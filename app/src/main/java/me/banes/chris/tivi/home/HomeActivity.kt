@@ -23,7 +23,6 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
@@ -54,9 +53,7 @@ class HomeActivity : TiviActivity() {
     }
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    private var viewModel: HomeActivityViewModel? = null
-
-    val bottomNavigation by lazy { findViewById<BottomNavigationView>(R.id.home_bottom_nav) }
+    private lateinit var viewModel: HomeActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,9 +62,9 @@ class HomeActivity : TiviActivity() {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(HomeActivityViewModel::class.java)
 
-        bottomNavigation.setOnNavigationItemSelectedListener {
+        home_bottom_nav.setOnNavigationItemSelectedListener {
             when (it.itemId) {
-                bottomNavigation.selectedItemId -> {
+                home_bottom_nav.selectedItemId -> {
                     if (supportFragmentManager.backStackEntryCount > 0) {
                         for (i in 0..supportFragmentManager.backStackEntryCount) {
                             supportFragmentManager.popBackStackImmediate()
@@ -78,21 +75,21 @@ class HomeActivity : TiviActivity() {
                     true
                 }
                 R.id.home_nav_collection -> {
-                    viewModel?.currentNavigationItemLiveData?.value = LIBRARY
+                    viewModel.currentNavigationItemLiveData.value = LIBRARY
                     true
                 }
                 R.id.home_nav_discover -> {
-                    viewModel?.currentNavigationItemLiveData?.value = DISCOVER
+                    viewModel.currentNavigationItemLiveData.value = DISCOVER
                     true
                 }
                 else -> false
             }
         }
 
-        viewModel?.currentNavigationItemLiveData?.observe(this,
+        viewModel.currentNavigationItemLiveData.observe(this,
                 Observer { showNavigationItem(it!!) })
 
-        viewModel?.authUiState?.observe(this, Observer {
+        viewModel.authUiState.observe(this, Observer {
             when (it) {
                 HomeActivityViewModel.AuthUiState.LOGGED_IN -> {
                     home_toolbar.menu.findItem(R.id.home_menu_user_avatar).apply {
@@ -114,7 +111,7 @@ class HomeActivity : TiviActivity() {
             }
         })
 
-        viewModel?.userProfileLifeProfile?.observe(this, Observer {
+        viewModel.userProfileLifeProfile.observe(this, Observer {
             if (it != null) {
                 loadUserProfile(it)
             } else {
@@ -137,7 +134,7 @@ class HomeActivity : TiviActivity() {
                     true
                 }
                 R.id.home_menu_user_login -> {
-                    viewModel?.startAuthProcess(REQUEST_CODE_AUTH)
+                    viewModel.startAuthProcess(REQUEST_CODE_AUTH)
                     true
                 }
                 else -> false
@@ -153,8 +150,8 @@ class HomeActivity : TiviActivity() {
     }
 
     private fun showNavigationItem(item: HomeActivityViewModel.NavigationItem) {
-        var newFragment: Fragment?
-        var newItemId: Int?
+        val newFragment: Fragment
+        val newItemId: Int
 
         when (item) {
             DISCOVER -> {
@@ -176,8 +173,8 @@ class HomeActivity : TiviActivity() {
         home_appbarlayout.setExpanded(true)
 
         // Now make the bottom nav show the correct item
-        if (bottomNavigation.selectedItemId != newItemId) {
-            bottomNavigation.menu.findItem(newItemId)?.isChecked = true
+        if (home_bottom_nav.selectedItemId != newItemId) {
+            home_bottom_nav.menu.findItem(newItemId)?.isChecked = true
         }
     }
 
@@ -214,7 +211,7 @@ class HomeActivity : TiviActivity() {
         }
 
         override fun showShowDetails(tiviShow: TiviShow) {
-            Snackbar.make(bottomNavigation, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(home_bottom_nav, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
         }
     }
 
@@ -223,7 +220,7 @@ class HomeActivity : TiviActivity() {
             Constants.INTENT_ACTION_HANDLE_AUTH_RESPONSE -> {
                 val response = AuthorizationResponse.fromIntent(intent)
                 val error = AuthorizationException.fromIntent(intent)
-                viewModel?.onAuthResponse(response, error)
+                viewModel.onAuthResponse(response, error)
             }
         }
     }

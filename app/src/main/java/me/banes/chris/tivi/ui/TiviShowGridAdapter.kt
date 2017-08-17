@@ -30,7 +30,7 @@ internal class TiviShowGridAdapter
     private val items: MutableList<TiviShow> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TiviShowGridViewHolder {
-        var view = LayoutInflater.from(parent.context)
+        val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.grid_item, parent, false)
         return TiviShowGridViewHolder(view)
     }
