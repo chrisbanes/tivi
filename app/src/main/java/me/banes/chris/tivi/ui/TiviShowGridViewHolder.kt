@@ -20,10 +20,10 @@ package me.banes.chris.tivi.ui
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import com.bumptech.glide.Glide
 import com.xwray.groupie.ViewHolder
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.TiviShow
+import applyImageFromUrl
 
 class TiviShowGridViewHolder(itemView: View) : ViewHolder(itemView) {
 
@@ -36,12 +36,9 @@ class TiviShowGridViewHolder(itemView: View) : ViewHolder(itemView) {
 
         poster.setImageDrawable(null)
         if (item.tmdbPosterPath != null) {
-            Glide.with(poster)
-                    .load("https://image.tmdb.org/t/p/w342${item.tmdbPosterPath}")
-                    .into(poster)
+            poster.applyImageFromUrl("https://image.tmdb.org/t/p/w342${item.tmdbPosterPath}")
         } else {
             title.visibility = View.VISIBLE
         }
     }
-
 }

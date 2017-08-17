@@ -16,6 +16,8 @@
  */
 
 import android.view.View
+import android.widget.ImageView
+import com.bumptech.glide.Glide
 
 fun View.doOnLayout(onLayout: (View) -> Boolean) {
     addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
@@ -33,4 +35,8 @@ fun View.updatePadding(paddingStart: Int = getPaddingStart(),
                        paddingEnd: Int = getPaddingEnd(),
                        paddingBottom: Int = getPaddingBottom()) {
     setPaddingRelative(getPaddingStart(), getPaddingTop(), getPaddingEnd(), getPaddingBottom())
+}
+
+fun ImageView.applyImageFromUrl(imageUrl: String) {
+    Glide.with(this).load(imageUrl).into(this)
 }
