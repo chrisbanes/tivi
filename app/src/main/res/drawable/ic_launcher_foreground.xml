@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2017 Google, Inc.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  -->
+
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:pathData="M 0 0 L 108 0 L 108 108 L 0 108 L 0 0 Z M 71.57 66.23 L 71.57 42.8 L 36.43 42.8 L 36.43 66.23 L 71.57 66.23 Z"
+        android:fillColor="#333333" />
+    <path
+        android:pathData="M 71.57 38.9 L 56.75 38.9 L 63.18 32.47 L 61.81 31.09 L 54.01 38.89 L 46.21 31.09 L 44.81 32.46 L 51.26 38.89 L 36.43 38.89 C 34.28 38.89 32.53 40.62 32.53 42.79 L 32.53 66.22 C 32.53 68.37 34.28 70.12 36.43 70.12 L 71.57 70.12 C 73.72 70.12 75.47 68.37 75.47 66.22 L 75.47 42.8 C 75.47 40.63 73.72 38.9 71.57 38.9 Z M 71.57 66.23 L 36.43 66.23 L 36.43 42.8 L 71.57 42.8 L 71.57 66.23 Z"
+        android:fillColor="#ffffff"
+        android:fillAlpha="0.7" />
+    <path
+        android:pathData="M 71.57 66.23 L 36.43 66.23 L 36.43 65.73 L 71.57 65.73"
+        android:fillColor="#000000"
+        android:fillAlpha="0.1" />
+    <path
+        android:pathData="M 71.57 43.3 L 36.43 43.3 L 36.43 42.8 L 71.57 42.8"
+        android:fillColor="#ffffff"
+        android:fillAlpha="0.1" />
+
+    <path
+        android:name="finish"
+        android:pathData="M0,0h108v108h-108z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="27"
+                android:centerY="27"
+                android:gradientRadius="76.37">
+                <item android:offset="0.0" android:color="#1affffff" />
+                <item android:offset="0.32" android:color="#0dffffff" />
+                <item android:offset="1.0" android:color="#00ffffff" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>
