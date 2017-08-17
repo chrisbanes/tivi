@@ -10,7 +10,7 @@ only contains two pieces of UI. It is under heavy development.
 
 Tivi is an app which attempts to use the latest cutting edge libraries and tools. As a summary:
 
- * Nearly entirely written in [Kotlin](https://kotlinlang.org/) (only one Java file)
+ * Nearly entirely written in [Kotlin](https://kotlinlang.org/)
  * Uses [RxJava](https://github.com/ReactiveX/RxJava) 2
  * Uses all of the [Architecture Components](https://developer.android.com/topic/libraries/architecture/): Room, LiveData and Lifecycle-components
  * Uses [dagger-android](https://google.github.io/dagger/android.html) for dependency injection
