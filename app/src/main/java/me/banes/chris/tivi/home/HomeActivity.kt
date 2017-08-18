@@ -21,17 +21,13 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
 import doOnLayout
 import kotlinx.android.synthetic.main.activity_home.*
+import loadIconFromUrl
 import me.banes.chris.tivi.Constants
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviActivity
@@ -86,8 +82,9 @@ class HomeActivity : TiviActivity() {
             }
         }
 
-        viewModel.navigationLiveData.observe(this,
-                Observer { showNavigationItem(it!!) })
+        viewModel.navigationLiveData.observe(this, Observer {
+            showNavigationItem(it!!)
+        })
 
         viewModel.authUiState.observe(this, Observer {
             when (it) {
@@ -126,20 +123,23 @@ class HomeActivity : TiviActivity() {
             true
         }
 
-        home_toolbar.inflateMenu(R.menu.home_toolbar)
-        home_toolbar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.home_menu_user_avatar -> {
-                    // TODO open profile
-                    Snackbar.make(home_toolbar, "TODO: Open profile", Snackbar.LENGTH_SHORT).show()
-                    true
+        home_toolbar?.apply {
+            inflateMenu(R.menu.home_toolbar)
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.home_menu_user_avatar -> {
+                        // TODO open profile
+                        Snackbar.make(home_toolbar, "TODO: Open profile", Snackbar.LENGTH_SHORT).show()
+                        true
+                    }
+                    R.id.home_menu_user_login -> {
+                        viewModel.startAuthProcess(REQUEST_CODE_AUTH)
+                        true
+                    }
+                    else -> false
                 }
-                R.id.home_menu_user_login -> {
-                    viewModel.startAuthProcess(REQUEST_CODE_AUTH)
-                    true
-                }
-                else -> false
             }
+            title = this@HomeActivity.title
         }
 
         handleIntent(intent)
@@ -180,16 +180,9 @@ class HomeActivity : TiviActivity() {
     }
 
     private fun loadUserProfile(user: TraktUser) {
-        Glide.with(this)
-                .asBitmap()
-                .load(user.avatarUrl)
-                .into(object : SimpleTarget<Bitmap>(100, 100) {
-                    override fun onResourceReady(resource: Bitmap?, transition: Transition<in Bitmap>?) {
-                        val circularBitmapDrawable = RoundedBitmapDrawableFactory.create(resources, resource)
-                        circularBitmapDrawable.isCircular = true
-                        home_toolbar.menu.findItem(R.id.home_menu_user_avatar).icon = circularBitmapDrawable
-                    }
-                })
+        user.avatarUrl?.also {
+            home_toolbar.menu.findItem(R.id.home_menu_user_avatar).loadIconFromUrl(this, it)
+        }
     }
 
     val navigator = object : HomeNavigator {

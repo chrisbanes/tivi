@@ -15,9 +15,15 @@
  *
  */
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 
 fun View.doOnLayout(onLayout: (View) -> Boolean) {
     addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
@@ -37,6 +43,18 @@ fun View.updatePadding(paddingStart: Int = getPaddingStart(),
     setPaddingRelative(getPaddingStart(), getPaddingTop(), getPaddingEnd(), getPaddingBottom())
 }
 
-fun ImageView.applyImageFromUrl(imageUrl: String) {
+fun ImageView.loadFromUrl(imageUrl: String) {
     Glide.with(this).load(imageUrl).into(this)
+}
+
+fun MenuItem.loadIconFromUrl(context: Context, imageUrl: String) {
+    Glide.with(context).asBitmap()
+            .load(imageUrl)
+            .into(object : SimpleTarget<Bitmap>(100, 100) {
+                override fun onResourceReady(resource: Bitmap?, transition: Transition<in Bitmap>?) {
+                    val circularIcon = RoundedBitmapDrawableFactory.create(context.resources, resource)
+                    circularIcon.isCircular = true
+                    icon = circularIcon
+                }
+            })
 }

@@ -23,7 +23,7 @@ import android.widget.TextView
 import com.xwray.groupie.ViewHolder
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.TiviShow
-import applyImageFromUrl
+import loadFromUrl
 
 class TiviShowGridViewHolder(itemView: View) : ViewHolder(itemView) {
 
@@ -36,7 +36,7 @@ class TiviShowGridViewHolder(itemView: View) : ViewHolder(itemView) {
 
         poster.setImageDrawable(null)
         if (item.tmdbPosterPath != null) {
-            poster.applyImageFromUrl("https://image.tmdb.org/t/p/w342${item.tmdbPosterPath}")
+            poster.loadFromUrl("https://image.tmdb.org/t/p/w342${item.tmdbPosterPath}")
         } else {
             title.visibility = View.VISIBLE
         }
