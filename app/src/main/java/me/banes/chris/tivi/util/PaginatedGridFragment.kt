@@ -46,10 +46,8 @@ abstract class PaginatedGridFragment<T, VM : PaginatedTraktViewModel<T>>(
 
     private val adapter = TiviShowGridAdapter()
 
-    override fun onCreateView(inflater: LayoutInflater?,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_rv_grid, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_rv_grid, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -59,13 +57,12 @@ abstract class PaginatedGridFragment<T, VM : PaginatedTraktViewModel<T>>(
             adapter = this@PaginatedGridFragment.adapter
             addItemDecoration(SpacingItemDecorator(paddingLeft))
             addOnScrollListener(EndlessRecyclerViewScrollListener(
-                    grid_recyclerview.layoutManager,
-                    { _: Int, _: RecyclerView ->
-                        if (userVisibleHint) viewModel?.onListScrolledToEnd()
+                    grid_recyclerview.layoutManager, { _: Int, _: RecyclerView ->
+                        if (userVisibleHint) viewModel.onListScrolledToEnd()
                     }))
         }
 
-        grid_swipe_refresh.setOnRefreshListener { viewModel?.fullRefresh() }
+        grid_swipe_refresh.setOnRefreshListener { viewModel.fullRefresh() }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -79,6 +76,7 @@ abstract class PaginatedGridFragment<T, VM : PaginatedTraktViewModel<T>>(
         viewModel.data.observe(this, Observer {
             it?.let { adapter.updateItems(it) }
         })
+
         viewModel.messages.observe(this, Observer {
             when (it?.status) {
                 Status.SUCCESS -> {
