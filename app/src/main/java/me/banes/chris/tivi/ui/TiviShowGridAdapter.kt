@@ -52,8 +52,8 @@ internal class TiviShowGridAdapter
         diffResult.dispatchUpdatesTo(this)
     }
 
-    private inner class DiffCb(val oldItems: List<TiviShow>,
-                               val newItems: List<TiviShow>) : DiffUtil.Callback() {
+    private class DiffCb(val oldItems: List<TiviShow>,
+                         val newItems: List<TiviShow>) : DiffUtil.Callback() {
         override fun getOldListSize(): Int {
             return oldItems.size
         }
