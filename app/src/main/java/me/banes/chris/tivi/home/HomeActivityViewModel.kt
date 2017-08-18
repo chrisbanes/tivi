@@ -39,19 +39,30 @@ internal class HomeActivityViewModel @Inject constructor(
         LOGGED_IN, LOGGED_OUT
     }
 
-    val currentNavigationItemLiveData = MutableLiveData<NavigationItem>()
+    private val mutableNavLiveData = MutableLiveData<NavigationItem>()
+
+    /**
+     * Facade so that we don't leak the fact that its mutable
+     */
+    val navigationLiveData: LiveData<NavigationItem>
+        get() = mutableNavLiveData
+
     val authUiState = MutableLiveData<AuthUiState>()
 
     val userProfileLifeProfile: LiveData<TraktUser> = LiveDataReactiveStreams.fromPublisher(traktManager.userObservable())
 
     init {
         // Set default value
-        currentNavigationItemLiveData.value = NavigationItem.DISCOVER
+        mutableNavLiveData.value = NavigationItem.DISCOVER
         authUiState.value = LOGGED_OUT
 
         traktManager.stateObservable.observeForever {
             authUiState.value = if (it?.isAuthorized == true) LOGGED_IN else LOGGED_OUT
         }
+    }
+
+    fun onNavigationItemClicked(item: NavigationItem) {
+        mutableNavLiveData.value = item
     }
 
     fun startAuthProcess(requestCode: Int) {

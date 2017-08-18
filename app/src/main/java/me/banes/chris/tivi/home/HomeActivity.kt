@@ -75,18 +75,18 @@ class HomeActivity : TiviActivity() {
                     true
                 }
                 R.id.home_nav_collection -> {
-                    viewModel.currentNavigationItemLiveData.value = LIBRARY
+                    viewModel.onNavigationItemClicked(LIBRARY)
                     true
                 }
                 R.id.home_nav_discover -> {
-                    viewModel.currentNavigationItemLiveData.value = DISCOVER
+                    viewModel.onNavigationItemClicked(DISCOVER)
                     true
                 }
                 else -> false
             }
         }
 
-        viewModel.currentNavigationItemLiveData.observe(this,
+        viewModel.navigationLiveData.observe(this,
                 Observer { showNavigationItem(it!!) })
 
         viewModel.authUiState.observe(this, Observer {
