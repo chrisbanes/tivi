@@ -86,62 +86,6 @@ class HomeActivity : TiviActivity() {
             showNavigationItem(it!!)
         })
 
-        viewModel.authUiState.observe(this, Observer {
-            when (it) {
-                HomeActivityViewModel.AuthUiState.LOGGED_IN -> {
-                    home_toolbar.menu.findItem(R.id.home_menu_user_avatar).apply {
-                        isVisible = true
-                        icon = getDrawable(R.drawable.ic_popular)
-                    }
-                    home_toolbar.menu.findItem(R.id.home_menu_user_login).apply {
-                        isVisible = false
-                    }
-                }
-                HomeActivityViewModel.AuthUiState.LOGGED_OUT -> {
-                    home_toolbar.menu.findItem(R.id.home_menu_user_avatar).apply {
-                        isVisible = false
-                    }
-                    home_toolbar.menu.findItem(R.id.home_menu_user_login).apply {
-                        isVisible = true
-                    }
-                }
-            }
-        })
-
-        viewModel.userProfileLiveData.observe(this, Observer {
-            if (it != null) {
-                loadUserProfile(it)
-            } else {
-                // TODO clear user profile
-            }
-        })
-
-        home_container_bottom_nav.doOnLayout {
-            if (it.height != home_content.paddingBottom) {
-                home_content.updatePadding(paddingEnd = it.height)
-            }
-            true
-        }
-
-        home_toolbar?.apply {
-            inflateMenu(R.menu.home_toolbar)
-            setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.home_menu_user_avatar -> {
-                        // TODO open profile
-                        Snackbar.make(home_toolbar, "TODO: Open profile", Snackbar.LENGTH_SHORT).show()
-                        true
-                    }
-                    R.id.home_menu_user_login -> {
-                        viewModel.startAuthProcess(REQUEST_CODE_AUTH)
-                        true
-                    }
-                    else -> false
-                }
-            }
-            title = this@HomeActivity.title
-        }
-
         handleIntent(intent)
     }
 
@@ -171,17 +115,9 @@ class HomeActivity : TiviActivity() {
                 .replace(R.id.home_content, newFragment)
                 .commit()
 
-        home_appbarlayout.setExpanded(true)
-
         // Now make the bottom nav show the correct item
         if (home_bottom_nav.selectedItemId != newItemId) {
             home_bottom_nav.menu.findItem(newItemId)?.isChecked = true
-        }
-    }
-
-    private fun loadUserProfile(user: TraktUser) {
-        user.avatarUrl?.also {
-            home_toolbar.menu.findItem(R.id.home_menu_user_avatar).loadIconFromUrl(this, it)
         }
     }
 
@@ -214,7 +150,7 @@ class HomeActivity : TiviActivity() {
             Constants.INTENT_ACTION_HANDLE_AUTH_RESPONSE -> {
                 val response = AuthorizationResponse.fromIntent(intent)
                 val error = AuthorizationException.fromIntent(intent)
-                viewModel.onAuthResponse(response, error)
+                //viewModel.onAuthResponse(response, error)
             }
         }
     }

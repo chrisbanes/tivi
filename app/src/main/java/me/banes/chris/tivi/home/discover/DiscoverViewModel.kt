@@ -23,8 +23,10 @@ import io.reactivex.disposables.CompositeDisposable
 import me.banes.chris.tivi.calls.PopularCall
 import me.banes.chris.tivi.calls.TrendingCall
 import me.banes.chris.tivi.data.TiviShow
+import me.banes.chris.tivi.home.BaseHomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.*
+import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
@@ -32,7 +34,8 @@ internal class DiscoverViewModel @Inject constructor(
         private val schedulers: AppRxSchedulers,
         private val popularCall: PopularCall,
         private val trendingCall: TrendingCall,
-        private val navigator: HomeNavigator) : ViewModel() {
+        private val navigator: HomeNavigator,
+        traktManager: TraktManager) : BaseHomeFragmentViewModel(traktManager) {
 
     private val subscriptions = CompositeDisposable()
 

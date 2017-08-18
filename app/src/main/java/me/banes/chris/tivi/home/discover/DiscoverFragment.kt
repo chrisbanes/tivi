@@ -18,12 +18,13 @@
 package me.banes.chris.tivi.home.discover
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.util.ArrayMap
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import com.xwray.groupie.GroupAdapter
@@ -32,18 +33,15 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_discover.*
 import kotlinx.android.synthetic.main.header_item.view.*
 import me.banes.chris.tivi.R
-import me.banes.chris.tivi.TiviFragment
 import me.banes.chris.tivi.data.TiviShow
+import me.banes.chris.tivi.home.BaseHomeFragment
+import me.banes.chris.tivi.home.HomeActivity
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.*
 import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterUpdatingSection
-import javax.inject.Inject
 
-class DiscoverFragment : TiviFragment() {
-
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var viewModel: DiscoverViewModel
+internal class DiscoverFragment : BaseHomeFragment<DiscoverViewModel>() {
 
     private lateinit var gridLayoutManager: GridLayoutManager
     private val groupAdapter = GroupAdapter<ViewHolder>()
@@ -54,7 +52,20 @@ class DiscoverFragment : TiviFragment() {
         return inflater.inflate(R.layout.fragment_discover, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        viewModel = ViewModelProviders.of(this, viewModelFactory)
+                .get(DiscoverViewModel::class.java)
+
+        viewModel.data.observe(this, Observer {
+            if (it != null) {
+                updateAdapter(it)
+            }
+        })
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         gridLayoutManager = discover_rv.layoutManager as GridLayoutManager
@@ -74,19 +85,34 @@ class DiscoverFragment : TiviFragment() {
             adapter = groupAdapter
             addItemDecoration(SpacingItemDecorator(paddingLeft))
         }
+
+        discover_toolbar?.apply {
+            inflateMenu(R.menu.home_toolbar)
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.home_menu_user_avatar -> {
+                        // TODO open profile
+                        Snackbar.make(discover_toolbar, "TODO: Open profile", Snackbar.LENGTH_SHORT).show()
+                        true
+                    }
+                    R.id.home_menu_user_login -> {
+                        viewModel.startAuthProcess(HomeActivity.REQUEST_CODE_AUTH)
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-                .get(DiscoverViewModel::class.java)
 
-        viewModel.data.observe(this, Observer {
-            if (it != null) {
-                updateAdapter(it)
-            }
-        })
+    override fun findUserAvatarMenuItem(): MenuItem? {
+        return discover_toolbar.menu.findItem(R.id.home_menu_user_avatar)
+    }
+
+    override fun findUserLoginMenuItem(): MenuItem? {
+        return discover_toolbar.menu.findItem(R.id.home_menu_user_login)
     }
 
     private fun updateAdapter(data: Map<DiscoverViewModel.Section, List<TiviShow>>) {
