@@ -33,9 +33,9 @@ android {
         versionName "0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        buildConfigField "String", "TRAKT_CLIENT_ID", "\"$TIVI_TRAKT_CLIENT_ID\""
-        buildConfigField "String", "TRAKT_CLIENT_SECRET", "\"$TIVI_TRAKT_CLIENT_SECRET\""
-        buildConfigField "String", "TMDB_API_KEY", "\"$TIVI_TMDB_API_KEY\""
+        buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + propOrDef("TIVI_TRAKT_CLIENT_ID", "") + "\""
+        buildConfigField "String", "TRAKT_CLIENT_SECRET", "\"" + propOrDef("TIVI_TRAKT_CLIENT_SECRET", "") + "\""
+        buildConfigField "String", "TMDB_API_KEY", "\"" + propOrDef("TIVI_TMDB_API_KEY", "") + "\""
 
         manifestPlaceholders += [
                 'appAuthRedirectScheme': 'me.banes.chris.tivi'
@@ -99,4 +99,8 @@ dependencies {
     androidTestImplementation("com.android.support.test.espresso:espresso-core:${versions.espresso}", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+}
+
+String propOrDef(String propertyName, String defaultValue) {
+    return hasProperty(propertyName) ? getProperties()[propertyName] : defaultValue
 }
