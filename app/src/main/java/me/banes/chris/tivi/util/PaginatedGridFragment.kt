@@ -42,7 +42,7 @@ abstract class PaginatedGridFragment<T, VM : PaginatedTraktViewModel<T>>(
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private var viewModel: VM? = null
+    private lateinit var viewModel: VM
 
     private val adapter = TiviShowGridAdapter()
 
@@ -76,10 +76,10 @@ abstract class PaginatedGridFragment<T, VM : PaginatedTraktViewModel<T>>(
     override fun onStart() {
         super.onStart()
 
-        viewModel?.data?.observe(this, Observer {
+        viewModel.data.observe(this, Observer {
             it?.let { adapter.updateItems(it) }
         })
-        viewModel?.messages?.observe(this, Observer {
+        viewModel.messages.observe(this, Observer {
             when (it?.status) {
                 Status.SUCCESS -> {
                     grid_swipe_refresh.isRefreshing = false
