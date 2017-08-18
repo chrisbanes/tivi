@@ -1,0 +1,29 @@
+machine:
+  environment:
+    JAVA_OPTS: -Xmx2048m -Djava.util.concurrent.ForkJoinPool.common.parallelism=2
+
+dependencies:
+  pre:
+    - mkdir "$ANDROID_HOME/licenses" || true
+    - echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
+    - echo "84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+    - echo y | android update sdk --no-ui --all --filter "platform-tools"
+  cache_directories:
+    - /usr/local/android-sdk-linux/tools
+    - /usr/local/android-sdk-linux/platform-tools
+    - /usr/local/android-sdk-linux/platforms
+    - /usr/local/android-sdk-linux/build-tools
+    - /home/ubuntu/.gradle/caches/modules-2/files-2.1/
+    - /home/ubuntu/.gradle/wrapper/
+  override:
+    - ./gradlew dependencies --no-daemon
+
+compile:
+  override:
+    - ./gradlew assemble --no-daemon
+
+test:
+  override:
+    - ./gradlew check --no-daemon
+  post:
+    - find app/build/outputs/apk -name '*.apk' -exec cp {} $CIRCLE_ARTIFACTS \;
