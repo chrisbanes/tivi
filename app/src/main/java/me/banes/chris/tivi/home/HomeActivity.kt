@@ -111,7 +111,7 @@ class HomeActivity : TiviActivity() {
             }
         })
 
-        viewModel.userProfileLifeProfile.observe(this, Observer {
+        viewModel.userProfileLiveData.observe(this, Observer {
             if (it != null) {
                 loadUserProfile(it)
             } else {
@@ -130,7 +130,8 @@ class HomeActivity : TiviActivity() {
         home_toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.home_menu_user_avatar -> {
-                    // TODO
+                    // TODO open profile
+                    Snackbar.make(home_toolbar, "TODO: Open profile", Snackbar.LENGTH_SHORT).show()
                     true
                 }
                 R.id.home_menu_user_login -> {
@@ -211,7 +212,7 @@ class HomeActivity : TiviActivity() {
         }
 
         override fun showShowDetails(tiviShow: TiviShow) {
-            Snackbar.make(home_bottom_nav, "Not implemented yet", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(home_bottom_nav, "TODO: Open show details", Snackbar.LENGTH_SHORT).show()
         }
     }
 

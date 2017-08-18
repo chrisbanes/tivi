@@ -49,7 +49,8 @@ internal class HomeActivityViewModel @Inject constructor(
 
     val authUiState = MutableLiveData<AuthUiState>()
 
-    val userProfileLifeProfile: LiveData<TraktUser> = LiveDataReactiveStreams.fromPublisher(traktManager.userObservable())
+    val userProfileLiveData: LiveData<TraktUser> =
+            LiveDataReactiveStreams.fromPublisher(traktManager.userObservable())
 
     init {
         // Set default value
