@@ -29,6 +29,7 @@ import me.banes.chris.tivi.data.TiviShow
 import me.banes.chris.tivi.data.TiviShowDao
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.DatabaseTxRunner
+import timber.log.Timber
 import java.util.Date
 
 abstract class PaginatedTraktCall<RS>(
@@ -87,6 +88,7 @@ abstract class PaginatedTraktCall<RS>(
         databaseTxRunner.runInTransaction {
             if (resetOnSave) deleteEntries() else deletePage(page.page)
             page.items.forEachIndexed { index, show ->
+                Timber.d("Saving entry: %s", show)
                 saveEntry(show, page.page, index)
             }
         }
@@ -96,7 +98,7 @@ abstract class PaginatedTraktCall<RS>(
 
     protected abstract fun loadShow(response: RS): Maybe<TiviShow>
 
-    protected fun showFromTmdb(tmdbId: Int, traktId: Int?): Maybe<TiviShow> {
+    protected fun showFromTmdb(tmdbId: Int, traktId: Int): Maybe<TiviShow> {
         val dbSource = showDao.getShowFromId(tmdbId, traktId)
                 .subscribeOn(schedulers.disk)
                 .filter { !it.needsUpdateFromTmdb() } // Don't emit if the item needs updating
@@ -104,14 +106,16 @@ abstract class PaginatedTraktCall<RS>(
         val networkSource = Single.fromCallable { tmdb.tvService().tv(tmdbId).execute().body() }
                 .subscribeOn(schedulers.network)
                 .observeOn(schedulers.disk)
-                .flatMap { mapTmdbShow(it, dbSource) }
+                .flatMap { mapTmdbShow(it) }
                 .map {
                     if (it.traktId == null) {
                         it.traktId = traktId
                     }
                     if (it.id == null) {
+                        Timber.d("Inserting show: %s", it)
                         it.id = showDao.insertShow(it)
                     } else {
+                        Timber.d("Updating show: %s", it)
                         showDao.updateShow(it)
                     }
                     it
@@ -120,8 +124,9 @@ abstract class PaginatedTraktCall<RS>(
         return Maybe.concat(dbSource, networkSource.toMaybe()).firstElement()
     }
 
-    private fun mapTmdbShow(tmdbShow: TvShow, dbSource: Maybe<TiviShow>): Single<TiviShow> {
-        return dbSource
+    private fun mapTmdbShow(tmdbShow: TvShow): Single<TiviShow> {
+        return showDao.getShowWithTmdbId(tmdbShow.id)
+                .subscribeOn(schedulers.disk)
                 .defaultIfEmpty(TiviShow())
                 .map {
                     it.apply {
