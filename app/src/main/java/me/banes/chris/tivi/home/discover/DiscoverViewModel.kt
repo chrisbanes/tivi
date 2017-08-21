@@ -18,7 +18,6 @@
 package me.banes.chris.tivi.home.discover
 
 import android.arch.lifecycle.MutableLiveData
-import io.reactivex.disposables.CompositeDisposable
 import me.banes.chris.tivi.calls.PopularCall
 import me.banes.chris.tivi.calls.TrendingCall
 import me.banes.chris.tivi.data.TiviShow
@@ -27,6 +26,7 @@ import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.*
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.util.AppRxSchedulers
+import plusAssign
 import javax.inject.Inject
 
 internal class DiscoverViewModel @Inject constructor(
@@ -35,8 +35,6 @@ internal class DiscoverViewModel @Inject constructor(
         private val trendingCall: TrendingCall,
         private val navigator: HomeNavigator,
         traktManager: TraktManager) : HomeFragmentViewModel(traktManager) {
-
-    private val subscriptions = CompositeDisposable()
 
     private val items = mapOf(
             TRENDING to mutableListOf<TiviShow>(),
@@ -51,7 +49,7 @@ internal class DiscoverViewModel @Inject constructor(
     init {
         data.value = items
 
-        subscriptions.add(popularCall.data()
+        disposables += popularCall.data()
                 .observeOn(schedulers.main)
                 .subscribe {
                     items[POPULAR]?.apply {
@@ -59,9 +57,9 @@ internal class DiscoverViewModel @Inject constructor(
                         addAll(it)
                     }
                     data.value = items
-                })
+                }
 
-        subscriptions.add(trendingCall.data()
+        disposables += trendingCall.data()
                 .observeOn(schedulers.main)
                 .subscribe {
                     items[TRENDING]?.apply {
@@ -69,14 +67,14 @@ internal class DiscoverViewModel @Inject constructor(
                         addAll(it)
                     }
                     data.value = items
-                })
+                }
 
         refresh()
     }
 
     fun refresh() {
-        subscriptions.add(popularCall.refresh().subscribe())
-        subscriptions.add(trendingCall.refresh().subscribe())
+        disposables += popularCall.refresh().subscribe()
+        disposables += trendingCall.refresh().subscribe()
     }
 
     fun onSectionHeaderClicked(section: Section) {
@@ -85,11 +83,6 @@ internal class DiscoverViewModel @Inject constructor(
 
     fun onItemPostedClicked(show: TiviShow) {
         navigator.showShowDetails(show)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        subscriptions.clear()
     }
 
 }

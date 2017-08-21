@@ -20,11 +20,13 @@ package me.banes.chris.tivi.home
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
 import me.banes.chris.tivi.data.TraktUser
 import me.banes.chris.tivi.trakt.TraktManager
+import me.banes.chris.tivi.util.RxAwareViewModel
+import net.openid.appauth.AuthState
+import plusAssign
 
-abstract class HomeFragmentViewModel(private val traktManager: TraktManager) : ViewModel() {
+abstract class HomeFragmentViewModel(private val traktManager: TraktManager) : RxAwareViewModel() {
 
     enum class AuthUiState {
         LOGGED_IN, LOGGED_OUT
@@ -36,13 +38,16 @@ abstract class HomeFragmentViewModel(private val traktManager: TraktManager) : V
             LiveDataReactiveStreams.fromPublisher(traktManager.userObservable())
 
     init {
-        authUiState.value = AuthUiState.LOGGED_OUT
+        disposables += traktManager.stateSubject
+                .subscribe { handleAuthState(it) }
 
-        traktManager.stateObservable.observeForever {
-            authUiState.value =
-                    if (it?.isAuthorized == true) AuthUiState.LOGGED_IN
-                    else AuthUiState.LOGGED_OUT
-        }
+        authUiState.value = AuthUiState.LOGGED_OUT
+    }
+
+    private fun handleAuthState(state: AuthState?) {
+        authUiState.value =
+                if (state?.isAuthorized == true) AuthUiState.LOGGED_IN
+                else AuthUiState.LOGGED_OUT
     }
 
     fun onProfileItemClicked() {

@@ -17,7 +17,6 @@
 
 package me.banes.chris.tivi.trakt
 
-import android.arch.lifecycle.MutableLiveData
 import android.content.SharedPreferences
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
@@ -52,7 +51,6 @@ class TraktManager @Inject constructor(
         private val userMeCall: UserMeCall) {
 
     val stateSubject = PublishSubject.create<AuthState>()
-    val stateObservable = MutableLiveData<AuthState>()
 
     init {
         // Read the auth state from disk
@@ -68,7 +66,6 @@ class TraktManager @Inject constructor(
         // Second observer updates local state
         stateSubject.observeOn(schedulers.main)
                 .subscribe {
-                    stateObservable.value = it
                     traktClient.accessToken(it?.accessToken)
                     traktClient.refreshToken(it?.refreshToken)
 
