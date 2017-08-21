@@ -26,6 +26,7 @@ import me.banes.chris.tivi.api.Resource
 import me.banes.chris.tivi.api.Status
 import me.banes.chris.tivi.calls.PaginatedTraktCall
 import me.banes.chris.tivi.data.TiviShow
+import plusAssign
 
 open class PaginatedTraktViewModel<R>(
         val schedulers: AppRxSchedulers,
@@ -48,21 +49,21 @@ open class PaginatedTraktViewModel<R>(
     }
 
     fun onListScrolledToEnd() {
-        subscriptions.add(call.loadNextPage()
+        subscriptions += call.loadNextPage()
                 .observeOn(schedulers.main)
                 .doOnSubscribe { messages.value = Resource(Status.LOADING) }
                 .doOnError { messages.value = Resource(Status.ERROR, it.localizedMessage) }
                 .doOnComplete { messages.value = Resource(Status.SUCCESS) }
-                .subscribe())
+                .subscribe()
     }
 
     fun fullRefresh() {
-        subscriptions.add(call.refresh()
+        subscriptions += call.refresh()
                 .observeOn(schedulers.main)
                 .doOnSubscribe { messages.value = Resource(Status.LOADING) }
                 .doOnError { messages.value = Resource(Status.ERROR, it.localizedMessage) }
                 .doOnComplete { messages.value = Resource(Status.SUCCESS) }
-                .subscribe())
+                .subscribe()
     }
 
     override fun onCleared() {
