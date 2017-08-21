@@ -16,7 +16,6 @@
  */
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.view.MenuItem
@@ -58,10 +57,4 @@ fun MenuItem.loadIconFromUrl(context: Context, imageUrl: String) {
                     icon = circularIcon
                 }
             })
-}
-
-inline fun SharedPreferences.edit(f: SharedPreferences.Editor.() -> Unit) {
-    val editor = edit()
-    editor.f()
-    editor.apply()
 }
