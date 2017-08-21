@@ -18,25 +18,17 @@
 package me.banes.chris.tivi.home
 
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import me.banes.chris.tivi.data.TraktUser
-import me.banes.chris.tivi.home.HomeActivityViewModel.AuthUiState.*
 import me.banes.chris.tivi.trakt.TraktManager
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import javax.inject.Inject
 
-internal class HomeActivityViewModel @Inject constructor(
-        private val traktManager: TraktManager) : ViewModel() {
+internal class HomeActivityViewModel @Inject constructor(private val traktManager: TraktManager) : ViewModel() {
 
     enum class NavigationItem {
         DISCOVER, LIBRARY
-    }
-
-    enum class AuthUiState {
-        LOGGED_IN, LOGGED_OUT
     }
 
     private val mutableNavLiveData = MutableLiveData<NavigationItem>()
@@ -47,37 +39,19 @@ internal class HomeActivityViewModel @Inject constructor(
     val navigationLiveData: LiveData<NavigationItem>
         get() = mutableNavLiveData
 
-    val authUiState = MutableLiveData<AuthUiState>()
-
-    val userProfileLiveData: LiveData<TraktUser> =
-            LiveDataReactiveStreams.fromPublisher(traktManager.userObservable())
-
     init {
         // Set default value
         mutableNavLiveData.value = NavigationItem.DISCOVER
-        authUiState.value = LOGGED_OUT
-
-        traktManager.stateObservable.observeForever {
-            authUiState.value = if (it?.isAuthorized == true) LOGGED_IN else LOGGED_OUT
-        }
     }
 
     fun onNavigationItemClicked(item: NavigationItem) {
         mutableNavLiveData.value = item
     }
 
-    fun startAuthProcess(requestCode: Int) {
-        traktManager.startAuth(requestCode)
-    }
-
     fun onAuthResponse(response: AuthorizationResponse?, ex: AuthorizationException?) {
-        if (ex != null) {
-            traktManager.onAuthException(ex)
-        } else {
-            if (response != null) {
-                traktManager.onAuthResponse(response)
-            }
+        when {
+            ex != null -> traktManager.onAuthException(ex)
+            response != null -> traktManager.onAuthResponse(response)
         }
     }
-
 }

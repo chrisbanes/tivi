@@ -15,59 +15,42 @@
   ~
   -->
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/home_coordinator"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
-
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/home_appbarlayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/home_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways|snap" />
-
-    </android.support.design.widget.AppBarLayout>
+    tools:context="me.banes.chris.tivi.home.HomeActivity">
 
     <FrameLayout
         android:id="@+id/home_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="59dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/home_bottom_nav"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/home_container_bottom_nav"
-        android:layout_width="match_parent"
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/home_bottom_nav"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:background="?android:attr/colorBackground"
         android:elevation="4dp"
-        android:orientation="vertical">
+        android:theme="@style/ThemeOverlay.AppCompat.Light"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/home_navigation" />
 
-        <ImageView
-            android:id="@+id/home_bottom_nav_border"
-            android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/tv_test" />
+    <ImageView
+        android:id="@+id/home_bottom_nav_border"
+        android:layout_width="0dp"
+        android:layout_height="3dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/tv_test"
+        app:layout_constraintBottom_toTopOf="@+id/home_bottom_nav"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <android.support.design.widget.BottomNavigationView
-            android:id="@+id/home_bottom_nav"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/colorBackground"
-
-            android:theme="@style/ThemeOverlay.AppCompat.Light"
-            app:menu="@menu/home_navigation" />
-
-    </LinearLayout>
-
-</android.support.design.widget.CoordinatorLayout>
-
+</android.support.constraint.ConstraintLayout>

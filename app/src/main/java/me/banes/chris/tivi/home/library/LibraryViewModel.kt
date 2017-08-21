@@ -17,11 +17,14 @@
 
 package me.banes.chris.tivi.home.library
 
-import android.arch.lifecycle.ViewModel
+import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
+import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
-internal class LibraryViewModel @Inject constructor(
+class LibraryViewModel @Inject constructor(
         private val schedulers: AppRxSchedulers,
-        private val navigator: HomeNavigator) : ViewModel()
+        private val navigator: HomeNavigator,
+        traktManager: TraktManager)
+    : HomeFragmentViewModel(traktManager)

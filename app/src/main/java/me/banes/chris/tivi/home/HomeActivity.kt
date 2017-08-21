@@ -25,21 +25,17 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
-import doOnLayout
 import kotlinx.android.synthetic.main.activity_home.*
-import loadIconFromUrl
 import me.banes.chris.tivi.Constants
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviActivity
 import me.banes.chris.tivi.data.TiviShow
-import me.banes.chris.tivi.data.TraktUser
 import me.banes.chris.tivi.home.HomeActivityViewModel.NavigationItem.*
 import me.banes.chris.tivi.home.discover.DiscoverFragment
 import me.banes.chris.tivi.home.library.LibraryFragment
 import me.banes.chris.tivi.home.trending.PopularShowsFragment
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
-import updatePadding
 import javax.inject.Inject
 
 class HomeActivity : TiviActivity() {
@@ -62,7 +58,7 @@ class HomeActivity : TiviActivity() {
             when (it.itemId) {
                 home_bottom_nav.selectedItemId -> {
                     if (supportFragmentManager.backStackEntryCount > 0) {
-                        for (i in 0..supportFragmentManager.backStackEntryCount) {
+                        for (i in 0 until supportFragmentManager.backStackEntryCount) {
                             supportFragmentManager.popBackStackImmediate()
                         }
                     } else {
@@ -85,62 +81,6 @@ class HomeActivity : TiviActivity() {
         viewModel.navigationLiveData.observe(this, Observer {
             showNavigationItem(it!!)
         })
-
-        viewModel.authUiState.observe(this, Observer {
-            when (it) {
-                HomeActivityViewModel.AuthUiState.LOGGED_IN -> {
-                    home_toolbar.menu.findItem(R.id.home_menu_user_avatar).apply {
-                        isVisible = true
-                        icon = getDrawable(R.drawable.ic_popular)
-                    }
-                    home_toolbar.menu.findItem(R.id.home_menu_user_login).apply {
-                        isVisible = false
-                    }
-                }
-                HomeActivityViewModel.AuthUiState.LOGGED_OUT -> {
-                    home_toolbar.menu.findItem(R.id.home_menu_user_avatar).apply {
-                        isVisible = false
-                    }
-                    home_toolbar.menu.findItem(R.id.home_menu_user_login).apply {
-                        isVisible = true
-                    }
-                }
-            }
-        })
-
-        viewModel.userProfileLiveData.observe(this, Observer {
-            if (it != null) {
-                loadUserProfile(it)
-            } else {
-                // TODO clear user profile
-            }
-        })
-
-        home_container_bottom_nav.doOnLayout {
-            if (it.height != home_content.paddingBottom) {
-                home_content.updatePadding(paddingEnd = it.height)
-            }
-            true
-        }
-
-        home_toolbar?.apply {
-            inflateMenu(R.menu.home_toolbar)
-            setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.home_menu_user_avatar -> {
-                        // TODO open profile
-                        Snackbar.make(home_toolbar, "TODO: Open profile", Snackbar.LENGTH_SHORT).show()
-                        true
-                    }
-                    R.id.home_menu_user_login -> {
-                        viewModel.startAuthProcess(REQUEST_CODE_AUTH)
-                        true
-                    }
-                    else -> false
-                }
-            }
-            title = this@HomeActivity.title
-        }
 
         handleIntent(intent)
     }
@@ -171,17 +111,9 @@ class HomeActivity : TiviActivity() {
                 .replace(R.id.home_content, newFragment)
                 .commit()
 
-        home_appbarlayout.setExpanded(true)
-
         // Now make the bottom nav show the correct item
         if (home_bottom_nav.selectedItemId != newItemId) {
             home_bottom_nav.menu.findItem(newItemId)?.isChecked = true
-        }
-    }
-
-    private fun loadUserProfile(user: TraktUser) {
-        user.avatarUrl?.also {
-            home_toolbar.menu.findItem(R.id.home_menu_user_avatar).loadIconFromUrl(this, it)
         }
     }
 

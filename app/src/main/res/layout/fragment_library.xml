@@ -21,13 +21,13 @@
     android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/discover_appbarlayout"
+        android:id="@+id/library_appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/discover_toolbar"
+            android:id="@+id/library_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways|snap"
@@ -37,7 +37,7 @@
 
     <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/discover_rv"
+        android:id="@+id/library_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
