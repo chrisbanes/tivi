@@ -25,21 +25,17 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
-import doOnLayout
 import kotlinx.android.synthetic.main.activity_home.*
-import loadIconFromUrl
 import me.banes.chris.tivi.Constants
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviActivity
 import me.banes.chris.tivi.data.TiviShow
-import me.banes.chris.tivi.data.TraktUser
 import me.banes.chris.tivi.home.HomeActivityViewModel.NavigationItem.*
 import me.banes.chris.tivi.home.discover.DiscoverFragment
 import me.banes.chris.tivi.home.library.LibraryFragment
 import me.banes.chris.tivi.home.trending.PopularShowsFragment
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
-import updatePadding
 import javax.inject.Inject
 
 class HomeActivity : TiviActivity() {
@@ -62,7 +58,7 @@ class HomeActivity : TiviActivity() {
             when (it.itemId) {
                 home_bottom_nav.selectedItemId -> {
                     if (supportFragmentManager.backStackEntryCount > 0) {
-                        for (i in 0..supportFragmentManager.backStackEntryCount) {
+                        for (i in 0 until supportFragmentManager.backStackEntryCount) {
                             supportFragmentManager.popBackStackImmediate()
                         }
                     } else {
@@ -150,7 +146,7 @@ class HomeActivity : TiviActivity() {
             Constants.INTENT_ACTION_HANDLE_AUTH_RESPONSE -> {
                 val response = AuthorizationResponse.fromIntent(intent)
                 val error = AuthorizationException.fromIntent(intent)
-                //viewModel.onAuthResponse(response, error)
+                viewModel.onAuthResponse(response, error)
             }
         }
     }

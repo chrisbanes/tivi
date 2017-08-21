@@ -19,8 +19,8 @@ package me.banes.chris.tivi.home.discover
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.util.ArrayMap
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
@@ -34,19 +34,25 @@ import kotlinx.android.synthetic.main.fragment_discover.*
 import kotlinx.android.synthetic.main.header_item.view.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.TiviShow
-import me.banes.chris.tivi.home.BaseHomeFragment
-import me.banes.chris.tivi.home.HomeActivity
+import me.banes.chris.tivi.home.HomeFragment
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.*
 import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterUpdatingSection
 
-internal class DiscoverFragment : BaseHomeFragment<DiscoverViewModel>() {
+internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
     private lateinit var gridLayoutManager: GridLayoutManager
     private val groupAdapter = GroupAdapter<ViewHolder>()
 
     private val groups = ArrayMap<DiscoverViewModel.Section, ShowPosterUpdatingSection>()
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        viewModel = ViewModelProviders.of(this, viewModelFactory)
+                .get(DiscoverViewModel::class.java)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_discover, container, false)
@@ -54,9 +60,6 @@ internal class DiscoverFragment : BaseHomeFragment<DiscoverViewModel>() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-                .get(DiscoverViewModel::class.java)
 
         viewModel.data.observe(this, Observer {
             if (it != null) {
@@ -87,25 +90,13 @@ internal class DiscoverFragment : BaseHomeFragment<DiscoverViewModel>() {
         }
 
         discover_toolbar?.apply {
+            title = getString(R.string.home_nav_discover)
             inflateMenu(R.menu.home_toolbar)
             setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.home_menu_user_avatar -> {
-                        // TODO open profile
-                        Snackbar.make(discover_toolbar, "TODO: Open profile", Snackbar.LENGTH_SHORT).show()
-                        true
-                    }
-                    R.id.home_menu_user_login -> {
-                        viewModel.startAuthProcess(HomeActivity.REQUEST_CODE_AUTH)
-                        true
-                    }
-                    else -> false
-                }
+                onMenuItemClicked(it)
             }
         }
     }
-
-
 
     override fun findUserAvatarMenuItem(): MenuItem? {
         return discover_toolbar.menu.findItem(R.id.home_menu_user_avatar)

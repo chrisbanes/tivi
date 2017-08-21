@@ -27,17 +27,17 @@ import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
 import javax.inject.Inject
 
-abstract class BaseHomeFragment<VM : BaseHomeFragmentViewModel>: TiviFragment() {
+abstract class HomeFragment<VM : HomeFragmentViewModel>: TiviFragment() {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    protected lateinit var viewModel: VM
+    internal lateinit var viewModel: VM
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.authUiState.observe(this, Observer {
             when (it) {
-                BaseHomeFragmentViewModel.AuthUiState.LOGGED_IN -> {
+                HomeFragmentViewModel.AuthUiState.LOGGED_IN -> {
                     findUserAvatarMenuItem()?.apply {
                         isVisible = true
                         icon = context.getDrawable(R.drawable.ic_popular)
@@ -46,7 +46,7 @@ abstract class BaseHomeFragment<VM : BaseHomeFragmentViewModel>: TiviFragment() 
                         isVisible = false
                     }
                 }
-                BaseHomeFragmentViewModel.AuthUiState.LOGGED_OUT -> {
+                HomeFragmentViewModel.AuthUiState.LOGGED_OUT -> {
                     findUserAvatarMenuItem()?.apply {
                         isVisible = false
                     }
@@ -66,6 +66,18 @@ abstract class BaseHomeFragment<VM : BaseHomeFragmentViewModel>: TiviFragment() 
                 // TODO clear user profile
             }
         })
+    }
+
+    open fun onMenuItemClicked(item: MenuItem) = when (item.itemId) {
+        R.id.home_menu_user_avatar -> {
+            viewModel.onProfileItemClicked()
+            true
+        }
+        R.id.home_menu_user_login -> {
+            viewModel.onLoginItemClicked()
+            true
+        }
+        else -> false
     }
 
     abstract fun findUserAvatarMenuItem(): MenuItem?

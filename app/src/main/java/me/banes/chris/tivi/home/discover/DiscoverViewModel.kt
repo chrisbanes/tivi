@@ -18,12 +18,11 @@
 package me.banes.chris.tivi.home.discover
 
 import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
 import me.banes.chris.tivi.calls.PopularCall
 import me.banes.chris.tivi.calls.TrendingCall
 import me.banes.chris.tivi.data.TiviShow
-import me.banes.chris.tivi.home.BaseHomeFragmentViewModel
+import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.*
 import me.banes.chris.tivi.trakt.TraktManager
@@ -35,7 +34,7 @@ internal class DiscoverViewModel @Inject constructor(
         private val popularCall: PopularCall,
         private val trendingCall: TrendingCall,
         private val navigator: HomeNavigator,
-        traktManager: TraktManager) : BaseHomeFragmentViewModel(traktManager) {
+        traktManager: TraktManager) : HomeFragmentViewModel(traktManager) {
 
     private val subscriptions = CompositeDisposable()
 

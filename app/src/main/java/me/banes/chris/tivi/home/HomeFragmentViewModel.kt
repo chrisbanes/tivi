@@ -23,10 +23,8 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import me.banes.chris.tivi.data.TraktUser
 import me.banes.chris.tivi.trakt.TraktManager
-import net.openid.appauth.AuthorizationException
-import net.openid.appauth.AuthorizationResponse
 
-open class BaseHomeFragmentViewModel(private val traktManager: TraktManager) : ViewModel() {
+abstract class HomeFragmentViewModel(private val traktManager: TraktManager) : ViewModel() {
 
     enum class AuthUiState {
         LOGGED_IN, LOGGED_OUT
@@ -47,18 +45,16 @@ open class BaseHomeFragmentViewModel(private val traktManager: TraktManager) : V
         }
     }
 
-    fun startAuthProcess(requestCode: Int) {
-        traktManager.startAuth(requestCode)
+    fun onProfileItemClicked() {
+        // TODO
     }
 
-    fun onAuthResponse(response: AuthorizationResponse?, ex: AuthorizationException?) {
-        if (ex != null) {
-            traktManager.onAuthException(ex)
-        } else {
-            if (response != null) {
-                traktManager.onAuthResponse(response)
-            }
-        }
+    fun onLoginItemClicked() {
+        startAuthProcess(0)
+    }
+
+    private fun startAuthProcess(requestCode: Int) {
+        traktManager.startAuth(requestCode)
     }
 
 }

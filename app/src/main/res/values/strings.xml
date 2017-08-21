@@ -21,6 +21,6 @@
     <string name="discover_trending">Trending</string>
     <string name="discover_popular">Popular</string>
     <string name="home_nav_discover">Discover</string>
-    <string name="home_nan_library">Library</string>
+    <string name="home_nav_library">Library</string>
     <string name="login">Login</string>
 </resources>

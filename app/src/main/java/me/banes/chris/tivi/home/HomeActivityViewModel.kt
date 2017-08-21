@@ -20,9 +20,12 @@ package me.banes.chris.tivi.home
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import me.banes.chris.tivi.trakt.TraktManager
+import net.openid.appauth.AuthorizationException
+import net.openid.appauth.AuthorizationResponse
 import javax.inject.Inject
 
-internal class HomeActivityViewModel @Inject constructor() : ViewModel() {
+internal class HomeActivityViewModel @Inject constructor(private val traktManager: TraktManager) : ViewModel() {
 
     enum class NavigationItem {
         DISCOVER, LIBRARY
@@ -45,4 +48,10 @@ internal class HomeActivityViewModel @Inject constructor() : ViewModel() {
         mutableNavLiveData.value = item
     }
 
+    fun onAuthResponse(response: AuthorizationResponse?, ex: AuthorizationException?) {
+        when {
+            ex != null -> traktManager.onAuthException(ex)
+            response != null -> traktManager.onAuthResponse(response)
+        }
+    }
 }
