@@ -21,6 +21,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.content.SharedPreferences
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
+import edit
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.subjects.PublishSubject
@@ -115,9 +116,9 @@ class TraktManager @Inject constructor(
     }
 
     private fun persistAuthState(state: AuthState) {
-        authPrefs.edit()
-                .putString("stateJson", state.jsonSerializeString())
-                .commit()
+        authPrefs.edit {
+            putString("stateJson", state.jsonSerializeString())
+        }
     }
 
 }
