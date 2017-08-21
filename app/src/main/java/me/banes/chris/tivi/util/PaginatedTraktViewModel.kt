@@ -20,8 +20,6 @@ package me.banes.chris.tivi.util
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
-import io.reactivex.disposables.CompositeDisposable
 import me.banes.chris.tivi.api.Resource
 import me.banes.chris.tivi.api.Status
 import me.banes.chris.tivi.calls.PaginatedTraktCall
@@ -30,9 +28,7 @@ import plusAssign
 
 open class PaginatedTraktViewModel<R>(
         val schedulers: AppRxSchedulers,
-        val call: PaginatedTraktCall<R>) : ViewModel() {
-
-    private val subscriptions = CompositeDisposable()
+        val call: PaginatedTraktCall<R>) : RxAwareViewModel() {
 
     /**
      * This is what my UI (Fragment) observes. Its backed by Room and a network call
@@ -49,7 +45,7 @@ open class PaginatedTraktViewModel<R>(
     }
 
     fun onListScrolledToEnd() {
-        subscriptions += call.loadNextPage()
+        disposables += call.loadNextPage()
                 .observeOn(schedulers.main)
                 .doOnSubscribe { messages.value = Resource(Status.LOADING) }
                 .doOnError { messages.value = Resource(Status.ERROR, it.localizedMessage) }
@@ -58,18 +54,11 @@ open class PaginatedTraktViewModel<R>(
     }
 
     fun fullRefresh() {
-        subscriptions += call.refresh()
+        disposables += call.refresh()
                 .observeOn(schedulers.main)
                 .doOnSubscribe { messages.value = Resource(Status.LOADING) }
                 .doOnError { messages.value = Resource(Status.ERROR, it.localizedMessage) }
                 .doOnComplete { messages.value = Resource(Status.SUCCESS) }
                 .subscribe()
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        subscriptions.clear()
-    }
-
-
 }
