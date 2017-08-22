@@ -55,6 +55,12 @@ interface TiviShowDao {
             "ORDER BY page, page_order")
     fun trendingShows(): Flowable<List<TiviShow>>
 
+    @Query("SELECT * FROM shows " +
+            "INNER JOIN trending_shows ON trending_shows.show_id = shows.id " +
+            "WHERE page = :arg0 " +
+            "ORDER BY page_order")
+    fun trendingShowsPage(page: Int): Flowable<List<TiviShow>>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertTrending(show: TrendingEntry): Long
 
@@ -75,6 +81,12 @@ interface TiviShowDao {
             "INNER JOIN popular_shows ON popular_shows.show_id = shows.id " +
             "ORDER BY page, page_order")
     fun popularShows(): Flowable<List<TiviShow>>
+
+    @Query("SELECT * FROM shows " +
+            "INNER JOIN popular_shows ON popular_shows.show_id = shows.id " +
+            "WHERE page = :arg0 " +
+            "ORDER BY page_order")
+    fun popularShowsPage(page: Int): Flowable<List<TiviShow>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertPopularShows(show: PopularEntry): Long

@@ -49,7 +49,7 @@ internal class DiscoverViewModel @Inject constructor(
     init {
         data.value = items
 
-        disposables += popularCall.data()
+        disposables += popularCall.data(0)
                 .observeOn(schedulers.main)
                 .subscribe {
                     items[POPULAR]?.apply {
@@ -59,7 +59,7 @@ internal class DiscoverViewModel @Inject constructor(
                     data.value = items
                 }
 
-        disposables += trendingCall.data()
+        disposables += trendingCall.data(0)
                 .observeOn(schedulers.main)
                 .subscribe {
                     items[TRENDING]?.apply {
@@ -78,7 +78,10 @@ internal class DiscoverViewModel @Inject constructor(
     }
 
     fun onSectionHeaderClicked(section: Section) {
-        navigator.showTrending()
+        when (section) {
+            TRENDING -> navigator.showTrending()
+            POPULAR -> navigator.showPopular()
+        }
     }
 
     fun onItemPostedClicked(show: TiviShow) {

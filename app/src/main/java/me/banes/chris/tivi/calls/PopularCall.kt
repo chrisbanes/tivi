@@ -58,8 +58,8 @@ class PopularCall @Inject constructor(
         return showDao.getLastPopularPage()
     }
 
-    override fun createData(): Flowable<List<TiviShow>> {
-        return showDao.popularShows()
+    override fun createData(page: Int?): Flowable<List<TiviShow>> {
+        return if (page == null) showDao.popularShows() else showDao.popularShowsPage(page)
     }
 
     override fun saveEntry(show: TiviShow, page: Int, order: Int) {

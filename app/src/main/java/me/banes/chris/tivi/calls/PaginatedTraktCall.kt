@@ -44,9 +44,10 @@ abstract class PaginatedTraktCall<RS>(
         val DEFAULT_PAGE_SIZE = 15
     }
 
-    fun data(): Flowable<List<TiviShow>> {
-        return createData()
+    fun data(page: Int? = null): Flowable<List<TiviShow>> {
+        return createData(page)
                 .subscribeOn(schedulers.disk)
+                .distinctUntilChanged()
     }
 
     private fun loadPage(page: Int = 0, resetOnSave: Boolean = false): Single<List<TiviShow>> {
@@ -67,7 +68,7 @@ abstract class PaginatedTraktCall<RS>(
 
     protected abstract fun lastPageLoaded(): Single<Int>
 
-    protected abstract fun createData(): Flowable<List<TiviShow>>
+    protected abstract fun createData(page: Int? = null): Flowable<List<TiviShow>>
 
     fun refresh(): Completable {
         return loadPage(0, resetOnSave = true).toCompletable()

@@ -39,8 +39,8 @@ class TrendingCall @Inject constructor(
         schedulers: AppRxSchedulers)
     : PaginatedTraktCall<TrendingShow>(databaseTxRunner, showDao, tmdb, trakt, schedulers) {
 
-    override fun createData(): Flowable<List<TiviShow>> {
-        return showDao.trendingShows()
+    override fun createData(page: Int?): Flowable<List<TiviShow>> {
+        return if (page == null) showDao.trendingShows() else showDao.trendingShowsPage(page)
     }
 
     override fun networkCall(page: Int): Single<List<TrendingShow>> {
