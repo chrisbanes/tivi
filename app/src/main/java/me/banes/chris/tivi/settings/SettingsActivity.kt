@@ -15,18 +15,18 @@
  *
  */
 
-package me.banes.chris.tivi.home.library
+package me.banes.chris.tivi.settings
 
-import me.banes.chris.tivi.AppNavigator
-import me.banes.chris.tivi.home.HomeFragmentViewModel
-import me.banes.chris.tivi.home.HomeNavigator
-import me.banes.chris.tivi.trakt.TraktManager
-import me.banes.chris.tivi.util.AppRxSchedulers
-import javax.inject.Inject
+import android.os.Bundle
+import me.banes.chris.tivi.TiviActivity
 
-class LibraryViewModel @Inject constructor(
-        private val schedulers: AppRxSchedulers,
-        private val navigator: HomeNavigator,
-        appNavigator: AppNavigator,
-        traktManager: TraktManager)
-    : HomeFragmentViewModel(traktManager, appNavigator)
+class SettingsActivity: TiviActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        fragmentManager.beginTransaction()
+                .replace(android.R.id.content, SettingsFragment())
+                .commit()
+    }
+
+}

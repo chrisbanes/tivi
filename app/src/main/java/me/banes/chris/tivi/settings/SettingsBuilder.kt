@@ -15,18 +15,15 @@
  *
  */
 
-package me.banes.chris.tivi.home.library
+package me.banes.chris.tivi.settings
 
-import me.banes.chris.tivi.AppNavigator
-import me.banes.chris.tivi.home.HomeFragmentViewModel
-import me.banes.chris.tivi.home.HomeNavigator
-import me.banes.chris.tivi.trakt.TraktManager
-import me.banes.chris.tivi.util.AppRxSchedulers
-import javax.inject.Inject
+import dagger.Module
+import dagger.android.ContributesAndroidInjector
 
-class LibraryViewModel @Inject constructor(
-        private val schedulers: AppRxSchedulers,
-        private val navigator: HomeNavigator,
-        appNavigator: AppNavigator,
-        traktManager: TraktManager)
-    : HomeFragmentViewModel(traktManager, appNavigator)
+@Module
+internal abstract class SettingsBuilder {
+
+    @ContributesAndroidInjector
+    internal abstract fun settingsActivity() : SettingsActivity
+
+}

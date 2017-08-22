@@ -20,13 +20,17 @@ package me.banes.chris.tivi.home
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MutableLiveData
+import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.data.TraktUser
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.util.RxAwareViewModel
 import net.openid.appauth.AuthState
 import plusAssign
 
-abstract class HomeFragmentViewModel(private val traktManager: TraktManager) : RxAwareViewModel() {
+abstract class HomeFragmentViewModel(
+        private val traktManager: TraktManager,
+        private val appNavigator: AppNavigator)
+    : RxAwareViewModel() {
 
     enum class AuthUiState {
         LOGGED_IN, LOGGED_OUT
@@ -56,6 +60,10 @@ abstract class HomeFragmentViewModel(private val traktManager: TraktManager) : R
 
     fun onLoginItemClicked() {
         startAuthProcess(0)
+    }
+
+    fun onSettingsItemClicked() {
+        appNavigator.startSettings()
     }
 
     private fun startAuthProcess(requestCode: Int) {

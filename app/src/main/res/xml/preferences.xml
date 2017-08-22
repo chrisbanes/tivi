@@ -16,23 +16,17 @@
   ~
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/home_menu_user_login"
-        android:icon="@drawable/ic_default_avatar_toolbar"
-        android:title="@string/login"
-        app:showAsAction="always" />
+    <PreferenceCategory android:title="@string/prefs_ui_category_title">
 
-    <item
-        android:id="@+id/home_menu_user_avatar"
-        android:visible="false"
-        app:showAsAction="always" />
+        <ListPreference
+            android:key="pref_ui_theme"
+            android:defaultValue="night"
+            android:entries="@array/prefs_ui_theme_titles"
+            android:entryValues="@array/prefs_ui_theme_values"
+            android:title="@string/prefs_ui_theme_title" />
 
-    <item
-        android:id="@+id/home_menu_settings"
-        android:title="@string/prefs_title"
-        app:showAsAction="never" />
+    </PreferenceCategory>
 
-</menu>
+</PreferenceScreen>

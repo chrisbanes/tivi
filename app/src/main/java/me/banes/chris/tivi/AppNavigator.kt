@@ -20,6 +20,7 @@ package me.banes.chris.tivi
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import me.banes.chris.tivi.settings.SettingsActivity
 import javax.inject.Inject
 
 class AppNavigator @Inject constructor(val context: Context) {
@@ -27,6 +28,10 @@ class AppNavigator @Inject constructor(val context: Context) {
     fun provideAuthHandleResponseIntent(requestCode: Int): PendingIntent {
         val intent = Intent(Constants.INTENT_ACTION_HANDLE_AUTH_RESPONSE)
         return PendingIntent.getActivity(context, requestCode, intent, 0)
+    }
+
+    fun startSettings() {
+        context.startActivity(Intent(context, SettingsActivity::class.java))
     }
 
 }
