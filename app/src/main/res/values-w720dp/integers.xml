@@ -19,5 +19,6 @@
 <resources>
 
     <integer name="grid_span_count">6</integer>
+    <integer name="grid_condensed_span_count">8</integer>
 
 </resources>

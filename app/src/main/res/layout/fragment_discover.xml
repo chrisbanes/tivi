@@ -47,6 +47,6 @@
         android:paddingTop="6dp"
         app:layoutManager="android.support.v7.widget.GridLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:spanCount="4" />
+        app:spanCount="@integer/grid_condensed_span_count" />
 
 </android.support.design.widget.CoordinatorLayout>
