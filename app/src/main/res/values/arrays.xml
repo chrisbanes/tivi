@@ -20,7 +20,7 @@
     <string-array name="prefs_ui_theme_titles">
         <item>Night (default)</item>
         <item>Day</item>
-        <item>Day Night</item>
+        <item>Auto</item>
     </string-array>
 
     <string-array name="prefs_ui_theme_values">
