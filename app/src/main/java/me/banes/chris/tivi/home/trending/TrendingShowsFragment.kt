@@ -29,7 +29,13 @@ class TrendingShowsFragment
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar.title = getString(R.string.discover_trending)
+
+        toolbar.apply {
+            title = getString(R.string.discover_popular)
+            setNavigationOnClickListener {
+                viewModel.onUpClicked()
+            }
+        }
     }
 
 }

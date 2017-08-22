@@ -19,11 +19,19 @@ package me.banes.chris.tivi.home.trending
 
 import com.uwetrottmann.trakt5.entities.TrendingShow
 import me.banes.chris.tivi.calls.TrendingCall
+import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.PaginatedTraktViewModel
 import javax.inject.Inject
 
 class TrendingShowsViewModel @Inject constructor(
         schedulers: AppRxSchedulers,
-        call: TrendingCall)
-    : PaginatedTraktViewModel<TrendingShow>(schedulers, call)
+        call: TrendingCall,
+        private val navigator: HomeNavigator)
+    : PaginatedTraktViewModel<TrendingShow>(schedulers, call) {
+
+    fun onUpClicked() {
+        navigator.onUpClicked()
+    }
+
+}

@@ -140,6 +140,11 @@ class HomeActivity : TiviActivity() {
         override fun showShowDetails(tiviShow: TiviShow) {
             Snackbar.make(home_bottom_nav, "TODO: Open show details", Snackbar.LENGTH_SHORT).show()
         }
+
+        override fun onUpClicked() {
+            // TODO can probably do something better here
+            supportFragmentManager.popBackStack()
+        }
     }
 
     private fun handleIntent(intent: Intent) {

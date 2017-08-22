@@ -27,4 +27,6 @@ interface HomeNavigator {
 
     fun showShowDetails(tiviShow: TiviShow)
 
+    fun onUpClicked()
+
 }

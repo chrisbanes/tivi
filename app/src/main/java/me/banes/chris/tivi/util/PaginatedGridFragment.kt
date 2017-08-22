@@ -42,7 +42,7 @@ abstract class PaginatedGridFragment<T, VM : PaginatedTraktViewModel<T>>(
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var viewModel: VM
+    protected lateinit var viewModel: VM
 
     private val adapter = TiviShowGridAdapter()
 
