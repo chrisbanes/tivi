@@ -19,7 +19,9 @@ package me.banes.chris.tivi.inject
 
 import android.arch.persistence.room.Room
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Debug
+import android.preference.PreferenceManager
 import com.uwetrottmann.tmdb2.Tmdb
 import dagger.Module
 import dagger.Provides
@@ -34,6 +36,7 @@ import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.File
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -94,6 +97,13 @@ class AppModule {
     @Provides
     fun provideRxSchedulers(): AppRxSchedulers {
         return AppRxSchedulers()
+    }
+
+    @Named("app")
+    @Provides
+    @Singleton
+    fun provideAppPreferences(application: TiviApplication): SharedPreferences {
+        return PreferenceManager.getDefaultSharedPreferences(application)
     }
 
 }

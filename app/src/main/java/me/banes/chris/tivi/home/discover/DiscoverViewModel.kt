@@ -18,6 +18,7 @@
 package me.banes.chris.tivi.home.discover
 
 import android.arch.lifecycle.MutableLiveData
+import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.calls.PopularCall
 import me.banes.chris.tivi.calls.TrendingCall
 import me.banes.chris.tivi.data.TiviShow
@@ -34,7 +35,8 @@ internal class DiscoverViewModel @Inject constructor(
         private val popularCall: PopularCall,
         private val trendingCall: TrendingCall,
         private val navigator: HomeNavigator,
-        traktManager: TraktManager) : HomeFragmentViewModel(traktManager) {
+        appNavigator: AppNavigator,
+        traktManager: TraktManager) : HomeFragmentViewModel(traktManager, appNavigator) {
 
     private val items = mapOf(
             TRENDING to mutableListOf<TiviShow>(),

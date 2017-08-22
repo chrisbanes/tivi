@@ -16,23 +16,16 @@
   ~
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<resources>
+    <string-array name="prefs_ui_theme_titles">
+        <item>Night (default)</item>
+        <item>Day</item>
+        <item>Day Night</item>
+    </string-array>
 
-    <item
-        android:id="@+id/home_menu_user_login"
-        android:icon="@drawable/ic_default_avatar_toolbar"
-        android:title="@string/login"
-        app:showAsAction="always" />
-
-    <item
-        android:id="@+id/home_menu_user_avatar"
-        android:visible="false"
-        app:showAsAction="always" />
-
-    <item
-        android:id="@+id/home_menu_settings"
-        android:title="@string/prefs_title"
-        app:showAsAction="never" />
-
-</menu>
+    <string-array name="prefs_ui_theme_values">
+        <item>night</item>
+        <item>day</item>
+        <item>daynight</item>
+    </string-array>
+</resources>
