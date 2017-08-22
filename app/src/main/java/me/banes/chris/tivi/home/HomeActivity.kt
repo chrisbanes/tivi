@@ -34,6 +34,7 @@ import me.banes.chris.tivi.home.HomeActivityViewModel.NavigationItem.*
 import me.banes.chris.tivi.home.discover.DiscoverFragment
 import me.banes.chris.tivi.home.library.LibraryFragment
 import me.banes.chris.tivi.home.trending.PopularShowsFragment
+import me.banes.chris.tivi.home.trending.TrendingShowsFragment
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import javax.inject.Inject
@@ -121,7 +122,7 @@ class HomeActivity : TiviActivity() {
         override fun showPopular() {
             supportFragmentManager
                     .beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .replace(R.id.home_content, PopularShowsFragment())
                     .addToBackStack(null)
                     .commit()
@@ -130,8 +131,8 @@ class HomeActivity : TiviActivity() {
         override fun showTrending() {
             supportFragmentManager
                     .beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .replace(R.id.home_content, PopularShowsFragment())
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .replace(R.id.home_content, TrendingShowsFragment())
                     .addToBackStack(null)
                     .commit()
         }
