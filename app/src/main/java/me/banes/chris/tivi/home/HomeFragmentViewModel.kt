@@ -42,10 +42,9 @@ abstract class HomeFragmentViewModel(
             LiveDataReactiveStreams.fromPublisher(traktManager.userObservable())
 
     init {
-        disposables += traktManager.stateSubject
-                .subscribe { handleAuthState(it) }
-
         authUiState.value = AuthUiState.LOGGED_OUT
+
+        disposables += traktManager.stateSubject.subscribe { handleAuthState(it) }
     }
 
     private fun handleAuthState(state: AuthState?) {

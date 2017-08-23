@@ -23,7 +23,7 @@ import dagger.Lazy
 import edit
 import io.reactivex.Flowable
 import io.reactivex.Maybe
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.BehaviorSubject
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.calls.UserMeCall
 import me.banes.chris.tivi.data.TraktUser
@@ -50,15 +50,9 @@ class TraktManager @Inject constructor(
         private val traktClient: TraktV2,
         private val userMeCall: UserMeCall) {
 
-    val stateSubject = PublishSubject.create<AuthState>()
+    val stateSubject = BehaviorSubject.create<AuthState>()
 
     init {
-        // Read the auth state from disk
-        Maybe.fromCallable(this::readAuthState)
-                .subscribeOn(schedulers.disk)
-                .observeOn(schedulers.main)
-                .subscribe(stateSubject::onNext, stateSubject::onError)
-
         // First observer updates the local storage
         stateSubject.observeOn(schedulers.disk)
                 .subscribe(this::persistAuthState)
@@ -74,6 +68,12 @@ class TraktManager @Inject constructor(
                         userMeCall.refresh().subscribe()
                     }
                 }
+
+        // Read the auth state from disk
+        Maybe.fromCallable(this::readAuthState)
+                .subscribeOn(schedulers.disk)
+                .observeOn(schedulers.main)
+                .subscribe(stateSubject::onNext, stateSubject::onError)
     }
 
     fun startAuth(requestCode: Int) {
