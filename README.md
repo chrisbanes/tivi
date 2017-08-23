@@ -1,3 +1,5 @@
+![Tivi](https://raw.githubusercontent.com/chrisbanes/tivi/master/art/banner.png)
+
 # Tivi 📺 (work-in-progress 👷🔧️👷‍♀️⛏)
 
 **This is not an official Google product**
