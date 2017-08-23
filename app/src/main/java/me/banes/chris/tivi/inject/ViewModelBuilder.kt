@@ -15,7 +15,7 @@
  *
  */
 
-package me.banes.chris.tivi.home
+package me.banes.chris.tivi.inject
 
 import android.arch.lifecycle.ViewModelProvider
 import dagger.Binds

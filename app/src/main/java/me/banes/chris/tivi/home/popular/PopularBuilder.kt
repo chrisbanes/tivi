@@ -15,15 +15,13 @@
  *
  */
 
-package me.banes.chris.tivi.home
+package me.banes.chris.tivi.home.popular
 
 import android.arch.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
-import me.banes.chris.tivi.home.popular.PopularShowsViewModel
-import me.banes.chris.tivi.home.trending.PopularShowsFragment
 import me.banes.chris.tivi.inject.ViewModelKey
 
 @Module
