@@ -22,7 +22,10 @@ import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
+import me.banes.chris.tivi.home.discover.DiscoverBuilder
 import me.banes.chris.tivi.home.library.LibraryBuilder
+import me.banes.chris.tivi.home.popular.PopularBuilder
+import me.banes.chris.tivi.home.trending.TrendingBuilder
 import me.banes.chris.tivi.inject.ViewModelKey
 
 @Module

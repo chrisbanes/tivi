@@ -33,7 +33,7 @@ import me.banes.chris.tivi.data.TiviShow
 import me.banes.chris.tivi.home.HomeActivityViewModel.NavigationItem.*
 import me.banes.chris.tivi.home.discover.DiscoverFragment
 import me.banes.chris.tivi.home.library.LibraryFragment
-import me.banes.chris.tivi.home.trending.PopularShowsFragment
+import me.banes.chris.tivi.home.popular.PopularShowsFragment
 import me.banes.chris.tivi.home.trending.TrendingShowsFragment
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
