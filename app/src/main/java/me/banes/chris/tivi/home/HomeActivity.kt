@@ -63,7 +63,7 @@ class HomeActivity : TiviActivity() {
                             supportFragmentManager.popBackStackImmediate()
                         }
                     } else {
-                        val fragment = supportFragmentManager.fragments[1]
+                        val fragment = supportFragmentManager.findFragmentById(R.id.home_content)
                         when (fragment){
                             is DiscoverFragment -> fragment.scrollToTop()
                             is LibraryFragment -> fragment.scrollToTop()
