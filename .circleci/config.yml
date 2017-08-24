@@ -1,0 +1,47 @@
+version: 2.0
+
+jobs:
+  build:
+    working_directory: ~/code
+    docker:
+      - image: circleci/android:api-26-alpha
+    environment:
+      JVM_OPTS: -Xmx3072m -Djava.util.concurrent.ForkJoinPool.common.parallelism=2
+      TERM: dumb
+    steps:
+      - run:
+          name: Update SDK
+          command: |
+            mkdir "$ANDROID_HOME/licenses" || true
+            echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
+            echo "84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+            echo y | android update sdk --no-ui --all --filter "platform-tools"
+
+      - checkout
+
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      - run:
+          name: Download Dependencies
+          command: ./gradlew dependencies --no-daemon
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+          
+      - run:
+          name: Assemble APKs
+          command: ./gradlew assemble --no-daemon
+      - store_artifacts:
+          path: app/build/outputs/apk
+          destination: apks
+
+      - run:
+          name: Check
+          command: ./gradlew check --no-daemon
+      - store_artifacts:
+          path: app/build/reports
+          destination: reports
+      - store_test_results:
+          path: app/build/test-results
+          
