@@ -63,7 +63,11 @@ class HomeActivity : TiviActivity() {
                             supportFragmentManager.popBackStackImmediate()
                         }
                     } else {
-                        // TODO scroll to top of main fragment
+                        val fragment = supportFragmentManager.fragments[1]
+                        when (fragment){
+                            is DiscoverFragment -> fragment.scrollToTop()
+                            is LibraryFragment -> fragment.scrollToTop()
+                        }
                     }
                     true
                 }
