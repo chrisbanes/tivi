@@ -12,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package me.banes.chris.tivi.home
@@ -22,10 +21,10 @@ import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MutableLiveData
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.data.TraktUser
+import me.banes.chris.tivi.extensions.plusAssign
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.util.RxAwareViewModel
 import net.openid.appauth.AuthState
-import plusAssign
 
 abstract class HomeFragmentViewModel(
         private val traktManager: TraktManager,
