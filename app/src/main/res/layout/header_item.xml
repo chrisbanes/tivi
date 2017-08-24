@@ -24,12 +24,25 @@
 
     <TextView
         android:id="@+id/header_title"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginStart="14dp"
-        android:layout_marginEnd="14dp"
+        android:layout_marginStart="@dimen/header_margin"
+        android:layout_marginEnd="@dimen/header_margin"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:gravity="center_vertical"
         tools:text="Game of Thrones" />
+
+    <TextView
+        android:id="@+id/header_more"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/header_margin"
+        android:layout_marginEnd="@dimen/header_margin"
+        android:layout_gravity="end"
+        android:gravity="center_vertical"
+        android:text="@string/discover_more"
+        android:textColor="@color/colorAccent"
+        android:textAllCaps="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
 </FrameLayout>
