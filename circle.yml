@@ -16,14 +16,14 @@ dependencies:
     - /home/ubuntu/.gradle/caches/modules-2/files-2.1/
     - /home/ubuntu/.gradle/wrapper/
   override:
-    - ./gradlew dependencies --no-daemon
+    - ./gradlew dependencies --no-daemon --console plain
 
 compile:
   override:
-    - ./gradlew assemble --no-daemon
+    - ./gradlew assemble --no-daemon --console plain
 
 test:
   override:
-    - ./gradlew check --no-daemon
+    - ./gradlew check --no-daemon --console plain
   post:
     - find app/build/outputs/apk -name '*.apk' -exec cp {} $CIRCLE_ARTIFACTS \;
