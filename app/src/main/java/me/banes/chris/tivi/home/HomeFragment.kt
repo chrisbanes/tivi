@@ -12,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package me.banes.chris.tivi.home
@@ -22,9 +21,9 @@ import android.arch.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import loadIconFromUrl
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
+import me.banes.chris.tivi.extensions.loadIconFromUrl
 import javax.inject.Inject
 
 abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
