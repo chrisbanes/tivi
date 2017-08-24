@@ -21,6 +21,14 @@ Tivi is an app which attempts to use the latest cutting edge libraries and tools
 
 First off, you require the latest Android Studio 3.0 (or newer) to be able to build the app.
 
+### Code style
+
+This project uses [ktlint](https://github.com/shyiko/ktlint), provided via
+the [spotless](https://github.com/diffplug/spotless) gradle plugin, and the bundled project IntelliJ codestyle.
+
+If you find that one of your pull reviews does not pass the CI server check due to a code style conflict, you can
+easily fix it by running: `./gradlew spotlessApply`, or running IntelliJ/Android Studio's code formatter.
+
 ### API keys
 
 You need to supply API / client keys for the various services the

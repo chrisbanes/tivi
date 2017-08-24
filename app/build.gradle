@@ -22,6 +22,14 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'com.getkeepsafe.dexcount'
 
+apply plugin: 'com.diffplug.gradle.spotless'
+spotless {
+    kotlin {
+        target "**/*.kt"
+        ktlint(versions.ktlint)
+    }
+}
+
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.1"
