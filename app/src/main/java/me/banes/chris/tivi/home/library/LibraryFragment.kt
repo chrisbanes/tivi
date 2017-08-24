@@ -61,4 +61,10 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         return library_toolbar.menu.findItem(R.id.home_menu_user_login)
     }
 
+    internal fun scrollToTop() {
+        library_rv.apply {
+            stopScroll()
+            smoothScrollToPosition(0)
+        }
+    }
 }

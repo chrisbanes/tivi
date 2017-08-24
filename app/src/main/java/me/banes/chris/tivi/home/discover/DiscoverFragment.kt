@@ -127,6 +127,13 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         TRENDING -> getString(R.string.discover_trending)
     }
 
+    internal fun scrollToTop() {
+        discover_rv.apply {
+            stopScroll()
+            smoothScrollToPosition(0)
+        }
+    }
+
     internal inner class HeaderItem(val section: DiscoverViewModel.Section) : Item<ViewHolder>() {
         override fun getLayout() = R.layout.header_item
 
