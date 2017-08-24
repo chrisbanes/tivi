@@ -71,7 +71,7 @@ interface TiviShowDao {
     fun deleteTrendingShows()
 
     @Query("SELECT MAX(page) from trending_shows")
-    fun getLastTrendingPage() : Single<Int>
+    fun getLastTrendingPage(): Single<Int>
 
     /**
      * Popular shows
@@ -98,6 +98,6 @@ interface TiviShowDao {
     fun deletePopularShows()
 
     @Query("SELECT MAX(page) from popular_shows")
-    fun getLastPopularPage() : Single<Int>
+    fun getLastPopularPage(): Single<Int>
 
 }

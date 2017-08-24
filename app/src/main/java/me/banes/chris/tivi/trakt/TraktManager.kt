@@ -95,12 +95,11 @@ class TraktManager @Inject constructor(
     }
 
     private fun performTokenExchange(response: AuthorizationResponse) {
-        authService.performTokenRequest(response.createTokenExchangeRequest(), clientAuth.get()) {
-            tokenResponse, exception ->
-                val newState = AuthState().apply {
-                    update(tokenResponse, exception)
-                }
-                stateSubject.onNext(newState)
+        authService.performTokenRequest(response.createTokenExchangeRequest(), clientAuth.get()) { tokenResponse, exception ->
+            val newState = AuthState().apply {
+                update(tokenResponse, exception)
+            }
+            stateSubject.onNext(newState)
         }
     }
 

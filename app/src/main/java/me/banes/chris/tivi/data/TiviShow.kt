@@ -24,7 +24,6 @@ import android.arch.persistence.room.PrimaryKey
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
-
 @Entity(tableName = "shows",
         indices = arrayOf(
                 Index(value = "trakt_id", unique = true),
@@ -52,6 +51,4 @@ data class TiviShow(
         return date.time < System.currentTimeMillis() - unit.toMillis(period)
     }
 }
-
-
 

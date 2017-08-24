@@ -28,7 +28,7 @@ import com.bumptech.glide.request.transition.Transition
 fun View.doOnLayout(onLayout: (View) -> Boolean) {
     addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
         override fun onLayoutChange(view: View, left: Int, top: Int, right: Int, bottom: Int,
-                                    oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int) {
+                oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int) {
             if (onLayout(view)) {
                 view.removeOnLayoutChangeListener(this)
             }
@@ -37,9 +37,9 @@ fun View.doOnLayout(onLayout: (View) -> Boolean) {
 }
 
 fun View.updatePadding(paddingStart: Int = getPaddingStart(),
-                       paddingTop: Int = getPaddingTop(),
-                       paddingEnd: Int = getPaddingEnd(),
-                       paddingBottom: Int = getPaddingBottom()) {
+        paddingTop: Int = getPaddingTop(),
+        paddingEnd: Int = getPaddingEnd(),
+        paddingBottom: Int = getPaddingBottom()) {
     setPaddingRelative(getPaddingStart(), getPaddingTop(), getPaddingEnd(), getPaddingBottom())
 }
 

@@ -35,7 +35,8 @@ import kotlinx.android.synthetic.main.header_item.view.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.TiviShow
 import me.banes.chris.tivi.home.HomeFragment
-import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.*
+import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.POPULAR
+import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
 import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterUpdatingSection

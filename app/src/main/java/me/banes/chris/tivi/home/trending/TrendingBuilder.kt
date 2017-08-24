@@ -22,8 +22,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
-import me.banes.chris.tivi.home.trending.TrendingShowsFragment
-import me.banes.chris.tivi.home.trending.TrendingShowsViewModel
 import me.banes.chris.tivi.inject.ViewModelKey
 
 @Module

@@ -21,9 +21,9 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.xwray.groupie.ViewHolder
+import loadFromUrl
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.TiviShow
-import loadFromUrl
 
 class TiviShowGridViewHolder(itemView: View) : ViewHolder(itemView) {
 

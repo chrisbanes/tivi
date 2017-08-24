@@ -58,8 +58,8 @@ abstract class PaginatedGridFragment<T, VM : PaginatedTraktViewModel<T>>(
             addItemDecoration(SpacingItemDecorator(paddingLeft))
             addOnScrollListener(EndlessRecyclerViewScrollListener(
                     grid_recyclerview.layoutManager, { _: Int, _: RecyclerView ->
-                        if (userVisibleHint) viewModel.onListScrolledToEnd()
-                    }))
+                if (userVisibleHint) viewModel.onListScrolledToEnd()
+            }))
         }
 
         grid_swipe_refresh.setOnRefreshListener { viewModel.fullRefresh() }

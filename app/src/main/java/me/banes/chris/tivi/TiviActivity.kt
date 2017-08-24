@@ -23,7 +23,9 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatDelegate
 import dagger.android.support.DaggerAppCompatActivity
 import me.banes.chris.tivi.settings.TiviPreferences
-import me.banes.chris.tivi.settings.TiviPreferences.UiTheme.*
+import me.banes.chris.tivi.settings.TiviPreferences.UiTheme.DAY
+import me.banes.chris.tivi.settings.TiviPreferences.UiTheme.DAYNIGHT
+import me.banes.chris.tivi.settings.TiviPreferences.UiTheme.NIGHT
 import javax.inject.Inject
 
 /**

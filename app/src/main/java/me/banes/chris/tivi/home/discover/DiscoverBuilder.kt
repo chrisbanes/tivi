@@ -22,8 +22,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
-import me.banes.chris.tivi.home.discover.DiscoverFragment
-import me.banes.chris.tivi.home.discover.DiscoverViewModel
 import me.banes.chris.tivi.inject.ViewModelKey
 
 @Module

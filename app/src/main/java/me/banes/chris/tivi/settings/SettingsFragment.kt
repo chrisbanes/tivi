@@ -21,7 +21,7 @@ import android.os.Bundle
 import android.preference.PreferenceFragment
 import me.banes.chris.tivi.R
 
-class SettingsFragment: PreferenceFragment() {
+class SettingsFragment : PreferenceFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

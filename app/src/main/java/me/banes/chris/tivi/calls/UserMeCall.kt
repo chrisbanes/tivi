@@ -30,10 +30,11 @@ import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.DatabaseTxRunner
 import javax.inject.Inject
 
-class UserMeCall @Inject constructor(dbTxRunner: DatabaseTxRunner,
-                                     dao: UserDao,
-                                     trakt: TraktV2,
-                                     schedulers: AppRxSchedulers)
+class UserMeCall @Inject constructor(
+        dbTxRunner: DatabaseTxRunner,
+        dao: UserDao,
+        trakt: TraktV2,
+        schedulers: AppRxSchedulers)
     : TraktCall<User, TraktUser, UserDao>(dbTxRunner, dao, trakt, schedulers) {
 
     override fun networkCall(): Single<User> {

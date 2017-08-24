@@ -27,7 +27,7 @@ import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
 import javax.inject.Inject
 
-abstract class HomeFragment<VM : HomeFragmentViewModel>: TiviFragment() {
+abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     internal lateinit var viewModel: VM

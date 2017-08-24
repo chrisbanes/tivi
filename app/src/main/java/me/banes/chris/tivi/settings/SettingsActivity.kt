@@ -20,7 +20,7 @@ package me.banes.chris.tivi.settings
 import android.os.Bundle
 import me.banes.chris.tivi.TiviActivity
 
-class SettingsActivity: TiviActivity() {
+class SettingsActivity : TiviActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

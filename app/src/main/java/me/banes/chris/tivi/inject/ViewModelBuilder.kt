@@ -20,7 +20,6 @@ package me.banes.chris.tivi.inject
 import android.arch.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.Module
-import me.banes.chris.tivi.inject.TiviViewModelFactory
 
 @Module
 internal abstract class ViewModelBuilder {

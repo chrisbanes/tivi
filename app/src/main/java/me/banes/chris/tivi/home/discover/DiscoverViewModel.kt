@@ -24,7 +24,8 @@ import me.banes.chris.tivi.calls.TrendingCall
 import me.banes.chris.tivi.data.TiviShow
 import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
-import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.*
+import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.POPULAR
+import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.util.AppRxSchedulers
 import plusAssign

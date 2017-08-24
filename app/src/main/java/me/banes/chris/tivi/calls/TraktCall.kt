@@ -52,7 +52,7 @@ abstract class TraktCall<Input, Output, out DaoType>(
 
     protected abstract fun networkCall(): Single<Input>
 
-    open protected fun filterResponse(response: Input): Boolean {
+    protected open fun filterResponse(response: Input): Boolean {
         return true
     }
 

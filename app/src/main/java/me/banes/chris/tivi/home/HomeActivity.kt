@@ -30,7 +30,8 @@ import me.banes.chris.tivi.Constants
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviActivity
 import me.banes.chris.tivi.data.TiviShow
-import me.banes.chris.tivi.home.HomeActivityViewModel.NavigationItem.*
+import me.banes.chris.tivi.home.HomeActivityViewModel.NavigationItem.DISCOVER
+import me.banes.chris.tivi.home.HomeActivityViewModel.NavigationItem.LIBRARY
 import me.banes.chris.tivi.home.discover.DiscoverFragment
 import me.banes.chris.tivi.home.library.LibraryFragment
 import me.banes.chris.tivi.home.popular.PopularShowsFragment
@@ -64,7 +65,7 @@ class HomeActivity : TiviActivity() {
                         }
                     } else {
                         val fragment = supportFragmentManager.findFragmentById(R.id.home_content)
-                        when (fragment){
+                        when (fragment) {
                             is DiscoverFragment -> fragment.scrollToTop()
                             is LibraryFragment -> fragment.scrollToTop()
                         }

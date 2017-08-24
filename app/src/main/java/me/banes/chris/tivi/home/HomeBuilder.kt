@@ -37,7 +37,7 @@ internal abstract class HomeBuilder {
             TrendingBuilder::class,
             PopularBuilder::class,
             LibraryBuilder::class))
-    internal abstract fun homeActivity() : HomeActivity
+    internal abstract fun homeActivity(): HomeActivity
 
     @Binds
     @IntoMap
