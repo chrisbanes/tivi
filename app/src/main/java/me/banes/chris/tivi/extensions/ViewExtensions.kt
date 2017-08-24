@@ -40,7 +40,7 @@ fun View.updatePadding(paddingStart: Int = getPaddingStart(),
         paddingTop: Int = getPaddingTop(),
         paddingEnd: Int = getPaddingEnd(),
         paddingBottom: Int = getPaddingBottom()) {
-    setPaddingRelative(getPaddingStart(), getPaddingTop(), getPaddingEnd(), getPaddingBottom())
+    setPaddingRelative(paddingStart, paddingTop, paddingEnd, paddingBottom)
 }
 
 fun ImageView.loadFromUrl(imageUrl: String) {

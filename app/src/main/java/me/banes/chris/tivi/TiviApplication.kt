@@ -19,6 +19,7 @@ package me.banes.chris.tivi
 
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
+import me.banes.chris.tivi.inject.DaggerAppComponent
 import timber.log.Timber
 
 class TiviApplication : DaggerApplication() {
