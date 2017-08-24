@@ -1,6 +1,7 @@
 machine:
   environment:
     JAVA_OPTS: -Xmx2048m -Djava.util.concurrent.ForkJoinPool.common.parallelism=2
+    TERM: dumb
 
 dependencies:
   pre:
@@ -16,14 +17,14 @@ dependencies:
     - /home/ubuntu/.gradle/caches/modules-2/files-2.1/
     - /home/ubuntu/.gradle/wrapper/
   override:
-    - ./gradlew dependencies --no-daemon --console plain
+    - ./gradlew dependencies --no-daemon
 
 compile:
   override:
-    - ./gradlew assemble --no-daemon --console plain
+    - ./gradlew assemble --no-daemon
 
 test:
   override:
-    - ./gradlew check --no-daemon --console plain
+    - ./gradlew check --no-daemon
   post:
     - find app/build/outputs/apk -name '*.apk' -exec cp {} $CIRCLE_ARTIFACTS \;
