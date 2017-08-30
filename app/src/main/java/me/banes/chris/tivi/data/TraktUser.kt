@@ -18,6 +18,7 @@ package me.banes.chris.tivi.data
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
 import java.util.Date
 
@@ -29,4 +30,7 @@ data class TraktUser(
         @ColumnInfo(name = "joined_date") var joined: Date? = null,
         @ColumnInfo(name = "location") var location: String? = null,
         @ColumnInfo(name = "about") var about: String? = null,
-        @ColumnInfo(name = "avatar_url") var avatarUrl: String? = null)
+        @ColumnInfo(name = "avatar_url") var avatarUrl: String? = null) {
+    // Needed just for Room
+    @Ignore constructor() : this(null)
+}

@@ -18,6 +18,7 @@ package me.banes.chris.tivi.data
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import java.util.Date
@@ -39,6 +40,9 @@ data class TiviShow(
         @ColumnInfo(name = "tmdb_updated") var lastTmdbUpdate: Date? = null,
         @ColumnInfo(name = "overview") var summary: String? = null,
         @ColumnInfo(name = "homepage") var homepage: String? = null) {
+
+    // Needed just for Room
+    @Ignore constructor() : this(null)
 
     fun needsUpdateFromTmdb(): Boolean {
         return tmdbId == null

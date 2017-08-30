@@ -19,6 +19,7 @@ apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 apply plugin: 'com.getkeepsafe.dexcount'
 
@@ -34,6 +35,7 @@ spotless {
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.1"
+
     defaultConfig {
         applicationId "me.banes.chris.tivi"
         minSdkVersion 23
@@ -49,6 +51,17 @@ android {
         manifestPlaceholders += [
                 'appAuthRedirectScheme': 'me.banes.chris.tivi'
         ]
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     buildTypes {
@@ -63,14 +76,10 @@ androidExtensions {
     experimental = true
 }
 
-kapt {
-    generateStubs = true
-}
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:${versions.kotlin}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:${versions.kotlin}"
 
     implementation "android.arch.lifecycle:runtime:${versions.arch_comp}"
     implementation "android.arch.lifecycle:extensions:${versions.arch_comp}"
@@ -117,5 +126,5 @@ dependencies {
 }
 
 String propOrDef(String propertyName, String defaultValue) {
-    return hasProperty(propertyName) ? getProperties()[propertyName] : defaultValue
+    return hasProperty(propertyName) ? property(propertyName) : defaultValue
 }
