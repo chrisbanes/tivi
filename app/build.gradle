@@ -51,6 +51,12 @@ android {
         manifestPlaceholders += [
                 'appAuthRedirectScheme': 'me.banes.chris.tivi'
         ]
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     compileOptions {
