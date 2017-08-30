@@ -24,6 +24,7 @@ buildscript {
             'espresso'         : '2.2.2',
             'dagger'           : '2.11',
             'ktlint'           : '0.9.0',
+            'leakcanary'       : '1.5.1',
     ]
 
     repositories {

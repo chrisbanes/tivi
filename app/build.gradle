@@ -123,6 +123,9 @@ dependencies {
     androidTestImplementation("com.android.support.test.espresso:espresso-core:${versions.espresso}", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${versions.leakcanary}"
 }
 
 String propOrDef(String propertyName, String defaultValue) {
