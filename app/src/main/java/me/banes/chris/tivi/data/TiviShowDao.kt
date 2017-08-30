@@ -28,15 +28,15 @@ import io.reactivex.Single
 @Dao
 interface TiviShowDao {
 
-    @Query("SELECT * FROM shows WHERE trakt_id = :arg0")
+    @Query("SELECT * FROM shows WHERE trakt_id = :id")
     fun getShowWithTraktId(id: Int): Maybe<TiviShow>
 
-    @Query("SELECT * FROM shows WHERE tmdb_id = :arg0")
+    @Query("SELECT * FROM shows WHERE tmdb_id = :id")
     fun getShowWithTmdbId(id: Int): Maybe<TiviShow>
 
     @Query("SELECT * FROM shows WHERE " +
-            "(tmdb_id IS NOT NULL AND tmdb_id = :arg0) OR " +
-            "(trakt_id IS NOT NULL AND trakt_id = :arg1)")
+            "(tmdb_id IS NOT NULL AND tmdb_id = :tmdbId) OR " +
+            "(trakt_id IS NOT NULL AND trakt_id = :traktId)")
     fun getShowFromId(tmdbId: Int? = null, traktId: Int? = null): Maybe<TiviShow>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -56,14 +56,14 @@ interface TiviShowDao {
 
     @Query("SELECT * FROM shows " +
             "INNER JOIN trending_shows ON trending_shows.show_id = shows.id " +
-            "WHERE page = :arg0 " +
+            "WHERE page = :page " +
             "ORDER BY page_order")
     fun trendingShowsPage(page: Int): Flowable<List<TiviShow>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertTrending(show: TrendingEntry): Long
 
-    @Query("DELETE FROM trending_shows WHERE page = :arg0")
+    @Query("DELETE FROM trending_shows WHERE page = :page")
     fun deleteTrendingShowsPageSync(page: Int = 0)
 
     @Query("DELETE FROM trending_shows")
@@ -83,14 +83,14 @@ interface TiviShowDao {
 
     @Query("SELECT * FROM shows " +
             "INNER JOIN popular_shows ON popular_shows.show_id = shows.id " +
-            "WHERE page = :arg0 " +
+            "WHERE page = :page " +
             "ORDER BY page_order")
     fun popularShowsPage(page: Int): Flowable<List<TiviShow>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertPopularShows(show: PopularEntry): Long
 
-    @Query("DELETE FROM popular_shows WHERE page = :arg0")
+    @Query("DELETE FROM popular_shows WHERE page = :page")
     fun deletePopularShowsPageSync(page: Int = 0)
 
     @Query("DELETE FROM popular_shows")

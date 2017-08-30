@@ -19,6 +19,7 @@ apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 apply plugin: 'com.getkeepsafe.dexcount'
 
@@ -61,10 +62,6 @@ android {
 
 androidExtensions {
     experimental = true
-}
-
-kapt {
-    generateStubs = true
 }
 
 dependencies {
@@ -117,5 +114,5 @@ dependencies {
 }
 
 String propOrDef(String propertyName, String defaultValue) {
-    return hasProperty(propertyName) ? getProperties()[propertyName] : defaultValue
+    return hasProperty(propertyName) ? property(propertyName) : defaultValue
 }
