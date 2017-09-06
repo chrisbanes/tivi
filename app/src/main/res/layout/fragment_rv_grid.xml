@@ -49,7 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingBottom="6dp"
+            android:paddingBottom="14dp"
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
             android:paddingTop="6dp"
@@ -58,5 +58,14 @@
             tools:listitem="@layout/grid_item" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_loadmore"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:indeterminate="true"
+        android:visibility="gone" />
 
 </android.support.design.widget.CoordinatorLayout>

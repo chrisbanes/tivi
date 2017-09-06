@@ -80,13 +80,18 @@ abstract class PaginatedGridFragment<T, VM : PaginatedTraktViewModel<T>>(
             when (it?.status) {
                 Status.SUCCESS -> {
                     grid_swipe_refresh.isRefreshing = false
+                    progress_loadmore.visibility = View.GONE
                 }
                 Status.ERROR -> {
                     grid_swipe_refresh.isRefreshing = false
+                    progress_loadmore.visibility = View.GONE
                     Snackbar.make(grid_recyclerview, it.message ?: "EMPTY", Snackbar.LENGTH_SHORT).show()
                 }
-                Status.LOADING -> {
+                Status.REFRESHING -> {
                     grid_swipe_refresh.isRefreshing = true
+                }
+                Status.LOADING_MORE -> {
+                    progress_loadmore.visibility = View.VISIBLE
                 }
             }
         })

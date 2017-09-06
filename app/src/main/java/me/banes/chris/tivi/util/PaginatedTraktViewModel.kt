@@ -46,7 +46,7 @@ open class PaginatedTraktViewModel<R>(
     fun onListScrolledToEnd() {
         disposables += call.loadNextPage()
                 .observeOn(schedulers.main)
-                .doOnSubscribe { messages.value = Resource(Status.LOADING) }
+                .doOnSubscribe { messages.value = Resource(Status.LOADING_MORE) }
                 .doOnError { messages.value = Resource(Status.ERROR, it.localizedMessage) }
                 .doOnComplete { messages.value = Resource(Status.SUCCESS) }
                 .subscribe()
@@ -55,7 +55,7 @@ open class PaginatedTraktViewModel<R>(
     fun fullRefresh() {
         disposables += call.refresh()
                 .observeOn(schedulers.main)
-                .doOnSubscribe { messages.value = Resource(Status.LOADING) }
+                .doOnSubscribe { messages.value = Resource(Status.REFRESHING) }
                 .doOnError { messages.value = Resource(Status.ERROR, it.localizedMessage) }
                 .doOnComplete { messages.value = Resource(Status.SUCCESS) }
                 .subscribe()

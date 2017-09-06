@@ -26,5 +26,6 @@ package me.banes.chris.tivi.api
 enum class Status {
     SUCCESS,
     ERROR,
-    LOADING
+    REFRESHING,
+    LOADING_MORE
 }
