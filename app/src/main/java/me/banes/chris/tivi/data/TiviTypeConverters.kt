@@ -19,10 +19,12 @@ package me.banes.chris.tivi.data
 import android.arch.persistence.room.TypeConverter
 import java.util.Date
 
-class TiviTypeConverters {
+object TiviTypeConverters {
     @TypeConverter
+    @JvmStatic
     fun fromTimestamp(value: Long?): Date? = if (null == value) null else Date(value)
 
     @TypeConverter
+    @JvmStatic
     fun dateToTimestamp(date: Date?): Long? = date?.time
 }
