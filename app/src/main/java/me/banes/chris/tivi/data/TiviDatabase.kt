@@ -25,10 +25,9 @@ import android.arch.persistence.room.TypeConverters
         TrendingEntry::class,
         PopularEntry::class,
         TraktUser::class),
-        version = 2)
+        version = 3)
 @TypeConverters(TiviTypeConverters::class)
 abstract class TiviDatabase : RoomDatabase() {
     abstract fun showDao(): TiviShowDao
-
     abstract fun userDao(): UserDao
 }

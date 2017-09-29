@@ -69,8 +69,9 @@ class TrendingCall @Inject constructor(
     }
 
     override fun saveEntry(show: TiviShow, page: Int, order: Int) {
-        val entry = TrendingEntry(showId = show.id, page = page, pageOrder = order)
-        entry.id = showDao.insertTrending(entry)
+        assert(show.id != null)
+        val entry = TrendingEntry(showId = show.id!!, page = page, pageOrder = order)
+        showDao.insertTrending(entry)
     }
 
 }

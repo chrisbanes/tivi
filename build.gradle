@@ -17,14 +17,14 @@
 
 buildscript {
     ext.versions = [
-            'support_library'  : '26.0.1',
+            'support_library'  : '26.1.0',
             'constraint_layout': '1.0.2',
-            'arch_comp'        : '1.0.0-alpha9',
-            'kotlin'           : '1.1.4-2',
+            'arch_comp'        : '1.0.0-beta1',
+            'kotlin'           : '1.1.50',
             'espresso'         : '2.2.2',
             'dagger'           : '2.11',
             'ktlint'           : '0.9.0',
-            'leakcanary'       : '1.5.1',
+            'leakcanary'       : '1.5.4',
     ]
 
     repositories {
@@ -33,7 +33,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-beta5'
+        classpath 'com.android.tools.build:gradle:3.0.0-beta6'
 
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:${versions.kotlin}"

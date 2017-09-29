@@ -18,19 +18,15 @@ package me.banes.chris.tivi.data
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
-import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
 import java.util.Date
 
 @Entity(tableName = "users")
 data class TraktUser(
-        @PrimaryKey @ColumnInfo(name = "id") var id: Long? = null,
-        @ColumnInfo(name = "username") var username: String? = null,
-        @ColumnInfo(name = "name") var name: String? = null,
-        @ColumnInfo(name = "joined_date") var joined: Date? = null,
-        @ColumnInfo(name = "location") var location: String? = null,
-        @ColumnInfo(name = "about") var about: String? = null,
-        @ColumnInfo(name = "avatar_url") var avatarUrl: String? = null) {
-    // Needed just for Room
-    @Ignore constructor() : this(null)
-}
+        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long? = null,
+        @ColumnInfo(name = "username") val username: String,
+        @ColumnInfo(name = "name") val name: String,
+        @ColumnInfo(name = "joined_date") val joined: Date? = null,
+        @ColumnInfo(name = "location") val location: String? = null,
+        @ColumnInfo(name = "about") val about: String? = null,
+        @ColumnInfo(name = "avatar_url") val avatarUrl: String? = null)

@@ -62,7 +62,8 @@ class PopularCall @Inject constructor(
     }
 
     override fun saveEntry(show: TiviShow, page: Int, order: Int) {
-        val entry = PopularEntry(showId = show.id, page = page, pageOrder = order)
+        assert(show.id != null)
+        val entry = PopularEntry(showId = show.id!!, page = page, pageOrder = order)
         showDao.insertPopularShows(entry)
     }
 

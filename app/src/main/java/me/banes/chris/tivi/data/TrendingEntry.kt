@@ -19,7 +19,6 @@ package me.banes.chris.tivi.data
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
-import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 
@@ -32,10 +31,7 @@ import android.arch.persistence.room.PrimaryKey
                         onUpdate = ForeignKey.CASCADE,
                         onDelete = ForeignKey.CASCADE)))
 data class TrendingEntry(
-        @PrimaryKey var id: Long? = null,
-        @ColumnInfo(name = "show_id") var showId: Long? = null,
-        @ColumnInfo(name = "page") var page: Int? = null,
-        @ColumnInfo(name = "page_order") var pageOrder: Int? = null) {
-    // Needed just for Room
-    @Ignore constructor() : this(null)
-}
+        @PrimaryKey(autoGenerate = true) val id: Long? = null,
+        @ColumnInfo(name = "show_id") val showId: Long,
+        @ColumnInfo(name = "page") val page: Int,
+        @ColumnInfo(name = "page_order") val pageOrder: Int)

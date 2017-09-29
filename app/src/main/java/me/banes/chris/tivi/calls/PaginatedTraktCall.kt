@@ -108,17 +108,18 @@ abstract class PaginatedTraktCall<RS>(
                 .observeOn(schedulers.disk)
                 .flatMap { mapTmdbShow(it) }
                 .map {
-                    if (it.traktId == null) {
-                        it.traktId = traktId
+                    var show = it
+                    if (show.traktId == null) {
+                        show = show.copy(traktId = traktId)
                     }
                     if (it.id == null) {
-                        Timber.d("Inserting show: %s", it)
-                        it.id = showDao.insertShow(it)
+                        Timber.d("Inserting show: %s", show)
+                        show = show.copy(id = showDao.insertShow(show))
                     } else {
-                        Timber.d("Updating show: %s", it)
-                        showDao.updateShow(it)
+                        Timber.d("Updating show: %s", show)
+                        showDao.updateShow(show)
                     }
-                    it
+                    show
                 }
 
         return Maybe.concat(dbSource, networkSource.toMaybe()).firstElement()
@@ -127,18 +128,18 @@ abstract class PaginatedTraktCall<RS>(
     private fun mapTmdbShow(tmdbShow: TvShow): Single<TiviShow> {
         return showDao.getShowWithTmdbId(tmdbShow.id)
                 .subscribeOn(schedulers.disk)
-                .defaultIfEmpty(TiviShow())
+                .defaultIfEmpty(TiviShow(title = tmdbShow.name))
                 .map {
-                    it.apply {
-                        title = tmdbShow.name
-                        tmdbId = tmdbShow.id
-                        summary = tmdbShow.overview
-                        tmdbBackdropPath = tmdbShow.backdrop_path
-                        tmdbPosterPath = tmdbShow.poster_path
-                        homepage = tmdbShow.homepage
-                        originalTitle = tmdbShow.original_name
+                    it.copy(
+                        title = tmdbShow.name,
+                        tmdbId = tmdbShow.id,
+                        summary = tmdbShow.overview,
+                        tmdbBackdropPath = tmdbShow.backdrop_path,
+                        tmdbPosterPath = tmdbShow.poster_path,
+                        homepage = tmdbShow.homepage,
+                        originalTitle = tmdbShow.original_name,
                         lastTmdbUpdate = Date()
-                    }
+                    )
                 }.toSingle()
     }
 
