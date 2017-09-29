@@ -17,7 +17,6 @@
 package me.banes.chris.tivi.util
 
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MutableLiveData
 import me.banes.chris.tivi.api.Resource
 import me.banes.chris.tivi.api.Status
@@ -33,7 +32,7 @@ open class PaginatedTraktViewModel<R>(
      * This is what my UI (Fragment) observes. Its backed by Room and a network call
      */
     val data: LiveData<List<TiviShow>> by lazy {
-        LiveDataReactiveStreams.fromPublisher(call.data())
+        ReactiveLiveData(call.data())
     }
 
     val messages = MutableLiveData<Resource>()
