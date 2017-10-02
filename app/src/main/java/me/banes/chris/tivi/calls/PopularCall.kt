@@ -23,6 +23,7 @@ import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
+import me.banes.chris.tivi.data.PopularDao
 import me.banes.chris.tivi.data.PopularEntry
 import me.banes.chris.tivi.data.TiviShow
 import me.banes.chris.tivi.data.TiviShowDao
@@ -33,6 +34,7 @@ import javax.inject.Inject
 class PopularCall @Inject constructor(
         databaseTxRunner: DatabaseTxRunner,
         showDao: TiviShowDao,
+        val popularDao: PopularDao,
         tmdb: Tmdb,
         trakt: TraktV2,
         schedulers: AppRxSchedulers)
@@ -54,25 +56,25 @@ class PopularCall @Inject constructor(
     }
 
     override fun lastPageLoaded(): Single<Int> {
-        return showDao.getLastPopularPage()
+        return popularDao.getLastPopularPage()
     }
 
     override fun createData(page: Int?): Flowable<List<TiviShow>> {
-        return if (page == null) showDao.popularShows() else showDao.popularShowsPage(page)
+        return if (page == null) popularDao.popularShows() else popularDao.popularShowsPage(page)
     }
 
     override fun saveEntry(show: TiviShow, page: Int, order: Int) {
         assert(show.id != null)
         val entry = PopularEntry(showId = show.id!!, page = page, pageOrder = order)
-        showDao.insertPopularShows(entry)
+        popularDao.insertPopularShows(entry)
     }
 
     override fun deleteEntries() {
-        showDao.deletePopularShows()
+        popularDao.deletePopularShows()
     }
 
     override fun deletePage(page: Int) {
-        showDao.deletePopularShowsPageSync(page)
+        popularDao.deletePopularShowsPageSync(page)
     }
 
     override fun loadShow(response: Show): Maybe<TiviShow> {
