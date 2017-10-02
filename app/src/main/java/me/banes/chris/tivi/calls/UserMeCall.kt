@@ -25,6 +25,7 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 import me.banes.chris.tivi.data.TraktUser
 import me.banes.chris.tivi.data.UserDao
+import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.DatabaseTxRunner
 import javax.inject.Inject
@@ -37,7 +38,7 @@ class UserMeCall @Inject constructor(
     : TraktCall<User, TraktUser, UserDao>(dbTxRunner, dao, trakt, schedulers) {
 
     override fun networkCall(): Single<User> {
-        return Single.fromCallable { trakt.users().profile(UserSlug.ME, Extended.FULL).execute().body() }
+        return trakt.users().profile(UserSlug.ME, Extended.FULL).toRxSingle()
     }
 
     override fun createDatabaseObservable(): Flowable<TraktUser> {

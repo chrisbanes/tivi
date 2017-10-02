@@ -26,6 +26,7 @@ import io.reactivex.Single
 import me.banes.chris.tivi.data.Page
 import me.banes.chris.tivi.data.TiviShow
 import me.banes.chris.tivi.data.TiviShowDao
+import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.DatabaseTxRunner
 import timber.log.Timber
@@ -103,7 +104,7 @@ abstract class PaginatedTraktCall<RS>(
                 .subscribeOn(schedulers.disk)
                 .filter { !it.needsUpdateFromTmdb() } // Don't emit if the item needs updating
 
-        val networkSource = Single.fromCallable { tmdb.tvService().tv(tmdbId).execute().body() }
+        val networkSource = tmdb.tvService().tv(tmdbId).toRxSingle()
                 .subscribeOn(schedulers.network)
                 .observeOn(schedulers.disk)
                 .flatMap { mapTmdbShow(it) }

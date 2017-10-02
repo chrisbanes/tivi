@@ -27,6 +27,7 @@ import me.banes.chris.tivi.data.PopularDao
 import me.banes.chris.tivi.data.PopularEntry
 import me.banes.chris.tivi.data.TiviShow
 import me.banes.chris.tivi.data.TiviShowDao
+import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.DatabaseTxRunner
 import javax.inject.Inject
@@ -41,14 +42,11 @@ class PopularCall @Inject constructor(
     : PaginatedTraktCall<Show>(databaseTxRunner, showDao, tmdb, trakt, schedulers) {
 
     override fun networkCall(page: Int): Single<List<Show>> {
-        return Single.fromCallable {
-            trakt.shows().popular(
-                    page + 1, // Trakt uses a 1 based index
-                    DEFAULT_PAGE_SIZE,
-                    Extended.NOSEASONS)
-                    .execute()
-                    .body()
-        }
+        return trakt.shows().popular(
+                page + 1, // Trakt uses a 1 based index
+                DEFAULT_PAGE_SIZE,
+                Extended.NOSEASONS)
+                .toRxSingle()
     }
 
     override fun filterResponse(response: Show): Boolean {

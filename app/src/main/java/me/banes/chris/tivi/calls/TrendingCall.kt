@@ -27,6 +27,7 @@ import me.banes.chris.tivi.data.TiviShow
 import me.banes.chris.tivi.data.TiviShowDao
 import me.banes.chris.tivi.data.TrendingDao
 import me.banes.chris.tivi.data.TrendingEntry
+import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.DatabaseTxRunner
 import javax.inject.Inject
@@ -45,9 +46,9 @@ class TrendingCall @Inject constructor(
     }
 
     override fun networkCall(page: Int): Single<List<TrendingShow>> {
-        return Single.fromCallable {
-            trakt.shows().trending(page + 1, DEFAULT_PAGE_SIZE, Extended.NOSEASONS).execute().body()
-        }
+        return trakt.shows()
+                .trending(page + 1, DEFAULT_PAGE_SIZE, Extended.NOSEASONS)
+                .toRxSingle()
     }
 
     override fun filterResponse(response: TrendingShow): Boolean {
