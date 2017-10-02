@@ -26,8 +26,10 @@ import dagger.Module
 import dagger.Provides
 import me.banes.chris.tivi.BuildConfig
 import me.banes.chris.tivi.TiviApplication
+import me.banes.chris.tivi.data.PopularDao
 import me.banes.chris.tivi.data.TiviDatabase
 import me.banes.chris.tivi.data.TiviShowDao
+import me.banes.chris.tivi.data.TrendingDao
 import me.banes.chris.tivi.data.UserDao
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.DatabaseTxRunner
@@ -84,6 +86,16 @@ class AppModule {
     @Provides
     fun provideUserDao(db: TiviDatabase): UserDao {
         return db.userDao()
+    }
+
+    @Provides
+    fun provideTrendingDao(db: TiviDatabase): TrendingDao {
+        return db.trendingDao()
+    }
+
+    @Provides
+    fun providePopularDao(db: TiviDatabase): PopularDao {
+        return db.popularDao()
     }
 
     @Singleton
