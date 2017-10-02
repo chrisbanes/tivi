@@ -31,7 +31,7 @@ open class PaginatedTraktViewModel<R>(
     /**
      * This is what my UI (Fragment) observes. Its backed by Room and a network call
      */
-    val data: LiveData<List<TiviShow>> by lazy {
+    val data: LiveData<List<TiviShow>> by lazy(mode = LazyThreadSafetyMode.NONE) {
         ReactiveLiveData(call.data())
     }
 
@@ -46,17 +46,17 @@ open class PaginatedTraktViewModel<R>(
         disposables += call.loadNextPage()
                 .observeOn(schedulers.main)
                 .doOnSubscribe { messages.value = Resource(Status.LOADING_MORE) }
-                .doOnError { messages.value = Resource(Status.ERROR, it.localizedMessage) }
-                .doOnComplete { messages.value = Resource(Status.SUCCESS) }
-                .subscribe()
+                .subscribe(
+                        { messages.value = Resource(Status.SUCCESS) },
+                        { messages.value = Resource(Status.ERROR, it.localizedMessage) })
     }
 
     fun fullRefresh() {
         disposables += call.refresh()
                 .observeOn(schedulers.main)
                 .doOnSubscribe { messages.value = Resource(Status.REFRESHING) }
-                .doOnError { messages.value = Resource(Status.ERROR, it.localizedMessage) }
-                .doOnComplete { messages.value = Resource(Status.SUCCESS) }
-                .subscribe()
+                .subscribe(
+                        { messages.value = Resource(Status.SUCCESS) },
+                        { messages.value = Resource(Status.ERROR, it.localizedMessage) })
     }
 }
