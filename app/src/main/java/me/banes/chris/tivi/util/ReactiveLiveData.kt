@@ -18,7 +18,10 @@ package me.banes.chris.tivi.util
 
 import android.arch.lifecycle.LiveData
 import io.reactivex.Flowable
-import io.reactivex.disposables.CompositeDisposable
+import org.reactivestreams.Subscription
+import org.reactivestreams.Subscriber
+import org.reactivestreams.Publisher
+import java.lang.ref.WeakReference
 
 /**
  * Defines a [LiveData] object that wraps a [Flowable].
@@ -30,25 +33,39 @@ import io.reactivex.disposables.CompositeDisposable
  *
  * @param <T> The type of data hold by this instance
  */
-class ReactiveLiveData<T>(private val flowable: Flowable<T>) : LiveData<T>() {
-
-    private val disposable: CompositeDisposable = CompositeDisposable()
+class ReactiveLiveData<T>(private val publisher: Publisher<T>) : LiveData<T>() {
+    private var subRef: WeakReference<Subscription>? = null
 
     override fun onActive() {
         super.onActive()
 
-        disposable.add(flowable.doOnSubscribe {
-            // Don't worry about backpressure. If the stream is too noisy then backpressure can
-            // be handled upstream.
-            it.request(java.lang.Long.MAX_VALUE)
-        }.subscribe(ReactiveLiveData@this::postValue, {
-            // Errors should be handled upstream, so propagate as a crash.
-            throw RuntimeException(it)
-        }))
+        publisher.subscribe(object : Subscriber<T> {
+            override fun onSubscribe(s: Subscription) {
+                // Don't worry about backpressure. If the stream is too noisy then
+                // backpressure can be handled upstream.
+                s.request(java.lang.Long.MAX_VALUE)
+                subRef = WeakReference(s)
+            }
+
+            override fun onNext(t: T) {
+                postValue(t)
+            }
+
+            override fun onError(t: Throwable) {
+                // Errors should be handled upstream, so propagate as a crash.
+                throw RuntimeException(t)
+            }
+
+            override fun onComplete() {
+                subRef = null
+            }
+        })
+
     }
 
     override fun onInactive() {
         super.onInactive()
-        disposable.clear()
+        subRef?.get()?.cancel()
+        subRef = null
     }
 }
