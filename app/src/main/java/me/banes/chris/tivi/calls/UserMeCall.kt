@@ -46,7 +46,7 @@ class UserMeCall @Inject constructor(
     }
 
     override fun mapToOutput(input: User): Maybe<TraktUser> {
-        return Maybe.fromCallable { input }
+        return Maybe.just(input)
                 .map { networkUser ->
                     TraktUser(
                             username = networkUser.username,
