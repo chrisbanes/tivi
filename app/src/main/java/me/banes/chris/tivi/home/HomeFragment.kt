@@ -59,7 +59,7 @@ abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
         viewModel.userProfileLiveData.observe(this, Observer {
             if (it != null) {
                 if (it.avatarUrl != null) {
-                    findUserAvatarMenuItem()?.loadIconFromUrl(context, it.avatarUrl!!)
+                    findUserAvatarMenuItem()?.loadIconFromUrl(context, it.avatarUrl)
                 }
             } else {
                 // TODO clear user profile

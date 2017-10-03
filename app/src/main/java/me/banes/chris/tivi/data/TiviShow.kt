@@ -43,7 +43,7 @@ data class TiviShow(
     fun needsUpdateFromTmdb(): Boolean {
         return tmdbId == null
                 || lastTmdbUpdate == null
-                || olderThan(lastTmdbUpdate!!, 1, TimeUnit.DAYS)
+                || olderThan(lastTmdbUpdate, 1, TimeUnit.DAYS)
     }
 
     private fun olderThan(date: Date, period: Long, unit: TimeUnit): Boolean {

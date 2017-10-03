@@ -33,6 +33,7 @@ import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ClientAuthentication
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Provider
@@ -86,7 +87,7 @@ class TraktManager @Inject constructor(
     }
 
     fun onAuthException(exception: AuthorizationException) {
-        // TODO
+        Timber.d("AuthException", exception)
     }
 
     fun userObservable(): Flowable<TraktUser> {
