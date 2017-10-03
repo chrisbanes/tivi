@@ -16,28 +16,9 @@
 
 package me.banes.chris.tivi
 
-import android.arch.lifecycle.LifecycleFragment
-import android.content.Context
-import android.support.v4.app.Fragment
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.support.AndroidSupportInjection
-import dagger.android.support.HasSupportFragmentInjector
-import javax.inject.Inject
+import dagger.android.support.DaggerFragment
 
 /**
  * Base fragment class which supports LifecycleOwner and Dagger injection.
  */
-abstract class TiviFragment : LifecycleFragment(), HasSupportFragmentInjector {
-
-    @Inject lateinit var childFragmentInjector: DispatchingAndroidInjector<Fragment>
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
-
-    override fun supportFragmentInjector(): AndroidInjector<Fragment> {
-        return childFragmentInjector
-    }
-}
+abstract class TiviFragment : DaggerFragment()

@@ -16,9 +16,6 @@
 
 package me.banes.chris.tivi
 
-import android.arch.lifecycle.LifecycleRegistry
-import android.arch.lifecycle.LifecycleRegistryOwner
-import android.os.Bundle
 import android.support.v7.app.AppCompatDelegate
 import dagger.android.support.DaggerAppCompatActivity
 import me.banes.chris.tivi.settings.TiviPreferences
@@ -30,15 +27,9 @@ import javax.inject.Inject
 /**
  * Base Activity class which supports LifecycleOwner and Dagger injection.
  */
-abstract class TiviActivity : DaggerAppCompatActivity(), LifecycleRegistryOwner {
+abstract class TiviActivity : DaggerAppCompatActivity() {
 
-    private var lifecycleRegistry: LifecycleRegistry? = null
     @Inject protected lateinit var preferences: TiviPreferences
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycleRegistry = LifecycleRegistry(this)
-    }
 
     override fun onStart() {
         super.onStart()
@@ -49,14 +40,4 @@ abstract class TiviActivity : DaggerAppCompatActivity(), LifecycleRegistryOwner 
             DAYNIGHT -> delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_AUTO)
         }
     }
-
-    override fun getLifecycle(): LifecycleRegistry {
-        return lifecycleRegistry!!
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        lifecycleRegistry = null
-    }
-
 }
