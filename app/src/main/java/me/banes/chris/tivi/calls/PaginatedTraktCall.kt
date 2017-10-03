@@ -29,7 +29,10 @@ import me.banes.chris.tivi.data.TiviShowDao
 import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.DatabaseTxRunner
+import me.banes.chris.tivi.util.RetryAfterTimeoutWithDelay
+import retrofit2.HttpException
 import timber.log.Timber
+import java.io.IOException
 import java.util.Date
 
 abstract class PaginatedTraktCall<RS>(
@@ -42,6 +45,10 @@ abstract class PaginatedTraktCall<RS>(
 
     companion object {
         val DEFAULT_PAGE_SIZE = 15
+    }
+
+    private val retryWhenFunc by lazy(mode = LazyThreadSafetyMode.NONE) {
+        RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry)
     }
 
     fun data(page: Int? = null): Flowable<List<TiviShow>> {
@@ -107,6 +114,7 @@ abstract class PaginatedTraktCall<RS>(
         val networkSource = tmdb.tvService().tv(tmdbId).toRxSingle()
                 .subscribeOn(schedulers.network)
                 .observeOn(schedulers.disk)
+                .retryWhen(retryWhenFunc)
                 .flatMap { mapTmdbShow(it) }
                 .map {
                     var show = it
@@ -124,6 +132,12 @@ abstract class PaginatedTraktCall<RS>(
                 }
 
         return Maybe.concat(dbSource, networkSource.toMaybe()).firstElement()
+    }
+
+    private fun shouldRetry(throwable: Throwable): Boolean = when (throwable) {
+        is HttpException -> throwable.code() == 429
+        is IOException -> true
+        else -> false
     }
 
     private fun mapTmdbShow(tmdbShow: TvShow): Single<TiviShow> {
