@@ -19,6 +19,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.banes.chris.tivi">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".TiviApplication"
         android:allowBackup="true"
@@ -47,7 +49,5 @@
             android:theme="@style/Theme.Tivi.Settings" />
 
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
