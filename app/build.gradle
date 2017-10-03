@@ -71,9 +71,9 @@ android {
 
         release {
             storeFile rootProject.file("signing/app-release.jks")
-            storePassword "fakefakefake"
+            storePassword project.properties['TIVI_RELEASE_KEYSTORE_PWD']
             keyAlias "tivi"
-            keyPassword "fakefakefake"
+            keyPassword project.properties['TIVI_RELEASE_KEY_PWD']
         }
     }
 
@@ -153,22 +153,12 @@ dependencies {
 }
 
 String propOrDef(String propertyName, String defaultValue) {
-    return hasProperty(propertyName) ? property(propertyName) : defaultValue
+    def propertyValue = project.properties[propertyName]
+    return propertyValue != null ? propertyValue : defaultValue
 }
 
 static def getBuildDate() {
     def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'") //you can change it
     df.setTimeZone(TimeZone.getTimeZone("UTC"))
     return df.format(new Date())
-}
-
-task gatherKeystorePasswords << {
-    android.signingConfigs.release.storePassword = property("TIVI_RELEASE_KEYSTORE_PWD")
-    android.signingConfigs.release.keyPassword = property("TIVI_RELEASE_KEY_PWD")
-}
-
-tasks.whenTaskAdded { task ->
-    if (task.name == "packageRelease") {
-        task.dependsOn "gatherKeystorePasswords"
-    }
 }
