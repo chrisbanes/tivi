@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 /*
  * Copyright 2017 Google, Inc.
  *
@@ -59,13 +61,35 @@ android {
         }
     }
 
+    signingConfigs {
+        debug {
+            storeFile rootProject.file("signing/app-debug.jks")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+
+        release {
+            storeFile rootProject.file("signing/app-release.jks")
+            storePassword project.properties['TIVI_RELEASE_KEYSTORE_PWD']
+            keyAlias "tivi"
+            keyPassword project.properties['TIVI_RELEASE_KEY_PWD']
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+            versionNameSuffix "-dev-" + getBuildDate()
+        }
+
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -129,5 +153,12 @@ dependencies {
 }
 
 String propOrDef(String propertyName, String defaultValue) {
-    return hasProperty(propertyName) ? property(propertyName) : defaultValue
+    def propertyValue = project.properties[propertyName]
+    return propertyValue != null ? propertyValue : defaultValue
+}
+
+static def getBuildDate() {
+    def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'") //you can change it
+    df.setTimeZone(TimeZone.getTimeZone("UTC"))
+    return df.format(new Date())
 }
