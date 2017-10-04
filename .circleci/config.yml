@@ -20,11 +20,10 @@ jobs:
           command: ./gradlew dependencies --no-daemon
       - run:
           name: Assemble APKs
-          command: ./gradlew assemble --no-daemon
+          command: ./gradlew check --no-daemon
       - save_cache:
           paths:
             - ~/.gradle
-            - ~/.m2
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - store_artifacts:
           path: app/build/outputs/apk
@@ -32,13 +31,16 @@ jobs:
       - store_artifacts:
           path: app/build/reports
           destination: reports
+      - store_test_results:
+          path: app/build/test-results
       - persist_to_workspace:
           root: .
           paths:
             - .gradle
             - build
             - app/build
-  test:
+
+  deploy_to_play:
     <<: *defaults
     steps:
       - checkout
@@ -47,16 +49,11 @@ jobs:
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
-          name: Check
-          command: ./gradlew check --no-daemon
-      - store_test_results:
-          path: app/build/test-results
+          name: Deply
+          command: echo "TODO"
 
 workflows:
   version: 2
   build_and_test:
     jobs:
       - build
-      - test:
-          requires:
-            - build
