@@ -19,6 +19,9 @@ jobs:
           name: Download Dependencies
           command: ./gradlew dependencies --no-daemon
       - run:
+          name: Decrypt secrets
+          command: openssl aes-256-cbc -d -in signing/app-release.aes -out signing/app-release.jks -k $ENCRYPT_KEY
+      - run:
           name: Assemble APKs
           command: ./gradlew check --no-daemon
       - save_cache:
