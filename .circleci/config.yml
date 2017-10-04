@@ -52,7 +52,10 @@ jobs:
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
-          name: Deply
+          name: Decrypt Play Store Secret
+          command: openssl aes-256-cbc -d -in signing/play-account.aes -out signing/play-account.p12 -k $ENCRYPT_KEY
+      - run:
+          name: Deploy
           command: echo "TODO"
 
 workflows:

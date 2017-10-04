@@ -25,6 +25,8 @@ apply plugin: 'kotlin-kapt'
 
 apply plugin: 'com.getkeepsafe.dexcount'
 
+apply plugin: 'com.github.triplet.play'
+
 apply plugin: 'com.diffplug.gradle.spotless'
 spotless {
     kotlin {
@@ -37,6 +39,13 @@ spotless {
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.1"
+
+    playAccountConfigs {
+        defaultAccountConfig {
+            serviceAccountEmail = propOrDef('TIVI_PLAY_PUBLISHER_ACCOUNT', "")
+            pk12File = rootProject.file('signing/play-account.p12')
+        }
+    }
 
     defaultConfig {
         applicationId "me.banes.chris.tivi"
@@ -59,6 +68,8 @@ android {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
+
+        playAccountConfig = playAccountConfigs.defaultAccountConfig
     }
 
     signingConfigs {
@@ -71,9 +82,9 @@ android {
 
         release {
             storeFile rootProject.file("signing/app-release.jks")
-            storePassword project.properties['TIVI_RELEASE_KEYSTORE_PWD']
+            storePassword propOrDef('TIVI_RELEASE_KEYSTORE_PWD', "")
             keyAlias "tivi"
-            keyPassword project.properties['TIVI_RELEASE_KEY_PWD']
+            keyPassword propOrDef('TIVI_RELEASE_KEY_PWD', "")
         }
     }
 
@@ -102,6 +113,11 @@ android {
 
 androidExtensions {
     experimental = true
+}
+
+play {
+    track = 'alpha'
+    uploadImages = true
 }
 
 dependencies {
