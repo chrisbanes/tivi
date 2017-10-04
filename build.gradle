@@ -39,6 +39,8 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:${versions.kotlin}"
 
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.7.3'
+
+        classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
     }
 }
 
