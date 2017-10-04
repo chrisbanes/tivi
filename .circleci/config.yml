@@ -42,7 +42,6 @@ jobs:
             - .gradle
             - build
             - app/build
-
   deploy_to_play:
     <<: *defaults
     steps:
@@ -66,3 +65,9 @@ workflows:
   build_and_test:
     jobs:
       - build
+      - deploy_to_play:
+          requires:
+            - build
+          filters:
+            branches:
+              only: deploy
