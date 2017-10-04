@@ -82,6 +82,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    dexOptions {
+        preDexLibraries "true" != System.getenv("CI")
+    }
+
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
