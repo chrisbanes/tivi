@@ -1,47 +1,68 @@
 version: 2.0
 
+defaults: &defaults
+  docker:
+    - image: circleci/android:api-26-alpha
+  working_directory: ~/tivi
+  environment:
+    _JAVA_OPTIONS: "-Xmx1400m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2"
+    TERM: dumb
+
 jobs:
   build:
-    working_directory: ~/code
-    docker:
-      - image: circleci/android:api-26-alpha
-    environment:
-      _JAVA_OPTIONS: "-Xmx1400m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2"
-      TERM: dumb
+    <<: *defaults
     steps:
-      - run:
-          name: Update SDK
-          command: |
-            mkdir "$ANDROID_HOME/licenses" || true
-            echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
-            echo "84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
-            echo y | android update sdk --no-ui --all --filter "platform-tools"
-
       - checkout
-
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
           name: Download Dependencies
           command: ./gradlew dependencies --no-daemon
+      - run:
+          name: Decrypt release signing key
+          command: openssl aes-256-cbc -d -in signing/app-release.aes -out signing/app-release.jks -k $ENCRYPT_KEY
+      - run:
+          name: Assemble APKs
+          command: ./gradlew check --no-daemon
       - save_cache:
           paths:
             - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-          
-      - run:
-          name: Assemble APKs
-          command: ./gradlew assemble --no-daemon
       - store_artifacts:
           path: app/build/outputs/apk
           destination: apks
-
-      - run:
-          name: Check
-          command: ./gradlew check --no-daemon
       - store_artifacts:
           path: app/build/reports
           destination: reports
       - store_test_results:
           path: app/build/test-results
-          
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .gradle
+            - build
+            - app/build
+
+  deploy_to_play:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      - attach_workspace:
+          at: ~/tivi
+      - run:
+          name: Decrypt release signing key
+          command: openssl aes-256-cbc -d -in signing/app-release.aes -out signing/app-release.jks -k $ENCRYPT_KEY
+      - run:
+          name: Decrypt Play Store Secret
+          command: openssl aes-256-cbc -d -in signing/play-account.aes -out signing/play-account.p12 -k $ENCRYPT_KEY
+      - run:
+          name: Deploy to Alpha channel
+          command: ./gradlew publishApkRelease --no-daemon
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
