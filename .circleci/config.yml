@@ -19,7 +19,7 @@ jobs:
           name: Download Dependencies
           command: ./gradlew dependencies --no-daemon
       - run:
-          name: Decrypt secrets
+          name: Decrypt release signing key
           command: openssl aes-256-cbc -d -in signing/app-release.aes -out signing/app-release.jks -k $ENCRYPT_KEY
       - run:
           name: Assemble APKs
@@ -47,16 +47,19 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/tivi
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      - attach_workspace:
+          at: ~/tivi
+      - run:
+          name: Decrypt release signing key
+          command: openssl aes-256-cbc -d -in signing/app-release.aes -out signing/app-release.jks -k $ENCRYPT_KEY
       - run:
           name: Decrypt Play Store Secret
           command: openssl aes-256-cbc -d -in signing/play-account.aes -out signing/play-account.p12 -k $ENCRYPT_KEY
       - run:
-          name: Deploy
-          command: echo "TODO"
+          name: Deploy to Alpha channel
+          command: ./gradlew publishApkRelease --no-daemon
 
 workflows:
   version: 2
