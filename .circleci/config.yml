@@ -17,13 +17,14 @@ jobs:
       - run:
           name: Download Dependencies
           command: ./gradlew dependencies --no-daemon
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
           name: Assemble APKs
           command: ./gradlew assemble --no-daemon
+      - save_cache:
+          paths:
+            - ~/.gradle
+            - ~/.m2
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - save_cache:
           paths:
             - app/build
@@ -39,13 +40,6 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-      - run:
-          name: Download Dependencies
-          command: ./gradlew dependencies --no-daemon
-      - save_cache:
-          paths:
-            - ~/.gradle
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - restore_cache:
           key: build-{{ .Revision }}
