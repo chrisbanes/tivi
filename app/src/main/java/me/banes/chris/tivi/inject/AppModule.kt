@@ -50,18 +50,13 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideTmdb(context: Context): Tmdb {
+    fun provideTmdb(@Named("cache") cacheDir: File, interceptor: HttpLoggingInterceptor): Tmdb {
         return object : Tmdb(BuildConfig.TMDB_API_KEY) {
             override fun setOkHttpClientDefaults(builder: OkHttpClient.Builder) {
                 super.setOkHttpClientDefaults(builder)
-
                 builder.apply {
-                    val logging = HttpLoggingInterceptor().apply {
-                        level = HttpLoggingInterceptor.Level.BASIC
-                    }
-                    addInterceptor(logging)
-
-                    cache(Cache(File(context.cacheDir, "tmdb_cache"), 10 * 1024 * 1024))
+                    addInterceptor(interceptor)
+                    cache(Cache(File(cacheDir, "tmdb_cache"), 10 * 1024 * 1024))
                 }
             }
         }
@@ -115,6 +110,13 @@ class AppModule {
     @Singleton
     fun provideAppPreferences(application: TiviApplication): SharedPreferences {
         return PreferenceManager.getDefaultSharedPreferences(application)
+    }
+
+    @Provides
+    @Singleton
+    @Named("cache")
+    fun provideCacheDir(application: TiviApplication): File {
+        return application.cacheDir
     }
 
 }

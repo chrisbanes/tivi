@@ -32,6 +32,7 @@ import javax.inject.Singleton
         ViewModelBuilder::class,
         HomeBuilder::class,
         TraktModule::class,
+        NetworkModule::class,
         SettingsBuilder::class))
 interface AppComponent : AndroidInjector<TiviApplication> {
 

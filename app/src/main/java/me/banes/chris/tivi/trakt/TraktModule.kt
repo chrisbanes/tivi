@@ -76,20 +76,14 @@ class TraktModule {
         return context.getSharedPreferences("trakt_auth", Context.MODE_PRIVATE)
     }
 
-    @Singleton
     @Provides
-    fun provideTrakt(context: Context): TraktV2 {
+    fun provideTrakt(@Named("cache") cacheDir: File, interceptor: HttpLoggingInterceptor): TraktV2 {
         return object : TraktV2(BuildConfig.TRAKT_CLIENT_ID) {
             override fun setOkHttpClientDefaults(builder: OkHttpClient.Builder) {
                 super.setOkHttpClientDefaults(builder)
-
                 builder.apply {
-                    val logging = HttpLoggingInterceptor().apply {
-                        level = HttpLoggingInterceptor.Level.BASIC
-                    }
-                    addInterceptor(logging)
-
-                    cache(Cache(File(context.cacheDir, "trakt_cache"), 10 * 1024 * 1024))
+                    addInterceptor(interceptor)
+                    cache(Cache(File(cacheDir, "trakt_cache"), 10 * 1024 * 1024))
                 }
             }
         }
