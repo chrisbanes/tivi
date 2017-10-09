@@ -31,6 +31,7 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven { url 'https://maven.fabric.io/public' }
     }
 
     dependencies {
@@ -42,6 +43,8 @@ buildscript {
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.7.3'
 
         classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
+
+        classpath 'io.fabric.tools:gradle:1.+'
     }
 }
 
@@ -53,6 +56,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url 'https://maven.fabric.io/public' }
     }
 }
 

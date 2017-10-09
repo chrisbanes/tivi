@@ -36,6 +36,8 @@ spotless {
     }
 }
 
+apply plugin: 'io.fabric'
+
 android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
@@ -70,6 +72,10 @@ android {
         }
 
         playAccountConfig = playAccountConfigs.defaultAccountConfig
+
+        // Crashlytics. Disabled by default
+        manifestPlaceholders += ["fabric-api-key": propOrDef("TIVI_FABRIC_API_KEY", "")]
+        ext.enableCrashlytics = false
     }
 
     signingConfigs {
@@ -107,6 +113,9 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            // Enable crashlytics
+            ext.enableCrashlytics = true
         }
     }
 }
@@ -170,6 +179,10 @@ dependencies {
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${versions.leakcanary}"
+
+    implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+        transitive = true
+    }
 }
 
 String propOrDef(String propertyName, String defaultValue) {
