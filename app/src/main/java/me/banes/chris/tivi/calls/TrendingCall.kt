@@ -42,7 +42,7 @@ class TrendingCall @Inject constructor(
     : PaginatedTraktCall<TrendingShow>(databaseTxRunner, showDao, tmdb, trakt, schedulers) {
 
     override fun createData(page: Int?): Flowable<List<TiviShow>> {
-        return if (page == null) trendingDao.trendingShows() else trendingDao.trendingShowsPage(page)
+        return if (page == null) trendingDao.entries() else trendingDao.entriesPage(page)
     }
 
     override fun networkCall(page: Int): Single<List<TrendingShow>> {
@@ -60,21 +60,21 @@ class TrendingCall @Inject constructor(
     }
 
     override fun lastPageLoaded(): Single<Int> {
-        return trendingDao.getLastTrendingPage()
+        return trendingDao.getLastPage()
     }
 
     override fun deleteEntries() {
-        trendingDao.deleteTrendingShows()
+        trendingDao.deleteAll()
     }
 
     override fun deletePage(page: Int) {
-        trendingDao.deleteTrendingShowsPageSync(page)
+        trendingDao.deletePage(page)
     }
 
     override fun saveEntry(show: TiviShow, page: Int, order: Int) {
         assert(show.id != null)
         val entry = TrendingEntry(showId = show.id!!, page = page, pageOrder = order)
-        trendingDao.insertTrending(entry)
+        trendingDao.insert(entry)
     }
 
 }

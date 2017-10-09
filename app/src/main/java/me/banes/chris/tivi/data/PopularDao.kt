@@ -29,24 +29,24 @@ interface PopularDao {
     @Query("SELECT * FROM shows " +
             "INNER JOIN popular_shows ON popular_shows.show_id = shows.id " +
             "ORDER BY page, page_order")
-    fun popularShows(): Flowable<List<TiviShow>>
+    fun entries(): Flowable<List<TiviShow>>
 
     @Query("SELECT * FROM shows " +
             "INNER JOIN popular_shows ON popular_shows.show_id = shows.id " +
             "WHERE page = :page " +
             "ORDER BY page_order")
-    fun popularShowsPage(page: Int): Flowable<List<TiviShow>>
+    fun entriesPage(page: Int): Flowable<List<TiviShow>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertPopularShows(show: PopularEntry): Long
+    fun insert(show: PopularEntry): Long
 
     @Query("DELETE FROM popular_shows WHERE page = :page")
-    fun deletePopularShowsPageSync(page: Int = 0)
+    fun deletePage(page: Int)
 
     @Query("DELETE FROM popular_shows")
-    fun deletePopularShows()
+    fun deleteAll()
 
     @Query("SELECT MAX(page) from popular_shows")
-    fun getLastPopularPage(): Single<Int>
+    fun getLastPage(): Single<Int>
 
 }

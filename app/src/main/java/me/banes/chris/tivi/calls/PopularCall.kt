@@ -54,25 +54,25 @@ class PopularCall @Inject constructor(
     }
 
     override fun lastPageLoaded(): Single<Int> {
-        return popularDao.getLastPopularPage()
+        return popularDao.getLastPage()
     }
 
     override fun createData(page: Int?): Flowable<List<TiviShow>> {
-        return if (page == null) popularDao.popularShows() else popularDao.popularShowsPage(page)
+        return if (page == null) popularDao.entries() else popularDao.entriesPage(page)
     }
 
     override fun saveEntry(show: TiviShow, page: Int, order: Int) {
         assert(show.id != null)
         val entry = PopularEntry(showId = show.id!!, page = page, pageOrder = order)
-        popularDao.insertPopularShows(entry)
+        popularDao.insert(entry)
     }
 
     override fun deleteEntries() {
-        popularDao.deletePopularShows()
+        popularDao.deleteAll()
     }
 
     override fun deletePage(page: Int) {
-        popularDao.deletePopularShowsPageSync(page)
+        popularDao.deletePage(page)
     }
 
     override fun loadShow(response: Show): Maybe<TiviShow> {

@@ -29,24 +29,24 @@ interface TrendingDao {
     @Query("SELECT * FROM shows " +
             "INNER JOIN trending_shows ON trending_shows.show_id = shows.id " +
             "ORDER BY page, page_order")
-    fun trendingShows(): Flowable<List<TiviShow>>
+    fun entries(): Flowable<List<TiviShow>>
 
     @Query("SELECT * FROM shows " +
             "INNER JOIN trending_shows ON trending_shows.show_id = shows.id " +
             "WHERE page = :page " +
             "ORDER BY page_order")
-    fun trendingShowsPage(page: Int): Flowable<List<TiviShow>>
+    fun entriesPage(page: Int): Flowable<List<TiviShow>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertTrending(show: TrendingEntry): Long
+    fun insert(show: TrendingEntry): Long
 
     @Query("DELETE FROM trending_shows WHERE page = :page")
-    fun deleteTrendingShowsPageSync(page: Int = 0)
+    fun deletePage(page: Int)
 
     @Query("DELETE FROM trending_shows")
-    fun deleteTrendingShows()
+    fun deleteAll()
 
     @Query("SELECT MAX(page) from trending_shows")
-    fun getLastTrendingPage(): Single<Int>
+    fun getLastPage(): Single<Int>
 
 }
