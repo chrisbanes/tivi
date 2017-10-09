@@ -73,7 +73,9 @@ android {
 
         playAccountConfig = playAccountConfigs.defaultAccountConfig
 
+        // Crashlytics. Disabled by default
         manifestPlaceholders += ["fabric-api-key": propOrDef("TIVI_FABRIC_API_KEY", "")]
+        ext.enableCrashlytics = false
     }
 
     signingConfigs {
@@ -111,6 +113,9 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            // Enable crashlytics
+            ext.enableCrashlytics = true
         }
     }
 }

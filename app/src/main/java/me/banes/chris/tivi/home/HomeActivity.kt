@@ -39,7 +39,9 @@ import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import javax.inject.Inject
 import com.crashlytics.android.Crashlytics
+import com.crashlytics.android.core.CrashlyticsCore
 import io.fabric.sdk.android.Fabric
+import me.banes.chris.tivi.BuildConfig
 
 class HomeActivity : TiviActivity() {
 
@@ -54,7 +56,9 @@ class HomeActivity : TiviActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        Fabric.with(this, Crashlytics())
+        val crashlyticsCore = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()
+        val crashlytics = Crashlytics.Builder().core(crashlyticsCore).build()
+        Fabric.with(this, crashlytics)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(HomeActivityViewModel::class.java)
