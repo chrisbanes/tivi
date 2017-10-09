@@ -44,9 +44,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".settings.SettingsActivity"
+        <activity
+            android:name=".settings.SettingsActivity"
             android:label="@string/prefs_title"
             android:theme="@style/Theme.Tivi.Settings" />
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="${fabric-api-key}" />
 
     </application>
 
