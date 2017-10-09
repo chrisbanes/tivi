@@ -16,7 +16,6 @@
 
 package me.banes.chris.tivi.calls
 
-import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
@@ -35,11 +34,11 @@ import javax.inject.Inject
 class PopularCall @Inject constructor(
         databaseTxRunner: DatabaseTxRunner,
         showDao: TiviShowDao,
-        val popularDao: PopularDao,
-        tmdb: Tmdb,
+        private val popularDao: PopularDao,
+        tmdbShowFetcher: TmdbShowFetcher,
         trakt: TraktV2,
         schedulers: AppRxSchedulers)
-    : PaginatedTraktCall<Show>(databaseTxRunner, showDao, tmdb, trakt, schedulers) {
+    : PaginatedTraktShowCallImpl<Show>(databaseTxRunner, showDao, trakt, schedulers, tmdbShowFetcher) {
 
     override fun networkCall(page: Int): Single<List<Show>> {
         return trakt.shows().popular(
@@ -57,8 +56,16 @@ class PopularCall @Inject constructor(
         return popularDao.getLastPage()
     }
 
-    override fun createData(page: Int?): Flowable<List<TiviShow>> {
-        return if (page == null) popularDao.entries() else popularDao.entriesPage(page)
+    override fun data(): Flowable<List<TiviShow>> {
+        return popularDao.entries()
+                .subscribeOn(schedulers.disk)
+                .distinctUntilChanged()
+    }
+
+    override fun data(page: Int): Flowable<List<TiviShow>> {
+        return popularDao.entriesPage(page)
+                .subscribeOn(schedulers.disk)
+                .distinctUntilChanged()
     }
 
     override fun saveEntry(show: TiviShow, page: Int, order: Int) {
@@ -76,7 +83,7 @@ class PopularCall @Inject constructor(
     }
 
     override fun loadShow(response: Show): Maybe<TiviShow> {
-        return showFromTmdb(response.ids.tmdb, response.ids.trakt)
+        return tmdbShowFetcher.showFromTmdb(response.ids.tmdb, response.ids.trakt)
     }
 
 }

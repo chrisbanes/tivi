@@ -16,7 +16,6 @@
 
 package me.banes.chris.tivi.calls
 
-import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.TrendingShow
 import com.uwetrottmann.trakt5.enums.Extended
@@ -36,13 +35,21 @@ class TrendingCall @Inject constructor(
         databaseTxRunner: DatabaseTxRunner,
         showDao: TiviShowDao,
         private val trendingDao: TrendingDao,
-        tmdb: Tmdb,
+        tmdbShowFetcher: TmdbShowFetcher,
         trakt: TraktV2,
         schedulers: AppRxSchedulers)
-    : PaginatedTraktCall<TrendingShow>(databaseTxRunner, showDao, tmdb, trakt, schedulers) {
+    : PaginatedTraktShowCallImpl<TrendingShow>(databaseTxRunner, showDao, trakt, schedulers, tmdbShowFetcher) {
 
-    override fun createData(page: Int?): Flowable<List<TiviShow>> {
-        return if (page == null) trendingDao.entries() else trendingDao.entriesPage(page)
+    override fun data(): Flowable<List<TiviShow>> {
+        return trendingDao.entries()
+                .subscribeOn(schedulers.disk)
+                .distinctUntilChanged()
+    }
+
+    override fun data(page: Int): Flowable<List<TiviShow>> {
+        return trendingDao.entriesPage(page)
+                .subscribeOn(schedulers.disk)
+                .distinctUntilChanged()
     }
 
     override fun networkCall(page: Int): Single<List<TrendingShow>> {
@@ -56,7 +63,7 @@ class TrendingCall @Inject constructor(
     }
 
     override fun loadShow(response: TrendingShow): Maybe<TiviShow> {
-        return showFromTmdb(response.show.ids.tmdb, response.show.ids.trakt)
+        return tmdbShowFetcher.showFromTmdb(response.show.ids.tmdb, response.show.ids.trakt)
     }
 
     override fun lastPageLoaded(): Single<Int> {

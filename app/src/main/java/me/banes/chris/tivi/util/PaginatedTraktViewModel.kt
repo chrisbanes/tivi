@@ -20,13 +20,13 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import me.banes.chris.tivi.api.Resource
 import me.banes.chris.tivi.api.Status
-import me.banes.chris.tivi.calls.PaginatedTraktCall
+import me.banes.chris.tivi.calls.PaginatedTraktShowCallImpl
 import me.banes.chris.tivi.data.TiviShow
 import me.banes.chris.tivi.extensions.plusAssign
 
 open class PaginatedTraktViewModel<R>(
         val schedulers: AppRxSchedulers,
-        val call: PaginatedTraktCall<R>) : RxAwareViewModel() {
+        val call: PaginatedTraktShowCallImpl<R>) : RxAwareViewModel() {
 
     /**
      * This is what my UI (Fragment) observes. Its backed by Room and a network call

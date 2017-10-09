@@ -16,26 +16,22 @@
 
 package me.banes.chris.tivi.calls
 
-import com.uwetrottmann.trakt5.TraktV2
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import me.banes.chris.tivi.util.AppRxSchedulers
-import me.banes.chris.tivi.util.DatabaseTxRunner
 
-abstract class TraktCall<Input, Output, out DaoType>(
-        protected val databaseTxRunner: DatabaseTxRunner,
-        protected val dao: DaoType,
-        protected val trakt: TraktV2,
-        protected val schedulers: AppRxSchedulers) {
+abstract class TraktCallImpl<Input, Output>(
+        protected val schedulers: AppRxSchedulers
+): Call<Unit, Output> {
 
-    fun observable(): Flowable<Output> {
+    override fun data(): Flowable<Output> {
         return createDatabaseObservable()
                 .subscribeOn(schedulers.disk)
     }
 
-    fun refresh(): Completable {
+    override fun refresh(param: Unit?): Completable {
         return load().toCompletable()
     }
 

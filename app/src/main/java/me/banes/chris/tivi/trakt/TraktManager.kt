@@ -65,7 +65,7 @@ class TraktManager @Inject constructor(
 
                     if (it.isAuthorized) {
                         // Now refresh the user information
-                        userMeCall.refresh().subscribe()
+                        userMeCall.refresh(Unit).subscribe()
                     }
                 }
 
@@ -91,7 +91,7 @@ class TraktManager @Inject constructor(
     }
 
     fun userObservable(): Flowable<TraktUser> {
-        return userMeCall.observable()
+        return userMeCall.data()
     }
 
     private fun performTokenExchange(response: AuthorizationResponse) {

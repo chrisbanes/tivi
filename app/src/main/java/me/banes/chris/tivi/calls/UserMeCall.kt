@@ -31,11 +31,11 @@ import me.banes.chris.tivi.util.DatabaseTxRunner
 import javax.inject.Inject
 
 class UserMeCall @Inject constructor(
-        dbTxRunner: DatabaseTxRunner,
-        dao: UserDao,
-        trakt: TraktV2,
+        private val dbTxRunner: DatabaseTxRunner,
+        private val dao: UserDao,
+        private val trakt: TraktV2,
         schedulers: AppRxSchedulers)
-    : TraktCall<User, TraktUser, UserDao>(dbTxRunner, dao, trakt, schedulers) {
+    : TraktCallImpl<User, TraktUser>(schedulers) {
 
     override fun networkCall(): Single<User> {
         return trakt.users().profile(UserSlug.ME, Extended.FULL).toRxSingle()
