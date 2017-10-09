@@ -20,34 +20,37 @@ import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.User
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
+import io.reactivex.Completable
 import io.reactivex.Flowable
-import io.reactivex.Maybe
 import io.reactivex.Single
 import me.banes.chris.tivi.data.TraktUser
 import me.banes.chris.tivi.data.UserDao
 import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
-import me.banes.chris.tivi.util.DatabaseTxRunner
 import javax.inject.Inject
 
 class UserMeCall @Inject constructor(
-        private val dbTxRunner: DatabaseTxRunner,
         private val dao: UserDao,
         private val trakt: TraktV2,
-        schedulers: AppRxSchedulers)
-    : TraktCallImpl<User, TraktUser>(schedulers) {
+        private val schedulers: AppRxSchedulers
+) : Call<Unit, TraktUser> {
 
-    override fun networkCall(): Single<User> {
+    override fun refresh(param: Unit): Completable {
         return trakt.users().profile(UserSlug.ME, Extended.FULL).toRxSingle()
+                .subscribeOn(schedulers.network)
+                .flatMap(this::mapToOutput)
+                .observeOn(schedulers.disk)
+                .doOnSuccess(this::saveEntry)
+                .toCompletable()
     }
 
-    override fun createDatabaseObservable(): Flowable<TraktUser> {
+    override fun data(): Flowable<TraktUser> {
         return dao.getTraktUser()
                 .subscribeOn(schedulers.disk)
     }
 
-    override fun mapToOutput(input: User): Maybe<TraktUser> {
-        return Maybe.just(input)
+    private fun mapToOutput(input: User): Single<TraktUser> {
+        return Single.just(input)
                 .map { networkUser ->
                     TraktUser(
                             username = networkUser.username,
@@ -59,7 +62,7 @@ class UserMeCall @Inject constructor(
                 }
     }
 
-    override fun saveEntry(show: TraktUser) {
+    private fun saveEntry(show: TraktUser) {
         dao.insertUser(show)
     }
 }

@@ -21,5 +21,5 @@ import io.reactivex.Flowable
 
 interface Call<in Param, Output> {
     fun data(): Flowable<Output>
-    fun refresh(param: Param? = null): Completable
+    fun refresh(param: Param): Completable
 }

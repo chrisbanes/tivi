@@ -74,9 +74,9 @@ internal class DiscoverViewModel @Inject constructor(
         refresh()
     }
 
-    fun refresh() {
-        disposables += popularCall.refresh().subscribe()
-        disposables += trendingCall.refresh().subscribe()
+    private fun refresh() {
+        disposables += popularCall.refresh(Unit).subscribe()
+        disposables += trendingCall.refresh(Unit).subscribe()
     }
 
     fun onSectionHeaderClicked(section: Section) {

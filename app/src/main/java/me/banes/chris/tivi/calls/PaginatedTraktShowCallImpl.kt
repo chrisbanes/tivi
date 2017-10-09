@@ -34,7 +34,7 @@ abstract class PaginatedTraktShowCallImpl<RS>(
         protected val schedulers: AppRxSchedulers,
         protected val tmdbShowFetcher: TmdbShowFetcher,
         protected var pageSize: Int = DEFAULT_PAGE_SIZE
-): PaginatedCall<Unit, List<TiviShow>> {
+) : PaginatedCall<Unit, List<TiviShow>> {
 
     companion object {
         val DEFAULT_PAGE_SIZE = 15
@@ -58,7 +58,7 @@ abstract class PaginatedTraktShowCallImpl<RS>(
 
     protected abstract fun lastPageLoaded(): Single<Int>
 
-    override fun refresh(param: Unit?): Completable {
+    override fun refresh(param: Unit): Completable {
         return loadPage(0, resetOnSave = true).toCompletable()
     }
 

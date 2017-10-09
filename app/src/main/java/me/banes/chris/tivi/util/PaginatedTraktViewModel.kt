@@ -52,7 +52,7 @@ open class PaginatedTraktViewModel<R>(
     }
 
     fun fullRefresh() {
-        disposables += call.refresh()
+        disposables += call.refresh(Unit)
                 .observeOn(schedulers.main)
                 .doOnSubscribe { messages.value = Resource(Status.REFRESHING) }
                 .subscribe(
