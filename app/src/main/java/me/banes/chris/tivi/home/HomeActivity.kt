@@ -38,6 +38,8 @@ import me.banes.chris.tivi.home.trending.TrendingShowsFragment
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import javax.inject.Inject
+import com.crashlytics.android.Crashlytics
+import io.fabric.sdk.android.Fabric
 
 class HomeActivity : TiviActivity() {
 
@@ -51,6 +53,8 @@ class HomeActivity : TiviActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        Fabric.with(this, Crashlytics())
 
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(HomeActivityViewModel::class.java)
