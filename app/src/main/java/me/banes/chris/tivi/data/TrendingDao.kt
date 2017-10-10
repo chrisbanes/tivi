@@ -24,29 +24,29 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 
 @Dao
-interface TrendingDao {
+interface TrendingDao : PaginatedEntryDao<TiviShow, TrendingEntry> {
 
     @Query("SELECT * FROM shows " +
             "INNER JOIN trending_shows ON trending_shows.show_id = shows.id " +
             "ORDER BY page, page_order")
-    fun entries(): Flowable<List<TiviShow>>
+    override fun entries(): Flowable<List<TiviShow>>
 
     @Query("SELECT * FROM shows " +
             "INNER JOIN trending_shows ON trending_shows.show_id = shows.id " +
             "WHERE page = :page " +
             "ORDER BY page_order")
-    fun entriesPage(page: Int): Flowable<List<TiviShow>>
+    override fun entriesPage(page: Int): Flowable<List<TiviShow>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(show: TrendingEntry): Long
+    override fun insert(show: TrendingEntry): Long
 
     @Query("DELETE FROM trending_shows WHERE page = :page")
-    fun deletePage(page: Int)
+    override fun deletePage(page: Int)
 
     @Query("DELETE FROM trending_shows")
-    fun deleteAll()
+    override fun deleteAll()
 
     @Query("SELECT MAX(page) from trending_shows")
-    fun getLastPage(): Single<Int>
+    override fun getLastPage(): Single<Int>
 
 }
