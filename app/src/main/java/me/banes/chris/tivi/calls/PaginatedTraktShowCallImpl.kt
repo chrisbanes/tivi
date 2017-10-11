@@ -18,73 +18,90 @@ package me.banes.chris.tivi.calls
 
 import com.uwetrottmann.trakt5.TraktV2
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import me.banes.chris.tivi.data.Page
+import me.banes.chris.tivi.data.PaginatedEntry
+import me.banes.chris.tivi.data.PaginatedEntryDao
 import me.banes.chris.tivi.data.TiviShow
 import me.banes.chris.tivi.data.TiviShowDao
+import me.banes.chris.tivi.data.TrendingEntry
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.DatabaseTxRunner
 import timber.log.Timber
 
-abstract class PaginatedTraktShowCallImpl<RS>(
+abstract class PaginatedTraktShowCallImpl<TT, ET : PaginatedEntry, out ED : PaginatedEntryDao<TiviShow, ET>>(
         private val databaseTxRunner: DatabaseTxRunner,
         protected val showDao: TiviShowDao,
+        protected val entryDao: ED,
         protected val trakt: TraktV2,
         protected val schedulers: AppRxSchedulers,
         protected val tmdbShowFetcher: TmdbShowFetcher,
-        protected var pageSize: Int = DEFAULT_PAGE_SIZE
-) : PaginatedCall<Unit, List<TiviShow>> {
+        protected var pageSize: Int = 15
+) : PaginatedCall<Unit, List<ET>> {
 
-    companion object {
-        val DEFAULT_PAGE_SIZE = 15
+    override fun data(): Flowable<List<TrendingEntry>> {
+        return entryDao.entries()
+                .subscribeOn(schedulers.disk)
+                .distinctUntilChanged()
     }
 
-    private fun loadPage(page: Int = 0, resetOnSave: Boolean = false): Single<List<TiviShow>> {
+    override fun data(page: Int): Flowable<List<TrendingEntry>> {
+        return entryDao.entriesPage(page)
+                .subscribeOn(schedulers.disk)
+                .distinctUntilChanged()
+    }
+
+    private fun loadPage(page: Int = 0, resetOnSave: Boolean = false): Single<List<ET>> {
         return networkCall(page)
                 .subscribeOn(schedulers.network)
                 .toFlowable()
                 .flatMapIterable { it }
                 .filter { filterResponse(it) }
-                .flatMap { loadShow(it).toFlowable() }
+                .flatMap { traktObject ->
+                    loadShow(traktObject)
+                            .map { tiviShow ->
+                                mapToEntry(traktObject, tiviShow, page, 0)
+                            }
+                            .toFlowable()
+                }
                 .toList()
                 .observeOn(schedulers.disk)
                 .doOnSuccess { savePage(Page(page, it), resetOnSave) }
     }
-
-    protected abstract fun networkCall(page: Int): Single<List<RS>>
-
-    protected abstract fun filterResponse(response: RS): Boolean
-
-    protected abstract fun lastPageLoaded(): Single<Int>
 
     override fun refresh(param: Unit): Completable {
         return loadPage(0, resetOnSave = true).toCompletable()
     }
 
     override fun loadNextPage(): Completable {
-        return lastPageLoaded()
+        return entryDao.getLastPage()
                 .subscribeOn(schedulers.disk)
                 .flatMap { loadPage(it + 1) }
                 .toCompletable()
     }
 
-    protected abstract fun deleteEntries()
-
-    protected abstract fun deletePage(page: Int)
-
-    private fun savePage(page: Page<TiviShow>, resetOnSave: Boolean) {
+    private fun savePage(page: Page<ET>, resetOnSave: Boolean) {
         databaseTxRunner.runInTransaction {
-            if (resetOnSave) deleteEntries() else deletePage(page.page)
-            page.items.forEachIndexed { index, show ->
+            if (resetOnSave) {
+                entryDao.deleteAll()
+            } else {
+                entryDao.deletePage(page.page)
+            }
+            page.items.forEach { show ->
                 Timber.d("Saving entry: %s", show)
-                saveEntry(show, page.page, index)
+                entryDao.insert(show)
             }
         }
     }
 
-    protected abstract fun saveEntry(show: TiviShow, page: Int, order: Int)
+    protected abstract fun mapToEntry(networkEntity: TT, show: TiviShow, page: Int, pageOrder: Int): ET
 
-    protected abstract fun loadShow(response: RS): Maybe<TiviShow>
+    protected abstract fun loadShow(response: TT): Maybe<TiviShow>
+
+    protected abstract fun networkCall(page: Int): Single<List<TT>>
+
+    protected abstract fun filterResponse(response: TT): Boolean
 
 }

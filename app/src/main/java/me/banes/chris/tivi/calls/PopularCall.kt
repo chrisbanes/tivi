@@ -19,7 +19,6 @@ package me.banes.chris.tivi.calls
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
-import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import me.banes.chris.tivi.data.PopularDao
@@ -34,16 +33,16 @@ import javax.inject.Inject
 class PopularCall @Inject constructor(
         databaseTxRunner: DatabaseTxRunner,
         showDao: TiviShowDao,
-        private val popularDao: PopularDao,
+        popularDao: PopularDao,
         tmdbShowFetcher: TmdbShowFetcher,
         trakt: TraktV2,
-        schedulers: AppRxSchedulers)
-    : PaginatedTraktShowCallImpl<Show>(databaseTxRunner, showDao, trakt, schedulers, tmdbShowFetcher) {
+        schedulers: AppRxSchedulers
+) : PaginatedTraktShowCallImpl<Show, PopularEntry, PopularDao>(databaseTxRunner, showDao, popularDao, trakt, schedulers, tmdbShowFetcher) {
 
     override fun networkCall(page: Int): Single<List<Show>> {
         return trakt.shows().popular(
                 page + 1, // Trakt uses a 1 based index
-                DEFAULT_PAGE_SIZE,
+                pageSize,
                 Extended.NOSEASONS)
                 .toRxSingle()
     }
@@ -52,34 +51,9 @@ class PopularCall @Inject constructor(
         return response.ids.tmdb != null
     }
 
-    override fun lastPageLoaded(): Single<Int> {
-        return popularDao.getLastPage()
-    }
-
-    override fun data(): Flowable<List<TiviShow>> {
-        return popularDao.entries()
-                .subscribeOn(schedulers.disk)
-                .distinctUntilChanged()
-    }
-
-    override fun data(page: Int): Flowable<List<TiviShow>> {
-        return popularDao.entriesPage(page)
-                .subscribeOn(schedulers.disk)
-                .distinctUntilChanged()
-    }
-
-    override fun saveEntry(show: TiviShow, page: Int, order: Int) {
+    override fun mapToEntry(networkEntity: Show, show: TiviShow, page: Int, pageOrder: Int): PopularEntry {
         assert(show.id != null)
-        val entry = PopularEntry(showId = show.id!!, page = page, pageOrder = order)
-        popularDao.insert(entry)
-    }
-
-    override fun deleteEntries() {
-        popularDao.deleteAll()
-    }
-
-    override fun deletePage(page: Int) {
-        popularDao.deletePage(page)
+        return PopularEntry(showId = show.id!!, page = page, pageOrder = pageOrder, show = show)
     }
 
     override fun loadShow(response: Show): Maybe<TiviShow> {

@@ -19,7 +19,7 @@ package me.banes.chris.tivi.data
 import io.reactivex.Flowable
 import io.reactivex.Single
 
-interface PaginatedEntryDao<PC, in EC> : EntryDao<PC, EC> {
+interface PaginatedEntryDao<PC, in EC : PaginatedEntry> : EntryDao<PC, EC> {
     fun entriesPage(page: Int): Flowable<List<PC>>
     fun deletePage(page: Int)
     fun getLastPage(): Single<Int>

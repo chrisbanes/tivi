@@ -22,7 +22,7 @@ interface Entry {
     var show: TiviShow?
 }
 
-interface PagingatedEntry : Entry {
+interface PaginatedEntry : Entry {
     val page: Int
     val pageOrder: Int
 }

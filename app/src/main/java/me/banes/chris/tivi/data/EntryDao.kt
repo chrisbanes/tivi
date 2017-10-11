@@ -18,7 +18,7 @@ package me.banes.chris.tivi.data
 
 import io.reactivex.Flowable
 
-interface EntryDao<PC, in EC> {
+interface EntryDao<PC, in EC : Entry> {
     fun entries(): Flowable<List<PC>>
     fun insert(entry: EC): Long
     fun deleteAll()

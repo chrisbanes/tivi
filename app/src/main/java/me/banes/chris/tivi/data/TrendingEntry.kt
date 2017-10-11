@@ -37,4 +37,4 @@ data class TrendingEntry(
         @ColumnInfo(name = "page") override val page: Int,
         @ColumnInfo(name = "page_order") override val pageOrder: Int,
         @Ignore override var show: TiviShow?
-) : PagingatedEntry
+) : PaginatedEntry

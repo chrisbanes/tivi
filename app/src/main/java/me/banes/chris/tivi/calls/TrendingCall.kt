@@ -34,27 +34,15 @@ import javax.inject.Inject
 class TrendingCall @Inject constructor(
         databaseTxRunner: DatabaseTxRunner,
         showDao: TiviShowDao,
-        private val trendingDao: TrendingDao,
+        trendingDao: TrendingDao,
         tmdbShowFetcher: TmdbShowFetcher,
         trakt: TraktV2,
         schedulers: AppRxSchedulers)
-    : PaginatedTraktShowCallImpl<TrendingShow>(databaseTxRunner, showDao, trakt, schedulers, tmdbShowFetcher) {
-
-    override fun data(): Flowable<List<TiviShow>> {
-        return trendingDao.entries()
-                .subscribeOn(schedulers.disk)
-                .distinctUntilChanged()
-    }
-
-    override fun data(page: Int): Flowable<List<TiviShow>> {
-        return trendingDao.entriesPage(page)
-                .subscribeOn(schedulers.disk)
-                .distinctUntilChanged()
-    }
+    : PaginatedTraktShowCallImpl<TrendingShow, TrendingEntry, TrendingDao>(databaseTxRunner, showDao, trendingDao, trakt, schedulers, tmdbShowFetcher) {
 
     override fun networkCall(page: Int): Single<List<TrendingShow>> {
         return trakt.shows()
-                .trending(page + 1, DEFAULT_PAGE_SIZE, Extended.NOSEASONS)
+                .trending(page + 1, page, Extended.NOSEASONS)
                 .toRxSingle()
     }
 
@@ -66,22 +54,9 @@ class TrendingCall @Inject constructor(
         return tmdbShowFetcher.showFromTmdb(response.show.ids.tmdb, response.show.ids.trakt)
     }
 
-    override fun lastPageLoaded(): Single<Int> {
-        return trendingDao.getLastPage()
-    }
-
-    override fun deleteEntries() {
-        trendingDao.deleteAll()
-    }
-
-    override fun deletePage(page: Int) {
-        trendingDao.deletePage(page)
-    }
-
-    override fun saveEntry(show: TiviShow, page: Int, order: Int) {
+    override fun mapToEntry(networkEntity: TrendingShow, show: TiviShow, page: Int, pageOrder: Int): TrendingEntry {
         assert(show.id != null)
-        val entry = TrendingEntry(showId = show.id!!, page = page, pageOrder = order)
-        trendingDao.insert(entry)
+        return TrendingEntry(showId = show.id!!, page = page, pageOrder = pageOrder, show = show)
     }
 
 }
