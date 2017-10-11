@@ -19,6 +19,7 @@ package me.banes.chris.tivi.data
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
+import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 
@@ -31,5 +32,7 @@ import android.arch.persistence.room.PrimaryKey
                         onUpdate = ForeignKey.CASCADE,
                         onDelete = ForeignKey.CASCADE)))
 data class WatchedEntry(
-        @PrimaryKey(autoGenerate = true) val id: Long? = null,
-        @ColumnInfo(name = "show_id") val showId: Long)
+        @PrimaryKey(autoGenerate = true) override val id: Long? = null,
+        @ColumnInfo(name = "show_id") override val showId: Long,
+        @Ignore override var show: TiviShow?
+) : Entry

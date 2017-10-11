@@ -19,6 +19,7 @@ package me.banes.chris.tivi.data
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
+import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 
@@ -31,7 +32,9 @@ import android.arch.persistence.room.PrimaryKey
                         onUpdate = ForeignKey.CASCADE,
                         onDelete = ForeignKey.CASCADE)))
 data class PopularEntry(
-        @PrimaryKey(autoGenerate = true) val id: Long? = null,
-        @ColumnInfo(name = "show_id") val showId: Long,
-        @ColumnInfo(name = "page") val page: Int,
-        @ColumnInfo(name = "page_order") val pageOrder: Int)
+        @PrimaryKey(autoGenerate = true) override val id: Long? = null,
+        @ColumnInfo(name = "show_id") override val showId: Long,
+        @ColumnInfo(name = "page") override val page: Int,
+        @ColumnInfo(name = "page_order") override val pageOrder: Int,
+        @Ignore override var show: TiviShow?
+) : PagingatedEntry
