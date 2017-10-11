@@ -15,14 +15,15 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="Widget.Tivi.BottomNav" parent="Widget.Design.BottomNavigationView">
-        <item name="android:background">?attr/colorPrimary</item>
-        <item name="android:elevation">4dp</item>
-        <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
-        <item name="itemIconTint">@color/bottom_nav_item_colors</item>
-        <item name="itemTextColor">@color/bottom_nav_item_colors</item>
-    </style>
+    <item android:color="?android:textColorPrimary"
+        android:alpha="?android:attr/disabledAlpha"
+        android:state_enabled="false" />
 
-</resources>
+    <item android:color="?android:textColorPrimary"
+        android:state_checked="true" />
+
+    <item android:color="?android:textColorSecondary" />
+
+</selector>
