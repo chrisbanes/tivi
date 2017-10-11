@@ -40,7 +40,6 @@ apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.2'
 
     playAccountConfigs {
         defaultAccountConfig {
@@ -61,9 +60,7 @@ android {
         buildConfigField "String", "TRAKT_CLIENT_SECRET", "\"" + propOrDef("TIVI_TRAKT_CLIENT_SECRET", "") + "\""
         buildConfigField "String", "TMDB_API_KEY", "\"" + propOrDef("TIVI_TMDB_API_KEY", "") + "\""
 
-        manifestPlaceholders += [
-                'appAuthRedirectScheme': 'me.banes.chris.tivi'
-        ]
+        manifestPlaceholders += ['appAuthRedirectScheme': 'me.banes.chris.tivi']
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -152,7 +149,7 @@ dependencies {
     implementation "com.uwetrottmann.trakt5:trakt-java:5.7.1"
     implementation "com.uwetrottmann.tmdb2:tmdb-java:1.8.1"
 
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
 
     implementation "io.reactivex.rxjava2:rxjava:${versions.rx}"
     implementation "io.reactivex.rxjava2:rxandroid:2.0.1"
@@ -165,7 +162,7 @@ dependencies {
 
     implementation 'com.jakewharton.timber:timber:4.5.1'
 
-    implementation "com.github.bumptech.glide:glide:4.0.0"
+    implementation "com.github.bumptech.glide:glide:4.2.0"
 
     implementation 'com.xwray:groupie:2.0.0-alpha2'
 
