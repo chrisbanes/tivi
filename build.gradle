@@ -19,13 +19,13 @@ buildscript {
     ext.versions = [
             'support_library'  : '26.1.0',
             'constraint_layout': '1.0.2',
-            'arch_comp'        : '1.0.0-beta1',
+            'arch_comp'        : '1.0.0-beta2',
             'kotlin'           : '1.1.51',
             'espresso'         : '2.2.2',
-            'dagger'           : '2.11',
+            'dagger'           : '2.12',
             'ktlint'           : '0.9.0',
             'leakcanary'       : '1.5.4',
-            'rx'               : '2.1.4',
+            'rx'               : '2.1.5',
     ]
 
     repositories {
