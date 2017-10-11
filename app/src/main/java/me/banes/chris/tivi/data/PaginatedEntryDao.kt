@@ -16,22 +16,11 @@
 
 package me.banes.chris.tivi.data
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.RoomDatabase
-import android.arch.persistence.room.TypeConverters
+import io.reactivex.Flowable
+import io.reactivex.Single
 
-@Database(entities = arrayOf(
-        TiviShow::class,
-        TrendingEntry::class,
-        PopularEntry::class,
-        TraktUser::class,
-        WatchedEntry::class),
-        version = 4)
-@TypeConverters(TiviTypeConverters::class)
-abstract class TiviDatabase : RoomDatabase() {
-    abstract fun showDao(): TiviShowDao
-    abstract fun trendingDao(): TrendingDao
-    abstract fun popularDao(): PopularDao
-    abstract fun userDao(): UserDao
-    abstract fun watchedDao(): WatchedDao
+interface PaginatedEntryDao<PC, in EC> : EntryDao<PC, EC> {
+    fun entriesPage(page: Int): Flowable<List<PC>>
+    fun deletePage(page: Int)
+    fun getLastPage(): Single<Int>
 }
