@@ -26,7 +26,6 @@ import me.banes.chris.tivi.data.entities.TiviShow
 
 @Dao
 interface TiviShowDao {
-
     @Query("SELECT * FROM shows WHERE trakt_id = :id")
     fun getShowWithTraktId(id: Int): Maybe<TiviShow>
 
@@ -46,5 +45,4 @@ interface TiviShowDao {
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun updateShow(shows: TiviShow)
-
 }
