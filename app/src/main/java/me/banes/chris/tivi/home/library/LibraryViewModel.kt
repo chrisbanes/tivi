@@ -16,16 +16,13 @@
 
 package me.banes.chris.tivi.home.library
 
-import me.banes.chris.tivi.AppNavigator
-import me.banes.chris.tivi.home.HomeFragmentViewModel
-import me.banes.chris.tivi.home.HomeNavigator
-import me.banes.chris.tivi.trakt.TraktManager
+import me.banes.chris.tivi.calls.WatchedCall
+import me.banes.chris.tivi.data.entities.WatchedEntry
 import me.banes.chris.tivi.util.AppRxSchedulers
+import me.banes.chris.tivi.util.EntryViewModel
 import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
-        private val schedulers: AppRxSchedulers,
-        private val navigator: HomeNavigator,
-        appNavigator: AppNavigator,
-        traktManager: TraktManager)
-    : HomeFragmentViewModel(traktManager, appNavigator)
+        schedulers: AppRxSchedulers,
+        call: WatchedCall
+) : EntryViewModel<WatchedEntry>(schedulers, call)

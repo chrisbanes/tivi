@@ -37,7 +37,7 @@ class PopularCall @Inject constructor(
         tmdbShowFetcher: TmdbShowFetcher,
         trakt: TraktV2,
         schedulers: AppRxSchedulers
-) : PaginatedTraktShowCallImpl<Show, PopularEntry, PopularDao>(databaseTxRunner, showDao, popularDao, trakt, schedulers, tmdbShowFetcher) {
+) : PaginatedEntryCallImpl<Show, PopularEntry, PopularDao>(databaseTxRunner, showDao, popularDao, trakt, schedulers, tmdbShowFetcher) {
 
     override fun networkCall(page: Int): Single<List<Show>> {
         return trakt.shows().popular(

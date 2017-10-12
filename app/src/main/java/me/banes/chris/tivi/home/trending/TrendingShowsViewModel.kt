@@ -20,14 +20,14 @@ import me.banes.chris.tivi.calls.TrendingCall
 import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.util.AppRxSchedulers
-import me.banes.chris.tivi.util.PaginatedTraktViewModel
+import me.banes.chris.tivi.util.EntryViewModel
 import javax.inject.Inject
 
 class TrendingShowsViewModel @Inject constructor(
         schedulers: AppRxSchedulers,
         call: TrendingCall,
         private val navigator: HomeNavigator)
-    : PaginatedTraktViewModel<TrendingEntry>(schedulers, call) {
+    : EntryViewModel<TrendingEntry>(schedulers, call) {
 
     fun onUpClicked() {
         navigator.onUpClicked()

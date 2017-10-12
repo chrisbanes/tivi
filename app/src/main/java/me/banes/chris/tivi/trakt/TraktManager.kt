@@ -65,7 +65,7 @@ class TraktManager @Inject constructor(
 
                     if (it.isAuthorized) {
                         // Now refresh the user information
-                        userMeCall.refresh(Unit).subscribe()
+                        userMeCall.refresh(Unit)
                     }
                 }
 

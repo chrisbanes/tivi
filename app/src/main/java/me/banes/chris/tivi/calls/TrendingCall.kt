@@ -37,7 +37,7 @@ class TrendingCall @Inject constructor(
         tmdbShowFetcher: TmdbShowFetcher,
         trakt: TraktV2,
         schedulers: AppRxSchedulers)
-    : PaginatedTraktShowCallImpl<TrendingShow, TrendingEntry, TrendingDao>(databaseTxRunner, showDao, trendingDao, trakt, schedulers, tmdbShowFetcher) {
+    : PaginatedEntryCallImpl<TrendingShow, TrendingEntry, TrendingDao>(databaseTxRunner, showDao, trendingDao, trakt, schedulers, tmdbShowFetcher) {
 
     override fun networkCall(page: Int): Single<List<TrendingShow>> {
         return trakt.shows()

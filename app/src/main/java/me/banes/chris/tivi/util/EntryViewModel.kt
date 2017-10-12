@@ -20,13 +20,14 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import me.banes.chris.tivi.api.Resource
 import me.banes.chris.tivi.api.Status
-import me.banes.chris.tivi.calls.PaginatedTraktShowCallImpl
-import me.banes.chris.tivi.data.PaginatedEntry
+import me.banes.chris.tivi.calls.Call
+import me.banes.chris.tivi.calls.PaginatedCall
+import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.extensions.plusAssign
 
-open class PaginatedTraktViewModel<ET : PaginatedEntry>(
+open class EntryViewModel<ET : Entry>(
         val schedulers: AppRxSchedulers,
-        val call: PaginatedTraktShowCallImpl<*, ET, *>) : RxAwareViewModel() {
+        val call: Call<Unit, List<ET>>) : RxAwareViewModel() {
 
     /**
      * This is what my UI (Fragment) observes. Its backed by Room and a network call
@@ -43,12 +44,14 @@ open class PaginatedTraktViewModel<ET : PaginatedEntry>(
     }
 
     fun onListScrolledToEnd() {
-        disposables += call.loadNextPage()
-                .observeOn(schedulers.main)
-                .doOnSubscribe { messages.value = Resource(Status.LOADING_MORE) }
-                .subscribe(
-                        { messages.value = Resource(Status.SUCCESS) },
-                        { messages.value = Resource(Status.ERROR, it.localizedMessage) })
+        if (call is PaginatedCall<*, *>) {
+            disposables += call.loadNextPage()
+                    .observeOn(schedulers.main)
+                    .doOnSubscribe { messages.value = Resource(Status.LOADING_MORE) }
+                    .subscribe(
+                            { messages.value = Resource(Status.SUCCESS) },
+                            { messages.value = Resource(Status.ERROR, it.localizedMessage) })
+        }
     }
 
     fun fullRefresh() {
