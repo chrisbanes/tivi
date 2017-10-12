@@ -21,10 +21,10 @@ import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Maybe
 import io.reactivex.Single
-import me.banes.chris.tivi.data.PopularDao
-import me.banes.chris.tivi.data.PopularEntry
-import me.banes.chris.tivi.data.TiviShow
-import me.banes.chris.tivi.data.TiviShowDao
+import me.banes.chris.tivi.data.daos.PopularDao
+import me.banes.chris.tivi.data.entities.PopularEntry
+import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.DatabaseTxRunner

@@ -23,8 +23,8 @@ import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
-import me.banes.chris.tivi.data.TraktUser
-import me.banes.chris.tivi.data.UserDao
+import me.banes.chris.tivi.data.entities.TraktUser
+import me.banes.chris.tivi.data.daos.UserDao
 import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject

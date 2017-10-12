@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.data
+package me.banes.chris.tivi.data.daos
 
 import io.reactivex.Flowable
 import io.reactivex.Single
+import me.banes.chris.tivi.data.PaginatedEntry
 
 interface PaginatedEntryDao<PC, in EC : PaginatedEntry> : EntryDao<PC, EC> {
     fun entriesPage(page: Int): Flowable<List<PC>>

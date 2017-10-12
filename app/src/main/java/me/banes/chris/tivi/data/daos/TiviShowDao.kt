@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.data
+package me.banes.chris.tivi.data.daos
 
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
@@ -22,6 +22,7 @@ import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Update
 import io.reactivex.Maybe
+import me.banes.chris.tivi.data.entities.TiviShow
 
 @Dao
 interface TiviShowDao {

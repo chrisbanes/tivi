@@ -21,12 +21,12 @@ import android.content.Context
 import android.os.Debug
 import dagger.Module
 import dagger.Provides
-import me.banes.chris.tivi.data.PopularDao
+import me.banes.chris.tivi.data.daos.PopularDao
 import me.banes.chris.tivi.data.TiviDatabase
-import me.banes.chris.tivi.data.TiviShowDao
-import me.banes.chris.tivi.data.TrendingDao
-import me.banes.chris.tivi.data.UserDao
-import me.banes.chris.tivi.data.WatchedDao
+import me.banes.chris.tivi.data.daos.TiviShowDao
+import me.banes.chris.tivi.data.daos.TrendingDao
+import me.banes.chris.tivi.data.daos.UserDao
+import me.banes.chris.tivi.data.daos.WatchedDao
 import me.banes.chris.tivi.util.DatabaseTxRunner
 import javax.inject.Singleton
 

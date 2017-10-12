@@ -23,10 +23,10 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 import me.banes.chris.tivi.data.Page
 import me.banes.chris.tivi.data.PaginatedEntry
-import me.banes.chris.tivi.data.PaginatedEntryDao
-import me.banes.chris.tivi.data.TiviShow
-import me.banes.chris.tivi.data.TiviShowDao
-import me.banes.chris.tivi.data.TrendingEntry
+import me.banes.chris.tivi.data.daos.PaginatedEntryDao
+import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.data.daos.TiviShowDao
+import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.DatabaseTxRunner
 import timber.log.Timber

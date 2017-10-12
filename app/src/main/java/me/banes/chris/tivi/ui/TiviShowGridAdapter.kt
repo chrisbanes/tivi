@@ -21,7 +21,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import me.banes.chris.tivi.R
-import me.banes.chris.tivi.data.TiviShow
+import me.banes.chris.tivi.data.entities.TiviShow
 
 internal class TiviShowGridAdapter
     : RecyclerView.Adapter<TiviShowGridViewHolder>() {

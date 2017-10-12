@@ -16,6 +16,8 @@
 
 package me.banes.chris.tivi.data
 
+import me.banes.chris.tivi.data.entities.TiviShow
+
 interface Entry {
     val id: Long?
     val showId: Long

@@ -19,6 +19,16 @@ package me.banes.chris.tivi.data
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
+import me.banes.chris.tivi.data.daos.PopularDao
+import me.banes.chris.tivi.data.daos.TiviShowDao
+import me.banes.chris.tivi.data.daos.TrendingDao
+import me.banes.chris.tivi.data.daos.UserDao
+import me.banes.chris.tivi.data.daos.WatchedDao
+import me.banes.chris.tivi.data.entities.PopularEntry
+import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.data.entities.TraktUser
+import me.banes.chris.tivi.data.entities.TrendingEntry
+import me.banes.chris.tivi.data.entities.WatchedEntry
 
 @Database(entities = arrayOf(
         TiviShow::class,

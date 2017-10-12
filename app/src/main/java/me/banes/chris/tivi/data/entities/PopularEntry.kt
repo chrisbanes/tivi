@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.data
+package me.banes.chris.tivi.data.entities
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
@@ -22,8 +22,9 @@ import android.arch.persistence.room.ForeignKey
 import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
+import me.banes.chris.tivi.data.PaginatedEntry
 
-@Entity(tableName = "trending_shows",
+@Entity(tableName = "popular_shows",
         indices = arrayOf(Index(value = "show_id", unique = true)),
         foreignKeys = arrayOf(
                 ForeignKey(entity = TiviShow::class,
@@ -31,7 +32,7 @@ import android.arch.persistence.room.PrimaryKey
                         childColumns = arrayOf("show_id"),
                         onUpdate = ForeignKey.CASCADE,
                         onDelete = ForeignKey.CASCADE)))
-data class TrendingEntry(
+data class PopularEntry(
         @PrimaryKey(autoGenerate = true) override val id: Long? = null,
         @ColumnInfo(name = "show_id") override val showId: Long,
         @ColumnInfo(name = "page") override val page: Int,

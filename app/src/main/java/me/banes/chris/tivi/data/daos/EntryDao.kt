@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.data
+package me.banes.chris.tivi.data.daos
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
 import io.reactivex.Flowable
+import me.banes.chris.tivi.data.Entry
 
-@Dao
-interface UserDao {
-
-    @Query("SELECT * FROM users")
-    fun getTraktUser(): Flowable<TraktUser>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertUser(user: TraktUser): Long
-
+interface EntryDao<PC, in EC : Entry> {
+    fun entries(): Flowable<List<PC>>
+    fun insert(entry: EC): Long
+    fun deleteAll()
 }
