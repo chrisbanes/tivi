@@ -34,6 +34,7 @@ import me.banes.chris.tivi.data.Entry
                         onDelete = ForeignKey.CASCADE)))
 data class WatchedEntry(
         @PrimaryKey(autoGenerate = true) override val id: Long? = null,
-        @ColumnInfo(name = "show_id") override val showId: Long,
-        @Ignore override var show: TiviShow?
-) : Entry
+        @ColumnInfo(name = "show_id") override val showId: Long
+) : Entry {
+    @Ignore override var show : TiviShow? = null
+}
