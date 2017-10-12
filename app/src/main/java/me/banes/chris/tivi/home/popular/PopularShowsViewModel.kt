@@ -27,7 +27,7 @@ class PopularShowsViewModel @Inject constructor(
         schedulers: AppRxSchedulers,
         call: PopularCall,
         private val navigator: HomeNavigator)
-    : EntryViewModel<PopularEntry>(schedulers, call) {
+    : EntryViewModel<PopularEntry>(schedulers, call, refreshOnStartup = true) {
 
     fun onUpClicked() {
         navigator.onUpClicked()

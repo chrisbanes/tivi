@@ -27,7 +27,7 @@ class TrendingShowsViewModel @Inject constructor(
         schedulers: AppRxSchedulers,
         call: TrendingCall,
         private val navigator: HomeNavigator)
-    : EntryViewModel<TrendingEntry>(schedulers, call) {
+    : EntryViewModel<TrendingEntry>(schedulers, call, refreshOnStartup = true) {
 
     fun onUpClicked() {
         navigator.onUpClicked()

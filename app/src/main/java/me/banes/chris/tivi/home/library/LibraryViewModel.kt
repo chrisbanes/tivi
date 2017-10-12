@@ -25,4 +25,4 @@ import javax.inject.Inject
 class LibraryViewModel @Inject constructor(
         schedulers: AppRxSchedulers,
         call: WatchedCall
-) : EntryViewModel<WatchedEntry>(schedulers, call)
+) : EntryViewModel<WatchedEntry>(schedulers, call, refreshOnStartup = false)

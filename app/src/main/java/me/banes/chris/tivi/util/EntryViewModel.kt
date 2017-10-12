@@ -27,7 +27,8 @@ import me.banes.chris.tivi.extensions.plusAssign
 
 open class EntryViewModel<ET : Entry>(
         val schedulers: AppRxSchedulers,
-        val call: Call<Unit, List<ET>>) : RxAwareViewModel() {
+        val call: Call<Unit, List<ET>>,
+        refreshOnStartup: Boolean) : RxAwareViewModel() {
 
     /**
      * This is what my UI (Fragment) observes. Its backed by Room and a network call
@@ -40,7 +41,9 @@ open class EntryViewModel<ET : Entry>(
 
     init {
         // Eagerly refresh the initial page of trending
-        fullRefresh()
+        if (refreshOnStartup) {
+            fullRefresh()
+        }
     }
 
     fun onListScrolledToEnd() {
