@@ -21,10 +21,11 @@ import android.view.View
 import com.uwetrottmann.trakt5.entities.Show
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import me.banes.chris.tivi.R
+import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.util.PaginatedGridFragment
 
 class PopularShowsFragment
-    : PaginatedGridFragment<Show, PopularShowsViewModel>(PopularShowsViewModel::class.java) {
+    : PaginatedGridFragment<PopularEntry, PopularShowsViewModel>(PopularShowsViewModel::class.java) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -33,6 +33,9 @@ interface TiviShowDao {
     @Query("SELECT * FROM shows WHERE tmdb_id = :id")
     fun getShowWithTmdbId(id: Int): Maybe<TiviShow>
 
+    @Query("SELECT * FROM shows WHERE id IN (:ids)")
+    fun getShowWithIds(ids: List<Long>): List<TiviShow>
+
     @Query("SELECT * FROM shows WHERE " +
             "(tmdb_id IS NOT NULL AND tmdb_id = :tmdbId) OR " +
             "(trakt_id IS NOT NULL AND trakt_id = :traktId)")

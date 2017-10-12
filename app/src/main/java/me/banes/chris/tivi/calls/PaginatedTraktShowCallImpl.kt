@@ -26,12 +26,11 @@ import me.banes.chris.tivi.data.PaginatedEntry
 import me.banes.chris.tivi.data.daos.PaginatedEntryDao
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.data.daos.TiviShowDao
-import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.DatabaseTxRunner
 import timber.log.Timber
 
-abstract class PaginatedTraktShowCallImpl<TT, ET : PaginatedEntry, out ED : PaginatedEntryDao<TiviShow, ET>>(
+abstract class PaginatedTraktShowCallImpl<TT, ET : PaginatedEntry, out ED : PaginatedEntryDao<ET>>(
         private val databaseTxRunner: DatabaseTxRunner,
         protected val showDao: TiviShowDao,
         protected val entryDao: ED,
@@ -41,13 +40,13 @@ abstract class PaginatedTraktShowCallImpl<TT, ET : PaginatedEntry, out ED : Pagi
         protected var pageSize: Int = 15
 ) : PaginatedCall<Unit, List<ET>> {
 
-    override fun data(): Flowable<List<TrendingEntry>> {
+    override fun data(): Flowable<List<ET>> {
         return entryDao.entries()
                 .subscribeOn(schedulers.disk)
                 .distinctUntilChanged()
     }
 
-    override fun data(page: Int): Flowable<List<TrendingEntry>> {
+    override fun data(page: Int): Flowable<List<ET>> {
         return entryDao.entriesPage(page)
                 .subscribeOn(schedulers.disk)
                 .distinctUntilChanged()

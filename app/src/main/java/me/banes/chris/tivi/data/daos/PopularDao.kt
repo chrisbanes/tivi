@@ -17,38 +17,28 @@
 package me.banes.chris.tivi.data.daos
 
 import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import io.reactivex.Flowable
 import io.reactivex.Single
+import me.banes.chris.tivi.data.TiviDatabase
 import me.banes.chris.tivi.data.entities.PopularEntry
-import me.banes.chris.tivi.data.entities.TiviShow
 
 @Dao
-interface PopularDao : PaginatedEntryDao<TiviShow, PopularEntry> {
+abstract class PopularDao(db: TiviDatabase) : PaginatedEntryDao<PopularEntry>(db.showDao()) {
 
-    @Query("SELECT * FROM shows " +
-            "INNER JOIN popular_shows ON popular_shows.show_id = shows.id " +
-            "ORDER BY page, page_order")
-    override fun entries(): Flowable<List<TiviShow>>
+    @Query("SELECT * FROM popular_shows ORDER BY page, page_order")
+    abstract override fun entriesImpl(): Flowable<List<PopularEntry>>
 
-    @Query("SELECT * FROM shows " +
-            "INNER JOIN popular_shows ON popular_shows.show_id = shows.id " +
-            "WHERE page = :page " +
-            "ORDER BY page_order")
-    override fun entriesPage(page: Int): Flowable<List<TiviShow>>
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    override fun insert(show: PopularEntry): Long
+    @Query("SELECT * FROM popular_shows WHERE page = :page ORDER BY page_order")
+    abstract override fun entriesPageImpl(page: Int): Flowable<List<PopularEntry>>
 
     @Query("DELETE FROM popular_shows WHERE page = :page")
-    override fun deletePage(page: Int)
+    abstract override fun deletePage(page: Int)
 
     @Query("DELETE FROM popular_shows")
-    override fun deleteAll()
+    abstract override fun deleteAll()
 
     @Query("SELECT MAX(page) from popular_shows")
-    override fun getLastPage(): Single<Int>
+    abstract override fun getLastPage(): Single<Int>
 
 }

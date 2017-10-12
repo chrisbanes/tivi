@@ -55,7 +55,9 @@ class TrendingCall @Inject constructor(
 
     override fun mapToEntry(networkEntity: TrendingShow, show: TiviShow, page: Int, pageOrder: Int): TrendingEntry {
         assert(show.id != null)
-        return TrendingEntry(showId = show.id!!, page = page, pageOrder = pageOrder, show = show)
+        return TrendingEntry(showId = show.id!!, page = page, pageOrder = pageOrder).apply {
+            this.show = show
+        }
     }
 
 }

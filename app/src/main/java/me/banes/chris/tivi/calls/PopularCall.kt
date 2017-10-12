@@ -53,7 +53,9 @@ class PopularCall @Inject constructor(
 
     override fun mapToEntry(networkEntity: Show, show: TiviShow, page: Int, pageOrder: Int): PopularEntry {
         assert(show.id != null)
-        return PopularEntry(showId = show.id!!, page = page, pageOrder = pageOrder, show = show)
+        return PopularEntry(showId = show.id!!, page = page, pageOrder = pageOrder).apply {
+            this.show = show
+        }
     }
 
     override fun loadShow(response: Show): Maybe<TiviShow> {

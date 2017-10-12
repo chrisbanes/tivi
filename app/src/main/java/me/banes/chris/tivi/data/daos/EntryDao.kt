@@ -16,11 +16,30 @@
 
 package me.banes.chris.tivi.data.daos
 
+import android.arch.persistence.room.Insert
+import android.arch.persistence.room.OnConflictStrategy
 import io.reactivex.Flowable
 import me.banes.chris.tivi.data.Entry
 
-interface EntryDao<PC, in EC : Entry> {
-    fun entries(): Flowable<List<PC>>
-    fun insert(entry: EC): Long
-    fun deleteAll()
+abstract class EntryDao<EC : Entry>(protected val showDao: TiviShowDao) {
+
+    protected abstract fun entriesImpl(): Flowable<List<EC>>
+
+    fun entries(): Flowable<List<EC>> {
+        return mapEntryShow(entriesImpl())
+    }
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    abstract fun insert(entry: EC): Long
+
+    abstract fun deleteAll()
+
+    protected fun mapEntryShow(flowable: Flowable<List<EC>>) : Flowable<List<EC>> {
+        return flowable.map {
+            val ids = it.map { it.showId }
+            val shows = showDao.getShowWithIds(ids).map { it.id to it }.toMap()
+            it.map { it.show = shows[it.showId] }
+            it
+        }
+    }
 }

@@ -18,13 +18,13 @@ package me.banes.chris.tivi.home.trending
 
 import android.os.Bundle
 import android.view.View
-import com.uwetrottmann.trakt5.entities.TrendingShow
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import me.banes.chris.tivi.R
+import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.util.PaginatedGridFragment
 
 class TrendingShowsFragment
-    : PaginatedGridFragment<TrendingShow, TrendingShowsViewModel>(TrendingShowsViewModel::class.java) {
+    : PaginatedGridFragment<TrendingEntry, TrendingShowsViewModel>(TrendingShowsViewModel::class.java) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
