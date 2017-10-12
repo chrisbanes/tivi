@@ -20,8 +20,8 @@ import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.TvShow
 import io.reactivex.Maybe
 import io.reactivex.Single
-import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.data.daos.TiviShowDao
+import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.RetryAfterTimeoutWithDelay

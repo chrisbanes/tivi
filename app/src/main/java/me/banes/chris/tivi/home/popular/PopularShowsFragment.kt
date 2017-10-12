@@ -18,7 +18,6 @@ package me.banes.chris.tivi.home.popular
 
 import android.os.Bundle
 import android.view.View
-import com.uwetrottmann.trakt5.entities.Show
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.PopularEntry

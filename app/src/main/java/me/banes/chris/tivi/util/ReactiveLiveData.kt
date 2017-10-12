@@ -18,9 +18,9 @@ package me.banes.chris.tivi.util
 
 import android.arch.lifecycle.LiveData
 import io.reactivex.Flowable
-import org.reactivestreams.Subscription
-import org.reactivestreams.Subscriber
 import org.reactivestreams.Publisher
+import org.reactivestreams.Subscriber
+import org.reactivestreams.Subscription
 import java.lang.ref.WeakReference
 
 /**
