@@ -21,11 +21,10 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
-import me.banes.chris.tivi.data.Page
 import me.banes.chris.tivi.data.PaginatedEntry
 import me.banes.chris.tivi.data.daos.PaginatedEntryDao
-import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.data.daos.TiviShowDao
+import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.DatabaseTxRunner
 import timber.log.Timber
@@ -65,7 +64,7 @@ abstract class PaginatedTraktShowCallImpl<TT, ET : PaginatedEntry, out ED : Pagi
                 }
                 .toList()
                 .observeOn(schedulers.disk)
-                .doOnSuccess { savePage(Page(page, it), resetOnSave) }
+                .doOnSuccess { savePage(it, page, resetOnSave) }
     }
 
     override fun refresh(param: Unit): Completable {
@@ -79,14 +78,13 @@ abstract class PaginatedTraktShowCallImpl<TT, ET : PaginatedEntry, out ED : Pagi
                 .toCompletable()
     }
 
-    private fun savePage(page: Page<ET>, resetOnSave: Boolean) {
+    private fun savePage(items: List<ET>, page: Int, resetOnSave: Boolean) {
         databaseTxRunner.runInTransaction {
-            if (resetOnSave) {
-                entryDao.deleteAll()
-            } else {
-                entryDao.deletePage(page.page)
+            when {
+                resetOnSave -> entryDao.deleteAll()
+                else -> entryDao.deletePage(page)
             }
-            page.items.forEach { show ->
+            items.forEach { show ->
                 Timber.d("Saving entry: %s", show)
                 entryDao.insert(show)
             }
