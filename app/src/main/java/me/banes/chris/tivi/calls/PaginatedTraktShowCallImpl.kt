@@ -60,9 +60,7 @@ abstract class PaginatedTraktShowCallImpl<TT, ET : PaginatedEntry, out ED : Pagi
                 .filter { filterResponse(it) }
                 .flatMap { traktObject ->
                     loadShow(traktObject)
-                            .map { tiviShow ->
-                                mapToEntry(traktObject, tiviShow, page, 0)
-                            }
+                            .map { show -> mapToEntry(traktObject, show, page, 0) }
                             .toFlowable()
                 }
                 .toList()

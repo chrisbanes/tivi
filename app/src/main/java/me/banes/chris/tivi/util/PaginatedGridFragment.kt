@@ -37,7 +37,7 @@ import me.banes.chris.tivi.ui.TiviShowGridAdapter
 import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
-abstract class PaginatedGridFragment<EC : PaginatedEntry, VM : PaginatedTraktViewModel<*, EC, *>>(
+abstract class PaginatedGridFragment<EC : PaginatedEntry, VM : PaginatedTraktViewModel<EC>>(
         private val vmClass: Class<VM>?) : TiviFragment() {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory

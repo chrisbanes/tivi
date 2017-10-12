@@ -16,9 +16,7 @@
 
 package me.banes.chris.tivi.home.popular
 
-import com.uwetrottmann.trakt5.entities.Show
 import me.banes.chris.tivi.calls.PopularCall
-import me.banes.chris.tivi.data.daos.PopularDao
 import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.util.AppRxSchedulers
@@ -29,7 +27,7 @@ class PopularShowsViewModel @Inject constructor(
         schedulers: AppRxSchedulers,
         call: PopularCall,
         private val navigator: HomeNavigator)
-    : PaginatedTraktViewModel<Show, PopularEntry, PopularDao>(schedulers, call) {
+    : PaginatedTraktViewModel<PopularEntry>(schedulers, call) {
 
     fun onUpClicked() {
         navigator.onUpClicked()
