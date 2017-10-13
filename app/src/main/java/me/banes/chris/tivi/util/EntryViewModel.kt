@@ -42,7 +42,7 @@ open class EntryViewModel<ET : Entry>(
                     if (it.needsUpdateFromTmdb()) {
                         val fetcher = tmdbShowFetcher.getShow(it.tmdbId!!)
                         fetcher?.let {
-                            disposables += fetcher.subscribe()
+                            disposables += fetcher.subscribe({}, this::onError)
                         }
                     }
                 }
@@ -65,10 +65,12 @@ open class EntryViewModel<ET : Entry>(
             disposables += call.loadNextPage()
                     .observeOn(schedulers.main)
                     .doOnSubscribe { messages.value = Resource(Status.LOADING_MORE) }
-                    .subscribe(
-                            { messages.value = Resource(Status.SUCCESS) },
-                            { messages.value = Resource(Status.ERROR, it.localizedMessage) })
+                    .subscribe({ messages.value = Resource(Status.SUCCESS) }, this::onError)
         }
+    }
+
+    private fun onError(t: Throwable) {
+        messages.value = Resource(Status.ERROR, t.localizedMessage)
     }
 
     fun fullRefresh() {
