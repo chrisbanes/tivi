@@ -18,9 +18,10 @@ package me.banes.chris.tivi.home.library
 
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import me.banes.chris.tivi.data.entities.WatchedEntry
+import me.banes.chris.tivi.data.entities.WatchedListItem
 import me.banes.chris.tivi.util.EntryGridFragment
 
-class LibraryFragment : EntryGridFragment<WatchedEntry, LibraryViewModel>(LibraryViewModel::class.java) {
+class LibraryFragment : EntryGridFragment<WatchedListItem, LibraryViewModel>(LibraryViewModel::class.java) {
 
     internal fun scrollToTop() {
         grid_recyclerview.apply {

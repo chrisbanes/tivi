@@ -21,11 +21,12 @@ import android.arch.persistence.room.Query
 import io.reactivex.Flowable
 import me.banes.chris.tivi.data.TiviDatabase
 import me.banes.chris.tivi.data.entities.WatchedEntry
+import me.banes.chris.tivi.data.entities.WatchedListItem
 
 @Dao
-abstract class WatchedDao(db: TiviDatabase) : EntryDao<WatchedEntry>(db.showDao()) {
+abstract class WatchedDao(db: TiviDatabase) : EntryDao<WatchedEntry, WatchedListItem>(db.showDao()) {
     @Query("SELECT * FROM watched_entries")
-    abstract override fun entriesImpl(): Flowable<List<WatchedEntry>>
+    abstract override fun entries(): Flowable<List<WatchedListItem>>
 
     @Query("DELETE FROM watched_entries")
     abstract override fun deleteAll()

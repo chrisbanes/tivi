@@ -21,10 +21,10 @@ import android.view.View
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.PopularEntry
+import me.banes.chris.tivi.data.entities.PopularListItem
 import me.banes.chris.tivi.util.EntryGridFragment
 
-class PopularShowsFragment
-    : EntryGridFragment<PopularEntry, PopularShowsViewModel>(PopularShowsViewModel::class.java) {
+class PopularShowsFragment : EntryGridFragment<PopularListItem, PopularShowsViewModel>(PopularShowsViewModel::class.java) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

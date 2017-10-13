@@ -22,14 +22,15 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 import me.banes.chris.tivi.data.TiviDatabase
 import me.banes.chris.tivi.data.entities.PopularEntry
+import me.banes.chris.tivi.data.entities.PopularListItem
 
 @Dao
-abstract class PopularDao(db: TiviDatabase) : PaginatedEntryDao<PopularEntry>(db.showDao()) {
-    @Query("SELECT * FROM popular_shows ORDER BY page")
-    abstract override fun entriesImpl(): Flowable<List<PopularEntry>>
+abstract class PopularDao(db: TiviDatabase) : PaginatedEntryDao<PopularEntry, PopularListItem>(db.showDao()) {
+    @Query("SELECT * FROM popular_shows ORDER BY page, page_order")
+    abstract override fun entries(): Flowable<List<PopularListItem>>
 
     @Query("SELECT * FROM popular_shows WHERE page = :page")
-    abstract override fun entriesPageImpl(page: Int): Flowable<List<PopularEntry>>
+    abstract override fun entriesPage(page: Int): Flowable<List<PopularListItem>>
 
     @Query("DELETE FROM popular_shows WHERE page = :page")
     abstract override fun deletePage(page: Int)

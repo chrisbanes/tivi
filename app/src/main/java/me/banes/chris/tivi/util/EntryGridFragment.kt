@@ -31,13 +31,14 @@ import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
 import me.banes.chris.tivi.api.Status
 import me.banes.chris.tivi.data.Entry
+import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.ui.EndlessRecyclerViewScrollListener
 import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.ui.TiviShowGridAdapter
 import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
-abstract class EntryGridFragment<EC : Entry, VM : EntryViewModel<EC>>(
+abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<LI>>(
         private val vmClass: Class<VM>?) : TiviFragment() {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory

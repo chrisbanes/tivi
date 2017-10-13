@@ -25,6 +25,7 @@ import me.banes.chris.tivi.api.ItemWithIndex
 import me.banes.chris.tivi.data.daos.PopularDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.PopularEntry
+import me.banes.chris.tivi.data.entities.PopularListItem
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
@@ -38,17 +39,13 @@ class PopularCall @Inject constructor(
         traktShowFetcher: TraktShowFetcher,
         trakt: TraktV2,
         schedulers: AppRxSchedulers
-) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularDao>(databaseTxRunner, showDao, popularDao, trakt, schedulers, traktShowFetcher) {
+) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularListItem, PopularDao>(databaseTxRunner, showDao, popularDao, trakt, schedulers, traktShowFetcher) {
 
     override fun networkCall(page: Int): Single<List<ItemWithIndex<Show>>> {
         // We add one to the page since Trakt uses a 1-based index whereas we use 0-based
         return trakt.shows().popular(page + 1, pageSize, Extended.NOSEASONS)
                 .toRxSingle()
                 .map { it.mapIndexed { index, show -> ItemWithIndex(show, index) } }
-    }
-
-    override fun filterResponse(response: ItemWithIndex<Show>): Boolean {
-        return response.item.ids.tmdb != null
     }
 
     override fun mapToEntry(networkEntity: ItemWithIndex<Show>, show: TiviShow, page: Int): PopularEntry {

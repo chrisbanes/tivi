@@ -20,26 +20,13 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import io.reactivex.Flowable
 import me.banes.chris.tivi.data.Entry
+import me.banes.chris.tivi.data.entities.ListItem
 
-abstract class EntryDao<EC : Entry>(protected val showDao: TiviShowDao) {
-
-    protected abstract fun entriesImpl(): Flowable<List<EC>>
-
-    fun entries(): Flowable<List<EC>> {
-        return mapEntryShow(entriesImpl())
-    }
+abstract class EntryDao<EC : Entry, LI : ListItem<EC>>(protected val showDao: TiviShowDao) {
+    abstract fun entries(): Flowable<List<LI>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insert(entry: EC): Long
 
     abstract fun deleteAll()
-
-    protected fun mapEntryShow(flowable: Flowable<List<EC>>) : Flowable<List<EC>> {
-        return flowable.map {
-            val ids = it.map { it.showId }
-            val shows = showDao.getShowWithIds(ids).map { it.id to it }.toMap()
-            it.map { it.show = shows[it.showId] }
-            it
-        }
-    }
 }

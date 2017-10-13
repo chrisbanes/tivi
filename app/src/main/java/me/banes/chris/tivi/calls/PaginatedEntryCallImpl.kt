@@ -24,12 +24,13 @@ import io.reactivex.Single
 import me.banes.chris.tivi.data.PaginatedEntry
 import me.banes.chris.tivi.data.daos.PaginatedEntryDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
+import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.DatabaseTxRunner
 import timber.log.Timber
 
-abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, out ED : PaginatedEntryDao<ET>>(
+abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>, out ED : PaginatedEntryDao<ET, LI>>(
         private val databaseTxRunner: DatabaseTxRunner,
         protected val showDao: TiviShowDao,
         protected val entryDao: ED,
@@ -37,15 +38,15 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, out ED : Paginate
         protected val schedulers: AppRxSchedulers,
         protected val traktShowFetcher: TraktShowFetcher,
         protected var pageSize: Int = 15
-) : PaginatedCall<Unit, List<ET>> {
+) : PaginatedCall<Unit, List<LI>> {
 
-    override fun data(): Flowable<List<ET>> {
+    override fun data(): Flowable<List<LI>> {
         return entryDao.entries()
                 .distinctUntilChanged()
                 .subscribeOn(schedulers.disk)
     }
 
-    override fun data(page: Int): Flowable<List<ET>> {
+    override fun data(page: Int): Flowable<List<LI>> {
         return entryDao.entriesPage(page)
                 .subscribeOn(schedulers.disk)
                 .distinctUntilChanged()
@@ -56,7 +57,6 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, out ED : Paginate
                 .subscribeOn(schedulers.network)
                 .toFlowable()
                 .flatMapIterable { it }
-                .filter { filterResponse(it) }
                 .flatMapMaybe { traktObject ->
                     loadShow(traktObject).map { show -> mapToEntry(traktObject, show, page) }
                 }
@@ -94,7 +94,5 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, out ED : Paginate
     protected abstract fun loadShow(response: TT): Maybe<TiviShow>
 
     protected abstract fun networkCall(page: Int): Single<List<TT>>
-
-    protected abstract fun filterResponse(response: TT): Boolean
 
 }

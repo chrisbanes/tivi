@@ -56,7 +56,7 @@ internal class DiscoverViewModel @Inject constructor(
                 .subscribe {
                     items[POPULAR]?.apply {
                         clear()
-                        addAll(it.map { it.show!! })
+                        addAll(it.map { it?.show!! })
                     }
                     data.value = items
                 }
@@ -66,7 +66,7 @@ internal class DiscoverViewModel @Inject constructor(
                 .subscribe {
                     items[TRENDING]?.apply {
                         clear()
-                        addAll(it.map { it.show!! })
+                        addAll(it.map { it?.show!! })
                     }
                     data.value = items
                 }

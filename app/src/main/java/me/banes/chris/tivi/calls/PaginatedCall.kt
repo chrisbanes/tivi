@@ -19,7 +19,7 @@ package me.banes.chris.tivi.calls
 import io.reactivex.Completable
 import io.reactivex.Flowable
 
-interface PaginatedCall<in Param, Output> : Call<Param, Output> {
-    fun data(page: Int): Flowable<Output>
+interface PaginatedCall<in Param, DatabaseOutput> : Call<Param, DatabaseOutput> {
+    fun data(page: Int): Flowable<DatabaseOutput>
     fun loadNextPage(): Completable
 }
