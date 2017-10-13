@@ -36,21 +36,13 @@ class TrendingCall @Inject constructor(
         trendingDao: TrendingDao,
         traktShowFetcher: TraktShowFetcher,
         trakt: TraktV2,
-        schedulers: AppRxSchedulers)
-    : PaginatedEntryCallImpl<TrendingShow, TrendingEntry, TrendingDao>(databaseTxRunner, showDao, trendingDao, trakt, schedulers, traktShowFetcher) {
+        schedulers: AppRxSchedulers
+) : PaginatedEntryCallImpl<TrendingShow, TrendingEntry, TrendingDao>(databaseTxRunner, showDao, trendingDao, trakt, schedulers, traktShowFetcher) {
 
     override fun networkCall(page: Int): Single<List<TrendingShow>> {
-        return trakt.shows()
-                .trending(page + 1, page, Extended.NOSEASONS)
+        // We add one to the page since Trakt uses a 1-based index whereas we use 0-based
+        return trakt.shows().trending(page + 1, pageSize, Extended.NOSEASONS)
                 .toRxSingle()
-    }
-
-    override fun filterResponse(response: TrendingShow): Boolean {
-        return response.show.ids.tmdb != null
-    }
-
-    override fun loadShow(response: TrendingShow): Maybe<TiviShow> {
-        return traktShowFetcher.getShow(response.show.ids.trakt, response.show)
     }
 
     override fun mapToEntry(networkEntity: TrendingShow, show: TiviShow, page: Int): TrendingEntry {
@@ -58,6 +50,10 @@ class TrendingCall @Inject constructor(
         return TrendingEntry(showId = show.id!!, page = page, watchers = networkEntity.watchers).apply {
             this.show = show
         }
+    }
+
+    override fun loadShow(response: TrendingShow): Maybe<TiviShow> {
+        return traktShowFetcher.getShow(response.show.ids.trakt, response.show)
     }
 
 }

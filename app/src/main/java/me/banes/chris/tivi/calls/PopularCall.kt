@@ -47,10 +47,6 @@ class PopularCall @Inject constructor(
                 .map { it.mapIndexed { index, show -> ItemWithIndex(show, index) } }
     }
 
-    override fun filterResponse(response: ItemWithIndex<Show>): Boolean {
-        return response.item.ids.tmdb != null
-    }
-
     override fun mapToEntry(networkEntity: ItemWithIndex<Show>, show: TiviShow, page: Int): PopularEntry {
         assert(show.id != null)
         return PopularEntry(showId = show.id!!, page = page, pageOrder = networkEntity.index).apply {

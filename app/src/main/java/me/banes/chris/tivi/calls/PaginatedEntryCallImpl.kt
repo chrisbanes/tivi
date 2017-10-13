@@ -56,7 +56,6 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, out ED : Paginate
                 .subscribeOn(schedulers.network)
                 .toFlowable()
                 .flatMapIterable { it }
-                .filter { filterResponse(it) }
                 .flatMapMaybe { traktObject ->
                     loadShow(traktObject).map { show -> mapToEntry(traktObject, show, page) }
                 }
@@ -94,7 +93,5 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, out ED : Paginate
     protected abstract fun loadShow(response: TT): Maybe<TiviShow>
 
     protected abstract fun networkCall(page: Int): Single<List<TT>>
-
-    protected abstract fun filterResponse(response: TT): Boolean
 
 }
