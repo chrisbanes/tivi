@@ -19,14 +19,11 @@ package me.banes.chris.tivi.data.daos
 import io.reactivex.Flowable
 import io.reactivex.Single
 import me.banes.chris.tivi.data.PaginatedEntry
+import me.banes.chris.tivi.data.entities.ListItem
 
-abstract class PaginatedEntryDao<EC : PaginatedEntry>(showDao: TiviShowDao) : EntryDao<EC>(showDao) {
+abstract class PaginatedEntryDao<EC : PaginatedEntry, LI : ListItem<EC>>(showDao: TiviShowDao) : EntryDao<EC, LI>(showDao) {
 
-    protected abstract fun entriesPageImpl(page: Int): Flowable<List<EC>>
-
-    fun entriesPage(page: Int): Flowable<List<EC>> {
-        return mapEntryShow(entriesPageImpl(page))
-    }
+    abstract fun entriesPage(page: Int): Flowable<List<LI>>
 
     abstract fun deletePage(page: Int)
 

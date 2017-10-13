@@ -19,7 +19,7 @@ package me.banes.chris.tivi.calls
 import io.reactivex.Completable
 import io.reactivex.Flowable
 
-interface Call<in Param, Output> {
-    fun data(): Flowable<Output>
+interface Call<in Param, DatabaseOutput> {
+    fun data(): Flowable<DatabaseOutput>
     fun refresh(param: Param): Completable
 }

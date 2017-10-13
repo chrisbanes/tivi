@@ -25,6 +25,7 @@ import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.daos.TrendingDao
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.data.entities.TrendingEntry
+import me.banes.chris.tivi.data.entities.TrendingListItem
 import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.DatabaseTxRunner
@@ -37,7 +38,7 @@ class TrendingCall @Inject constructor(
         traktShowFetcher: TraktShowFetcher,
         trakt: TraktV2,
         schedulers: AppRxSchedulers
-) : PaginatedEntryCallImpl<TrendingShow, TrendingEntry, TrendingDao>(databaseTxRunner, showDao, trendingDao, trakt, schedulers, traktShowFetcher) {
+) : PaginatedEntryCallImpl<TrendingShow, TrendingEntry, TrendingListItem, TrendingDao>(databaseTxRunner, showDao, trendingDao, trakt, schedulers, traktShowFetcher) {
 
     override fun networkCall(page: Int): Single<List<TrendingShow>> {
         // We add one to the page since Trakt uses a 1-based index whereas we use 0-based

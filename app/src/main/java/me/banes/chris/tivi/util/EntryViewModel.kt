@@ -24,21 +24,22 @@ import me.banes.chris.tivi.calls.Call
 import me.banes.chris.tivi.calls.PaginatedCall
 import me.banes.chris.tivi.calls.TmdbShowFetcher
 import me.banes.chris.tivi.data.Entry
+import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.extensions.plusAssign
 
-open class EntryViewModel<ET : Entry>(
+open class EntryViewModel<ET : Entry, LI : ListItem<ET>>(
         val schedulers: AppRxSchedulers,
-        val call: Call<Unit, List<ET>>,
+        val call: Call<Unit, List<LI>>,
         private val tmdbShowFetcher: TmdbShowFetcher,
         refreshOnStartup: Boolean) : RxAwareViewModel() {
 
     /**
      * This is what my UI (Fragment) observes. Its backed by Room and a network call
      */
-    val data: LiveData<List<ET>> by lazy(mode = LazyThreadSafetyMode.NONE) {
+    val data: LiveData<List<LI>> by lazy(mode = LazyThreadSafetyMode.NONE) {
         val updateCall = call.data().doOnNext {
             it.forEach {
-                it.show?.let {
+                it?.shows?.get(0)?.let {
                     if (it.needsUpdateFromTmdb()) {
                         val fetcher = tmdbShowFetcher.getShow(it.tmdbId!!)
                         fetcher?.let {
