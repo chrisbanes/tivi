@@ -17,7 +17,6 @@
 package me.banes.chris.tivi.calls
 
 import com.uwetrottmann.trakt5.TraktV2
-import com.uwetrottmann.trakt5.entities.Show
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
@@ -36,7 +35,7 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, out ED : Paginate
         protected val entryDao: ED,
         protected val trakt: TraktV2,
         protected val schedulers: AppRxSchedulers,
-        protected val tmdbShowFetcher: TmdbShowFetcher,
+        protected val traktShowFetcher: TraktShowFetcher,
         protected var pageSize: Int = 15
 ) : PaginatedCall<Unit, List<ET>> {
 
@@ -58,10 +57,8 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, out ED : Paginate
                 .toFlowable()
                 .flatMapIterable { it }
                 .filter { filterResponse(it) }
-                .flatMap { traktObject ->
-                    loadShow(traktObject)
-                            .map { show -> mapToEntry(traktObject, show, page) }
-                            .toFlowable()
+                .flatMapMaybe { traktObject ->
+                    loadShow(traktObject).map { show -> mapToEntry(traktObject, show, page) }
                 }
                 .toList()
                 .observeOn(schedulers.disk)
@@ -96,28 +93,8 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, out ED : Paginate
 
     protected abstract fun loadShow(response: TT): Maybe<TiviShow>
 
-    protected fun loadShow(traktId: Int, tmdbId: Int, response: TT): Maybe<TiviShow> {
-        val dbSource = showDao.getShowFromId(tmdbId, traktId)
-                .subscribeOn(schedulers.disk)
-
-        // TODO New source should check the database before just inserting
-        val newSource = Maybe.just(mapShow(response))
-                .observeOn(schedulers.disk)
-                .map { it.copy(id = showDao.insertShow(it)) }
-
-        return Maybe.concat(dbSource, newSource).firstElement()
-    }
-
-    protected abstract fun mapShow(response: TT): TiviShow
-
     protected abstract fun networkCall(page: Int): Single<List<TT>>
 
     protected abstract fun filterResponse(response: TT): Boolean
-
-    protected fun mapFromTraktShow(show: Show): TiviShow {
-        return TiviShow(title = show.title,
-                traktId = show.ids.trakt,
-                tmdbId = show.ids.tmdb)
-    }
 
 }

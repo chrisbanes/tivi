@@ -35,10 +35,10 @@ class PopularCall @Inject constructor(
         databaseTxRunner: DatabaseTxRunner,
         showDao: TiviShowDao,
         popularDao: PopularDao,
-        tmdbShowFetcher: TmdbShowFetcher,
+        traktShowFetcher: TraktShowFetcher,
         trakt: TraktV2,
         schedulers: AppRxSchedulers
-) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularDao>(databaseTxRunner, showDao, popularDao, trakt, schedulers, tmdbShowFetcher) {
+) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularDao>(databaseTxRunner, showDao, popularDao, trakt, schedulers, traktShowFetcher) {
 
     override fun networkCall(page: Int): Single<List<ItemWithIndex<Show>>> {
         // We add one to the page since Trakt uses a 1-based index whereas we use 0-based
@@ -58,11 +58,7 @@ class PopularCall @Inject constructor(
         }
     }
 
-    override fun mapShow(response: ItemWithIndex<Show>): TiviShow {
-        return mapFromTraktShow(response.item)
-    }
-
     override fun loadShow(response: ItemWithIndex<Show>): Maybe<TiviShow> {
-        return loadShow(response.item.ids.trakt, response.item.ids.tmdb, response)
+        return traktShowFetcher.getShow(response.item.ids.trakt, response.item)
     }
 }

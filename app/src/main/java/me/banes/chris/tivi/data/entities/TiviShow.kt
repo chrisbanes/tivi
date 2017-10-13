@@ -41,9 +41,9 @@ data class TiviShow(
         @ColumnInfo(name = "homepage") val homepage: String? = null) {
 
     fun needsUpdateFromTmdb(): Boolean {
-        return tmdbId == null
-                || lastTmdbUpdate == null
-                || olderThan(lastTmdbUpdate, 1, TimeUnit.DAYS)
+        return tmdbId != null
+                && (lastTmdbUpdate == null
+                || olderThan(lastTmdbUpdate, 1, TimeUnit.DAYS))
     }
 
     private fun olderThan(date: Date, period: Long, unit: TimeUnit): Boolean {

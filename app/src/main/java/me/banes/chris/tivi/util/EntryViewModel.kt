@@ -40,7 +40,7 @@ open class EntryViewModel<ET : Entry>(
             it.forEach {
                 it.show?.let {
                     if (it.needsUpdateFromTmdb()) {
-                        disposables += tmdbShowFetcher.showFromTmdb(it.tmdbId!!, it.traktId!!).subscribe()
+                        disposables += tmdbShowFetcher.getShow(it.tmdbId!!).subscribe()
                     }
                 }
             }

@@ -34,10 +34,10 @@ class TrendingCall @Inject constructor(
         databaseTxRunner: DatabaseTxRunner,
         showDao: TiviShowDao,
         trendingDao: TrendingDao,
-        tmdbShowFetcher: TmdbShowFetcher,
+        traktShowFetcher: TraktShowFetcher,
         trakt: TraktV2,
         schedulers: AppRxSchedulers)
-    : PaginatedEntryCallImpl<TrendingShow, TrendingEntry, TrendingDao>(databaseTxRunner, showDao, trendingDao, trakt, schedulers, tmdbShowFetcher) {
+    : PaginatedEntryCallImpl<TrendingShow, TrendingEntry, TrendingDao>(databaseTxRunner, showDao, trendingDao, trakt, schedulers, traktShowFetcher) {
 
     override fun networkCall(page: Int): Single<List<TrendingShow>> {
         return trakt.shows()
@@ -50,11 +50,7 @@ class TrendingCall @Inject constructor(
     }
 
     override fun loadShow(response: TrendingShow): Maybe<TiviShow> {
-        return loadShow(response.show.ids.trakt, response.show.ids.tmdb, response)
-    }
-
-    override fun mapShow(response: TrendingShow): TiviShow {
-        return mapFromTraktShow(response.show)
+        return traktShowFetcher.getShow(response.show.ids.trakt, response.show)
     }
 
     override fun mapToEntry(networkEntity: TrendingShow, show: TiviShow, page: Int): TrendingEntry {

@@ -31,7 +31,7 @@ import javax.inject.Inject
 class WatchedCall @Inject constructor(
         private val databaseTxRunner: DatabaseTxRunner,
         private val watchDao: WatchedDao,
-        private val tmdbShowFetcher: TmdbShowFetcher,
+        private val traktShowFetcher: TraktShowFetcher,
         private val trakt: TraktV2,
         private val schedulers: AppRxSchedulers) : Call<Unit, List<WatchedEntry>> {
 
@@ -46,12 +46,8 @@ class WatchedCall @Inject constructor(
                 .subscribeOn(schedulers.network)
                 .toFlowable()
                 .flatMapIterable { it }
-                .filter { it.show.ids.tmdb != null } // TODO This needs to be removed
-                .flatMap { traktObject ->
-                    tmdbShowFetcher.showFromTmdb(traktObject.show.ids.tmdb, traktObject.show.ids.trakt)
-                            .map { show -> WatchedEntry(showId = show.id!!).apply { this.show = show } }
-                            .toFlowable()
-                }
+                .flatMapMaybe { traktShowFetcher.getShow(it.show.ids.trakt, it.show) }
+                .map { WatchedEntry(showId = it.id!!).apply { this.show = it } }
                 .toList()
                 .observeOn(schedulers.disk)
                 .doOnSuccess {
