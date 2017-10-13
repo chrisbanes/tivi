@@ -22,19 +22,30 @@ import me.banes.chris.tivi.api.Resource
 import me.banes.chris.tivi.api.Status
 import me.banes.chris.tivi.calls.Call
 import me.banes.chris.tivi.calls.PaginatedCall
+import me.banes.chris.tivi.calls.TmdbShowFetcher
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.extensions.plusAssign
 
 open class EntryViewModel<ET : Entry>(
         val schedulers: AppRxSchedulers,
         val call: Call<Unit, List<ET>>,
+        private val tmdbShowFetcher: TmdbShowFetcher,
         refreshOnStartup: Boolean) : RxAwareViewModel() {
 
     /**
      * This is what my UI (Fragment) observes. Its backed by Room and a network call
      */
     val data: LiveData<List<ET>> by lazy(mode = LazyThreadSafetyMode.NONE) {
-        ReactiveLiveData(call.data())
+        val updateCall = call.data().doOnNext {
+            it.forEach {
+                it.show?.let {
+                    if (it.needsUpdateFromTmdb()) {
+                        disposables += tmdbShowFetcher.showFromTmdb(it.tmdbId!!, it.traktId!!).subscribe()
+                    }
+                }
+            }
+        }
+        ReactiveLiveData(updateCall)
     }
 
     val messages = MutableLiveData<Resource>()

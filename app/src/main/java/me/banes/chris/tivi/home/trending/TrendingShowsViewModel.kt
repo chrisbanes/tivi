@@ -16,6 +16,7 @@
 
 package me.banes.chris.tivi.home.trending
 
+import me.banes.chris.tivi.calls.TmdbShowFetcher
 import me.banes.chris.tivi.calls.TrendingCall
 import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.home.HomeNavigator
@@ -26,8 +27,9 @@ import javax.inject.Inject
 class TrendingShowsViewModel @Inject constructor(
         schedulers: AppRxSchedulers,
         call: TrendingCall,
+        tmdbShowFetcher: TmdbShowFetcher,
         private val navigator: HomeNavigator)
-    : EntryViewModel<TrendingEntry>(schedulers, call, refreshOnStartup = true) {
+    : EntryViewModel<TrendingEntry>(schedulers, call, tmdbShowFetcher, refreshOnStartup = true) {
 
     fun onUpClicked() {
         navigator.onUpClicked()

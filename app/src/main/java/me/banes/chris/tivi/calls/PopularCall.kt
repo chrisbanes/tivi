@@ -58,10 +58,11 @@ class PopularCall @Inject constructor(
         }
     }
 
-    override fun loadShow(response: ItemWithIndex<Show>): Maybe<TiviShow> {
-        return response.item.let {
-            tmdbShowFetcher.showFromTmdb(it.ids.tmdb, it.ids.trakt)
-        }
+    override fun mapShow(response: ItemWithIndex<Show>): TiviShow {
+        return mapFromTraktShow(response.item)
     }
 
+    override fun loadShow(response: ItemWithIndex<Show>): Maybe<TiviShow> {
+        return loadShow(response.item.ids.trakt, response.item.ids.tmdb, response)
+    }
 }

@@ -17,6 +17,7 @@
 package me.banes.chris.tivi.home.popular
 
 import me.banes.chris.tivi.calls.PopularCall
+import me.banes.chris.tivi.calls.TmdbShowFetcher
 import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.util.AppRxSchedulers
@@ -26,8 +27,9 @@ import javax.inject.Inject
 class PopularShowsViewModel @Inject constructor(
         schedulers: AppRxSchedulers,
         call: PopularCall,
+        tmdbShowFetcher: TmdbShowFetcher,
         private val navigator: HomeNavigator)
-    : EntryViewModel<PopularEntry>(schedulers, call, refreshOnStartup = true) {
+    : EntryViewModel<PopularEntry>(schedulers, call, tmdbShowFetcher, refreshOnStartup = true) {
 
     fun onUpClicked() {
         navigator.onUpClicked()

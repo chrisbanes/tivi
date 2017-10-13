@@ -50,7 +50,11 @@ class TrendingCall @Inject constructor(
     }
 
     override fun loadShow(response: TrendingShow): Maybe<TiviShow> {
-        return tmdbShowFetcher.showFromTmdb(response.show.ids.tmdb, response.show.ids.trakt)
+        return loadShow(response.show.ids.trakt, response.show.ids.tmdb, response)
+    }
+
+    override fun mapShow(response: TrendingShow): TiviShow {
+        return mapFromTraktShow(response.show)
     }
 
     override fun mapToEntry(networkEntity: TrendingShow, show: TiviShow, page: Int): TrendingEntry {
