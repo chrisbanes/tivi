@@ -38,7 +38,7 @@ import me.banes.chris.tivi.ui.TiviShowGridAdapter
 import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
-abstract class EntryGridFragment<EC : Entry, LI : ListItem<EC>, VM : EntryViewModel<EC, LI>>(
+abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<LI>>(
         private val vmClass: Class<VM>?) : TiviFragment() {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -75,7 +75,7 @@ abstract class EntryGridFragment<EC : Entry, LI : ListItem<EC>, VM : EntryViewMo
         super.onStart()
 
         viewModel.data.observe(this, Observer {
-            it.let { adapter.updateItems(it!!.map { it?.shows?.get(0)!! }) }
+            it.let { adapter.updateItems(it!!.map { it.shows?.get(0)!! }) }
         })
 
         viewModel.messages.observe(this, Observer {

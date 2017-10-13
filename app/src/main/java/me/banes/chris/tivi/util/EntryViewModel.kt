@@ -27,7 +27,7 @@ import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.extensions.plusAssign
 
-open class EntryViewModel<ET : Entry, LI : ListItem<ET>>(
+open class EntryViewModel<LI : ListItem<out Entry>>(
         val schedulers: AppRxSchedulers,
         val call: Call<Unit, List<LI>>,
         private val tmdbShowFetcher: TmdbShowFetcher,

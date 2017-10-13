@@ -30,7 +30,7 @@ class PopularShowsViewModel @Inject constructor(
         call: PopularCall,
         tmdbShowFetcher: TmdbShowFetcher,
         private val navigator: HomeNavigator
-) : EntryViewModel<PopularEntry, PopularListItem>(schedulers, call, tmdbShowFetcher, refreshOnStartup = true) {
+) : EntryViewModel<PopularListItem>(schedulers, call, tmdbShowFetcher, refreshOnStartup = true) {
 
     fun onUpClicked() {
         navigator.onUpClicked()

@@ -24,8 +24,7 @@ import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.data.entities.TrendingListItem
 import me.banes.chris.tivi.util.EntryGridFragment
 
-class TrendingShowsFragment
-    : EntryGridFragment<TrendingEntry, TrendingListItem, TrendingShowsViewModel>(TrendingShowsViewModel::class.java) {
+class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsViewModel>(TrendingShowsViewModel::class.java) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -30,7 +30,7 @@ class TrendingShowsViewModel @Inject constructor(
         call: TrendingCall,
         tmdbShowFetcher: TmdbShowFetcher,
         private val navigator: HomeNavigator
-) : EntryViewModel<TrendingEntry, TrendingListItem>(schedulers, call, tmdbShowFetcher, refreshOnStartup = true) {
+) : EntryViewModel<TrendingListItem>(schedulers, call, tmdbShowFetcher, refreshOnStartup = true) {
 
     fun onUpClicked() {
         navigator.onUpClicked()

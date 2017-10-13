@@ -24,8 +24,7 @@ import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.PopularListItem
 import me.banes.chris.tivi.util.EntryGridFragment
 
-class PopularShowsFragment
-    : EntryGridFragment<PopularEntry, PopularListItem, PopularShowsViewModel>(PopularShowsViewModel::class.java) {
+class PopularShowsFragment : EntryGridFragment<PopularListItem, PopularShowsViewModel>(PopularShowsViewModel::class.java) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

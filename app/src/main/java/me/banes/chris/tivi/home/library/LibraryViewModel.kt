@@ -28,4 +28,4 @@ class LibraryViewModel @Inject constructor(
         schedulers: AppRxSchedulers,
         call: WatchedCall,
         tmdbShowFetcher: TmdbShowFetcher
-) : EntryViewModel<WatchedEntry, WatchedListItem>(schedulers, call, tmdbShowFetcher, refreshOnStartup = false)
+) : EntryViewModel<WatchedListItem>(schedulers, call, tmdbShowFetcher, refreshOnStartup = false)
