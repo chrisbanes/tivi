@@ -16,6 +16,7 @@
 
 package me.banes.chris.tivi.calls
 
+import android.support.v4.util.LruCache
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.TvShow
 import com.uwetrottmann.trakt5.TraktV2
@@ -42,11 +43,12 @@ class TmdbShowFetcher @Inject constructor(
         private val tmdb: Tmdb,
         private val schedulers: AppRxSchedulers
 ) {
-    private val active = setOf<Int>()
+    private val active = LruCache<Int, Maybe<TiviShow>>(100)
 
-    fun getShow(tmdbId: Int): Maybe<TiviShow>? {
-        if (active.contains(tmdbId)) {
-            return null
+    fun getShow(tmdbId: Int): Maybe<TiviShow> {
+        val cached = active[tmdbId]
+        if (cached != null) {
+            return cached
         }
 
         val dbSource = showDao.getShowWithTmdbId(tmdbId)
@@ -70,10 +72,9 @@ class TmdbShowFetcher @Inject constructor(
                     show
                 }
 
-        return Maybe.concat(dbSource, networkSource.toMaybe())
-                .firstElement()
-                .doOnSubscribe { active.plus(tmdbId) }
-                .doOnComplete { active.minus(tmdbId) }
+        val m = Maybe.concat(dbSource, networkSource.toMaybe()).firstElement()
+        active.put(tmdbId, m)
+        return m
     }
 
     private fun mapShow(tmdbShow: TvShow): Single<TiviShow> {
