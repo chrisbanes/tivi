@@ -36,7 +36,7 @@ data class TrendingEntry(
         @PrimaryKey(autoGenerate = true) override val id: Long? = null,
         @ColumnInfo(name = "show_id") override val showId: Long,
         @ColumnInfo(name = "page") override val page: Int,
-        @ColumnInfo(name = "page_order") override val pageOrder: Int
+        @ColumnInfo(name = "watchers") val watchers: Int
 ) : PaginatedEntry {
     @Ignore override var show : TiviShow? = null
 }

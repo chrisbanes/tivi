@@ -59,7 +59,7 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, out ED : Paginate
                 .filter { filterResponse(it) }
                 .flatMap { traktObject ->
                     loadShow(traktObject)
-                            .map { show -> mapToEntry(traktObject, show, page, 0) }
+                            .map { show -> mapToEntry(traktObject, show, page) }
                             .toFlowable()
                 }
                 .toList()
@@ -91,7 +91,7 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, out ED : Paginate
         }
     }
 
-    protected abstract fun mapToEntry(networkEntity: TT, show: TiviShow, page: Int, pageOrder: Int): ET
+    protected abstract fun mapToEntry(networkEntity: TT, show: TiviShow, page: Int): ET
 
     protected abstract fun loadShow(response: TT): Maybe<TiviShow>
 

@@ -25,10 +25,10 @@ import me.banes.chris.tivi.data.entities.TrendingEntry
 
 @Dao
 abstract class TrendingDao(db: TiviDatabase) : PaginatedEntryDao<TrendingEntry>(db.showDao()) {
-    @Query("SELECT * FROM trending_shows ORDER BY page, page_order")
+    @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC")
     abstract override fun entriesImpl(): Flowable<List<TrendingEntry>>
 
-    @Query("SELECT * FROM trending_shows WHERE page = :page ORDER BY page_order")
+    @Query("SELECT * FROM trending_shows WHERE page = :page ORDER BY watchers DESC")
     abstract override fun entriesPageImpl(page: Int): Flowable<List<TrendingEntry>>
 
     @Query("DELETE FROM trending_shows WHERE page = :page")

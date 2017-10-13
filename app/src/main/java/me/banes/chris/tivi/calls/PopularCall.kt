@@ -21,6 +21,7 @@ import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Maybe
 import io.reactivex.Single
+import me.banes.chris.tivi.api.ItemWithIndex
 import me.banes.chris.tivi.data.daos.PopularDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.PopularEntry
@@ -37,29 +38,30 @@ class PopularCall @Inject constructor(
         tmdbShowFetcher: TmdbShowFetcher,
         trakt: TraktV2,
         schedulers: AppRxSchedulers
-) : PaginatedEntryCallImpl<Show, PopularEntry, PopularDao>(databaseTxRunner, showDao, popularDao, trakt, schedulers, tmdbShowFetcher) {
+) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularDao>(databaseTxRunner, showDao, popularDao, trakt, schedulers, tmdbShowFetcher) {
 
-    override fun networkCall(page: Int): Single<List<Show>> {
-        return trakt.shows().popular(
-                page + 1, // Trakt uses a 1 based index
-                pageSize,
-                Extended.NOSEASONS)
+    override fun networkCall(page: Int): Single<List<ItemWithIndex<Show>>> {
+        // We add one to the page since Trakt uses a 1-based index whereas we use 0-based
+        return trakt.shows().popular(page + 1, pageSize, Extended.NOSEASONS)
                 .toRxSingle()
+                .map { it.mapIndexed { index, show -> ItemWithIndex(show, index) } }
     }
 
-    override fun filterResponse(response: Show): Boolean {
-        return response.ids.tmdb != null
+    override fun filterResponse(response: ItemWithIndex<Show>): Boolean {
+        return response.item.ids.tmdb != null
     }
 
-    override fun mapToEntry(networkEntity: Show, show: TiviShow, page: Int, pageOrder: Int): PopularEntry {
+    override fun mapToEntry(networkEntity: ItemWithIndex<Show>, show: TiviShow, page: Int): PopularEntry {
         assert(show.id != null)
-        return PopularEntry(showId = show.id!!, page = page, pageOrder = pageOrder).apply {
+        return PopularEntry(showId = show.id!!, page = page, pageOrder = networkEntity.index).apply {
             this.show = show
         }
     }
 
-    override fun loadShow(response: Show): Maybe<TiviShow> {
-        return tmdbShowFetcher.showFromTmdb(response.ids.tmdb, response.ids.trakt)
+    override fun loadShow(response: ItemWithIndex<Show>): Maybe<TiviShow> {
+        return response.item.let {
+            tmdbShowFetcher.showFromTmdb(it.ids.tmdb, it.ids.trakt)
+        }
     }
 
 }

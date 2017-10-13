@@ -53,9 +53,9 @@ class TrendingCall @Inject constructor(
         return tmdbShowFetcher.showFromTmdb(response.show.ids.tmdb, response.show.ids.trakt)
     }
 
-    override fun mapToEntry(networkEntity: TrendingShow, show: TiviShow, page: Int, pageOrder: Int): TrendingEntry {
+    override fun mapToEntry(networkEntity: TrendingShow, show: TiviShow, page: Int): TrendingEntry {
         assert(show.id != null)
-        return TrendingEntry(showId = show.id!!, page = page, pageOrder = pageOrder).apply {
+        return TrendingEntry(showId = show.id!!, page = page, watchers = networkEntity.watchers).apply {
             this.show = show
         }
     }

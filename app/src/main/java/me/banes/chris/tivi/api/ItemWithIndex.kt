@@ -14,16 +14,6 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.data
+package me.banes.chris.tivi.api
 
-import me.banes.chris.tivi.data.entities.TiviShow
-
-interface Entry {
-    val id: Long?
-    val showId: Long
-    var show: TiviShow?
-}
-
-interface PaginatedEntry : Entry {
-    val page: Int
-}
+data class ItemWithIndex<out T>(val item: T, val index: Int)
