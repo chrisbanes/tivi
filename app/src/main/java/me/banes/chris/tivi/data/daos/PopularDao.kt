@@ -16,18 +16,21 @@
 
 package me.banes.chris.tivi.data.daos
 
+import android.arch.paging.LivePagedListProvider
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import io.reactivex.Flowable
 import io.reactivex.Single
-import me.banes.chris.tivi.data.TiviDatabase
 import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.PopularListItem
 
 @Dao
-abstract class PopularDao(db: TiviDatabase) : PaginatedEntryDao<PopularEntry, PopularListItem>(db.showDao()) {
+abstract class PopularDao : PaginatedEntryDao<PopularEntry, PopularListItem> {
     @Query("SELECT * FROM popular_shows ORDER BY page, page_order")
     abstract override fun entries(): Flowable<List<PopularListItem>>
+
+    @Query("SELECT * FROM popular_shows ORDER BY page, page_order")
+    abstract override fun entriesLiveList(): LivePagedListProvider<Int, PopularListItem>
 
     @Query("SELECT * FROM popular_shows WHERE page = :page")
     abstract override fun entriesPage(page: Int): Flowable<List<PopularListItem>>

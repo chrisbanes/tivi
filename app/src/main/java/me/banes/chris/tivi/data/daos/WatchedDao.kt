@@ -16,17 +16,20 @@
 
 package me.banes.chris.tivi.data.daos
 
+import android.arch.paging.LivePagedListProvider
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import io.reactivex.Flowable
-import me.banes.chris.tivi.data.TiviDatabase
 import me.banes.chris.tivi.data.entities.WatchedEntry
 import me.banes.chris.tivi.data.entities.WatchedListItem
 
 @Dao
-abstract class WatchedDao(db: TiviDatabase) : EntryDao<WatchedEntry, WatchedListItem>(db.showDao()) {
+abstract class WatchedDao : EntryDao<WatchedEntry, WatchedListItem> {
     @Query("SELECT * FROM watched_entries")
     abstract override fun entries(): Flowable<List<WatchedListItem>>
+
+    @Query("SELECT * FROM watched_entries")
+    abstract override fun entriesLiveList(): LivePagedListProvider<Int, WatchedListItem>
 
     @Query("DELETE FROM watched_entries")
     abstract override fun deleteAll()

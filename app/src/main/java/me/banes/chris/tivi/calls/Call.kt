@@ -16,10 +16,16 @@
 
 package me.banes.chris.tivi.calls
 
+import android.arch.paging.LivePagedListProvider
 import io.reactivex.Completable
 import io.reactivex.Flowable
 
 interface Call<in Param, DatabaseOutput> {
     fun data(): Flowable<DatabaseOutput>
     fun refresh(param: Param): Completable
+}
+
+interface ListCall<in Param, DatabaseOutput> : Call<Param, List<DatabaseOutput>> {
+    fun liveList(): LivePagedListProvider<Int, DatabaseOutput>
+    val pageSize: Int
 }

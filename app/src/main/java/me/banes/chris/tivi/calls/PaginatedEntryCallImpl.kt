@@ -16,6 +16,7 @@
 
 package me.banes.chris.tivi.calls
 
+import android.arch.paging.LivePagedListProvider
 import com.uwetrottmann.trakt5.TraktV2
 import io.reactivex.Completable
 import io.reactivex.Flowable
@@ -37,8 +38,8 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
         protected val trakt: TraktV2,
         protected val schedulers: AppRxSchedulers,
         protected val traktShowFetcher: TraktShowFetcher,
-        protected var pageSize: Int = 15
-) : PaginatedCall<Unit, List<LI>> {
+        override val pageSize: Int = 21
+) : PaginatedCall<Unit, LI> {
 
     override fun data(): Flowable<List<LI>> {
         return entryDao.entries()
@@ -50,6 +51,10 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
         return entryDao.entriesPage(page)
                 .subscribeOn(schedulers.disk)
                 .distinctUntilChanged()
+    }
+
+    override fun liveList(): LivePagedListProvider<Int, LI> {
+        return entryDao.entriesLiveList()
     }
 
     private fun loadPage(page: Int = 0, resetOnSave: Boolean = false): Single<List<ET>> {

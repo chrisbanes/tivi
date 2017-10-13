@@ -16,11 +16,10 @@
 
 package me.banes.chris.tivi.util
 
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import me.banes.chris.tivi.api.Resource
 import me.banes.chris.tivi.api.Status
-import me.banes.chris.tivi.calls.Call
+import me.banes.chris.tivi.calls.ListCall
 import me.banes.chris.tivi.calls.PaginatedCall
 import me.banes.chris.tivi.calls.TmdbShowFetcher
 import me.banes.chris.tivi.data.Entry
@@ -29,27 +28,16 @@ import me.banes.chris.tivi.extensions.plusAssign
 
 open class EntryViewModel<LI : ListItem<out Entry>>(
         val schedulers: AppRxSchedulers,
-        val call: Call<Unit, List<LI>>,
+        val call: ListCall<Unit, LI>,
         private val tmdbShowFetcher: TmdbShowFetcher,
         refreshOnStartup: Boolean) : RxAwareViewModel() {
 
-    /**
-     * This is what my UI (Fragment) observes. Its backed by Room and a network call
-     */
-    val data: LiveData<List<LI>> by lazy(mode = LazyThreadSafetyMode.NONE) {
-        val updateCall = call.data().doOnNext {
-            it.forEach {
-                it.show?.let {
-                    if (it.needsUpdateFromTmdb()) {
-                        val fetcher = tmdbShowFetcher.getShow(it.tmdbId!!)
-                        fetcher?.let {
-                            disposables += fetcher.observeOn(schedulers.main).subscribe({}, this::onError)
-                        }
-                    }
-                }
-            }
-        }
-        ReactiveLiveData(updateCall)
+    val liveList by lazy(mode = LazyThreadSafetyMode.NONE) {
+        call.liveList().create(0,
+                PagedList.Config.Builder()
+                        .setPageSize(call.pageSize)
+                        .setEnablePlaceholders(true)
+                        .build())
     }
 
     val messages = MutableLiveData<Resource>()
