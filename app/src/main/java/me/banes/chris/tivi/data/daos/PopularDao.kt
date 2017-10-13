@@ -25,7 +25,7 @@ import me.banes.chris.tivi.data.entities.PopularEntry
 
 @Dao
 abstract class PopularDao(db: TiviDatabase) : PaginatedEntryDao<PopularEntry>(db.showDao()) {
-    @Query("SELECT * FROM popular_shows ORDER BY page")
+    @Query("SELECT * FROM popular_shows ORDER BY page, page_order")
     abstract override fun entriesImpl(): Flowable<List<PopularEntry>>
 
     @Query("SELECT * FROM popular_shows WHERE page = :page")
