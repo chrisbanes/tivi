@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.util
+package me.banes.chris.tivi.data
 
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import me.banes.chris.tivi.data.entities.TiviShow
 
-data class AppRxSchedulers(val disk: Scheduler = Schedulers.io(),
-        val network: Scheduler = Schedulers.io(),
-        val main: Scheduler = AndroidSchedulers.mainThread())
+interface Entry {
+    val id: Long?
+    val showId: Long
+    var show: TiviShow?
+}
+
+interface PaginatedEntry : Entry {
+    val page: Int
+}

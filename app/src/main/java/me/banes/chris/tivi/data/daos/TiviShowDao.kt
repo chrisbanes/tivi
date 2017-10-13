@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.data
+package me.banes.chris.tivi.data.daos
 
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
@@ -22,15 +22,18 @@ import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Update
 import io.reactivex.Maybe
+import me.banes.chris.tivi.data.entities.TiviShow
 
 @Dao
 interface TiviShowDao {
-
     @Query("SELECT * FROM shows WHERE trakt_id = :id")
     fun getShowWithTraktId(id: Int): Maybe<TiviShow>
 
     @Query("SELECT * FROM shows WHERE tmdb_id = :id")
     fun getShowWithTmdbId(id: Int): Maybe<TiviShow>
+
+    @Query("SELECT * FROM shows WHERE id IN (:ids)")
+    fun getShowWithIds(ids: List<Long>): List<TiviShow>
 
     @Query("SELECT * FROM shows WHERE " +
             "(tmdb_id IS NOT NULL AND tmdb_id = :tmdbId) OR " +
@@ -42,5 +45,4 @@ interface TiviShowDao {
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun updateShow(shows: TiviShow)
-
 }

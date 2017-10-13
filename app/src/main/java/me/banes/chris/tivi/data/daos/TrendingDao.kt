@@ -14,39 +14,29 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.data
+package me.banes.chris.tivi.data.daos
 
 import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import io.reactivex.Flowable
 import io.reactivex.Single
+import me.banes.chris.tivi.data.TiviDatabase
+import me.banes.chris.tivi.data.entities.TrendingEntry
 
 @Dao
-interface TrendingDao {
+abstract class TrendingDao(db: TiviDatabase) : PaginatedEntryDao<TrendingEntry>(db.showDao()) {
+    @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC")
+    abstract override fun entriesImpl(): Flowable<List<TrendingEntry>>
 
-    @Query("SELECT * FROM shows " +
-            "INNER JOIN trending_shows ON trending_shows.show_id = shows.id " +
-            "ORDER BY page, page_order")
-    fun trendingShows(): Flowable<List<TiviShow>>
-
-    @Query("SELECT * FROM shows " +
-            "INNER JOIN trending_shows ON trending_shows.show_id = shows.id " +
-            "WHERE page = :page " +
-            "ORDER BY page_order")
-    fun trendingShowsPage(page: Int): Flowable<List<TiviShow>>
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertTrending(show: TrendingEntry): Long
+    @Query("SELECT * FROM trending_shows WHERE page = :page ORDER BY watchers DESC")
+    abstract override fun entriesPageImpl(page: Int): Flowable<List<TrendingEntry>>
 
     @Query("DELETE FROM trending_shows WHERE page = :page")
-    fun deleteTrendingShowsPageSync(page: Int = 0)
+    abstract override fun deletePage(page: Int)
 
     @Query("DELETE FROM trending_shows")
-    fun deleteTrendingShows()
+    abstract override fun deleteAll()
 
     @Query("SELECT MAX(page) from trending_shows")
-    fun getLastTrendingPage(): Single<Int>
-
+    abstract override fun getLastPage(): Single<Int>
 }

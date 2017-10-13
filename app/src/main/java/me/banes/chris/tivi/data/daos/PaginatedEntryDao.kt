@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.data
+package me.banes.chris.tivi.data.daos
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
 import io.reactivex.Flowable
+import io.reactivex.Single
+import me.banes.chris.tivi.data.PaginatedEntry
 
-@Dao
-interface UserDao {
+abstract class PaginatedEntryDao<EC : PaginatedEntry>(showDao: TiviShowDao) : EntryDao<EC>(showDao) {
 
-    @Query("SELECT * FROM users")
-    fun getTraktUser(): Flowable<TraktUser>
+    protected abstract fun entriesPageImpl(page: Int): Flowable<List<EC>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertUser(user: TraktUser): Long
+    fun entriesPage(page: Int): Flowable<List<EC>> {
+        return mapEntryShow(entriesPageImpl(page))
+    }
 
+    abstract fun deletePage(page: Int)
+
+    abstract fun getLastPage(): Single<Int>
 }
+

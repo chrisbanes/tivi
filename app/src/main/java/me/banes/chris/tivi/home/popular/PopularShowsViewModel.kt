@@ -16,18 +16,20 @@
 
 package me.banes.chris.tivi.home.popular
 
-import com.uwetrottmann.trakt5.entities.Show
 import me.banes.chris.tivi.calls.PopularCall
+import me.banes.chris.tivi.calls.TmdbShowFetcher
+import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.util.AppRxSchedulers
-import me.banes.chris.tivi.util.PaginatedTraktViewModel
+import me.banes.chris.tivi.util.EntryViewModel
 import javax.inject.Inject
 
 class PopularShowsViewModel @Inject constructor(
         schedulers: AppRxSchedulers,
         call: PopularCall,
+        tmdbShowFetcher: TmdbShowFetcher,
         private val navigator: HomeNavigator)
-    : PaginatedTraktViewModel<Show>(schedulers, call) {
+    : EntryViewModel<PopularEntry>(schedulers, call, tmdbShowFetcher, refreshOnStartup = true) {
 
     fun onUpClicked() {
         navigator.onUpClicked()

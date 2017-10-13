@@ -16,54 +16,17 @@
 
 package me.banes.chris.tivi.home.library
 
-import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_library.*
-import me.banes.chris.tivi.R
-import me.banes.chris.tivi.home.HomeFragment
+import kotlinx.android.synthetic.main.fragment_rv_grid.*
+import me.banes.chris.tivi.data.entities.WatchedEntry
+import me.banes.chris.tivi.util.EntryGridFragment
 
-class LibraryFragment : HomeFragment<LibraryViewModel>() {
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-                .get(LibraryViewModel::class.java)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_library, container, false)
-    }
-
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        library_toolbar?.apply {
-            title = getString(R.string.home_nav_library)
-            inflateMenu(R.menu.home_toolbar)
-            setOnMenuItemClickListener {
-                onMenuItemClicked(it)
-            }
-        }
-    }
-
-    override fun findUserAvatarMenuItem(): MenuItem? {
-        return library_toolbar.menu.findItem(R.id.home_menu_user_avatar)
-    }
-
-    override fun findUserLoginMenuItem(): MenuItem? {
-        return library_toolbar.menu.findItem(R.id.home_menu_user_login)
-    }
+class LibraryFragment : EntryGridFragment<WatchedEntry, LibraryViewModel>(LibraryViewModel::class.java) {
 
     internal fun scrollToTop() {
-        library_rv.apply {
+        grid_recyclerview.apply {
             stopScroll()
             smoothScrollToPosition(0)
         }
     }
+
 }

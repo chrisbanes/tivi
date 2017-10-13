@@ -16,17 +16,16 @@
 
 package me.banes.chris.tivi.calls
 
-import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
-import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
-import me.banes.chris.tivi.data.PopularDao
-import me.banes.chris.tivi.data.PopularEntry
-import me.banes.chris.tivi.data.TiviShow
-import me.banes.chris.tivi.data.TiviShowDao
+import me.banes.chris.tivi.api.ItemWithIndex
+import me.banes.chris.tivi.data.daos.PopularDao
+import me.banes.chris.tivi.data.daos.TiviShowDao
+import me.banes.chris.tivi.data.entities.PopularEntry
+import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.DatabaseTxRunner
@@ -35,48 +34,31 @@ import javax.inject.Inject
 class PopularCall @Inject constructor(
         databaseTxRunner: DatabaseTxRunner,
         showDao: TiviShowDao,
-        val popularDao: PopularDao,
-        tmdb: Tmdb,
+        popularDao: PopularDao,
+        traktShowFetcher: TraktShowFetcher,
         trakt: TraktV2,
-        schedulers: AppRxSchedulers)
-    : PaginatedTraktCall<Show>(databaseTxRunner, showDao, tmdb, trakt, schedulers) {
+        schedulers: AppRxSchedulers
+) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularDao>(databaseTxRunner, showDao, popularDao, trakt, schedulers, traktShowFetcher) {
 
-    override fun networkCall(page: Int): Single<List<Show>> {
-        return trakt.shows().popular(
-                page + 1, // Trakt uses a 1 based index
-                DEFAULT_PAGE_SIZE,
-                Extended.NOSEASONS)
+    override fun networkCall(page: Int): Single<List<ItemWithIndex<Show>>> {
+        // We add one to the page since Trakt uses a 1-based index whereas we use 0-based
+        return trakt.shows().popular(page + 1, pageSize, Extended.NOSEASONS)
                 .toRxSingle()
+                .map { it.mapIndexed { index, show -> ItemWithIndex(show, index) } }
     }
 
-    override fun filterResponse(response: Show): Boolean {
-        return response.ids.tmdb != null
+    override fun filterResponse(response: ItemWithIndex<Show>): Boolean {
+        return response.item.ids.tmdb != null
     }
 
-    override fun lastPageLoaded(): Single<Int> {
-        return popularDao.getLastPopularPage()
-    }
-
-    override fun createData(page: Int?): Flowable<List<TiviShow>> {
-        return if (page == null) popularDao.popularShows() else popularDao.popularShowsPage(page)
-    }
-
-    override fun saveEntry(show: TiviShow, page: Int, order: Int) {
+    override fun mapToEntry(networkEntity: ItemWithIndex<Show>, show: TiviShow, page: Int): PopularEntry {
         assert(show.id != null)
-        val entry = PopularEntry(showId = show.id!!, page = page, pageOrder = order)
-        popularDao.insertPopularShows(entry)
+        return PopularEntry(showId = show.id!!, page = page, pageOrder = networkEntity.index).apply {
+            this.show = show
+        }
     }
 
-    override fun deleteEntries() {
-        popularDao.deletePopularShows()
+    override fun loadShow(response: ItemWithIndex<Show>): Maybe<TiviShow> {
+        return traktShowFetcher.getShow(response.item.ids.trakt, response.item)
     }
-
-    override fun deletePage(page: Int) {
-        popularDao.deletePopularShowsPageSync(page)
-    }
-
-    override fun loadShow(response: Show): Maybe<TiviShow> {
-        return showFromTmdb(response.ids.tmdb, response.ids.trakt)
-    }
-
 }

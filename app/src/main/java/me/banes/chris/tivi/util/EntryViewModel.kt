@@ -20,39 +20,59 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import me.banes.chris.tivi.api.Resource
 import me.banes.chris.tivi.api.Status
-import me.banes.chris.tivi.calls.PaginatedTraktCall
-import me.banes.chris.tivi.data.TiviShow
+import me.banes.chris.tivi.calls.Call
+import me.banes.chris.tivi.calls.PaginatedCall
+import me.banes.chris.tivi.calls.TmdbShowFetcher
+import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.extensions.plusAssign
 
-open class PaginatedTraktViewModel<R>(
+open class EntryViewModel<ET : Entry>(
         val schedulers: AppRxSchedulers,
-        val call: PaginatedTraktCall<R>) : RxAwareViewModel() {
+        val call: Call<Unit, List<ET>>,
+        private val tmdbShowFetcher: TmdbShowFetcher,
+        refreshOnStartup: Boolean) : RxAwareViewModel() {
 
     /**
      * This is what my UI (Fragment) observes. Its backed by Room and a network call
      */
-    val data: LiveData<List<TiviShow>> by lazy(mode = LazyThreadSafetyMode.NONE) {
-        ReactiveLiveData(call.data())
+    val data: LiveData<List<ET>> by lazy(mode = LazyThreadSafetyMode.NONE) {
+        val updateCall = call.data().doOnNext {
+            it.forEach {
+                it.show?.let {
+                    if (it.needsUpdateFromTmdb()) {
+                        val fetcher = tmdbShowFetcher.getShow(it.tmdbId!!)
+                        fetcher?.let {
+                            disposables += fetcher.subscribe()
+                        }
+                    }
+                }
+            }
+        }
+        ReactiveLiveData(updateCall)
     }
 
     val messages = MutableLiveData<Resource>()
 
     init {
         // Eagerly refresh the initial page of trending
-        fullRefresh()
+        if (refreshOnStartup) {
+            fullRefresh()
+        }
     }
 
     fun onListScrolledToEnd() {
-        disposables += call.loadNextPage()
-                .observeOn(schedulers.main)
-                .doOnSubscribe { messages.value = Resource(Status.LOADING_MORE) }
-                .subscribe(
-                        { messages.value = Resource(Status.SUCCESS) },
-                        { messages.value = Resource(Status.ERROR, it.localizedMessage) })
+        if (call is PaginatedCall<*, *>) {
+            disposables += call.loadNextPage()
+                    .observeOn(schedulers.main)
+                    .doOnSubscribe { messages.value = Resource(Status.LOADING_MORE) }
+                    .subscribe(
+                            { messages.value = Resource(Status.SUCCESS) },
+                            { messages.value = Resource(Status.ERROR, it.localizedMessage) })
+        }
     }
 
     fun fullRefresh() {
-        disposables += call.refresh()
+        disposables += call.refresh(Unit)
                 .observeOn(schedulers.main)
                 .doOnSubscribe { messages.value = Resource(Status.REFRESHING) }
                 .subscribe(

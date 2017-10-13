@@ -20,7 +20,7 @@ import android.arch.lifecycle.MutableLiveData
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.calls.PopularCall
 import me.banes.chris.tivi.calls.TrendingCall
-import me.banes.chris.tivi.data.TiviShow
+import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.plusAssign
 import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
@@ -56,7 +56,7 @@ internal class DiscoverViewModel @Inject constructor(
                 .subscribe {
                     items[POPULAR]?.apply {
                         clear()
-                        addAll(it)
+                        addAll(it.map { it.show!! })
                     }
                     data.value = items
                 }
@@ -66,7 +66,7 @@ internal class DiscoverViewModel @Inject constructor(
                 .subscribe {
                     items[TRENDING]?.apply {
                         clear()
-                        addAll(it)
+                        addAll(it.map { it.show!! })
                     }
                     data.value = items
                 }
@@ -74,9 +74,9 @@ internal class DiscoverViewModel @Inject constructor(
         refresh()
     }
 
-    fun refresh() {
-        disposables += popularCall.refresh().subscribe()
-        disposables += trendingCall.refresh().subscribe()
+    private fun refresh() {
+        disposables += popularCall.refresh(Unit).subscribe()
+        disposables += trendingCall.refresh(Unit).subscribe()
     }
 
     fun onSectionHeaderClicked(section: Section) {

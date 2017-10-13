@@ -77,6 +77,7 @@ class TraktModule {
     }
 
     @Provides
+    @Singleton
     fun provideTrakt(@Named("cache") cacheDir: File, interceptor: HttpLoggingInterceptor): TraktV2 {
         return object : TraktV2(BuildConfig.TRAKT_CLIENT_ID) {
             override fun setOkHttpClientDefaults(builder: OkHttpClient.Builder) {

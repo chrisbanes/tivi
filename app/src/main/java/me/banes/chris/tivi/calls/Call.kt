@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.util
+package me.banes.chris.tivi.calls
 
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.Completable
+import io.reactivex.Flowable
 
-data class AppRxSchedulers(val disk: Scheduler = Schedulers.io(),
-        val network: Scheduler = Schedulers.io(),
-        val main: Scheduler = AndroidSchedulers.mainThread())
+interface Call<in Param, Output> {
+    fun data(): Flowable<Output>
+    fun refresh(param: Param): Completable
+}

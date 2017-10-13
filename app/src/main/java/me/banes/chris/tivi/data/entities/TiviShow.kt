@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.data
+package me.banes.chris.tivi.data.entities
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
@@ -41,9 +41,9 @@ data class TiviShow(
         @ColumnInfo(name = "homepage") val homepage: String? = null) {
 
     fun needsUpdateFromTmdb(): Boolean {
-        return tmdbId == null
-                || lastTmdbUpdate == null
-                || olderThan(lastTmdbUpdate, 1, TimeUnit.DAYS)
+        return tmdbId != null
+                && (lastTmdbUpdate == null
+                || olderThan(lastTmdbUpdate, 1, TimeUnit.DAYS))
     }
 
     private fun olderThan(date: Date, period: Long, unit: TimeUnit): Boolean {

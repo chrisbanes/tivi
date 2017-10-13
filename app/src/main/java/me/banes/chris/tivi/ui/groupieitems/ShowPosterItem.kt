@@ -19,7 +19,7 @@ package me.banes.chris.tivi.ui.groupieitems
 import android.view.View
 import com.xwray.groupie.Item
 import me.banes.chris.tivi.R
-import me.banes.chris.tivi.data.TiviShow
+import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.ui.TiviShowGridViewHolder
 
 internal class ShowPosterItem(val show: TiviShow) : Item<TiviShowGridViewHolder>() {

@@ -30,13 +30,14 @@ import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
 import me.banes.chris.tivi.api.Status
+import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.ui.EndlessRecyclerViewScrollListener
 import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.ui.TiviShowGridAdapter
 import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
-abstract class PaginatedGridFragment<T, VM : PaginatedTraktViewModel<T>>(
+abstract class EntryGridFragment<EC : Entry, VM : EntryViewModel<EC>>(
         private val vmClass: Class<VM>?) : TiviFragment() {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -53,7 +54,7 @@ abstract class PaginatedGridFragment<T, VM : PaginatedTraktViewModel<T>>(
         super.onViewCreated(view, savedInstanceState)
 
         grid_recyclerview.apply {
-            adapter = this@PaginatedGridFragment.adapter
+            adapter = this@EntryGridFragment.adapter
             addItemDecoration(SpacingItemDecorator(paddingLeft))
             addOnScrollListener(EndlessRecyclerViewScrollListener(
                     grid_recyclerview.layoutManager, { _: Int, _: RecyclerView ->
@@ -73,7 +74,7 @@ abstract class PaginatedGridFragment<T, VM : PaginatedTraktViewModel<T>>(
         super.onStart()
 
         viewModel.data.observe(this, Observer {
-            it?.let { adapter.updateItems(it) }
+            it.let { adapter.updateItems(it!!.map { it.show!! }) }
         })
 
         viewModel.messages.observe(this, Observer {

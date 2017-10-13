@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.util
+package me.banes.chris.tivi.data.daos
 
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Insert
+import android.arch.persistence.room.OnConflictStrategy
+import android.arch.persistence.room.Query
+import io.reactivex.Flowable
+import me.banes.chris.tivi.data.entities.TraktUser
 
-data class AppRxSchedulers(val disk: Scheduler = Schedulers.io(),
-        val network: Scheduler = Schedulers.io(),
-        val main: Scheduler = AndroidSchedulers.mainThread())
+@Dao
+interface UserDao {
+
+    @Query("SELECT * FROM users")
+    fun getTraktUser(): Flowable<TraktUser>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertUser(user: TraktUser): Long
+
+}

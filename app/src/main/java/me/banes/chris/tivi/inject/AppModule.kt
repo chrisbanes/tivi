@@ -16,23 +16,15 @@
 
 package me.banes.chris.tivi.inject
 
-import android.arch.persistence.room.Room
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Debug
 import android.preference.PreferenceManager
 import com.uwetrottmann.tmdb2.Tmdb
 import dagger.Module
 import dagger.Provides
 import me.banes.chris.tivi.BuildConfig
 import me.banes.chris.tivi.TiviApplication
-import me.banes.chris.tivi.data.PopularDao
-import me.banes.chris.tivi.data.TiviDatabase
-import me.banes.chris.tivi.data.TiviShowDao
-import me.banes.chris.tivi.data.TrendingDao
-import me.banes.chris.tivi.data.UserDao
 import me.banes.chris.tivi.util.AppRxSchedulers
-import me.banes.chris.tivi.util.DatabaseTxRunner
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -60,43 +52,6 @@ class AppModule {
                 }
             }
         }
-    }
-
-    @Singleton
-    @Provides
-    fun provideDatabase(context: Context): TiviDatabase {
-        val builder = Room.databaseBuilder(context, TiviDatabase::class.java, "shows.db")
-                .fallbackToDestructiveMigration()
-        if (Debug.isDebuggerConnected()) {
-            builder.allowMainThreadQueries()
-        }
-        return builder.build()
-    }
-
-    @Provides
-    fun provideTiviShowDao(db: TiviDatabase): TiviShowDao {
-        return db.showDao()
-    }
-
-    @Provides
-    fun provideUserDao(db: TiviDatabase): UserDao {
-        return db.userDao()
-    }
-
-    @Provides
-    fun provideTrendingDao(db: TiviDatabase): TrendingDao {
-        return db.trendingDao()
-    }
-
-    @Provides
-    fun providePopularDao(db: TiviDatabase): PopularDao {
-        return db.popularDao()
-    }
-
-    @Singleton
-    @Provides
-    fun provideDatabaseTransactionRunner(db: TiviDatabase): DatabaseTxRunner {
-        return DatabaseTxRunner(db)
     }
 
     @Singleton

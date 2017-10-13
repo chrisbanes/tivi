@@ -18,7 +18,7 @@ package me.banes.chris.tivi.ui.groupieitems
 
 import com.xwray.groupie.Section
 import com.xwray.groupie.UpdatingGroup
-import me.banes.chris.tivi.data.TiviShow
+import me.banes.chris.tivi.data.entities.TiviShow
 
 internal class ShowPosterUpdatingSection : Section() {
     private val group = UpdatingGroup()

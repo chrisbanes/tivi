@@ -29,6 +29,7 @@ import javax.inject.Singleton
 @Component(modules = arrayOf(
         AndroidSupportInjectionModule::class,
         AppModule::class,
+        DatabaseModule::class,
         ViewModelBuilder::class,
         HomeBuilder::class,
         TraktModule::class,
