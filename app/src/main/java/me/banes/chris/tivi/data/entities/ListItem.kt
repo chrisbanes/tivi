@@ -22,7 +22,10 @@ import me.banes.chris.tivi.data.Entry
 
 interface ListItem<ET : Entry> {
     var entry: ET?
-    var shows: MutableList<TiviShow>?
+    var relations: MutableList<TiviShow>?
+
+    val show: TiviShow?
+        get() = relations?.getOrNull(0)
 }
 
 class TrendingListItem : ListItem<TrendingEntry> {
@@ -30,7 +33,7 @@ class TrendingListItem : ListItem<TrendingEntry> {
     override var entry: TrendingEntry? = null
 
     @Relation(parentColumn = "show_id", entityColumn = "id", entity = TiviShow::class)
-    override var shows: MutableList<TiviShow>? = null
+    override var relations: MutableList<TiviShow>? = null
 }
 
 class PopularListItem : ListItem<PopularEntry> {
@@ -38,7 +41,7 @@ class PopularListItem : ListItem<PopularEntry> {
     override var entry: PopularEntry? = null
 
     @Relation(parentColumn = "show_id", entityColumn = "id", entity = TiviShow::class)
-    override var shows: MutableList<TiviShow>? = null
+    override var relations: MutableList<TiviShow>? = null
 }
 
 class WatchedListItem : ListItem<WatchedEntry> {
@@ -46,5 +49,5 @@ class WatchedListItem : ListItem<WatchedEntry> {
     override var entry: WatchedEntry? = null
 
     @Relation(parentColumn = "show_id", entityColumn = "id", entity = TiviShow::class)
-    override var shows: MutableList<TiviShow>? = null
+    override var relations: MutableList<TiviShow>? = null
 }

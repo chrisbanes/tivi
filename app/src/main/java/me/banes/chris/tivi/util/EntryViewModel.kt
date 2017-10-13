@@ -39,7 +39,7 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
     val data: LiveData<List<LI>> by lazy(mode = LazyThreadSafetyMode.NONE) {
         val updateCall = call.data().doOnNext {
             it.forEach {
-                it?.shows?.get(0)?.let {
+                it.show?.let {
                     if (it.needsUpdateFromTmdb()) {
                         val fetcher = tmdbShowFetcher.getShow(it.tmdbId!!)
                         fetcher?.let {

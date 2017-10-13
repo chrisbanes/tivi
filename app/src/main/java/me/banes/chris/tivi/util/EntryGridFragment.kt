@@ -75,7 +75,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         super.onStart()
 
         viewModel.data.observe(this, Observer {
-            it.let { adapter.updateItems(it!!.map { it.shows?.get(0)!! }) }
+            it.let { adapter.updateItems(it!!.map { it.show!! }) }
         })
 
         viewModel.messages.observe(this, Observer {
