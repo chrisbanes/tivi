@@ -43,7 +43,7 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
                     if (it.needsUpdateFromTmdb()) {
                         val fetcher = tmdbShowFetcher.getShow(it.tmdbId!!)
                         fetcher?.let {
-                            disposables += fetcher.subscribe({}, this::onError)
+                            disposables += fetcher.observeOn(schedulers.main).subscribe({}, this::onError)
                         }
                     }
                 }
