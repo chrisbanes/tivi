@@ -42,7 +42,13 @@ class TmdbShowFetcher @Inject constructor(
         private val tmdb: Tmdb,
         private val schedulers: AppRxSchedulers
 ) {
-    fun getShow(tmdbId: Int): Maybe<TiviShow> {
+    private val active = setOf<Int>()
+
+    fun getShow(tmdbId: Int): Maybe<TiviShow>? {
+        if (active.contains(tmdbId)) {
+            return null
+        }
+
         val dbSource = showDao.getShowWithTmdbId(tmdbId)
                 .subscribeOn(schedulers.disk)
                 .filter { !it.needsUpdateFromTmdb() } // Don't emit if the item needs updating
@@ -64,7 +70,10 @@ class TmdbShowFetcher @Inject constructor(
                     show
                 }
 
-        return Maybe.concat(dbSource, networkSource.toMaybe()).firstElement()
+        return Maybe.concat(dbSource, networkSource.toMaybe())
+                .firstElement()
+                .doOnSubscribe { active.plus(tmdbId) }
+                .doOnComplete { active.minus(tmdbId) }
     }
 
     private fun mapShow(tmdbShow: TvShow): Single<TiviShow> {

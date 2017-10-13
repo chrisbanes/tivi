@@ -40,7 +40,10 @@ open class EntryViewModel<ET : Entry>(
             it.forEach {
                 it.show?.let {
                     if (it.needsUpdateFromTmdb()) {
-                        disposables += tmdbShowFetcher.getShow(it.tmdbId!!).subscribe()
+                        val fetcher = tmdbShowFetcher.getShow(it.tmdbId!!)
+                        fetcher?.let {
+                            disposables += fetcher.subscribe()
+                        }
                     }
                 }
             }
