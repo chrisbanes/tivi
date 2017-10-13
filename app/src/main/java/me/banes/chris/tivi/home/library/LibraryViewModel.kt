@@ -16,9 +16,7 @@
 
 package me.banes.chris.tivi.home.library
 
-import me.banes.chris.tivi.calls.TmdbShowFetcher
 import me.banes.chris.tivi.calls.WatchedCall
-import me.banes.chris.tivi.data.entities.WatchedEntry
 import me.banes.chris.tivi.data.entities.WatchedListItem
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.EntryViewModel
@@ -26,6 +24,5 @@ import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
         schedulers: AppRxSchedulers,
-        call: WatchedCall,
-        tmdbShowFetcher: TmdbShowFetcher
-) : EntryViewModel<WatchedListItem>(schedulers, call, tmdbShowFetcher, refreshOnStartup = false)
+        call: WatchedCall
+) : EntryViewModel<WatchedListItem>(schedulers, call)

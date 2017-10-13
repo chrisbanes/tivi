@@ -17,11 +17,11 @@
 package me.banes.chris.tivi.util
 
 import android.arch.lifecycle.MutableLiveData
+import android.arch.paging.PagedList
 import me.banes.chris.tivi.api.Resource
 import me.banes.chris.tivi.api.Status
 import me.banes.chris.tivi.calls.ListCall
 import me.banes.chris.tivi.calls.PaginatedCall
-import me.banes.chris.tivi.calls.TmdbShowFetcher
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.extensions.plusAssign
@@ -29,8 +29,7 @@ import me.banes.chris.tivi.extensions.plusAssign
 open class EntryViewModel<LI : ListItem<out Entry>>(
         val schedulers: AppRxSchedulers,
         val call: ListCall<Unit, LI>,
-        private val tmdbShowFetcher: TmdbShowFetcher,
-        refreshOnStartup: Boolean) : RxAwareViewModel() {
+        refreshOnStartup: Boolean = true) : RxAwareViewModel() {
 
     val liveList by lazy(mode = LazyThreadSafetyMode.NONE) {
         call.liveList().create(0,
