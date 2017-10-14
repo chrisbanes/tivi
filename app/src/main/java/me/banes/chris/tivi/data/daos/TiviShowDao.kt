@@ -21,6 +21,7 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Update
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 import me.banes.chris.tivi.data.entities.TiviShow
 
@@ -45,4 +46,7 @@ interface TiviShowDao {
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun updateShow(shows: TiviShow)
+
+    @Query("SELECT * FROM shows WHERE tmdb_updated IS null")
+    fun getShowsWhichNeedTmdbUpdate() : Flowable<List<TiviShow>>
 }
