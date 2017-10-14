@@ -23,7 +23,7 @@ buildscript {
             'kotlin'           : '1.1.51',
             'espresso'         : '2.2.2',
             'dagger'           : '2.12',
-            'ktlint'           : '0.9.0',
+            'ktlint'           : '0.10.0',
             'leakcanary'       : '1.5.4',
             'rx'               : '2.1.5',
     ]
@@ -49,7 +49,7 @@ buildscript {
 }
 
 plugins {
-    id "com.diffplug.gradle.spotless" version "3.5.1"
+    id "com.diffplug.gradle.spotless" version "3.6.0"
 }
 
 allprojects {

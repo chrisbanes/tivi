@@ -38,5 +38,5 @@ data class PopularEntry(
         @ColumnInfo(name = "page") override val page: Int,
         @ColumnInfo(name = "page_order") val pageOrder: Int
 ) : PaginatedEntry {
-    @Ignore override var show : TiviShow? = null
+    @Ignore override var show: TiviShow? = null
 }

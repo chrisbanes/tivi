@@ -36,5 +36,5 @@ data class WatchedEntry(
         @PrimaryKey(autoGenerate = true) override val id: Long? = null,
         @ColumnInfo(name = "show_id") override val showId: Long
 ) : Entry {
-    @Ignore override var show : TiviShow? = null
+    @Ignore override var show: TiviShow? = null
 }
