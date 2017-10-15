@@ -30,7 +30,7 @@ class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsV
         super.onViewCreated(view, savedInstanceState)
 
         toolbar.apply {
-            title = getString(R.string.discover_popular)
+            title = getString(R.string.discover_trending)
             setNavigationOnClickListener {
                 viewModel.onUpClicked()
             }
