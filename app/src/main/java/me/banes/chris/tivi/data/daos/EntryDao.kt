@@ -16,17 +16,19 @@
 
 package me.banes.chris.tivi.data.daos
 
+import android.arch.paging.LivePagedListProvider
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import io.reactivex.Flowable
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 
-abstract class EntryDao<EC : Entry, LI : ListItem<EC>>(protected val showDao: TiviShowDao) {
-    abstract fun entries(): Flowable<List<LI>>
+interface EntryDao<EC : Entry, LI : ListItem<EC>> {
+    fun entries(): Flowable<List<LI>>
+    fun entriesLiveList(): LivePagedListProvider<Int, LI>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    abstract fun insert(entry: EC): Long
+    fun insert(entry: EC): Long
 
-    abstract fun deleteAll()
+    fun deleteAll()
 }

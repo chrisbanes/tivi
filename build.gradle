@@ -20,6 +20,7 @@ buildscript {
             'support_library'  : '26.1.0',
             'constraint_layout': '1.0.2',
             'arch_comp'        : '1.0.0-beta2',
+            'arch_comp_paging' : '1.0.0-alpha3',
             'kotlin'           : '1.1.51',
             'espresso'         : '2.2.2',
             'dagger'           : '2.12',

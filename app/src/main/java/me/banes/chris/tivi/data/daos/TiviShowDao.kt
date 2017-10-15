@@ -21,28 +21,42 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Update
+import io.reactivex.Flowable
 import io.reactivex.Maybe
 import me.banes.chris.tivi.data.entities.TiviShow
+import timber.log.Timber
 
 @Dao
-interface TiviShowDao {
+abstract class TiviShowDao {
     @Query("SELECT * FROM shows WHERE trakt_id = :id")
-    fun getShowWithTraktId(id: Int): Maybe<TiviShow>
+    abstract fun getShowWithTraktId(id: Int): Maybe<TiviShow>
 
     @Query("SELECT * FROM shows WHERE tmdb_id = :id")
-    fun getShowWithTmdbId(id: Int): Maybe<TiviShow>
+    abstract fun getShowWithTmdbId(id: Int): Maybe<TiviShow>
 
-    @Query("SELECT * FROM shows WHERE id IN (:ids)")
-    fun getShowWithIds(ids: List<Long>): List<TiviShow>
-
-    @Query("SELECT * FROM shows WHERE " +
-            "(tmdb_id IS NOT NULL AND tmdb_id = :tmdbId) OR " +
-            "(trakt_id IS NOT NULL AND trakt_id = :traktId)")
-    fun getShowFromId(tmdbId: Int? = null, traktId: Int? = null): Maybe<TiviShow>
+    @Query("SELECT * FROM shows WHERE tmdb_id = :id")
+    abstract fun getShowWithTmdbIdSync(id: Int): TiviShow?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertShow(shows: TiviShow): Long
+    protected abstract fun insertShow(show: TiviShow): Long
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun updateShow(shows: TiviShow)
+    protected abstract fun updateShow(show: TiviShow)
+
+    fun insertOrUpdateShow(show: TiviShow): TiviShow {
+        return when {
+            show.id == null -> {
+                Timber.d("Inserting show: %s", show)
+                show.copy(id = insertShow(show))
+            }
+            else -> {
+                Timber.d("Updating show: %s", show)
+                updateShow(show)
+                show
+            }
+        }
+    }
+
+    @Query("SELECT * FROM shows WHERE tmdb_updated IS null")
+    abstract fun getShowsWhichNeedTmdbUpdate(): Flowable<List<TiviShow>>
 }

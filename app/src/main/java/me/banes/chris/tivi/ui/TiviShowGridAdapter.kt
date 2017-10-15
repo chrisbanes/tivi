@@ -16,18 +16,16 @@
 
 package me.banes.chris.tivi.ui
 
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
+import android.arch.paging.PagedListAdapter
+import android.support.v7.recyclerview.extensions.DiffCallback
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import me.banes.chris.tivi.R
+import me.banes.chris.tivi.data.Entry
+import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TiviShow
 
-internal class TiviShowGridAdapter
-    : RecyclerView.Adapter<TiviShowGridViewHolder>() {
-
-    private val items: MutableList<TiviShow> = mutableListOf()
-
+internal class TiviShowGridAdapter<LI : ListItem<out Entry>> : PagedListAdapter<LI, TiviShowGridViewHolder>(TiviShowDiffCallback<LI>()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TiviShowGridViewHolder {
         val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.grid_item, parent, false)
@@ -35,44 +33,19 @@ internal class TiviShowGridAdapter
     }
 
     override fun onBindViewHolder(holder: TiviShowGridViewHolder, position: Int) {
-        holder.bindShow(items[position])
+        holder.bind(getItem(position)?.show ?: TiviShow.PLACEHOLDER)
     }
 
-    override fun getItemCount(): Int {
-        return items.size
-    }
-
-    fun updateItems(shows: List<TiviShow>) {
-        val oldItems = ArrayList(items)
-        items.clear()
-        items.addAll(shows)
-
-        val diffResult = DiffUtil.calculateDiff(DiffCb(oldItems, shows))
-        diffResult.dispatchUpdatesTo(this)
-    }
-
-    private class DiffCb(val oldItems: List<TiviShow>,
-            val newItems: List<TiviShow>) : DiffUtil.Callback() {
-        override fun getOldListSize(): Int {
-            return oldItems.size
+    class TiviShowDiffCallback<LI : ListItem<out Entry>> : DiffCallback<LI>() {
+        override fun areItemsTheSame(oldItem: LI, newItem: LI): Boolean {
+            return (oldItem.show?.id != null && oldItem.show?.id == newItem.show?.id)
+                    || (oldItem.show?.traktId != null && oldItem.show?.traktId == newItem.show?.traktId)
+                    || (oldItem.show?.tmdbId != null && oldItem.show?.tmdbId == newItem.show?.tmdbId)
         }
 
-        override fun getNewListSize(): Int {
-            return newItems.size
-        }
-
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            val oldItem = oldItems[oldItemPosition]
-            val newItem = newItems[newItemPosition]
-            return (oldItem.id != null && oldItem.id == newItem.id)
-                    || (oldItem.traktId != null && oldItem.traktId == newItem.traktId)
-                    || (oldItem.tmdbId != null && oldItem.tmdbId == newItem.tmdbId)
-        }
-
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldItems[oldItemPosition] == newItems[newItemPosition]
+        override fun areContentsTheSame(oldItem: LI, newItem: LI): Boolean {
+            return oldItem?.show == newItem?.show && oldItem?.entry == newItem?.entry
         }
     }
-
 }
 

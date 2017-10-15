@@ -45,7 +45,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
 
     protected lateinit var viewModel: VM
 
-    private val adapter = TiviShowGridAdapter()
+    private val adapter = TiviShowGridAdapter<LI>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_rv_grid, container, false)
@@ -74,9 +74,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
     override fun onStart() {
         super.onStart()
 
-        viewModel.data.observe(this, Observer {
-            it.let { adapter.updateItems(it!!.map { it.show!! }) }
-        })
+        viewModel.liveList.observe(this, Observer(adapter::setList))
 
         viewModel.messages.observe(this, Observer {
             when (it?.status) {

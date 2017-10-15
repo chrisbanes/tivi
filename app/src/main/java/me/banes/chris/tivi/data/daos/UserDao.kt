@@ -25,11 +25,9 @@ import me.banes.chris.tivi.data.entities.TraktUser
 
 @Dao
 interface UserDao {
-
     @Query("SELECT * FROM users")
     fun getTraktUser(): Flowable<TraktUser>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertUser(user: TraktUser): Long
-
 }

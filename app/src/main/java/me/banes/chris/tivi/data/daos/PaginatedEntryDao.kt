@@ -21,12 +21,9 @@ import io.reactivex.Single
 import me.banes.chris.tivi.data.PaginatedEntry
 import me.banes.chris.tivi.data.entities.ListItem
 
-abstract class PaginatedEntryDao<EC : PaginatedEntry, LI : ListItem<EC>>(showDao: TiviShowDao) : EntryDao<EC, LI>(showDao) {
-
-    abstract fun entriesPage(page: Int): Flowable<List<LI>>
-
-    abstract fun deletePage(page: Int)
-
-    abstract fun getLastPage(): Single<Int>
+interface PaginatedEntryDao<EC : PaginatedEntry, LI : ListItem<EC>> : EntryDao<EC, LI> {
+    fun entriesPage(page: Int): Flowable<List<LI>>
+    fun deletePage(page: Int)
+    fun getLastPage(): Single<Int>
 }
 

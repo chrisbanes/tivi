@@ -29,6 +29,16 @@ class TiviShowGridViewHolder(itemView: View) : ViewHolder(itemView) {
     private val title = itemView.findViewById<TextView>(R.id.show_title)
     private val poster = itemView.findViewById<ImageView>(R.id.show_poster)
 
+    fun bind(item: TiviShow) = when (item) {
+        TiviShow.PLACEHOLDER -> bindPlaceholder()
+        else -> bindShow(item)
+    }
+
+    private fun bindPlaceholder() {
+        title.visibility = View.GONE
+        poster.setImageDrawable(null)
+    }
+
     fun bindShow(item: TiviShow) {
         title.text = item.title
         title.visibility = View.VISIBLE

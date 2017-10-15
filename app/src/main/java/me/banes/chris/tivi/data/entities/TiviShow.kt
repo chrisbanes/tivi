@@ -40,6 +40,10 @@ data class TiviShow(
         @ColumnInfo(name = "overview") val summary: String? = null,
         @ColumnInfo(name = "homepage") val homepage: String? = null) {
 
+    companion object {
+        val PLACEHOLDER = TiviShow(title = "placeholder")
+    }
+
     fun needsUpdateFromTmdb(): Boolean {
         return tmdbId != null
                 && (lastTmdbUpdate == null
