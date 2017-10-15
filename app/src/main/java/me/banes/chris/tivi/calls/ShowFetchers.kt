@@ -16,9 +16,8 @@
 
 package me.banes.chris.tivi.calls
 
-import android.support.v4.util.LruCache
+import android.support.v4.util.ArraySet
 import com.uwetrottmann.tmdb2.Tmdb
-import com.uwetrottmann.tmdb2.entities.TvShow
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
@@ -31,7 +30,6 @@ import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.RetryAfterTimeoutWithDelay
 import retrofit2.HttpException
-import timber.log.Timber
 import java.io.IOException
 import java.util.Date
 import javax.inject.Inject
@@ -43,61 +41,43 @@ class TmdbShowFetcher @Inject constructor(
         private val tmdb: Tmdb,
         private val schedulers: AppRxSchedulers
 ) {
-    private val active = LruCache<Int, Maybe<TiviShow>>(100)
+    private val active = ArraySet<Int>()
 
-    fun getShow(tmdbId: Int): Maybe<TiviShow> {
-        val cached = active[tmdbId]
-        if (cached != null) {
-            return cached
-        }
+    fun startUpdate(show: TiviShow): Boolean {
+        return show.needsUpdateFromTmdb() && !active.contains(show.tmdbId)
+    }
 
-        val dbSource = showDao.getShowWithTmdbId(tmdbId)
-                .subscribeOn(schedulers.disk)
-                .filter { !it.needsUpdateFromTmdb() } // Don't emit if the item needs updating
-
+    fun updateShow(tmdbId: Int): Single<TiviShow> {
         val networkSource = tmdb.tvService().tv(tmdbId).toRxSingle()
                 .subscribeOn(schedulers.network)
                 .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry))
                 .observeOn(schedulers.disk)
-                .flatMap { mapShow(it) }
                 .map {
-                    var show = it
-                    if (show.id == null) {
-                        Timber.d("Inserting show: %s", show)
-                        show = show.copy(id = showDao.insertShow(show))
-                    } else {
-                        Timber.d("Updating show: %s", show)
-                        showDao.updateShow(show)
-                    }
-                    show
-                }
-
-        val m = Maybe.concat(dbSource, networkSource.toMaybe()).firstElement()
-        active.put(tmdbId, m)
-        return m
-    }
-
-    private fun mapShow(tmdbShow: TvShow): Single<TiviShow> {
-        return showDao.getShowWithTmdbId(tmdbShow.id)
-                .subscribeOn(schedulers.disk)
-                .toSingle(TiviShow(title = tmdbShow.name))
-                .map {
-                    it.copy(
-                            title = tmdbShow.name,
-                            tmdbId = tmdbShow.id,
-                            summary = tmdbShow.overview,
-                            tmdbBackdropPath = tmdbShow.backdrop_path,
-                            tmdbPosterPath = tmdbShow.poster_path,
-                            homepage = tmdbShow.homepage,
-                            originalTitle = tmdbShow.original_name,
-                            lastTmdbUpdate = Date()
+                    val show = showDao.getShowWithTmdbIdSync(tmdbId) ?: TiviShow(title = it.name)
+                    showDao.insertOrUpdateShow(
+                            show.copy(
+                                    title = it.name,
+                                    tmdbId = it.id,
+                                    summary = it.overview,
+                                    tmdbBackdropPath = it.backdrop_path,
+                                    tmdbPosterPath = it.poster_path,
+                                    homepage = it.homepage,
+                                    originalTitle = it.original_name,
+                                    lastTmdbUpdate = Date()
+                            )
                     )
                 }
+                .doOnDispose { active.remove(tmdbId) }
+
+        active += tmdbId
+
+        return networkSource
     }
 
     private fun shouldRetry(throwable: Throwable): Boolean = when (throwable) {
         is HttpException -> throwable.code() == 429
         is IOException -> true
+        is IllegalStateException -> true
         else -> false
     }
 }
@@ -115,27 +95,14 @@ class TraktShowFetcher @Inject constructor(
         val fromEntity = entity?.let {
             Maybe.just(mapShow(entity))
                     .observeOn(schedulers.disk)
-                    .map { it.copy(id = showDao.insertShow(it)) }
+                    .map(showDao::insertOrUpdateShow)
         } ?: Maybe.empty<TiviShow>()
 
         val networkSource = trakt.shows().summary(traktId.toString(), Extended.NOSEASONS).toRxMaybe()
                 .subscribeOn(schedulers.network)
                 .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry))
                 .observeOn(schedulers.disk)
-                .map {
-                    var show = mapShow(it)
-                    if (show.traktId == null) {
-                        show = show.copy(traktId = traktId)
-                    }
-                    if (show.id == null) {
-                        Timber.d("Inserting show: %s", show)
-                        show = show.copy(id = showDao.insertShow(show))
-                    } else {
-                        Timber.d("Updating show: %s", show)
-                        showDao.updateShow(show)
-                    }
-                    show
-                }
+                .map { showDao.insertOrUpdateShow(mapShow(it)) }
 
         return Maybe.concat(dbSource, fromEntity, networkSource).firstElement()
     }

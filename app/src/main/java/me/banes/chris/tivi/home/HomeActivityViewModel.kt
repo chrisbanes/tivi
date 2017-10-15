@@ -73,9 +73,14 @@ internal class HomeActivityViewModel @Inject constructor(
         disposables += tiviShowDao.getShowsWhichNeedTmdbUpdate()
                 .subscribeOn(schedulers.disk)
                 .subscribe {
-                    it.filter { it.needsUpdateFromTmdb() }.forEach {
+                    it.filter(tmdbShowFetcher::startUpdate).forEach {
                         Timber.d("Updating show from TMDb: %s", it)
-                        disposables += tmdbShowFetcher.getShow(it.tmdbId!!).subscribe()
+                        disposables += tmdbShowFetcher.updateShow(it.tmdbId!!)
+                                .subscribe({
+                                    // Ignore result
+                                }, {
+                                    Timber.e(it)
+                                })
                     }
                 }
     }
