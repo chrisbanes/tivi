@@ -28,6 +28,7 @@ import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.POPULAR
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.util.AppRxSchedulers
+import timber.log.Timber
 import javax.inject.Inject
 
 internal class DiscoverViewModel @Inject constructor(
@@ -53,30 +54,44 @@ internal class DiscoverViewModel @Inject constructor(
 
         disposables += popularCall.data(0)
                 .observeOn(schedulers.main)
-                .subscribe {
+                .subscribe({
                     items[POPULAR]?.apply {
                         clear()
                         addAll(it.map { it.show!! })
                     }
                     data.value = items
-                }
+                }, {
+                    Timber.e(it, "Error while fetching popular items from database")
+                })
 
         disposables += trendingCall.data(0)
                 .observeOn(schedulers.main)
-                .subscribe {
+                .subscribe({
                     items[TRENDING]?.apply {
                         clear()
                         addAll(it.map { it.show!! })
                     }
                     data.value = items
-                }
+                }, {
+                    Timber.e(it, "Error while fetching trending items from database")
+                })
 
         refresh()
     }
 
     private fun refresh() {
-        disposables += popularCall.refresh(Unit).subscribe()
-        disposables += trendingCall.refresh(Unit).subscribe()
+        disposables += popularCall.refresh(Unit)
+                .subscribe(this::onSuccess, this::onRefreshError)
+        disposables += trendingCall.refresh(Unit)
+                .subscribe(this::onSuccess, this::onRefreshError)
+    }
+
+    private fun onSuccess() {
+        // TODO nothing really to do here
+    }
+
+    private fun onRefreshError(t: Throwable) {
+        Timber.e(t, "Error while refreshing")
     }
 
     fun onSectionHeaderClicked(section: Section) {

@@ -36,6 +36,9 @@ abstract class TiviShowDao {
     @Query("SELECT * FROM shows WHERE tmdb_id = :id")
     abstract fun getShowWithTmdbIdSync(id: Int): TiviShow?
 
+    @Query("SELECT * FROM shows WHERE trakt_id = :id")
+    abstract fun getShowWithTraktIdSync(id: Int): TiviShow?
+
     @Insert
     protected abstract fun insertShow(show: TiviShow): Long
 

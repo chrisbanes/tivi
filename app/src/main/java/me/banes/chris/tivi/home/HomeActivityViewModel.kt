@@ -20,6 +20,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import me.banes.chris.tivi.calls.TmdbShowFetcher
 import me.banes.chris.tivi.data.daos.TiviShowDao
+import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.plusAssign
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.util.AppRxSchedulers
@@ -72,16 +73,20 @@ internal class HomeActivityViewModel @Inject constructor(
     private fun setupTiviShowTmdbUpdater() {
         disposables += tiviShowDao.getShowsWhichNeedTmdbUpdate()
                 .subscribeOn(schedulers.disk)
-                .subscribe {
-                    it.filter(tmdbShowFetcher::startUpdate).forEach {
-                        Timber.d("Updating show from TMDb: %s", it)
-                        disposables += tmdbShowFetcher.updateShow(it.tmdbId!!)
-                                .subscribe({
-                                    // Ignore result
-                                }, {
-                                    Timber.e(it)
-                                })
-                    }
-                }
+                .subscribe({
+                    it.filter(tmdbShowFetcher::startUpdate).forEach(this::refreshShowFromTmdb)
+                }, {
+                    Timber.e(it, "Error while refreshing shows from TVDb")
+                })
+    }
+
+    private fun refreshShowFromTmdb(show: TiviShow) {
+        Timber.d("Updating show from TMDb: %s", show)
+        disposables += tmdbShowFetcher.updateShow(show.tmdbId!!)
+                .subscribe({
+                    Timber.d("Updated show from TMDb %s", show)
+                }, {
+                    Timber.e(it, "Error while refreshing show from TMDb", show)
+                })
     }
 }

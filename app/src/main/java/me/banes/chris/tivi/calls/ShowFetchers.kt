@@ -95,7 +95,7 @@ class TraktShowFetcher @Inject constructor(
         val fromEntity = entity?.let {
             Maybe.just(mapShow(entity))
                     .observeOn(schedulers.disk)
-                    .map(showDao::insertOrUpdateShow)
+                    .map { showDao.getShowWithTraktIdSync(traktId) ?: showDao.insertOrUpdateShow(it) }
         } ?: Maybe.empty<TiviShow>()
 
         val networkSource = trakt.shows().summary(traktId.toString(), Extended.NOSEASONS).toRxMaybe()
