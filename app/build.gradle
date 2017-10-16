@@ -176,6 +176,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
+    debugImplementation "nl.littlerobots.rxlint:rxlint:${versions.rxlint}"
+
     debugImplementation "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${versions.leakcanary}"
 
