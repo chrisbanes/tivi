@@ -31,7 +31,10 @@ import me.banes.chris.tivi.data.Entry
                         parentColumns = arrayOf("id"),
                         childColumns = arrayOf("show_id"),
                         onUpdate = ForeignKey.CASCADE,
-                        onDelete = ForeignKey.CASCADE)))
+                        onDelete = ForeignKey.CASCADE
+                )
+        )
+)
 data class WatchedEntry(
         @PrimaryKey(autoGenerate = true) override val id: Long? = null,
         @ColumnInfo(name = "show_id") override val showId: Long

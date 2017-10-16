@@ -18,7 +18,6 @@ package me.banes.chris.tivi.data.daos
 
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Update
 import io.reactivex.Flowable
@@ -37,10 +36,10 @@ abstract class TiviShowDao {
     @Query("SELECT * FROM shows WHERE tmdb_id = :id")
     abstract fun getShowWithTmdbIdSync(id: Int): TiviShow?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     protected abstract fun insertShow(show: TiviShow): Long
 
-    @Update(onConflict = OnConflictStrategy.REPLACE)
+    @Update
     protected abstract fun updateShow(show: TiviShow)
 
     fun insertOrUpdateShow(show: TiviShow): TiviShow {

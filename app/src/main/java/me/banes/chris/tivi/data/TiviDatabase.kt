@@ -36,7 +36,7 @@ import me.banes.chris.tivi.data.entities.WatchedEntry
         PopularEntry::class,
         TraktUser::class,
         WatchedEntry::class),
-        version = 6)
+        version = 7)
 @TypeConverters(TiviTypeConverters::class)
 abstract class TiviDatabase : RoomDatabase() {
     abstract fun showDao(): TiviShowDao
