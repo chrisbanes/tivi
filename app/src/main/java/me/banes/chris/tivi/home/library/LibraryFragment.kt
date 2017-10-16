@@ -17,7 +17,6 @@
 package me.banes.chris.tivi.home.library
 
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
-import me.banes.chris.tivi.data.entities.WatchedEntry
 import me.banes.chris.tivi.data.entities.WatchedListItem
 import me.banes.chris.tivi.util.EntryGridFragment
 
