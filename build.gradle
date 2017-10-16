@@ -27,6 +27,7 @@ buildscript {
             'ktlint'           : '0.10.0',
             'leakcanary'       : '1.5.4',
             'rx'               : '2.1.5',
+            'rxlint'           : '1.6'
     ]
 
     repositories {
