@@ -44,7 +44,7 @@ internal class TiviShowGridAdapter<LI : ListItem<out Entry>> : PagedListAdapter<
         }
 
         override fun areContentsTheSame(oldItem: LI, newItem: LI): Boolean {
-            return oldItem?.show == newItem?.show && oldItem?.entry == newItem?.entry
+            return oldItem == newItem
         }
     }
 }

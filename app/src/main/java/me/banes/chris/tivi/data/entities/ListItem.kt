@@ -22,32 +22,23 @@ import me.banes.chris.tivi.data.Entry
 
 interface ListItem<ET : Entry> {
     var entry: ET?
-    var relations: MutableList<TiviShow>?
+    var relations: List<TiviShow>?
 
     val show: TiviShow?
         get() = relations?.getOrNull(0)
 }
 
-class TrendingListItem : ListItem<TrendingEntry> {
-    @Embedded
-    override var entry: TrendingEntry? = null
+data class TrendingListItem(
+        @Embedded override var entry: TrendingEntry? = null,
+        @Relation(parentColumn = "show_id", entityColumn = "id", entity = TiviShow::class) override var relations: List<TiviShow>? = null
+) : ListItem<TrendingEntry>
 
-    @Relation(parentColumn = "show_id", entityColumn = "id", entity = TiviShow::class)
-    override var relations: MutableList<TiviShow>? = null
-}
+data class PopularListItem(
+        @Embedded override var entry: PopularEntry? = null,
+        @Relation(parentColumn = "show_id", entityColumn = "id", entity = TiviShow::class) override var relations: List<TiviShow>? = null
+) : ListItem<PopularEntry>
 
-class PopularListItem : ListItem<PopularEntry> {
-    @Embedded
-    override var entry: PopularEntry? = null
-
-    @Relation(parentColumn = "show_id", entityColumn = "id", entity = TiviShow::class)
-    override var relations: MutableList<TiviShow>? = null
-}
-
-class WatchedListItem : ListItem<WatchedEntry> {
-    @Embedded
-    override var entry: WatchedEntry? = null
-
-    @Relation(parentColumn = "show_id", entityColumn = "id", entity = TiviShow::class)
-    override var relations: MutableList<TiviShow>? = null
-}
+data class WatchedListItem(
+        @Embedded override var entry: WatchedEntry? = null,
+        @Relation(parentColumn = "show_id", entityColumn = "id", entity = TiviShow::class) override var relations: List<TiviShow>? = null
+) : ListItem<WatchedEntry>
