@@ -103,7 +103,7 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
-            versionNameSuffix "-dev"
+            versionNameSuffix "-dev [${getGitHash()}]"
         }
 
         release {
@@ -189,4 +189,13 @@ dependencies {
 String propOrDef(String propertyName, String defaultValue) {
     def propertyValue = project.properties[propertyName]
     return propertyValue != null ? propertyValue : defaultValue
+}
+
+def getGitHash() {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
 }
