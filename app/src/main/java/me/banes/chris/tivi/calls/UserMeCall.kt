@@ -57,7 +57,8 @@ class UserMeCall @Inject constructor(
                             name = networkUser.name,
                             location = networkUser.location,
                             about = networkUser.about,
-                            avatarUrl = networkUser.images?.avatar?.full
+                            avatarUrl = networkUser.images?.avatar?.full,
+                            joined = networkUser.joined_at
                     )
                 }
     }

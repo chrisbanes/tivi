@@ -20,8 +20,7 @@ import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
-import java.util.Date
-import java.util.concurrent.TimeUnit
+import org.threeten.bp.OffsetDateTime
 
 @Entity(tableName = "shows",
         indices = arrayOf(
@@ -35,8 +34,8 @@ data class TiviShow(
         @ColumnInfo(name = "tmdb_id") val tmdbId: Int? = null,
         @ColumnInfo(name = "tmdb_poster_path") val tmdbPosterPath: String? = null,
         @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null,
-        @ColumnInfo(name = "trakt_updated") val lastTraktUpdate: Date? = null,
-        @ColumnInfo(name = "tmdb_updated") val lastTmdbUpdate: Date? = null,
+        @ColumnInfo(name = "trakt_updated") val lastTraktUpdate: OffsetDateTime? = null,
+        @ColumnInfo(name = "tmdb_updated") val lastTmdbUpdate: OffsetDateTime? = null,
         @ColumnInfo(name = "overview") val summary: String? = null,
         @ColumnInfo(name = "homepage") val homepage: String? = null) {
 
@@ -45,13 +44,7 @@ data class TiviShow(
     }
 
     fun needsUpdateFromTmdb(): Boolean {
-        return tmdbId != null
-                && (lastTmdbUpdate == null
-                || olderThan(lastTmdbUpdate, 1, TimeUnit.DAYS))
-    }
-
-    private fun olderThan(date: Date, period: Long, unit: TimeUnit): Boolean {
-        return date.time < System.currentTimeMillis() - unit.toMillis(period)
+        return tmdbId != null && (lastTmdbUpdate?.isBefore(OffsetDateTime.now().minusDays(1)) != false)
     }
 }
 

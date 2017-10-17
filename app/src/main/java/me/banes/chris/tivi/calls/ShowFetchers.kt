@@ -29,9 +29,9 @@ import me.banes.chris.tivi.extensions.toRxMaybe
 import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.RetryAfterTimeoutWithDelay
+import org.threeten.bp.OffsetDateTime
 import retrofit2.HttpException
 import java.io.IOException
-import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -63,7 +63,7 @@ class TmdbShowFetcher @Inject constructor(
                                     tmdbPosterPath = it.poster_path,
                                     homepage = it.homepage,
                                     originalTitle = it.original_name,
-                                    lastTmdbUpdate = Date()
+                                    lastTmdbUpdate = OffsetDateTime.now()
                             )
                     )
                 }

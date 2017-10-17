@@ -54,8 +54,15 @@ class WatchedCall @Inject constructor(
                 .subscribeOn(schedulers.network)
                 .toFlowable()
                 .flatMapIterable { it }
-                .flatMapMaybe { traktShowFetcher.getShow(it.show.ids.trakt, it.show) }
-                .map { WatchedEntry(showId = it.id!!).apply { this.show = it } }
+                .flatMapMaybe { traktEntry ->
+                    traktShowFetcher.getShow(traktEntry.show.ids.trakt, traktEntry.show)
+                            .map {
+                                WatchedEntry(showId = it.id!!,
+                                        lastWatched = traktEntry.last_watched_at)
+                                        .apply { this.show = it }
+                            }
+                }
+
                 .toList()
                 .observeOn(schedulers.disk)
                 .doOnSuccess {
@@ -66,5 +73,4 @@ class WatchedCall @Inject constructor(
                 }
                 .toCompletable()
     }
-
 }
