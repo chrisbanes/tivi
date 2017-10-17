@@ -103,7 +103,7 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
-            versionNameSuffix "-dev-" + getBuildDate()
+            versionNameSuffix "-dev"
         }
 
         release {
@@ -189,10 +189,4 @@ dependencies {
 String propOrDef(String propertyName, String defaultValue) {
     def propertyValue = project.properties[propertyName]
     return propertyValue != null ? propertyValue : defaultValue
-}
-
-static def getBuildDate() {
-    def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'") //you can change it
-    df.setTimeZone(TimeZone.getTimeZone("UTC"))
-    return df.format(new Date())
 }
