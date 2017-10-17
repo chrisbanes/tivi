@@ -74,7 +74,7 @@ class HomeActivity : TiviActivity() {
                         val fragment = supportFragmentManager.findFragmentById(R.id.home_content)
                         when (fragment) {
                             is DiscoverFragment -> fragment.scrollToTop()
-                            is LibraryFragment -> fragment.scrollToTop()
+                            // FIXME is LibraryFragment -> fragment.scrollToTop()
                         }
                     }
                     true

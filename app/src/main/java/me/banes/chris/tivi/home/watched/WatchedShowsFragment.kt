@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.home.library
+package me.banes.chris.tivi.home.watched
 
-import me.banes.chris.tivi.AppNavigator
-import me.banes.chris.tivi.home.HomeFragmentViewModel
-import me.banes.chris.tivi.trakt.TraktManager
-import javax.inject.Inject
+import kotlinx.android.synthetic.main.fragment_rv_grid.*
+import me.banes.chris.tivi.data.entities.WatchedListItem
+import me.banes.chris.tivi.util.EntryGridFragment
 
-class LibraryViewModel @Inject constructor(
-        appNavigator: AppNavigator,
-        traktManager: TraktManager
-) : HomeFragmentViewModel(traktManager, appNavigator)
+class WatchedShowsFragment : EntryGridFragment<WatchedListItem, WatchedShowsViewModel>(WatchedShowsViewModel::class.java) {
+
+    internal fun scrollToTop() {
+        grid_recyclerview.apply {
+            stopScroll()
+            smoothScrollToPosition(0)
+        }
+    }
+
+}

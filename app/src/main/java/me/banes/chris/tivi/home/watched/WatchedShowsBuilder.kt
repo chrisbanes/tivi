@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.home.library
+package me.banes.chris.tivi.home.watched
 
-import me.banes.chris.tivi.AppNavigator
-import me.banes.chris.tivi.home.HomeFragmentViewModel
-import me.banes.chris.tivi.trakt.TraktManager
-import javax.inject.Inject
+import android.arch.lifecycle.ViewModel
+import dagger.Binds
+import dagger.Module
+import dagger.android.ContributesAndroidInjector
+import dagger.multibindings.IntoMap
+import me.banes.chris.tivi.inject.ViewModelKey
 
-class LibraryViewModel @Inject constructor(
-        appNavigator: AppNavigator,
-        traktManager: TraktManager
-) : HomeFragmentViewModel(traktManager, appNavigator)
+@Module
+internal abstract class WatchedShowsBuilder {
+
+    @ContributesAndroidInjector
+    internal abstract fun libraryFragment(): WatchedShowsFragment
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(WatchedShowsViewModel::class)
+    abstract fun bindLibraryViewModel(viewModel: WatchedShowsViewModel): ViewModel
+
+}

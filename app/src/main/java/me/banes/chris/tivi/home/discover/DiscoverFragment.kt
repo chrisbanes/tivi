@@ -49,7 +49,6 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(DiscoverViewModel::class.java)
     }

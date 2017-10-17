@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.home.library
+package me.banes.chris.tivi.home.watched
 
-import me.banes.chris.tivi.AppNavigator
-import me.banes.chris.tivi.home.HomeFragmentViewModel
-import me.banes.chris.tivi.trakt.TraktManager
+import me.banes.chris.tivi.calls.WatchedCall
+import me.banes.chris.tivi.data.entities.WatchedListItem
+import me.banes.chris.tivi.util.AppRxSchedulers
+import me.banes.chris.tivi.util.EntryViewModel
 import javax.inject.Inject
 
-class LibraryViewModel @Inject constructor(
-        appNavigator: AppNavigator,
-        traktManager: TraktManager
-) : HomeFragmentViewModel(traktManager, appNavigator)
+class WatchedShowsViewModel @Inject constructor(
+        schedulers: AppRxSchedulers,
+        call: WatchedCall
+) : EntryViewModel<WatchedListItem>(schedulers, call)
