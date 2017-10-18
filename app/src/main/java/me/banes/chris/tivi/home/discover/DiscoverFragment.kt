@@ -61,7 +61,7 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         super.onActivityCreated(savedInstanceState)
 
         viewModel.data.observe(this, Observer {
-            if (it != null) {
+            it?.run {
                 updateAdapter(it)
             }
         })
@@ -105,19 +105,19 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         return discover_toolbar.menu.findItem(R.id.home_menu_user_login)
     }
 
-    private fun updateAdapter(data: Map<DiscoverViewModel.Section, List<TiviShow>>) {
+    private fun updateAdapter(data: List<DiscoverViewModel.SectionPage>) {
         if (groups.size != data.size) {
             groups.clear()
-            for ((category) in data) {
+            for (section in data) {
                 val group = ShowPosterUpdatingSection()
-                groups[category] = group
-                group.setHeader(HeaderItem(category))
+                groups[section.section] = group
+                group.setHeader(HeaderItem(section.section))
                 groupAdapter.add(group)
             }
         }
         val spanCount = gridLayoutManager.spanCount
-        for ((category, items) in data) {
-            groups[category]?.update(items.take(spanCount * 2))
+        for (section in data) {
+            groups[section.section]?.update(section.items.mapNotNull { it.show }.take(spanCount * 2))
         }
     }
 

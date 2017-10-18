@@ -17,10 +17,16 @@
 package me.banes.chris.tivi.home.discover
 
 import android.arch.lifecycle.MutableLiveData
+import io.reactivex.Flowable
+import io.reactivex.functions.BiFunction
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.calls.PopularCall
 import me.banes.chris.tivi.calls.TrendingCall
+import me.banes.chris.tivi.data.Entry
+import me.banes.chris.tivi.data.entities.ListItem
+import me.banes.chris.tivi.data.entities.PopularListItem
 import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.data.entities.TrendingListItem
 import me.banes.chris.tivi.extensions.plusAssign
 import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
@@ -39,41 +45,26 @@ internal class DiscoverViewModel @Inject constructor(
         appNavigator: AppNavigator,
         traktManager: TraktManager) : HomeFragmentViewModel(traktManager, appNavigator) {
 
-    private val items = mapOf(
-            TRENDING to mutableListOf<TiviShow>(),
-            POPULAR to mutableListOf<TiviShow>())
+    data class SectionPage(val section: Section, val items: List<out ListItem<out Entry>>)
 
     enum class Section {
         TRENDING, POPULAR
     }
 
-    val data = MutableLiveData<Map<Section, List<TiviShow>>>()
+    val data = MutableLiveData<List<SectionPage>>()
 
     init {
-        data.value = items
-
-        disposables += popularCall.data(0)
-                .observeOn(schedulers.main)
-                .subscribe({
-                    items[POPULAR]?.apply {
-                        clear()
-                        addAll(it.map { it.show!! })
-                    }
-                    data.value = items
-                }, {
-                    Timber.e(it, "Error while fetching popular items from database")
+        disposables += Flowable.zip(
+                popularCall.data(0),
+                trendingCall.data(0),
+                BiFunction<List<PopularListItem>, List<TrendingListItem>, List<SectionPage>> { popular, trending ->
+                    listOf(SectionPage(TRENDING, trending), SectionPage(POPULAR, popular))
                 })
-
-        disposables += trendingCall.data(0)
                 .observeOn(schedulers.main)
                 .subscribe({
-                    items[TRENDING]?.apply {
-                        clear()
-                        addAll(it.map { it.show!! })
-                    }
-                    data.value = items
+                    data.value = it
                 }, {
-                    Timber.e(it, "Error while fetching trending items from database")
+                    Timber.e(it)
                 })
 
         refresh()
