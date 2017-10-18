@@ -30,15 +30,15 @@ interface ListItem<ET : Entry> {
 
 data class TrendingListItem(
         @Embedded override var entry: TrendingEntry? = null,
-        @Relation(parentColumn = "show_id", entityColumn = "id", entity = TiviShow::class) override var relations: List<TiviShow>? = null
+        @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow>? = null
 ) : ListItem<TrendingEntry>
 
 data class PopularListItem(
         @Embedded override var entry: PopularEntry? = null,
-        @Relation(parentColumn = "show_id", entityColumn = "id", entity = TiviShow::class) override var relations: List<TiviShow>? = null
+        @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow>? = null
 ) : ListItem<PopularEntry>
 
 data class WatchedListItem(
         @Embedded override var entry: WatchedEntry? = null,
-        @Relation(parentColumn = "show_id", entityColumn = "id", entity = TiviShow::class) override var relations: List<TiviShow>? = null
+        @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow>? = null
 ) : ListItem<WatchedEntry>
