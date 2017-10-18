@@ -51,7 +51,7 @@ class TmdbShowFetcher @Inject constructor(
         val networkSource = tmdb.tvService().tv(tmdbId).toRxSingle()
                 .subscribeOn(schedulers.network)
                 .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry))
-                .observeOn(schedulers.disk)
+                .observeOn(schedulers.database)
                 .map {
                     val show = showDao.getShowWithTmdbIdSync(tmdbId) ?: TiviShow(title = it.name)
                     showDao.insertOrUpdateShow(
@@ -90,18 +90,18 @@ class TraktShowFetcher @Inject constructor(
 ) {
     fun getShow(traktId: Int, entity: Show? = null): Maybe<TiviShow> {
         val dbSource = showDao.getShowWithTraktId(traktId)
-                .subscribeOn(schedulers.disk)
+                .subscribeOn(schedulers.database)
 
         val fromEntity = entity?.let {
             Maybe.just(mapShow(entity))
-                    .observeOn(schedulers.disk)
+                    .observeOn(schedulers.database)
                     .map { showDao.getShowWithTraktIdSync(traktId) ?: showDao.insertOrUpdateShow(it) }
         } ?: Maybe.empty<TiviShow>()
 
         val networkSource = trakt.shows().summary(traktId.toString(), Extended.NOSEASONS).toRxMaybe()
                 .subscribeOn(schedulers.network)
                 .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry))
-                .observeOn(schedulers.disk)
+                .observeOn(schedulers.database)
                 .map { showDao.insertOrUpdateShow(mapShow(it)) }
 
         return Maybe.concat(dbSource, fromEntity, networkSource).firstElement()

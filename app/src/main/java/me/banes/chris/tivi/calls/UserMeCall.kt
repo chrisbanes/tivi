@@ -39,14 +39,14 @@ class UserMeCall @Inject constructor(
         return trakt.users().profile(UserSlug.ME, Extended.FULL).toRxSingle()
                 .subscribeOn(schedulers.network)
                 .flatMap(this::mapToOutput)
-                .observeOn(schedulers.disk)
+                .observeOn(schedulers.database)
                 .doOnSuccess(this::saveEntry)
                 .toCompletable()
     }
 
     override fun data(): Flowable<TraktUser> {
         return dao.getTraktUser()
-                .subscribeOn(schedulers.disk)
+                .subscribeOn(schedulers.database)
     }
 
     private fun mapToOutput(input: User): Single<TraktUser> {

@@ -42,7 +42,7 @@ class WatchedCall @Inject constructor(
     override fun data(): Flowable<List<WatchedListItem>> {
         return watchDao.entries()
                 .distinctUntilChanged()
-                .subscribeOn(schedulers.disk)
+                .subscribeOn(schedulers.database)
     }
 
     override fun liveList(): LivePagedListProvider<Int, WatchedListItem> {
@@ -64,7 +64,7 @@ class WatchedCall @Inject constructor(
                 }
 
                 .toList()
-                .observeOn(schedulers.disk)
+                .observeOn(schedulers.database)
                 .doOnSuccess {
                     databaseTxRunner.runInTransaction {
                         watchDao.deleteAll()
