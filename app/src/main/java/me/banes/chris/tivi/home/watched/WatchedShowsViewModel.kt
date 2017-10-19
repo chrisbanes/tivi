@@ -18,11 +18,17 @@ package me.banes.chris.tivi.home.watched
 
 import me.banes.chris.tivi.calls.WatchedCall
 import me.banes.chris.tivi.data.entities.WatchedListItem
+import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.EntryViewModel
 import javax.inject.Inject
 
 class WatchedShowsViewModel @Inject constructor(
         schedulers: AppRxSchedulers,
-        call: WatchedCall
-) : EntryViewModel<WatchedListItem>(schedulers, call)
+        call: WatchedCall,
+        private val navigator: HomeNavigator
+) : EntryViewModel<WatchedListItem>(schedulers, call) {
+    fun onUpClicked() {
+        navigator.onUpClicked()
+    }
+}

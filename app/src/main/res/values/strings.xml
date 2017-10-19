@@ -17,14 +17,20 @@
 
 <resources>
     <string name="app_name">Tivi</string>
+
+    <string name="home_nav_discover">Discover</string>
+    <string name="home_nav_library">Library</string>
+
+    <string name="discover_title">Discover</string>
     <string name="discover_my_shows">My Shows</string>
     <string name="discover_trending">Trending</string>
     <string name="discover_popular">Popular</string>
-    <string name="discover_more">More</string>
-    <string name="home_nav_discover">Discover</string>
-    <string name="home_nav_library">Library</string>
-    <string name="login">Login</string>
 
+    <string name="library_title">Library</string>
+    <string name="library_watched">Watched</string>
+
+    <string name="login">Login</string>
+    <string name="header_more">More</string>
 
     <string name="prefs_ui_category_title">User Interface</string>
     <string name="prefs_ui_theme_title">Theme</string>

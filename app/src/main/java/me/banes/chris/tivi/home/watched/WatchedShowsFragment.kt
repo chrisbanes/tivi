@@ -16,16 +16,22 @@
 
 package me.banes.chris.tivi.home.watched
 
+import android.os.Bundle
+import android.view.View
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
+import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.WatchedListItem
 import me.banes.chris.tivi.util.EntryGridFragment
 
 class WatchedShowsFragment : EntryGridFragment<WatchedListItem, WatchedShowsViewModel>(WatchedShowsViewModel::class.java) {
 
-    internal fun scrollToTop() {
-        grid_recyclerview.apply {
-            stopScroll()
-            smoothScrollToPosition(0)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        toolbar.apply {
+            title = getString(R.string.library_watched)
+            setNavigationOnClickListener {
+                viewModel.onUpClicked()
+            }
         }
     }
 

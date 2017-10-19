@@ -61,11 +61,7 @@ internal class DiscoverViewModel @Inject constructor(
                     listOf(SectionPage(TRENDING, trending), SectionPage(POPULAR, popular))
                 })
                 .observeOn(schedulers.main)
-                .subscribe({
-                    data.value = it
-                }, {
-                    Timber.e(it)
-                })
+                .subscribe(data::setValue, Timber::e)
 
         refresh()
     }
