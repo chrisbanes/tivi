@@ -21,8 +21,8 @@ import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
+import io.reactivex.Completable
 import io.reactivex.Maybe
-import io.reactivex.Single
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.toRxMaybe
@@ -47,27 +47,26 @@ class TmdbShowFetcher @Inject constructor(
         return show.needsUpdateFromTmdb() && !active.contains(show.tmdbId)
     }
 
-    fun updateShow(tmdbId: Int): Single<TiviShow> {
+    fun updateShow(tmdbId: Int): Completable {
         val networkSource = tmdb.tvService().tv(tmdbId).toRxSingle()
                 .subscribeOn(schedulers.network)
                 .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry))
                 .observeOn(schedulers.database)
-                .map {
-                    val show = showDao.getShowWithTmdbIdSync(tmdbId) ?: TiviShow(title = it.name)
-                    showDao.insertOrUpdateShow(
-                            show.copy(
-                                    title = it.name,
-                                    tmdbId = it.id,
-                                    summary = it.overview,
-                                    tmdbBackdropPath = it.backdrop_path,
-                                    tmdbPosterPath = it.poster_path,
-                                    homepage = it.homepage,
-                                    originalTitle = it.original_name,
-                                    lastTmdbUpdate = OffsetDateTime.now()
-                            )
-                    )
+                .map { tmdbShow ->
+                    val show = showDao.getShowWithTmdbIdSync(tmdbShow.id) ?: TiviShow()
+                    show.apply {
+                        updateProperty(this::tmdbId, tmdbShow.id)
+                        updateProperty(this::title, tmdbShow.name)
+                        updateProperty(this::summary, tmdbShow.overview)
+                        updateProperty(this::tmdbBackdropPath, tmdbShow.backdrop_path)
+                        updateProperty(this::tmdbPosterPath, tmdbShow.poster_path)
+                        updateProperty(this::homepage, tmdbShow.homepage)
+                        lastTmdbUpdate = OffsetDateTime.now()
+                    }
+                    showDao.insertOrUpdateShow(show)
                 }
                 .doOnDispose { active.remove(tmdbId) }
+                .toCompletable()
 
         active += tmdbId
 
@@ -92,27 +91,33 @@ class TraktShowFetcher @Inject constructor(
         val dbSource = showDao.getShowWithTraktId(traktId)
                 .subscribeOn(schedulers.database)
 
-        val fromEntity = entity?.let {
-            Maybe.just(mapShow(entity))
-                    .observeOn(schedulers.database)
-                    .map { showDao.getShowWithTraktIdSync(traktId) ?: showDao.insertOrUpdateShow(it) }
-        } ?: Maybe.empty<TiviShow>()
+        val fromEntity = entity?.let { appendRx(Maybe.just(entity)) } ?: Maybe.empty<TiviShow>()
 
-        val networkSource = trakt.shows().summary(traktId.toString(), Extended.NOSEASONS).toRxMaybe()
+        val networkSource = appendRx(
+                trakt.shows().summary(traktId.toString(), Extended.NOSEASONS).toRxMaybe()
                 .subscribeOn(schedulers.network)
                 .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry))
-                .observeOn(schedulers.database)
-                .map { showDao.insertOrUpdateShow(mapShow(it)) }
+        )
 
         return Maybe.concat(dbSource, fromEntity, networkSource).firstElement()
     }
 
-    private fun mapShow(show: Show): TiviShow {
-        return TiviShow(
-                title = show.title,
-                traktId = show.ids.trakt,
-                tmdbId = show.ids.tmdb,
-                summary = show.overview)
+    private fun appendRx(maybe: Maybe<Show>): Maybe<TiviShow> {
+        return maybe.observeOn(schedulers.database)
+                .map { traktShow ->
+                    val show = showDao.getShowWithTraktIdSync(traktShow.ids.trakt) ?: TiviShow()
+                    show.apply {
+                        updateProperty(this::traktId, traktShow.ids.trakt)
+                        updateProperty(this::tmdbId, traktShow.ids.tmdb)
+                        updateProperty(this::title, traktShow.title)
+                        updateProperty(this::summary, traktShow.overview)
+                        updateProperty(this::homepage, traktShow.homepage)
+                        lastTraktUpdate = OffsetDateTime.now()
+                    }
+                    showDao.insertOrUpdateShow(show)
+                }
+                .map(TiviShow::traktId)
+                .flatMap(showDao::getShowWithTraktId)
     }
 
     private fun shouldRetry(throwable: Throwable): Boolean = when (throwable) {

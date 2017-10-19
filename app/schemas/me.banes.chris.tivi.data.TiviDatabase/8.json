@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 8,
-    "identityHash": "876f47a54634e55164708b51bd60ee44",
+    "identityHash": "aeb17f45fc1702e8000056ba8650ac45",
     "entities": [
       {
         "tableName": "shows",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT NOT NULL, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `trakt_updated` TEXT, `tmdb_updated` TEXT, `overview` TEXT, `homepage` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `trakt_updated` TEXT, `tmdb_updated` TEXT, `overview` TEXT, `homepage` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -18,7 +18,7 @@
             "fieldPath": "title",
             "columnName": "title",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "originalTitle",
@@ -331,7 +331,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"876f47a54634e55164708b51bd60ee44\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"aeb17f45fc1702e8000056ba8650ac45\")"
     ]
   }
 }

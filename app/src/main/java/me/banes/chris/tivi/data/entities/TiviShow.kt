@@ -21,30 +21,37 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.OffsetDateTime
+import kotlin.reflect.KMutableProperty0
 
 @Entity(tableName = "shows",
         indices = arrayOf(
                 Index(value = "trakt_id", unique = true),
                 Index(value = "tmdb_id", unique = true)))
 data class TiviShow(
-        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long? = null,
-        @ColumnInfo(name = "title") val title: String,
-        @ColumnInfo(name = "original_title") val originalTitle: String? = null,
-        @ColumnInfo(name = "trakt_id") val traktId: Int? = null,
-        @ColumnInfo(name = "tmdb_id") val tmdbId: Int? = null,
-        @ColumnInfo(name = "tmdb_poster_path") val tmdbPosterPath: String? = null,
-        @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null,
-        @ColumnInfo(name = "trakt_updated") val lastTraktUpdate: OffsetDateTime? = null,
-        @ColumnInfo(name = "tmdb_updated") val lastTmdbUpdate: OffsetDateTime? = null,
-        @ColumnInfo(name = "overview") val summary: String? = null,
-        @ColumnInfo(name = "homepage") val homepage: String? = null) {
+        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") var id: Long? = null,
+        @ColumnInfo(name = "title") var title: String? = null,
+        @ColumnInfo(name = "original_title") var originalTitle: String? = null,
+        @ColumnInfo(name = "trakt_id") var traktId: Int? = null,
+        @ColumnInfo(name = "tmdb_id") var tmdbId: Int? = null,
+        @ColumnInfo(name = "tmdb_poster_path") var tmdbPosterPath: String? = null,
+        @ColumnInfo(name = "tmdb_backdrop_path") var tmdbBackdropPath: String? = null,
+        @ColumnInfo(name = "trakt_updated") var lastTraktUpdate: OffsetDateTime? = null,
+        @ColumnInfo(name = "tmdb_updated") var lastTmdbUpdate: OffsetDateTime? = null,
+        @ColumnInfo(name = "overview") var summary: String? = null,
+        @ColumnInfo(name = "homepage") var homepage: String? = null) {
 
     companion object {
-        val PLACEHOLDER = TiviShow(title = "placeholder")
+        val PLACEHOLDER = TiviShow()
     }
 
     fun needsUpdateFromTmdb(): Boolean {
         return tmdbId != null && (lastTmdbUpdate?.isBefore(OffsetDateTime.now().minusDays(1)) != false)
+    }
+
+    fun <T> updateProperty(entityVar: KMutableProperty0<T?>, updateVal: T?) {
+        when {
+            updateVal != null -> entityVar.set(updateVal)
+        }
     }
 }
 
