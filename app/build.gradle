@@ -50,8 +50,8 @@ android {
         applicationId "me.banes.chris.tivi"
         minSdkVersion 23
         targetSdkVersion 26
-        versionCode 3
-        versionName "0.1.1"
+        versionCode 4
+        versionName "0.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + propOrDef("TIVI_TRAKT_CLIENT_ID", "") + "\""
