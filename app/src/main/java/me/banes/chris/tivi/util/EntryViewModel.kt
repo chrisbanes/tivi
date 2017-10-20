@@ -25,6 +25,7 @@ import me.banes.chris.tivi.calls.PaginatedCall
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.extensions.plusAssign
+import timber.log.Timber
 
 open class EntryViewModel<LI : ListItem<out Entry>>(
         val schedulers: AppRxSchedulers,
@@ -53,20 +54,23 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
             disposables += call.loadNextPage()
                     .observeOn(schedulers.main)
                     .doOnSubscribe { messages.value = Resource(Status.LOADING_MORE) }
-                    .subscribe({ messages.value = Resource(Status.SUCCESS) }, this::onError)
+                    .subscribe(this::onSuccess, this::onError)
         }
-    }
-
-    private fun onError(t: Throwable) {
-        messages.value = Resource(Status.ERROR, t.localizedMessage)
     }
 
     fun fullRefresh() {
         disposables += call.refresh(Unit)
                 .observeOn(schedulers.main)
                 .doOnSubscribe { messages.value = Resource(Status.REFRESHING) }
-                .subscribe(
-                        { messages.value = Resource(Status.SUCCESS) },
-                        { messages.value = Resource(Status.ERROR, it.localizedMessage) })
+                .subscribe(this::onSuccess, this::onError)
+    }
+
+    private fun onError(t: Throwable) {
+        Timber.e(t)
+        messages.value = Resource(Status.ERROR, t.localizedMessage)
+    }
+
+    private fun onSuccess() {
+        messages.value = Resource(Status.SUCCESS)
     }
 }
