@@ -19,6 +19,7 @@ package me.banes.chris.tivi.data.daos
 import android.arch.paging.LivePagedListProvider
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
+import android.arch.persistence.room.Transaction
 import io.reactivex.Flowable
 import io.reactivex.Single
 import me.banes.chris.tivi.data.entities.PopularEntry
@@ -26,12 +27,15 @@ import me.banes.chris.tivi.data.entities.PopularListItem
 
 @Dao
 abstract class PopularDao : PaginatedEntryDao<PopularEntry, PopularListItem> {
+    @Transaction
     @Query("SELECT * FROM popular_shows ORDER BY page, page_order")
     abstract override fun entries(): Flowable<List<PopularListItem>>
 
+    @Transaction
     @Query("SELECT * FROM popular_shows ORDER BY page, page_order")
     abstract override fun entriesLiveList(): LivePagedListProvider<Int, PopularListItem>
 
+    @Transaction
     @Query("SELECT * FROM popular_shows WHERE page = :page")
     abstract override fun entriesPage(page: Int): Flowable<List<PopularListItem>>
 

@@ -19,15 +19,18 @@ package me.banes.chris.tivi.data.daos
 import android.arch.paging.LivePagedListProvider
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
+import android.arch.persistence.room.Transaction
 import io.reactivex.Flowable
 import me.banes.chris.tivi.data.entities.WatchedEntry
 import me.banes.chris.tivi.data.entities.WatchedListItem
 
 @Dao
 abstract class WatchedDao : EntryDao<WatchedEntry, WatchedListItem> {
+    @Transaction
     @Query("SELECT * FROM watched_entries")
     abstract override fun entries(): Flowable<List<WatchedListItem>>
 
+    @Transaction
     @Query("SELECT * FROM watched_entries")
     abstract override fun entriesLiveList(): LivePagedListProvider<Int, WatchedListItem>
 
