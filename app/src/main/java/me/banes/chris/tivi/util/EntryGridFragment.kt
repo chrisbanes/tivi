@@ -20,8 +20,10 @@ import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -46,7 +48,12 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
 
     protected lateinit var viewModel: VM
 
-    private val adapter = TiviShowGridAdapter<LI>()
+    private lateinit var adapter: TiviShowGridAdapter<LI>
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(vmClass)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_rv_grid, container, false)
@@ -55,21 +62,26 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val layoutManager = grid_recyclerview.layoutManager as GridLayoutManager
+        adapter = TiviShowGridAdapter(layoutManager.spanCount)
+
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return adapter.getItemColumnSpan(position)
+            }
+        }
+
         grid_recyclerview.apply {
             adapter = this@EntryGridFragment.adapter
             addItemDecoration(SpacingItemDecorator(paddingLeft))
-            addOnScrollListener(EndlessRecyclerViewScrollListener(
-                    grid_recyclerview.layoutManager, { _: Int, _: RecyclerView ->
-                if (userVisibleHint) viewModel.onListScrolledToEnd()
+            addOnScrollListener(EndlessRecyclerViewScrollListener(layoutManager, { _: Int, _: RecyclerView ->
+                if (userVisibleHint) {
+                    viewModel.onListScrolledToEnd()
+                }
             }))
         }
 
-        grid_swipe_refresh.setOnRefreshListener { viewModel.fullRefresh() }
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(vmClass)
+        grid_swipe_refresh.setOnRefreshListener(viewModel::fullRefresh)
     }
 
     override fun onStart() {
@@ -81,18 +93,18 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
             when (it?.status) {
                 Status.SUCCESS -> {
                     grid_swipe_refresh.isRefreshing = false
-                    progress_loadmore.visibility = View.GONE
+                    adapter.isLoading = false
                 }
                 Status.ERROR -> {
                     grid_swipe_refresh.isRefreshing = false
-                    progress_loadmore.visibility = View.GONE
+                    adapter.isLoading = false
                     Snackbar.make(grid_recyclerview, it.message ?: "EMPTY", Snackbar.LENGTH_SHORT).show()
                 }
                 Status.REFRESHING -> {
                     grid_swipe_refresh.isRefreshing = true
                 }
                 Status.LOADING_MORE -> {
-                    progress_loadmore.visibility = View.VISIBLE
+                    adapter.isLoading = true
                 }
             }
         })
