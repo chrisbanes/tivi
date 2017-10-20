@@ -18,6 +18,7 @@ package me.banes.chris.tivi.ui
 
 import android.arch.paging.PagedListAdapter
 import android.support.v7.recyclerview.extensions.DiffCallback
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import me.banes.chris.tivi.R
@@ -25,18 +26,77 @@ import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TiviShow
 
-internal class TiviShowGridAdapter<LI : ListItem<out Entry>> : PagedListAdapter<LI, TiviShowGridViewHolder>(TiviShowDiffCallback<LI>()) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TiviShowGridViewHolder {
-        val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.grid_item, parent, false)
-        return TiviShowGridViewHolder(view)
+internal class TiviShowGridAdapter<LI : ListItem<out Entry>>(
+        private val columnCount : Int
+) : PagedListAdapter<LI, RecyclerView.ViewHolder>(TiviShowDiffCallback<LI>()) {
+
+    companion object {
+        const val TYPE_ITEM = 0
+        const val TYPE_LOADING_MORE = -1
     }
 
-    override fun onBindViewHolder(holder: TiviShowGridViewHolder, position: Int) {
-        holder.bind(getItem(position)?.show ?: TiviShow.PLACEHOLDER)
+    private val loadingMoreItemPosition: Int
+        get() = if (isLoading) itemCount - 1 else RecyclerView.NO_POSITION
+
+    var isLoading = false
+        set(value) {
+            if (value == field) return
+            if (value) {
+                notifyItemInserted(loadingMoreItemPosition)
+                field = value
+            }
+            else {
+                notifyItemRemoved(loadingMoreItemPosition)
+                field = value
+            }
+        }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        return when (viewType) {
+            TYPE_ITEM -> {
+                TiviShowGridViewHolder(inflater.inflate(R.layout.grid_item, parent, false))
+            }
+            TYPE_LOADING_MORE -> {
+                LoadingViewHolder(inflater.inflate(R.layout.infinite_loading, parent, false))
+            }
+            else -> {
+                throw IllegalArgumentException("Invalid item type")
+            }
+        }
     }
 
-    class TiviShowDiffCallback<LI : ListItem<out Entry>> : DiffCallback<LI>() {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is TiviShowGridViewHolder -> {
+                holder.bind(getItem(position)?.show ?: TiviShow.PLACEHOLDER)
+            }
+        }
+    }
+
+    override fun getItemId(position: Int): Long {
+        if (getItemViewType(position) == TYPE_LOADING_MORE) {
+            return RecyclerView.NO_ID
+        }
+        return super.getItemId(position)
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        val itemCount = super.getItemCount()
+        if (position < itemCount && itemCount > 0) {
+            return TYPE_ITEM
+        }
+        return TYPE_LOADING_MORE
+    }
+
+    fun getItemColumnSpan(position: Int) = when (getItemViewType(position)) {
+        TYPE_LOADING_MORE -> columnCount
+        else -> 1
+    }
+
+    override fun getItemCount(): Int = super.getItemCount() + if (isLoading) 1 else 0
+
+    private class TiviShowDiffCallback<LI : ListItem<out Entry>> : DiffCallback<LI>() {
         override fun areItemsTheSame(oldItem: LI, newItem: LI): Boolean {
             return (oldItem.show?.id != null && oldItem.show?.id == newItem.show?.id)
                     || (oldItem.show?.traktId != null && oldItem.show?.traktId == newItem.show?.traktId)
