@@ -21,11 +21,13 @@ import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
 import io.reactivex.Flowable
 import io.reactivex.Maybe
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.calls.UserMeCall
 import me.banes.chris.tivi.data.entities.TraktUser
 import me.banes.chris.tivi.extensions.edit
+import me.banes.chris.tivi.extensions.plusAssign
 import me.banes.chris.tivi.util.AppRxSchedulers
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
@@ -50,27 +52,29 @@ class TraktManager @Inject constructor(
         private val traktClient: TraktV2,
         private val userMeCall: UserMeCall) {
 
-    val stateSubject = BehaviorSubject.create<AuthState>()
+    private val disposables = CompositeDisposable()
+
+    val stateSubject = BehaviorSubject.create<AuthState>()!!
 
     init {
         // First observer updates the local storage
-        stateSubject.observeOn(schedulers.database)
-                .subscribe(this::persistAuthState)
+        disposables += stateSubject.observeOn(schedulers.database)
+                .subscribe(this::persistAuthState, Timber::e)
 
         // Second observer updates local state
-        stateSubject.observeOn(schedulers.main)
-                .subscribe {
-                    traktClient.accessToken(it?.accessToken)
-                    traktClient.refreshToken(it?.refreshToken)
-
+        disposables += stateSubject.observeOn(schedulers.main)
+                .subscribe({
+                    traktClient.accessToken(it.accessToken)
+                    traktClient.refreshToken(it.refreshToken)
                     if (it.isAuthorized) {
                         // Now refresh the user information
-                        userMeCall.refresh(Unit)
+                        disposables += userMeCall.refresh(Unit)
+                                .subscribe({}, Timber::e)
                     }
-                }
+                }, Timber::e)
 
         // Read the auth state from database
-        Maybe.fromCallable(this::readAuthState)
+        disposables += Maybe.fromCallable(this::readAuthState)
                 .subscribeOn(schedulers.database)
                 .observeOn(schedulers.main)
                 .subscribe(stateSubject::onNext, stateSubject::onError)
@@ -116,5 +120,4 @@ class TraktManager @Inject constructor(
             putString("stateJson", state.jsonSerializeString())
         }
     }
-
 }
