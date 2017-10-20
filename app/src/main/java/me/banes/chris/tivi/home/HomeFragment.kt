@@ -37,29 +37,23 @@ abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
         viewModel.authUiState.observe(this, Observer {
             when (it) {
                 HomeFragmentViewModel.AuthUiState.LOGGED_IN -> {
-                    findUserAvatarMenuItem()?.apply {
-                        isVisible = true
-                        icon = context.getDrawable(R.drawable.ic_popular)
-                    }
-                    findUserLoginMenuItem()?.apply {
-                        isVisible = false
-                    }
+                    findUserAvatarMenuItem()?.isVisible = true
+                    findUserLoginMenuItem()?.isVisible = false
                 }
                 HomeFragmentViewModel.AuthUiState.LOGGED_OUT -> {
-                    findUserAvatarMenuItem()?.apply {
-                        isVisible = false
-                    }
-                    findUserLoginMenuItem()?.apply {
-                        isVisible = true
-                    }
+                    findUserAvatarMenuItem()?.isVisible = false
+                    findUserLoginMenuItem()?.isVisible = true
                 }
             }
         })
 
-        viewModel.userProfileLiveData.observe(this, Observer {
-            if (it != null) {
-                if (it.avatarUrl != null) {
-                    findUserAvatarMenuItem()?.loadIconFromUrl(context, it.avatarUrl)
+        viewModel.userProfileLiveData.observe(this, Observer { user ->
+            if (user != null) {
+                findUserAvatarMenuItem()?.let {
+                    it.title = user.name
+                    if (user.avatarUrl != null) {
+                        it.loadIconFromUrl(context, user.avatarUrl)
+                    }
                 }
             } else {
                 // TODO clear user profile
