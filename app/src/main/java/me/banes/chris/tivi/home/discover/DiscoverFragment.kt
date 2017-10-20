@@ -111,6 +111,7 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
                 val group = ShowPosterUpdatingSection()
                 groups[section.section] = group
                 group.setHeader(HeaderItem(section.section))
+                group.setPlaceholder(EmptyPlaceholder())
                 groupAdapter.add(group)
             }
         }
@@ -137,6 +138,13 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
         override fun bind(viewHolder: ViewHolder, position: Int) {
             viewHolder.itemView.header_title.text = titleFromSection(section)
+        }
+    }
+
+    internal inner class EmptyPlaceholder : Item<ViewHolder>() {
+        override fun getLayout() = R.layout.empty_state
+
+        override fun bind(viewHolder: ViewHolder, position: Int) {
         }
     }
 
