@@ -19,14 +19,14 @@ package me.banes.chris.tivi.data.entities
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import java.util.Date
+import org.threeten.bp.OffsetDateTime
 
 @Entity(tableName = "users")
 data class TraktUser(
         @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long? = null,
         @ColumnInfo(name = "username") val username: String,
         @ColumnInfo(name = "name") val name: String,
-        @ColumnInfo(name = "joined_date") val joined: Date? = null,
+        @ColumnInfo(name = "joined_date") val joined: OffsetDateTime? = null,
         @ColumnInfo(name = "location") val location: String? = null,
         @ColumnInfo(name = "about") val about: String? = null,
         @ColumnInfo(name = "avatar_url") val avatarUrl: String? = null)

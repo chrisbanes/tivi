@@ -24,6 +24,10 @@ import dagger.Module
 import dagger.Provides
 import me.banes.chris.tivi.BuildConfig
 import me.banes.chris.tivi.TiviApplication
+import me.banes.chris.tivi.appmanagers.AppManagers
+import me.banes.chris.tivi.appmanagers.LeakCanaryManager
+import me.banes.chris.tivi.appmanagers.ThreeTenBpManager
+import me.banes.chris.tivi.appmanagers.TimberManager
 import me.banes.chris.tivi.util.AppRxSchedulers
 import okhttp3.Cache
 import okhttp3.OkHttpClient
@@ -74,4 +78,11 @@ class AppModule {
         return application.cacheDir
     }
 
+    @Provides
+    fun provideAppManagers(
+            leakCanaryManager: LeakCanaryManager,
+            timberManager: TimberManager,
+            threeTenManager: ThreeTenBpManager): AppManagers {
+        return AppManagers(leakCanaryManager, timberManager, threeTenManager)
+    }
 }

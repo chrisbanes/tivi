@@ -27,11 +27,11 @@ import me.banes.chris.tivi.data.entities.WatchedListItem
 @Dao
 abstract class WatchedDao : EntryDao<WatchedEntry, WatchedListItem> {
     @Transaction
-    @Query("SELECT * FROM watched_entries")
+    @Query("SELECT * FROM watched_entries ORDER BY datetime(last_watched) DESC")
     abstract override fun entries(): Flowable<List<WatchedListItem>>
 
     @Transaction
-    @Query("SELECT * FROM watched_entries")
+    @Query("SELECT * FROM watched_entries ORDER BY datetime(last_watched) DESC")
     abstract override fun entriesLiveList(): LivePagedListProvider<Int, WatchedListItem>
 
     @Query("DELETE FROM watched_entries")

@@ -39,6 +39,7 @@ import me.banes.chris.tivi.home.discover.DiscoverFragment
 import me.banes.chris.tivi.home.library.LibraryFragment
 import me.banes.chris.tivi.home.popular.PopularShowsFragment
 import me.banes.chris.tivi.home.trending.TrendingShowsFragment
+import me.banes.chris.tivi.home.watched.WatchedShowsFragment
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import javax.inject.Inject
@@ -74,7 +75,7 @@ class HomeActivity : TiviActivity() {
                         val fragment = supportFragmentManager.findFragmentById(R.id.home_content)
                         when (fragment) {
                             is DiscoverFragment -> fragment.scrollToTop()
-                            is LibraryFragment -> fragment.scrollToTop()
+                            // FIXME is LibraryFragment -> fragment.scrollToTop()
                         }
                     }
                     true
@@ -145,6 +146,15 @@ class HomeActivity : TiviActivity() {
                     .beginTransaction()
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .replace(R.id.home_content, TrendingShowsFragment())
+                    .addToBackStack(null)
+                    .commit()
+        }
+
+        override fun showWatched() {
+            supportFragmentManager
+                    .beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .replace(R.id.home_content, WatchedShowsFragment())
                     .addToBackStack(null)
                     .commit()
         }
