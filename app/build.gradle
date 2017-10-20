@@ -1,5 +1,3 @@
-import java.text.SimpleDateFormat
-
 /*
  * Copyright 2017 Google, Inc.
  *
@@ -148,7 +146,14 @@ dependencies {
 
     implementation "com.android.support.constraint:constraint-layout:${versions.constraint_layout}"
 
-    implementation "com.uwetrottmann.trakt5:trakt-java:5.7.1"
+    implementation 'org.threeten:threetenbp:1.3.6:no-tzdb'
+    implementation 'com.gabrielittner.threetenbp:lazythreetenbp:0.2.0'
+
+    implementation("com.uwetrottmann.trakt5:trakt-java:5.7.1", {
+        // Exclude this since we explicitly depend on threetenbp:no-tzdb above
+        exclude group: 'org.threeten', module: 'threetenbp'
+    })
+
     implementation "com.uwetrottmann.tmdb2:tmdb-java:1.8.1"
 
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'

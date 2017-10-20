@@ -54,7 +54,7 @@ class TraktManager @Inject constructor(
 
     init {
         // First observer updates the local storage
-        stateSubject.observeOn(schedulers.disk)
+        stateSubject.observeOn(schedulers.database)
                 .subscribe(this::persistAuthState)
 
         // Second observer updates local state
@@ -69,9 +69,9 @@ class TraktManager @Inject constructor(
                     }
                 }
 
-        // Read the auth state from disk
+        // Read the auth state from database
         Maybe.fromCallable(this::readAuthState)
-                .subscribeOn(schedulers.disk)
+                .subscribeOn(schedulers.database)
                 .observeOn(schedulers.main)
                 .subscribe(stateSubject::onNext, stateSubject::onError)
     }

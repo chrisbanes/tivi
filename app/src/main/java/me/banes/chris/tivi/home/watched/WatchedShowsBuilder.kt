@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi
+package me.banes.chris.tivi.home.watched
 
-import dagger.android.AndroidInjector
-import dagger.android.DaggerApplication
-import me.banes.chris.tivi.appmanagers.AppManagers
-import me.banes.chris.tivi.inject.DaggerAppComponent
-import javax.inject.Inject
+import android.arch.lifecycle.ViewModel
+import dagger.Binds
+import dagger.Module
+import dagger.android.ContributesAndroidInjector
+import dagger.multibindings.IntoMap
+import me.banes.chris.tivi.inject.ViewModelKey
 
-class TiviApplication : DaggerApplication() {
-    @Inject lateinit var managers: AppManagers
+@Module
+internal abstract class WatchedShowsBuilder {
 
-    override fun onCreate() {
-        super.onCreate()
-        managers.init(this)
-    }
+    @ContributesAndroidInjector
+    internal abstract fun libraryFragment(): WatchedShowsFragment
 
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        return DaggerAppComponent.builder().create(this)
-    }
+    @Binds
+    @IntoMap
+    @ViewModelKey(WatchedShowsViewModel::class)
+    abstract fun bindLibraryViewModel(viewModel: WatchedShowsViewModel): ViewModel
+
 }

@@ -40,7 +40,7 @@
         android:layout_marginEnd="@dimen/header_margin"
         android:layout_gravity="end"
         android:gravity="center_vertical"
-        android:text="@string/discover_more"
+        android:text="@string/header_more"
         android:textColor="@color/colorAccent"
         android:textAllCaps="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2" />

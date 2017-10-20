@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi
+package me.banes.chris.tivi.home.watched
 
-import dagger.android.AndroidInjector
-import dagger.android.DaggerApplication
-import me.banes.chris.tivi.appmanagers.AppManagers
-import me.banes.chris.tivi.inject.DaggerAppComponent
+import me.banes.chris.tivi.calls.WatchedCall
+import me.banes.chris.tivi.data.entities.WatchedListItem
+import me.banes.chris.tivi.home.HomeNavigator
+import me.banes.chris.tivi.util.AppRxSchedulers
+import me.banes.chris.tivi.util.EntryViewModel
 import javax.inject.Inject
 
-class TiviApplication : DaggerApplication() {
-    @Inject lateinit var managers: AppManagers
-
-    override fun onCreate() {
-        super.onCreate()
-        managers.init(this)
-    }
-
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        return DaggerAppComponent.builder().create(this)
+class WatchedShowsViewModel @Inject constructor(
+        schedulers: AppRxSchedulers,
+        call: WatchedCall,
+        private val navigator: HomeNavigator
+) : EntryViewModel<WatchedListItem>(schedulers, call) {
+    fun onUpClicked() {
+        navigator.onUpClicked()
     }
 }

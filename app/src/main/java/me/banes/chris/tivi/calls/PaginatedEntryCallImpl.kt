@@ -44,12 +44,12 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
     override fun data(): Flowable<List<LI>> {
         return entryDao.entries()
                 .distinctUntilChanged()
-                .subscribeOn(schedulers.disk)
+                .subscribeOn(schedulers.database)
     }
 
     override fun data(page: Int): Flowable<List<LI>> {
         return entryDao.entriesPage(page)
-                .subscribeOn(schedulers.disk)
+                .subscribeOn(schedulers.database)
                 .distinctUntilChanged()
     }
 
@@ -66,7 +66,7 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
                     loadShow(traktObject).map { show -> mapToEntry(traktObject, show, page) }
                 }
                 .toList()
-                .observeOn(schedulers.disk)
+                .observeOn(schedulers.database)
                 .doOnSuccess { savePage(it, page, resetOnSave) }
     }
 
@@ -76,7 +76,7 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
 
     override fun loadNextPage(): Completable {
         return entryDao.getLastPage()
-                .subscribeOn(schedulers.disk)
+                .subscribeOn(schedulers.database)
                 .flatMap { loadPage(it + 1) }
                 .toCompletable()
     }

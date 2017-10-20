@@ -23,6 +23,7 @@ import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import me.banes.chris.tivi.data.Entry
+import org.threeten.bp.OffsetDateTime
 
 @Entity(tableName = "watched_entries",
         indices = arrayOf(Index(value = "show_id", unique = true)),
@@ -37,7 +38,8 @@ import me.banes.chris.tivi.data.Entry
 )
 data class WatchedEntry(
         @PrimaryKey(autoGenerate = true) override val id: Long? = null,
-        @ColumnInfo(name = "show_id") override val showId: Long
+        @ColumnInfo(name = "show_id") override val showId: Long,
+        @ColumnInfo(name = "last_watched") val lastWatched: OffsetDateTime
 ) : Entry {
     @Ignore override var show: TiviShow? = null
 }

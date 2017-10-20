@@ -17,14 +17,25 @@
 package me.banes.chris.tivi.data
 
 import android.arch.persistence.room.TypeConverter
-import java.util.Date
+import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.format.DateTimeFormatter
 
 object TiviTypeConverters {
-    @TypeConverter
-    @JvmStatic
-    fun fromTimestamp(value: Long?): Date? = if (null == value) null else Date(value)
+    private val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
 
     @TypeConverter
     @JvmStatic
-    fun dateToTimestamp(date: Date?): Long? = date?.time
+    fun toOffsetDateTime(value: String?): OffsetDateTime? {
+        return value?.let {
+            return formatter.parse(value, OffsetDateTime::from)
+        }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromOffsetDateTime(date: OffsetDateTime?): String? {
+        return date?.let {
+            it.format(formatter)
+        }
+    }
 }

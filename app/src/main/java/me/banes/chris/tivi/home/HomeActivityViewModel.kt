@@ -72,7 +72,7 @@ internal class HomeActivityViewModel @Inject constructor(
      */
     private fun setupTiviShowTmdbUpdater() {
         disposables += tiviShowDao.getShowsWhichNeedTmdbUpdate()
-                .subscribeOn(schedulers.disk)
+                .subscribeOn(schedulers.database)
                 .subscribe({
                     it.filter(tmdbShowFetcher::startUpdate).forEach(this::refreshShowFromTmdb)
                 }, {

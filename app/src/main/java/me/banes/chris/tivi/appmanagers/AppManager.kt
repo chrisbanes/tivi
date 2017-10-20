@@ -14,23 +14,10 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi
+package me.banes.chris.tivi.appmanagers
 
-import dagger.android.AndroidInjector
-import dagger.android.DaggerApplication
-import me.banes.chris.tivi.appmanagers.AppManagers
-import me.banes.chris.tivi.inject.DaggerAppComponent
-import javax.inject.Inject
+import android.app.Application
 
-class TiviApplication : DaggerApplication() {
-    @Inject lateinit var managers: AppManagers
-
-    override fun onCreate() {
-        super.onCreate()
-        managers.init(this)
-    }
-
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        return DaggerAppComponent.builder().create(this)
-    }
+interface AppManager {
+    fun init(application: Application)
 }

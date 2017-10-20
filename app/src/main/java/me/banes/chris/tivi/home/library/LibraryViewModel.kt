@@ -16,13 +16,66 @@
 
 package me.banes.chris.tivi.home.library
 
+import android.arch.lifecycle.MutableLiveData
+import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.calls.WatchedCall
-import me.banes.chris.tivi.data.entities.WatchedListItem
+import me.banes.chris.tivi.data.Entry
+import me.banes.chris.tivi.data.entities.ListItem
+import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.extensions.plusAssign
+import me.banes.chris.tivi.home.HomeFragmentViewModel
+import me.banes.chris.tivi.home.HomeNavigator
+import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.util.AppRxSchedulers
-import me.banes.chris.tivi.util.EntryViewModel
+import timber.log.Timber
 import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
-        schedulers: AppRxSchedulers,
-        call: WatchedCall
-) : EntryViewModel<WatchedListItem>(schedulers, call)
+        private val schedulers: AppRxSchedulers,
+        private val watchedCall: WatchedCall,
+        private val navigator: HomeNavigator,
+        appNavigator: AppNavigator,
+        traktManager: TraktManager) : HomeFragmentViewModel(traktManager, appNavigator) {
+
+    data class SectionPage(val section: Section, val items: List<out ListItem<out Entry>>)
+
+    enum class Section {
+        WHATS_NEXT, WATCHED
+    }
+
+    val data = MutableLiveData<List<SectionPage>>()
+
+    init {
+        disposables += watchedCall.data()
+                .map { SectionPage(Section.WATCHED, it.take(20)) }
+                .map { listOf(it) }
+                .observeOn(schedulers.main)
+                .subscribe(data::setValue, Timber::e)
+
+        refresh()
+    }
+
+    private fun refresh() {
+        disposables += watchedCall.refresh(Unit)
+                .subscribe(this::onSuccess, this::onRefreshError)
+    }
+
+    private fun onSuccess() {
+        // TODO nothing really to do here
+    }
+
+    private fun onRefreshError(t: Throwable) {
+        Timber.e(t, "Error while refreshing")
+    }
+
+    fun onSectionHeaderClicked(section: Section) {
+        when (section) {
+            Section.WATCHED -> navigator.showWatched()
+        }
+    }
+
+    fun onItemPostedClicked(show: TiviShow) {
+        navigator.showShowDetails(show)
+    }
+
+}
