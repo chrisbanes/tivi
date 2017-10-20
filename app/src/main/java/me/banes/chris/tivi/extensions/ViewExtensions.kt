@@ -18,9 +18,12 @@ package me.banes.chris.tivi.extensions
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.support.annotation.LayoutRes
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
@@ -58,4 +61,8 @@ fun MenuItem.loadIconFromUrl(context: Context, imageUrl: String) {
                     icon = circularIcon
                 }
             })
+}
+
+fun inflateView(@LayoutRes layoutResId: Int, parent: ViewGroup, attachToRoot: Boolean): View {
+    return LayoutInflater.from(parent.context).inflate(layoutResId, parent, attachToRoot)
 }

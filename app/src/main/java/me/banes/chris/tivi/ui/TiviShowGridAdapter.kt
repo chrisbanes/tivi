@@ -19,15 +19,15 @@ package me.banes.chris.tivi.ui
 import android.arch.paging.PagedListAdapter
 import android.support.v7.recyclerview.extensions.DiffCallback
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.extensions.inflateView
 
 internal class TiviShowGridAdapter<LI : ListItem<out Entry>>(
-        private val columnCount : Int
+        private val columnCount: Int
 ) : PagedListAdapter<LI, RecyclerView.ViewHolder>(TiviShowDiffCallback<LI>()) {
 
     companion object {
@@ -41,25 +41,21 @@ internal class TiviShowGridAdapter<LI : ListItem<out Entry>>(
     var isLoading = false
         set(value) {
             if (value == field) return
-            if (value) {
+            field = if (value) {
                 notifyItemInserted(loadingMoreItemPosition)
-                field = value
-            }
-            else {
+                value
+            } else {
                 notifyItemRemoved(loadingMoreItemPosition)
-                field = value
+                value
             }
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             TYPE_ITEM -> {
-                TiviShowGridViewHolder(inflater.inflate(R.layout.grid_item, parent, false))
+                TiviShowGridViewHolder(inflateView(R.layout.grid_item, parent, false))
             }
-            TYPE_LOADING_MORE -> {
-                LoadingViewHolder(inflater.inflate(R.layout.infinite_loading, parent, false))
-            }
+            TYPE_LOADING_MORE -> LoadingViewHolder(parent)
             else -> {
                 throw IllegalArgumentException("Invalid item type")
             }
@@ -68,9 +64,8 @@ internal class TiviShowGridAdapter<LI : ListItem<out Entry>>(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is TiviShowGridViewHolder -> {
-                holder.bind(getItem(position)?.show ?: TiviShow.PLACEHOLDER)
-            }
+            is TiviShowGridViewHolder -> holder.bind(getItem(position)?.show ?: TiviShow.PLACEHOLDER)
+            is LoadingViewHolder -> holder.bind()
         }
     }
 

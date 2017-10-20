@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.ui
+package me.banes.chris.tivi.util
 
+import android.support.annotation.LayoutRes
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.infinite_loading.*
-import me.banes.chris.tivi.R
-import me.banes.chris.tivi.util.TiviViewHolder
+import kotlinx.android.extensions.LayoutContainer
+import me.banes.chris.tivi.extensions.inflateView
 
-class LoadingViewHolder(parent: ViewGroup) : TiviViewHolder(parent, R.layout.infinite_loading) {
-    fun bind() {
-        loading.visibility = View.VISIBLE
-    }
+open class TiviViewHolder(parent: ViewGroup, @LayoutRes layoutResId: Int
+) : RecyclerView.ViewHolder(inflateView(layoutResId, parent, false)), LayoutContainer {
+    override val containerView: View?
+        get() = itemView
 }
