@@ -35,4 +35,5 @@
     <string name="prefs_ui_category_title">User Interface</string>
     <string name="prefs_ui_theme_title">Theme</string>
     <string name="prefs_title">Settings</string>
+    <string name="empty_prompt">Y u no watch some TV?</string>
 </resources>
