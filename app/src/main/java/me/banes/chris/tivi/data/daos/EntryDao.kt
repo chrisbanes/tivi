@@ -27,7 +27,7 @@ interface EntryDao<EC : Entry, LI : ListItem<EC>> {
     fun entries(): Flowable<List<LI>>
     fun entriesLiveList(): LivePagedListProvider<Int, LI>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(entry: EC): Long
 
     fun deleteAll()
