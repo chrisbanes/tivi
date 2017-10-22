@@ -70,7 +70,7 @@ jobs:
           command: openssl aes-256-cbc -d -in signing/play-account.aes -out signing/play-account.p12 -k $ENCRYPT_KEY
       - run:
           name: Deploy to Alpha channel
-          command: ./gradlew publishApkRelease --no-daemon
+          command: ./gradlew publishRelease --no-daemon
 
 workflows:
   version: 2
