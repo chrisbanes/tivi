@@ -29,11 +29,14 @@ jobs:
           name: Download Dependencies
           command: ./gradlew dependencies --no-daemon
       - run:
-          name: Decrypt release signing key
-          command: openssl aes-256-cbc -d -in signing/app-release.aes -out signing/app-release.jks -k $ENCRYPT_KEY
+          name: Decrypt secrets
+          command: signing/setup.sh $ENCRYPT_KEY
       - run:
           name: Check and assemble APKs
           command: ./gradlew clean check --no-daemon
+      - run:
+          name: Cleanup secrets
+          command: signing/cleanup.sh
       - save_cache:
           paths:
             - ~/.gradle
@@ -63,14 +66,14 @@ jobs:
       - attach_workspace:
           at: ~/tivi
       - run:
-          name: Decrypt release signing key
-          command: openssl aes-256-cbc -d -in signing/app-release.aes -out signing/app-release.jks -k $ENCRYPT_KEY
-      - run:
-          name: Decrypt Play Store Secret
-          command: openssl aes-256-cbc -d -in signing/play-account.aes -out signing/play-account.p12 -k $ENCRYPT_KEY
+          name: Decrypt secrets
+          command: signing/setup.sh $ENCRYPT_KEY
       - run:
           name: Deploy to Alpha channel
           command: ./gradlew publishRelease --no-daemon
+      - run:
+          name: Cleanup secrets
+          command: signing/cleanup.sh
 
 workflows:
   version: 2
