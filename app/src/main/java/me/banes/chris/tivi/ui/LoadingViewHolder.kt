@@ -20,7 +20,7 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.infinite_loading.*
 import me.banes.chris.tivi.R
-import me.banes.chris.tivi.util.TiviViewHolder
+import me.banes.chris.tivi.ui.holders.TiviViewHolder
 
 class LoadingViewHolder(parent: ViewGroup) : TiviViewHolder(parent, R.layout.infinite_loading) {
     fun bind() {

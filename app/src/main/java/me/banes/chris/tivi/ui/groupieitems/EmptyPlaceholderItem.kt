@@ -16,18 +16,12 @@
 
 package me.banes.chris.tivi.ui.groupieitems
 
-import com.xwray.groupie.Section
-import com.xwray.groupie.UpdatingGroup
-import me.banes.chris.tivi.data.entities.TiviShow
+import com.xwray.groupie.Item
+import com.xwray.groupie.ViewHolder
+import me.banes.chris.tivi.R
 
-internal class ShowPosterUpdatingSection : Section() {
-    private val group = UpdatingGroup()
+class EmptyPlaceholderItem : Item<ViewHolder>() {
+    override fun getLayout() = R.layout.empty_state
 
-    init {
-        add(group)
-    }
-
-    fun update(items: List<TiviShow>) {
-        group.update(items.map(::ShowPosterItem))
-    }
+    override fun bind(viewHolder: ViewHolder, position: Int) {}
 }

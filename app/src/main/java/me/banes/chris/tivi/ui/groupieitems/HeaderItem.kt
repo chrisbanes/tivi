@@ -18,25 +18,14 @@ package me.banes.chris.tivi.ui.groupieitems
 
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
+import kotlinx.android.synthetic.main.header_item.view.*
+import me.banes.chris.tivi.R
 
-abstract class UpdatingItem<T : Any, VH : ViewHolder?>(item: T? = null) : Item<VH>() {
+class HeaderItem(private val title : String, val tag : Any? = null) : Item<ViewHolder>() {
 
-    var item: T? = item
-        set(value) {
-            if (field != value) {
-                field = value
-                notifyChanged()
-            }
-        }
+    override fun getLayout() = R.layout.header_item
 
-    override fun bind(viewHolder: VH, position: Int) {
-        bind(viewHolder, position, item!!)
-    }
-
-    abstract fun bind(viewHolder: VH, position: Int, item: T)
-
-    override fun unbind(holder: VH) {
-        item = null
-        super.unbind(holder)
+    override fun bind(viewHolder: ViewHolder, position: Int) {
+        viewHolder.itemView.header_title.text = title
     }
 }

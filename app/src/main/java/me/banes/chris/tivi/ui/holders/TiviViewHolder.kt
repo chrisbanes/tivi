@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.util
+package me.banes.chris.tivi.ui.holders
 
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
