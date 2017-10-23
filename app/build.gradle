@@ -34,7 +34,10 @@ spotless {
     }
 }
 
-apply plugin: 'io.fabric'
+def haveFabricApiKey = !propOrDef("TIVI_FABRIC_API_KEY", "").isEmpty()
+if (haveFabricApiKey) {
+    apply plugin: 'io.fabric'
+}
 
 android {
     compileSdkVersion 26
@@ -110,7 +113,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
             // Enable crashlytics
-            ext.enableCrashlytics = true
+            ext.enableCrashlytics = haveFabricApiKey
         }
     }
 }

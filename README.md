@@ -32,8 +32,8 @@ easily fix it by running: `./gradlew spotlessApply`, or running IntelliJ/Android
 ### API keys
 
 You need to supply API / client keys for the various services the
-app uses. That is currently [Trakt.tv](http://docs.trakt.apiary.io/) and
-[TMDb](https://developers.themoviedb.org/4/getting-started). You can find information about
+app uses. That is currently [Trakt.tv](http://docs.trakt.apiary.io/),
+[TMDb](https://developers.themoviedb.org/4/getting-started) and [Fabric](https://fabric.io) (for Crashlytics). You can find information about
 how to gain access via the relevant links.
 
 When you obtain the keys, you can provide them to the app by putting the following in the
@@ -46,6 +46,9 @@ TIVI_TRAKT_CLIENT_SECRET=<insert>
 
 # Get this from TMDb
 TIVI_TMDB_API_KEY=<insert>
+
+# Get this from Fabric/Crashlytics
+TIVI_FABRIC_API_KEY=<insert>
 ```
 
 On Linux/Mac that file is typically found at `~/.gradle/gradle.properties`.
