@@ -110,7 +110,7 @@ android {
         release {
             signingConfig signingConfigs.release
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles 'proguard-rules.pro'
 
             // Enable crashlytics
             ext.enableCrashlytics = haveFabricApiKey
