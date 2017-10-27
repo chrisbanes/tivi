@@ -33,7 +33,7 @@ jobs:
           command: signing/setup.sh $ENCRYPT_KEY
       - run:
           name: Check and assemble APKs
-          command: ./gradlew clean check --no-daemon
+          command: ./gradlew clean check dependencyUpdates --no-daemon
       - run:
           name: Cleanup secrets
           command: signing/cleanup.sh
@@ -47,6 +47,9 @@ jobs:
       - store_artifacts:
           path: app/build/reports
           destination: reports
+      - store_artifacts:
+          path: build/dependencyUpdates
+          destination: dependencyUpdates
       - store_test_results:
           path: app/build/test-results
       - persist_to_workspace:
