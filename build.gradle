@@ -17,8 +17,8 @@
 
 buildscript {
     ext.versions = [
-            'support_library'  : '26.1.0',
-            'constraint_layout': '1.0.2',
+            'support_library'  : '27.0.0',
+            'constraint_layout': '1.1.0-beta3',
             'arch_comp'        : '1.0.0-rc1',
             'arch_comp_paging' : '1.0.0-alpha3',
             'kotlin'           : '1.1.51',
@@ -26,7 +26,7 @@ buildscript {
             'dagger'           : '2.12',
             'ktlint'           : '0.10.0',
             'leakcanary'       : '1.5.4',
-            'rx'               : '2.1.5',
+            'rx'               : '2.1.6',
             'rxlint'           : '1.6'
     ]
 
@@ -42,16 +42,17 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:${versions.kotlin}"
 
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.7.3'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.1'
 
         classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
 
-        classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'io.fabric.tools:gradle:1.24.4'
     }
 }
 
 plugins {
     id "com.diffplug.gradle.spotless" version "3.6.0"
+    id 'com.github.ben-manes.versions' version "0.17.0"
 }
 
 allprojects {
