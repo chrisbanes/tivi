@@ -40,7 +40,7 @@ if (haveFabricApiKey) {
 }
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
 
     playAccountConfigs {
         defaultAccountConfig {
