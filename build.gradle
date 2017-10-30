@@ -22,7 +22,7 @@ buildscript {
             'arch_comp'        : '1.0.0-rc1',
             'arch_comp_paging' : '1.0.0-alpha3',
             'kotlin'           : '1.1.51',
-            'espresso'         : '2.2.2',
+            'espresso'         : '3.0.1',
             'dagger'           : '2.12',
             'ktlint'           : '0.10.0',
             'leakcanary'       : '1.5.4',

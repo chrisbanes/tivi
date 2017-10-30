@@ -183,6 +183,7 @@ dependencies {
     androidTestImplementation("com.android.support.test.espresso:espresso-core:${versions.espresso}", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
 
     debugImplementation "nl.littlerobots.rxlint:rxlint:${versions.rxlint}"
 
