@@ -34,8 +34,8 @@ import me.banes.chris.tivi.api.Status
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.ui.EndlessRecyclerViewScrollListener
+import me.banes.chris.tivi.ui.ShowPosterGridAdapter
 import me.banes.chris.tivi.ui.SpacingItemDecorator
-import me.banes.chris.tivi.ui.TiviShowGridAdapter
 import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
@@ -47,7 +47,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
 
     protected lateinit var viewModel: VM
 
-    private lateinit var adapter: TiviShowGridAdapter<LI>
+    private lateinit var adapter: ShowPosterGridAdapter<LI>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +62,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         super.onViewCreated(view, savedInstanceState)
 
         val layoutManager = grid_recyclerview.layoutManager as GridLayoutManager
-        adapter = TiviShowGridAdapter(layoutManager.spanCount)
+        adapter = ShowPosterGridAdapter(layoutManager.spanCount)
 
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {

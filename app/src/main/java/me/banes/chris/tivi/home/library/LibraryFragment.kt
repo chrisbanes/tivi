@@ -33,7 +33,7 @@ import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.ui.groupieitems.EmptyPlaceholderItem
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
-import me.banes.chris.tivi.ui.groupieitems.ShowPosterUpdatingSection
+import me.banes.chris.tivi.ui.groupieitems.ShowPosterSection
 
 class LibraryFragment : HomeFragment<LibraryViewModel>() {
 
@@ -96,7 +96,7 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         groupAdapter.clear()
 
         data.forEach { section ->
-            val group = ShowPosterUpdatingSection().apply {
+            val group = ShowPosterSection().apply {
                 setHeader(HeaderItem(titleFromSection(section.section), section.section))
                 setPlaceholder(EmptyPlaceholderItem())
                 update(section.items.mapNotNull { it.show }.take(spanCount * 2))

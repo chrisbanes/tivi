@@ -25,9 +25,12 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.Section
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_summary.*
 import me.banes.chris.tivi.R
+import me.banes.chris.tivi.data.entities.ListItem
+import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.home.HomeFragment
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.POPULAR
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
@@ -35,7 +38,7 @@ import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.ui.groupieitems.EmptyPlaceholderItem
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
-import me.banes.chris.tivi.ui.groupieitems.ShowPosterUpdatingSection
+import me.banes.chris.tivi.ui.groupieitems.TrendingShowPosterSection
 
 internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
@@ -97,12 +100,23 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         groupAdapter.clear()
 
         data.forEach { section ->
-            val group = ShowPosterUpdatingSection().apply {
+            var group: Section? = null
+
+            when (section.section) {
+                TRENDING -> {
+                    group = TrendingShowPosterSection().apply {
+                        update(section.items
+                                .filter { it.show != null }
+                                .take(spanCount * 2) as List<ListItem<TrendingEntry>>)
+                    }
+                }
+            }
+
+            group?.run {
                 setHeader(HeaderItem(titleFromSection(section.section), section.section))
                 setPlaceholder(EmptyPlaceholderItem())
-                update(section.items.mapNotNull { it.show }.take(spanCount * 2))
+                groupAdapter.add(this)
             }
-            groupAdapter.add(group)
         }
     }
 

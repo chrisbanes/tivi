@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.ui.groupieitems
+package me.banes.chris.tivi.ui.holders
 
-import com.xwray.groupie.Section
-import com.xwray.groupie.UpdatingGroup
-import me.banes.chris.tivi.data.entities.TiviShow
+import android.view.View
+import android.view.ViewGroup
+import kotlinx.android.synthetic.main.infinite_loading.*
+import me.banes.chris.tivi.R
 
-internal class ShowPosterUpdatingSection : Section() {
-    private val group = UpdatingGroup()
-
-    init {
-        add(group)
-    }
-
-    fun update(items: List<TiviShow>) {
-        group.update(items.map(::ShowPosterItem))
+class LoadingViewHolder(parent: ViewGroup) : TiviViewHolder(parent, R.layout.infinite_loading) {
+    fun bind() {
+        loading.visibility = View.VISIBLE
     }
 }

@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.ui
+package me.banes.chris.tivi.ui.groupieitems
 
-import android.view.View
-import android.view.ViewGroup
-import kotlinx.android.synthetic.main.infinite_loading.*
-import me.banes.chris.tivi.R
-import me.banes.chris.tivi.ui.holders.TiviViewHolder
+import com.xwray.groupie.Section
+import com.xwray.groupie.UpdatingGroup
+import me.banes.chris.tivi.data.entities.ListItem
+import me.banes.chris.tivi.data.entities.TrendingEntry
 
-class LoadingViewHolder(parent: ViewGroup) : TiviViewHolder(parent, R.layout.infinite_loading) {
-    fun bind() {
-        loading.visibility = View.VISIBLE
+internal class TrendingShowPosterSection : Section() {
+    private val group = UpdatingGroup()
+
+    init {
+        add(group)
+    }
+
+    fun update(items: List<ListItem<TrendingEntry>>) {
+        group.update(items.map(::TrendingPosterItem))
     }
 }

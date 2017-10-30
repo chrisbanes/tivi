@@ -46,4 +46,18 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@android:drawable/star_on" />
 
+    <TextView
+        android:id="@+id/show_annotation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/colorBackground"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="100" />
+
 </android.support.constraint.ConstraintLayout>

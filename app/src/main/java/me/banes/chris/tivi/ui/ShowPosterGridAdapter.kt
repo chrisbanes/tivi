@@ -23,10 +23,11 @@ import android.view.ViewGroup
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
-import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.inflateView
+import me.banes.chris.tivi.ui.holders.LoadingViewHolder
+import me.banes.chris.tivi.ui.holders.PosterGridHolder
 
-internal class TiviShowGridAdapter<LI : ListItem<out Entry>>(
+internal class ShowPosterGridAdapter<LI : ListItem<out Entry>>(
         private val columnCount: Int
 ) : PagedListAdapter<LI, RecyclerView.ViewHolder>(TiviShowDiffCallback<LI>()) {
 
@@ -53,7 +54,7 @@ internal class TiviShowGridAdapter<LI : ListItem<out Entry>>(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             TYPE_ITEM -> {
-                TiviShowGridViewHolder(inflateView(R.layout.grid_item, parent, false))
+                PosterGridHolder(inflateView(R.layout.grid_item, parent, false))
             }
             TYPE_LOADING_MORE -> LoadingViewHolder(parent)
             else -> {
@@ -64,7 +65,14 @@ internal class TiviShowGridAdapter<LI : ListItem<out Entry>>(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is TiviShowGridViewHolder -> holder.bind(getItem(position)?.show ?: TiviShow.PLACEHOLDER)
+            is PosterGridHolder -> {
+                val item = getItem(position)
+                val show = item?.show
+                when (show) {
+                    null -> holder.bindPlaceholder()
+                    else -> holder.bindShow(show.tmdbPosterPath, show.title)
+                }
+            }
             is LoadingViewHolder -> holder.bind()
         }
     }
