@@ -7,9 +7,8 @@
 
 # If you want to enable optimization, you should include the
 # following:
--dontoptimize
-# -optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*
-# -optimizationpasses 5
+-optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*
+-optimizationpasses 5
 
 -allowaccessmodification
 
