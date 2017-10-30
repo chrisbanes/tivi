@@ -18,7 +18,6 @@ package me.banes.chris.tivi.home.library
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.util.ArrayMap
 import android.support.v7.widget.GridLayoutManager
@@ -44,8 +43,8 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
 
     private val groups = ArrayMap<LibraryViewModel.Section, ShowPosterUpdatingSection>()
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(LibraryViewModel::class.java)
     }

@@ -18,7 +18,6 @@ package me.banes.chris.tivi.home.discover
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.util.ArrayMap
 import android.support.v7.widget.GridLayoutManager
@@ -46,8 +45,8 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
     private val groups = ArrayMap<DiscoverViewModel.Section, ShowPosterUpdatingSection>()
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(DiscoverViewModel::class.java)
     }
