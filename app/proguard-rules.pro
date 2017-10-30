@@ -4,16 +4,15 @@
 -dontskipnonpubliclibraryclasses
 -verbose
 
-# Optimization is turned off by default. Dex does not like code run
-# through the ProGuard optimize and preverify steps (and performs some
-# of these optimizations on its own).
--dontoptimize
+-dontobfuscate
 -dontpreverify
 
 # If you want to enable optimization, you should include the
 # following:
+-dontoptimize
 # -optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*
 # -optimizationpasses 5
+
 -allowaccessmodification
 
 # Note that you cannot just include these flags in your own
@@ -92,5 +91,9 @@
 -keepattributes Signature
 -keepattributes Exceptions
 
-# Okio
+# Okhttp + Okio
+-dontwarn okhttp3.**
 -dontwarn okio.**
+-dontwarn javax.annotation.**
+# A resource is loaded with a relative path so the package of this class must be preserved.
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
