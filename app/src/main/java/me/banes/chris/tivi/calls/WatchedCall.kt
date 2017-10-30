@@ -56,11 +56,7 @@ class WatchedCall @Inject constructor(
                 .flatMapIterable { it }
                 .flatMapMaybe { traktEntry ->
                     traktShowFetcher.getShow(traktEntry.show.ids.trakt, traktEntry.show)
-                            .map {
-                                WatchedEntry(showId = it.id!!,
-                                        lastWatched = traktEntry.last_watched_at)
-                                        .apply { this.show = it }
-                            }
+                            .map { WatchedEntry(null, it.id!!, traktEntry.last_watched_at) }
                 }
 
                 .toList()
