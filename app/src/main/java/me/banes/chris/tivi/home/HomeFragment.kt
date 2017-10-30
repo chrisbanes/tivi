@@ -31,7 +31,7 @@ abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     internal lateinit var viewModel: VM
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.authUiState.observe(this, Observer {
@@ -52,7 +52,7 @@ abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
                 findUserAvatarMenuItem()?.let {
                     it.title = user.name
                     if (user.avatarUrl != null) {
-                        it.loadIconFromUrl(context, user.avatarUrl)
+                        it.loadIconFromUrl(context!!, user.avatarUrl)
                     }
                 }
             } else {
