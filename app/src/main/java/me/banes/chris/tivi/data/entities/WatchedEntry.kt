@@ -19,7 +19,6 @@ package me.banes.chris.tivi.data.entities
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
-import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import me.banes.chris.tivi.data.Entry
@@ -40,6 +39,4 @@ data class WatchedEntry(
         @PrimaryKey(autoGenerate = true) override val id: Long? = null,
         @ColumnInfo(name = "show_id") override val showId: Long,
         @ColumnInfo(name = "last_watched") val lastWatched: OffsetDateTime
-) : Entry {
-    @Ignore override var show: TiviShow? = null
-}
+) : Entry
