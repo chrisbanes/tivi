@@ -3,8 +3,6 @@
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
 -verbose
-
--dontobfuscate
 -dontpreverify
 
 # If you want to enable optimization, you should include the
@@ -97,3 +95,15 @@
 -dontwarn javax.annotation.**
 # A resource is loaded with a relative path so the package of this class must be preserved.
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+
+# Keep Trakt-java Entity names (for GSON)
+-keepnames class com.uwetrottmann.trakt5.enums.** { *; }
+-keepnames class com.uwetrottmann.trakt5.entities.** { *; }
+
+# Keep TMDb Entity names (for GSON)
+-keepnames class com.uwetrottmann.tmdb2.enumerations.** { *; }
+-keepnames class com.uwetrottmann.tmdb2.entities.** { *; }
+
+# Keep stuff for Room
+-keep class me.banes.chris.tivi.data.TiviTypeConverters { *; }
+-keep class me.banes.chris.tivi.data.entities.** { *; }
