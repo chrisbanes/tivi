@@ -15,15 +15,30 @@
  *
  */
 
+ext {
+    ci = System.getenv("CI") == "true"
+}
+
 apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+androidExtensions {
+    experimental = true
+}
 
 apply plugin: 'com.getkeepsafe.dexcount'
+dexcount {
+    // Only run the method counter on CI
+    runOnEachPackage = ci
+}
 
 apply plugin: 'com.github.triplet.play'
+play {
+    track = 'alpha'
+    uploadImages = true
+}
 
 apply plugin: 'com.diffplug.gradle.spotless'
 spotless {
@@ -98,7 +113,8 @@ android {
     }
 
     dexOptions {
-        preDexLibraries "true" != System.getenv("CI")
+        // Don't pre-dex on CI
+        preDexLibraries !ci
     }
 
     buildTypes {
@@ -116,15 +132,6 @@ android {
             ext.enableCrashlytics = haveFabricApiKey
         }
     }
-}
-
-androidExtensions {
-    experimental = true
-}
-
-play {
-    track = 'alpha'
-    uploadImages = true
 }
 
 dependencies {
