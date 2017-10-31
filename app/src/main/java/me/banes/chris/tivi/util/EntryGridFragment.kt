@@ -62,7 +62,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         super.onViewCreated(view, savedInstanceState)
 
         val layoutManager = grid_recyclerview.layoutManager as GridLayoutManager
-        adapter = ShowPosterGridAdapter(layoutManager.spanCount)
+        adapter = createAdapter(layoutManager.spanCount)
 
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
@@ -82,6 +82,8 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
 
         grid_swipe_refresh.setOnRefreshListener(viewModel::fullRefresh)
     }
+
+    open fun createAdapter(spanCount: Int) : ShowPosterGridAdapter<LI> = ShowPosterGridAdapter(spanCount)
 
     override fun onStart() {
         super.onStart()
