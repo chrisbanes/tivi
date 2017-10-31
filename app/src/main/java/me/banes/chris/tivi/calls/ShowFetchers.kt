@@ -50,7 +50,7 @@ class TmdbShowFetcher @Inject constructor(
     fun updateShow(tmdbId: Int): Completable {
         val networkSource = tmdb.tvService().tv(tmdbId).toRxSingle()
                 .subscribeOn(schedulers.network)
-                .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry))
+                .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry, schedulers.network))
                 .observeOn(schedulers.database)
                 .map { tmdbShow ->
                     val show = showDao.getShowWithTmdbIdSync(tmdbShow.id) ?: TiviShow()
@@ -96,7 +96,7 @@ class TraktShowFetcher @Inject constructor(
         val networkSource = appendRx(
                 trakt.shows().summary(traktId.toString(), Extended.NOSEASONS).toRxMaybe()
                 .subscribeOn(schedulers.network)
-                .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry))
+                .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry, schedulers.network))
         )
 
         return Maybe.concat(dbSource, fromEntity, networkSource).firstElement()

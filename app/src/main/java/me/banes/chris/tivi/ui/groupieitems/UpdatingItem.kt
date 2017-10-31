@@ -22,7 +22,6 @@ import com.xwray.groupie.ViewHolder
 abstract class UpdatingItem<T : Any, VH : ViewHolder?>(item: T? = null) : Item<VH>() {
 
     var item: T? = item
-        get() = field
         set(value) {
             if (field != value) {
                 field = value

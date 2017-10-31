@@ -25,6 +25,8 @@ import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.plusAssign
 import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
+import me.banes.chris.tivi.home.library.LibraryViewModel.Section.WATCHED
+import me.banes.chris.tivi.home.library.LibraryViewModel.Section.WHATS_NEXT
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
@@ -37,7 +39,7 @@ class LibraryViewModel @Inject constructor(
         appNavigator: AppNavigator,
         traktManager: TraktManager) : HomeFragmentViewModel(traktManager, appNavigator) {
 
-    data class SectionPage(val section: Section, val items: List<out ListItem<out Entry>>)
+    data class SectionPage(val section: Section, val items: List<ListItem<out Entry>>)
 
     enum class Section {
         WHATS_NEXT, WATCHED
@@ -47,7 +49,7 @@ class LibraryViewModel @Inject constructor(
 
     init {
         disposables += watchedCall.data()
-                .map { SectionPage(Section.WATCHED, it.take(20)) }
+                .map { SectionPage(WATCHED, it.take(20)) }
                 .map { listOf(it) }
                 .observeOn(schedulers.main)
                 .subscribe(data::setValue, Timber::e)
@@ -70,7 +72,8 @@ class LibraryViewModel @Inject constructor(
 
     fun onSectionHeaderClicked(section: Section) {
         when (section) {
-            Section.WATCHED -> navigator.showWatched()
+            WATCHED -> navigator.showWatched()
+            WHATS_NEXT -> TODO()
         }
     }
 
