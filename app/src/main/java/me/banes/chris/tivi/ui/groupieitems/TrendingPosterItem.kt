@@ -24,7 +24,7 @@ import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.ui.holders.PosterGridHolder
 
-internal class TrendingPosterItem(val entry: ListItem<TrendingEntry>) : Item<PosterGridHolder>() {
+internal class TrendingPosterItem(val entry: TrendingEntry, val show: TiviShow) : Item<PosterGridHolder>() {
 
     override fun getLayout() = R.layout.grid_item
 
@@ -33,10 +33,10 @@ internal class TrendingPosterItem(val entry: ListItem<TrendingEntry>) : Item<Pos
     }
 
     override fun bind(viewHolder: PosterGridHolder, position: Int) {
-        viewHolder.bindShow(entry.show?.tmdbPosterPath, entry.show?.title, entry.entry?.watchers.toString())
+        viewHolder.bindShow(show.tmdbPosterPath, show.title, entry.watchers.toString())
     }
 
     override fun getSpanSize(spanCount: Int, position: Int) = 1
 
-    override fun getId(): Long = entry.show?.id!!
+    override fun getId(): Long = show.id!!
 }

@@ -29,6 +29,6 @@ internal class TrendingShowPosterSection : Section() {
     }
 
     fun update(items: List<ListItem<TrendingEntry>>) {
-        group.update(items.map(::TrendingPosterItem))
+        group.update(items.map { TrendingPosterItem(it.entry!!, it.show!!) })
     }
 }
