@@ -16,6 +16,7 @@
 
 package me.banes.chris.tivi.ui.holders
 
+import android.graphics.drawable.Drawable
 import android.view.View
 import kotlinx.android.synthetic.main.grid_item.*
 import me.banes.chris.tivi.extensions.loadFromUrl
@@ -27,7 +28,10 @@ class PosterGridHolder(itemView: View) : TiviViewHolder(itemView) {
         show_poster.setImageDrawable(null)
     }
 
-    fun bindShow(posterPath: String?, title: String?, annotation: String? = null) {
+    fun bindShow(posterPath: String?,
+            title: String?,
+            annotation: String? = null,
+            annotationDrawable: Drawable? = null) {
         show_title.text = title
         show_title.visibility = View.VISIBLE
 
@@ -41,6 +45,7 @@ class PosterGridHolder(itemView: View) : TiviViewHolder(itemView) {
         if (annotation != null) {
             show_annotation.text = annotation
             show_annotation.visibility = View.VISIBLE
+            show_annotation.setCompoundDrawablesRelativeWithIntrinsicBounds(annotationDrawable, null, null, null)
         } else {
             show_annotation.visibility = View.GONE
         }

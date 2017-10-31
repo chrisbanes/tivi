@@ -38,6 +38,7 @@ import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.ui.groupieitems.EmptyPlaceholderItem
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
+import me.banes.chris.tivi.ui.groupieitems.ShowPosterSection
 import me.banes.chris.tivi.ui.groupieitems.TrendingShowPosterSection
 
 internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
@@ -66,7 +67,7 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        gridLayoutManager = discover_rv.layoutManager as GridLayoutManager
+        gridLayoutManager = summary_rv.layoutManager as GridLayoutManager
         gridLayoutManager.spanSizeLookup = groupAdapter.spanSizeLookup
 
         groupAdapter.apply {
@@ -79,12 +80,12 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
             spanCount = gridLayoutManager.spanCount
         }
 
-        discover_rv.apply {
+        summary_rv.apply {
             adapter = groupAdapter
             addItemDecoration(SpacingItemDecorator(paddingLeft))
         }
 
-        discover_toolbar.apply {
+        summary_toolbar.apply {
             title = getString(R.string.discover_title)
             inflateMenu(R.menu.home_toolbar)
             setOnMenuItemClickListener {
@@ -93,7 +94,7 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         }
     }
 
-    override fun getMenu(): Menu? = discover_toolbar.menu
+    override fun getMenu(): Menu? = summary_toolbar.menu
 
     private fun updateAdapter(data: List<DiscoverViewModel.SectionPage>) {
         val spanCount = gridLayoutManager.spanCount
@@ -110,9 +111,17 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
                                 .take(spanCount * 2) as List<ListItem<TrendingEntry>>)
                     }
                 }
+                POPULAR -> {
+                    group = ShowPosterSection().apply {
+                        update(section.items
+                                .filter { it.show != null }
+                                .take(spanCount * 2)
+                                .map { it.show!! })
+                    }
+                }
             }
 
-            group?.run {
+            group.run {
                 setHeader(HeaderItem(titleFromSection(section.section), section.section))
                 setPlaceholder(EmptyPlaceholderItem())
                 groupAdapter.add(this)
@@ -126,9 +135,10 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     }
 
     internal fun scrollToTop() {
-        discover_rv.apply {
+        summary_rv.apply {
             stopScroll()
             smoothScrollToPosition(0)
         }
+        summary_appbarlayout.setExpanded(true)
     }
 }

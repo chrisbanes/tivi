@@ -62,7 +62,7 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
             , savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        gridLayoutManager = discover_rv.layoutManager as GridLayoutManager
+        gridLayoutManager = summary_rv.layoutManager as GridLayoutManager
         gridLayoutManager.spanSizeLookup = groupAdapter.spanSizeLookup
 
         groupAdapter.apply {
@@ -75,13 +75,13 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
             spanCount = gridLayoutManager.spanCount
         }
 
-        discover_rv.apply {
+        summary_rv.apply {
             adapter = groupAdapter
             addItemDecoration(SpacingItemDecorator(paddingLeft))
         }
 
-        discover_toolbar.apply {
-            title = getString(R.string.discover_title)
+        summary_toolbar.apply {
+            title = getString(R.string.library_title)
             inflateMenu(R.menu.home_toolbar)
             setOnMenuItemClickListener {
                 onMenuItemClicked(it)
@@ -89,7 +89,7 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         }
     }
 
-    override fun getMenu(): Menu? = discover_toolbar.menu
+    override fun getMenu(): Menu? = summary_toolbar.menu
 
     private fun updateAdapter(data: List<LibraryViewModel.SectionPage>) {
         val spanCount = gridLayoutManager.spanCount
@@ -111,10 +111,11 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
     }
 
     internal fun scrollToTop() {
-        discover_rv.apply {
+        summary_rv.apply {
             stopScroll()
             smoothScrollToPosition(0)
         }
+        summary_appbarlayout.setExpanded(true)
     }
 
 }
