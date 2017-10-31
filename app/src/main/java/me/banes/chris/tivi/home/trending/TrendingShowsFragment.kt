@@ -21,6 +21,7 @@ import android.view.View
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.TrendingListItem
+import me.banes.chris.tivi.ui.ShowPosterGridAdapter
 import me.banes.chris.tivi.util.EntryGridFragment
 
 class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsViewModel>(TrendingShowsViewModel::class.java) {
@@ -30,10 +31,19 @@ class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsV
 
         toolbar.apply {
             title = getString(R.string.discover_trending)
-            setNavigationOnClickListener {
-                viewModel.onUpClicked()
-            }
+            setNavigationOnClickListener { viewModel.onUpClicked() }
         }
     }
 
+    override fun createAdapter(spanCount: Int): ShowPosterGridAdapter<TrendingListItem> {
+        val placeholderIcon = context?.getDrawable(R.drawable.ic_eye_12dp)
+        return ShowPosterGridAdapter(spanCount) { item, holder ->
+            val show = item.show
+            val entry = item.entry
+            holder.bindShow(show?.tmdbPosterPath,
+                    show?.title,
+                    entry?.watchers.toString(),
+                    placeholderIcon?.mutate())
+        }
+    }
 }

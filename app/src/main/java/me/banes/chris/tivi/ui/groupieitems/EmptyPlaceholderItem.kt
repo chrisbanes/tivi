@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.util
+package me.banes.chris.tivi.ui.groupieitems
 
-import android.support.annotation.LayoutRes
-import android.support.v7.widget.RecyclerView
-import android.view.View
-import android.view.ViewGroup
-import kotlinx.android.extensions.LayoutContainer
-import me.banes.chris.tivi.extensions.inflateView
+import com.xwray.groupie.Item
+import com.xwray.groupie.ViewHolder
+import me.banes.chris.tivi.R
 
-open class TiviViewHolder(parent: ViewGroup, @LayoutRes layoutResId: Int
-) : RecyclerView.ViewHolder(inflateView(layoutResId, parent, false)), LayoutContainer {
-    override val containerView: View?
-        get() = itemView
+class EmptyPlaceholderItem : Item<ViewHolder>() {
+    override fun getLayout() = R.layout.empty_state
+
+    override fun bind(viewHolder: ViewHolder, position: Int) {}
 }

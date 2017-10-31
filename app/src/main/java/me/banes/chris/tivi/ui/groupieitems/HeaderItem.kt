@@ -16,19 +16,16 @@
 
 package me.banes.chris.tivi.ui.groupieitems
 
-import com.xwray.groupie.Section
-import com.xwray.groupie.UpdatingGroup
-import me.banes.chris.tivi.data.entities.TiviShow
+import com.xwray.groupie.Item
+import com.xwray.groupie.ViewHolder
+import kotlinx.android.synthetic.main.header_item.view.*
+import me.banes.chris.tivi.R
 
-internal class ShowPosterUpdatingSection : Section() {
-    private val group = UpdatingGroup()
+class HeaderItem(private val title: String, val tag: Any? = null) : Item<ViewHolder>() {
 
-    init {
-        add(group)
+    override fun getLayout() = R.layout.header_item
+
+    override fun bind(viewHolder: ViewHolder, position: Int) {
+        viewHolder.itemView.header_title.text = title
     }
-
-    fun update(items: List<TiviShow>) {
-        group.update(items.map { ShowPosterItem(it) })
-    }
-
 }

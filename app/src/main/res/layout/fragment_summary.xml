@@ -22,13 +22,13 @@
     android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/discover_appbarlayout"
+        android:id="@+id/summary_appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="?attr/actionBarTheme">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/discover_toolbar"
+            android:id="@+id/summary_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways|snap"
@@ -37,7 +37,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/discover_rv"
+        android:id="@+id/summary_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"

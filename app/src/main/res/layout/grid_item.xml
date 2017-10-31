@@ -46,4 +46,13 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@android:drawable/star_on" />
 
+    <TextView
+        android:id="@+id/show_annotation"
+        style="@style/Widget.Tivi.GridItem.Annotation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="100" />
+
 </android.support.constraint.ConstraintLayout>

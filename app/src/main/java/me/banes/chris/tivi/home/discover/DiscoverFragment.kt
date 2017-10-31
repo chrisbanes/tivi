@@ -19,31 +19,32 @@ package me.banes.chris.tivi.home.discover
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.util.ArrayMap
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
-import android.view.MenuItem
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.Item
+import com.xwray.groupie.Section
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_summary.*
-import kotlinx.android.synthetic.main.header_item.view.*
 import me.banes.chris.tivi.R
+import me.banes.chris.tivi.data.entities.ListItem
+import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.home.HomeFragment
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.POPULAR
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
 import me.banes.chris.tivi.ui.SpacingItemDecorator
+import me.banes.chris.tivi.ui.groupieitems.EmptyPlaceholderItem
+import me.banes.chris.tivi.ui.groupieitems.HeaderItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
-import me.banes.chris.tivi.ui.groupieitems.ShowPosterUpdatingSection
+import me.banes.chris.tivi.ui.groupieitems.ShowPosterSection
+import me.banes.chris.tivi.ui.groupieitems.TrendingShowPosterSection
 
 internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
     private lateinit var gridLayoutManager: GridLayoutManager
     private val groupAdapter = GroupAdapter<ViewHolder>()
-
-    private val groups = ArrayMap<DiscoverViewModel.Section, ShowPosterUpdatingSection>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,34 +60,32 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         super.onActivityCreated(savedInstanceState)
 
         viewModel.data.observe(this, Observer {
-            it?.run {
-                updateAdapter(it)
-            }
+            it?.run { updateAdapter(it) } ?: groupAdapter.clear()
         })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        gridLayoutManager = discover_rv.layoutManager as GridLayoutManager
+        gridLayoutManager = summary_rv.layoutManager as GridLayoutManager
         gridLayoutManager.spanSizeLookup = groupAdapter.spanSizeLookup
 
         groupAdapter.apply {
             setOnItemClickListener { item, _ ->
                 when (item) {
-                    is HeaderItem -> viewModel.onSectionHeaderClicked(item.section)
+                    is HeaderItem -> viewModel.onSectionHeaderClicked(item.tag as DiscoverViewModel.Section)
                     is ShowPosterItem -> viewModel.onItemPostedClicked(item.show)
                 }
             }
             spanCount = gridLayoutManager.spanCount
         }
 
-        discover_rv.apply {
+        summary_rv.apply {
             adapter = groupAdapter
             addItemDecoration(SpacingItemDecorator(paddingLeft))
         }
 
-        discover_toolbar?.apply {
+        summary_toolbar.apply {
             title = getString(R.string.discover_title)
             inflateMenu(R.menu.home_toolbar)
             setOnMenuItemClickListener {
@@ -95,28 +94,38 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         }
     }
 
-    override fun findUserAvatarMenuItem(): MenuItem? {
-        return discover_toolbar.menu.findItem(R.id.home_menu_user_avatar)
-    }
-
-    override fun findUserLoginMenuItem(): MenuItem? {
-        return discover_toolbar.menu.findItem(R.id.home_menu_user_login)
-    }
+    override fun getMenu(): Menu? = summary_toolbar.menu
 
     private fun updateAdapter(data: List<DiscoverViewModel.SectionPage>) {
-        if (groups.size != data.size) {
-            groups.clear()
-            for (section in data) {
-                val group = ShowPosterUpdatingSection()
-                groups[section.section] = group
-                group.setHeader(HeaderItem(section.section))
-                group.setPlaceholder(EmptyPlaceholder())
-                groupAdapter.add(group)
-            }
-        }
         val spanCount = gridLayoutManager.spanCount
-        for (section in data) {
-            groups[section.section]?.update(section.items.mapNotNull { it.show }.take(spanCount * 2))
+        groupAdapter.clear()
+
+        data.forEach { section ->
+            var group: Section? = null
+
+            when (section.section) {
+                TRENDING -> {
+                    group = TrendingShowPosterSection().apply {
+                        update(section.items
+                                .filter { it.show != null }
+                                .take(spanCount * 2) as List<ListItem<TrendingEntry>>)
+                    }
+                }
+                POPULAR -> {
+                    group = ShowPosterSection().apply {
+                        update(section.items
+                                .filter { it.show != null }
+                                .take(spanCount * 2)
+                                .map { it.show!! })
+                    }
+                }
+            }
+
+            group.run {
+                setHeader(HeaderItem(titleFromSection(section.section), section.section))
+                setPlaceholder(EmptyPlaceholderItem())
+                groupAdapter.add(this)
+            }
         }
     }
 
@@ -126,25 +135,10 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     }
 
     internal fun scrollToTop() {
-        discover_rv.apply {
+        summary_rv.apply {
             stopScroll()
             smoothScrollToPosition(0)
         }
+        summary_appbarlayout.setExpanded(true)
     }
-
-    internal inner class HeaderItem(val section: DiscoverViewModel.Section) : Item<ViewHolder>() {
-        override fun getLayout() = R.layout.header_item
-
-        override fun bind(viewHolder: ViewHolder, position: Int) {
-            viewHolder.itemView.header_title.text = titleFromSection(section)
-        }
-    }
-
-    internal inner class EmptyPlaceholder : Item<ViewHolder>() {
-        override fun getLayout() = R.layout.empty_state
-
-        override fun bind(viewHolder: ViewHolder, position: Int) {
-        }
-    }
-
 }

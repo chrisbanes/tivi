@@ -46,10 +46,6 @@ import javax.inject.Inject
 
 class HomeActivity : TiviActivity() {
 
-    companion object {
-        const val REQUEST_CODE_AUTH = 10
-    }
-
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: HomeActivityViewModel
 
@@ -75,7 +71,7 @@ class HomeActivity : TiviActivity() {
                         val fragment = supportFragmentManager.findFragmentById(R.id.home_content)
                         when (fragment) {
                             is DiscoverFragment -> fragment.scrollToTop()
-                            // FIXME is LibraryFragment -> fragment.scrollToTop()
+                            is LibraryFragment -> fragment.scrollToTop()
                         }
                     }
                     true

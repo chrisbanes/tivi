@@ -23,11 +23,13 @@ import android.view.ViewGroup
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
-import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.inflateView
+import me.banes.chris.tivi.ui.holders.LoadingViewHolder
+import me.banes.chris.tivi.ui.holders.PosterGridHolder
 
-internal class TiviShowGridAdapter<LI : ListItem<out Entry>>(
-        private val columnCount: Int
+open class ShowPosterGridAdapter<LI : ListItem<out Entry>>(
+        private val columnCount: Int,
+        private val showBinder: ((LI, PosterGridHolder) -> Unit)? = null
 ) : PagedListAdapter<LI, RecyclerView.ViewHolder>(TiviShowDiffCallback<LI>()) {
 
     companion object {
@@ -53,7 +55,7 @@ internal class TiviShowGridAdapter<LI : ListItem<out Entry>>(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             TYPE_ITEM -> {
-                TiviShowGridViewHolder(inflateView(R.layout.grid_item, parent, false))
+                PosterGridHolder(inflateView(R.layout.grid_item, parent, false))
             }
             TYPE_LOADING_MORE -> LoadingViewHolder(parent)
             else -> {
@@ -64,24 +66,37 @@ internal class TiviShowGridAdapter<LI : ListItem<out Entry>>(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is TiviShowGridViewHolder -> holder.bind(getItem(position)?.show ?: TiviShow.PLACEHOLDER)
+            is PosterGridHolder -> {
+                val item = getItem(position)
+                val show = item?.show
+                when (show) {
+                    null -> bindPlaceholder(item, holder)
+                    else -> bindEntry(item, holder)
+                }
+            }
             is LoadingViewHolder -> holder.bind()
         }
     }
 
-    override fun getItemId(position: Int): Long {
-        if (getItemViewType(position) == TYPE_LOADING_MORE) {
-            return RecyclerView.NO_ID
-        }
-        return super.getItemId(position)
+    private fun bindEntry(entry: LI, holder: PosterGridHolder) {
+        showBinder?.invoke(entry, holder) ?: holder.bindShow(entry?.show?.tmdbPosterPath, entry?.show?.title)
+    }
+
+    private fun bindPlaceholder(entry: LI?, holder: PosterGridHolder) {
+        holder.bindPlaceholder()
+    }
+
+    override fun getItemId(position: Int): Long = when (getItemViewType(position)) {
+        TYPE_LOADING_MORE -> RecyclerView.NO_ID
+        else -> super.getItemId(position)
     }
 
     override fun getItemViewType(position: Int): Int {
         val itemCount = super.getItemCount()
-        if (position < itemCount && itemCount > 0) {
-            return TYPE_ITEM
+        return when {
+            position < itemCount && itemCount > 0 -> TYPE_ITEM
+            else -> TYPE_LOADING_MORE
         }
-        return TYPE_LOADING_MORE
     }
 
     fun getItemColumnSpan(position: Int) = when (getItemViewType(position)) {

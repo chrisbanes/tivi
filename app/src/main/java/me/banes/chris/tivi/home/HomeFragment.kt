@@ -19,6 +19,7 @@ package me.banes.chris.tivi.home
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import me.banes.chris.tivi.R
@@ -77,7 +78,14 @@ abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
         else -> false
     }
 
-    abstract fun findUserAvatarMenuItem(): MenuItem?
-    abstract fun findUserLoginMenuItem(): MenuItem?
+    open fun findUserAvatarMenuItem(): MenuItem? {
+        return getMenu()?.findItem(R.id.home_menu_user_avatar)
+    }
+
+    open fun findUserLoginMenuItem(): MenuItem? {
+        return getMenu()?.findItem(R.id.home_menu_user_login)
+    }
+
+    abstract fun getMenu(): Menu?
 
 }

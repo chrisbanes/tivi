@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.ui
+package me.banes.chris.tivi.ui.holders
 
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.infinite_loading.*
 import me.banes.chris.tivi.R
-import me.banes.chris.tivi.util.TiviViewHolder
 
 class LoadingViewHolder(parent: ViewGroup) : TiviViewHolder(parent, R.layout.infinite_loading) {
     fun bind() {

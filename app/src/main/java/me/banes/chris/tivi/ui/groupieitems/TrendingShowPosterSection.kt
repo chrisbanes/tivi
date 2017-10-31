@@ -16,27 +16,19 @@
 
 package me.banes.chris.tivi.ui.groupieitems
 
-import com.xwray.groupie.Item
-import com.xwray.groupie.ViewHolder
+import com.xwray.groupie.Section
+import com.xwray.groupie.UpdatingGroup
+import me.banes.chris.tivi.data.entities.ListItem
+import me.banes.chris.tivi.data.entities.TrendingEntry
 
-abstract class UpdatingItem<T : Any, VH : ViewHolder?>(item: T? = null) : Item<VH>() {
+internal class TrendingShowPosterSection : Section() {
+    private val group = UpdatingGroup()
 
-    var item: T? = item
-        set(value) {
-            if (field != value) {
-                field = value
-                notifyChanged()
-            }
-        }
-
-    override fun bind(viewHolder: VH, position: Int) {
-        bind(viewHolder, position, item!!)
+    init {
+        add(group)
     }
 
-    abstract fun bind(viewHolder: VH, position: Int, item: T)
-
-    override fun unbind(holder: VH) {
-        item = null
-        super.unbind(holder)
+    fun update(items: List<ListItem<TrendingEntry>>) {
+        group.update(items.map { TrendingPosterItem(it.entry!!, it.show!!) })
     }
 }
