@@ -159,7 +159,7 @@ class HomeActivity : TiviActivity() {
                     .commit()
         }
 
-        override fun showShowDetails(tiviShow: TiviShow) {
+        override fun showShowDetails(show: TiviShow) {
             Snackbar.make(home_bottom_nav, "TODO: Open show details", Snackbar.LENGTH_SHORT).show()
         }
 

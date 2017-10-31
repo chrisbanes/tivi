@@ -45,7 +45,7 @@ internal class DiscoverViewModel @Inject constructor(
         appNavigator: AppNavigator,
         traktManager: TraktManager) : HomeFragmentViewModel(traktManager, appNavigator) {
 
-    data class SectionPage(val section: Section, val items: List<out ListItem<out Entry>>)
+    data class SectionPage(val section: Section, val items: List<ListItem<out Entry>>)
 
     enum class Section {
         TRENDING, POPULAR

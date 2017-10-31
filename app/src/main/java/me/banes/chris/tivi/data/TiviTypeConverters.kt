@@ -33,9 +33,5 @@ object TiviTypeConverters {
 
     @TypeConverter
     @JvmStatic
-    fun fromOffsetDateTime(date: OffsetDateTime?): String? {
-        return date?.let {
-            it.format(formatter)
-        }
-    }
+    fun fromOffsetDateTime(date: OffsetDateTime?): String? = date?.format(formatter)
 }

@@ -34,7 +34,7 @@ import timber.log.Timber
 abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>, out ED : PaginatedEntryDao<ET, LI>>(
         private val databaseTxRunner: DatabaseTxRunner,
         protected val showDao: TiviShowDao,
-        protected val entryDao: ED,
+        private val entryDao: ED,
         protected val trakt: TraktV2,
         protected val schedulers: AppRxSchedulers,
         protected val traktShowFetcher: TraktShowFetcher,

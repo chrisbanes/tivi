@@ -20,12 +20,19 @@ import android.graphics.Rect
 import android.support.v7.widget.RecyclerView
 import android.view.View
 
-class SpacingItemDecorator(val spacing: Int) : RecyclerView.ItemDecoration() {
+class SpacingItemDecorator(left: Int, top: Int, right: Int, bottom: Int) : RecyclerView.ItemDecoration() {
+
+    constructor(spacing: Int): this(spacing, spacing, spacing, spacing)
+
+    private val spacingRect = Rect()
+
+    init {
+        spacingRect.set(left, top, right, bottom)
+    }
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView,
             state: RecyclerView.State) {
-        outRect.set(spacing, spacing, spacing, spacing)
+        outRect.set(spacingRect)
     }
-
 }
 

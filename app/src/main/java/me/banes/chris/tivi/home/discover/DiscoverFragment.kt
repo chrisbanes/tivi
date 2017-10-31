@@ -28,7 +28,7 @@ import android.view.ViewGroup
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
-import kotlinx.android.synthetic.main.fragment_discover.*
+import kotlinx.android.synthetic.main.fragment_summary.*
 import kotlinx.android.synthetic.main.header_item.view.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.home.HomeFragment
@@ -52,7 +52,7 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_discover, container, false)
+        return inflater.inflate(R.layout.fragment_summary, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
