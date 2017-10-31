@@ -83,7 +83,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         grid_swipe_refresh.setOnRefreshListener(viewModel::fullRefresh)
     }
 
-    open fun createAdapter(spanCount: Int) : ShowPosterGridAdapter<LI> = ShowPosterGridAdapter(spanCount)
+    open fun createAdapter(spanCount: Int): ShowPosterGridAdapter<LI> = ShowPosterGridAdapter(spanCount)
 
     override fun onStart() {
         super.onStart()
