@@ -93,11 +93,11 @@ class HomeActivity : TiviActivity() {
 
         viewModel.navigationLiveData.observeK(this, this::showNavigationItem)
 
-        navigatorViewModel.showPopularCall.observeK(this, this::showPopular)
-        navigatorViewModel.showTrendingCall.observeK(this, this::showTrending)
-        navigatorViewModel.showWatchedCall.observeK(this, this::showWatched)
+        navigatorViewModel.showPopularCall.observeK(this) { this.showPopular() }
+        navigatorViewModel.showTrendingCall.observeK(this) { this.showTrending() }
+        navigatorViewModel.showWatchedCall.observeK(this) { this.showWatched() }
         navigatorViewModel.showShowDetailsCall.observeK(this) { it?.let(this::showShowDetails) }
-        navigatorViewModel.upClickedCall.observeK(this, this::onUpClicked)
+        navigatorViewModel.upClickedCall.observeK(this) { this.onUpClicked() }
 
         handleIntent(intent)
     }
@@ -166,7 +166,7 @@ class HomeActivity : TiviActivity() {
     }
 
     private fun showShowDetails(show: TiviShow) {
-        Snackbar.make(home_bottom_nav, "TODO: Open show details", Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(home_bottom_nav, "TODO: Open details for ${show.title}", Snackbar.LENGTH_SHORT).show()
     }
 
     private fun onUpClicked() {
