@@ -33,9 +33,8 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
-        private val schedulers: AppRxSchedulers,
+        schedulers: AppRxSchedulers,
         private val watchedCall: WatchedCall,
-        private val navigator: HomeNavigator,
         appNavigator: AppNavigator,
         traktManager: TraktManager) : HomeFragmentViewModel(traktManager, appNavigator) {
 
@@ -70,14 +69,14 @@ class LibraryViewModel @Inject constructor(
         Timber.e(t, "Error while refreshing")
     }
 
-    fun onSectionHeaderClicked(section: Section) {
+    fun onSectionHeaderClicked(navigator: HomeNavigator, section: Section) {
         when (section) {
             WATCHED -> navigator.showWatched()
             WHATS_NEXT -> TODO()
         }
     }
 
-    fun onItemPostedClicked(show: TiviShow) {
+    fun onItemPostedClicked(navigator: HomeNavigator, show: TiviShow) {
         navigator.showShowDetails(show)
     }
 

@@ -32,7 +32,6 @@ import me.banes.chris.tivi.inject.ViewModelKey
 internal abstract class HomeBuilder {
 
     @ContributesAndroidInjector(modules = arrayOf(
-            HomeModule::class,
             DiscoverBuilder::class,
             TrendingBuilder::class,
             PopularBuilder::class,

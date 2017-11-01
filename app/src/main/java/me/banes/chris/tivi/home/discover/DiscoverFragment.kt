@@ -32,6 +32,8 @@ import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.home.HomeFragment
+import me.banes.chris.tivi.home.HomeNavigator
+import me.banes.chris.tivi.home.HomeNavigatorViewModel
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.POPULAR
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
 import me.banes.chris.tivi.ui.SpacingItemDecorator
@@ -46,22 +48,26 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     private lateinit var gridLayoutManager: GridLayoutManager
     private val groupAdapter = GroupAdapter<ViewHolder>()
 
+    private lateinit var homeNavigator: HomeNavigator
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(DiscoverViewModel::class.java)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_summary, container, false)
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
 
         viewModel.data.observe(this, Observer {
             it?.run { updateAdapter(it) } ?: groupAdapter.clear()
         })
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_summary, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -73,8 +79,8 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         groupAdapter.apply {
             setOnItemClickListener { item, _ ->
                 when (item) {
-                    is HeaderItem -> viewModel.onSectionHeaderClicked(item.tag as DiscoverViewModel.Section)
-                    is ShowPosterItem -> viewModel.onItemPostedClicked(item.show)
+                    is HeaderItem -> viewModel.onSectionHeaderClicked(homeNavigator, item.tag as DiscoverViewModel.Section)
+                    is ShowPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
                 }
             }
             spanCount = gridLayoutManager.spanCount

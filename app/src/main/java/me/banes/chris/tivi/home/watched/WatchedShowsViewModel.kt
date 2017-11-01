@@ -25,10 +25,9 @@ import javax.inject.Inject
 
 class WatchedShowsViewModel @Inject constructor(
         schedulers: AppRxSchedulers,
-        call: WatchedCall,
-        private val navigator: HomeNavigator
+        call: WatchedCall
 ) : EntryViewModel<WatchedListItem>(schedulers, call) {
-    fun onUpClicked() {
+    fun onUpClicked(navigator: HomeNavigator) {
         navigator.onUpClicked()
     }
 }

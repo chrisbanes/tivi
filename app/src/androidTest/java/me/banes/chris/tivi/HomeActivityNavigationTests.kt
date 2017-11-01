@@ -46,7 +46,7 @@ class HomeActivityNavigationTests {
 
     @Test
     fun testBottomNavigationLibraryClick() {
-        onView(allOf(withText(R.string.home_nav_library), isDescendantOfA(withId(R.id.home_bottom_nav)), isDisplayed()))
+        onView(bottomNavItemWithTitle(R.id.home_bottom_nav, R.string.home_nav_library))
                 .perform(click())
 
         onView(toolbarWithTitle(R.string.library_title))
@@ -61,6 +61,24 @@ class HomeActivityNavigationTests {
                 .perform(click())
 
         onView(toolbarWithTitle(R.string.library_title))
+                .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun testRotateRetainsMainFragment() {
+        // First click the trending header
+        onView(allOf(withText(R.string.discover_trending), isDescendantOfA(withId(R.id.summary_rv))))
+                .perform(click())
+
+        // And assert that the trending fragment is shown
+        onView(toolbarWithTitle(R.string.discover_trending))
+                .check(matches(isDisplayed()))
+
+        // Now rotate the screen
+        onView(isRoot()).perform(rotateLandscape())
+
+        // And check that the trending show is still shown
+        onView(toolbarWithTitle(R.string.discover_trending))
                 .check(matches(isDisplayed()))
     }
 
