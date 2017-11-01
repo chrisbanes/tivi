@@ -16,7 +16,6 @@
 
 package me.banes.chris.tivi.home.discover
 
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
@@ -31,6 +30,7 @@ import kotlinx.android.synthetic.main.fragment_summary.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TrendingEntry
+import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeFragment
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.HomeNavigatorViewModel
@@ -61,9 +61,9 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
         homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
 
-        viewModel.data.observe(this, Observer {
+        viewModel.data.observeK(this) {
             it?.run { updateAdapter(it) } ?: groupAdapter.clear()
-        })
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

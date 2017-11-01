@@ -16,7 +16,6 @@
 
 package me.banes.chris.tivi.home
 
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.Menu
@@ -25,6 +24,7 @@ import android.view.View
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
 import me.banes.chris.tivi.extensions.loadIconFromUrl
+import me.banes.chris.tivi.extensions.observeK
 import javax.inject.Inject
 
 abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
@@ -35,7 +35,7 @@ abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.authUiState.observe(this, Observer {
+        viewModel.authUiState.observeK(this) {
             when (it) {
                 HomeFragmentViewModel.AuthUiState.LOGGED_IN -> {
                     findUserAvatarMenuItem()?.isVisible = true
@@ -46,9 +46,9 @@ abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
                     findUserLoginMenuItem()?.isVisible = true
                 }
             }
-        })
+        }
 
-        viewModel.userProfileLiveData.observe(this, Observer { user ->
+        viewModel.userProfileLiveData.observeK(this) { user ->
             if (user != null) {
                 findUserAvatarMenuItem()?.let {
                     it.title = user.name
@@ -59,7 +59,7 @@ abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
             } else {
                 // TODO clear user profile
             }
-        })
+        }
     }
 
     open fun onMenuItemClicked(item: MenuItem) = when (item.itemId) {
