@@ -48,6 +48,7 @@ class HomeActivity : TiviActivity() {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: HomeActivityViewModel
+    private lateinit var navigatorViewModel: HomeNavigatorViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +60,8 @@ class HomeActivity : TiviActivity() {
 
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(HomeActivityViewModel::class.java)
+
+        navigatorViewModel = ViewModelProviders.of(this).get(HomeNavigatorViewModel::class.java)
 
         home_bottom_nav.setOnNavigationItemSelectedListener {
             when (it.itemId) {
@@ -88,9 +91,13 @@ class HomeActivity : TiviActivity() {
             }
         }
 
-        viewModel.navigationLiveData.observe(this, Observer {
-            showNavigationItem(it!!)
-        })
+        viewModel.navigationLiveData.observe(this, Observer { showNavigationItem(it!!) })
+
+        navigatorViewModel.showPopularCall.observe(this, Observer { showPopular() })
+        navigatorViewModel.showTrendingCall.observe(this, Observer { showTrending() })
+        navigatorViewModel.showWatchedCall.observe(this, Observer { showWatched() })
+        navigatorViewModel.showShowDetailsCall.observe(this, Observer { it?.let(this::showShowDetails) })
+        navigatorViewModel.upClickedCall.observe(this, Observer { onUpClicked() })
 
         handleIntent(intent)
     }
@@ -127,42 +134,40 @@ class HomeActivity : TiviActivity() {
         }
     }
 
-    val navigator = object : HomeNavigator {
-        override fun showPopular() {
-            supportFragmentManager
-                    .beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .replace(R.id.home_content, PopularShowsFragment())
-                    .addToBackStack(null)
-                    .commit()
-        }
+    private fun showPopular() {
+        supportFragmentManager
+                .beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .replace(R.id.home_content, PopularShowsFragment())
+                .addToBackStack(null)
+                .commit()
+    }
 
-        override fun showTrending() {
-            supportFragmentManager
-                    .beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .replace(R.id.home_content, TrendingShowsFragment())
-                    .addToBackStack(null)
-                    .commit()
-        }
+    private fun showTrending() {
+        supportFragmentManager
+                .beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .replace(R.id.home_content, TrendingShowsFragment())
+                .addToBackStack(null)
+                .commit()
+    }
 
-        override fun showWatched() {
-            supportFragmentManager
-                    .beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .replace(R.id.home_content, WatchedShowsFragment())
-                    .addToBackStack(null)
-                    .commit()
-        }
+    private fun showWatched() {
+        supportFragmentManager
+                .beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .replace(R.id.home_content, WatchedShowsFragment())
+                .addToBackStack(null)
+                .commit()
+    }
 
-        override fun showShowDetails(show: TiviShow) {
-            Snackbar.make(home_bottom_nav, "TODO: Open show details", Snackbar.LENGTH_SHORT).show()
-        }
+    private fun showShowDetails(show: TiviShow) {
+        Snackbar.make(home_bottom_nav, "TODO: Open show details", Snackbar.LENGTH_SHORT).show()
+    }
 
-        override fun onUpClicked() {
-            // TODO can probably do something better here
-            supportFragmentManager.popBackStack()
-        }
+    private fun onUpClicked() {
+        // TODO can probably do something better here
+        supportFragmentManager.popBackStack()
     }
 
     private fun handleIntent(intent: Intent) {

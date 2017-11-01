@@ -25,11 +25,9 @@ import javax.inject.Inject
 
 class PopularShowsViewModel @Inject constructor(
         schedulers: AppRxSchedulers,
-        call: PopularCall,
-        private val navigator: HomeNavigator
+        call: PopularCall
 ) : EntryViewModel<PopularListItem>(schedulers, call) {
-
-    fun onUpClicked() {
+    fun onUpClicked(navigator: HomeNavigator) {
         navigator.onUpClicked()
     }
 }

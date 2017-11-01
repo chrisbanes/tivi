@@ -17,7 +17,6 @@
 package me.banes.chris.tivi.home
 
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
 import me.banes.chris.tivi.calls.TmdbShowFetcher
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.TiviShow
@@ -25,6 +24,7 @@ import me.banes.chris.tivi.extensions.plusAssign
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.RxAwareViewModel
+import me.banes.chris.tivi.util.SingleLiveEvent
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import timber.log.Timber
@@ -41,7 +41,7 @@ internal class HomeActivityViewModel @Inject constructor(
         DISCOVER, LIBRARY
     }
 
-    private val mutableNavLiveData = MutableLiveData<NavigationItem>()
+    private val mutableNavLiveData = SingleLiveEvent<NavigationItem>()
 
     /**
      * Facade so that we don't leak the fact that its mutable

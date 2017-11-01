@@ -29,6 +29,8 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_summary.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.home.HomeFragment
+import me.banes.chris.tivi.home.HomeNavigator
+import me.banes.chris.tivi.home.HomeNavigatorViewModel
 import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.ui.groupieitems.EmptyPlaceholderItem
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
@@ -36,6 +38,8 @@ import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterSection
 
 class LibraryFragment : HomeFragment<LibraryViewModel>() {
+
+    private lateinit var homeNavigator: HomeNavigator
 
     private lateinit var gridLayoutManager: GridLayoutManager
     private val groupAdapter = GroupAdapter<ViewHolder>()
@@ -53,6 +57,8 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
+
         viewModel.data.observe(this, Observer {
             it?.run { updateAdapter(it) } ?: groupAdapter.clear()
         })
@@ -68,8 +74,8 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         groupAdapter.apply {
             setOnItemClickListener { item, _ ->
                 when (item) {
-                    is HeaderItem -> viewModel.onSectionHeaderClicked(item.tag as LibraryViewModel.Section)
-                    is ShowPosterItem -> viewModel.onItemPostedClicked(item.show)
+                    is HeaderItem -> viewModel.onSectionHeaderClicked(homeNavigator, item.tag as LibraryViewModel.Section)
+                    is ShowPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
                 }
             }
             spanCount = gridLayoutManager.spanCount

@@ -38,10 +38,9 @@ import timber.log.Timber
 import javax.inject.Inject
 
 internal class DiscoverViewModel @Inject constructor(
-        private val schedulers: AppRxSchedulers,
+        schedulers: AppRxSchedulers,
         private val popularCall: PopularCall,
         private val trendingCall: TrendingCall,
-        private val navigator: HomeNavigator,
         appNavigator: AppNavigator,
         traktManager: TraktManager) : HomeFragmentViewModel(traktManager, appNavigator) {
 
@@ -81,15 +80,14 @@ internal class DiscoverViewModel @Inject constructor(
         Timber.e(t, "Error while refreshing")
     }
 
-    fun onSectionHeaderClicked(section: Section) {
+    fun onSectionHeaderClicked(navigator: HomeNavigator, section: Section) {
         when (section) {
             TRENDING -> navigator.showTrending()
             POPULAR -> navigator.showPopular()
         }
     }
 
-    fun onItemPostedClicked(show: TiviShow) {
+    fun onItemPostedClicked(navigator: HomeNavigator, show: TiviShow) {
         navigator.showShowDetails(show)
     }
-
 }
