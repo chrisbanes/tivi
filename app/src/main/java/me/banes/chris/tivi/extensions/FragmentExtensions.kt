@@ -20,6 +20,7 @@ import android.support.v4.app.FragmentManager
 
 fun FragmentManager.clearBackStack() {
     for (i in 0 until backStackEntryCount) {
-        popBackStackImmediate()
+        popBackStack()
     }
+    executePendingTransactions()
 }
