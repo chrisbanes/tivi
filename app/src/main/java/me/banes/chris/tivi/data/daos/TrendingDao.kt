@@ -28,15 +28,15 @@ import me.banes.chris.tivi.data.entities.TrendingListItem
 @Dao
 abstract class TrendingDao : PaginatedEntryDao<TrendingEntry, TrendingListItem> {
     @Transaction
-    @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC")
+    @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC, id ASC")
     abstract override fun entries(): Flowable<List<TrendingListItem>>
 
     @Transaction
-    @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC")
+    @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC, id ASC")
     abstract override fun entriesLiveList(): LivePagedListProvider<Int, TrendingListItem>
 
     @Transaction
-    @Query("SELECT * FROM trending_shows WHERE page = :page ORDER BY watchers DESC")
+    @Query("SELECT * FROM trending_shows WHERE page = :page ORDER BY watchers DESC, id ASC")
     abstract override fun entriesPage(page: Int): Flowable<List<TrendingListItem>>
 
     @Query("DELETE FROM trending_shows WHERE page = :page")

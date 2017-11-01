@@ -42,13 +42,15 @@ open class ShowPosterGridAdapter<LI : ListItem<out Entry>>(
 
     var isLoading = false
         set(value) {
-            if (value == field) return
-            field = if (value) {
-                notifyItemInserted(loadingMoreItemPosition)
-                value
-            } else {
-                notifyItemRemoved(loadingMoreItemPosition)
-                value
+            if (value != field) {
+                val position = loadingMoreItemPosition
+                if (position >= 0) {
+                    when {
+                        value -> notifyItemInserted(position)
+                        else -> notifyItemRemoved(position)
+                    }
+                }
+                field = value
             }
         }
 
