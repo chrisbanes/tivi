@@ -32,7 +32,6 @@ import me.banes.chris.tivi.Constants
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviActivity
 import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.extensions.clearBackStack
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeActivityViewModel.NavigationItem.DISCOVER
 import me.banes.chris.tivi.home.HomeActivityViewModel.NavigationItem.LIBRARY
@@ -46,6 +45,10 @@ import net.openid.appauth.AuthorizationResponse
 import javax.inject.Inject
 
 class HomeActivity : TiviActivity() {
+
+    companion object {
+        val ROOT_FRAGMENT = "root"
+    }
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: HomeActivityViewModel
@@ -127,11 +130,11 @@ class HomeActivity : TiviActivity() {
             }
         }
 
-        supportFragmentManager.clearBackStack()
+        supportFragmentManager.popBackStackImmediate(ROOT_FRAGMENT, 0)
         supportFragmentManager
                 .beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .replace(R.id.home_content, newFragment)
+                .replace(R.id.home_content, newFragment, ROOT_FRAGMENT)
                 .commit()
 
         // Now make the bottom nav show the correct item
