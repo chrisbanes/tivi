@@ -32,6 +32,7 @@ import me.banes.chris.tivi.Constants
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviActivity
 import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.extensions.clearBackStack
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeActivityViewModel.NavigationItem.DISCOVER
 import me.banes.chris.tivi.home.HomeActivityViewModel.NavigationItem.LIBRARY
@@ -126,6 +127,7 @@ class HomeActivity : TiviActivity() {
             }
         }
 
+        supportFragmentManager.clearBackStack()
         supportFragmentManager
                 .beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
