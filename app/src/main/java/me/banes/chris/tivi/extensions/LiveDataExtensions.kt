@@ -19,12 +19,7 @@ package me.banes.chris.tivi.extensions
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
-import kotlin.reflect.KFunction0
 
 inline fun <T> LiveData<T>.observeK(owner: LifecycleOwner, crossinline observer: (T?) -> Unit) {
     this.observe(owner, Observer { observer(it) })
-}
-
-fun <T> LiveData<T>.observeK(owner: LifecycleOwner, observer: KFunction0<Unit>) {
-    this.observe(owner, Observer { observer.call(it) })
 }
