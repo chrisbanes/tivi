@@ -16,7 +16,6 @@
 
 package me.banes.chris.tivi.home
 
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
@@ -33,6 +32,7 @@ import me.banes.chris.tivi.Constants
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviActivity
 import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeActivityViewModel.NavigationItem.DISCOVER
 import me.banes.chris.tivi.home.HomeActivityViewModel.NavigationItem.LIBRARY
 import me.banes.chris.tivi.home.discover.DiscoverFragment
@@ -91,13 +91,13 @@ class HomeActivity : TiviActivity() {
             }
         }
 
-        viewModel.navigationLiveData.observe(this, Observer { showNavigationItem(it!!) })
+        viewModel.navigationLiveData.observeK(this, this::showNavigationItem)
 
-        navigatorViewModel.showPopularCall.observe(this, Observer { showPopular() })
-        navigatorViewModel.showTrendingCall.observe(this, Observer { showTrending() })
-        navigatorViewModel.showWatchedCall.observe(this, Observer { showWatched() })
-        navigatorViewModel.showShowDetailsCall.observe(this, Observer { it?.let(this::showShowDetails) })
-        navigatorViewModel.upClickedCall.observe(this, Observer { onUpClicked() })
+        navigatorViewModel.showPopularCall.observeK(this, this::showPopular)
+        navigatorViewModel.showTrendingCall.observeK(this, this::showTrending)
+        navigatorViewModel.showWatchedCall.observeK(this, this::showWatched)
+        navigatorViewModel.showShowDetailsCall.observeK(this) { it?.let(this::showShowDetails) }
+        navigatorViewModel.upClickedCall.observeK(this, this::onUpClicked)
 
         handleIntent(intent)
     }
@@ -107,7 +107,11 @@ class HomeActivity : TiviActivity() {
         handleIntent(intent)
     }
 
-    private fun showNavigationItem(item: HomeActivityViewModel.NavigationItem) {
+    private fun showNavigationItem(item: HomeActivityViewModel.NavigationItem?) {
+        if (item == null) {
+            return
+        }
+
         val newFragment: Fragment
         val newItemId: Int
 

@@ -16,7 +16,6 @@
 
 package me.banes.chris.tivi.home.library
 
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
@@ -28,6 +27,7 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_summary.*
 import me.banes.chris.tivi.R
+import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeFragment
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.HomeNavigatorViewModel
@@ -59,9 +59,9 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
 
         homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
 
-        viewModel.data.observe(this, Observer {
+        viewModel.data.observeK(this) {
             it?.run { updateAdapter(it) } ?: groupAdapter.clear()
-        })
+        }
     }
 
     override fun onViewCreated(view: View

@@ -17,7 +17,6 @@
 package me.banes.chris.tivi.util
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -33,6 +32,7 @@ import me.banes.chris.tivi.TiviFragment
 import me.banes.chris.tivi.api.Status
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
+import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.ui.EndlessRecyclerViewScrollListener
 import me.banes.chris.tivi.ui.ShowPosterGridAdapter
 import me.banes.chris.tivi.ui.SpacingItemDecorator
@@ -88,9 +88,9 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
     override fun onStart() {
         super.onStart()
 
-        viewModel.liveList.observe(this, Observer(adapter::setList))
+        viewModel.liveList.observeK(this, adapter::setList)
 
-        viewModel.messages.observe(this, Observer {
+        viewModel.messages.observeK(this) {
             when (it?.status) {
                 Status.SUCCESS -> {
                     grid_swipe_refresh.isRefreshing = false
@@ -108,7 +108,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
                     adapter.isLoading = true
                 }
             }
-        })
+        }
     }
 
 }
