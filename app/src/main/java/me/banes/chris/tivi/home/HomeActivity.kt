@@ -28,7 +28,6 @@ import com.crashlytics.android.core.CrashlyticsCore
 import io.fabric.sdk.android.Fabric
 import kotlinx.android.synthetic.main.activity_home.*
 import me.banes.chris.tivi.BuildConfig
-import me.banes.chris.tivi.Constants
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviActivity
 import me.banes.chris.tivi.data.entities.TiviShow
@@ -40,6 +39,7 @@ import me.banes.chris.tivi.home.library.LibraryFragment
 import me.banes.chris.tivi.home.popular.PopularShowsFragment
 import me.banes.chris.tivi.home.trending.TrendingShowsFragment
 import me.banes.chris.tivi.home.watched.WatchedShowsFragment
+import me.banes.chris.tivi.trakt.TraktConstants
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import javax.inject.Inject
@@ -181,7 +181,7 @@ class HomeActivity : TiviActivity() {
 
     private fun handleIntent(intent: Intent) {
         when (intent.action) {
-            Constants.INTENT_ACTION_HANDLE_AUTH_RESPONSE -> {
+            TraktConstants.INTENT_ACTION_HANDLE_AUTH_RESPONSE -> {
                 val response = AuthorizationResponse.fromIntent(intent)
                 val error = AuthorizationException.fromIntent(intent)
                 viewModel.onAuthResponse(response, error)

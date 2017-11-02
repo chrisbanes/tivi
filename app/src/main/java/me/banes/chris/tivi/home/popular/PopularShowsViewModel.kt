@@ -16,9 +16,9 @@
 
 package me.banes.chris.tivi.home.popular
 
-import me.banes.chris.tivi.calls.PopularCall
 import me.banes.chris.tivi.data.entities.PopularListItem
 import me.banes.chris.tivi.home.HomeNavigator
+import me.banes.chris.tivi.trakt.calls.PopularCall
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.EntryViewModel
 import javax.inject.Inject

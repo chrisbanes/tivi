@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.calls
+package me.banes.chris.tivi.trakt.calls
 
 import android.arch.paging.LivePagedListProvider
 import com.uwetrottmann.trakt5.TraktV2
@@ -22,11 +22,13 @@ import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import me.banes.chris.tivi.calls.ListCall
 import me.banes.chris.tivi.data.DatabaseTxRunner
 import me.banes.chris.tivi.data.daos.WatchedDao
 import me.banes.chris.tivi.data.entities.WatchedEntry
 import me.banes.chris.tivi.data.entities.WatchedListItem
 import me.banes.chris.tivi.extensions.toRxSingle
+import me.banes.chris.tivi.trakt.TraktShowFetcher
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 

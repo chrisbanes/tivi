@@ -72,13 +72,11 @@ android {
         versionName "0.1.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + propOrDef("TIVI_TRAKT_CLIENT_ID", "") + "\""
-        buildConfigField "String", "TRAKT_CLIENT_SECRET", "\"" + propOrDef("TIVI_TRAKT_CLIENT_SECRET", "") + "\""
         buildConfigField "String", "TMDB_API_KEY", "\"" + propOrDef("TIVI_TMDB_API_KEY", "") + "\""
 
-        manifestPlaceholders += ['appAuthRedirectScheme': 'me.banes.chris.tivi']
-
         playAccountConfig = playAccountConfigs.defaultAccountConfig
+
+        manifestPlaceholders += ['appAuthRedirectScheme': 'me.banes.chris.tivi']
 
         // Crashlytics. Disabled by default
         manifestPlaceholders += ["fabric-api-key": propOrDef("TIVI_FABRIC_API_KEY", "")]
@@ -130,6 +128,7 @@ android {
 
 dependencies {
     implementation project(":data")
+    implementation project(":trakt")
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:${versions.kotlin}"
 
@@ -148,30 +147,16 @@ dependencies {
 
     implementation 'com.gabrielittner.threetenbp:lazythreetenbp:0.2.0'
 
-    implementation("com.uwetrottmann.trakt5:trakt-java:5.7.3", {
-        // Exclude this since we explicitly depend on threetenbp:no-tzdb above
-        exclude group: 'org.threeten', module: 'threetenbp'
-    })
-
     implementation "com.uwetrottmann.tmdb2:tmdb-java:1.8.1"
-
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
-
-    implementation "io.reactivex.rxjava2:rxjava:${versions.rx}"
-    implementation "io.reactivex.rxjava2:rxandroid:2.0.1"
 
     implementation "com.google.dagger:dagger-android:${versions.dagger}"
     implementation "com.google.dagger:dagger-android-support:${versions.dagger}"
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
 
-    implementation 'com.jakewharton.timber:timber:4.5.1'
-
     implementation "com.github.bumptech.glide:glide:4.2.0"
 
     implementation 'com.xwray:groupie:2.0.0-alpha2'
-
-    implementation "net.openid:appauth:0.7.0"
 
     testImplementation 'junit:junit:4.12'
 

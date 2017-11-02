@@ -22,7 +22,9 @@ import android.preference.PreferenceManager
 import com.uwetrottmann.tmdb2.Tmdb
 import dagger.Module
 import dagger.Provides
+import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.BuildConfig
+import me.banes.chris.tivi.TiviAppNavigator
 import me.banes.chris.tivi.TiviApplication
 import me.banes.chris.tivi.appmanagers.AppManagers
 import me.banes.chris.tivi.appmanagers.LeakCanaryManager
@@ -84,5 +86,11 @@ class AppModule {
             timberManager: TimberManager,
             threeTenManager: ThreeTenBpManager): AppManagers {
         return AppManagers(leakCanaryManager, timberManager, threeTenManager)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppNavigator(context: Context): AppNavigator {
+        return TiviAppNavigator(context)
     }
 }

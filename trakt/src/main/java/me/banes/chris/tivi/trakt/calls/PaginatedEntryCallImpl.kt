@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.calls
+package me.banes.chris.tivi.trakt.calls
 
 import android.arch.paging.LivePagedListProvider
-import com.uwetrottmann.trakt5.TraktV2
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
+import me.banes.chris.tivi.calls.PaginatedCall
 import me.banes.chris.tivi.data.DatabaseTxRunner
 import me.banes.chris.tivi.data.PaginatedEntry
 import me.banes.chris.tivi.data.daos.PaginatedEntryDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.trakt.TraktShowFetcher
 import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
 
@@ -35,7 +36,6 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
         private val databaseTxRunner: DatabaseTxRunner,
         protected val showDao: TiviShowDao,
         private val entryDao: ED,
-        protected val trakt: TraktV2,
         protected val schedulers: AppRxSchedulers,
         protected val traktShowFetcher: TraktShowFetcher,
         override val pageSize: Int = 21

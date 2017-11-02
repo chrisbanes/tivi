@@ -22,8 +22,6 @@ import android.net.Uri
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Module
 import dagger.Provides
-import me.banes.chris.tivi.BuildConfig
-import me.banes.chris.tivi.Constants
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.AuthorizationServiceConfiguration
@@ -55,7 +53,7 @@ class TraktModule {
                 serviceConfig,
                 BuildConfig.TRAKT_CLIENT_ID,
                 ResponseTypeValues.CODE,
-                Uri.parse(Constants.URI_AUTH_CALLBACK)).build()
+                Uri.parse(TraktConstants.URI_AUTH_CALLBACK)).build()
     }
 
     @Provides

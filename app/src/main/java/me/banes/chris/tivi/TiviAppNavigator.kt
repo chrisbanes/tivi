@@ -20,16 +20,16 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import me.banes.chris.tivi.settings.SettingsActivity
-import javax.inject.Inject
+import me.banes.chris.tivi.trakt.TraktConstants
 
-class AppNavigator @Inject constructor(val context: Context) {
+internal class TiviAppNavigator(private val context: Context) : AppNavigator {
 
-    fun provideAuthHandleResponseIntent(requestCode: Int): PendingIntent {
-        val intent = Intent(Constants.INTENT_ACTION_HANDLE_AUTH_RESPONSE)
+    override fun provideAuthHandleResponseIntent(requestCode: Int): PendingIntent {
+        val intent = Intent(TraktConstants.INTENT_ACTION_HANDLE_AUTH_RESPONSE)
         return PendingIntent.getActivity(context, requestCode, intent, 0)
     }
 
-    fun startSettings() {
+    override fun startSettings() {
         context.startActivity(Intent(context, SettingsActivity::class.java))
     }
 

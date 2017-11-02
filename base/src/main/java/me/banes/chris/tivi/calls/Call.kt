@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.home.watched
+package me.banes.chris.tivi.calls
 
-import me.banes.chris.tivi.data.entities.WatchedListItem
-import me.banes.chris.tivi.home.HomeNavigator
-import me.banes.chris.tivi.trakt.calls.WatchedCall
-import me.banes.chris.tivi.util.AppRxSchedulers
-import me.banes.chris.tivi.util.EntryViewModel
-import javax.inject.Inject
+import io.reactivex.Completable
+import io.reactivex.Flowable
 
-class WatchedShowsViewModel @Inject constructor(
-        schedulers: AppRxSchedulers,
-        call: WatchedCall
-) : EntryViewModel<WatchedListItem>(schedulers, call) {
-    fun onUpClicked(navigator: HomeNavigator) {
-        navigator.onUpClicked()
-    }
+interface Call<in Param, DatabaseOutput> {
+    fun data(): Flowable<DatabaseOutput>
+    fun refresh(param: Param): Completable
+}
+
+interface ListCall<in Param, DatabaseOutput> : Call<Param, List<DatabaseOutput>> {
+    fun liveList(): android.arch.paging.LivePagedListProvider<Int, DatabaseOutput>
+    val pageSize: Int
 }

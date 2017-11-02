@@ -18,14 +18,9 @@ package me.banes.chris.tivi.calls
 
 import android.support.v4.util.ArraySet
 import com.uwetrottmann.tmdb2.Tmdb
-import com.uwetrottmann.trakt5.TraktV2
-import com.uwetrottmann.trakt5.entities.Show
-import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Completable
-import io.reactivex.Maybe
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.extensions.toRxMaybe
 import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.RetryAfterTimeoutWithDelay
@@ -77,52 +72,6 @@ class TmdbShowFetcher @Inject constructor(
         is HttpException -> throwable.code() == 429
         is IOException -> true
         is IllegalStateException -> true
-        else -> false
-    }
-}
-
-@Singleton
-class TraktShowFetcher @Inject constructor(
-        private val showDao: TiviShowDao,
-        private val trakt: TraktV2,
-        private val schedulers: AppRxSchedulers
-) {
-    fun getShow(traktId: Int, entity: Show? = null): Maybe<TiviShow> {
-        val dbSource = showDao.getShowWithTraktId(traktId)
-                .subscribeOn(schedulers.database)
-
-        val fromEntity = entity?.let { appendRx(Maybe.just(entity)) } ?: Maybe.empty<TiviShow>()
-
-        val networkSource = appendRx(
-                trakt.shows().summary(traktId.toString(), Extended.NOSEASONS).toRxMaybe()
-                .subscribeOn(schedulers.network)
-                .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry, schedulers.network))
-        )
-
-        return Maybe.concat(dbSource, fromEntity, networkSource).firstElement()
-    }
-
-    private fun appendRx(maybe: Maybe<Show>): Maybe<TiviShow> {
-        return maybe.observeOn(schedulers.database)
-                .map { traktShow ->
-                    val show = showDao.getShowWithTraktIdSync(traktShow.ids.trakt) ?: TiviShow()
-                    show.apply {
-                        updateProperty(this::traktId, traktShow.ids.trakt)
-                        updateProperty(this::tmdbId, traktShow.ids.tmdb)
-                        updateProperty(this::title, traktShow.title)
-                        updateProperty(this::summary, traktShow.overview)
-                        updateProperty(this::homepage, traktShow.homepage)
-                        lastTraktUpdate = OffsetDateTime.now()
-                    }
-                    showDao.insertOrUpdateShow(show)
-                }
-                .map(TiviShow::traktId)
-                .flatMap(showDao::getShowWithTraktId)
-    }
-
-    private fun shouldRetry(throwable: Throwable): Boolean = when (throwable) {
-        is HttpException -> throwable.code() == 429
-        is IOException -> true
         else -> false
     }
 }

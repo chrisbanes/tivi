@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.calls
+package me.banes.chris.tivi.trakt.calls
 
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.Show
@@ -29,6 +29,7 @@ import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.PopularListItem
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.toRxSingle
+import me.banes.chris.tivi.trakt.TraktShowFetcher
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
@@ -37,9 +38,9 @@ class PopularCall @Inject constructor(
         showDao: TiviShowDao,
         popularDao: PopularDao,
         traktShowFetcher: TraktShowFetcher,
-        trakt: TraktV2,
+        private val trakt: TraktV2,
         schedulers: AppRxSchedulers
-) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularListItem, PopularDao>(databaseTxRunner, showDao, popularDao, trakt, schedulers, traktShowFetcher) {
+) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularListItem, PopularDao>(databaseTxRunner, showDao, popularDao, schedulers, traktShowFetcher) {
 
     override fun networkCall(page: Int): Single<List<ItemWithIndex<Show>>> {
         // We add one to the page since Trakt uses a 1-based index whereas we use 0-based

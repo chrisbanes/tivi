@@ -16,7 +16,6 @@
 
 package me.banes.chris.tivi.extensions
 
-import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Observable
@@ -26,18 +25,14 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.exceptions.CompositeException
 import io.reactivex.exceptions.Exceptions
 import io.reactivex.plugins.RxJavaPlugins
-import retrofit2.Call
-import retrofit2.HttpException
-import retrofit2.Response
 
-fun <T> Call<T>.toRxObservable(): Observable<T> = BodyObservable(RetrofitCallObservable(this))
-fun <T> Call<T>.toRxSingle(): Single<T> = toRxObservable().singleOrError()
-fun <T> Call<T>.toRxMaybe(): Maybe<T> = toRxObservable().singleElement()
-fun <T> Call<T>.toRxFlowable(): Flowable<T> = toRxObservable().toFlowable(BackpressureStrategy.LATEST)
+fun <T> retrofit2.Call<T>.toRxObservable(): Observable<T> = me.banes.chris.tivi.extensions.BodyObservable(me.banes.chris.tivi.extensions.RetrofitCallObservable(this))
+fun <T> retrofit2.Call<T>.toRxSingle(): Single<T> = toRxObservable().singleOrError()
+fun <T> retrofit2.Call<T>.toRxMaybe(): Maybe<T> = toRxObservable().singleElement()
+fun <T> retrofit2.Call<T>.toRxFlowable(): Flowable<T> = toRxObservable().toFlowable(io.reactivex.BackpressureStrategy.LATEST)
+private class RetrofitCallObservable<T>(private val originalCall: retrofit2.Call<T>) : Observable<retrofit2.Response<T>>() {
 
-private class RetrofitCallObservable<T>(private val originalCall: Call<T>) : Observable<Response<T>>() {
-
-    override fun subscribeActual(observer: Observer<in Response<T>>) {
+    override fun subscribeActual(observer: Observer<in retrofit2.Response<T>>) {
         // Since Call is a one-shot type, clone it for each new observer.
         val call = originalCall.clone()
         observer.onSubscribe(CallDisposable(call))
@@ -68,7 +63,7 @@ private class RetrofitCallObservable<T>(private val originalCall: Call<T>) : Obs
     }
 }
 
-private class CallDisposable(private val call: Call<*>) : Disposable {
+private class CallDisposable(private val call: retrofit2.Call<*>) : Disposable {
     override fun dispose() {
         call.cancel()
     }
@@ -78,25 +73,25 @@ private class CallDisposable(private val call: Call<*>) : Disposable {
     }
 }
 
-private class BodyObservable<T>(private val upstream: Observable<Response<T>>) : Observable<T>() {
+private class BodyObservable<T>(private val upstream: Observable<retrofit2.Response<T>>) : Observable<T>() {
     override fun subscribeActual(observer: Observer<in T>) {
         upstream.subscribe(BodyObserver(observer))
     }
 }
 
-private class BodyObserver<R>(private val observer: Observer<in R>) : Observer<Response<R>> {
+private class BodyObserver<R>(private val observer: Observer<in R>) : Observer<retrofit2.Response<R>> {
     private var terminated: Boolean = false
 
     override fun onSubscribe(disposable: Disposable) {
         observer.onSubscribe(disposable)
     }
 
-    override fun onNext(response: Response<R>) {
+    override fun onNext(response: retrofit2.Response<R>) {
         if (response.isSuccessful) {
             observer.onNext(response.body()!!)
         } else {
             terminated = true
-            val t = HttpException(response)
+            val t = retrofit2.HttpException(response)
             try {
                 observer.onError(t)
             } catch (inner: Throwable) {

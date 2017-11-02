@@ -24,6 +24,11 @@ android {
 
     defaultConfig {
         minSdkVersion 23
+
+        buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + propOrDef("TIVI_TRAKT_CLIENT_ID", "") + "\""
+        buildConfigField "String", "TRAKT_CLIENT_SECRET", "\"" + propOrDef("TIVI_TRAKT_CLIENT_SECRET", "") + "\""
+
+        manifestPlaceholders += ['appAuthRedirectScheme': 'me.banes.chris.tivi']
     }
 
     compileOptions {
@@ -33,16 +38,15 @@ android {
 }
 
 dependencies {
-    api "org.jetbrains.kotlin:kotlin-stdlib-jre8:${versions.kotlin}"
-    api 'com.jakewharton.timber:timber:4.5.1'
-    api "com.google.dagger:dagger:${versions.dagger}"
+    api project(":base")
+    implementation project(":data")
 
-    api "android.arch.paging:runtime:1.0.0-alpha3"
+    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
 
-    api 'com.squareup.retrofit2:retrofit:2.3.0'
+    api("com.uwetrottmann.trakt5:trakt-java:5.7.3", {
+        // Exclude this since we explicitly depend on threetenbp:no-tzdb above
+        exclude group: 'org.threeten', module: 'threetenbp'
+    })
 
-    api 'com.squareup.okhttp3:logging-interceptor:3.9.0'
-
-    api "io.reactivex.rxjava2:rxjava:${versions.rx}"
-    implementation "io.reactivex.rxjava2:rxandroid:2.0.1"
+    api "net.openid:appauth:0.7.0"
 }

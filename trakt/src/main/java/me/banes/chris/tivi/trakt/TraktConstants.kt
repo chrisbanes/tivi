@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi
+package me.banes.chris.tivi.trakt
 
-object Constants {
+object TraktConstants {
     const val INTENT_ACTION_HANDLE_AUTH_RESPONSE = "me.banes.chris.tivi.HANDLE_AUTHORIZATION_RESPONSE"
     const val URI_AUTH_CALLBACK = "me.banes.chris.tivi://auth/oauth2callback"
 }
