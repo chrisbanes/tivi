@@ -22,12 +22,12 @@ import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import me.banes.chris.tivi.data.DatabaseTxRunner
 import me.banes.chris.tivi.data.daos.WatchedDao
 import me.banes.chris.tivi.data.entities.WatchedEntry
 import me.banes.chris.tivi.data.entities.WatchedListItem
 import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
-import me.banes.chris.tivi.util.DatabaseTxRunner
 import javax.inject.Inject
 
 class WatchedCall @Inject constructor(

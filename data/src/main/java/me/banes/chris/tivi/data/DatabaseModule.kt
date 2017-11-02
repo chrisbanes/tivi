@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.inject
+package me.banes.chris.tivi.data
 
 import android.arch.persistence.room.Room
 import android.content.Context
 import android.os.Debug
 import dagger.Module
 import dagger.Provides
-import me.banes.chris.tivi.data.TiviDatabase
 import me.banes.chris.tivi.data.daos.PopularDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.daos.TrendingDao
 import me.banes.chris.tivi.data.daos.UserDao
 import me.banes.chris.tivi.data.daos.WatchedDao
-import me.banes.chris.tivi.util.DatabaseTxRunner
 import javax.inject.Singleton
 
 @Module

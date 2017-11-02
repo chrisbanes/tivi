@@ -12,16 +12,28 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
-package me.banes.chris.tivi.util
+apply plugin: 'com.android.library'
 
-import me.banes.chris.tivi.data.TiviDatabase
+apply plugin: 'kotlin-android'
 
-class DatabaseTxRunner(private val db: TiviDatabase) {
+android {
+    compileSdkVersion 27
 
-    fun runInTransaction(run: () -> Unit) {
-        db.runInTransaction(run)
+    defaultConfig {
+        minSdkVersion 23
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    api "org.jetbrains.kotlin:kotlin-stdlib-jre8:${versions.kotlin}"
+    api 'com.jakewharton.timber:timber:4.5.1'
+    api "com.google.dagger:dagger:${versions.dagger}"
 }

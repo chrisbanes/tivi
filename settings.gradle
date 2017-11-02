@@ -15,4 +15,6 @@
  *
  */
 
+include ':base'
+include ':data'
 include ':app'

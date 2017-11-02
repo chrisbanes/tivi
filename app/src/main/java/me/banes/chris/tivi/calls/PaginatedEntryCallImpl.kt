@@ -22,13 +22,13 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.Single
+import me.banes.chris.tivi.data.DatabaseTxRunner
 import me.banes.chris.tivi.data.PaginatedEntry
 import me.banes.chris.tivi.data.daos.PaginatedEntryDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.util.AppRxSchedulers
-import me.banes.chris.tivi.util.DatabaseTxRunner
 import timber.log.Timber
 
 abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>, out ED : PaginatedEntryDao<ET, LI>>(
