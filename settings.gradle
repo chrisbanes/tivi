@@ -18,4 +18,5 @@
 include ':base'
 include ':trakt'
 include ':data'
+include ':tmdb'
 include ':app'

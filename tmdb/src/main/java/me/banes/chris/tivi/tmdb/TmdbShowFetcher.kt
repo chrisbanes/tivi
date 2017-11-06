@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.calls
+package me.banes.chris.tivi.tmdb
 
 import android.support.v4.util.ArraySet
 import com.uwetrottmann.tmdb2.Tmdb

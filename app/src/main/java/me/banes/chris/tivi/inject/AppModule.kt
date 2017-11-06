@@ -19,11 +19,9 @@ package me.banes.chris.tivi.inject
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import com.uwetrottmann.tmdb2.Tmdb
 import dagger.Module
 import dagger.Provides
 import me.banes.chris.tivi.AppNavigator
-import me.banes.chris.tivi.BuildConfig
 import me.banes.chris.tivi.TiviAppNavigator
 import me.banes.chris.tivi.TiviApplication
 import me.banes.chris.tivi.appmanagers.AppManagers
@@ -31,9 +29,6 @@ import me.banes.chris.tivi.appmanagers.LeakCanaryManager
 import me.banes.chris.tivi.appmanagers.ThreeTenBpManager
 import me.banes.chris.tivi.appmanagers.TimberManager
 import me.banes.chris.tivi.util.AppRxSchedulers
-import okhttp3.Cache
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import java.io.File
 import javax.inject.Named
 import javax.inject.Singleton
@@ -44,20 +39,6 @@ class AppModule {
     @Provides
     fun provideContext(application: TiviApplication): Context {
         return application.applicationContext
-    }
-
-    @Singleton
-    @Provides
-    fun provideTmdb(@Named("cache") cacheDir: File, interceptor: HttpLoggingInterceptor): Tmdb {
-        return object : Tmdb(BuildConfig.TMDB_API_KEY) {
-            override fun setOkHttpClientDefaults(builder: OkHttpClient.Builder) {
-                super.setOkHttpClientDefaults(builder)
-                builder.apply {
-                    addInterceptor(interceptor)
-                    cache(Cache(File(cacheDir, "tmdb_cache"), 10 * 1024 * 1024))
-                }
-            }
-        }
     }
 
     @Singleton

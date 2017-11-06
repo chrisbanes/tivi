@@ -11,6 +11,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/base" />
             <option value="$PROJECT_DIR$/data" />
+            <option value="$PROJECT_DIR$/tmdb" />
             <option value="$PROJECT_DIR$/trakt" />
           </set>
         </option>

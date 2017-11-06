@@ -23,6 +23,7 @@ import me.banes.chris.tivi.TiviApplication
 import me.banes.chris.tivi.data.DatabaseModule
 import me.banes.chris.tivi.home.HomeBuilder
 import me.banes.chris.tivi.settings.SettingsBuilder
+import me.banes.chris.tivi.tmdb.TmdbModule
 import me.banes.chris.tivi.trakt.TraktModule
 import javax.inject.Singleton
 
@@ -34,11 +35,10 @@ import javax.inject.Singleton
         ViewModelBuilder::class,
         HomeBuilder::class,
         TraktModule::class,
+        TmdbModule::class,
         NetworkModule::class,
         SettingsBuilder::class))
 interface AppComponent : AndroidInjector<TiviApplication> {
-
     @Component.Builder
     abstract class Builder : AndroidInjector.Builder<TiviApplication>()
-
 }
