@@ -39,7 +39,7 @@ class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsV
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        toolbar.apply {
+        grid_toolbar.apply {
             title = getString(R.string.discover_trending)
             setNavigationOnClickListener {
                 viewModel.onUpClicked(homeNavigator)

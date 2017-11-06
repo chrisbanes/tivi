@@ -27,6 +27,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="Theme.Tivi.Immerse" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
     <style name="Theme.Tivi.Settings">
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">false</item>

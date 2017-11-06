@@ -38,7 +38,7 @@ class WatchedShowsFragment : EntryGridFragment<WatchedListItem, WatchedShowsView
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        toolbar.apply {
+        grid_toolbar.apply {
             title = getString(R.string.library_watched)
             setNavigationOnClickListener {
                 viewModel.onUpClicked(homeNavigator)

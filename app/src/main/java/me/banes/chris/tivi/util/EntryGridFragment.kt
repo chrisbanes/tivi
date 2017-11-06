@@ -20,6 +20,7 @@ import android.annotation.SuppressLint
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -32,7 +33,9 @@ import me.banes.chris.tivi.TiviFragment
 import me.banes.chris.tivi.api.Status
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
+import me.banes.chris.tivi.extensions.doWhenLaidOut
 import me.banes.chris.tivi.extensions.observeK
+import me.banes.chris.tivi.extensions.updatePadding
 import me.banes.chris.tivi.ui.EndlessRecyclerViewScrollListener
 import me.banes.chris.tivi.ui.ShowPosterGridAdapter
 import me.banes.chris.tivi.ui.SpacingItemDecorator
@@ -48,6 +51,8 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
     protected lateinit var viewModel: VM
 
     private lateinit var adapter: ShowPosterGridAdapter<LI>
+
+    private var originalRvTopPadding = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,8 +84,46 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
                 }
             }))
         }
+        originalRvTopPadding = grid_recyclerview.paddingTop
 
         grid_swipe_refresh.setOnRefreshListener(viewModel::fullRefresh)
+
+        grid_root.setOnApplyWindowInsetsListener { _, insets ->
+            val topInset = insets.systemWindowInsetTop
+
+            grid_toolbar.doWhenLaidOut {
+                grid_recyclerview.updatePadding(paddingTop = topInset + originalRvTopPadding + grid_toolbar.height)
+            }
+
+            val tlp = (grid_toolbar.layoutParams as ConstraintLayout.LayoutParams)
+            tlp.topMargin = topInset
+            grid_toolbar.layoutParams = tlp
+
+            val scrimLp = (grid_status_scrim.layoutParams as ConstraintLayout.LayoutParams)
+            scrimLp.height = topInset
+            grid_status_scrim.layoutParams = scrimLp
+            grid_status_scrim.visibility = View.VISIBLE
+
+            insets.consumeSystemWindowInsets()
+        }
+
+        grid_recyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (layoutManager.findFirstVisibleItemPosition() == 0) {
+                    grid_toolbar.visibility = View.VISIBLE
+
+                    val scrollAmountPx = recyclerView.paddingTop
+                    val scrollAmount = recyclerView.getChildAt(0).top / scrollAmountPx.toFloat()
+                    grid_toolbar.translationY = -scrollAmountPx * (1f - scrollAmount) * 0.5f
+                    grid_toolbar.alpha = scrollAmount
+                } else {
+                    grid_toolbar.visibility = View.GONE
+                }
+            }
+        })
+
+        grid_root.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        grid_root.requestApplyInsets()
     }
 
     open fun createAdapter(spanCount: Int): ShowPosterGridAdapter<LI> = ShowPosterGridAdapter(spanCount)
