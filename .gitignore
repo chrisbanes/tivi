@@ -4,8 +4,8 @@
 /.idea/workspace.xml
 /.idea/libraries
 .DS_Store
-/build
-/captures
+build
+captures
 .externalNativeBuild
 
 # Do not commit plain release keys

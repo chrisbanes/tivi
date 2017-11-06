@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.home.watched
+package me.banes.chris.tivi
 
-import me.banes.chris.tivi.data.entities.WatchedListItem
-import me.banes.chris.tivi.home.HomeNavigator
-import me.banes.chris.tivi.trakt.calls.WatchedCall
-import me.banes.chris.tivi.util.AppRxSchedulers
-import me.banes.chris.tivi.util.EntryViewModel
-import javax.inject.Inject
+import android.app.PendingIntent
 
-class WatchedShowsViewModel @Inject constructor(
-        schedulers: AppRxSchedulers,
-        call: WatchedCall
-) : EntryViewModel<WatchedListItem>(schedulers, call) {
-    fun onUpClicked(navigator: HomeNavigator) {
-        navigator.onUpClicked()
-    }
+interface AppNavigator {
+    fun provideAuthHandleResponseIntent(requestCode: Int): PendingIntent
+    fun startSettings()
 }

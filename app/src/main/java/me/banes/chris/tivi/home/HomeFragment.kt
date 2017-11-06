@@ -53,7 +53,7 @@ abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
                 findUserAvatarMenuItem()?.let {
                     it.title = user.name
                     if (user.avatarUrl != null) {
-                        it.loadIconFromUrl(context!!, user.avatarUrl)
+                        it.loadIconFromUrl(context!!, user.avatarUrl!!)
                     }
                 }
             } else {

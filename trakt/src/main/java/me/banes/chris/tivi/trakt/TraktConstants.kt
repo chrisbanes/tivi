@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.home.watched
+package me.banes.chris.tivi.trakt
 
-import me.banes.chris.tivi.data.entities.WatchedListItem
-import me.banes.chris.tivi.home.HomeNavigator
-import me.banes.chris.tivi.trakt.calls.WatchedCall
-import me.banes.chris.tivi.util.AppRxSchedulers
-import me.banes.chris.tivi.util.EntryViewModel
-import javax.inject.Inject
-
-class WatchedShowsViewModel @Inject constructor(
-        schedulers: AppRxSchedulers,
-        call: WatchedCall
-) : EntryViewModel<WatchedListItem>(schedulers, call) {
-    fun onUpClicked(navigator: HomeNavigator) {
-        navigator.onUpClicked()
-    }
+object TraktConstants {
+    const val INTENT_ACTION_HANDLE_AUTH_RESPONSE = "me.banes.chris.tivi.HANDLE_AUTHORIZATION_RESPONSE"
+    const val URI_AUTH_CALLBACK = "me.banes.chris.tivi://auth/oauth2callback"
 }
