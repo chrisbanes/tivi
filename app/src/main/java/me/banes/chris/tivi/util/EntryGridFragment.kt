@@ -110,12 +110,13 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         grid_recyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (layoutManager.findFirstVisibleItemPosition() == 0) {
-                    grid_toolbar.visibility = View.VISIBLE
-
                     val scrollAmountPx = recyclerView.paddingTop
                     val scrollAmount = recyclerView.getChildAt(0).top / scrollAmountPx.toFloat()
-                    grid_toolbar.translationY = -scrollAmountPx * (1f - scrollAmount) * 0.5f
-                    grid_toolbar.alpha = scrollAmount
+                    grid_toolbar.apply {
+                        visibility = View.VISIBLE
+                        translationY = -scrollAmountPx * (1f - scrollAmount) * 0.5f
+                        alpha = scrollAmount
+                    }
                 } else {
                     grid_toolbar.visibility = View.GONE
                 }

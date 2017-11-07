@@ -25,9 +25,11 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:colorBackground">@color/window_background</item>
     </style>
 
-    <style name="Theme.Tivi.Immerse" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="Theme.Tivi.Immerse">
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
@@ -36,7 +38,7 @@
         <item name="windowNoTitle">false</item>
     </style>
 
-    <style name="ThemeOverlay.Tivi.ActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-    <style name="ThemeOverlay.Tivi.Popup" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="ThemeOverlay.Tivi.ActionBar" parent="ThemeOverlay.AppCompat.ActionBar" />
+    <style name="ThemeOverlay.Tivi.Popup" parent="ThemeOverlay.AppCompat" />
 
 </resources>

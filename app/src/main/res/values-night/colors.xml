@@ -13,13 +13,10 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  ~
   -->
 
 <resources>
-
-    <style name="ThemeOverlay.Tivi.ActionBar" parent="ThemeOverlay.AppCompat.ActionBar" />
-
-    <style name="ThemeOverlay.Tivi.Popup" parent="ThemeOverlay.AppCompat.ActionBar" />
-
+    <color name="window_background">#303030</color>
+    <color name="bottom_nav_background">#212121</color>
+    <color name="status_bar_scrim">#8F222222</color>
 </resources>
