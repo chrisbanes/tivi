@@ -37,6 +37,7 @@ import me.banes.chris.tivi.extensions.doWhenLaidOut
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.extensions.updatePadding
 import me.banes.chris.tivi.ui.EndlessRecyclerViewScrollListener
+import me.banes.chris.tivi.ui.ProgressTimeLatch
 import me.banes.chris.tivi.ui.ShowPosterGridAdapter
 import me.banes.chris.tivi.ui.SpacingItemDecorator
 import javax.inject.Inject
@@ -51,6 +52,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
     protected lateinit var viewModel: VM
 
     private lateinit var adapter: ShowPosterGridAdapter<LI>
+    private lateinit var swipeRefreshLatch: ProgressTimeLatch
 
     private var originalRvTopPadding = 0
 
@@ -65,6 +67,10 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        swipeRefreshLatch = ProgressTimeLatch {
+            grid_swipe_refresh.isRefreshing = it
+        }
 
         val layoutManager = grid_recyclerview.layoutManager as GridLayoutManager
         adapter = createAdapter(layoutManager.spanCount)
@@ -137,16 +143,16 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         viewModel.messages.observeK(this) {
             when (it?.status) {
                 Status.SUCCESS -> {
-                    grid_swipe_refresh.isRefreshing = false
+                    swipeRefreshLatch.refreshing = false
                     adapter.isLoading = false
                 }
                 Status.ERROR -> {
-                    grid_swipe_refresh.isRefreshing = false
+                    swipeRefreshLatch.refreshing = false
                     adapter.isLoading = false
                     Snackbar.make(grid_recyclerview, it.message ?: "EMPTY", Snackbar.LENGTH_SHORT).show()
                 }
                 Status.REFRESHING -> {
-                    grid_swipe_refresh.isRefreshing = true
+                    swipeRefreshLatch.refreshing = true
                 }
                 Status.LOADING_MORE -> {
                     adapter.isLoading = true
