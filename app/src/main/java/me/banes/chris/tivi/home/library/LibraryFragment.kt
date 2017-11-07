@@ -46,8 +46,8 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-                .get(LibraryViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(LibraryViewModel::class.java)
+        homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -56,8 +56,6 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
 
         viewModel.data.observeK(this) {
             it?.run { updateAdapter(it) } ?: groupAdapter.clear()
