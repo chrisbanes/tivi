@@ -22,6 +22,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
@@ -130,7 +131,9 @@ class HomeActivity : TiviActivity() {
             }
         }
 
-        supportFragmentManager.popBackStackImmediate(ROOT_FRAGMENT, 0)
+        for (i in 0 until supportFragmentManager.backStackEntryCount) {
+            supportFragmentManager.popBackStack()
+        }
         supportFragmentManager
                 .beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
@@ -146,7 +149,7 @@ class HomeActivity : TiviActivity() {
     private fun showPopular() {
         supportFragmentManager
                 .beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(R.id.home_content, PopularShowsFragment())
                 .addToBackStack(null)
                 .commit()
@@ -155,7 +158,7 @@ class HomeActivity : TiviActivity() {
     private fun showTrending() {
         supportFragmentManager
                 .beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(R.id.home_content, TrendingShowsFragment())
                 .addToBackStack(null)
                 .commit()
@@ -164,7 +167,7 @@ class HomeActivity : TiviActivity() {
     private fun showWatched() {
         supportFragmentManager
                 .beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(R.id.home_content, WatchedShowsFragment())
                 .addToBackStack(null)
                 .commit()

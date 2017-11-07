@@ -41,6 +41,7 @@ import me.banes.chris.tivi.ui.groupieitems.EmptyPlaceholderItem
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterSection
+import me.banes.chris.tivi.ui.groupieitems.TrendingPosterItem
 import me.banes.chris.tivi.ui.groupieitems.TrendingShowPosterSection
 
 internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
@@ -81,6 +82,7 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
                 when (item) {
                     is HeaderItem -> viewModel.onSectionHeaderClicked(homeNavigator, item.tag as DiscoverViewModel.Section)
                     is ShowPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
+                    is TrendingPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
                 }
             }
             spanCount = gridLayoutManager.spanCount
