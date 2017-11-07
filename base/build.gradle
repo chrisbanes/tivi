@@ -38,10 +38,10 @@ android {
 
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jre8:${versions.kotlin}"
-    api 'com.jakewharton.timber:timber:4.5.1'
+    api 'com.jakewharton.timber:timber:4.6.0'
     api "com.google.dagger:dagger:${versions.dagger}"
 
-    api "android.arch.paging:runtime:1.0.0-alpha3"
+    api "android.arch.paging:runtime:${versions.arch_comp_paging}"
 
     api 'com.squareup.retrofit2:retrofit:2.3.0'
 
