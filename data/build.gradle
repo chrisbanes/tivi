@@ -46,9 +46,9 @@ android {
 dependencies {
     api project(":base")
 
-    implementation "android.arch.persistence.room:runtime:1.0.0-rc1"
-    implementation "android.arch.persistence.room:rxjava2:1.0.0-rc1"
-    kapt "android.arch.persistence.room:compiler:1.0.0-rc1"
+    implementation "android.arch.persistence.room:runtime:${versions.arch_comp}"
+    implementation "android.arch.persistence.room:rxjava2:${versions.arch_comp}"
+    kapt "android.arch.persistence.room:compiler:${versions.arch_comp}"
 
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
 
