@@ -20,7 +20,7 @@
     <style name="Widget.Tivi.BottomNav" parent="Widget.Design.BottomNavigationView">
         <item name="android:background">?attr/colorPrimary</item>
         <item name="android:elevation">4dp</item>
-        <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.ActionBar</item>
         <item name="itemIconTint">@color/bottom_nav_item_colors</item>
         <item name="itemTextColor">@color/bottom_nav_item_colors</item>
     </style>
