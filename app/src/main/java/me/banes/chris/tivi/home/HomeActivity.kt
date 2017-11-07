@@ -22,7 +22,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
