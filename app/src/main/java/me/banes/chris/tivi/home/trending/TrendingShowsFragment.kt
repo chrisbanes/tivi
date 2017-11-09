@@ -31,15 +31,15 @@ class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsV
 
     private lateinit var homeNavigator: HomeNavigator
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        toolbar.apply {
+        grid_toolbar.apply {
             title = getString(R.string.discover_trending)
             setNavigationOnClickListener {
                 viewModel.onUpClicked(homeNavigator)

@@ -20,12 +20,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/summary_coordinator"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    app:statusBarBackground="@null">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/summary_appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/app_bar_background"
         android:theme="?attr/actionBarTheme">
 
         <android.support.v7.widget.Toolbar
@@ -36,6 +39,15 @@
             app:popupTheme="?attr/actionBarPopupTheme" />
 
     </android.support.design.widget.AppBarLayout>
+
+    <View
+        android:id="@+id/summary_status_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/status_bar_scrim"
+        android:elevation="4dp"
+        android:fitsSystemWindows="true"
+        app:layout_behavior="me.banes.chris.tivi.ui.StatusBarHeightBehavior" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/summary_rv"

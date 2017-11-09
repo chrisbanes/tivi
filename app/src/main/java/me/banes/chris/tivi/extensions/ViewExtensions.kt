@@ -40,6 +40,14 @@ fun View.doOnLayout(onLayout: (View) -> Boolean) {
     })
 }
 
+fun View.doWhenLaidOut(a: (View) -> Unit) {
+    if (isLaidOut) a(this)
+    else doOnLayout { view ->
+        a(view)
+        false
+    }
+}
+
 fun View.updatePadding(paddingStart: Int = getPaddingStart(),
         paddingTop: Int = getPaddingTop(),
         paddingEnd: Int = getPaddingEnd(),
