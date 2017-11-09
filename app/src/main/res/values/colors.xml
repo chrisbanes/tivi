@@ -31,6 +31,7 @@
     <color name="window_background">#FAFAFA</color>
     <color name="app_bar_background">#F5F5F5</color>
     <color name="bottom_nav_background">@color/app_bar_background</color>
-    <color name="status_bar_scrim">#5F222222</color>
+    <color name="status_bar_scrim">#E0E0E0</color>
+    <color name="status_bar_scrim_translucent">#5F222222</color>
 
 </resources>
