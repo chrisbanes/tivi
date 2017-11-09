@@ -45,6 +45,9 @@
         </activity>
 
         <activity
+            android:name=".details.ShowDetailsActivity" />
+
+        <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/prefs_title"
             android:theme="@style/Theme.Tivi.Settings" />

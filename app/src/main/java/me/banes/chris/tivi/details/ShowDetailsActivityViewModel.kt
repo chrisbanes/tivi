@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi
+package me.banes.chris.tivi.details
 
-import android.app.PendingIntent
+import android.arch.lifecycle.ViewModel
+import javax.inject.Inject
 
-interface AppNavigator {
-    fun provideAuthHandleResponseIntent(requestCode: Int): PendingIntent
-    fun startSettings()
-    fun startShowDetails(id: Long)
-}
+class ShowDetailsActivityViewModel @Inject constructor() : ViewModel()

@@ -44,4 +44,9 @@ internal abstract class HomeBuilder {
     @ViewModelKey(HomeActivityViewModel::class)
     abstract fun bindHomeActivityViewModel(viewModel: HomeActivityViewModel): ViewModel
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(HomeNavigatorViewModel::class)
+    abstract fun bindHomeNavigatorViewModel(viewModel: HomeNavigatorViewModel): ViewModel
+
 }

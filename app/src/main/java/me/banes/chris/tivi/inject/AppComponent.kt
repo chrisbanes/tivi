@@ -21,6 +21,7 @@ import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
 import me.banes.chris.tivi.TiviApplication
 import me.banes.chris.tivi.data.DatabaseModule
+import me.banes.chris.tivi.details.ShowDetailsBuilder
 import me.banes.chris.tivi.home.HomeBuilder
 import me.banes.chris.tivi.settings.SettingsBuilder
 import me.banes.chris.tivi.tmdb.TmdbModule
@@ -34,6 +35,7 @@ import javax.inject.Singleton
         DatabaseModule::class,
         ViewModelBuilder::class,
         HomeBuilder::class,
+        ShowDetailsBuilder::class,
         TraktModule::class,
         TmdbModule::class,
         NetworkModule::class,
