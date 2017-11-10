@@ -36,6 +36,7 @@ import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.HomeNavigatorViewModel
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.POPULAR
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
+import me.banes.chris.tivi.ui.SharedElementHelper
 import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.ui.groupieitems.EmptyPlaceholderItem
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
@@ -48,6 +49,8 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
     private lateinit var gridLayoutManager: GridLayoutManager
     private val groupAdapter = GroupAdapter<ViewHolder>()
+
+    private val sectionMap = mutableMapOf<DiscoverViewModel.Section, Section>()
 
     private lateinit var homeNavigator: HomeNavigator
 
@@ -80,7 +83,26 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         groupAdapter.apply {
             setOnItemClickListener { item, _ ->
                 when (item) {
-                    is HeaderItem -> viewModel.onSectionHeaderClicked(homeNavigator, item.tag as DiscoverViewModel.Section)
+                    is HeaderItem -> {
+                        val cSection = item.tag as DiscoverViewModel.Section
+                        val sharedElements = SharedElementHelper()
+
+                        val section: Section? = sectionMap[cSection]
+                        section?.run {
+                            for (i in 0 until section.itemCount) {
+                                val item = section.getItem(i)
+                                if (item is ShowPosterItem || item is TrendingPosterItem) {
+                                    val adapterPos = groupAdapter.getAdapterPosition(item)
+                                    val vh = summary_rv.findViewHolderForAdapterPosition(adapterPos)
+                                    if (vh != null) {
+                                        sharedElements.addSharedElement(vh.itemView)
+                                    }
+                                }
+                            }
+                        }
+
+                        viewModel.onSectionHeaderClicked(homeNavigator, cSection, sharedElements)
+                    }
                     is ShowPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
                     is TrendingPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
                 }
@@ -107,9 +129,10 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     private fun updateAdapter(data: List<DiscoverViewModel.SectionPage>) {
         val spanCount = gridLayoutManager.spanCount
         groupAdapter.clear()
+        sectionMap.clear()
 
         data.forEach { section ->
-            var group: Section? = null
+            val group: Section
 
             when (section.section) {
                 TRENDING -> {
@@ -134,6 +157,7 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
                 setPlaceholder(EmptyPlaceholderItem())
                 groupAdapter.add(this)
             }
+            sectionMap[section.section] = group
         }
     }
 

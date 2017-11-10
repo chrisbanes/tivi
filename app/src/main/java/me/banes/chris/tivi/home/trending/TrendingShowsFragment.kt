@@ -54,6 +54,7 @@ class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsV
             val entry = item.entry
             holder.bindShow(show?.tmdbPosterPath,
                     show?.title,
+                    "show_${show!!.id}",
                     entry?.watchers.toString(),
                     placeholderIcon?.mutate())
         }

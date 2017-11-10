@@ -19,6 +19,7 @@ package me.banes.chris.tivi.home
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
 import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.ui.SharedElementHelper
 import me.banes.chris.tivi.util.SingleLiveEvent
 
 class HomeNavigatorViewModel : ViewModel(), HomeNavigator {
@@ -27,8 +28,8 @@ class HomeNavigatorViewModel : ViewModel(), HomeNavigator {
         _showPopularCall.call()
     }
 
-    override fun showTrending() {
-        _showTrendingCall.call()
+    override fun showTrending(sharedElements: SharedElementHelper?) {
+        _showTrendingCall.value = sharedElements
     }
 
     override fun showWatched() {
@@ -47,8 +48,8 @@ class HomeNavigatorViewModel : ViewModel(), HomeNavigator {
     val showPopularCall: LiveData<Unit>
         get() = _showPopularCall
 
-    private val _showTrendingCall = SingleLiveEvent<Unit>()
-    val showTrendingCall: LiveData<Unit>
+    private val _showTrendingCall = SingleLiveEvent<SharedElementHelper>()
+    val showTrendingCall: LiveData<SharedElementHelper>
         get() = _showTrendingCall
 
     private val _showWatchedCall = SingleLiveEvent<Unit>()
