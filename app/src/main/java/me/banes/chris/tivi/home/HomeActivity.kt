@@ -98,9 +98,9 @@ class HomeActivity : TiviActivity() {
 
         viewModel.navigationLiveData.observeK(this, this::showNavigationItem)
 
-        navigatorViewModel.showPopularCall.observeK(this) { this.showPopular() }
+        navigatorViewModel.showPopularCall.observeK(this, this::showPopular)
         navigatorViewModel.showTrendingCall.observeK(this, this::showTrending)
-        navigatorViewModel.showWatchedCall.observeK(this) { this.showWatched() }
+        navigatorViewModel.showWatchedCall.observeK(this, this::showWatched)
         navigatorViewModel.showShowDetailsCall.observeK(this) { it?.let(this::showShowDetails) }
         navigatorViewModel.upClickedCall.observeK(this) { this.onUpClicked() }
 
@@ -146,19 +146,22 @@ class HomeActivity : TiviActivity() {
         }
     }
 
-    private fun showPopular() {
-        supportFragmentManager
-                .beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.home_content, PopularShowsFragment())
-                .addToBackStack(null)
-                .commit()
+    private fun showPopular(sharedElements: SharedElementHelper?) {
+        showStackFragment(PopularShowsFragment(), sharedElements)
     }
 
     private fun showTrending(sharedElements: SharedElementHelper?) {
+        showStackFragment(TrendingShowsFragment(), sharedElements)
+    }
+
+    private fun showWatched(sharedElements: SharedElementHelper?) {
+        showStackFragment(WatchedShowsFragment(), sharedElements)
+    }
+
+    private fun showStackFragment(fragment: Fragment, sharedElements: SharedElementHelper? = null) {
         supportFragmentManager.beginTransaction()
                 .setReorderingAllowed(true)
-                .replace(R.id.home_content, TrendingShowsFragment())
+                .replace(R.id.home_content, fragment)
                 .addToBackStack(null)
                 .apply {
                     if (sharedElements != null && !sharedElements.isEmpty()) {
@@ -167,15 +170,6 @@ class HomeActivity : TiviActivity() {
                         setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     }
                 }
-                .commit()
-    }
-
-    private fun showWatched() {
-        supportFragmentManager
-                .beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.home_content, WatchedShowsFragment())
-                .addToBackStack(null)
                 .commit()
     }
 

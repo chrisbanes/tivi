@@ -81,7 +81,8 @@ open class ShowPosterGridAdapter<LI : ListItem<out Entry>>(
     }
 
     private fun bindEntry(entry: LI, holder: PosterGridHolder) {
-        showBinder?.invoke(entry, holder) ?: holder.bindShow(entry?.show?.tmdbPosterPath, entry?.show?.title)
+        val show = entry.show!!
+        showBinder?.invoke(entry, holder) ?: holder.bindShow(show.tmdbPosterPath, show.title, show.homepage)
     }
 
     private fun bindPlaceholder(entry: LI?, holder: PosterGridHolder) {

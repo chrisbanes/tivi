@@ -58,8 +58,7 @@ class SectionedHelper<S>(
         val sharedElements = SharedElementHelper()
         sectionMap[section]!!
                 .filterItemsViewHolders(recyclerView) { it.layout == R.layout.grid_item }
-                .map(ViewHolder::itemView)
-                .forEach { sharedElements.addSharedElement(it) }
+                .forEach { sharedElements.addSharedElement(it.itemView) }
         return sharedElements
     }
 }

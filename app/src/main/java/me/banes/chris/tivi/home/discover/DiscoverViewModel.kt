@@ -87,7 +87,7 @@ internal class DiscoverViewModel @Inject constructor(
             sharedElementHelper: SharedElementHelper? = null) {
         when (section) {
             TRENDING -> navigator.showTrending(sharedElementHelper)
-            POPULAR -> navigator.showPopular()
+            POPULAR -> navigator.showPopular(sharedElementHelper)
         }
     }
 

@@ -82,7 +82,12 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         groupAdapter.apply {
             setOnItemClickListener { item, _ ->
                 when (item) {
-                    is HeaderItem -> viewModel.onSectionHeaderClicked(homeNavigator, item.tag as LibraryViewModel.Section)
+                    is HeaderItem -> {
+                        viewModel.onSectionHeaderClicked(
+                                homeNavigator,
+                                item.tag as LibraryViewModel.Section,
+                                sectionHelper.getSharedElementHelperForSection(item.tag))
+                    }
                     is ShowPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
                 }
             }

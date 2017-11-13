@@ -20,9 +20,9 @@ import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.ui.SharedElementHelper
 
 interface HomeNavigator {
-    fun showPopular()
-    fun showTrending(sharedElements: SharedElementHelper? = null)
-    fun showWatched()
+    fun showPopular(sharedElements: SharedElementHelper?)
+    fun showTrending(sharedElements: SharedElementHelper?)
+    fun showWatched(sharedElements: SharedElementHelper?)
     fun showShowDetails(show: TiviShow)
     fun onUpClicked()
 }

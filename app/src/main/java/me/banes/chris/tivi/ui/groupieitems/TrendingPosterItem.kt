@@ -34,7 +34,7 @@ internal class TrendingPosterItem(val entry: TrendingEntry, val show: TiviShow) 
 
     override fun bind(viewHolder: PosterGridHolder, position: Int) {
         val drawable = viewHolder.itemView.context.getDrawable(R.drawable.ic_eye_12dp)
-        viewHolder.bindShow(show.tmdbPosterPath, show.title, "show_$id", entry.watchers.toString(), drawable)
+        viewHolder.bindShow(show.tmdbPosterPath, show.title, show.homepage, entry.watchers.toString(), drawable)
     }
 
     override fun getSpanSize(spanCount: Int, position: Int) = 1
