@@ -161,8 +161,8 @@ class HomeActivity : TiviActivity() {
                 .replace(R.id.home_content, TrendingShowsFragment())
                 .addToBackStack(null)
                 .apply {
-                    if (sharedElements != null) {
-                        sharedElements.apply(this)
+                    if (sharedElements != null && !sharedElements.isEmpty()) {
+                        sharedElements.applyToTransaction(this)
                     } else {
                         setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     }

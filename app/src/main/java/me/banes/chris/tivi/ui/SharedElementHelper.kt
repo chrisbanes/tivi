@@ -29,11 +29,13 @@ class SharedElementHelper {
         sharedElementNames.add(name)
     }
 
-    fun apply(tx: FragmentTransaction) {
+    fun applyToTransaction(tx: FragmentTransaction) {
         for (i in 0 until sharedElementViews.size) {
             sharedElementViews[i].get()?.apply {
                 tx.addSharedElement(this, sharedElementNames[i] ?: transitionName)
             }
         }
     }
+
+    fun isEmpty(): Boolean = sharedElementViews.isEmpty()
 }

@@ -30,6 +30,7 @@ import kotlinx.android.synthetic.main.fragment_summary.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TrendingEntry
+import me.banes.chris.tivi.extensions.filterItemsViewHolders
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeFragment
 import me.banes.chris.tivi.home.HomeNavigator
@@ -86,20 +87,10 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
                     is HeaderItem -> {
                         val cSection = item.tag as DiscoverViewModel.Section
                         val sharedElements = SharedElementHelper()
-
-                        val section: Section? = sectionMap[cSection]
-                        section?.run {
-                            for (i in 0 until section.itemCount) {
-                                val item = section.getItem(i)
-                                if (item is ShowPosterItem || item is TrendingPosterItem) {
-                                    val adapterPos = groupAdapter.getAdapterPosition(item)
-                                    val vh = summary_rv.findViewHolderForAdapterPosition(adapterPos)
-                                    if (vh != null) {
-                                        sharedElements.addSharedElement(vh.itemView)
-                                    }
-                                }
-                            }
-                        }
+                        sectionMap[cSection]!!
+                                .filterItemsViewHolders(summary_rv) { it.layout == R.layout.grid_item }
+                                .map(ViewHolder::itemView)
+                                .forEach { sharedElements.addSharedElement(it) }
 
                         viewModel.onSectionHeaderClicked(homeNavigator, cSection, sharedElements)
                     }
