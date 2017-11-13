@@ -31,8 +31,8 @@ import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeFragment
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.HomeNavigatorViewModel
+import me.banes.chris.tivi.home.discover.SectionedHelper
 import me.banes.chris.tivi.ui.SpacingItemDecorator
-import me.banes.chris.tivi.ui.groupieitems.EmptyPlaceholderItem
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterSection
@@ -43,6 +43,8 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
 
     private lateinit var gridLayoutManager: GridLayoutManager
     private val groupAdapter = GroupAdapter<ViewHolder>()
+
+    private lateinit var sectionHelper: SectionedHelper<LibraryViewModel.Section>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,16 +60,24 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         super.onActivityCreated(savedInstanceState)
 
         viewModel.data.observeK(this) {
-            it?.run { updateAdapter(it) } ?: groupAdapter.clear()
+            it?.run {
+                sectionHelper.update(it.map { it.section to it.items }.toMap())
+            }
         }
     }
 
-    override fun onViewCreated(view: View
-            , savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         gridLayoutManager = summary_rv.layoutManager as GridLayoutManager
         gridLayoutManager.spanSizeLookup = groupAdapter.spanSizeLookup
+
+        sectionHelper = SectionedHelper(
+                summary_rv,
+                groupAdapter,
+                gridLayoutManager.spanCount,
+                { _, list -> ShowPosterSection(list.mapNotNull { it.show }) },
+                this::titleFromSection)
 
         groupAdapter.apply {
             setOnItemClickListener { item, _ ->
@@ -95,20 +105,6 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
 
     override fun getMenu(): Menu? = summary_toolbar.menu
 
-    private fun updateAdapter(data: List<LibraryViewModel.SectionPage>) {
-        val spanCount = gridLayoutManager.spanCount
-        groupAdapter.clear()
-
-        data.forEach { section ->
-            val group = ShowPosterSection().apply {
-                setHeader(HeaderItem(titleFromSection(section.section), section.section))
-                setPlaceholder(EmptyPlaceholderItem())
-                update(section.items.mapNotNull { it.show }.take(spanCount * 2))
-            }
-            groupAdapter.add(group)
-        }
-    }
-
     private fun titleFromSection(section: LibraryViewModel.Section) = when (section) {
         LibraryViewModel.Section.WATCHED -> getString(R.string.library_watched)
         else -> "FIXME"
@@ -121,5 +117,4 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         }
         summary_appbarlayout.setExpanded(true)
     }
-
 }

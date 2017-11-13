@@ -21,11 +21,12 @@ import com.xwray.groupie.UpdatingGroup
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TrendingEntry
 
-internal class TrendingShowPosterSection : Section() {
+internal class TrendingShowPosterSection(items: List<ListItem<TrendingEntry>>) : Section() {
     private val group = UpdatingGroup()
 
     init {
         add(group)
+        update(items)
     }
 
     fun update(items: List<ListItem<TrendingEntry>>) {
