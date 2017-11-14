@@ -19,24 +19,22 @@ package me.banes.chris.tivi.ui.groupieitems
 import android.view.View
 import com.xwray.groupie.Item
 import me.banes.chris.tivi.R
+import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.ui.holders.PosterGridHolder
 
-internal class TrendingPosterItem(val entry: TrendingEntry, val show: TiviShow) : Item<PosterGridHolder>() {
+internal class PopularPosterItem(val entry: PopularEntry, val show: TiviShow) : Item<PosterGridHolder>() {
 
     override fun getLayout() = R.layout.grid_item
 
     override fun createViewHolder(itemView: View): PosterGridHolder = PosterGridHolder(itemView)
 
     override fun bind(viewHolder: PosterGridHolder, position: Int) {
-        val drawable = viewHolder.itemView.context.getDrawable(R.drawable.ic_eye_12dp)
         viewHolder.bindShow(
                 show.tmdbPosterPath,
                 show.title,
-                "trending_${show.homepage}",
-                entry.watchers.toString(),
-                drawable)
+                "popular_${show.homepage}")
     }
 
     override fun getSpanSize(spanCount: Int, position: Int) = 1

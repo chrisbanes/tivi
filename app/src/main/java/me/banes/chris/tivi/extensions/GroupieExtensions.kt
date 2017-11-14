@@ -22,7 +22,7 @@ import com.xwray.groupie.Item
 import com.xwray.groupie.Section
 import com.xwray.groupie.ViewHolder
 
-fun Section.filterItems(filter: (Item<*>) -> Boolean): List<Item<ViewHolder>> {
+fun Section.filterItems(filter: (Item<*>) -> Boolean): List<Item<out ViewHolder>> {
     return (0 until itemCount).map(this::getItem).filter { filter(it) }
 }
 

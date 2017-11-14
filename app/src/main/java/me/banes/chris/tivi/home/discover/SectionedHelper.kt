@@ -23,10 +23,13 @@ import com.xwray.groupie.ViewHolder
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
-import me.banes.chris.tivi.extensions.filterItemsViewHolders
+import me.banes.chris.tivi.extensions.filterItems
 import me.banes.chris.tivi.ui.SharedElementHelper
 import me.banes.chris.tivi.ui.groupieitems.EmptyPlaceholderItem
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
+import me.banes.chris.tivi.ui.groupieitems.PopularPosterItem
+import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
+import me.banes.chris.tivi.ui.groupieitems.TrendingPosterItem
 
 class SectionedHelper<S>(
         private val recyclerView: RecyclerView,
@@ -56,8 +59,15 @@ class SectionedHelper<S>(
     fun getSharedElementHelperForSection(section: S): SharedElementHelper {
         val sharedElements = SharedElementHelper()
         sectionMap[section]!!
-                .filterItemsViewHolders(recyclerView) { it.layout == R.layout.grid_item }
-                .forEach { sharedElements.addSharedElement(it.itemView) }
+                .filterItems { it.layout == R.layout.grid_item }
+                .forEach { item ->
+                    val adapterPos = adapter.getAdapterPosition(item)
+                    val vh = recyclerView.findViewHolderForAdapterPosition(adapterPos)
+                    when (item) {
+                        is PopularPosterItem -> { sharedElements.addSharedElement(vh.itemView, item.show.homepage) }
+                        is TrendingPosterItem -> { sharedElements.addSharedElement(vh.itemView, item.show.homepage) }
+                    }
+                }
         return sharedElements
     }
 }

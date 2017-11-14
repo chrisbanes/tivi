@@ -28,6 +28,7 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_summary.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.ListItem
+import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.extensions.doOnPreDraw
 import me.banes.chris.tivi.extensions.observeK
@@ -38,10 +39,11 @@ import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.POPULAR
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
 import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
+import me.banes.chris.tivi.ui.groupieitems.PopularPosterSection
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterSection
 import me.banes.chris.tivi.ui.groupieitems.TrendingPosterItem
-import me.banes.chris.tivi.ui.groupieitems.TrendingShowPosterSection
+import me.banes.chris.tivi.ui.groupieitems.TrendingPosterSection
 
 internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
@@ -86,11 +88,10 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         sectionHelper = SectionedHelper(
                 summary_rv,
                 groupAdapter,
-                gridLayoutManager.spanCount,
-                { section, list ->
+                gridLayoutManager.spanCount, { section, list ->
                     when (section) {
-                        TRENDING -> TrendingShowPosterSection(list as List<ListItem<TrendingEntry>>)
-                        POPULAR -> ShowPosterSection(list.mapNotNull { it.show })
+                        TRENDING -> TrendingPosterSection(list as List<ListItem<TrendingEntry>>)
+                        POPULAR -> PopularPosterSection(list as List<ListItem<PopularEntry>>)
                     }
                 },
                 this::titleFromSection)
