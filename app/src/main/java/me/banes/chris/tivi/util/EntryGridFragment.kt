@@ -22,8 +22,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.Snackbar
-import android.support.transition.AutoTransition
-import android.support.transition.Fade
+import android.support.transition.ChangeBounds
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -62,10 +61,13 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(vmClass)
 
-        enterTransition = Fade()
-        exitTransition = Fade()
-        sharedElementEnterTransition = AutoTransition()
-        sharedElementReturnTransition = AutoTransition()
+        sharedElementEnterTransition = ChangeBounds().apply {
+            duration = 375
+
+        }
+        sharedElementReturnTransition = ChangeBounds().apply {
+            duration = 290
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -77,7 +79,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
 
         postponeEnterTransition()
 
-        swipeRefreshLatch = ProgressTimeLatch {
+        swipeRefreshLatch = ProgressTimeLatch(minShowTime = 1350) {
             grid_swipe_refresh.isRefreshing = it
         }
 
@@ -136,14 +138,6 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
             }
         })
 
-        grid_root.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-    }
-
-    open fun createAdapter(spanCount: Int): ShowPosterGridAdapter<LI> = ShowPosterGridAdapter(spanCount)
-
-    override fun onStart() {
-        super.onStart()
-
         viewModel.liveList.observeK(this) {
             adapter.setList(it)
             startPostponedEnterTransition()
@@ -165,5 +159,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
             }
         }
     }
+
+    open fun createAdapter(spanCount: Int): ShowPosterGridAdapter<LI> = ShowPosterGridAdapter(spanCount)
 
 }
