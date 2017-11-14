@@ -20,11 +20,12 @@ import com.xwray.groupie.Section
 import com.xwray.groupie.UpdatingGroup
 import me.banes.chris.tivi.data.entities.TiviShow
 
-internal class ShowPosterSection : Section() {
+internal class ShowPosterSection(items: List<TiviShow>) : Section() {
     private val group = UpdatingGroup()
 
     init {
         add(group)
+        update(items)
     }
 
     fun update(items: List<TiviShow>) {

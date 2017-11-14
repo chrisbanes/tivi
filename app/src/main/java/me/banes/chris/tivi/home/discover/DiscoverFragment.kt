@@ -24,12 +24,13 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.Section
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_summary.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.ListItem
+import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.TrendingEntry
+import me.banes.chris.tivi.extensions.doOnPreDraw
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeFragment
 import me.banes.chris.tivi.home.HomeNavigator
@@ -37,33 +38,34 @@ import me.banes.chris.tivi.home.HomeNavigatorViewModel
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.POPULAR
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
 import me.banes.chris.tivi.ui.SpacingItemDecorator
-import me.banes.chris.tivi.ui.groupieitems.EmptyPlaceholderItem
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
+import me.banes.chris.tivi.ui.groupieitems.PopularPosterSection
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterSection
 import me.banes.chris.tivi.ui.groupieitems.TrendingPosterItem
-import me.banes.chris.tivi.ui.groupieitems.TrendingShowPosterSection
+import me.banes.chris.tivi.ui.groupieitems.TrendingPosterSection
 
 internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
     private lateinit var gridLayoutManager: GridLayoutManager
     private val groupAdapter = GroupAdapter<ViewHolder>()
 
+    private lateinit var sectionHelper: SectionedHelper<DiscoverViewModel.Section>
+
     private lateinit var homeNavigator: HomeNavigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-                .get(DiscoverViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(DiscoverViewModel::class.java)
+        homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
-
         viewModel.data.observeK(this) {
-            it?.run { updateAdapter(it) } ?: groupAdapter.clear()
+            it?.run {
+                sectionHelper.update(it.map { it.section to it.items }.toMap())
+            }
         }
     }
 
@@ -74,18 +76,42 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val container = view.parent as ViewGroup
+        postponeEnterTransition()
+        container.doOnPreDraw {
+            startPostponedEnterTransition()
+        }
+
         gridLayoutManager = summary_rv.layoutManager as GridLayoutManager
         gridLayoutManager.spanSizeLookup = groupAdapter.spanSizeLookup
 
+        sectionHelper = SectionedHelper(
+                summary_rv,
+                groupAdapter,
+                gridLayoutManager.spanCount, { section, list ->
+                    when (section) {
+                        TRENDING -> TrendingPosterSection(list as List<ListItem<TrendingEntry>>)
+                        POPULAR -> PopularPosterSection(list as List<ListItem<PopularEntry>>)
+                    }
+                },
+                this::titleFromSection)
+
         groupAdapter.apply {
+            spanCount = gridLayoutManager.spanCount
+
             setOnItemClickListener { item, _ ->
                 when (item) {
-                    is HeaderItem -> viewModel.onSectionHeaderClicked(homeNavigator, item.tag as DiscoverViewModel.Section)
+                    is HeaderItem -> {
+                        val cSection = item.tag as DiscoverViewModel.Section
+                        viewModel.onSectionHeaderClicked(
+                                homeNavigator,
+                                cSection,
+                                sectionHelper.getSharedElementHelperForSection(cSection))
+                    }
                     is ShowPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
                     is TrendingPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
                 }
             }
-            spanCount = gridLayoutManager.spanCount
         }
 
         summary_rv.apply {
@@ -103,39 +129,6 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     }
 
     override fun getMenu(): Menu? = summary_toolbar.menu
-
-    private fun updateAdapter(data: List<DiscoverViewModel.SectionPage>) {
-        val spanCount = gridLayoutManager.spanCount
-        groupAdapter.clear()
-
-        data.forEach { section ->
-            var group: Section? = null
-
-            when (section.section) {
-                TRENDING -> {
-                    group = TrendingShowPosterSection().apply {
-                        update(section.items
-                                .filter { it.show != null }
-                                .take(spanCount * 2) as List<ListItem<TrendingEntry>>)
-                    }
-                }
-                POPULAR -> {
-                    group = ShowPosterSection().apply {
-                        update(section.items
-                                .filter { it.show != null }
-                                .take(spanCount * 2)
-                                .map { it.show!! })
-                    }
-                }
-            }
-
-            group.run {
-                setHeader(HeaderItem(titleFromSection(section.section), section.section))
-                setPlaceholder(EmptyPlaceholderItem())
-                groupAdapter.add(this)
-            }
-        }
-    }
 
     private fun titleFromSection(section: DiscoverViewModel.Section) = when (section) {
         POPULAR -> getString(R.string.discover_popular)

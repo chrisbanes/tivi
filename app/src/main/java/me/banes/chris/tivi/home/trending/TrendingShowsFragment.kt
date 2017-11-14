@@ -50,10 +50,11 @@ class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsV
     override fun createAdapter(spanCount: Int): ShowPosterGridAdapter<TrendingListItem> {
         val placeholderIcon = context?.getDrawable(R.drawable.ic_eye_12dp)
         return ShowPosterGridAdapter(spanCount) { item, holder ->
-            val show = item.show
+            val show = item.show!!
             val entry = item.entry
-            holder.bindShow(show?.tmdbPosterPath,
-                    show?.title,
+            holder.bindShow(show.tmdbPosterPath,
+                    show.title,
+                    show.homepage,
                     entry?.watchers.toString(),
                     placeholderIcon?.mutate())
         }

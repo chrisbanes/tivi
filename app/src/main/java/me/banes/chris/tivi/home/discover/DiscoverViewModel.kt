@@ -33,6 +33,7 @@ import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.PopularCall
 import me.banes.chris.tivi.trakt.calls.TrendingCall
+import me.banes.chris.tivi.ui.SharedElementHelper
 import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
 import javax.inject.Inject
@@ -80,10 +81,13 @@ internal class DiscoverViewModel @Inject constructor(
         Timber.e(t, "Error while refreshing")
     }
 
-    fun onSectionHeaderClicked(navigator: HomeNavigator, section: Section) {
+    fun onSectionHeaderClicked(
+            navigator: HomeNavigator,
+            section: Section,
+            sharedElementHelper: SharedElementHelper? = null) {
         when (section) {
-            TRENDING -> navigator.showTrending()
-            POPULAR -> navigator.showPopular()
+            TRENDING -> navigator.showTrending(sharedElementHelper)
+            POPULAR -> navigator.showPopular(sharedElementHelper)
         }
     }
 

@@ -28,6 +28,7 @@ import me.banes.chris.tivi.home.library.LibraryViewModel.Section.WATCHED
 import me.banes.chris.tivi.home.library.LibraryViewModel.Section.WHATS_NEXT
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.WatchedCall
+import me.banes.chris.tivi.ui.SharedElementHelper
 import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
 import javax.inject.Inject
@@ -69,9 +70,9 @@ class LibraryViewModel @Inject constructor(
         Timber.e(t, "Error while refreshing")
     }
 
-    fun onSectionHeaderClicked(navigator: HomeNavigator, section: Section) {
+    fun onSectionHeaderClicked(navigator: HomeNavigator, section: Section, sharedElements: SharedElementHelper) {
         when (section) {
-            WATCHED -> navigator.showWatched()
+            WATCHED -> navigator.showWatched(sharedElements)
             WHATS_NEXT -> TODO()
         }
     }

@@ -19,16 +19,18 @@ package me.banes.chris.tivi.ui.groupieitems
 import com.xwray.groupie.Section
 import com.xwray.groupie.UpdatingGroup
 import me.banes.chris.tivi.data.entities.ListItem
+import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.TrendingEntry
 
-internal class TrendingShowPosterSection : Section() {
+internal class PopularPosterSection(items: List<ListItem<PopularEntry>>) : Section() {
     private val group = UpdatingGroup()
 
     init {
         add(group)
+        update(items)
     }
 
-    fun update(items: List<ListItem<TrendingEntry>>) {
-        group.update(items.map { TrendingPosterItem(it.entry!!, it.show!!) })
+    fun update(items: List<ListItem<PopularEntry>>) {
+        group.update(items.map { PopularPosterItem(it.entry!!, it.show!!) })
     }
 }

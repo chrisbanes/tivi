@@ -40,6 +40,7 @@ import me.banes.chris.tivi.home.popular.PopularShowsFragment
 import me.banes.chris.tivi.home.trending.TrendingShowsFragment
 import me.banes.chris.tivi.home.watched.WatchedShowsFragment
 import me.banes.chris.tivi.trakt.TraktConstants
+import me.banes.chris.tivi.ui.SharedElementHelper
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import javax.inject.Inject
@@ -97,9 +98,9 @@ class HomeActivity : TiviActivity() {
 
         viewModel.navigationLiveData.observeK(this, this::showNavigationItem)
 
-        navigatorViewModel.showPopularCall.observeK(this) { this.showPopular() }
-        navigatorViewModel.showTrendingCall.observeK(this) { this.showTrending() }
-        navigatorViewModel.showWatchedCall.observeK(this) { this.showWatched() }
+        navigatorViewModel.showPopularCall.observeK(this, this::showPopular)
+        navigatorViewModel.showTrendingCall.observeK(this, this::showTrending)
+        navigatorViewModel.showWatchedCall.observeK(this, this::showWatched)
         navigatorViewModel.showShowDetailsCall.observeK(this) { it?.let(this::showShowDetails) }
         navigatorViewModel.upClickedCall.observeK(this) { this.onUpClicked() }
 
@@ -145,30 +146,30 @@ class HomeActivity : TiviActivity() {
         }
     }
 
-    private fun showPopular() {
-        supportFragmentManager
-                .beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.home_content, PopularShowsFragment())
-                .addToBackStack(null)
-                .commit()
+    private fun showPopular(sharedElements: SharedElementHelper?) {
+        showStackFragment(PopularShowsFragment(), sharedElements)
     }
 
-    private fun showTrending() {
-        supportFragmentManager
-                .beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.home_content, TrendingShowsFragment())
-                .addToBackStack(null)
-                .commit()
+    private fun showTrending(sharedElements: SharedElementHelper?) {
+        showStackFragment(TrendingShowsFragment(), sharedElements)
     }
 
-    private fun showWatched() {
-        supportFragmentManager
-                .beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.home_content, WatchedShowsFragment())
+    private fun showWatched(sharedElements: SharedElementHelper?) {
+        showStackFragment(WatchedShowsFragment(), sharedElements)
+    }
+
+    private fun showStackFragment(fragment: Fragment, sharedElements: SharedElementHelper? = null) {
+        supportFragmentManager.beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.home_content, fragment)
                 .addToBackStack(null)
+                .apply {
+                    if (sharedElements != null && !sharedElements.isEmpty()) {
+                        sharedElements.applyToTransaction(this)
+                    } else {
+                        setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    }
+                }
                 .commit()
     }
 

@@ -86,6 +86,6 @@ abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
         return getMenu()?.findItem(R.id.home_menu_user_login)
     }
 
-    abstract fun getMenu(): Menu?
+    open fun getMenu(): Menu? = null
 
 }
