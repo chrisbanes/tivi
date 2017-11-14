@@ -66,8 +66,6 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         exitTransition = Fade()
         sharedElementEnterTransition = AutoTransition()
         sharedElementReturnTransition = AutoTransition()
-
-        postponeEnterTransition()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -77,6 +75,8 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        postponeEnterTransition()
+
         swipeRefreshLatch = ProgressTimeLatch {
             grid_swipe_refresh.isRefreshing = it
         }
@@ -85,9 +85,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         adapter = createAdapter(layoutManager.spanCount)
 
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                return adapter.getItemColumnSpan(position)
-            }
+            override fun getSpanSize(position: Int): Int = adapter.getItemColumnSpan(position)
         }
 
         grid_recyclerview.apply {
