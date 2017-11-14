@@ -80,6 +80,14 @@ open class ShowPosterGridAdapter<LI : ListItem<out Entry>>(
         }
     }
 
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isEmpty()) {
+            onBindViewHolder(holder, position)
+        } else {
+            // TODO handle the change payload
+        }
+    }
+
     private fun bindEntry(entry: LI, holder: PosterGridHolder) {
         val show = entry.show!!
         showBinder?.invoke(entry, holder) ?: holder.bindShow(show.tmdbPosterPath, show.title, show.homepage)
@@ -118,6 +126,11 @@ open class ShowPosterGridAdapter<LI : ListItem<out Entry>>(
 
         override fun areContentsTheSame(oldItem: LI, newItem: LI): Boolean {
             return oldItem == newItem
+        }
+
+        override fun getChangePayload(oldItem: LI, newItem: LI): Any {
+            // Do something better here
+            return Any()
         }
     }
 }
