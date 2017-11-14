@@ -34,7 +34,6 @@ class SectionedHelper<S>(
         private val spanCount: Int,
         private val sectionGroupMapper: (S, List<ListItem<out Entry>>) -> Section,
         private val titleFetcher: (S) -> String
-
 ) {
     private val sectionMap = mutableMapOf<S, Section>()
 

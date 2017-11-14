@@ -16,7 +16,6 @@
 
 package me.banes.chris.tivi.home.library
 
-import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
