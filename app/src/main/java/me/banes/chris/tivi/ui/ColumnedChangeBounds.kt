@@ -29,6 +29,7 @@ import android.animation.ObjectAnimator
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 
 /**
@@ -123,8 +124,10 @@ class ColumnedChangeBounds : Transition() {
                         // Animate the current one out to the right
                         val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
                         val canvas = Canvas(bitmap)
+                        canvas.drawColor(Color.MAGENTA)
                         view.draw(canvas)
                         val drawable = BitmapDrawable(view.resources, bitmap)
+                        drawable.setBounds(0, 0, view.width, view.height)
                         ViewUtils.getOverlay(sceneRoot).add(drawable)
 
                         val topLeftPath = pathMotion.getPath(
@@ -173,7 +176,8 @@ class ColumnedChangeBounds : Transition() {
                     anim.addListener(object : AnimatorListenerAdapter() {
                         // We need a strong reference to viewBounds until the
                         // animator ends (The ObjectAnimator holds only a weak reference).
-                        private val viewBoundsRef = viewBounds
+                        @Suppress("unused")
+                        val viewBoundsRef = viewBounds
                     })
                 }
             } else if (startLeft != endLeft || startTop != endTop) {
