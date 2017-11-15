@@ -20,7 +20,6 @@ import com.xwray.groupie.Section
 import com.xwray.groupie.UpdatingGroup
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.PopularEntry
-import me.banes.chris.tivi.data.entities.TrendingEntry
 
 internal class PopularPosterSection(items: List<ListItem<PopularEntry>>) : Section() {
     private val group = UpdatingGroup()

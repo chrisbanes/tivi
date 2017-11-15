@@ -28,7 +28,6 @@ import me.banes.chris.tivi.ui.SharedElementHelper
 import me.banes.chris.tivi.ui.groupieitems.EmptyPlaceholderItem
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
 import me.banes.chris.tivi.ui.groupieitems.PopularPosterItem
-import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
 import me.banes.chris.tivi.ui.groupieitems.TrendingPosterItem
 
 class SectionedHelper<S>(

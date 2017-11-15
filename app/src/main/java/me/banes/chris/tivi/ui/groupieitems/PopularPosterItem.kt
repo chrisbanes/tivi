@@ -21,7 +21,6 @@ import com.xwray.groupie.Item
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.ui.holders.PosterGridHolder
 
 internal class PopularPosterItem(val entry: PopularEntry, val show: TiviShow) : Item<PosterGridHolder>() {

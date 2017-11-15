@@ -41,7 +41,6 @@ import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
 import me.banes.chris.tivi.ui.groupieitems.PopularPosterSection
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
-import me.banes.chris.tivi.ui.groupieitems.ShowPosterSection
 import me.banes.chris.tivi.ui.groupieitems.TrendingPosterItem
 import me.banes.chris.tivi.ui.groupieitems.TrendingPosterSection
 
