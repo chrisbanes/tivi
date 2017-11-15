@@ -22,7 +22,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.Snackbar
-import android.support.transition.TransitionInflater
+import android.support.transition.ColumnedChangeBounds
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -61,9 +61,11 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(vmClass)
 
-        TransitionInflater.from(context).run {
-            sharedElementEnterTransition = inflateTransition(R.transition.fragment_shared_enter)
-            sharedElementReturnTransition = inflateTransition(R.transition.fragment_shared_return)
+        sharedElementEnterTransition = ColumnedChangeBounds().apply {
+            duration = 375
+        }
+        sharedElementReturnTransition = ColumnedChangeBounds().apply {
+            duration = 280
         }
     }
 
