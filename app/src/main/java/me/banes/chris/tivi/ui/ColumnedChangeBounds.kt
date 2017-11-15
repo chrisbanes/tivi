@@ -25,6 +25,11 @@ import android.support.v4.view.ViewCompat
 import android.util.Property
 import android.view.View
 import android.view.ViewGroup
+import android.animation.ObjectAnimator
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 
 /**
  * This transition captures the layout bounds of target views before and after
@@ -34,15 +39,13 @@ import android.view.ViewGroup
  * tag `changeBounds`, along with the other standard attributes of Transition.
  */
 class ColumnedChangeBounds : Transition() {
-    private val tmpLocation = IntArray(2)
 
     override fun getTransitionProperties(): Array<String>? = TRANSITION_PROPS
 
     private fun captureValues(values: TransitionValues) {
         val view = values.view
         if (ViewCompat.isLaidOut(view) || view.width != 0 || view.height != 0) {
-            values.values.put(PROPNAME_BOUNDS, Rect(view.left, view.top,
-                    view.right, view.bottom))
+            values.values.put(PROPNAME_BOUNDS, Rect(view.left, view.top, view.right, view.bottom))
             values.values.put(PROPNAME_PARENT, values.view.parent)
         }
     }
@@ -108,27 +111,70 @@ class ColumnedChangeBounds : Transition() {
                 if (startWidth == endWidth && startHeight == endHeight) {
                     val topLeftPath = pathMotion.getPath(startLeft.toFloat(), startTop.toFloat(), endLeft.toFloat(),
                             endTop.toFloat())
-                    anim = ObjectAnimatorUtils.ofPointF(view, POSITION_PROPERTY,
-                            topLeftPath)
+                    anim = ObjectAnimatorUtils.ofPointF(view, POSITION_PROPERTY, topLeftPath)
                 } else {
                     val viewBounds = ViewBounds(view)
-                    val topLeftPath = pathMotion.getPath(startLeft.toFloat(), startTop.toFloat(),
-                            endLeft.toFloat(), endTop.toFloat())
-                    val topLeftAnimator = ObjectAnimatorUtils.ofPointF(viewBounds, TOP_LEFT_PROPERTY, topLeftPath)
+                    anim = AnimatorSet()
 
-                    val bottomRightPath = pathMotion.getPath(startRight.toFloat(), startBottom.toFloat(),
-                            endRight.toFloat(), endBottom.toFloat())
-                    val bottomRightAnimator = ObjectAnimatorUtils.ofPointF(
-                            viewBounds, BOTTOM_RIGHT_PROPERTY, bottomRightPath)
+                    if (endWidth > startWidth && endLeft < startLeft) {
+                        // If we're bigger, and we're going left, we're probably part of a grid of different column
+                        // counts
 
-                    anim = AnimatorSet().apply {
-                        playTogether(topLeftAnimator, bottomRightAnimator)
-                        addListener(object : AnimatorListenerAdapter() {
-                            // We need a strong reference to viewBounds until the
-                            // animator ends (The ObjectAnimator holds only a weak reference).
-                            private val viewBoundsRef = viewBounds
+                        // Animate the current one out to the right
+                        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+                        val canvas = Canvas(bitmap)
+                        view.draw(canvas)
+                        val drawable = BitmapDrawable(view.resources, bitmap)
+                        ViewUtils.getOverlay(sceneRoot).add(drawable)
+
+                        val topLeftPath = pathMotion.getPath(
+                                startLeft.toFloat(), startTop.toFloat(),
+                                startLeft.toFloat() + endWidth, startTop.toFloat())
+                        val origin = PropertyValuesHolderUtils.ofPointF(DRAWABLE_ORIGIN_PROPERTY, topLeftPath)
+                        val outAnimator = ObjectAnimator.ofPropertyValuesHolder(drawable, origin)
+                        outAnimator.addListener(object : AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: Animator) {
+                                ViewUtils.getOverlay(sceneRoot).remove(drawable)
+                            }
                         })
+
+                        // Animate the current in from to the left
+                        val inTopLeftAnimator = ObjectAnimatorUtils.ofPointF(viewBounds,
+                                TOP_LEFT_PROPERTY,
+                                pathMotion.getPath(
+                                        endLeft.toFloat() - (startWidth * 2), endTop.toFloat(),
+                                        endLeft.toFloat(), endTop.toFloat()))
+
+                        val inBottomRightAnimator = ObjectAnimatorUtils.ofPointF(
+                                viewBounds,
+                                BOTTOM_RIGHT_PROPERTY,
+                                pathMotion.getPath(
+                                        endLeft.toFloat() - startWidth, endBottom.toFloat() - endHeight + startHeight,
+                                        endRight.toFloat(), endBottom.toFloat()))
+
+                        anim.playTogether(outAnimator, inTopLeftAnimator, inBottomRightAnimator)
+
+                    } else {
+                        val topLeftAnimator = ObjectAnimatorUtils.ofPointF(
+                                viewBounds,
+                                TOP_LEFT_PROPERTY,
+                                pathMotion.getPath(startLeft.toFloat(), startTop.toFloat(),
+                                        endLeft.toFloat(), endTop.toFloat()))
+
+                        val bottomRightAnimator = ObjectAnimatorUtils.ofPointF(
+                                viewBounds,
+                                BOTTOM_RIGHT_PROPERTY,
+                                pathMotion.getPath(startRight.toFloat(), startBottom.toFloat(),
+                                        endRight.toFloat(), endBottom.toFloat()))
+
+                        anim.playTogether(topLeftAnimator, bottomRightAnimator)
                     }
+
+                    anim.addListener(object : AnimatorListenerAdapter() {
+                        // We need a strong reference to viewBounds until the
+                        // animator ends (The ObjectAnimator holds only a weak reference).
+                        private val viewBoundsRef = viewBounds
+                    })
                 }
             } else if (startLeft != endLeft || startTop != endTop) {
                 val topLeftPath = pathMotion.getPath(startLeft.toFloat(), startTop.toFloat(),
@@ -211,9 +257,22 @@ class ColumnedChangeBounds : Transition() {
     companion object {
         private const val PROPNAME_BOUNDS = "android:changeBounds:bounds"
         private const val PROPNAME_PARENT = "android:changeBounds:parent"
-        private const val PROPNAME_WINDOW_X = "android:changeBounds:windowX"
-        private const val PROPNAME_WINDOW_Y = "android:changeBounds:windowY"
-        private val TRANSITION_PROPS = arrayOf(PROPNAME_BOUNDS, PROPNAME_PARENT, PROPNAME_WINDOW_X, PROPNAME_WINDOW_Y)
+        private val TRANSITION_PROPS = arrayOf(PROPNAME_BOUNDS, PROPNAME_PARENT)
+
+        private val DRAWABLE_ORIGIN_PROPERTY = object : Property<Drawable, PointF>(PointF::class.java, "boundsOrigin") {
+            private val bounds = Rect()
+
+            override fun set(d: Drawable, value: PointF) {
+                d.copyBounds(bounds)
+                bounds.offsetTo(Math.round(value.x), Math.round(value.y))
+                d.bounds = bounds
+            }
+
+            override fun get(d: Drawable): PointF {
+                d.copyBounds(bounds)
+                return PointF(bounds.left.toFloat(), bounds.top.toFloat())
+            }
+        }
 
         private val TOP_LEFT_PROPERTY = object : Property<ViewBounds, PointF>(PointF::class.java, "topLeft") {
             override fun set(viewBounds: ViewBounds, topLeft: PointF) = viewBounds.setTopLeft(topLeft)
