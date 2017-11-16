@@ -77,17 +77,17 @@ class ColumnedChangeBounds : Transition() {
         val startBounds = startValues.values[PROPNAME_BOUNDS] as Rect
         val endBounds = endValues.values[PROPNAME_BOUNDS] as Rect
 
-        val startLeft = startBounds.left
-        val endLeft = endBounds.left
+        val startLeft = startBounds.left.toFloat()
+        val endLeft = endBounds.left.toFloat()
 
-        val startTop = startBounds.top
-        val endTop = endBounds.top
+        val startTop = startBounds.top.toFloat()
+        val endTop = endBounds.top.toFloat()
 
-        val startRight = startBounds.right
-        val endRight = endBounds.right
+        val startRight = startBounds.right.toFloat()
+        val endRight = endBounds.right.toFloat()
 
-        val startBottom = startBounds.bottom
-        val endBottom = endBounds.bottom
+        val startBottom = startBounds.bottom.toFloat()
+        val endBottom = endBounds.bottom.toFloat()
 
         val startWidth = startRight - startLeft
         val startHeight = startBottom - startTop
@@ -97,7 +97,7 @@ class ColumnedChangeBounds : Transition() {
 
         val anim: Animator
 
-        ViewUtils.setLeftTopRightBottom(view, startLeft, startTop, startRight, startBottom)
+        ViewUtils.setLeftTopRightBottom(view, startBounds.left, startBounds.top, startBounds.right, startBounds.bottom)
         val viewBounds = ViewBounds(view)
 
         if (endWidth > startWidth && endLeft < startLeft) {
@@ -105,28 +105,61 @@ class ColumnedChangeBounds : Transition() {
             // counts
             val anims = mutableListOf<Animator>()
 
-            // Animate the current one out to the right
+            // Animate a copy of the current view out to the right
             anims += createAnimatorsForChildCopyOut(sceneRoot, view, endParent, startBounds, endBounds)
 
-            // Animate the current in from to the left
-            val inStartTop = startBottom.toFloat()
+            // Animate the current view in from the left
+            val inStartTop = startBottom
             val inTopLeftPropValue = PropertyValuesHolder.ofObject<PointF>(
                     TOP_LEFT_PROPERTY,
                     null,
                     pathMotion.getPath(
-                            endLeft.toFloat() - startWidth,
+                            endLeft - startWidth,
                             inStartTop,
-                            endLeft.toFloat(),
-                            endTop.toFloat()))
+                            endLeft,
+                            endTop))
 
             val inBottomRightPropValue = PropertyValuesHolder.ofObject<PointF>(
                     BOTTOM_RIGHT_PROPERTY,
                     null,
                     pathMotion.getPath(
-                            endLeft.toFloat(),
+                            endLeft,
                             inStartTop + startHeight,
-                            endRight.toFloat(),
-                            endBottom.toFloat()))
+                            endRight,
+                            endBottom))
+
+            anims += ObjectAnimator.ofPropertyValuesHolder(viewBounds, inTopLeftPropValue, inBottomRightPropValue)
+            anims += ObjectAnimator.ofFloat(view, View.ALPHA, 0f, 1f)
+
+            anim = AnimatorSet()
+            anim.playTogether(anims)
+        } else if (endWidth < startWidth && endLeft > startLeft) {
+            // If we're smaller, and we're going right, we're probably part of a grid of different column
+            // counts
+
+            val gap = 0 // Fix this spacing
+            val anims = mutableListOf<Animator>()
+
+            // Animate the current view in from the right
+            val inStartLeft = endRight + gap
+            val inStartTop = endTop
+            val inTopLeftPropValue = PropertyValuesHolder.ofObject<PointF>(
+                    TOP_LEFT_PROPERTY,
+                    null,
+                    pathMotion.getPath(
+                            endRight + gap,
+                            inStartTop,
+                            endLeft,
+                            endTop))
+
+            val inBottomRightPropValue = PropertyValuesHolder.ofObject<PointF>(
+                    BOTTOM_RIGHT_PROPERTY,
+                    null,
+                    pathMotion.getPath(
+                            inStartLeft + startWidth,
+                            inStartTop + startHeight,
+                            endRight,
+                            endBottom))
 
             anims += ObjectAnimator.ofPropertyValuesHolder(viewBounds, inTopLeftPropValue, inBottomRightPropValue)
             anims += ObjectAnimator.ofFloat(view, View.ALPHA, 0f, 1f)
@@ -138,14 +171,12 @@ class ColumnedChangeBounds : Transition() {
             val topLeftPropVal = PropertyValuesHolder.ofObject<PointF>(
                     TOP_LEFT_PROPERTY,
                     null,
-                    pathMotion.getPath(startLeft.toFloat(), startTop.toFloat(),
-                            endLeft.toFloat(), endTop.toFloat()))
+                    pathMotion.getPath(startLeft, startTop, endLeft, endTop))
 
             val bottomRightPropVal = PropertyValuesHolder.ofObject<PointF>(
                     BOTTOM_RIGHT_PROPERTY,
                     null,
-                    pathMotion.getPath(startRight.toFloat(), startBottom.toFloat(),
-                            endRight.toFloat(), endBottom.toFloat()))
+                    pathMotion.getPath(startRight, startBottom, endRight, endBottom))
 
             anim = ObjectAnimator.ofPropertyValuesHolder(viewBounds, topLeftPropVal, bottomRightPropVal)
         }
@@ -230,11 +261,15 @@ class ColumnedChangeBounds : Transition() {
         return listOf(outModeAnim, outFade)
     }
 
-    private fun findPreviousItemViewWithGreaterRight(parent: RecyclerView, view: View, right: Int): Rect? {
+    private fun findPreviousItemViewWithGreaterRight(
+            parent: RecyclerView,
+            view: View,
+            right: Int): Rect? {
         return (parent.getChildAdapterPosition(view) - 1 downTo 0)
                 .mapNotNull(parent::findViewHolderForAdapterPosition)
                 .mapNotNull { getTransitionValues(it.itemView, false) }
-                .map { it.values[PROPNAME_BOUNDS] as Rect }
+                .mapNotNull { it.values[PROPNAME_BOUNDS] }
+                .mapNotNull { it as Rect }
                 .firstOrNull { it.right > right }
     }
 
