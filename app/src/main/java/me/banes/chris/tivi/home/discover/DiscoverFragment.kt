@@ -19,11 +19,13 @@ package me.banes.chris.tivi.home.discover
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.transition.Fade
+import android.support.transition.TransitionSet
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_summary.*
@@ -58,6 +60,24 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(DiscoverViewModel::class.java)
         homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
+
+        exitTransition = TransitionSet().apply {
+            addTransition(Fade().apply {
+                excludeTarget(R.id.summary_appbarlayout, true)
+                excludeTarget(R.id.summary_status_scrim, true)
+                interpolator = LinearInterpolator()
+                duration = 130
+            })
+            addTransition(Fade().apply {
+                interpolator = LinearInterpolator()
+                duration = 270
+            })
+        }
+
+        reenterTransition = Fade().apply {
+            interpolator = LinearInterpolator()
+            duration = 270
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

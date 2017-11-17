@@ -29,7 +29,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/app_bar_background"
-        android:theme="?attr/actionBarTheme">
+        android:theme="?attr/actionBarTheme"
+        android:transitionGroup="true">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/summary_toolbar"

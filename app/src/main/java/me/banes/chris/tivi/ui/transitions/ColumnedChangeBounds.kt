@@ -111,7 +111,9 @@ class ColumnedChangeBounds : Transition() {
             anims += createPointToPointAnimator(sceneRoot, view, startCopy, endBounds, 0)
 
             // Animate a copy of the current view out to the right
-            anims += createAnimatorsForChildCopyOutRight(sceneRoot, view, endParent, startBounds, endBounds)
+            createAnimatorsForChildCopyOutRight(sceneRoot, view, endParent, startBounds, endBounds)?.let {
+                anims += it
+            }
 
             anim = AnimatorSet().apply { playTogether(anims) }
         } else if (endWidth < startWidth && endLeft > startLeft) {
@@ -120,9 +122,9 @@ class ColumnedChangeBounds : Transition() {
             val anims = mutableListOf<Animator>()
 
             val gap = 0 // TODO Fix this spacing
-            val inStartLeft = endRight + gap
-            val inStartTop = endTop
-            val startCopy = Rect(endRight + gap, inStartTop, inStartLeft + startWidth, inStartTop + startHeight)
+            val inStartLeft = startLeft + sceneRoot.width
+            val inStartTop = startTop - startHeight - gap
+            val startCopy = Rect(inStartLeft, inStartTop, inStartLeft + startWidth, inStartTop + startHeight)
 
             anims += createPointToPointAnimator(sceneRoot, view, startCopy, endBounds, 0)
 
@@ -197,8 +199,9 @@ class ColumnedChangeBounds : Transition() {
             view: View,
             endParent: RecyclerView,
             startBounds: Rect,
-            endBounds: Rect): Animator {
-        val prevEndBounds = findPreviousItemViewWithGreaterRight(endParent, view, endBounds.right)!!
+            endBounds: Rect): Animator? {
+        val prevEndBounds = findPreviousItemViewWithGreaterRight(endParent, view, endBounds.right) ?: return null
+
         val newEndLeft = prevEndBounds.right + endBounds.left
         val newEndTop = prevEndBounds.top
         val newEndBounds = Rect(newEndLeft, newEndTop,

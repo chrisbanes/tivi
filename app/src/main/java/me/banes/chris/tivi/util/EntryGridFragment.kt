@@ -24,7 +24,6 @@ import android.support.constraint.ConstraintLayout
 import android.support.design.widget.Snackbar
 import android.support.transition.ColumnedChangeBounds
 import android.support.transition.Fade
-import android.support.transition.Slide
 import android.support.transition.Transition
 import android.support.transition.TransitionListenerAdapter
 import android.support.transition.TransitionSet
@@ -34,8 +33,6 @@ import android.support.v4.view.animation.LinearOutSlowInInterpolator
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

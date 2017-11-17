@@ -21,25 +21,48 @@ import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.support.transition.TransitionValues
 import android.support.transition.Visibility
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 
-class BabySlide : Visibility() {
+class BabySlide(
+        private val gravity: Int = Gravity.START,
+        private val babyFraction: Float = 2f
+) : Visibility() {
 
     override fun onAppear(sceneRoot: ViewGroup, view: View,
             startValues: TransitionValues?,
             endValues: TransitionValues?): Animator {
-        view.translationX = -view.width / 2f
+        setupTranslation(view)
         view.alpha = 0f
+
         return ObjectAnimator.ofPropertyValuesHolder(view,
                 PropertyValuesHolder.ofFloat(View.TRANSLATION_X, 0f),
                 PropertyValuesHolder.ofFloat(View.ALPHA, 1f))
     }
 
-    override fun onDisappear(sceneRoot: ViewGroup, view: View, startValues: TransitionValues?, endValues: TransitionValues?): Animator {
+    override fun onDisappear(sceneRoot: ViewGroup, view: View,
+            startValues: TransitionValues?, endValues: TransitionValues?): Animator {
         return ObjectAnimator.ofPropertyValuesHolder(view,
-                PropertyValuesHolder.ofFloat(View.TRANSLATION_X, -view.width / 2f),
+                translatePropValForGravity(view),
                 PropertyValuesHolder.ofFloat(View.ALPHA, 0f))
+    }
+
+    private fun translatePropValForGravity(view: View): PropertyValuesHolder =
+            when (Gravity.getAbsoluteGravity(gravity, view.layoutDirection)) {
+                Gravity.TOP -> PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, -view.height / babyFraction)
+                Gravity.RIGHT -> PropertyValuesHolder.ofFloat(View.TRANSLATION_X, view.width / babyFraction)
+                Gravity.BOTTOM -> PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, view.height / babyFraction)
+                else -> PropertyValuesHolder.ofFloat(View.TRANSLATION_X, -view.width / babyFraction)
+            }
+
+    private fun setupTranslation(view: View) {
+        when (Gravity.getAbsoluteGravity(gravity, view.layoutDirection)) {
+            Gravity.TOP -> view.translationY = -view.height / babyFraction
+            Gravity.RIGHT -> view.translationX = view.width / babyFraction
+            Gravity.BOTTOM -> view.translationY = view.width / babyFraction
+            else -> view.translationX = -view.width / babyFraction
+        }
     }
 
 }
