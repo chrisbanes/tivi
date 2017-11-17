@@ -102,15 +102,14 @@ class ColumnedChangeBounds : Transition() {
             // counts
             val anims = mutableListOf<Animator>()
 
-            // Animate a copy of the current view out to the right
-            anims += createAnimatorsForChildCopyOut(sceneRoot, view, endParent, startBounds, endBounds)
-
             // Animate the current view in from the left
             val startCopy = Rect(endLeft - startWidth, startBottom, endLeft, startBottom + startHeight)
             anims += createPointToPointAnimator(sceneRoot, view, startCopy, endBounds, 0)
 
-            anim = AnimatorSet()
-            anim.playTogether(anims)
+            // Animate a copy of the current view out to the right
+            anims += createAnimatorsForChildCopyOutRight(sceneRoot, view, endParent, startBounds, endBounds)
+
+            anim = AnimatorSet().apply { playTogether(anims) }
         } else if (endWidth < startWidth && endLeft > startLeft) {
             // If we're smaller, and we're going right, we're probably part of a grid of different column
             // counts
@@ -123,8 +122,10 @@ class ColumnedChangeBounds : Transition() {
 
             anims += createPointToPointAnimator(sceneRoot, view, startCopy, endBounds, 0)
 
-            anim = AnimatorSet()
-            anim.playTogether(anims)
+            // Animate a copy of the current view out to the left
+            anims += createAnimatorForChildCopyOutLeft(sceneRoot, view, endParent, startBounds, endBounds)
+
+            anim = AnimatorSet().apply { playTogether(anims) }
         } else {
             anim = createPointToPointAnimator(sceneRoot, view, startBounds, endBounds)
         }
@@ -167,7 +168,27 @@ class ColumnedChangeBounds : Transition() {
         return anim
     }
 
-    private fun createAnimatorsForChildCopyOut(
+    private fun createAnimatorForChildCopyOutLeft(
+            sceneRoot: ViewGroup,
+            view: View,
+            endParent: RecyclerView,
+            startBounds: Rect,
+            endBounds: Rect): Animator {
+
+        val gap = 0
+
+        val newEndRight = startBounds.left - gap
+        val newEndTop = endBounds.bottom + gap
+        val newEndBounds = Rect(
+                newEndRight - endBounds.width(),
+                newEndTop,
+                newEndRight,
+                newEndTop + endBounds.height())
+
+        return createPointToPointAnimator(sceneRoot, view, startBounds, newEndBounds, 255, 0)
+    }
+
+    private fun createAnimatorsForChildCopyOutRight(
             sceneRoot: ViewGroup,
             view: View,
             endParent: RecyclerView,
