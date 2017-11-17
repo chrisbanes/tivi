@@ -77,17 +77,17 @@ class ColumnedChangeBounds : Transition() {
         val startBounds = startValues.values[PROPNAME_BOUNDS] as Rect
         val endBounds = endValues.values[PROPNAME_BOUNDS] as Rect
 
-        val startLeft = startBounds.left.toFloat()
-        val endLeft = endBounds.left.toFloat()
+        val startLeft = startBounds.left
+        val endLeft = endBounds.left
 
-        val startTop = startBounds.top.toFloat()
-        val endTop = endBounds.top.toFloat()
+        val startTop = startBounds.top
+        val endTop = endBounds.top
 
-        val startRight = startBounds.right.toFloat()
-        val endRight = endBounds.right.toFloat()
+        val startRight = startBounds.right
+        val endRight = endBounds.right
 
-        val startBottom = startBounds.bottom.toFloat()
-        val endBottom = endBounds.bottom.toFloat()
+        val startBottom = startBounds.bottom
+        val endBottom = endBounds.bottom
 
         val startWidth = startRight - startLeft
         val startHeight = startBottom - startTop
@@ -96,9 +96,6 @@ class ColumnedChangeBounds : Transition() {
         val endHeight = endBottom - endTop
 
         val anim: Animator
-
-        ViewUtils.setLeftTopRightBottom(view, startBounds.left, startBounds.top, startBounds.right, startBounds.bottom)
-        val viewBounds = ViewBounds(view)
 
         if (endWidth > startWidth && endLeft < startLeft) {
             // If we're bigger, and we're going left, we're probably part of a grid of different column
@@ -109,98 +106,49 @@ class ColumnedChangeBounds : Transition() {
             anims += createAnimatorsForChildCopyOut(sceneRoot, view, endParent, startBounds, endBounds)
 
             // Animate the current view in from the left
-            val inStartTop = startBottom
-            val inTopLeftPropValue = PropertyValuesHolder.ofObject<PointF>(
-                    TOP_LEFT_PROPERTY,
-                    null,
-                    pathMotion.getPath(
-                            endLeft - startWidth,
-                            inStartTop,
-                            endLeft,
-                            endTop))
-
-            val inBottomRightPropValue = PropertyValuesHolder.ofObject<PointF>(
-                    BOTTOM_RIGHT_PROPERTY,
-                    null,
-                    pathMotion.getPath(
-                            endLeft,
-                            inStartTop + startHeight,
-                            endRight,
-                            endBottom))
-
-            anims += ObjectAnimator.ofPropertyValuesHolder(viewBounds, inTopLeftPropValue, inBottomRightPropValue)
-            anims += ObjectAnimator.ofFloat(view, View.ALPHA, 0f, 1f)
+            val startCopy = Rect(endLeft - startWidth, startBottom, endLeft, startBottom + startHeight)
+            anims += createPointToPointAnimator(sceneRoot, view, startCopy, endBounds, 0)
 
             anim = AnimatorSet()
             anim.playTogether(anims)
         } else if (endWidth < startWidth && endLeft > startLeft) {
             // If we're smaller, and we're going right, we're probably part of a grid of different column
             // counts
-
-            val gap = 0 // Fix this spacing
             val anims = mutableListOf<Animator>()
 
-            // Animate the current view in from the right
+            val gap = 0 // TODO Fix this spacing
             val inStartLeft = endRight + gap
             val inStartTop = endTop
-            val inTopLeftPropValue = PropertyValuesHolder.ofObject<PointF>(
-                    TOP_LEFT_PROPERTY,
-                    null,
-                    pathMotion.getPath(
-                            endRight + gap,
-                            inStartTop,
-                            endLeft,
-                            endTop))
+            val startCopy = Rect(endRight + gap, inStartTop, inStartLeft + startWidth, inStartTop + startHeight)
 
-            val inBottomRightPropValue = PropertyValuesHolder.ofObject<PointF>(
-                    BOTTOM_RIGHT_PROPERTY,
-                    null,
-                    pathMotion.getPath(
-                            inStartLeft + startWidth,
-                            inStartTop + startHeight,
-                            endRight,
-                            endBottom))
-
-            anims += ObjectAnimator.ofPropertyValuesHolder(viewBounds, inTopLeftPropValue, inBottomRightPropValue)
-            anims += ObjectAnimator.ofFloat(view, View.ALPHA, 0f, 1f)
+            anims += createPointToPointAnimator(sceneRoot, view, startCopy, endBounds, 0)
 
             anim = AnimatorSet()
             anim.playTogether(anims)
         } else {
-            // We're just doing a simple point-to-point animation
-            val topLeftPropVal = PropertyValuesHolder.ofObject<PointF>(
-                    TOP_LEFT_PROPERTY,
-                    null,
-                    pathMotion.getPath(startLeft, startTop, endLeft, endTop))
-
-            val bottomRightPropVal = PropertyValuesHolder.ofObject<PointF>(
-                    BOTTOM_RIGHT_PROPERTY,
-                    null,
-                    pathMotion.getPath(startRight, startBottom, endRight, endBottom))
-
-            anim = ObjectAnimator.ofPropertyValuesHolder(viewBounds, topLeftPropVal, bottomRightPropVal)
+            anim = createPointToPointAnimator(sceneRoot, view, startBounds, endBounds)
         }
 
+        ViewUtils.setTransitionAlpha(view, 0f)
         anim.addListener(object : AnimatorListenerAdapter() {
-            // We need a strong reference to viewBounds until the
-            // animator ends (The ObjectAnimator holds only a weak reference).
-            @Suppress("unused")
-            val viewBoundsRef = viewBounds
+            override fun onAnimationEnd(animation: Animator) {
+                ViewUtils.setTransitionAlpha(view, 1f)
+            }
         })
 
         if (view.parent is ViewGroup) {
             val parent = view.parent as ViewGroup
             ViewGroupUtils.suppressLayout(parent, true)
             addListener(object : TransitionListenerAdapter() {
-                private var mCanceled = false
+                private var canceled = false
 
                 override fun onTransitionCancel(transition: Transition) {
                     ViewGroupUtils.suppressLayout(parent, false)
-                    mCanceled = true
+                    canceled = true
                 }
 
                 override fun onTransitionEnd(transition: Transition) {
-                    if (!mCanceled) {
+                    if (!canceled) {
                         ViewGroupUtils.suppressLayout(parent, false)
                     }
                     transition.removeListener(this)
@@ -220,45 +168,82 @@ class ColumnedChangeBounds : Transition() {
     }
 
     private fun createAnimatorsForChildCopyOut(
-            sceneRoot: ViewGroup, view: View,
+            sceneRoot: ViewGroup,
+            view: View,
             endParent: RecyclerView,
             startBounds: Rect,
-            endBounds: Rect): List<Animator> {
-        val bitmap = Bitmap.createBitmap(endBounds.width(), endBounds.height(), Bitmap.Config.ARGB_8888)
+            endBounds: Rect): Animator {
+        val prevEndBounds = findPreviousItemViewWithGreaterRight(endParent, view, endBounds.right)!!
+        val newEndLeft = prevEndBounds.right + endBounds.left
+        val newEndTop = prevEndBounds.top
+        val newEndBounds = Rect(newEndLeft, newEndTop,
+                newEndLeft + endBounds.width(),
+                newEndTop + endBounds.height())
+
+        return createPointToPointAnimator(sceneRoot, view, startBounds, newEndBounds, 255, 0)
+    }
+
+    private fun createDrawableBoundsForView(view: View, bounds: Rect): DrawableBounds {
+        val bitmap = Bitmap.createBitmap(bounds.width(), bounds.height(), Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         view.draw(canvas)
         val drawable = BitmapDrawable(view.resources, bitmap)
-        ViewUtils.getOverlay(sceneRoot).add(drawable)
-        val drawableBounds = DrawableBounds(drawable)
+        return DrawableBounds(drawable)
+    }
 
-        val prevEndBounds = findPreviousItemViewWithGreaterRight(endParent, view, endBounds.right)!!
-        val newEndLeft = prevEndBounds.right.toFloat() + endBounds.left
-        val newEndTop = prevEndBounds.top.toFloat()
+    private fun createPointToPointAnimator(
+            sceneRoot: ViewGroup,
+            view: View,
+            startBounds: Rect,
+            endBounds: Rect,
+            startAlpha: Int = 255,
+            endAlpha: Int = 255): Animator {
+        val drawable = createDrawableBoundsForView(view, endBounds)
+        ViewUtils.getOverlay(sceneRoot).add(drawable.drawable)
+
+        val moveAnim = createMoveAnimatorForView(drawable, startBounds, endBounds)
+        val anim: Animator
+
+        when {
+            startAlpha != endAlpha -> {
+                val alphaAnim = ObjectAnimator.ofInt(drawable.drawable, DRAWABLE_ALPHA, startAlpha, endAlpha)
+                anim = AnimatorSet().apply { playTogether(moveAnim, alphaAnim) }
+            }
+            else -> {
+                drawable.drawable.alpha = endAlpha
+                anim = moveAnim
+            }
+        }
+
+        anim.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                ViewUtils.getOverlay(sceneRoot).remove(drawable.drawable)
+            }
+        })
+
+        return anim
+    }
+
+    private fun createMoveAnimatorForView(
+            drawableBounds: DrawableBounds,
+            startBounds: Rect,
+            endBounds: Rect): Animator {
 
         val outTopLeftPropVal = PropertyValuesHolder.ofObject<PointF>(
                 TOP_LEFT_PROPERTY,
                 null,
                 pathMotion.getPath(
                         startBounds.left.toFloat(), startBounds.top.toFloat(),
-                        newEndLeft, newEndTop))
+                        endBounds.left.toFloat(), endBounds.top.toFloat()))
 
         val outBottomRightPropVal = PropertyValuesHolder.ofObject<PointF>(
                 BOTTOM_RIGHT_PROPERTY,
                 null,
-                pathMotion.getPath(startBounds.right.toFloat(), startBounds.bottom.toFloat(),
-                        newEndLeft + endBounds.width(), newEndTop + endBounds.height()))
+                pathMotion.getPath(
+                        startBounds.right.toFloat(), startBounds.bottom.toFloat(),
+                        endBounds.right.toFloat(), endBounds.bottom.toFloat()))
 
-        val outModeAnim = ObjectAnimator.ofPropertyValuesHolder(drawableBounds,
-                outTopLeftPropVal, outBottomRightPropVal)
-        outModeAnim.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                ViewUtils.getOverlay(sceneRoot).remove(drawableBounds.drawable)
-            }
-        })
-
-        val outFade = ObjectAnimator.ofInt(drawable, DRAWABLE_ALPHA, 255, 0)
-
-        return listOf(outModeAnim, outFade)
+        return ObjectAnimator.ofPropertyValuesHolder(drawableBounds, outTopLeftPropVal, outBottomRightPropVal)
     }
 
     private fun findPreviousItemViewWithGreaterRight(
