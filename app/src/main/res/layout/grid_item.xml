@@ -22,7 +22,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:foreground="?android:attr/selectableItemBackground">
+    android:foreground="?android:attr/selectableItemBackground"
+    android:transitionGroup="true">
 
     <TextView
         android:id="@+id/show_title"
