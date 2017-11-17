@@ -18,6 +18,7 @@ package me.banes.chris.tivi.home.discover
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.transition.Fade
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu

@@ -47,7 +47,11 @@ class ColumnedChangeBounds : Transition() {
     private fun captureValues(values: TransitionValues) {
         val view = values.view
         if (ViewCompat.isLaidOut(view) || view.width != 0 || view.height != 0) {
-            values.values.put(PROPNAME_BOUNDS, Rect(view.left, view.top, view.right, view.bottom))
+            val loc = IntArray(2)
+            view.getLocationOnScreen(loc)
+
+            values.values.put(PROPNAME_BOUNDS, Rect(loc[0], loc[1],
+                    loc[0] + view.width, loc[1] + view.height))
             values.values.put(PROPNAME_PARENT, values.view.parent)
         }
     }

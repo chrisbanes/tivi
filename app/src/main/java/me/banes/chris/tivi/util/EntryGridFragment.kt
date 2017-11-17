@@ -23,11 +23,23 @@ import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.Snackbar
 import android.support.transition.ColumnedChangeBounds
+import android.support.transition.Fade
+import android.support.transition.Slide
+import android.support.transition.Transition
+import android.support.transition.TransitionListenerAdapter
+import android.support.transition.TransitionSet
+import android.support.v4.view.animation.FastOutLinearInInterpolator
+import android.support.v4.view.animation.FastOutSlowInInterpolator
+import android.support.v4.view.animation.LinearOutSlowInInterpolator
+import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
@@ -41,6 +53,7 @@ import me.banes.chris.tivi.ui.EndlessRecyclerViewScrollListener
 import me.banes.chris.tivi.ui.ProgressTimeLatch
 import me.banes.chris.tivi.ui.ShowPosterGridAdapter
 import me.banes.chris.tivi.ui.SpacingItemDecorator
+import me.banes.chris.tivi.ui.transitions.BabySlide
 import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
@@ -62,10 +75,44 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(vmClass)
 
         sharedElementEnterTransition = ColumnedChangeBounds().apply {
+            interpolator = FastOutSlowInInterpolator()
             duration = 375
         }
         sharedElementReturnTransition = ColumnedChangeBounds().apply {
+            interpolator = FastOutSlowInInterpolator()
             duration = 280
+        }
+
+        enterTransition = TransitionSet().apply {
+            addTransition(Fade().apply {
+                addTarget(R.id.grid_toolbar)
+                interpolator = LinearInterpolator()
+            })
+            addTransition(BabySlide().apply {
+                excludeTarget(R.id.grid_toolbar, true)
+                interpolator = LinearOutSlowInInterpolator()
+            })
+
+            duration = 270
+            startDelay = (sharedElementEnterTransition as Transition).duration - duration
+
+            addListener(object : TransitionListenerAdapter() {
+                override fun onTransitionEnd(transition: Transition) {
+                    grid_recyclerview?.itemAnimator = DefaultItemAnimator()
+                }
+            })
+        }
+        returnTransition = TransitionSet().apply {
+            addTransition(Fade().apply {
+                addTarget(R.id.grid_toolbar)
+                interpolator = LinearInterpolator()
+                duration = 220
+            })
+            addTransition(BabySlide().apply {
+                excludeTarget(R.id.grid_toolbar, true)
+                interpolator = FastOutLinearInInterpolator()
+                duration = 180
+            })
         }
     }
 
@@ -97,6 +144,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
                     viewModel.onListScrolledToEnd()
                 }
             }))
+            itemAnimator = null
         }
         originalRvTopPadding = grid_recyclerview.paddingTop
 
@@ -111,6 +159,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
 
             val tlp = (grid_toolbar.layoutParams as ConstraintLayout.LayoutParams)
             tlp.topMargin = topInset
+            grid_toolbar.layoutParams = tlp
             grid_toolbar.layoutParams = tlp
 
             val scrimLp = (grid_status_scrim.layoutParams as ConstraintLayout.LayoutParams)
