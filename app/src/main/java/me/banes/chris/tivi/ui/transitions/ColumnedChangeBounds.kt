@@ -77,7 +77,9 @@ class ColumnedChangeBounds : Transition() {
         val startParent = startParentVals[PROPNAME_PARENT] as ViewGroup
         val endParent = endParentVals[PROPNAME_PARENT] as RecyclerView
 
-        val view = endValues.view
+        val startView = startValues.view
+        val endView = endValues.view
+
         val startBounds = startValues.values[PROPNAME_BOUNDS] as Rect
         val endBounds = endValues.values[PROPNAME_BOUNDS] as Rect
 
@@ -108,10 +110,10 @@ class ColumnedChangeBounds : Transition() {
 
             // Animate the current view in from the left
             val startCopy = Rect(endLeft - startWidth, startBottom, endLeft, startBottom + startHeight)
-            anims += createPointToPointAnimator(sceneRoot, view, startCopy, endBounds, 0)
+            anims += createPointToPointAnimator(sceneRoot, startView, startCopy, endBounds, 0)
 
             // Animate a copy of the current view out to the right
-            createAnimatorsForChildCopyOutRight(sceneRoot, view, endParent, startBounds, endBounds)?.let {
+            createAnimatorsForChildCopyOutRight(sceneRoot, startView, endParent, startBounds, endBounds)?.let {
                 anims += it
             }
 
@@ -126,25 +128,25 @@ class ColumnedChangeBounds : Transition() {
             val inStartTop = startTop - startHeight - gap
             val startCopy = Rect(inStartLeft, inStartTop, inStartLeft + startWidth, inStartTop + startHeight)
 
-            anims += createPointToPointAnimator(sceneRoot, view, startCopy, endBounds, 0)
+            anims += createPointToPointAnimator(sceneRoot, startView, startCopy, endBounds, 0)
 
             // Animate a copy of the current view out to the left
-            anims += createAnimatorForChildCopyOutLeft(sceneRoot, view, endParent, startBounds, endBounds)
+            anims += createAnimatorForChildCopyOutLeft(sceneRoot, startView, endParent, startBounds, endBounds)
 
             anim = AnimatorSet().apply { playTogether(anims) }
         } else {
-            anim = createPointToPointAnimator(sceneRoot, view, startBounds, endBounds)
+            anim = createPointToPointAnimator(sceneRoot, startView, startBounds, endBounds)
         }
 
-        view.visibility = View.INVISIBLE
+        endView.visibility = View.INVISIBLE
         anim.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
-                view.visibility = View.VISIBLE
+                endView.visibility = View.VISIBLE
             }
         })
 
-        if (view.parent is ViewGroup) {
-            val parent = view.parent as ViewGroup
+        if (startView.parent is ViewGroup) {
+            val parent = startView.parent as ViewGroup
             ViewGroupUtils.suppressLayout(parent, true)
             addListener(object : TransitionListenerAdapter() {
                 private var canceled = false
@@ -214,7 +216,7 @@ class ColumnedChangeBounds : Transition() {
         return DrawableBounds(drawable)
     }
 
-    private fun drawViewToBitmp(view: View) : Bitmap {
+    private fun drawViewToBitmp(view: View): Bitmap {
         val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         view.draw(canvas)
