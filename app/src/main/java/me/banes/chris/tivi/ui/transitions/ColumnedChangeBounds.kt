@@ -47,7 +47,7 @@ class ColumnedChangeBounds : Transition() {
     private fun captureValues(values: TransitionValues) {
         val view = values.view
         if (ViewCompat.isLaidOut(view) || view.width != 0 || view.height != 0) {
-            val loc = IntArray(2)
+            val loc = TEMP_ARRAY
             view.getLocationOnScreen(loc)
 
             values.values.put(PROPNAME_BOUNDS, Rect(loc[0], loc[1],
@@ -136,10 +136,10 @@ class ColumnedChangeBounds : Transition() {
             anim = createPointToPointAnimator(sceneRoot, view, startBounds, endBounds)
         }
 
-        ViewUtils.setTransitionAlpha(view, 0f)
+        view.visibility = View.INVISIBLE
         anim.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
-                ViewUtils.setTransitionAlpha(view, 1f)
+                view.visibility = View.VISIBLE
             }
         })
 
@@ -180,9 +180,7 @@ class ColumnedChangeBounds : Transition() {
             endParent: RecyclerView,
             startBounds: Rect,
             endBounds: Rect): Animator {
-
-        val gap = 0
-
+        val gap = 0 // TODO
         val newEndRight = startBounds.left - gap
         val newEndTop = endBounds.bottom + gap
         val newEndBounds = Rect(
@@ -211,12 +209,16 @@ class ColumnedChangeBounds : Transition() {
         return createPointToPointAnimator(sceneRoot, view, startBounds, newEndBounds, 255, 0)
     }
 
-    private fun createDrawableBoundsForView(view: View, bounds: Rect): DrawableBounds {
-        val bitmap = Bitmap.createBitmap(bounds.width(), bounds.height(), Bitmap.Config.ARGB_8888)
+    private fun createDrawableBoundsForView(view: View): DrawableBounds {
+        val drawable = BitmapDrawable(view.resources, drawViewToBitmp(view))
+        return DrawableBounds(drawable)
+    }
+
+    private fun drawViewToBitmp(view: View) : Bitmap {
+        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         view.draw(canvas)
-        val drawable = BitmapDrawable(view.resources, bitmap)
-        return DrawableBounds(drawable)
+        return bitmap
     }
 
     private fun createPointToPointAnimator(
@@ -226,7 +228,7 @@ class ColumnedChangeBounds : Transition() {
             endBounds: Rect,
             startAlpha: Int = 255,
             endAlpha: Int = 255): Animator {
-        val drawable = createDrawableBoundsForView(view, endBounds)
+        val drawable = createDrawableBoundsForView(view)
         ViewUtils.getOverlay(sceneRoot).add(drawable.drawable)
 
         val moveAnim = createMoveAnimatorForView(drawable, startBounds, endBounds)
@@ -278,22 +280,23 @@ class ColumnedChangeBounds : Transition() {
             parent: RecyclerView,
             view: View,
             right: Int): Rect? {
-        return (parent.getChildAdapterPosition(view) - 1 downTo 0)
-                .mapNotNull(parent::findViewHolderForAdapterPosition)
-                .mapNotNull { getTransitionValues(it.itemView, false) }
-                .mapNotNull { it.values[PROPNAME_BOUNDS] }
-                .mapNotNull { it as Rect }
-                .firstOrNull { it.right > right }
+        for (i in parent.getChildAdapterPosition(view) - 1 downTo 0) {
+            parent.findViewHolderForAdapterPosition(i)?.let {
+                getTransitionValues(it.itemView, false)?.let {
+                    (it.values[PROPNAME_BOUNDS] as? Rect)?.let {
+                        if (it.right > right) {
+                            return it
+                        }
+                    }
+                }
+            }
+        }
+        return null
     }
 
     private class DrawableBounds(val drawable: Drawable) : PointFBounds() {
         override fun setLeftTopRightBottom(left: Int, top: Int, right: Int, bottom: Int) =
                 drawable.setBounds(left, top, right, bottom)
-    }
-
-    private class ViewBounds(val view: View) : PointFBounds() {
-        override fun setLeftTopRightBottom(left: Int, top: Int, right: Int, bottom: Int) =
-                ViewUtils.setLeftTopRightBottom(view, left, top, right, bottom)
     }
 
     private abstract class PointFBounds {
@@ -332,9 +335,11 @@ class ColumnedChangeBounds : Transition() {
     }
 
     companion object {
-        private const val PROPNAME_BOUNDS = "android:changeBounds:bounds"
-        private const val PROPNAME_PARENT = "android:changeBounds:parent"
+        private const val PROPNAME_BOUNDS = "android:columnedChangeBounds:bounds"
+        private const val PROPNAME_PARENT = "android:columnedChangeBounds:parent"
         private val TRANSITION_PROPS = arrayOf(PROPNAME_BOUNDS, PROPNAME_PARENT)
+
+        private val TEMP_ARRAY = IntArray(2)
 
         private val TOP_LEFT_PROPERTY = object : Property<PointFBounds, PointF>(PointF::class.java, "topLeft") {
             override fun set(bounds: PointFBounds, topLeft: PointF) = bounds.setTopLeft(topLeft)
