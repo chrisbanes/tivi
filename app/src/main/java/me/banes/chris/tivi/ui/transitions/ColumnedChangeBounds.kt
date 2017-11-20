@@ -72,11 +72,6 @@ class ColumnedChangeBounds : Transition() {
             return null
         }
 
-        val startParentVals = startValues.values
-        val endParentVals = endValues.values
-        val startParent = startParentVals[PROPNAME_PARENT] as ViewGroup
-        val endParent = endParentVals[PROPNAME_PARENT] as RecyclerView
-
         val startView = startValues.view
         val endView = endValues.view
 
@@ -101,6 +96,9 @@ class ColumnedChangeBounds : Transition() {
         val endWidth = endRight - endLeft
         val endHeight = endBottom - endTop
 
+        // If we don't have a RecyclerView parent, not much point us doing anything so return null
+        val recyclerViewEndParent = findRecyclerViewParent(endView) ?: return null
+
         val anim: Animator
 
         if (endWidth > startWidth && endLeft < startLeft) {
@@ -113,7 +111,7 @@ class ColumnedChangeBounds : Transition() {
             anims += createPointToPointAnimator(sceneRoot, startView, startCopy, endBounds, 0)
 
             // Animate a copy of the current view out to the right
-            createAnimatorsForChildCopyOutRight(sceneRoot, startView, endParent, startBounds, endBounds)?.let {
+            createAnimatorsForChildCopyOutRight(sceneRoot, startView, recyclerViewEndParent, startBounds, endBounds)?.let {
                 anims += it
             }
 
@@ -131,7 +129,7 @@ class ColumnedChangeBounds : Transition() {
             anims += createPointToPointAnimator(sceneRoot, startView, startCopy, endBounds, 0)
 
             // Animate a copy of the current view out to the left
-            anims += createAnimatorForChildCopyOutLeft(sceneRoot, startView, endParent, startBounds, endBounds)
+            anims += createAnimatorForChildCopyOutLeft(sceneRoot, startView, startBounds, endBounds)
 
             anim = AnimatorSet().apply { playTogether(anims) }
         } else {
@@ -179,7 +177,6 @@ class ColumnedChangeBounds : Transition() {
     private fun createAnimatorForChildCopyOutLeft(
             sceneRoot: ViewGroup,
             view: View,
-            endParent: RecyclerView,
             startBounds: Rect,
             endBounds: Rect): Animator {
         val gap = 0 // TODO
@@ -221,6 +218,17 @@ class ColumnedChangeBounds : Transition() {
         val canvas = Canvas(bitmap)
         view.draw(canvas)
         return bitmap
+    }
+
+    private fun findRecyclerViewParent(view: View): RecyclerView? {
+        var parent = view.parent
+        while (parent != null && parent !is RecyclerView) {
+            parent = parent.parent
+        }
+        return when (parent) {
+            is RecyclerView -> parent
+            else -> null
+        }
     }
 
     private fun createPointToPointAnimator(
@@ -282,7 +290,9 @@ class ColumnedChangeBounds : Transition() {
             parent: RecyclerView,
             view: View,
             right: Int): Rect? {
-        for (i in parent.getChildAdapterPosition(view) - 1 downTo 0) {
+        // This view might not necessarily be the root of the item view
+        val rvItemView = parent.findContainingItemView(view)
+        for (i in parent.getChildAdapterPosition(rvItemView) - 1 downTo 0) {
             parent.findViewHolderForAdapterPosition(i)?.let {
                 getTransitionValues(it.itemView, false)?.let {
                     (it.values[PROPNAME_BOUNDS] as? Rect)?.let {

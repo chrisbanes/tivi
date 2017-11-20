@@ -37,6 +37,7 @@ import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.HomeNavigatorViewModel
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.POPULAR
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
+import me.banes.chris.tivi.ui.SharedElementHelper
 import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
 import me.banes.chris.tivi.ui.groupieitems.PopularPosterSection
@@ -105,11 +106,12 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
             setOnItemClickListener { item, _ ->
                 when (item) {
                     is HeaderItem -> {
-                        val cSection = item.tag as DiscoverViewModel.Section
-                        viewModel.onSectionHeaderClicked(
-                                homeNavigator,
-                                cSection,
-                                sectionHelper.getSharedElementHelperForSection(cSection))
+                        val section = item.tag as DiscoverViewModel.Section
+
+                        val sharedElements = SharedElementHelper()
+                        sectionHelper.addSharedElementsForSection(section, sharedElements)
+
+                        viewModel.onSectionHeaderClicked(homeNavigator, section, sharedElements)
                     }
                     is ShowPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
                     is TrendingPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
