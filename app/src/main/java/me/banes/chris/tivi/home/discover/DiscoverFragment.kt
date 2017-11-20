@@ -69,6 +69,8 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
                 duration = 130
             })
             addTransition(Fade().apply {
+                addTarget(R.id.summary_appbarlayout)
+                addTarget(R.id.summary_status_scrim)
                 interpolator = LinearInterpolator()
                 duration = 270
             })

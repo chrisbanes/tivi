@@ -38,6 +38,7 @@ class BabySlide(
 
         return ObjectAnimator.ofPropertyValuesHolder(view,
                 PropertyValuesHolder.ofFloat(View.TRANSLATION_X, 0f),
+                PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 0f),
                 PropertyValuesHolder.ofFloat(View.ALPHA, 1f))
     }
 
