@@ -37,6 +37,7 @@ import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterSection
+import me.banes.chris.tivi.util.GridToGridTransitioner
 
 class LibraryFragment : HomeFragment<LibraryViewModel>() {
 
@@ -51,6 +52,9 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(LibraryViewModel::class.java)
         homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
+
+        GridToGridTransitioner.setupFirstFragment(this,
+                intArrayOf(R.id.summary_appbarlayout, R.id.summary_status_scrim))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
