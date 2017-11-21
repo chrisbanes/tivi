@@ -27,12 +27,10 @@ import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
 import javax.inject.Inject
 
-class AppManagers(vararg params: AppManager) : AppManager {
-    private val managers = params.asList()
-
+class AppManagers(private vararg val managers: AppManager) : AppManager {
     override fun init(application: Application) {
-        for (m in managers) {
-            m.init(application)
+        managers.forEach {
+            it.init(application)
         }
     }
 }
