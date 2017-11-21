@@ -18,14 +18,11 @@ package me.banes.chris.tivi.home.discover
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.transition.Fade
-import android.support.transition.TransitionSet
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.LinearInterpolator
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_summary.*
@@ -40,12 +37,14 @@ import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.HomeNavigatorViewModel
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.POPULAR
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
+import me.banes.chris.tivi.ui.SharedElementHelper
 import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
 import me.banes.chris.tivi.ui.groupieitems.PopularPosterSection
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
 import me.banes.chris.tivi.ui.groupieitems.TrendingPosterItem
 import me.banes.chris.tivi.ui.groupieitems.TrendingPosterSection
+import me.banes.chris.tivi.util.GridToGridTransitioner
 
 internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
@@ -61,23 +60,8 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(DiscoverViewModel::class.java)
         homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
 
-        exitTransition = TransitionSet().apply {
-            addTransition(Fade().apply {
-                excludeTarget(R.id.summary_appbarlayout, true)
-                excludeTarget(R.id.summary_status_scrim, true)
-                interpolator = LinearInterpolator()
-                duration = 130
-            })
-            addTransition(Fade().apply {
-                interpolator = LinearInterpolator()
-                duration = 270
-            })
-        }
-
-        reenterTransition = Fade().apply {
-            interpolator = LinearInterpolator()
-            duration = 270
-        }
+        GridToGridTransitioner.setupFirstFragment(this,
+                intArrayOf(R.id.summary_appbarlayout, R.id.summary_status_scrim))
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -122,11 +106,12 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
             setOnItemClickListener { item, _ ->
                 when (item) {
                     is HeaderItem -> {
-                        val cSection = item.tag as DiscoverViewModel.Section
-                        viewModel.onSectionHeaderClicked(
-                                homeNavigator,
-                                cSection,
-                                sectionHelper.getSharedElementHelperForSection(cSection))
+                        val section = item.tag as DiscoverViewModel.Section
+
+                        val sharedElements = SharedElementHelper()
+                        sectionHelper.addSharedElementsForSection(section, sharedElements)
+
+                        viewModel.onSectionHeaderClicked(homeNavigator, section, sharedElements)
                     }
                     is ShowPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
                     is TrendingPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)

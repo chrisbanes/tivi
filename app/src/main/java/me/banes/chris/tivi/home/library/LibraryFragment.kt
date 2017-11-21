@@ -33,10 +33,12 @@ import me.banes.chris.tivi.home.HomeFragment
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.HomeNavigatorViewModel
 import me.banes.chris.tivi.home.discover.SectionedHelper
+import me.banes.chris.tivi.ui.SharedElementHelper
 import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterSection
+import me.banes.chris.tivi.util.GridToGridTransitioner
 
 class LibraryFragment : HomeFragment<LibraryViewModel>() {
 
@@ -51,6 +53,9 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(LibraryViewModel::class.java)
         homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
+
+        GridToGridTransitioner.setupFirstFragment(this,
+                intArrayOf(R.id.summary_appbarlayout, R.id.summary_status_scrim))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -90,10 +95,12 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
             setOnItemClickListener { item, _ ->
                 when (item) {
                     is HeaderItem -> {
-                        viewModel.onSectionHeaderClicked(
-                                homeNavigator,
-                                item.tag as LibraryViewModel.Section,
-                                sectionHelper.getSharedElementHelperForSection(item.tag))
+                        val section = item.tag as LibraryViewModel.Section
+
+                        val sharedElements = SharedElementHelper()
+                        sectionHelper.addSharedElementsForSection(section, sharedElements)
+
+                        viewModel.onSectionHeaderClicked(homeNavigator, section, sharedElements)
                     }
                     is ShowPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
                 }

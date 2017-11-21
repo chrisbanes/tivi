@@ -55,8 +55,7 @@ class SectionedHelper<S>(
         }
     }
 
-    fun getSharedElementHelperForSection(section: S): SharedElementHelper {
-        val sharedElements = SharedElementHelper()
+    fun addSharedElementsForSection(section: S, sharedElements: SharedElementHelper) {
         sectionMap[section]!!
                 .filterItems { it.layout == R.layout.grid_item }
                 .forEach { item ->
@@ -67,6 +66,5 @@ class SectionedHelper<S>(
                         is TrendingPosterItem -> { sharedElements.addSharedElement(vh.itemView, item.show.homepage) }
                     }
                 }
-        return sharedElements
     }
 }
