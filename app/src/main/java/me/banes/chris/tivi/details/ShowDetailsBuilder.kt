@@ -32,4 +32,12 @@ internal abstract class ShowDetailsBuilder {
     @IntoMap
     @ViewModelKey(ShowDetailsActivityViewModel::class)
     abstract fun bindShowDetailsActivityViewModel(viewModel: ShowDetailsActivityViewModel): ViewModel
+
+    @ContributesAndroidInjector
+    internal abstract fun showDetailsFragment(): ShowDetailsFragment
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ShowDetailsFragmentViewModel::class)
+    abstract fun bindShowDetailsFragmentViewModel(viewModel: ShowDetailsFragmentViewModel): ViewModel
 }

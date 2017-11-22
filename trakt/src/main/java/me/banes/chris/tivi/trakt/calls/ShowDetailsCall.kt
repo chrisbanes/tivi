@@ -29,7 +29,19 @@ class ShowDetailsCall @Inject constructor(
         private val dao: TiviShowDao,
         private val traktShowFetcher: TraktShowFetcher,
         private val schedulers: AppRxSchedulers
-) : Call<Int, TiviShow> {
-    override fun refresh(param: Int): Completable = traktShowFetcher.updateShow(param).toCompletable()
-    override fun data(param: Int): Flowable<TiviShow> = dao.getShowWithTraktId(param).subscribeOn(schedulers.database)
+) : Call<Long, TiviShow> {
+
+    override fun refresh(param: Long): Completable {
+        return dao.getShowWithId(param)
+                .firstElement()
+                .subscribeOn(schedulers.database)
+                .map(TiviShow::traktId)
+                .flatMapSingle(traktShowFetcher::updateShow)
+                .toCompletable()
+    }
+
+    override fun data(param: Long): Flowable<TiviShow> {
+        return dao.getShowWithId(param)
+                .subscribeOn(schedulers.database)
+    }
 }

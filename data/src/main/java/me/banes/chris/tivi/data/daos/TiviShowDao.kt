@@ -29,14 +29,20 @@ abstract class TiviShowDao {
     @Query("SELECT * FROM shows WHERE trakt_id = :id")
     abstract fun getShowWithTraktId(id: Int): Flowable<TiviShow>
 
+    @Query("SELECT * FROM shows WHERE trakt_id = :id")
+    abstract fun getShowWithTraktIdSync(id: Int): TiviShow?
+
     @Query("SELECT * FROM shows WHERE tmdb_id = :id")
     abstract fun getShowWithTmdbId(id: Int): Flowable<TiviShow>
 
     @Query("SELECT * FROM shows WHERE tmdb_id = :id")
     abstract fun getShowWithTmdbIdSync(id: Int): TiviShow?
 
-    @Query("SELECT * FROM shows WHERE trakt_id = :id")
-    abstract fun getShowWithTraktIdSync(id: Int): TiviShow?
+    @Query("SELECT * FROM shows WHERE id = :id")
+    abstract fun getShowWithId(id: Long): Flowable<TiviShow>
+
+    @Query("SELECT * FROM shows WHERE id = :id")
+    abstract fun getShowWithIdSync(id: Long): TiviShow?
 
     @Insert
     protected abstract fun insertShow(show: TiviShow): Long

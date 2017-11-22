@@ -16,37 +16,35 @@
 
 package me.banes.chris.tivi.details
 
-import android.content.Context
-import android.content.Intent
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import me.banes.chris.tivi.R
-import me.banes.chris.tivi.TiviActivity
+import me.banes.chris.tivi.TiviFragment
+import javax.inject.Inject
 
-class ShowDetailsActivity : TiviActivity() {
+class ShowDetailsFragment : TiviFragment() {
 
     companion object {
         private const val KEY_SHOW_ID = "show_id"
 
-        fun createIntent(context: Context, id: Long): Intent {
-            return Intent(context, ShowDetailsActivity::class.java).apply {
-                putExtra(KEY_SHOW_ID, id)
+        fun create(id: Long): ShowDetailsFragment {
+            return ShowDetailsFragment().apply {
+                arguments = Bundle().apply {
+                    putLong(KEY_SHOW_ID, id)
+                }
             }
         }
     }
 
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    internal lateinit var viewModel: ShowDetailsFragmentViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_show_details)
-    }
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(ShowDetailsFragmentViewModel::class.java)
 
-    override fun handleIntent(intent: Intent) {
-        val showId = intent.getLongExtra(KEY_SHOW_ID, -1L)
-        if (showId != -1L) {
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.details_content, ShowDetailsFragment.create(showId))
-                    .commit()
-        } else {
-            // TODO finish?
+        arguments?.let {
+            viewModel.showId = it.getLong(KEY_SHOW_ID)
         }
     }
 }
