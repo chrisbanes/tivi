@@ -46,7 +46,7 @@ class TmdbImageUrlProvider(private val imageSizes: TmdbImageSizes) {
                     previousSize!!
                 }
             } else if (i == sizes.size - 1) {
-                // If we get here then we're larger than the current bucket
+                // If we get here then we're larger than the last bucket
                 if (imageWidth < sizeWidth * 2) {
                     return size
                 }
@@ -56,7 +56,7 @@ class TmdbImageUrlProvider(private val imageSizes: TmdbImageSizes) {
             previousWidth = sizeWidth
         }
 
-        return sizes[0]
+        return previousSize ?: sizes.last()
     }
 
 }
