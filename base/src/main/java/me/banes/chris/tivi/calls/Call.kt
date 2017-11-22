@@ -21,7 +21,7 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 
 interface Call<in Param, DatabaseOutput> {
-    fun data(): Flowable<DatabaseOutput>
+    fun data(param: Param): Flowable<DatabaseOutput>
     fun refresh(param: Param): Completable
 }
 

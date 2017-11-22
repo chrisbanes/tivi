@@ -21,17 +21,16 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Update
 import io.reactivex.Flowable
-import io.reactivex.Maybe
 import me.banes.chris.tivi.data.entities.TiviShow
 import timber.log.Timber
 
 @Dao
 abstract class TiviShowDao {
     @Query("SELECT * FROM shows WHERE trakt_id = :id")
-    abstract fun getShowWithTraktId(id: Int): Maybe<TiviShow>
+    abstract fun getShowWithTraktId(id: Int): Flowable<TiviShow>
 
     @Query("SELECT * FROM shows WHERE tmdb_id = :id")
-    abstract fun getShowWithTmdbId(id: Int): Maybe<TiviShow>
+    abstract fun getShowWithTmdbId(id: Int): Flowable<TiviShow>
 
     @Query("SELECT * FROM shows WHERE tmdb_id = :id")
     abstract fun getShowWithTmdbIdSync(id: Int): TiviShow?

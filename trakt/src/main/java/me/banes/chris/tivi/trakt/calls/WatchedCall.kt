@@ -41,15 +41,15 @@ class WatchedCall @Inject constructor(
 
     override val pageSize = 21
 
-    override fun data(): Flowable<List<WatchedListItem>> {
+    fun data() = data(Unit)
+
+    override fun data(param: Unit): Flowable<List<WatchedListItem>> {
         return watchDao.entries()
                 .distinctUntilChanged()
                 .subscribeOn(schedulers.database)
     }
 
-    override fun liveList(): LivePagedListProvider<Int, WatchedListItem> {
-        return watchDao.entriesLiveList()
-    }
+    override fun liveList(): LivePagedListProvider<Int, WatchedListItem> = watchDao.entriesLiveList()
 
     override fun refresh(param: Unit): Completable {
         return trakt.users().watchedShows(UserSlug.ME, Extended.NOSEASONS).toRxSingle()
@@ -60,7 +60,6 @@ class WatchedCall @Inject constructor(
                     traktShowFetcher.getShow(traktEntry.show.ids.trakt, traktEntry.show)
                             .map { WatchedEntry(null, it.id!!, traktEntry.last_watched_at) }
                 }
-
                 .toList()
                 .observeOn(schedulers.database)
                 .doOnSuccess {

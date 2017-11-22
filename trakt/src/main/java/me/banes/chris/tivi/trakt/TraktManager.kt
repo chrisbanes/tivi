@@ -24,10 +24,10 @@ import io.reactivex.Maybe
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 import me.banes.chris.tivi.AppNavigator
-import me.banes.chris.tivi.calls.UserMeCall
 import me.banes.chris.tivi.data.entities.TraktUser
 import me.banes.chris.tivi.extensions.edit
 import me.banes.chris.tivi.extensions.plusAssign
+import me.banes.chris.tivi.trakt.calls.UserMeCall
 import me.banes.chris.tivi.util.AppRxSchedulers
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
@@ -91,12 +91,10 @@ class TraktManager @Inject constructor(
     }
 
     fun onAuthException(exception: AuthorizationException) {
-        Timber.d("AuthException", exception)
+        Timber.d(exception, "AuthException")
     }
 
-    fun userObservable(): Flowable<TraktUser> {
-        return userMeCall.data()
-    }
+    fun userObservable(): Flowable<TraktUser> = userMeCall.data()
 
     private fun performTokenExchange(response: AuthorizationResponse) {
         authService.performTokenRequest(response.createTokenExchangeRequest(), clientAuth.get()) { tokenResponse, exception ->

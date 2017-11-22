@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.calls
+package me.banes.chris.tivi.trakt.calls
 
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.User
@@ -23,6 +23,7 @@ import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
+import me.banes.chris.tivi.calls.Call
 import me.banes.chris.tivi.data.daos.UserDao
 import me.banes.chris.tivi.data.entities.TraktUser
 import me.banes.chris.tivi.extensions.toRxSingle
@@ -44,7 +45,9 @@ class UserMeCall @Inject constructor(
                 .toCompletable()
     }
 
-    override fun data(): Flowable<TraktUser> {
+    fun data() = data(Unit)
+
+    override fun data(param: Unit): Flowable<TraktUser> {
         return dao.getTraktUser()
                 .subscribeOn(schedulers.database)
     }

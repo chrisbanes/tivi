@@ -41,7 +41,7 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
         override val pageSize: Int = 21
 ) : PaginatedCall<Unit, LI> {
 
-    override fun data(): Flowable<List<LI>> {
+    override fun data(param: Unit): Flowable<List<LI>> {
         return entryDao.entries()
                 .distinctUntilChanged()
                 .subscribeOn(schedulers.database)
@@ -53,9 +53,7 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
                 .distinctUntilChanged()
     }
 
-    override fun liveList(): LivePagedListProvider<Int, LI> {
-        return entryDao.entriesLiveList()
-    }
+    override fun liveList(): LivePagedListProvider<Int, LI> = entryDao.entriesLiveList()
 
     private fun loadPage(page: Int = 0, resetOnSave: Boolean = false): Single<List<ET>> {
         return networkCall(page)
@@ -70,9 +68,7 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
                 .doOnSuccess { savePage(it, page, resetOnSave) }
     }
 
-    override fun refresh(param: Unit): Completable {
-        return loadPage(0, resetOnSave = true).toCompletable()
-    }
+    override fun refresh(param: Unit): Completable = loadPage(0, resetOnSave = true).toCompletable()
 
     override fun loadNextPage(): Completable {
         return entryDao.getLastPage()
