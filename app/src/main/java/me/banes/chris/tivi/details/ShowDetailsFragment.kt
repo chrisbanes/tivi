@@ -22,12 +22,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_show_details.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
 import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.extensions.doWhenLaidOut
+import me.banes.chris.tivi.extensions.loadFromUrl
 import me.banes.chris.tivi.extensions.observeK
+import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import javax.inject.Inject
 
 class ShowDetailsFragment : TiviFragment() {
@@ -45,6 +47,8 @@ class ShowDetailsFragment : TiviFragment() {
     }
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var imageUrlProvider: TmdbImageUrlProvider
+
     internal lateinit var viewModel: ShowDetailsFragmentViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,10 +75,10 @@ class ShowDetailsFragment : TiviFragment() {
         details_ctl.title = show.title
 
         show.tmdbBackdropPath?.let {
-            // TODO load image
-//            Glide.with(this)
-//                    .load(it)
-//                    .into(details_backdrop)
+            val path = it
+            details_backdrop.doWhenLaidOut {
+                details_backdrop.loadFromUrl(imageUrlProvider.getBackdropUrl(path, details_backdrop.width))
+            }
         }
     }
 }
