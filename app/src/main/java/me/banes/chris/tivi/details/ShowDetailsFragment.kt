@@ -19,13 +19,18 @@ package me.banes.chris.tivi.details
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.Item
+import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_show_details.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
 import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.details.items.SummaryItem
 import me.banes.chris.tivi.extensions.doWhenLaidOut
 import me.banes.chris.tivi.extensions.loadFromUrl
 import me.banes.chris.tivi.extensions.observeK
@@ -49,7 +54,10 @@ class ShowDetailsFragment : TiviFragment() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var imageUrlProvider: TmdbImageUrlProvider
 
-    internal lateinit var viewModel: ShowDetailsFragmentViewModel
+    private lateinit var viewModel: ShowDetailsFragmentViewModel
+    private lateinit var groupAdapter: GroupAdapter<ViewHolder>
+
+    private var summaryItem: Item<out ViewHolder>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +71,17 @@ class ShowDetailsFragment : TiviFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
             inflater.inflate(R.layout.fragment_show_details, container, false)
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        groupAdapter = GroupAdapter()
+
+        details_rv.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            adapter = groupAdapter
+        }
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -74,11 +93,15 @@ class ShowDetailsFragment : TiviFragment() {
     private fun update(show: TiviShow) {
         details_ctl.title = show.title
 
-        show.tmdbBackdropPath?.let {
-            val path = it
+        show.tmdbBackdropPath?.let { path ->
             details_backdrop.doWhenLaidOut {
                 details_backdrop.loadFromUrl(imageUrlProvider.getBackdropUrl(path, details_backdrop.width))
             }
         }
+
+        groupAdapter.clear()
+
+        summaryItem = SummaryItem(show)
+        summaryItem?.let(groupAdapter::add)
     }
 }
