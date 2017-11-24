@@ -21,6 +21,7 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.OffsetDateTime
+import java.security.cert.Certificate
 import kotlin.reflect.KMutableProperty0
 
 @Entity(tableName = "shows",
@@ -38,7 +39,9 @@ data class TiviShow(
         @ColumnInfo(name = "trakt_updated") var lastTraktUpdate: OffsetDateTime? = null,
         @ColumnInfo(name = "tmdb_updated") var lastTmdbUpdate: OffsetDateTime? = null,
         @ColumnInfo(name = "overview") var summary: String? = null,
-        @ColumnInfo(name = "homepage") var homepage: String? = null) {
+        @ColumnInfo(name = "homepage") var homepage: String? = null,
+        @ColumnInfo(name = "rating") var rating: Float? = null
+) {
 
     companion object {
         val PLACEHOLDER = TiviShow()

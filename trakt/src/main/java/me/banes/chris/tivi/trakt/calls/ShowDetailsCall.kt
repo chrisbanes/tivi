@@ -32,7 +32,7 @@ class ShowDetailsCall @Inject constructor(
 ) : Call<Long, TiviShow> {
 
     override fun refresh(param: Long): Completable {
-        return dao.getShowWithId(param)
+        return dao.getShowWithIdFlowable(param)
                 .firstElement()
                 .subscribeOn(schedulers.database)
                 .map(TiviShow::traktId)
@@ -41,7 +41,7 @@ class ShowDetailsCall @Inject constructor(
     }
 
     override fun data(param: Long): Flowable<TiviShow> {
-        return dao.getShowWithId(param)
+        return dao.getShowWithIdFlowable(param)
                 .subscribeOn(schedulers.database)
     }
 }

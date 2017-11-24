@@ -19,17 +19,17 @@ package me.banes.chris.tivi.details
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_show_details.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
 import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.details.items.RatingItem
 import me.banes.chris.tivi.details.items.SummaryItem
 import me.banes.chris.tivi.extensions.doWhenLaidOut
 import me.banes.chris.tivi.extensions.loadFromUrl
@@ -57,8 +57,6 @@ class ShowDetailsFragment : TiviFragment() {
     private lateinit var viewModel: ShowDetailsFragmentViewModel
     private lateinit var groupAdapter: GroupAdapter<ViewHolder>
 
-    private var summaryItem: Item<out ViewHolder>? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ShowDetailsFragmentViewModel::class.java)
@@ -75,9 +73,12 @@ class ShowDetailsFragment : TiviFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         groupAdapter = GroupAdapter()
+        groupAdapter.spanCount = 3
 
         details_rv.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            layoutManager = GridLayoutManager(context, groupAdapter.spanCount).apply {
+                spanSizeLookup = groupAdapter.spanSizeLookup
+            }
             adapter = groupAdapter
         }
     }
@@ -99,9 +100,10 @@ class ShowDetailsFragment : TiviFragment() {
             }
         }
 
-        groupAdapter.clear()
-
-        summaryItem = SummaryItem(show)
-        summaryItem?.let(groupAdapter::add)
+        groupAdapter.apply {
+            clear()
+            add(RatingItem(show))
+            add(SummaryItem(show))
+        }
     }
 }

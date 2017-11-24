@@ -58,5 +58,4 @@ class SummaryItem(private val show: TiviShow) : TiviItem<TiviViewHolder>() {
     }
 
     override fun isClickable() = false
-
 }

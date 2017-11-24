@@ -35,4 +35,6 @@
     <string name="prefs_ui_theme_title">Theme</string>
     <string name="prefs_title">Settings</string>
     <string name="empty_prompt">Y u no watch some TV?</string>
+
+    <string name="percentage_format">%1$d%%</string>
 </resources>

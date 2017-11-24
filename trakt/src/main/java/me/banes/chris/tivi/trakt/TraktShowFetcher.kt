@@ -40,9 +40,8 @@ class TraktShowFetcher @Inject constructor(
         private val schedulers: AppRxSchedulers
 ) {
     fun getShow(traktId: Int, entity: Show? = null): Maybe<TiviShow> {
-        val dbSource = showDao.getShowWithTraktId(traktId)
+        val dbSource = showDao.getShowWithTraktIdMaybe(traktId)
                 .subscribeOn(schedulers.database)
-                .firstElement()
 
         val fromEntity = entity?.let { appendRx(Maybe.just(entity)) } ?: Maybe.empty<TiviShow>()
 
@@ -59,7 +58,7 @@ class TraktShowFetcher @Inject constructor(
         return maybe.observeOn(schedulers.database)
                 .map(this::upsertShow)
                 .map(TiviShow::traktId)
-                .flatMap { showDao.getShowWithTraktId(it).firstElement() }
+                .flatMap(showDao::getShowWithTraktIdMaybe)
     }
 
     fun updateShow(traktId: Int): Single<TiviShow> {
@@ -83,6 +82,7 @@ class TraktShowFetcher @Inject constructor(
             updateProperty(this::title, traktShow.title)
             updateProperty(this::summary, traktShow.overview)
             updateProperty(this::homepage, traktShow.homepage)
+            updateProperty(this::rating, traktShow.rating?.toFloat())
             lastTraktUpdate = OffsetDateTime.now()
         }
         return showDao.insertOrUpdateShow(show)
