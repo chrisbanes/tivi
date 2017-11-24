@@ -35,6 +35,7 @@ import me.banes.chris.tivi.details.items.NetworkItem
 import me.banes.chris.tivi.details.items.RatingItem
 import me.banes.chris.tivi.details.items.RuntimeItem
 import me.banes.chris.tivi.details.items.SummaryItem
+import me.banes.chris.tivi.details.items.TitleItem
 import me.banes.chris.tivi.extensions.doWhenLaidOut
 import me.banes.chris.tivi.extensions.loadFromUrl
 import me.banes.chris.tivi.extensions.observeK
@@ -96,8 +97,6 @@ class ShowDetailsFragment : TiviFragment() {
     }
 
     private fun update(show: TiviShow) {
-        details_ctl.title = show.title
-
         show.tmdbBackdropPath?.let { path ->
             details_backdrop.doWhenLaidOut {
                 details_backdrop.loadFromUrl(imageUrlProvider.getBackdropUrl(path, details_backdrop.width))
@@ -106,6 +105,7 @@ class ShowDetailsFragment : TiviFragment() {
 
         groupAdapter.apply {
             clear()
+            add(TitleItem(show))
             add(RatingItem(show))
             add(CertificationItem(show))
             add(NetworkItem(show))

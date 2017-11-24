@@ -25,7 +25,6 @@ import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.TiviAppNavigator
 import me.banes.chris.tivi.TiviApplication
 import me.banes.chris.tivi.appmanagers.AppManagers
-import me.banes.chris.tivi.appmanagers.EmojiCompatManager
 import me.banes.chris.tivi.appmanagers.LeakCanaryManager
 import me.banes.chris.tivi.appmanagers.ThreeTenBpManager
 import me.banes.chris.tivi.appmanagers.TimberManager
@@ -66,9 +65,8 @@ class AppModule {
     fun provideAppManagers(
             leakCanaryManager: LeakCanaryManager,
             timberManager: TimberManager,
-            threeTenManager: ThreeTenBpManager,
-            emojiCompatManager: EmojiCompatManager): AppManagers {
-        return AppManagers(leakCanaryManager, timberManager, threeTenManager, emojiCompatManager)
+            threeTenManager: ThreeTenBpManager): AppManagers {
+        return AppManagers(leakCanaryManager, timberManager, threeTenManager)
     }
 
     @Provides

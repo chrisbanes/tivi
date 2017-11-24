@@ -16,17 +16,17 @@
 
 package me.banes.chris.tivi.data.entities
 
-enum class Genre(val traktValue: String, val emojiValue: String? = null) {
-    DRAMA("drama", "\uD83D\uDE28"),
-    FANTASY("fantasy", "\uD83E\uDDD9"),
-    SCIENCE_FICTION("science-fiction", "☄️"),
-    ACTION("action", "\uD83E\uDD20"),
-    ADVENTURE("adventure", "\uD83C\uDFDE️"),
-    CRIME("crime", "\uD83D\uDE93"),
-    THRILLER("thriller", "\uD83D\uDDE1️"),
-    COMEDY("comedy", "\uD83E\uDD23"),
-    HORROR("horror", "\uD83D\uDC7B"),
-    MYSTERY("mystery", "\uD83D\uDD75️");
+enum class Genre(val traktValue: String) {
+    DRAMA("drama"),
+    FANTASY("fantasy"),
+    SCIENCE_FICTION("science-fiction"),
+    ACTION("action"),
+    ADVENTURE("adventure"),
+    CRIME("crime"),
+    THRILLER("thriller"),
+    COMEDY("comedy"),
+    HORROR("horror"),
+    MYSTERY("mystery");
 
     companion object {
         fun fromTraktValue(value: String) : Genre? = values().firstOrNull { it.traktValue == value }

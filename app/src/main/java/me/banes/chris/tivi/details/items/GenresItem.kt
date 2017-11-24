@@ -19,6 +19,7 @@ package me.banes.chris.tivi.details.items
 import kotlinx.android.synthetic.main.details_summary_item.view.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.ui.GenreStringer
 import me.banes.chris.tivi.ui.groupieitems.TiviItem
 import me.banes.chris.tivi.ui.holders.TiviViewHolder
 
@@ -27,10 +28,11 @@ class GenresItem(private val show: TiviShow) : TiviItem<TiviViewHolder>() {
     override fun getLayout() = R.layout.details_summary_item
 
     override fun bind(viewHolder: TiviViewHolder, position: Int) {
-        viewHolder.itemView.details_summary.text =
-                show.genres?.joinToString(" / ") {
-                    "${it.name} ${it.emojiValue}"
-                }
+        viewHolder.itemView.details_summary.apply {
+            text = show.genres?.joinToString(" // ") {
+                "${resources.getString(GenreStringer.getLabel(it))} ${GenreStringer.getEmoji(it)}"
+            }
+        }
     }
 
     override fun isClickable() = false
