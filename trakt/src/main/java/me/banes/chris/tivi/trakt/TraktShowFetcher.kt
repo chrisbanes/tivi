@@ -83,6 +83,10 @@ class TraktShowFetcher @Inject constructor(
             updateProperty(this::summary, traktShow.overview)
             updateProperty(this::homepage, traktShow.homepage)
             updateProperty(this::rating, traktShow.rating?.toFloat())
+            updateProperty(this::certification, traktShow.certification)
+            updateProperty(this::runtime, traktShow.runtime)
+            updateProperty(this::network, traktShow.network)
+            updateProperty(this::country, traktShow.country)
             lastTraktUpdate = OffsetDateTime.now()
         }
         return showDao.insertOrUpdateShow(show)

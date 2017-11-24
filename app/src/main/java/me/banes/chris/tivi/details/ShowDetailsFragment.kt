@@ -29,7 +29,10 @@ import kotlinx.android.synthetic.main.fragment_show_details.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
 import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.details.items.CertificationItem
+import me.banes.chris.tivi.details.items.NetworkItem
 import me.banes.chris.tivi.details.items.RatingItem
+import me.banes.chris.tivi.details.items.RuntimeItem
 import me.banes.chris.tivi.details.items.SummaryItem
 import me.banes.chris.tivi.extensions.doWhenLaidOut
 import me.banes.chris.tivi.extensions.loadFromUrl
@@ -73,7 +76,7 @@ class ShowDetailsFragment : TiviFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         groupAdapter = GroupAdapter()
-        groupAdapter.spanCount = 3
+        groupAdapter.spanCount = 4
 
         details_rv.apply {
             layoutManager = GridLayoutManager(context, groupAdapter.spanCount).apply {
@@ -103,6 +106,9 @@ class ShowDetailsFragment : TiviFragment() {
         groupAdapter.apply {
             clear()
             add(RatingItem(show))
+            add(CertificationItem(show))
+            add(NetworkItem(show))
+            add(RuntimeItem(show))
             add(SummaryItem(show))
         }
     }

@@ -24,20 +24,19 @@
     android:transitionGroup="true">
 
     <ImageView
-        android:id="@+id/details_rating_icon"
+        android:id="@+id/details_badge_icon"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:scaleType="fitCenter"
         android:layout_marginTop="16dp"
-        android:src="@drawable/ic_stars_black"
-        app:layout_constraintBottom_toTopOf="@+id/details_rating_label"
+        app:layout_constraintBottom_toTopOf="@+id/details_badge_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <me.banes.chris.tivi.ui.widget.BaselineGridTextView
-        android:id="@+id/details_rating_label"
+        android:id="@+id/details_badge_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -48,7 +47,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/details_rating_icon"
+        app:layout_constraintTop_toBottomOf="@+id/details_badge_icon"
         tools:text="9.3" />
 
 </android.support.constraint.ConstraintLayout>

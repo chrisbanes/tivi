@@ -21,12 +21,8 @@ import android.graphics.drawable.Drawable
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.TiviShow
 
-class RatingItem(show: TiviShow) : BadgeItem(show) {
-    override fun getLabel(context: Context, show: TiviShow): String? {
-        return show.rating?.let {
-            context.getString(R.string.percentage_format, Math.round(it * 10))
-        }
-    }
+class CertificationItem(show: TiviShow) : BadgeItem(show) {
+    override fun getLabel(context: Context, show: TiviShow): String? = show.certification
 
-    override fun getIcon(context: Context, show: TiviShow): Drawable = context.getDrawable(R.drawable.ic_details_rating)
+    override fun getIcon(context: Context, show: TiviShow): Drawable = context.getDrawable(R.drawable.ic_details_certificate)
 }

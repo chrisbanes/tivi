@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 9,
-    "identityHash": "bec56f39678da2cc9ed1b381dcf018dc",
+    "identityHash": "79ac28030e243125efc4a2474b27e808",
     "entities": [
       {
         "tableName": "shows",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `trakt_updated` TEXT, `tmdb_updated` TEXT, `overview` TEXT, `homepage` TEXT, `rating` REAL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `trakt_updated` TEXT, `tmdb_updated` TEXT, `overview` TEXT, `homepage` TEXT, `rating` REAL, `certification` TEXT, `country` TEXT, `network` TEXT, `runtime` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -78,6 +78,30 @@
             "fieldPath": "rating",
             "columnName": "rating",
             "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "certification",
+            "columnName": "certification",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "country",
+            "columnName": "country",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "network",
+            "columnName": "network",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "runtime",
+            "columnName": "runtime",
+            "affinity": "INTEGER",
             "notNull": false
           }
         ],
@@ -337,7 +361,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"bec56f39678da2cc9ed1b381dcf018dc\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"79ac28030e243125efc4a2474b27e808\")"
     ]
   }
 }

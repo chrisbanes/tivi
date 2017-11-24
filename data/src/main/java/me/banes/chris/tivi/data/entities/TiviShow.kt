@@ -40,7 +40,11 @@ data class TiviShow(
         @ColumnInfo(name = "tmdb_updated") var lastTmdbUpdate: OffsetDateTime? = null,
         @ColumnInfo(name = "overview") var summary: String? = null,
         @ColumnInfo(name = "homepage") var homepage: String? = null,
-        @ColumnInfo(name = "rating") var rating: Float? = null
+        @ColumnInfo(name = "rating") var rating: Float? = null,
+        @ColumnInfo(name = "certification") var certification: String? = null,
+        @ColumnInfo(name = "country") var country: String? = null,
+        @ColumnInfo(name = "network") var network: String? = null,
+        @ColumnInfo(name = "runtime") var runtime: Int? = null
 ) {
 
     companion object {

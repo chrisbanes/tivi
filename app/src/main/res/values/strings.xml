@@ -37,4 +37,5 @@
     <string name="empty_prompt">Y u no watch some TV?</string>
 
     <string name="percentage_format">%1$d%%</string>
+    <string name="minutes_format">%1$dm</string>
 </resources>
