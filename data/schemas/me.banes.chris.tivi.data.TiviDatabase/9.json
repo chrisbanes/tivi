@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 9,
-    "identityHash": "79ac28030e243125efc4a2474b27e808",
+    "identityHash": "9d6d68aaf3e7b0e1724d00f75754e057",
     "entities": [
       {
         "tableName": "shows",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `trakt_updated` TEXT, `tmdb_updated` TEXT, `overview` TEXT, `homepage` TEXT, `rating` REAL, `certification` TEXT, `country` TEXT, `network` TEXT, `runtime` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `trakt_updated` TEXT, `tmdb_updated` TEXT, `overview` TEXT, `homepage` TEXT, `rating` REAL, `certification` TEXT, `country` TEXT, `network` TEXT, `runtime` INTEGER, `genres` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -102,6 +102,12 @@
             "fieldPath": "runtime",
             "columnName": "runtime",
             "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "_genres",
+            "columnName": "genres",
+            "affinity": "TEXT",
             "notNull": false
           }
         ],
@@ -361,7 +367,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"79ac28030e243125efc4a2474b27e808\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"9d6d68aaf3e7b0e1724d00f75754e057\")"
     ]
   }
 }

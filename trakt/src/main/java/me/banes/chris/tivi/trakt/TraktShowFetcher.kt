@@ -22,6 +22,7 @@ import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Maybe
 import io.reactivex.Single
 import me.banes.chris.tivi.data.daos.TiviShowDao
+import me.banes.chris.tivi.data.entities.Genre
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.toRxMaybe
 import me.banes.chris.tivi.extensions.toRxSingle
@@ -74,7 +75,7 @@ class TraktShowFetcher @Inject constructor(
         else -> false
     }
 
-    private fun upsertShow(traktShow: Show) : TiviShow {
+    private fun upsertShow(traktShow: Show): TiviShow {
         val show = showDao.getShowWithTraktIdSync(traktShow.ids.trakt) ?: TiviShow()
         show.apply {
             updateProperty(this::traktId, traktShow.ids.trakt)
@@ -87,6 +88,7 @@ class TraktShowFetcher @Inject constructor(
             updateProperty(this::runtime, traktShow.runtime)
             updateProperty(this::network, traktShow.network)
             updateProperty(this::country, traktShow.country)
+            updateProperty(this::_genres, traktShow.genres?.joinToString(","))
             lastTraktUpdate = OffsetDateTime.now()
         }
         return showDao.insertOrUpdateShow(show)

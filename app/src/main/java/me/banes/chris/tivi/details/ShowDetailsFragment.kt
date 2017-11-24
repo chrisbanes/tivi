@@ -30,6 +30,7 @@ import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.details.items.CertificationItem
+import me.banes.chris.tivi.details.items.GenresItem
 import me.banes.chris.tivi.details.items.NetworkItem
 import me.banes.chris.tivi.details.items.RatingItem
 import me.banes.chris.tivi.details.items.RuntimeItem
@@ -110,6 +111,7 @@ class ShowDetailsFragment : TiviFragment() {
             add(NetworkItem(show))
             add(RuntimeItem(show))
             add(SummaryItem(show))
+            add(GenresItem(show))
         }
     }
 }
