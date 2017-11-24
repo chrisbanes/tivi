@@ -22,4 +22,6 @@
     <dimen name="details_summary_collapsed">80dp</dimen>
     <dimen name="details_summary_expanded">240dp</dimen>
 
+    <dimen name="image_round_rect_radius">4dp</dimen>
+
 </resources>

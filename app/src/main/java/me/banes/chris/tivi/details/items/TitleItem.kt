@@ -16,26 +16,17 @@
 
 package me.banes.chris.tivi.details.items
 
-import android.support.v4.view.animation.FastOutSlowInInterpolator
-import android.transition.ChangeBounds
-import android.transition.TransitionManager
 import android.view.View
-import android.view.ViewGroup
-import kotlinx.android.synthetic.main.details_summary_item.view.*
-import kotlinx.android.synthetic.main.details_title_poster_item.view.*
-import kotlinx.android.synthetic.main.fragment_show_details.*
+import kotlinx.android.synthetic.main.details_title_item.view.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.extensions.doWhenLaidOut
-import me.banes.chris.tivi.extensions.loadFromUrl
-import me.banes.chris.tivi.tmdb.TmdbImageSizes
-import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
+import me.banes.chris.tivi.ui.GenreStringer
 import me.banes.chris.tivi.ui.groupieitems.TiviItem
 import me.banes.chris.tivi.ui.holders.TiviViewHolder
 
 class TitleItem(private val show: TiviShow) : TiviItem<TiviViewHolder>() {
 
-    override fun getLayout() = R.layout.details_title_poster_item
+    override fun getLayout() = R.layout.details_title_item
 
     override fun bind(viewHolder: TiviViewHolder, position: Int) {
         viewHolder.itemView.details_title.text = show.title
@@ -49,11 +40,9 @@ class TitleItem(private val show: TiviShow) : TiviItem<TiviViewHolder>() {
             viewHolder.itemView.details_subtitle.visibility = View.GONE
         }
 
-        if (show.tmdbPosterPath != null) {
-            val imageUrlProvider = TmdbImageUrlProvider(TmdbImageSizes)
-            viewHolder.itemView.details_show_poster.doWhenLaidOut {
-                viewHolder.itemView.details_show_poster.loadFromUrl(
-                        imageUrlProvider.getPosterUrl(show.tmdbPosterPath!!, viewHolder.itemView.details_show_poster.width))
+        viewHolder.itemView.details_categories.apply {
+            text = show.genres?.joinToString(" // ") {
+                "${resources.getString(GenreStringer.getLabel(it))} ${GenreStringer.getEmoji(it)}"
             }
         }
     }

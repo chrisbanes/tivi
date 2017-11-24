@@ -30,4 +30,8 @@ class TrendingShowsViewModel @Inject constructor(
     fun onUpClicked(navigator: HomeNavigator) {
         navigator.onUpClicked()
     }
+
+    fun onItemClicked(item: TrendingListItem, navigator: HomeNavigator) {
+        navigator.showShowDetails(item.show!!)
+    }
 }

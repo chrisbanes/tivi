@@ -57,6 +57,11 @@ class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsV
                     show.homepage,
                     entry?.watchers.toString(),
                     placeholderIcon?.mutate())
+
+            // FIXME do something better here
+            holder.itemView.setOnClickListener {
+                viewModel.onItemClicked(item, homeNavigator)
+            }
         }
     }
 }

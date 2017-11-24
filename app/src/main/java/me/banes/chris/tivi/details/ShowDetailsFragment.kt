@@ -23,6 +23,9 @@ import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_show_details.*
@@ -30,7 +33,6 @@ import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.details.items.CertificationItem
-import me.banes.chris.tivi.details.items.GenresItem
 import me.banes.chris.tivi.details.items.NetworkItem
 import me.banes.chris.tivi.details.items.RatingItem
 import me.banes.chris.tivi.details.items.RuntimeItem
@@ -103,6 +105,16 @@ class ShowDetailsFragment : TiviFragment() {
             }
         }
 
+        show.tmdbPosterPath?.let { path ->
+            details_poster.doWhenLaidOut {
+                Glide.with(this)
+                        .load(imageUrlProvider.getPosterUrl(path, details_poster.width))
+                        .apply(RequestOptions.bitmapTransform(
+                                RoundedCorners(resources.getDimensionPixelSize(R.dimen.image_round_rect_radius))))
+                        .into(details_poster)
+            }
+        }
+
         groupAdapter.apply {
             clear()
             add(TitleItem(show))
@@ -111,7 +123,6 @@ class ShowDetailsFragment : TiviFragment() {
             add(NetworkItem(show))
             add(RuntimeItem(show))
             add(SummaryItem(show))
-            add(GenresItem(show))
         }
     }
 }

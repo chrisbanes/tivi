@@ -21,7 +21,7 @@ import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.Genre
 
 object GenreStringer {
-    
+
     fun getEmoji(genre: Genre): String = when (genre) {
         Genre.DRAMA -> "\uD83D\uDE28"
         Genre.FANTASY -> "\uD83E\uDDD9"
@@ -34,7 +34,7 @@ object GenreStringer {
         Genre.HORROR -> "\uD83D\uDC7B"
         Genre.MYSTERY -> "\uD83D\uDD75️"
     }
-    
+
     @StringRes
     fun getLabel(genre: Genre): Int = when (genre) {
         Genre.DRAMA -> R.string.genre_label_drama

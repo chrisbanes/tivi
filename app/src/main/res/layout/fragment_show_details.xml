@@ -57,6 +57,15 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <ImageView
+        android:id="@+id/details_poster"
+        android:layout_width="80dp"
+        android:layout_height="120dp"
+        android:layout_marginStart="16dp"
+        android:elevation="8dp"
+        app:layout_anchor="@+id/details_appbarlayout"
+        app:layout_anchorGravity="bottom|start" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/details_rv"
         android:layout_width="match_parent"

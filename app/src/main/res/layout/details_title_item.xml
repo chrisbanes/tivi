@@ -18,32 +18,22 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    android:background="?android:attr/colorBackground"
     android:layout_width="match_parent"
-    android:layout_height="200dp">
-
-    <ImageView
-        android:id="@+id/details_show_poster"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="0dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="w,1:1.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@android:drawable/star_on" />
+    android:layout_height="wrap_content"
+    android:padding="16dp">
 
     <me.banes.chris.tivi.ui.widget.BaselineGridTextView
         android:id="@+id/details_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="96dp"
         android:ellipsize="end"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         app:layout_constraintBottom_toTopOf="@+id/details_subtitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/details_show_poster"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Game of Thrones" />
@@ -55,10 +45,23 @@
         android:layout_marginTop="8dp"
         android:ellipsize="end"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/details_categories"
         app:layout_constraintEnd_toEndOf="@+id/details_title"
         app:layout_constraintStart_toStartOf="@+id/details_title"
         app:layout_constraintTop_toBottomOf="@+id/details_title"
         tools:text="Game of Thrones" />
+
+    <me.banes.chris.tivi.ui.widget.BaselineGridTextView
+        android:id="@+id/details_categories"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/details_title"
+        app:layout_constraintStart_toStartOf="@+id/details_title"
+        app:layout_constraintTop_toBottomOf="@+id/details_subtitle"
+        tools:text="Drama // Fantasy" />
 
 </android.support.constraint.ConstraintLayout>
