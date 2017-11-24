@@ -16,7 +16,11 @@
 
 package me.banes.chris.tivi.details.items
 
-import android.widget.TextView
+import android.support.v4.view.animation.FastOutSlowInInterpolator
+import android.transition.ChangeBounds
+import android.transition.TransitionManager
+import android.view.View
+import android.view.ViewGroup
 import kotlinx.android.synthetic.main.details_summary_item.view.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.TiviShow
@@ -27,20 +31,32 @@ class SummaryItem(private val show: TiviShow) : TiviItem<TiviViewHolder>() {
 
     override fun getLayout() = R.layout.details_summary_item
 
+    override fun createViewHolder(itemView: View): TiviViewHolder {
+        itemView.apply {
+            setOnClickListener(object : View.OnClickListener {
+                val collapsedHeight = resources.getDimensionPixelSize(R.dimen.details_summary_collapsed)
+                val expandedHeight = resources.getDimensionPixelSize(R.dimen.details_summary_expanded)
+                val transition = ChangeBounds().apply {
+                    duration = 200
+                    interpolator = FastOutSlowInInterpolator()
+                }
+
+                override fun onClick(view: View) {
+                    TransitionManager.beginDelayedTransition(view as ViewGroup, transition)
+                    view.details_summary.maxHeight =
+                            if (view.details_summary.maxHeight < expandedHeight) expandedHeight else collapsedHeight
+                }
+            })
+        }
+        return super.createViewHolder(itemView)
+    }
+
     override fun bind(viewHolder: TiviViewHolder, position: Int) {
         viewHolder.itemView.details_summary.apply {
-            setOnClickListener { view ->
-                val textView = view as TextView
-
-                val collapsedHeight = view.resources.getDimensionPixelSize(R.dimen.details_summary_collapsed)
-                val expandedHeight = view.resources.getDimensionPixelSize(R.dimen.details_summary_expanded)
-
-                textView.maxHeight = if (textView.maxHeight < expandedHeight) expandedHeight else collapsedHeight
-                textView.requestLayout()
-            }
-
             text = show.summary
         }
     }
+
+    override fun isClickable() = false
 
 }
