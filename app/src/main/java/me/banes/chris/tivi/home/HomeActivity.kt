@@ -20,17 +20,11 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
-import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.core.CrashlyticsCore
-import io.fabric.sdk.android.Fabric
 import kotlinx.android.synthetic.main.activity_home.*
-import me.banes.chris.tivi.BuildConfig
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviActivity
-import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeActivityViewModel.NavigationItem.DISCOVER
 import me.banes.chris.tivi.home.HomeActivityViewModel.NavigationItem.LIBRARY
@@ -59,21 +53,18 @@ class HomeActivity : TiviActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        val crashlyticsCore = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()
-        val crashlytics = Crashlytics.Builder().core(crashlyticsCore).build()
-        Fabric.with(this, crashlytics)
-
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(HomeActivityViewModel::class.java)
 
-        navigatorViewModel = ViewModelProviders.of(this).get(HomeNavigatorViewModel::class.java)
+        navigatorViewModel = ViewModelProviders.of(this, viewModelFactory)
+                .get(HomeNavigatorViewModel::class.java)
 
         home_bottom_nav.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 home_bottom_nav.selectedItemId -> {
                     if (supportFragmentManager.backStackEntryCount > 0) {
                         for (i in 0 until supportFragmentManager.backStackEntryCount) {
-                            supportFragmentManager.popBackStackImmediate()
+                            supportFragmentManager.popBackStack()
                         }
                     } else {
                         val fragment = supportFragmentManager.findFragmentById(R.id.home_content)
@@ -101,15 +92,7 @@ class HomeActivity : TiviActivity() {
         navigatorViewModel.showPopularCall.observeK(this, this::showPopular)
         navigatorViewModel.showTrendingCall.observeK(this, this::showTrending)
         navigatorViewModel.showWatchedCall.observeK(this, this::showWatched)
-        navigatorViewModel.showShowDetailsCall.observeK(this) { it?.let(this::showShowDetails) }
         navigatorViewModel.upClickedCall.observeK(this) { this.onUpClicked() }
-
-        handleIntent(intent)
-    }
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        handleIntent(intent)
     }
 
     private fun showNavigationItem(item: HomeActivityViewModel.NavigationItem?) {
@@ -173,16 +156,12 @@ class HomeActivity : TiviActivity() {
                 .commit()
     }
 
-    private fun showShowDetails(show: TiviShow) {
-        Snackbar.make(home_bottom_nav, "TODO: Open details for ${show.title}", Snackbar.LENGTH_SHORT).show()
-    }
-
     private fun onUpClicked() {
         // TODO can probably do something better here
         supportFragmentManager.popBackStack()
     }
 
-    private fun handleIntent(intent: Intent) {
+    override fun handleIntent(intent: Intent) {
         when (intent.action) {
             TraktConstants.INTENT_ACTION_HANDLE_AUTH_RESPONSE -> {
                 val response = AuthorizationResponse.fromIntent(intent)

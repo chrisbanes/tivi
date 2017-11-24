@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.calls
+package me.banes.chris.tivi.details
 
-import android.arch.paging.LivePagedListProvider
-import io.reactivex.Completable
-import io.reactivex.Flowable
+import android.arch.lifecycle.ViewModel
+import javax.inject.Inject
 
-interface Call<in Param, DatabaseOutput> {
-    fun data(param: Param): Flowable<DatabaseOutput>
-    fun refresh(param: Param): Completable
-}
-
-interface ListCall<in Param, DatabaseOutput> : Call<Param, List<DatabaseOutput>> {
-    fun liveList(): LivePagedListProvider<Int, DatabaseOutput>
-    val pageSize: Int
-}
+class ShowDetailsActivityViewModel @Inject constructor() : ViewModel()

@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.calls
+package me.banes.chris.tivi.ui.groupieitems
 
-import android.arch.paging.LivePagedListProvider
-import io.reactivex.Completable
-import io.reactivex.Flowable
+import android.view.View
+import com.xwray.groupie.Item
+import me.banes.chris.tivi.ui.holders.TiviViewHolder
 
-interface Call<in Param, DatabaseOutput> {
-    fun data(param: Param): Flowable<DatabaseOutput>
-    fun refresh(param: Param): Completable
-}
-
-interface ListCall<in Param, DatabaseOutput> : Call<Param, List<DatabaseOutput>> {
-    fun liveList(): LivePagedListProvider<Int, DatabaseOutput>
-    val pageSize: Int
+abstract class TiviItem<VH : TiviViewHolder> : Item<VH>() {
+    override fun createViewHolder(itemView: View): VH = TiviViewHolder(itemView) as VH
 }

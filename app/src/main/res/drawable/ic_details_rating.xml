@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright 2017 Google, Inc.
   ~
@@ -13,15 +12,15 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  ~
   -->
 
-<resources>
-    <dimen name="header_margin">14dp</dimen>
-
-    <dimen name="details_summary_collapsed">80dp</dimen>
-    <dimen name="details_summary_expanded">240dp</dimen>
-
-    <dimen name="image_round_rect_radius">4dp</dimen>
-
-</resources>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:tint="?android:attr/colorControlNormal"
+    android:viewportHeight="24.0"
+    android:viewportWidth="24.0">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M11.99,2C6.47,2 2,6.48 2,12s4.47,10 9.99,10C17.52,22 22,17.52 22,12S17.52,2 11.99,2zM16.23,18L12,15.45 7.77,18l1.12,-4.81 -3.73,-3.23 4.92,-0.42L12,5l1.92,4.53 4.92,0.42 -3.73,3.23L16.23,18z" />
+</vector>

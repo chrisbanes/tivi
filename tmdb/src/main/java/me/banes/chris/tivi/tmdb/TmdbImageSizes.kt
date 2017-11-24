@@ -14,18 +14,26 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.calls
+package me.banes.chris.tivi.tmdb
 
-import android.arch.paging.LivePagedListProvider
-import io.reactivex.Completable
-import io.reactivex.Flowable
+object TmdbImageSizes {
 
-interface Call<in Param, DatabaseOutput> {
-    fun data(param: Param): Flowable<DatabaseOutput>
-    fun refresh(param: Param): Completable
-}
+    val baseImageUrl = "https://image.tmdb.org/t/p/"
 
-interface ListCall<in Param, DatabaseOutput> : Call<Param, List<DatabaseOutput>> {
-    fun liveList(): LivePagedListProvider<Int, DatabaseOutput>
-    val pageSize: Int
+    val posterSizes = arrayOf(
+            "w92",
+            "w154",
+            "w185",
+            "w342",
+            "w500",
+            "w780",
+            "original"
+    )
+
+    val backdropSizes = arrayOf(
+            "w300",
+            "w780",
+            "w1280",
+            "original"
+    )
 }

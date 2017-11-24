@@ -35,4 +35,18 @@
     <string name="prefs_ui_theme_title">Theme</string>
     <string name="prefs_title">Settings</string>
     <string name="empty_prompt">Y u no watch some TV?</string>
+
+    <string name="percentage_format">%1$d%%</string>
+    <string name="minutes_format">%1$dm</string>
+
+    <string name="genre_label_drama">Drama</string>
+    <string name="genre_label_fantasy">Fantasy</string>
+    <string name="genre_label_science_fiction">Science Fiction</string>
+    <string name="genre_label_action">Action</string>
+    <string name="genre_label_adventure">Adventure</string>
+    <string name="genre_label_crime">Crime</string>
+    <string name="genre_label_thriller">Thriller</string>
+    <string name="genre_label_comedy">Comedy</string>
+    <string name="genre_label_horror">Horror</string>
+    <string name="genre_label_mystery">Mystery</string>
 </resources>

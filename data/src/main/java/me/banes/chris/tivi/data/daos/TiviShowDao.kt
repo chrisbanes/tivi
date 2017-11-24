@@ -28,16 +28,31 @@ import timber.log.Timber
 @Dao
 abstract class TiviShowDao {
     @Query("SELECT * FROM shows WHERE trakt_id = :id")
-    abstract fun getShowWithTraktId(id: Int): Maybe<TiviShow>
+    abstract fun getShowWithTraktIdFlowable(id: Int): Flowable<TiviShow>
+
+    @Query("SELECT * FROM shows WHERE trakt_id = :id")
+    abstract fun getShowWithTraktIdMaybe(id: Int): Maybe<TiviShow>
+
+    @Query("SELECT * FROM shows WHERE trakt_id = :id")
+    abstract fun getShowWithTraktIdSync(id: Int): TiviShow?
 
     @Query("SELECT * FROM shows WHERE tmdb_id = :id")
-    abstract fun getShowWithTmdbId(id: Int): Maybe<TiviShow>
+    abstract fun getShowWithTmdbIdFlowable(id: Int): Flowable<TiviShow>
+
+    @Query("SELECT * FROM shows WHERE tmdb_id = :id")
+    abstract fun getShowWithTmdbIdMaybe(id: Int): Maybe<TiviShow>
 
     @Query("SELECT * FROM shows WHERE tmdb_id = :id")
     abstract fun getShowWithTmdbIdSync(id: Int): TiviShow?
 
-    @Query("SELECT * FROM shows WHERE trakt_id = :id")
-    abstract fun getShowWithTraktIdSync(id: Int): TiviShow?
+    @Query("SELECT * FROM shows WHERE id = :id")
+    abstract fun getShowWithIdFlowable(id: Long): Flowable<TiviShow>
+
+    @Query("SELECT * FROM shows WHERE id = :id")
+    abstract fun getShowWithIdMaybe(id: Long): Maybe<TiviShow>
+
+    @Query("SELECT * FROM shows WHERE id = :id")
+    abstract fun getShowWithIdSync(id: Long): TiviShow?
 
     @Insert
     protected abstract fun insertShow(show: TiviShow): Long
@@ -45,17 +60,15 @@ abstract class TiviShowDao {
     @Update
     protected abstract fun updateShow(show: TiviShow)
 
-    fun insertOrUpdateShow(show: TiviShow): TiviShow {
-        return when {
-            show.id == null -> {
-                Timber.d("Inserting show: %s", show)
-                show.copy(id = insertShow(show))
-            }
-            else -> {
-                Timber.d("Updating show: %s", show)
-                updateShow(show)
-                show
-            }
+    fun insertOrUpdateShow(show: TiviShow): TiviShow = when {
+        show.id == null -> {
+            Timber.d("Inserting show: %s", show)
+            show.copy(id = insertShow(show))
+        }
+        else -> {
+            Timber.d("Updating show: %s", show)
+            updateShow(show)
+            show
         }
     }
 

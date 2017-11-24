@@ -20,9 +20,12 @@ import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Maybe
+import io.reactivex.Single
 import me.banes.chris.tivi.data.daos.TiviShowDao
+import me.banes.chris.tivi.data.entities.Genre
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.toRxMaybe
+import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.RetryAfterTimeoutWithDelay
 import org.threeten.bp.OffsetDateTime
@@ -38,7 +41,7 @@ class TraktShowFetcher @Inject constructor(
         private val schedulers: AppRxSchedulers
 ) {
     fun getShow(traktId: Int, entity: Show? = null): Maybe<TiviShow> {
-        val dbSource = showDao.getShowWithTraktId(traktId)
+        val dbSource = showDao.getShowWithTraktIdMaybe(traktId)
                 .subscribeOn(schedulers.database)
 
         val fromEntity = entity?.let { appendRx(Maybe.just(entity)) } ?: Maybe.empty<TiviShow>()
@@ -54,25 +57,40 @@ class TraktShowFetcher @Inject constructor(
 
     private fun appendRx(maybe: Maybe<Show>): Maybe<TiviShow> {
         return maybe.observeOn(schedulers.database)
-                .map { traktShow ->
-                    val show = showDao.getShowWithTraktIdSync(traktShow.ids.trakt) ?: TiviShow()
-                    show.apply {
-                        updateProperty(this::traktId, traktShow.ids.trakt)
-                        updateProperty(this::tmdbId, traktShow.ids.tmdb)
-                        updateProperty(this::title, traktShow.title)
-                        updateProperty(this::summary, traktShow.overview)
-                        updateProperty(this::homepage, traktShow.homepage)
-                        lastTraktUpdate = OffsetDateTime.now()
-                    }
-                    showDao.insertOrUpdateShow(show)
-                }
+                .map(this::upsertShow)
                 .map(TiviShow::traktId)
-                .flatMap(showDao::getShowWithTraktId)
+                .flatMap(showDao::getShowWithTraktIdMaybe)
+    }
+
+    fun updateShow(traktId: Int): Single<TiviShow> {
+        return trakt.shows().summary(traktId.toString(), Extended.FULL).toRxSingle()
+                .subscribeOn(schedulers.network)
+                .observeOn(schedulers.database)
+                .map(this::upsertShow)
     }
 
     private fun shouldRetry(throwable: Throwable): Boolean = when (throwable) {
         is HttpException -> throwable.code() == 429
         is IOException -> true
         else -> false
+    }
+
+    private fun upsertShow(traktShow: Show): TiviShow {
+        val show = showDao.getShowWithTraktIdSync(traktShow.ids.trakt) ?: TiviShow()
+        show.apply {
+            updateProperty(this::traktId, traktShow.ids.trakt)
+            updateProperty(this::tmdbId, traktShow.ids.tmdb)
+            updateProperty(this::title, traktShow.title)
+            updateProperty(this::summary, traktShow.overview)
+            updateProperty(this::homepage, traktShow.homepage)
+            updateProperty(this::rating, traktShow.rating?.toFloat())
+            updateProperty(this::certification, traktShow.certification)
+            updateProperty(this::runtime, traktShow.runtime)
+            updateProperty(this::network, traktShow.network)
+            updateProperty(this::country, traktShow.country)
+            updateProperty(this::_genres, traktShow.genres?.joinToString(","))
+            lastTraktUpdate = OffsetDateTime.now()
+        }
+        return showDao.insertOrUpdateShow(show)
     }
 }

@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.calls
+package me.banes.chris.tivi.details.items
 
-import android.arch.paging.LivePagedListProvider
-import io.reactivex.Completable
-import io.reactivex.Flowable
+import android.content.Context
+import android.graphics.drawable.Drawable
+import me.banes.chris.tivi.R
+import me.banes.chris.tivi.data.entities.TiviShow
 
-interface Call<in Param, DatabaseOutput> {
-    fun data(param: Param): Flowable<DatabaseOutput>
-    fun refresh(param: Param): Completable
-}
+class RatingItem(show: TiviShow) : BadgeItem(show) {
+    override fun getLabel(context: Context, show: TiviShow): String? {
+        return show.rating?.let {
+            context.getString(R.string.percentage_format, Math.round(it * 10))
+        }
+    }
 
-interface ListCall<in Param, DatabaseOutput> : Call<Param, List<DatabaseOutput>> {
-    fun liveList(): LivePagedListProvider<Int, DatabaseOutput>
-    val pageSize: Int
+    override fun getIcon(context: Context, show: TiviShow): Drawable = context.getDrawable(R.drawable.ic_details_rating)
 }

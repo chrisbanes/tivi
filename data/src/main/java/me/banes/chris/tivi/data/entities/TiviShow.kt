@@ -18,9 +18,11 @@ package me.banes.chris.tivi.data.entities
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.OffsetDateTime
+import java.security.cert.Certificate
 import kotlin.reflect.KMutableProperty0
 
 @Entity(tableName = "shows",
@@ -38,11 +40,19 @@ data class TiviShow(
         @ColumnInfo(name = "trakt_updated") var lastTraktUpdate: OffsetDateTime? = null,
         @ColumnInfo(name = "tmdb_updated") var lastTmdbUpdate: OffsetDateTime? = null,
         @ColumnInfo(name = "overview") var summary: String? = null,
-        @ColumnInfo(name = "homepage") var homepage: String? = null) {
-
-    companion object {
-        val PLACEHOLDER = TiviShow()
-    }
+        @ColumnInfo(name = "homepage") var homepage: String? = null,
+        @ColumnInfo(name = "rating") var rating: Float? = null,
+        @ColumnInfo(name = "certification") var certification: String? = null,
+        @ColumnInfo(name = "country") var country: String? = null,
+        @ColumnInfo(name = "network") var network: String? = null,
+        @ColumnInfo(name = "runtime") var runtime: Int? = null,
+        @ColumnInfo(name = "genres") var _genres: String? = null
+) {
+    val genres: List<Genre>?
+        get() = _genres?.split(",")
+                ?.mapNotNull {
+                    Genre.fromTraktValue(it.trim())
+                }
 
     fun needsUpdateFromTmdb(): Boolean {
         return tmdbId != null && (lastTmdbUpdate?.isBefore(OffsetDateTime.now().minusDays(1)) != false)

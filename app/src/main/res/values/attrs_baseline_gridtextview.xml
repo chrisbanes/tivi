@@ -13,15 +13,16 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  ~
   -->
 
 <resources>
-    <dimen name="header_margin">14dp</dimen>
+    <attr name="lineHeightHint" format="dimension" />
 
-    <dimen name="details_summary_collapsed">80dp</dimen>
-    <dimen name="details_summary_expanded">240dp</dimen>
-
-    <dimen name="image_round_rect_radius">4dp</dimen>
-
+    <declare-styleable name="BaselineGridTextView">
+        <attr name="lineHeightMultiplierHint" format="float" />
+        <attr name="lineHeightHint" />
+        <attr name="maxLinesByHeight" format="boolean" />
+        <attr name="android:textAppearance"/>
+        <attr name="android:fontFamily"/>
+    </declare-styleable>
 </resources>

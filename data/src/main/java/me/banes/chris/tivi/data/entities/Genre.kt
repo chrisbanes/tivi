@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.calls
+package me.banes.chris.tivi.data.entities
 
-import android.arch.paging.LivePagedListProvider
-import io.reactivex.Completable
-import io.reactivex.Flowable
+enum class Genre(val traktValue: String) {
+    DRAMA("drama"),
+    FANTASY("fantasy"),
+    SCIENCE_FICTION("science-fiction"),
+    ACTION("action"),
+    ADVENTURE("adventure"),
+    CRIME("crime"),
+    THRILLER("thriller"),
+    COMEDY("comedy"),
+    HORROR("horror"),
+    MYSTERY("mystery");
 
-interface Call<in Param, DatabaseOutput> {
-    fun data(param: Param): Flowable<DatabaseOutput>
-    fun refresh(param: Param): Completable
-}
-
-interface ListCall<in Param, DatabaseOutput> : Call<Param, List<DatabaseOutput>> {
-    fun liveList(): LivePagedListProvider<Int, DatabaseOutput>
-    val pageSize: Int
+    companion object {
+        fun fromTraktValue(value: String) : Genre? = values().firstOrNull { it.traktValue == value }
+    }
 }

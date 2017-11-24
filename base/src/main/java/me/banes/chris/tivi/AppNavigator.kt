@@ -21,4 +21,5 @@ import android.app.PendingIntent
 interface AppNavigator {
     fun provideAuthHandleResponseIntent(requestCode: Int): PendingIntent
     fun startSettings()
+    fun startShowDetails(id: Long)
 }

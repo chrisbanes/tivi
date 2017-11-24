@@ -40,6 +40,7 @@ import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
 import me.banes.chris.tivi.ui.SharedElementHelper
 import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
+import me.banes.chris.tivi.ui.groupieitems.PopularPosterItem
 import me.banes.chris.tivi.ui.groupieitems.PopularPosterSection
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
 import me.banes.chris.tivi.ui.groupieitems.TrendingPosterItem
@@ -114,6 +115,7 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
                         viewModel.onSectionHeaderClicked(homeNavigator, section, sharedElements)
                     }
                     is ShowPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
+                    is PopularPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
                     is TrendingPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
                 }
             }
