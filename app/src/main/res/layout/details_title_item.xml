@@ -18,8 +18,6 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-    android:background="?android:attr/colorBackground"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp">
@@ -42,20 +40,21 @@
         android:id="@+id/details_subtitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:ellipsize="end"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         app:layout_constraintBottom_toTopOf="@+id/details_categories"
         app:layout_constraintEnd_toEndOf="@+id/details_title"
         app:layout_constraintStart_toStartOf="@+id/details_title"
         app:layout_constraintTop_toBottomOf="@+id/details_title"
+        app:layout_goneMarginTop="0dp"
         tools:text="Game of Thrones" />
 
     <me.banes.chris.tivi.ui.widget.BaselineGridTextView
         android:id="@+id/details_categories"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:ellipsize="end"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -13,15 +13,11 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  ~
   -->
 
-<resources>
-    <dimen name="header_margin">14dp</dimen>
-
-    <integer name="details_summary_collapsed_lines">4</integer>
-    <integer name="details_summary_expanded_lines">8</integer>
-
-    <dimen name="image_round_rect_radius">4dp</dimen>
-
-</resources>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners
+        android:topLeftRadius="@dimen/image_round_rect_radius"
+        android:topRightRadius="@dimen/image_round_rect_radius" />
+    <solid android:color="?android:colorBackground" />
+</shape>

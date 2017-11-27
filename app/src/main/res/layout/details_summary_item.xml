@@ -21,7 +21,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:foreground="?android:attr/selectableItemBackground"
-    android:padding="32dp"
+    android:padding="16dp"
     android:transitionGroup="true">
 
     <me.banes.chris.tivi.ui.widget.BaselineGridTextView
@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:maxHeight="@dimen/details_summary_collapsed"
+        android:maxLines="@integer/details_summary_collapsed_lines"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         tools:text="Game of Thrones" />
 
