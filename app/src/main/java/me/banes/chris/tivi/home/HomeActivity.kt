@@ -24,6 +24,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import kotlinx.android.synthetic.main.activity_home.*
 import me.banes.chris.tivi.R
+import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.TiviActivity
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeActivityViewModel.NavigationItem.DISCOVER
@@ -34,7 +35,6 @@ import me.banes.chris.tivi.home.popular.PopularShowsFragment
 import me.banes.chris.tivi.home.trending.TrendingShowsFragment
 import me.banes.chris.tivi.home.watched.WatchedShowsFragment
 import me.banes.chris.tivi.trakt.TraktConstants
-import me.banes.chris.tivi.ui.SharedElementHelper
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import javax.inject.Inject

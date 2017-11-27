@@ -16,13 +16,17 @@
 
 package me.banes.chris.tivi.home
 
-import me.banes.chris.tivi.SharedElementHelper
-import me.banes.chris.tivi.data.entities.TiviShow
+import dagger.Module
+import dagger.Provides
+import me.banes.chris.tivi.AppNavigator
+import me.banes.chris.tivi.TiviAppNavigator
+import javax.inject.Singleton
 
-interface HomeNavigator {
-    fun showPopular(sharedElements: SharedElementHelper?)
-    fun showTrending(sharedElements: SharedElementHelper?)
-    fun showWatched(sharedElements: SharedElementHelper?)
-    fun showShowDetails(show: TiviShow, sharedElements: SharedElementHelper?)
-    fun onUpClicked()
+@Module
+class HomeModule {
+    @Provides
+    @Singleton
+    fun provideAppNavigator(activity: HomeActivity): AppNavigator {
+        return TiviAppNavigator(activity)
+    }
 }

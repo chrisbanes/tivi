@@ -29,8 +29,10 @@ internal class TiviAppNavigator(private val context: Context) : AppNavigator {
         return PendingIntent.getActivity(context, requestCode, intent, 0)
     }
 
-    override fun startShowDetails(id: Long) {
-        context.startActivity(ShowDetailsActivity.createIntent(context, id))
+    override fun startShowDetails(id: Long, sharedElements: SharedElementHelper?) {
+        context.startActivity(
+                ShowDetailsActivity.createIntent(context, id),
+                sharedElements?.applyToIntent(context))
     }
 
     override fun startSettings() {

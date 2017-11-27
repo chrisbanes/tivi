@@ -21,10 +21,10 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Section
 import com.xwray.groupie.ViewHolder
 import me.banes.chris.tivi.R
+import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.extensions.filterItems
-import me.banes.chris.tivi.ui.SharedElementHelper
 import me.banes.chris.tivi.ui.groupieitems.EmptyPlaceholderItem
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
 import me.banes.chris.tivi.ui.groupieitems.PopularPosterItem
