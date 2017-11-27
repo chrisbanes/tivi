@@ -54,6 +54,8 @@ if (haveFabricApiKey) {
     apply plugin: 'io.fabric'
 }
 
+apply plugin: 'com.google.firebase.firebase-perf'
+
 android {
     compileSdkVersion 27
 
@@ -167,6 +169,8 @@ dependencies {
     implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
     }
+
+    implementation "com.google.firebase:firebase-perf:${versions.firebase}"
 }
 
 def getGitHash() {
