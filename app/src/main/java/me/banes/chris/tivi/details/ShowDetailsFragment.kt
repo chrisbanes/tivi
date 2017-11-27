@@ -18,13 +18,14 @@ package me.banes.chris.tivi.details
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.graphics.Outline
+import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
+import android.support.v7.graphics.Palette
 import android.support.v7.widget.GridLayoutManager
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewOutlineProvider
 import com.bumptech.glide.Glide
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
@@ -39,9 +40,11 @@ import me.banes.chris.tivi.details.items.RuntimeItem
 import me.banes.chris.tivi.details.items.SummaryItem
 import me.banes.chris.tivi.details.items.TitleItem
 import me.banes.chris.tivi.extensions.doWhenLaidOut
-import me.banes.chris.tivi.extensions.loadFromUrl
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
+import me.banes.chris.tivi.ui.GlidePaletteListener
+import me.banes.chris.tivi.ui.RoundRectViewOutline
+import me.banes.chris.tivi.util.ScrimUtil
 import javax.inject.Inject
 
 class ShowDetailsFragment : TiviFragment() {
@@ -89,14 +92,12 @@ class ShowDetailsFragment : TiviFragment() {
             adapter = groupAdapter
         }
 
-        details_poster.clipToOutline = true
-        details_poster.outlineProvider = object : ViewOutlineProvider() {
-            private val radius = resources.getDimension(R.dimen.image_round_rect_radius)
-
-            override fun getOutline(view: View, outline: Outline) {
-                outline.setRoundRect(0, 0, view.width, view.height, radius)
-            }
+        details_backdrop.setOnApplyWindowInsetsListener { _, windowInsets ->
+            windowInsets
         }
+
+        details_poster.clipToOutline = true
+        details_poster.outlineProvider = RoundRectViewOutline
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -107,10 +108,27 @@ class ShowDetailsFragment : TiviFragment() {
         }
     }
 
+    private fun onBackdropPaletteLoaded(palette: Palette) {
+        palette.dominantSwatch?.let {
+            details_coordinator.setBackgroundColor(it.rgb)
+
+            val scrim = ScrimUtil.makeCubicGradientScrimDrawable(it.rgb, 10, Gravity.BOTTOM)
+            val drawable = LayerDrawable(arrayOf(scrim)).apply {
+                setLayerGravity(0, Gravity.FILL)
+                setLayerInsetTop(0, details_backdrop.height / 2)
+            }
+
+            details_backdrop.foreground = drawable
+        }
+    }
+
     private fun update(show: TiviShow) {
         show.tmdbBackdropPath?.let { path ->
             details_backdrop.doWhenLaidOut {
-                details_backdrop.loadFromUrl(imageUrlProvider.getBackdropUrl(path, details_backdrop.width))
+                Glide.with(this)
+                        .load(imageUrlProvider.getBackdropUrl(path, details_backdrop.width))
+                        .listener(GlidePaletteListener(this::onBackdropPaletteLoaded))
+                        .into(details_backdrop)
             }
         }
 

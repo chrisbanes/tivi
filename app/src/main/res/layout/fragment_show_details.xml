@@ -23,11 +23,20 @@
     android:fitsSystemWindows="true"
     app:statusBarBackground="@null">
 
+    <ImageView
+        android:id="@+id/details_backdrop"
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:fitsSystemWindows="true"
+        android:scaleType="centerCrop" />
+
     <android.support.design.widget.AppBarLayout
         android:id="@+id/details_appbarlayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="256dp"
+        android:background="@null"
         android:fitsSystemWindows="true"
+        android:stateListAnimator="@null"
         android:theme="?attr/actionBarTheme">
 
         <android.support.design.widget.CollapsingToolbarLayout
@@ -35,16 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="256dp"
             android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed|snap">
-
-            <ImageView
-                android:id="@+id/details_backdrop"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fitsSystemWindows="true"
-                android:scaleType="centerCrop"
-                app:layout_collapseMode="parallax" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/details_toolbar"
@@ -57,19 +57,22 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/details_rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@drawable/round_rect_background"
+        android:elevation="2dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
     <ImageView
         android:id="@+id/details_poster"
         android:layout_width="80dp"
         android:layout_height="120dp"
         android:layout_marginStart="16dp"
-        android:elevation="8dp"
-        app:layout_anchor="@+id/details_appbarlayout"
-        app:layout_anchorGravity="bottom|start" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/details_rv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:elevation="2dp"
+        app:layout_behavior="me.banes.chris.tivi.ui.PosterBehavior" />
 
 </android.support.design.widget.CoordinatorLayout>

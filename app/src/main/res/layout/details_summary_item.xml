@@ -21,7 +21,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:foreground="?android:attr/selectableItemBackground"
-    android:padding="32dp"
+    android:padding="16dp"
     android:transitionGroup="true">
 
     <me.banes.chris.tivi.ui.widget.BaselineGridTextView
