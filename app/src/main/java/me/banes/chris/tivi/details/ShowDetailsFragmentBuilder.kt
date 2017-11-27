@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.home.trending
+package me.banes.chris.tivi.details
 
 import android.arch.lifecycle.ViewModel
 import dagger.Binds
@@ -24,12 +24,12 @@ import dagger.multibindings.IntoMap
 import me.banes.chris.tivi.inject.ViewModelKey
 
 @Module
-internal abstract class TrendingBuilder {
+internal abstract class ShowDetailsFragmentBuilder {
     @ContributesAndroidInjector
-    internal abstract fun trendingShowsFragment(): TrendingShowsFragment
+    internal abstract fun showDetailsFragment(): ShowDetailsFragment
 
     @Binds
     @IntoMap
-    @ViewModelKey(TrendingShowsViewModel::class)
-    abstract fun bindTrendingShowsViewModel(viewModel: TrendingShowsViewModel): ViewModel
+    @ViewModelKey(ShowDetailsFragmentViewModel::class)
+    abstract fun bindShowDetailsFragmentViewModel(viewModel: ShowDetailsFragmentViewModel): ViewModel
 }

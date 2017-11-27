@@ -19,14 +19,14 @@ package me.banes.chris.tivi.home
 import dagger.Module
 import dagger.Provides
 import me.banes.chris.tivi.AppNavigator
+import me.banes.chris.tivi.TiviAppActivityNavigator
 import me.banes.chris.tivi.TiviAppNavigator
 import javax.inject.Singleton
 
 @Module
 class HomeModule {
     @Provides
-    @Singleton
     fun provideAppNavigator(activity: HomeActivity): AppNavigator {
-        return TiviAppNavigator(activity)
+        return TiviAppActivityNavigator(activity)
     }
 }
