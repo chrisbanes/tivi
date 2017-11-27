@@ -60,7 +60,7 @@ class BaselineGridTextView @JvmOverloads constructor(
             }
         }
 
-    var maxLinesByHeight = false
+    var maxLinesByHeight = true
         set(value) {
             if (field != value) {
                 field = value

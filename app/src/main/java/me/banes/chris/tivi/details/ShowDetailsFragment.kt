@@ -18,14 +18,14 @@ package me.banes.chris.tivi.details
 
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.graphics.Outline
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_show_details.*
@@ -88,6 +88,15 @@ class ShowDetailsFragment : TiviFragment() {
             }
             adapter = groupAdapter
         }
+
+        details_poster.clipToOutline = true
+        details_poster.outlineProvider = object : ViewOutlineProvider() {
+            private val radius = resources.getDimension(R.dimen.image_round_rect_radius)
+
+            override fun getOutline(view: View, outline: Outline) {
+                outline.setRoundRect(0, 0, view.width, view.height, radius)
+            }
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -109,8 +118,6 @@ class ShowDetailsFragment : TiviFragment() {
             details_poster.doWhenLaidOut {
                 Glide.with(this)
                         .load(imageUrlProvider.getPosterUrl(path, details_poster.width))
-                        .apply(RequestOptions.bitmapTransform(
-                                RoundedCorners(resources.getDimensionPixelSize(R.dimen.image_round_rect_radius))))
                         .into(details_poster)
             }
         }

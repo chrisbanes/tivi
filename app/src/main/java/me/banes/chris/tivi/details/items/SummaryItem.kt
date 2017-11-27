@@ -31,31 +31,27 @@ class SummaryItem(private val show: TiviShow) : TiviItem<TiviViewHolder>() {
 
     override fun getLayout() = R.layout.details_summary_item
 
-    override fun createViewHolder(itemView: View): TiviViewHolder {
-        itemView.apply {
-            setOnClickListener(object : View.OnClickListener {
-                val collapsedHeight = resources.getDimensionPixelSize(R.dimen.details_summary_collapsed)
-                val expandedHeight = resources.getDimensionPixelSize(R.dimen.details_summary_expanded)
-                val transition = ChangeBounds().apply {
-                    duration = 200
-                    interpolator = FastOutSlowInInterpolator()
-                }
-
-                override fun onClick(view: View) {
-                    TransitionManager.beginDelayedTransition(view as ViewGroup, transition)
-                    view.details_summary.maxHeight =
-                            if (view.details_summary.maxHeight < expandedHeight) expandedHeight else collapsedHeight
-                }
-            })
-        }
-        return super.createViewHolder(itemView)
-    }
-
     override fun bind(viewHolder: TiviViewHolder, position: Int) {
-        viewHolder.itemView.details_summary.apply {
-            text = show.summary
-        }
+        val resources = viewHolder.itemView.resources
+
+        viewHolder.itemView.setOnClickListener(MaxLinesToggleClickListener(
+                resources.getInteger(R.integer.details_summary_collapsed_lines)))
+
+        viewHolder.itemView.details_summary.text = show.summary
     }
 
     override fun isClickable() = false
+
+    private class MaxLinesToggleClickListener(private val collapsedLines: Int) : View.OnClickListener {
+        private val transition = ChangeBounds().apply {
+            duration = 200
+            interpolator = FastOutSlowInInterpolator()
+        }
+
+        override fun onClick(view: View) {
+            TransitionManager.beginDelayedTransition(view as ViewGroup, transition)
+            view.details_summary.maxLines =
+                    if (view.details_summary.maxLines > collapsedLines) collapsedLines else Int.MAX_VALUE
+        }
+    }
 }
