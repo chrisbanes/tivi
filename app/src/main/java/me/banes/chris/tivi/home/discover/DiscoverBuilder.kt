@@ -25,7 +25,6 @@ import me.banes.chris.tivi.inject.ViewModelKey
 
 @Module
 internal abstract class DiscoverBuilder {
-
     @ContributesAndroidInjector
     internal abstract fun discoverFragment(): DiscoverFragment
 
@@ -33,5 +32,4 @@ internal abstract class DiscoverBuilder {
     @IntoMap
     @ViewModelKey(DiscoverViewModel::class)
     abstract fun bindDiscoverViewModel(viewModel: DiscoverViewModel): ViewModel
-
 }

@@ -30,8 +30,8 @@ import me.banes.chris.tivi.inject.ViewModelKey
 
 @Module
 internal abstract class HomeBuilder {
-
     @ContributesAndroidInjector(modules = arrayOf(
+            HomeModule::class,
             DiscoverBuilder::class,
             TrendingBuilder::class,
             PopularBuilder::class,
@@ -48,5 +48,4 @@ internal abstract class HomeBuilder {
     @IntoMap
     @ViewModelKey(HomeNavigatorViewModel::class)
     abstract fun bindHomeNavigatorViewModel(viewModel: HomeNavigatorViewModel): ViewModel
-
 }

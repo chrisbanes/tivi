@@ -35,7 +35,6 @@ import javax.inject.Singleton
 
 @Module
 class AppModule {
-
     @Provides
     fun provideContext(application: TiviApplication): Context {
         return application.applicationContext
@@ -71,6 +70,7 @@ class AppModule {
 
     @Provides
     @Singleton
+    @Named("app")
     fun provideAppNavigator(context: Context): AppNavigator {
         return TiviAppNavigator(context)
     }

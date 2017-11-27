@@ -16,6 +16,7 @@
 
 package me.banes.chris.tivi
 
+import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -23,19 +24,23 @@ import me.banes.chris.tivi.details.ShowDetailsActivity
 import me.banes.chris.tivi.settings.SettingsActivity
 import me.banes.chris.tivi.trakt.TraktConstants
 
-internal class TiviAppNavigator(private val context: Context) : AppNavigator {
+internal open class TiviAppNavigator(private val context: Context) : AppNavigator {
     override fun provideAuthHandleResponseIntent(requestCode: Int): PendingIntent {
         val intent = Intent(TraktConstants.INTENT_ACTION_HANDLE_AUTH_RESPONSE)
         return PendingIntent.getActivity(context, requestCode, intent, 0)
     }
 
     override fun startShowDetails(id: Long, sharedElements: SharedElementHelper?) {
-        context.startActivity(
-                ShowDetailsActivity.createIntent(context, id),
-                sharedElements?.applyToIntent(context))
+        context.startActivity(ShowDetailsActivity.createIntent(context, id))
     }
 
     override fun startSettings() {
         context.startActivity(Intent(context, SettingsActivity::class.java))
+    }
+}
+
+internal class TiviAppActivityNavigator(private val activity: Activity) : TiviAppNavigator(activity) {
+    override fun startShowDetails(id: Long, sharedElements: SharedElementHelper?) {
+        activity.startActivity(ShowDetailsActivity.createIntent(activity, id), sharedElements?.applyToIntent(activity))
     }
 }

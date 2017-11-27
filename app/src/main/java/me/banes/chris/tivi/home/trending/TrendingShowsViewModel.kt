@@ -32,6 +32,6 @@ class TrendingShowsViewModel @Inject constructor(
     }
 
     fun onItemClicked(item: TrendingListItem, navigator: HomeNavigator) {
-        navigator.showShowDetails(item.show!!)
+        navigator.showShowDetails(item.show!!, null) // TODO
     }
 }
