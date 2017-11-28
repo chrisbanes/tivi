@@ -21,7 +21,7 @@ buildscript {
             'constraint_layout': '1.1.0-beta3',
             'arch_comp'        : '1.0.0',
             'arch_comp_paging' : '1.0.0-alpha3',
-            'kotlin'           : '1.1.61',
+            'kotlin'           : '1.2.0',
             'espresso'         : '3.0.1',
             'dagger'           : '2.13',
             'ktlint'           : '0.10.0',
