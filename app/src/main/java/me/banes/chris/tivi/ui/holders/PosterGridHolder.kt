@@ -30,7 +30,7 @@ class PosterGridHolder(itemView: View) : TiviViewHolder(itemView) {
 
     fun bindShow(posterPath: String?,
             title: String?,
-            transitionName: String? = null,
+            name: String? = null,
             annotation: String? = null,
             annotationDrawable: Drawable? = null) {
         show_title.text = title
@@ -51,6 +51,10 @@ class PosterGridHolder(itemView: View) : TiviViewHolder(itemView) {
             show_annotation.visibility = View.GONE
         }
 
-        itemView.transitionName = transitionName
+        itemView.apply {
+            transitionName = name
+            translationX = 0f
+            translationY = 0f
+        }
     }
 }

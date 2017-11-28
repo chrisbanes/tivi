@@ -16,8 +16,10 @@
 
 package me.banes.chris.tivi.details
 
+import android.animation.ObjectAnimator
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.support.v7.graphics.Palette
@@ -43,7 +45,9 @@ import me.banes.chris.tivi.extensions.doWhenLaidOut
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.GlidePaletteListener
+import me.banes.chris.tivi.ui.NoopApplyWindowInsetsListener
 import me.banes.chris.tivi.ui.RoundRectViewOutline
+import me.banes.chris.tivi.ui.transitions.DrawableAlphaProperty
 import me.banes.chris.tivi.util.ScrimUtil
 import javax.inject.Inject
 
@@ -92,9 +96,7 @@ class ShowDetailsFragment : TiviFragment() {
             adapter = groupAdapter
         }
 
-        details_backdrop.setOnApplyWindowInsetsListener { _, windowInsets ->
-            windowInsets
-        }
+        details_backdrop.setOnApplyWindowInsetsListener(NoopApplyWindowInsetsListener)
 
         details_poster.clipToOutline = true
         details_poster.outlineProvider = RoundRectViewOutline
@@ -110,15 +112,17 @@ class ShowDetailsFragment : TiviFragment() {
 
     private fun onBackdropPaletteLoaded(palette: Palette) {
         palette.dominantSwatch?.let {
-            details_coordinator.setBackgroundColor(it.rgb)
+            val background = ColorDrawable(it.rgb)
+            details_coordinator.background = background
+            ObjectAnimator.ofInt(background, DrawableAlphaProperty, 0, 255).start()
 
             val scrim = ScrimUtil.makeCubicGradientScrimDrawable(it.rgb, 10, Gravity.BOTTOM)
             val drawable = LayerDrawable(arrayOf(scrim)).apply {
                 setLayerGravity(0, Gravity.FILL)
                 setLayerInsetTop(0, details_backdrop.height / 2)
             }
-
             details_backdrop.foreground = drawable
+            ObjectAnimator.ofInt(drawable, DrawableAlphaProperty, 0, 255).start()
         }
     }
 
@@ -149,5 +153,7 @@ class ShowDetailsFragment : TiviFragment() {
             add(RuntimeItem(show))
             add(SummaryItem(show))
         }
+
+        scheduleStartPostponedTransitions()
     }
 }

@@ -21,6 +21,7 @@ import android.os.Bundle
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import me.banes.chris.tivi.R
+import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.TrendingListItem
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.HomeNavigatorViewModel
@@ -49,19 +50,25 @@ class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsV
 
     override fun createAdapter(spanCount: Int): ShowPosterGridAdapter<TrendingListItem> {
         val placeholderIcon = context?.getDrawable(R.drawable.ic_eye_12dp)
-        return ShowPosterGridAdapter(spanCount) { item, holder ->
-            val show = item.show!!
-            val entry = item.entry
-            holder.bindShow(show.tmdbPosterPath,
-                    show.title,
-                    show.homepage,
-                    entry?.watchers.toString(),
-                    placeholderIcon?.mutate())
-
-            // FIXME do something better here
-            holder.itemView.setOnClickListener {
-                viewModel.onItemClicked(item, homeNavigator)
+        return super.createAdapter(spanCount).apply {
+            showBinder = { item, holder ->
+                val show = item.show!!
+                val entry = item.entry
+                holder.bindShow(show.tmdbPosterPath,
+                        show.title,
+                        show.homepage,
+                        entry?.watchers.toString(),
+                        placeholderIcon?.mutate())
+            }
+            itemClickListener = { item, viewHolder ->
+                val sharedElements = SharedElementHelper()
+                sharedElements.addSharedElement(viewHolder.itemView, "poster")
+                viewModel.onItemClicked(item, homeNavigator, sharedElements)
             }
         }
+    }
+
+    override fun canStartTransition(): Boolean {
+        return adapter.itemCount > 0
     }
 }

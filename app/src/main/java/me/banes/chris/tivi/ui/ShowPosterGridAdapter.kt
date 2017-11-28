@@ -27,10 +27,7 @@ import me.banes.chris.tivi.extensions.inflateView
 import me.banes.chris.tivi.ui.holders.LoadingViewHolder
 import me.banes.chris.tivi.ui.holders.PosterGridHolder
 
-open class ShowPosterGridAdapter<LI : ListItem<out Entry>>(
-        private val columnCount: Int,
-        private val showBinder: ((LI, PosterGridHolder) -> Unit)? = null
-) : PagedListAdapter<LI, RecyclerView.ViewHolder>(TiviShowDiffCallback<LI>()) {
+open class ShowPosterGridAdapter<LI : ListItem<out Entry>>(private val columnCount: Int) : PagedListAdapter<LI, RecyclerView.ViewHolder>(TiviShowDiffCallback<LI>()) {
 
     companion object {
         const val TYPE_ITEM = 0
@@ -53,6 +50,9 @@ open class ShowPosterGridAdapter<LI : ListItem<out Entry>>(
                 field = value
             }
         }
+
+    var showBinder: ((LI, PosterGridHolder) -> Unit)? = null
+    var itemClickListener: ((LI, PosterGridHolder) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -91,6 +91,12 @@ open class ShowPosterGridAdapter<LI : ListItem<out Entry>>(
     private fun bindEntry(entry: LI, holder: PosterGridHolder) {
         val show = entry.show!!
         showBinder?.invoke(entry, holder) ?: holder.bindShow(show.tmdbPosterPath, show.title, show.homepage)
+
+        if (itemClickListener != null) {
+            holder.itemView.setOnClickListener {
+                itemClickListener?.invoke(entry, holder)
+            }
+        }
     }
 
     private fun bindPlaceholder(entry: LI?, holder: PosterGridHolder) {

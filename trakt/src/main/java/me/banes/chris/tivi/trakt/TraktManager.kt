@@ -44,7 +44,7 @@ import javax.inject.Singleton
 @Singleton
 class TraktManager @Inject constructor(
         private val schedulers: AppRxSchedulers,
-        private val appNavigator: AppNavigator,
+        @Named("app") private val appNavigator: AppNavigator,
         private val requestProvider: Provider<AuthorizationRequest>,
         private val authService: AuthorizationService,
         private val clientAuth: Lazy<ClientAuthentication>,

@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.home.trending
+package me.banes.chris.tivi.ui.transitions
 
-import android.arch.lifecycle.ViewModel
-import dagger.Binds
-import dagger.Module
-import dagger.android.ContributesAndroidInjector
-import dagger.multibindings.IntoMap
-import me.banes.chris.tivi.inject.ViewModelKey
+import android.graphics.drawable.Drawable
+import android.util.Property
 
-@Module
-internal abstract class TrendingBuilder {
-    @ContributesAndroidInjector
-    internal abstract fun trendingShowsFragment(): TrendingShowsFragment
+object DrawableAlphaProperty : Property<Drawable, Int>(Int::class.java, "drawableAlpha") {
+    override fun set(d: Drawable, value: Int) { d.alpha = value }
 
-    @Binds
-    @IntoMap
-    @ViewModelKey(TrendingShowsViewModel::class)
-    abstract fun bindTrendingShowsViewModel(viewModel: TrendingShowsViewModel): ViewModel
+    override fun get(d: Drawable): Int = d.alpha
 }

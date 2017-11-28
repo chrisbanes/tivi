@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.home.trending
+package me.banes.chris.tivi.ui
 
-import android.arch.lifecycle.ViewModel
-import dagger.Binds
-import dagger.Module
-import dagger.android.ContributesAndroidInjector
-import dagger.multibindings.IntoMap
-import me.banes.chris.tivi.inject.ViewModelKey
+import android.view.View
+import android.view.WindowInsets
 
-@Module
-internal abstract class TrendingBuilder {
-    @ContributesAndroidInjector
-    internal abstract fun trendingShowsFragment(): TrendingShowsFragment
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(TrendingShowsViewModel::class)
-    abstract fun bindTrendingShowsViewModel(viewModel: TrendingShowsViewModel): ViewModel
+object NoopApplyWindowInsetsListener : View.OnApplyWindowInsetsListener {
+    override fun onApplyWindowInsets(view: View, insets: WindowInsets): WindowInsets = insets
 }

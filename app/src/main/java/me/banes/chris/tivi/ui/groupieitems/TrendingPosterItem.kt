@@ -16,19 +16,12 @@
 
 package me.banes.chris.tivi.ui.groupieitems
 
-import android.view.View
-import com.xwray.groupie.Item
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.ui.holders.PosterGridHolder
 
-internal class TrendingPosterItem(val entry: TrendingEntry, val show: TiviShow) : Item<PosterGridHolder>() {
-
-    override fun getLayout() = R.layout.grid_item
-
-    override fun createViewHolder(itemView: View): PosterGridHolder = PosterGridHolder(itemView)
-
+internal class TrendingPosterItem(val entry: TrendingEntry, show: TiviShow) : ShowPosterItem(show) {
     override fun bind(viewHolder: PosterGridHolder, position: Int) {
         val drawable = viewHolder.itemView.context.getDrawable(R.drawable.ic_eye_12dp)
         viewHolder.bindShow(
@@ -38,8 +31,4 @@ internal class TrendingPosterItem(val entry: TrendingEntry, val show: TiviShow) 
                 entry.watchers.toString(),
                 drawable)
     }
-
-    override fun getSpanSize(spanCount: Int, position: Int) = 1
-
-    override fun getId(): Long = show.id!!
 }

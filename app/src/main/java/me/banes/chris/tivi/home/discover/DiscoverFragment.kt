@@ -27,23 +27,20 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_summary.*
 import me.banes.chris.tivi.R
+import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.TrendingEntry
-import me.banes.chris.tivi.extensions.doOnPreDraw
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeFragment
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.HomeNavigatorViewModel
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.POPULAR
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
-import me.banes.chris.tivi.ui.SharedElementHelper
 import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
-import me.banes.chris.tivi.ui.groupieitems.PopularPosterItem
 import me.banes.chris.tivi.ui.groupieitems.PopularPosterSection
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
-import me.banes.chris.tivi.ui.groupieitems.TrendingPosterItem
 import me.banes.chris.tivi.ui.groupieitems.TrendingPosterSection
 import me.banes.chris.tivi.util.GridToGridTransitioner
 
@@ -68,6 +65,9 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel.data.observeK(this) {
+            if (it != null && !it.isEmpty() && groupAdapter.itemCount == 0) {
+                scheduleStartPostponedTransitions()
+            }
             it?.run {
                 sectionHelper.update(it.map { it.section to it.items }.toMap())
             }
@@ -81,11 +81,7 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val container = view.parent as ViewGroup
         postponeEnterTransition()
-        container.doOnPreDraw {
-            startPostponedEnterTransition()
-        }
 
         gridLayoutManager = summary_rv.layoutManager as GridLayoutManager
         gridLayoutManager.spanSizeLookup = groupAdapter.spanSizeLookup
@@ -114,9 +110,11 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
                         viewModel.onSectionHeaderClicked(homeNavigator, section, sharedElements)
                     }
-                    is ShowPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
-                    is PopularPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
-                    is TrendingPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
+                    is ShowPosterItem -> {
+                        val sharedElements = SharedElementHelper()
+                        sectionHelper.addSharedElementForItem(item, sharedElements, "poster")
+                        viewModel.onItemPostedClicked(homeNavigator, item.show, sharedElements)
+                    }
                 }
             }
         }
@@ -148,5 +146,9 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
             smoothScrollToPosition(0)
         }
         summary_appbarlayout.setExpanded(true)
+    }
+
+    override fun canStartTransition(): Boolean {
+        return groupAdapter.itemCount > 0
     }
 }

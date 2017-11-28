@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.home.trending
+package me.banes.chris.tivi.home
 
-import android.arch.lifecycle.ViewModel
-import dagger.Binds
 import dagger.Module
-import dagger.android.ContributesAndroidInjector
-import dagger.multibindings.IntoMap
-import me.banes.chris.tivi.inject.ViewModelKey
+import dagger.Provides
+import me.banes.chris.tivi.AppNavigator
+import me.banes.chris.tivi.TiviAppActivityNavigator
 
 @Module
-internal abstract class TrendingBuilder {
-    @ContributesAndroidInjector
-    internal abstract fun trendingShowsFragment(): TrendingShowsFragment
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(TrendingShowsViewModel::class)
-    abstract fun bindTrendingShowsViewModel(viewModel: TrendingShowsViewModel): ViewModel
+class HomeModule {
+    @Provides
+    fun provideAppNavigator(activity: HomeActivity): AppNavigator {
+        return TiviAppActivityNavigator(activity)
+    }
 }

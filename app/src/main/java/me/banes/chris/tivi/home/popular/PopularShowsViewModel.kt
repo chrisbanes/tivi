@@ -16,6 +16,7 @@
 
 package me.banes.chris.tivi.home.popular
 
+import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.PopularListItem
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.trakt.calls.PopularCall
@@ -29,5 +30,9 @@ class PopularShowsViewModel @Inject constructor(
 ) : EntryViewModel<PopularListItem>(schedulers, call) {
     fun onUpClicked(navigator: HomeNavigator) {
         navigator.onUpClicked()
+    }
+
+    fun onItemClicked(item: PopularListItem, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
+        navigator.showShowDetails(item.show!!, sharedElements)
     }
 }

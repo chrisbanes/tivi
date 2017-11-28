@@ -18,6 +18,7 @@ package me.banes.chris.tivi.home.library
 
 import android.arch.lifecycle.MutableLiveData
 import me.banes.chris.tivi.AppNavigator
+import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TiviShow
@@ -28,7 +29,6 @@ import me.banes.chris.tivi.home.library.LibraryViewModel.Section.WATCHED
 import me.banes.chris.tivi.home.library.LibraryViewModel.Section.WHATS_NEXT
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.WatchedCall
-import me.banes.chris.tivi.ui.SharedElementHelper
 import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
 import javax.inject.Inject
@@ -78,7 +78,7 @@ class LibraryViewModel @Inject constructor(
     }
 
     fun onItemPostedClicked(navigator: HomeNavigator, show: TiviShow) {
-        navigator.showShowDetails(show)
+        navigator.showShowDetails(show, null) // TODO
     }
 
 }
