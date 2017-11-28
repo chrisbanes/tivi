@@ -32,6 +32,7 @@ import android.support.v7.widget.RecyclerView
 import android.util.Property
 import android.view.View
 import android.view.ViewGroup
+import me.banes.chris.tivi.ui.transitions.DrawableAlphaProperty
 
 /**
  * This transition captures the layout bounds of target views before and after
@@ -246,7 +247,7 @@ class ColumnedChangeBounds : Transition() {
 
         when {
             startAlpha != endAlpha -> {
-                val alphaAnim = ObjectAnimator.ofInt(drawable.drawable, DRAWABLE_ALPHA, startAlpha, endAlpha)
+                val alphaAnim = ObjectAnimator.ofInt(drawable.drawable, DrawableAlphaProperty, startAlpha, endAlpha)
                 anim = AnimatorSet().apply { playTogether(moveAnim, alphaAnim) }
             }
             else -> {
@@ -361,14 +362,6 @@ class ColumnedChangeBounds : Transition() {
         private val BOTTOM_RIGHT_PROPERTY = object : Property<PointFBounds, PointF>(PointF::class.java, "bottomRight") {
             override fun set(bounds: PointFBounds, bottomRight: PointF) = bounds.setBottomRight(bottomRight)
             override fun get(bounds: PointFBounds): PointF? = null
-        }
-
-        private val DRAWABLE_ALPHA = object : Property<Drawable, Int>(Int::class.java, "drawableAlpha") {
-            override fun set(d: Drawable, value: Int) {
-                d.alpha = value
-            }
-
-            override fun get(d: Drawable): Int = d.alpha
         }
     }
 }
