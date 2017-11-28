@@ -63,6 +63,10 @@ android {
         targetSdkVersion 27
         versionCode 9
         versionName "0.1.9"
+
+        // For now we're sticking to just shipping APKs
+        resConfigs "en"
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         playAccountConfig = playAccountConfigs.defaultAccountConfig
@@ -108,6 +112,7 @@ android {
 
         release {
             signingConfig signingConfigs.release
+            shrinkResources true
             minifyEnabled true
             proguardFiles 'proguard-rules.pro'
 
