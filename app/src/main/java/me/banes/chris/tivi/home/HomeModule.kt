@@ -20,8 +20,6 @@ import dagger.Module
 import dagger.Provides
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.TiviAppActivityNavigator
-import me.banes.chris.tivi.TiviAppNavigator
-import javax.inject.Singleton
 
 @Module
 class HomeModule {

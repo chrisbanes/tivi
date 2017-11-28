@@ -20,6 +20,7 @@ import android.arch.lifecycle.MutableLiveData
 import io.reactivex.Flowable
 import io.reactivex.functions.BiFunction
 import me.banes.chris.tivi.AppNavigator
+import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.PopularListItem
@@ -33,7 +34,6 @@ import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.PopularCall
 import me.banes.chris.tivi.trakt.calls.TrendingCall
-import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
 import javax.inject.Inject

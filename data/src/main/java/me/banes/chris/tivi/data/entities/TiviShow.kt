@@ -18,11 +18,9 @@ package me.banes.chris.tivi.data.entities
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
-import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.OffsetDateTime
-import java.security.cert.Certificate
 import kotlin.reflect.KMutableProperty0
 
 @Entity(tableName = "shows",
