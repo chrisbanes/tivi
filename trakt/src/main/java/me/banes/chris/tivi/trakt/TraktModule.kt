@@ -37,7 +37,6 @@ import javax.inject.Singleton
 
 @Module
 class TraktModule {
-
     @Singleton
     @Provides
     fun provideAuthConfig(): AuthorizationServiceConfiguration {
@@ -87,5 +86,4 @@ class TraktModule {
             }
         }
     }
-
 }

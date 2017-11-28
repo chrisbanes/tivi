@@ -25,7 +25,6 @@ import me.banes.chris.tivi.inject.ViewModelKey
 
 @Module
 internal abstract class WatchedShowsBuilder {
-
     @ContributesAndroidInjector
     internal abstract fun libraryFragment(): WatchedShowsFragment
 
@@ -33,5 +32,4 @@ internal abstract class WatchedShowsBuilder {
     @IntoMap
     @ViewModelKey(WatchedShowsViewModel::class)
     abstract fun bindLibraryViewModel(viewModel: WatchedShowsViewModel): ViewModel
-
 }

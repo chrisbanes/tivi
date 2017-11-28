@@ -24,7 +24,6 @@ import javax.inject.Singleton
 
 @Module
 class NetworkModule {
-
     @Singleton
     @Provides
     fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
@@ -34,5 +33,4 @@ class NetworkModule {
             }
         }
     }
-
 }

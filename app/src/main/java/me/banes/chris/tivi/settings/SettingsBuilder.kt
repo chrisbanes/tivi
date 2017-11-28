@@ -21,8 +21,6 @@ import dagger.android.ContributesAndroidInjector
 
 @Module
 internal abstract class SettingsBuilder {
-
     @ContributesAndroidInjector
     internal abstract fun settingsActivity(): SettingsActivity
-
 }

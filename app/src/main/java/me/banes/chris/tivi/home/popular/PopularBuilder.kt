@@ -25,7 +25,6 @@ import me.banes.chris.tivi.inject.ViewModelKey
 
 @Module
 internal abstract class PopularBuilder {
-
     @ContributesAndroidInjector
     internal abstract fun popularShowsFragment(): PopularShowsFragment
 
@@ -33,5 +32,4 @@ internal abstract class PopularBuilder {
     @IntoMap
     @ViewModelKey(PopularShowsViewModel::class)
     abstract fun bindPopularShowsViewModel(viewModel: PopularShowsViewModel): ViewModel
-
 }

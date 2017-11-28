@@ -25,7 +25,6 @@ import me.banes.chris.tivi.inject.ViewModelKey
 
 @Module
 internal abstract class LibraryBuilder {
-
     @ContributesAndroidInjector
     internal abstract fun libraryFragment(): LibraryFragment
 
@@ -33,5 +32,4 @@ internal abstract class LibraryBuilder {
     @IntoMap
     @ViewModelKey(LibraryViewModel::class)
     abstract fun bindLibraryViewModel(viewModel: LibraryViewModel): ViewModel
-
 }

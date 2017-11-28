@@ -54,5 +54,4 @@ class TrendingCall @Inject constructor(
 
     override fun loadShow(response: TrendingShow): Maybe<TiviShow> =
             traktShowFetcher.getShow(response.show.ids.trakt, response.show)
-
 }

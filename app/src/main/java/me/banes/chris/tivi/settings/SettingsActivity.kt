@@ -27,5 +27,4 @@ class SettingsActivity : TiviActivity() {
                 .replace(android.R.id.content, SettingsFragment())
                 .commit()
     }
-
 }

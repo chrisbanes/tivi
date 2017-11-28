@@ -39,8 +39,6 @@ object ScrimUtil {
      * details.
      */
     fun makeCubicGradientScrimDrawable(@ColorInt baseColor: Int, numStops: Int, gravity: Int): Drawable {
-        var numStops = numStops
-
         // Generate a cache key by hashing together the inputs, based on the method described in the Effective Java book
         var cacheKeyHash = baseColor
         cacheKeyHash = 31 * cacheKeyHash + numStops
@@ -50,8 +48,6 @@ object ScrimUtil {
         if (cachedGradient != null) {
             return cachedGradient
         }
-
-        numStops = Math.max(numStops, 2)
 
         val paintDrawable = PaintDrawable()
         paintDrawable.shape = RectShape()

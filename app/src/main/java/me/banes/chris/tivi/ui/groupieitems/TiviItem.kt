@@ -21,5 +21,6 @@ import com.xwray.groupie.Item
 import me.banes.chris.tivi.ui.holders.TiviViewHolder
 
 abstract class TiviItem<VH : TiviViewHolder> : Item<VH>() {
+    @Suppress("UNCHECKED_CAST")
     override fun createViewHolder(itemView: View): VH = TiviViewHolder(itemView) as VH
 }

@@ -24,9 +24,10 @@ import org.threeten.bp.OffsetDateTime
 import kotlin.reflect.KMutableProperty0
 
 @Entity(tableName = "shows",
-        indices = arrayOf(
-                Index(value = "trakt_id", unique = true),
-                Index(value = "tmdb_id", unique = true)))
+        indices = [
+            Index(value = "trakt_id", unique = true),
+            Index(value = "tmdb_id", unique = true)
+        ])
 data class TiviShow(
         @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") var id: Long? = null,
         @ColumnInfo(name = "title") var title: String? = null,

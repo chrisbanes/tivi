@@ -29,17 +29,17 @@ import me.banes.chris.tivi.trakt.TraktModule
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = arrayOf(
-        AndroidSupportInjectionModule::class,
-        AppModule::class,
-        DatabaseModule::class,
-        ViewModelBuilder::class,
-        HomeBuilder::class,
-        ShowDetailsBuilder::class,
-        TraktModule::class,
-        TmdbModule::class,
-        NetworkModule::class,
-        SettingsBuilder::class))
+@Component(modules = [
+    AndroidSupportInjectionModule::class,
+    AppModule::class,
+    DatabaseModule::class,
+    ViewModelBuilder::class,
+    HomeBuilder::class,
+    ShowDetailsBuilder::class,
+    TraktModule::class,
+    TmdbModule::class,
+    NetworkModule::class,
+    SettingsBuilder::class])
 interface AppComponent : AndroidInjector<TiviApplication> {
     @Component.Builder
     abstract class Builder : AndroidInjector.Builder<TiviApplication>()

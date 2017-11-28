@@ -28,7 +28,6 @@ import javax.inject.Singleton
 
 @Module
 class TmdbModule {
-
     @Singleton
     @Provides
     fun provideTmdb(@Named("cache") cacheDir: File, interceptor: HttpLoggingInterceptor): Tmdb {
@@ -45,5 +44,5 @@ class TmdbModule {
 
     @Singleton
     @Provides
-    fun provideTmdbImageUrlProvider() : TmdbImageUrlProvider = TmdbImageUrlProvider(TmdbImageSizes)
+    fun provideTmdbImageUrlProvider(): TmdbImageUrlProvider = TmdbImageUrlProvider(TmdbImageSizes)
 }
