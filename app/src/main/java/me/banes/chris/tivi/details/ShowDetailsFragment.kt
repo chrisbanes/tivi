@@ -43,6 +43,7 @@ import me.banes.chris.tivi.extensions.doWhenLaidOut
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.GlidePaletteListener
+import me.banes.chris.tivi.ui.NoopApplyWindowInsetsListener
 import me.banes.chris.tivi.ui.RoundRectViewOutline
 import me.banes.chris.tivi.util.ScrimUtil
 import javax.inject.Inject
@@ -92,9 +93,7 @@ class ShowDetailsFragment : TiviFragment() {
             adapter = groupAdapter
         }
 
-        details_backdrop.setOnApplyWindowInsetsListener { _, windowInsets ->
-            windowInsets
-        }
+        details_backdrop.setOnApplyWindowInsetsListener(NoopApplyWindowInsetsListener)
 
         details_poster.clipToOutline = true
         details_poster.outlineProvider = RoundRectViewOutline
@@ -149,5 +148,7 @@ class ShowDetailsFragment : TiviFragment() {
             add(RuntimeItem(show))
             add(SummaryItem(show))
         }
+
+        scheduleStartPostponedTransitions()
     }
 }

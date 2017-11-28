@@ -21,6 +21,7 @@ import android.support.transition.TransitionInflater
 import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
+import me.banes.chris.tivi.extensions.doOnPreDraw
 
 /**
  * Base fragment class which supports LifecycleOwner and Dagger injection.
@@ -79,4 +80,10 @@ abstract class TiviFragment : DaggerFragment() {
         container.requestApplyInsets()
     }
 
+    protected fun scheduleStartPostponedTransitions() {
+        (view?.parent as ViewGroup).doOnPreDraw {
+            startPostponedEnterTransition()
+            activity?.startPostponedEnterTransition()
+        }
+    }
 }

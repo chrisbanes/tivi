@@ -31,7 +31,6 @@ import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.TrendingEntry
-import me.banes.chris.tivi.extensions.doOnPreDraw
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeFragment
 import me.banes.chris.tivi.home.HomeNavigator
@@ -66,9 +65,21 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel.data.observeK(this) {
+            if (it != null && !it.isEmpty() && groupAdapter.itemCount == 0) {
+                scheduleStartPostponedTransitions()
+            }
             it?.run {
                 sectionHelper.update(it.map { it.section to it.items }.toMap())
             }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        if (groupAdapter.itemCount > 0) {
+            // If we already have a items, we might need to start our Activity transition
+            scheduleStartPostponedTransitions()
         }
     }
 
@@ -79,11 +90,7 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val container = view.parent as ViewGroup
         postponeEnterTransition()
-        container.doOnPreDraw {
-            startPostponedEnterTransition()
-        }
 
         gridLayoutManager = summary_rv.layoutManager as GridLayoutManager
         gridLayoutManager.spanSizeLookup = groupAdapter.spanSizeLookup
@@ -112,7 +119,11 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
                         viewModel.onSectionHeaderClicked(homeNavigator, section, sharedElements)
                     }
-                    is ShowPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
+                    is ShowPosterItem -> {
+                        val sharedElements = SharedElementHelper()
+                        sectionHelper.addSharedElementForItem(item, sharedElements, "poster")
+                        viewModel.onItemPostedClicked(homeNavigator, item.show, sharedElements)
+                    }
                 }
             }
         }

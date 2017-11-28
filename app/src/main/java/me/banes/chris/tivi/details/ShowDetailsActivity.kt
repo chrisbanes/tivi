@@ -37,6 +37,8 @@ class ShowDetailsActivity : TiviActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_details)
+
+        postponeEnterTransition()
     }
 
     override fun handleIntent(intent: Intent) {

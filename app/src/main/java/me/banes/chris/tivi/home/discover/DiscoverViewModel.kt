@@ -91,7 +91,7 @@ internal class DiscoverViewModel @Inject constructor(
         }
     }
 
-    fun onItemPostedClicked(navigator: HomeNavigator, show: TiviShow) {
-        navigator.showShowDetails(show, null) // TODO
+    fun onItemPostedClicked(navigator: HomeNavigator, show: TiviShow, sharedElements: SharedElementHelper?) {
+        navigator.showShowDetails(show, sharedElements)
     }
 }

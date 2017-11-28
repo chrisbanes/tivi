@@ -27,8 +27,7 @@ import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.extensions.filterItems
 import me.banes.chris.tivi.ui.groupieitems.EmptyPlaceholderItem
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
-import me.banes.chris.tivi.ui.groupieitems.PopularPosterItem
-import me.banes.chris.tivi.ui.groupieitems.TrendingPosterItem
+import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
 
 class SectionedHelper<S>(
         private val recyclerView: RecyclerView,
@@ -58,13 +57,19 @@ class SectionedHelper<S>(
     fun addSharedElementsForSection(section: S, sharedElements: SharedElementHelper) {
         sectionMap[section]!!
                 .filterItems { it.layout == R.layout.grid_item }
-                .forEach { item ->
-                    val adapterPos = adapter.getAdapterPosition(item)
-                    val vh = recyclerView.findViewHolderForAdapterPosition(adapterPos)
-                    when (item) {
-                        is PopularPosterItem -> { sharedElements.addSharedElement(vh.itemView, item.show.homepage) }
-                        is TrendingPosterItem -> { sharedElements.addSharedElement(vh.itemView, item.show.homepage) }
+                .forEach {
+                    if (it is ShowPosterItem) {
+                        addSharedElementForItem(it, sharedElements)
                     }
                 }
+    }
+
+    fun addSharedElementForItem(
+            item: ShowPosterItem,
+            sharedElements: SharedElementHelper,
+            name: String? = item.show.homepage) {
+        val adapterPos = adapter.getAdapterPosition(item)
+        val vh = recyclerView.findViewHolderForAdapterPosition(adapterPos)
+        sharedElements.addSharedElement(vh.itemView, name)
     }
 }

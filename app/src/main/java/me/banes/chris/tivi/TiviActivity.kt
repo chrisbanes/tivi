@@ -16,6 +16,7 @@
 
 package me.banes.chris.tivi
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatDelegate
@@ -64,6 +65,17 @@ abstract class TiviActivity : DaggerAppCompatActivity() {
         }
     }
 
-    open fun handleIntent(intent: Intent) {
+    open fun handleIntent(intent: Intent) {}
+
+    override fun finishAfterTransition() {
+        val resultData = Intent()
+        val result = onPopulateResultIntent(resultData)
+        setResult(result, resultData)
+
+        super.finishAfterTransition()
+    }
+
+    open fun onPopulateResultIntent(intent: Intent) : Int {
+        return Activity.RESULT_OK
     }
 }

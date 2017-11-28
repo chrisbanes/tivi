@@ -22,7 +22,7 @@ import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.ui.holders.PosterGridHolder
 
-open internal class ShowPosterItem(val show: TiviShow) : Item<PosterGridHolder>() {
+open class ShowPosterItem(val show: TiviShow) : Item<PosterGridHolder>() {
 
     override fun getLayout() = R.layout.grid_item
 
