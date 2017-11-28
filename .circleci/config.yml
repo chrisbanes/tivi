@@ -33,7 +33,7 @@ jobs:
           command: signing/setup.sh $ENCRYPT_KEY
       - run:
           name: Check and assemble APKs
-          command: ./gradlew clean check dependencyUpdates --no-daemon
+          command: ./gradlew check assemble dependencyUpdates --no-daemon
       - run:
           name: Cleanup secrets
           command: signing/cleanup.sh
