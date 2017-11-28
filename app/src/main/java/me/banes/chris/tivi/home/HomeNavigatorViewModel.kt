@@ -23,9 +23,10 @@ import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.util.SingleLiveEvent
 import javax.inject.Inject
+import javax.inject.Provider
 
 class HomeNavigatorViewModel @Inject constructor(
-        private val appNavigator: AppNavigator
+        private val appNavigatorProvider: Provider<AppNavigator>
 ) : ViewModel(), HomeNavigator {
 
     override fun showPopular(sharedElements: SharedElementHelper?) {
@@ -42,7 +43,7 @@ class HomeNavigatorViewModel @Inject constructor(
 
     override fun showShowDetails(show: TiviShow, sharedElements: SharedElementHelper?) {
         if (show.id != null) {
-            appNavigator.startShowDetails(show.id!!, sharedElements)
+            appNavigatorProvider.get().startShowDetails(show.id!!, sharedElements)
         }
     }
 
