@@ -66,6 +66,9 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         super.onActivityCreated(savedInstanceState)
 
         viewModel.data.observeK(this) {
+            if (it != null && !it.isEmpty() && groupAdapter.itemCount == 0) {
+                scheduleStartPostponedTransitions()
+            }
             it?.run {
                 sectionHelper.update(it.map { it.section to it.items }.toMap())
             }
@@ -120,6 +123,10 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
                 onMenuItemClicked(it)
             }
         }
+    }
+
+    override fun canStartTransition(): Boolean {
+        return groupAdapter.itemCount > 0
     }
 
     override fun getMenu(): Menu? = summary_toolbar.menu

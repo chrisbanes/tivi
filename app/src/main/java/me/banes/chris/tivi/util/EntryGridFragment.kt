@@ -52,7 +52,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
 
     protected lateinit var viewModel: VM
 
-    private lateinit var adapter: ShowPosterGridAdapter<LI>
+    protected lateinit var adapter: ShowPosterGridAdapter<LI>
     private lateinit var swipeRefreshLatch: ProgressTimeLatch
 
     private var originalRvTopPadding = 0

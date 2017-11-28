@@ -74,15 +74,6 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        if (groupAdapter.itemCount > 0) {
-            // If we already have a items, we might need to start our Activity transition
-            scheduleStartPostponedTransitions()
-        }
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_summary, container, false)
     }
@@ -155,5 +146,9 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
             smoothScrollToPosition(0)
         }
         summary_appbarlayout.setExpanded(true)
+    }
+
+    override fun canStartTransition(): Boolean {
+        return groupAdapter.itemCount > 0
     }
 }

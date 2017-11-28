@@ -75,7 +75,7 @@ abstract class TiviActivity : DaggerAppCompatActivity() {
         super.finishAfterTransition()
     }
 
-    open fun onPopulateResultIntent(intent: Intent) : Int {
+    open fun onPopulateResultIntent(intent: Intent): Int {
         return Activity.RESULT_OK
     }
 }

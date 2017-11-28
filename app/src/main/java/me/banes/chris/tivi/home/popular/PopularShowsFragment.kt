@@ -21,9 +21,11 @@ import android.os.Bundle
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import me.banes.chris.tivi.R
+import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.PopularListItem
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.HomeNavigatorViewModel
+import me.banes.chris.tivi.ui.ShowPosterGridAdapter
 import me.banes.chris.tivi.util.EntryGridFragment
 
 class PopularShowsFragment : EntryGridFragment<PopularListItem, PopularShowsViewModel>(PopularShowsViewModel::class.java) {
@@ -46,4 +48,17 @@ class PopularShowsFragment : EntryGridFragment<PopularListItem, PopularShowsView
         }
     }
 
+    override fun createAdapter(spanCount: Int): ShowPosterGridAdapter<PopularListItem> {
+        return super.createAdapter(spanCount).apply {
+            itemClickListener = { item, viewHolder ->
+                val sharedElements = SharedElementHelper()
+                sharedElements.addSharedElement(viewHolder.itemView, "poster")
+                viewModel.onItemClicked(item, homeNavigator, sharedElements)
+            }
+        }
+    }
+
+    override fun canStartTransition(): Boolean {
+        return adapter.itemCount > 0
+    }
 }

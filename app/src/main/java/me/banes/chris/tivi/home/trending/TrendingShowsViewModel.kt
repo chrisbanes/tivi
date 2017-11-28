@@ -16,6 +16,7 @@
 
 package me.banes.chris.tivi.home.trending
 
+import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.TrendingListItem
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.trakt.calls.TrendingCall
@@ -31,7 +32,7 @@ class TrendingShowsViewModel @Inject constructor(
         navigator.onUpClicked()
     }
 
-    fun onItemClicked(item: TrendingListItem, navigator: HomeNavigator) {
-        navigator.showShowDetails(item.show!!, null) // TODO
+    fun onItemClicked(item: TrendingListItem, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
+        navigator.showShowDetails(item.show!!, sharedElements)
     }
 }

@@ -16,6 +16,7 @@
 
 package me.banes.chris.tivi.home.watched
 
+import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.WatchedListItem
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.trakt.calls.WatchedCall
@@ -29,5 +30,9 @@ class WatchedShowsViewModel @Inject constructor(
 ) : EntryViewModel<WatchedListItem>(schedulers, call) {
     fun onUpClicked(navigator: HomeNavigator) {
         navigator.onUpClicked()
+    }
+
+    fun onItemClicked(item: WatchedListItem, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
+        navigator.showShowDetails(item.show!!, sharedElements)
     }
 }

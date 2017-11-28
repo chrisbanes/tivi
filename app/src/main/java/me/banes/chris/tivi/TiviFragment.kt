@@ -42,6 +42,16 @@ abstract class TiviFragment : DaggerFragment() {
         setupParentWindowInsetsForTransition()
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        if (canStartTransition()) {
+            scheduleStartPostponedTransitions()
+        }
+    }
+
+    protected open fun canStartTransition(): Boolean = true
+
     private fun setupParentWindowInsetsForTransition() {
         val root = view!!
         val container = root.parent as ViewGroup
