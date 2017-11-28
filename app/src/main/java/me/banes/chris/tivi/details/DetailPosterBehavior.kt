@@ -63,5 +63,4 @@ class DetailPosterBehavior(context: Context, attrs: AttributeSet?) : Coordinator
 
         return false
     }
-
 }

@@ -95,5 +95,4 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
     protected abstract fun loadShow(response: TT): Maybe<TiviShow>
 
     protected abstract fun networkCall(page: Int): Single<List<TT>>
-
 }

@@ -24,7 +24,7 @@ buildscript {
             'kotlin'           : '1.2.0',
             'espresso'         : '3.0.1',
             'dagger'           : '2.13',
-            'ktlint'           : '0.10.0',
+            'ktlint'           : '0.12.1',
             'leakcanary'       : '1.5.4',
             'rx'               : '2.1.7',
             'rxlint'           : '1.6',
@@ -68,6 +68,17 @@ allprojects {
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         kotlinOptions {
             jvmTarget = "1.8"
+        }
+    }
+}
+
+subprojects {
+    apply plugin: 'com.diffplug.gradle.spotless'
+    spotless {
+        kotlin {
+            target "**/*.kt"
+            ktlint(versions.ktlint)
+            licenseHeaderFile '../spotless/copyright.kt'
         }
     }
 }

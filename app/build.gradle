@@ -40,15 +40,6 @@ play {
     uploadImages = true
 }
 
-apply plugin: 'com.diffplug.gradle.spotless'
-spotless {
-    kotlin {
-        target "**/*.kt"
-        ktlint(versions.ktlint)
-        licenseHeaderFile '../spotless/copyright.kt'
-    }
-}
-
 def haveFabricApiKey = !propOrDef("TIVI_FABRIC_API_KEY", "").isEmpty()
 if (haveFabricApiKey) {
     apply plugin: 'io.fabric'

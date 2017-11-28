@@ -99,7 +99,6 @@ private class BodyObserver<R>(private val observer: Observer<in R>) : Observer<r
                 Exceptions.throwIfFatal(inner)
                 RxJavaPlugins.onError(CompositeException(t, inner))
             }
-
         }
     }
 

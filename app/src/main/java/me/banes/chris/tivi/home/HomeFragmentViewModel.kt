@@ -67,5 +67,4 @@ abstract class HomeFragmentViewModel(
     private fun startAuthProcess(requestCode: Int) {
         traktManager.startAuth(requestCode)
     }
-
 }

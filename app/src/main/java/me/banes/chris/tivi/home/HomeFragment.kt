@@ -87,5 +87,4 @@ abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
     }
 
     open fun getMenu(): Menu? = null
-
 }

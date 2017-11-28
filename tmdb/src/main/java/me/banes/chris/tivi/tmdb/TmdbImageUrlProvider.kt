@@ -58,5 +58,4 @@ class TmdbImageUrlProvider(private val imageSizes: TmdbImageSizes) {
 
         return previousSize ?: sizes.last()
     }
-
 }

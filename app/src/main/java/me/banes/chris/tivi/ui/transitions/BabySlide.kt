@@ -65,5 +65,4 @@ class BabySlide(
             else -> view.translationX = -view.width / babyFraction
         }
     }
-
 }

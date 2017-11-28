@@ -80,5 +80,4 @@ class LibraryViewModel @Inject constructor(
     fun onItemPostedClicked(navigator: HomeNavigator, show: TiviShow) {
         navigator.showShowDetails(show, null) // TODO
     }
-
 }

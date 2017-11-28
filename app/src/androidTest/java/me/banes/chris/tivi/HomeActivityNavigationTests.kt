@@ -81,5 +81,4 @@ class HomeActivityNavigationTests {
         onView(toolbarWithTitle(R.string.discover_trending))
                 .check(matches(isDisplayed()))
     }
-
 }
