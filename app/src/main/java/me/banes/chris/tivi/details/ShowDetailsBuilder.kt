@@ -25,9 +25,7 @@ import me.banes.chris.tivi.inject.ViewModelKey
 
 @Module
 internal abstract class ShowDetailsBuilder {
-    @ContributesAndroidInjector(modules = arrayOf(
-                    ShowDetailsModule::class,
-                    ShowDetailsFragmentBuilder::class))
+    @ContributesAndroidInjector(modules = [ShowDetailsModule::class, ShowDetailsFragmentBuilder::class])
     internal abstract fun showDetailsActivity(): ShowDetailsActivity
 
     @Binds

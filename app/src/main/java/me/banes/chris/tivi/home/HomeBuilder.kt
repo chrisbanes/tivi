@@ -30,13 +30,13 @@ import me.banes.chris.tivi.inject.ViewModelKey
 
 @Module
 internal abstract class HomeBuilder {
-    @ContributesAndroidInjector(modules = arrayOf(
-            HomeModule::class,
-            DiscoverBuilder::class,
-            TrendingBuilder::class,
-            PopularBuilder::class,
-            LibraryBuilder::class,
-            WatchedShowsBuilder::class))
+    @ContributesAndroidInjector(modules = [
+        HomeModule::class,
+        DiscoverBuilder::class,
+        TrendingBuilder::class,
+        PopularBuilder::class,
+        LibraryBuilder::class,
+        WatchedShowsBuilder::class])
     internal abstract fun homeActivity(): HomeActivity
 
     @Binds
