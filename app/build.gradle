@@ -70,8 +70,8 @@ android {
         applicationId "me.banes.chris.tivi"
         minSdkVersion 23
         targetSdkVersion 27
-        versionCode 8
-        versionName "0.1.8"
+        versionCode 9
+        versionName "0.1.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         playAccountConfig = playAccountConfigs.defaultAccountConfig
