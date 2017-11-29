@@ -17,7 +17,7 @@
 
 buildscript {
     ext.versions = [
-            'support_library'  : '27.0.1',
+            'support_library'  : '27.0.2',
             'constraint_layout': '1.1.0-beta3',
             'arch_comp'        : '1.0.0',
             'arch_comp_paging' : '1.0.0-alpha3',
@@ -28,7 +28,7 @@ buildscript {
             'leakcanary'       : '1.5.4',
             'rx'               : '2.1.7',
             'rxlint'           : '1.6',
-            'firebase'         : '11.6.0'
+            'firebase'         : '11.6.2'
     ]
 
     repositories {
@@ -47,7 +47,7 @@ buildscript {
 
         classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
 
-        classpath 'io.fabric.tools:gradle:1.24.5'
+        classpath 'io.fabric.tools:gradle:1.25.0'
 
         classpath 'com.google.firebase:firebase-plugins:1.1.5'
     }
