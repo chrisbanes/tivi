@@ -140,4 +140,3 @@ open class ShowPosterGridAdapter<LI : ListItem<out Entry>>(private val columnCou
         }
     }
 }
-

@@ -54,4 +54,3 @@ class GlidePaletteListener(private val listener: (Palette) -> Unit) : RequestLis
         return false
     }
 }
-
