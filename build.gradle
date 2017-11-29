@@ -24,7 +24,7 @@ buildscript {
             'kotlin'           : '1.2.0',
             'espresso'         : '3.0.1',
             'dagger'           : '2.13',
-            'ktlint'           : '0.12.1',
+            'ktlint'           : '0.13.0',
             'leakcanary'       : '1.5.4',
             'rx'               : '2.1.7',
             'rxlint'           : '1.6',
