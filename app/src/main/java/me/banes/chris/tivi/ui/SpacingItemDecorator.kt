@@ -35,4 +35,3 @@ class SpacingItemDecorator(left: Int, top: Int, right: Int, bottom: Int) : Recyc
         outRect.set(spacingRect)
     }
 }
-

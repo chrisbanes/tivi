@@ -26,4 +26,3 @@ interface PaginatedEntryDao<EC : PaginatedEntry, LI : ListItem<EC>> : EntryDao<E
     fun deletePage(page: Int)
     fun getLastPage(): Single<Int>
 }
-
