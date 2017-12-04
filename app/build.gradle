@@ -104,6 +104,11 @@ android {
         preDexLibraries !ci
     }
 
+    lintOptions {
+        // Disable lintVital. Not needed since lint is run on CI
+        checkReleaseBuilds false
+    }
+
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
