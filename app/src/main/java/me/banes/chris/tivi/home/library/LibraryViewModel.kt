@@ -17,16 +17,21 @@
 package me.banes.chris.tivi.home.library
 
 import android.arch.lifecycle.MutableLiveData
+import io.reactivex.Flowable
+import io.reactivex.functions.BiFunction
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.data.entities.WatchedListItem
 import me.banes.chris.tivi.extensions.plusAssign
 import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.library.LibraryViewModel.Section.WATCHED
 import me.banes.chris.tivi.home.library.LibraryViewModel.Section.WHATS_NEXT
+import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
+import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.WatchedCall
 import me.banes.chris.tivi.util.AppRxSchedulers
@@ -37,7 +42,9 @@ class LibraryViewModel @Inject constructor(
         schedulers: AppRxSchedulers,
         private val watchedCall: WatchedCall,
         appNavigator: AppNavigator,
-        traktManager: TraktManager) : HomeFragmentViewModel(traktManager, appNavigator) {
+        traktManager: TraktManager,
+        tmdbManager: TmdbManager
+) : HomeFragmentViewModel(traktManager, appNavigator) {
 
     data class SectionPage(val section: Section, val items: List<ListItem<out Entry>>)
 
@@ -45,12 +52,15 @@ class LibraryViewModel @Inject constructor(
         WHATS_NEXT, WATCHED
     }
 
-    val data = MutableLiveData<List<SectionPage>>()
+    val data = MutableLiveData<LibraryViewState>()
 
     init {
-        disposables += watchedCall.data()
-                .map { SectionPage(WATCHED, it.take(20)) }
-                .map { listOf(it) }
+        disposables += Flowable.combineLatest(
+                watchedCall.data(),
+                tmdbManager.imageProvider,
+                BiFunction<List<WatchedListItem>, TmdbImageUrlProvider, LibraryViewState> { items, imageUrlProvider ->
+                    LibraryViewState(listOf(SectionPage(WATCHED, items.take(20))), imageUrlProvider)
+                })
                 .observeOn(schedulers.main)
                 .subscribe(data::setValue, Timber::e)
 

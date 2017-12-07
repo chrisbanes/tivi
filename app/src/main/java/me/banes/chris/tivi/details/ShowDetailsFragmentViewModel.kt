@@ -17,9 +17,12 @@
 package me.banes.chris.tivi.details
 
 import android.arch.lifecycle.MutableLiveData
-import io.reactivex.disposables.Disposable
+import io.reactivex.Flowable
+import io.reactivex.functions.BiFunction
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.plusAssign
+import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
+import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.calls.ShowDetailsCall
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.RxAwareViewModel
@@ -28,7 +31,8 @@ import javax.inject.Inject
 
 class ShowDetailsFragmentViewModel @Inject constructor(
         private val schedulers: AppRxSchedulers,
-        private val showCall: ShowDetailsCall
+        private val showCall: ShowDetailsCall,
+        private val tmdbManager: TmdbManager
 ) : RxAwareViewModel() {
 
     var showId: Long? = null
@@ -44,8 +48,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
             }
         }
 
-    val data = MutableLiveData<TiviShow>()
-    private var dbDisposable: Disposable? = null
+    val data = MutableLiveData<ShowDetailsFragmentViewState>()
 
     private fun refresh() {
         showId?.let {
@@ -55,19 +58,15 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     }
 
     private fun setupLiveData() {
-        dbDisposable?.let {
-            disposables.remove(it)
-            dbDisposable = null
-        }
-
         showId?.let {
-            showCall.data(it)
+            disposables += Flowable.combineLatest(
+                    showCall.data(it),
+                    tmdbManager.imageProvider,
+                    BiFunction<TiviShow, TmdbImageUrlProvider, ShowDetailsFragmentViewState> { show, urlProvider ->
+                        ShowDetailsFragmentViewState(show, urlProvider)
+                    })
                     .observeOn(schedulers.main)
                     .subscribe(data::setValue, Timber::e)
-                    .run {
-                        dbDisposable = this
-                        disposables += this
-                    }
         }
     }
 

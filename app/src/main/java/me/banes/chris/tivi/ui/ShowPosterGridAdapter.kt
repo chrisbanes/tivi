@@ -24,15 +24,24 @@ import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.extensions.inflateView
+import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.holders.LoadingViewHolder
 import me.banes.chris.tivi.ui.holders.PosterGridHolder
 
-open class ShowPosterGridAdapter<LI : ListItem<out Entry>>(private val columnCount: Int) : PagedListAdapter<LI, RecyclerView.ViewHolder>(TiviShowDiffCallback<LI>()) {
+open class ShowPosterGridAdapter<LI : ListItem<out Entry>>(
+        private val columnCount: Int
+) : PagedListAdapter<LI, RecyclerView.ViewHolder>(TiviShowDiffCallback<LI>()) {
 
     companion object {
         const val TYPE_ITEM = 0
         const val TYPE_LOADING_MORE = -1
     }
+
+    var tmdbImageUrlProvider: TmdbImageUrlProvider? = null
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     private val loadingMoreItemPosition: Int
         get() = if (isLoading) itemCount - 1 else RecyclerView.NO_POSITION
@@ -51,18 +60,14 @@ open class ShowPosterGridAdapter<LI : ListItem<out Entry>>(private val columnCou
             }
         }
 
-    var showBinder: ((LI, PosterGridHolder) -> Unit)? = null
+    var showBinder: ((LI, PosterGridHolder, TmdbImageUrlProvider?) -> Unit)? = null
     var itemClickListener: ((LI, PosterGridHolder) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            TYPE_ITEM -> {
-                PosterGridHolder(inflateView(R.layout.grid_item, parent, false))
-            }
+            TYPE_ITEM -> PosterGridHolder(inflateView(R.layout.grid_item, parent, false))
             TYPE_LOADING_MORE -> LoadingViewHolder(parent)
-            else -> {
-                throw IllegalArgumentException("Invalid item type")
-            }
+            else -> throw IllegalArgumentException("Invalid item type")
         }
     }
 
@@ -90,7 +95,8 @@ open class ShowPosterGridAdapter<LI : ListItem<out Entry>>(private val columnCou
 
     private fun bindEntry(entry: LI, holder: PosterGridHolder) {
         val show = entry.show!!
-        showBinder?.invoke(entry, holder) ?: holder.bindShow(show.tmdbPosterPath, show.title, show.homepage)
+        showBinder?.invoke(entry, holder, tmdbImageUrlProvider)
+                ?: holder.bindShow(show.tmdbPosterPath, tmdbImageUrlProvider, show.title, show.homepage)
 
         if (itemClickListener != null) {
             holder.itemView.setOnClickListener {

@@ -18,7 +18,7 @@ package me.banes.chris.tivi.home.discover
 
 import android.arch.lifecycle.MutableLiveData
 import io.reactivex.Flowable
-import io.reactivex.functions.BiFunction
+import io.reactivex.functions.Function3
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.Entry
@@ -31,6 +31,8 @@ import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.POPULAR
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
+import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
+import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.PopularCall
 import me.banes.chris.tivi.trakt.calls.TrendingCall
@@ -38,12 +40,14 @@ import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
 import javax.inject.Inject
 
-internal class DiscoverViewModel @Inject constructor(
+class DiscoverViewModel @Inject constructor(
         schedulers: AppRxSchedulers,
         private val popularCall: PopularCall,
         private val trendingCall: TrendingCall,
         appNavigator: AppNavigator,
-        traktManager: TraktManager) : HomeFragmentViewModel(traktManager, appNavigator) {
+        traktManager: TraktManager,
+        tmdbManager: TmdbManager
+) : HomeFragmentViewModel(traktManager, appNavigator) {
 
     data class SectionPage(val section: Section, val items: List<ListItem<out Entry>>)
 
@@ -51,14 +55,18 @@ internal class DiscoverViewModel @Inject constructor(
         TRENDING, POPULAR
     }
 
-    val data = MutableLiveData<List<SectionPage>>()
+    val data = MutableLiveData<DiscoverFragmentViewState>()
 
     init {
-        disposables += Flowable.zip(
+        disposables += Flowable.combineLatest(
                 popularCall.data(0),
                 trendingCall.data(0),
-                BiFunction<List<PopularListItem>, List<TrendingListItem>, List<SectionPage>> { popular, trending ->
-                    listOf(SectionPage(TRENDING, trending), SectionPage(POPULAR, popular))
+                tmdbManager.imageProvider,
+                Function3<List<PopularListItem>, List<TrendingListItem>, TmdbImageUrlProvider, DiscoverFragmentViewState> { popular, trending, tmdbImageProvider ->
+                    DiscoverFragmentViewState(
+                            listOf(SectionPage(TRENDING, trending), SectionPage(POPULAR, popular)),
+                            tmdbImageProvider
+                    )
                 })
                 .observeOn(schedulers.main)
                 .subscribe(data::setValue, Timber::e)

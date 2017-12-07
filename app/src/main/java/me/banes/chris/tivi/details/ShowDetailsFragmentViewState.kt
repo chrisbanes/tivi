@@ -14,31 +14,12 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.ui.groupieitems
+package me.banes.chris.tivi.details
 
-import android.view.View
-import com.xwray.groupie.Item
-import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
-import me.banes.chris.tivi.ui.holders.PosterGridHolder
 
-open class ShowPosterItem(
+data class ShowDetailsFragmentViewState(
         val show: TiviShow,
         val tmdbImageUrlProvider: TmdbImageUrlProvider
-) : Item<PosterGridHolder>() {
-
-    override fun getLayout() = R.layout.grid_item
-
-    override fun createViewHolder(itemView: View): PosterGridHolder {
-        return PosterGridHolder(itemView)
-    }
-
-    override fun bind(viewHolder: PosterGridHolder, position: Int) {
-        viewHolder.bindShow(show.tmdbPosterPath, tmdbImageUrlProvider, show.title, show.homepage)
-    }
-
-    override fun getSpanSize(spanCount: Int, position: Int) = 1
-
-    override fun getId(): Long = show.id!!
-}
+)

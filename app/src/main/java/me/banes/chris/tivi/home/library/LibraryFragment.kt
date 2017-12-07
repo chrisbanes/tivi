@@ -66,11 +66,11 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         super.onActivityCreated(savedInstanceState)
 
         viewModel.data.observeK(this) {
-            if (it != null && !it.isEmpty() && groupAdapter.itemCount == 0) {
+            if (it != null && !it.sections.isEmpty() && groupAdapter.itemCount == 0) {
                 scheduleStartPostponedTransitions()
             }
             it?.run {
-                sectionHelper.update(it.map { it.section to it.items }.toMap())
+                sectionHelper.update(it.sections.map { it.section to it.items }.toMap(), it.tmdbImageUrlProvider)
             }
         }
     }
@@ -91,7 +91,7 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
                 summary_rv,
                 groupAdapter,
                 gridLayoutManager.spanCount,
-                { _, list -> ShowPosterSection(list.mapNotNull { it.show }) },
+                { _, list, tmdbImageProvider -> ShowPosterSection(list.mapNotNull { it.show }, tmdbImageProvider) },
                 this::titleFromSection)
 
         groupAdapter.apply {

@@ -19,7 +19,9 @@ package me.banes.chris.tivi.ui.holders
 import android.graphics.drawable.Drawable
 import android.view.View
 import kotlinx.android.synthetic.main.grid_item.*
+import me.banes.chris.tivi.extensions.doWhenLaidOut
 import me.banes.chris.tivi.extensions.loadFromUrl
+import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 
 class PosterGridHolder(itemView: View) : TiviViewHolder(itemView) {
 
@@ -29,6 +31,7 @@ class PosterGridHolder(itemView: View) : TiviViewHolder(itemView) {
     }
 
     fun bindShow(posterPath: String?,
+            tmdbImageUrlProvider: TmdbImageUrlProvider?,
             title: String?,
             name: String? = null,
             annotation: String? = null,
@@ -37,8 +40,10 @@ class PosterGridHolder(itemView: View) : TiviViewHolder(itemView) {
         show_title.visibility = View.VISIBLE
 
         show_poster.setImageDrawable(null)
-        if (posterPath != null) {
-            show_poster.loadFromUrl("https://image.tmdb.org/t/p/w342$posterPath")
+        if (posterPath != null && tmdbImageUrlProvider != null) {
+            show_poster.doWhenLaidOut {
+                show_poster.loadFromUrl(tmdbImageUrlProvider.getPosterUrl(posterPath, it.width))
+            }
         } else {
             show_title.visibility = View.VISIBLE
         }

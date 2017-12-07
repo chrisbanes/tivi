@@ -19,13 +19,19 @@ package me.banes.chris.tivi.ui.groupieitems
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.data.entities.TrendingEntry
+import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.holders.PosterGridHolder
 
-internal class TrendingPosterItem(val entry: TrendingEntry, show: TiviShow) : ShowPosterItem(show) {
+internal class TrendingPosterItem(
+        val entry: TrendingEntry,
+        show: TiviShow,
+        tmdbImageUrlProvider: TmdbImageUrlProvider
+) : ShowPosterItem(show, tmdbImageUrlProvider) {
     override fun bind(viewHolder: PosterGridHolder, position: Int) {
         val drawable = viewHolder.itemView.context.getDrawable(R.drawable.ic_eye_12dp)
         viewHolder.bindShow(
                 show.tmdbPosterPath,
+                tmdbImageUrlProvider,
                 show.title,
                 "trending_${show.homepage}",
                 entry.watchers.toString(),

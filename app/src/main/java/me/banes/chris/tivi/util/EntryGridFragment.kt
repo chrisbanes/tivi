@@ -145,19 +145,23 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
             startPostponedEnterTransition()
         }
 
-        viewModel.messages.observeK(this) {
-            when (it?.status) {
-                Status.SUCCESS -> {
-                    swipeRefreshLatch.refreshing = false
-                    adapter.isLoading = false
+        viewModel.viewState.observeK(this) {
+            adapter.tmdbImageUrlProvider = it?.tmdbImageUrlProvider
+
+            it?.resource?.let {
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        swipeRefreshLatch.refreshing = false
+                        adapter.isLoading = false
+                    }
+                    Status.ERROR -> {
+                        swipeRefreshLatch.refreshing = false
+                        adapter.isLoading = false
+                        Snackbar.make(grid_recyclerview, it.message ?: "EMPTY", Snackbar.LENGTH_SHORT).show()
+                    }
+                    Status.REFRESHING -> swipeRefreshLatch.refreshing = true
+                    Status.LOADING_MORE -> adapter.isLoading = true
                 }
-                Status.ERROR -> {
-                    swipeRefreshLatch.refreshing = false
-                    adapter.isLoading = false
-                    Snackbar.make(grid_recyclerview, it.message ?: "EMPTY", Snackbar.LENGTH_SHORT).show()
-                }
-                Status.REFRESHING -> swipeRefreshLatch.refreshing = true
-                Status.LOADING_MORE -> adapter.isLoading = true
             }
         }
     }

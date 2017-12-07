@@ -65,11 +65,11 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel.data.observeK(this) {
-            if (it != null && !it.isEmpty() && groupAdapter.itemCount == 0) {
+            if (it != null && !it.sections.isEmpty() && groupAdapter.itemCount == 0) {
                 scheduleStartPostponedTransitions()
             }
             it?.run {
-                sectionHelper.update(it.map { it.section to it.items }.toMap())
+                sectionHelper.update(it.sections.map { it.section to it.items }.toMap(), it.tmdbImageUrlProvider)
             }
         }
     }
@@ -89,10 +89,11 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         sectionHelper = SectionedHelper(
                 summary_rv,
                 groupAdapter,
-                gridLayoutManager.spanCount, { section, list ->
+                gridLayoutManager.spanCount,
+                { section, list, tmdbImageProvider ->
                     when (section) {
-                        TRENDING -> TrendingPosterSection(list as List<ListItem<TrendingEntry>>)
-                        POPULAR -> PopularPosterSection(list as List<ListItem<PopularEntry>>)
+                        TRENDING -> TrendingPosterSection(list as List<ListItem<TrendingEntry>>, tmdbImageProvider)
+                        POPULAR -> PopularPosterSection(list as List<ListItem<PopularEntry>>, tmdbImageProvider)
                     }
                 },
                 this::titleFromSection)

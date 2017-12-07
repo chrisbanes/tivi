@@ -16,8 +16,13 @@
 
 package me.banes.chris.tivi.util
 
-import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.paging.PagedList
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
+import io.reactivex.functions.BiFunction
+import io.reactivex.subjects.BehaviorSubject
 import me.banes.chris.tivi.api.Resource
 import me.banes.chris.tivi.api.Status
 import me.banes.chris.tivi.calls.ListCall
@@ -25,12 +30,17 @@ import me.banes.chris.tivi.calls.PaginatedCall
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.extensions.plusAssign
+import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
+import me.banes.chris.tivi.tmdb.TmdbManager
 import timber.log.Timber
 
 open class EntryViewModel<LI : ListItem<out Entry>>(
-        val schedulers: AppRxSchedulers,
-        val call: ListCall<Unit, LI>,
+        private val schedulers: AppRxSchedulers,
+        private val call: ListCall<Unit, LI>,
+        tmdbManager: TmdbManager,
         refreshOnStartup: Boolean = true) : RxAwareViewModel() {
+
+    private val messages = BehaviorSubject.create<Resource>()
 
     val liveList by lazy(mode = LazyThreadSafetyMode.NONE) {
         call.liveList().create(0,
@@ -40,7 +50,14 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
                         .build())
     }
 
-    val messages = MutableLiveData<Resource>()
+    val viewState: LiveData<EntryViewState> = LiveDataReactiveStreams.fromPublisher(
+            Flowable.combineLatest(
+                    messages.toFlowable(BackpressureStrategy.LATEST),
+                    tmdbManager.imageProvider,
+                    BiFunction<Resource, TmdbImageUrlProvider, EntryViewState> { message, tmdb ->
+                        EntryViewState(message, tmdb)
+                    })
+    )
 
     init {
         // Eagerly refresh the initial page of trending
@@ -53,7 +70,7 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
         if (call is PaginatedCall<*, *>) {
             disposables += call.loadNextPage()
                     .observeOn(schedulers.main)
-                    .doOnSubscribe { messages.value = Resource(Status.LOADING_MORE) }
+                    .doOnSubscribe { sendMessage(Resource(Status.LOADING_MORE)) }
                     .subscribe(this::onSuccess, this::onError)
         }
     }
@@ -61,16 +78,20 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
     fun fullRefresh() {
         disposables += call.refresh(Unit)
                 .observeOn(schedulers.main)
-                .doOnSubscribe { messages.value = Resource(Status.REFRESHING) }
+                .doOnSubscribe { sendMessage(Resource(Status.REFRESHING)) }
                 .subscribe(this::onSuccess, this::onError)
     }
 
     private fun onError(t: Throwable) {
         Timber.e(t)
-        messages.value = Resource(Status.ERROR, t.localizedMessage)
+        sendMessage(Resource(Status.ERROR, t.localizedMessage))
     }
 
     private fun onSuccess() {
-        messages.value = Resource(Status.SUCCESS)
+        sendMessage(Resource(Status.SUCCESS))
+    }
+
+    private fun sendMessage(resource: Resource) {
+        messages.onNext(resource)
     }
 }
