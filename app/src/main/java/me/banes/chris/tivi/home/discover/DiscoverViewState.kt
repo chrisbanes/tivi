@@ -18,7 +18,7 @@ package me.banes.chris.tivi.home.discover
 
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 
-data class DiscoverFragmentViewState(
+data class DiscoverViewState(
         val sections: List<DiscoverViewModel.SectionPage>,
         val tmdbImageUrlProvider: TmdbImageUrlProvider
 )

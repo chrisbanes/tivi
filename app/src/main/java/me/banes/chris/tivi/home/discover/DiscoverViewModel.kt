@@ -51,7 +51,7 @@ class DiscoverViewModel @Inject constructor(
         TRENDING, POPULAR
     }
 
-    val data = MutableLiveData<DiscoverFragmentViewState>()
+    val data = MutableLiveData<DiscoverViewState>()
 
     init {
         disposables += Flowables.combineLatest(
@@ -59,7 +59,7 @@ class DiscoverViewModel @Inject constructor(
                 trendingCall.data(0),
                 tmdbManager.imageProvider,
                 { popular, trending, tmdbImageProvider ->
-                    DiscoverFragmentViewState(
+                    DiscoverViewState(
                             listOf(SectionPage(TRENDING, trending), SectionPage(POPULAR, popular)),
                             tmdbImageProvider
                     )
