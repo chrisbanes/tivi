@@ -17,11 +17,8 @@
 package me.banes.chris.tivi.details
 
 import android.arch.lifecycle.MutableLiveData
-import io.reactivex.Flowable
-import io.reactivex.functions.BiFunction
-import me.banes.chris.tivi.data.entities.TiviShow
+import io.reactivex.rxkotlin.Flowables
 import me.banes.chris.tivi.extensions.plusAssign
-import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.calls.ShowDetailsCall
 import me.banes.chris.tivi.util.AppRxSchedulers
@@ -59,10 +56,10 @@ class ShowDetailsFragmentViewModel @Inject constructor(
 
     private fun setupLiveData() {
         showId?.let {
-            disposables += Flowable.combineLatest(
+            disposables += Flowables.combineLatest(
                     showCall.data(it),
                     tmdbManager.imageProvider,
-                    BiFunction<TiviShow, TmdbImageUrlProvider, ShowDetailsFragmentViewState> { show, urlProvider ->
+                    { show, urlProvider ->
                         ShowDetailsFragmentViewState(show, urlProvider)
                     })
                     .observeOn(schedulers.main)

@@ -17,21 +17,17 @@
 package me.banes.chris.tivi.home.discover
 
 import android.arch.lifecycle.MutableLiveData
-import io.reactivex.Flowable
-import io.reactivex.functions.Function3
+import io.reactivex.rxkotlin.Flowables
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
-import me.banes.chris.tivi.data.entities.PopularListItem
 import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.data.entities.TrendingListItem
 import me.banes.chris.tivi.extensions.plusAssign
 import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.POPULAR
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
-import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.PopularCall
@@ -58,11 +54,11 @@ class DiscoverViewModel @Inject constructor(
     val data = MutableLiveData<DiscoverFragmentViewState>()
 
     init {
-        disposables += Flowable.combineLatest(
+        disposables += Flowables.combineLatest(
                 popularCall.data(0),
                 trendingCall.data(0),
                 tmdbManager.imageProvider,
-                Function3<List<PopularListItem>, List<TrendingListItem>, TmdbImageUrlProvider, DiscoverFragmentViewState> { popular, trending, tmdbImageProvider ->
+                { popular, trending, tmdbImageProvider ->
                     DiscoverFragmentViewState(
                             listOf(SectionPage(TRENDING, trending), SectionPage(POPULAR, popular)),
                             tmdbImageProvider

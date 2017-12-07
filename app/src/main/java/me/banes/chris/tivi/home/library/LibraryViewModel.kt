@@ -17,20 +17,17 @@
 package me.banes.chris.tivi.home.library
 
 import android.arch.lifecycle.MutableLiveData
-import io.reactivex.Flowable
-import io.reactivex.functions.BiFunction
+import io.reactivex.rxkotlin.Flowables
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.data.entities.WatchedListItem
 import me.banes.chris.tivi.extensions.plusAssign
 import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.library.LibraryViewModel.Section.WATCHED
 import me.banes.chris.tivi.home.library.LibraryViewModel.Section.WHATS_NEXT
-import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.WatchedCall
@@ -55,10 +52,10 @@ class LibraryViewModel @Inject constructor(
     val data = MutableLiveData<LibraryViewState>()
 
     init {
-        disposables += Flowable.combineLatest(
+        disposables += Flowables.combineLatest(
                 watchedCall.data(),
                 tmdbManager.imageProvider,
-                BiFunction<List<WatchedListItem>, TmdbImageUrlProvider, LibraryViewState> { items, imageUrlProvider ->
+                { items, imageUrlProvider ->
                     LibraryViewState(listOf(SectionPage(WATCHED, items.take(20))), imageUrlProvider)
                 })
                 .observeOn(schedulers.main)

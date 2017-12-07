@@ -20,8 +20,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.paging.PagedList
 import io.reactivex.BackpressureStrategy
-import io.reactivex.Flowable
-import io.reactivex.functions.BiFunction
+import io.reactivex.rxkotlin.Flowables
 import io.reactivex.subjects.BehaviorSubject
 import me.banes.chris.tivi.api.Resource
 import me.banes.chris.tivi.api.Status
@@ -30,7 +29,6 @@ import me.banes.chris.tivi.calls.PaginatedCall
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.extensions.plusAssign
-import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.tmdb.TmdbManager
 import timber.log.Timber
 
@@ -51,10 +49,10 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
     }
 
     val viewState: LiveData<EntryViewState> = LiveDataReactiveStreams.fromPublisher(
-            Flowable.combineLatest(
+            Flowables.combineLatest(
                     messages.toFlowable(BackpressureStrategy.LATEST),
                     tmdbManager.imageProvider,
-                    BiFunction<Resource, TmdbImageUrlProvider, EntryViewState> { message, tmdb ->
+                    { message, tmdb ->
                         EntryViewState(message, tmdb)
                     })
     )
