@@ -21,6 +21,7 @@ import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.paging.PagedList
 import io.reactivex.BackpressureStrategy
 import io.reactivex.rxkotlin.Flowables
+import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
 import me.banes.chris.tivi.api.Resource
 import me.banes.chris.tivi.api.Status
@@ -28,7 +29,6 @@ import me.banes.chris.tivi.calls.ListCall
 import me.banes.chris.tivi.calls.PaginatedCall
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
-import me.banes.chris.tivi.extensions.plusAssign
 import me.banes.chris.tivi.tmdb.TmdbManager
 import timber.log.Timber
 

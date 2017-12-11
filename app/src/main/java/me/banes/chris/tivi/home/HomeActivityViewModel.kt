@@ -17,9 +17,9 @@
 package me.banes.chris.tivi.home
 
 import android.arch.lifecycle.LiveData
+import io.reactivex.rxkotlin.plusAssign
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.extensions.plusAssign
 import me.banes.chris.tivi.tmdb.TmdbShowFetcher
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.util.AppRxSchedulers
@@ -86,7 +86,7 @@ internal class HomeActivityViewModel @Inject constructor(
                 .subscribe({
                     Timber.d("Updated show from TMDb %s", show)
                 }, {
-                    Timber.e(it, "Error while refreshing show from TMDb", show)
+                    Timber.e(it, "Error while refreshing show from TMDb:  %s", show)
                 })
     }
 }

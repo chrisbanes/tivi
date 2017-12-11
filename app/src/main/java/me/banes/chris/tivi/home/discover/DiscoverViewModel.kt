@@ -18,12 +18,12 @@ package me.banes.chris.tivi.home.discover
 
 import android.arch.lifecycle.MutableLiveData
 import io.reactivex.rxkotlin.Flowables
+import io.reactivex.rxkotlin.plusAssign
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.extensions.plusAssign
 import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.POPULAR

@@ -22,11 +22,11 @@ import dagger.Lazy
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.data.entities.TraktUser
 import me.banes.chris.tivi.extensions.edit
-import me.banes.chris.tivi.extensions.plusAssign
 import me.banes.chris.tivi.trakt.calls.UserMeCall
 import me.banes.chris.tivi.util.AppRxSchedulers
 import net.openid.appauth.AuthState

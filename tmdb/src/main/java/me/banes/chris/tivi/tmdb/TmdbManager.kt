@@ -21,8 +21,8 @@ import com.uwetrottmann.tmdb2.entities.Configuration
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
-import me.banes.chris.tivi.extensions.plusAssign
 import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
