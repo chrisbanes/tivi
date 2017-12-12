@@ -21,8 +21,8 @@ import com.gabrielittner.threetenbp.LazyThreeTen
 import com.squareup.leakcanary.LeakCanary
 import io.reactivex.Completable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
 import me.banes.chris.tivi.BuildConfig
-import me.banes.chris.tivi.extensions.plusAssign
 import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
 import javax.inject.Inject

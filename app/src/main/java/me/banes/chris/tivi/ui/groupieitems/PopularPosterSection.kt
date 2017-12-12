@@ -20,16 +20,17 @@ import com.xwray.groupie.Section
 import com.xwray.groupie.UpdatingGroup
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.PopularEntry
+import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 
-internal class PopularPosterSection(items: List<ListItem<PopularEntry>>) : Section() {
+internal class PopularPosterSection(items: List<ListItem<PopularEntry>>, tmdbImageUrlProvider: TmdbImageUrlProvider) : Section() {
     private val group = UpdatingGroup()
 
     init {
         add(group)
-        update(items)
+        update(items, tmdbImageUrlProvider)
     }
 
-    fun update(items: List<ListItem<PopularEntry>>) {
-        group.update(items.map { PopularPosterItem(it.entry!!, it.show!!) })
+    fun update(items: List<ListItem<PopularEntry>>, tmdbImageUrlProvider: TmdbImageUrlProvider) {
+        group.update(items.map { PopularPosterItem(it.entry!!, it.show!!, tmdbImageUrlProvider) })
     }
 }

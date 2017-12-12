@@ -25,6 +25,7 @@ import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.extensions.filterItems
+import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.groupieitems.EmptyPlaceholderItem
 import me.banes.chris.tivi.ui.groupieitems.HeaderItem
 import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
@@ -33,18 +34,21 @@ class SectionedHelper<S>(
         private val recyclerView: RecyclerView,
         private val adapter: GroupAdapter<ViewHolder>,
         private val spanCount: Int,
-        private val sectionGroupMapper: (S, List<ListItem<out Entry>>) -> Section,
+        private val sectionGroupMapper: (S, List<ListItem<out Entry>>, TmdbImageUrlProvider) -> Section,
         private val titleFetcher: (S) -> String
 ) {
     private val sectionMap = mutableMapOf<S, Section>()
 
-    fun update(data: Map<S, List<ListItem<out Entry>>>) {
+    fun update(data: Map<S, List<ListItem<out Entry>>>, tmdbImageUrlProvider: TmdbImageUrlProvider) {
         adapter.clear()
         sectionMap.clear()
 
         data.forEach {
             val key = it.key
-            sectionGroupMapper(key, it.value.filter { it.show != null }.take(spanCount * 2))
+            sectionGroupMapper(
+                    key,
+                    it.value.filter { it.show != null }.take(spanCount * 2),
+                    tmdbImageUrlProvider)
                     .run {
                         setHeader(HeaderItem(titleFetcher(key), key))
                         setPlaceholder(EmptyPlaceholderItem())

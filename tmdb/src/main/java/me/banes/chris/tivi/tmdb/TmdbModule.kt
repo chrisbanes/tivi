@@ -41,8 +41,4 @@ class TmdbModule {
             }
         }
     }
-
-    @Singleton
-    @Provides
-    fun provideTmdbImageUrlProvider(): TmdbImageUrlProvider = TmdbImageUrlProvider(TmdbImageSizes)
 }

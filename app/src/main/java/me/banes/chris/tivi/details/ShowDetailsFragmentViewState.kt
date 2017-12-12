@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.extensions
+package me.banes.chris.tivi.details
 
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
+import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 
-operator fun CompositeDisposable.plusAssign(disposable: Disposable) {
-    add(disposable)
-}
+data class ShowDetailsFragmentViewState(
+        val show: TiviShow,
+        val tmdbImageUrlProvider: TmdbImageUrlProvider
+)

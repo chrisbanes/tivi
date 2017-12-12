@@ -18,12 +18,18 @@ package me.banes.chris.tivi.ui.groupieitems
 
 import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.holders.PosterGridHolder
 
-internal class PopularPosterItem(val entry: PopularEntry, show: TiviShow) : ShowPosterItem(show) {
+internal class PopularPosterItem(
+        val entry: PopularEntry,
+        show: TiviShow,
+        tmdbImageUrlProvider: TmdbImageUrlProvider
+) : ShowPosterItem(show, tmdbImageUrlProvider) {
     override fun bind(viewHolder: PosterGridHolder, position: Int) {
         viewHolder.bindShow(
                 show.tmdbPosterPath,
+                tmdbImageUrlProvider,
                 show.title,
                 "popular_${show.homepage}")
     }

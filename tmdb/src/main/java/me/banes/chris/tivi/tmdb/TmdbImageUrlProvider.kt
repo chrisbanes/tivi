@@ -16,13 +16,17 @@
 
 package me.banes.chris.tivi.tmdb
 
-class TmdbImageUrlProvider(private val imageSizes: TmdbImageSizes) {
+class TmdbImageUrlProvider(
+        private var baseImageUrl: String = TmdbImageSizes.baseImageUrl,
+        private var posterSizes: Array<String> = TmdbImageSizes.posterSizes,
+        private var backdropSizes: Array<String> = TmdbImageSizes.backdropSizes
+) {
 
     fun getPosterUrl(path: String, imageWidth: Int): String =
-            "${imageSizes.baseImageUrl}${selectSize(imageSizes.posterSizes, imageWidth)}$path"
+            "$baseImageUrl${selectSize(posterSizes, imageWidth)}$path"
 
     fun getBackdropUrl(path: String, imageWidth: Int): String =
-            "${imageSizes.baseImageUrl}${selectSize(imageSizes.backdropSizes, imageWidth)}$path"
+            "$baseImageUrl${selectSize(backdropSizes, imageWidth)}$path"
 
     private fun selectSize(sizes: Array<String>, imageWidth: Int, forceLarger: Boolean = false): String {
         var previousSize: String? = null

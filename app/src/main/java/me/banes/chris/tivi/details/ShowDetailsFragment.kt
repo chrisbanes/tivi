@@ -34,7 +34,6 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_show_details.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
-import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.details.items.CertificationItem
 import me.banes.chris.tivi.details.items.NetworkItem
 import me.banes.chris.tivi.details.items.RatingItem
@@ -43,7 +42,6 @@ import me.banes.chris.tivi.details.items.SummaryItem
 import me.banes.chris.tivi.details.items.TitleItem
 import me.banes.chris.tivi.extensions.doWhenLaidOut
 import me.banes.chris.tivi.extensions.observeK
-import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.GlidePaletteListener
 import me.banes.chris.tivi.ui.NoopApplyWindowInsetsListener
 import me.banes.chris.tivi.ui.RoundRectViewOutline
@@ -66,7 +64,6 @@ class ShowDetailsFragment : TiviFragment() {
     }
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    @Inject lateinit var imageUrlProvider: TmdbImageUrlProvider
 
     private lateinit var viewModel: ShowDetailsFragmentViewModel
     private lateinit var groupAdapter: GroupAdapter<ViewHolder>
@@ -126,11 +123,14 @@ class ShowDetailsFragment : TiviFragment() {
         }
     }
 
-    private fun update(show: TiviShow) {
+    private fun update(viewState: ShowDetailsFragmentViewState) {
+        val show = viewState.show
+        val imageProvider = viewState.tmdbImageUrlProvider
+
         show.tmdbBackdropPath?.let { path ->
             details_backdrop.doWhenLaidOut {
                 Glide.with(this)
-                        .load(imageUrlProvider.getBackdropUrl(path, details_backdrop.width))
+                        .load(imageProvider.getBackdropUrl(path, details_backdrop.width))
                         .listener(GlidePaletteListener(this::onBackdropPaletteLoaded))
                         .into(details_backdrop)
             }
@@ -139,7 +139,7 @@ class ShowDetailsFragment : TiviFragment() {
         show.tmdbPosterPath?.let { path ->
             details_poster.doWhenLaidOut {
                 Glide.with(this)
-                        .load(imageUrlProvider.getPosterUrl(path, details_poster.width))
+                        .load(imageProvider.getPosterUrl(path, details_poster.width))
                         .into(details_poster)
             }
         }

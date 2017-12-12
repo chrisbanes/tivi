@@ -20,9 +20,13 @@ import android.view.View
 import com.xwray.groupie.Item
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.holders.PosterGridHolder
 
-open class ShowPosterItem(val show: TiviShow) : Item<PosterGridHolder>() {
+open class ShowPosterItem(
+        val show: TiviShow,
+        val tmdbImageUrlProvider: TmdbImageUrlProvider
+) : Item<PosterGridHolder>() {
 
     override fun getLayout() = R.layout.grid_item
 
@@ -31,7 +35,7 @@ open class ShowPosterItem(val show: TiviShow) : Item<PosterGridHolder>() {
     }
 
     override fun bind(viewHolder: PosterGridHolder, position: Int) {
-        viewHolder.bindShow(show.tmdbPosterPath, show.title, show.homepage)
+        viewHolder.bindShow(show.tmdbPosterPath, tmdbImageUrlProvider, show.title, show.homepage)
     }
 
     override fun getSpanSize(spanCount: Int, position: Int) = 1

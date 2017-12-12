@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.ui.groupieitems
+package me.banes.chris.tivi.home.discover
 
-import com.xwray.groupie.Section
-import com.xwray.groupie.UpdatingGroup
-import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 
-internal class ShowPosterSection(items: List<TiviShow>, tmdbImageUrlProvider: TmdbImageUrlProvider) : Section() {
-    private val group = UpdatingGroup()
-
-    init {
-        add(group)
-        update(items, tmdbImageUrlProvider)
-    }
-
-    fun update(items: List<TiviShow>, tmdbImageUrlProvider: TmdbImageUrlProvider) {
-        group.update(items.map { show -> ShowPosterItem(show, tmdbImageUrlProvider) })
-    }
-}
+data class DiscoverViewState(
+        val sections: List<DiscoverViewModel.SectionPage>,
+        val tmdbImageUrlProvider: TmdbImageUrlProvider
+)
