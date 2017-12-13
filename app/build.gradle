@@ -23,6 +23,9 @@ apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+kapt {
+    correctErrorTypes = true
+}
 apply plugin: 'kotlin-android-extensions'
 androidExtensions {
     experimental = true
@@ -155,6 +158,9 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:4.2.0"
 
     implementation 'com.xwray:groupie:2.0.0-beta1'
+
+    implementation 'com.airbnb.android:epoxy:2.7.3'
+    kapt 'com.airbnb.android:epoxy-processor:2.7.3'
 
     testImplementation 'junit:junit:4.12'
 

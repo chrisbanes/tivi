@@ -21,8 +21,6 @@ import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.SharedElementHelper
-import me.banes.chris.tivi.data.Entry
-import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
@@ -45,8 +43,6 @@ class DiscoverViewModel @Inject constructor(
         tmdbManager: TmdbManager
 ) : HomeFragmentViewModel(traktManager, appNavigator) {
 
-    data class SectionPage(val section: Section, val items: List<ListItem<out Entry>>)
-
     enum class Section {
         TRENDING, POPULAR
     }
@@ -55,15 +51,10 @@ class DiscoverViewModel @Inject constructor(
 
     init {
         disposables += Flowables.combineLatest(
-                popularCall.data(0),
                 trendingCall.data(0),
+                popularCall.data(0),
                 tmdbManager.imageProvider,
-                { popular, trending, tmdbImageProvider ->
-                    DiscoverViewState(
-                            listOf(SectionPage(TRENDING, trending), SectionPage(POPULAR, popular)),
-                            tmdbImageProvider
-                    )
-                })
+                ::DiscoverViewState)
                 .observeOn(schedulers.main)
                 .subscribe(data::setValue, Timber::e)
 

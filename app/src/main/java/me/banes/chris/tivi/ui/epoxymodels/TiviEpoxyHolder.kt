@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.home.discover
+package me.banes.chris.tivi.ui.epoxymodels
 
-import me.banes.chris.tivi.data.entities.PopularListItem
-import me.banes.chris.tivi.data.entities.TrendingListItem
-import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
+import android.view.View
+import com.airbnb.epoxy.EpoxyHolder
+import kotlinx.android.extensions.LayoutContainer
 
-data class DiscoverViewState(
-        val trendingItems: List<TrendingListItem>,
-        val popularItems: List<PopularListItem>,
-        val tmdbImageUrlProvider: TmdbImageUrlProvider
-)
+class TiviEpoxyHolder : EpoxyHolder(), LayoutContainer {
+    private var itemView: View? = null
+
+    override val containerView: View?
+        get() = itemView
+
+    override fun bindView(itemView: View?) {
+        this.itemView = itemView
+    }
+}
