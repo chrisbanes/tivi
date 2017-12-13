@@ -26,6 +26,7 @@ import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_summary.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.SharedElementHelper
+import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.TrendingEntry
@@ -40,21 +41,32 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
     private lateinit var gridLayoutManager: GridLayoutManager
 
-    private val controller = DiscoverEpoxyController(object : DiscoverAdapterCallbacks {
+    private val controller = DiscoverEpoxyController(object : DiscoverEpoxyController.Callbacks {
         override fun onTrendingHeaderClicked(items: List<ListItem<TrendingEntry>>?) {
             val sharedElementHelper = SharedElementHelper()
-            items?.forEach {
-                val vh = summary_rv.findViewHolderForItemId(it.entry!!.id!!)
-                if (vh != null) {
-                    sharedElementHelper.addSharedElement(vh.itemView, it.show?.homepage)
-                }
-            }
+            items?.forEach { addSharedElementEntry(it, sharedElementHelper) }
             viewModel.onTrendingHeaderClicked(homeNavigator, sharedElementHelper)
         }
 
         override fun onPopularHeaderClicked(items: List<ListItem<PopularEntry>>?) {
-            // TODO shared elements
-            viewModel.onPopularHeaderClicked(homeNavigator)
+            val sharedElementHelper = SharedElementHelper()
+            items?.forEach { addSharedElementEntry(it, sharedElementHelper) }
+            viewModel.onPopularHeaderClicked(homeNavigator, sharedElementHelper)
+        }
+
+        override fun onItemClicked(item: ListItem<out Entry>) {
+            val sharedElementHelper = SharedElementHelper()
+            addSharedElementEntry(item, sharedElementHelper, "poster")
+            viewModel.onItemPostedClicked(homeNavigator, item.show!!, sharedElementHelper)
+        }
+
+        private fun addSharedElementEntry(
+                item: ListItem<out Entry>,
+                sharedElementHelper: SharedElementHelper,
+                transitionName: String? = item.show?.homepage) {
+            summary_rv.findViewHolderForItemId(item.entry!!.id!!)?.let {
+                sharedElementHelper.addSharedElement(it.itemView, transitionName)
+            }
         }
     })
 
@@ -89,38 +101,6 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         gridLayoutManager = summary_rv.layoutManager as GridLayoutManager
         gridLayoutManager.spanSizeLookup = controller.spanSizeLookup
         controller.spanCount = gridLayoutManager.spanCount
-
-//        sectionHelper = SectionedHelper(
-//                summary_rv,
-//                groupAdapter,
-//                gridLayoutManager.spanCount,
-//                { section, list, tmdbImageProvider ->
-//                    when (section) {
-//                        TRENDING -> TrendingPosterSection(list as List<ListItem<TrendingEntry>>, tmdbImageProvider)
-//                        POPULAR -> PopularPosterSection(list as List<ListItem<PopularEntry>>, tmdbImageProvider)
-//                    }
-//                },
-//                this::titleFromSection)
-
-//        groupAdapter.apply {
-//            setOnItemClickListener { item, _ ->
-//                when (item) {
-//                    is HeaderItem -> {
-//                        val section = item.tag as DiscoverViewModel.Section
-//
-//                        val sharedElements = SharedElementHelper()
-//                        sectionHelper.addSharedElementsForSection(section, sharedElements)
-//
-//                        viewModel.onTrendingHeaderClicked(homeNavigator, section, sharedElements)
-//                    }
-//                    is ShowPosterItem -> {
-//                        val sharedElements = SharedElementHelper()
-//                        sectionHelper.addSharedElementForItem(item, sharedElements, "poster")
-//                        viewModel.onItemPostedClicked(homeNavigator, item.show, sharedElements)
-//                    }
-//                }
-//            }
-//        }
 
         summary_rv.apply {
             adapter = controller.adapter
