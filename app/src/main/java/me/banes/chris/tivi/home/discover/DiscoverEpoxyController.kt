@@ -24,13 +24,13 @@ import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
+import me.banes.chris.tivi.ui.epoxymodels.emptyPlaceholder
 import me.banes.chris.tivi.ui.epoxymodels.header
 import me.banes.chris.tivi.ui.epoxymodels.showPoster
 
-class DiscoverEpoxyController(private val callbacks: Callbacks) : Typed3EpoxyController<
-        List<ListItem<TrendingEntry>>,
-        List<ListItem<PopularEntry>>,
-        TmdbImageUrlProvider>() {
+class DiscoverEpoxyController(
+        private val callbacks: Callbacks
+) : Typed3EpoxyController<List<ListItem<TrendingEntry>>, List<ListItem<PopularEntry>>, TmdbImageUrlProvider>() {
 
     interface Callbacks {
         fun onTrendingHeaderClicked(items: List<ListItem<TrendingEntry>>?)
@@ -64,7 +64,9 @@ class DiscoverEpoxyController(private val callbacks: Callbacks) : Typed3EpoxyCon
                 }
             }
         } else {
-            // TODO show placeholder
+            emptyPlaceholder {
+                id("trending_placeholder")
+            }
         }
 
         header {
@@ -87,7 +89,9 @@ class DiscoverEpoxyController(private val callbacks: Callbacks) : Typed3EpoxyCon
                 }
             }
         } else {
-            // TODO show placeholder
+            emptyPlaceholder {
+                id("popular_placeholder")
+            }
         }
     }
 }

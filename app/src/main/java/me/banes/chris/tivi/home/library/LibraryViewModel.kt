@@ -21,13 +21,9 @@ import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.SharedElementHelper
-import me.banes.chris.tivi.data.Entry
-import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
-import me.banes.chris.tivi.home.library.LibraryViewModel.Section.WATCHED
-import me.banes.chris.tivi.home.library.LibraryViewModel.Section.WHATS_NEXT
 import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.WatchedCall
@@ -42,22 +38,13 @@ class LibraryViewModel @Inject constructor(
         traktManager: TraktManager,
         tmdbManager: TmdbManager
 ) : HomeFragmentViewModel(traktManager, appNavigator) {
-
-    data class SectionPage(val section: Section, val items: List<ListItem<out Entry>>)
-
-    enum class Section {
-        WHATS_NEXT, WATCHED
-    }
-
     val data = MutableLiveData<LibraryViewState>()
 
     init {
         disposables += Flowables.combineLatest(
-                watchedCall.data(),
+                watchedCall.data().map { it.take(20) },
                 tmdbManager.imageProvider,
-                { items, imageUrlProvider ->
-                    LibraryViewState(listOf(SectionPage(WATCHED, items.take(20))), imageUrlProvider)
-                })
+                ::LibraryViewState)
                 .observeOn(schedulers.main)
                 .subscribe(data::setValue, Timber::e)
 
@@ -77,14 +64,11 @@ class LibraryViewModel @Inject constructor(
         Timber.e(t, "Error while refreshing")
     }
 
-    fun onSectionHeaderClicked(navigator: HomeNavigator, section: Section, sharedElements: SharedElementHelper) {
-        when (section) {
-            WATCHED -> navigator.showWatched(sharedElements)
-            WHATS_NEXT -> TODO()
-        }
+    fun onWatchedHeaderClicked(navigator: HomeNavigator, sharedElements: SharedElementHelper) {
+        navigator.showWatched(sharedElements)
     }
 
-    fun onItemPostedClicked(navigator: HomeNavigator, show: TiviShow) {
-        navigator.showShowDetails(show, null) // TODO
+    fun onItemPostedClicked(navigator: HomeNavigator, show: TiviShow, sharedElements: SharedElementHelper? = null) {
+        navigator.showShowDetails(show, sharedElements)
     }
 }

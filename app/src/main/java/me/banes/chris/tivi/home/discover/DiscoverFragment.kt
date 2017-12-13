@@ -40,6 +40,7 @@ import me.banes.chris.tivi.util.GridToGridTransitioner
 internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
     private lateinit var gridLayoutManager: GridLayoutManager
+    private lateinit var homeNavigator: HomeNavigator
 
     private val controller = DiscoverEpoxyController(object : DiscoverEpoxyController.Callbacks {
         override fun onTrendingHeaderClicked(items: List<ListItem<TrendingEntry>>?) {
@@ -69,8 +70,6 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
             }
         }
     })
-
-    private lateinit var homeNavigator: HomeNavigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
