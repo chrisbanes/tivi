@@ -23,9 +23,12 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import kotlinx.android.synthetic.main.fragment_summary.*
 import me.banes.chris.tivi.R
+import me.banes.chris.tivi.SharedElementHelper
+import me.banes.chris.tivi.data.entities.ListItem
+import me.banes.chris.tivi.data.entities.PopularEntry
+import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeFragment
 import me.banes.chris.tivi.home.HomeNavigator
@@ -36,7 +39,24 @@ import me.banes.chris.tivi.util.GridToGridTransitioner
 internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
     private lateinit var gridLayoutManager: GridLayoutManager
-    private val controller = DiscoverEpoxyController()
+
+    private val controller = DiscoverEpoxyController(object : DiscoverAdapterCallbacks {
+        override fun onTrendingHeaderClicked(items: List<ListItem<TrendingEntry>>?) {
+            val sharedElementHelper = SharedElementHelper()
+            items?.forEach {
+                val vh = summary_rv.findViewHolderForItemId(it.entry!!.id!!)
+                if (vh != null) {
+                    sharedElementHelper.addSharedElement(vh.itemView, it.show?.homepage)
+                }
+            }
+            viewModel.onTrendingHeaderClicked(homeNavigator, sharedElementHelper)
+        }
+
+        override fun onPopularHeaderClicked(items: List<ListItem<PopularEntry>>?) {
+            // TODO shared elements
+            viewModel.onPopularHeaderClicked(homeNavigator)
+        }
+    })
 
     private lateinit var homeNavigator: HomeNavigator
 
@@ -91,7 +111,7 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 //                        val sharedElements = SharedElementHelper()
 //                        sectionHelper.addSharedElementsForSection(section, sharedElements)
 //
-//                        viewModel.onSectionHeaderClicked(homeNavigator, section, sharedElements)
+//                        viewModel.onTrendingHeaderClicked(homeNavigator, section, sharedElements)
 //                    }
 //                    is ShowPosterItem -> {
 //                        val sharedElements = SharedElementHelper()
@@ -127,6 +147,7 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     }
 
     override fun canStartTransition(): Boolean {
-        return grid_recyclerview.adapter.itemCount > 0
+        return true
+        //FIXME return controller.adapter.itemCount > 0
     }
 }

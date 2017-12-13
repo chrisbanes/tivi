@@ -24,8 +24,6 @@ import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
-import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.POPULAR
-import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
 import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.PopularCall
@@ -42,10 +40,6 @@ class DiscoverViewModel @Inject constructor(
         traktManager: TraktManager,
         tmdbManager: TmdbManager
 ) : HomeFragmentViewModel(traktManager, appNavigator) {
-
-    enum class Section {
-        TRENDING, POPULAR
-    }
 
     val data = MutableLiveData<DiscoverViewState>()
 
@@ -76,14 +70,12 @@ class DiscoverViewModel @Inject constructor(
         Timber.e(t, "Error while refreshing")
     }
 
-    fun onSectionHeaderClicked(
-            navigator: HomeNavigator,
-            section: Section,
-            sharedElementHelper: SharedElementHelper? = null) {
-        when (section) {
-            TRENDING -> navigator.showTrending(sharedElementHelper)
-            POPULAR -> navigator.showPopular(sharedElementHelper)
-        }
+    fun onTrendingHeaderClicked(navigator: HomeNavigator, sharedElementHelper: SharedElementHelper? = null) {
+        navigator.showTrending(sharedElementHelper)
+    }
+
+    fun onPopularHeaderClicked(navigator: HomeNavigator, sharedElementHelper: SharedElementHelper? = null) {
+        navigator.showPopular(sharedElementHelper)
     }
 
     fun onItemPostedClicked(navigator: HomeNavigator, show: TiviShow, sharedElements: SharedElementHelper?) {

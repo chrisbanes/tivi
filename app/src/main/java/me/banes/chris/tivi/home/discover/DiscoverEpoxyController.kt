@@ -16,6 +16,7 @@
 
 package me.banes.chris.tivi.home.discover
 
+import android.view.View
 import com.airbnb.epoxy.Typed3EpoxyController
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.ListItem
@@ -25,10 +26,11 @@ import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.epoxymodels.header
 import me.banes.chris.tivi.ui.epoxymodels.showPoster
 
-class DiscoverEpoxyController : Typed3EpoxyController<
+class DiscoverEpoxyController(private val callbacks: DiscoverAdapterCallbacks) : Typed3EpoxyController<
         List<ListItem<TrendingEntry>>,
         List<ListItem<PopularEntry>>,
         TmdbImageUrlProvider>() {
+
     override fun buildModels(
             trending: List<ListItem<TrendingEntry>>?,
             popular: List<ListItem<PopularEntry>>?,
@@ -36,6 +38,9 @@ class DiscoverEpoxyController : Typed3EpoxyController<
         header {
             id("trending_header")
             title(R.string.discover_trending)
+            clickListener(View.OnClickListener {
+                callbacks.onTrendingHeaderClicked(trending)
+            })
         }
         if (trending != null && !trending.isEmpty()) {
             trending.take(spanCount * 2).forEach { item ->
@@ -55,6 +60,9 @@ class DiscoverEpoxyController : Typed3EpoxyController<
         header {
             id("popular_header")
             title(R.string.discover_popular)
+            clickListener(View.OnClickListener {
+                callbacks.onPopularHeaderClicked(popular)
+            })
         }
         if (popular != null && !popular.isEmpty()) {
             popular.take(spanCount * 2).forEach { item ->
@@ -71,4 +79,9 @@ class DiscoverEpoxyController : Typed3EpoxyController<
             // TODO show placeholder
         }
     }
+}
+
+interface DiscoverAdapterCallbacks {
+    fun onTrendingHeaderClicked(items: List<ListItem<TrendingEntry>>?)
+    fun onPopularHeaderClicked(items: List<ListItem<PopularEntry>>?)
 }
