@@ -56,7 +56,7 @@ class DiscoverEpoxyController(private val callbacks: Callbacks) : Typed3EpoxyCon
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
                     posterPath(item.show?.tmdbPosterPath)
                     annotation(item.entry?.watchers.toString())
-                    annotationDrawable(null)
+                    annotationDrawable(R.drawable.ic_eye_12dp)
                     transName("trending_${item.show?.homepage}")
                     clickListener(View.OnClickListener {
                         callbacks.onItemClicked(item)
@@ -80,8 +80,6 @@ class DiscoverEpoxyController(private val callbacks: Callbacks) : Typed3EpoxyCon
                     id(item.entry!!.id!!)
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
                     posterPath(item.show?.tmdbPosterPath)
-                    annotation(null)
-                    annotationDrawable(null)
                     transName("popular_${item.show?.homepage}")
                     clickListener(View.OnClickListener {
                         callbacks.onItemClicked(item)
