@@ -29,7 +29,7 @@ interface ListItem<ET : Entry> {
         get() = relations?.getOrNull(0)
 
     fun generateStableId(): Long {
-        return Objects.hash(entry!!.id!!, show!!.id!!).toLong()
+        return Objects.hash(entry!!::class, entry!!.id!!, show!!.id!!).toLong()
     }
 }
 

@@ -25,7 +25,6 @@ import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.WatchedListItem
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.HomeNavigatorViewModel
-import me.banes.chris.tivi.ui.ShowPosterGridAdapter
 import me.banes.chris.tivi.util.EntryGridFragment
 
 class WatchedShowsFragment : EntryGridFragment<WatchedListItem, WatchedShowsViewModel>(WatchedShowsViewModel::class.java) {
@@ -48,13 +47,11 @@ class WatchedShowsFragment : EntryGridFragment<WatchedListItem, WatchedShowsView
         }
     }
 
-    override fun createAdapter(spanCount: Int): ShowPosterGridAdapter<WatchedListItem> {
-        return super.createAdapter(spanCount).apply {
-            itemClickListener = { item, viewHolder ->
-                val sharedElements = SharedElementHelper()
-                sharedElements.addSharedElement(viewHolder.itemView, "poster")
-                viewModel.onItemClicked(item, homeNavigator, sharedElements)
-            }
+    override fun onItemClicked(item: WatchedListItem) {
+        val sharedElements = SharedElementHelper()
+        grid_recyclerview.findViewHolderForItemId(item.generateStableId())?.let {
+            sharedElements.addSharedElement(it.itemView, "poster")
         }
+        viewModel.onItemClicked(item, homeNavigator, sharedElements)
     }
 }

@@ -39,7 +39,6 @@ import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.extensions.updatePadding
 import me.banes.chris.tivi.ui.EndlessRecyclerViewScrollListener
 import me.banes.chris.tivi.ui.ProgressTimeLatch
-import me.banes.chris.tivi.ui.ShowPosterGridAdapter
 import me.banes.chris.tivi.ui.SpacingItemDecorator
 import javax.inject.Inject
 
@@ -52,14 +51,21 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
 
     protected lateinit var viewModel: VM
 
-    protected lateinit var adapter: ShowPosterGridAdapter<LI>
     private lateinit var swipeRefreshLatch: ProgressTimeLatch
-
     private var originalRvTopPadding = 0
+
+    private lateinit var controller: EntryGridEpoxyController<LI>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(vmClass)
+
+        controller = createController()
+        controller.callbacks = object : EntryGridEpoxyController.Callbacks<LI> {
+            override fun onItemClicked(item: LI) {
+                this@EntryGridFragment.onItemClicked(item)
+            }
+        }
 
         GridToGridTransitioner.setupSecondFragment(this,
                 intArrayOf(R.id.grid_toolbar, R.id.grid_status_scrim)) {
@@ -81,18 +87,14 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         }
 
         val layoutManager = grid_recyclerview.layoutManager as GridLayoutManager
-        adapter = createAdapter(layoutManager.spanCount)
-
-        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int = adapter.getItemColumnSpan(position)
-        }
 
         grid_recyclerview.apply {
             // We set the item animator to null since it can interfere with the enter/shared element
             // transitions
             itemAnimator = null
 
-            adapter = this@EntryGridFragment.adapter
+            adapter = controller.adapter
+
             addItemDecoration(SpacingItemDecorator(paddingLeft))
             addOnScrollListener(EndlessRecyclerViewScrollListener(layoutManager, { _: Int, _: RecyclerView ->
                 if (userVisibleHint) {
@@ -141,30 +143,34 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         })
 
         viewModel.liveList.observeK(this) {
-            adapter.setList(it)
+            controller.setList(it)
             scheduleStartPostponedTransitions()
         }
 
         viewModel.viewState.observeK(this) {
-            adapter.tmdbImageUrlProvider = it?.tmdbImageUrlProvider
+            controller.tmdbImageUrlProvider = it?.tmdbImageUrlProvider
 
             it?.resource?.let {
                 when (it.status) {
                     Status.SUCCESS -> {
                         swipeRefreshLatch.refreshing = false
-                        adapter.isLoading = false
+                        controller.isLoading = false
                     }
                     Status.ERROR -> {
                         swipeRefreshLatch.refreshing = false
-                        adapter.isLoading = false
+                        controller.isLoading = false
                         Snackbar.make(grid_recyclerview, it.message ?: "EMPTY", Snackbar.LENGTH_SHORT).show()
                     }
                     Status.REFRESHING -> swipeRefreshLatch.refreshing = true
-                    Status.LOADING_MORE -> adapter.isLoading = true
+                    Status.LOADING_MORE -> controller.isLoading = true
                 }
             }
         }
     }
 
-    open fun createAdapter(spanCount: Int): ShowPosterGridAdapter<LI> = ShowPosterGridAdapter(spanCount)
+    abstract fun onItemClicked(item: LI)
+
+    open fun createController(): EntryGridEpoxyController<LI> {
+        return EntryGridEpoxyController()
+    }
 }

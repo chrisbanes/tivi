@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.ui.holders
+package me.banes.chris.tivi.ui.epoxymodels
 
-import android.view.View
-import android.view.ViewGroup
-import kotlinx.android.synthetic.main.infinite_loading.*
+import com.airbnb.epoxy.EpoxyModelClass
+import com.airbnb.epoxy.EpoxyModelWithHolder
 import me.banes.chris.tivi.R
 
-class LoadingViewHolder(parent: ViewGroup) : TiviViewHolder(parent, R.layout.infinite_loading) {
-    fun bind() {
-        loading.visibility = View.VISIBLE
+@EpoxyModelClass(layout = R.layout.infinite_loading)
+abstract class LoadingViewModel : EpoxyModelWithHolder<TiviEpoxyHolder>() {
+
+    override fun bind(holder: TiviEpoxyHolder) {
+        // Nothing to do here
     }
+
+    override fun getSpanSize(totalSpanCount: Int, position: Int, itemCount: Int) = totalSpanCount
 }

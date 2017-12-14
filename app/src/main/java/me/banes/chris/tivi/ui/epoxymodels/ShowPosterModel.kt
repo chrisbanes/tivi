@@ -16,7 +16,6 @@
 
 package me.banes.chris.tivi.ui.epoxymodels
 
-import android.graphics.drawable.Drawable
 import android.support.annotation.DrawableRes
 import android.view.View
 import com.airbnb.epoxy.EpoxyAttribute
@@ -30,10 +29,10 @@ import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 
 @EpoxyModelClass(layout = R.layout.grid_item)
 abstract class ShowPosterModel : EpoxyModelWithHolder<TiviEpoxyHolder>() {
-    @EpoxyAttribute var title : String? = null
+    @EpoxyAttribute var title: String? = null
     @EpoxyAttribute var transName: String? = null
-    @EpoxyAttribute var posterPath : String? = null
-    @EpoxyAttribute var annotation : String? = null
+    @EpoxyAttribute var posterPath: String? = null
+    @EpoxyAttribute var annotation: String? = null
     @EpoxyAttribute @DrawableRes var annotationDrawable = 0
     @EpoxyAttribute var tmdbImageUrlProvider: TmdbImageUrlProvider? = null
     @EpoxyAttribute var clickListener: View.OnClickListener? = null
