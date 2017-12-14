@@ -57,8 +57,4 @@ class PopularShowsFragment : EntryGridFragment<PopularListItem, PopularShowsView
             }
         }
     }
-
-    override fun canStartTransition(): Boolean {
-        return adapter.itemCount > 0
-    }
 }

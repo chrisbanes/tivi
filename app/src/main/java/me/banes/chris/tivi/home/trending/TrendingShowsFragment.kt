@@ -68,8 +68,4 @@ class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsV
             }
         }
     }
-
-    override fun canStartTransition(): Boolean {
-        return adapter.itemCount > 0
-    }
 }

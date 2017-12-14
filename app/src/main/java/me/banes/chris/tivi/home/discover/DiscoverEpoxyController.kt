@@ -52,7 +52,7 @@ class DiscoverEpoxyController(
         if (trending != null && !trending.isEmpty()) {
             trending.take(spanCount * 2).forEach { item ->
                 showPoster {
-                    id(item.entry!!.id!!)
+                    id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
                     posterPath(item.show?.tmdbPosterPath)
                     annotation(item.entry?.watchers.toString())
@@ -79,7 +79,7 @@ class DiscoverEpoxyController(
         if (popular != null && !popular.isEmpty()) {
             popular.take(spanCount * 2).forEach { item ->
                 showPoster {
-                    id(item.entry!!.id!!)
+                    id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
                     posterPath(item.show?.tmdbPosterPath)
                     transName("popular_${item.show?.homepage}")

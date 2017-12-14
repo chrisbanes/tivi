@@ -142,7 +142,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
 
         viewModel.liveList.observeK(this) {
             adapter.setList(it)
-            startPostponedEnterTransition()
+            scheduleStartPostponedTransitions()
         }
 
         viewModel.viewState.observeK(this) {

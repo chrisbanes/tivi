@@ -49,7 +49,7 @@ class LibraryEpoxyController(
         if (watched != null && !watched.isEmpty()) {
             watched.take(spanCount * 2).forEach { item ->
                 showPoster {
-                    id(item.entry!!.id!!)
+                    id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
                     posterPath(item.show?.tmdbPosterPath)
                     transName("watched_${item.show?.homepage}")

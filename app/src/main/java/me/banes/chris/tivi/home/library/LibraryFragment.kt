@@ -29,7 +29,6 @@ import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.WatchedEntry
-import me.banes.chris.tivi.extensions.doOnPreDraw
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeFragment
 import me.banes.chris.tivi.home.HomeNavigator
@@ -59,7 +58,7 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
                 item: ListItem<out Entry>,
                 sharedElementHelper: SharedElementHelper,
                 transitionName: String? = item.show?.homepage) {
-            summary_rv.findViewHolderForItemId(item.entry!!.id!!)?.let {
+            summary_rv.findViewHolderForItemId(item.generateStableId())?.let {
                 sharedElementHelper.addSharedElement(it.itemView, transitionName)
             }
         }
@@ -83,17 +82,14 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
 
         viewModel.data.observeK(this) { model ->
             controller.setData(model?.watched, model?.tmdbImageUrlProvider)
+            scheduleStartPostponedTransitions()
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val container = view.parent as ViewGroup
         postponeEnterTransition()
-        container.doOnPreDraw {
-            startPostponedEnterTransition()
-        }
 
         // Setup span and columns
         gridLayoutManager = summary_rv.layoutManager as GridLayoutManager
@@ -112,11 +108,6 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
                 onMenuItemClicked(it)
             }
         }
-    }
-
-    override fun canStartTransition(): Boolean {
-        return true
-        // FIXME return groupAdapter.itemCount > 0
     }
 
     override fun getMenu(): Menu? = summary_toolbar.menu

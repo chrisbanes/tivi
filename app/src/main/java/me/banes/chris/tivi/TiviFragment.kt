@@ -28,6 +28,9 @@ import me.banes.chris.tivi.extensions.doOnPreDraw
  */
 abstract class TiviFragment : DaggerFragment() {
 
+    private var startedTransition = false
+    private var postponed = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -35,6 +38,11 @@ abstract class TiviFragment : DaggerFragment() {
             enterTransition = inflateTransition(R.transition.fragment_enter)
             exitTransition = inflateTransition(R.transition.fragment_exit)
         }
+    }
+
+    override fun postponeEnterTransition() {
+        super.postponeEnterTransition()
+        postponed = true
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,12 +53,16 @@ abstract class TiviFragment : DaggerFragment() {
     override fun onStart() {
         super.onStart()
 
-        if (canStartTransition()) {
-            scheduleStartPostponedTransitions()
+        if (postponed && !startedTransition) {
+            // If we're postponed and haven't started a transition yet, we'll delay for a max of 200ms
+            view?.postDelayed(this::scheduleStartPostponedTransitions, 200)
         }
     }
 
-    protected open fun canStartTransition(): Boolean = true
+    override fun onStop() {
+        super.onStop()
+        startedTransition = false
+    }
 
     private fun setupParentWindowInsetsForTransition() {
         val root = view!!
@@ -91,9 +103,12 @@ abstract class TiviFragment : DaggerFragment() {
     }
 
     protected fun scheduleStartPostponedTransitions() {
-        (view?.parent as ViewGroup).doOnPreDraw {
-            startPostponedEnterTransition()
-            activity?.startPostponedEnterTransition()
+        if (!startedTransition) {
+            (view?.parent as ViewGroup).doOnPreDraw {
+                startPostponedEnterTransition()
+                activity?.startPostponedEnterTransition()
+            }
+            startedTransition = true
         }
     }
 }

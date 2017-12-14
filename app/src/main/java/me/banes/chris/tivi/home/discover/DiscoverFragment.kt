@@ -65,7 +65,7 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
                 item: ListItem<out Entry>,
                 sharedElementHelper: SharedElementHelper,
                 transitionName: String? = item.show?.homepage) {
-            summary_rv.findViewHolderForItemId(item.entry!!.id!!)?.let {
+            summary_rv.findViewHolderForItemId(item.generateStableId())?.let {
                 sharedElementHelper.addSharedElement(it.itemView, transitionName)
             }
         }
@@ -84,6 +84,7 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         super.onActivityCreated(savedInstanceState)
         viewModel.data.observeK(this) { model ->
             controller.setData(model?.trendingItems, model?.popularItems, model?.tmdbImageUrlProvider)
+            scheduleStartPostponedTransitions()
         }
     }
 
@@ -123,10 +124,5 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
             smoothScrollToPosition(0)
         }
         summary_appbarlayout.setExpanded(true)
-    }
-
-    override fun canStartTransition(): Boolean {
-        return true
-        //FIXME return controller.adapter.itemCount > 0
     }
 }
