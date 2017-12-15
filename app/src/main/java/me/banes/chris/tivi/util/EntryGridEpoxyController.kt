@@ -70,14 +70,16 @@ open class EntryGridEpoxyController<LI : ListItem<out Entry>> : PagingEpoxyContr
         }
     }
 
-    protected open fun buildItemModel(item: LI): ShowPosterModel_ = ShowPosterModel_().apply {
-        id(item.generateStableId())
-        tmdbImageUrlProvider(tmdbImageUrlProvider)
-        posterPath(item.show?.tmdbPosterPath)
-        transName("trending_${item.show?.homepage}")
-        clickListener(View.OnClickListener {
-            callbacks?.onItemClicked(item)
-        })
+    protected open fun buildItemModel(item: LI): ShowPosterModel_ {
+        return ShowPosterModel_()
+                .id(item.generateStableId())
+                .tmdbImageUrlProvider(tmdbImageUrlProvider)
+                .title(item.show?.title)
+                .posterPath(item.show?.tmdbPosterPath)
+                .transName(item.show?.homepage)
+                .clickListener(View.OnClickListener {
+                    callbacks?.onItemClicked(item)
+                })
     }
 
     protected open fun buildItemPlaceholder(index: Int): ShowPosterModel_ = ShowPosterModel_().apply {

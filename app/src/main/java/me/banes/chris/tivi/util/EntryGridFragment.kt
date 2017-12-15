@@ -61,6 +61,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(vmClass)
 
         controller = createController()
+        controller.setDebugLoggingEnabled(true)
         controller.callbacks = object : EntryGridEpoxyController.Callbacks<LI> {
             override fun onItemClicked(item: LI) {
                 this@EntryGridFragment.onItemClicked(item)

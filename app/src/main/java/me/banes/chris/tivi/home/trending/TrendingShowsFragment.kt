@@ -52,10 +52,9 @@ class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsV
     override fun createController(): EntryGridEpoxyController<TrendingListItem> {
         return object : EntryGridEpoxyController<TrendingListItem>() {
             override fun buildItemModel(item: TrendingListItem): ShowPosterModel_ {
-                return super.buildItemModel(item).apply {
-                    annotation(item.entry?.watchers.toString())
-                    annotationDrawable(R.drawable.ic_eye_12dp)
-                }
+                return super.buildItemModel(item)
+                        .annotation(item.entry?.watchers.toString())
+                        .annotationDrawable(R.drawable.ic_eye_12dp)
             }
         }
     }
