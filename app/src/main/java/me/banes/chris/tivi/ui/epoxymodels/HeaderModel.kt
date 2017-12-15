@@ -27,7 +27,7 @@ import me.banes.chris.tivi.R
 @EpoxyModelClass(layout = R.layout.header_item)
 abstract class HeaderModel : EpoxyModelWithHolder<TiviEpoxyHolder>() {
     @EpoxyAttribute @StringRes var title = 0
-    @EpoxyAttribute var clickListener: View.OnClickListener? = null
+    @EpoxyAttribute(EpoxyAttribute.Option.DoNotHash) var clickListener: View.OnClickListener? = null
 
     override fun bind(holder: TiviEpoxyHolder) {
         holder.header_title.setText(title)

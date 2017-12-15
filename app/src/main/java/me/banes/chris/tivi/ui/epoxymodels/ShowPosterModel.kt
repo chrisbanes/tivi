@@ -35,7 +35,7 @@ abstract class ShowPosterModel : EpoxyModelWithHolder<TiviEpoxyHolder>() {
     @EpoxyAttribute var annotation: String? = null
     @EpoxyAttribute @DrawableRes var annotationDrawable = 0
     @EpoxyAttribute var tmdbImageUrlProvider: TmdbImageUrlProvider? = null
-    @EpoxyAttribute var clickListener: View.OnClickListener? = null
+    @EpoxyAttribute(EpoxyAttribute.Option.DoNotHash) var clickListener: View.OnClickListener? = null
 
     override fun bind(holder: TiviEpoxyHolder) {
         holder.show_title.text = title
