@@ -20,7 +20,7 @@ import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
 import me.banes.chris.tivi.R
 
-@EpoxyModelClass(layout = R.layout.empty_state)
+@EpoxyModelClass(layout = R.layout.view_holder_empty_state)
 abstract class EmptyPlaceholderModel : EpoxyModelWithHolder<TiviEpoxyHolder>() {
 
     override fun bind(holder: TiviEpoxyHolder) {

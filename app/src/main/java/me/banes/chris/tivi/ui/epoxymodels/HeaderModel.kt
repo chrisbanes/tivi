@@ -21,10 +21,10 @@ import android.view.View
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
-import kotlinx.android.synthetic.main.header_item.*
+import kotlinx.android.synthetic.main.view_holder_header.*
 import me.banes.chris.tivi.R
 
-@EpoxyModelClass(layout = R.layout.header_item)
+@EpoxyModelClass(layout = R.layout.view_holder_header)
 abstract class HeaderModel : EpoxyModelWithHolder<TiviEpoxyHolder>() {
     @EpoxyAttribute @StringRes var title = 0
     @EpoxyAttribute(EpoxyAttribute.Option.DoNotHash) var clickListener: View.OnClickListener? = null

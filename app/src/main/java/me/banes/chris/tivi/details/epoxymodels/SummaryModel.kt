@@ -16,20 +16,15 @@
 
 package me.banes.chris.tivi.details.epoxymodels
 
-import android.support.v4.view.animation.FastOutSlowInInterpolator
-import android.transition.ChangeBounds
-import android.transition.TransitionManager
-import android.view.View
-import android.view.ViewGroup
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
-import kotlinx.android.synthetic.main.details_summary_item.*
-import kotlinx.android.synthetic.main.details_summary_item.view.*
+import kotlinx.android.synthetic.main.view_holder_details_summary.*
 import me.banes.chris.tivi.R
+import me.banes.chris.tivi.ui.MaxLinesToggleClickListener
 import me.banes.chris.tivi.ui.epoxymodels.TiviEpoxyHolder
 
-@EpoxyModelClass(layout = R.layout.details_summary_item)
+@EpoxyModelClass(layout = R.layout.view_holder_details_summary)
 abstract class SummaryModel : EpoxyModelWithHolder<TiviEpoxyHolder>() {
     @EpoxyAttribute var summary: String? = null
 
@@ -43,17 +38,4 @@ abstract class SummaryModel : EpoxyModelWithHolder<TiviEpoxyHolder>() {
     }
 
     override fun getSpanSize(totalSpanCount: Int, position: Int, itemCount: Int) = totalSpanCount
-
-    private class MaxLinesToggleClickListener(private val collapsedLines: Int) : View.OnClickListener {
-        private val transition = ChangeBounds().apply {
-            duration = 200
-            interpolator = FastOutSlowInInterpolator()
-        }
-
-        override fun onClick(view: View) {
-            TransitionManager.beginDelayedTransition(view as ViewGroup, transition)
-            view.details_summary.maxLines =
-                    if (view.details_summary.maxLines > collapsedLines) collapsedLines else Int.MAX_VALUE
-        }
-    }
 }

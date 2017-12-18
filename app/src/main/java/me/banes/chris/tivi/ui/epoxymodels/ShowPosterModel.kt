@@ -19,15 +19,16 @@ package me.banes.chris.tivi.ui.epoxymodels
 import android.support.annotation.DrawableRes
 import android.view.View
 import com.airbnb.epoxy.EpoxyAttribute
+import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
-import kotlinx.android.synthetic.main.grid_item.*
+import kotlinx.android.synthetic.main.view_holder_grid_item.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.extensions.doWhenLaidOut
 import me.banes.chris.tivi.extensions.loadFromUrl
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 
-@EpoxyModelClass(layout = R.layout.grid_item)
+@EpoxyModelClass(layout = R.layout.view_holder_grid_item)
 abstract class ShowPosterModel : EpoxyModelWithHolder<TiviEpoxyHolder>() {
     @EpoxyAttribute var title: String? = null
     @EpoxyAttribute var transName: String? = null

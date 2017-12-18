@@ -82,7 +82,8 @@ open class EntryGridEpoxyController<LI : ListItem<out Entry>> : PagingEpoxyContr
                 })
     }
 
-    protected open fun buildItemPlaceholder(index: Int): ShowPosterModel_ = ShowPosterModel_().apply {
-        id("placeholder_$index")
+    protected open fun buildItemPlaceholder(index: Int): ShowPosterModel_ {
+        return ShowPosterModel_()
+                .id("placeholder_$index")
     }
 }

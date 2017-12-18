@@ -104,7 +104,7 @@ abstract class TiviFragment : DaggerFragment() {
 
     protected fun scheduleStartPostponedTransitions() {
         if (!startedTransition) {
-            (view?.parent as ViewGroup).doOnPreDraw {
+            (view?.parent as? ViewGroup)?.doOnPreDraw {
                 startPostponedEnterTransition()
                 activity?.startPostponedEnterTransition()
             }

@@ -21,11 +21,11 @@ import android.support.annotation.StringRes
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
-import kotlinx.android.synthetic.main.details_badge_item.*
+import kotlinx.android.synthetic.main.view_holder_details_badge.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.ui.epoxymodels.TiviEpoxyHolder
 
-@EpoxyModelClass(layout = R.layout.details_badge_item)
+@EpoxyModelClass(layout = R.layout.view_holder_details_badge)
 abstract class BadgeModel : EpoxyModelWithHolder<TiviEpoxyHolder>() {
     @EpoxyAttribute var label: String? = null
     @EpoxyAttribute @StringRes var labelRes = 0
