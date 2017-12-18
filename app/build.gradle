@@ -168,7 +168,7 @@ dependencies {
     debugImplementation "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${versions.leakcanary}"
 
-    implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true
     }
 
