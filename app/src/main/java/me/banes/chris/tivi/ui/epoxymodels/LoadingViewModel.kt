@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.details.items
+package me.banes.chris.tivi.ui.epoxymodels
 
-import android.content.Context
-import android.graphics.drawable.Drawable
+import com.airbnb.epoxy.EpoxyModelClass
+import com.airbnb.epoxy.EpoxyModelWithHolder
 import me.banes.chris.tivi.R
-import me.banes.chris.tivi.data.entities.TiviShow
 
-class RuntimeItem(show: TiviShow) : BadgeItem(show) {
-    override fun getLabel(context: Context, show: TiviShow): String? {
-        return show.runtime?.let {
-            context.getString(R.string.minutes_format, it)
-        }
+@EpoxyModelClass(layout = R.layout.infinite_loading)
+abstract class LoadingViewModel : EpoxyModelWithHolder<TiviEpoxyHolder>() {
+
+    override fun bind(holder: TiviEpoxyHolder) {
+        // Nothing to do here
     }
 
-    override fun getIcon(context: Context, show: TiviShow): Drawable = context.getDrawable(R.drawable.ic_details_runtime)
+    override fun getSpanSize(totalSpanCount: Int, position: Int, itemCount: Int) = totalSpanCount
 }

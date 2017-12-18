@@ -28,7 +28,8 @@ buildscript {
             'leakcanary'       : '1.5.4',
             'rx'               : '2.1.7',
             'rxlint'           : '1.6',
-            'firebase'         : '11.6.2'
+            'firebase'         : '11.6.2',
+            'epoxy'            : '2.7.3'
     ]
 
     repositories {

@@ -23,31 +23,46 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_summary.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.SharedElementHelper
-import me.banes.chris.tivi.extensions.doOnPreDraw
+import me.banes.chris.tivi.data.Entry
+import me.banes.chris.tivi.data.entities.ListItem
+import me.banes.chris.tivi.data.entities.WatchedEntry
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeFragment
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.HomeNavigatorViewModel
-import me.banes.chris.tivi.home.discover.SectionedHelper
 import me.banes.chris.tivi.ui.SpacingItemDecorator
-import me.banes.chris.tivi.ui.groupieitems.HeaderItem
-import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
-import me.banes.chris.tivi.ui.groupieitems.ShowPosterSection
 import me.banes.chris.tivi.util.GridToGridTransitioner
 
 class LibraryFragment : HomeFragment<LibraryViewModel>() {
 
     private lateinit var homeNavigator: HomeNavigator
-
     private lateinit var gridLayoutManager: GridLayoutManager
-    private val groupAdapter = GroupAdapter<ViewHolder>()
 
-    private lateinit var sectionHelper: SectionedHelper<LibraryViewModel.Section>
+    private val controller = LibraryEpoxyController(object : LibraryEpoxyController.Callbacks {
+        override fun onWatchedHeaderClicked(items: List<ListItem<WatchedEntry>>?) {
+            val sharedElementHelper = SharedElementHelper()
+            items?.forEach { addSharedElementEntry(it, sharedElementHelper) }
+            viewModel.onWatchedHeaderClicked(homeNavigator, sharedElementHelper)
+        }
+
+        override fun onItemClicked(item: ListItem<out Entry>) {
+            val sharedElementHelper = SharedElementHelper()
+            addSharedElementEntry(item, sharedElementHelper, "poster")
+            viewModel.onItemPostedClicked(homeNavigator, item.show!!, sharedElementHelper)
+        }
+
+        private fun addSharedElementEntry(
+                item: ListItem<out Entry>,
+                sharedElementHelper: SharedElementHelper,
+                transitionName: String? = item.show?.homepage) {
+            summary_rv.findViewHolderForItemId(item.generateStableId())?.let {
+                sharedElementHelper.addSharedElement(it.itemView, transitionName)
+            }
+        }
+    })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,54 +80,24 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel.data.observeK(this) {
-            if (it != null && !it.sections.isEmpty() && groupAdapter.itemCount == 0) {
-                scheduleStartPostponedTransitions()
-            }
-            it?.run {
-                sectionHelper.update(it.sections.map { it.section to it.items }.toMap(), it.tmdbImageUrlProvider)
-            }
+        viewModel.data.observeK(this) { model ->
+            controller.setData(model?.watched, model?.tmdbImageUrlProvider)
+            scheduleStartPostponedTransitions()
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val container = view.parent as ViewGroup
         postponeEnterTransition()
-        container.doOnPreDraw {
-            startPostponedEnterTransition()
-        }
 
+        // Setup span and columns
         gridLayoutManager = summary_rv.layoutManager as GridLayoutManager
-        gridLayoutManager.spanSizeLookup = groupAdapter.spanSizeLookup
-
-        sectionHelper = SectionedHelper(
-                summary_rv,
-                groupAdapter,
-                gridLayoutManager.spanCount,
-                { _, list, tmdbImageProvider -> ShowPosterSection(list.mapNotNull { it.show }, tmdbImageProvider) },
-                this::titleFromSection)
-
-        groupAdapter.apply {
-            setOnItemClickListener { item, _ ->
-                when (item) {
-                    is HeaderItem -> {
-                        val section = item.tag as LibraryViewModel.Section
-
-                        val sharedElements = SharedElementHelper()
-                        sectionHelper.addSharedElementsForSection(section, sharedElements)
-
-                        viewModel.onSectionHeaderClicked(homeNavigator, section, sharedElements)
-                    }
-                    is ShowPosterItem -> viewModel.onItemPostedClicked(homeNavigator, item.show)
-                }
-            }
-            spanCount = gridLayoutManager.spanCount
-        }
+        gridLayoutManager.spanSizeLookup = controller.spanSizeLookup
+        controller.spanCount = gridLayoutManager.spanCount
 
         summary_rv.apply {
-            adapter = groupAdapter
+            adapter = controller.adapter
             addItemDecoration(SpacingItemDecorator(paddingLeft))
         }
 
@@ -125,16 +110,7 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         }
     }
 
-    override fun canStartTransition(): Boolean {
-        return groupAdapter.itemCount > 0
-    }
-
     override fun getMenu(): Menu? = summary_toolbar.menu
-
-    private fun titleFromSection(section: LibraryViewModel.Section) = when (section) {
-        LibraryViewModel.Section.WATCHED -> getString(R.string.library_watched)
-        else -> "FIXME"
-    }
 
     internal fun scrollToTop() {
         summary_rv.apply {

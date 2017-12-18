@@ -16,9 +16,11 @@
 
 package me.banes.chris.tivi.home.library
 
+import me.banes.chris.tivi.data.entities.ListItem
+import me.banes.chris.tivi.data.entities.WatchedEntry
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 
 data class LibraryViewState(
-        val sections: List<LibraryViewModel.SectionPage>,
+        val watched: List<ListItem<WatchedEntry>>,
         val tmdbImageUrlProvider: TmdbImageUrlProvider
 )

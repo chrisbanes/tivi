@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.ui.groupieitems
+package me.banes.chris.tivi.ui.epoxymodels
 
-import com.xwray.groupie.Item
-import com.xwray.groupie.ViewHolder
-import kotlinx.android.synthetic.main.header_item.view.*
+import com.airbnb.epoxy.EpoxyModelClass
+import com.airbnb.epoxy.EpoxyModelWithHolder
 import me.banes.chris.tivi.R
 
-class HeaderItem(private val title: String, val tag: Any? = null) : Item<ViewHolder>() {
+@EpoxyModelClass(layout = R.layout.view_holder_empty_state)
+abstract class EmptyPlaceholderModel : EpoxyModelWithHolder<TiviEpoxyHolder>() {
 
-    override fun getLayout() = R.layout.header_item
-
-    override fun bind(viewHolder: ViewHolder, position: Int) {
-        viewHolder.itemView.header_title.text = title
+    override fun bind(holder: TiviEpoxyHolder) {
+        // Nothing to do here
     }
+
+    override fun getSpanSize(totalSpanCount: Int, position: Int, itemCount: Int) = totalSpanCount
 }

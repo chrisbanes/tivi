@@ -52,9 +52,7 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
             Flowables.combineLatest(
                     messages.toFlowable(BackpressureStrategy.LATEST),
                     tmdbManager.imageProvider,
-                    { message, tmdb ->
-                        EntryViewState(message, tmdb)
-                    })
+                    ::EntryViewState)
     )
 
     init {

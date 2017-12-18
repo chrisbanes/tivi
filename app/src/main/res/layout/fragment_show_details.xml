@@ -57,7 +57,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <com.airbnb.epoxy.EpoxyRecyclerView
         android:id="@+id/details_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -65,7 +65,9 @@
         android:layout_marginRight="12dp"
         android:background="@drawable/round_rect_background"
         android:elevation="2dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layoutManager="android.support.v7.widget.GridLayoutManager"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:spanCount="4" />
 
     <ImageView
         android:id="@+id/details_poster"

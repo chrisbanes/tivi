@@ -21,13 +21,9 @@ import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.SharedElementHelper
-import me.banes.chris.tivi.data.Entry
-import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
-import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.POPULAR
-import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
 import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.PopularCall
@@ -45,25 +41,14 @@ class DiscoverViewModel @Inject constructor(
         tmdbManager: TmdbManager
 ) : HomeFragmentViewModel(traktManager, appNavigator) {
 
-    data class SectionPage(val section: Section, val items: List<ListItem<out Entry>>)
-
-    enum class Section {
-        TRENDING, POPULAR
-    }
-
     val data = MutableLiveData<DiscoverViewState>()
 
     init {
         disposables += Flowables.combineLatest(
-                popularCall.data(0),
                 trendingCall.data(0),
+                popularCall.data(0),
                 tmdbManager.imageProvider,
-                { popular, trending, tmdbImageProvider ->
-                    DiscoverViewState(
-                            listOf(SectionPage(TRENDING, trending), SectionPage(POPULAR, popular)),
-                            tmdbImageProvider
-                    )
-                })
+                ::DiscoverViewState)
                 .observeOn(schedulers.main)
                 .subscribe(data::setValue, Timber::e)
 
@@ -85,14 +70,12 @@ class DiscoverViewModel @Inject constructor(
         Timber.e(t, "Error while refreshing")
     }
 
-    fun onSectionHeaderClicked(
-            navigator: HomeNavigator,
-            section: Section,
-            sharedElementHelper: SharedElementHelper? = null) {
-        when (section) {
-            TRENDING -> navigator.showTrending(sharedElementHelper)
-            POPULAR -> navigator.showPopular(sharedElementHelper)
-        }
+    fun onTrendingHeaderClicked(navigator: HomeNavigator, sharedElementHelper: SharedElementHelper? = null) {
+        navigator.showTrending(sharedElementHelper)
+    }
+
+    fun onPopularHeaderClicked(navigator: HomeNavigator, sharedElementHelper: SharedElementHelper? = null) {
+        navigator.showPopular(sharedElementHelper)
     }
 
     fun onItemPostedClicked(navigator: HomeNavigator, show: TiviShow, sharedElements: SharedElementHelper?) {

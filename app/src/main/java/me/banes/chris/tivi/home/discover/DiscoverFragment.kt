@@ -23,11 +23,10 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.fragment_summary.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.SharedElementHelper
+import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.TrendingEntry
@@ -35,23 +34,42 @@ import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeFragment
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.HomeNavigatorViewModel
-import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.POPULAR
-import me.banes.chris.tivi.home.discover.DiscoverViewModel.Section.TRENDING
 import me.banes.chris.tivi.ui.SpacingItemDecorator
-import me.banes.chris.tivi.ui.groupieitems.HeaderItem
-import me.banes.chris.tivi.ui.groupieitems.PopularPosterSection
-import me.banes.chris.tivi.ui.groupieitems.ShowPosterItem
-import me.banes.chris.tivi.ui.groupieitems.TrendingPosterSection
 import me.banes.chris.tivi.util.GridToGridTransitioner
 
 internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
     private lateinit var gridLayoutManager: GridLayoutManager
-    private val groupAdapter = GroupAdapter<ViewHolder>()
-
-    private lateinit var sectionHelper: SectionedHelper<DiscoverViewModel.Section>
-
     private lateinit var homeNavigator: HomeNavigator
+
+    private val controller = DiscoverEpoxyController(object : DiscoverEpoxyController.Callbacks {
+        override fun onTrendingHeaderClicked(items: List<ListItem<TrendingEntry>>?) {
+            val sharedElementHelper = SharedElementHelper()
+            items?.forEach { addSharedElementEntry(it, sharedElementHelper) }
+            viewModel.onTrendingHeaderClicked(homeNavigator, sharedElementHelper)
+        }
+
+        override fun onPopularHeaderClicked(items: List<ListItem<PopularEntry>>?) {
+            val sharedElementHelper = SharedElementHelper()
+            items?.forEach { addSharedElementEntry(it, sharedElementHelper) }
+            viewModel.onPopularHeaderClicked(homeNavigator, sharedElementHelper)
+        }
+
+        override fun onItemClicked(item: ListItem<out Entry>) {
+            val sharedElementHelper = SharedElementHelper()
+            addSharedElementEntry(item, sharedElementHelper, "poster")
+            viewModel.onItemPostedClicked(homeNavigator, item.show!!, sharedElementHelper)
+        }
+
+        private fun addSharedElementEntry(
+                item: ListItem<out Entry>,
+                sharedElementHelper: SharedElementHelper,
+                transitionName: String? = item.show?.homepage) {
+            summary_rv.findViewHolderForItemId(item.generateStableId())?.let {
+                sharedElementHelper.addSharedElement(it.itemView, transitionName)
+            }
+        }
+    })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,13 +82,9 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel.data.observeK(this) {
-            if (it != null && !it.sections.isEmpty() && groupAdapter.itemCount == 0) {
-                scheduleStartPostponedTransitions()
-            }
-            it?.run {
-                sectionHelper.update(it.sections.map { it.section to it.items }.toMap(), it.tmdbImageUrlProvider)
-            }
+        viewModel.data.observeK(this) { model ->
+            controller.setData(model?.trendingItems, model?.popularItems, model?.tmdbImageUrlProvider)
+            scheduleStartPostponedTransitions()
         }
     }
 
@@ -83,45 +97,13 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
         postponeEnterTransition()
 
+        // Setup span and columns
         gridLayoutManager = summary_rv.layoutManager as GridLayoutManager
-        gridLayoutManager.spanSizeLookup = groupAdapter.spanSizeLookup
-
-        sectionHelper = SectionedHelper(
-                summary_rv,
-                groupAdapter,
-                gridLayoutManager.spanCount,
-                { section, list, tmdbImageProvider ->
-                    when (section) {
-                        TRENDING -> TrendingPosterSection(list as List<ListItem<TrendingEntry>>, tmdbImageProvider)
-                        POPULAR -> PopularPosterSection(list as List<ListItem<PopularEntry>>, tmdbImageProvider)
-                    }
-                },
-                this::titleFromSection)
-
-        groupAdapter.apply {
-            spanCount = gridLayoutManager.spanCount
-
-            setOnItemClickListener { item, _ ->
-                when (item) {
-                    is HeaderItem -> {
-                        val section = item.tag as DiscoverViewModel.Section
-
-                        val sharedElements = SharedElementHelper()
-                        sectionHelper.addSharedElementsForSection(section, sharedElements)
-
-                        viewModel.onSectionHeaderClicked(homeNavigator, section, sharedElements)
-                    }
-                    is ShowPosterItem -> {
-                        val sharedElements = SharedElementHelper()
-                        sectionHelper.addSharedElementForItem(item, sharedElements, "poster")
-                        viewModel.onItemPostedClicked(homeNavigator, item.show, sharedElements)
-                    }
-                }
-            }
-        }
+        gridLayoutManager.spanSizeLookup = controller.spanSizeLookup
+        controller.spanCount = gridLayoutManager.spanCount
 
         summary_rv.apply {
-            adapter = groupAdapter
+            adapter = controller.adapter
             addItemDecoration(SpacingItemDecorator(paddingLeft))
         }
 
@@ -136,20 +118,11 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
     override fun getMenu(): Menu? = summary_toolbar.menu
 
-    private fun titleFromSection(section: DiscoverViewModel.Section) = when (section) {
-        POPULAR -> getString(R.string.discover_popular)
-        TRENDING -> getString(R.string.discover_trending)
-    }
-
     internal fun scrollToTop() {
         summary_rv.apply {
             stopScroll()
             smoothScrollToPosition(0)
         }
         summary_appbarlayout.setExpanded(true)
-    }
-
-    override fun canStartTransition(): Boolean {
-        return groupAdapter.itemCount > 0
     }
 }

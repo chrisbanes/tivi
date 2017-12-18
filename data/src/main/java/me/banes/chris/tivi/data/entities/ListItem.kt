@@ -19,6 +19,7 @@ package me.banes.chris.tivi.data.entities
 import android.arch.persistence.room.Embedded
 import android.arch.persistence.room.Relation
 import me.banes.chris.tivi.data.Entry
+import java.util.Objects
 
 interface ListItem<ET : Entry> {
     var entry: ET?
@@ -26,6 +27,10 @@ interface ListItem<ET : Entry> {
 
     val show: TiviShow?
         get() = relations?.getOrNull(0)
+
+    fun generateStableId(): Long {
+        return Objects.hash(entry!!::class, show!!.id!!).toLong()
+    }
 }
 
 data class TrendingListItem(

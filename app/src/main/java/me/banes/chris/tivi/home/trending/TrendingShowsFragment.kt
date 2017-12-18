@@ -25,7 +25,8 @@ import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.TrendingListItem
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.HomeNavigatorViewModel
-import me.banes.chris.tivi.ui.ShowPosterGridAdapter
+import me.banes.chris.tivi.ui.epoxymodels.ShowPosterModel_
+import me.banes.chris.tivi.util.EntryGridEpoxyController
 import me.banes.chris.tivi.util.EntryGridFragment
 
 class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsViewModel>(TrendingShowsViewModel::class.java) {
@@ -48,28 +49,21 @@ class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsV
         }
     }
 
-    override fun createAdapter(spanCount: Int): ShowPosterGridAdapter<TrendingListItem> {
-        val placeholderIcon = context?.getDrawable(R.drawable.ic_eye_12dp)
-        return super.createAdapter(spanCount).apply {
-            showBinder = { item, holder, tmdbImageUrlProvider ->
-                val show = item.show!!
-                val entry = item.entry
-                holder.bindShow(show.tmdbPosterPath,
-                        tmdbImageUrlProvider,
-                        show.title,
-                        show.homepage,
-                        entry?.watchers.toString(),
-                        placeholderIcon?.mutate())
-            }
-            itemClickListener = { item, viewHolder ->
-                val sharedElements = SharedElementHelper()
-                sharedElements.addSharedElement(viewHolder.itemView, "poster")
-                viewModel.onItemClicked(item, homeNavigator, sharedElements)
+    override fun createController(): EntryGridEpoxyController<TrendingListItem> {
+        return object : EntryGridEpoxyController<TrendingListItem>() {
+            override fun buildItemModel(item: TrendingListItem): ShowPosterModel_ {
+                return super.buildItemModel(item)
+                        .annotation(item.entry?.watchers.toString())
+                        .annotationDrawable(R.drawable.ic_eye_12dp)
             }
         }
     }
 
-    override fun canStartTransition(): Boolean {
-        return adapter.itemCount > 0
+    override fun onItemClicked(item: TrendingListItem) {
+        val sharedElements = SharedElementHelper()
+        grid_recyclerview.findViewHolderForItemId(item.generateStableId())?.let {
+            sharedElements.addSharedElement(it.itemView, "poster")
+        }
+        viewModel.onItemClicked(item, homeNavigator, sharedElements)
     }
 }
