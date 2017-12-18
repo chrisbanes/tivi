@@ -14,33 +14,35 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.details.items
+package me.banes.chris.tivi.details.epoxymodels
 
 import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.view.View
 import android.view.ViewGroup
+import com.airbnb.epoxy.EpoxyAttribute
+import com.airbnb.epoxy.EpoxyModelClass
+import com.airbnb.epoxy.EpoxyModelWithHolder
+import kotlinx.android.synthetic.main.details_summary_item.*
 import kotlinx.android.synthetic.main.details_summary_item.view.*
 import me.banes.chris.tivi.R
-import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.ui.groupieitems.TiviItem
-import me.banes.chris.tivi.ui.holders.TiviViewHolder
+import me.banes.chris.tivi.ui.epoxymodels.TiviEpoxyHolder
 
-class SummaryItem(private val show: TiviShow) : TiviItem<TiviViewHolder>() {
+@EpoxyModelClass(layout = R.layout.details_summary_item)
+abstract class SummaryModel : EpoxyModelWithHolder<TiviEpoxyHolder>() {
+    @EpoxyAttribute var summary: String? = null
 
-    override fun getLayout() = R.layout.details_summary_item
+    override fun bind(holder: TiviEpoxyHolder) {
+        holder.details_summary.text = summary
 
-    override fun bind(viewHolder: TiviViewHolder, position: Int) {
-        val resources = viewHolder.itemView.resources
-
-        viewHolder.itemView.setOnClickListener(MaxLinesToggleClickListener(
-                resources.getInteger(R.integer.details_summary_collapsed_lines)))
-
-        viewHolder.itemView.details_summary.text = show.summary
+        holder.containerView?.apply {
+            setOnClickListener(
+                    MaxLinesToggleClickListener(resources.getInteger(R.integer.details_summary_collapsed_lines)))
+        }
     }
 
-    override fun isClickable() = false
+    override fun getSpanSize(totalSpanCount: Int, position: Int, itemCount: Int) = totalSpanCount
 
     private class MaxLinesToggleClickListener(private val collapsedLines: Int) : View.OnClickListener {
         private val transition = ChangeBounds().apply {

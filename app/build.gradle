@@ -157,8 +157,6 @@ dependencies {
 
     implementation "com.github.bumptech.glide:glide:4.2.0"
 
-    implementation 'com.xwray:groupie:2.0.0-beta1'
-
     implementation "com.airbnb.android:epoxy:${versions.epoxy}"
     implementation "com.airbnb.android:epoxy-paging:${versions.epoxy}"
     kapt "com.airbnb.android:epoxy-processor:${versions.epoxy}"
