@@ -19,7 +19,6 @@ package me.banes.chris.tivi.ui.epoxymodels
 import android.support.annotation.DrawableRes
 import android.view.View
 import com.airbnb.epoxy.EpoxyAttribute
-import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
 import kotlinx.android.synthetic.main.view_holder_grid_item.*
