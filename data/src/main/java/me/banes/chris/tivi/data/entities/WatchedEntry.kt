@@ -26,7 +26,7 @@ import org.threeten.bp.OffsetDateTime
 
 @Entity(tableName = "watched_entries",
         indices = [
-            Index(value = "show_id", unique = true)
+            Index(value = ["show_id"], unique = true)
         ],
         foreignKeys = [
             ForeignKey(entity = TiviShow::class,

@@ -25,8 +25,8 @@ import kotlin.reflect.KMutableProperty0
 
 @Entity(tableName = "shows",
         indices = [
-            Index(value = "trakt_id", unique = true),
-            Index(value = "tmdb_id", unique = true)
+            Index(value = ["trakt_id"], unique = true),
+            Index(value = ["tmdb_id"], unique = true)
         ])
 data class TiviShow(
         @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") var id: Long? = null,
