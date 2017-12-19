@@ -18,7 +18,6 @@ package me.banes.chris.tivi.home.discover
 
 import android.view.View
 import com.airbnb.epoxy.Typed3EpoxyController
-import me.banes.chris.tivi.BuildConfig
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
@@ -32,11 +31,6 @@ import me.banes.chris.tivi.ui.epoxymodels.showPoster
 class DiscoverEpoxyController(
         private val callbacks: Callbacks
 ) : Typed3EpoxyController<List<ListItem<TrendingEntry>>, List<ListItem<PopularEntry>>, TmdbImageUrlProvider>() {
-
-    init {
-        setDebugLoggingEnabled(BuildConfig.DEBUG)
-        setFilterDuplicates(true)
-    }
 
     interface Callbacks {
         fun onTrendingHeaderClicked(items: List<ListItem<TrendingEntry>>?)
