@@ -95,7 +95,6 @@ class ColumnedChangeBounds : Transition() {
         val startHeight = startBottom - startTop
 
         val endWidth = endRight - endLeft
-        val endHeight = endBottom - endTop
 
         // If we don't have a RecyclerView parent, not much point us doing anything so return null
         val recyclerViewEndParent = findRecyclerViewParent(endView) ?: return null
