@@ -2,7 +2,7 @@ version: 2.0
 
 defaults: &defaults
   docker:
-    - image: circleci/android:api-26-alpha
+    - image: circleci/android:api-27-alpha
   working_directory: ~/tivi
   environment:
     _JAVA_OPTIONS: "-Xmx1400m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2"
