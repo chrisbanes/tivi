@@ -18,6 +18,7 @@ package me.banes.chris.tivi.data.entities
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.OffsetDateTime
@@ -25,8 +26,8 @@ import kotlin.reflect.KMutableProperty0
 
 @Entity(tableName = "shows",
         indices = [
-            Index(value = "trakt_id", unique = true),
-            Index(value = "tmdb_id", unique = true)
+            Index(value = ["trakt_id"], unique = true),
+            Index(value = ["tmdb_id"], unique = true)
         ])
 data class TiviShow(
         @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") var id: Long? = null,
@@ -47,6 +48,8 @@ data class TiviShow(
         @ColumnInfo(name = "runtime") var runtime: Int? = null,
         @ColumnInfo(name = "genres") var _genres: String? = null
 ) {
+    @Ignore constructor(): this(null)
+
     val genres: List<Genre>?
         get() = _genres?.split(",")
                 ?.mapNotNull {
