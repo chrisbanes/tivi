@@ -36,6 +36,8 @@ app uses. That is currently [Trakt.tv](http://docs.trakt.apiary.io/),
 [TMDb](https://developers.themoviedb.org/4/getting-started) and [Fabric](https://fabric.io) (for Crashlytics). You can find information about
 how to gain access via the relevant links.
 
+For Trakt.tv, set the redirect uri to `me.banes.chris.tivi://auth/oauth2callback`.
+
 When you obtain the keys, you can provide them to the app by putting the following in the
 `gradle.properties` file in your user home:
 
