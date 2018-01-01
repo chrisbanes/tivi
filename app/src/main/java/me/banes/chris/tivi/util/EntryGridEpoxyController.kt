@@ -26,7 +26,6 @@ import me.banes.chris.tivi.ui.epoxymodels.emptyPlaceholder
 import me.banes.chris.tivi.ui.epoxymodels.loadingView
 
 open class EntryGridEpoxyController<LI : ListItem<out Entry>> : PagingEpoxyController<LI>() {
-
     internal var callbacks: Callbacks<LI>? = null
 
     var isLoading = false
@@ -49,8 +48,8 @@ open class EntryGridEpoxyController<LI : ListItem<out Entry>> : PagingEpoxyContr
         fun onItemClicked(item: LI)
     }
 
-    override fun buildModels(items: List<LI?>?) {
-        if (items != null && !items.isEmpty()) {
+    override fun buildModels(items: MutableList<LI?>) {
+        if (!items.isEmpty()) {
             items.forEachIndexed { index, item ->
                 when {
                     item != null -> buildItemModel(item)

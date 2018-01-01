@@ -23,13 +23,13 @@ buildscript {
             'arch_comp_paging' : '1.0.0-alpha3',
             'kotlin'           : '1.2.10',
             'espresso'         : '3.0.1',
-            'dagger'           : '2.13',
+            'dagger'           : '2.14.1',
             'ktlint'           : '0.13.0',
             'leakcanary'       : '1.5.4',
-            'rx'               : '2.1.7',
+            'rx'               : '2.1.8',
             'rxlint'           : '1.6',
-            'firebase'         : '11.6.2',
-            'epoxy'            : '2.7.3'
+            'firebase'         : '11.8.0',
+            'epoxy'            : '2.8.0'
     ]
 
     repositories {
