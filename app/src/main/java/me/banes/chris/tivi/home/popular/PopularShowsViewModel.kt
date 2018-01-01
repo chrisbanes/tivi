@@ -19,7 +19,7 @@ package me.banes.chris.tivi.home.popular
 import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.PopularListItem
 import me.banes.chris.tivi.home.HomeNavigator
-import me.banes.chris.tivi.tmdb.TmdbManager
+import me.banes.chris.tivi.tmdb.TmdbImageProviderRepo
 import me.banes.chris.tivi.trakt.calls.PopularCall
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.EntryViewModel
@@ -28,8 +28,8 @@ import javax.inject.Inject
 class PopularShowsViewModel @Inject constructor(
         schedulers: AppRxSchedulers,
         call: PopularCall,
-        tmdbManager: TmdbManager
-) : EntryViewModel<PopularListItem>(schedulers, call, tmdbManager) {
+        tmdbImageProviderRepo: TmdbImageProviderRepo
+) : EntryViewModel<PopularListItem>(schedulers, call, tmdbImageProviderRepo) {
     fun onUpClicked(navigator: HomeNavigator) {
         navigator.onUpClicked()
     }

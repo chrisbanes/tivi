@@ -19,7 +19,7 @@ package me.banes.chris.tivi.details
 import android.arch.lifecycle.MutableLiveData
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
-import me.banes.chris.tivi.tmdb.TmdbManager
+import me.banes.chris.tivi.tmdb.TmdbImageProviderRepo
 import me.banes.chris.tivi.trakt.calls.ShowDetailsCall
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.RxAwareViewModel
@@ -29,7 +29,7 @@ import javax.inject.Inject
 class ShowDetailsFragmentViewModel @Inject constructor(
         private val schedulers: AppRxSchedulers,
         private val showCall: ShowDetailsCall,
-        private val tmdbManager: TmdbManager
+        private val tmdbImageProviderRepo: TmdbImageProviderRepo
 ) : RxAwareViewModel() {
 
     var showId: Long? = null
@@ -58,7 +58,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         showId?.let {
             disposables += Flowables.combineLatest(
                     showCall.data(it),
-                    tmdbManager.imageProvider,
+                    tmdbImageProviderRepo.imageProvider,
                     ::ShowDetailsFragmentViewState)
                     .observeOn(schedulers.main)
                     .subscribe(data::setValue, Timber::e)
