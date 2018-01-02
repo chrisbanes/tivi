@@ -95,10 +95,6 @@ class HomeActivity : TiviActivity() {
         navigatorViewModel.upClickedCall.observeK(this) { this.onUpClicked() }
     }
 
-    override fun onActivityReenter(resultCode: Int, data: Intent?) {
-        postponeEnterTransition()
-    }
-
     private fun showNavigationItem(item: HomeActivityViewModel.NavigationItem?) {
         if (item == null) {
             return
