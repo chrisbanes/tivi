@@ -19,7 +19,7 @@ package me.banes.chris.tivi.home.watched
 import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.WatchedListItem
 import me.banes.chris.tivi.home.HomeNavigator
-import me.banes.chris.tivi.tmdb.TmdbImageProviderRepo
+import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.calls.WatchedCall
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.EntryViewModel
@@ -28,8 +28,8 @@ import javax.inject.Inject
 class WatchedShowsViewModel @Inject constructor(
         schedulers: AppRxSchedulers,
         call: WatchedCall,
-        tmdbImageProviderRepo: TmdbImageProviderRepo
-) : EntryViewModel<WatchedListItem>(schedulers, call, tmdbImageProviderRepo) {
+        tmdbManager: TmdbManager
+) : EntryViewModel<WatchedListItem>(schedulers, call, tmdbManager) {
     fun onUpClicked(navigator: HomeNavigator) {
         navigator.onUpClicked()
     }

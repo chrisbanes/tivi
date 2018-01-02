@@ -24,7 +24,7 @@ import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
-import me.banes.chris.tivi.tmdb.TmdbImageProviderRepo
+import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.WatchedCall
 import me.banes.chris.tivi.util.AppRxSchedulers
@@ -36,14 +36,14 @@ class LibraryViewModel @Inject constructor(
         private val watchedCall: WatchedCall,
         appNavigator: AppNavigator,
         traktManager: TraktManager,
-        tmdbImageProviderRepo: TmdbImageProviderRepo
+        tmdbManager: TmdbManager
 ) : HomeFragmentViewModel(traktManager, appNavigator) {
     val data = MutableLiveData<LibraryViewState>()
 
     init {
         disposables += Flowables.combineLatest(
                 watchedCall.data().map { it.take(20) },
-                tmdbImageProviderRepo.imageProvider,
+                tmdbManager.imageProvider,
                 ::LibraryViewState)
                 .observeOn(schedulers.main)
                 .subscribe(data::setValue, Timber::e)

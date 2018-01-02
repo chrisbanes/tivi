@@ -29,13 +29,13 @@ import me.banes.chris.tivi.calls.ListCall
 import me.banes.chris.tivi.calls.PaginatedCall
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
-import me.banes.chris.tivi.tmdb.TmdbImageProviderRepo
+import me.banes.chris.tivi.tmdb.TmdbManager
 import timber.log.Timber
 
 open class EntryViewModel<LI : ListItem<out Entry>>(
         private val schedulers: AppRxSchedulers,
         private val call: ListCall<Unit, LI>,
-        tmdbImageProviderRepo: TmdbImageProviderRepo,
+        tmdbManager: TmdbManager,
         refreshOnStartup: Boolean = true) : RxAwareViewModel() {
 
     private val messages = BehaviorSubject.create<Resource>()
@@ -51,7 +51,7 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
     val viewState: LiveData<EntryViewState> = LiveDataReactiveStreams.fromPublisher(
             Flowables.combineLatest(
                     messages.toFlowable(BackpressureStrategy.LATEST),
-                    tmdbImageProviderRepo.imageProvider,
+                    tmdbManager.imageProvider,
                     ::EntryViewState)
     )
 

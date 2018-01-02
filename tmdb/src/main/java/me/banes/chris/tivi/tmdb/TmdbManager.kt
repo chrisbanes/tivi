@@ -30,7 +30,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TmdbImageProviderRepo @Inject constructor(
+class TmdbManager @Inject constructor(
         schedulers: AppRxSchedulers,
         tmdbClient: Tmdb
 ) {

@@ -24,7 +24,7 @@ import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
-import me.banes.chris.tivi.tmdb.TmdbImageProviderRepo
+import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.PopularCall
 import me.banes.chris.tivi.trakt.calls.TrendingCall
@@ -38,7 +38,7 @@ class DiscoverViewModel @Inject constructor(
         private val trendingCall: TrendingCall,
         appNavigator: AppNavigator,
         traktManager: TraktManager,
-        tmdbImageProviderRepo: TmdbImageProviderRepo
+        tmdbManager: TmdbManager
 ) : HomeFragmentViewModel(traktManager, appNavigator) {
 
     val data = MutableLiveData<DiscoverViewState>()
@@ -47,7 +47,7 @@ class DiscoverViewModel @Inject constructor(
         disposables += Flowables.combineLatest(
                 trendingCall.data(0),
                 popularCall.data(0),
-                tmdbImageProviderRepo.imageProvider,
+                tmdbManager.imageProvider,
                 ::DiscoverViewState)
                 .observeOn(schedulers.main)
                 .subscribe(data::setValue, Timber::e)
