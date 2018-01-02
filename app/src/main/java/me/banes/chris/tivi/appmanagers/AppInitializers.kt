@@ -27,15 +27,15 @@ import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
 import javax.inject.Inject
 
-class AppManagers(private vararg val managers: AppManager) : AppManager {
+class AppInitializers(private vararg val initializers: AppInitializer) : AppInitializer {
     override fun init(application: Application) {
-        managers.forEach {
+        initializers.forEach {
             it.init(application)
         }
     }
 }
 
-class ThreeTenBpManager @Inject constructor(private val schedulers: AppRxSchedulers) : AppManager {
+class ThreeTenBpInitializer @Inject constructor(private val schedulers: AppRxSchedulers) : AppInitializer {
     private val disposables = CompositeDisposable()
 
     override fun init(application: Application) {
@@ -55,7 +55,7 @@ class ThreeTenBpManager @Inject constructor(private val schedulers: AppRxSchedul
     }
 }
 
-class LeakCanaryManager @Inject constructor() : AppManager {
+class LeakCanaryInitializer @Inject constructor() : AppInitializer {
     override fun init(application: Application) {
         if (!LeakCanary.isInAnalyzerProcess(application)) {
             LeakCanary.install(application)
@@ -63,7 +63,7 @@ class LeakCanaryManager @Inject constructor() : AppManager {
     }
 }
 
-class TimberManager @Inject constructor() : AppManager {
+class TimberInitializer @Inject constructor() : AppInitializer {
     override fun init(application: Application) {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())

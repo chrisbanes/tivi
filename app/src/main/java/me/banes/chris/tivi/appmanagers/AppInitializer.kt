@@ -18,6 +18,6 @@ package me.banes.chris.tivi.appmanagers
 
 import android.app.Application
 
-interface AppManager {
+interface AppInitializer {
     fun init(application: Application)
 }
