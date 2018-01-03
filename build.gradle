@@ -55,7 +55,7 @@ buildscript {
 }
 
 plugins {
-    id "com.diffplug.gradle.spotless" version "3.6.0"
+    id "com.diffplug.gradle.spotless" version "3.8.0"
     id 'com.github.ben-manes.versions' version "0.17.0"
 }
 
@@ -82,10 +82,6 @@ subprojects {
             licenseHeaderFile project.rootProject.file('spotless/copyright.kt')
         }
     }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }
 
 String propOrDef(String propertyName, String defaultValue) {
