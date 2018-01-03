@@ -23,10 +23,10 @@ import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.TrendingEntry
+import me.banes.chris.tivi.posterGridItem
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.epoxymodels.emptyPlaceholder
 import me.banes.chris.tivi.ui.epoxymodels.header
-import me.banes.chris.tivi.ui.epoxymodels.showPoster
 
 class DiscoverEpoxyController(
         private val callbacks: Callbacks
@@ -51,13 +51,13 @@ class DiscoverEpoxyController(
         }
         if (trending != null && !trending.isEmpty()) {
             trending.take(spanCount * 2).forEach { item ->
-                showPoster {
+                posterGridItem {
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
                     posterPath(item.show?.tmdbPosterPath)
-                    annotation(item.entry?.watchers.toString())
-                    annotationDrawable(R.drawable.ic_eye_12dp)
-                    transName("trending_${item.show?.homepage}")
+                    annotationLabel(item.entry?.watchers.toString())
+                    annotationIcon(R.drawable.ic_eye_12dp)
+                    transitionName("trending_${item.show?.homepage}")
                     clickListener(View.OnClickListener {
                         callbacks.onItemClicked(item)
                     })
@@ -78,11 +78,11 @@ class DiscoverEpoxyController(
         }
         if (popular != null && !popular.isEmpty()) {
             popular.take(spanCount * 2).forEach { item ->
-                showPoster {
+                posterGridItem {
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
                     posterPath(item.show?.tmdbPosterPath)
-                    transName("popular_${item.show?.homepage}")
+                    transitionName("popular_${item.show?.homepage}")
                     clickListener(View.OnClickListener {
                         callbacks.onItemClicked(item)
                     })

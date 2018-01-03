@@ -20,12 +20,12 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.View
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
+import me.banes.chris.tivi.PosterGridItemBindingModel_
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.TrendingListItem
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.HomeNavigatorViewModel
-import me.banes.chris.tivi.ui.epoxymodels.ShowPosterModel_
 import me.banes.chris.tivi.util.EntryGridEpoxyController
 import me.banes.chris.tivi.util.EntryGridFragment
 
@@ -51,10 +51,10 @@ class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsV
 
     override fun createController(): EntryGridEpoxyController<TrendingListItem> {
         return object : EntryGridEpoxyController<TrendingListItem>() {
-            override fun buildItemModel(item: TrendingListItem): ShowPosterModel_ {
+            override fun buildItemModel(item: TrendingListItem): PosterGridItemBindingModel_ {
                 return super.buildItemModel(item)
-                        .annotation(item.entry?.watchers.toString())
-                        .annotationDrawable(R.drawable.ic_eye_12dp)
+                        .annotationLabel(item.entry?.watchers.toString())
+                        .annotationIcon(R.drawable.ic_eye_12dp)
             }
         }
     }
