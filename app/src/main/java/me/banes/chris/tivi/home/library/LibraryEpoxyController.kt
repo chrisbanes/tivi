@@ -23,10 +23,10 @@ import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.WatchedEntry
 import me.banes.chris.tivi.emptyState
+import me.banes.chris.tivi.header
 import me.banes.chris.tivi.posterGridItem
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.epoxymodels.TotalSpanOverride
-import me.banes.chris.tivi.ui.epoxymodels.header
 
 class LibraryEpoxyController(
         private val callbacks: Callbacks
@@ -43,7 +43,8 @@ class LibraryEpoxyController(
         header {
             id("watched_header")
             title(R.string.library_watched)
-            clickListener(View.OnClickListener {
+            spanSizeOverride(TotalSpanOverride)
+            buttonClickListener(View.OnClickListener {
                 callbacks.onWatchedHeaderClicked(watched)
             })
         }

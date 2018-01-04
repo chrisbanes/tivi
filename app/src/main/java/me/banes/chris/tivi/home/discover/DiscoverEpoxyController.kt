@@ -24,10 +24,10 @@ import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.emptyState
+import me.banes.chris.tivi.header
 import me.banes.chris.tivi.posterGridItem
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.epoxymodels.TotalSpanOverride
-import me.banes.chris.tivi.ui.epoxymodels.header
 
 class DiscoverEpoxyController(
         private val callbacks: Callbacks
@@ -46,7 +46,8 @@ class DiscoverEpoxyController(
         header {
             id("trending_header")
             title(R.string.discover_trending)
-            clickListener(View.OnClickListener {
+            spanSizeOverride(TotalSpanOverride)
+            buttonClickListener(View.OnClickListener {
                 callbacks.onTrendingHeaderClicked(trending)
             })
         }
@@ -74,7 +75,8 @@ class DiscoverEpoxyController(
         header {
             id("popular_header")
             title(R.string.discover_popular)
-            clickListener(View.OnClickListener {
+            spanSizeOverride(TotalSpanOverride)
+            buttonClickListener(View.OnClickListener {
                 callbacks.onPopularHeaderClicked(popular)
             })
         }
