@@ -16,34 +16,47 @@
   ~
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="44dp"
-    android:foreground="?android:attr/selectableItemBackground"
-    android:transitionGroup="true">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/header_title"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/header_margin"
-        android:layout_marginEnd="@dimen/header_margin"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        android:gravity="center_vertical"
-        tools:text="Game of Thrones" />
+    <data>
+        <import type="android.content.Context" />
 
-    <TextView
-        android:id="@+id/header_more"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/header_margin"
-        android:layout_marginEnd="@dimen/header_margin"
-        android:layout_gravity="end"
-        android:gravity="center_vertical"
-        android:text="@string/header_more"
-        android:textColor="@color/colorAccent"
-        android:textAllCaps="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+        <variable name="title" type="int" />
+        <variable name="buttonTitle" type="int" />
+        <variable name="buttonClickListener" type="android.view.View.OnClickListener" />
+    </data>
 
-</FrameLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:transitionGroup="true">
+
+        <TextView
+            android:id="@+id/header_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/header_margin"
+            android:layout_marginStart="@dimen/header_margin"
+            android:gravity="center_vertical"
+            android:text="@{title}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            tools:text="Game of Thrones" />
+
+        <TextView
+            android:id="@+id/header_more"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/header_margin"
+            android:layout_marginStart="@dimen/header_margin"
+            android:gravity="center_vertical"
+            android:onClick="@{buttonClickListener}"
+            android:text="@{buttonTitle != 0 ? context.getString(buttonTitle) : @string/header_more}"
+            android:textAllCaps="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textColor="@color/colorAccent" />
+
+    </FrameLayout>
+</layout>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.ui.epoxymodels
+@EpoxyDataBindingPattern(rClass = R.class, layoutPrefix = "view_holder")
+package me.banes.chris.tivi;
 
-import com.airbnb.epoxy.EpoxyModelClass
-import com.airbnb.epoxy.EpoxyModelWithHolder
-import me.banes.chris.tivi.R
-
-@EpoxyModelClass(layout = R.layout.infinite_loading)
-abstract class LoadingViewModel : EpoxyModelWithHolder<TiviEpoxyHolder>() {
-
-    override fun bind(holder: TiviEpoxyHolder) {
-        // Nothing to do here
-    }
-
-    override fun getSpanSize(totalSpanCount: Int, position: Int, itemCount: Int) = totalSpanCount
-}
+import com.airbnb.epoxy.EpoxyDataBindingPattern;

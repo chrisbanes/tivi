@@ -16,12 +16,12 @@
 
 package me.banes.chris.tivi.ui
 
+import android.content.Context
 import android.support.annotation.StringRes
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.Genre
 
 object GenreStringer {
-
     fun getEmoji(genre: Genre): String = when (genre) {
         Genre.DRAMA -> "\uD83D\uDE28"
         Genre.FANTASY -> "\uD83E\uDDD9"
@@ -47,5 +47,11 @@ object GenreStringer {
         Genre.COMEDY -> R.string.genre_label_comedy
         Genre.HORROR -> R.string.genre_label_horror
         Genre.MYSTERY -> R.string.genre_label_mystery
+    }
+
+    fun joinStrings(context: Context, genres: Collection<Genre>): String {
+        return genres.joinToString(" // ") {
+            "${context.getString(GenreStringer.getLabel(it))} ${GenreStringer.getEmoji(it)}"
+        }
     }
 }

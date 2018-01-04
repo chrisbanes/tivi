@@ -17,6 +17,7 @@
 
 buildscript {
     ext.versions = [
+            'android_gradle'   : '3.0.1',
             'support_library'  : '27.0.2',
             'constraint_layout': '1.1.0-beta4',
             'arch_comp'        : '1.0.0',
@@ -39,7 +40,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath "com.android.tools.build:gradle:${versions.android_gradle}"
 
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:${versions.kotlin}"

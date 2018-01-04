@@ -18,12 +18,13 @@ package me.banes.chris.tivi.util
 
 import android.view.View
 import com.airbnb.epoxy.paging.PagingEpoxyController
+import me.banes.chris.tivi.PosterGridItemBindingModel_
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
+import me.banes.chris.tivi.emptyState
+import me.banes.chris.tivi.infiniteLoading
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
-import me.banes.chris.tivi.ui.epoxymodels.ShowPosterModel_
-import me.banes.chris.tivi.ui.epoxymodels.emptyPlaceholder
-import me.banes.chris.tivi.ui.epoxymodels.loadingView
+import me.banes.chris.tivi.ui.epoxy.TotalSpanOverride
 
 open class EntryGridEpoxyController<LI : ListItem<out Entry>> : PagingEpoxyController<LI>() {
     internal var callbacks: Callbacks<LI>? = null
@@ -57,32 +58,34 @@ open class EntryGridEpoxyController<LI : ListItem<out Entry>> : PagingEpoxyContr
                 }.addTo(this)
             }
         } else {
-            emptyPlaceholder {
+            emptyState {
                 id("item_placeholder")
+                spanSizeOverride(TotalSpanOverride)
             }
         }
 
         if (isLoading) {
-            loadingView {
+            infiniteLoading {
                 id("loading_view")
+                spanSizeOverride(TotalSpanOverride)
             }
         }
     }
 
-    protected open fun buildItemModel(item: LI): ShowPosterModel_ {
-        return ShowPosterModel_()
+    protected open fun buildItemModel(item: LI): PosterGridItemBindingModel_ {
+        return PosterGridItemBindingModel_()
                 .id(item.generateStableId())
                 .tmdbImageUrlProvider(tmdbImageUrlProvider)
                 .title(item.show?.title)
                 .posterPath(item.show?.tmdbPosterPath)
-                .transName(item.show?.homepage)
+                .transitionName(item.show?.homepage)
                 .clickListener(View.OnClickListener {
                     callbacks?.onItemClicked(item)
                 })
     }
 
-    protected open fun buildItemPlaceholder(index: Int): ShowPosterModel_ {
-        return ShowPosterModel_()
+    protected open fun buildItemPlaceholder(index: Int): PosterGridItemBindingModel_ {
+        return PosterGridItemBindingModel_()
                 .id("placeholder_$index")
     }
 }

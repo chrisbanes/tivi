@@ -22,10 +22,11 @@ import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.WatchedEntry
+import me.banes.chris.tivi.emptyState
+import me.banes.chris.tivi.header
+import me.banes.chris.tivi.posterGridItem
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
-import me.banes.chris.tivi.ui.epoxymodels.emptyPlaceholder
-import me.banes.chris.tivi.ui.epoxymodels.header
-import me.banes.chris.tivi.ui.epoxymodels.showPoster
+import me.banes.chris.tivi.ui.epoxy.TotalSpanOverride
 
 class LibraryEpoxyController(
         private val callbacks: Callbacks
@@ -42,25 +43,27 @@ class LibraryEpoxyController(
         header {
             id("watched_header")
             title(R.string.library_watched)
-            clickListener(View.OnClickListener {
+            spanSizeOverride(TotalSpanOverride)
+            buttonClickListener(View.OnClickListener {
                 callbacks.onWatchedHeaderClicked(watched)
             })
         }
         if (watched != null && !watched.isEmpty()) {
             watched.take(spanCount * 2).forEach { item ->
-                showPoster {
+                posterGridItem {
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
                     posterPath(item.show?.tmdbPosterPath)
-                    transName("watched_${item.show?.homepage}")
+                    transitionName("watched_${item.show?.homepage}")
                     clickListener(View.OnClickListener {
                         callbacks.onItemClicked(item)
                     })
                 }
             }
         } else {
-            emptyPlaceholder {
+            emptyState {
                 id("watched_placeholder")
+                spanSizeOverride(TotalSpanOverride)
             }
         }
     }

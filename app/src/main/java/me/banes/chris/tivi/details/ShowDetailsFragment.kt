@@ -31,15 +31,17 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_show_details.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
-import me.banes.chris.tivi.details.epoxymodels.BadgeModel_
-import me.banes.chris.tivi.details.epoxymodels.SummaryModel_
-import me.banes.chris.tivi.details.epoxymodels.TitleModel_
+/* ktlint-disable no-unused-imports */
+import me.banes.chris.tivi.detailsBadge
+import me.banes.chris.tivi.detailsSummary
+import me.banes.chris.tivi.detailsTitle
+/* ktlint-disable no-unused-imports */
 import me.banes.chris.tivi.extensions.doWhenLaidOut
 import me.banes.chris.tivi.extensions.observeK
-import me.banes.chris.tivi.ui.GenreStringer
 import me.banes.chris.tivi.ui.GlidePaletteListener
 import me.banes.chris.tivi.ui.NoopApplyWindowInsetsListener
 import me.banes.chris.tivi.ui.RoundRectViewOutline
+import me.banes.chris.tivi.ui.epoxy.TotalSpanOverride
 import me.banes.chris.tivi.ui.transitions.DrawableAlphaProperty
 import me.banes.chris.tivi.util.ScrimUtil
 import javax.inject.Inject
@@ -129,48 +131,48 @@ class ShowDetailsFragment : TiviFragment() {
         }
 
         details_rv.buildModelsWith { controller ->
-            TitleModel_()
-                    .id("title")
-                    .title(show.title)
-                    .subtitle(show.originalTitle)
-                    .genres(show.genres?.joinToString(" // ") {
-                        "${resources.getString(GenreStringer.getLabel(it))} ${GenreStringer.getEmoji(it)}"
-                    })
-                    .addTo(controller)
+            controller.detailsTitle {
+                id("title")
+                title(show.title)
+                subtitle(show.originalTitle)
+                genres(show.genres)
+                spanSizeOverride(TotalSpanOverride)
+            }
 
             show.rating?.let { rating ->
-                BadgeModel_()
-                        .id("rating")
-                        .label(context?.getString(R.string.percentage_format, Math.round(rating * 10)))
-                        .iconRes(R.drawable.ic_details_rating)
-                        .addTo(controller)
+                controller.detailsBadge {
+                    id("rating")
+                    label(context?.getString(R.string.percentage_format, Math.round(rating * 10)))
+                    icon(R.drawable.ic_details_rating)
+                }
             }
             show.network?.let { network ->
-                BadgeModel_()
-                        .id("network")
-                        .label(network)
-                        .iconRes(R.drawable.ic_details_network)
-                        .addTo(controller)
+                controller.detailsBadge {
+                    id("network")
+                    label(network)
+                    icon(R.drawable.ic_details_network)
+                }
             }
             show.certification?.let { certificate ->
-                BadgeModel_()
-                        .id("cert")
-                        .label(certificate)
-                        .iconRes(R.drawable.ic_details_certificate)
-                        .addTo(controller)
+                controller.detailsBadge {
+                    id("cert")
+                    label(certificate)
+                    icon(R.drawable.ic_details_certificate)
+                }
             }
             show.runtime?.let { runtime ->
-                BadgeModel_()
-                        .id("runtime")
-                        .label(context?.getString(R.string.minutes_format, runtime))
-                        .iconRes(R.drawable.ic_details_runtime)
-                        .addTo(controller)
+                controller.detailsBadge {
+                    id("runtime")
+                    label(context?.getString(R.string.minutes_format, runtime))
+                    icon(R.drawable.ic_details_runtime)
+                }
             }
 
-            SummaryModel_()
-                    .id("summary")
-                    .summary(show.summary)
-                    .addTo(controller)
+            controller.detailsSummary {
+                id("summary")
+                summary(show.summary)
+                spanSizeOverride(TotalSpanOverride)
+            }
         }
 
         scheduleStartPostponedTransitions()

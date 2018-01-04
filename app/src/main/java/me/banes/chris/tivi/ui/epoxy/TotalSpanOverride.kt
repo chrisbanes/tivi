@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.ui.epoxymodels
+package me.banes.chris.tivi.ui.epoxy
 
-import android.view.View
-import com.airbnb.epoxy.EpoxyHolder
-import kotlinx.android.extensions.LayoutContainer
+import com.airbnb.epoxy.EpoxyModel
 
-class TiviEpoxyHolder : EpoxyHolder(), LayoutContainer {
-    private var itemView: View? = null
-
-    override val containerView: View?
-        get() = itemView
-
-    override fun bindView(itemView: View?) {
-        this.itemView = itemView
-    }
+object TotalSpanOverride : EpoxyModel.SpanSizeOverrideCallback {
+    override fun getSpanSize(totalSpanCount: Int, position: Int, itemCount: Int) = totalSpanCount
 }

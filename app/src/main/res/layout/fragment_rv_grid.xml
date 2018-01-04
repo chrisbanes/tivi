@@ -43,7 +43,7 @@
             android:paddingTop="2dp"
             app:layoutManager="android.support.v7.widget.GridLayoutManager"
             app:spanCount="@integer/grid_span_count"
-            tools:listitem="@layout/view_holder_grid_item" />
+            tools:listitem="@layout/view_holder_poster_grid_item" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

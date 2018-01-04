@@ -112,6 +112,10 @@ android {
         checkReleaseBuilds false
     }
 
+    dataBinding {
+        enabled = true
+    }
+
     buildTypes {
         leakcanary {
             signingConfig signingConfigs.debug
@@ -154,6 +158,8 @@ dependencies {
 
     implementation "com.android.support.constraint:constraint-layout:${versions.constraint_layout}"
 
+    kapt "com.android.databinding:compiler:${versions.android_gradle}"
+
     implementation 'com.gabrielittner.threetenbp:lazythreetenbp:0.2.0'
 
     implementation "com.google.dagger:dagger-android:${versions.dagger}"
@@ -165,6 +171,7 @@ dependencies {
 
     implementation "com.airbnb.android:epoxy:${versions.epoxy}"
     implementation "com.airbnb.android:epoxy-paging:${versions.epoxy}"
+    implementation "com.airbnb.android:epoxy-databinding:${versions.epoxy}"
     kapt "com.airbnb.android:epoxy-processor:${versions.epoxy}"
 
     testImplementation 'junit:junit:4.12'
