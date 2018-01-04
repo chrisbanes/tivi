@@ -31,9 +31,11 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_show_details.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
+/* ktlint-disable no-unused-imports */
 import me.banes.chris.tivi.detailsBadge
 import me.banes.chris.tivi.detailsSummary
 import me.banes.chris.tivi.detailsTitle
+/* ktlint-disable no-unused-imports */
 import me.banes.chris.tivi.extensions.doWhenLaidOut
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.ui.GlidePaletteListener
