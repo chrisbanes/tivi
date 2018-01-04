@@ -14,13 +14,17 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
 -->
-<ProgressBar
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/loading"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:layout_marginBottom="48dp"
-    android:layout_marginTop="48dp"
-    android:indeterminate="true"
-    android:indeterminateTint="?attr/colorControlNormal" />
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+    </data>
+
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="48dp"
+        android:layout_marginTop="48dp"
+        android:indeterminate="true"
+        android:indeterminateTint="?attr/colorControlNormal" />
+</layout>

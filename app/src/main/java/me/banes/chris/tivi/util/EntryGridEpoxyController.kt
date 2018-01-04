@@ -22,9 +22,9 @@ import me.banes.chris.tivi.PosterGridItemBindingModel_
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.emptyState
+import me.banes.chris.tivi.infiniteLoading
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.epoxymodels.TotalSpanOverride
-import me.banes.chris.tivi.ui.epoxymodels.loadingView
 
 open class EntryGridEpoxyController<LI : ListItem<out Entry>> : PagingEpoxyController<LI>() {
     internal var callbacks: Callbacks<LI>? = null
@@ -65,8 +65,9 @@ open class EntryGridEpoxyController<LI : ListItem<out Entry>> : PagingEpoxyContr
         }
 
         if (isLoading) {
-            loadingView {
+            infiniteLoading {
                 id("loading_view")
+                spanSizeOverride(TotalSpanOverride)
             }
         }
     }
