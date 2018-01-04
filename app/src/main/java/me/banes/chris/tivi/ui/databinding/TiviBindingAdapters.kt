@@ -25,6 +25,7 @@ import me.banes.chris.tivi.extensions.doWhenLaidOut
 import me.banes.chris.tivi.extensions.loadFromUrl
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.GenreStringer
+import me.banes.chris.tivi.ui.MaxLinesToggleClickListener
 
 @BindingAdapter(value = ["android:tmdbPosterPath", "android:tmdbImageUrlProvider"])
 fun loadPoster(view: ImageView, posterPath: String?, tmdbImageUrlProvider: TmdbImageUrlProvider?) {
@@ -55,4 +56,12 @@ fun imageViewSrcRes(view: ImageView, drawableRes: Int) {
     } else {
         view.setImageDrawable(null)
     }
+}
+
+@BindingAdapter(value = ["android:maxLinesToggle"])
+fun maxLinesClickListener(view: TextView, collapsedMaxLines: Int) {
+    // Default to collapsed
+    view.maxLines = collapsedMaxLines
+    // Now set click listener
+    view.setOnClickListener(MaxLinesToggleClickListener(collapsedMaxLines))
 }

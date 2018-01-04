@@ -21,7 +21,7 @@ import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.view_holder_details_summary.view.*
+import android.widget.TextView
 
 class MaxLinesToggleClickListener(private val collapsedLines: Int) : View.OnClickListener {
     private val transition = ChangeBounds().apply {
@@ -30,8 +30,8 @@ class MaxLinesToggleClickListener(private val collapsedLines: Int) : View.OnClic
     }
 
     override fun onClick(view: View) {
-        TransitionManager.beginDelayedTransition(view as ViewGroup, transition)
-        view.details_summary.maxLines =
-                if (view.details_summary.maxLines > collapsedLines) collapsedLines else Int.MAX_VALUE
+        TransitionManager.beginDelayedTransition(view.parent as ViewGroup, transition)
+        val textView = view as TextView
+        textView.maxLines = if (textView.maxLines > collapsedLines) collapsedLines else Int.MAX_VALUE
     }
 }

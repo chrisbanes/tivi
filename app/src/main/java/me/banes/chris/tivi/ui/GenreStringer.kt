@@ -49,7 +49,7 @@ object GenreStringer {
         Genre.MYSTERY -> R.string.genre_label_mystery
     }
 
-    fun joinStrings(context: Context, genres: Collection<Genre>) : String {
+    fun joinStrings(context: Context, genres: Collection<Genre>): String {
         return genres.joinToString(" // ") {
             "${context.getString(GenreStringer.getLabel(it))} ${GenreStringer.getEmoji(it)}"
         }
