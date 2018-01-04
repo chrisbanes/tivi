@@ -74,7 +74,7 @@
             android:layout_height="wrap_content"
             android:drawableStart="@{annotationIcon != 0 ? context.getDrawable(annotationIcon) : null}"
             android:text="@{annotationLabel}"
-            android:visibility="@{annotationLabel != null ? View.VISIBLE : View.GONE}"
+            android:visibleIfNotNull="@{annotationLabel}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="100" />

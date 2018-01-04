@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.ui.epoxymodels
+package me.banes.chris.tivi.ui.epoxy
 
 import com.airbnb.epoxy.EpoxyModel
 

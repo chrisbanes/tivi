@@ -24,7 +24,7 @@ import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.emptyState
 import me.banes.chris.tivi.infiniteLoading
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
-import me.banes.chris.tivi.ui.epoxymodels.TotalSpanOverride
+import me.banes.chris.tivi.ui.epoxy.TotalSpanOverride
 
 open class EntryGridEpoxyController<LI : ListItem<out Entry>> : PagingEpoxyController<LI>() {
     internal var callbacks: Callbacks<LI>? = null

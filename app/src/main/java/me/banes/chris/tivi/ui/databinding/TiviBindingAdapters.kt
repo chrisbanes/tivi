@@ -17,10 +17,14 @@
 package me.banes.chris.tivi.ui.databinding
 
 import android.databinding.BindingAdapter
+import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
+import me.banes.chris.tivi.data.entities.Genre
 import me.banes.chris.tivi.extensions.doWhenLaidOut
 import me.banes.chris.tivi.extensions.loadFromUrl
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
+import me.banes.chris.tivi.ui.GenreStringer
 
 @BindingAdapter(value = ["android:tmdbPosterPath", "android:tmdbImageUrlProvider"])
 fun loadPoster(view: ImageView, posterPath: String?, tmdbImageUrlProvider: TmdbImageUrlProvider?) {
@@ -28,5 +32,27 @@ fun loadPoster(view: ImageView, posterPath: String?, tmdbImageUrlProvider: TmdbI
         view.doWhenLaidOut {
             view.loadFromUrl(tmdbImageUrlProvider.getPosterUrl(posterPath, it.width))
         }
+    }
+}
+
+@BindingAdapter(value = ["android:genreString"])
+fun genreString(view: TextView, genres: List<Genre>?) {
+    val genreText = genres?.joinToString(" // ") {
+        "${view.context.getString(GenreStringer.getLabel(it))} ${GenreStringer.getEmoji(it)}"
+    }
+    view.text = genreText
+}
+
+@BindingAdapter(value = ["android:visibleIfNotNull"])
+fun visibleIfNotNull(view: View, target: Any?) {
+    view.visibility = if (target == null) View.GONE else View.VISIBLE
+}
+
+@BindingAdapter(value = ["android:srcRes"])
+fun imageViewSrcRes(view: ImageView, drawableRes: Int) {
+    if (drawableRes != 0) {
+        view.setImageResource(drawableRes)
+    } else {
+        view.setImageDrawable(null)
     }
 }

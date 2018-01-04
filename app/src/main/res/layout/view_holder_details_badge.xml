@@ -15,39 +15,49 @@
   ~ limitations under the License.
   -->
 
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:foreground="?android:attr/selectableItemBackground"
-    android:transitionGroup="true">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/details_badge_icon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toTopOf="@+id/details_badge_label"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+    <data>
+        <variable name="label" type="String" />
+        <variable name="icon" type="int" />
+    </data>
 
-    <me.banes.chris.tivi.ui.widget.BaselineGridTextView
-        android:id="@+id/details_badge_label"
-        android:layout_width="wrap_content"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="8dp"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/details_badge_icon"
-        tools:text="9.3" />
+        android:foreground="?android:attr/selectableItemBackground"
+        android:transitionGroup="true">
 
-</android.support.constraint.ConstraintLayout>
+        <ImageView
+            android:id="@+id/details_badge_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:scaleType="fitCenter"
+            android:srcRes="@{icon}"
+            app:layout_constraintBottom_toTopOf="@+id/details_badge_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <me.banes.chris.tivi.ui.widget.BaselineGridTextView
+            android:id="@+id/details_badge_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:text="@{label}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/details_badge_icon"
+            tools:text="9.3" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

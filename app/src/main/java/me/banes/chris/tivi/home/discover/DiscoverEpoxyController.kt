@@ -27,7 +27,7 @@ import me.banes.chris.tivi.emptyState
 import me.banes.chris.tivi.header
 import me.banes.chris.tivi.posterGridItem
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
-import me.banes.chris.tivi.ui.epoxymodels.TotalSpanOverride
+import me.banes.chris.tivi.ui.epoxy.TotalSpanOverride
 
 class DiscoverEpoxyController(
         private val callbacks: Callbacks
