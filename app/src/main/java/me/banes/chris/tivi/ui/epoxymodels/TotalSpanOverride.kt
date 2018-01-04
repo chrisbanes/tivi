@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,8 @@
 
 package me.banes.chris.tivi.ui.epoxymodels
 
-import com.airbnb.epoxy.EpoxyModelClass
-import com.airbnb.epoxy.EpoxyModelWithHolder
-import me.banes.chris.tivi.R
+import com.airbnb.epoxy.EpoxyModel
 
-@EpoxyModelClass(layout = R.layout.view_holder_empty_state)
-abstract class EmptyPlaceholderModel : EpoxyModelWithHolder<TiviEpoxyHolder>() {
-
-    override fun bind(holder: TiviEpoxyHolder) {
-        // Nothing to do here
-    }
-
+object TotalSpanOverride : EpoxyModel.SpanSizeOverrideCallback {
     override fun getSpanSize(totalSpanCount: Int, position: Int, itemCount: Int) = totalSpanCount
 }

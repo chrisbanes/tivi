@@ -23,9 +23,10 @@ import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.TrendingEntry
+import me.banes.chris.tivi.emptyState
 import me.banes.chris.tivi.posterGridItem
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
-import me.banes.chris.tivi.ui.epoxymodels.emptyPlaceholder
+import me.banes.chris.tivi.ui.epoxymodels.TotalSpanOverride
 import me.banes.chris.tivi.ui.epoxymodels.header
 
 class DiscoverEpoxyController(
@@ -64,8 +65,9 @@ class DiscoverEpoxyController(
                 }
             }
         } else {
-            emptyPlaceholder {
+            emptyState {
                 id("trending_placeholder")
+                spanSizeOverride(TotalSpanOverride)
             }
         }
 
@@ -89,8 +91,9 @@ class DiscoverEpoxyController(
                 }
             }
         } else {
-            emptyPlaceholder {
+            emptyState {
                 id("popular_placeholder")
+                spanSizeOverride(TotalSpanOverride)
             }
         }
     }

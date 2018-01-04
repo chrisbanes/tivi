@@ -21,8 +21,9 @@ import com.airbnb.epoxy.paging.PagingEpoxyController
 import me.banes.chris.tivi.PosterGridItemBindingModel_
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
+import me.banes.chris.tivi.emptyState
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
-import me.banes.chris.tivi.ui.epoxymodels.emptyPlaceholder
+import me.banes.chris.tivi.ui.epoxymodels.TotalSpanOverride
 import me.banes.chris.tivi.ui.epoxymodels.loadingView
 
 open class EntryGridEpoxyController<LI : ListItem<out Entry>> : PagingEpoxyController<LI>() {
@@ -57,8 +58,9 @@ open class EntryGridEpoxyController<LI : ListItem<out Entry>> : PagingEpoxyContr
                 }.addTo(this)
             }
         } else {
-            emptyPlaceholder {
+            emptyState {
                 id("item_placeholder")
+                spanSizeOverride(TotalSpanOverride)
             }
         }
 
