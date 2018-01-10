@@ -21,7 +21,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import me.banes.chris.tivi.details.ShowDetailsActivity
-import me.banes.chris.tivi.settings.SettingsActivity
 import me.banes.chris.tivi.trakt.TraktConstants
 
 internal open class TiviAppNavigator(private val context: Context) : AppNavigator {
@@ -32,10 +31,6 @@ internal open class TiviAppNavigator(private val context: Context) : AppNavigato
 
     override fun startShowDetails(id: Long, sharedElements: SharedElementHelper?) {
         context.startActivity(ShowDetailsActivity.createIntent(context, id))
-    }
-
-    override fun startSettings() {
-        context.startActivity(Intent(context, SettingsActivity::class.java))
     }
 }
 
