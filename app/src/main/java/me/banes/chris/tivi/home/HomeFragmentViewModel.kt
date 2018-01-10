@@ -60,10 +60,6 @@ abstract class HomeFragmentViewModel(
         startAuthProcess(0)
     }
 
-    fun onSettingsItemClicked() {
-        appNavigator.startSettings()
-    }
-
     private fun startAuthProcess(requestCode: Int) {
         traktManager.startAuth(requestCode)
     }
