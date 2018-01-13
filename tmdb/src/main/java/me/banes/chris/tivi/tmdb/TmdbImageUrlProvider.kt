@@ -37,10 +37,10 @@ class TmdbImageUrlProvider(
             val sizeWidth = extractWidthAsIntFrom(size) ?: continue
 
             if (sizeWidth > imageWidth) {
-                return if (forceLarger || (previousSize != null && imageWidth > (previousWidth + sizeWidth) / 2)) {
-                    size
-                } else {
-                    previousSize!!
+                if (forceLarger || (previousSize != null && imageWidth > (previousWidth + sizeWidth) / 2)) {
+                    return size
+                } else if (previousSize != null) {
+                    return previousSize
                 }
             } else if (i == sizes.size - 1) {
                 // If we get here then we're larger than the last bucket
