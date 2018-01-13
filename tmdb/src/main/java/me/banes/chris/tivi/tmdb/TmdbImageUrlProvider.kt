@@ -34,14 +34,7 @@ class TmdbImageUrlProvider(
 
         for (i in sizes.indices) {
             val size = sizes[i]
-            val indexOfW = size.indexOf('w')
-
-            if (indexOfW < 0) {
-                // This dimension doesn't start with w, so skip
-                continue
-            }
-
-            val sizeWidth = size.substring(indexOfW + 1 until size.length).toInt()
+            val sizeWidth = extractWidthAsIntFrom(size) ?: continue
 
             if (sizeWidth > imageWidth) {
                 return if (forceLarger || (previousSize != null && imageWidth > (previousWidth + sizeWidth) / 2)) {
@@ -61,5 +54,9 @@ class TmdbImageUrlProvider(
         }
 
         return previousSize ?: sizes.last()
+    }
+
+    private fun extractWidthAsIntFrom(size: String): Int? {
+        return "w(\\d+)$".toRegex().matchEntire(size)?.groups?.get(1)?.value?.toInt()
     }
 }
