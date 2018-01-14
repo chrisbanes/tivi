@@ -46,7 +46,7 @@ fun genreString(view: TextView, genres: List<Genre>?) {
 
 @BindingAdapter(value = ["android:genreContentDescriptionString"])
 fun genreContentDescriptionString(view: TextView, genres: List<Genre>?) {
-    val genreContentDescription = genres?.joinToString(" // ") {
+    val genreContentDescription = genres?.joinToString(", ") {
         view.context.getString(GenreStringer.getLabel(it))
     }
     view.contentDescription = genreContentDescription
