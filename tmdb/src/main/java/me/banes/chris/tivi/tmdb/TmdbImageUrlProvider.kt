@@ -16,6 +16,8 @@
 
 package me.banes.chris.tivi.tmdb
 
+private const val IMAGE_SIZE_PATTERN = "w(\\d+)$"
+
 class TmdbImageUrlProvider(
         private var baseImageUrl: String = TmdbImageSizes.baseImageUrl,
         private var posterSizes: Array<String> = TmdbImageSizes.posterSizes,
@@ -57,6 +59,6 @@ class TmdbImageUrlProvider(
     }
 
     private fun extractWidthAsIntFrom(size: String): Int? {
-        return "w(\\d+)$".toRegex().matchEntire(size)?.groups?.get(1)?.value?.toInt()
+        return IMAGE_SIZE_PATTERN.toRegex().matchEntire(size)?.groups?.get(1)?.value?.toInt()
     }
 }
