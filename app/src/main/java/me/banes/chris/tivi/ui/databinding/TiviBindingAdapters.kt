@@ -44,6 +44,14 @@ fun genreString(view: TextView, genres: List<Genre>?) {
     view.text = genreText
 }
 
+@BindingAdapter(value = ["android:genreContentDescriptionString"])
+fun genreContentDescriptionString(view: TextView, genres: List<Genre>?) {
+    val genreContentDescription = genres?.joinToString(", ") {
+        view.context.getString(GenreStringer.getLabel(it))
+    }
+    view.contentDescription = genreContentDescription
+}
+
 @BindingAdapter(value = ["android:visibleIfNotNull"])
 fun visibleIfNotNull(view: View, target: Any?) {
     view.visibility = if (target == null) View.GONE else View.VISIBLE

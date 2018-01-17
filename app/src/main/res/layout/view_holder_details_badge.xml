@@ -21,6 +21,7 @@
 
     <data>
         <variable name="label" type="String" />
+        <variable name="contentDescription" type="String" />
         <variable name="icon" type="int" />
     </data>
 
@@ -28,7 +29,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:foreground="?android:attr/selectableItemBackground"
-        android:transitionGroup="true">
+        android:transitionGroup="true"
+        android:contentDescription="@{contentDescription}">
 
         <ImageView
             android:id="@+id/details_badge_icon"

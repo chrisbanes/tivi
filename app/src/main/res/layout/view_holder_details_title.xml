@@ -72,6 +72,7 @@
             android:layout_marginTop="4dp"
             android:ellipsize="end"
             android:genreString="@{genres}"
+            android:genreContentDescriptionString="@{genres}"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/details_title"

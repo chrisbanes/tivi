@@ -141,9 +141,11 @@ class ShowDetailsFragment : TiviFragment() {
 
             show.rating?.let { rating ->
                 controller.detailsBadge {
+                    val ratingOutOfOneHundred = Math.round(rating * 10)
                     id("rating")
-                    label(context?.getString(R.string.percentage_format, Math.round(rating * 10)))
+                    label(context?.getString(R.string.percentage_format, ratingOutOfOneHundred))
                     icon(R.drawable.ic_details_rating)
+                    contentDescription(context?.getString(R.string.rating_content_description_format, ratingOutOfOneHundred))
                 }
             }
             show.network?.let { network ->
@@ -151,6 +153,7 @@ class ShowDetailsFragment : TiviFragment() {
                     id("network")
                     label(network)
                     icon(R.drawable.ic_details_network)
+                    contentDescription(context?.getString(R.string.network_content_description_format, network))
                 }
             }
             show.certification?.let { certificate ->
@@ -158,13 +161,16 @@ class ShowDetailsFragment : TiviFragment() {
                     id("cert")
                     label(certificate)
                     icon(R.drawable.ic_details_certificate)
+                    contentDescription(context?.getString(R.string.certificate_content_description_format, certificate))
                 }
             }
             show.runtime?.let { runtime ->
                 controller.detailsBadge {
+                    val runtimeMinutes = context?.getString(R.string.minutes_format, runtime)
                     id("runtime")
-                    label(context?.getString(R.string.minutes_format, runtime))
+                    label(runtimeMinutes)
                     icon(R.drawable.ic_details_runtime)
+                    contentDescription(context?.resources?.getQuantityString(R.plurals.runtime_content_description_format, runtime, runtime))
                 }
             }
 

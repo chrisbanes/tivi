@@ -16,6 +16,8 @@
 
 package me.banes.chris.tivi.tmdb
 
+private const val IMAGE_SIZE_PATTERN = "w(\\d+)$"
+
 class TmdbImageUrlProvider(
         private var baseImageUrl: String = TmdbImageSizes.baseImageUrl,
         private var posterSizes: Array<String> = TmdbImageSizes.posterSizes,
@@ -34,20 +36,13 @@ class TmdbImageUrlProvider(
 
         for (i in sizes.indices) {
             val size = sizes[i]
-            val indexOfW = size.indexOf('w')
-
-            if (indexOfW < 0) {
-                // This dimension doesn't start with w, so skip
-                continue
-            }
-
-            val sizeWidth = size.substring(indexOfW + 1 until size.length).toInt()
+            val sizeWidth = extractWidthAsIntFrom(size) ?: continue
 
             if (sizeWidth > imageWidth) {
-                return if (forceLarger || (previousSize != null && imageWidth > (previousWidth + sizeWidth) / 2)) {
-                    size
-                } else {
-                    previousSize!!
+                if (forceLarger || (previousSize != null && imageWidth > (previousWidth + sizeWidth) / 2)) {
+                    return size
+                } else if (previousSize != null) {
+                    return previousSize
                 }
             } else if (i == sizes.size - 1) {
                 // If we get here then we're larger than the last bucket
@@ -61,5 +56,9 @@ class TmdbImageUrlProvider(
         }
 
         return previousSize ?: sizes.last()
+    }
+
+    private fun extractWidthAsIntFrom(size: String): Int? {
+        return IMAGE_SIZE_PATTERN.toRegex().matchEntire(size)?.groups?.get(1)?.value?.toInt()
     }
 }
