@@ -74,7 +74,7 @@
         android:layout_width="80dp"
         android:layout_height="120dp"
         android:layout_marginStart="16dp"
-        android:elevation="2dp"
+        android:elevation="3dp"
         android:transitionName="poster"
         app:layout_behavior="me.banes.chris.tivi.details.DetailPosterBehavior" />
 
