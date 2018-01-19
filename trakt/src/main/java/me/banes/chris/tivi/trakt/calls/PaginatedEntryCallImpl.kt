@@ -16,7 +16,7 @@
 
 package me.banes.chris.tivi.trakt.calls
 
-import android.arch.paging.LivePagedListProvider
+import android.arch.paging.DataSource
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
@@ -53,7 +53,7 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
                 .distinctUntilChanged()
     }
 
-    override fun liveList(): LivePagedListProvider<Int, LI> = entryDao.entriesLiveList()
+    override fun dataSourceFactory(): DataSource.Factory<Int, LI> = entryDao.entriesDataSource()
 
     private fun loadPage(page: Int = 0, resetOnSave: Boolean = false): Single<List<ET>> {
         return networkCall(page)

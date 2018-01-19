@@ -16,7 +16,7 @@
 
 package me.banes.chris.tivi.data.daos
 
-import android.arch.paging.LivePagedListProvider
+import android.arch.paging.DataSource
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
@@ -33,7 +33,7 @@ abstract class PopularDao : PaginatedEntryDao<PopularEntry, PopularListItem> {
 
     @Transaction
     @Query("SELECT * FROM popular_shows ORDER BY page, page_order")
-    abstract override fun entriesLiveList(): LivePagedListProvider<Int, PopularListItem>
+    abstract override fun entriesDataSource(): DataSource.Factory<Int, PopularListItem>
 
     @Transaction
     @Query("SELECT * FROM popular_shows WHERE page = :page")

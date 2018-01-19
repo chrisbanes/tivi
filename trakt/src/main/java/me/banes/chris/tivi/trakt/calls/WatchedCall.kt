@@ -16,7 +16,7 @@
 
 package me.banes.chris.tivi.trakt.calls
 
-import android.arch.paging.LivePagedListProvider
+import android.arch.paging.DataSource
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
@@ -49,7 +49,7 @@ class WatchedCall @Inject constructor(
                 .subscribeOn(schedulers.database)
     }
 
-    override fun liveList(): LivePagedListProvider<Int, WatchedListItem> = watchDao.entriesLiveList()
+    override fun dataSourceFactory(): DataSource.Factory<Int, WatchedListItem> = watchDao.entriesDataSource()
 
     override fun refresh(param: Unit): Completable {
         return trakt.users().watchedShows(UserSlug.ME, Extended.NOSEASONS).toRxSingle()
