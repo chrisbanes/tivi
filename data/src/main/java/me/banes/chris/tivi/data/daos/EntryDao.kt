@@ -16,7 +16,7 @@
 
 package me.banes.chris.tivi.data.daos
 
-import android.arch.paging.LivePagedListProvider
+import android.arch.paging.DataSource
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import io.reactivex.Flowable
@@ -25,7 +25,7 @@ import me.banes.chris.tivi.data.entities.ListItem
 
 interface EntryDao<EC : Entry, LI : ListItem<EC>> {
     fun entries(): Flowable<List<LI>>
-    fun entriesLiveList(): LivePagedListProvider<Int, LI>
+    fun entriesDataSource(): DataSource.Factory<Int, LI>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(entry: EC): Long

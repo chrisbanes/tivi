@@ -16,7 +16,7 @@
 
 package me.banes.chris.tivi.data.daos
 
-import android.arch.paging.LivePagedListProvider
+import android.arch.paging.DataSource
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
@@ -33,7 +33,7 @@ abstract class TrendingDao : PaginatedEntryDao<TrendingEntry, TrendingListItem> 
 
     @Transaction
     @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC, id ASC")
-    abstract override fun entriesLiveList(): LivePagedListProvider<Int, TrendingListItem>
+    abstract override fun entriesDataSource(): DataSource.Factory<Int, TrendingListItem>
 
     @Transaction
     @Query("SELECT * FROM trending_shows WHERE page = :page ORDER BY watchers DESC, id ASC")

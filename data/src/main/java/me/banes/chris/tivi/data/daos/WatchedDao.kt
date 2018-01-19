@@ -16,7 +16,7 @@
 
 package me.banes.chris.tivi.data.daos
 
-import android.arch.paging.LivePagedListProvider
+import android.arch.paging.DataSource
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
@@ -32,7 +32,7 @@ abstract class WatchedDao : EntryDao<WatchedEntry, WatchedListItem> {
 
     @Transaction
     @Query("SELECT * FROM watched_entries ORDER BY datetime(last_watched) DESC")
-    abstract override fun entriesLiveList(): LivePagedListProvider<Int, WatchedListItem>
+    abstract override fun entriesDataSource(): DataSource.Factory<Int, WatchedListItem>
 
     @Query("DELETE FROM watched_entries")
     abstract override fun deleteAll()

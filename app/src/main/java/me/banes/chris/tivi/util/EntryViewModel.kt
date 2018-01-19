@@ -18,6 +18,7 @@ package me.banes.chris.tivi.util
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
+import android.arch.paging.LivePagedListBuilder
 import android.arch.paging.PagedList
 import io.reactivex.BackpressureStrategy
 import io.reactivex.rxkotlin.Flowables
@@ -41,11 +42,16 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
     private val messages = BehaviorSubject.create<Resource>()
 
     val liveList by lazy(mode = LazyThreadSafetyMode.NONE) {
-        call.liveList().create(0,
-                PagedList.Config.Builder()
-                        .setPageSize(call.pageSize)
-                        .setEnablePlaceholders(true)
-                        .build())
+        LivePagedListBuilder<Int, LI>(
+                call.dataSourceFactory(),
+                PagedList.Config.Builder().run {
+                    setPageSize(call.pageSize)
+                    setEnablePlaceholders(true)
+                    build()
+                }
+        ).run {
+            build()
+        }
     }
 
     val viewState: LiveData<EntryViewState> = LiveDataReactiveStreams.fromPublisher(

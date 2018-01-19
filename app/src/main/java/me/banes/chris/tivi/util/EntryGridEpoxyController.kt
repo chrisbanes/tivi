@@ -17,13 +17,13 @@
 package me.banes.chris.tivi.util
 
 import android.view.View
-import com.airbnb.epoxy.paging.PagingEpoxyController
 import me.banes.chris.tivi.PosterGridItemBindingModel_
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.emptyState
 import me.banes.chris.tivi.infiniteLoading
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
+import me.banes.chris.tivi.ui.epoxy.PagingEpoxyController
 import me.banes.chris.tivi.ui.epoxy.TotalSpanOverride
 
 open class EntryGridEpoxyController<LI : ListItem<out Entry>> : PagingEpoxyController<LI>() {
