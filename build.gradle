@@ -22,7 +22,7 @@ buildscript {
             'constraint_layout': '1.1.0-beta4',
             'arch_comp'        : '1.0.0',
             'arch_comp_paging' : '1.0.0-alpha4-1',
-            'kotlin'           : '1.2.10',
+            'kotlin'           : '1.2.20',
             'espresso'         : '3.0.1',
             'dagger'           : '2.14.1',
             'ktlint'           : '0.14.0',
