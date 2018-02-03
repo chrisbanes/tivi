@@ -46,11 +46,11 @@ android {
 dependencies {
     api project(":base")
 
-    implementation "android.arch.persistence.room:runtime:${versions.arch_comp}"
-    implementation "android.arch.persistence.room:rxjava2:${versions.arch_comp}"
-    kapt "android.arch.persistence.room:compiler:${versions.arch_comp}"
+    implementation "android.arch.persistence.room:runtime:${versions.arch_room}"
+    implementation "android.arch.persistence.room:rxjava2:${versions.arch_room}"
+    kapt "android.arch.persistence.room:compiler:${versions.arch_room}"
 
-    api "android.arch.paging:runtime:${versions.arch_comp_paging}"
+    api "android.arch.paging:runtime:${versions.arch_paging}"
 
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
 
