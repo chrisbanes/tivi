@@ -33,17 +33,41 @@ interface ListItem<ET : Entry> {
     }
 }
 
-data class TrendingListItem(
-        @Embedded override var entry: TrendingEntry? = null,
-        @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow>? = null
-) : ListItem<TrendingEntry>
+class TrendingListItem : ListItem<TrendingEntry> {
+    @Embedded override var entry: TrendingEntry? = null
+    @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow>? = null
 
-data class PopularListItem(
-        @Embedded override var entry: PopularEntry? = null,
-        @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow>? = null
-) : ListItem<PopularEntry>
+    override fun equals(other: Any?): Boolean = when {
+        other === this -> true
+        other is TrendingListItem -> entry == other.entry && relations == other.relations
+        else -> false
+    }
 
-data class WatchedListItem(
-        @Embedded override var entry: WatchedEntry? = null,
-        @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow>? = null
-) : ListItem<WatchedEntry>
+    override fun hashCode(): Int = Objects.hash(entry, relations)
+}
+
+class PopularListItem : ListItem<PopularEntry> {
+    @Embedded override var entry: PopularEntry? = null
+    @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow>? = null
+
+    override fun equals(other: Any?): Boolean = when {
+        other === this -> true
+        other is PopularListItem -> entry == other.entry && relations == other.relations
+        else -> false
+    }
+
+    override fun hashCode(): Int = Objects.hash(entry, relations)
+}
+
+class WatchedListItem : ListItem<WatchedEntry> {
+    @Embedded override var entry: WatchedEntry? = null
+    @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow>? = null
+
+    override fun equals(other: Any?): Boolean = when {
+        other === this -> true
+        other is WatchedListItem -> entry == other.entry && relations == other.relations
+        else -> false
+    }
+
+    override fun hashCode(): Int = Objects.hash(entry, relations)
+}
