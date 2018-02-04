@@ -37,6 +37,7 @@ import me.banes.chris.tivi.detailsBadge
 import me.banes.chris.tivi.detailsSummary
 import me.banes.chris.tivi.detailsTitle
 /* ktlint-disable no-unused-imports */
+import me.banes.chris.tivi.extensions.loadFromUrl
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.ui.GlidePaletteListener
 import me.banes.chris.tivi.ui.NoopApplyWindowInsetsListener
@@ -117,6 +118,7 @@ class ShowDetailsFragment : TiviFragment() {
             details_backdrop.doOnLayout {
                 Glide.with(this)
                         .load(imageProvider.getBackdropUrl(path, details_backdrop.width))
+                        .thumbnail(Glide.with(this).load(imageProvider.getBackdropUrl(path, 0)))
                         .listener(GlidePaletteListener(this::onBackdropPaletteLoaded))
                         .into(details_backdrop)
             }
@@ -124,9 +126,9 @@ class ShowDetailsFragment : TiviFragment() {
 
         show.tmdbPosterPath?.let { path ->
             details_poster.doOnLayout {
-                Glide.with(this)
-                        .load(imageProvider.getPosterUrl(path, details_poster.width))
-                        .into(details_poster)
+                details_poster.loadFromUrl(
+                        imageProvider.getPosterUrl(path, 0),
+                        imageProvider.getPosterUrl(path, details_poster.width))
             }
         }
 

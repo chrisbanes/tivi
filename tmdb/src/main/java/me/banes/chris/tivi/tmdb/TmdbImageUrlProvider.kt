@@ -24,11 +24,13 @@ class TmdbImageUrlProvider(
         private var backdropSizes: Array<String> = TmdbImageSizes.backdropSizes
 ) {
 
-    fun getPosterUrl(path: String, imageWidth: Int): String =
-            "$baseImageUrl${selectSize(posterSizes, imageWidth)}$path"
+    fun getPosterUrl(path: String, imageWidth: Int): String {
+        return "$baseImageUrl${selectSize(posterSizes, imageWidth)}$path"
+    }
 
-    fun getBackdropUrl(path: String, imageWidth: Int): String =
-            "$baseImageUrl${selectSize(backdropSizes, imageWidth)}$path"
+    fun getBackdropUrl(path: String, imageWidth: Int): String {
+        return "$baseImageUrl${selectSize(backdropSizes, imageWidth)}$path"
+    }
 
     private fun selectSize(sizes: Array<String>, imageWidth: Int, forceLarger: Boolean = false): String {
         var previousSize: String? = null

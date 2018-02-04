@@ -27,16 +27,19 @@ import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.GenreStringer
 import me.banes.chris.tivi.ui.MaxLinesToggleClickListener
 
-@BindingAdapter(value = ["android:tmdbPosterPath", "android:tmdbImageUrlProvider"])
+@BindingAdapter("android:tmdbPosterPath", "android:tmdbImageUrlProvider")
 fun loadPoster(view: ImageView, posterPath: String?, tmdbImageUrlProvider: TmdbImageUrlProvider?) {
     if (posterPath != null && tmdbImageUrlProvider != null) {
         view.doOnLayout {
-            view.loadFromUrl(tmdbImageUrlProvider.getPosterUrl(posterPath, it.width))
+            view.loadFromUrl(
+                    tmdbImageUrlProvider.getPosterUrl(posterPath, 0),
+                    tmdbImageUrlProvider.getPosterUrl(posterPath, it.width)
+            )
         }
     }
 }
 
-@BindingAdapter(value = ["android:genreString"])
+@BindingAdapter("android:genreString")
 fun genreString(view: TextView, genres: List<Genre>?) {
     val genreText = genres?.joinToString(" // ") {
         "${view.context.getString(GenreStringer.getLabel(it))} ${GenreStringer.getEmoji(it)}"
@@ -44,7 +47,7 @@ fun genreString(view: TextView, genres: List<Genre>?) {
     view.text = genreText
 }
 
-@BindingAdapter(value = ["android:genreContentDescriptionString"])
+@BindingAdapter("android:genreContentDescriptionString")
 fun genreContentDescriptionString(view: TextView, genres: List<Genre>?) {
     val genreContentDescription = genres?.joinToString(", ") {
         view.context.getString(GenreStringer.getLabel(it))
@@ -52,12 +55,12 @@ fun genreContentDescriptionString(view: TextView, genres: List<Genre>?) {
     view.contentDescription = genreContentDescription
 }
 
-@BindingAdapter(value = ["android:visibleIfNotNull"])
+@BindingAdapter("android:visibleIfNotNull")
 fun visibleIfNotNull(view: View, target: Any?) {
     view.visibility = if (target == null) View.GONE else View.VISIBLE
 }
 
-@BindingAdapter(value = ["android:srcRes"])
+@BindingAdapter("android:srcRes")
 fun imageViewSrcRes(view: ImageView, drawableRes: Int) {
     if (drawableRes != 0) {
         view.setImageResource(drawableRes)
@@ -66,7 +69,7 @@ fun imageViewSrcRes(view: ImageView, drawableRes: Int) {
     }
 }
 
-@BindingAdapter(value = ["android:maxLinesToggle"])
+@BindingAdapter("android:maxLinesToggle")
 fun maxLinesClickListener(view: TextView, collapsedMaxLines: Int) {
     // Default to collapsed
     view.maxLines = collapsedMaxLines
