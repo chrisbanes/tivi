@@ -41,7 +41,7 @@ dependencies {
     api 'com.jakewharton.timber:timber:4.6.0'
     api "com.google.dagger:dagger:${versions.dagger}"
 
-    api "android.arch.paging:runtime:${versions.arch_comp_paging}"
+    api "android.arch.paging:runtime:${versions.arch_paging}"
 
     api 'com.squareup.retrofit2:retrofit:2.3.0'
 

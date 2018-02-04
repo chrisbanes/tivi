@@ -45,5 +45,5 @@ dependencies {
 
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
 
-    api "com.uwetrottmann.tmdb2:tmdb-java:1.8.1"
+    api "com.uwetrottmann.tmdb2:tmdb-java:1.8.2"
 }
