@@ -23,6 +23,7 @@ buildscript {
             'arch'             : '1.1.0',
             'arch_paging'      : '1.0.0-alpha5',
             'arch_room'        : '1.1.0-alpha1',
+            'core_ktx'         : '0.1',
             'kotlin'           : '1.2.21',
             'espresso'         : '3.0.1',
             'dagger'           : '2.14.1',

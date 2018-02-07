@@ -27,6 +27,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.view.doOnLayout
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_show_details.*
 import me.banes.chris.tivi.R
@@ -36,7 +37,6 @@ import me.banes.chris.tivi.detailsBadge
 import me.banes.chris.tivi.detailsSummary
 import me.banes.chris.tivi.detailsTitle
 /* ktlint-disable no-unused-imports */
-import me.banes.chris.tivi.extensions.doWhenLaidOut
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.ui.GlidePaletteListener
 import me.banes.chris.tivi.ui.NoopApplyWindowInsetsListener
@@ -114,7 +114,7 @@ class ShowDetailsFragment : TiviFragment() {
         val imageProvider = viewState.tmdbImageUrlProvider
 
         show.tmdbBackdropPath?.let { path ->
-            details_backdrop.doWhenLaidOut {
+            details_backdrop.doOnLayout {
                 Glide.with(this)
                         .load(imageProvider.getBackdropUrl(path, details_backdrop.width))
                         .listener(GlidePaletteListener(this::onBackdropPaletteLoaded))
@@ -123,7 +123,7 @@ class ShowDetailsFragment : TiviFragment() {
         }
 
         show.tmdbPosterPath?.let { path ->
-            details_poster.doWhenLaidOut {
+            details_poster.doOnLayout {
                 Glide.with(this)
                         .load(imageProvider.getPosterUrl(path, details_poster.width))
                         .into(details_poster)
