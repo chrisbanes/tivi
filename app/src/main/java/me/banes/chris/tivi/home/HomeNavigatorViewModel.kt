@@ -41,6 +41,10 @@ class HomeNavigatorViewModel @Inject constructor(
         _showWatchedCall.value = sharedElements
     }
 
+    override fun showMyShows(sharedElements: SharedElementHelper?) {
+        _showMyShowsCall.value = sharedElements
+    }
+
     override fun showShowDetails(show: TiviShow, sharedElements: SharedElementHelper?) {
         if (show.id != null) {
             appNavigatorProvider.get().startShowDetails(show.id!!, sharedElements)
@@ -62,6 +66,10 @@ class HomeNavigatorViewModel @Inject constructor(
     private val _showWatchedCall = SingleLiveEvent<SharedElementHelper>()
     val showWatchedCall: LiveData<SharedElementHelper>
         get() = _showWatchedCall
+
+    private val _showMyShowsCall = SingleLiveEvent<SharedElementHelper>()
+    val showMyShowsCall: LiveData<SharedElementHelper>
+        get() = _showMyShowsCall
 
     private val _upClickedCall = SingleLiveEvent<Unit>()
     val upClickedCall: LiveData<Unit>

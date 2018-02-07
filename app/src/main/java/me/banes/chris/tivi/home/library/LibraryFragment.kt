@@ -28,6 +28,7 @@ import me.banes.chris.tivi.R
 import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
+import me.banes.chris.tivi.data.entities.MyShowsEntry
 import me.banes.chris.tivi.data.entities.WatchedEntry
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeFragment
@@ -42,6 +43,12 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
     private lateinit var gridLayoutManager: GridLayoutManager
 
     private val controller = LibraryEpoxyController(object : LibraryEpoxyController.Callbacks {
+        override fun onMyShowsHeaderClicked(items: List<ListItem<MyShowsEntry>>?) {
+            val sharedElementHelper = SharedElementHelper()
+            items?.forEach { addSharedElementEntry(it, sharedElementHelper) }
+            viewModel.onMyShowsHeaderClicked(homeNavigator, sharedElementHelper)
+        }
+
         override fun onWatchedHeaderClicked(items: List<ListItem<WatchedEntry>>?) {
             val sharedElementHelper = SharedElementHelper()
             items?.forEach { addSharedElementEntry(it, sharedElementHelper) }
@@ -82,7 +89,7 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         super.onActivityCreated(savedInstanceState)
 
         viewModel.data.observeK(this) { model ->
-            controller.setData(model?.watched, model?.tmdbImageUrlProvider)
+            controller.setData(model?.myShows, model?.watched, model?.tmdbImageUrlProvider)
             scheduleStartPostponedTransitions()
         }
     }

@@ -26,6 +26,7 @@
     <string name="discover_popular">Popular</string>
 
     <string name="library_title">Library</string>
+    <string name="library_myshows">My Shows</string>
     <string name="library_watched">Watched</string>
 
     <string name="login">Login</string>
