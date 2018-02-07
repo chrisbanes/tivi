@@ -20,8 +20,8 @@ import android.databinding.BindingAdapter
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.view.doOnLayout
 import me.banes.chris.tivi.data.entities.Genre
-import me.banes.chris.tivi.extensions.doWhenLaidOut
 import me.banes.chris.tivi.extensions.loadFromUrl
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.GenreStringer
@@ -30,7 +30,7 @@ import me.banes.chris.tivi.ui.MaxLinesToggleClickListener
 @BindingAdapter(value = ["android:tmdbPosterPath", "android:tmdbImageUrlProvider"])
 fun loadPoster(view: ImageView, posterPath: String?, tmdbImageUrlProvider: TmdbImageUrlProvider?) {
     if (posterPath != null && tmdbImageUrlProvider != null) {
-        view.doWhenLaidOut {
+        view.doOnLayout {
             view.loadFromUrl(tmdbImageUrlProvider.getPosterUrl(posterPath, it.width))
         }
     }

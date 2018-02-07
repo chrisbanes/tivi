@@ -158,6 +158,8 @@ dependencies {
 
     implementation "com.android.support.constraint:constraint-layout:${versions.constraint_layout}"
 
+    implementation "androidx.core:core-ktx:${versions.core_ktx}"
+
     kapt "com.android.databinding:compiler:${versions.android_gradle}"
 
     implementation 'com.gabrielittner.threetenbp:lazythreetenbp:0.2.0'

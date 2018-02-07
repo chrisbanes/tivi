@@ -28,15 +28,15 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.view.doOnLayout
+import androidx.view.updatePadding
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
 import me.banes.chris.tivi.api.Status
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
-import me.banes.chris.tivi.extensions.doWhenLaidOut
 import me.banes.chris.tivi.extensions.observeK
-import me.banes.chris.tivi.extensions.updatePadding
 import me.banes.chris.tivi.ui.EndlessRecyclerViewScrollListener
 import me.banes.chris.tivi.ui.ProgressTimeLatch
 import me.banes.chris.tivi.ui.SpacingItemDecorator
@@ -110,8 +110,8 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         grid_root.setOnApplyWindowInsetsListener { _, insets ->
             val topInset = insets.systemWindowInsetTop
 
-            grid_toolbar.doWhenLaidOut {
-                grid_recyclerview.updatePadding(paddingTop = topInset + originalRvTopPadding + grid_toolbar.height)
+            grid_toolbar.doOnLayout {
+                grid_recyclerview.updatePadding(top = topInset + originalRvTopPadding + grid_toolbar.height)
             }
 
             val tlp = (grid_toolbar.layoutParams as ConstraintLayout.LayoutParams)
