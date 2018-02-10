@@ -24,6 +24,7 @@ import dagger.Provides
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.TiviAppNavigator
 import me.banes.chris.tivi.TiviApplication
+import me.banes.chris.tivi.appinitializers.AndroidJobInitializer
 import me.banes.chris.tivi.appinitializers.AppInitializers
 import me.banes.chris.tivi.appinitializers.LeakCanaryInitializer
 import me.banes.chris.tivi.appinitializers.ThreeTenBpInitializer
@@ -62,11 +63,12 @@ class AppModule {
 
     @Provides
     fun provideAppManagers(
+        androidJobInitializer: AndroidJobInitializer,
         leakCanaryManager: LeakCanaryInitializer,
         timberManager: TimberInitializer,
         threeTenManager: ThreeTenBpInitializer
     ): AppInitializers {
-        return AppInitializers(leakCanaryManager, timberManager, threeTenManager)
+        return AppInitializers(androidJobInitializer, leakCanaryManager, timberManager, threeTenManager)
     }
 
     @Provides
