@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi
+package me.banes.chris.tivi.appinitializers
 
-import dagger.android.AndroidInjector
-import dagger.android.DaggerApplication
-import me.banes.chris.tivi.appinitializers.AppInitializers
-import me.banes.chris.tivi.inject.DaggerAppComponent
-import javax.inject.Inject
+import android.app.Application
 
-class TiviApplication : DaggerApplication() {
-    @Inject lateinit var initializers: AppInitializers
-
-    override fun onCreate() {
-        super.onCreate()
-        initializers.init(this)
-    }
-
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        return DaggerAppComponent.builder().create(this)
+class AppInitializers(private vararg val initializers: AppInitializer) : AppInitializer {
+    override fun init(application: Application) {
+        initializers.forEach {
+            it.init(application)
+        }
     }
 }

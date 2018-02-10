@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi
+package me.banes.chris.tivi.appinitializers
 
-import dagger.android.AndroidInjector
-import dagger.android.DaggerApplication
-import me.banes.chris.tivi.appinitializers.AppInitializers
-import me.banes.chris.tivi.inject.DaggerAppComponent
+import android.app.Application
+import com.squareup.leakcanary.LeakCanary
 import javax.inject.Inject
 
-class TiviApplication : DaggerApplication() {
-    @Inject lateinit var initializers: AppInitializers
-
-    override fun onCreate() {
-        super.onCreate()
-        initializers.init(this)
-    }
-
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        return DaggerAppComponent.builder().create(this)
+class LeakCanaryInitializer @Inject constructor() : AppInitializer {
+    override fun init(application: Application) {
+        if (!LeakCanary.isInAnalyzerProcess(application)) {
+            LeakCanary.install(application)
+        }
     }
 }
