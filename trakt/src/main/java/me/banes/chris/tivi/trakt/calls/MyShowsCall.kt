@@ -21,16 +21,12 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import me.banes.chris.tivi.calls.ListCall
 import me.banes.chris.tivi.data.daos.MyShowsDao
-import me.banes.chris.tivi.data.daos.WatchedDao
-import me.banes.chris.tivi.data.entities.MyShowsEntry
 import me.banes.chris.tivi.data.entities.MyShowsListItem
-import me.banes.chris.tivi.data.entities.WatchedListItem
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
 class MyShowsCall @Inject constructor(
     private val myShowsDao: MyShowsDao,
-    private val watchedDao: WatchedDao,
     private val schedulers: AppRxSchedulers
 ) : ListCall<Unit, MyShowsListItem> {
 
@@ -47,20 +43,6 @@ class MyShowsCall @Inject constructor(
     override fun dataSourceFactory(): DataSource.Factory<Int, MyShowsListItem> = myShowsDao.entriesDataSource()
 
     override fun refresh(param: Unit): Completable {
-        // TODO, remove this. Just for testing
-        return watchedDao.entries()
-                .firstElement()
-                .map {
-                    ArrayList(it).apply { shuffle() }
-                            .take(10)
-                            .mapNotNull(WatchedListItem::show)
-                }
-                .doOnSuccess {
-                    myShowsDao.deleteAll()
-                    it.forEach {
-                        myShowsDao.insert(MyShowsEntry(showId = it.id!!))
-                    }
-                }
-                .ignoreElement()
+        return Completable.complete()
     }
 }

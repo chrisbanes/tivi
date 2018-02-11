@@ -18,7 +18,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/details_menu_add_show_myshows"
-        android:title="Add show"
+        android:id="@+id/details_menu_add_myshows"
+        android:title="Add to My Shows"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/details_menu_remove_myshows"
+        android:title="Remove from My Shows"
         app:showAsAction="never" />
 </menu>

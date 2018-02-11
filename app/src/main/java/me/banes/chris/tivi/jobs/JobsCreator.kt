@@ -30,6 +30,11 @@ abstract class JobsCreator {
 
     @Binds
     @IntoMap
-    @StringKey(AddShowToMyShows.TAG)
-    abstract fun bindAddShowsToMyShows(job: AddShowToMyShows): Job
+    @StringKey(AddToMyShows.TAG)
+    abstract fun bindAddToMyShows(job: AddToMyShows): Job
+
+    @Binds
+    @IntoMap
+    @StringKey(RemoveFromMyShows.TAG)
+    abstract fun bindRemoveFromMyShows(job: RemoveFromMyShows): Job
 }

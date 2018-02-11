@@ -19,27 +19,21 @@ package me.banes.chris.tivi.jobs
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
 import com.evernote.android.job.util.support.PersistableBundleCompat
+import io.reactivex.Completable
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.plusAssign
-import me.banes.chris.tivi.data.DatabaseTxRunner
 import me.banes.chris.tivi.data.daos.MyShowsDao
-import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.MyShowsEntry
-import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
-import java.util.concurrent.CountDownLatch
 import javax.inject.Inject
 
-class AddShowToMyShows @Inject constructor(
+class AddToMyShows @Inject constructor(
     private val rxSchedulers: AppRxSchedulers,
-    private val databaseTxRunner: DatabaseTxRunner,
-    private val showDao: TiviShowDao,
     private val myShowsDao: MyShowsDao
 ) : Job() {
 
     companion object {
-        const val TAG = "AddShowToMyShows"
+        const val TAG = "myshows-add"
 
         private const val PARAM_SHOW_ID = "show-id"
 
@@ -56,28 +50,13 @@ class AddShowToMyShows @Inject constructor(
     private val disposables = CompositeDisposable()
 
     override fun onRunJob(params: Params): Result {
-        val countDownLatch = CountDownLatch(1)
-
         val showId = params.extras.getLong(PARAM_SHOW_ID, -1)
 
-        Timber.d("AddShowToMyShows job running for id: $showId")
+        Timber.d("${RemoveFromMyShows.TAG} job running for id: $showId")
 
-        disposables += showDao.getShowWithIdMaybe(showId)
+        Completable.fromCallable { myShowsDao.insert(MyShowsEntry(showId = showId)) }
                 .subscribeOn(rxSchedulers.database)
-                .map(TiviShow::id)
-                .doOnSuccess {
-                    it?.let {
-                        myShowsDao.insert(MyShowsEntry(showId = it))
-                    }
-                    countDownLatch.countDown()
-                }
-                .ignoreElement()
-                .subscribe({}, {})
-
-        try {
-            countDownLatch.await()
-        } catch (ignored: InterruptedException) {
-        }
+                .blockingAwait()
 
         return Result.SUCCESS
     }

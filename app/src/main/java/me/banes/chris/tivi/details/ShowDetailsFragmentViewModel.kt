@@ -20,6 +20,7 @@ import android.arch.lifecycle.MutableLiveData
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
 import me.banes.chris.tivi.actions.TiviActions
+import me.banes.chris.tivi.data.daos.MyShowsDao
 import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.calls.ShowDetailsCall
 import me.banes.chris.tivi.util.AppRxSchedulers
@@ -31,7 +32,8 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     private val schedulers: AppRxSchedulers,
     private val showCall: ShowDetailsCall,
     private val tmdbManager: TmdbManager,
-    private val tiviActions: TiviActions
+    private val tiviActions: TiviActions,
+    private val myShowsDao: MyShowsDao
 ) : RxAwareViewModel() {
 
     var showId: Long? = null
@@ -61,6 +63,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
             disposables += Flowables.combineLatest(
                     showCall.data(it),
                     tmdbManager.imageProvider,
+                    myShowsDao.showEntry(it).map { it > 0 },
                     ::ShowDetailsFragmentViewState)
                     .observeOn(schedulers.main)
                     .subscribe(data::setValue, Timber::e)
@@ -75,9 +78,15 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         Timber.e(t, "Error while refreshing")
     }
 
-    fun addShowToMyShows() {
+    fun addToMyShows() {
         showId?.let {
             tiviActions.addShowToMyShows(it)
+        }
+    }
+
+    fun removeFromMyShows() {
+        showId?.let {
+            tiviActions.removeShowFromMyShows(it)
         }
     }
 }

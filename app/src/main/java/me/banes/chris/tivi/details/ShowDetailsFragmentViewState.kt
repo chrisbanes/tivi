@@ -21,5 +21,6 @@ import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 
 data class ShowDetailsFragmentViewState(
     val show: TiviShow,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider
+    val tmdbImageUrlProvider: TmdbImageUrlProvider,
+    val inMyShows: Boolean
 )

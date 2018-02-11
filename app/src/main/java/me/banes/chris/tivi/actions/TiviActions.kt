@@ -16,14 +16,22 @@
 
 package me.banes.chris.tivi.actions
 
-import me.banes.chris.tivi.jobs.AddShowToMyShows
+import me.banes.chris.tivi.jobs.AddToMyShows
+import me.banes.chris.tivi.jobs.RemoveFromMyShows
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class TiviActions @Inject constructor() {
     fun addShowToMyShows(showId: Long) {
-        AddShowToMyShows.buildRequest(showId)
+        AddToMyShows.buildRequest(showId)
+                .startNow()
+                .build()
+                .scheduleAsync()
+    }
+
+    fun removeShowFromMyShows(showId: Long) {
+        RemoveFromMyShows.buildRequest(showId)
                 .startNow()
                 .build()
                 .scheduleAsync()
