@@ -19,6 +19,7 @@ package me.banes.chris.tivi.details
 import android.arch.lifecycle.MutableLiveData
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
+import me.banes.chris.tivi.actions.TiviActions
 import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.calls.ShowDetailsCall
 import me.banes.chris.tivi.util.AppRxSchedulers
@@ -29,7 +30,8 @@ import javax.inject.Inject
 class ShowDetailsFragmentViewModel @Inject constructor(
     private val schedulers: AppRxSchedulers,
     private val showCall: ShowDetailsCall,
-    private val tmdbManager: TmdbManager
+    private val tmdbManager: TmdbManager,
+    private val tiviActions: TiviActions
 ) : RxAwareViewModel() {
 
     var showId: Long? = null
@@ -71,5 +73,11 @@ class ShowDetailsFragmentViewModel @Inject constructor(
 
     private fun onRefreshError(t: Throwable) {
         Timber.e(t, "Error while refreshing")
+    }
+
+    fun addShowToMyShows() {
+        showId?.let {
+            tiviActions.addShowToMyShows(it)
+        }
     }
 }

@@ -82,8 +82,22 @@ class ShowDetailsFragment : TiviFragment() {
 
         details_backdrop.setOnApplyWindowInsetsListener(NoopApplyWindowInsetsListener)
 
-        details_poster.clipToOutline = true
-        details_poster.outlineProvider = RoundRectViewOutline
+        details_poster.apply {
+            clipToOutline = true
+            outlineProvider = RoundRectViewOutline
+        }
+
+        details_toolbar.apply {
+            inflateMenu(R.menu.details_toolbar)
+
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.details_menu_add_show_myshows -> viewModel.addShowToMyShows()
+                    else -> TODO()
+                }
+                true
+            }
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

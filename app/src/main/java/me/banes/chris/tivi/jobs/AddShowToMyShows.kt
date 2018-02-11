@@ -19,30 +19,65 @@ package me.banes.chris.tivi.jobs
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
 import com.evernote.android.job.util.support.PersistableBundleCompat
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
+import me.banes.chris.tivi.data.DatabaseTxRunner
+import me.banes.chris.tivi.data.daos.MyShowsDao
+import me.banes.chris.tivi.data.daos.TiviShowDao
+import me.banes.chris.tivi.data.entities.MyShowsEntry
+import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
+import java.util.concurrent.CountDownLatch
 import javax.inject.Inject
 
-class AddShowToMyShows @Inject constructor() : Job() {
+class AddShowToMyShows @Inject constructor(
+    private val rxSchedulers: AppRxSchedulers,
+    private val databaseTxRunner: DatabaseTxRunner,
+    private val showDao: TiviShowDao,
+    private val myShowsDao: MyShowsDao
+) : Job() {
+
     companion object {
         const val TAG = "AddShowToMyShows"
 
-        private const val PARAM_TRAKT_ID = "_trakt-id"
+        private const val PARAM_SHOW_ID = "show-id"
 
-        fun schedule(traktId: String) {
-            JobRequest.Builder(TAG)
+        fun buildRequest(showId: Long): JobRequest.Builder {
+            return JobRequest.Builder(TAG)
                     .addExtras(
                             PersistableBundleCompat().apply {
-                                putString(PARAM_TRAKT_ID, traktId)
+                                putLong(PARAM_SHOW_ID, showId)
                             }
                     )
-                    .startNow()
-                    .build()
-                    .scheduleAsync()
         }
     }
 
+    private val disposables = CompositeDisposable()
+
     override fun onRunJob(params: Params): Result {
-        Timber.d("AddShowToMyShows job running!!")
+        val countDownLatch = CountDownLatch(1)
+
+        val showId = params.extras.getLong(PARAM_SHOW_ID, -1)
+
+        Timber.d("AddShowToMyShows job running for id: $showId")
+
+        disposables += showDao.getShowWithIdMaybe(showId)
+                .subscribeOn(rxSchedulers.database)
+                .map(TiviShow::id)
+                .doOnSuccess {
+                    it?.let {
+                        myShowsDao.insert(MyShowsEntry(showId = it))
+                    }
+                    countDownLatch.countDown()
+                }
+                .ignoreElement()
+                .subscribe({}, {})
+
+        try {
+            countDownLatch.await()
+        } catch (ignored: InterruptedException) {
+        }
 
         return Result.SUCCESS
     }

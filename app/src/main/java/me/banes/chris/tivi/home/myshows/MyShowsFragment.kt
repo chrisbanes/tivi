@@ -40,7 +40,7 @@ class MyShowsFragment : EntryGridFragment<MyShowsListItem, MyShowsViewModel>(MyS
         super.onViewCreated(view, savedInstanceState)
 
         grid_toolbar.apply {
-            title = getString(R.string.library_watched)
+            title = getString(R.string.library_myshows)
             setNavigationOnClickListener {
                 viewModel.onUpClicked(homeNavigator)
             }

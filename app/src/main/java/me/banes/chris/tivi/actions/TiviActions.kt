@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.jobs
+package me.banes.chris.tivi.actions
 
-import com.evernote.android.job.Job
-import com.evernote.android.job.JobCreator
+import me.banes.chris.tivi.jobs.AddShowToMyShows
 import javax.inject.Inject
-import javax.inject.Provider
+import javax.inject.Singleton
 
-/**
- * JobCreator which uses Dagger to create the instances.
- */
-class TiviJobCreator @Inject constructor(
-    private val creators: @JvmSuppressWildcards Map<String, Provider<Job>>
-) : JobCreator {
-    override fun create(tag: String): Job {
-        val creator = creators[tag] ?: throw IllegalArgumentException("Unknown job tag: " + tag)
-        try {
-            return creator.get()
-        } catch (e: Exception) {
-            throw RuntimeException(e)
-        }
+@Singleton
+class TiviActions @Inject constructor() {
+    fun addShowToMyShows(showId: Long) {
+        AddShowToMyShows.buildRequest(showId)
+                .startNow()
+                .build()
+                .scheduleAsync()
     }
 }
