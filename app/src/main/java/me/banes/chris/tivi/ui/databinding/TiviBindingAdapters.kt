@@ -21,6 +21,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.view.doOnLayout
+import com.bumptech.glide.Glide
 import me.banes.chris.tivi.data.entities.Genre
 import me.banes.chris.tivi.extensions.loadFromUrl
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
@@ -29,6 +30,8 @@ import me.banes.chris.tivi.ui.MaxLinesToggleClickListener
 
 @BindingAdapter("android:tmdbPosterPath", "android:tmdbImageUrlProvider")
 fun loadPoster(view: ImageView, posterPath: String?, tmdbImageUrlProvider: TmdbImageUrlProvider?) {
+    Glide.with(view).clear(view)
+
     if (posterPath != null && tmdbImageUrlProvider != null) {
         view.doOnLayout {
             view.loadFromUrl(
