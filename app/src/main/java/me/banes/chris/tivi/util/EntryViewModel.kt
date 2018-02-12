@@ -46,7 +46,7 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
                 call.dataSourceFactory(),
                 PagedList.Config.Builder().run {
                     setPageSize(call.pageSize)
-                    setEnablePlaceholders(true)
+                    setEnablePlaceholders(false)
                     build()
                 }
         ).run {
