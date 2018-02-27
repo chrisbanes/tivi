@@ -22,6 +22,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
+import android.view.ViewGroup
+import androidx.view.forEach
 import kotlinx.android.synthetic.main.activity_home.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.SharedElementHelper
@@ -52,6 +54,18 @@ class HomeActivity : TiviActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        home_content.setOnApplyWindowInsetsListener { view, insets ->
+            var consumed = false
+
+            (view as ViewGroup).forEach { child ->
+                if (child.dispatchApplyWindowInsets(insets).isConsumed) {
+                    consumed = true
+                }
+            }
+
+            if (consumed) insets.consumeSystemWindowInsets() else insets
+        }
 
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(HomeActivityViewModel::class.java)
