@@ -36,11 +36,9 @@ class TmdbManager @Inject constructor(
 ) {
 
     private val disposables = CompositeDisposable()
-    private val imageProviderSubject = BehaviorSubject.create<TmdbImageUrlProvider>()!!
+    private val imageProviderSubject = BehaviorSubject.createDefault(TmdbImageUrlProvider())!!
 
-    val imageProvider: Flowable<TmdbImageUrlProvider> by lazy(LazyThreadSafetyMode.NONE) {
-        imageProviderSubject.toFlowable(BackpressureStrategy.LATEST)
-    }
+    val imageProvider = imageProviderSubject.toFlowable(BackpressureStrategy.LATEST)!!
 
     init {
         disposables += tmdbClient.configurationService().configuration().toRxSingle()
