@@ -162,7 +162,7 @@ dependencies {
 
     kapt "com.android.databinding:compiler:${versions.android_gradle}"
 
-    implementation 'com.gabrielittner.threetenbp:lazythreetenbp:0.2.0'
+    implementation 'com.gabrielittner.threetenbp:lazythreetenbp:0.3.0'
 
     implementation "com.google.dagger:dagger-android:${versions.dagger}"
     implementation "com.google.dagger:dagger-android-support:${versions.dagger}"
@@ -189,7 +189,7 @@ dependencies {
     debugImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${versions.leakcanary}"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${versions.leakcanary}"
 
-    implementation('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
         transitive = true
     }
 
