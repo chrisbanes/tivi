@@ -38,16 +38,18 @@ android {
 
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jre8:${versions.kotlin}"
-    api 'com.jakewharton.timber:timber:4.6.0'
+    api 'com.jakewharton.timber:timber:4.6.1'
     api "com.google.dagger:dagger:${versions.dagger}"
 
     api "android.arch.paging:runtime:${versions.arch_paging}"
+    // TODO want to remove this
+    implementation "com.android.support:support-fragment:${versions.support_library}"
 
     api 'com.squareup.retrofit2:retrofit:2.3.0'
 
-    api 'com.squareup.okhttp3:logging-interceptor:3.9.1'
+    api 'com.squareup.okhttp3:logging-interceptor:3.10.0'
 
     api "io.reactivex.rxjava2:rxjava:${versions.rx}"
     api 'io.reactivex.rxjava2:rxkotlin:2.2.0'
-    implementation "io.reactivex.rxjava2:rxandroid:2.0.1"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
 }
