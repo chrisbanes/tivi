@@ -42,6 +42,8 @@ dependencies {
     api "com.google.dagger:dagger:${versions.dagger}"
 
     api "android.arch.paging:runtime:${versions.arch_paging}"
+    // TODO want to remove this
+    implementation "com.android.support:support-fragment:${versions.support_library}"
 
     api 'com.squareup.retrofit2:retrofit:2.3.0'
 
