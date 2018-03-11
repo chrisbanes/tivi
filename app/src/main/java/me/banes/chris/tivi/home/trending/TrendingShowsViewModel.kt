@@ -26,9 +26,9 @@ import me.banes.chris.tivi.util.EntryViewModel
 import javax.inject.Inject
 
 class TrendingShowsViewModel @Inject constructor(
-        schedulers: AppRxSchedulers,
-        call: TrendingCall,
-        tmdbManager: TmdbManager
+    schedulers: AppRxSchedulers,
+    call: TrendingCall,
+    tmdbManager: TmdbManager
 ) : EntryViewModel<TrendingListItem>(schedulers, call, tmdbManager) {
     fun onUpClicked(navigator: HomeNavigator) {
         navigator.onUpClicked()

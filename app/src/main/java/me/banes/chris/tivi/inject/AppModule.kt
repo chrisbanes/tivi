@@ -62,9 +62,10 @@ class AppModule {
 
     @Provides
     fun provideAppManagers(
-            leakCanaryManager: LeakCanaryInitializer,
-            timberManager: TimberInitializer,
-            threeTenManager: ThreeTenBpInitializer): AppInitializers {
+        leakCanaryManager: LeakCanaryInitializer,
+        timberManager: TimberInitializer,
+        threeTenManager: ThreeTenBpInitializer
+    ): AppInitializers {
         return AppInitializers(leakCanaryManager, timberManager, threeTenManager)
     }
 

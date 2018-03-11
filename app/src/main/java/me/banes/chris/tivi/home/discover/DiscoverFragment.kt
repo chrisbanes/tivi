@@ -62,9 +62,10 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         }
 
         private fun addSharedElementEntry(
-                item: ListItem<out Entry>,
-                sharedElementHelper: SharedElementHelper,
-                transitionName: String? = item.show?.homepage) {
+            item: ListItem<out Entry>,
+            sharedElementHelper: SharedElementHelper,
+            transitionName: String? = item.show?.homepage
+        ) {
             summary_rv.findViewHolderForItemId(item.generateStableId())?.let {
                 sharedElementHelper.addSharedElement(it.itemView, transitionName)
             }

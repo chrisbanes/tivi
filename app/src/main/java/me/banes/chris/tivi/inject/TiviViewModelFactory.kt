@@ -25,7 +25,7 @@ import javax.inject.Provider
  * ViewModelFactory which uses Dagger to create the instances.
  */
 class TiviViewModelFactory @Inject constructor(
-        private val creators: @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
+    private val creators: @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

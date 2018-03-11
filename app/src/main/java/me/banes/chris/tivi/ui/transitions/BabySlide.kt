@@ -26,13 +26,16 @@ import android.view.View
 import android.view.ViewGroup
 
 class BabySlide(
-        private val gravity: Int = Gravity.START,
-        private val babyFraction: Float = 2f
+    private val gravity: Int = Gravity.START,
+    private val babyFraction: Float = 2f
 ) : Visibility() {
 
-    override fun onAppear(sceneRoot: ViewGroup, view: View,
-            startValues: TransitionValues?,
-            endValues: TransitionValues?): Animator {
+    override fun onAppear(
+        sceneRoot: ViewGroup,
+        view: View,
+        startValues: TransitionValues?,
+        endValues: TransitionValues?
+    ): Animator {
         setupTranslation(view)
         view.alpha = 0f
 
@@ -42,8 +45,12 @@ class BabySlide(
                 PropertyValuesHolder.ofFloat(View.ALPHA, 1f))
     }
 
-    override fun onDisappear(sceneRoot: ViewGroup, view: View,
-            startValues: TransitionValues?, endValues: TransitionValues?): Animator {
+    override fun onDisappear(
+        sceneRoot: ViewGroup,
+        view: View,
+        startValues: TransitionValues?,
+        endValues: TransitionValues?
+    ): Animator {
         return ObjectAnimator.ofPropertyValuesHolder(view,
                 translatePropValForGravity(view),
                 PropertyValuesHolder.ofFloat(View.ALPHA, 0f))

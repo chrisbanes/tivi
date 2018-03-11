@@ -26,9 +26,9 @@ import me.banes.chris.tivi.util.EntryViewModel
 import javax.inject.Inject
 
 class WatchedShowsViewModel @Inject constructor(
-        schedulers: AppRxSchedulers,
-        call: WatchedCall,
-        tmdbManager: TmdbManager
+    schedulers: AppRxSchedulers,
+    call: WatchedCall,
+    tmdbManager: TmdbManager
 ) : EntryViewModel<WatchedListItem>(schedulers, call, tmdbManager) {
     fun onUpClicked(navigator: HomeNavigator) {
         navigator.onUpClicked()

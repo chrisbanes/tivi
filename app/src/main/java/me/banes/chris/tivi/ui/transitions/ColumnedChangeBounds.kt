@@ -66,9 +66,10 @@ class ColumnedChangeBounds : Transition() {
     }
 
     override fun createAnimator(
-            sceneRoot: ViewGroup,
-            startValues: TransitionValues?,
-            endValues: TransitionValues?): Animator? {
+        sceneRoot: ViewGroup,
+        startValues: TransitionValues?,
+        endValues: TransitionValues?
+    ): Animator? {
         if (startValues == null || endValues == null) {
             return null
         }
@@ -175,10 +176,11 @@ class ColumnedChangeBounds : Transition() {
     }
 
     private fun createAnimatorForChildCopyOutLeft(
-            sceneRoot: ViewGroup,
-            view: View,
-            startBounds: Rect,
-            endBounds: Rect): Animator {
+        sceneRoot: ViewGroup,
+        view: View,
+        startBounds: Rect,
+        endBounds: Rect
+    ): Animator {
         val gap = 0 // TODO
         val newEndRight = startBounds.left - gap
         val newEndTop = endBounds.bottom + gap
@@ -192,11 +194,12 @@ class ColumnedChangeBounds : Transition() {
     }
 
     private fun createAnimatorsForChildCopyOutRight(
-            sceneRoot: ViewGroup,
-            view: View,
-            endParent: RecyclerView,
-            startBounds: Rect,
-            endBounds: Rect): Animator? {
+        sceneRoot: ViewGroup,
+        view: View,
+        endParent: RecyclerView,
+        startBounds: Rect,
+        endBounds: Rect
+    ): Animator? {
         val prevEndBounds = findPreviousItemViewWithGreaterRight(endParent, view, endBounds.right) ?: return null
 
         val newEndLeft = prevEndBounds.right + endBounds.left
@@ -232,12 +235,13 @@ class ColumnedChangeBounds : Transition() {
     }
 
     private fun createPointToPointAnimator(
-            sceneRoot: ViewGroup,
-            view: View,
-            startBounds: Rect,
-            endBounds: Rect,
-            startAlpha: Int = 255,
-            endAlpha: Int = 255): Animator {
+        sceneRoot: ViewGroup,
+        view: View,
+        startBounds: Rect,
+        endBounds: Rect,
+        startAlpha: Int = 255,
+        endAlpha: Int = 255
+    ): Animator {
         val drawable = createDrawableBoundsForView(view)
         ViewUtils.getOverlay(sceneRoot).add(drawable.drawable)
 
@@ -265,9 +269,10 @@ class ColumnedChangeBounds : Transition() {
     }
 
     private fun createMoveAnimatorForView(
-            drawableBounds: DrawableBounds,
-            startBounds: Rect,
-            endBounds: Rect): Animator {
+        drawableBounds: DrawableBounds,
+        startBounds: Rect,
+        endBounds: Rect
+    ): Animator {
 
         val outTopLeftPropVal = PropertyValuesHolder.ofObject<PointF>(
                 TOP_LEFT_PROPERTY,
@@ -287,9 +292,10 @@ class ColumnedChangeBounds : Transition() {
     }
 
     private fun findPreviousItemViewWithGreaterRight(
-            parent: RecyclerView,
-            view: View,
-            right: Int): Rect? {
+        parent: RecyclerView,
+        view: View,
+        right: Int
+    ): Rect? {
         // This view might not necessarily be the root of the item view
         val rvItemView = parent.findContainingItemView(view)
         for (i in parent.getChildAdapterPosition(rvItemView) - 1 downTo 0) {

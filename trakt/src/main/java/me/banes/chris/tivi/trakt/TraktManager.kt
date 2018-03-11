@@ -43,14 +43,15 @@ import javax.inject.Singleton
 
 @Singleton
 class TraktManager @Inject constructor(
-        private val schedulers: AppRxSchedulers,
-        @Named("app") private val appNavigator: AppNavigator,
-        private val requestProvider: Provider<AuthorizationRequest>,
-        private val authService: AuthorizationService,
-        private val clientAuth: Lazy<ClientAuthentication>,
-        @Named("auth") private val authPrefs: SharedPreferences,
-        private val traktClient: TraktV2,
-        private val userMeCall: UserMeCall) {
+    private val schedulers: AppRxSchedulers,
+    @Named("app") private val appNavigator: AppNavigator,
+    private val requestProvider: Provider<AuthorizationRequest>,
+    private val authService: AuthorizationService,
+    private val clientAuth: Lazy<ClientAuthentication>,
+    @Named("auth") private val authPrefs: SharedPreferences,
+    private val traktClient: TraktV2,
+    private val userMeCall: UserMeCall
+) {
 
     private val disposables = CompositeDisposable()
 

@@ -29,7 +29,7 @@ import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.epoxy.TotalSpanOverride
 
 class LibraryEpoxyController(
-        private val callbacks: Callbacks
+    private val callbacks: Callbacks
 ) : Typed2EpoxyController<List<ListItem<WatchedEntry>>, TmdbImageUrlProvider>() {
 
     interface Callbacks {
@@ -38,8 +38,9 @@ class LibraryEpoxyController(
     }
 
     override fun buildModels(
-            watched: List<ListItem<WatchedEntry>>?,
-            tmdbImageUrlProvider: TmdbImageUrlProvider?) {
+        watched: List<ListItem<WatchedEntry>>?,
+        tmdbImageUrlProvider: TmdbImageUrlProvider?
+    ) {
         header {
             id("watched_header")
             title(R.string.library_watched)

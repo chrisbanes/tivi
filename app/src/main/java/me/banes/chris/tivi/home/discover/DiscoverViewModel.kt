@@ -33,12 +33,12 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class DiscoverViewModel @Inject constructor(
-        schedulers: AppRxSchedulers,
-        private val popularCall: PopularCall,
-        private val trendingCall: TrendingCall,
-        appNavigator: AppNavigator,
-        traktManager: TraktManager,
-        tmdbManager: TmdbManager
+    schedulers: AppRxSchedulers,
+    private val popularCall: PopularCall,
+    private val trendingCall: TrendingCall,
+    appNavigator: AppNavigator,
+    traktManager: TraktManager,
+    tmdbManager: TmdbManager
 ) : HomeFragmentViewModel(traktManager, appNavigator) {
 
     val data = MutableLiveData<DiscoverViewState>()

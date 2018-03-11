@@ -19,9 +19,9 @@ package me.banes.chris.tivi.tmdb
 private const val IMAGE_SIZE_PATTERN = "w(\\d+)$"
 
 class TmdbImageUrlProvider(
-        private var baseImageUrl: String = TmdbImageSizes.baseImageUrl,
-        private var posterSizes: Array<String> = TmdbImageSizes.posterSizes,
-        private var backdropSizes: Array<String> = TmdbImageSizes.backdropSizes
+    private var baseImageUrl: String = TmdbImageSizes.baseImageUrl,
+    private var posterSizes: Array<String> = TmdbImageSizes.posterSizes,
+    private var backdropSizes: Array<String> = TmdbImageSizes.backdropSizes
 ) {
 
     fun getPosterUrl(path: String, imageWidth: Int): String {

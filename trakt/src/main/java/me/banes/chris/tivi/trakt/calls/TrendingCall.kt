@@ -33,12 +33,12 @@ import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
 class TrendingCall @Inject constructor(
-        databaseTxRunner: DatabaseTxRunner,
-        showDao: TiviShowDao,
-        trendingDao: TrendingDao,
-        traktShowFetcher: TraktShowFetcher,
-        private val trakt: TraktV2,
-        schedulers: AppRxSchedulers
+    databaseTxRunner: DatabaseTxRunner,
+    showDao: TiviShowDao,
+    trendingDao: TrendingDao,
+    traktShowFetcher: TraktShowFetcher,
+    private val trakt: TraktV2,
+    schedulers: AppRxSchedulers
 ) : PaginatedEntryCallImpl<TrendingShow, TrendingEntry, TrendingListItem, TrendingDao>(databaseTxRunner, showDao, trendingDao, schedulers, traktShowFetcher) {
 
     override fun networkCall(page: Int): Single<List<TrendingShow>> {

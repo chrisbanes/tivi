@@ -26,7 +26,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 class HomeNavigatorViewModel @Inject constructor(
-        private val appNavigatorProvider: Provider<AppNavigator>
+    private val appNavigatorProvider: Provider<AppNavigator>
 ) : ViewModel(), HomeNavigator {
 
     override fun showPopular(sharedElements: SharedElementHelper?) {

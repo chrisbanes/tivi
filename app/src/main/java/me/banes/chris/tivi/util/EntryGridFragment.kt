@@ -44,7 +44,7 @@ import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
 abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<LI>>(
-        private val vmClass: Class<VM>
+    private val vmClass: Class<VM>
 ) : TiviFragment() {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory

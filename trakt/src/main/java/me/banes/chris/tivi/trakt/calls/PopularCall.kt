@@ -34,12 +34,12 @@ import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
 class PopularCall @Inject constructor(
-        databaseTxRunner: DatabaseTxRunner,
-        showDao: TiviShowDao,
-        popularDao: PopularDao,
-        traktShowFetcher: TraktShowFetcher,
-        private val trakt: TraktV2,
-        schedulers: AppRxSchedulers
+    databaseTxRunner: DatabaseTxRunner,
+    showDao: TiviShowDao,
+    popularDao: PopularDao,
+    traktShowFetcher: TraktShowFetcher,
+    private val trakt: TraktV2,
+    schedulers: AppRxSchedulers
 ) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularListItem, PopularDao>(databaseTxRunner, showDao, popularDao, schedulers, traktShowFetcher) {
 
     override fun networkCall(page: Int): Single<List<ItemWithIndex<Show>>> {

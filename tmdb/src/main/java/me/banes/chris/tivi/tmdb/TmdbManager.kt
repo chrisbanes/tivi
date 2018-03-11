@@ -30,8 +30,8 @@ import javax.inject.Singleton
 
 @Singleton
 class TmdbManager @Inject constructor(
-        schedulers: AppRxSchedulers,
-        tmdbClient: Tmdb
+    schedulers: AppRxSchedulers,
+    tmdbClient: Tmdb
 ) {
 
     private val disposables = CompositeDisposable()

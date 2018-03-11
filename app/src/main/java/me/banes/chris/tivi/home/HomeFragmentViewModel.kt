@@ -28,8 +28,9 @@ import net.openid.appauth.AuthState
 import timber.log.Timber
 
 abstract class HomeFragmentViewModel(
-        private val traktManager: TraktManager,
-        private val appNavigator: AppNavigator)
+    private val traktManager: TraktManager,
+    private val appNavigator: AppNavigator
+)
     : RxAwareViewModel() {
 
     enum class AuthUiState {

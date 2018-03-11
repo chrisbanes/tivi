@@ -30,8 +30,12 @@ class SpacingItemDecorator(left: Int, top: Int, right: Int, bottom: Int) : Recyc
         spacingRect.set(left, top, right, bottom)
     }
 
-    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView,
-            state: RecyclerView.State) {
+    override fun getItemOffsets(
+        outRect: Rect,
+        view: View,
+        parent: RecyclerView,
+        state: RecyclerView.State
+    ) {
         outRect.set(spacingRect)
     }
 }
