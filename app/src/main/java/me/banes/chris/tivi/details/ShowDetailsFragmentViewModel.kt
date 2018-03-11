@@ -27,9 +27,9 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class ShowDetailsFragmentViewModel @Inject constructor(
-        private val schedulers: AppRxSchedulers,
-        private val showCall: ShowDetailsCall,
-        private val tmdbManager: TmdbManager
+    private val schedulers: AppRxSchedulers,
+    private val showCall: ShowDetailsCall,
+    private val tmdbManager: TmdbManager
 ) : RxAwareViewModel() {
 
     var showId: Long? = null

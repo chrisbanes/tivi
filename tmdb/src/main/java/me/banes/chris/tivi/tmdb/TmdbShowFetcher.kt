@@ -32,9 +32,9 @@ import javax.inject.Singleton
 
 @Singleton
 class TmdbShowFetcher @Inject constructor(
-        private val showDao: TiviShowDao,
-        private val tmdb: Tmdb,
-        private val schedulers: AppRxSchedulers
+    private val showDao: TiviShowDao,
+    private val tmdb: Tmdb,
+    private val schedulers: AppRxSchedulers
 ) {
     private val active = ArraySet<Int>()
 

@@ -32,11 +32,11 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
-        schedulers: AppRxSchedulers,
-        private val watchedCall: WatchedCall,
-        appNavigator: AppNavigator,
-        traktManager: TraktManager,
-        tmdbManager: TmdbManager
+    schedulers: AppRxSchedulers,
+    private val watchedCall: WatchedCall,
+    appNavigator: AppNavigator,
+    traktManager: TraktManager,
+    tmdbManager: TmdbManager
 ) : HomeFragmentViewModel(traktManager, appNavigator) {
     val data = MutableLiveData<LibraryViewState>()
 

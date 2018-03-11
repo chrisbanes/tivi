@@ -26,9 +26,9 @@ import me.banes.chris.tivi.util.EntryViewModel
 import javax.inject.Inject
 
 class PopularShowsViewModel @Inject constructor(
-        schedulers: AppRxSchedulers,
-        call: PopularCall,
-        tmdbManager: TmdbManager
+    schedulers: AppRxSchedulers,
+    call: PopularCall,
+    tmdbManager: TmdbManager
 ) : EntryViewModel<PopularListItem>(schedulers, call, tmdbManager) {
     fun onUpClicked(navigator: HomeNavigator) {
         navigator.onUpClicked()

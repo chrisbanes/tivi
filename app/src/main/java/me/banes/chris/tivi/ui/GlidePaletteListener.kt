@@ -26,19 +26,21 @@ import com.bumptech.glide.request.target.Target
 
 class GlidePaletteListener(private val listener: (Palette) -> Unit) : RequestListener<Drawable> {
     override fun onLoadFailed(
-            e: GlideException?,
-            model: Any,
-            target: Target<Drawable>,
-            isFirstResource: Boolean): Boolean {
+        e: GlideException?,
+        model: Any,
+        target: Target<Drawable>,
+        isFirstResource: Boolean
+    ): Boolean {
         return false
     }
 
     override fun onResourceReady(
-            resource: Drawable,
-            model: Any,
-            target: Target<Drawable>,
-            dataSource: DataSource,
-            isFirstResource: Boolean): Boolean {
+        resource: Drawable,
+        model: Any,
+        target: Target<Drawable>,
+        dataSource: DataSource,
+        isFirstResource: Boolean
+    ): Boolean {
         if (resource is BitmapDrawable) {
             val bitmap = resource.bitmap
             Palette.Builder(bitmap)

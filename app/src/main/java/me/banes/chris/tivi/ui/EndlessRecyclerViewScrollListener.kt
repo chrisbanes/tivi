@@ -22,8 +22,9 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 
 class EndlessRecyclerViewScrollListener(
-        private val layoutManager: RecyclerView.LayoutManager,
-        private val loadMore: (totalItemsCount: Int, view: RecyclerView) -> Unit)
+    private val layoutManager: RecyclerView.LayoutManager,
+    private val loadMore: (totalItemsCount: Int, view: RecyclerView) -> Unit
+)
     : RecyclerView.OnScrollListener() {
 
     private var loadMoreThreshold = 2

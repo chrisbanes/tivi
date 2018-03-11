@@ -35,9 +35,9 @@ import javax.inject.Singleton
 
 @Singleton
 class TraktShowFetcher @Inject constructor(
-        private val showDao: TiviShowDao,
-        private val trakt: TraktV2,
-        private val schedulers: AppRxSchedulers
+    private val showDao: TiviShowDao,
+    private val trakt: TraktV2,
+    private val schedulers: AppRxSchedulers
 ) {
     fun getShow(traktId: Int, entity: Show? = null): Maybe<TiviShow> {
         val dbSource = showDao.getShowWithTraktIdMaybe(traktId)

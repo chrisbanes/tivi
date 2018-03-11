@@ -31,10 +31,10 @@ import timber.log.Timber
 import javax.inject.Inject
 
 internal class HomeActivityViewModel @Inject constructor(
-        private val traktManager: TraktManager,
-        private val tiviShowDao: TiviShowDao,
-        private val tmdbShowFetcher: TmdbShowFetcher,
-        private val schedulers: AppRxSchedulers
+    private val traktManager: TraktManager,
+    private val tiviShowDao: TiviShowDao,
+    private val tmdbShowFetcher: TmdbShowFetcher,
+    private val schedulers: AppRxSchedulers
 ) : RxAwareViewModel() {
 
     enum class NavigationItem {

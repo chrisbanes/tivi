@@ -30,23 +30,23 @@ import kotlin.reflect.KMutableProperty0
             Index(value = ["tmdb_id"], unique = true)
         ])
 data class TiviShow(
-        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") var id: Long? = null,
-        @ColumnInfo(name = "title") var title: String? = null,
-        @ColumnInfo(name = "original_title") var originalTitle: String? = null,
-        @ColumnInfo(name = "trakt_id") var traktId: Int? = null,
-        @ColumnInfo(name = "tmdb_id") var tmdbId: Int? = null,
-        @ColumnInfo(name = "tmdb_poster_path") var tmdbPosterPath: String? = null,
-        @ColumnInfo(name = "tmdb_backdrop_path") var tmdbBackdropPath: String? = null,
-        @ColumnInfo(name = "trakt_updated") var lastTraktUpdate: OffsetDateTime? = null,
-        @ColumnInfo(name = "tmdb_updated") var lastTmdbUpdate: OffsetDateTime? = null,
-        @ColumnInfo(name = "overview") var summary: String? = null,
-        @ColumnInfo(name = "homepage") var homepage: String? = null,
-        @ColumnInfo(name = "rating") var rating: Float? = null,
-        @ColumnInfo(name = "certification") var certification: String? = null,
-        @ColumnInfo(name = "country") var country: String? = null,
-        @ColumnInfo(name = "network") var network: String? = null,
-        @ColumnInfo(name = "runtime") var runtime: Int? = null,
-        @ColumnInfo(name = "genres") var _genres: String? = null
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") var id: Long? = null,
+    @ColumnInfo(name = "title") var title: String? = null,
+    @ColumnInfo(name = "original_title") var originalTitle: String? = null,
+    @ColumnInfo(name = "trakt_id") var traktId: Int? = null,
+    @ColumnInfo(name = "tmdb_id") var tmdbId: Int? = null,
+    @ColumnInfo(name = "tmdb_poster_path") var tmdbPosterPath: String? = null,
+    @ColumnInfo(name = "tmdb_backdrop_path") var tmdbBackdropPath: String? = null,
+    @ColumnInfo(name = "trakt_updated") var lastTraktUpdate: OffsetDateTime? = null,
+    @ColumnInfo(name = "tmdb_updated") var lastTmdbUpdate: OffsetDateTime? = null,
+    @ColumnInfo(name = "overview") var summary: String? = null,
+    @ColumnInfo(name = "homepage") var homepage: String? = null,
+    @ColumnInfo(name = "rating") var rating: Float? = null,
+    @ColumnInfo(name = "certification") var certification: String? = null,
+    @ColumnInfo(name = "country") var country: String? = null,
+    @ColumnInfo(name = "network") var network: String? = null,
+    @ColumnInfo(name = "runtime") var runtime: Int? = null,
+    @ColumnInfo(name = "genres") var _genres: String? = null
 ) {
     @Ignore constructor(): this(null)
 

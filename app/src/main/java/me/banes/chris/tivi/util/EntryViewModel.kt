@@ -34,10 +34,11 @@ import me.banes.chris.tivi.tmdb.TmdbManager
 import timber.log.Timber
 
 open class EntryViewModel<LI : ListItem<out Entry>>(
-        private val schedulers: AppRxSchedulers,
-        private val call: ListCall<Unit, LI>,
-        tmdbManager: TmdbManager,
-        refreshOnStartup: Boolean = true) : RxAwareViewModel() {
+    private val schedulers: AppRxSchedulers,
+    private val call: ListCall<Unit, LI>,
+    tmdbManager: TmdbManager,
+    refreshOnStartup: Boolean = true
+) : RxAwareViewModel() {
 
     private val messages = BehaviorSubject.create<Resource>()
 

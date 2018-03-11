@@ -33,11 +33,12 @@ import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
 class WatchedCall @Inject constructor(
-        private val databaseTxRunner: DatabaseTxRunner,
-        private val watchDao: WatchedDao,
-        private val traktShowFetcher: TraktShowFetcher,
-        private val trakt: TraktV2,
-        private val schedulers: AppRxSchedulers) : ListCall<Unit, WatchedListItem> {
+    private val databaseTxRunner: DatabaseTxRunner,
+    private val watchDao: WatchedDao,
+    private val traktShowFetcher: TraktShowFetcher,
+    private val trakt: TraktV2,
+    private val schedulers: AppRxSchedulers
+) : ListCall<Unit, WatchedListItem> {
 
     override val pageSize = 21
 

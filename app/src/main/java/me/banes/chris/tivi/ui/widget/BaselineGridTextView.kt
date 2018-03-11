@@ -39,9 +39,9 @@ import me.banes.chris.tivi.R
  * subsequent views start on the grid.
  */
 class BaselineGridTextView @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = android.R.attr.textViewStyle
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = android.R.attr.textViewStyle
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
 
     var lineHeightMultiplierHint = 1f
