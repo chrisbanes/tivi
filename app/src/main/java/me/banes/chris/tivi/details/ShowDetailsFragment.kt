@@ -32,17 +32,11 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_show_details.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
-/* ktlint-disable no-unused-imports */
-import me.banes.chris.tivi.detailsBadge
-import me.banes.chris.tivi.detailsSummary
-import me.banes.chris.tivi.detailsTitle
-/* ktlint-disable no-unused-imports */
 import me.banes.chris.tivi.extensions.loadFromUrl
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.ui.GlidePaletteListener
 import me.banes.chris.tivi.ui.NoopApplyWindowInsetsListener
 import me.banes.chris.tivi.ui.RoundRectViewOutline
-import me.banes.chris.tivi.ui.epoxy.TotalSpanOverride
 import me.banes.chris.tivi.ui.transitions.DrawableAlphaProperty
 import me.banes.chris.tivi.util.ScrimUtil
 import javax.inject.Inject
@@ -64,6 +58,7 @@ class ShowDetailsFragment : TiviFragment() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var viewModel: ShowDetailsFragmentViewModel
+    private lateinit var controller: ShowDetailsEpoxyController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,6 +81,9 @@ class ShowDetailsFragment : TiviFragment() {
             clipToOutline = true
             outlineProvider = RoundRectViewOutline
         }
+
+        controller = ShowDetailsEpoxyController(requireContext())
+        details_rv.setController(controller)
 
         details_toolbar.apply {
             inflateMenu(R.menu.details_toolbar)
@@ -152,56 +150,7 @@ class ShowDetailsFragment : TiviFragment() {
             it.findItem(R.id.details_menu_remove_myshows)?.isVisible = viewState.inMyShows
         }
 
-        details_rv.buildModelsWith { controller ->
-            controller.detailsTitle {
-                id("title")
-                title(show.title)
-                subtitle(show.originalTitle)
-                genres(show.genres)
-                spanSizeOverride(TotalSpanOverride)
-            }
-
-            show.rating?.let { rating ->
-                controller.detailsBadge {
-                    val ratingOutOfOneHundred = Math.round(rating * 10)
-                    id("rating")
-                    label(context?.getString(R.string.percentage_format, ratingOutOfOneHundred))
-                    icon(R.drawable.ic_details_rating)
-                    contentDescription(context?.getString(R.string.rating_content_description_format, ratingOutOfOneHundred))
-                }
-            }
-            show.network?.let { network ->
-                controller.detailsBadge {
-                    id("network")
-                    label(network)
-                    icon(R.drawable.ic_details_network)
-                    contentDescription(context?.getString(R.string.network_content_description_format, network))
-                }
-            }
-            show.certification?.let { certificate ->
-                controller.detailsBadge {
-                    id("cert")
-                    label(certificate)
-                    icon(R.drawable.ic_details_certificate)
-                    contentDescription(context?.getString(R.string.certificate_content_description_format, certificate))
-                }
-            }
-            show.runtime?.let { runtime ->
-                controller.detailsBadge {
-                    val runtimeMinutes = context?.getString(R.string.minutes_format, runtime)
-                    id("runtime")
-                    label(runtimeMinutes)
-                    icon(R.drawable.ic_details_runtime)
-                    contentDescription(context?.resources?.getQuantityString(R.plurals.runtime_content_description_format, runtime, runtime))
-                }
-            }
-
-            controller.detailsSummary {
-                id("summary")
-                summary(show.summary)
-                spanSizeOverride(TotalSpanOverride)
-            }
-        }
+        controller.setData(show, imageProvider)
 
         scheduleStartPostponedTransitions()
     }
