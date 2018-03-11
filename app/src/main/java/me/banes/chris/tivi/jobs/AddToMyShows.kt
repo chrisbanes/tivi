@@ -20,7 +20,6 @@ import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
 import com.evernote.android.job.util.support.PersistableBundleCompat
 import io.reactivex.Completable
-import io.reactivex.disposables.CompositeDisposable
 import me.banes.chris.tivi.data.daos.MyShowsDao
 import me.banes.chris.tivi.data.entities.MyShowsEntry
 import me.banes.chris.tivi.util.AppRxSchedulers
@@ -34,20 +33,16 @@ class AddToMyShows @Inject constructor(
 
     companion object {
         const val TAG = "myshows-add"
-
         private const val PARAM_SHOW_ID = "show-id"
 
         fun buildRequest(showId: Long): JobRequest.Builder {
-            return JobRequest.Builder(TAG)
-                    .addExtras(
-                            PersistableBundleCompat().apply {
-                                putLong(PARAM_SHOW_ID, showId)
-                            }
-                    )
+            return JobRequest.Builder(TAG).addExtras(
+                    PersistableBundleCompat().apply {
+                        putLong(PARAM_SHOW_ID, showId)
+                    }
+            )
         }
     }
-
-    private val disposables = CompositeDisposable()
 
     override fun onRunJob(params: Params): Result {
         val showId = params.extras.getLong(PARAM_SHOW_ID, -1)
