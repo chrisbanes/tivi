@@ -19,6 +19,7 @@ package me.banes.chris.tivi.details
 import android.animation.ObjectAnimator
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
@@ -107,21 +108,24 @@ class ShowDetailsFragment : TiviFragment() {
         }
     }
 
-    private fun onBackdropPaletteLoaded(palette: Palette) {
-        palette.dominantSwatch?.let {
-            val background = ColorDrawable(it.rgb)
-            details_coordinator.background = background
-            ObjectAnimator.ofInt(background, DrawableAlphaProperty, 0, 255).start()
+    private var colorSwatch: Palette.Swatch = Palette.Swatch(Color.BLACK, 0)
+        set(value) {
+            if (field != value) {
+                val background = ColorDrawable(value.rgb)
+                details_coordinator.background = background
+                ObjectAnimator.ofInt(background, DrawableAlphaProperty, 0, 255).start()
 
-            val scrim = ScrimUtil.makeCubicGradientScrimDrawable(it.rgb, 10, Gravity.BOTTOM)
-            val drawable = LayerDrawable(arrayOf(scrim)).apply {
-                setLayerGravity(0, Gravity.FILL)
-                setLayerInsetTop(0, details_backdrop.height / 2)
+                val scrim = ScrimUtil.makeCubicGradientScrimDrawable(value.rgb, 10, Gravity.BOTTOM)
+                val drawable = LayerDrawable(arrayOf(scrim)).apply {
+                    setLayerGravity(0, Gravity.FILL)
+                    setLayerInsetTop(0, details_backdrop.height / 2)
+                }
+                details_backdrop.foreground = drawable
+                ObjectAnimator.ofInt(drawable, DrawableAlphaProperty, 0, 255).start()
+
+                field = value
             }
-            details_backdrop.foreground = drawable
-            ObjectAnimator.ofInt(drawable, DrawableAlphaProperty, 0, 255).start()
         }
-    }
 
     private fun update(viewState: ShowDetailsFragmentViewState) {
         val show = viewState.show
@@ -132,7 +136,7 @@ class ShowDetailsFragment : TiviFragment() {
                 Glide.with(this)
                         .load(imageProvider.getBackdropUrl(path, details_backdrop.width))
                         .thumbnail(Glide.with(this).load(imageProvider.getBackdropUrl(path, 0)))
-                        .listener(GlidePaletteListener(this::onBackdropPaletteLoaded))
+                        .listener(GlidePaletteListener { colorSwatch = it.dominantSwatch!! })
                         .into(details_backdrop)
             }
         }
