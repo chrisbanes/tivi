@@ -194,6 +194,8 @@ dependencies {
     }
 
     implementation "com.google.firebase:firebase-perf:${versions.firebase}"
+
+    implementation 'com.evernote:android-job:1.2.4'
 }
 
 def getGitHash() {

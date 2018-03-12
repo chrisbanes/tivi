@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.home.library
+package me.banes.chris.tivi.appinitializers
 
-import me.banes.chris.tivi.data.entities.ListItem
-import me.banes.chris.tivi.data.entities.MyShowsEntry
-import me.banes.chris.tivi.data.entities.WatchedEntry
-import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
+import android.app.Application
+import com.evernote.android.job.JobManager
+import me.banes.chris.tivi.jobs.TiviJobCreator
+import javax.inject.Inject
 
-data class LibraryViewState(
-    val watched: List<ListItem<WatchedEntry>>,
-    val myShows: List<ListItem<MyShowsEntry>>,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider
-)
+class AndroidJobInitializer @Inject constructor(
+    private val jobManager: JobManager,
+    private val jobCreator: TiviJobCreator
+) : AppInitializer {
+    override fun init(application: Application) {
+        jobManager.addJobCreator(jobCreator)
+    }
+}

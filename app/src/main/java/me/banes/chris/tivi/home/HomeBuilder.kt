@@ -25,6 +25,7 @@ import me.banes.chris.tivi.home.discover.DiscoverBuilder
 import me.banes.chris.tivi.home.library.LibraryBuilder
 import me.banes.chris.tivi.home.popular.PopularBuilder
 import me.banes.chris.tivi.home.trending.TrendingBuilder
+import me.banes.chris.tivi.home.watched.MyShowsBuilder
 import me.banes.chris.tivi.home.watched.WatchedShowsBuilder
 import me.banes.chris.tivi.inject.ViewModelKey
 
@@ -36,7 +37,9 @@ internal abstract class HomeBuilder {
         TrendingBuilder::class,
         PopularBuilder::class,
         LibraryBuilder::class,
-        WatchedShowsBuilder::class])
+        WatchedShowsBuilder::class,
+        MyShowsBuilder::class
+    ])
     internal abstract fun homeActivity(): HomeActivity
 
     @Binds

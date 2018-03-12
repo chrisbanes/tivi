@@ -23,6 +23,7 @@ import me.banes.chris.tivi.TiviApplication
 import me.banes.chris.tivi.data.DatabaseModule
 import me.banes.chris.tivi.details.ShowDetailsBuilder
 import me.banes.chris.tivi.home.HomeBuilder
+import me.banes.chris.tivi.jobs.JobsCreator
 import me.banes.chris.tivi.tmdb.TmdbModule
 import me.banes.chris.tivi.trakt.TraktModule
 import javax.inject.Singleton
@@ -31,6 +32,7 @@ import javax.inject.Singleton
 @Component(modules = [
     AndroidSupportInjectionModule::class,
     AppModule::class,
+    JobsCreator::class,
     DatabaseModule::class,
     ViewModelBuilder::class,
     HomeBuilder::class,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.appmanagers
+package me.banes.chris.tivi.appinitializers
 
 import android.app.Application
 

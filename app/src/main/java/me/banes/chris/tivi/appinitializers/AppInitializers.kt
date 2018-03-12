@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.home.library
+package me.banes.chris.tivi.appinitializers
 
-import me.banes.chris.tivi.data.entities.ListItem
-import me.banes.chris.tivi.data.entities.MyShowsEntry
-import me.banes.chris.tivi.data.entities.WatchedEntry
-import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
+import android.app.Application
 
-data class LibraryViewState(
-    val watched: List<ListItem<WatchedEntry>>,
-    val myShows: List<ListItem<MyShowsEntry>>,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider
-)
+class AppInitializers(private vararg val initializers: AppInitializer) : AppInitializer {
+    override fun init(application: Application) {
+        initializers.forEach {
+            it.init(application)
+        }
+    }
+}

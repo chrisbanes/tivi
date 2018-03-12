@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.home.library
+package me.banes.chris.tivi.jobs
 
-import me.banes.chris.tivi.data.entities.ListItem
-import me.banes.chris.tivi.data.entities.MyShowsEntry
-import me.banes.chris.tivi.data.entities.WatchedEntry
-import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
+import com.evernote.android.job.JobManager
+import dagger.Module
+import dagger.Provides
+import me.banes.chris.tivi.TiviApplication
+import javax.inject.Singleton
 
-data class LibraryViewState(
-    val watched: List<ListItem<WatchedEntry>>,
-    val myShows: List<ListItem<MyShowsEntry>>,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider
-)
+@Module
+class JobsModule {
+    @Provides
+    @Singleton
+    fun provideJobManager(application: TiviApplication): JobManager {
+        return JobManager.create(application)
+    }
+}
