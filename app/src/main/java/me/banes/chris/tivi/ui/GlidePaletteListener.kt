@@ -19,20 +19,24 @@ package me.banes.chris.tivi.ui
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.support.v7.graphics.Palette
+import android.util.LruCache
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 
 class GlidePaletteListener(private val listener: (Palette) -> Unit) : RequestListener<Drawable> {
+
+    companion object {
+        private val cache = LruCache<Any, Palette>(20)
+    }
+
     override fun onLoadFailed(
         e: GlideException?,
         model: Any,
         target: Target<Drawable>,
         isFirstResource: Boolean
-    ): Boolean {
-        return false
-    }
+    ): Boolean = false
 
     override fun onResourceReady(
         resource: Drawable,
@@ -41,13 +45,20 @@ class GlidePaletteListener(private val listener: (Palette) -> Unit) : RequestLis
         dataSource: DataSource,
         isFirstResource: Boolean
     ): Boolean {
-        if (resource is BitmapDrawable) {
+        // First check the cache
+        val palette = cache[model]
+        if (palette != null) {
+            listener(palette)
+        } else if (resource is BitmapDrawable) {
             val bitmap = resource.bitmap
             Palette.Builder(bitmap)
                     .clearTargets()
                     .maximumColorCount(4)
                     .setRegion(0, Math.round(bitmap.height * 0.9f), bitmap.width, bitmap.height)
                     .generate {
+                        // Update the cache first
+                        cache.put(model, it)
+                        // Now invoke the listener
                         listener(it)
                     }
         }
