@@ -29,6 +29,7 @@ class GlidePaletteListener(private val listener: (Palette) -> Unit) : RequestLis
 
     companion object {
         private val cache = LruCache<Any, Palette>(20)
+        private val cacheLock = Any()
     }
 
     override fun onLoadFailed(
@@ -46,20 +47,32 @@ class GlidePaletteListener(private val listener: (Palette) -> Unit) : RequestLis
         isFirstResource: Boolean
     ): Boolean {
         // First check the cache
-        val palette = cache[model]
-        if (palette != null) {
-            listener(palette)
-        } else if (resource is BitmapDrawable) {
+        synchronized(cacheLock) {
+            cache[model]?.let {
+                listener(it)
+                // We don't want to handle updating the target
+                return false
+            }
+        }
+
+        if (resource is BitmapDrawable) {
             val bitmap = resource.bitmap
             Palette.Builder(bitmap)
                     .clearTargets()
                     .maximumColorCount(4)
                     .setRegion(0, Math.round(bitmap.height * 0.9f), bitmap.width, bitmap.height)
-                    .generate {
-                        // Update the cache first
-                        cache.put(model, it)
-                        // Now invoke the listener
-                        listener(it)
+                    .generate { newPalette ->
+                        synchronized(cacheLock) {
+                            cache[model]?.let {
+                                // If the cache has a result now, just return it to maintain equality
+                                listener(it)
+                            } ?: let {
+                                // Else we'll save the newly generated one
+                                cache.put(model, newPalette)
+                                // Now invoke the listener
+                                listener(newPalette)
+                            }
+                        }
                     }
         }
 
