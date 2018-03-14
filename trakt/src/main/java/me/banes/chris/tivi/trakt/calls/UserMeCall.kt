@@ -31,9 +31,9 @@ import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
 class UserMeCall @Inject constructor(
-        private val dao: UserDao,
-        private val trakt: TraktV2,
-        private val schedulers: AppRxSchedulers
+    private val dao: UserDao,
+    private val trakt: TraktV2,
+    private val schedulers: AppRxSchedulers
 ) : Call<Unit, TraktUser> {
 
     override fun refresh(param: Unit): Completable {

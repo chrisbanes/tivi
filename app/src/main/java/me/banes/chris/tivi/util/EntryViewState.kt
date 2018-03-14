@@ -20,6 +20,6 @@ import me.banes.chris.tivi.api.Resource
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 
 data class EntryViewState(
-        val resource: Resource,
-        val tmdbImageUrlProvider: TmdbImageUrlProvider
+    val resource: Resource,
+    val tmdbImageUrlProvider: TmdbImageUrlProvider
 )

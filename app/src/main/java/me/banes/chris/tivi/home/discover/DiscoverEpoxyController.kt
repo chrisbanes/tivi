@@ -30,7 +30,7 @@ import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.epoxy.TotalSpanOverride
 
 class DiscoverEpoxyController(
-        private val callbacks: Callbacks
+    private val callbacks: Callbacks
 ) : Typed3EpoxyController<List<ListItem<TrendingEntry>>, List<ListItem<PopularEntry>>, TmdbImageUrlProvider>() {
 
     interface Callbacks {
@@ -40,9 +40,10 @@ class DiscoverEpoxyController(
     }
 
     override fun buildModels(
-            trending: List<ListItem<TrendingEntry>>?,
-            popular: List<ListItem<PopularEntry>>?,
-            tmdbImageUrlProvider: TmdbImageUrlProvider?) {
+        trending: List<ListItem<TrendingEntry>>?,
+        popular: List<ListItem<PopularEntry>>?,
+        tmdbImageUrlProvider: TmdbImageUrlProvider?
+    ) {
         header {
             id("trending_header")
             title(R.string.discover_trending)

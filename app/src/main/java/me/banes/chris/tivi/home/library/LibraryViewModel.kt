@@ -26,23 +26,26 @@ import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.TraktManager
+import me.banes.chris.tivi.trakt.calls.MyShowsCall
 import me.banes.chris.tivi.trakt.calls.WatchedCall
 import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
 import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
-        schedulers: AppRxSchedulers,
-        private val watchedCall: WatchedCall,
-        appNavigator: AppNavigator,
-        traktManager: TraktManager,
-        tmdbManager: TmdbManager
+    schedulers: AppRxSchedulers,
+    private val watchedCall: WatchedCall,
+    private val myShowsCall: MyShowsCall,
+    appNavigator: AppNavigator,
+    traktManager: TraktManager,
+    tmdbManager: TmdbManager
 ) : HomeFragmentViewModel(traktManager, appNavigator) {
     val data = MutableLiveData<LibraryViewState>()
 
     init {
         disposables += Flowables.combineLatest(
                 watchedCall.data().map { it.take(20) },
+                myShowsCall.data().map { it.take(20) },
                 tmdbManager.imageProvider,
                 ::LibraryViewState)
                 .observeOn(schedulers.main)
@@ -66,6 +69,10 @@ class LibraryViewModel @Inject constructor(
 
     fun onWatchedHeaderClicked(navigator: HomeNavigator, sharedElements: SharedElementHelper) {
         navigator.showWatched(sharedElements)
+    }
+
+    fun onMyShowsHeaderClicked(navigator: HomeNavigator, sharedElements: SharedElementHelper) {
+        navigator.showMyShows(sharedElements)
     }
 
     fun onItemPostedClicked(navigator: HomeNavigator, show: TiviShow, sharedElements: SharedElementHelper? = null) {

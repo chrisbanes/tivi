@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 9,
-    "identityHash": "9d6d68aaf3e7b0e1724d00f75754e057",
+    "identityHash": "138c7fc76773e56fd5a860806d05bbd9",
     "entities": [
       {
         "tableName": "shows",
@@ -363,11 +363,58 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "myshows_entries",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `show_id` INTEGER NOT NULL, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "showId",
+            "columnName": "show_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_myshows_entries_show_id",
+            "unique": true,
+            "columnNames": [
+              "show_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_myshows_entries_show_id` ON `${TABLE_NAME}` (`show_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "shows",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "show_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"9d6d68aaf3e7b0e1724d00f75754e057\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"138c7fc76773e56fd5a860806d05bbd9\")"
     ]
   }
 }

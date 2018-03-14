@@ -71,3 +71,16 @@ class WatchedListItem : ListItem<WatchedEntry> {
 
     override fun hashCode(): Int = Objects.hash(entry, relations)
 }
+
+class MyShowsListItem : ListItem<MyShowsEntry> {
+    @Embedded override var entry: MyShowsEntry? = null
+    @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow>? = null
+
+    override fun equals(other: Any?): Boolean = when {
+        other === this -> true
+        other is MyShowsListItem -> entry == other.entry && relations == other.relations
+        else -> false
+    }
+
+    override fun hashCode(): Int = Objects.hash(entry, relations)
+}

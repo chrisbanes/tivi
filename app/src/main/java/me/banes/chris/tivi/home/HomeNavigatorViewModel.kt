@@ -26,7 +26,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 class HomeNavigatorViewModel @Inject constructor(
-        private val appNavigatorProvider: Provider<AppNavigator>
+    private val appNavigatorProvider: Provider<AppNavigator>
 ) : ViewModel(), HomeNavigator {
 
     override fun showPopular(sharedElements: SharedElementHelper?) {
@@ -39,6 +39,10 @@ class HomeNavigatorViewModel @Inject constructor(
 
     override fun showWatched(sharedElements: SharedElementHelper?) {
         _showWatchedCall.value = sharedElements
+    }
+
+    override fun showMyShows(sharedElements: SharedElementHelper?) {
+        _showMyShowsCall.value = sharedElements
     }
 
     override fun showShowDetails(show: TiviShow, sharedElements: SharedElementHelper?) {
@@ -62,6 +66,10 @@ class HomeNavigatorViewModel @Inject constructor(
     private val _showWatchedCall = SingleLiveEvent<SharedElementHelper>()
     val showWatchedCall: LiveData<SharedElementHelper>
         get() = _showWatchedCall
+
+    private val _showMyShowsCall = SingleLiveEvent<SharedElementHelper>()
+    val showMyShowsCall: LiveData<SharedElementHelper>
+        get() = _showMyShowsCall
 
     private val _upClickedCall = SingleLiveEvent<Unit>()
     val upClickedCall: LiveData<Unit>

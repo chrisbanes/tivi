@@ -22,6 +22,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
+import android.view.ViewGroup
+import androidx.view.forEach
 import kotlinx.android.synthetic.main.activity_home.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.SharedElementHelper
@@ -33,6 +35,7 @@ import me.banes.chris.tivi.home.discover.DiscoverFragment
 import me.banes.chris.tivi.home.library.LibraryFragment
 import me.banes.chris.tivi.home.popular.PopularShowsFragment
 import me.banes.chris.tivi.home.trending.TrendingShowsFragment
+import me.banes.chris.tivi.home.watched.MyShowsFragment
 import me.banes.chris.tivi.home.watched.WatchedShowsFragment
 import me.banes.chris.tivi.trakt.TraktConstants
 import net.openid.appauth.AuthorizationException
@@ -52,6 +55,18 @@ class HomeActivity : TiviActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+
+        home_content.setOnApplyWindowInsetsListener { view, insets ->
+            var consumed = false
+
+            (view as ViewGroup).forEach { child ->
+                if (child.dispatchApplyWindowInsets(insets).isConsumed) {
+                    consumed = true
+                }
+            }
+
+            if (consumed) insets.consumeSystemWindowInsets() else insets
+        }
 
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(HomeActivityViewModel::class.java)
@@ -92,6 +107,7 @@ class HomeActivity : TiviActivity() {
         navigatorViewModel.showPopularCall.observeK(this, this::showPopular)
         navigatorViewModel.showTrendingCall.observeK(this, this::showTrending)
         navigatorViewModel.showWatchedCall.observeK(this, this::showWatched)
+        navigatorViewModel.showMyShowsCall.observeK(this, this::showMyShows)
         navigatorViewModel.upClickedCall.observeK(this) { this.onUpClicked() }
     }
 
@@ -139,6 +155,10 @@ class HomeActivity : TiviActivity() {
 
     private fun showWatched(sharedElements: SharedElementHelper?) {
         showStackFragment(WatchedShowsFragment(), sharedElements)
+    }
+
+    private fun showMyShows(sharedElements: SharedElementHelper?) {
+        showStackFragment(MyShowsFragment(), sharedElements)
     }
 
     private fun showStackFragment(fragment: Fragment, sharedElements: SharedElementHelper? = null) {

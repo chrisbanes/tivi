@@ -18,21 +18,21 @@
 buildscript {
     ext.versions = [
             'android_gradle'   : '3.0.1',
-            'support_library'  : '27.0.2',
-            'constraint_layout': '1.1.0-beta4',
+            'support_library'  : '27.1.0',
+            'constraint_layout': '1.1.0-beta5',
             'arch'             : '1.1.0',
-            'arch_paging'      : '1.0.0-alpha5',
-            'arch_room'        : '1.1.0-alpha1',
-            'core_ktx'         : '0.1',
-            'kotlin'           : '1.2.21',
+            'arch_paging'      : '1.0.0-alpha6',
+            'arch_room'        : '1.1.0-alpha3',
+            'core_ktx'         : '0.2',
+            'kotlin'           : '1.2.30',
             'espresso'         : '3.0.1',
-            'dagger'           : '2.14.1',
-            'ktlint'           : '0.14.0',
+            'dagger'           : '2.15',
+            'ktlint'           : '0.19.0',
             'leakcanary'       : '1.5.4',
-            'rx'               : '2.1.8',
-            'rxlint'           : '1.6',
+            'rx'               : '2.1.10',
+            'rxlint'           : '1.6.1',
             'firebase'         : '11.8.0',
-            'epoxy'            : '2.9.0'
+            'epoxy'            : '2.10.0'
     ]
 
     repositories {
@@ -58,7 +58,7 @@ buildscript {
 }
 
 plugins {
-    id "com.diffplug.gradle.spotless" version "3.8.0"
+    id "com.diffplug.gradle.spotless" version "3.10.0"
     id 'com.github.ben-manes.versions' version "0.17.0"
 }
 

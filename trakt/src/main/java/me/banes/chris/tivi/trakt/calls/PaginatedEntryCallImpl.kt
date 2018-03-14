@@ -33,12 +33,12 @@ import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
 
 abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>, out ED : PaginatedEntryDao<ET, LI>>(
-        private val databaseTxRunner: DatabaseTxRunner,
-        protected val showDao: TiviShowDao,
-        private val entryDao: ED,
-        protected val schedulers: AppRxSchedulers,
-        protected val traktShowFetcher: TraktShowFetcher,
-        override val pageSize: Int = 21
+    private val databaseTxRunner: DatabaseTxRunner,
+    protected val showDao: TiviShowDao,
+    private val entryDao: ED,
+    protected val schedulers: AppRxSchedulers,
+    protected val traktShowFetcher: TraktShowFetcher,
+    override val pageSize: Int = 21
 ) : PaginatedCall<Unit, LI> {
 
     override fun data(param: Unit): Flowable<List<LI>> {

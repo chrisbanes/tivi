@@ -18,7 +18,7 @@ package me.banes.chris.tivi
 
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
-import me.banes.chris.tivi.appmanagers.AppInitializers
+import me.banes.chris.tivi.appinitializers.AppInitializers
 import me.banes.chris.tivi.inject.DaggerAppComponent
 import javax.inject.Inject
 

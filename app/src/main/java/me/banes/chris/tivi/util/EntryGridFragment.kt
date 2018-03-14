@@ -44,7 +44,7 @@ import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
 abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<LI>>(
-        private val vmClass: Class<VM>
+    private val vmClass: Class<VM>
 ) : TiviFragment() {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -61,7 +61,6 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(vmClass)
 
         controller = createController()
-        controller.setDebugLoggingEnabled(true)
         controller.callbacks = object : EntryGridEpoxyController.Callbacks<LI> {
             override fun onItemClicked(item: LI) {
                 this@EntryGridFragment.onItemClicked(item)
@@ -107,6 +106,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
 
         grid_swipe_refresh.setOnRefreshListener(viewModel::fullRefresh)
 
+        grid_root.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         grid_root.setOnApplyWindowInsetsListener { _, insets ->
             val topInset = insets.systemWindowInsetTop
 
@@ -117,7 +117,6 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
             val tlp = (grid_toolbar.layoutParams as ConstraintLayout.LayoutParams)
             tlp.topMargin = topInset
             grid_toolbar.layoutParams = tlp
-            grid_toolbar.layoutParams = tlp
 
             val scrimLp = (grid_status_scrim.layoutParams as ConstraintLayout.LayoutParams)
             scrimLp.height = topInset
@@ -126,6 +125,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
 
             insets.consumeSystemWindowInsets()
         }
+        grid_root.requestApplyInsets()
 
         grid_recyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

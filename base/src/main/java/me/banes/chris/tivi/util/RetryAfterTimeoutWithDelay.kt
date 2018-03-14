@@ -22,10 +22,10 @@ import io.reactivex.functions.Function
 import java.util.concurrent.TimeUnit
 
 class RetryAfterTimeoutWithDelay(
-        private val maxRetries: Int,
-        private val delay: Long,
-        private val shouldRetry: (Throwable) -> Boolean,
-        private val scheduler: Scheduler
+    private val maxRetries: Int,
+    private val delay: Long,
+    private val shouldRetry: (Throwable) -> Boolean,
+    private val scheduler: Scheduler
 ) : Function<Flowable<out Throwable>, Flowable<*>> {
     private var retryCount = 0
 
