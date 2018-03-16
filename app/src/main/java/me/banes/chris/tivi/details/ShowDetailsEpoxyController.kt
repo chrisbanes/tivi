@@ -17,22 +17,23 @@
 package me.banes.chris.tivi.details
 
 import android.content.Context
-import com.airbnb.epoxy.Typed2EpoxyController
+import com.airbnb.epoxy.Typed3EpoxyController
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.TiviShow
 /* ktlint-disable no-unused-imports */
 import me.banes.chris.tivi.detailsBadge
 import me.banes.chris.tivi.detailsSummary
 import me.banes.chris.tivi.detailsTitle
+import me.banes.chris.tivi.posterGridItem
 /* ktlint-disable no-unused-imports */
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.epoxy.TotalSpanOverride
 
 class ShowDetailsEpoxyController(
     private val context: Context
-) : Typed2EpoxyController<TiviShow, TmdbImageUrlProvider>() {
+) : Typed3EpoxyController<TiviShow, List<TiviShow>, TmdbImageUrlProvider>() {
 
-    override fun buildModels(show: TiviShow, tmdbImageUrlProvider: TmdbImageUrlProvider) {
+    override fun buildModels(show: TiviShow, related: List<TiviShow>, tmdbImageUrlProvider: TmdbImageUrlProvider) {
         detailsTitle {
             id("title")
             title(show.title)
@@ -80,6 +81,15 @@ class ShowDetailsEpoxyController(
             id("summary")
             summary(show.summary)
             spanSizeOverride(TotalSpanOverride)
+        }
+
+        for (show in related.take(6)) {
+            posterGridItem {
+                id("related_${show.id}")
+                title(show.title)
+                tmdbImageUrlProvider(tmdbImageUrlProvider)
+                posterPath(show.tmdbPosterPath)
+            }
         }
     }
 }

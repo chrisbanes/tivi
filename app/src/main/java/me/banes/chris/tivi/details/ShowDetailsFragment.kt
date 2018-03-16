@@ -155,7 +155,7 @@ class ShowDetailsFragment : TiviFragment() {
             it.findItem(R.id.details_menu_remove_myshows)?.isVisible = viewState.inMyShows
         }
 
-        controller.setData(show, imageProvider)
+        controller.setData(show, viewState.relatedShows, imageProvider)
 
         scheduleStartPostponedTransitions()
     }

@@ -22,6 +22,7 @@ import io.reactivex.rxkotlin.plusAssign
 import me.banes.chris.tivi.actions.TiviActions
 import me.banes.chris.tivi.data.daos.MyShowsDao
 import me.banes.chris.tivi.tmdb.TmdbManager
+import me.banes.chris.tivi.trakt.calls.RelatedShowsCall
 import me.banes.chris.tivi.trakt.calls.ShowDetailsCall
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.RxAwareViewModel
@@ -31,6 +32,7 @@ import javax.inject.Inject
 class ShowDetailsFragmentViewModel @Inject constructor(
     private val schedulers: AppRxSchedulers,
     private val showCall: ShowDetailsCall,
+    private val relatedShows: RelatedShowsCall,
     private val tmdbManager: TmdbManager,
     private val tiviActions: TiviActions,
     private val myShowsDao: MyShowsDao
@@ -55,6 +57,8 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         showId?.let {
             disposables += showCall.refresh(it)
                     .subscribe(this::onRefreshSuccess, this::onRefreshError)
+            disposables += relatedShows.refresh(it)
+                    .subscribe(this::onRefreshSuccess, this::onRefreshError)
         }
     }
 
@@ -62,6 +66,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         showId?.let {
             disposables += Flowables.combineLatest(
                     showCall.data(it),
+                    relatedShows.data(it),
                     tmdbManager.imageProvider,
                     myShowsDao.showEntry(it).map { it > 0 },
                     ::ShowDetailsFragmentViewState)

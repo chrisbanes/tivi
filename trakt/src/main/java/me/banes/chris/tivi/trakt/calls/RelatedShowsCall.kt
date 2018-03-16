@@ -43,21 +43,26 @@ class RelatedShowsCall @Inject constructor(
                 .flatMapSingle { traktId ->
                     trakt.shows().related(traktId.toString(), 0, 10, Extended.NOSEASONS).toRxSingle()
                             .subscribeOn(schedulers.network)
-                            .map {
+                            .doOnSuccess {
                                 traktState.setRelatedShowsForTraktId(traktId, it.map { it.ids.trakt })
                             }
                 }
                 .toCompletable()
     }
 
-    override fun data(param: Long): Flowable<List<TiviShow>> {
-        return return dao.getShowWithIdMaybe(param)
-                .subscribeOn(schedulers.database)
-                .map(TiviShow::traktId)
-                .flatMapPublisher(traktState::relatedShowsForTraktId)
-                .flatMapIterable { it }
-                .flatMapMaybe { traktShowFetcher.getShow(it) }
-                .toList()
-                .toFlowable()
+    override fun data(id: Long): Flowable<List<TiviShow>> {
+        return Flowable.merge(
+                Flowable.just(emptyList()),
+                dao.getShowWithIdMaybe(id)
+                        .subscribeOn(schedulers.database)
+                        .flatMapPublisher {
+                            traktState.relatedShowsForTraktId(it.traktId!!)
+                        }
+                        .map {
+                            it.map {
+                                traktShowFetcher.getShow(it).blockingGet()
+                            }
+                        }
+        )
     }
 }
