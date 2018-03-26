@@ -83,7 +83,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         postponeEnterTransition()
 
         swipeRefreshLatch = ProgressTimeLatch(minShowTime = 1350) {
-            grid_swipe_refresh.isRefreshing = it
+            grid_swipe_refresh?.isRefreshing = it
         }
 
         val layoutManager = grid_recyclerview.layoutManager as GridLayoutManager
