@@ -28,7 +28,7 @@ class TiviJobCreator @Inject constructor(
     private val creators: @JvmSuppressWildcards Map<String, Provider<Job>>
 ) : JobCreator {
     override fun create(tag: String): Job {
-        val creator = creators[tag] ?: throw IllegalArgumentException("Unknown job tag: " + tag)
+        val creator = creators[tag] ?: throw IllegalArgumentException("Unknown job tag: $tag")
         try {
             return creator.get()
         } catch (e: Exception) {
