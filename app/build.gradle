@@ -27,9 +27,6 @@ kapt {
     correctErrorTypes = true
 }
 apply plugin: 'kotlin-android-extensions'
-androidExtensions {
-    experimental = true
-}
 
 apply plugin: 'com.getkeepsafe.dexcount'
 dexcount {
@@ -145,9 +142,9 @@ dependencies {
     implementation project(":trakt")
     implementation project(":tmdb")
 
-    implementation "android.arch.lifecycle:extensions:${versions.arch}"
-    implementation "android.arch.lifecycle:reactivestreams:${versions.arch}"
-    kapt "android.arch.lifecycle:compiler:${versions.arch}"
+    implementation "android.arch.lifecycle:extensions:${versions.arch_lifecycle}"
+    implementation "android.arch.lifecycle:reactivestreams:${versions.arch_lifecycle}"
+    kapt "android.arch.lifecycle:compiler:${versions.arch_lifecycle}"
 
     implementation "android.arch.paging:runtime:${versions.arch_paging}"
 
@@ -195,7 +192,7 @@ dependencies {
 
     implementation "com.google.firebase:firebase-perf:${versions.firebase}"
 
-    implementation 'com.evernote:android-job:1.2.4'
+    implementation 'com.evernote:android-job:1.2.5'
 }
 
 def getGitHash() {

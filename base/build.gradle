@@ -45,7 +45,7 @@ dependencies {
     // TODO want to remove this
     implementation "com.android.support:support-fragment:${versions.support_library}"
 
-    api 'com.squareup.retrofit2:retrofit:2.3.0'
+    api 'com.squareup.retrofit2:retrofit:2.4.0'
 
     api 'com.squareup.okhttp3:logging-interceptor:3.10.0'
 
