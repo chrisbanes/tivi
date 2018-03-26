@@ -16,24 +16,8 @@
 
 package me.banes.chris.tivi.actions
 
-import me.banes.chris.tivi.jobs.AddToMyShows
-import me.banes.chris.tivi.jobs.RemoveFromMyShows
-import javax.inject.Inject
-import javax.inject.Singleton
-
-@Singleton
-class TiviActions @Inject constructor() {
-    fun addShowToMyShows(showId: Long) {
-        AddToMyShows.buildRequest(showId)
-                .startNow()
-                .build()
-                .scheduleAsync()
-    }
-
-    fun removeShowFromMyShows(showId: Long) {
-        RemoveFromMyShows.buildRequest(showId)
-                .startNow()
-                .build()
-                .scheduleAsync()
-    }
+interface TiviActions {
+    fun addShowToMyShows(showId: Long)
+    fun removeShowFromMyShows(showId: Long)
+    fun updateShowFromTMDb(showId: Long)
 }

@@ -24,6 +24,8 @@ import dagger.Provides
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.TiviAppNavigator
 import me.banes.chris.tivi.TiviApplication
+import me.banes.chris.tivi.actions.TiviActions
+import me.banes.chris.tivi.actions.TiviActionsImpl
 import me.banes.chris.tivi.appinitializers.AndroidJobInitializer
 import me.banes.chris.tivi.appinitializers.AppInitializers
 import me.banes.chris.tivi.appinitializers.LeakCanaryInitializer
@@ -76,5 +78,11 @@ class AppModule {
     @Named("app")
     fun provideAppNavigator(context: Context): AppNavigator {
         return TiviAppNavigator(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTiviActions(): TiviActions {
+        return TiviActionsImpl()
     }
 }
