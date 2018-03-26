@@ -58,7 +58,7 @@ class RelatedShowsCall @Inject constructor(
                 }
                 .flatMap {
                     Flowable.fromIterable(it)
-                            .flatMapMaybe { traktShowFetcher.getShow(it) }
+                            .concatMapMaybe { traktShowFetcher.getShow(it) }
                             .toList()
                             .toFlowable()
                 }
