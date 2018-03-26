@@ -50,19 +50,18 @@ class RelatedShowsCall @Inject constructor(
                 .toCompletable()
     }
 
-    override fun data(id: Long): Flowable<List<TiviShow>> {
-        return Flowable.merge(
-                Flowable.just(emptyList()),
-                dao.getShowWithIdMaybe(id)
-                        .subscribeOn(schedulers.database)
-                        .flatMapPublisher {
-                            traktState.relatedShowsForTraktId(it.traktId!!)
-                        }
-                        .map {
-                            it.map {
-                                traktShowFetcher.getShow(it).blockingGet()
-                            }
-                        }
-        )
+    override fun data(param: Long): Flowable<List<TiviShow>> {
+        return dao.getShowWithIdMaybe(param)
+                .subscribeOn(schedulers.database)
+                .flatMapPublisher {
+                    traktState.relatedShowsForTraktId(it.traktId!!)
+                }
+                .flatMap {
+                    Flowable.fromIterable(it)
+                            .flatMapMaybe { traktShowFetcher.getShow(it) }
+                            .toList()
+                            .toFlowable()
+                }
+                .startWith(Flowable.just(emptyList()))
     }
 }
