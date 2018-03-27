@@ -32,8 +32,13 @@ import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.epoxy.TotalSpanOverride
 
 class ShowDetailsEpoxyController(
-    private val context: Context
+    private val context: Context,
+    private val callbacks : Callbacks
 ) : Typed3EpoxyController<TiviShow, List<TiviShow>, TmdbImageUrlProvider>() {
+
+    interface Callbacks {
+        fun onRelatedShowClicked(show: TiviShow)
+    }
 
     override fun buildModels(show: TiviShow, related: List<TiviShow>, tmdbImageUrlProvider: TmdbImageUrlProvider) {
         detailsTitle {
@@ -103,6 +108,9 @@ class ShowDetailsEpoxyController(
                     title(show.title)
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
                     posterPath(show.tmdbPosterPath)
+                    clickListener { _ ->
+                        callbacks.onRelatedShowClicked(show)
+                    }
                 }
             }
         }

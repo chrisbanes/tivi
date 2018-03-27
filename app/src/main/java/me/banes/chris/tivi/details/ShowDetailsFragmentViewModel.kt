@@ -19,8 +19,10 @@ package me.banes.chris.tivi.details
 import android.arch.lifecycle.MutableLiveData
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
+import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.actions.TiviActions
 import me.banes.chris.tivi.data.daos.MyShowsDao
+import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.calls.RelatedShowsCall
 import me.banes.chris.tivi.trakt.calls.ShowDetailsCall
@@ -93,5 +95,13 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         showId?.let {
             tiviActions.removeShowFromMyShows(it)
         }
+    }
+
+    fun onRelatedShowClicked(
+        navigator: DetailsNavigator,
+        show: TiviShow,
+        sharedElementHelper: SharedElementHelper? = null
+    ) {
+        navigator.showShowDetails(show, sharedElementHelper)
     }
 }

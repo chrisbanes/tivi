@@ -33,6 +33,7 @@ import kotlinx.android.synthetic.main.fragment_show_details.*
 import me.banes.chris.tivi.GlideApp
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
+import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.loadFromUrl
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.ui.GlidePaletteListener
@@ -60,10 +61,12 @@ class ShowDetailsFragment : TiviFragment() {
 
     private lateinit var viewModel: ShowDetailsFragmentViewModel
     private lateinit var controller: ShowDetailsEpoxyController
+    private lateinit var detailsNavigator: DetailsNavigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ShowDetailsFragmentViewModel::class.java)
+        detailsNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(DetailsNavigatorViewModel::class.java)
 
         arguments?.let {
             viewModel.showId = it.getLong(KEY_SHOW_ID)
@@ -83,7 +86,12 @@ class ShowDetailsFragment : TiviFragment() {
             outlineProvider = RoundRectViewOutline
         }
 
-        controller = ShowDetailsEpoxyController(requireContext())
+        controller = ShowDetailsEpoxyController(requireContext(), object : ShowDetailsEpoxyController.Callbacks {
+            override fun onRelatedShowClicked(show: TiviShow) {
+                viewModel.onRelatedShowClicked(detailsNavigator, show)
+            }
+        })
+
         details_rv.setController(controller)
 
         details_toolbar.apply {

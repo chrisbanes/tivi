@@ -32,4 +32,9 @@ internal abstract class ShowDetailsBuilder {
     @IntoMap
     @ViewModelKey(ShowDetailsActivityViewModel::class)
     abstract fun bindShowDetailsActivityViewModel(viewModel: ShowDetailsActivityViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(DetailsNavigatorViewModel::class)
+    abstract fun bindDetailsNavigatorViewModel(viewModel: DetailsNavigatorViewModel): ViewModel
 }
