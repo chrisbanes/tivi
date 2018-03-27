@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.details
+package me.banes.chris.tivi.showdetails
 
-import android.arch.lifecycle.ViewModel
-import javax.inject.Inject
+import me.banes.chris.tivi.SharedElementHelper
+import me.banes.chris.tivi.data.entities.TiviShow
 
-class ShowDetailsActivityViewModel @Inject constructor() : ViewModel()
+interface ShowDetailsNavigator {
+    fun showShowDetails(show: TiviShow, sharedElements: SharedElementHelper?)
+}

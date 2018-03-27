@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.details
+package me.banes.chris.tivi.showdetails
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviActivity
+import me.banes.chris.tivi.showdetails.details.ShowDetailsFragment
 
 class ShowDetailsActivity : TiviActivity() {
 

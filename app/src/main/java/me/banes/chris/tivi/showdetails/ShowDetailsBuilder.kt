@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.details
+package me.banes.chris.tivi.showdetails
 
 import android.arch.lifecycle.ViewModel
 import dagger.Binds
@@ -22,6 +22,7 @@ import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
 import me.banes.chris.tivi.inject.ViewModelKey
+import me.banes.chris.tivi.showdetails.details.ShowDetailsFragmentBuilder
 
 @Module
 internal abstract class ShowDetailsBuilder {
@@ -30,11 +31,6 @@ internal abstract class ShowDetailsBuilder {
 
     @Binds
     @IntoMap
-    @ViewModelKey(ShowDetailsActivityViewModel::class)
-    abstract fun bindShowDetailsActivityViewModel(viewModel: ShowDetailsActivityViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(DetailsNavigatorViewModel::class)
-    abstract fun bindDetailsNavigatorViewModel(viewModel: DetailsNavigatorViewModel): ViewModel
+    @ViewModelKey(ShowDetailsNavigatorViewModel::class)
+    abstract fun bindDetailsNavigatorViewModel(viewModel: ShowDetailsNavigatorViewModel): ViewModel
 }

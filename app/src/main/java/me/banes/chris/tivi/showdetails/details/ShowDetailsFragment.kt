@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.details
+package me.banes.chris.tivi.showdetails.details
 
 import android.animation.ObjectAnimator
 import android.arch.lifecycle.ViewModelProvider
@@ -36,6 +36,8 @@ import me.banes.chris.tivi.TiviFragment
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.loadFromUrl
 import me.banes.chris.tivi.extensions.observeK
+import me.banes.chris.tivi.showdetails.ShowDetailsNavigator
+import me.banes.chris.tivi.showdetails.ShowDetailsNavigatorViewModel
 import me.banes.chris.tivi.ui.GlidePaletteListener
 import me.banes.chris.tivi.ui.NoopApplyWindowInsetsListener
 import me.banes.chris.tivi.ui.RoundRectViewOutline
@@ -61,12 +63,12 @@ class ShowDetailsFragment : TiviFragment() {
 
     private lateinit var viewModel: ShowDetailsFragmentViewModel
     private lateinit var controller: ShowDetailsEpoxyController
-    private lateinit var detailsNavigator: DetailsNavigator
+    private lateinit var showDetailsNavigator: ShowDetailsNavigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ShowDetailsFragmentViewModel::class.java)
-        detailsNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(DetailsNavigatorViewModel::class.java)
+        showDetailsNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(ShowDetailsNavigatorViewModel::class.java)
 
         arguments?.let {
             viewModel.showId = it.getLong(KEY_SHOW_ID)
@@ -88,7 +90,7 @@ class ShowDetailsFragment : TiviFragment() {
 
         controller = ShowDetailsEpoxyController(requireContext(), object : ShowDetailsEpoxyController.Callbacks {
             override fun onRelatedShowClicked(show: TiviShow) {
-                viewModel.onRelatedShowClicked(detailsNavigator, show)
+                viewModel.onRelatedShowClicked(showDetailsNavigator, show)
             }
         })
 

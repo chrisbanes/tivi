@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.details
+package me.banes.chris.tivi.showdetails.details
 
 import android.arch.lifecycle.MutableLiveData
 import io.reactivex.rxkotlin.Flowables
@@ -23,6 +23,7 @@ import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.actions.TiviActions
 import me.banes.chris.tivi.data.daos.MyShowsDao
 import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.showdetails.ShowDetailsNavigator
 import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.calls.RelatedShowsCall
 import me.banes.chris.tivi.trakt.calls.ShowDetailsCall
@@ -98,10 +99,10 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     }
 
     fun onRelatedShowClicked(
-        navigator: DetailsNavigator,
+        navigatorShow: ShowDetailsNavigator,
         show: TiviShow,
         sharedElementHelper: SharedElementHelper? = null
     ) {
-        navigator.showShowDetails(show, sharedElementHelper)
+        navigatorShow.showShowDetails(show, sharedElementHelper)
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.details
+package me.banes.chris.tivi.showdetails.details
 
 import android.content.Context
 import com.airbnb.epoxy.Typed3EpoxyController
@@ -33,7 +33,7 @@ import me.banes.chris.tivi.ui.epoxy.TotalSpanOverride
 
 class ShowDetailsEpoxyController(
     private val context: Context,
-    private val callbacks : Callbacks
+    private val callbacks: Callbacks
 ) : Typed3EpoxyController<TiviShow, List<TiviShow>, TmdbImageUrlProvider>() {
 
     interface Callbacks {

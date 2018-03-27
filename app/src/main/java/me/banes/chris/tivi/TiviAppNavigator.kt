@@ -20,7 +20,7 @@ import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import me.banes.chris.tivi.details.ShowDetailsActivity
+import me.banes.chris.tivi.showdetails.ShowDetailsActivity
 import me.banes.chris.tivi.trakt.TraktConstants
 
 internal open class TiviAppNavigator(private val context: Context) : AppNavigator {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.details
+package me.banes.chris.tivi.showdetails
 
 import dagger.Module
 import dagger.Provides

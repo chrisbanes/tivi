@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.details
+package me.banes.chris.tivi.showdetails
 
 import android.arch.lifecycle.ViewModel
 import me.banes.chris.tivi.AppNavigator
@@ -23,9 +23,9 @@ import me.banes.chris.tivi.data.entities.TiviShow
 import javax.inject.Inject
 import javax.inject.Provider
 
-class DetailsNavigatorViewModel @Inject constructor(
+class ShowDetailsNavigatorViewModel @Inject constructor(
     private val appNavigatorProvider: Provider<AppNavigator>
-) : ViewModel(), DetailsNavigator {
+) : ViewModel(), ShowDetailsNavigator {
     override fun showShowDetails(show: TiviShow, sharedElements: SharedElementHelper?) {
         if (show.id != null) {
             appNavigatorProvider.get().startShowDetails(show.id!!, sharedElements)
