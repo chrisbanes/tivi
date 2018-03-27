@@ -24,6 +24,8 @@ import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.detailsBadge
 import me.banes.chris.tivi.detailsSummary
 import me.banes.chris.tivi.detailsTitle
+import me.banes.chris.tivi.emptyState
+import me.banes.chris.tivi.header
 import me.banes.chris.tivi.posterGridItem
 /* ktlint-disable no-unused-imports */
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
@@ -83,12 +85,25 @@ class ShowDetailsEpoxyController(
             spanSizeOverride(TotalSpanOverride)
         }
 
-        for (show in related.take(6)) {
-            posterGridItem {
-                id("related_${show.id}")
-                title(show.title)
-                tmdbImageUrlProvider(tmdbImageUrlProvider)
-                posterPath(show.tmdbPosterPath)
+        header {
+            id("related_header")
+            title(R.string.details_related)
+            spanSizeOverride(TotalSpanOverride)
+        }
+
+        if (related.isEmpty()) {
+            emptyState {
+                id("related_empty")
+                spanSizeOverride(TotalSpanOverride)
+            }
+        } else {
+            for (show in related.take(6)) {
+                posterGridItem {
+                    id("related_${show.id}")
+                    title(show.title)
+                    tmdbImageUrlProvider(tmdbImageUrlProvider)
+                    posterPath(show.tmdbPosterPath)
+                }
             }
         }
     }
