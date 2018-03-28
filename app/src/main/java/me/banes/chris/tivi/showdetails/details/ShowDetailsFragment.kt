@@ -32,6 +32,7 @@ import androidx.view.doOnLayout
 import kotlinx.android.synthetic.main.fragment_show_details.*
 import me.banes.chris.tivi.GlideApp
 import me.banes.chris.tivi.R
+import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.TiviFragment
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.loadFromUrl
@@ -89,8 +90,14 @@ class ShowDetailsFragment : TiviFragment() {
         }
 
         controller = ShowDetailsEpoxyController(requireContext(), object : ShowDetailsEpoxyController.Callbacks {
-            override fun onRelatedShowClicked(show: TiviShow) {
-                viewModel.onRelatedShowClicked(showDetailsNavigator, show)
+            override fun onRelatedShowClicked(show: TiviShow, view: View) {
+                viewModel.onRelatedShowClicked(
+                        showDetailsNavigator,
+                        show,
+                        SharedElementHelper().apply {
+                            addSharedElement(view, "poster")
+                        }
+                )
             }
         })
 

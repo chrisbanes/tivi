@@ -17,6 +17,7 @@
 package me.banes.chris.tivi.showdetails.details
 
 import android.content.Context
+import android.view.View
 import com.airbnb.epoxy.Typed3EpoxyController
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.TiviShow
@@ -37,7 +38,7 @@ class ShowDetailsEpoxyController(
 ) : Typed3EpoxyController<TiviShow, List<TiviShow>, TmdbImageUrlProvider>() {
 
     interface Callbacks {
-        fun onRelatedShowClicked(show: TiviShow)
+        fun onRelatedShowClicked(show: TiviShow, view: View)
     }
 
     override fun buildModels(show: TiviShow, related: List<TiviShow>, tmdbImageUrlProvider: TmdbImageUrlProvider) {
@@ -108,8 +109,8 @@ class ShowDetailsEpoxyController(
                     title(show.title)
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
                     posterPath(show.tmdbPosterPath)
-                    clickListener { _ ->
-                        callbacks.onRelatedShowClicked(show)
+                    clickListener { view ->
+                        callbacks.onRelatedShowClicked(show, view)
                     }
                 }
             }
