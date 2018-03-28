@@ -19,6 +19,7 @@ package me.banes.chris.tivi.showdetails.details
 import android.content.Context
 import android.view.View
 import com.airbnb.epoxy.Typed3EpoxyController
+import me.banes.chris.tivi.PosterGridItemBindingModel_
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.entities.TiviShow
 /* ktlint-disable no-unused-imports */
@@ -27,10 +28,11 @@ import me.banes.chris.tivi.detailsSummary
 import me.banes.chris.tivi.detailsTitle
 import me.banes.chris.tivi.emptyState
 import me.banes.chris.tivi.header
-import me.banes.chris.tivi.posterGridItem
 /* ktlint-disable no-unused-imports */
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.epoxy.TotalSpanOverride
+import me.banes.chris.tivi.ui.epoxy.carousel
+import me.banes.chris.tivi.ui.epoxy.withModelsFrom
 
 class ShowDetailsEpoxyController(
     private val context: Context,
@@ -103,15 +105,20 @@ class ShowDetailsEpoxyController(
                 spanSizeOverride(TotalSpanOverride)
             }
         } else {
-            for (show in related.take(6)) {
-                posterGridItem {
-                    id("related_${show.id}")
-                    title(show.title)
-                    tmdbImageUrlProvider(tmdbImageUrlProvider)
-                    posterPath(show.tmdbPosterPath)
-                    clickListener { view ->
-                        callbacks.onRelatedShowClicked(show, view)
-                    }
+            carousel {
+                id("related_shows")
+                numViewsToShowOnScreen(4f)
+                paddingDp(4)
+                hasFixedSize(true)
+                withModelsFrom(related) { relatedShow ->
+                    PosterGridItemBindingModel_()
+                            .id("related_${relatedShow.id}")
+                            .title(relatedShow.title)
+                            .tmdbImageUrlProvider(tmdbImageUrlProvider)
+                            .posterPath(relatedShow.tmdbPosterPath)
+                            .clickListener { view ->
+                                callbacks.onRelatedShowClicked(relatedShow, view)
+                            }
                 }
             }
         }
