@@ -59,6 +59,7 @@ buildscript {
 }
 
 plugins {
+    id 'com.gradle.build-scan' version '1.13'
     id "com.diffplug.gradle.spotless" version "3.10.0"
     id 'com.github.ben-manes.versions' version "0.17.0"
 }
@@ -75,6 +76,19 @@ allprojects {
             jvmTarget = "1.8"
         }
     }
+}
+
+buildScan {
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
+
+    if (System.getenv('CI')) {
+        tag 'CI'
+    } else {
+        tag 'Local'
+    }
+
+    publishAlways()
 }
 
 subprojects {
