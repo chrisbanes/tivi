@@ -38,7 +38,7 @@ android {
 
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jre8:${versions.kotlin}"
-    api 'com.jakewharton.timber:timber:4.6.1'
+    api 'com.jakewharton.timber:timber:4.7.0'
     api "com.google.dagger:dagger:${versions.dagger}"
 
     api "android.arch.paging:runtime:${versions.arch_paging}"
