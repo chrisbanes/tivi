@@ -56,7 +56,6 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - .gradle
             - build
             - app/build
   deploy_to_play:
