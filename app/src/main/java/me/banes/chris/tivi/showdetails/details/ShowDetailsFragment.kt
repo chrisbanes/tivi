@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.details
+package me.banes.chris.tivi.showdetails.details
 
 import android.animation.ObjectAnimator
 import android.arch.lifecycle.ViewModelProvider
@@ -32,9 +32,13 @@ import androidx.view.doOnLayout
 import kotlinx.android.synthetic.main.fragment_show_details.*
 import me.banes.chris.tivi.GlideApp
 import me.banes.chris.tivi.R
+import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.TiviFragment
+import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.loadFromUrl
 import me.banes.chris.tivi.extensions.observeK
+import me.banes.chris.tivi.showdetails.ShowDetailsNavigator
+import me.banes.chris.tivi.showdetails.ShowDetailsNavigatorViewModel
 import me.banes.chris.tivi.ui.GlidePaletteListener
 import me.banes.chris.tivi.ui.NoopApplyWindowInsetsListener
 import me.banes.chris.tivi.ui.RoundRectViewOutline
@@ -60,10 +64,12 @@ class ShowDetailsFragment : TiviFragment() {
 
     private lateinit var viewModel: ShowDetailsFragmentViewModel
     private lateinit var controller: ShowDetailsEpoxyController
+    private lateinit var showDetailsNavigator: ShowDetailsNavigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ShowDetailsFragmentViewModel::class.java)
+        showDetailsNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(ShowDetailsNavigatorViewModel::class.java)
 
         arguments?.let {
             viewModel.showId = it.getLong(KEY_SHOW_ID)
@@ -83,7 +89,18 @@ class ShowDetailsFragment : TiviFragment() {
             outlineProvider = RoundRectViewOutline
         }
 
-        controller = ShowDetailsEpoxyController(requireContext())
+        controller = ShowDetailsEpoxyController(requireContext(), object : ShowDetailsEpoxyController.Callbacks {
+            override fun onRelatedShowClicked(show: TiviShow, view: View) {
+                viewModel.onRelatedShowClicked(
+                        showDetailsNavigator,
+                        show,
+                        SharedElementHelper().apply {
+                            addSharedElement(view, "poster")
+                        }
+                )
+            }
+        })
+
         details_rv.setController(controller)
 
         details_toolbar.apply {
@@ -155,7 +172,7 @@ class ShowDetailsFragment : TiviFragment() {
             it.findItem(R.id.details_menu_remove_myshows)?.isVisible = viewState.inMyShows
         }
 
-        controller.setData(show, imageProvider)
+        controller.setData(show, viewState.relatedShows, imageProvider)
 
         scheduleStartPostponedTransitions()
     }

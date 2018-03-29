@@ -16,14 +16,15 @@
 
 package me.banes.chris.tivi.actions
 
+import com.evernote.android.job.JobRequest
 import me.banes.chris.tivi.jobs.AddToMyShows
 import me.banes.chris.tivi.jobs.RemoveFromMyShows
 import me.banes.chris.tivi.jobs.UpdateShowFromTMDb
+import me.banes.chris.tivi.jobs.UpdateShowFromTrakt
 
 class TiviActionsImpl : TiviActions {
     override fun addShowToMyShows(showId: Long) {
         AddToMyShows.buildRequest(showId)
-                .setUpdateCurrent(true)
                 .startNow()
                 .build()
                 .scheduleAsync()
@@ -31,15 +32,22 @@ class TiviActionsImpl : TiviActions {
 
     override fun removeShowFromMyShows(showId: Long) {
         RemoveFromMyShows.buildRequest(showId)
-                .setUpdateCurrent(true)
                 .startNow()
                 .build()
                 .scheduleAsync()
     }
 
-    override fun updateShowFromTMDb(showId: Long) {
-        UpdateShowFromTMDb.buildRequest(showId)
-                .setUpdateCurrent(true)
+    override fun updateShowFromTMDb(tmdbId: Int) {
+        UpdateShowFromTMDb.buildRequest(tmdbId)
+                .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
+                .startNow()
+                .build()
+                .scheduleAsync()
+    }
+
+    override fun updateShowFromTrakt(traktId: Int) {
+        UpdateShowFromTrakt.buildRequest(traktId)
+                .setRequiredNetworkType(JobRequest.NetworkType.CONNECTED)
                 .startNow()
                 .build()
                 .scheduleAsync()

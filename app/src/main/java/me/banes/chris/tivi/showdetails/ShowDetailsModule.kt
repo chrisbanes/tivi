@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.details
+package me.banes.chris.tivi.showdetails
 
-import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
+import dagger.Module
+import dagger.Provides
+import me.banes.chris.tivi.AppNavigator
+import me.banes.chris.tivi.TiviAppActivityNavigator
 
-data class ShowDetailsFragmentViewState(
-    val show: TiviShow,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    val inMyShows: Boolean
-)
+@Module
+class ShowDetailsModule {
+    @Provides
+    fun provideAppNavigator(activity: ShowDetailsActivity): AppNavigator {
+        return TiviAppActivityNavigator(activity)
+    }
+}

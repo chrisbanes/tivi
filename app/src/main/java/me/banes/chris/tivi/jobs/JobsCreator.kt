@@ -42,4 +42,9 @@ abstract class JobsCreator {
     @IntoMap
     @StringKey(UpdateShowFromTMDb.TAG)
     abstract fun bindUpdateShowFromTMDb(job: UpdateShowFromTMDb): Job
+
+    @Binds
+    @IntoMap
+    @StringKey(UpdateShowFromTrakt.TAG)
+    abstract fun bindUpdateShowFromTrakt(job: UpdateShowFromTrakt): Job
 }

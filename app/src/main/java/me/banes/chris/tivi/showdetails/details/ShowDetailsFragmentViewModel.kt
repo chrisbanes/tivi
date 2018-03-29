@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.details
+package me.banes.chris.tivi.showdetails.details
 
 import android.arch.lifecycle.MutableLiveData
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
+import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.actions.TiviActions
 import me.banes.chris.tivi.data.daos.MyShowsDao
+import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.showdetails.ShowDetailsNavigator
 import me.banes.chris.tivi.tmdb.TmdbManager
+import me.banes.chris.tivi.trakt.calls.RelatedShowsCall
 import me.banes.chris.tivi.trakt.calls.ShowDetailsCall
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.RxAwareViewModel
@@ -31,6 +35,7 @@ import javax.inject.Inject
 class ShowDetailsFragmentViewModel @Inject constructor(
     private val schedulers: AppRxSchedulers,
     private val showCall: ShowDetailsCall,
+    private val relatedShows: RelatedShowsCall,
     private val tmdbManager: TmdbManager,
     private val tiviActions: TiviActions,
     private val myShowsDao: MyShowsDao
@@ -55,6 +60,8 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         showId?.let {
             disposables += showCall.refresh(it)
                     .subscribe(this::onRefreshSuccess, this::onRefreshError)
+            disposables += relatedShows.refresh(it)
+                    .subscribe(this::onRefreshSuccess, this::onRefreshError)
         }
     }
 
@@ -62,6 +69,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         showId?.let {
             disposables += Flowables.combineLatest(
                     showCall.data(it),
+                    relatedShows.data(it),
                     tmdbManager.imageProvider,
                     myShowsDao.showEntry(it).map { it > 0 },
                     ::ShowDetailsFragmentViewState)
@@ -88,5 +96,13 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         showId?.let {
             tiviActions.removeShowFromMyShows(it)
         }
+    }
+
+    fun onRelatedShowClicked(
+        navigatorShow: ShowDetailsNavigator,
+        show: TiviShow,
+        sharedElementHelper: SharedElementHelper? = null
+    ) {
+        navigatorShow.showShowDetails(show, sharedElementHelper)
     }
 }

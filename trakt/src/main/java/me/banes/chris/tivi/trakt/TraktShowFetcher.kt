@@ -59,8 +59,7 @@ class TraktShowFetcher @Inject constructor(
     private fun appendRx(maybe: Maybe<Show>): Maybe<TiviShow> {
         return maybe.observeOn(schedulers.database)
                 .map(this::upsertShow)
-                .map(TiviShow::traktId)
-                .flatMap(showDao::getShowWithTraktIdMaybe)
+                .flatMap { showDao.getShowWithTraktIdMaybe(it.traktId!!) }
     }
 
     fun updateShow(traktId: Int): Single<TiviShow> {
@@ -94,7 +93,7 @@ class TraktShowFetcher @Inject constructor(
         }
         return showDao.insertOrUpdateShow(show).also {
             if (it.needsUpdateFromTmdb()) {
-                tiviActions.updateShowFromTMDb(it.id!!)
+                tiviActions.updateShowFromTMDb(it.tmdbId!!)
             }
         }
     }

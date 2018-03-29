@@ -52,6 +52,7 @@ class TrendingCall @Inject constructor(
         return TrendingEntry(null, show.id!!, page, networkEntity.watchers)
     }
 
-    override fun loadShow(response: TrendingShow): Maybe<TiviShow> =
-            traktShowFetcher.getShow(response.show.ids.trakt, response.show)
+    override fun loadShow(response: TrendingShow): Maybe<TiviShow> {
+        return traktShowFetcher.getShow(response.show.ids.trakt, response.show)
+    }
 }

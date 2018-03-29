@@ -20,11 +20,20 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="android.content.Context" />
 
-        <variable name="title" type="int" />
-        <variable name="buttonTitle" type="int" />
-        <variable name="buttonClickListener" type="android.view.View.OnClickListener" />
+        <variable
+            name="title"
+            type="int" />
+
+        <variable
+            name="buttonTitle"
+            type="int" />
+
+        <variable
+            name="buttonClickListener"
+            type="android.view.View.OnClickListener" />
     </data>
 
     <FrameLayout
@@ -56,7 +65,8 @@
             android:text="@{buttonTitle != 0 ? context.getString(buttonTitle) : @string/header_more}"
             android:textAllCaps="true"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:textColor="@color/colorAccent" />
+            android:textColor="@color/colorAccent"
+            android:visibleIfNotNull="@{buttonClickListener}" />
 
     </FrameLayout>
 </layout>

@@ -54,6 +54,7 @@ class PopularCall @Inject constructor(
         return PopularEntry(null, show.id!!, page, networkEntity.index)
     }
 
-    override fun loadShow(response: ItemWithIndex<Show>): Maybe<TiviShow> =
-            traktShowFetcher.getShow(response.item.ids.trakt, response.item)
+    override fun loadShow(response: ItemWithIndex<Show>): Maybe<TiviShow> {
+        return traktShowFetcher.getShow(response.item.ids.trakt, response.item)
+    }
 }
