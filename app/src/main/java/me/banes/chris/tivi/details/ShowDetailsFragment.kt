@@ -136,6 +136,7 @@ class ShowDetailsFragment : TiviFragment() {
                 GlideApp.with(this)
                         .load(imageProvider.getBackdropUrl(path, details_backdrop.width))
                         .thumbnail(GlideApp.with(this).load(imageProvider.getBackdropUrl(path, 0)))
+                        .disallowHardwareConfig()
                         .listener(GlidePaletteListener { colorSwatch = it.dominantSwatch!! })
                         .into(details_backdrop)
             }
