@@ -45,8 +45,6 @@ if (haveFabricApiKey) {
     apply plugin: 'io.fabric'
 }
 
-apply plugin: 'com.google.firebase.firebase-perf'
-
 android {
     compileSdkVersion 27
 
@@ -114,12 +112,6 @@ android {
     }
 
     buildTypes {
-        leakcanary {
-            signingConfig signingConfigs.debug
-            versionNameSuffix "-dev-nolc [${getGitHash()}]"
-            matchingFallbacks = ['debug', 'release']
-        }
-
         debug {
             signingConfig signingConfigs.debug
             versionNameSuffix "-dev [${getGitHash()}]"
@@ -183,15 +175,9 @@ dependencies {
 
     debugImplementation "nl.littlerobots.rxlint:rxlint:${versions.rxlint}"
 
-    leakcanaryImplementation "com.squareup.leakcanary:leakcanary-android:${versions.leakcanary}"
-    debugImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${versions.leakcanary}"
-    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${versions.leakcanary}"
-
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
         transitive = true
     }
-
-    implementation "com.google.firebase:firebase-perf:${versions.firebase}"
 
     implementation 'com.evernote:android-job:1.2.5'
 }

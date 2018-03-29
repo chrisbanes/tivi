@@ -39,7 +39,8 @@ jobs:
           command: signing/cleanup.sh
       - save_cache:
           paths:
-            - ~/.gradle
+            - ~/.gradle/caches
+            - ~/.gradle/wrapper
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - store_artifacts:
           path: app/build/outputs/apk
@@ -55,7 +56,6 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - .gradle
             - build
             - app/build
   deploy_to_play:
