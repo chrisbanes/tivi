@@ -21,26 +21,26 @@ import android.graphics.Bitmap
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.view.MenuItem
 import android.widget.ImageView
-import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
+import me.banes.chris.tivi.GlideApp
 
 fun ImageView.loadFromUrl(imageUrl: String) {
-    Glide.with(this).load(imageUrl).into(this)
+    GlideApp.with(this).load(imageUrl).into(this)
 }
 
 fun ImageView.loadFromUrl(thumbnailUrl: String, imageUrl: String) {
-    Glide.with(this)
+    GlideApp.with(this)
             .load(imageUrl)
-            .thumbnail(Glide.with(this).load(thumbnailUrl))
+            .thumbnail(GlideApp.with(this).load(thumbnailUrl))
             .into(this)
 }
 
 fun MenuItem.loadIconFromUrl(context: Context, imageUrl: String) {
-    Glide.with(context).asBitmap()
+    GlideApp.with(context).asBitmap()
             .load(imageUrl)
             .into(object : SimpleTarget<Bitmap>(100, 100) {
-                override fun onResourceReady(resource: Bitmap?, transition: Transition<in Bitmap>?) {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                     icon = RoundedBitmapDrawableFactory.create(context.resources, resource).apply {
                         isCircular = true
                     }
