@@ -29,8 +29,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.view.doOnLayout
-import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_show_details.*
+import me.banes.chris.tivi.GlideApp
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
 import me.banes.chris.tivi.extensions.loadFromUrl
@@ -133,9 +133,9 @@ class ShowDetailsFragment : TiviFragment() {
 
         show.tmdbBackdropPath?.let { path ->
             details_backdrop.doOnLayout {
-                Glide.with(this)
+                GlideApp.with(this)
                         .load(imageProvider.getBackdropUrl(path, details_backdrop.width))
-                        .thumbnail(Glide.with(this).load(imageProvider.getBackdropUrl(path, 0)))
+                        .thumbnail(GlideApp.with(this).load(imageProvider.getBackdropUrl(path, 0)))
                         .listener(GlidePaletteListener { colorSwatch = it.dominantSwatch!! })
                         .into(details_backdrop)
             }
