@@ -37,8 +37,8 @@ class TiviActionsImpl : TiviActions {
                 .scheduleAsync()
     }
 
-    override fun updateShowFromTMDb(showId: Long) {
-        UpdateShowFromTMDb.buildRequest(showId)
+    override fun updateShowFromTMDb(tmdbId: Int) {
+        UpdateShowFromTMDb.buildRequest(tmdbId)
                 .setUpdateCurrent(true)
                 .startNow()
                 .build()

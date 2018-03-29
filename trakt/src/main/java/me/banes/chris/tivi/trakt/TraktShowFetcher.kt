@@ -93,7 +93,7 @@ class TraktShowFetcher @Inject constructor(
         }
         return showDao.insertOrUpdateShow(show).also {
             if (it.needsUpdateFromTmdb()) {
-                tiviActions.updateShowFromTMDb(it.id!!)
+                tiviActions.updateShowFromTMDb(it.tmdbId!!)
             }
         }
     }

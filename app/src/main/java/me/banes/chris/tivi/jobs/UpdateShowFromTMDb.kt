@@ -30,31 +30,34 @@ class UpdateShowFromTMDb @Inject constructor(
     private val showsDao: TiviShowDao,
     private val tmdbShowFetcher: TmdbShowFetcher
 ) : Job() {
-
     companion object {
         const val TAG = "show-update-tmdb"
-        private const val PARAM_SHOW_ID = "show-id"
+        private const val PARAM_SHOW_TMDB_ID = "show-tmdb-id"
+        private const val PARAM_FORCE_REFRESH = "force"
 
-        fun buildRequest(showId: Long): JobRequest.Builder {
+        fun buildRequest(showTmdbId: Int, forceRefresh: Boolean = false): JobRequest.Builder {
             return JobRequest.Builder(TAG).addExtras(
                     PersistableBundleCompat().apply {
-                        putLong(PARAM_SHOW_ID, showId)
+                        putInt(PARAM_SHOW_TMDB_ID, showTmdbId)
+                        putBoolean(PARAM_FORCE_REFRESH, forceRefresh)
                     }
             )
         }
     }
 
     override fun onRunJob(params: Params): Result {
-        val showId = params.extras.getLong(PARAM_SHOW_ID, -1)
+        val tmdbId = params.extras.getInt(PARAM_SHOW_TMDB_ID, -1)
+        require(tmdbId != -1)
 
-        Timber.d("$TAG job running for id: $showId")
+        val forceRefresh = params.extras.getBoolean(PARAM_FORCE_REFRESH, false)
+
+        Timber.d("$TAG job running for id: $tmdbId")
 
         return try {
-            showsDao.getShowWithIdMaybe(showId)
+            showsDao.getShowWithTmdbIdMaybe(tmdbId)
                     .subscribeOn(rxSchedulers.database)
-                    .flatMapCompletable {
-                        tmdbShowFetcher.updateShow(it.tmdbId!!)
-                    }
+                    .filter { forceRefresh || it.needsUpdateFromTmdb() }
+                    .flatMapCompletable { tmdbShowFetcher.updateShow(it.tmdbId!!) }
                     .blockingAwait()
             Result.SUCCESS
         } catch (exception: Exception) {
