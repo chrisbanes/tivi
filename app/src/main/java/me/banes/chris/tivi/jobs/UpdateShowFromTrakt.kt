@@ -20,25 +20,25 @@ import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
 import com.evernote.android.job.util.support.PersistableBundleCompat
 import me.banes.chris.tivi.data.daos.TiviShowDao
-import me.banes.chris.tivi.tmdb.TmdbShowFetcher
+import me.banes.chris.tivi.trakt.TraktShowFetcher
 import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
 import javax.inject.Inject
 
-class UpdateShowFromTMDb @Inject constructor(
+class UpdateShowFromTrakt @Inject constructor(
     private val rxSchedulers: AppRxSchedulers,
     private val showsDao: TiviShowDao,
-    private val tmdbShowFetcher: TmdbShowFetcher
+    private val traktShowFetcher: TraktShowFetcher
 ) : Job() {
     companion object {
-        const val TAG = "show-update-tmdb"
-        private const val PARAM_SHOW_TMDB_ID = "show-tmdb-id"
+        const val TAG = "show-update-trakt"
+        private const val PARAM_SHOW_TRAKT_ID = "show-trakt-id"
         private const val PARAM_FORCE_REFRESH = "force"
 
-        fun buildRequest(showTmdbId: Int, forceRefresh: Boolean = false): JobRequest.Builder {
+        fun buildRequest(traktId: Int, forceRefresh: Boolean = false): JobRequest.Builder {
             return JobRequest.Builder(TAG).addExtras(
                     PersistableBundleCompat().apply {
-                        putInt(PARAM_SHOW_TMDB_ID, showTmdbId)
+                        putInt(PARAM_SHOW_TRAKT_ID, traktId)
                         putBoolean(PARAM_FORCE_REFRESH, forceRefresh)
                     }
             )
@@ -46,23 +46,25 @@ class UpdateShowFromTMDb @Inject constructor(
     }
 
     override fun onRunJob(params: Params): Result {
-        val tmdbId = params.extras.getInt(PARAM_SHOW_TMDB_ID, -1)
-        require(tmdbId != -1)
+        val traktId = params.extras.getInt(PARAM_SHOW_TRAKT_ID, -1)
+        require(traktId != -1)
 
         val forceRefresh = params.extras.getBoolean(PARAM_FORCE_REFRESH, false)
 
-        Timber.d("$TAG job running for id: $tmdbId")
+        Timber.d("$TAG job running for id: $traktId")
 
         return try {
             var needRefresh = forceRefresh
             if (!needRefresh) {
-                val show = showsDao.getShowWithTmdbIdMaybe(tmdbId)
+                val show = showsDao.getShowWithTraktIdMaybe(traktId)
                         .subscribeOn(rxSchedulers.database)
                         .blockingGet()
-                needRefresh = show != null && show.needsUpdateFromTmdb()
+                needRefresh = show == null || show.needsUpdateFromTrakt()
             }
             if (needRefresh) {
-                tmdbShowFetcher.updateShow(tmdbId).blockingAwait()
+                traktShowFetcher.getShow(traktId)
+                        .ignoreElement()
+                        .blockingAwait()
             }
             Result.SUCCESS
         } catch (exception: Exception) {

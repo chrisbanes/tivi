@@ -60,6 +60,11 @@ data class TiviShow(
         return tmdbId != null && (lastTmdbUpdate?.isBefore(OffsetDateTime.now().minusDays(1)) != false)
     }
 
+    fun needsUpdateFromTrakt(): Boolean {
+        // TODO implement this
+        return false
+    }
+
     fun <T> updateProperty(entityVar: KMutableProperty0<T?>, updateVal: T?) {
         when {
             updateVal != null -> entityVar.set(updateVal)

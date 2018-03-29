@@ -20,11 +20,11 @@ import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import me.banes.chris.tivi.actions.TiviActions
 import me.banes.chris.tivi.calls.Call
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.toRxSingle
-import me.banes.chris.tivi.trakt.TraktShowFetcher
 import me.banes.chris.tivi.trakt.state.TraktState
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
@@ -32,7 +32,7 @@ import javax.inject.Inject
 class RelatedShowsCall @Inject constructor(
     private val dao: TiviShowDao,
     private val traktState: TraktState,
-    private val traktShowFetcher: TraktShowFetcher,
+    private val tiviActions: TiviActions,
     private val trakt: TraktV2,
     private val schedulers: AppRxSchedulers
 ) : Call<Long, List<TiviShow>> {
@@ -53,15 +53,9 @@ class RelatedShowsCall @Inject constructor(
     override fun data(param: Long): Flowable<List<TiviShow>> {
         return dao.getShowWithIdMaybe(param)
                 .subscribeOn(schedulers.database)
-                .flatMapPublisher {
-                    traktState.relatedShowsForTraktId(it.traktId!!)
-                }
-                .flatMap {
-                    Flowable.fromIterable(it)
-                            .flatMapMaybe { traktShowFetcher.getShow(it) }
-                            .toList()
-                            .toFlowable()
-                }
+                .flatMapPublisher { traktState.relatedShowsForTraktId(it.traktId!!) }
+                .doOnNext { it.forEach(tiviActions::updateShowFromTrakt) }
+                .flatMap(dao::getShowsWithTraktId)
                 .startWith(Flowable.just(emptyList()))
     }
 }

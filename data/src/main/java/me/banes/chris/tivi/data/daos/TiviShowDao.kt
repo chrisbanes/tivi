@@ -36,6 +36,9 @@ abstract class TiviShowDao {
     @Query("SELECT * FROM shows WHERE trakt_id = :id")
     abstract fun getShowWithTraktIdSync(id: Int): TiviShow?
 
+    @Query("SELECT * FROM shows WHERE trakt_id IN (:ids)")
+    abstract fun getShowsWithTraktId(ids: List<Int>): Flowable<List<TiviShow>>
+
     @Query("SELECT * FROM shows WHERE tmdb_id = :id")
     abstract fun getShowWithTmdbIdFlowable(id: Int): Flowable<TiviShow>
 
