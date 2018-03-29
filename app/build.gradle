@@ -149,8 +149,6 @@ dependencies {
 
     implementation "androidx.core:core-ktx:${versions.core_ktx}"
 
-    kapt "com.android.databinding:compiler:${versions.android_gradle}"
-
     implementation 'com.gabrielittner.threetenbp:lazythreetenbp:0.3.0'
 
     implementation "com.google.dagger:dagger-android:${versions.dagger}"
