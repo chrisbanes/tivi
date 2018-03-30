@@ -105,6 +105,9 @@ android {
     lintOptions {
         // Disable lintVital. Not needed since lint is run on CI
         checkReleaseBuilds false
+
+        // Disable StringFormatMatches due to https://issuetracker.google.com/issues/76490033
+        disable 'StringFormatMatches'
     }
 
     dataBinding {
