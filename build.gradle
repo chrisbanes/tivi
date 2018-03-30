@@ -17,7 +17,7 @@
 
 buildscript {
     ext.versions = [
-            'android_gradle'   : '3.0.1',
+            'android_gradle'   : '3.1.0',
             'support_library'  : '27.1.0',
             'constraint_layout': '1.1.0-beta6',
             'arch'             : '1.1.0',
@@ -56,7 +56,6 @@ buildscript {
 }
 
 plugins {
-    id 'com.gradle.build-scan' version '1.13'
     id "com.diffplug.gradle.spotless" version "3.10.0"
     id 'com.github.ben-manes.versions' version "0.17.0"
 }
@@ -73,19 +72,6 @@ allprojects {
             jvmTarget = "1.8"
         }
     }
-}
-
-buildScan {
-    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-    termsOfServiceAgree = 'yes'
-
-    if (System.getenv('CI')) {
-        tag 'CI'
-    } else {
-        tag 'Local'
-    }
-
-    publishAlways()
 }
 
 subprojects {

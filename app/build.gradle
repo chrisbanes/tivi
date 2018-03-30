@@ -105,6 +105,9 @@ android {
     lintOptions {
         // Disable lintVital. Not needed since lint is run on CI
         checkReleaseBuilds false
+
+        // Disable StringFormatMatches due to https://issuetracker.google.com/issues/76490033
+        disable 'StringFormatMatches'
     }
 
     dataBinding {
@@ -148,8 +151,6 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:${versions.constraint_layout}"
 
     implementation "androidx.core:core-ktx:${versions.core_ktx}"
-
-    kapt "com.android.databinding:compiler:${versions.android_gradle}"
 
     implementation 'com.gabrielittner.threetenbp:lazythreetenbp:0.3.0'
 
