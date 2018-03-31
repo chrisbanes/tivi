@@ -107,3 +107,11 @@
 # Keep stuff for Room
 -keep class me.banes.chris.tivi.data.TiviTypeConverters { *; }
 -keep class me.banes.chris.tivi.data.entities.** { *; }
+
+# Glide
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep public class * extends com.bumptech.glide.module.AppGlideModule
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}
