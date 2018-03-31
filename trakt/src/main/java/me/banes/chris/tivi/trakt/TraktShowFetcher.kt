@@ -53,12 +53,19 @@ class TraktShowFetcher @Inject constructor(
                         .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry, schedulers.network))
         )
 
-        return Maybe.concat(dbSource, fromEntity, networkSource).firstElement()
+        return Maybe.concat(dbSource, fromEntity, networkSource)
+                .firstElement()
+                .doOnSuccess {
+                    if (it.needsUpdateFromTmdb()) {
+                        tiviActions.updateShowFromTMDb(it.tmdbId!!)
+                    }
+                }
     }
 
     private fun appendRx(maybe: Maybe<Show>): Maybe<TiviShow> {
         return maybe.observeOn(schedulers.database)
-                .map(this::upsertShow)
+                .flatMapSingle(this::upsertShow)
+                .toMaybe()
                 .flatMap { showDao.getShowWithTraktIdMaybe(it.traktId!!) }
     }
 
@@ -66,7 +73,12 @@ class TraktShowFetcher @Inject constructor(
         return trakt.shows().summary(traktId.toString(), Extended.FULL).toRxSingle()
                 .subscribeOn(schedulers.network)
                 .observeOn(schedulers.database)
-                .map(this::upsertShow)
+                .flatMap(this::upsertShow)
+                .doOnSuccess {
+                    if (it.needsUpdateFromTmdb()) {
+                        tiviActions.updateShowFromTMDb(it.tmdbId!!)
+                    }
+                }
     }
 
     private fun shouldRetry(throwable: Throwable): Boolean = when (throwable) {
@@ -75,26 +87,26 @@ class TraktShowFetcher @Inject constructor(
         else -> false
     }
 
-    private fun upsertShow(traktShow: Show): TiviShow {
-        val show = showDao.getShowWithTraktIdSync(traktShow.ids.trakt) ?: TiviShow()
-        show.apply {
-            updateProperty(this::traktId, traktShow.ids.trakt)
-            updateProperty(this::tmdbId, traktShow.ids.tmdb)
-            updateProperty(this::title, traktShow.title)
-            updateProperty(this::summary, traktShow.overview)
-            updateProperty(this::homepage, traktShow.homepage)
-            updateProperty(this::rating, traktShow.rating?.toFloat())
-            updateProperty(this::certification, traktShow.certification)
-            updateProperty(this::runtime, traktShow.runtime)
-            updateProperty(this::network, traktShow.network)
-            updateProperty(this::country, traktShow.country)
-            updateProperty(this::_genres, traktShow.genres?.joinToString(","))
-            lastTraktUpdate = OffsetDateTime.now()
-        }
-        return showDao.insertOrUpdateShow(show).also {
-            if (it.needsUpdateFromTmdb()) {
-                tiviActions.updateShowFromTMDb(it.tmdbId!!)
-            }
-        }
+    private fun upsertShow(traktShow: Show): Single<TiviShow> {
+        return showDao.getShowWithTraktIdMaybe(traktShow.ids.trakt)
+                .subscribeOn(schedulers.database)
+                .toSingle(TiviShow())
+                .map {
+                    it.apply {
+                        updateProperty(this::traktId, traktShow.ids.trakt)
+                        updateProperty(this::tmdbId, traktShow.ids.tmdb)
+                        updateProperty(this::title, traktShow.title)
+                        updateProperty(this::summary, traktShow.overview)
+                        updateProperty(this::homepage, traktShow.homepage)
+                        updateProperty(this::rating, traktShow.rating?.toFloat())
+                        updateProperty(this::certification, traktShow.certification)
+                        updateProperty(this::runtime, traktShow.runtime)
+                        updateProperty(this::network, traktShow.network)
+                        updateProperty(this::country, traktShow.country)
+                        updateProperty(this::_genres, traktShow.genres?.joinToString(","))
+                        lastTraktUpdate = OffsetDateTime.now()
+                    }
+                }
+                .map(showDao::insertOrUpdateShow)
     }
 }

@@ -43,7 +43,10 @@ class TmdbShowFetcher @Inject constructor(
     }
 
     fun updateShow(tmdbId: Int): Completable {
-        val networkSource = tmdb.tvService().tv(tmdbId).toRxSingle()
+        if (active.contains(tmdbId)) {
+            return Completable.complete()
+        }
+        return tmdb.tvService().tv(tmdbId).toRxSingle()
                 .subscribeOn(schedulers.network)
                 .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry, schedulers.network))
                 .observeOn(schedulers.database)
@@ -60,12 +63,9 @@ class TmdbShowFetcher @Inject constructor(
                     }
                     showDao.insertOrUpdateShow(show)
                 }
-                .doOnDispose { active.remove(tmdbId) }
+                .doOnSubscribe { active += tmdbId }
+                .doOnDispose { active -= tmdbId }
                 .toCompletable()
-
-        active += tmdbId
-
-        return networkSource
     }
 
     private fun shouldRetry(throwable: Throwable): Boolean = when (throwable) {
