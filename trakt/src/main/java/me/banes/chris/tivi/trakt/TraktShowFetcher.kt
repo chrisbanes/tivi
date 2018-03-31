@@ -19,6 +19,7 @@ package me.banes.chris.tivi.trakt
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
+import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import me.banes.chris.tivi.actions.TiviActions
@@ -69,7 +70,7 @@ class TraktShowFetcher @Inject constructor(
                 .flatMap { showDao.getShowWithTraktIdMaybe(it.traktId!!) }
     }
 
-    fun updateShow(traktId: Int): Single<TiviShow> {
+    fun updateShow(traktId: Int): Completable {
         return trakt.shows().summary(traktId.toString(), Extended.FULL).toRxSingle()
                 .subscribeOn(schedulers.network)
                 .observeOn(schedulers.database)
@@ -79,6 +80,7 @@ class TraktShowFetcher @Inject constructor(
                         tiviActions.updateShowFromTMDb(it.tmdbId!!)
                     }
                 }
+                .toCompletable()
     }
 
     private fun shouldRetry(throwable: Throwable): Boolean = when (throwable) {

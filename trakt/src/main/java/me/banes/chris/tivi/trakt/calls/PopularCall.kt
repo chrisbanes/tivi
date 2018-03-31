@@ -37,10 +37,10 @@ class PopularCall @Inject constructor(
     databaseTxRunner: DatabaseTxRunner,
     showDao: TiviShowDao,
     popularDao: PopularDao,
-    traktShowFetcher: TraktShowFetcher,
+    private val traktShowFetcher: TraktShowFetcher,
     private val trakt: TraktV2,
     schedulers: AppRxSchedulers
-) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularListItem, PopularDao>(databaseTxRunner, showDao, popularDao, schedulers, traktShowFetcher) {
+) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularListItem, PopularDao>(databaseTxRunner, showDao, popularDao, schedulers) {
 
     override fun networkCall(page: Int): Single<List<ItemWithIndex<Show>>> {
         // We add one to the page since Trakt uses a 1-based index whereas we use 0-based

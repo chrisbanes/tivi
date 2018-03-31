@@ -28,7 +28,6 @@ import me.banes.chris.tivi.data.daos.PaginatedEntryDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.trakt.TraktShowFetcher
 import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
 
@@ -37,7 +36,6 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
     protected val showDao: TiviShowDao,
     private val entryDao: ED,
     protected val schedulers: AppRxSchedulers,
-    protected val traktShowFetcher: TraktShowFetcher,
     override val pageSize: Int = 21
 ) : PaginatedCall<Unit, LI> {
 
