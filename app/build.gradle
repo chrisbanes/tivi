@@ -59,8 +59,8 @@ android {
         applicationId "me.banes.chris.tivi"
         minSdkVersion 23
         targetSdkVersion 27
-        versionCode 10
-        versionName "0.1.10"
+        versionCode 11
+        versionName "0.1.11"
 
         // For now we're sticking to just shipping APKs
         resConfigs "en"
