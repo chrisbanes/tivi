@@ -16,18 +16,9 @@
 
 package me.banes.chris.tivi.trakt
 
-import android.content.Context
-import android.content.SharedPreferences
-import android.net.Uri
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Module
 import dagger.Provides
-import net.openid.appauth.AuthorizationRequest
-import net.openid.appauth.AuthorizationService
-import net.openid.appauth.AuthorizationServiceConfiguration
-import net.openid.appauth.ClientAuthentication
-import net.openid.appauth.ClientSecretBasic
-import net.openid.appauth.ResponseTypeValues
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -37,46 +28,14 @@ import javax.inject.Singleton
 
 @Module
 class TraktModule {
-    @Singleton
-    @Provides
-    fun provideAuthConfig(): AuthorizationServiceConfiguration {
-        return AuthorizationServiceConfiguration(
-                Uri.parse("https://trakt.tv/oauth/authorize"),
-                Uri.parse("https://trakt.tv/oauth/token"),
-                null)
-    }
-
-    @Provides
-    fun provideAuthRequest(serviceConfig: AuthorizationServiceConfiguration): AuthorizationRequest {
-        return AuthorizationRequest.Builder(
-                serviceConfig,
-                BuildConfig.TRAKT_CLIENT_ID,
-                ResponseTypeValues.CODE,
-                Uri.parse(TraktConstants.URI_AUTH_CALLBACK)).build()
-    }
-
-    @Provides
-    fun provideAuthService(context: Context): AuthorizationService {
-        return AuthorizationService(context)
-    }
-
-    @Singleton
-    @Provides
-    fun provideClientAuth(): ClientAuthentication {
-        return ClientSecretBasic(BuildConfig.TRAKT_CLIENT_SECRET)
-    }
-
-    @Singleton
-    @Provides
-    @Named("auth")
-    fun provideAuthSharedPrefs(context: Context): SharedPreferences {
-        return context.getSharedPreferences("trakt_auth", Context.MODE_PRIVATE)
-    }
-
     @Provides
     @Singleton
-    fun provideTrakt(@Named("cache") cacheDir: File, interceptor: HttpLoggingInterceptor): TraktV2 {
-        return object : TraktV2(BuildConfig.TRAKT_CLIENT_ID) {
+    fun provideTrakt(
+        @Named("cache") cacheDir: File,
+        interceptor: HttpLoggingInterceptor,
+        @Named("trakt-client-id") clientId: String
+    ): TraktV2 {
+        return object : TraktV2(clientId) {
             override fun setOkHttpClientDefaults(builder: OkHttpClient.Builder) {
                 super.setOkHttpClientDefaults(builder)
                 builder.apply {

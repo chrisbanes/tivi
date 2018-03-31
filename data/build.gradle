@@ -15,44 +15,13 @@
  *
  */
 
-apply plugin: 'com.android.library'
-
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-
-android {
-    compileSdkVersion 27
-
-    defaultConfig {
-        minSdkVersion 23
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
-            }
-        }
-    }
-
-    lintOptions {
-        disable 'GradleCompatible'
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-}
+apply plugin: 'kotlin'
 
 dependencies {
-    api project(":base")
+    implementation project(":base")
 
-    implementation "android.arch.persistence.room:runtime:${versions.arch_room}"
-    implementation "android.arch.persistence.room:rxjava2:${versions.arch_room}"
-    kapt "android.arch.persistence.room:compiler:${versions.arch_room}"
+    implementation "android.arch.persistence.room:common:${versions.arch_room}"
+    implementation "android.arch.paging:common:${versions.arch_paging}"
 
-    api "android.arch.paging:runtime:${versions.arch_paging}"
-
-    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
-
-    api 'org.threeten:threetenbp:1.3.6:no-tzdb'
+    compile 'org.threeten:threetenbp:1.3.6:no-tzdb'
 }

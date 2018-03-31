@@ -30,8 +30,12 @@ import javax.inject.Singleton
 class TmdbModule {
     @Singleton
     @Provides
-    fun provideTmdb(@Named("cache") cacheDir: File, interceptor: HttpLoggingInterceptor): Tmdb {
-        return object : Tmdb(BuildConfig.TMDB_API_KEY) {
+    fun provideTmdb(
+        @Named("cache") cacheDir: File,
+        interceptor: HttpLoggingInterceptor,
+        @Named("tmdb-api") apiKey: String
+    ): Tmdb {
+        return object : Tmdb(apiKey) {
             override fun setOkHttpClientDefaults(builder: OkHttpClient.Builder) {
                 super.setOkHttpClientDefaults(builder)
                 builder.apply {

@@ -16,5 +16,5 @@
   ~
   -->
 
-<manifest package="me.banes.chris.tivi.tmdb">
+<manifest package="me.banes.chris.tivi.trakt.auth">
 </manifest>

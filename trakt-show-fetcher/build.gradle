@@ -12,14 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
-package me.banes.chris.tivi.calls
+apply plugin: 'kotlin'
 
-import io.reactivex.Completable
-import io.reactivex.Flowable
-
-interface PaginatedCall<in Param, DatabaseOutput> : ListCall<Param, DatabaseOutput> {
-    fun data(page: Int): Flowable<List<DatabaseOutput>>
-    fun loadNextPage(): Completable
+dependencies {
+    implementation project(":trakt")
+    implementation project(":data")
+    implementation project(":base")
 }

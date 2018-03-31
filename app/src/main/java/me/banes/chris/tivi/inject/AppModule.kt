@@ -21,7 +21,10 @@ import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import me.banes.chris.tivi.AppNavigator
+import me.banes.chris.tivi.BuildConfig
 import me.banes.chris.tivi.TiviAppNavigator
 import me.banes.chris.tivi.TiviApplication
 import me.banes.chris.tivi.actions.TiviActions
@@ -45,7 +48,12 @@ class AppModule {
     @Singleton
     @Provides
     fun provideRxSchedulers(): AppRxSchedulers {
-        return AppRxSchedulers()
+        return AppRxSchedulers(
+                Schedulers.single(),
+                Schedulers.io(),
+                Schedulers.io(),
+                AndroidSchedulers.mainThread()
+        )
     }
 
     @Named("app")
@@ -82,5 +90,23 @@ class AppModule {
     @Singleton
     fun provideTiviActions(): TiviActions {
         return TiviActionsImpl()
+    }
+
+    @Provides
+    @Named("tmdb-api")
+    fun provideTmdbApiKey(): String {
+        return BuildConfig.TMDB_API_KEY
+    }
+
+    @Provides
+    @Named("trakt-client-id")
+    fun provideTraktClientId(): String {
+        return BuildConfig.TRAKT_CLIENT_ID
+    }
+
+    @Provides
+    @Named("trakt-client-secret")
+    fun provideTraktClientSecret(): String {
+        return BuildConfig.TRAKT_CLIENT_SECRET
     }
 }

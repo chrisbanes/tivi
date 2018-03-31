@@ -69,6 +69,10 @@ android {
 
         playAccountConfig = playAccountConfigs.defaultAccountConfig
 
+        buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + propOrDef("TIVI_TRAKT_CLIENT_ID", "") + "\""
+        buildConfigField "String", "TRAKT_CLIENT_SECRET", "\"" + propOrDef("TIVI_TRAKT_CLIENT_SECRET", "") + "\""
+        buildConfigField "String", "TMDB_API_KEY", "\"" + propOrDef("TIVI_TMDB_API_KEY", "") + "\""
+
         manifestPlaceholders += ['appAuthRedirectScheme': 'me.banes.chris.tivi']
 
         // Crashlytics. Disabled by default
@@ -133,9 +137,15 @@ android {
 }
 
 dependencies {
+    implementation project(":base")
+    implementation project(":base-android")
     implementation project(":data")
+    implementation project(":data-android")
     implementation project(":trakt")
+    implementation project(":trakt-auth")
     implementation project(":tmdb")
+    implementation project(":show-fetcher")
+    implementation project(":calls")
 
     implementation "android.arch.lifecycle:extensions:${versions.arch_lifecycle}"
     implementation "android.arch.lifecycle:reactivestreams:${versions.arch_lifecycle}"

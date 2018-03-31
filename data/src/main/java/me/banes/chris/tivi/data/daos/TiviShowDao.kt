@@ -23,7 +23,6 @@ import android.arch.persistence.room.Update
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import me.banes.chris.tivi.data.entities.TiviShow
-import timber.log.Timber
 
 @Dao
 abstract class TiviShowDao {
@@ -65,11 +64,9 @@ abstract class TiviShowDao {
 
     fun insertOrUpdateShow(show: TiviShow): TiviShow = when {
         show.id == null -> {
-            Timber.d("Inserting show: %s", show)
             show.copy(id = insertShow(show))
         }
         else -> {
-            Timber.d("Updating show: %s", show)
             updateShow(show)
             show
         }

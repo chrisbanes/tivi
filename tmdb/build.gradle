@@ -15,35 +15,13 @@
  *
  */
 
-apply plugin: 'com.android.library'
-
-apply plugin: 'kotlin-android'
+apply plugin: 'kotlin'
 apply plugin: 'kotlin-kapt'
-
-android {
-    compileSdkVersion 27
-
-    defaultConfig {
-        minSdkVersion 23
-
-        buildConfigField "String", "TMDB_API_KEY", "\"" + propOrDef("TIVI_TMDB_API_KEY", "") + "\""
-    }
-
-    lintOptions {
-        disable 'GradleCompatible'
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-}
 
 dependencies {
     implementation project(":base")
-    implementation project(":data")
 
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
 
-    api "com.uwetrottmann.tmdb2:tmdb-java:1.8.3"
+    compile "com.uwetrottmann.tmdb2:tmdb-java:1.8.3"
 }

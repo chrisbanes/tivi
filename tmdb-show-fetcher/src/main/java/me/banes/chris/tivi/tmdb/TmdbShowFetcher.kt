@@ -16,7 +16,6 @@
 
 package me.banes.chris.tivi.tmdb
 
-import android.support.v4.util.ArraySet
 import com.uwetrottmann.tmdb2.Tmdb
 import io.reactivex.Completable
 import me.banes.chris.tivi.data.daos.TiviShowDao
@@ -36,7 +35,7 @@ class TmdbShowFetcher @Inject constructor(
     private val tmdb: Tmdb,
     private val schedulers: AppRxSchedulers
 ) {
-    private val active = ArraySet<Int>()
+    private val active = mutableSetOf<Int>()
 
     fun startUpdate(show: TiviShow): Boolean {
         return show.needsUpdateFromTmdb() && !active.contains(show.tmdbId)

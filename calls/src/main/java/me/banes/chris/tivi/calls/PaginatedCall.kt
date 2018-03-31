@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.extensions
+package me.banes.chris.tivi.calls
 
-import android.content.SharedPreferences
+import io.reactivex.Completable
+import io.reactivex.Flowable
 
-inline fun SharedPreferences.edit(preferApply: Boolean = false, f: SharedPreferences.Editor.() -> Unit) {
-    val editor = edit()
-    editor.f()
-    if (preferApply) editor.apply() else editor.commit()
+interface PaginatedCall<in Param, DatabaseOutput> : ListCall<Param, DatabaseOutput> {
+    fun data(page: Int): Flowable<List<DatabaseOutput>>
+    fun loadNextPage(): Completable
 }
