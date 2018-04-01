@@ -34,7 +34,8 @@ class ShowDetailsCall @Inject constructor(
         return dao.getShowWithIdMaybe(param)
                 .subscribeOn(schedulers.database)
                 .map(TiviShow::traktId)
-                .flatMapCompletable(showFetcher::updateShow)
+                .flatMapSingle(showFetcher::updateShow)
+                .toCompletable()
     }
 
     override fun data(param: Long): Flowable<TiviShow> {

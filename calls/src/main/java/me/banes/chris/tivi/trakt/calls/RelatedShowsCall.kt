@@ -45,6 +45,7 @@ class RelatedShowsCall @Inject constructor(
                             .subscribeOn(schedulers.network)
                             .doOnSuccess {
                                 traktState.setRelatedShowsForTraktId(traktId, it.map { it.ids.trakt })
+                                it.forEach { showFetcher.loadShowAsync(it.ids.trakt) }
                             }
                 }
                 .toCompletable()
@@ -54,7 +55,6 @@ class RelatedShowsCall @Inject constructor(
         return dao.getShowWithIdMaybe(param)
                 .subscribeOn(schedulers.database)
                 .flatMapPublisher { traktState.relatedShowsForTraktId(it.traktId!!) }
-                .doOnNext { it.forEach { showFetcher.loadShowAsync(it) } }
                 .flatMap(dao::getShowsWithTraktId)
                 .startWith(Flowable.just(emptyList()))
     }

@@ -19,7 +19,6 @@ package me.banes.chris.tivi.trakt
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
-import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import me.banes.chris.tivi.data.daos.TiviShowDao
@@ -40,7 +39,7 @@ class TraktShowFetcher @Inject constructor(
     private val trakt: TraktV2,
     private val schedulers: AppRxSchedulers
 ) {
-    fun getShow(traktId: Int, entity: Show? = null): Maybe<TiviShow> {
+    fun loadShow(traktId: Int, entity: Show? = null): Maybe<TiviShow> {
         val dbSource = showDao.getShowWithTraktIdMaybe(traktId)
                 .subscribeOn(schedulers.database)
 
@@ -62,12 +61,11 @@ class TraktShowFetcher @Inject constructor(
                 .flatMap { showDao.getShowWithTraktIdMaybe(it.traktId!!) }
     }
 
-    fun updateShow(traktId: Int): Completable {
+    fun updateShow(traktId: Int): Single<TiviShow> {
         return trakt.shows().summary(traktId.toString(), Extended.FULL).toRxSingle()
                 .subscribeOn(schedulers.network)
                 .observeOn(schedulers.database)
                 .flatMap(this::upsertShow)
-                .toCompletable()
     }
 
     private fun shouldRetry(throwable: Throwable): Boolean = when (throwable) {

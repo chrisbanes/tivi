@@ -35,16 +35,7 @@ class TmdbShowFetcher @Inject constructor(
     private val tmdb: Tmdb,
     private val schedulers: AppRxSchedulers
 ) {
-    private val active = mutableSetOf<Int>()
-
-    fun startUpdate(show: TiviShow): Boolean {
-        return show.needsUpdateFromTmdb() && !active.contains(show.tmdbId)
-    }
-
     fun updateShow(tmdbId: Int): Completable {
-        if (active.contains(tmdbId)) {
-            return Completable.complete()
-        }
         return tmdb.tvService().tv(tmdbId).toRxSingle()
                 .subscribeOn(schedulers.network)
                 .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry, schedulers.network))
@@ -62,8 +53,6 @@ class TmdbShowFetcher @Inject constructor(
                     }
                     showDao.insertOrUpdateShow(show)
                 }
-                .doOnSubscribe { active += tmdbId }
-                .doOnDispose { active -= tmdbId }
                 .toCompletable()
     }
 

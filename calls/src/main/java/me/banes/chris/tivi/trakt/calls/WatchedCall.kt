@@ -57,7 +57,7 @@ class WatchedCall @Inject constructor(
                 .subscribeOn(schedulers.network)
                 .toFlowable()
                 .flatMapIterable { it }
-                .flatMapMaybe { traktEntry ->
+                .flatMapSingle { traktEntry ->
                     showFetcher.loadShow(traktEntry.show.ids.trakt, traktEntry.show)
                             .map {
                                 WatchedEntry(null, it.id!!, traktEntry.last_watched_at)

@@ -19,7 +19,6 @@ package me.banes.chris.tivi.trakt.calls
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
-import io.reactivex.Maybe
 import io.reactivex.Single
 import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.api.ItemWithIndex
@@ -54,7 +53,7 @@ class PopularCall @Inject constructor(
         return PopularEntry(null, show.id!!, page, networkEntity.index)
     }
 
-    override fun loadShow(response: ItemWithIndex<Show>): Maybe<TiviShow> {
+    override fun loadShow(response: ItemWithIndex<Show>): Single<TiviShow> {
         return showFetcher.loadShow(response.item.ids.trakt, response.item)
     }
 }

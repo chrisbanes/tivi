@@ -19,7 +19,6 @@ package me.banes.chris.tivi.trakt.calls
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.TrendingShow
 import com.uwetrottmann.trakt5.enums.Extended
-import io.reactivex.Maybe
 import io.reactivex.Single
 import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.data.DatabaseTxRunner
@@ -52,7 +51,7 @@ class TrendingCall @Inject constructor(
         return TrendingEntry(null, show.id!!, page, networkEntity.watchers)
     }
 
-    override fun loadShow(response: TrendingShow): Maybe<TiviShow> {
+    override fun loadShow(response: TrendingShow): Single<TiviShow> {
         return showFetcher.loadShow(response.show.ids.trakt, response.show)
     }
 }
