@@ -19,6 +19,4 @@ package me.banes.chris.tivi.actions
 interface TiviActions {
     fun addShowToMyShows(showId: Long)
     fun removeShowFromMyShows(showId: Long)
-    fun updateShowFromTMDb(tmdbId: Int)
-    fun updateShowFromTrakt(traktId: Int)
 }

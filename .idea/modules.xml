@@ -4,10 +4,17 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/base/base.iml" filepath="$PROJECT_DIR$/base/base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/base-android/base-android.iml" filepath="$PROJECT_DIR$/base-android/base-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/calls/calls.iml" filepath="$PROJECT_DIR$/calls/calls.iml" />
       <module fileurl="file://$PROJECT_DIR$/data/data.iml" filepath="$PROJECT_DIR$/data/data.iml" />
+      <module fileurl="file://$PROJECT_DIR$/data-android/data-android.iml" filepath="$PROJECT_DIR$/data-android/data-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/show-fetcher/show-fetcher.iml" filepath="$PROJECT_DIR$/show-fetcher/show-fetcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/tivi.iml" filepath="$PROJECT_DIR$/tivi.iml" />
       <module fileurl="file://$PROJECT_DIR$/tmdb/tmdb.iml" filepath="$PROJECT_DIR$/tmdb/tmdb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tmdb-show-fetcher/tmdb-show-fetcher.iml" filepath="$PROJECT_DIR$/tmdb-show-fetcher/tmdb-show-fetcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/trakt/trakt.iml" filepath="$PROJECT_DIR$/trakt/trakt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trakt-auth/trakt-auth.iml" filepath="$PROJECT_DIR$/trakt-auth/trakt-auth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trakt-show-fetcher/trakt-show-fetcher.iml" filepath="$PROJECT_DIR$/trakt-show-fetcher/trakt-show-fetcher.iml" />
     </modules>
   </component>
 </project>

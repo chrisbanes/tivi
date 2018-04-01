@@ -24,7 +24,6 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
 import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -56,5 +55,8 @@ class TmdbManager @Inject constructor(
         }
     }
 
-    private fun onError(t: Throwable) = Timber.e(t, "Error while fetching configuration from TMDb")
+    private fun onError(t: Throwable) {
+        throw t
+        // Timber.e(t, "Error while fetching configuration from TMDb")
+    }
 }

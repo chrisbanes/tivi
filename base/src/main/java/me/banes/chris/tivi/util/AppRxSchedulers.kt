@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,10 @@
 package me.banes.chris.tivi.util
 
 import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
 data class AppRxSchedulers(
-    val database: Scheduler = Schedulers.single(),
-    val disk: Scheduler = Schedulers.io(),
-    val network: Scheduler = Schedulers.io(),
-    val main: Scheduler = AndroidSchedulers.mainThread()
+    val database: Scheduler,
+    val disk: Scheduler,
+    val network: Scheduler,
+    val main: Scheduler
 )

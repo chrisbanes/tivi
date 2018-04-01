@@ -25,6 +25,7 @@ import me.banes.chris.tivi.home.HomeBuilder
 import me.banes.chris.tivi.jobs.JobsCreator
 import me.banes.chris.tivi.showdetails.ShowDetailsBuilder
 import me.banes.chris.tivi.tmdb.TmdbModule
+import me.banes.chris.tivi.trakt.TraktAuthModule
 import me.banes.chris.tivi.trakt.TraktModule
 import javax.inject.Singleton
 
@@ -38,6 +39,7 @@ import javax.inject.Singleton
     HomeBuilder::class,
     ShowDetailsBuilder::class,
     TraktModule::class,
+    TraktAuthModule::class,
     TmdbModule::class,
     NetworkModule::class
 ])
