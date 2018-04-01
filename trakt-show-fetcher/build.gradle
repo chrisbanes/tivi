@@ -18,7 +18,7 @@
 apply plugin: 'kotlin'
 
 dependencies {
-    implementation project(":trakt")
+    compile project(":trakt")
     implementation project(":data")
     implementation project(":base")
 }

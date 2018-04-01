@@ -22,20 +22,20 @@ import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.calls.ListCall
 import me.banes.chris.tivi.data.DatabaseTxRunner
 import me.banes.chris.tivi.data.daos.WatchedDao
 import me.banes.chris.tivi.data.entities.WatchedEntry
 import me.banes.chris.tivi.data.entities.WatchedListItem
 import me.banes.chris.tivi.extensions.toRxSingle
-import me.banes.chris.tivi.trakt.TraktShowFetcher
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
 class WatchedCall @Inject constructor(
     private val databaseTxRunner: DatabaseTxRunner,
     private val watchDao: WatchedDao,
-    private val traktShowFetcher: TraktShowFetcher,
+    private val showFetcher: ShowFetcher,
     private val trakt: TraktV2,
     private val schedulers: AppRxSchedulers
 ) : ListCall<Unit, WatchedListItem> {
@@ -58,8 +58,10 @@ class WatchedCall @Inject constructor(
                 .toFlowable()
                 .flatMapIterable { it }
                 .flatMapMaybe { traktEntry ->
-                    traktShowFetcher.getShow(traktEntry.show.ids.trakt, traktEntry.show)
-                            .map { WatchedEntry(null, it.id!!, traktEntry.last_watched_at) }
+                    showFetcher.loadShow(traktEntry.show.ids.trakt, traktEntry.show)
+                            .map {
+                                WatchedEntry(null, it.id!!, traktEntry.last_watched_at)
+                            }
                 }
                 .toList()
                 .observeOn(schedulers.database)

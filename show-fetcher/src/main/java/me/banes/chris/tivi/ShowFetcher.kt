@@ -16,6 +16,12 @@
 
 package me.banes.chris.tivi
 
+import com.uwetrottmann.trakt5.entities.Show
+import io.reactivex.Completable
+import io.reactivex.Maybe
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
+import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.tmdb.TmdbShowFetcher
 import me.banes.chris.tivi.trakt.TraktShowFetcher
 import javax.inject.Inject
@@ -26,19 +32,27 @@ class ShowFetcher @Inject constructor(
     private val traktShowFetcher: TraktShowFetcher,
     private val tmdbShowFetcher: TmdbShowFetcher
 ) {
-    //private val disposable = CompositeDisposable()
+    private val disposable = CompositeDisposable()
 
-//    fun loadShow(traktId: Int): Maybe<TiviShow> {
-//        return traktShowFetcher.loadShow(traktId)
-//                .doOnSuccess {
-//                    if (it.needsUpdateFromTmdb()) {
-//                        refreshFromTmdb(it.tmdbId!!)
-//                    }
-//                }
-//    }
+    fun loadShowAsync(traktId: Int, show: Show? = null) {
+        disposable += loadShow(traktId, show).subscribe({}, {})
+    }
+
+    fun loadShow(traktId: Int, show: Show? = null): Maybe<TiviShow> {
+        return traktShowFetcher.getShow(traktId, show)
+                .doOnSuccess {
+                    if (it.needsUpdateFromTmdb()) {
+                        refreshFromTmdb(it.tmdbId!!)
+                    }
+                }
+    }
+
+    fun updateShow(traktId: Int): Completable {
+        return traktShowFetcher.updateShow(traktId)
+    }
 
     private fun refreshFromTmdb(tmdbId: Int) {
-//        disposable += tmdbShowFetcher.updateShow(tmdbId)
-//                .subscribe({}, {})
+        disposable += tmdbShowFetcher.updateShow(tmdbId)
+                .subscribe({}, {})
     }
 }

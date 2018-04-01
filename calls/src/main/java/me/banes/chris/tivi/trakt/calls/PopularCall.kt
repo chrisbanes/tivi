@@ -21,6 +21,7 @@ import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Maybe
 import io.reactivex.Single
+import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.api.ItemWithIndex
 import me.banes.chris.tivi.data.DatabaseTxRunner
 import me.banes.chris.tivi.data.daos.PopularDao
@@ -29,7 +30,6 @@ import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.PopularListItem
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.toRxSingle
-import me.banes.chris.tivi.trakt.TraktShowFetcher
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
@@ -37,7 +37,7 @@ class PopularCall @Inject constructor(
     databaseTxRunner: DatabaseTxRunner,
     showDao: TiviShowDao,
     popularDao: PopularDao,
-    private val traktShowFetcher: TraktShowFetcher,
+    private val showFetcher: ShowFetcher,
     private val trakt: TraktV2,
     schedulers: AppRxSchedulers
 ) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularListItem, PopularDao>(databaseTxRunner, showDao, popularDao, schedulers) {
@@ -55,6 +55,6 @@ class PopularCall @Inject constructor(
     }
 
     override fun loadShow(response: ItemWithIndex<Show>): Maybe<TiviShow> {
-        return traktShowFetcher.getShow(response.item.ids.trakt, response.item)
+        return showFetcher.loadShow(response.item.ids.trakt, response.item)
     }
 }

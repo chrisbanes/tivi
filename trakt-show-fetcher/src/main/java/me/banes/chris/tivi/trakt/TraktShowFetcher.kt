@@ -22,7 +22,6 @@ import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
-import me.banes.chris.tivi.actions.TiviActions
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.toRxMaybe
@@ -39,8 +38,7 @@ import javax.inject.Singleton
 class TraktShowFetcher @Inject constructor(
     private val showDao: TiviShowDao,
     private val trakt: TraktV2,
-    private val schedulers: AppRxSchedulers,
-    private val tiviActions: TiviActions
+    private val schedulers: AppRxSchedulers
 ) {
     fun getShow(traktId: Int, entity: Show? = null): Maybe<TiviShow> {
         val dbSource = showDao.getShowWithTraktIdMaybe(traktId)
@@ -54,13 +52,7 @@ class TraktShowFetcher @Inject constructor(
                         .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry, schedulers.network))
         )
 
-        return Maybe.concat(dbSource, fromEntity, networkSource)
-                .firstElement()
-                .doOnSuccess {
-                    if (it.needsUpdateFromTmdb()) {
-                        tiviActions.updateShowFromTMDb(it.tmdbId!!)
-                    }
-                }
+        return Maybe.concat(dbSource, fromEntity, networkSource).firstElement()
     }
 
     private fun appendRx(maybe: Maybe<Show>): Maybe<TiviShow> {
@@ -75,11 +67,6 @@ class TraktShowFetcher @Inject constructor(
                 .subscribeOn(schedulers.network)
                 .observeOn(schedulers.database)
                 .flatMap(this::upsertShow)
-                .doOnSuccess {
-                    if (it.needsUpdateFromTmdb()) {
-                        tiviActions.updateShowFromTMDb(it.tmdbId!!)
-                    }
-                }
                 .toCompletable()
     }
 

@@ -21,5 +21,6 @@ dependencies {
     // TODO eventually I want these to be implementation deps
     compile project(":trakt-show-fetcher")
     compile project(":tmdb-show-fetcher")
+    implementation project(":data")
     implementation project(":base")
 }

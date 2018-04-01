@@ -18,8 +18,6 @@ package me.banes.chris.tivi.actions
 
 import me.banes.chris.tivi.jobs.AddToMyShows
 import me.banes.chris.tivi.jobs.RemoveFromMyShows
-import me.banes.chris.tivi.jobs.UpdateShowFromTMDb
-import me.banes.chris.tivi.jobs.UpdateShowFromTrakt
 
 class TiviActionsImpl : TiviActions {
     override fun addShowToMyShows(showId: Long) {
@@ -31,20 +29,6 @@ class TiviActionsImpl : TiviActions {
 
     override fun removeShowFromMyShows(showId: Long) {
         RemoveFromMyShows.buildRequest(showId)
-                .startNow()
-                .build()
-                .scheduleAsync()
-    }
-
-    override fun updateShowFromTMDb(tmdbId: Int) {
-        UpdateShowFromTMDb.buildRequest(tmdbId)
-                .startNow()
-                .build()
-                .scheduleAsync()
-    }
-
-    override fun updateShowFromTrakt(traktId: Int) {
-        UpdateShowFromTrakt.buildRequest(traktId)
                 .startNow()
                 .build()
                 .scheduleAsync()

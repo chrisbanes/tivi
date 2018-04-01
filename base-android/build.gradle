@@ -40,7 +40,7 @@ dependencies {
     implementation project(":base")
     implementation "com.android.support:support-fragment:${versions.support_library}"
 
-    compile "io.reactivex.rxjava2:rxandroid:2.0.2"
+    api "io.reactivex.rxjava2:rxandroid:2.0.2"
 
-    compile 'com.jakewharton.timber:timber:4.7.0'
+    api 'com.jakewharton.timber:timber:4.7.0'
 }

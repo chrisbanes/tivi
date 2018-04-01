@@ -20,7 +20,7 @@ import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Completable
 import io.reactivex.Flowable
-import me.banes.chris.tivi.actions.TiviActions
+import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.calls.Call
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.TiviShow
@@ -32,9 +32,9 @@ import javax.inject.Inject
 class RelatedShowsCall @Inject constructor(
     private val dao: TiviShowDao,
     private val traktState: TraktState,
-    private val tiviActions: TiviActions,
     private val trakt: TraktV2,
-    private val schedulers: AppRxSchedulers
+    private val schedulers: AppRxSchedulers,
+    private val showFetcher: ShowFetcher
 ) : Call<Long, List<TiviShow>> {
     override fun refresh(param: Long): Completable {
         return dao.getShowWithIdMaybe(param)
@@ -54,7 +54,7 @@ class RelatedShowsCall @Inject constructor(
         return dao.getShowWithIdMaybe(param)
                 .subscribeOn(schedulers.database)
                 .flatMapPublisher { traktState.relatedShowsForTraktId(it.traktId!!) }
-                .doOnNext { it.forEach(tiviActions::updateShowFromTrakt) }
+                .doOnNext { it.forEach { showFetcher.loadShowAsync(it) } }
                 .flatMap(dao::getShowsWithTraktId)
                 .startWith(Flowable.just(emptyList()))
     }
