@@ -22,6 +22,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.emptySubscribe
+import me.banes.chris.tivi.inject.ApplicationLevel
 import me.banes.chris.tivi.tmdb.TmdbShowFetcher
 import me.banes.chris.tivi.trakt.TraktShowFetcher
 import javax.inject.Inject
@@ -29,13 +30,12 @@ import javax.inject.Singleton
 
 @Singleton
 class ShowFetcher @Inject constructor(
+    @ApplicationLevel private val disposables: CompositeDisposable,
     private val traktShowFetcher: TraktShowFetcher,
     private val tmdbShowFetcher: TmdbShowFetcher
 ) {
-    private val disposable = CompositeDisposable()
-
     fun loadShowAsync(traktId: Int, show: Show? = null) {
-        disposable += loadShow(traktId, show).emptySubscribe()
+        disposables += loadShow(traktId, show).emptySubscribe()
     }
 
     fun loadShow(traktId: Int, show: Show? = null): Single<TiviShow> {
@@ -58,6 +58,6 @@ class ShowFetcher @Inject constructor(
     }
 
     private fun refreshFromTmdb(tmdbId: Int) {
-        disposable += tmdbShowFetcher.updateShow(tmdbId).emptySubscribe()
+        disposables += tmdbShowFetcher.updateShow(tmdbId).emptySubscribe()
     }
 }

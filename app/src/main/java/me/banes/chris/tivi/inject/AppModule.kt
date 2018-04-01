@@ -16,12 +16,17 @@
 
 package me.banes.chris.tivi.inject
 
+import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.LifecycleObserver
+import android.arch.lifecycle.OnLifecycleEvent
+import android.arch.lifecycle.ProcessLifecycleOwner
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.BuildConfig
@@ -108,5 +113,20 @@ class AppModule {
     @Named("trakt-client-secret")
     fun provideTraktClientSecret(): String {
         return BuildConfig.TRAKT_CLIENT_SECRET
+    }
+
+    @Singleton
+    @Provides
+    @ApplicationLevel
+    fun provideCompositeDisposable(): CompositeDisposable {
+        val disposables = CompositeDisposable()
+        // Add ProcessLifecycleOwner observer to clear when stopped
+        ProcessLifecycleOwner.get().lifecycle.addObserver(object : LifecycleObserver {
+            @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+            fun onStopped() {
+                disposables.clear()
+            }
+        })
+        return disposables
     }
 }

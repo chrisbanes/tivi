@@ -27,6 +27,7 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.data.entities.TraktUser
+import me.banes.chris.tivi.inject.ApplicationLevel
 import me.banes.chris.tivi.trakt.calls.UserMeCall
 import me.banes.chris.tivi.util.AppRxSchedulers
 import net.openid.appauth.AuthState
@@ -44,6 +45,7 @@ import javax.inject.Singleton
 @Singleton
 class TraktManager @Inject constructor(
     private val schedulers: AppRxSchedulers,
+    @ApplicationLevel private val disposables: CompositeDisposable,
     @Named("app") private val appNavigator: AppNavigator,
     private val requestProvider: Provider<AuthorizationRequest>,
     private val authService: AuthorizationService,
@@ -52,9 +54,6 @@ class TraktManager @Inject constructor(
     private val traktClient: TraktV2,
     private val userMeCall: UserMeCall
 ) {
-
-    private val disposables = CompositeDisposable()
-
     val stateSubject = BehaviorSubject.create<AuthState>()!!
 
     init {

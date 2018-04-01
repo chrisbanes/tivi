@@ -21,13 +21,15 @@ import com.gabrielittner.threetenbp.LazyThreeTen
 import io.reactivex.Completable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
+import me.banes.chris.tivi.inject.ApplicationLevel
 import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
 import javax.inject.Inject
 
-class ThreeTenBpInitializer @Inject constructor(private val schedulers: AppRxSchedulers) : AppInitializer {
-    private val disposables = CompositeDisposable()
-
+class ThreeTenBpInitializer @Inject constructor(
+    @ApplicationLevel private val disposables: CompositeDisposable,
+    private val schedulers: AppRxSchedulers
+) : AppInitializer {
     override fun init(application: Application) {
         // Init LazyThreeTen
         LazyThreeTen.init(application)

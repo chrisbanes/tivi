@@ -23,17 +23,17 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
 import me.banes.chris.tivi.extensions.toRxSingle
+import me.banes.chris.tivi.inject.ApplicationLevel
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class TmdbManager @Inject constructor(
+    @ApplicationLevel private val disposables: CompositeDisposable,
     schedulers: AppRxSchedulers,
     tmdbClient: Tmdb
 ) {
-
-    private val disposables = CompositeDisposable()
     private val imageProviderSubject = BehaviorSubject.createDefault(TmdbImageUrlProvider())!!
 
     val imageProvider = imageProviderSubject.toFlowable(BackpressureStrategy.LATEST)!!
