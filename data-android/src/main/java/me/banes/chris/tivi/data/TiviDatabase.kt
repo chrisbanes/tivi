@@ -25,8 +25,10 @@ import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.daos.TrendingDao
 import me.banes.chris.tivi.data.daos.UserDao
 import me.banes.chris.tivi.data.daos.WatchedDao
+import me.banes.chris.tivi.data.entities.Episode
 import me.banes.chris.tivi.data.entities.MyShowsEntry
 import me.banes.chris.tivi.data.entities.PopularEntry
+import me.banes.chris.tivi.data.entities.Season
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.data.entities.TraktUser
 import me.banes.chris.tivi.data.entities.TrendingEntry
@@ -39,9 +41,11 @@ import me.banes.chris.tivi.data.entities.WatchedEntry
             PopularEntry::class,
             TraktUser::class,
             WatchedEntry::class,
-            MyShowsEntry::class
+            MyShowsEntry::class,
+            Season::class,
+            Episode::class
         ],
-        version = 10
+        version = 11
 )
 @TypeConverters(TiviTypeConverters::class)
 abstract class TiviDatabase : RoomDatabase() {
