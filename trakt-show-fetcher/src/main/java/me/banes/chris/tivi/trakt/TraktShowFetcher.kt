@@ -93,7 +93,10 @@ class TraktShowFetcher @Inject constructor(
                         updateProperty(this::_genres, traktShow.genres?.joinToString(","))
                         lastTraktUpdate = OffsetDateTime.now()
                     }
+                    showDao.insertOrUpdate(it)
                 }
-                .map(showDao::insertOrUpdateShow)
+                .flatMapMaybe(showDao::getShowWithIdMaybe)
+                .toSingle()
+
     }
 }

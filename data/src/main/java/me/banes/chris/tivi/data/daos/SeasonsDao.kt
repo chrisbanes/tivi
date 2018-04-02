@@ -16,27 +16,8 @@
 
 package me.banes.chris.tivi.data.daos
 
-import android.arch.paging.DataSource
 import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Query
-import android.arch.persistence.room.Transaction
-import io.reactivex.Flowable
-import io.reactivex.Single
 import me.banes.chris.tivi.data.entities.Season
-import me.banes.chris.tivi.data.entities.TrendingEntry
-import me.banes.chris.tivi.data.entities.TrendingListItem
 
 @Dao
-abstract class SeasonsDao : PaginatedEntryDao<TrendingEntry, TrendingListItem> {
-    @Query("SELECT * FROM seasons ORDER BY number ASC")
-    abstract fun entries(showId: Int): Flowable<List<Season>>
-
-    @Query("DELETE FROM trending_shows WHERE page = :page")
-    abstract override fun deletePage(page: Int)
-
-    @Query("DELETE FROM trending_shows")
-    abstract override fun deleteAll()
-
-    @Query("SELECT MAX(page) from trending_shows")
-    abstract override fun getLastPage(): Single<Int>
-}
+abstract class SeasonsDao : EntityDao<Season>

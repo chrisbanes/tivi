@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,22 @@
 
 package me.banes.chris.tivi.data.daos
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Query
-import io.reactivex.Flowable
-import me.banes.chris.tivi.data.entities.TraktUser
+import android.arch.persistence.room.Insert
+import android.arch.persistence.room.Update
+import me.banes.chris.tivi.data.entities.TiviEntity
 
-@Dao
-interface UserDao : EntityDao<TraktUser> {
-    @Query("SELECT * FROM users")
-    fun getTraktUser(): Flowable<TraktUser>
+interface EntityDao<in E : TiviEntity> {
+    @Insert
+    fun insert(entity: E): Long
+
+    @Update
+    fun update(entity: E)
+
+    fun insertOrUpdate(entity: E): Long = when {
+        entity.id == null -> insert(entity)
+        else -> {
+            update(entity)
+            entity.id!!
+        }
+    }
 }

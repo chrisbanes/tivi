@@ -51,7 +51,7 @@ class TmdbShowFetcher @Inject constructor(
                         updateProperty(this::homepage, tmdbShow.homepage)
                         lastTmdbUpdate = OffsetDateTime.now()
                     }
-                    showDao.insertOrUpdateShow(show)
+                    showDao.insertOrUpdate(show)
                 }
                 .toCompletable()
     }

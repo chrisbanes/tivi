@@ -66,7 +66,7 @@ class UserMeCall @Inject constructor(
                 }
     }
 
-    private fun saveEntry(show: TraktUser) {
-        dao.insertUser(show)
+    private fun saveEntry(user: TraktUser) {
+        dao.insertOrUpdate(user)
     }
 }
