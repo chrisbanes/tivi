@@ -97,6 +97,5 @@ class TraktShowFetcher @Inject constructor(
                 }
                 .flatMapMaybe(showDao::getShowWithIdMaybe)
                 .toSingle()
-
     }
 }
