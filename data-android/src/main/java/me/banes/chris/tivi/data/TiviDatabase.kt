@@ -19,8 +19,10 @@ package me.banes.chris.tivi.data
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
+import me.banes.chris.tivi.data.daos.EpisodesDao
 import me.banes.chris.tivi.data.daos.MyShowsDao
 import me.banes.chris.tivi.data.daos.PopularDao
+import me.banes.chris.tivi.data.daos.SeasonsDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.daos.TrendingDao
 import me.banes.chris.tivi.data.daos.UserDao
@@ -55,4 +57,6 @@ abstract class TiviDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun watchedDao(): WatchedDao
     abstract fun myShowsDao(): MyShowsDao
+    abstract fun seasonsDao(): SeasonsDao
+    abstract fun episodesDao(): EpisodesDao
 }

@@ -21,8 +21,10 @@ import android.content.Context
 import android.os.Debug
 import dagger.Module
 import dagger.Provides
+import me.banes.chris.tivi.data.daos.EpisodesDao
 import me.banes.chris.tivi.data.daos.MyShowsDao
 import me.banes.chris.tivi.data.daos.PopularDao
+import me.banes.chris.tivi.data.daos.SeasonsDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.daos.TrendingDao
 import me.banes.chris.tivi.data.daos.UserDao
@@ -59,6 +61,12 @@ class DatabaseModule {
 
     @Provides
     fun provideMyShowsDao(db: TiviDatabase): MyShowsDao = db.myShowsDao()
+
+    @Provides
+    fun provideSeasonsDao(db: TiviDatabase): SeasonsDao = db.seasonsDao()
+
+    @Provides
+    fun provideEpisodesDao(db: TiviDatabase): EpisodesDao = db.episodesDao()
 
     @Singleton
     @Provides
