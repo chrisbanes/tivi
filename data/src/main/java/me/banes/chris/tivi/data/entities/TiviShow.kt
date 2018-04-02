@@ -61,8 +61,7 @@ data class TiviShow(
     }
 
     fun needsUpdateFromTrakt(): Boolean {
-        // TODO implement this
-        return false
+        return traktId != null && (lastTraktUpdate?.isBefore(OffsetDateTime.now().minusDays(1)) != false)
     }
 
     fun <T> updateProperty(entityVar: KMutableProperty0<T?>, updateVal: T?) {
