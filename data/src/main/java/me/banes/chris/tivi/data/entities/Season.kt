@@ -22,10 +22,10 @@ import android.arch.persistence.room.ForeignKey
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.OffsetDateTime
-import kotlin.reflect.KMutableProperty0
 
 @Entity(tableName = "seasons",
         indices = [
+            Index(value = ["show_id"]),
             Index(value = ["trakt_id"], unique = true),
             Index(value = ["tmdb_id"], unique = true)
         ],
@@ -37,10 +37,10 @@ import kotlin.reflect.KMutableProperty0
                     onDelete = ForeignKey.CASCADE)
         ])
 data class Season(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") var id: Long? = null,
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override var id: Long? = null,
     @ColumnInfo(name = "show_id") val showId: Long,
-    @ColumnInfo(name = "trakt_id") var traktId: Int? = null,
-    @ColumnInfo(name = "tmdb_id") var tmdbId: Int? = null,
+    @ColumnInfo(name = "trakt_id") override val traktId: Int? = null,
+    @ColumnInfo(name = "tmdb_id") override val tmdbId: Int? = null,
     @ColumnInfo(name = "title") var title: String? = null,
     @ColumnInfo(name = "overview") var summary: String? = null,
     @ColumnInfo(name = "number") var number: Int = 0,
@@ -52,20 +52,6 @@ data class Season(
     @ColumnInfo(name = "tmdb_poster_path") var tmdbPosterPath: String? = null,
     @ColumnInfo(name = "tmdb_backdrop_path") var tmdbBackdropPath: String? = null,
 
-    @ColumnInfo(name = "trakt_updated") var lastTraktUpdate: OffsetDateTime? = null,
-    @ColumnInfo(name = "tmdb_updated") var lastTmdbUpdate: OffsetDateTime? = null
-) {
-    fun needsUpdateFromTmdb(): Boolean {
-        return tmdbId != null && (lastTmdbUpdate?.isBefore(OffsetDateTime.now().minusDays(1)) != false)
-    }
-
-    fun needsUpdateFromTrakt(): Boolean {
-        return traktId != null && (lastTraktUpdate?.isBefore(OffsetDateTime.now().minusDays(1)) != false)
-    }
-
-    fun <T> updateProperty(entityVar: KMutableProperty0<T?>, updateVal: T?) {
-        when {
-            updateVal != null -> entityVar.set(updateVal)
-        }
-    }
-}
+    @ColumnInfo(name = "trakt_updated") override val lastTraktUpdate: OffsetDateTime? = null,
+    @ColumnInfo(name = "tmdb_updated") override val lastTmdbUpdate: OffsetDateTime? = null
+) : TiviEntity, TmdbIdEntity, TraktIdEntity
