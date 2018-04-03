@@ -16,14 +16,17 @@
 
 package me.banes.chris.tivi.data.daos
 
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.Update
 import me.banes.chris.tivi.data.entities.TiviEntity
+import javax.inject.Inject
+import javax.inject.Singleton
 
-interface EntityDao<in E : TiviEntity> {
-    @Insert
-    fun insert(entity: E): Long
-
-    @Update
-    fun update(entity: E)
+@Singleton
+class EntityInserter @Inject constructor() {
+    fun <E : TiviEntity> insertOrUpdate(dao: EntityDao<E>, entity: E): Long = when {
+        entity.id == null -> dao.insert(entity)
+        else -> {
+            dao.update(entity)
+            entity.id!!
+        }
+    }
 }

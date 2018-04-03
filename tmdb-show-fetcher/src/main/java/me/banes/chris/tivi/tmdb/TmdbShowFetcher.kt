@@ -18,6 +18,7 @@ package me.banes.chris.tivi.tmdb
 
 import com.uwetrottmann.tmdb2.Tmdb
 import io.reactivex.Completable
+import me.banes.chris.tivi.data.daos.EntityInserter
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.toRxSingle
@@ -33,7 +34,8 @@ import javax.inject.Singleton
 class TmdbShowFetcher @Inject constructor(
     private val showDao: TiviShowDao,
     private val tmdb: Tmdb,
-    private val schedulers: AppRxSchedulers
+    private val schedulers: AppRxSchedulers,
+    private val entityInserter: EntityInserter
 ) {
     fun updateShow(tmdbId: Int): Completable {
         return tmdb.tvService().tv(tmdbId).toRxSingle()
@@ -51,7 +53,7 @@ class TmdbShowFetcher @Inject constructor(
                         updateProperty(this::homepage, tmdbShow.homepage)
                         lastTmdbUpdate = OffsetDateTime.now()
                     }
-                    showDao.insertOrUpdate(show)
+                    entityInserter.insertOrUpdate(showDao, show)
                 }
                 .toCompletable()
     }
