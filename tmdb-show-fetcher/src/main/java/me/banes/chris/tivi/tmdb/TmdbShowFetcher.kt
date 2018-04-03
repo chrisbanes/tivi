@@ -42,20 +42,24 @@ class TmdbShowFetcher @Inject constructor(
                 .subscribeOn(schedulers.network)
                 .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry, schedulers.network))
                 .observeOn(schedulers.database)
-                .map { tmdbShow ->
-                    val show = showDao.getShowWithTmdbIdSync(tmdbShow.id) ?: TiviShow()
-                    show.apply {
-                        updateProperty(this::tmdbId, tmdbShow.id)
-                        updateProperty(this::title, tmdbShow.name)
-                        updateProperty(this::summary, tmdbShow.overview)
-                        updateProperty(this::tmdbBackdropPath, tmdbShow.backdrop_path)
-                        updateProperty(this::tmdbPosterPath, tmdbShow.poster_path)
-                        updateProperty(this::homepage, tmdbShow.homepage)
-                        lastTmdbUpdate = OffsetDateTime.now()
-                    }
-                    entityInserter.insertOrUpdate(showDao, show)
+                .flatMapMaybe { tmdbShow ->
+                    showDao.getShowWithTmdbIdMaybe(tmdbShow.id)
+                            .subscribeOn(schedulers.database)
+                            .defaultIfEmpty(TiviShow())
+                            .map {
+                                it.apply {
+                                    updateProperty(this::tmdbId, tmdbShow.id)
+                                    updateProperty(this::title, tmdbShow.name)
+                                    updateProperty(this::summary, tmdbShow.overview)
+                                    updateProperty(this::tmdbBackdropPath, tmdbShow.backdrop_path)
+                                    updateProperty(this::tmdbPosterPath, tmdbShow.poster_path)
+                                    updateProperty(this::homepage, tmdbShow.homepage)
+                                    lastTmdbUpdate = OffsetDateTime.now()
+                                }
+                                entityInserter.insertOrUpdate(showDao, it)
+                            }
                 }
-                .toCompletable()
+                .ignoreElement()
     }
 
     private fun shouldRetry(throwable: Throwable): Boolean = when (throwable) {
