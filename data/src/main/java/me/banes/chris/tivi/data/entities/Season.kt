@@ -38,20 +38,17 @@ import org.threeten.bp.OffsetDateTime
         ])
 data class Season(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override var id: Long? = null,
-    @ColumnInfo(name = "show_id") val showId: Long,
-    @ColumnInfo(name = "trakt_id") override val traktId: Int? = null,
-    @ColumnInfo(name = "tmdb_id") override val tmdbId: Int? = null,
-    @ColumnInfo(name = "title") var title: String? = null,
+    @ColumnInfo(name = "show_id") var showId: Long? = null,
+    @ColumnInfo(name = "trakt_id") override var traktId: Int? = null,
+    @ColumnInfo(name = "tmdb_id") override var tmdbId: Int? = null,
     @ColumnInfo(name = "overview") var summary: String? = null,
-    @ColumnInfo(name = "number") var number: Int = 0,
-    @ColumnInfo(name = "ep_count") var episodeCount: Int = 0,
-    @ColumnInfo(name = "ep_aired") var airedEpisodes: Int = 0,
+    @ColumnInfo(name = "number") var number: Int? = null,
+    @ColumnInfo(name = "ep_count") var episodeCount: Int? = null,
+    @ColumnInfo(name = "ep_aired") var airedEpisodes: Int? = null,
     @ColumnInfo(name = "rating") var rating: Float? = null,
-    @ColumnInfo(name = "votes") var votes: Int = 0,
-
+    @ColumnInfo(name = "votes") var votes: Int? = null,
     @ColumnInfo(name = "tmdb_poster_path") var tmdbPosterPath: String? = null,
     @ColumnInfo(name = "tmdb_backdrop_path") var tmdbBackdropPath: String? = null,
-
-    @ColumnInfo(name = "trakt_updated") override val lastTraktUpdate: OffsetDateTime? = null,
-    @ColumnInfo(name = "tmdb_updated") override val lastTmdbUpdate: OffsetDateTime? = null
+    @ColumnInfo(name = "trakt_updated") override var lastTraktUpdate: OffsetDateTime? = null,
+    @ColumnInfo(name = "tmdb_updated") override var lastTmdbUpdate: OffsetDateTime? = null
 ) : TiviEntity, TmdbIdEntity, TraktIdEntity

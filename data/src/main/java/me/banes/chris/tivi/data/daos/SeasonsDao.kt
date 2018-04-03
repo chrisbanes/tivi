@@ -19,6 +19,7 @@ package me.banes.chris.tivi.data.daos
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import io.reactivex.Flowable
+import io.reactivex.Maybe
 import me.banes.chris.tivi.data.entities.Season
 import me.banes.chris.tivi.data.entities.SeasonWithEpisodes
 
@@ -26,4 +27,13 @@ import me.banes.chris.tivi.data.entities.SeasonWithEpisodes
 abstract class SeasonsDao : EntityDao<Season> {
     @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number ASC")
     abstract fun seasonsWithEpisodesForShowId(showId: Long): Flowable<List<SeasonWithEpisodes>>
+
+    @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number ASC")
+    abstract fun seasonsForShowId(showId: Long): Maybe<List<Season>>
+
+    @Query("SELECT * FROM seasons WHERE id = :id")
+    abstract fun seasonWithId(id: Long): Maybe<Season>
+
+    @Query("SELECT * FROM seasons WHERE trakt_id = :traktId AND number = :seasonNumber")
+    abstract fun seasonWithShowTraktId(traktId: Int, seasonNumber: Number): Maybe<Season>
 }

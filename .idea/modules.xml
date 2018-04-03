@@ -14,6 +14,7 @@
       <module fileurl="file://$PROJECT_DIR$/tmdb-show-fetcher/tmdb-show-fetcher.iml" filepath="$PROJECT_DIR$/tmdb-show-fetcher/tmdb-show-fetcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/trakt/trakt.iml" filepath="$PROJECT_DIR$/trakt/trakt.iml" />
       <module fileurl="file://$PROJECT_DIR$/trakt-auth/trakt-auth.iml" filepath="$PROJECT_DIR$/trakt-auth/trakt-auth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trakt-season-fetcher/trakt-season-fetcher.iml" filepath="$PROJECT_DIR$/trakt-season-fetcher/trakt-season-fetcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/trakt-show-fetcher/trakt-show-fetcher.iml" filepath="$PROJECT_DIR$/trakt-show-fetcher/trakt-show-fetcher.iml" />
     </modules>
   </component>
