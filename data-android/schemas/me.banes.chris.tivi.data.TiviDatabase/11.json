@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 11,
-    "identityHash": "845f4b398a3bc05492fcdfca330267d8",
+    "identityHash": "7b8cc449d9e942df66658837a470e8b8",
     "entities": [
       {
         "tableName": "shows",
@@ -413,7 +413,7 @@
       },
       {
         "tableName": "seasons",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `show_id` INTEGER NOT NULL, `trakt_id` INTEGER, `tmdb_id` INTEGER, `title` TEXT, `overview` TEXT, `number` INTEGER NOT NULL, `ep_count` INTEGER NOT NULL, `ep_aired` INTEGER NOT NULL, `rating` REAL, `votes` INTEGER NOT NULL, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `trakt_updated` TEXT, `tmdb_updated` TEXT, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `show_id` INTEGER, `trakt_id` INTEGER, `tmdb_id` INTEGER, `overview` TEXT, `number` INTEGER, `ep_count` INTEGER, `ep_aired` INTEGER, `rating` REAL, `votes` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `trakt_updated` TEXT, `tmdb_updated` TEXT, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -425,7 +425,7 @@
             "fieldPath": "showId",
             "columnName": "show_id",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "traktId",
@@ -440,12 +440,6 @@
             "notNull": false
           },
           {
-            "fieldPath": "title",
-            "columnName": "title",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
             "fieldPath": "summary",
             "columnName": "overview",
             "affinity": "TEXT",
@@ -455,19 +449,19 @@
             "fieldPath": "number",
             "columnName": "number",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "episodeCount",
             "columnName": "ep_count",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "airedEpisodes",
             "columnName": "ep_aired",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "rating",
@@ -479,7 +473,7 @@
             "fieldPath": "votes",
             "columnName": "votes",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "tmdbPosterPath",
@@ -690,7 +684,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"845f4b398a3bc05492fcdfca330267d8\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"7b8cc449d9e942df66658837a470e8b8\")"
     ]
   }
 }

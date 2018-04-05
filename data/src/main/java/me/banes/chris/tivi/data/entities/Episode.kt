@@ -39,9 +39,9 @@ import org.threeten.bp.OffsetDateTime
 )
 data class Episode(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override var id: Long? = null,
-    @ColumnInfo(name = "season_id") val seasonId: Long,
-    @ColumnInfo(name = "trakt_id") override val traktId: Int? = null,
-    @ColumnInfo(name = "tmdb_id") override val tmdbId: Int? = null,
+    @ColumnInfo(name = "season_id") var seasonId: Long,
+    @ColumnInfo(name = "trakt_id") override var traktId: Int? = null,
+    @ColumnInfo(name = "tmdb_id") override var tmdbId: Int? = null,
     @ColumnInfo(name = "title") var title: String? = null,
     @ColumnInfo(name = "overview") var summary: String? = null,
     @ColumnInfo(name = "season") var season: Int = 0,
@@ -50,6 +50,6 @@ data class Episode(
     @ColumnInfo(name = "votes") var votes: Int = 0,
     @ColumnInfo(name = "tmdb_poster_path") var tmdbPosterPath: String? = null,
     @ColumnInfo(name = "tmdb_backdrop_path") var tmdbBackdropPath: String? = null,
-    @ColumnInfo(name = "trakt_updated") override val lastTraktUpdate: OffsetDateTime? = null,
-    @ColumnInfo(name = "tmdb_updated") override val lastTmdbUpdate: OffsetDateTime? = null
+    @ColumnInfo(name = "trakt_updated") override var lastTraktUpdate: OffsetDateTime? = null,
+    @ColumnInfo(name = "tmdb_updated") override var lastTmdbUpdate: OffsetDateTime? = null
 ) : TiviEntity, TraktIdEntity, TmdbIdEntity

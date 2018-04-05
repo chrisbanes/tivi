@@ -19,6 +19,7 @@ package me.banes.chris.tivi.data.entities
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
+import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.OffsetDateTime
@@ -51,4 +52,6 @@ data class Season(
     @ColumnInfo(name = "tmdb_backdrop_path") var tmdbBackdropPath: String? = null,
     @ColumnInfo(name = "trakt_updated") override var lastTraktUpdate: OffsetDateTime? = null,
     @ColumnInfo(name = "tmdb_updated") override var lastTmdbUpdate: OffsetDateTime? = null
-) : TiviEntity, TmdbIdEntity, TraktIdEntity
+) : TiviEntity, TmdbIdEntity, TraktIdEntity {
+    @Ignore constructor() : this(null)
+}
