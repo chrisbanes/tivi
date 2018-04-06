@@ -48,6 +48,7 @@ data class Season(
     @ColumnInfo(name = "ep_count") var episodeCount: Int? = null,
     @ColumnInfo(name = "ep_aired") var airedEpisodes: Int? = null,
     @ColumnInfo(name = "rating") var rating: Float? = null,
+    @ColumnInfo(name = "network") var network: String? = null,
     @ColumnInfo(name = "votes") var votes: Int? = null,
     @ColumnInfo(name = "tmdb_poster_path") var tmdbPosterPath: String? = null,
     @ColumnInfo(name = "tmdb_backdrop_path") var tmdbBackdropPath: String? = null,

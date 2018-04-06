@@ -76,11 +76,13 @@ class TraktSeasonFetcher @Inject constructor(
                         updateProperty(this::traktId, traktSeason.ids.trakt)
                         updateProperty(this::tmdbId, traktSeason.ids.tmdb)
                         updateProperty(this::number, traktSeason.number)
+                        updateProperty(this::title, traktSeason.title)
                         updateProperty(this::summary, traktSeason.overview)
                         updateProperty(this::rating, traktSeason.rating?.toFloat())
                         updateProperty(this::votes, traktSeason.votes)
                         updateProperty(this::episodeCount, traktSeason.episode_count)
                         updateProperty(this::airedEpisodes, traktSeason.aired_episodes)
+                        updateProperty(this::network, traktSeason.network)
                         lastTraktUpdate = OffsetDateTime.now()
                     }
                     entityInserter.insertOrUpdate(seasonDao, it)

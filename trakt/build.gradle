@@ -24,7 +24,7 @@ dependencies {
 
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
 
-    compile("com.uwetrottmann.trakt5:trakt-java:5.8.0", {
+    compile("com.uwetrottmann.trakt5:trakt-java:5.8.1", {
         // Exclude this since we explicitly depend on threetenbp:no-tzdb above
         exclude group: 'org.threeten', module: 'threetenbp'
     })
