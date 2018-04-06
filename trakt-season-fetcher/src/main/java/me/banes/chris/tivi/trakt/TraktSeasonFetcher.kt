@@ -42,20 +42,23 @@ class TraktSeasonFetcher @Inject constructor(
     private val schedulers: AppRxSchedulers,
     private val entityInserter: EntityInserter
 ) {
-    fun loadShowSeasons(showTraktId: Int): Maybe<List<Season>> {
-        val dbSource = showDao.getShowWithTraktIdMaybe(showTraktId)
+    fun loadShowSeasons(showId: Long): Maybe<List<Season>> {
+        val dbSource = seasonDao.seasonsForShowId(showId)
                 .subscribeOn(schedulers.database)
-                .observeOn(schedulers.database)
-                .flatMap { seasonDao.seasonsForShowId(it.id!!) }
+                .filter { it.isNotEmpty() }
 
-        val networkSource = trakt.seasons().summary(showTraktId.toString(), Extended.FULL).toRxMaybe()
-                        .subscribeOn(schedulers.network)
-                        .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry, schedulers.network))
-                        .toFlowable()
-                        .flatMapIterable { it }
-                        .flatMapSingle(this::upsertSeason)
-                        .toList()
-                        .toMaybe()
+        val networkSource = showDao.getShowWithIdMaybe(showId)
+                .subscribeOn(schedulers.database)
+                .flatMap {
+                    trakt.seasons().summary(it.traktId!!.toString(), Extended.FULL).toRxMaybe()
+                            .subscribeOn(schedulers.network)
+                            .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry, schedulers.network))
+                            .toFlowable()
+                            .flatMapIterable { it }
+                            .flatMapSingle { upsertSeason(showId, it) }
+                            .toList()
+                            .toMaybe()
+                }
 
         return Maybe.concat(dbSource, networkSource).firstElement()
     }
@@ -66,7 +69,7 @@ class TraktSeasonFetcher @Inject constructor(
         else -> false
     }
 
-    private fun upsertSeason(traktSeason: TraktSeason): Single<Season> {
+    private fun upsertSeason(showId: Long, traktSeason: TraktSeason): Single<Season> {
         return seasonDao.seasonWithSeasonTraktId(traktSeason.ids.trakt)
                 .defaultIfEmpty(Season())
                 .subscribeOn(schedulers.database)

@@ -22,7 +22,6 @@ import me.banes.chris.tivi.calls.Call
 import me.banes.chris.tivi.data.daos.SeasonsDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.SeasonWithEpisodes
-import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.trakt.TraktSeasonFetcher
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
@@ -34,10 +33,7 @@ class ShowSeasonsCall @Inject constructor(
     private val traktSeasonFetcher: TraktSeasonFetcher
 ) : Call<Long, List<SeasonWithEpisodes>> {
     override fun refresh(param: Long): Completable {
-        return showDao.getShowWithIdMaybe(param)
-                .subscribeOn(schedulers.database)
-                .map(TiviShow::traktId)
-                .flatMap { traktSeasonFetcher.loadShowSeasons(it) }
+        return traktSeasonFetcher.loadShowSeasons(param)
                 .ignoreElement()
     }
 

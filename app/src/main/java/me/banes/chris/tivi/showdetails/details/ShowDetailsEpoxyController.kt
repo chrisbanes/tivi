@@ -16,8 +16,6 @@
 
 package me.banes.chris.tivi.showdetails.details
 
-/* ktlint-disable no-unused-imports */
-/* ktlint-disable no-unused-imports */
 import android.content.Context
 import android.view.View
 import com.airbnb.epoxy.Typed4EpoxyController
@@ -134,7 +132,7 @@ class ShowDetailsEpoxyController(
             seasons.forEach { season ->
                 seasonHeader {
                     id("season_${season.season!!.id}_header")
-                    title("Season ${season.season!!.number}")
+                    title(season.season?.title)
                     spanSizeOverride(TotalSpanOverride)
                 }
             }
