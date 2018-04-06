@@ -48,7 +48,7 @@ class TraktSeasonFetcher @Inject constructor(
                 .observeOn(schedulers.database)
                 .flatMap { seasonDao.seasonsForShowId(it.id!!) }
 
-        val networkSource = trakt.seasons().summary(showTraktId.toString(), Extended.NOSEASONS).toRxMaybe()
+        val networkSource = trakt.seasons().summary(showTraktId.toString(), Extended.FULL).toRxMaybe()
                         .subscribeOn(schedulers.network)
                         .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry, schedulers.network))
                         .toFlowable()
@@ -67,8 +67,8 @@ class TraktSeasonFetcher @Inject constructor(
     }
 
     private fun upsertSeason(traktSeason: TraktSeason): Single<Season> {
-        // TODO check that the season trakt id == show trakt id
-        return seasonDao.seasonWithShowTraktId(traktSeason.ids.trakt, traktSeason.number)
+        return seasonDao.seasonWithSeasonTraktId(traktSeason.ids.trakt)
+                .defaultIfEmpty(Season())
                 .subscribeOn(schedulers.database)
                 .map {
                     it.apply {

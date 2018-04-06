@@ -42,6 +42,7 @@ data class Season(
     @ColumnInfo(name = "show_id") var showId: Long? = null,
     @ColumnInfo(name = "trakt_id") override var traktId: Int? = null,
     @ColumnInfo(name = "tmdb_id") override var tmdbId: Int? = null,
+    @ColumnInfo(name = "title") var title: String? = null,
     @ColumnInfo(name = "overview") var summary: String? = null,
     @ColumnInfo(name = "number") var number: Int? = null,
     @ColumnInfo(name = "ep_count") var episodeCount: Int? = null,

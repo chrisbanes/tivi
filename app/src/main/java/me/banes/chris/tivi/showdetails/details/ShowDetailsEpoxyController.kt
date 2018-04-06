@@ -16,19 +16,21 @@
 
 package me.banes.chris.tivi.showdetails.details
 
+/* ktlint-disable no-unused-imports */
+/* ktlint-disable no-unused-imports */
 import android.content.Context
 import android.view.View
-import com.airbnb.epoxy.Typed3EpoxyController
+import com.airbnb.epoxy.Typed4EpoxyController
 import me.banes.chris.tivi.PosterGridItemBindingModel_
 import me.banes.chris.tivi.R
+import me.banes.chris.tivi.data.entities.SeasonWithEpisodes
 import me.banes.chris.tivi.data.entities.TiviShow
-/* ktlint-disable no-unused-imports */
 import me.banes.chris.tivi.detailsBadge
 import me.banes.chris.tivi.detailsSummary
 import me.banes.chris.tivi.detailsTitle
 import me.banes.chris.tivi.emptyState
 import me.banes.chris.tivi.header
-/* ktlint-disable no-unused-imports */
+import me.banes.chris.tivi.seasonHeader
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.epoxy.TotalSpanOverride
 import me.banes.chris.tivi.ui.epoxy.carousel
@@ -37,13 +39,18 @@ import me.banes.chris.tivi.ui.epoxy.withModelsFrom
 class ShowDetailsEpoxyController(
     private val context: Context,
     private val callbacks: Callbacks
-) : Typed3EpoxyController<TiviShow, List<TiviShow>, TmdbImageUrlProvider>() {
+) : Typed4EpoxyController<TiviShow, List<TiviShow>, List<SeasonWithEpisodes>, TmdbImageUrlProvider>() {
 
     interface Callbacks {
         fun onRelatedShowClicked(show: TiviShow, view: View)
     }
 
-    override fun buildModels(show: TiviShow, related: List<TiviShow>, tmdbImageUrlProvider: TmdbImageUrlProvider) {
+    override fun buildModels(
+        show: TiviShow,
+        related: List<TiviShow>,
+        seasons: List<SeasonWithEpisodes>,
+        tmdbImageUrlProvider: TmdbImageUrlProvider
+    ) {
         detailsTitle {
             id("title")
             title(show.title)
@@ -119,6 +126,16 @@ class ShowDetailsEpoxyController(
                             .clickListener { view ->
                                 callbacks.onRelatedShowClicked(relatedShow, view)
                             }
+                }
+            }
+        }
+
+        if (seasons.isNotEmpty()) {
+            seasons.forEach { season ->
+                seasonHeader {
+                    id("season_${season.season!!.id}_header")
+                    title("Season ${season.season!!.number}")
+                    spanSizeOverride(TotalSpanOverride)
                 }
             }
         }

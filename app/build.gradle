@@ -145,6 +145,7 @@ dependencies {
     implementation project(":trakt-auth")
     implementation project(":tmdb")
     implementation project(":show-fetcher")
+    implementation project(":season-fetcher")
     implementation project(":calls")
 
     implementation "android.arch.lifecycle:extensions:${versions.arch_lifecycle}"
