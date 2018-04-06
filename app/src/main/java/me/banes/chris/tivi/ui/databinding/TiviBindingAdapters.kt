@@ -20,7 +20,7 @@ import android.databinding.BindingAdapter
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.view.doOnLayout
+import androidx.core.view.doOnLayout
 import me.banes.chris.tivi.GlideApp
 import me.banes.chris.tivi.data.entities.Genre
 import me.banes.chris.tivi.extensions.loadFromUrl

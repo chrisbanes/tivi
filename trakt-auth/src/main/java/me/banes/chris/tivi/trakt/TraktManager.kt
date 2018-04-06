@@ -17,7 +17,7 @@
 package me.banes.chris.tivi.trakt
 
 import android.content.SharedPreferences
-import androidx.content.edit
+import androidx.core.content.edit
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
 import io.reactivex.Flowable

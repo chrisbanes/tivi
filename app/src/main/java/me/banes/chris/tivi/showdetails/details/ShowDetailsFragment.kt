@@ -28,7 +28,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.view.doOnLayout
+import androidx.core.view.doOnLayout
 import kotlinx.android.synthetic.main.fragment_show_details.*
 import me.banes.chris.tivi.GlideApp
 import me.banes.chris.tivi.R
