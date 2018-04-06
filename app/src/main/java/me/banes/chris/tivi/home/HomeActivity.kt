@@ -23,7 +23,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.view.ViewGroup
-import androidx.view.forEach
+import androidx.core.view.forEach
 import kotlinx.android.synthetic.main.activity_home.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.SharedElementHelper

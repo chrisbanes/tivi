@@ -28,8 +28,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.view.doOnLayout
-import androidx.view.updatePadding
+import androidx.core.view.doOnLayout
+import androidx.core.view.updatePadding
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment

@@ -18,13 +18,13 @@
 buildscript {
     ext.versions = [
             'android_gradle'   : '3.1.0',
-            'support_library'  : '27.1.0',
+            'support_library'  : '27.1.1',
             'constraint_layout': '1.1.0-beta6',
             'arch'             : '1.1.0',
             'arch_lifecycle'   : '1.1.1',
-            'arch_paging'      : '1.0.0-alpha7',
-            'arch_room'        : '1.1.0-beta1',
-            'core_ktx'         : '0.2',
+            'arch_paging'      : '1.0.0-beta1',
+            'arch_room'        : '1.1.0-beta2',
+            'core_ktx'         : '0.3',
             'kotlin'           : '1.2.31',
             'espresso'         : '3.0.1',
             'dagger'           : '2.15',

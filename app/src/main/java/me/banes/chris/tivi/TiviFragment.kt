@@ -19,7 +19,7 @@ package me.banes.chris.tivi
 import android.os.Bundle
 import android.support.transition.TransitionInflater
 import android.view.ViewGroup
-import androidx.view.doOnPreDraw
+import androidx.core.view.doOnPreDraw
 import dagger.android.support.DaggerFragment
 
 /**
