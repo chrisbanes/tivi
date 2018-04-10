@@ -26,9 +26,7 @@ import org.threeten.bp.OffsetDateTime
 
 @Entity(tableName = "seasons",
         indices = [
-            Index(value = ["show_id"]),
-            Index(value = ["trakt_id"], unique = true),
-            Index(value = ["tmdb_id"], unique = true)
+            Index(value = ["show_id", "number"], unique = true)
         ],
         foreignKeys = [
             ForeignKey(entity = TiviShow::class,

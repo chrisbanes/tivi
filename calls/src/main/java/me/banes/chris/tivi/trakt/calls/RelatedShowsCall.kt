@@ -45,7 +45,7 @@ class RelatedShowsCall @Inject constructor(
                             .subscribeOn(schedulers.network)
                             .doOnSuccess {
                                 traktState.setRelatedShowsForTraktId(traktId, it.map { it.ids.trakt })
-                                it.forEach { showFetcher.loadShowAsync(it.ids.trakt) }
+                                it.forEach { showFetcher.loadAsync(it.ids.trakt) }
                             }
                 }
                 .toCompletable()

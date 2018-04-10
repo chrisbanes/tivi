@@ -28,6 +28,7 @@ import me.banes.chris.tivi.detailsSummary
 import me.banes.chris.tivi.detailsTitle
 import me.banes.chris.tivi.emptyState
 import me.banes.chris.tivi.header
+import me.banes.chris.tivi.seasonEpisodeItem
 import me.banes.chris.tivi.seasonHeader
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.epoxy.TotalSpanOverride
@@ -134,6 +135,13 @@ class ShowDetailsEpoxyController(
                     id("season_${season.season!!.id}_header")
                     title(season.season?.title)
                     spanSizeOverride(TotalSpanOverride)
+                }
+
+                season.episodes?.forEach { episode ->
+                    seasonEpisodeItem {
+                        id("episode_${episode.id}")
+                        episode(episode)
+                    }
                 }
             }
         }

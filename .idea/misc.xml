@@ -30,4 +30,11 @@
   <component name="ProjectType">
     <option name="id" value="Android" />
   </component>
+  <component name="SuppressABINotification">
+    <option name="modulesWithSuppressedNotConfigured">
+      <set>
+        <option value="season-fetcher" />
+      </set>
+    </option>
+  </component>
 </project>

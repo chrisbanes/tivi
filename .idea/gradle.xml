@@ -14,6 +14,7 @@
             <option value="$PROJECT_DIR$/calls" />
             <option value="$PROJECT_DIR$/data" />
             <option value="$PROJECT_DIR$/data-android" />
+            <option value="$PROJECT_DIR$/episode-fetcher" />
             <option value="$PROJECT_DIR$/season-fetcher" />
             <option value="$PROJECT_DIR$/show-fetcher" />
             <option value="$PROJECT_DIR$/tmdb" />

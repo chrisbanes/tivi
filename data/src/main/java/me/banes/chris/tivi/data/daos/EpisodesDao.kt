@@ -17,7 +17,18 @@
 package me.banes.chris.tivi.data.daos
 
 import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Query
+import io.reactivex.Maybe
 import me.banes.chris.tivi.data.entities.Episode
 
 @Dao
-abstract class EpisodesDao : EntityDao<Episode>
+abstract class EpisodesDao : EntityDao<Episode> {
+    @Query("SELECT * from episodes WHERE season_id = :seasonId ORDER BY number")
+    abstract fun episodesFromSeasonId(seasonId: Long): Maybe<List<Episode>>
+
+    @Query("SELECT * from episodes WHERE trakt_id = :traktId")
+    abstract fun episodeWithTraktId(traktId: Int): Maybe<Episode>
+
+    @Query("SELECT * from episodes WHERE id = :id")
+    abstract fun episodeWithId(id: Long): Maybe<Episode>
+}

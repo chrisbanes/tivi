@@ -54,6 +54,6 @@ class PopularCall @Inject constructor(
     }
 
     override fun loadShow(response: ItemWithIndex<Show>): Single<TiviShow> {
-        return showFetcher.loadShow(response.item.ids.trakt, response.item)
+        return showFetcher.load(response.item.ids.trakt, response.item)
     }
 }

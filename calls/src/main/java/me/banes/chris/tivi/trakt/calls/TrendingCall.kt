@@ -52,6 +52,6 @@ class TrendingCall @Inject constructor(
     }
 
     override fun loadShow(response: TrendingShow): Single<TiviShow> {
-        return showFetcher.loadShow(response.show.ids.trakt, response.show)
+        return showFetcher.load(response.show.ids.trakt, response.show)
     }
 }

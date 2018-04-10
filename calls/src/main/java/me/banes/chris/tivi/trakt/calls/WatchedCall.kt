@@ -58,7 +58,7 @@ class WatchedCall @Inject constructor(
                 .toFlowable()
                 .flatMapIterable { it }
                 .flatMapSingle { traktEntry ->
-                    showFetcher.loadShow(traktEntry.show.ids.trakt, traktEntry.show)
+                    showFetcher.load(traktEntry.show.ids.trakt, traktEntry.show)
                             .map {
                                 WatchedEntry(null, it.id!!, traktEntry.last_watched_at)
                             }

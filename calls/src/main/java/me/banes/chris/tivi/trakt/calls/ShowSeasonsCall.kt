@@ -18,23 +18,20 @@ package me.banes.chris.tivi.trakt.calls
 
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import me.banes.chris.tivi.SeasonFetcher
 import me.banes.chris.tivi.calls.Call
 import me.banes.chris.tivi.data.daos.SeasonsDao
-import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.SeasonWithEpisodes
-import me.banes.chris.tivi.trakt.TraktSeasonFetcher
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
 class ShowSeasonsCall @Inject constructor(
-    private val showDao: TiviShowDao,
     private val seasonsDao: SeasonsDao,
     private val schedulers: AppRxSchedulers,
-    private val traktSeasonFetcher: TraktSeasonFetcher
+    private val seasonFetcher: SeasonFetcher
 ) : Call<Long, List<SeasonWithEpisodes>> {
     override fun refresh(param: Long): Completable {
-        return traktSeasonFetcher.loadShowSeasons(param)
-                .ignoreElement()
+        return seasonFetcher.load(param).ignoreElement()
     }
 
     override fun data(param: Long): Flowable<List<SeasonWithEpisodes>> {

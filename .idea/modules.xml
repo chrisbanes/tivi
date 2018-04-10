@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/calls/calls.iml" filepath="$PROJECT_DIR$/calls/calls.iml" />
       <module fileurl="file://$PROJECT_DIR$/data/data.iml" filepath="$PROJECT_DIR$/data/data.iml" />
       <module fileurl="file://$PROJECT_DIR$/data-android/data-android.iml" filepath="$PROJECT_DIR$/data-android/data-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/episode-fetcher/episode-fetcher.iml" filepath="$PROJECT_DIR$/episode-fetcher/episode-fetcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/season-fetcher/season-fetcher.iml" filepath="$PROJECT_DIR$/season-fetcher/season-fetcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/show-fetcher/show-fetcher.iml" filepath="$PROJECT_DIR$/show-fetcher/show-fetcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/tivi.iml" filepath="$PROJECT_DIR$/tivi.iml" />
