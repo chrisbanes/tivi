@@ -22,7 +22,7 @@ import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Single
 import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.api.ItemWithIndex
-import me.banes.chris.tivi.data.DatabaseTxRunner
+import me.banes.chris.tivi.data.DatabaseTransactionRunner
 import me.banes.chris.tivi.data.daos.PopularDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.PopularEntry
@@ -33,13 +33,13 @@ import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
 class PopularCall @Inject constructor(
-    databaseTxRunner: DatabaseTxRunner,
+    databaseTransactionRunner: DatabaseTransactionRunner,
     showDao: TiviShowDao,
     popularDao: PopularDao,
     private val showFetcher: ShowFetcher,
     private val trakt: TraktV2,
     schedulers: AppRxSchedulers
-) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularListItem, PopularDao>(databaseTxRunner, showDao, popularDao, schedulers) {
+) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularListItem, PopularDao>(databaseTransactionRunner, showDao, popularDao, schedulers) {
 
     override fun networkCall(page: Int): Single<List<ItemWithIndex<Show>>> {
         // We add one to the page since Trakt uses a 1-based index whereas we use 0-based

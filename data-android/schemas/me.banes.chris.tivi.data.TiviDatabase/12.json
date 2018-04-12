@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 12,
-    "identityHash": "9c8c75fc91389c95e6cdd32d84cc6804",
+    "identityHash": "b119b6ad7e9f7cd73b6de74d9e867b71",
     "entities": [
       {
         "tableName": "shows",
@@ -413,7 +413,7 @@
       },
       {
         "tableName": "seasons",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `show_id` INTEGER, `trakt_id` INTEGER, `tmdb_id` INTEGER, `title` TEXT, `overview` TEXT, `number` INTEGER, `ep_count` INTEGER, `ep_aired` INTEGER, `rating` REAL, `network` TEXT, `votes` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `trakt_updated` TEXT, `tmdb_updated` TEXT, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `show_id` INTEGER, `trakt_id` INTEGER, `tmdb_id` INTEGER, `title` TEXT, `overview` TEXT, `number` INTEGER, `ep_count` INTEGER, `ep_aired` INTEGER, `rating` REAL, `network` TEXT, `votes` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `trakt_updated` TEXT, `tmdb_updated` TEXT, `episodes_updated` TEXT, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -508,6 +508,12 @@
           {
             "fieldPath": "lastTmdbUpdate",
             "columnName": "tmdb_updated",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lastEpisodeUpdate",
+            "columnName": "episodes_updated",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -666,7 +672,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"9c8c75fc91389c95e6cdd32d84cc6804\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"b119b6ad7e9f7cd73b6de74d9e867b71\")"
     ]
   }
 }

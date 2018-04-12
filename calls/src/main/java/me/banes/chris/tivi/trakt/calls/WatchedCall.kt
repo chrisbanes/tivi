@@ -24,7 +24,7 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.calls.ListCall
-import me.banes.chris.tivi.data.DatabaseTxRunner
+import me.banes.chris.tivi.data.DatabaseTransactionRunner
 import me.banes.chris.tivi.data.daos.WatchedDao
 import me.banes.chris.tivi.data.entities.WatchedEntry
 import me.banes.chris.tivi.data.entities.WatchedListItem
@@ -33,7 +33,7 @@ import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
 class WatchedCall @Inject constructor(
-    private val databaseTxRunner: DatabaseTxRunner,
+    private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val watchDao: WatchedDao,
     private val showFetcher: ShowFetcher,
     private val trakt: TraktV2,
@@ -66,7 +66,7 @@ class WatchedCall @Inject constructor(
                 .toList()
                 .observeOn(schedulers.database)
                 .doOnSuccess {
-                    databaseTxRunner.runInTransaction {
+                    databaseTransactionRunner.runInTransaction {
                         watchDao.deleteAll()
                         it.forEach { watchDao.insert(it) }
                     }

@@ -21,7 +21,7 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 import me.banes.chris.tivi.calls.PaginatedCall
-import me.banes.chris.tivi.data.DatabaseTxRunner
+import me.banes.chris.tivi.data.DatabaseTransactionRunner
 import me.banes.chris.tivi.data.PaginatedEntry
 import me.banes.chris.tivi.data.daos.PaginatedEntryDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
@@ -31,7 +31,7 @@ import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
 
 abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>, out ED : PaginatedEntryDao<ET, LI>>(
-    private val databaseTxRunner: DatabaseTxRunner,
+    private val databaseTransactionRunner: DatabaseTransactionRunner,
     protected val showDao: TiviShowDao,
     private val entryDao: ED,
     protected val schedulers: AppRxSchedulers,
@@ -75,7 +75,7 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
     }
 
     private fun savePage(items: List<ET>, page: Int, resetOnSave: Boolean) {
-        databaseTxRunner.runInTransaction {
+        databaseTransactionRunner.runInTransaction {
             when {
                 resetOnSave -> entryDao.deleteAll()
                 else -> entryDao.deletePage(page)

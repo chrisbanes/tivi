@@ -51,7 +51,12 @@ data class Season(
     @ColumnInfo(name = "tmdb_poster_path") var tmdbPosterPath: String? = null,
     @ColumnInfo(name = "tmdb_backdrop_path") var tmdbBackdropPath: String? = null,
     @ColumnInfo(name = "trakt_updated") override var lastTraktUpdate: OffsetDateTime? = null,
-    @ColumnInfo(name = "tmdb_updated") override var lastTmdbUpdate: OffsetDateTime? = null
+    @ColumnInfo(name = "tmdb_updated") override var lastTmdbUpdate: OffsetDateTime? = null,
+    @ColumnInfo(name = "episodes_updated") var lastEpisodeUpdate: OffsetDateTime? = null
 ) : TiviEntity, TmdbIdEntity, TraktIdEntity {
     @Ignore constructor() : this(null)
+
+    fun needsEpisodeUpdate(): Boolean {
+        return lastEpisodeUpdate?.isBefore(OffsetDateTime.now().minusDays(1)) != false
+    }
 }

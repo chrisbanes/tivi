@@ -70,5 +70,5 @@ class DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideDatabaseTransactionRunner(db: TiviDatabase): DatabaseTxRunner = DatabaseTxRunner(db)
+    fun provideDatabaseTransactionRunner(db: TiviDatabase): DatabaseTransactionRunner = RoomTransactionRunner(db)
 }

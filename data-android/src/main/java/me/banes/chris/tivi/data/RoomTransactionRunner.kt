@@ -16,6 +16,6 @@
 
 package me.banes.chris.tivi.data
 
-class DatabaseTxRunner(private val db: TiviDatabase) {
-    fun runInTransaction(run: () -> Unit) = db.runInTransaction(run)
+class RoomTransactionRunner(private val db: TiviDatabase) : DatabaseTransactionRunner {
+    override fun runInTransaction(run: () -> Unit) = db.runInTransaction(run)
 }
