@@ -25,32 +25,32 @@ import io.reactivex.Flowable
 import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.calls.ListCall
 import me.banes.chris.tivi.data.DatabaseTransactionRunner
-import me.banes.chris.tivi.data.daos.WatchedDao
-import me.banes.chris.tivi.data.entities.WatchedEntry
-import me.banes.chris.tivi.data.entities.WatchedListItem
+import me.banes.chris.tivi.data.daos.WatchedShowDao
+import me.banes.chris.tivi.data.entities.WatchedShowListItem
+import me.banes.chris.tivi.data.entities.WatchedShowEntry
 import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
-class WatchedCall @Inject constructor(
+class WatchedShowsCall @Inject constructor(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
-    private val watchDao: WatchedDao,
+    private val watchShowDao: WatchedShowDao,
     private val showFetcher: ShowFetcher,
     private val trakt: TraktV2,
     private val schedulers: AppRxSchedulers
-) : ListCall<Unit, WatchedListItem> {
+) : ListCall<Unit, WatchedShowListItem> {
 
     override val pageSize = 21
 
     fun data() = data(Unit)
 
-    override fun data(param: Unit): Flowable<List<WatchedListItem>> {
-        return watchDao.entries()
+    override fun data(param: Unit): Flowable<List<WatchedShowListItem>> {
+        return watchShowDao.entries()
                 .distinctUntilChanged()
                 .subscribeOn(schedulers.database)
     }
 
-    override fun dataSourceFactory(): DataSource.Factory<Int, WatchedListItem> = watchDao.entriesDataSource()
+    override fun dataSourceFactory(): DataSource.Factory<Int, WatchedShowListItem> = watchShowDao.entriesDataSource()
 
     override fun refresh(param: Unit): Completable {
         return trakt.users().watchedShows(UserSlug.ME, Extended.NOSEASONS).toRxSingle()
@@ -60,15 +60,15 @@ class WatchedCall @Inject constructor(
                 .flatMapSingle { traktEntry ->
                     showFetcher.load(traktEntry.show.ids.trakt, traktEntry.show)
                             .map {
-                                WatchedEntry(null, it.id!!, traktEntry.last_watched_at)
+                                WatchedShowEntry(null, it.id!!, traktEntry.last_watched_at)
                             }
                 }
                 .toList()
                 .observeOn(schedulers.database)
                 .doOnSuccess {
                     databaseTransactionRunner.runInTransaction {
-                        watchDao.deleteAll()
-                        it.forEach { watchDao.insert(it) }
+                        watchShowDao.deleteAll()
+                        it.forEach { watchShowDao.insert(it) }
                     }
                 }
                 .toCompletable()

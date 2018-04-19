@@ -28,7 +28,7 @@ import me.banes.chris.tivi.data.daos.SeasonsDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.daos.TrendingDao
 import me.banes.chris.tivi.data.daos.UserDao
-import me.banes.chris.tivi.data.daos.WatchedDao
+import me.banes.chris.tivi.data.daos.WatchedShowDao
 import javax.inject.Singleton
 
 @Module
@@ -57,7 +57,7 @@ class DatabaseModule {
     fun providePopularDao(db: TiviDatabase): PopularDao = db.popularDao()
 
     @Provides
-    fun provideWatchedDao(db: TiviDatabase): WatchedDao = db.watchedDao()
+    fun provideWatchedDao(db: TiviDatabase): WatchedShowDao = db.watchedShowsDao()
 
     @Provides
     fun provideMyShowsDao(db: TiviDatabase): MyShowsDao = db.myShowsDao()

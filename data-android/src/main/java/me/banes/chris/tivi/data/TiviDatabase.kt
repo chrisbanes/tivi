@@ -26,7 +26,7 @@ import me.banes.chris.tivi.data.daos.SeasonsDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.daos.TrendingDao
 import me.banes.chris.tivi.data.daos.UserDao
-import me.banes.chris.tivi.data.daos.WatchedDao
+import me.banes.chris.tivi.data.daos.WatchedShowDao
 import me.banes.chris.tivi.data.entities.Episode
 import me.banes.chris.tivi.data.entities.MyShowsEntry
 import me.banes.chris.tivi.data.entities.PopularEntry
@@ -34,7 +34,7 @@ import me.banes.chris.tivi.data.entities.Season
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.data.entities.TraktUser
 import me.banes.chris.tivi.data.entities.TrendingEntry
-import me.banes.chris.tivi.data.entities.WatchedEntry
+import me.banes.chris.tivi.data.entities.WatchedShowEntry
 
 @Database(
         entities = [
@@ -42,7 +42,7 @@ import me.banes.chris.tivi.data.entities.WatchedEntry
             TrendingEntry::class,
             PopularEntry::class,
             TraktUser::class,
-            WatchedEntry::class,
+            WatchedShowEntry::class,
             MyShowsEntry::class,
             Season::class,
             Episode::class
@@ -55,7 +55,7 @@ abstract class TiviDatabase : RoomDatabase() {
     abstract fun trendingDao(): TrendingDao
     abstract fun popularDao(): PopularDao
     abstract fun userDao(): UserDao
-    abstract fun watchedDao(): WatchedDao
+    abstract fun watchedShowsDao(): WatchedShowDao
     abstract fun myShowsDao(): MyShowsDao
     abstract fun seasonsDao(): SeasonsDao
     abstract fun episodesDao(): EpisodesDao

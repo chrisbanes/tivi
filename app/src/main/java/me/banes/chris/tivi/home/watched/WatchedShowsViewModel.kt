@@ -17,24 +17,24 @@
 package me.banes.chris.tivi.home.watched
 
 import me.banes.chris.tivi.SharedElementHelper
-import me.banes.chris.tivi.data.entities.WatchedListItem
+import me.banes.chris.tivi.data.entities.WatchedShowListItem
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.tmdb.TmdbManager
-import me.banes.chris.tivi.trakt.calls.WatchedCall
+import me.banes.chris.tivi.trakt.calls.WatchedShowsCall
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.EntryViewModel
 import javax.inject.Inject
 
 class WatchedShowsViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
-    call: WatchedCall,
+    call: WatchedShowsCall,
     tmdbManager: TmdbManager
-) : EntryViewModel<WatchedListItem>(schedulers, call, tmdbManager) {
+) : EntryViewModel<WatchedShowListItem>(schedulers, call, tmdbManager) {
     fun onUpClicked(navigator: HomeNavigator) {
         navigator.onUpClicked()
     }
 
-    fun onItemClicked(item: WatchedListItem, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
+    fun onItemClicked(item: WatchedShowListItem, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
         navigator.showShowDetails(item.show!!, sharedElements)
     }
 }

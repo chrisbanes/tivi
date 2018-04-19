@@ -22,7 +22,7 @@ import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.MyShowsEntry
-import me.banes.chris.tivi.data.entities.WatchedEntry
+import me.banes.chris.tivi.data.entities.WatchedShowEntry
 import me.banes.chris.tivi.emptyState
 import me.banes.chris.tivi.header
 import me.banes.chris.tivi.posterGridItem
@@ -31,17 +31,17 @@ import me.banes.chris.tivi.ui.epoxy.TotalSpanOverride
 
 class LibraryEpoxyController(
     private val callbacks: Callbacks
-) : Typed3EpoxyController<List<ListItem<MyShowsEntry>>, List<ListItem<WatchedEntry>>, TmdbImageUrlProvider>() {
+) : Typed3EpoxyController<List<ListItem<MyShowsEntry>>, List<ListItem<WatchedShowEntry>>, TmdbImageUrlProvider>() {
 
     interface Callbacks {
         fun onMyShowsHeaderClicked(items: List<ListItem<MyShowsEntry>>?)
-        fun onWatchedHeaderClicked(items: List<ListItem<WatchedEntry>>?)
+        fun onWatchedHeaderClicked(items: List<ListItem<WatchedShowEntry>>?)
         fun onItemClicked(item: ListItem<out Entry>)
     }
 
     override fun buildModels(
         myShows: List<ListItem<MyShowsEntry>>?,
-        watched: List<ListItem<WatchedEntry>>?,
+        watched: List<ListItem<WatchedShowEntry>>?,
         tmdbImageUrlProvider: TmdbImageUrlProvider?
     ) {
         header {
