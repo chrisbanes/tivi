@@ -47,7 +47,7 @@ import me.banes.chris.tivi.data.entities.WatchedShowEntry
             Season::class,
             Episode::class
         ],
-        version = 12
+        version = 13
 )
 @TypeConverters(TiviTypeConverters::class)
 abstract class TiviDatabase : RoomDatabase() {

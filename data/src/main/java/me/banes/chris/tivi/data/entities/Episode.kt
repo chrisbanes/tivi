@@ -49,5 +49,6 @@ data class Episode(
     @ColumnInfo(name = "tmdb_poster_path") var tmdbPosterPath: String? = null,
     @ColumnInfo(name = "tmdb_backdrop_path") var tmdbBackdropPath: String? = null,
     @ColumnInfo(name = "trakt_updated") override var lastTraktUpdate: OffsetDateTime? = null,
-    @ColumnInfo(name = "tmdb_updated") override var lastTmdbUpdate: OffsetDateTime? = null
+    @ColumnInfo(name = "tmdb_updated") override var lastTmdbUpdate: OffsetDateTime? = null,
+    @ColumnInfo(name = "last_watched_at") var lastWatched: OffsetDateTime? = null
 ) : TiviEntity, TraktIdEntity, TmdbIdEntity
