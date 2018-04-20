@@ -94,7 +94,7 @@ class TraktEpisodeFetcher @Inject constructor(
     }
 
     private fun fetchEpisodesFromTrakt(show: TiviShow, season: Season): Maybe<List<Episode>> {
-        return trakt.seasons().season(show.traktId.toString(), season.number!!, Extended.EPISODES).toRxMaybe()
+        return trakt.seasons().season(show.traktId.toString(), season.number!!, Extended.FULL).toRxMaybe()
                 .subscribeOn(schedulers.network)
                 .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry, schedulers.network))
                 .toFlowable()
