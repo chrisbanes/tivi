@@ -24,6 +24,7 @@ import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
 import me.banes.chris.tivi.calls.Call
+import me.banes.chris.tivi.data.daos.EntityInserter
 import me.banes.chris.tivi.data.daos.UserDao
 import me.banes.chris.tivi.data.entities.TraktUser
 import me.banes.chris.tivi.extensions.toRxSingle
@@ -33,7 +34,8 @@ import javax.inject.Inject
 class UserMeCall @Inject constructor(
     private val dao: UserDao,
     private val trakt: TraktV2,
-    private val schedulers: AppRxSchedulers
+    private val schedulers: AppRxSchedulers,
+    private val entityInserter: EntityInserter
 ) : Call<Unit, TraktUser> {
 
     override fun refresh(param: Unit): Completable {
@@ -66,7 +68,7 @@ class UserMeCall @Inject constructor(
                 }
     }
 
-    private fun saveEntry(show: TraktUser) {
-        dao.insertUser(show)
+    private fun saveEntry(user: TraktUser) {
+        entityInserter.insertOrUpdate(dao, user)
     }
 }

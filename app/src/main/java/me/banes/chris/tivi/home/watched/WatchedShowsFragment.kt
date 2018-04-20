@@ -22,12 +22,12 @@ import android.view.View
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.SharedElementHelper
-import me.banes.chris.tivi.data.entities.WatchedListItem
+import me.banes.chris.tivi.data.entities.WatchedShowListItem
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.HomeNavigatorViewModel
 import me.banes.chris.tivi.util.EntryGridFragment
 
-class WatchedShowsFragment : EntryGridFragment<WatchedListItem, WatchedShowsViewModel>(WatchedShowsViewModel::class.java) {
+class WatchedShowsFragment : EntryGridFragment<WatchedShowListItem, WatchedShowsViewModel>(WatchedShowsViewModel::class.java) {
 
     private lateinit var homeNavigator: HomeNavigator
 
@@ -47,7 +47,7 @@ class WatchedShowsFragment : EntryGridFragment<WatchedListItem, WatchedShowsView
         }
     }
 
-    override fun onItemClicked(item: WatchedListItem) {
+    override fun onItemClicked(item: WatchedShowListItem) {
         val sharedElements = SharedElementHelper()
         grid_recyclerview.findViewHolderForItemId(item.generateStableId())?.let {
             sharedElements.addSharedElement(it.itemView, "poster")

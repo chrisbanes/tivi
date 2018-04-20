@@ -34,11 +34,11 @@ class ShowFetcher @Inject constructor(
     private val traktShowFetcher: TraktShowFetcher,
     private val tmdbShowFetcher: TmdbShowFetcher
 ) {
-    fun loadShowAsync(traktId: Int, show: Show? = null) {
-        disposables += loadShow(traktId, show).emptySubscribe()
+    fun loadAsync(traktId: Int, show: Show? = null) {
+        disposables += load(traktId, show).emptySubscribe()
     }
 
-    fun loadShow(traktId: Int, show: Show? = null): Single<TiviShow> {
+    fun load(traktId: Int, show: Show? = null): Single<TiviShow> {
         return traktShowFetcher.loadShow(traktId, show)
                 .doOnSuccess {
                     if (it.needsUpdateFromTmdb()) {
@@ -48,7 +48,7 @@ class ShowFetcher @Inject constructor(
                 .toSingle()
     }
 
-    fun updateShow(traktId: Int): Single<TiviShow> {
+    fun update(traktId: Int): Single<TiviShow> {
         return traktShowFetcher.updateShow(traktId)
                 .doOnSuccess {
                     if (it.needsUpdateFromTmdb()) {

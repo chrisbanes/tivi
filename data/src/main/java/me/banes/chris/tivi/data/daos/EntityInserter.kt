@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,19 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.data
+package me.banes.chris.tivi.data.daos
 
-class DatabaseTxRunner(private val db: TiviDatabase) {
-    fun runInTransaction(run: () -> Unit) = db.runInTransaction(run)
+import me.banes.chris.tivi.data.entities.TiviEntity
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class EntityInserter @Inject constructor() {
+    fun <E : TiviEntity> insertOrUpdate(dao: EntityDao<E>, entity: E): Long = when {
+        entity.id == null -> dao.insert(entity)
+        else -> {
+            dao.update(entity)
+            entity.id!!
+        }
+    }
 }

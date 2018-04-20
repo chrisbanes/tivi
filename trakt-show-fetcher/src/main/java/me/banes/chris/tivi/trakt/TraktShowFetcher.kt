@@ -21,6 +21,7 @@ import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Maybe
 import io.reactivex.Single
+import me.banes.chris.tivi.data.daos.EntityInserter
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.toRxMaybe
@@ -37,7 +38,8 @@ import javax.inject.Singleton
 class TraktShowFetcher @Inject constructor(
     private val showDao: TiviShowDao,
     private val trakt: TraktV2,
-    private val schedulers: AppRxSchedulers
+    private val schedulers: AppRxSchedulers,
+    private val entityInserter: EntityInserter
 ) {
     fun loadShow(traktId: Int, entity: Show? = null): Maybe<TiviShow> {
         val dbSource = showDao.getShowWithTraktIdMaybe(traktId)
@@ -93,7 +95,9 @@ class TraktShowFetcher @Inject constructor(
                         updateProperty(this::_genres, traktShow.genres?.joinToString(","))
                         lastTraktUpdate = OffsetDateTime.now()
                     }
+                    entityInserter.insertOrUpdate(showDao, it)
                 }
-                .map(showDao::insertOrUpdateShow)
+                .flatMapMaybe(showDao::getShowWithIdMaybe)
+                .toSingle()
     }
 }

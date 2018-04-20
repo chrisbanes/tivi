@@ -17,23 +17,18 @@
 package me.banes.chris.tivi.data.daos
 
 import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Query
-import android.arch.persistence.room.Update
 import io.reactivex.Flowable
 import io.reactivex.Maybe
 import me.banes.chris.tivi.data.entities.TiviShow
 
 @Dao
-abstract class TiviShowDao {
+abstract class TiviShowDao : EntityDao<TiviShow> {
     @Query("SELECT * FROM shows WHERE trakt_id = :id")
     abstract fun getShowWithTraktIdFlowable(id: Int): Flowable<TiviShow>
 
     @Query("SELECT * FROM shows WHERE trakt_id = :id")
     abstract fun getShowWithTraktIdMaybe(id: Int): Maybe<TiviShow>
-
-    @Query("SELECT * FROM shows WHERE trakt_id = :id")
-    abstract fun getShowWithTraktIdSync(id: Int): TiviShow?
 
     @Query("SELECT * FROM shows WHERE trakt_id IN (:ids)")
     abstract fun getShowsWithTraktId(ids: List<Int>): Flowable<List<TiviShow>>
@@ -44,34 +39,9 @@ abstract class TiviShowDao {
     @Query("SELECT * FROM shows WHERE tmdb_id = :id")
     abstract fun getShowWithTmdbIdMaybe(id: Int): Maybe<TiviShow>
 
-    @Query("SELECT * FROM shows WHERE tmdb_id = :id")
-    abstract fun getShowWithTmdbIdSync(id: Int): TiviShow?
-
     @Query("SELECT * FROM shows WHERE id = :id")
     abstract fun getShowWithIdFlowable(id: Long): Flowable<TiviShow>
 
     @Query("SELECT * FROM shows WHERE id = :id")
     abstract fun getShowWithIdMaybe(id: Long): Maybe<TiviShow>
-
-    @Query("SELECT * FROM shows WHERE id = :id")
-    abstract fun getShowWithIdSync(id: Long): TiviShow?
-
-    @Insert
-    protected abstract fun insertShow(show: TiviShow): Long
-
-    @Update
-    protected abstract fun updateShow(show: TiviShow)
-
-    fun insertOrUpdateShow(show: TiviShow): TiviShow = when {
-        show.id == null -> {
-            show.copy(id = insertShow(show))
-        }
-        else -> {
-            updateShow(show)
-            show
-        }
-    }
-
-    @Query("SELECT * FROM shows WHERE tmdb_updated IS null")
-    abstract fun getShowsWhichNeedTmdbUpdate(): Flowable<List<TiviShow>>
 }

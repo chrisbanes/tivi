@@ -34,7 +34,7 @@ class ShowDetailsCall @Inject constructor(
         return dao.getShowWithIdMaybe(param)
                 .subscribeOn(schedulers.database)
                 .map(TiviShow::traktId)
-                .flatMapSingle(showFetcher::updateShow)
+                .flatMapSingle(showFetcher::update)
                 .toCompletable()
     }
 

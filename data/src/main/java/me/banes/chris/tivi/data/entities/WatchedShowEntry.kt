@@ -35,7 +35,7 @@ import org.threeten.bp.OffsetDateTime
                     onUpdate = ForeignKey.CASCADE,
                     onDelete = ForeignKey.CASCADE)
         ])
-data class WatchedEntry(
+data class WatchedShowEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long? = null,
     @ColumnInfo(name = "show_id") override val showId: Long,
     @ColumnInfo(name = "last_watched") val lastWatched: OffsetDateTime

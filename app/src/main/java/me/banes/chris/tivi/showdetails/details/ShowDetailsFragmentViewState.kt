@@ -16,12 +16,14 @@
 
 package me.banes.chris.tivi.showdetails.details
 
+import me.banes.chris.tivi.data.entities.SeasonWithEpisodes
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 
 data class ShowDetailsFragmentViewState(
     val show: TiviShow,
     val relatedShows: List<TiviShow>,
+    val seasons: List<SeasonWithEpisodes>,
     val tmdbImageUrlProvider: TmdbImageUrlProvider,
     val inMyShows: Boolean
 )

@@ -27,14 +27,14 @@ import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.MyShowsCall
-import me.banes.chris.tivi.trakt.calls.WatchedCall
+import me.banes.chris.tivi.trakt.calls.WatchedShowsCall
 import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
 import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
-    private val watchedCall: WatchedCall,
+    private val watchedShowsCall: WatchedShowsCall,
     private val myShowsCall: MyShowsCall,
     appNavigator: AppNavigator,
     traktManager: TraktManager,
@@ -44,7 +44,7 @@ class LibraryViewModel @Inject constructor(
 
     init {
         disposables += Flowables.combineLatest(
-                watchedCall.data().map { it.take(20) },
+                watchedShowsCall.data().map { it.take(20) },
                 myShowsCall.data().map { it.take(20) },
                 tmdbManager.imageProvider,
                 ::LibraryViewState)
@@ -55,7 +55,7 @@ class LibraryViewModel @Inject constructor(
     }
 
     private fun refresh() {
-        disposables += watchedCall.refresh(Unit)
+        disposables += watchedShowsCall.refresh(Unit)
                 .subscribe(this::onSuccess, this::onRefreshError)
     }
 

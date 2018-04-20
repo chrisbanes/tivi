@@ -18,6 +18,7 @@ package me.banes.chris.tivi.tmdb
 
 import com.uwetrottmann.tmdb2.Tmdb
 import io.reactivex.Completable
+import me.banes.chris.tivi.data.daos.EntityInserter
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.toRxSingle
@@ -33,27 +34,32 @@ import javax.inject.Singleton
 class TmdbShowFetcher @Inject constructor(
     private val showDao: TiviShowDao,
     private val tmdb: Tmdb,
-    private val schedulers: AppRxSchedulers
+    private val schedulers: AppRxSchedulers,
+    private val entityInserter: EntityInserter
 ) {
     fun updateShow(tmdbId: Int): Completable {
         return tmdb.tvService().tv(tmdbId).toRxSingle()
                 .subscribeOn(schedulers.network)
                 .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry, schedulers.network))
                 .observeOn(schedulers.database)
-                .map { tmdbShow ->
-                    val show = showDao.getShowWithTmdbIdSync(tmdbShow.id) ?: TiviShow()
-                    show.apply {
-                        updateProperty(this::tmdbId, tmdbShow.id)
-                        updateProperty(this::title, tmdbShow.name)
-                        updateProperty(this::summary, tmdbShow.overview)
-                        updateProperty(this::tmdbBackdropPath, tmdbShow.backdrop_path)
-                        updateProperty(this::tmdbPosterPath, tmdbShow.poster_path)
-                        updateProperty(this::homepage, tmdbShow.homepage)
-                        lastTmdbUpdate = OffsetDateTime.now()
-                    }
-                    showDao.insertOrUpdateShow(show)
+                .flatMapMaybe { tmdbShow ->
+                    showDao.getShowWithTmdbIdMaybe(tmdbShow.id)
+                            .subscribeOn(schedulers.database)
+                            .defaultIfEmpty(TiviShow())
+                            .map {
+                                it.apply {
+                                    updateProperty(this::tmdbId, tmdbShow.id)
+                                    updateProperty(this::title, tmdbShow.name)
+                                    updateProperty(this::summary, tmdbShow.overview)
+                                    updateProperty(this::tmdbBackdropPath, tmdbShow.backdrop_path)
+                                    updateProperty(this::tmdbPosterPath, tmdbShow.poster_path)
+                                    updateProperty(this::homepage, tmdbShow.homepage)
+                                    lastTmdbUpdate = OffsetDateTime.now()
+                                }
+                                entityInserter.insertOrUpdate(showDao, it)
+                            }
                 }
-                .toCompletable()
+                .ignoreElement()
     }
 
     private fun shouldRetry(throwable: Throwable): Boolean = when (throwable) {

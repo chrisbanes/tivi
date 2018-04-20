@@ -17,17 +17,12 @@
 package me.banes.chris.tivi.data.daos
 
 import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import io.reactivex.Flowable
 import me.banes.chris.tivi.data.entities.TraktUser
 
 @Dao
-interface UserDao {
+interface UserDao : EntityDao<TraktUser> {
     @Query("SELECT * FROM users")
     fun getTraktUser(): Flowable<TraktUser>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertUser(user: TraktUser): Long
 }

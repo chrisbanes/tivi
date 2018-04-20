@@ -16,8 +16,9 @@
 
 package me.banes.chris.tivi.data
 
-interface Entry {
-    val id: Long?
+import me.banes.chris.tivi.data.entities.TiviEntity
+
+interface Entry : TiviEntity {
     val showId: Long
 }
 

@@ -29,7 +29,7 @@ import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.MyShowsEntry
-import me.banes.chris.tivi.data.entities.WatchedEntry
+import me.banes.chris.tivi.data.entities.WatchedShowEntry
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeFragment
 import me.banes.chris.tivi.home.HomeNavigator
@@ -49,7 +49,7 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
             viewModel.onMyShowsHeaderClicked(homeNavigator, sharedElementHelper)
         }
 
-        override fun onWatchedHeaderClicked(items: List<ListItem<WatchedEntry>>?) {
+        override fun onWatchedHeaderClicked(items: List<ListItem<WatchedShowEntry>>?) {
             val sharedElementHelper = SharedElementHelper()
             items?.forEach { addSharedElementEntry(it, sharedElementHelper) }
             viewModel.onWatchedHeaderClicked(homeNavigator, sharedElementHelper)
