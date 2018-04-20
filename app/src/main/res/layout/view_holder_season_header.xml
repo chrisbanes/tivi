@@ -19,11 +19,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="android.content.Context" />
-
         <variable
-            name="title"
-            type="String" />
+            name="season"
+            type="me.banes.chris.tivi.data.entities.Season" />
     </data>
 
     <FrameLayout
@@ -39,7 +37,7 @@
             android:layout_marginEnd="@dimen/header_margin"
             android:layout_marginStart="@dimen/header_margin"
             android:gravity="center_vertical"
-            android:text="@{title}"
+            android:text="@{season.title}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             tools:text="Season 01" />
 

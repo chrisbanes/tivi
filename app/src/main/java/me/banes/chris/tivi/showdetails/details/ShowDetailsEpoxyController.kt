@@ -133,7 +133,7 @@ class ShowDetailsEpoxyController(
             seasons.forEach { season ->
                 seasonHeader {
                     id("season_${season.season!!.id}_header")
-                    title(season.season?.title)
+                    season(season.season)
                     spanSizeOverride(TotalSpanOverride)
                 }
 
@@ -141,6 +141,7 @@ class ShowDetailsEpoxyController(
                     seasonEpisodeItem {
                         id("episode_${episode.id}")
                         episode(episode)
+                        spanSizeOverride(TotalSpanOverride)
                     }
                 }
             }
