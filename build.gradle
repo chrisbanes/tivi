@@ -26,6 +26,7 @@ buildscript {
             'arch_room'        : '1.1.0-beta2',
             'core_ktx'         : '0.3',
             'kotlin'           : '1.2.31',
+            'coroutines'       : '0.22.5',
             'espresso'         : '3.0.1',
             'dagger'           : '2.15',
             'ktlint'           : '0.19.0',
