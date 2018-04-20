@@ -9,9 +9,9 @@
       <module fileurl="file://$PROJECT_DIR$/data/data.iml" filepath="$PROJECT_DIR$/data/data.iml" />
       <module fileurl="file://$PROJECT_DIR$/data-android/data-android.iml" filepath="$PROJECT_DIR$/data-android/data-android.iml" />
       <module fileurl="file://$PROJECT_DIR$/episodes-fetcher/episodes-fetcher.iml" filepath="$PROJECT_DIR$/episodes-fetcher/episodes-fetcher.iml" />
+      <module fileurl="file://$PROJECT_DIR$/seasons-fetcher/seasons-fetcher.iml" filepath="$PROJECT_DIR$/seasons-fetcher/seasons-fetcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/show-fetcher/show-fetcher.iml" filepath="$PROJECT_DIR$/show-fetcher/show-fetcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/tivi.iml" filepath="$PROJECT_DIR$/tivi.iml" />
-      <module fileurl="file://$PROJECT_DIR$/seasons-fetcher/tivi-seasons-fetcher.iml" filepath="$PROJECT_DIR$/seasons-fetcher/tivi-seasons-fetcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/tmdb/tmdb.iml" filepath="$PROJECT_DIR$/tmdb/tmdb.iml" />
       <module fileurl="file://$PROJECT_DIR$/tmdb-show-fetcher/tmdb-show-fetcher.iml" filepath="$PROJECT_DIR$/tmdb-show-fetcher/tmdb-show-fetcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/trakt/trakt.iml" filepath="$PROJECT_DIR$/trakt/trakt.iml" />
