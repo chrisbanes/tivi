@@ -16,8 +16,8 @@
 
 package me.banes.chris.tivi.trakt.calls
 
-import io.reactivex.Completable
 import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.rx2.await
 import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.calls.Call
 import me.banes.chris.tivi.data.daos.TiviShowDao
@@ -30,12 +30,12 @@ class ShowDetailsCall @Inject constructor(
     private val showFetcher: ShowFetcher,
     private val schedulers: AppRxSchedulers
 ) : Call<Long, TiviShow> {
-    override fun refresh(param: Long): Completable {
-        return dao.getShowWithIdMaybe(param)
+    override suspend fun refresh(param: Long) {
+        dao.getShowWithIdMaybe(param)
                 .subscribeOn(schedulers.database)
                 .map(TiviShow::traktId)
                 .flatMapSingle(showFetcher::update)
-                .toCompletable()
+                .await()
     }
 
     override fun data(param: Long): Flowable<TiviShow> {

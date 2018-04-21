@@ -17,9 +17,9 @@
 package me.banes.chris.tivi.trakt.calls
 
 import android.arch.paging.DataSource
-import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
+import kotlinx.coroutines.experimental.rx2.await
 import me.banes.chris.tivi.calls.PaginatedCall
 import me.banes.chris.tivi.data.DatabaseTransactionRunner
 import me.banes.chris.tivi.data.PaginatedEntry
@@ -65,13 +65,15 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
                 .doOnSuccess { savePage(it, page, resetOnSave) }
     }
 
-    override fun refresh(param: Unit): Completable = loadPage(0, resetOnSave = true).toCompletable()
+    override suspend fun refresh(param: Unit) {
+        loadPage(0, resetOnSave = true).await()
+    }
 
-    override fun loadNextPage(): Completable {
-        return entryDao.getLastPage()
+    override suspend fun loadNextPage() {
+        entryDao.getLastPage()
                 .subscribeOn(schedulers.database)
                 .flatMap { loadPage(it + 1) }
-                .toCompletable()
+                .await()
     }
 
     private fun savePage(items: List<ET>, page: Int, resetOnSave: Boolean) {

@@ -22,8 +22,8 @@ import android.arch.paging.LivePagedListBuilder
 import android.arch.paging.PagedList
 import io.reactivex.BackpressureStrategy
 import io.reactivex.rxkotlin.Flowables
-import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.experimental.launch
 import me.banes.chris.tivi.api.Resource
 import me.banes.chris.tivi.api.Status
 import me.banes.chris.tivi.calls.ListCall
@@ -35,6 +35,7 @@ import timber.log.Timber
 
 open class EntryViewModel<LI : ListItem<out Entry>>(
     private val schedulers: AppRxSchedulers,
+    private val coroutineDispatchers: AppCoroutineDispatchers,
     private val call: ListCall<Unit, LI>,
     tmdbManager: TmdbManager,
     refreshOnStartup: Boolean = true
@@ -71,18 +72,42 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
 
     fun onListScrolledToEnd() {
         if (call is PaginatedCall<*, *>) {
-            disposables += call.loadNextPage()
-                    .observeOn(schedulers.main)
-                    .doOnSubscribe { sendMessage(Resource(Status.LOADING_MORE)) }
-                    .subscribe(this::onSuccess, this::onError)
+            launch {
+                launch(coroutineDispatchers.main) {
+                    sendMessage(Resource(Status.LOADING_MORE))
+                }
+                try {
+                    call.loadNextPage()
+
+                    launch(coroutineDispatchers.main) {
+                        onSuccess()
+                    }
+                } catch (e: Exception) {
+                    launch(coroutineDispatchers.main) {
+                        onError(e)
+                    }
+                }
+            }
         }
     }
 
     fun fullRefresh() {
-        disposables += call.refresh(Unit)
-                .observeOn(schedulers.main)
-                .doOnSubscribe { sendMessage(Resource(Status.REFRESHING)) }
-                .subscribe(this::onSuccess, this::onError)
+        launch {
+            launch(coroutineDispatchers.main) {
+                sendMessage(Resource(Status.REFRESHING))
+            }
+            try {
+                call.refresh(Unit)
+
+                launch(coroutineDispatchers.main) {
+                    onSuccess()
+                }
+            } catch (e: Exception) {
+                launch(coroutineDispatchers.main) {
+                    onError(e)
+                }
+            }
+        }
     }
 
     private fun onError(t: Throwable) {

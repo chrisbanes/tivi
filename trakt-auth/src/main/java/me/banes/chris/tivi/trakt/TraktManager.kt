@@ -25,6 +25,7 @@ import io.reactivex.Maybe
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.experimental.launch
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.data.entities.TraktUser
 import me.banes.chris.tivi.inject.ApplicationLevel
@@ -68,8 +69,9 @@ class TraktManager @Inject constructor(
                     traktClient.refreshToken(it.refreshToken)
                     if (it.isAuthorized) {
                         // Now refresh the user information
-                        disposables += userMeCall.refresh(Unit)
-                                .subscribe({}, Timber::e)
+                        launch {
+                            userMeCall.refresh(Unit)
+                        }
                     }
                 }, Timber::e)
 

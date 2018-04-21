@@ -19,6 +19,7 @@ package me.banes.chris.tivi.showdetails.details
 import android.arch.lifecycle.MutableLiveData
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
+import kotlinx.coroutines.experimental.launch
 import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.actions.TiviActions
 import me.banes.chris.tivi.data.daos.MyShowsDao
@@ -59,13 +60,16 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     val data = MutableLiveData<ShowDetailsFragmentViewState>()
 
     private fun refresh() {
-        showId?.let {
-            disposables += showCall.refresh(it)
-                    .subscribe(this::onRefreshSuccess, this::onRefreshError)
-            disposables += seasonsCall.refresh(it)
-                    .subscribe(this::onRefreshSuccess, this::onRefreshError)
-            disposables += relatedShows.refresh(it)
-                    .subscribe(this::onRefreshSuccess, this::onRefreshError)
+        showId?.let { id ->
+            launch {
+                showCall.refresh(id)
+            }
+            launch {
+                seasonsCall.refresh(id)
+            }
+            launch {
+                relatedShows.refresh(id)
+            }
         }
     }
 

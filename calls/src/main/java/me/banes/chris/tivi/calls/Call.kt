@@ -17,12 +17,11 @@
 package me.banes.chris.tivi.calls
 
 import android.arch.paging.DataSource
-import io.reactivex.Completable
 import io.reactivex.Flowable
 
 interface Call<in Param, DatabaseOutput> {
     fun data(param: Param): Flowable<DatabaseOutput>
-    fun refresh(param: Param): Completable
+    suspend fun refresh(param: Param)
 }
 
 interface ListCall<in Param, DatabaseOutput> : Call<Param, List<DatabaseOutput>> {

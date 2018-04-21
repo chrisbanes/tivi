@@ -18,8 +18,8 @@ package me.banes.chris.tivi.trakt.calls
 
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.enums.Extended
-import io.reactivex.Completable
 import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.rx2.await
 import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.calls.Call
 import me.banes.chris.tivi.data.daos.TiviShowDao
@@ -36,8 +36,8 @@ class RelatedShowsCall @Inject constructor(
     private val schedulers: AppRxSchedulers,
     private val showFetcher: ShowFetcher
 ) : Call<Long, List<TiviShow>> {
-    override fun refresh(param: Long): Completable {
-        return dao.getShowWithIdMaybe(param)
+    override suspend fun refresh(param: Long) {
+        dao.getShowWithIdMaybe(param)
                 .subscribeOn(schedulers.database)
                 .map(TiviShow::traktId)
                 .flatMapSingle { traktId ->
@@ -47,8 +47,7 @@ class RelatedShowsCall @Inject constructor(
                                 traktState.setRelatedShowsForTraktId(traktId, it.map { it.ids.trakt })
                                 it.forEach { showFetcher.loadAsync(it.ids.trakt) }
                             }
-                }
-                .toCompletable()
+                }.await()
     }
 
     override fun data(param: Long): Flowable<List<TiviShow>> {

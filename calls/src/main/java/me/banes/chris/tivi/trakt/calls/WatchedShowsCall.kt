@@ -20,14 +20,14 @@ import android.arch.paging.DataSource
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
-import io.reactivex.Completable
 import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.rx2.await
 import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.calls.ListCall
 import me.banes.chris.tivi.data.DatabaseTransactionRunner
 import me.banes.chris.tivi.data.daos.WatchedShowDao
-import me.banes.chris.tivi.data.entities.WatchedShowListItem
 import me.banes.chris.tivi.data.entities.WatchedShowEntry
+import me.banes.chris.tivi.data.entities.WatchedShowListItem
 import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
@@ -52,8 +52,8 @@ class WatchedShowsCall @Inject constructor(
 
     override fun dataSourceFactory(): DataSource.Factory<Int, WatchedShowListItem> = watchShowDao.entriesDataSource()
 
-    override fun refresh(param: Unit): Completable {
-        return trakt.users().watchedShows(UserSlug.ME, Extended.NOSEASONS).toRxSingle()
+    override suspend fun refresh(param: Unit) {
+        trakt.users().watchedShows(UserSlug.ME, Extended.NOSEASONS).toRxSingle()
                 .subscribeOn(schedulers.network)
                 .toFlowable()
                 .flatMapIterable { it }
@@ -71,6 +71,6 @@ class WatchedShowsCall @Inject constructor(
                         it.forEach { watchShowDao.insert(it) }
                     }
                 }
-                .toCompletable()
+                .await()
     }
 }

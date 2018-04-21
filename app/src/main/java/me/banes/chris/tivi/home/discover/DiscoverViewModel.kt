@@ -19,6 +19,7 @@ package me.banes.chris.tivi.home.discover
 import android.arch.lifecycle.MutableLiveData
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
+import kotlinx.coroutines.experimental.launch
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.TiviShow
@@ -56,10 +57,12 @@ class DiscoverViewModel @Inject constructor(
     }
 
     private fun refresh() {
-        disposables += popularCall.refresh(Unit)
-                .subscribe(this::onSuccess, this::onRefreshError)
-        disposables += trendingCall.refresh(Unit)
-                .subscribe(this::onSuccess, this::onRefreshError)
+        launch {
+            popularCall.refresh(Unit)
+        }
+        launch {
+            trendingCall.refresh(Unit)
+        }
     }
 
     private fun onSuccess() {

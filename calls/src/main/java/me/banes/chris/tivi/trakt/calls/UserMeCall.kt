@@ -20,9 +20,9 @@ import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.User
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
-import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Single
+import kotlinx.coroutines.experimental.rx2.await
 import me.banes.chris.tivi.calls.Call
 import me.banes.chris.tivi.data.daos.EntityInserter
 import me.banes.chris.tivi.data.daos.UserDao
@@ -38,13 +38,13 @@ class UserMeCall @Inject constructor(
     private val entityInserter: EntityInserter
 ) : Call<Unit, TraktUser> {
 
-    override fun refresh(param: Unit): Completable {
-        return trakt.users().profile(UserSlug.ME, Extended.FULL).toRxSingle()
+    override suspend fun refresh(param: Unit) {
+        trakt.users().profile(UserSlug.ME, Extended.FULL).toRxSingle()
                 .subscribeOn(schedulers.network)
                 .flatMap(this::mapToOutput)
                 .observeOn(schedulers.database)
                 .doOnSuccess(this::saveEntry)
-                .toCompletable()
+                .await()
     }
 
     fun data() = data(Unit)
