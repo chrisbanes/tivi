@@ -18,7 +18,7 @@ package me.banes.chris.tivi.home
 
 import android.arch.lifecycle.LiveData
 import me.banes.chris.tivi.trakt.TraktManager
-import me.banes.chris.tivi.util.RxAwareViewModel
+import me.banes.chris.tivi.util.TiviViewModel
 import me.banes.chris.tivi.util.SingleLiveEvent
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
@@ -26,7 +26,7 @@ import javax.inject.Inject
 
 internal class HomeActivityViewModel @Inject constructor(
     private val traktManager: TraktManager
-) : RxAwareViewModel() {
+) : TiviViewModel() {
 
     enum class NavigationItem {
         DISCOVER, LIBRARY

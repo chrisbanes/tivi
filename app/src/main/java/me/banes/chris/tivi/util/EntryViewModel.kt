@@ -39,7 +39,7 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
     private val call: ListCall<Unit, LI>,
     tmdbManager: TmdbManager,
     refreshOnStartup: Boolean = true
-) : RxAwareViewModel() {
+) : TiviViewModel() {
 
     private val messages = BehaviorSubject.create<Resource>()
 

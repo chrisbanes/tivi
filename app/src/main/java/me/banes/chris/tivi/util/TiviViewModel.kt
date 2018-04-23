@@ -18,17 +18,19 @@ package me.banes.chris.tivi.util
 
 import android.arch.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.experimental.Job
 
 /**
- * Simple ViewModel which exposes a CompositeDisposable which is automatically cleared when
+ * Simple ViewModel which exposes a [CompositeDisposable] and [Job] which are automatically cleared/stopped when
  * the ViewModel is cleared.
  */
-open class RxAwareViewModel : ViewModel() {
-
+open class TiviViewModel : ViewModel() {
+    val job = Job()
     val disposables = CompositeDisposable()
 
     override fun onCleared() {
         super.onCleared()
         disposables.clear()
+        job.cancel()
     }
 }

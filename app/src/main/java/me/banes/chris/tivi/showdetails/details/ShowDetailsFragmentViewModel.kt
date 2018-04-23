@@ -30,7 +30,7 @@ import me.banes.chris.tivi.trakt.calls.RelatedShowsCall
 import me.banes.chris.tivi.trakt.calls.ShowDetailsCall
 import me.banes.chris.tivi.trakt.calls.ShowSeasonsCall
 import me.banes.chris.tivi.util.AppRxSchedulers
-import me.banes.chris.tivi.util.RxAwareViewModel
+import me.banes.chris.tivi.util.TiviViewModel
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -42,7 +42,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     private val tmdbManager: TmdbManager,
     private val tiviActions: TiviActions,
     private val myShowsDao: MyShowsDao
-) : RxAwareViewModel() {
+) : TiviViewModel() {
 
     var showId: Long? = null
         set(value) {
