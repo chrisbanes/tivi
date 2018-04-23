@@ -17,7 +17,7 @@
 
 buildscript {
     ext.versions = [
-            'android_gradle'   : '3.1.0',
+            'android_gradle'   : '3.1.1',
             'support_library'  : '27.1.1',
             'constraint_layout': '1.1.0-beta6',
             'arch'             : '1.1.0',
