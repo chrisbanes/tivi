@@ -16,10 +16,10 @@
 
 package me.banes.chris.tivi.util
 
-import me.banes.chris.tivi.api.Resource
+import me.banes.chris.tivi.api.UiResource
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 
 data class EntryViewState(
-    val resource: Resource,
+    val uiResource: UiResource,
     val tmdbImageUrlProvider: TmdbImageUrlProvider
 )

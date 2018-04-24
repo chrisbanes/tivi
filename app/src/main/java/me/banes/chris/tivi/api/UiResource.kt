@@ -19,5 +19,5 @@ package me.banes.chris.tivi.api
 /**
  * A generic class that holds a value with its loading status.
  * @param <T>
-</T> */
-data class Resource(val status: Status, val message: String? = null)
+ */
+data class UiResource(val status: Status, val message: String? = null)

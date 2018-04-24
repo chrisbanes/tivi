@@ -24,8 +24,8 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.launch
-import me.banes.chris.tivi.api.Resource
 import me.banes.chris.tivi.api.Status
+import me.banes.chris.tivi.api.UiResource
 import me.banes.chris.tivi.calls.ListCall
 import me.banes.chris.tivi.calls.PaginatedCall
 import me.banes.chris.tivi.data.Entry
@@ -41,7 +41,7 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
     refreshOnStartup: Boolean = true
 ) : TiviViewModel() {
 
-    private val messages = BehaviorSubject.create<Resource>()
+    private val messages = BehaviorSubject.create<UiResource>()
 
     val liveList by lazy(mode = LazyThreadSafetyMode.NONE) {
         LivePagedListBuilder<Int, LI>(
@@ -74,7 +74,7 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
         if (call is PaginatedCall<*, *>) {
             launch {
                 launch(coroutineDispatchers.main) {
-                    sendMessage(Resource(Status.LOADING_MORE))
+                    sendMessage(UiResource(Status.LOADING_MORE))
                 }
                 try {
                     call.loadNextPage()
@@ -94,7 +94,7 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
     fun fullRefresh() {
         launch {
             launch(coroutineDispatchers.main) {
-                sendMessage(Resource(Status.REFRESHING))
+                sendMessage(UiResource(Status.REFRESHING))
             }
             try {
                 call.refresh(Unit)
@@ -112,14 +112,14 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
 
     private fun onError(t: Throwable) {
         Timber.e(t)
-        sendMessage(Resource(Status.ERROR, t.localizedMessage))
+        sendMessage(UiResource(Status.ERROR, t.localizedMessage))
     }
 
     private fun onSuccess() {
-        sendMessage(Resource(Status.SUCCESS))
+        sendMessage(UiResource(Status.SUCCESS))
     }
 
-    private fun sendMessage(resource: Resource) {
-        messages.onNext(resource)
+    private fun sendMessage(uiResource: UiResource) {
+        messages.onNext(uiResource)
     }
 }
