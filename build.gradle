@@ -85,6 +85,19 @@ subprojects {
             licenseHeaderFile project.rootProject.file('spotless/copyright.kt')
         }
     }
+
+    /**
+     * Remove this when fixed https://github.com/Takhion/kotlin-metadata/issues/8
+     */
+    configurations.all {
+        resolutionStrategy {
+            eachDependency { DependencyResolveDetails details ->
+                if (details.requested.name == 'kotlin-compiler-embeddable') {
+                    details.useVersion "1.2.30"
+                }
+            }
+        }
+    }
 }
 
 String propOrDef(String propertyName, String defaultValue) {
