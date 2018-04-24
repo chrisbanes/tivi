@@ -25,12 +25,12 @@ import kotlinx.coroutines.experimental.Job
  * the ViewModel is cleared.
  */
 open class TiviViewModel : ViewModel() {
-    val job = Job()
+    val viewModelJob = Job()
     val disposables = CompositeDisposable()
 
     override fun onCleared() {
         super.onCleared()
         disposables.clear()
-        job.cancel()
+        viewModelJob.cancel()
     }
 }

@@ -61,13 +61,13 @@ class ShowDetailsFragmentViewModel @Inject constructor(
 
     private fun refresh() {
         showId?.let { id ->
-            launch {
+            launch(parent = viewModelJob) {
                 showCall.refresh(id)
             }
-            launch {
+            launch(parent = viewModelJob) {
                 seasonsCall.refresh(id)
             }
-            launch {
+            launch(parent = viewModelJob) {
                 relatedShows.refresh(id)
             }
         }

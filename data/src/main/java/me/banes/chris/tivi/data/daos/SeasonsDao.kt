@@ -34,7 +34,10 @@ abstract class SeasonsDao : EntityDao<Season> {
     abstract fun seasonsForShowId(showId: Long): Maybe<List<Season>>
 
     @Query("SELECT * FROM seasons WHERE id = :id")
-    abstract fun seasonWithId(id: Long): Maybe<Season>
+    abstract fun seasonWithIdMaybe(id: Long): Maybe<Season>
+
+    @Query("SELECT * FROM seasons WHERE id = :id")
+    abstract fun seasonWithId(id: Long): Season
 
     @Query("SELECT * FROM seasons WHERE trakt_id = :traktId")
     abstract fun seasonWithSeasonTraktId(traktId: Int): Maybe<Season>

@@ -18,14 +18,15 @@ package me.banes.chris.tivi
 
 import io.reactivex.Maybe
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.plusAssign
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.data.DatabaseTransactionRunner
 import me.banes.chris.tivi.data.daos.EntityInserter
 import me.banes.chris.tivi.data.daos.SeasonsDao
 import me.banes.chris.tivi.data.entities.Season
-import me.banes.chris.tivi.extensions.emptySubscribe
 import me.banes.chris.tivi.inject.ApplicationLevel
 import me.banes.chris.tivi.trakt.TraktSeasonFetcher
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
@@ -39,36 +40,33 @@ class SeasonFetcher @Inject constructor(
     private val entityInserter: EntityInserter,
     private val seasonsDao: SeasonsDao,
     private val schedulers: AppRxSchedulers,
+    private val dispatchers: AppCoroutineDispatchers,
     private val episodeFetcher: EpisodeFetcher
 ) {
-    fun loadAsync(showId: Long) {
-        disposables += load(showId).emptySubscribe()
-    }
-
     fun load(showId: Long): Maybe<List<Season>> {
         return traktSeasonFetcher.loadShowSeasons(showId)
                 .doOnSuccess {
                     it.forEach {
                         if (it.needsEpisodeUpdate()) {
-                            updateEpisodes(it)
+                            updateEpisodesAsync(it)
                         }
                     }
                 }
     }
 
-    private fun updateEpisodes(season: Season) {
-        disposables += episodeFetcher.load(season.id!!)
-                .observeOn(schedulers.database)
-                .doOnSuccess {
+    private fun updateEpisodesAsync(season: Season) {
+        async {
+            val episodes = episodeFetcher.load(season.id!!)
+            if (episodes.isNotEmpty()) {
+                withContext(dispatchers.database) {
                     transactionRunner.runInTransaction {
-                        seasonsDao.seasonWithId(season.id!!)
-                                .blockingGet()
-                                .let {
-                                    it.lastEpisodeUpdate = OffsetDateTime.now()
-                                    entityInserter.insertOrUpdate(seasonsDao, it)
-                                }
+                        seasonsDao.seasonWithId(season.id!!).let {
+                            it.lastEpisodeUpdate = OffsetDateTime.now()
+                            entityInserter.insertOrUpdate(seasonsDao, it)
+                        }
                     }
                 }
-                .emptySubscribe()
+            }
+        }
     }
 }

@@ -25,12 +25,16 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.exceptions.CompositeException
 import io.reactivex.exceptions.Exceptions
 import io.reactivex.plugins.RxJavaPlugins
+import kotlinx.coroutines.experimental.rx2.await
 import retrofit2.Call
 
 fun <T> Call<T>.toRxObservable(): Observable<T> = me.banes.chris.tivi.extensions.BodyObservable(me.banes.chris.tivi.extensions.RetrofitCallObservable(this))
 fun <T> Call<T>.toRxSingle(): Single<T> = toRxObservable().singleOrError()
 fun <T> Call<T>.toRxMaybe(): Maybe<T> = toRxObservable().singleElement()
 fun <T> Call<T>.toRxFlowable(): Flowable<T> = toRxObservable().toFlowable(io.reactivex.BackpressureStrategy.LATEST)
+
+suspend fun <T> Call<T>.await() = toRxSingle().await()
+
 private class RetrofitCallObservable<T>(private val originalCall: Call<T>) : Observable<retrofit2.Response<T>>() {
 
     override fun subscribeActual(observer: Observer<in retrofit2.Response<T>>) {

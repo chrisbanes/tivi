@@ -19,6 +19,7 @@ package me.banes.chris.tivi.trakt.calls
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.rx2.await
 import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.calls.Call
@@ -26,6 +27,7 @@ import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.toRxSingle
 import me.banes.chris.tivi.trakt.state.TraktState
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
@@ -34,20 +36,26 @@ class RelatedShowsCall @Inject constructor(
     private val traktState: TraktState,
     private val trakt: TraktV2,
     private val schedulers: AppRxSchedulers,
+    private val dispatchers: AppCoroutineDispatchers,
     private val showFetcher: ShowFetcher
 ) : Call<Long, List<TiviShow>> {
     override suspend fun refresh(param: Long) {
-        dao.getShowWithIdMaybe(param)
-                .subscribeOn(schedulers.database)
-                .map(TiviShow::traktId)
-                .flatMapSingle { traktId ->
-                    trakt.shows().related(traktId.toString(), 0, 10, Extended.NOSEASONS).toRxSingle()
-                            .subscribeOn(schedulers.network)
-                            .doOnSuccess {
-                                traktState.setRelatedShowsForTraktId(traktId, it.map { it.ids.trakt })
-                                it.forEach { showFetcher.loadAsync(it.ids.trakt) }
-                            }
-                }.await()
+        val show = async(dispatchers.database) {
+            dao.getShowWithId(param)
+        }.await()
+
+        if (show != null) {
+            val traktId = show.traktId!!
+            val related = trakt.shows().related(traktId.toString(), 0, 10, Extended.NOSEASONS)
+                    .toRxSingle()
+                    .subscribeOn(schedulers.network)
+                    .await()
+
+            traktState.setRelatedShowsForTraktId(traktId, related.map { it.ids.trakt })
+            related.forEach {
+                showFetcher.loadAsync(it.ids.trakt)
+            }
+        }
     }
 
     override fun data(param: Long): Flowable<List<TiviShow>> {

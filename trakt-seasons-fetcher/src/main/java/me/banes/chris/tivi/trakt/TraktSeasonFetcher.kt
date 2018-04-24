@@ -90,7 +90,7 @@ class TraktSeasonFetcher @Inject constructor(
                     }
                     entityInserter.insertOrUpdate(seasonDao, it)
                 }
-                .flatMap(seasonDao::seasonWithId)
+                .flatMap(seasonDao::seasonWithIdMaybe)
                 .toSingle()
     }
 }

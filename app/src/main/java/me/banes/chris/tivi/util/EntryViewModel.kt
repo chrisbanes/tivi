@@ -72,40 +72,30 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
 
     fun onListScrolledToEnd() {
         if (call is PaginatedCall<*, *>) {
-            launch {
-                launch(coroutineDispatchers.main) {
-                    sendMessage(UiResource(Status.LOADING_MORE))
-                }
+            launch(coroutineDispatchers.main) {
+                sendMessage(UiResource(Status.LOADING_MORE))
                 try {
-                    call.loadNextPage()
-
-                    launch(coroutineDispatchers.main) {
-                        onSuccess()
-                    }
+                    launch {
+                        call.loadNextPage()
+                    }.join()
+                    onSuccess()
                 } catch (e: Exception) {
-                    launch(coroutineDispatchers.main) {
-                        onError(e)
-                    }
+                    onError(e)
                 }
             }
         }
     }
 
     fun fullRefresh() {
-        launch {
-            launch(coroutineDispatchers.main) {
-                sendMessage(UiResource(Status.REFRESHING))
-            }
+        launch(coroutineDispatchers.main) {
+            sendMessage(UiResource(Status.REFRESHING))
             try {
-                call.refresh(Unit)
-
-                launch(coroutineDispatchers.main) {
-                    onSuccess()
-                }
+                launch {
+                    call.refresh(Unit)
+                }.join()
+                onSuccess()
             } catch (e: Exception) {
-                launch(coroutineDispatchers.main) {
-                    onError(e)
-                }
+                onError(e)
             }
         }
     }

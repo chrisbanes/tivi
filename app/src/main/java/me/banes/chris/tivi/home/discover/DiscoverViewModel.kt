@@ -57,10 +57,10 @@ class DiscoverViewModel @Inject constructor(
     }
 
     private fun refresh() {
-        launch {
+        launch(parent = viewModelJob) {
             popularCall.refresh(Unit)
         }
-        launch {
+        launch(parent = viewModelJob) {
             trendingCall.refresh(Unit)
         }
     }

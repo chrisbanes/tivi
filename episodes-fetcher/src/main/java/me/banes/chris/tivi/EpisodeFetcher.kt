@@ -16,26 +16,16 @@
 
 package me.banes.chris.tivi
 
-import io.reactivex.Maybe
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.plusAssign
 import me.banes.chris.tivi.data.entities.Episode
-import me.banes.chris.tivi.extensions.emptySubscribe
-import me.banes.chris.tivi.inject.ApplicationLevel
 import me.banes.chris.tivi.trakt.TraktEpisodeFetcher
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class EpisodeFetcher @Inject constructor(
-    @ApplicationLevel private val disposables: CompositeDisposable,
     private val traktEpisodeFetcher: TraktEpisodeFetcher
 ) {
-    fun loadAsync(seasonId: Long) {
-        disposables += load(seasonId).emptySubscribe()
-    }
-
-    fun load(seasonId: Long): Maybe<List<Episode>> {
+    suspend fun load(seasonId: Long): List<Episode> {
         return traktEpisodeFetcher.loadShowSeasonEpisodes(seasonId)
     }
 }

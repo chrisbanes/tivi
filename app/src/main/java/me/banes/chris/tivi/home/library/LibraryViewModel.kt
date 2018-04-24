@@ -56,7 +56,7 @@ class LibraryViewModel @Inject constructor(
     }
 
     private fun refresh() {
-        launch {
+        launch(parent = viewModelJob) {
             watchedShowsCall.refresh(Unit)
         }
     }
