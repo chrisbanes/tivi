@@ -166,6 +166,8 @@ dependencies {
 
     implementation 'com.gabrielittner.threetenbp:lazythreetenbp:0.3.0'
 
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}"
+
     implementation "com.google.dagger:dagger-android:${versions.dagger}"
     implementation "com.google.dagger:dagger-android-support:${versions.dagger}"
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
