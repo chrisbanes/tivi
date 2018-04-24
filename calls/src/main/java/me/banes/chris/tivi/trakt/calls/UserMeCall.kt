@@ -17,17 +17,15 @@
 package me.banes.chris.tivi.trakt.calls
 
 import com.uwetrottmann.trakt5.TraktV2
-import com.uwetrottmann.trakt5.entities.User
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Flowable
-import io.reactivex.Single
-import kotlinx.coroutines.experimental.rx2.await
+import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.calls.Call
 import me.banes.chris.tivi.data.daos.EntityInserter
 import me.banes.chris.tivi.data.daos.UserDao
 import me.banes.chris.tivi.data.entities.TraktUser
-import me.banes.chris.tivi.extensions.toRxSingle
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
@@ -35,16 +33,34 @@ class UserMeCall @Inject constructor(
     private val dao: UserDao,
     private val trakt: TraktV2,
     private val schedulers: AppRxSchedulers,
+    private val dispatchers: AppCoroutineDispatchers,
     private val entityInserter: EntityInserter
 ) : Call<Unit, TraktUser> {
 
     override suspend fun refresh(param: Unit) {
-        trakt.users().profile(UserSlug.ME, Extended.FULL).toRxSingle()
-                .subscribeOn(schedulers.network)
-                .flatMap(this::mapToOutput)
-                .observeOn(schedulers.database)
-                .doOnSuccess(this::saveEntry)
-                .await()
+        // Fetch network response on network dispatcher
+        val networkResponse = withContext(dispatchers.network) {
+            trakt.users().profile(UserSlug.ME, Extended.FULL).execute().body()
+        }
+
+        networkResponse
+                ?.let {
+                    // Map to our entity
+                    TraktUser(
+                            username = it.username,
+                            name = it.name,
+                            location = it.location,
+                            about = it.about,
+                            avatarUrl = it.images?.avatar?.full,
+                            joined = it.joined_at
+                    )
+                }
+                ?.let { user ->
+                    // Save to the database on the database dispatcher
+                    withContext(dispatchers.database) {
+                        entityInserter.insertOrUpdate(dao, user)
+                    }
+                }
     }
 
     fun data() = data(Unit)
@@ -52,23 +68,5 @@ class UserMeCall @Inject constructor(
     override fun data(param: Unit): Flowable<TraktUser> {
         return dao.getTraktUser()
                 .subscribeOn(schedulers.database)
-    }
-
-    private fun mapToOutput(input: User): Single<TraktUser> {
-        return Single.just(input)
-                .map { networkUser ->
-                    TraktUser(
-                            username = networkUser.username,
-                            name = networkUser.name,
-                            location = networkUser.location,
-                            about = networkUser.about,
-                            avatarUrl = networkUser.images?.avatar?.full,
-                            joined = networkUser.joined_at
-                    )
-                }
-    }
-
-    private fun saveEntry(user: TraktUser) {
-        entityInserter.insertOrUpdate(dao, user)
     }
 }
