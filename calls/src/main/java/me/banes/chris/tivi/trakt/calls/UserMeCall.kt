@@ -25,6 +25,7 @@ import me.banes.chris.tivi.calls.Call
 import me.banes.chris.tivi.data.daos.EntityInserter
 import me.banes.chris.tivi.data.daos.UserDao
 import me.banes.chris.tivi.data.entities.TraktUser
+import me.banes.chris.tivi.extensions.fetchBody
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
@@ -40,7 +41,7 @@ class UserMeCall @Inject constructor(
     override suspend fun refresh(param: Unit) {
         // Fetch network response on network dispatcher
         val networkResponse = withContext(dispatchers.network) {
-            trakt.users().profile(UserSlug.ME, Extended.FULL).execute().body()
+            trakt.users().profile(UserSlug.ME, Extended.FULL).fetchBody()
         }
 
         networkResponse

@@ -18,18 +18,14 @@ package me.banes.chris.tivi.trakt
 
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.enums.Extended
-import io.reactivex.Maybe
-import io.reactivex.Single
+import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.data.daos.EntityInserter
 import me.banes.chris.tivi.data.daos.SeasonsDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.Season
-import me.banes.chris.tivi.extensions.toRxMaybe
-import me.banes.chris.tivi.util.AppRxSchedulers
-import me.banes.chris.tivi.util.RetryAfterTimeoutWithDelay
+import me.banes.chris.tivi.extensions.fetchBody
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import org.threeten.bp.OffsetDateTime
-import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 import com.uwetrottmann.trakt5.entities.Season as TraktSeason
@@ -39,58 +35,43 @@ class TraktSeasonFetcher @Inject constructor(
     private val showDao: TiviShowDao,
     private val seasonDao: SeasonsDao,
     private val trakt: TraktV2,
-    private val schedulers: AppRxSchedulers,
+    private val dispatchers: AppCoroutineDispatchers,
     private val entityInserter: EntityInserter
 ) {
-    fun loadShowSeasons(showId: Long): Maybe<List<Season>> {
-        val dbSource = seasonDao.seasonsForShowId(showId)
-                .subscribeOn(schedulers.database)
-                .filter { it.isNotEmpty() }
+    suspend fun loadShowSeasons(showId: Long): List<Season> {
+        val seasons = withContext(dispatchers.database) { seasonDao.seasonsForShowId(showId) }
+        if (seasons.isNotEmpty()) return seasons
 
-        val networkSource = showDao.getShowWithIdMaybe(showId)
-                .subscribeOn(schedulers.database)
-                .flatMap {
-                    trakt.seasons().summary(it.traktId!!.toString(), Extended.FULL).toRxMaybe()
-                            .subscribeOn(schedulers.network)
-                            .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry, schedulers.network))
-                            .toFlowable()
-                            .flatMapIterable { it }
-                            .flatMapSingle { upsertSeason(showId, it) }
-                            .toList()
-                            .toMaybe()
-                }
+        val show = withContext(dispatchers.database) {
+            showDao.getShowWithId(showId)
+        } ?: throw IllegalArgumentException("Show with id[$showId] does not exist")
 
-        return Maybe.concat(dbSource, networkSource).firstElement()
+        return withContext(dispatchers.network) {
+            trakt.seasons().summary(show.traktId!!.toString(), Extended.FULL).fetchBody()
+        }.map {
+            upsertSeason(showId, it)
+        }
     }
 
-    private fun shouldRetry(throwable: Throwable): Boolean = when (throwable) {
-        is HttpException -> throwable.code() == 429
-        is IOException -> true
-        else -> false
-    }
-
-    private fun upsertSeason(showId: Long, traktSeason: TraktSeason): Single<Season> {
-        return seasonDao.seasonWithSeasonTraktId(traktSeason.ids.trakt)
-                .defaultIfEmpty(Season())
-                .subscribeOn(schedulers.database)
-                .map {
-                    it.apply {
-                        updateProperty(this::showId, showId)
-                        updateProperty(this::traktId, traktSeason.ids.trakt)
-                        updateProperty(this::tmdbId, traktSeason.ids.tmdb)
-                        updateProperty(this::number, traktSeason.number)
-                        updateProperty(this::title, traktSeason.title)
-                        updateProperty(this::summary, traktSeason.overview)
-                        updateProperty(this::rating, traktSeason.rating?.toFloat())
-                        updateProperty(this::votes, traktSeason.votes)
-                        updateProperty(this::episodeCount, traktSeason.episode_count)
-                        updateProperty(this::airedEpisodes, traktSeason.aired_episodes)
-                        updateProperty(this::network, traktSeason.network)
-                        lastTraktUpdate = OffsetDateTime.now()
-                    }
-                    entityInserter.insertOrUpdate(seasonDao, it)
-                }
-                .flatMap(seasonDao::seasonWithIdMaybe)
-                .toSingle()
+    private suspend fun upsertSeason(showId: Long, traktSeason: TraktSeason): Season {
+        return withContext(dispatchers.database) {
+            (seasonDao.seasonWithSeasonTraktId(traktSeason.ids.trakt) ?: Season()).apply {
+                updateProperty(this::showId, showId)
+                updateProperty(this::traktId, traktSeason.ids.trakt)
+                updateProperty(this::tmdbId, traktSeason.ids.tmdb)
+                updateProperty(this::number, traktSeason.number)
+                updateProperty(this::title, traktSeason.title)
+                updateProperty(this::summary, traktSeason.overview)
+                updateProperty(this::rating, traktSeason.rating?.toFloat())
+                updateProperty(this::votes, traktSeason.votes)
+                updateProperty(this::episodeCount, traktSeason.episode_count)
+                updateProperty(this::airedEpisodes, traktSeason.aired_episodes)
+                updateProperty(this::network, traktSeason.network)
+                lastTraktUpdate = OffsetDateTime.now()
+            }.let {
+                val id = entityInserter.insertOrUpdate(seasonDao, it)
+                seasonDao.seasonWithId(id)!!
+            }
+        }
     }
 }

@@ -17,7 +17,6 @@
 package me.banes.chris.tivi.trakt.calls
 
 import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.rx2.await
 import me.banes.chris.tivi.SeasonFetcher
 import me.banes.chris.tivi.calls.Call
 import me.banes.chris.tivi.data.daos.SeasonsDao
@@ -31,7 +30,7 @@ class ShowSeasonsCall @Inject constructor(
     private val seasonFetcher: SeasonFetcher
 ) : Call<Long, List<SeasonWithEpisodes>> {
     override suspend fun refresh(param: Long) {
-        seasonFetcher.load(param).await()
+        seasonFetcher.load(param)
     }
 
     override fun data(param: Long): Flowable<List<SeasonWithEpisodes>> {

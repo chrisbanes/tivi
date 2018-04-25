@@ -24,7 +24,7 @@ import me.banes.chris.tivi.data.daos.EpisodesDao
 import me.banes.chris.tivi.data.daos.SeasonsDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.Episode
-import me.banes.chris.tivi.extensions.await
+import me.banes.chris.tivi.extensions.fetchBody
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
@@ -43,11 +43,15 @@ class TraktEpisodeFetcher @Inject constructor(
         val episodes = withContext(dispatchers.database) { episodesDao.episodesFromSeasonId(seasonId) }
         if (episodes?.isNotEmpty() == true) return episodes
 
-        val season = withContext(dispatchers.database) { seasonDao.seasonWithId(seasonId) }
-        val show = withContext(dispatchers.database) { showDao.getShowWithId(season.showId!!)!! }
+        val season = withContext(dispatchers.database) {
+            seasonDao.seasonWithId(seasonId)
+        } ?: throw IllegalArgumentException("Season with id[$seasonId] does not exist")
+        val show = withContext(dispatchers.database) {
+            showDao.getShowWithId(season.showId!!)!!
+        }
 
         return withContext(dispatchers.network) {
-            trakt.seasons().season(show.traktId.toString(), season.number!!, Extended.FULL).await()
+            trakt.seasons().season(show.traktId.toString(), season.number!!, Extended.FULL).fetchBody()
         }.mapNotNull { traktEpisode ->
             withContext(dispatchers.database) {
                 (episodesDao.episodeWithTraktId(traktEpisode.ids.trakt) ?: Episode()).apply {
