@@ -18,6 +18,7 @@
 
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/summary_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -61,6 +62,7 @@
         android:paddingTop="6dp"
         app:layoutManager="android.support.v7.widget.GridLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:spanCount="@integer/grid_condensed_span_count" />
+        app:spanCount="@integer/grid_condensed_span_count"
+        tools:listitem="@layout/view_holder_details_summary" />
 
 </android.support.design.widget.CoordinatorLayout>
