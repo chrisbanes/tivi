@@ -17,6 +17,7 @@
 
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/details_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -67,7 +68,8 @@
         android:elevation="2dp"
         app:layoutManager="android.support.v7.widget.GridLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:spanCount="4" />
+        app:spanCount="4"
+        tools:lisitem="@layout/viewdetai" />
 
     <ImageView
         android:id="@+id/details_poster"

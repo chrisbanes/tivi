@@ -39,7 +39,7 @@
             android:maxLinesToggle="@{@integer/details_summary_collapsed_lines}"
             android:text="@{summary}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            tools:text="Game of Thrones" />
+            tools:text="@sample/shows.txt" />
 
     </FrameLayout>
 </layout>
