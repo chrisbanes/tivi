@@ -17,7 +17,6 @@
 package me.banes.chris.tivi
 
 import com.uwetrottmann.trakt5.entities.Show
-import kotlinx.coroutines.experimental.rx2.await
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.tmdb.TmdbShowFetcher
 import me.banes.chris.tivi.trakt.TraktShowFetcher
@@ -31,23 +30,19 @@ class ShowFetcher @Inject constructor(
 ) {
     suspend fun load(traktId: Int, show: Show? = null): TiviShow {
         return traktShowFetcher.loadShow(traktId, show)
-                .await()!!
                 .also {
                     if (it.needsUpdateFromTmdb()) {
-                        refreshFromTmdb(it.tmdbId!!)
+                        tmdbShowFetcher.updateShow(it.tmdbId!!)
                     }
                 }
     }
 
     suspend fun update(traktId: Int) {
         traktShowFetcher.updateShow(traktId)
-                .await()
-                ?.also {
+                .also {
                     if (it.needsUpdateFromTmdb()) {
-                        refreshFromTmdb(it.tmdbId!!)
+                        tmdbShowFetcher.updateShow(it.tmdbId!!)
                     }
                 }
     }
-
-    private suspend fun refreshFromTmdb(tmdbId: Int) = tmdbShowFetcher.updateShow(tmdbId).await()
 }
