@@ -21,11 +21,9 @@ import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.data.daos.EntityInserter
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.extensions.fetchBody
+import me.banes.chris.tivi.extensions.fetchBodyWithRetry
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import org.threeten.bp.OffsetDateTime
-import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,7 +36,7 @@ class TmdbShowFetcher @Inject constructor(
 ) {
     suspend fun updateShow(tmdbId: Int) {
         return withContext(dispatchers.network) {
-            tmdb.tvService().tv(tmdbId).fetchBody()
+            tmdb.tvService().tv(tmdbId).fetchBodyWithRetry()
         }.let { tmdbShow ->
             withContext(dispatchers.database) {
                 (showDao.getShowWithTmdbId(tmdbShow.id) ?: TiviShow())
@@ -56,12 +54,5 @@ class TmdbShowFetcher @Inject constructor(
                         }
             }
         }
-    }
-
-    private fun shouldRetry(throwable: Throwable): Boolean = when (throwable) {
-        is HttpException -> throwable.code() == 429
-        is IOException -> true
-        is IllegalStateException -> true
-        else -> false
     }
 }

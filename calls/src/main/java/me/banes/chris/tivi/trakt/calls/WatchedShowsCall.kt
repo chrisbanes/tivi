@@ -28,7 +28,7 @@ import me.banes.chris.tivi.data.DatabaseTransactionRunner
 import me.banes.chris.tivi.data.daos.WatchedShowDao
 import me.banes.chris.tivi.data.entities.WatchedShowEntry
 import me.banes.chris.tivi.data.entities.WatchedShowListItem
-import me.banes.chris.tivi.extensions.fetchBody
+import me.banes.chris.tivi.extensions.fetchBodyWithRetry
 import me.banes.chris.tivi.extensions.parallelMap
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
@@ -57,7 +57,7 @@ class WatchedShowsCall @Inject constructor(
 
     override suspend fun refresh(param: Unit) {
         val networkResponse = withContext(dispatchers.network) {
-            trakt.users().watchedShows(UserSlug.ME, Extended.NOSEASONS).fetchBody()
+            trakt.users().watchedShows(UserSlug.ME, Extended.NOSEASONS).fetchBodyWithRetry()
         }
 
         val shows = networkResponse.parallelMap { traktEntry ->

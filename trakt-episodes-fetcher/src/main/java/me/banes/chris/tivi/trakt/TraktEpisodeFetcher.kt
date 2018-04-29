@@ -24,7 +24,7 @@ import me.banes.chris.tivi.data.daos.EpisodesDao
 import me.banes.chris.tivi.data.daos.SeasonsDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.Episode
-import me.banes.chris.tivi.extensions.fetchBody
+import me.banes.chris.tivi.extensions.fetchBodyWithRetry
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
@@ -51,7 +51,7 @@ class TraktEpisodeFetcher @Inject constructor(
         }
 
         return withContext(dispatchers.network) {
-            trakt.seasons().season(show.traktId.toString(), season.number!!, Extended.FULL).fetchBody()
+            trakt.seasons().season(show.traktId.toString(), season.number!!, Extended.FULL).fetchBodyWithRetry()
         }.mapNotNull { traktEpisode ->
             withContext(dispatchers.database) {
                 (episodesDao.episodeWithTraktId(traktEpisode.ids.trakt) ?: Episode()).apply {

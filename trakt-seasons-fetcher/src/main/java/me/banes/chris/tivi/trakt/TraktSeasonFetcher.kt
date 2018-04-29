@@ -23,7 +23,7 @@ import me.banes.chris.tivi.data.daos.EntityInserter
 import me.banes.chris.tivi.data.daos.SeasonsDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.Season
-import me.banes.chris.tivi.extensions.fetchBody
+import me.banes.chris.tivi.extensions.fetchBodyWithRetry
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
@@ -47,7 +47,7 @@ class TraktSeasonFetcher @Inject constructor(
         } ?: throw IllegalArgumentException("Show with id[$showId] does not exist")
 
         return withContext(dispatchers.network) {
-            trakt.seasons().summary(show.traktId!!.toString(), Extended.FULL).fetchBody()
+            trakt.seasons().summary(show.traktId!!.toString(), Extended.FULL).fetchBodyWithRetry()
         }.map {
             upsertSeason(showId, it)
         }

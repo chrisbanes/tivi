@@ -23,7 +23,7 @@ import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.data.daos.EntityInserter
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.extensions.fetchBody
+import me.banes.chris.tivi.extensions.fetchBodyWithRetry
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
@@ -49,7 +49,7 @@ class TraktShowFetcher @Inject constructor(
         }
 
         return withContext(dispatchers.network) {
-            trakt.shows().summary(traktId.toString(), Extended.NOSEASONS).fetchBody()
+            trakt.shows().summary(traktId.toString(), Extended.NOSEASONS).fetchBodyWithRetry()
         }.let {
             withContext(dispatchers.database) {
                 upsertShow(it)
@@ -59,7 +59,7 @@ class TraktShowFetcher @Inject constructor(
 
     suspend fun updateShow(traktId: Int): TiviShow {
         return withContext(dispatchers.network) {
-            trakt.shows().summary(traktId.toString(), Extended.FULL).fetchBody()
+            trakt.shows().summary(traktId.toString(), Extended.FULL).fetchBodyWithRetry()
         }.let {
             withContext(dispatchers.database) {
                 upsertShow(it)
