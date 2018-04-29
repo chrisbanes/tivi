@@ -17,12 +17,8 @@
 package me.banes.chris.tivi
 
 import com.uwetrottmann.trakt5.entities.Show
-import io.reactivex.Single
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.plusAssign
+import kotlinx.coroutines.experimental.rx2.await
 import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.extensions.emptySubscribe
-import me.banes.chris.tivi.inject.ApplicationLevel
 import me.banes.chris.tivi.tmdb.TmdbShowFetcher
 import me.banes.chris.tivi.trakt.TraktShowFetcher
 import javax.inject.Inject
@@ -30,34 +26,28 @@ import javax.inject.Singleton
 
 @Singleton
 class ShowFetcher @Inject constructor(
-    @ApplicationLevel private val disposables: CompositeDisposable,
     private val traktShowFetcher: TraktShowFetcher,
     private val tmdbShowFetcher: TmdbShowFetcher
 ) {
-    fun loadAsync(traktId: Int, show: Show? = null) {
-        disposables += load(traktId, show).emptySubscribe()
-    }
-
-    fun load(traktId: Int, show: Show? = null): Single<TiviShow> {
+    suspend fun load(traktId: Int, show: Show? = null): TiviShow {
         return traktShowFetcher.loadShow(traktId, show)
-                .doOnSuccess {
-                    if (it.needsUpdateFromTmdb()) {
-                        refreshFromTmdb(it.tmdbId!!)
-                    }
-                }
-                .toSingle()
-    }
-
-    fun update(traktId: Int): Single<TiviShow> {
-        return traktShowFetcher.updateShow(traktId)
-                .doOnSuccess {
+                .await()!!
+                .also {
                     if (it.needsUpdateFromTmdb()) {
                         refreshFromTmdb(it.tmdbId!!)
                     }
                 }
     }
 
-    private fun refreshFromTmdb(tmdbId: Int) {
-        disposables += tmdbShowFetcher.updateShow(tmdbId).emptySubscribe()
+    suspend fun update(traktId: Int) {
+        traktShowFetcher.updateShow(traktId)
+                .await()
+                ?.also {
+                    if (it.needsUpdateFromTmdb()) {
+                        refreshFromTmdb(it.tmdbId!!)
+                    }
+                }
     }
+
+    private suspend fun refreshFromTmdb(tmdbId: Int) = tmdbShowFetcher.updateShow(tmdbId).await()
 }

@@ -19,6 +19,7 @@ package me.banes.chris.tivi.trakt.calls
 import android.arch.paging.DataSource
 import io.reactivex.Flowable
 import io.reactivex.Single
+import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.rx2.await
 import me.banes.chris.tivi.calls.PaginatedCall
 import me.banes.chris.tivi.data.DatabaseTransactionRunner
@@ -57,8 +58,10 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
                 .subscribeOn(schedulers.network)
                 .toFlowable()
                 .flatMapIterable { it }
-                .flatMapSingle { traktObject ->
-                    loadShow(traktObject).map { show -> mapToEntry(traktObject, show, page) }
+                .map { traktObject ->
+                    runBlocking {
+                        loadShow(traktObject).let { show -> mapToEntry(traktObject, show, page) }
+                    }
                 }
                 .toList()
                 .observeOn(schedulers.database)
@@ -91,7 +94,7 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
 
     protected abstract fun mapToEntry(networkEntity: TT, show: TiviShow, page: Int): ET
 
-    protected abstract fun loadShow(response: TT): Single<TiviShow>
+    protected abstract suspend fun loadShow(response: TT): TiviShow
 
     protected abstract fun networkCall(page: Int): Single<List<TT>>
 }

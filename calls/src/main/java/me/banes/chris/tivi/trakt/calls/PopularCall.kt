@@ -53,7 +53,7 @@ class PopularCall @Inject constructor(
         return PopularEntry(null, show.id!!, page, networkEntity.index)
     }
 
-    override fun loadShow(response: ItemWithIndex<Show>): Single<TiviShow> {
+    override suspend fun loadShow(response: ItemWithIndex<Show>): TiviShow {
         return showFetcher.load(response.item.ids.trakt, response.item)
     }
 }

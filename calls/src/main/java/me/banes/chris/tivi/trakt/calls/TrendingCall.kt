@@ -51,7 +51,7 @@ class TrendingCall @Inject constructor(
         return TrendingEntry(null, show.id!!, page, networkEntity.watchers)
     }
 
-    override fun loadShow(response: TrendingShow): Single<TiviShow> {
+    override suspend fun loadShow(response: TrendingShow): TiviShow {
         return showFetcher.load(response.show.ids.trakt, response.show)
     }
 }

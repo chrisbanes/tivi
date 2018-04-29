@@ -21,7 +21,6 @@ import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.rx2.await
 import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.calls.ListCall
@@ -62,13 +61,8 @@ class WatchedShowsCall @Inject constructor(
         }
 
         val shows = networkResponse.parallelMap { traktEntry ->
-            showFetcher.load(traktEntry.show.ids.trakt, traktEntry.show).map {
-                WatchedShowEntry(
-                        null,
-                        it.id!!,
-                        traktEntry.last_watched_at
-                )
-            }.await()
+            showFetcher.load(traktEntry.show.ids.trakt, traktEntry.show)
+                    .let { WatchedShowEntry(null, it.id!!, traktEntry.last_watched_at) }
         }
 
         // Now save it to the database

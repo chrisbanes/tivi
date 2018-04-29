@@ -19,8 +19,8 @@ package me.banes.chris.tivi.trakt.calls
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.rx2.await
+import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.calls.Call
 import me.banes.chris.tivi.data.daos.TiviShowDao
@@ -40,9 +40,9 @@ class RelatedShowsCall @Inject constructor(
     private val showFetcher: ShowFetcher
 ) : Call<Long, List<TiviShow>> {
     override suspend fun refresh(param: Long) {
-        val show = async(dispatchers.database) {
+        val show = withContext(dispatchers.database) {
             dao.getShowWithId(param)
-        }.await()
+        }
 
         if (show != null) {
             val traktId = show.traktId!!
@@ -52,8 +52,9 @@ class RelatedShowsCall @Inject constructor(
                     .await()
 
             traktState.setRelatedShowsForTraktId(traktId, related.map { it.ids.trakt })
+
             related.forEach {
-                showFetcher.loadAsync(it.ids.trakt)
+                showFetcher.load(it.ids.trakt)
             }
         }
     }
