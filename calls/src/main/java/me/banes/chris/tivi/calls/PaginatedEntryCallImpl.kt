@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.trakt.calls
+package me.banes.chris.tivi.calls
 
 import android.arch.paging.DataSource
 import io.reactivex.Flowable
-import io.reactivex.Single
-import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.rx2.await
-import me.banes.chris.tivi.calls.PaginatedCall
+import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.data.DatabaseTransactionRunner
 import me.banes.chris.tivi.data.PaginatedEntry
 import me.banes.chris.tivi.data.daos.PaginatedEntryDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.TiviShow
+import me.banes.chris.tivi.extensions.parallelMap
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
 
@@ -36,6 +35,7 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
     protected val showDao: TiviShowDao,
     private val entryDao: ED,
     protected val schedulers: AppRxSchedulers,
+    private val dispatchers: AppCoroutineDispatchers,
     override val pageSize: Int = 21
 ) : PaginatedCall<Unit, LI> {
 
@@ -53,30 +53,27 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
 
     override fun dataSourceFactory(): DataSource.Factory<Int, LI> = entryDao.entriesDataSource()
 
-    private fun loadPage(page: Int = 0, resetOnSave: Boolean = false): Single<List<ET>> {
-        return networkCall(page)
-                .subscribeOn(schedulers.network)
-                .toFlowable()
-                .flatMapIterable { it }
-                .map { traktObject ->
-                    runBlocking {
-                        loadShow(traktObject).let { show -> mapToEntry(traktObject, show, page) }
+    private suspend fun loadPage(page: Int = 0, resetOnSave: Boolean = false): List<ET> {
+        return withContext(dispatchers.network) { networkCall(page) }
+                .parallelMap { traktObject ->
+                    loadShow(traktObject).let { show ->
+                        mapToEntry(traktObject, show, page)
                     }
                 }
-                .toList()
-                .observeOn(schedulers.database)
-                .doOnSuccess { savePage(it, page, resetOnSave) }
+                .also {
+                    withContext(dispatchers.database) {
+                        savePage(it, page, resetOnSave)
+                    }
+                }
     }
 
     override suspend fun refresh(param: Unit) {
-        loadPage(0, resetOnSave = true).await()
+        loadPage(0, resetOnSave = true)
     }
 
     override suspend fun loadNextPage() {
-        entryDao.getLastPage()
-                .subscribeOn(schedulers.database)
-                .flatMap { loadPage(it + 1) }
-                .await()
+        withContext(dispatchers.database) { entryDao.getLastPage() }
+                .also { loadPage(it + 1) }
     }
 
     private fun savePage(items: List<ET>, page: Int, resetOnSave: Boolean) {
@@ -96,5 +93,5 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
 
     protected abstract suspend fun loadShow(response: TT): TiviShow
 
-    protected abstract fun networkCall(page: Int): Single<List<TT>>
+    protected abstract suspend fun networkCall(page: Int): List<TT>
 }

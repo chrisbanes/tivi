@@ -23,25 +23,13 @@ import kotlin.coroutines.experimental.CoroutineContext
 suspend fun <A, B> Collection<A>.parallelMap(
     context: CoroutineContext = DefaultDispatcher,
     block: suspend (A) -> B
-): Collection<B> {
-    return map {
-        async(context) {
-            block(it)
-        }
-    }.map {
-        it.await()
-    }
-}
+) = map {
+    async(context) { block(it) }
+}.map { it.await() }
 
 suspend fun <A, B> Collection<A>.parallelForEach(
     context: CoroutineContext = DefaultDispatcher,
     block: suspend (A) -> B
-) {
-    return map {
-        async(context) {
-            block(it)
-        }
-    }.forEach {
-        it.await()
-    }
-}
+) = map {
+    async(context) { block(it) }
+}.forEach { it.await() }

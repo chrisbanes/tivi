@@ -19,16 +19,17 @@ package me.banes.chris.tivi.trakt.calls
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
-import io.reactivex.Single
 import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.api.ItemWithIndex
+import me.banes.chris.tivi.calls.PaginatedEntryCallImpl
 import me.banes.chris.tivi.data.DatabaseTransactionRunner
 import me.banes.chris.tivi.data.daos.PopularDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.PopularListItem
 import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.extensions.toRxSingle
+import me.banes.chris.tivi.extensions.fetchBodyWithRetry
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
@@ -38,14 +39,21 @@ class PopularCall @Inject constructor(
     popularDao: PopularDao,
     private val showFetcher: ShowFetcher,
     private val trakt: TraktV2,
-    schedulers: AppRxSchedulers
-) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularListItem, PopularDao>(databaseTransactionRunner, showDao, popularDao, schedulers) {
+    schedulers: AppRxSchedulers,
+    dispatchers: AppCoroutineDispatchers
+) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularListItem, PopularDao>(
+        databaseTransactionRunner,
+        showDao,
+        popularDao,
+        schedulers,
+        dispatchers
+) {
 
-    override fun networkCall(page: Int): Single<List<ItemWithIndex<Show>>> {
+    override suspend fun networkCall(page: Int): List<ItemWithIndex<Show>> {
         // We add one to the page since Trakt uses a 1-based index whereas we use 0-based
         return trakt.shows().popular(page + 1, pageSize, Extended.NOSEASONS)
-                .toRxSingle()
-                .map { it.mapIndexed { index, show -> ItemWithIndex(show, index) } }
+                .fetchBodyWithRetry()
+                .mapIndexed { index, show -> ItemWithIndex(show, index) }
     }
 
     override fun mapToEntry(networkEntity: ItemWithIndex<Show>, show: TiviShow, page: Int): PopularEntry {
