@@ -47,4 +47,7 @@ dependencies {
     implementation project(":tmdb")
     implementation project(":data")
     implementation project(":data-android")
+
+    api "io.reactivex.rxjava2:rxjava:${versions.rx}"
+    implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
 }

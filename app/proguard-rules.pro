@@ -115,3 +115,8 @@
   **[] $VALUES;
   public *;
 }
+
+# Coroutines
+-keepclassmembernames class kotlinx.** {
+    volatile <fields>;
+}

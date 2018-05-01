@@ -19,18 +19,13 @@ package me.banes.chris.tivi.trakt
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
-import io.reactivex.Maybe
-import io.reactivex.Single
+import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.data.daos.EntityInserter
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.extensions.toRxMaybe
-import me.banes.chris.tivi.extensions.toRxSingle
-import me.banes.chris.tivi.util.AppRxSchedulers
-import me.banes.chris.tivi.util.RetryAfterTimeoutWithDelay
+import me.banes.chris.tivi.extensions.fetchBodyWithRetry
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import org.threeten.bp.OffsetDateTime
-import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,66 +33,58 @@ import javax.inject.Singleton
 class TraktShowFetcher @Inject constructor(
     private val showDao: TiviShowDao,
     private val trakt: TraktV2,
-    private val schedulers: AppRxSchedulers,
+    private val dispatchers: AppCoroutineDispatchers,
     private val entityInserter: EntityInserter
 ) {
-    fun loadShow(traktId: Int, entity: Show? = null): Maybe<TiviShow> {
-        val dbSource = showDao.getShowWithTraktIdMaybe(traktId)
-                .subscribeOn(schedulers.database)
+    suspend fun loadShow(traktId: Int, entity: Show? = null): TiviShow {
+        val dbShow = withContext(dispatchers.database) { showDao.getShowWithTraktId(traktId) }
+        if (dbShow != null) {
+            return dbShow
+        }
 
-        val fromEntity = entity?.let { appendRx(Maybe.just(entity)) } ?: Maybe.empty<TiviShow>()
+        if (entity != null) {
+            return withContext(dispatchers.database) {
+                upsertShow(entity)
+            }
+        }
 
-        val networkSource = appendRx(
-                trakt.shows().summary(traktId.toString(), Extended.NOSEASONS).toRxMaybe()
-                        .subscribeOn(schedulers.network)
-                        .retryWhen(RetryAfterTimeoutWithDelay(3, 1000, this::shouldRetry, schedulers.network))
-        )
-
-        return Maybe.concat(dbSource, fromEntity, networkSource).firstElement()
+        return withContext(dispatchers.network) {
+            trakt.shows().summary(traktId.toString(), Extended.NOSEASONS).fetchBodyWithRetry()
+        }.let {
+            withContext(dispatchers.database) {
+                upsertShow(it)
+            }
+        }
     }
 
-    private fun appendRx(maybe: Maybe<Show>): Maybe<TiviShow> {
-        return maybe.observeOn(schedulers.database)
-                .flatMapSingle(this::upsertShow)
-                .toMaybe()
-                .flatMap { showDao.getShowWithTraktIdMaybe(it.traktId!!) }
+    suspend fun updateShow(traktId: Int): TiviShow {
+        return withContext(dispatchers.network) {
+            trakt.shows().summary(traktId.toString(), Extended.FULL).fetchBodyWithRetry()
+        }.let {
+            withContext(dispatchers.database) {
+                upsertShow(it)
+            }
+        }
     }
 
-    fun updateShow(traktId: Int): Single<TiviShow> {
-        return trakt.shows().summary(traktId.toString(), Extended.FULL).toRxSingle()
-                .subscribeOn(schedulers.network)
-                .observeOn(schedulers.database)
-                .flatMap(this::upsertShow)
-    }
-
-    private fun shouldRetry(throwable: Throwable): Boolean = when (throwable) {
-        is HttpException -> throwable.code() == 429
-        is IOException -> true
-        else -> false
-    }
-
-    private fun upsertShow(traktShow: Show): Single<TiviShow> {
-        return showDao.getShowWithTraktIdMaybe(traktShow.ids.trakt)
-                .subscribeOn(schedulers.database)
-                .toSingle(TiviShow())
-                .map {
-                    it.apply {
-                        updateProperty(this::traktId, traktShow.ids.trakt)
-                        updateProperty(this::tmdbId, traktShow.ids.tmdb)
-                        updateProperty(this::title, traktShow.title)
-                        updateProperty(this::summary, traktShow.overview)
-                        updateProperty(this::homepage, traktShow.homepage)
-                        updateProperty(this::rating, traktShow.rating?.toFloat())
-                        updateProperty(this::certification, traktShow.certification)
-                        updateProperty(this::runtime, traktShow.runtime)
-                        updateProperty(this::network, traktShow.network)
-                        updateProperty(this::country, traktShow.country)
-                        updateProperty(this::_genres, traktShow.genres?.joinToString(","))
-                        lastTraktUpdate = OffsetDateTime.now()
-                    }
-                    entityInserter.insertOrUpdate(showDao, it)
+    private fun upsertShow(traktShow: Show): TiviShow {
+        return (showDao.getShowWithTraktId(traktShow.ids.trakt) ?: TiviShow())
+                .apply {
+                    updateProperty(this::traktId, traktShow.ids.trakt)
+                    updateProperty(this::tmdbId, traktShow.ids.tmdb)
+                    updateProperty(this::title, traktShow.title)
+                    updateProperty(this::summary, traktShow.overview)
+                    updateProperty(this::homepage, traktShow.homepage)
+                    updateProperty(this::rating, traktShow.rating?.toFloat())
+                    updateProperty(this::certification, traktShow.certification)
+                    updateProperty(this::runtime, traktShow.runtime)
+                    updateProperty(this::network, traktShow.network)
+                    updateProperty(this::country, traktShow.country)
+                    updateProperty(this::_genres, traktShow.genres?.joinToString(","))
+                    lastTraktUpdate = OffsetDateTime.now()
+                }.let {
+                    val id = entityInserter.insertOrUpdate(showDao, it)
+                    showDao.getShowWithId(id)!!
                 }
-                .flatMapMaybe(showDao::getShowWithIdMaybe)
-                .toSingle()
     }
 }

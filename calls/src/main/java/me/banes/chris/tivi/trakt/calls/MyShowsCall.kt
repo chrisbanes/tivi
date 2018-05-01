@@ -17,7 +17,6 @@
 package me.banes.chris.tivi.trakt.calls
 
 import android.arch.paging.DataSource
-import io.reactivex.Completable
 import io.reactivex.Flowable
 import me.banes.chris.tivi.calls.ListCall
 import me.banes.chris.tivi.data.daos.MyShowsDao
@@ -42,7 +41,5 @@ class MyShowsCall @Inject constructor(
 
     override fun dataSourceFactory(): DataSource.Factory<Int, MyShowsListItem> = myShowsDao.entriesDataSource()
 
-    override fun refresh(param: Unit): Completable {
-        return Completable.complete()
-    }
+    override suspend fun refresh(param: Unit) = Unit
 }

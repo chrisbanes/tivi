@@ -17,12 +17,7 @@
 package me.banes.chris.tivi
 
 import com.uwetrottmann.trakt5.entities.Show
-import io.reactivex.Single
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.plusAssign
 import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.extensions.emptySubscribe
-import me.banes.chris.tivi.inject.ApplicationLevel
 import me.banes.chris.tivi.tmdb.TmdbShowFetcher
 import me.banes.chris.tivi.trakt.TraktShowFetcher
 import javax.inject.Inject
@@ -30,34 +25,24 @@ import javax.inject.Singleton
 
 @Singleton
 class ShowFetcher @Inject constructor(
-    @ApplicationLevel private val disposables: CompositeDisposable,
     private val traktShowFetcher: TraktShowFetcher,
     private val tmdbShowFetcher: TmdbShowFetcher
 ) {
-    fun loadAsync(traktId: Int, show: Show? = null) {
-        disposables += load(traktId, show).emptySubscribe()
-    }
-
-    fun load(traktId: Int, show: Show? = null): Single<TiviShow> {
+    suspend fun load(traktId: Int, show: Show? = null): TiviShow {
         return traktShowFetcher.loadShow(traktId, show)
-                .doOnSuccess {
+                .also {
                     if (it.needsUpdateFromTmdb()) {
-                        refreshFromTmdb(it.tmdbId!!)
-                    }
-                }
-                .toSingle()
-    }
-
-    fun update(traktId: Int): Single<TiviShow> {
-        return traktShowFetcher.updateShow(traktId)
-                .doOnSuccess {
-                    if (it.needsUpdateFromTmdb()) {
-                        refreshFromTmdb(it.tmdbId!!)
+                        tmdbShowFetcher.updateShow(it.tmdbId!!)
                     }
                 }
     }
 
-    private fun refreshFromTmdb(tmdbId: Int) {
-        disposables += tmdbShowFetcher.updateShow(tmdbId).emptySubscribe()
+    suspend fun update(traktId: Int) {
+        traktShowFetcher.updateShow(traktId)
+                .also {
+                    if (it.needsUpdateFromTmdb()) {
+                        tmdbShowFetcher.updateShow(it.tmdbId!!)
+                    }
+                }
     }
 }

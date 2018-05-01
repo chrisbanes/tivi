@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.api
+package me.banes.chris.tivi.util
 
-/**
- * A generic class that holds a value with its loading status.
- * @param <T>
-</T> */
-data class Resource(val status: Status, val message: String? = null)
+import kotlinx.coroutines.experimental.CoroutineDispatcher
+
+data class AppCoroutineDispatchers(
+    val database: CoroutineDispatcher,
+    val disk: CoroutineDispatcher,
+    val network: CoroutineDispatcher,
+    val main: CoroutineDispatcher
+)

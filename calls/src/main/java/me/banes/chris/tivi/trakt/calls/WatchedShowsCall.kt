@@ -20,15 +20,17 @@ import android.arch.paging.DataSource
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
-import io.reactivex.Completable
 import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.calls.ListCall
 import me.banes.chris.tivi.data.DatabaseTransactionRunner
 import me.banes.chris.tivi.data.daos.WatchedShowDao
-import me.banes.chris.tivi.data.entities.WatchedShowListItem
 import me.banes.chris.tivi.data.entities.WatchedShowEntry
-import me.banes.chris.tivi.extensions.toRxSingle
+import me.banes.chris.tivi.data.entities.WatchedShowListItem
+import me.banes.chris.tivi.extensions.fetchBodyWithRetry
+import me.banes.chris.tivi.extensions.parallelMap
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
@@ -37,7 +39,8 @@ class WatchedShowsCall @Inject constructor(
     private val watchShowDao: WatchedShowDao,
     private val showFetcher: ShowFetcher,
     private val trakt: TraktV2,
-    private val schedulers: AppRxSchedulers
+    private val schedulers: AppRxSchedulers,
+    private val dispatchers: AppCoroutineDispatchers
 ) : ListCall<Unit, WatchedShowListItem> {
 
     override val pageSize = 21
@@ -52,25 +55,22 @@ class WatchedShowsCall @Inject constructor(
 
     override fun dataSourceFactory(): DataSource.Factory<Int, WatchedShowListItem> = watchShowDao.entriesDataSource()
 
-    override fun refresh(param: Unit): Completable {
-        return trakt.users().watchedShows(UserSlug.ME, Extended.NOSEASONS).toRxSingle()
-                .subscribeOn(schedulers.network)
-                .toFlowable()
-                .flatMapIterable { it }
-                .flatMapSingle { traktEntry ->
-                    showFetcher.load(traktEntry.show.ids.trakt, traktEntry.show)
-                            .map {
-                                WatchedShowEntry(null, it.id!!, traktEntry.last_watched_at)
-                            }
-                }
-                .toList()
-                .observeOn(schedulers.database)
-                .doOnSuccess {
-                    databaseTransactionRunner.runInTransaction {
-                        watchShowDao.deleteAll()
-                        it.forEach { watchShowDao.insert(it) }
-                    }
-                }
-                .toCompletable()
+    override suspend fun refresh(param: Unit) {
+        val networkResponse = withContext(dispatchers.network) {
+            trakt.users().watchedShows(UserSlug.ME, Extended.NOSEASONS).fetchBodyWithRetry()
+        }
+
+        val shows = networkResponse.parallelMap { traktEntry ->
+            showFetcher.load(traktEntry.show.ids.trakt, traktEntry.show)
+                    .let { WatchedShowEntry(null, it.id!!, traktEntry.last_watched_at) }
+        }
+
+        // Now save it to the database
+        withContext(dispatchers.database) {
+            databaseTransactionRunner.runInTransaction {
+                watchShowDao.deleteAll()
+                shows.forEach { watchShowDao.insert(it) }
+            }
+        }
     }
 }

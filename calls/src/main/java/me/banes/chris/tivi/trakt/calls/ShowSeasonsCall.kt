@@ -16,7 +16,6 @@
 
 package me.banes.chris.tivi.trakt.calls
 
-import io.reactivex.Completable
 import io.reactivex.Flowable
 import me.banes.chris.tivi.SeasonFetcher
 import me.banes.chris.tivi.calls.Call
@@ -30,8 +29,8 @@ class ShowSeasonsCall @Inject constructor(
     private val schedulers: AppRxSchedulers,
     private val seasonFetcher: SeasonFetcher
 ) : Call<Long, List<SeasonWithEpisodes>> {
-    override fun refresh(param: Long): Completable {
-        return seasonFetcher.load(param).ignoreElement()
+    override suspend fun refresh(param: Long) {
+        seasonFetcher.load(param)
     }
 
     override fun data(param: Long): Flowable<List<SeasonWithEpisodes>> {

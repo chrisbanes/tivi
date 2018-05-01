@@ -22,10 +22,10 @@ import android.arch.paging.LivePagedListBuilder
 import android.arch.paging.PagedList
 import io.reactivex.BackpressureStrategy
 import io.reactivex.rxkotlin.Flowables
-import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
-import me.banes.chris.tivi.api.Resource
+import kotlinx.coroutines.experimental.launch
 import me.banes.chris.tivi.api.Status
+import me.banes.chris.tivi.api.UiResource
 import me.banes.chris.tivi.calls.ListCall
 import me.banes.chris.tivi.calls.PaginatedCall
 import me.banes.chris.tivi.data.Entry
@@ -35,12 +35,13 @@ import timber.log.Timber
 
 open class EntryViewModel<LI : ListItem<out Entry>>(
     private val schedulers: AppRxSchedulers,
+    private val coroutineDispatchers: AppCoroutineDispatchers,
     private val call: ListCall<Unit, LI>,
     tmdbManager: TmdbManager,
     refreshOnStartup: Boolean = true
-) : RxAwareViewModel() {
+) : TiviViewModel() {
 
-    private val messages = BehaviorSubject.create<Resource>()
+    private val messages = BehaviorSubject.create<UiResource>()
 
     val liveList by lazy(mode = LazyThreadSafetyMode.NONE) {
         LivePagedListBuilder<Int, LI>(
@@ -71,30 +72,42 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
 
     fun onListScrolledToEnd() {
         if (call is PaginatedCall<*, *>) {
-            disposables += call.loadNextPage()
-                    .observeOn(schedulers.main)
-                    .doOnSubscribe { sendMessage(Resource(Status.LOADING_MORE)) }
-                    .subscribe(this::onSuccess, this::onError)
+            launch(coroutineDispatchers.main) {
+                sendMessage(UiResource(Status.LOADING_MORE))
+                try {
+                    launch {
+                        call.loadNextPage()
+                    }.join()
+                    onSuccess()
+                } catch (e: Exception) {
+                    onError(e)
+                }
+            }
         }
     }
 
     fun fullRefresh() {
-        disposables += call.refresh(Unit)
-                .observeOn(schedulers.main)
-                .doOnSubscribe { sendMessage(Resource(Status.REFRESHING)) }
-                .subscribe(this::onSuccess, this::onError)
+        launchWithParent(coroutineDispatchers.main) {
+            sendMessage(UiResource(Status.REFRESHING))
+            try {
+                call.refresh(Unit)
+                onSuccess()
+            } catch (e: Exception) {
+                onError(e)
+            }
+        }
     }
 
     private fun onError(t: Throwable) {
         Timber.e(t)
-        sendMessage(Resource(Status.ERROR, t.localizedMessage))
+        sendMessage(UiResource(Status.ERROR, t.localizedMessage))
     }
 
     private fun onSuccess() {
-        sendMessage(Resource(Status.SUCCESS))
+        sendMessage(UiResource(Status.SUCCESS))
     }
 
-    private fun sendMessage(resource: Resource) {
-        messages.onNext(resource)
+    private fun sendMessage(uiResource: UiResource) {
+        messages.onNext(uiResource)
     }
 }

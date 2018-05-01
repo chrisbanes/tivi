@@ -14,21 +14,10 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.util
-
-import android.arch.lifecycle.ViewModel
-import io.reactivex.disposables.CompositeDisposable
+package me.banes.chris.tivi.api
 
 /**
- * Simple ViewModel which exposes a CompositeDisposable which is automatically cleared when
- * the ViewModel is cleared.
+ * A generic class that holds a value with its loading status.
+ * @param <T>
  */
-open class RxAwareViewModel : ViewModel() {
-
-    val disposables = CompositeDisposable()
-
-    override fun onCleared() {
-        super.onCleared()
-        disposables.clear()
-    }
-}
+data class UiResource(val status: Status, val message: String? = null)

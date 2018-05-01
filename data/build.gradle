@@ -23,5 +23,7 @@ dependencies {
     implementation "android.arch.persistence.room:common:${versions.arch_room}"
     implementation "android.arch.paging:common:${versions.arch_paging}"
 
+    compile "io.reactivex.rxjava2:rxjava:${versions.rx}"
+
     compile 'org.threeten:threetenbp:1.3.6:no-tzdb'
 }

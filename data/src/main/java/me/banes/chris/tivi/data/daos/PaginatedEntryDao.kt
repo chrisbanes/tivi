@@ -17,12 +17,11 @@
 package me.banes.chris.tivi.data.daos
 
 import io.reactivex.Flowable
-import io.reactivex.Single
 import me.banes.chris.tivi.data.PaginatedEntry
 import me.banes.chris.tivi.data.entities.ListItem
 
 interface PaginatedEntryDao<EC : PaginatedEntry, LI : ListItem<EC>> : EntryDao<EC, LI> {
     fun entriesPage(page: Int): Flowable<List<LI>>
     fun deletePage(page: Int)
-    fun getLastPage(): Single<Int>
+    fun getLastPage(): Int
 }

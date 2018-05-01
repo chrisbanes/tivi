@@ -21,7 +21,6 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
 import io.reactivex.Flowable
-import io.reactivex.Single
 import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.data.entities.TrendingListItem
 
@@ -46,5 +45,5 @@ abstract class TrendingDao : PaginatedEntryDao<TrendingEntry, TrendingListItem> 
     abstract override fun deleteAll()
 
     @Query("SELECT MAX(page) from trending_shows")
-    abstract override fun getLastPage(): Single<Int>
+    abstract override fun getLastPage(): Int
 }

@@ -56,10 +56,12 @@ class DiscoverViewModel @Inject constructor(
     }
 
     private fun refresh() {
-        disposables += popularCall.refresh(Unit)
-                .subscribe(this::onSuccess, this::onRefreshError)
-        disposables += trendingCall.refresh(Unit)
-                .subscribe(this::onSuccess, this::onRefreshError)
+        launchWithParent {
+            popularCall.refresh(Unit)
+        }
+        launchWithParent {
+            trendingCall.refresh(Unit)
+        }
     }
 
     private fun onSuccess() {

@@ -55,8 +55,9 @@ class LibraryViewModel @Inject constructor(
     }
 
     private fun refresh() {
-        disposables += watchedShowsCall.refresh(Unit)
-                .subscribe(this::onSuccess, this::onRefreshError)
+        launchWithParent {
+            watchedShowsCall.refresh(Unit)
+        }
     }
 
     private fun onSuccess() {

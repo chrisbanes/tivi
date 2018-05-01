@@ -28,6 +28,8 @@ import dagger.Provides
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.rx2.asCoroutineDispatcher
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.BuildConfig
 import me.banes.chris.tivi.TiviAppNavigator
@@ -38,6 +40,7 @@ import me.banes.chris.tivi.appinitializers.AndroidJobInitializer
 import me.banes.chris.tivi.appinitializers.AppInitializers
 import me.banes.chris.tivi.appinitializers.ThreeTenBpInitializer
 import me.banes.chris.tivi.appinitializers.TimberInitializer
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
 import java.io.File
 import javax.inject.Named
@@ -60,6 +63,15 @@ class AppModule {
                 AndroidSchedulers.mainThread()
         )
     }
+
+    @Singleton
+    @Provides
+    fun provideCoroutineDispatchers(schedulers: AppRxSchedulers) = AppCoroutineDispatchers(
+            database = schedulers.database.asCoroutineDispatcher(),
+            disk = schedulers.disk.asCoroutineDispatcher(),
+            network = schedulers.network.asCoroutineDispatcher(),
+            main = UI
+    )
 
     @Named("app")
     @Provides

@@ -151,7 +151,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         viewModel.viewState.observeK(this) {
             controller.tmdbImageUrlProvider = it?.tmdbImageUrlProvider
 
-            it?.resource?.let {
+            it?.uiResource?.let {
                 when (it.status) {
                     Status.SUCCESS -> {
                         swipeRefreshLatch.refreshing = false

@@ -45,6 +45,9 @@ dependencies {
     implementation project(":trakt")
     implementation project(":calls")
 
+    compile "io.reactivex.rxjava2:rxjava:${versions.rx}"
+    implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
+
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
 
     implementation "androidx.core:core-ktx:${versions.core_ktx}"

@@ -16,8 +16,6 @@
 
 package me.banes.chris.tivi.extensions
 
-import io.reactivex.Flowable
-import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.Single
@@ -25,12 +23,60 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.exceptions.CompositeException
 import io.reactivex.exceptions.Exceptions
 import io.reactivex.plugins.RxJavaPlugins
+import kotlinx.coroutines.experimental.delay
 import retrofit2.Call
+import retrofit2.HttpException
+import java.io.IOException
 
 fun <T> Call<T>.toRxObservable(): Observable<T> = me.banes.chris.tivi.extensions.BodyObservable(me.banes.chris.tivi.extensions.RetrofitCallObservable(this))
 fun <T> Call<T>.toRxSingle(): Single<T> = toRxObservable().singleOrError()
-fun <T> Call<T>.toRxMaybe(): Maybe<T> = toRxObservable().singleElement()
-fun <T> Call<T>.toRxFlowable(): Flowable<T> = toRxObservable().toFlowable(io.reactivex.BackpressureStrategy.LATEST)
+
+fun <T> Call<T>.fetchBody(): T {
+    return execute().let {
+        if (!it.isSuccessful) throw HttpException(it)
+        it.body()!!
+    }
+}
+
+suspend inline fun <T> Call<T>.fetchBodyWithRetry(
+    firstDelay: Int = 100,
+    maxAttempts: Int = 3,
+    shouldRetry: (Exception) -> Boolean = ::defaultShouldRetry
+): T {
+    var nextDelay = firstDelay
+    repeat(maxAttempts - 1) { attempt ->
+        // Clone a new ready call if needed
+        val call = if (!isExecuted) {
+            this
+        } else {
+            clone()
+        }
+
+        // Execute the call
+        try {
+            return call.fetchBody()
+        } catch (e: Exception) {
+            // The response failed, so lets see if we should retry again
+            if (attempt == (maxAttempts - 1) || !shouldRetry(e)) {
+                throw e
+            }
+        }
+        // Delay to implement exp. backoff
+        delay(nextDelay)
+        // Increase the next delay
+        nextDelay *= 2
+    }
+
+    // We should never hit here
+    throw IllegalStateException("Unknown exception from fetchBodyWithRetry")
+}
+
+fun defaultShouldRetry(exception: Exception) = when (exception) {
+    is HttpException -> exception.code() == 429
+    is IOException -> true
+    else -> false
+}
+
 private class RetrofitCallObservable<T>(private val originalCall: Call<T>) : Observable<retrofit2.Response<T>>() {
 
     override fun subscribeActual(observer: Observer<in retrofit2.Response<T>>) {

@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi
+package me.banes.chris.tivi.extensions
 
-import me.banes.chris.tivi.data.entities.Episode
-import me.banes.chris.tivi.trakt.TraktEpisodeFetcher
-import javax.inject.Inject
-import javax.inject.Singleton
+import kotlinx.coroutines.experimental.DefaultDispatcher
+import kotlinx.coroutines.experimental.async
+import kotlin.coroutines.experimental.CoroutineContext
 
-@Singleton
-class EpisodeFetcher @Inject constructor(
-    private val traktEpisodeFetcher: TraktEpisodeFetcher
-) {
-    suspend fun load(seasonId: Long): List<Episode> {
-        return traktEpisodeFetcher.loadShowSeasonEpisodes(seasonId)
-    }
-}
+suspend fun <A, B> Collection<A>.parallelMap(
+    context: CoroutineContext = DefaultDispatcher,
+    block: suspend (A) -> B
+) = map {
+    async(context) { block(it) }
+}.map { it.await() }
+
+suspend fun <A, B> Collection<A>.parallelForEach(
+    context: CoroutineContext = DefaultDispatcher,
+    block: suspend (A) -> B
+) = map {
+    async(context) { block(it) }
+}.forEach { it.await() }

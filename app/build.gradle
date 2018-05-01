@@ -166,6 +166,12 @@ dependencies {
 
     implementation 'com.gabrielittner.threetenbp:lazythreetenbp:0.3.0'
 
+    implementation "io.reactivex.rxjava2:rxjava:${versions.rx}"
+    implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}"
+
     implementation "com.google.dagger:dagger-android:${versions.dagger}"
     implementation "com.google.dagger:dagger-android-support:${versions.dagger}"
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
