@@ -19,7 +19,6 @@ package me.banes.chris.tivi.showdetails.details
 import android.arch.lifecycle.MutableLiveData
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
-import kotlinx.coroutines.experimental.launch
 import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.actions.TiviActions
 import me.banes.chris.tivi.data.daos.MyShowsDao
@@ -61,13 +60,13 @@ class ShowDetailsFragmentViewModel @Inject constructor(
 
     private fun refresh() {
         showId?.let { id ->
-            launch(parent = viewModelJob) {
+            launchWithParent {
                 showCall.refresh(id)
             }
-            launch(parent = viewModelJob) {
+            launchWithParent {
                 seasonsCall.refresh(id)
             }
-            launch(parent = viewModelJob) {
+            launchWithParent {
                 relatedShows.refresh(id)
             }
         }

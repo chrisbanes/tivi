@@ -19,7 +19,6 @@ package me.banes.chris.tivi.home.library
 import android.arch.lifecycle.MutableLiveData
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
-import kotlinx.coroutines.experimental.launch
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.TiviShow
@@ -56,7 +55,7 @@ class LibraryViewModel @Inject constructor(
     }
 
     private fun refresh() {
-        launch(parent = viewModelJob) {
+        launchWithParent {
             watchedShowsCall.refresh(Unit)
         }
     }

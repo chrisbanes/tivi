@@ -87,12 +87,10 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
     }
 
     fun fullRefresh() {
-        launch(coroutineDispatchers.main) {
+        launchWithParent(coroutineDispatchers.main) {
             sendMessage(UiResource(Status.REFRESHING))
             try {
-                launch {
-                    call.refresh(Unit)
-                }.join()
+                call.refresh(Unit)
                 onSuccess()
             } catch (e: Exception) {
                 onError(e)
