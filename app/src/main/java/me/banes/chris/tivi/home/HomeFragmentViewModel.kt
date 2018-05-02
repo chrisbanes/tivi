@@ -44,7 +44,7 @@ abstract class HomeFragmentViewModel(
     init {
         authUiState.value = AuthUiState.LOGGED_OUT
 
-        disposables += traktManager.stateSubject.subscribe({ handleAuthState(it) }, Timber::e)
+        disposables += traktManager.stateSubject.subscribe(::handleAuthState, Timber::e)
     }
 
     private fun handleAuthState(state: AuthState?) {

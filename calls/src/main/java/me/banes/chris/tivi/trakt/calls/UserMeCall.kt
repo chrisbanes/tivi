@@ -44,24 +44,22 @@ class UserMeCall @Inject constructor(
             trakt.users().profile(UserSlug.ME, Extended.FULL).fetchBodyWithRetry()
         }
 
-        networkResponse
-                ?.let {
-                    // Map to our entity
-                    TraktUser(
-                            username = it.username,
-                            name = it.name,
-                            location = it.location,
-                            about = it.about,
-                            avatarUrl = it.images?.avatar?.full,
-                            joined = it.joined_at
-                    )
-                }
-                ?.let { user ->
-                    // Save to the database on the database dispatcher
-                    withContext(dispatchers.database) {
-                        entityInserter.insertOrUpdate(dao, user)
-                    }
-                }
+        networkResponse.let {
+            // Map to our entity
+            TraktUser(
+                    username = it.username,
+                    name = it.name,
+                    location = it.location,
+                    about = it.about,
+                    avatarUrl = it.images?.avatar?.full,
+                    joined = it.joined_at
+            )
+        }.let {
+            // Save to the database on the database dispatcher
+            withContext(dispatchers.database) {
+                entityInserter.insertOrUpdate(dao, it)
+            }
+        }
     }
 
     fun data() = data(Unit)
