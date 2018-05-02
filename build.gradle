@@ -30,7 +30,7 @@ buildscript {
             'espresso'         : '3.0.1',
             'dagger'           : '2.15',
             'ktlint'           : '0.19.0',
-            'rx'               : '2.1.13',
+            'rx'               : '2.1.12',
             'rxlint'           : '1.6.1',
             'rxkotlin'         : '2.2.0',
             'epoxy'            : '2.12.0',
