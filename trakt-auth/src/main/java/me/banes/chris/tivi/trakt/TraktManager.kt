@@ -21,15 +21,16 @@ import androidx.core.content.edit
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
 import io.reactivex.Flowable
-import io.reactivex.Maybe
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.data.entities.TraktUser
 import me.banes.chris.tivi.inject.ApplicationLevel
 import me.banes.chris.tivi.trakt.calls.UserMeCall
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
@@ -37,6 +38,7 @@ import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ClientAuthentication
+import net.openid.appauth.TokenResponse
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
@@ -46,6 +48,7 @@ import javax.inject.Singleton
 @Singleton
 class TraktManager @Inject constructor(
     private val schedulers: AppRxSchedulers,
+    private val dispatchers: AppCoroutineDispatchers,
     @ApplicationLevel private val disposables: CompositeDisposable,
     @Named("app") private val appNavigator: AppNavigator,
     private val requestProvider: Provider<AuthorizationRequest>,
@@ -55,14 +58,16 @@ class TraktManager @Inject constructor(
     private val traktClient: TraktV2,
     private val userMeCall: UserMeCall
 ) {
-    val stateSubject = BehaviorSubject.create<AuthState>()!!
+    val stateSubject = BehaviorSubject.create<AuthState>()
 
     init {
-        // First observer updates the local storage
-        disposables += stateSubject.observeOn(schedulers.database)
-                .subscribe(this::persistAuthState, Timber::e)
+        // Read the auth state from prefs
+        launch(dispatchers.main) {
+            val state = withContext(dispatchers.disk) { readAuthState() }
+            stateSubject.onNext(state)
+        }
 
-        // Second observer updates local state
+        // Observer which updates local state
         disposables += stateSubject.observeOn(schedulers.main)
                 .subscribe({
                     traktClient.accessToken(it.accessToken)
@@ -74,18 +79,13 @@ class TraktManager @Inject constructor(
                         }
                     }
                 }, Timber::e)
-
-        // Read the auth state from database
-        disposables += Maybe.fromCallable(this::readAuthState)
-                .subscribeOn(schedulers.database)
-                .observeOn(schedulers.main)
-                .subscribe(stateSubject::onNext, stateSubject::onError)
     }
 
     fun startAuth(requestCode: Int) {
         authService.performAuthorizationRequest(
                 requestProvider.get(),
-                appNavigator.provideAuthHandleResponseIntent(requestCode))
+                appNavigator.provideAuthHandleResponseIntent(requestCode)
+        )
     }
 
     fun onAuthResponse(response: AuthorizationResponse) {
@@ -99,11 +99,20 @@ class TraktManager @Inject constructor(
     fun userObservable(): Flowable<TraktUser> = userMeCall.data()
 
     private fun performTokenExchange(response: AuthorizationResponse) {
-        authService.performTokenRequest(response.createTokenExchangeRequest(), clientAuth.get()) { tokenResponse, exception ->
-            val newState = AuthState().apply {
-                update(tokenResponse, exception)
-            }
-            stateSubject.onNext(newState)
+        authService.performTokenRequest(
+                response.createTokenExchangeRequest(),
+                clientAuth.get(),
+                ::onTokenExchangeResponse
+        )
+    }
+
+    private fun onTokenExchangeResponse(response: TokenResponse?, ex: AuthorizationException?) {
+        val newState = AuthState().apply { update(response, ex) }
+        // Update our local state
+        stateSubject.onNext(newState)
+        // Persist auth state
+        launch(dispatchers.disk) {
+            persistAuthState(newState)
         }
     }
 
