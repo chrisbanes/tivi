@@ -17,32 +17,22 @@
 package me.banes.chris.tivi.appinitializers
 
 import android.app.Application
-import com.gabrielittner.threetenbp.LazyThreeTen
-import io.reactivex.Completable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.plusAssign
-import me.banes.chris.tivi.inject.ApplicationLevel
-import me.banes.chris.tivi.util.AppRxSchedulers
-import timber.log.Timber
+import com.jakewharton.threetenabp.AndroidThreeTen
+import kotlinx.coroutines.experimental.launch
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
+import org.threeten.bp.zone.ZoneRulesProvider
 import javax.inject.Inject
 
 class ThreeTenBpInitializer @Inject constructor(
-    @ApplicationLevel private val disposables: CompositeDisposable,
-    private val schedulers: AppRxSchedulers
+    private val dispatchers: AppCoroutineDispatchers
 ) : AppInitializer {
     override fun init(application: Application) {
-        // Init LazyThreeTen
-        LazyThreeTen.init(application)
+        // Init ThreeTenABP
+        AndroidThreeTen.init(application)
 
-        // ...and cache it's timezones on a background thread
-        disposables += Completable.fromCallable { LazyThreeTen.cacheZones() }
-                .subscribeOn(schedulers.disk)
-                .subscribe({
-                    // Ignore, nothing to do here!
-                }, {
-                    // This should never happen so lets throw the exception
-                    Timber.e(it)
-                    throw it
-                })
+        // Query the ZoneRulesProvider so that it is loaded on a background coroutine
+        launch(dispatchers.disk) {
+            ZoneRulesProvider.getAvailableZoneIds()
+        }
     }
 }
