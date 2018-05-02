@@ -41,7 +41,5 @@ open class TiviViewModel : ViewModel() {
     fun launchWithParent(
         context: CoroutineContext = DefaultDispatcher,
         block: suspend CoroutineScope.() -> Unit
-    ) {
-        launch(context = context, parent = viewModelJob, block = block)
-    }
+    ) = launch(context = context, parent = viewModelJob, block = block)
 }

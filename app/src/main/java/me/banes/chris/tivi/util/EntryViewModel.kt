@@ -23,7 +23,6 @@ import android.arch.paging.PagedList
 import io.reactivex.BackpressureStrategy
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.subjects.BehaviorSubject
-import kotlinx.coroutines.experimental.launch
 import me.banes.chris.tivi.api.Status
 import me.banes.chris.tivi.api.UiResource
 import me.banes.chris.tivi.calls.ListCall
@@ -72,12 +71,10 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
 
     fun onListScrolledToEnd() {
         if (call is PaginatedCall<*, *>) {
-            launch(coroutineDispatchers.main) {
+            launchWithParent(coroutineDispatchers.main) {
                 sendMessage(UiResource(Status.LOADING_MORE))
                 try {
-                    launch {
-                        call.loadNextPage()
-                    }.join()
+                    call.loadNextPage()
                     onSuccess()
                 } catch (e: Exception) {
                     onError(e)

@@ -56,16 +56,13 @@ class LibraryViewModel @Inject constructor(
 
     private fun refresh() {
         launchWithParent {
-            watchedShowsCall.refresh(Unit)
+            try {
+                watchedShowsCall.refresh(Unit)
+            } catch (e: Exception) {
+                // TODO this shouldn't live here
+                Timber.e(e, "Error while refreshing")
+            }
         }
-    }
-
-    private fun onSuccess() {
-        // TODO nothing really to do here
-    }
-
-    private fun onRefreshError(t: Throwable) {
-        Timber.e(t, "Error while refreshing")
     }
 
     fun onWatchedHeaderClicked(navigator: HomeNavigator, sharedElements: SharedElementHelper) {
