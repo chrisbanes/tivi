@@ -21,10 +21,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion buildConfig.compileSdk
 
     defaultConfig {
-        minSdkVersion 23
+        minSdkVersion buildConfig.minSdk
     }
 
     lintOptions {

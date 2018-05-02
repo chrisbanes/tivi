@@ -21,10 +21,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion buildConfig.compileSdk
 
     defaultConfig {
-        minSdkVersion 23
+        minSdkVersion buildConfig.minSdk
         manifestPlaceholders += ['appAuthRedirectScheme': 'me.banes.chris.tivi']
     }
 
@@ -45,7 +45,7 @@ dependencies {
     implementation project(":trakt")
     implementation project(":calls")
 
-    compile "io.reactivex.rxjava2:rxjava:${versions.rx}"
+    api "io.reactivex.rxjava2:rxjava:${versions.rx}"
     implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
 
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"

@@ -20,10 +20,10 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion buildConfig.compileSdk
 
     defaultConfig {
-        minSdkVersion 23
+        minSdkVersion buildConfig.minSdk
     }
 
     lintOptions {
