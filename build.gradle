@@ -19,22 +19,22 @@ buildscript {
     ext.versions = [
             'android_gradle'   : '3.1.2',
             'support_library'  : '27.1.1',
-            'constraint_layout': '1.1.0-beta6',
+            'constraint_layout': '1.1.0',
             'arch'             : '1.1.0',
             'arch_lifecycle'   : '1.1.1',
-            'arch_paging'      : '1.0.0-beta1',
-            'arch_room'        : '1.1.0-beta2',
+            'arch_paging'      : '1.0.0-rc1',
+            'arch_room'        : '1.1.0-beta3',
             'core_ktx'         : '0.3',
             'kotlin'           : '1.2.41',
             'coroutines'       : '0.22.5',
             'espresso'         : '3.0.1',
             'dagger'           : '2.15',
             'ktlint'           : '0.19.0',
-            'rx'               : '2.1.12',
+            'rx'               : '2.1.13',
             'rxlint'           : '1.6.1',
             'rxkotlin'         : '2.2.0',
-            'epoxy'            : '2.10.0',
-            'glide'            : '4.6.1'
+            'epoxy'            : '2.12.0',
+            'glide'            : '4.7.1'
     ]
 
     ext.buildConfig = [
