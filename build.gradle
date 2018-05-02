@@ -37,6 +37,12 @@ buildscript {
             'glide'            : '4.6.1'
     ]
 
+    ext.buildConfig = [
+            'compileSdk': 27,
+            'minSdk'    : 23,
+            'targetSdk' : 27,
+    ]
+
     repositories {
         google()
         jcenter()
