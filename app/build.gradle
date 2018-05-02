@@ -190,11 +190,11 @@ dependencies {
     androidTestImplementation("com.android.support.test.espresso:espresso-core:${versions.espresso}", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
 
     debugImplementation "nl.littlerobots.rxlint:rxlint:${versions.rxlint}"
 
-    implementation('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.2@aar') {
         transitive = true
     }
 
