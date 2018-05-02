@@ -5,7 +5,8 @@ defaults: &defaults
     - image: circleci/android:api-27-alpha
   working_directory: ~/tivi
   environment:
-    _JAVA_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2"
+    JAVA_TOOL_OPTIONS: "-Xmx1024m"
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false"
     TERM: dumb
 
 update_sdk: &update_sdk
@@ -27,13 +28,13 @@ jobs:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
           name: Download Dependencies
-          command: ./gradlew dependencies --no-daemon
+          command: ./gradlew dependencies
       - run:
           name: Decrypt secrets
           command: signing/setup.sh $ENCRYPT_KEY
       - run:
           name: Check and assemble APKs
-          command: ./gradlew check assemble dependencyUpdates --no-daemon
+          command: ./gradlew check assemble dependencyUpdates
       - run:
           name: Cleanup secrets
           command: signing/cleanup.sh
@@ -73,7 +74,7 @@ jobs:
           command: signing/setup.sh $ENCRYPT_KEY
       - run:
           name: Deploy to Alpha channel
-          command: ./gradlew publishRelease --no-daemon
+          command: ./gradlew publishRelease
       - run:
           name: Cleanup secrets
           command: signing/cleanup.sh
