@@ -19,16 +19,17 @@ package me.banes.chris.tivi.home
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MutableLiveData
-import io.reactivex.rxkotlin.plusAssign
+import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.reactive.asPublisher
 import me.banes.chris.tivi.data.entities.TraktUser
 import me.banes.chris.tivi.trakt.TraktManager
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.TiviViewModel
 import net.openid.appauth.AuthState
-import timber.log.Timber
 
 abstract class HomeFragmentViewModel(
-    private val traktManager: TraktManager
+    private val traktManager: TraktManager,
+    dispatchers: AppCoroutineDispatchers
 ) : TiviViewModel() {
 
     enum class AuthUiState {
@@ -44,7 +45,11 @@ abstract class HomeFragmentViewModel(
     init {
         authUiState.value = AuthUiState.LOGGED_OUT
 
-        disposables += traktManager.stateSubject.subscribe(::handleAuthState, Timber::e)
+        launchWithParent(dispatchers.main) {
+            traktManager.authState.consumeEach {
+                handleAuthState(it)
+            }
+        }
     }
 
     private fun handleAuthState(state: AuthState?) {

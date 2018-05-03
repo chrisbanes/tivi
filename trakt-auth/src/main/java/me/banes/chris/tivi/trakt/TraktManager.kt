@@ -20,18 +20,15 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.experimental.channels.ConflatedChannel
 import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.data.entities.TraktUser
-import me.banes.chris.tivi.inject.ApplicationLevel
 import me.banes.chris.tivi.trakt.calls.UserMeCall
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
-import me.banes.chris.tivi.util.AppRxSchedulers
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationRequest
@@ -47,9 +44,7 @@ import javax.inject.Singleton
 
 @Singleton
 class TraktManager @Inject constructor(
-    private val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
-    @ApplicationLevel private val disposables: CompositeDisposable,
     @Named("app") private val appNavigator: AppNavigator,
     private val requestProvider: Provider<AuthorizationRequest>,
     private val authService: AuthorizationService,
@@ -58,27 +53,31 @@ class TraktManager @Inject constructor(
     private val traktClient: TraktV2,
     private val userMeCall: UserMeCall
 ) {
-    val stateSubject = BehaviorSubject.create<AuthState>()
+    val authState = ConflatedChannel<AuthState>()
 
     init {
         // Read the auth state from prefs
         launch(dispatchers.main) {
-            val state = withContext(dispatchers.disk) { readAuthState() }
-            stateSubject.onNext(state)
+            val state = withContext(dispatchers.disk) {
+                readAuthState()
+            }
+            authState.offer(state)
         }
 
         // Observer which updates local state
-        disposables += stateSubject.observeOn(schedulers.main)
-                .subscribe({
-                    traktClient.accessToken(it.accessToken)
-                    traktClient.refreshToken(it.refreshToken)
-                    if (it.isAuthorized) {
-                        // Now refresh the user information
-                        launch {
-                            userMeCall.refresh(Unit)
-                        }
+        launch(dispatchers.main) {
+            authState.consumeEach {
+                traktClient.accessToken(it.accessToken)
+                traktClient.refreshToken(it.refreshToken)
+
+                if (it.isAuthorized) {
+                    // Now refresh the user information
+                    launch {
+                        userMeCall.refresh(Unit)
                     }
-                }, Timber::e)
+                }
+            }
+        }
     }
 
     fun startAuth(requestCode: Int) {
@@ -109,7 +108,7 @@ class TraktManager @Inject constructor(
     private fun onTokenExchangeResponse(response: TokenResponse?, ex: AuthorizationException?) {
         val newState = AuthState().apply { update(response, ex) }
         // Update our local state
-        stateSubject.onNext(newState)
+        authState.offer(newState)
         // Persist auth state
         launch(dispatchers.disk) {
             persistAuthState(newState)

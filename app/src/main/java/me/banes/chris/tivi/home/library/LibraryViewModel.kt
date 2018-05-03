@@ -37,7 +37,7 @@ class LibraryViewModel @Inject constructor(
     traktManager: TraktManager,
     tmdbManager: TmdbManager,
     dispatchers: AppCoroutineDispatchers
-) : HomeFragmentViewModel(traktManager) {
+) : HomeFragmentViewModel(traktManager, dispatchers) {
     val data = MutableLiveData<LibraryViewState>()
 
     init {
