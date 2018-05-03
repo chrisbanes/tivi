@@ -25,22 +25,10 @@ import me.banes.chris.tivi.data.entities.TiviShow
 @Dao
 abstract class TiviShowDao : EntityDao<TiviShow> {
     @Query("SELECT * FROM shows WHERE trakt_id = :id")
-    abstract fun getShowWithTraktIdFlowable(id: Int): Flowable<TiviShow>
-
-    @Query("SELECT * FROM shows WHERE trakt_id = :id")
-    abstract fun getShowWithTraktIdMaybe(id: Int): Maybe<TiviShow>
-
-    @Query("SELECT * FROM shows WHERE trakt_id = :id")
     abstract fun getShowWithTraktId(id: Int): TiviShow?
 
     @Query("SELECT * FROM shows WHERE trakt_id IN (:ids)")
     abstract fun getShowsWithTraktId(ids: List<Int>): Flowable<List<TiviShow>>
-
-    @Query("SELECT * FROM shows WHERE tmdb_id = :id")
-    abstract fun getShowWithTmdbIdFlowable(id: Int): Flowable<TiviShow>
-
-    @Query("SELECT * FROM shows WHERE tmdb_id = :id")
-    abstract fun getShowWithTmdbIdMaybe(id: Int): Maybe<TiviShow>
 
     @Query("SELECT * FROM shows WHERE tmdb_id = :id")
     abstract fun getShowWithTmdbId(id: Int): TiviShow?
