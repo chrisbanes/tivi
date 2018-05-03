@@ -17,9 +17,8 @@
 package me.banes.chris.tivi.home.library
 
 import android.arch.lifecycle.MutableLiveData
-import io.reactivex.rxkotlin.Flowables
-import io.reactivex.rxkotlin.plusAssign
-import me.banes.chris.tivi.AppNavigator
+import kotlinx.coroutines.experimental.CoroutineStart
+import kotlinx.coroutines.experimental.selects.select
 import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.home.HomeFragmentViewModel
@@ -28,28 +27,37 @@ import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.MyShowsCall
 import me.banes.chris.tivi.trakt.calls.WatchedShowsCall
-import me.banes.chris.tivi.util.AppRxSchedulers
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import timber.log.Timber
 import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
-    schedulers: AppRxSchedulers,
     private val watchedShowsCall: WatchedShowsCall,
     private val myShowsCall: MyShowsCall,
-    appNavigator: AppNavigator,
     traktManager: TraktManager,
-    tmdbManager: TmdbManager
-) : HomeFragmentViewModel(traktManager, appNavigator) {
+    tmdbManager: TmdbManager,
+    dispatchers: AppCoroutineDispatchers
+) : HomeFragmentViewModel(traktManager) {
     val data = MutableLiveData<LibraryViewState>()
 
     init {
-        disposables += Flowables.combineLatest(
-                watchedShowsCall.data().map { it.take(20) },
-                myShowsCall.data().map { it.take(20) },
-                tmdbManager.imageProvider,
-                ::LibraryViewState)
-                .observeOn(schedulers.main)
-                .subscribe(data::setValue, Timber::e)
+        launchWithParent(context = dispatchers.main, start = CoroutineStart.UNDISPATCHED) {
+            var model = LibraryViewState()
+            while (isActive) {
+                model = select {
+                    watchedShowsCall.data().onReceive {
+                        model.copy(watched = it.take(20))
+                    }
+                    myShowsCall.data().onReceive {
+                        model.copy(myShows = it.take(20))
+                    }
+                    tmdbManager.imageProvider.onReceive {
+                        model.copy(tmdbImageUrlProvider = it)
+                    }
+                }
+                data.value = model
+            }
+        }
 
         refresh()
     }

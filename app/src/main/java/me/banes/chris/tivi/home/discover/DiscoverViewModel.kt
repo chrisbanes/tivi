@@ -17,9 +17,8 @@
 package me.banes.chris.tivi.home.discover
 
 import android.arch.lifecycle.MutableLiveData
-import io.reactivex.rxkotlin.Flowables
-import io.reactivex.rxkotlin.plusAssign
-import me.banes.chris.tivi.AppNavigator
+import kotlinx.coroutines.experimental.CoroutineStart
+import kotlinx.coroutines.experimental.selects.select
 import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.home.HomeFragmentViewModel
@@ -28,29 +27,38 @@ import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.PopularCall
 import me.banes.chris.tivi.trakt.calls.TrendingCall
-import me.banes.chris.tivi.util.AppRxSchedulers
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import timber.log.Timber
 import javax.inject.Inject
 
 class DiscoverViewModel @Inject constructor(
-    schedulers: AppRxSchedulers,
     private val popularCall: PopularCall,
     private val trendingCall: TrendingCall,
-    appNavigator: AppNavigator,
     traktManager: TraktManager,
-    tmdbManager: TmdbManager
-) : HomeFragmentViewModel(traktManager, appNavigator) {
+    tmdbManager: TmdbManager,
+    dispatchers: AppCoroutineDispatchers
+) : HomeFragmentViewModel(traktManager) {
 
     val data = MutableLiveData<DiscoverViewState>()
 
     init {
-        disposables += Flowables.combineLatest(
-                trendingCall.data(0),
-                popularCall.data(0),
-                tmdbManager.imageProvider,
-                ::DiscoverViewState)
-                .observeOn(schedulers.main)
-                .subscribe(data::setValue, Timber::e)
+        launchWithParent(context = dispatchers.main, start = CoroutineStart.UNDISPATCHED) {
+            var model = DiscoverViewState()
+            while (isActive) {
+                model = select {
+                    trendingCall.data(0).onReceive {
+                        model.copy(trendingItems = it)
+                    }
+                    popularCall.data(0).onReceive {
+                        model.copy(popularItems = it)
+                    }
+                    tmdbManager.imageProvider.onReceive {
+                        model.copy(tmdbImageUrlProvider = it)
+                    }
+                }
+                data.value = model
+            }
+        }
 
         refresh()
     }

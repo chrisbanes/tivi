@@ -16,9 +16,9 @@
 
 package me.banes.chris.tivi.calls
 
-import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 interface PaginatedCall<in Param, DatabaseOutput> : ListCall<Param, DatabaseOutput> {
-    fun data(page: Int): Flowable<List<DatabaseOutput>>
+    fun data(page: Int): ReceiveChannel<List<DatabaseOutput>>
     suspend fun loadNextPage()
 }

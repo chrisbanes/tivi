@@ -21,9 +21,6 @@ apply plugin: 'kotlin-kapt'
 dependencies {
     implementation project(":base")
 
-    compile "io.reactivex.rxjava2:rxjava:${versions.rx}"
-    implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
-
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
 
     compile "com.uwetrottmann.tmdb2:tmdb-java:1.8.3"

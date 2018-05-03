@@ -18,8 +18,8 @@ package me.banes.chris.tivi.home
 
 import android.arch.lifecycle.LiveData
 import me.banes.chris.tivi.trakt.TraktManager
-import me.banes.chris.tivi.util.TiviViewModel
 import me.banes.chris.tivi.util.SingleLiveEvent
+import me.banes.chris.tivi.util.TiviViewModel
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import javax.inject.Inject

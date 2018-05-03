@@ -20,10 +20,10 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
-import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.AppNavigator
@@ -96,7 +96,7 @@ class TraktManager @Inject constructor(
         Timber.d(exception, "AuthException")
     }
 
-    fun userObservable(): Flowable<TraktUser> = userMeCall.data()
+    fun userChannel(): ReceiveChannel<TraktUser> = userMeCall.data()
 
     private fun performTokenExchange(response: AuthorizationResponse) {
         authService.performTokenRequest(

@@ -22,16 +22,14 @@ import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.calls.MyShowsCall
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
-import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.EntryViewModel
 import javax.inject.Inject
 
 class MyShowsViewModel @Inject constructor(
-    schedulers: AppRxSchedulers,
-    coroutineDispatchers: AppCoroutineDispatchers,
+    dispatchers: AppCoroutineDispatchers,
     call: MyShowsCall,
     tmdbManager: TmdbManager
-) : EntryViewModel<MyShowsListItem>(schedulers, coroutineDispatchers, call, tmdbManager) {
+) : EntryViewModel<MyShowsListItem>(dispatchers, call, tmdbManager) {
     fun onUpClicked(navigator: HomeNavigator) {
         navigator.onUpClicked()
     }

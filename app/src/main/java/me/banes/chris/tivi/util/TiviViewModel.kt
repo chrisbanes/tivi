@@ -19,6 +19,7 @@ package me.banes.chris.tivi.util
 import android.arch.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.CoroutineStart
 import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.launch
@@ -40,6 +41,7 @@ open class TiviViewModel : ViewModel() {
 
     fun launchWithParent(
         context: CoroutineContext = DefaultDispatcher,
+        start: CoroutineStart = CoroutineStart.DEFAULT,
         block: suspend CoroutineScope.() -> Unit
-    ) = launch(context = context, parent = viewModelJob, block = block)
+    ) = launch(context, start, viewModelJob, block)
 }

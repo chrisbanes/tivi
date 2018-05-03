@@ -20,7 +20,8 @@ import android.arch.paging.DataSource
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
-import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.reactive.openSubscription
 import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.calls.ListCall
@@ -47,10 +48,11 @@ class WatchedShowsCall @Inject constructor(
 
     fun data() = data(Unit)
 
-    override fun data(param: Unit): Flowable<List<WatchedShowListItem>> {
+    override fun data(param: Unit): ReceiveChannel<List<WatchedShowListItem>> {
         return watchShowDao.entries()
-                .distinctUntilChanged()
                 .subscribeOn(schedulers.database)
+                .distinctUntilChanged()
+                .openSubscription()
     }
 
     override fun dataSourceFactory(): DataSource.Factory<Int, WatchedShowListItem> = watchShowDao.entriesDataSource()

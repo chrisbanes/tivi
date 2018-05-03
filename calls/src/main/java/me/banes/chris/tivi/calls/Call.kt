@@ -17,10 +17,10 @@
 package me.banes.chris.tivi.calls
 
 import android.arch.paging.DataSource
-import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
 
 interface Call<in Param, DatabaseOutput> {
-    fun data(param: Param): Flowable<DatabaseOutput>
+    fun data(param: Param): ReceiveChannel<DatabaseOutput>
     suspend fun refresh(param: Param)
 }
 

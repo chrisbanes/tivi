@@ -21,9 +21,9 @@ import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 
 data class ShowDetailsFragmentViewState(
-    val show: TiviShow,
-    val relatedShows: List<TiviShow>,
-    val seasons: List<SeasonWithEpisodes>,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    val inMyShows: Boolean
+    val show: TiviShow = TiviShow(),
+    val relatedShows: List<TiviShow> = emptyList(),
+    val seasons: List<SeasonWithEpisodes> = emptyList(),
+    val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider(),
+    val inMyShows: Boolean = false
 )

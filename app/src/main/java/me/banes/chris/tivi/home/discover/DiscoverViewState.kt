@@ -21,7 +21,7 @@ import me.banes.chris.tivi.data.entities.TrendingListItem
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 
 data class DiscoverViewState(
-    val trendingItems: List<TrendingListItem>,
-    val popularItems: List<PopularListItem>,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider
+    val trendingItems: List<TrendingListItem> = emptyList(),
+    val popularItems: List<PopularListItem> = emptyList(),
+    val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider()
 )

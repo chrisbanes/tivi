@@ -20,7 +20,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MutableLiveData
 import io.reactivex.rxkotlin.plusAssign
-import me.banes.chris.tivi.AppNavigator
+import kotlinx.coroutines.experimental.reactive.asPublisher
 import me.banes.chris.tivi.data.entities.TraktUser
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.util.TiviViewModel
@@ -28,10 +28,8 @@ import net.openid.appauth.AuthState
 import timber.log.Timber
 
 abstract class HomeFragmentViewModel(
-    private val traktManager: TraktManager,
-    private val appNavigator: AppNavigator
-)
-    : TiviViewModel() {
+    private val traktManager: TraktManager
+) : TiviViewModel() {
 
     enum class AuthUiState {
         LOGGED_IN, LOGGED_OUT
@@ -39,7 +37,9 @@ abstract class HomeFragmentViewModel(
 
     val authUiState = MutableLiveData<AuthUiState>()
 
-    val userProfileLiveData: LiveData<TraktUser> = LiveDataReactiveStreams.fromPublisher(traktManager.userObservable())
+    val userProfileLiveData: LiveData<TraktUser> = LiveDataReactiveStreams.fromPublisher(
+            traktManager.userChannel().asPublisher()
+    )
 
     init {
         authUiState.value = AuthUiState.LOGGED_OUT

@@ -17,7 +17,8 @@
 package me.banes.chris.tivi.calls
 
 import android.arch.paging.DataSource
-import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.reactive.openSubscription
 import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.data.DatabaseTransactionRunner
 import me.banes.chris.tivi.data.PaginatedEntry
@@ -39,16 +40,18 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
     override val pageSize: Int = 21
 ) : PaginatedCall<Unit, LI> {
 
-    override fun data(param: Unit): Flowable<List<LI>> {
+    override fun data(param: Unit): ReceiveChannel<List<LI>> {
         return entryDao.entries()
-                .distinctUntilChanged()
                 .subscribeOn(schedulers.database)
+                .distinctUntilChanged()
+                .openSubscription()
     }
 
-    override fun data(page: Int): Flowable<List<LI>> {
+    override fun data(page: Int): ReceiveChannel<List<LI>> {
         return entryDao.entriesPage(page)
                 .subscribeOn(schedulers.database)
                 .distinctUntilChanged()
+                .openSubscription()
     }
 
     override fun dataSourceFactory(): DataSource.Factory<Int, LI> = entryDao.entriesDataSource()

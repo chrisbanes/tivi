@@ -16,7 +16,8 @@
 
 package me.banes.chris.tivi.trakt.calls
 
-import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.reactive.openSubscription
 import me.banes.chris.tivi.SeasonFetcher
 import me.banes.chris.tivi.calls.Call
 import me.banes.chris.tivi.data.daos.SeasonsDao
@@ -33,8 +34,10 @@ class ShowSeasonsCall @Inject constructor(
         seasonFetcher.load(param)
     }
 
-    override fun data(param: Long): Flowable<List<SeasonWithEpisodes>> {
+    override fun data(param: Long): ReceiveChannel<List<SeasonWithEpisodes>> {
         return seasonsDao.seasonsWithEpisodesForShowId(param)
                 .subscribeOn(schedulers.database)
+                .distinctUntilChanged()
+                .openSubscription()
     }
 }

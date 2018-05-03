@@ -19,7 +19,8 @@ package me.banes.chris.tivi.trakt.calls
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
-import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.reactive.openSubscription
 import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.calls.Call
 import me.banes.chris.tivi.data.daos.EntityInserter
@@ -64,8 +65,10 @@ class UserMeCall @Inject constructor(
 
     fun data() = data(Unit)
 
-    override fun data(param: Unit): Flowable<TraktUser> {
+    override fun data(param: Unit): ReceiveChannel<TraktUser> {
         return dao.getTraktUser()
                 .subscribeOn(schedulers.database)
+                .distinctUntilChanged()
+                .openSubscription()
     }
 }

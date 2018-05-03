@@ -16,7 +16,8 @@
 
 package me.banes.chris.tivi.trakt.calls
 
-import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.reactive.openSubscription
 import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.calls.Call
@@ -39,8 +40,10 @@ class ShowDetailsCall @Inject constructor(
         }
     }
 
-    override fun data(param: Long): Flowable<TiviShow> {
+    override fun data(param: Long): ReceiveChannel<TiviShow> {
         return dao.getShowWithIdFlowable(param)
                 .subscribeOn(schedulers.database)
+                .distinctUntilChanged()
+                .openSubscription()
     }
 }

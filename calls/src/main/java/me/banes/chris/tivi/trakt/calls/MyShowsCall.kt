@@ -17,7 +17,8 @@
 package me.banes.chris.tivi.trakt.calls
 
 import android.arch.paging.DataSource
-import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.reactive.openSubscription
 import me.banes.chris.tivi.calls.ListCall
 import me.banes.chris.tivi.data.daos.MyShowsDao
 import me.banes.chris.tivi.data.entities.MyShowsListItem
@@ -33,10 +34,11 @@ class MyShowsCall @Inject constructor(
 
     fun data() = data(Unit)
 
-    override fun data(param: Unit): Flowable<List<MyShowsListItem>> {
+    override fun data(param: Unit): ReceiveChannel<List<MyShowsListItem>> {
         return myShowsDao.entries()
-                .distinctUntilChanged()
                 .subscribeOn(schedulers.database)
+                .distinctUntilChanged()
+                .openSubscription()
     }
 
     override fun dataSourceFactory(): DataSource.Factory<Int, MyShowsListItem> = myShowsDao.entriesDataSource()

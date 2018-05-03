@@ -22,7 +22,7 @@ import me.banes.chris.tivi.data.entities.WatchedShowEntry
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 
 data class LibraryViewState(
-    val watched: List<ListItem<WatchedShowEntry>>,
-    val myShows: List<ListItem<MyShowsEntry>>,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider
+    val watched: List<ListItem<WatchedShowEntry>> = emptyList(),
+    val myShows: List<ListItem<MyShowsEntry>> = emptyList(),
+    val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider()
 )

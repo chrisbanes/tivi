@@ -16,13 +16,12 @@
 
 package me.banes.chris.tivi.util
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.LiveDataReactiveStreams
+import android.arch.lifecycle.MutableLiveData
 import android.arch.paging.LivePagedListBuilder
 import android.arch.paging.PagedList
-import io.reactivex.BackpressureStrategy
-import io.reactivex.rxkotlin.Flowables
-import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.experimental.CoroutineStart
+import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.selects.select
 import me.banes.chris.tivi.api.Status
 import me.banes.chris.tivi.api.UiResource
 import me.banes.chris.tivi.calls.ListCall
@@ -33,14 +32,13 @@ import me.banes.chris.tivi.tmdb.TmdbManager
 import timber.log.Timber
 
 open class EntryViewModel<LI : ListItem<out Entry>>(
-    private val schedulers: AppRxSchedulers,
-    private val coroutineDispatchers: AppCoroutineDispatchers,
+    private val dispatchers: AppCoroutineDispatchers,
     private val call: ListCall<Unit, LI>,
     tmdbManager: TmdbManager,
     refreshOnStartup: Boolean = true
 ) : TiviViewModel() {
 
-    private val messages = BehaviorSubject.create<UiResource>()
+    private val messages = ConflatedBroadcastChannel<UiResource>()
 
     val liveList by lazy(mode = LazyThreadSafetyMode.NONE) {
         LivePagedListBuilder<Int, LI>(
@@ -55,14 +53,24 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
         }
     }
 
-    val viewState: LiveData<EntryViewState> = LiveDataReactiveStreams.fromPublisher(
-            Flowables.combineLatest(
-                    messages.toFlowable(BackpressureStrategy.LATEST),
-                    tmdbManager.imageProvider,
-                    ::EntryViewState)
-    )
+    val viewState = MutableLiveData<EntryViewState>()
 
     init {
+        launchWithParent(dispatchers.main, CoroutineStart.UNDISPATCHED) {
+            var model = EntryViewState()
+            while (isActive) {
+                model = select {
+                    messages.openSubscription().onReceive {
+                        model.copy(uiResource = it)
+                    }
+                    tmdbManager.imageProvider.onReceive {
+                        model.copy(tmdbImageUrlProvider = it)
+                    }
+                }
+                viewState.value = model
+            }
+        }
+
         // Eagerly refresh the initial page of trending
         if (refreshOnStartup) {
             fullRefresh()
@@ -71,7 +79,7 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
 
     fun onListScrolledToEnd() {
         if (call is PaginatedCall<*, *>) {
-            launchWithParent(coroutineDispatchers.main) {
+            launchWithParent(dispatchers.main) {
                 sendMessage(UiResource(Status.LOADING_MORE))
                 try {
                     call.loadNextPage()
@@ -84,7 +92,7 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
     }
 
     fun fullRefresh() {
-        launchWithParent(coroutineDispatchers.main) {
+        launchWithParent(dispatchers.main) {
             sendMessage(UiResource(Status.REFRESHING))
             try {
                 call.refresh(Unit)
@@ -105,6 +113,6 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
     }
 
     private fun sendMessage(uiResource: UiResource) {
-        messages.onNext(uiResource)
+        messages.offer(uiResource)
     }
 }

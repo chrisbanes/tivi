@@ -19,6 +19,8 @@ package me.banes.chris.tivi.trakt.calls
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+import kotlinx.coroutines.experimental.reactive.openSubscription
 import kotlinx.coroutines.experimental.rx2.await
 import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.ShowFetcher
@@ -59,11 +61,13 @@ class RelatedShowsCall @Inject constructor(
         }
     }
 
-    override fun data(param: Long): Flowable<List<TiviShow>> {
+    override fun data(param: Long): ReceiveChannel<List<TiviShow>> {
         return dao.getShowWithIdMaybe(param)
                 .subscribeOn(schedulers.database)
                 .flatMapPublisher { traktState.relatedShowsForTraktId(it.traktId!!) }
                 .flatMap(dao::getShowsWithTraktId)
                 .startWith(Flowable.just(emptyList()))
+                .distinctUntilChanged()
+                .openSubscription()
     }
 }
