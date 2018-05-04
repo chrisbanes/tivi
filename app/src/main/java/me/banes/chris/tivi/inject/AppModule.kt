@@ -16,10 +16,6 @@
 
 package me.banes.chris.tivi.inject
 
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleObserver
-import android.arch.lifecycle.OnLifecycleEvent
-import android.arch.lifecycle.ProcessLifecycleOwner
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
@@ -130,15 +126,5 @@ class AppModule {
     @Singleton
     @Provides
     @ApplicationLevel
-    fun provideCompositeDisposable(): CompositeDisposable {
-        val disposables = CompositeDisposable()
-        // Add ProcessLifecycleOwner observer to clear when stopped
-        ProcessLifecycleOwner.get().lifecycle.addObserver(object : LifecycleObserver {
-            @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-            fun onStopped() {
-                disposables.clear()
-            }
-        })
-        return disposables
-    }
+    fun provideCompositeDisposable() = CompositeDisposable()
 }

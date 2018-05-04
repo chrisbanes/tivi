@@ -25,4 +25,7 @@ import me.banes.chris.tivi.data.entities.TraktUser
 interface UserDao : EntityDao<TraktUser> {
     @Query("SELECT * FROM users")
     fun getTraktUser(): Flowable<TraktUser>
+
+    @Query("DELETE FROM users")
+    fun deleteAll()
 }
