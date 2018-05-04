@@ -22,7 +22,6 @@ dependencies {
     implementation project(":base")
 
     compile "io.reactivex.rxjava2:rxjava:${versions.rx}"
-    implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
 
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
 
