@@ -19,30 +19,37 @@ package me.banes.chris.tivi.tmdb
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.Configuration
 import io.reactivex.BackpressureStrategy
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
-import me.banes.chris.tivi.extensions.toRxSingle
-import me.banes.chris.tivi.inject.ApplicationLevel
-import me.banes.chris.tivi.util.AppRxSchedulers
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
+import me.banes.chris.tivi.extensions.fetchBodyWithRetry
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class TmdbManager @Inject constructor(
-    @ApplicationLevel private val disposables: CompositeDisposable,
-    schedulers: AppRxSchedulers,
-    tmdbClient: Tmdb
+    private val dispatchers: AppCoroutineDispatchers,
+    private val tmdbClient: Tmdb
 ) {
     private val imageProviderSubject = BehaviorSubject.createDefault(TmdbImageUrlProvider())!!
-
     val imageProvider = imageProviderSubject.toFlowable(BackpressureStrategy.LATEST)!!
 
     init {
-        disposables += tmdbClient.configurationService().configuration().toRxSingle()
-                .subscribeOn(schedulers.network)
-                .observeOn(schedulers.main)
-                .subscribe(this::onConfigurationLoaded, this::onError)
+        refreshConfiguration()
+    }
+
+    private fun refreshConfiguration() {
+        launch(dispatchers.main) {
+            try {
+                val config = withContext(dispatchers.network) {
+                    tmdbClient.configurationService().configuration().fetchBodyWithRetry()
+                }
+                onConfigurationLoaded(config)
+            } catch (e: Exception) {
+                // TODO
+            }
+        }
     }
 
     private fun onConfigurationLoaded(configuration: Configuration) {
@@ -53,10 +60,5 @@ class TmdbManager @Inject constructor(
                     it.backdrop_sizes.toTypedArray())
             imageProviderSubject.onNext(newProvider)
         }
-    }
-
-    private fun onError(t: Throwable) {
-        throw t
-        // Timber.e(t, "Error while fetching configuration from TMDb")
     }
 }

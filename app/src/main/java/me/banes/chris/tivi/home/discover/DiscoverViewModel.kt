@@ -19,7 +19,6 @@ package me.banes.chris.tivi.home.discover
 import android.arch.lifecycle.MutableLiveData
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
-import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.home.HomeFragmentViewModel
@@ -36,10 +35,9 @@ class DiscoverViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     private val popularCall: PopularCall,
     private val trendingCall: TrendingCall,
-    appNavigator: AppNavigator,
     traktManager: TraktManager,
     tmdbManager: TmdbManager
-) : HomeFragmentViewModel(traktManager, appNavigator) {
+) : HomeFragmentViewModel(traktManager) {
 
     val data = MutableLiveData<DiscoverViewState>()
 

@@ -20,6 +20,7 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
+import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -58,27 +59,33 @@ class TraktManager @Inject constructor(
     private val traktClient: TraktV2,
     private val userMeCall: UserMeCall
 ) {
-    val stateSubject = BehaviorSubject.create<AuthState>()
+    private val _state = BehaviorSubject.create<AuthState>()!!
+    val state = _state.toFlowable(BackpressureStrategy.LATEST)!!
 
     init {
+        // Observer which updates local state
+        disposables += _state.observeOn(schedulers.main)
+                .subscribe(::updateAuthState, Timber::e)
+
         // Read the auth state from prefs
         launch(dispatchers.main) {
-            val state = withContext(dispatchers.disk) { readAuthState() }
-            stateSubject.onNext(state)
+            val state = withContext(dispatchers.disk) {
+                readAuthState()
+            }
+            _state.onNext(state)
         }
+    }
 
-        // Observer which updates local state
-        disposables += stateSubject.observeOn(schedulers.main)
-                .subscribe({
-                    traktClient.accessToken(it.accessToken)
-                    traktClient.refreshToken(it.refreshToken)
-                    if (it.isAuthorized) {
-                        // Now refresh the user information
-                        launch {
-                            userMeCall.refresh(Unit)
-                        }
-                    }
-                }, Timber::e)
+    private fun updateAuthState(authState: AuthState) {
+        traktClient.accessToken(authState.accessToken)
+        traktClient.refreshToken(authState.refreshToken)
+
+        if (authState.isAuthorized) {
+            // Now refresh the user information
+            launch {
+                userMeCall.refresh(Unit)
+            }
+        }
     }
 
     fun startAuth(requestCode: Int) {
@@ -109,7 +116,7 @@ class TraktManager @Inject constructor(
     private fun onTokenExchangeResponse(response: TokenResponse?, ex: AuthorizationException?) {
         val newState = AuthState().apply { update(response, ex) }
         // Update our local state
-        stateSubject.onNext(newState)
+        _state.onNext(newState)
         // Persist auth state
         launch(dispatchers.disk) {
             persistAuthState(newState)

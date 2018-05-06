@@ -54,9 +54,10 @@ class UserMeCall @Inject constructor(
                     avatarUrl = it.images?.avatar?.full,
                     joined = it.joined_at
             )
-        }.let {
+        }.also {
             // Save to the database on the database dispatcher
             withContext(dispatchers.database) {
+                dao.deleteAll()
                 entityInserter.insertOrUpdate(dao, it)
             }
         }
