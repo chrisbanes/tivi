@@ -21,6 +21,9 @@ import io.reactivex.Flowable
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 
+/**
+ * This interface represents a DAO which contains entities which are part of a single collective list.
+ */
 interface EntryDao<EC : Entry, LI : ListItem<EC>> : EntityDao<EC> {
     fun entries(): Flowable<List<LI>>
     fun entriesDataSource(): DataSource.Factory<Int, LI>

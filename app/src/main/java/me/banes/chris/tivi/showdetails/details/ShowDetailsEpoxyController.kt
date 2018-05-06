@@ -21,6 +21,7 @@ import android.view.View
 import com.airbnb.epoxy.Typed4EpoxyController
 import me.banes.chris.tivi.PosterGridItemBindingModel_
 import me.banes.chris.tivi.R
+import me.banes.chris.tivi.data.entities.RelatedShowsListItem
 import me.banes.chris.tivi.data.entities.SeasonWithEpisodes
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.detailsBadge
@@ -38,7 +39,7 @@ import me.banes.chris.tivi.ui.epoxy.withModelsFrom
 class ShowDetailsEpoxyController(
     private val context: Context,
     private val callbacks: Callbacks
-) : Typed4EpoxyController<TiviShow, List<TiviShow>, List<SeasonWithEpisodes>, TmdbImageUrlProvider>() {
+) : Typed4EpoxyController<TiviShow, List<RelatedShowsListItem>, List<SeasonWithEpisodes>, TmdbImageUrlProvider>() {
 
     interface Callbacks {
         fun onRelatedShowClicked(show: TiviShow, view: View)
@@ -46,7 +47,7 @@ class ShowDetailsEpoxyController(
 
     override fun buildModels(
         show: TiviShow,
-        related: List<TiviShow>,
+        related: List<RelatedShowsListItem>,
         seasons: List<SeasonWithEpisodes>,
         tmdbImageUrlProvider: TmdbImageUrlProvider
     ) {
@@ -116,7 +117,8 @@ class ShowDetailsEpoxyController(
                 numViewsToShowOnScreen(4f)
                 paddingDp(4)
                 hasFixedSize(true)
-                withModelsFrom(related) { relatedShow ->
+                withModelsFrom(related) { relatedEntry ->
+                    val relatedShow = relatedEntry.show!!
                     PosterGridItemBindingModel_()
                             .id("related_${relatedShow.id}")
                             .title(relatedShow.title)
