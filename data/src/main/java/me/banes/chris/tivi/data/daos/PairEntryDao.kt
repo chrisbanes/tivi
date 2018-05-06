@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.data
+package me.banes.chris.tivi.data.daos
 
-import me.banes.chris.tivi.data.entities.TiviEntity
+import io.reactivex.Flowable
+import me.banes.chris.tivi.data.MultipleEntry
+import me.banes.chris.tivi.data.entities.ListItem
 
-interface Entry : TiviEntity {
-    val showId: Long
-}
-
-interface MultipleEntry : Entry {
-    val otherShowId: Long
-}
-
-interface PaginatedEntry : Entry {
-    val page: Int
+/**
+ * This interface represents a DAO which contains entities which are part of a collective list for a given show.
+ */
+interface PairEntryDao<EC : MultipleEntry, LI : ListItem<EC>> : EntityDao<EC> {
+    fun entries(showId: Long): Flowable<List<LI>>
+    fun deleteAll(showId: Long)
 }

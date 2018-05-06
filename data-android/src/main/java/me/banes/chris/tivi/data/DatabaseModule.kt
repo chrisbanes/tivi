@@ -24,6 +24,7 @@ import dagger.Provides
 import me.banes.chris.tivi.data.daos.EpisodesDao
 import me.banes.chris.tivi.data.daos.MyShowsDao
 import me.banes.chris.tivi.data.daos.PopularDao
+import me.banes.chris.tivi.data.daos.RelatedShowsDao
 import me.banes.chris.tivi.data.daos.SeasonsDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.daos.TrendingDao
@@ -67,6 +68,9 @@ class DatabaseModule {
 
     @Provides
     fun provideEpisodesDao(db: TiviDatabase): EpisodesDao = db.episodesDao()
+
+    @Provides
+    fun provideRelatedShowsDao(db: TiviDatabase): RelatedShowsDao = db.relatedShowsDao()
 
     @Singleton
     @Provides

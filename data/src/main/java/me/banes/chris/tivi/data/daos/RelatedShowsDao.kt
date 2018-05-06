@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.showdetails.details
+package me.banes.chris.tivi.data.daos
 
+import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Query
+import android.arch.persistence.room.Transaction
+import io.reactivex.Flowable
+import me.banes.chris.tivi.data.entities.RelatedShowEntry
 import me.banes.chris.tivi.data.entities.RelatedShowsListItem
-import me.banes.chris.tivi.data.entities.SeasonWithEpisodes
-import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 
-data class ShowDetailsFragmentViewState(
-    val show: TiviShow,
-    val relatedShows: List<RelatedShowsListItem>,
-    val seasons: List<SeasonWithEpisodes>,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    val inMyShows: Boolean
-)
+@Dao
+abstract class RelatedShowsDao : PairEntryDao<RelatedShowEntry, RelatedShowsListItem> {
+    @Transaction
+    @Query("SELECT * FROM related_shows WHERE show_id = :showId ORDER BY order_index")
+    abstract override fun entries(showId: Long): Flowable<List<RelatedShowsListItem>>
+
+    @Query("DELETE FROM related_shows WHERE show_id = :showId")
+    abstract override fun deleteAll(showId: Long)
+}
