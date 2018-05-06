@@ -17,6 +17,7 @@
 package me.banes.chris.tivi.calls
 
 import android.arch.paging.DataSource
+import android.database.sqlite.SQLiteConstraintException
 import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.ShowFetcher
@@ -87,9 +88,13 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
                 resetOnSave -> entryDao.deleteAll()
                 else -> entryDao.deletePage(page)
             }
-            items.forEach { show ->
-                Timber.d("Saving entry: %s", show)
-                entryDao.insert(show)
+            items.forEach { entry ->
+                Timber.d("Saving entry: %s", entry)
+                try {
+                    entryDao.insert(entry)
+                } catch (e: SQLiteConstraintException) {
+                    Timber.d(e, "Ignoring SQLiteConstraintException while inserting %s", entry)
+                }
             }
         }
     }
