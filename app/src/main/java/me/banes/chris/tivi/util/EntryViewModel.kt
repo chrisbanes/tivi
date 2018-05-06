@@ -34,7 +34,7 @@ import timber.log.Timber
 
 open class EntryViewModel<LI : ListItem<out Entry>>(
     private val schedulers: AppRxSchedulers,
-    private val coroutineDispatchers: AppCoroutineDispatchers,
+    private val dispatchers: AppCoroutineDispatchers,
     private val call: ListCall<Unit, LI>,
     tmdbManager: TmdbManager,
     refreshOnStartup: Boolean = true
@@ -46,7 +46,8 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
         LivePagedListBuilder<Int, LI>(
                 call.dataSourceFactory(),
                 PagedList.Config.Builder().run {
-                    setPageSize(call.pageSize)
+                    setPageSize(call.pageSize * 3)
+                    setPrefetchDistance(call.pageSize)
                     setEnablePlaceholders(false)
                     build()
                 }
@@ -71,7 +72,7 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
 
     fun onListScrolledToEnd() {
         if (call is PaginatedCall<*, *>) {
-            launchWithParent(coroutineDispatchers.main) {
+            launchWithParent(dispatchers.main) {
                 sendMessage(UiResource(Status.LOADING_MORE))
                 try {
                     call.loadNextPage()
@@ -84,7 +85,7 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
     }
 
     fun fullRefresh() {
-        launchWithParent(coroutineDispatchers.main) {
+        launchWithParent(dispatchers.main) {
             sendMessage(UiResource(Status.REFRESHING))
             try {
                 call.refresh(Unit)
