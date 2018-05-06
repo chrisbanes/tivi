@@ -19,13 +19,13 @@ package me.banes.chris.tivi.calls
 import android.arch.paging.DataSource
 import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.withContext
+import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.data.DatabaseTransactionRunner
 import me.banes.chris.tivi.data.PaginatedEntry
 import me.banes.chris.tivi.data.daos.PaginatedEntryDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.ListItem
-import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.extensions.parallelMap
+import me.banes.chris.tivi.extensions.parallelForEach
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
@@ -34,6 +34,7 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     protected val showDao: TiviShowDao,
     private val entryDao: ED,
+    private val showFetcher: ShowFetcher,
     protected val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
     override val pageSize: Int = 21
@@ -53,17 +54,21 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
 
     override fun dataSourceFactory(): DataSource.Factory<Int, LI> = entryDao.entriesDataSource()
 
-    private suspend fun loadPage(page: Int = 0, resetOnSave: Boolean = false): List<ET> {
+    private suspend fun loadPage(page: Int = 0, resetOnSave: Boolean = false) {
         return withContext(dispatchers.network) { networkCall(page) }
-                .parallelMap { traktObject ->
-                    loadShow(traktObject).let { show ->
-                        mapToEntry(traktObject, show, page)
-                    }
+                .map {
+                    val id = insertShowPlaceholder(it)
+                    mapToEntry(it, id, page)
                 }
                 .also {
+                    // Save the entry list
                     withContext(dispatchers.database) {
                         savePage(it, page, resetOnSave)
                     }
+                }
+                .parallelForEach {
+                    // Now trigger a refresh of each show
+                    showFetcher.update(it.showId)
                 }
     }
 
@@ -89,9 +94,9 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
         }
     }
 
-    protected abstract fun mapToEntry(networkEntity: TT, show: TiviShow, page: Int): ET
+    protected abstract fun mapToEntry(networkEntity: TT, showId: Long, page: Int): ET
 
-    protected abstract suspend fun loadShow(response: TT): TiviShow
+    protected abstract suspend fun insertShowPlaceholder(response: TT): Long
 
     protected abstract suspend fun networkCall(page: Int): List<TT>
 }

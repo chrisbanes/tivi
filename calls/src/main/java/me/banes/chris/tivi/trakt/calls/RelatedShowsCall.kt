@@ -19,13 +19,13 @@ package me.banes.chris.tivi.trakt.calls
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.enums.Extended
 import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.rx2.await
 import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.calls.Call
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.TiviShow
-import me.banes.chris.tivi.extensions.toRxSingle
+import me.banes.chris.tivi.extensions.fetchBodyWithRetry
+import me.banes.chris.tivi.extensions.parallelForEach
 import me.banes.chris.tivi.trakt.state.TraktState
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
@@ -40,30 +40,31 @@ class RelatedShowsCall @Inject constructor(
     private val showFetcher: ShowFetcher
 ) : Call<Long, List<TiviShow>> {
     override suspend fun refresh(param: Long) {
-        val show = withContext(dispatchers.database) {
-            dao.getShowWithId(param)
-        }
+        val show = withContext(dispatchers.database) { dao.getShowWithId(param) }
 
         if (show != null) {
-            val traktId = show.traktId!!
-            val related = trakt.shows().related(traktId.toString(), 0, 10, Extended.NOSEASONS)
-                    .toRxSingle()
-                    .subscribeOn(schedulers.network)
-                    .await()
+            val related = withContext(dispatchers.network) {
+                trakt.shows().related(show.traktId.toString(), 0, 10, Extended.NOSEASONS).fetchBodyWithRetry()
+            }.map {
+                // Now insert a placeholder for each show if needed
+                showFetcher.insertPlaceholderIfNeeded(it)
+            }
 
-            traktState.setRelatedShowsForTraktId(traktId, related.map { it.ids.trakt })
+            // Now set the state to trigger any UI changes
+            traktState.setRelatedShowsForTraktId(param, related)
 
-            related.forEach {
-                showFetcher.load(it.ids.trakt)
+            // Finally trigger a refresh for each show
+            related.parallelForEach {
+                showFetcher.update(it)
             }
         }
     }
 
     override fun data(param: Long): Flowable<List<TiviShow>> {
-        return dao.getShowWithIdMaybe(param)
-                .subscribeOn(schedulers.database)
-                .flatMapPublisher { traktState.relatedShowsForTraktId(it.traktId!!) }
-                .flatMap(dao::getShowsWithTraktId)
+        return traktState.relatedShowsForTraktId(param)
+                .observeOn(schedulers.database)
+                .flatMap(dao::getShowsWithIds)
                 .startWith(Flowable.just(emptyList()))
+                .distinctUntilChanged()
     }
 }

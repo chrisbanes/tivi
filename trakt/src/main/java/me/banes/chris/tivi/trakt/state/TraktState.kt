@@ -24,17 +24,17 @@ import javax.inject.Singleton
 
 @Singleton
 class TraktState @Inject constructor() {
-    private val relatedShows = mutableMapOf<Int, List<Int>>()
+    private val relatedShows = mutableMapOf<Long, List<Long>>()
     private val relatedShowsObservable = BehaviorSubject.createDefault(relatedShows)
 
-    fun relatedShowsForTraktId(id: Int): Flowable<List<Int>> {
+    fun relatedShowsForTraktId(id: Long): Flowable<List<Long>> {
         return relatedShowsObservable
                 .map { it[id] ?: emptyList() }
                 .distinctUntilChanged()
                 .toFlowable(BackpressureStrategy.LATEST)
     }
 
-    fun setRelatedShowsForTraktId(id: Int, shows: List<Int>) {
+    fun setRelatedShowsForTraktId(id: Long, shows: List<Long>) {
         relatedShows[id] = shows
         relatedShowsObservable.onNext(relatedShows)
     }

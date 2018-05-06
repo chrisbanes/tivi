@@ -36,38 +36,20 @@ class TraktShowFetcher @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val entityInserter: EntityInserter
 ) {
-    suspend fun loadShow(traktId: Int, entity: Show? = null): TiviShow {
-        val dbShow = withContext(dispatchers.database) { showDao.getShowWithTraktId(traktId) }
-        if (dbShow != null) {
-            return dbShow
-        }
-
-        if (entity != null) {
-            return withContext(dispatchers.database) {
-                upsertShow(entity)
-            }
-        }
-
-        return withContext(dispatchers.network) {
-            trakt.shows().summary(traktId.toString(), Extended.NOSEASONS).fetchBodyWithRetry()
-        }.let {
-            withContext(dispatchers.database) {
-                upsertShow(it)
-            }
-        }
-    }
-
-    suspend fun updateShow(traktId: Int): TiviShow {
-        return withContext(dispatchers.network) {
+    suspend fun updateShow(traktId: Int) {
+        val response = withContext(dispatchers.network) {
             trakt.shows().summary(traktId.toString(), Extended.FULL).fetchBodyWithRetry()
-        }.let {
-            withContext(dispatchers.database) {
-                upsertShow(it)
-            }
+        }
+        withContext(dispatchers.database) {
+            upsertShow(response)
         }
     }
 
-    private fun upsertShow(traktShow: Show): TiviShow {
+    suspend fun insertPlaceholderIfNeeded(show: Show): Long {
+        return withContext(dispatchers.database) { upsertShow(show) }
+    }
+
+    private fun upsertShow(traktShow: Show): Long {
         return (showDao.getShowWithTraktId(traktShow.ids.trakt) ?: TiviShow())
                 .apply {
                     updateProperty(this::traktId, traktShow.ids.trakt)
@@ -83,8 +65,7 @@ class TraktShowFetcher @Inject constructor(
                     updateProperty(this::_genres, traktShow.genres?.joinToString(","))
                     lastTraktUpdate = OffsetDateTime.now()
                 }.let {
-                    val id = entityInserter.insertOrUpdate(showDao, it)
-                    showDao.getShowWithId(id)!!
+                    entityInserter.insertOrUpdate(showDao, it)
                 }
     }
 }

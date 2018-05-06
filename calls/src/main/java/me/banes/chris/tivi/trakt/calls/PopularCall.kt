@@ -27,7 +27,6 @@ import me.banes.chris.tivi.data.daos.PopularDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.PopularListItem
-import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.extensions.fetchBodyWithRetry
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
@@ -45,6 +44,7 @@ class PopularCall @Inject constructor(
         databaseTransactionRunner,
         showDao,
         popularDao,
+        showFetcher,
         schedulers,
         dispatchers
 ) {
@@ -56,12 +56,11 @@ class PopularCall @Inject constructor(
                 .mapIndexed { index, show -> ItemWithIndex(show, index) }
     }
 
-    override fun mapToEntry(networkEntity: ItemWithIndex<Show>, show: TiviShow, page: Int): PopularEntry {
-        assert(show.id != null)
-        return PopularEntry(null, show.id!!, page, networkEntity.index)
+    override fun mapToEntry(networkEntity: ItemWithIndex<Show>, showId: Long, page: Int): PopularEntry {
+        return PopularEntry(showId = showId, page = page, pageOrder = networkEntity.index)
     }
 
-    override suspend fun loadShow(response: ItemWithIndex<Show>): TiviShow {
-        return showFetcher.load(response.item.ids.trakt, response.item)
+    override suspend fun insertShowPlaceholder(response: ItemWithIndex<Show>): Long {
+        return showFetcher.insertPlaceholderIfNeeded(response.item)
     }
 }

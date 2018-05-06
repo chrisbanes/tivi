@@ -17,32 +17,32 @@
 package me.banes.chris.tivi
 
 import com.uwetrottmann.trakt5.entities.Show
-import me.banes.chris.tivi.data.entities.TiviShow
+import kotlinx.coroutines.experimental.withContext
+import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.tmdb.TmdbShowFetcher
 import me.banes.chris.tivi.trakt.TraktShowFetcher
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ShowFetcher @Inject constructor(
+    private val showDao: TiviShowDao,
+    private val dispatchers: AppCoroutineDispatchers,
     private val traktShowFetcher: TraktShowFetcher,
     private val tmdbShowFetcher: TmdbShowFetcher
 ) {
-    suspend fun load(traktId: Int, show: Show? = null): TiviShow {
-        return traktShowFetcher.loadShow(traktId, show)
-                .also {
-                    if (it.needsUpdateFromTmdb()) {
-                        tmdbShowFetcher.updateShow(it.tmdbId!!)
-                    }
-                }
+    suspend fun insertPlaceholderIfNeeded(show: Show): Long {
+        return traktShowFetcher.insertPlaceholderIfNeeded(show)
     }
 
-    suspend fun update(traktId: Int) {
-        traktShowFetcher.updateShow(traktId)
-                .also {
-                    if (it.needsUpdateFromTmdb()) {
-                        tmdbShowFetcher.updateShow(it.tmdbId!!)
-                    }
-                }
+    suspend fun update(showId: Long, force: Boolean = false) {
+        val show = withContext(dispatchers.database) { showDao.getShowWithId(showId)!! }
+        if (force || show.needsUpdateFromTrakt()) {
+            traktShowFetcher.updateShow(show.traktId!!)
+        }
+        if (force || show.needsUpdateFromTmdb()) {
+            tmdbShowFetcher.updateShow(show.tmdbId!!)
+        }
     }
 }
