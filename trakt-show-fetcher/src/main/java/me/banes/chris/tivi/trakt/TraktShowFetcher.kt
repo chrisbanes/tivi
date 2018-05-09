@@ -41,7 +41,7 @@ class TraktShowFetcher @Inject constructor(
             trakt.shows().summary(traktId.toString(), Extended.FULL).fetchBodyWithRetry()
         }
         withContext(dispatchers.database) {
-            upsertShow(response)
+            upsertShow(response, true)
         }
     }
 
@@ -49,7 +49,7 @@ class TraktShowFetcher @Inject constructor(
         return withContext(dispatchers.database) { upsertShow(show) }
     }
 
-    private fun upsertShow(traktShow: Show): Long {
+    private fun upsertShow(traktShow: Show, updateTime: Boolean = false): Long {
         return (showDao.getShowWithTraktId(traktShow.ids.trakt) ?: TiviShow())
                 .apply {
                     updateProperty(this::traktId, traktShow.ids.trakt)
@@ -63,7 +63,9 @@ class TraktShowFetcher @Inject constructor(
                     updateProperty(this::network, traktShow.network)
                     updateProperty(this::country, traktShow.country)
                     updateProperty(this::_genres, traktShow.genres?.joinToString(","))
-                    lastTraktUpdate = OffsetDateTime.now()
+                    if (updateTime) {
+                        lastTraktUpdate = OffsetDateTime.now()
+                    }
                 }.let {
                     entityInserter.insertOrUpdate(showDao, it)
                 }
