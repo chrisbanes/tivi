@@ -24,7 +24,6 @@ import me.banes.chris.tivi.calls.PaginatedEntryCallImpl
 import me.banes.chris.tivi.data.DatabaseTransactionRunner
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.daos.TrendingDao
-import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.data.entities.TrendingEntry
 import me.banes.chris.tivi.data.entities.TrendingListItem
 import me.banes.chris.tivi.extensions.fetchBodyWithRetry
@@ -44,6 +43,7 @@ class TrendingCall @Inject constructor(
         databaseTransactionRunner,
         showDao,
         trendingDao,
+        showFetcher,
         schedulers,
         dispatchers
 ) {
@@ -52,12 +52,11 @@ class TrendingCall @Inject constructor(
         return trakt.shows().trending(page + 1, pageSize, Extended.NOSEASONS).fetchBodyWithRetry()
     }
 
-    override fun mapToEntry(networkEntity: TrendingShow, show: TiviShow, page: Int): TrendingEntry {
-        assert(show.id != null)
-        return TrendingEntry(null, show.id!!, page, networkEntity.watchers)
+    override fun mapToEntry(networkEntity: TrendingShow, showId: Long, page: Int): TrendingEntry {
+        return TrendingEntry(showId = showId, page = page, watchers = networkEntity.watchers)
     }
 
-    override suspend fun loadShow(response: TrendingShow): TiviShow {
-        return showFetcher.load(response.show.ids.trakt, response.show)
+    override suspend fun insertShowPlaceholder(response: TrendingShow): Long {
+        return showFetcher.insertPlaceholderIfNeeded(response.show)
     }
 }

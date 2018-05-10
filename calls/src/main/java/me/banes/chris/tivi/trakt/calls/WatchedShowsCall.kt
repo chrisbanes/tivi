@@ -61,8 +61,8 @@ class WatchedShowsCall @Inject constructor(
         }
 
         val shows = networkResponse.parallelMap { traktEntry ->
-            showFetcher.load(traktEntry.show.ids.trakt, traktEntry.show)
-                    .let { WatchedShowEntry(null, it.id!!, traktEntry.last_watched_at) }
+            val showId = showFetcher.insertPlaceholderIfNeeded(traktEntry.show)
+            WatchedShowEntry(null, showId, traktEntry.last_watched_at)
         }
 
         // Now save it to the database

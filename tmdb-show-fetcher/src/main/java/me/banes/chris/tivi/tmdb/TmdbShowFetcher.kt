@@ -48,9 +48,8 @@ class TmdbShowFetcher @Inject constructor(
                             updateProperty(this::tmdbPosterPath, tmdbShow.poster_path)
                             updateProperty(this::homepage, tmdbShow.homepage)
                             lastTmdbUpdate = OffsetDateTime.now()
-                        }.let {
-                            val id = entityInserter.insertOrUpdate(showDao, it)
-                            showDao.getShowWithId(id)
+                        }.also {
+                            entityInserter.insertOrUpdate(showDao, it)
                         }
             }
         }
