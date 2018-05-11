@@ -58,12 +58,14 @@ class TraktManager @Inject constructor(
     @Named("auth") private val authPrefs: SharedPreferences,
     private val userMeCall: UserMeCall
 ) {
-    private val _state = BehaviorSubject.create<AuthState>()!!
+    private val authState = BehaviorSubject.create<AuthState>()!!
+
+    private val _state = BehaviorSubject.createDefault(TraktAuthState.LOGGED_OUT)!!
     val state = _state.toFlowable(BackpressureStrategy.LATEST)!!
 
     init {
         // Observer which updates local state
-        disposables += _state.observeOn(schedulers.main)
+        disposables += authState.observeOn(schedulers.main)
                 .subscribe(::updateAuthState, Timber::e)
 
         // Read the auth state from prefs
@@ -71,12 +73,12 @@ class TraktManager @Inject constructor(
             val state = withContext(dispatchers.disk) {
                 readAuthState()
             }
-            _state.onNext(state)
+            authState.onNext(state)
         }
     }
 
     internal fun applyToTraktClient(traktClient: TraktV2) {
-        _state.value?.also {
+        authState.value?.also {
             traktClient.accessToken(it.accessToken)
             traktClient.refreshToken(it.refreshToken)
         }
@@ -88,6 +90,9 @@ class TraktManager @Inject constructor(
             launch {
                 userMeCall.refresh(Unit)
             }
+            _state.onNext(TraktAuthState.LOGGED_IN)
+        } else {
+            _state.onNext(TraktAuthState.LOGGED_OUT)
         }
     }
 
@@ -119,7 +124,7 @@ class TraktManager @Inject constructor(
     private fun onTokenExchangeResponse(response: TokenResponse?, ex: AuthorizationException?) {
         val newState = AuthState().apply { update(response, ex) }
         // Update our local state
-        _state.onNext(newState)
+        authState.onNext(newState)
         // Persist auth state
         launch(dispatchers.disk) {
             persistAuthState(newState)
