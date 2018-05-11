@@ -16,9 +16,9 @@
 
 package me.banes.chris.tivi.trakt.calls
 
-import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
+import com.uwetrottmann.trakt5.services.Users
 import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.calls.Call
@@ -29,10 +29,11 @@ import me.banes.chris.tivi.extensions.fetchBodyWithRetry
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
+import javax.inject.Provider
 
 class UserMeCall @Inject constructor(
     private val dao: UserDao,
-    private val trakt: TraktV2,
+    private val usersService: Provider<Users>,
     private val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
     private val entityInserter: EntityInserter
@@ -41,7 +42,7 @@ class UserMeCall @Inject constructor(
     override suspend fun refresh(param: Unit) {
         // Fetch network response on network dispatcher
         val networkResponse = withContext(dispatchers.network) {
-            trakt.users().profile(UserSlug.ME, Extended.FULL).fetchBodyWithRetry()
+            usersService.get().profile(UserSlug.ME, Extended.FULL).fetchBodyWithRetry()
         }
 
         networkResponse.let {

@@ -56,7 +56,6 @@ class TraktManager @Inject constructor(
     private val authService: AuthorizationService,
     private val clientAuth: Lazy<ClientAuthentication>,
     @Named("auth") private val authPrefs: SharedPreferences,
-    private val traktClient: TraktV2,
     private val userMeCall: UserMeCall
 ) {
     private val _state = BehaviorSubject.create<AuthState>()!!
@@ -76,10 +75,14 @@ class TraktManager @Inject constructor(
         }
     }
 
-    private fun updateAuthState(authState: AuthState) {
-        traktClient.accessToken(authState.accessToken)
-        traktClient.refreshToken(authState.refreshToken)
+    internal fun applyToTraktClient(traktClient: TraktV2) {
+        _state.value?.also {
+            traktClient.accessToken(it.accessToken)
+            traktClient.refreshToken(it.refreshToken)
+        }
+    }
 
+    private fun updateAuthState(authState: AuthState) {
         if (authState.isAuthorized) {
             // Now refresh the user information
             launch {

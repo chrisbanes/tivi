@@ -16,9 +16,9 @@
 
 package me.banes.chris.tivi.trakt.calls
 
-import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
+import com.uwetrottmann.trakt5.services.Shows
 import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.api.ItemWithIndex
 import me.banes.chris.tivi.calls.PaginatedEntryCallImpl
@@ -31,13 +31,14 @@ import me.banes.chris.tivi.extensions.fetchBodyWithRetry
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
+import javax.inject.Provider
 
 class PopularCall @Inject constructor(
     databaseTransactionRunner: DatabaseTransactionRunner,
     showDao: TiviShowDao,
     popularDao: PopularDao,
     private val showFetcher: ShowFetcher,
-    private val trakt: TraktV2,
+    private val showsService: Provider<Shows>,
     schedulers: AppRxSchedulers,
     dispatchers: AppCoroutineDispatchers
 ) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularListItem, PopularDao>(
@@ -51,7 +52,7 @@ class PopularCall @Inject constructor(
 
     override suspend fun networkCall(page: Int): List<ItemWithIndex<Show>> {
         // We add one to the page since Trakt uses a 1-based index whereas we use 0-based
-        return trakt.shows().popular(page + 1, pageSize, Extended.NOSEASONS)
+        return showsService.get().popular(page + 1, pageSize, Extended.NOSEASONS)
                 .fetchBodyWithRetry()
                 .mapIndexed { index, show -> ItemWithIndex(show, index) }
     }

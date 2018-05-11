@@ -16,9 +16,9 @@
 
 package me.banes.chris.tivi.trakt.calls
 
-import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.TrendingShow
 import com.uwetrottmann.trakt5.enums.Extended
+import com.uwetrottmann.trakt5.services.Shows
 import me.banes.chris.tivi.ShowFetcher
 import me.banes.chris.tivi.calls.PaginatedEntryCallImpl
 import me.banes.chris.tivi.data.DatabaseTransactionRunner
@@ -30,13 +30,14 @@ import me.banes.chris.tivi.extensions.fetchBodyWithRetry
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
+import javax.inject.Provider
 
 class TrendingCall @Inject constructor(
     databaseTransactionRunner: DatabaseTransactionRunner,
     showDao: TiviShowDao,
     trendingDao: TrendingDao,
     private val showFetcher: ShowFetcher,
-    private val trakt: TraktV2,
+    private val showsService: Provider<Shows>,
     schedulers: AppRxSchedulers,
     dispatchers: AppCoroutineDispatchers
 ) : PaginatedEntryCallImpl<TrendingShow, TrendingEntry, TrendingListItem, TrendingDao>(
@@ -49,7 +50,7 @@ class TrendingCall @Inject constructor(
 ) {
     override suspend fun networkCall(page: Int): List<TrendingShow> {
         // We add one to the page since Trakt uses a 1-based index whereas we use 0-based
-        return trakt.shows().trending(page + 1, pageSize, Extended.NOSEASONS).fetchBodyWithRetry()
+        return showsService.get().trending(page + 1, pageSize, Extended.NOSEASONS).fetchBodyWithRetry()
     }
 
     override fun mapToEntry(networkEntity: TrendingShow, showId: Long, page: Int): TrendingEntry {

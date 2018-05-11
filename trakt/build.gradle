@@ -16,17 +16,8 @@
  */
 
 apply plugin: 'kotlin'
-apply plugin: 'kotlin-kapt'
 
 dependencies {
-    implementation project(":base")
-    implementation project(":data")
-
-    compile "io.reactivex.rxjava2:rxjava:${versions.rx}"
-    implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
-
-    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
-
     compile("com.uwetrottmann.trakt5:trakt-java:5.8.1", {
         // Exclude this since we explicitly depend on threetenbp:no-tzdb above
         exclude group: 'org.threeten', module: 'threetenbp'

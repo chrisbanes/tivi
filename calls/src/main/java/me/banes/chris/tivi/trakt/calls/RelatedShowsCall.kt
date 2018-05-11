@@ -16,8 +16,8 @@
 
 package me.banes.chris.tivi.trakt.calls
 
-import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.enums.Extended
+import com.uwetrottmann.trakt5.services.Shows
 import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.ShowFetcher
@@ -32,12 +32,13 @@ import me.banes.chris.tivi.extensions.parallelForEach
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
+import javax.inject.Provider
 
 class RelatedShowsCall @Inject constructor(
     private val showDao: TiviShowDao,
     private val entryDao: RelatedShowsDao,
     private val transactionRunner: DatabaseTransactionRunner,
-    private val trakt: TraktV2,
+    private val showsService: Provider<Shows>,
     private val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
     private val showFetcher: ShowFetcher
@@ -47,7 +48,7 @@ class RelatedShowsCall @Inject constructor(
 
         if (show != null) {
             val related = withContext(dispatchers.network) {
-                trakt.shows().related(show.traktId.toString(), 0, 10, Extended.NOSEASONS).fetchBodyWithRetry()
+                showsService.get().related(show.traktId.toString(), 0, 10, Extended.NOSEASONS).fetchBodyWithRetry()
             }.mapIndexed { index, relatedShow ->
                 // Now insert a placeholder for each show if needed
                 val relatedShowId = showFetcher.insertPlaceholderIfNeeded(relatedShow)
