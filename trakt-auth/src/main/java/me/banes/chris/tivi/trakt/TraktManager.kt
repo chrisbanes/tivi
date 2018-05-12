@@ -20,8 +20,8 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
-import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
@@ -33,6 +33,7 @@ import me.banes.chris.tivi.inject.ApplicationLevel
 import me.banes.chris.tivi.trakt.calls.UserMeCall
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
+import me.banes.chris.tivi.util.NetworkDetector
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationRequest
@@ -56,12 +57,14 @@ class TraktManager @Inject constructor(
     private val authService: AuthorizationService,
     private val clientAuth: Lazy<ClientAuthentication>,
     @Named("auth") private val authPrefs: SharedPreferences,
-    private val userMeCall: UserMeCall
+    private val userMeCall: UserMeCall,
+    private val networkDetector: NetworkDetector
 ) {
     private val authState = BehaviorSubject.create<AuthState>()!!
 
     private val _state = BehaviorSubject.createDefault(TraktAuthState.LOGGED_OUT)!!
-    val state = _state.toFlowable(BackpressureStrategy.LATEST)!!
+    val state: Observable<TraktAuthState>
+        get() = _state
 
     init {
         // Observer which updates local state
@@ -86,13 +89,22 @@ class TraktManager @Inject constructor(
 
     private fun updateAuthState(authState: AuthState) {
         if (authState.isAuthorized) {
-            // Now refresh the user information
-            launch {
-                userMeCall.refresh(Unit)
-            }
             _state.onNext(TraktAuthState.LOGGED_IN)
+
+            disposables += networkDetector.waitForConnection()
+                    .subscribe({ refreshUserProfile() }, Timber::e)
         } else {
             _state.onNext(TraktAuthState.LOGGED_OUT)
+        }
+    }
+
+    private fun refreshUserProfile() {
+        launch {
+            try {
+                userMeCall.refresh(Unit)
+            } catch (e: Exception) {
+                Timber.e(e, "Error while refreshing user profile")
+            }
         }
     }
 

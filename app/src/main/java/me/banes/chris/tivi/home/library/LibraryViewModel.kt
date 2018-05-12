@@ -18,16 +18,19 @@ package me.banes.chris.tivi.home.library
 
 import android.arch.lifecycle.MutableLiveData
 import io.reactivex.rxkotlin.Flowables
+import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.plusAssign
 import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.home.HomeFragmentViewModel
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.tmdb.TmdbManager
+import me.banes.chris.tivi.trakt.TraktAuthState
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.MyShowsCall
 import me.banes.chris.tivi.trakt.calls.WatchedShowsCall
 import me.banes.chris.tivi.util.AppRxSchedulers
+import me.banes.chris.tivi.util.NetworkDetector
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -35,8 +38,9 @@ class LibraryViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     private val watchedShowsCall: WatchedShowsCall,
     private val myShowsCall: MyShowsCall,
-    traktManager: TraktManager,
-    tmdbManager: TmdbManager
+    private val traktManager: TraktManager,
+    tmdbManager: TmdbManager,
+    private val networkDetector: NetworkDetector
 ) : HomeFragmentViewModel(traktManager) {
     val data = MutableLiveData<LibraryViewState>()
 
@@ -53,12 +57,22 @@ class LibraryViewModel @Inject constructor(
     }
 
     private fun refresh() {
+        disposables += Observables.combineLatest(
+                networkDetector.waitForConnection().toObservable(),
+                traktManager.state.filter { it == TraktAuthState.LOGGED_IN }
+        ).subscribe({ onRefresh() }, Timber::e)
+    }
+
+    private fun onRefresh() {
+        refreshWatched()
+    }
+
+    private fun refreshWatched() {
         launchWithParent {
             try {
                 watchedShowsCall.refresh(Unit)
             } catch (e: Exception) {
-                // TODO this shouldn't live here
-                Timber.e(e, "Error while refreshing")
+                Timber.e(e, "Error while refreshing watched shows")
             }
         }
     }

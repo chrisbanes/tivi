@@ -24,14 +24,16 @@ import me.banes.chris.tivi.trakt.calls.TrendingCall
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.EntryViewModel
+import me.banes.chris.tivi.util.NetworkDetector
 import javax.inject.Inject
 
 class TrendingShowsViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     coroutineDispatchers: AppCoroutineDispatchers,
     call: TrendingCall,
-    tmdbManager: TmdbManager
-) : EntryViewModel<TrendingListItem>(schedulers, coroutineDispatchers, call, tmdbManager) {
+    tmdbManager: TmdbManager,
+    networkDetector: NetworkDetector
+) : EntryViewModel<TrendingListItem>(schedulers, coroutineDispatchers, call, tmdbManager, networkDetector) {
     fun onUpClicked(navigator: HomeNavigator) {
         navigator.onUpClicked()
     }
