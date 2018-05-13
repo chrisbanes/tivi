@@ -29,6 +29,7 @@ import me.banes.chris.tivi.data.daos.WatchedShowDao
 import me.banes.chris.tivi.data.entities.WatchedShowEntry
 import me.banes.chris.tivi.data.entities.WatchedShowListItem
 import me.banes.chris.tivi.extensions.fetchBodyWithRetry
+import me.banes.chris.tivi.extensions.parallelForEach
 import me.banes.chris.tivi.extensions.parallelMap
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
@@ -72,6 +73,11 @@ class WatchedShowsCall @Inject constructor(
                 watchShowDao.deleteAll()
                 shows.forEach { watchShowDao.insert(it) }
             }
+        }
+
+        shows.parallelForEach {
+            // Now trigger a refresh of each show
+            showFetcher.update(it.showId)
         }
     }
 }
