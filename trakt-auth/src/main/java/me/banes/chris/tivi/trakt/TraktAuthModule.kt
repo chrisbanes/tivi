@@ -19,6 +19,7 @@ package me.banes.chris.tivi.trakt
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
+import com.uwetrottmann.trakt5.TraktV2
 import dagger.Module
 import dagger.Provides
 import net.openid.appauth.AuthorizationRequest
@@ -27,11 +28,41 @@ import net.openid.appauth.AuthorizationServiceConfiguration
 import net.openid.appauth.ClientAuthentication
 import net.openid.appauth.ClientSecretBasic
 import net.openid.appauth.ResponseTypeValues
+import okhttp3.Cache
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import java.io.File
 import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 class TraktAuthModule {
+    @Provides
+    fun provideTrakt(
+        @Named("cache") cacheDir: File,
+        interceptor: HttpLoggingInterceptor,
+        @Named("trakt-client-id") clientId: String,
+        traktManager: TraktManager
+    ): TraktV2 {
+        return object : TraktV2(clientId) {
+            override fun setOkHttpClientDefaults(builder: OkHttpClient.Builder) {
+                super.setOkHttpClientDefaults(builder)
+                builder.apply {
+                    addInterceptor(interceptor)
+                    cache(Cache(File(cacheDir, "trakt_cache"), 10 * 1024 * 1024))
+                }
+            }
+        }.apply {
+            traktManager.applyToTraktClient(this)
+        }
+    }
+
+    @Provides
+    fun provideTraktUsersService(traktV2: TraktV2) = traktV2.users()
+
+    @Provides
+    fun provideTraktShowsService(traktV2: TraktV2) = traktV2.shows()
+
     @Singleton
     @Provides
     fun provideAuthConfig(): AuthorizationServiceConfiguration {

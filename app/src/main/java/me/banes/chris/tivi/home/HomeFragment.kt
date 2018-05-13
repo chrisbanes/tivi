@@ -25,6 +25,7 @@ import me.banes.chris.tivi.R
 import me.banes.chris.tivi.TiviFragment
 import me.banes.chris.tivi.extensions.loadIconFromUrl
 import me.banes.chris.tivi.extensions.observeK
+import me.banes.chris.tivi.trakt.TraktAuthState
 import javax.inject.Inject
 
 abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
@@ -37,11 +38,11 @@ abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
 
         viewModel.authUiState.observeK(this) {
             when (it) {
-                HomeFragmentViewModel.AuthUiState.LOGGED_IN -> {
+                TraktAuthState.LOGGED_IN -> {
                     findUserAvatarMenuItem()?.isVisible = true
                     findUserLoginMenuItem()?.isVisible = false
                 }
-                HomeFragmentViewModel.AuthUiState.LOGGED_OUT -> {
+                TraktAuthState.LOGGED_OUT -> {
                     findUserAvatarMenuItem()?.isVisible = false
                     findUserLoginMenuItem()?.isVisible = true
                 }

@@ -28,6 +28,7 @@ import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.PopularCall
 import me.banes.chris.tivi.trakt.calls.TrendingCall
 import me.banes.chris.tivi.util.AppRxSchedulers
+import me.banes.chris.tivi.util.NetworkDetector
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -36,7 +37,8 @@ class DiscoverViewModel @Inject constructor(
     private val popularCall: PopularCall,
     private val trendingCall: TrendingCall,
     traktManager: TraktManager,
-    tmdbManager: TmdbManager
+    tmdbManager: TmdbManager,
+    private val networkDetector: NetworkDetector
 ) : HomeFragmentViewModel(traktManager) {
 
     val data = MutableLiveData<DiscoverViewState>()
@@ -54,20 +56,25 @@ class DiscoverViewModel @Inject constructor(
     }
 
     private fun refresh() {
-        launchWithParent {
-            popularCall.refresh(Unit)
-        }
-        launchWithParent {
-            trendingCall.refresh(Unit)
-        }
+        disposables += networkDetector.waitForConnection()
+                .subscribe({ onRefresh() }, Timber::e)
     }
 
-    private fun onSuccess() {
-        // TODO nothing really to do here
-    }
-
-    private fun onRefreshError(t: Throwable) {
-        Timber.e(t, "Error while refreshing")
+    private fun onRefresh() {
+        launchWithParent {
+            try {
+                popularCall.refresh(Unit)
+            } catch (e: Exception) {
+                Timber.e(e, "Error while refreshing popular shows")
+            }
+        }
+        launchWithParent {
+            try {
+                trendingCall.refresh(Unit)
+            } catch (e: Exception) {
+                Timber.e(e, "Error while refreshing trending shows")
+            }
+        }
     }
 
     fun onTrendingHeaderClicked(navigator: HomeNavigator, sharedElementHelper: SharedElementHelper? = null) {

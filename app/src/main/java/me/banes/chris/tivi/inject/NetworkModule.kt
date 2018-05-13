@@ -19,6 +19,9 @@ package me.banes.chris.tivi.inject
 import dagger.Module
 import dagger.Provides
 import me.banes.chris.tivi.BuildConfig
+import me.banes.chris.tivi.TiviApplication
+import me.banes.chris.tivi.util.AndroidNetworkDetector
+import me.banes.chris.tivi.util.NetworkDetector
 import okhttp3.logging.HttpLoggingInterceptor
 import javax.inject.Singleton
 
@@ -33,4 +36,8 @@ class NetworkModule {
             }
         }
     }
+
+    @Provides
+    @Singleton
+    fun provideNetworkDetector(application: TiviApplication): NetworkDetector = AndroidNetworkDetector(application)
 }

@@ -17,9 +17,9 @@
 package me.banes.chris.tivi.trakt.calls
 
 import android.arch.paging.DataSource
-import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
+import com.uwetrottmann.trakt5.services.Users
 import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.ShowFetcher
@@ -33,12 +33,13 @@ import me.banes.chris.tivi.extensions.parallelMap
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
+import javax.inject.Provider
 
 class WatchedShowsCall @Inject constructor(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val watchShowDao: WatchedShowDao,
     private val showFetcher: ShowFetcher,
-    private val trakt: TraktV2,
+    private val usersService: Provider<Users>,
     private val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers
 ) : ListCall<Unit, WatchedShowListItem> {
@@ -57,7 +58,7 @@ class WatchedShowsCall @Inject constructor(
 
     override suspend fun refresh(param: Unit) {
         val networkResponse = withContext(dispatchers.network) {
-            trakt.users().watchedShows(UserSlug.ME, Extended.NOSEASONS).fetchBodyWithRetry()
+            usersService.get().watchedShows(UserSlug.ME, Extended.NOSEASONS).fetchBodyWithRetry()
         }
 
         val shows = networkResponse.parallelMap { traktEntry ->

@@ -104,7 +104,7 @@ abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<L
         }
         originalRvTopPadding = grid_recyclerview.paddingTop
 
-        grid_swipe_refresh.setOnRefreshListener(viewModel::fullRefresh)
+        grid_swipe_refresh.setOnRefreshListener(viewModel::refresh)
 
         grid_root.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         grid_root.setOnApplyWindowInsetsListener { _, insets ->

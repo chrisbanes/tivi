@@ -21,34 +21,26 @@ import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MutableLiveData
 import io.reactivex.rxkotlin.plusAssign
 import me.banes.chris.tivi.data.entities.TraktUser
+import me.banes.chris.tivi.trakt.TraktAuthState
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.util.TiviViewModel
-import net.openid.appauth.AuthState
 import timber.log.Timber
 
 abstract class HomeFragmentViewModel(
     private val traktManager: TraktManager
 ) : TiviViewModel() {
 
-    enum class AuthUiState {
-        LOGGED_IN, LOGGED_OUT
-    }
-
-    val authUiState = MutableLiveData<AuthUiState>()
+    private val _authUiState = MutableLiveData<TraktAuthState>()
+    val authUiState: LiveData<TraktAuthState>
+        get() = _authUiState
 
     val userProfileLiveData: LiveData<TraktUser> = LiveDataReactiveStreams.fromPublisher(traktManager.userObservable())
 
     init {
-        authUiState.value = AuthUiState.LOGGED_OUT
+        _authUiState.value = TraktAuthState.LOGGED_OUT
 
         disposables += traktManager.state
-                .subscribe(::handleAuthState, Timber::e)
-    }
-
-    private fun handleAuthState(state: AuthState?) {
-        authUiState.value =
-                if (state?.isAuthorized == true) AuthUiState.LOGGED_IN
-                else AuthUiState.LOGGED_OUT
+                .subscribe(_authUiState::setValue, Timber::e)
     }
 
     fun onProfileItemClicked() {
