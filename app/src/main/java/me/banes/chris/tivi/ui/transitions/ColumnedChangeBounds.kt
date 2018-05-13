@@ -20,6 +20,7 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
+import android.graphics.Bitmap
 import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
@@ -29,9 +30,9 @@ import android.util.Property
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.animation.doOnEnd
+import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.isVisible
-import androidx.core.view.toBitmap
 import me.banes.chris.tivi.ui.transitions.DrawableAlphaProperty
 import kotlin.math.roundToInt
 
@@ -210,7 +211,10 @@ class ColumnedChangeBounds : Transition() {
     }
 
     private fun createDrawableBoundsForView(view: View): DrawableBounds {
-        return DrawableBounds(view.toBitmap().toDrawable(view.resources))
+        val d = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+                .applyCanvas(view::draw)
+                .toDrawable(view.resources)
+        return DrawableBounds(d)
     }
 
     private fun findRecyclerViewParent(view: View): RecyclerView? {
