@@ -25,7 +25,6 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_summary.*
 import me.banes.chris.tivi.R
-import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.data.entities.MyShowsEntry
@@ -34,41 +33,31 @@ import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeFragment
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.HomeNavigatorViewModel
+import me.banes.chris.tivi.ui.ListItemSharedElementHelper
 import me.banes.chris.tivi.ui.SpacingItemDecorator
 import me.banes.chris.tivi.util.GridToGridTransitioner
 
 class LibraryFragment : HomeFragment<LibraryViewModel>() {
-
     private lateinit var homeNavigator: HomeNavigator
     private lateinit var gridLayoutManager: GridLayoutManager
 
     private val controller = LibraryEpoxyController(object : LibraryEpoxyController.Callbacks {
+        private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
+            ListItemSharedElementHelper(summary_rv)
+        }
+
         override fun onMyShowsHeaderClicked(items: List<ListItem<MyShowsEntry>>?) {
-            val sharedElementHelper = SharedElementHelper()
-            items?.forEach { addSharedElementEntry(it, sharedElementHelper) }
-            viewModel.onMyShowsHeaderClicked(homeNavigator, sharedElementHelper)
+            viewModel.onMyShowsHeaderClicked(homeNavigator, listItemSharedElementHelper.createForItems(items))
         }
 
         override fun onWatchedHeaderClicked(items: List<ListItem<WatchedShowEntry>>?) {
-            val sharedElementHelper = SharedElementHelper()
-            items?.forEach { addSharedElementEntry(it, sharedElementHelper) }
-            viewModel.onWatchedHeaderClicked(homeNavigator, sharedElementHelper)
+            viewModel.onWatchedHeaderClicked(homeNavigator, listItemSharedElementHelper.createForItems(items))
         }
 
         override fun onItemClicked(item: ListItem<out Entry>) {
-            val sharedElementHelper = SharedElementHelper()
-            addSharedElementEntry(item, sharedElementHelper, "poster")
-            viewModel.onItemPostedClicked(homeNavigator, item.show!!, sharedElementHelper)
-        }
-
-        private fun addSharedElementEntry(
-            item: ListItem<out Entry>,
-            sharedElementHelper: SharedElementHelper,
-            transitionName: String? = item.show?.homepage
-        ) {
-            summary_rv.findViewHolderForItemId(item.generateStableId())?.let {
-                sharedElementHelper.addSharedElement(it.itemView, transitionName)
-            }
+            viewModel.onItemPostedClicked(homeNavigator, item.show!!,
+                    listItemSharedElementHelper.createForItem(item, "poster")
+            )
         }
     })
 
