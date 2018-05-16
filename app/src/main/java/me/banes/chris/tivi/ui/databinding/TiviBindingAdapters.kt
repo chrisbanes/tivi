@@ -21,6 +21,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.doOnLayout
+import androidx.core.view.isVisible
 import me.banes.chris.tivi.GlideApp
 import me.banes.chris.tivi.data.entities.Genre
 import me.banes.chris.tivi.extensions.loadFromUrl
@@ -61,6 +62,11 @@ fun genreContentDescriptionString(view: TextView, genres: List<Genre>?) {
 @BindingAdapter("android:visibleIfNotNull")
 fun visibleIfNotNull(view: View, target: Any?) {
     view.visibility = if (target == null) View.GONE else View.VISIBLE
+}
+
+@BindingAdapter("android:visible")
+fun visible(view: View, value: Boolean) {
+    view.isVisible = value
 }
 
 @BindingAdapter("android:srcRes")

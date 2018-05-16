@@ -20,10 +20,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="episode"
             type="me.banes.chris.tivi.data.entities.Episode" />
+        <variable
+            name="watched"
+            type="boolean" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -44,15 +46,16 @@
             app:layout_constraintStart_toStartOf="parent"
             tools:text="A tale of two halves" />
 
-        <TextView
+        <ImageView
             android:id="@+id/episode_watched"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginTop="8dp"
-            android:text="✅"
-            android:visibleIfNotNull="@{episode.lastWatched}"
+            android:src="@drawable/ic_eye_24dp"
+            android:tint="?android:attr/colorControlNormal"
+            android:visible="@{watched}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

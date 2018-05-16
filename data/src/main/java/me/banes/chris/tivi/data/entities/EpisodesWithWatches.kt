@@ -20,20 +20,20 @@ import android.arch.persistence.room.Embedded
 import android.arch.persistence.room.Relation
 import java.util.Objects
 
-class SeasonWithEpisodes {
+class EpisodesWithWatches {
     @Embedded
-    var season: Season? = null
+    var episode: Episode? = null
 
-    @Relation(parentColumn = "id", entityColumn = "season_id", entity = Episode::class)
-    var episodes: List<EpisodesWithWatches> = emptyList()
+    @Relation(parentColumn = "id", entityColumn = "episode_id")
+    var watches: List<EpisodeWatchEntry> = emptyList()
 
-    fun isWatched() = episodes.all { it.isWatched() }
+    fun isWatched() = watches.isNotEmpty()
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
-        other is SeasonWithEpisodes -> season == other.season && episodes == other.episodes
+        other is EpisodesWithWatches -> watches == other.watches && episode == other.episode
         else -> false
     }
 
-    override fun hashCode(): Int = Objects.hash(season, episodes)
+    override fun hashCode(): Int = Objects.hash(episode, watches)
 }

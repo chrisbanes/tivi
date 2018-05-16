@@ -139,10 +139,12 @@ class ShowDetailsEpoxyController(
                     spanSizeOverride(TotalSpanOverride)
                 }
 
-                season.episodes?.forEach { episode ->
+                season.episodes.forEach { episodeWithWatches ->
                     seasonEpisodeItem {
+                        val episode = episodeWithWatches.episode!!
                         id("episode_${episode.id}")
                         episode(episode)
+                        watched(episodeWithWatches.isWatched())
                         spanSizeOverride(TotalSpanOverride)
                     }
                 }
