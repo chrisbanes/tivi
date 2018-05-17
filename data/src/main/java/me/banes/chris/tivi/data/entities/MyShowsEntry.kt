@@ -25,7 +25,7 @@ import me.banes.chris.tivi.data.Entry
 
 @Entity(tableName = "myshows_entries",
         indices = [
-            Index(value = "show_id", unique = true)
+            Index(value = ["show_id"], unique = true)
         ],
         foreignKeys = [
             ForeignKey(entity = TiviShow::class,
