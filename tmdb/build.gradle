@@ -25,5 +25,5 @@ dependencies {
 
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
 
-    compile "com.uwetrottmann.tmdb2:tmdb-java:1.8.3"
+    compile "com.uwetrottmann.tmdb2:tmdb-java:1.8.4"
 }

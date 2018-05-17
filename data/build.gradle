@@ -20,8 +20,8 @@ apply plugin: 'kotlin'
 dependencies {
     implementation project(":base")
 
-    implementation "android.arch.persistence.room:common:${versions.arch_room}"
-    implementation "android.arch.paging:common:${versions.arch_paging}"
+    implementation "android.arch.persistence.room:common:${versions.arch.room}"
+    implementation "android.arch.paging:common:${versions.arch.paging}"
 
     compile "io.reactivex.rxjava2:rxjava:${versions.rx}"
 
