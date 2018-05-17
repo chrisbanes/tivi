@@ -149,11 +149,11 @@ dependencies {
     implementation project(':episodes-fetcher')
     implementation project(":calls")
 
-    implementation "android.arch.lifecycle:extensions:${versions.arch_lifecycle}"
-    implementation "android.arch.lifecycle:reactivestreams:${versions.arch_lifecycle}"
-    kapt "android.arch.lifecycle:compiler:${versions.arch_lifecycle}"
+    implementation "android.arch.lifecycle:extensions:${versions.arch.lifecycle}"
+    implementation "android.arch.lifecycle:reactivestreams:${versions.arch.lifecycle}"
+    kapt "android.arch.lifecycle:compiler:${versions.arch.lifecycle}"
 
-    implementation "android.arch.paging:runtime:${versions.arch_paging}"
+    implementation "android.arch.paging:runtime:${versions.arch.paging}"
 
     implementation "com.android.support:appcompat-v7:${versions.support_library}"
     implementation "com.android.support:design:${versions.support_library}"
