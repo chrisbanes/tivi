@@ -149,21 +149,21 @@ dependencies {
     implementation project(':episodes-fetcher')
     implementation project(":calls")
 
-    implementation "android.arch.lifecycle:extensions:${versions.arch.lifecycle}"
-    implementation "android.arch.lifecycle:reactivestreams:${versions.arch.lifecycle}"
-    kapt "android.arch.lifecycle:compiler:${versions.arch.lifecycle}"
+    implementation "android.arch.lifecycle:extensions:${versions.androidx.lifecycle}"
+    implementation "android.arch.lifecycle:reactivestreams:${versions.androidx.lifecycle}"
+    kapt "android.arch.lifecycle:compiler:${versions.androidx.lifecycle}"
 
-    implementation "android.arch.paging:runtime:${versions.arch.paging}"
+    implementation "android.arch.paging:runtime:${versions.androidx.paging}"
 
-    implementation "com.android.support:appcompat-v7:${versions.support_library}"
-    implementation "com.android.support:design:${versions.support_library}"
-    implementation "com.android.support:customtabs:${versions.support_library}"
-    implementation "com.android.support:palette-v7:${versions.support_library}"
-    implementation "com.android.support:recyclerview-v7:${versions.support_library}"
+    implementation "com.android.support:appcompat-v7:${versions.androidx.appcompat}"
+    implementation "com.android.support:design:${versions.material_design}"
+    implementation "com.android.support:customtabs:${versions.androidx.browser}"
+    implementation "com.android.support:palette-v7:${versions.androidx.palette}"
+    implementation "com.android.support:recyclerview-v7:${versions.androidx.recyclerview}"
 
-    implementation "com.android.support.constraint:constraint-layout:${versions.constraint_layout}"
+    implementation "com.android.support.constraint:constraint-layout:${versions.androidx.constraint_layout}"
 
-    implementation "androidx.core:core-ktx:${versions.core_ktx}"
+    implementation "androidx.core:core-ktx:${versions.androidx.core_ktx}"
 
     implementation 'com.jakewharton.threetenabp:threetenabp:1.1.0'
 
