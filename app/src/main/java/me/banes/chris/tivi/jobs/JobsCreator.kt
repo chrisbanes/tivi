@@ -37,4 +37,14 @@ abstract class JobsCreator {
     @IntoMap
     @StringKey(RemoveFromMyShows.TAG)
     abstract fun bindRemoveFromMyShows(job: RemoveFromMyShows): Job
+
+    @Binds
+    @IntoMap
+    @StringKey(SyncShowSeasonEpisodes.TAG)
+    abstract fun bindSyncShowSeasonEpisodes(job: SyncShowSeasonEpisodes): Job
+
+    @Binds
+    @IntoMap
+    @StringKey(SyncShowWatchedProgress.TAG)
+    abstract fun bindSyncShowWatchedProgress(job: SyncShowWatchedProgress): Job
 }

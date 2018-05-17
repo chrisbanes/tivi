@@ -18,6 +18,7 @@ package me.banes.chris.tivi.actions
 
 import me.banes.chris.tivi.jobs.AddToMyShows
 import me.banes.chris.tivi.jobs.RemoveFromMyShows
+import me.banes.chris.tivi.jobs.SyncShowWatchedProgress
 
 class TiviActionsImpl : TiviActions {
     override fun addShowToMyShows(showId: Long) {
@@ -29,6 +30,13 @@ class TiviActionsImpl : TiviActions {
 
     override fun removeShowFromMyShows(showId: Long) {
         RemoveFromMyShows.buildRequest(showId)
+                .startNow()
+                .build()
+                .scheduleAsync()
+    }
+
+    override fun syncShowWatchedEpisodes(showId: Long) {
+        SyncShowWatchedProgress.buildRequest(showId)
                 .startNow()
                 .build()
                 .scheduleAsync()

@@ -14,46 +14,79 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.trakt.calls
+package me.banes.chris.tivi.jobs
 
-import com.uwetrottmann.trakt5.TraktV2
+import com.evernote.android.job.Job
+import com.evernote.android.job.JobRequest
+import com.evernote.android.job.util.support.PersistableBundleCompat
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.enums.HistoryType
-import io.reactivex.Flowable
+import com.uwetrottmann.trakt5.services.Users
+import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withContext
-import me.banes.chris.tivi.calls.Call
 import me.banes.chris.tivi.data.DatabaseTransactionRunner
 import me.banes.chris.tivi.data.daos.EpisodeWatchEntryDao
 import me.banes.chris.tivi.data.daos.EpisodesDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
 import me.banes.chris.tivi.data.entities.EpisodeWatchEntry
 import me.banes.chris.tivi.extensions.fetchBodyWithRetry
+import me.banes.chris.tivi.trakt.TraktAuthState
+import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
+import timber.log.Timber
 import javax.inject.Inject
+import javax.inject.Provider
 
-class ShowWatchedProgressCall @Inject constructor(
+class SyncShowWatchedProgress @Inject constructor(
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,
     private val episodesDao: EpisodesDao,
-    private val tiviShowDao: TiviShowDao,
+    private val showDao: TiviShowDao,
     private val dispatchers: AppCoroutineDispatchers,
-    private val trakt: TraktV2,
+    private val traktManager: TraktManager,
+    private val usersService: Provider<Users>,
     private val databaseTransactionRunner: DatabaseTransactionRunner
-) : Call<Long, Unit> {
+) : Job() {
 
-    override fun data(param: Long): Flowable<Unit> = Flowable.empty()
+    companion object {
+        const val TAG = "sync-show-watched-episodes"
+        private const val PARAM_SHOW_ID = "show-id"
 
-    override suspend fun refresh(param: Long) {
+        fun buildRequest(showId: Long): JobRequest.Builder {
+            return JobRequest.Builder(TAG).addExtras(
+                    PersistableBundleCompat().apply {
+                        putLong(PARAM_SHOW_ID, showId)
+                    }
+            )
+        }
+    }
+
+    override fun onRunJob(params: Params): Result {
+        val showId = params.extras.getLong(PARAM_SHOW_ID, -1)
+        Timber.d("$TAG job running for id: $showId")
+
+        val authState = traktManager.state.blockingFirst()
+        if (authState == TraktAuthState.LOGGED_IN) {
+            return runBlocking {
+                runBlocking { sync(showId) }
+                Result.SUCCESS
+            }
+        }
+
+        return Result.FAILURE
+    }
+
+    private suspend fun sync(showId: Long) {
         val show = withContext(dispatchers.database) {
-            tiviShowDao.getShowWithId(param)
-        } ?: throw IllegalArgumentException("Show with id: $param does not exist")
+            showDao.getShowWithId(showId)
+        } ?: throw IllegalArgumentException("Show with id: $showId does not exist")
 
         // TODO fetch all un-synced watches from DB and send to Trakt
 
         // Fetch watched progress for show
         val watchedProgress = withContext(dispatchers.network) {
             // TODO use start and end dates
-            trakt.users().history(UserSlug.ME, HistoryType.SHOWS, show.traktId!!,
+            usersService.get().history(UserSlug.ME, HistoryType.SHOWS, show.traktId!!,
                     0, 10000, Extended.NOSEASONS, null, null).fetchBodyWithRetry()
         }
 

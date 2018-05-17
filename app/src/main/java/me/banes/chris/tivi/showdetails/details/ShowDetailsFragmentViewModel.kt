@@ -28,7 +28,6 @@ import me.banes.chris.tivi.tmdb.TmdbManager
 import me.banes.chris.tivi.trakt.calls.RelatedShowsCall
 import me.banes.chris.tivi.trakt.calls.ShowDetailsCall
 import me.banes.chris.tivi.trakt.calls.ShowSeasonsCall
-import me.banes.chris.tivi.trakt.calls.ShowWatchedProgressCall
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.TiviViewModel
 import timber.log.Timber
@@ -41,8 +40,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     private val seasonsCall: ShowSeasonsCall,
     private val tmdbManager: TmdbManager,
     private val tiviActions: TiviActions,
-    private val myShowsDao: MyShowsDao,
-    private val showWatchedProgressCall: ShowWatchedProgressCall
+    private val myShowsDao: MyShowsDao
 ) : TiviViewModel() {
 
     var showId: Long? = null
@@ -67,7 +65,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
             }
             launchWithParent {
                 seasonsCall.refresh(id)
-                showWatchedProgressCall.refresh(id)
+                tiviActions.syncShowWatchedEpisodes(id)
             }
             launchWithParent {
                 relatedShows.refresh(id)
