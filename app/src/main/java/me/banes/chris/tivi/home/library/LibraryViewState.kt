@@ -17,12 +17,12 @@
 package me.banes.chris.tivi.home.library
 
 import me.banes.chris.tivi.data.entities.ListItem
-import me.banes.chris.tivi.data.entities.MyShowsEntry
+import me.banes.chris.tivi.data.entities.FollowedShowEntry
 import me.banes.chris.tivi.data.entities.WatchedShowEntry
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 
 data class LibraryViewState(
     val watched: List<ListItem<WatchedShowEntry>>,
-    val myShows: List<ListItem<MyShowsEntry>>,
+    val followedShow: List<ListItem<FollowedShowEntry>>,
     val tmdbImageUrlProvider: TmdbImageUrlProvider
 )

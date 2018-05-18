@@ -17,28 +17,28 @@
 package me.banes.chris.tivi.home.watched
 
 import me.banes.chris.tivi.SharedElementHelper
-import me.banes.chris.tivi.data.entities.MyShowsListItem
+import me.banes.chris.tivi.data.entities.FollowedShowsListItem
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.tmdb.TmdbManager
-import me.banes.chris.tivi.trakt.calls.MyShowsCall
+import me.banes.chris.tivi.trakt.calls.FollowedShowsCall
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
 import me.banes.chris.tivi.util.EntryViewModel
 import me.banes.chris.tivi.util.NetworkDetector
 import javax.inject.Inject
 
-class MyShowsViewModel @Inject constructor(
+class FollowedShowsViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     coroutineDispatchers: AppCoroutineDispatchers,
-    call: MyShowsCall,
+    call: FollowedShowsCall,
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector
-) : EntryViewModel<MyShowsListItem>(schedulers, coroutineDispatchers, call, tmdbManager, networkDetector) {
+) : EntryViewModel<FollowedShowsListItem>(schedulers, coroutineDispatchers, call, tmdbManager, networkDetector) {
     fun onUpClicked(navigator: HomeNavigator) {
         navigator.onUpClicked()
     }
 
-    fun onItemClicked(item: MyShowsListItem, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
+    fun onItemClicked(item: FollowedShowsListItem, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
         navigator.showShowDetails(item.show!!, sharedElements)
     }
 }

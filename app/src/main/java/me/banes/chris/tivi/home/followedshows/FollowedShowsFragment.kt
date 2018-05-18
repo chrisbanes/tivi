@@ -22,12 +22,12 @@ import android.view.View
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.SharedElementHelper
-import me.banes.chris.tivi.data.entities.MyShowsListItem
+import me.banes.chris.tivi.data.entities.FollowedShowsListItem
 import me.banes.chris.tivi.home.HomeNavigator
 import me.banes.chris.tivi.home.HomeNavigatorViewModel
 import me.banes.chris.tivi.util.EntryGridFragment
 
-class MyShowsFragment : EntryGridFragment<MyShowsListItem, MyShowsViewModel>(MyShowsViewModel::class.java) {
+class FollowedShowsFragment : EntryGridFragment<FollowedShowsListItem, FollowedShowsViewModel>(FollowedShowsViewModel::class.java) {
 
     private lateinit var homeNavigator: HomeNavigator
 
@@ -40,14 +40,14 @@ class MyShowsFragment : EntryGridFragment<MyShowsListItem, MyShowsViewModel>(MyS
         super.onViewCreated(view, savedInstanceState)
 
         grid_toolbar.apply {
-            title = getString(R.string.library_myshows)
+            title = getString(R.string.library_followed_shows)
             setNavigationOnClickListener {
                 viewModel.onUpClicked(homeNavigator)
             }
         }
     }
 
-    override fun onItemClicked(item: MyShowsListItem) {
+    override fun onItemClicked(item: FollowedShowsListItem) {
         val sharedElements = SharedElementHelper()
         grid_recyclerview.findViewHolderForItemId(item.generateStableId())?.let {
             sharedElements.addSharedElement(it.itemView, "poster")

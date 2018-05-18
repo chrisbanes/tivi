@@ -23,7 +23,7 @@ import dagger.Module
 import dagger.Provides
 import me.banes.chris.tivi.data.daos.EpisodeWatchEntryDao
 import me.banes.chris.tivi.data.daos.EpisodesDao
-import me.banes.chris.tivi.data.daos.MyShowsDao
+import me.banes.chris.tivi.data.daos.FollowedShowsDao
 import me.banes.chris.tivi.data.daos.PopularDao
 import me.banes.chris.tivi.data.daos.RelatedShowsDao
 import me.banes.chris.tivi.data.daos.SeasonsDao
@@ -62,7 +62,7 @@ class DatabaseModule {
     fun provideWatchedDao(db: TiviDatabase): WatchedShowDao = db.watchedShowsDao()
 
     @Provides
-    fun provideMyShowsDao(db: TiviDatabase): MyShowsDao = db.myShowsDao()
+    fun provideFollowedShowsDao(db: TiviDatabase): FollowedShowsDao = db.followedShowsDao()
 
     @Provides
     fun provideSeasonsDao(db: TiviDatabase): SeasonsDao = db.seasonsDao()

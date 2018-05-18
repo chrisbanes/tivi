@@ -17,7 +17,7 @@
 package me.banes.chris.tivi.actions
 
 interface TiviActions {
-    fun addShowToMyShows(showId: Long)
-    fun removeShowFromMyShows(showId: Long)
+    fun followShow(showId: Long)
+    fun unfollowShow(showId: Long)
     fun syncShowWatchedEpisodes(showId: Long)
 }

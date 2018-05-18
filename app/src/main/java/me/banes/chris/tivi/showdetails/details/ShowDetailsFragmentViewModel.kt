@@ -21,7 +21,7 @@ import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
 import me.banes.chris.tivi.SharedElementHelper
 import me.banes.chris.tivi.actions.TiviActions
-import me.banes.chris.tivi.data.daos.MyShowsDao
+import me.banes.chris.tivi.data.daos.FollowedShowsDao
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.showdetails.ShowDetailsNavigator
 import me.banes.chris.tivi.tmdb.TmdbManager
@@ -40,7 +40,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     private val seasonsCall: ShowSeasonsCall,
     private val tmdbManager: TmdbManager,
     private val tiviActions: TiviActions,
-    private val myShowsDao: MyShowsDao
+    private val followedShowsDao: FollowedShowsDao
 ) : TiviViewModel() {
 
     var showId: Long? = null
@@ -80,7 +80,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
                     relatedShows.data(it),
                     seasonsCall.data(it),
                     tmdbManager.imageProvider,
-                    myShowsDao.showEntry(it).map { it > 0 },
+                    followedShowsDao.showEntry(it).map { it > 0 },
                     ::ShowDetailsFragmentViewState)
                     .observeOn(schedulers.main)
                     .subscribe(data::setValue, Timber::e)
@@ -97,13 +97,13 @@ class ShowDetailsFragmentViewModel @Inject constructor(
 
     fun addToMyShows() {
         showId?.let {
-            tiviActions.addShowToMyShows(it)
+            tiviActions.followShow(it)
         }
     }
 
     fun removeFromMyShows() {
         showId?.let {
-            tiviActions.removeShowFromMyShows(it)
+            tiviActions.unfollowShow(it)
         }
     }
 

@@ -24,12 +24,12 @@ import dagger.multibindings.IntoMap
 import me.banes.chris.tivi.inject.ViewModelKey
 
 @Module
-internal abstract class MyShowsBuilder {
+internal abstract class FollowedShowsBuilder {
     @ContributesAndroidInjector
-    internal abstract fun myShowsFragment(): MyShowsFragment
+    internal abstract fun followedShowsFragment(): FollowedShowsFragment
 
     @Binds
     @IntoMap
-    @ViewModelKey(MyShowsViewModel::class)
-    abstract fun bindMyShowsViewModel(viewModel: MyShowsViewModel): ViewModel
+    @ViewModelKey(FollowedShowsViewModel::class)
+    abstract fun bindFollowedShowsViewModel(viewModel: FollowedShowsViewModel): ViewModel
 }

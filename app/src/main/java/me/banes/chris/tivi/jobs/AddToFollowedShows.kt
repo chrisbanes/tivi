@@ -20,28 +20,27 @@ import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
 import com.evernote.android.job.util.support.PersistableBundleCompat
 import io.reactivex.Completable
-import me.banes.chris.tivi.data.daos.MyShowsDao
+import me.banes.chris.tivi.data.daos.FollowedShowsDao
+import me.banes.chris.tivi.data.entities.FollowedShowEntry
 import me.banes.chris.tivi.util.AppRxSchedulers
 import timber.log.Timber
 import javax.inject.Inject
 
-class RemoveFromMyShows @Inject constructor(
+class AddToFollowedShows @Inject constructor(
     private val rxSchedulers: AppRxSchedulers,
-    private val myShowsDao: MyShowsDao
+    private val followedShowsDao: FollowedShowsDao
 ) : Job() {
 
     companion object {
-        const val TAG = "myshows-remove"
-
+        const val TAG = "myshows-add"
         private const val PARAM_SHOW_ID = "show-id"
 
         fun buildRequest(showId: Long): JobRequest.Builder {
-            return JobRequest.Builder(TAG)
-                    .addExtras(
-                            PersistableBundleCompat().apply {
-                                putLong(PARAM_SHOW_ID, showId)
-                            }
-                    )
+            return JobRequest.Builder(TAG).addExtras(
+                    PersistableBundleCompat().apply {
+                        putLong(PARAM_SHOW_ID, showId)
+                    }
+            )
         }
     }
 
@@ -50,7 +49,7 @@ class RemoveFromMyShows @Inject constructor(
 
         Timber.d("$TAG job running for id: $showId")
 
-        Completable.fromCallable { myShowsDao.deleteWithShowId(showId) }
+        Completable.fromCallable { followedShowsDao.insert(FollowedShowEntry(showId = showId)) }
                 .subscribeOn(rxSchedulers.database)
                 .blockingAwait()
 

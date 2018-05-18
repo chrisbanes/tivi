@@ -19,27 +19,27 @@ package me.banes.chris.tivi.trakt.calls
 import android.arch.paging.DataSource
 import io.reactivex.Flowable
 import me.banes.chris.tivi.calls.ListCall
-import me.banes.chris.tivi.data.daos.MyShowsDao
-import me.banes.chris.tivi.data.entities.MyShowsListItem
+import me.banes.chris.tivi.data.daos.FollowedShowsDao
+import me.banes.chris.tivi.data.entities.FollowedShowsListItem
 import me.banes.chris.tivi.util.AppRxSchedulers
 import javax.inject.Inject
 
-class MyShowsCall @Inject constructor(
-    private val myShowsDao: MyShowsDao,
+class FollowedShowsCall @Inject constructor(
+    private val followedShowsDao: FollowedShowsDao,
     private val schedulers: AppRxSchedulers
-) : ListCall<Unit, MyShowsListItem> {
+) : ListCall<Unit, FollowedShowsListItem> {
 
     override val pageSize = 21
 
     fun data() = data(Unit)
 
-    override fun data(param: Unit): Flowable<List<MyShowsListItem>> {
-        return myShowsDao.entries()
+    override fun data(param: Unit): Flowable<List<FollowedShowsListItem>> {
+        return followedShowsDao.entries()
                 .distinctUntilChanged()
                 .subscribeOn(schedulers.database)
     }
 
-    override fun dataSourceFactory(): DataSource.Factory<Int, MyShowsListItem> = myShowsDao.entriesDataSource()
+    override fun dataSourceFactory(): DataSource.Factory<Int, FollowedShowsListItem> = followedShowsDao.entriesDataSource()
 
     override suspend fun refresh(param: Unit) = Unit
 }

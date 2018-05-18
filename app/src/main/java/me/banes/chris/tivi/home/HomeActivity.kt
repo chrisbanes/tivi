@@ -35,7 +35,7 @@ import me.banes.chris.tivi.home.discover.DiscoverFragment
 import me.banes.chris.tivi.home.library.LibraryFragment
 import me.banes.chris.tivi.home.popular.PopularShowsFragment
 import me.banes.chris.tivi.home.trending.TrendingShowsFragment
-import me.banes.chris.tivi.home.watched.MyShowsFragment
+import me.banes.chris.tivi.home.watched.FollowedShowsFragment
 import me.banes.chris.tivi.home.watched.WatchedShowsFragment
 import me.banes.chris.tivi.trakt.TraktConstants
 import net.openid.appauth.AuthorizationException
@@ -158,7 +158,7 @@ class HomeActivity : TiviActivity() {
     }
 
     private fun showMyShows(sharedElements: SharedElementHelper?) {
-        showStackFragment(MyShowsFragment(), sharedElements)
+        showStackFragment(FollowedShowsFragment(), sharedElements)
     }
 
     private fun showStackFragment(fragment: Fragment, sharedElements: SharedElementHelper? = null) {
