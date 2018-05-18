@@ -16,48 +16,15 @@
 
 package me.banes.chris.tivi
 
-import kotlinx.coroutines.experimental.withContext
-import me.banes.chris.tivi.data.DatabaseTransactionRunner
-import me.banes.chris.tivi.data.daos.EntityInserter
-import me.banes.chris.tivi.data.daos.SeasonsDao
-import me.banes.chris.tivi.data.entities.Season
-import me.banes.chris.tivi.extensions.parallelForEach
 import me.banes.chris.tivi.trakt.TraktSeasonFetcher
-import me.banes.chris.tivi.util.AppCoroutineDispatchers
-import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class SeasonFetcher @Inject constructor(
-    private val traktSeasonFetcher: TraktSeasonFetcher,
-    private val transactionRunner: DatabaseTransactionRunner,
-    private val entityInserter: EntityInserter,
-    private val seasonsDao: SeasonsDao,
-    private val dispatchers: AppCoroutineDispatchers,
-    private val episodeFetcher: EpisodeFetcher
+    private val traktSeasonFetcher: TraktSeasonFetcher
 ) {
-    suspend fun load(showId: Long): List<Season> {
-        return traktSeasonFetcher.loadShowSeasons(showId).also {
-            it.parallelForEach {
-                if (it.needsEpisodeUpdate()) {
-                    updateEpisodes(it)
-                }
-            }
-        }
-    }
-
-    private suspend fun updateEpisodes(season: Season) {
-        val episodes = episodeFetcher.load(season.id!!)
-        if (episodes.isNotEmpty()) {
-            withContext(dispatchers.database) {
-                transactionRunner.runInTransaction {
-                    seasonsDao.seasonWithId(season.id!!)?.let {
-                        it.lastEpisodeUpdate = OffsetDateTime.now()
-                        entityInserter.insertOrUpdate(seasonsDao, it)
-                    } ?: throw IllegalArgumentException("Season with id[${season.id}] does not exist")
-                }
-            }
-        }
+    suspend fun load(showId: Long) {
+        traktSeasonFetcher.updateSeasonData(showId)
     }
 }

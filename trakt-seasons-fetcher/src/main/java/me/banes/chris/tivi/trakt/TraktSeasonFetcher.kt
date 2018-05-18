@@ -19,59 +19,87 @@ package me.banes.chris.tivi.trakt
 import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.enums.Extended
 import kotlinx.coroutines.experimental.withContext
+import me.banes.chris.tivi.data.DatabaseTransactionRunner
 import me.banes.chris.tivi.data.daos.EntityInserter
+import me.banes.chris.tivi.data.daos.EpisodesDao
 import me.banes.chris.tivi.data.daos.SeasonsDao
 import me.banes.chris.tivi.data.daos.TiviShowDao
+import me.banes.chris.tivi.data.entities.Episode
 import me.banes.chris.tivi.data.entities.Season
 import me.banes.chris.tivi.extensions.fetchBodyWithRetry
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
+import com.uwetrottmann.trakt5.entities.Episode as TraktEpisode
 import com.uwetrottmann.trakt5.entities.Season as TraktSeason
 
 @Singleton
 class TraktSeasonFetcher @Inject constructor(
     private val showDao: TiviShowDao,
     private val seasonDao: SeasonsDao,
+    private val episodesDao: EpisodesDao,
     private val trakt: TraktV2,
     private val dispatchers: AppCoroutineDispatchers,
-    private val entityInserter: EntityInserter
+    private val entityInserter: EntityInserter,
+    private val transactionRunner: DatabaseTransactionRunner
 ) {
-    suspend fun loadShowSeasons(showId: Long): List<Season> {
-        val seasons = withContext(dispatchers.database) { seasonDao.seasonsForShowId(showId) }
-        if (seasons.isNotEmpty()) return seasons
-
+    suspend fun updateSeasonData(showId: Long) {
         val show = withContext(dispatchers.database) {
             showDao.getShowWithId(showId)
         } ?: throw IllegalArgumentException("Show with id[$showId] does not exist")
 
-        return withContext(dispatchers.network) {
-            trakt.seasons().summary(show.traktId!!.toString(), Extended.FULL).fetchBodyWithRetry()
-        }.map {
-            upsertSeason(showId, it)
+        val response = withContext(dispatchers.network) {
+            trakt.seasons().summary(show.traktId!!.toString(), Extended.FULLEPISODES).fetchBodyWithRetry()
+        }
+
+        withContext(dispatchers.database) {
+            transactionRunner.runInTransaction {
+                response.forEach { traktSeason ->
+                    // Upsert the season
+                    val seasonId = upsertSeason(showId, traktSeason)
+                    // Now upsert all the episodes
+                    traktSeason.episodes?.forEach {
+                        upsertEpisode(seasonId, it)
+                    }
+                }
+            }
         }
     }
 
-    private suspend fun upsertSeason(showId: Long, traktSeason: TraktSeason): Season {
-        return withContext(dispatchers.database) {
-            (seasonDao.seasonWithSeasonTraktId(traktSeason.ids.trakt) ?: Season()).apply {
-                updateProperty(this::showId, showId)
-                updateProperty(this::traktId, traktSeason.ids.trakt)
-                updateProperty(this::tmdbId, traktSeason.ids.tmdb)
-                updateProperty(this::number, traktSeason.number)
-                updateProperty(this::title, traktSeason.title)
-                updateProperty(this::summary, traktSeason.overview)
-                updateProperty(this::rating, traktSeason.rating?.toFloat())
-                updateProperty(this::votes, traktSeason.votes)
-                updateProperty(this::episodeCount, traktSeason.episode_count)
-                updateProperty(this::airedEpisodes, traktSeason.aired_episodes)
-                updateProperty(this::network, traktSeason.network)
-                lastTraktUpdate = OffsetDateTime.now()
-            }.let {
-                val id = entityInserter.insertOrUpdate(seasonDao, it)
-                seasonDao.seasonWithId(id)!!
-            }
+    private fun upsertSeason(showId: Long, traktSeason: TraktSeason): Long {
+        return (seasonDao.seasonWithSeasonTraktId(traktSeason.ids.trakt) ?: Season()).apply {
+            updateProperty(this::showId, showId)
+            updateProperty(this::traktId, traktSeason.ids.trakt)
+            updateProperty(this::tmdbId, traktSeason.ids.tmdb)
+            updateProperty(this::number, traktSeason.number)
+            updateProperty(this::title, traktSeason.title)
+            updateProperty(this::summary, traktSeason.overview)
+            updateProperty(this::rating, traktSeason.rating?.toFloat())
+            updateProperty(this::votes, traktSeason.votes)
+            updateProperty(this::episodeCount, traktSeason.episode_count)
+            updateProperty(this::airedEpisodes, traktSeason.aired_episodes)
+            updateProperty(this::network, traktSeason.network)
+            lastTraktUpdate = OffsetDateTime.now()
+        }.let {
+            entityInserter.insertOrUpdate(seasonDao, it)
+        }
+    }
+
+    private fun upsertEpisode(seasonId: Long, traktEpisode: TraktEpisode) {
+        (episodesDao.episodeWithTraktId(traktEpisode.ids.trakt) ?: Episode()).apply {
+            updateProperty(this::seasonId, seasonId)
+            updateProperty(this::traktId, traktEpisode.ids.trakt)
+            updateProperty(this::tmdbId, traktEpisode.ids.tmdb)
+            updateProperty(this::title, traktEpisode.title)
+            updateProperty(this::number, traktEpisode.number)
+            updateProperty(this::summary, traktEpisode.overview)
+            updateProperty(this::firstAired, traktEpisode.first_aired)
+            updateProperty(this::rating, traktEpisode.rating?.toFloat())
+            updateProperty(this::votes, traktEpisode.votes)
+            lastTraktUpdate = OffsetDateTime.now()
+        }.also {
+            entityInserter.insertOrUpdate(episodesDao, it)
         }
     }
 }

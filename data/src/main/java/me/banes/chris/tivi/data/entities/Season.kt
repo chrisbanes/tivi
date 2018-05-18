@@ -55,8 +55,4 @@ data class Season(
     @ColumnInfo(name = "episodes_updated") var lastEpisodeUpdate: OffsetDateTime? = null
 ) : TiviEntity, TmdbIdEntity, TraktIdEntity {
     @Ignore constructor() : this(null)
-
-    fun needsEpisodeUpdate(): Boolean {
-        return lastEpisodeUpdate?.isBefore(OffsetDateTime.now().minusDays(1)) != false
-    }
 }

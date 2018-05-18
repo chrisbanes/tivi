@@ -42,7 +42,6 @@ dependencies {
     implementation project(":base-android")
     implementation project(":show-fetcher")
     implementation project(':seasons-fetcher')
-    implementation project(':episodes-fetcher')
     implementation project(":trakt")
     implementation project(":tmdb")
     implementation project(":data")

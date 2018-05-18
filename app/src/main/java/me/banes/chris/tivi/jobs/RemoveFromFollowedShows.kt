@@ -39,12 +39,10 @@ class RemoveFromFollowedShows @Inject constructor(
         private const val PARAM_SHOW_ID = "show-id"
 
         fun buildRequest(showId: Long): JobRequest.Builder {
-            return JobRequest.Builder(TAG)
-                    .addExtras(
-                            PersistableBundleCompat().apply {
-                                putLong(PARAM_SHOW_ID, showId)
-                            }
-                    )
+            return JobRequest.Builder(TAG).addExtras(
+                    PersistableBundleCompat().apply {
+                        putLong(PARAM_SHOW_ID, showId)
+                    })
         }
     }
 

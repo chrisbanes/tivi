@@ -146,7 +146,6 @@ dependencies {
     implementation project(":tmdb")
     implementation project(":show-fetcher")
     implementation project(':seasons-fetcher')
-    implementation project(':episodes-fetcher')
     implementation project(":calls")
 
     implementation "android.arch.lifecycle:extensions:${versions.androidx.lifecycle}"
