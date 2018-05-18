@@ -30,8 +30,8 @@ import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.BuildConfig
 import me.banes.chris.tivi.TiviAppNavigator
 import me.banes.chris.tivi.TiviApplication
-import me.banes.chris.tivi.actions.TiviActions
-import me.banes.chris.tivi.actions.TiviActionsImpl
+import me.banes.chris.tivi.actions.ShowTasks
+import me.banes.chris.tivi.tasks.ShowTasksImpl
 import me.banes.chris.tivi.appinitializers.AndroidJobInitializer
 import me.banes.chris.tivi.appinitializers.AppInitializers
 import me.banes.chris.tivi.appinitializers.ThreeTenBpInitializer
@@ -101,8 +101,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideTiviActions(): TiviActions {
-        return TiviActionsImpl()
+    fun provideTiviActions(): ShowTasks {
+        return ShowTasksImpl()
     }
 
     @Provides

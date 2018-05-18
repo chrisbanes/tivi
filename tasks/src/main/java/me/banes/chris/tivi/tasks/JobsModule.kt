@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.jobs
+package me.banes.chris.tivi.tasks
 
+import android.content.Context
 import com.evernote.android.job.JobManager
 import dagger.Module
 import dagger.Provides
-import me.banes.chris.tivi.TiviApplication
 import javax.inject.Singleton
 
 @Module
 class JobsModule {
     @Provides
     @Singleton
-    fun provideJobManager(application: TiviApplication): JobManager {
-        return JobManager.create(application)
+    fun provideJobManager(context: Context): JobManager {
+        return JobManager.create(context.applicationContext)
     }
 }

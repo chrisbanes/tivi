@@ -22,7 +22,7 @@ import dagger.android.support.AndroidSupportInjectionModule
 import me.banes.chris.tivi.TiviApplication
 import me.banes.chris.tivi.data.DatabaseModule
 import me.banes.chris.tivi.home.HomeBuilder
-import me.banes.chris.tivi.jobs.JobsCreator
+import me.banes.chris.tivi.tasks.JobsCreator
 import me.banes.chris.tivi.showdetails.ShowDetailsBuilder
 import me.banes.chris.tivi.tmdb.TmdbModule
 import me.banes.chris.tivi.trakt.TraktAuthModule

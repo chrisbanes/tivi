@@ -14,51 +14,44 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.jobs
+package me.banes.chris.tivi.tasks
 
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
-import com.evernote.android.job.util.support.PersistableBundleCompat
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withContext
+import me.banes.chris.tivi.SeasonFetcher
+import me.banes.chris.tivi.actions.ShowTasks
 import me.banes.chris.tivi.data.daos.FollowedShowsDao
-import me.banes.chris.tivi.data.daos.SeasonsDao
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
-import timber.log.Timber
 import javax.inject.Inject
 
-class RemoveFromFollowedShows @Inject constructor(
+class SyncAllFollowedShows @Inject constructor(
+    private val followedShowsDao: FollowedShowsDao,
     private val dispatchers: AppCoroutineDispatchers,
-    private val seasonsDao: SeasonsDao,
-    private val followedShowsDao: FollowedShowsDao
+    private val seasonFetcher: SeasonFetcher,
+    private val showTasks: ShowTasks
 ) : Job() {
-
     companion object {
-        const val TAG = "myshows-remove"
+        const val TAG = "sync-all-followed-shows"
 
-        private const val PARAM_SHOW_ID = "show-id"
-
-        fun buildRequest(showId: Long): JobRequest.Builder {
-            return JobRequest.Builder(TAG).addExtras(
-                    PersistableBundleCompat().apply {
-                        putLong(PARAM_SHOW_ID, showId)
-                    })
+        fun buildRequest(): JobRequest.Builder {
+            return JobRequest.Builder(TAG)
         }
     }
 
     override fun onRunJob(params: Params): Result {
-        val showId = params.extras.getLong(PARAM_SHOW_ID, -1)
-
-        Timber.d("$TAG job running for id: $showId")
-
-        return runBlocking {
-            withContext(dispatchers.database) {
-                followedShowsDao.deleteWithShowId(showId)
-
-                // Now remove all season/episode data from database
-                seasonsDao.deleteSeasonsForShowId(showId)
+        // TODO this is really crude, needs to be improved
+        runBlocking {
+            val followedShows = withContext(dispatchers.database) {
+                followedShowsDao.entriesBlocking()
             }
-            Result.SUCCESS
+            followedShows.forEach {
+                seasonFetcher.load(it.showId)
+                showTasks.syncShowWatchedEpisodes(it.showId)
+            }
         }
+
+        return Result.SUCCESS
     }
 }

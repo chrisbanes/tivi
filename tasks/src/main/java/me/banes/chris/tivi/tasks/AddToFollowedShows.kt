@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.jobs
+package me.banes.chris.tivi.tasks
 
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
@@ -22,7 +22,7 @@ import com.evernote.android.job.util.support.PersistableBundleCompat
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.SeasonFetcher
-import me.banes.chris.tivi.actions.TiviActions
+import me.banes.chris.tivi.actions.ShowTasks
 import me.banes.chris.tivi.data.daos.FollowedShowsDao
 import me.banes.chris.tivi.data.entities.FollowedShowEntry
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
@@ -33,7 +33,7 @@ class AddToFollowedShows @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val followedShowsDao: FollowedShowsDao,
     private val seasonFetcher: SeasonFetcher,
-    private val tiviActions: TiviActions
+    private val showTasks: ShowTasks
 ) : Job() {
 
     companion object {
@@ -62,7 +62,7 @@ class AddToFollowedShows @Inject constructor(
             // Now refresh seasons
             seasonFetcher.load(showId)
             // And sync watched episodes
-            tiviActions.syncShowWatchedEpisodes(entryId)
+            showTasks.syncShowWatchedEpisodes(entryId)
 
             Result.SUCCESS
         }

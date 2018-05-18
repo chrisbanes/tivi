@@ -28,6 +28,7 @@ import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.AppNavigator
+import me.banes.chris.tivi.actions.ShowTasks
 import me.banes.chris.tivi.data.entities.TraktUser
 import me.banes.chris.tivi.inject.ApplicationLevel
 import me.banes.chris.tivi.trakt.calls.UserMeCall
@@ -58,7 +59,8 @@ class TraktManager @Inject constructor(
     private val clientAuth: Lazy<ClientAuthentication>,
     @Named("auth") private val authPrefs: SharedPreferences,
     private val userMeCall: UserMeCall,
-    private val networkDetector: NetworkDetector
+    private val networkDetector: NetworkDetector,
+    private val showTasks: ShowTasks
 ) {
     private val authState = BehaviorSubject.create<AuthState>()!!
 
@@ -141,6 +143,8 @@ class TraktManager @Inject constructor(
         launch(dispatchers.disk) {
             persistAuthState(newState)
         }
+        // Now trigger a sync of all shows
+        showTasks.syncAllShows()
     }
 
     private fun readAuthState(): AuthState {

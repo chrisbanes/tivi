@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.actions
+package me.banes.chris.tivi.tasks
 
-import me.banes.chris.tivi.jobs.AddToFollowedShows
-import me.banes.chris.tivi.jobs.RemoveFromFollowedShows
-import me.banes.chris.tivi.jobs.SyncShowWatchedProgress
+import me.banes.chris.tivi.actions.ShowTasks
 
-class TiviActionsImpl : TiviActions {
+class ShowTasksImpl : ShowTasks {
     override fun followShow(showId: Long) {
         AddToFollowedShows.buildRequest(showId)
                 .startNow()
@@ -37,6 +35,13 @@ class TiviActionsImpl : TiviActions {
 
     override fun syncShowWatchedEpisodes(followedShowId: Long) {
         SyncShowWatchedProgress.buildRequest(followedShowId)
+                .startNow()
+                .build()
+                .scheduleAsync()
+    }
+
+    override fun syncAllShows() {
+        SyncAllFollowedShows.buildRequest()
                 .startNow()
                 .build()
                 .scheduleAsync()

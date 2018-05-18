@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.jobs
+package me.banes.chris.tivi.tasks
 
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobCreator
@@ -40,8 +40,8 @@ abstract class JobsCreator {
 
     @Binds
     @IntoMap
-    @StringKey(SyncShowSeasonEpisodes.TAG)
-    abstract fun bindSyncShowSeasonEpisodes(job: SyncShowSeasonEpisodes): Job
+    @StringKey(SyncAllFollowedShows.TAG)
+    abstract fun bindSyncAllFollowedShows(job: SyncAllFollowedShows): Job
 
     @Binds
     @IntoMap

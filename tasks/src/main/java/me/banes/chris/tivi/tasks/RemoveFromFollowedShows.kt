@@ -14,44 +14,51 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.jobs
+package me.banes.chris.tivi.tasks
 
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
 import com.evernote.android.job.util.support.PersistableBundleCompat
 import kotlinx.coroutines.experimental.runBlocking
-import me.banes.chris.tivi.SeasonFetcher
+import kotlinx.coroutines.experimental.withContext
+import me.banes.chris.tivi.data.daos.FollowedShowsDao
+import me.banes.chris.tivi.data.daos.SeasonsDao
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import timber.log.Timber
 import javax.inject.Inject
 
-class SyncShowSeasonEpisodes @Inject constructor(
-    private val seasonFetcher: SeasonFetcher
+class RemoveFromFollowedShows @Inject constructor(
+    private val dispatchers: AppCoroutineDispatchers,
+    private val seasonsDao: SeasonsDao,
+    private val followedShowsDao: FollowedShowsDao
 ) : Job() {
 
     companion object {
-        const val TAG = "sync-show-season-episodes"
+        const val TAG = "myshows-remove"
+
         private const val PARAM_SHOW_ID = "show-id"
 
         fun buildRequest(showId: Long): JobRequest.Builder {
             return JobRequest.Builder(TAG).addExtras(
                     PersistableBundleCompat().apply {
                         putLong(PARAM_SHOW_ID, showId)
-                    }
-            )
+                    })
         }
     }
 
     override fun onRunJob(params: Params): Result {
         val showId = params.extras.getLong(PARAM_SHOW_ID, -1)
+
         Timber.d("$TAG job running for id: $showId")
 
         return runBlocking {
-            try {
-                seasonFetcher.load(showId)
-                Result.SUCCESS
-            } catch (e: Exception) {
-                Result.FAILURE
+            withContext(dispatchers.database) {
+                followedShowsDao.deleteWithShowId(showId)
+
+                // Now remove all season/episode data from database
+                seasonsDao.deleteSeasonsForShowId(showId)
             }
+            Result.SUCCESS
         }
     }
 }

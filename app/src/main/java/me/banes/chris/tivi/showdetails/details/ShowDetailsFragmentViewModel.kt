@@ -20,7 +20,7 @@ import android.arch.lifecycle.MutableLiveData
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
 import me.banes.chris.tivi.SharedElementHelper
-import me.banes.chris.tivi.actions.TiviActions
+import me.banes.chris.tivi.actions.ShowTasks
 import me.banes.chris.tivi.data.daos.FollowedShowsDao
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.showdetails.ShowDetailsNavigator
@@ -39,7 +39,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     private val relatedShows: RelatedShowsCall,
     private val seasonsCall: ShowSeasonsCall,
     private val tmdbManager: TmdbManager,
-    private val tiviActions: TiviActions,
+    private val showTasks: ShowTasks,
     private val followedShowsDao: FollowedShowsDao
 ) : TiviViewModel() {
 
@@ -65,7 +65,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
             }
 
             // TODO re-add some sort of season refresh
-            tiviActions.syncShowWatchedEpisodes(id)
+            showTasks.syncShowWatchedEpisodes(id)
 
             launchWithParent {
                 relatedShows.refresh(id)
@@ -110,13 +110,13 @@ class ShowDetailsFragmentViewModel @Inject constructor(
 
     fun addToMyShows() {
         showId?.let {
-            tiviActions.followShow(it)
+            showTasks.followShow(it)
         }
     }
 
     fun removeFromMyShows() {
         showId?.let {
-            tiviActions.unfollowShow(it)
+            showTasks.unfollowShow(it)
         }
     }
 

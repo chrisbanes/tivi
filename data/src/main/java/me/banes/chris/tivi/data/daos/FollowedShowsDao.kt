@@ -28,6 +28,10 @@ import me.banes.chris.tivi.data.entities.FollowedShowsListItem
 abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowsListItem> {
     @Transaction
     @Query("SELECT * FROM myshows_entries")
+    abstract fun entriesBlocking(): List<FollowedShowEntry>
+
+    @Transaction
+    @Query("SELECT * FROM myshows_entries")
     abstract override fun entries(): Flowable<List<FollowedShowsListItem>>
 
     @Transaction
