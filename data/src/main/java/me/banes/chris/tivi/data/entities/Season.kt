@@ -55,4 +55,8 @@ data class Season(
     @ColumnInfo(name = "episodes_updated") var lastEpisodeUpdate: OffsetDateTime? = null
 ) : TiviEntity, TmdbIdEntity, TraktIdEntity {
     @Ignore constructor() : this(null)
+
+    companion object {
+        const val NUMBER_SPECIALS = 0
+    }
 }

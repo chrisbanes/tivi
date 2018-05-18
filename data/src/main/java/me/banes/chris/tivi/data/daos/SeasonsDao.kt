@@ -21,15 +21,16 @@ import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
 import io.reactivex.Flowable
 import me.banes.chris.tivi.data.entities.Season
+import me.banes.chris.tivi.data.entities.Season.Companion.NUMBER_SPECIALS
 import me.banes.chris.tivi.data.entities.SeasonWithEpisodes
 
 @Dao
 abstract class SeasonsDao : EntityDao<Season> {
     @Transaction
-    @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number ASC")
+    @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number=$NUMBER_SPECIALS, number")
     abstract fun seasonsWithEpisodesForShowId(showId: Long): Flowable<List<SeasonWithEpisodes>>
 
-    @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number ASC")
+    @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number=$NUMBER_SPECIALS, number")
     abstract fun seasonsForShowId(showId: Long): List<Season>
 
     @Query("DELETE FROM seasons WHERE show_id = :showId")
