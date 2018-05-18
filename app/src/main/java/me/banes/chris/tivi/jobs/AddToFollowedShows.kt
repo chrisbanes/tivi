@@ -19,16 +19,21 @@ package me.banes.chris.tivi.jobs
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
 import com.evernote.android.job.util.support.PersistableBundleCompat
-import io.reactivex.Completable
+import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.withContext
+import me.banes.chris.tivi.SeasonFetcher
+import me.banes.chris.tivi.actions.TiviActions
 import me.banes.chris.tivi.data.daos.FollowedShowsDao
 import me.banes.chris.tivi.data.entities.FollowedShowEntry
-import me.banes.chris.tivi.util.AppRxSchedulers
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import timber.log.Timber
 import javax.inject.Inject
 
 class AddToFollowedShows @Inject constructor(
-    private val rxSchedulers: AppRxSchedulers,
-    private val followedShowsDao: FollowedShowsDao
+    private val dispatchers: AppCoroutineDispatchers,
+    private val followedShowsDao: FollowedShowsDao,
+    private val seasonFetcher: SeasonFetcher,
+    private val tiviActions: TiviActions
 ) : Job() {
 
     companion object {
@@ -49,10 +54,17 @@ class AddToFollowedShows @Inject constructor(
 
         Timber.d("$TAG job running for id: $showId")
 
-        Completable.fromCallable { followedShowsDao.insert(FollowedShowEntry(showId = showId)) }
-                .subscribeOn(rxSchedulers.database)
-                .blockingAwait()
+        return runBlocking {
+            val entryId = withContext(dispatchers.database) {
+                followedShowsDao.insert(FollowedShowEntry(showId = showId))
+            }
 
-        return Result.SUCCESS
+            // Now refresh seasons
+            seasonFetcher.load(showId)
+            // And sync watched episodes
+            tiviActions.syncShowWatchedEpisodes(entryId)
+
+            Result.SUCCESS
+        }
     }
 }

@@ -19,14 +19,17 @@ package me.banes.chris.tivi.jobs
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
 import com.evernote.android.job.util.support.PersistableBundleCompat
-import io.reactivex.Completable
+import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.data.daos.FollowedShowsDao
-import me.banes.chris.tivi.util.AppRxSchedulers
+import me.banes.chris.tivi.data.daos.SeasonsDao
+import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import timber.log.Timber
 import javax.inject.Inject
 
 class RemoveFromFollowedShows @Inject constructor(
-    private val rxSchedulers: AppRxSchedulers,
+    private val dispatchers: AppCoroutineDispatchers,
+    private val seasonsDao: SeasonsDao,
     private val followedShowsDao: FollowedShowsDao
 ) : Job() {
 
@@ -50,10 +53,14 @@ class RemoveFromFollowedShows @Inject constructor(
 
         Timber.d("$TAG job running for id: $showId")
 
-        Completable.fromCallable { followedShowsDao.deleteWithShowId(showId) }
-                .subscribeOn(rxSchedulers.database)
-                .blockingAwait()
+        return runBlocking {
+            withContext(dispatchers.database) {
+                followedShowsDao.deleteWithShowId(showId)
 
-        return Result.SUCCESS
+                // Now remove all season/episode data from database
+                seasonsDao.deleteSeasonsForShowId(showId)
+            }
+            Result.SUCCESS
+        }
     }
 }

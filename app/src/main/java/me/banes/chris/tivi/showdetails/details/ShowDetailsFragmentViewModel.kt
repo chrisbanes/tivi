@@ -63,10 +63,10 @@ class ShowDetailsFragmentViewModel @Inject constructor(
             launchWithParent {
                 showCall.refresh(id)
             }
-            launchWithParent {
-                seasonsCall.refresh(id)
-                tiviActions.syncShowWatchedEpisodes(id)
-            }
+
+            // TODO re-add some sort of season refresh
+            tiviActions.syncShowWatchedEpisodes(id)
+
             launchWithParent {
                 relatedShows.refresh(id)
             }
@@ -75,7 +75,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
 
     private fun setupLiveData() {
         showId?.let { id ->
-            disposables += followedShowsDao.showEntry(id)
+            disposables += followedShowsDao.entryCountWithShowId(id)
                     .subscribeOn(schedulers.database)
                     .flatMap {
                         if (it > 0) {

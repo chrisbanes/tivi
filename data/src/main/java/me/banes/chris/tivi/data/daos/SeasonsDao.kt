@@ -32,6 +32,9 @@ abstract class SeasonsDao : EntityDao<Season> {
     @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number ASC")
     abstract fun seasonsForShowId(showId: Long): List<Season>
 
+    @Query("DELETE FROM seasons WHERE show_id = :showId")
+    abstract fun deleteSeasonsForShowId(showId: Long): Int
+
     @Query("SELECT * FROM seasons WHERE id = :id")
     abstract fun seasonWithId(id: Long): Season?
 

@@ -35,8 +35,8 @@ class TiviActionsImpl : TiviActions {
                 .scheduleAsync()
     }
 
-    override fun syncShowWatchedEpisodes(showId: Long) {
-        SyncShowWatchedProgress.buildRequest(showId)
+    override fun syncShowWatchedEpisodes(followedShowId: Long) {
+        SyncShowWatchedProgress.buildRequest(followedShowId)
                 .startNow()
                 .build()
                 .scheduleAsync()

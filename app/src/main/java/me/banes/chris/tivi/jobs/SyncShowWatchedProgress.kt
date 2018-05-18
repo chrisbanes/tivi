@@ -28,7 +28,7 @@ import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.data.DatabaseTransactionRunner
 import me.banes.chris.tivi.data.daos.EpisodeWatchEntryDao
 import me.banes.chris.tivi.data.daos.EpisodesDao
-import me.banes.chris.tivi.data.daos.TiviShowDao
+import me.banes.chris.tivi.data.daos.FollowedShowsDao
 import me.banes.chris.tivi.data.entities.EpisodeWatchEntry
 import me.banes.chris.tivi.extensions.fetchBodyWithRetry
 import me.banes.chris.tivi.trakt.TraktAuthState
@@ -41,34 +41,33 @@ import javax.inject.Provider
 class SyncShowWatchedProgress @Inject constructor(
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,
     private val episodesDao: EpisodesDao,
-    private val showDao: TiviShowDao,
+    private val followedShowsDao: FollowedShowsDao,
     private val dispatchers: AppCoroutineDispatchers,
     private val traktManager: TraktManager,
     private val usersService: Provider<Users>,
     private val databaseTransactionRunner: DatabaseTransactionRunner
 ) : Job() {
-
     companion object {
         const val TAG = "sync-show-watched-episodes"
-        private const val PARAM_SHOW_ID = "show-id"
+        private const val PARAM_FOLLOWED_ID = "show-id"
 
-        fun buildRequest(showId: Long): JobRequest.Builder {
+        fun buildRequest(followedId: Long): JobRequest.Builder {
             return JobRequest.Builder(TAG).addExtras(
                     PersistableBundleCompat().apply {
-                        putLong(PARAM_SHOW_ID, showId)
+                        putLong(PARAM_FOLLOWED_ID, followedId)
                     }
             )
         }
     }
 
     override fun onRunJob(params: Params): Result {
-        val showId = params.extras.getLong(PARAM_SHOW_ID, -1)
-        Timber.d("$TAG job running for id: $showId")
+        val followedId = params.extras.getLong(PARAM_FOLLOWED_ID, -1)
+        Timber.d("$TAG job running for id: $followedId")
 
         val authState = traktManager.state.blockingFirst()
         if (authState == TraktAuthState.LOGGED_IN) {
             return runBlocking {
-                runBlocking { sync(showId) }
+                sync(followedId)
                 Result.SUCCESS
             }
         }
@@ -76,10 +75,10 @@ class SyncShowWatchedProgress @Inject constructor(
         return Result.FAILURE
     }
 
-    private suspend fun sync(showId: Long) {
-        val show = withContext(dispatchers.database) {
-            showDao.getShowWithId(showId)
-        } ?: throw IllegalArgumentException("Show with id: $showId does not exist")
+    private suspend fun sync(followedId: Long) {
+        val followedEntry = withContext(dispatchers.database) { followedShowsDao.entryWithId(followedId) }
+            ?: throw IllegalArgumentException("Followed entry with id: $followedId does not exist")
+        val show = followedEntry.show!!
 
         // TODO fetch all un-synced watches from DB and send to Trakt
 
@@ -102,10 +101,9 @@ class SyncShowWatchedProgress @Inject constructor(
                     val currentEntry = episodeWatchEntryDao.entryWithTraktId(historyEntry.id)
 
                     // Now fetch the episode entity from the database
-                    val episode = episodesDao.episodeWithTraktId(traktEpisode.ids.trakt)
-                    if (episode == null) {
-                        throw IllegalArgumentException("Episode with id ${traktEpisode.ids.trakt} does not exist.")
-                    }
+                    val traktId = traktEpisode.ids.trakt
+                    val episode = episodesDao.episodeWithTraktId(traktId)
+                            ?: throw IllegalArgumentException("Episode with id $traktId does not exist.")
 
                     if (currentEntry != null) {
                         // TODO update?
