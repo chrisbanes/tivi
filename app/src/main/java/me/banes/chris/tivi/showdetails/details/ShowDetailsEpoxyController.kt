@@ -18,11 +18,9 @@ package me.banes.chris.tivi.showdetails.details
 
 import android.content.Context
 import android.view.View
-import com.airbnb.epoxy.Typed4EpoxyController
+import com.airbnb.epoxy.TypedEpoxyController
 import me.banes.chris.tivi.PosterGridItemBindingModel_
 import me.banes.chris.tivi.R
-import me.banes.chris.tivi.data.entities.RelatedShowsListItem
-import me.banes.chris.tivi.data.entities.SeasonWithEpisodes
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.detailsBadge
 import me.banes.chris.tivi.detailsSummary
@@ -31,7 +29,6 @@ import me.banes.chris.tivi.emptyState
 import me.banes.chris.tivi.header
 import me.banes.chris.tivi.seasonEpisodeItem
 import me.banes.chris.tivi.seasonHeader
-import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 import me.banes.chris.tivi.ui.epoxy.TotalSpanOverride
 import me.banes.chris.tivi.ui.epoxy.carousel
 import me.banes.chris.tivi.ui.epoxy.withModelsFrom
@@ -39,18 +36,17 @@ import me.banes.chris.tivi.ui.epoxy.withModelsFrom
 class ShowDetailsEpoxyController(
     private val context: Context,
     private val callbacks: Callbacks
-) : Typed4EpoxyController<TiviShow, List<RelatedShowsListItem>, List<SeasonWithEpisodes>, TmdbImageUrlProvider>() {
+) : TypedEpoxyController<ShowDetailsViewState>() {
 
     interface Callbacks {
         fun onRelatedShowClicked(show: TiviShow, view: View)
     }
 
-    override fun buildModels(
-        show: TiviShow,
-        related: List<RelatedShowsListItem>,
-        seasons: List<SeasonWithEpisodes>,
-        tmdbImageUrlProvider: TmdbImageUrlProvider
-    ) {
+    override fun buildModels(viewState: ShowDetailsViewState) {
+        val show = viewState.show
+        val tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
+        val related = viewState.relatedShows
+
         detailsTitle {
             id("title")
             title(show.title)
@@ -131,8 +127,8 @@ class ShowDetailsEpoxyController(
             }
         }
 
-        if (seasons.isNotEmpty()) {
-            seasons.forEach { season ->
+        if (viewState is FollowedShowDetailsViewState) {
+            viewState.seasons.forEach { season ->
                 seasonHeader {
                     id("season_${season.season!!.id}_header")
                     season(season.season)

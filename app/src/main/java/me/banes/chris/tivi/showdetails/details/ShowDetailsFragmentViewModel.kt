@@ -56,7 +56,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
             }
         }
 
-    val data = MutableLiveData<ShowDetailsFragmentViewState>()
+    val data = MutableLiveData<ShowDetailsViewState>()
 
     private fun refresh() {
         showId?.let { id ->
@@ -74,14 +74,27 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     }
 
     private fun setupLiveData() {
-        showId?.let {
-            disposables += Flowables.combineLatest(
-                    showCall.data(it),
-                    relatedShows.data(it),
-                    seasonsCall.data(it),
-                    tmdbManager.imageProvider,
-                    followedShowsDao.showEntry(it).map { it > 0 },
-                    ::ShowDetailsFragmentViewState)
+        showId?.let { id ->
+            disposables += followedShowsDao.showEntry(id)
+                    .subscribeOn(schedulers.database)
+                    .flatMap {
+                        if (it > 0) {
+                            // Followed show
+                            Flowables.combineLatest(
+                                    showCall.data(id),
+                                    relatedShows.data(id),
+                                    seasonsCall.data(id),
+                                    tmdbManager.imageProvider,
+                                    ::FollowedShowDetailsViewState)
+                        } else {
+                            // Not followed
+                            Flowables.combineLatest(
+                                    showCall.data(id),
+                                    relatedShows.data(id),
+                                    tmdbManager.imageProvider,
+                                    ::NotFollowedShowDetailsViewState)
+                        }
+                    }
                     .observeOn(schedulers.main)
                     .subscribe(data::setValue, Timber::e)
         }

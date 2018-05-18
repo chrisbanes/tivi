@@ -21,10 +21,21 @@ import me.banes.chris.tivi.data.entities.SeasonWithEpisodes
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.tmdb.TmdbImageUrlProvider
 
-data class ShowDetailsFragmentViewState(
-    val show: TiviShow,
-    val relatedShows: List<RelatedShowsListItem>,
-    val seasons: List<SeasonWithEpisodes>,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    val inMyShows: Boolean
+sealed class ShowDetailsViewState(
+    open val show: TiviShow,
+    open val relatedShows: List<RelatedShowsListItem>,
+    open val tmdbImageUrlProvider: TmdbImageUrlProvider
 )
+
+data class FollowedShowDetailsViewState(
+    override val show: TiviShow,
+    override val relatedShows: List<RelatedShowsListItem>,
+    val seasons: List<SeasonWithEpisodes>,
+    override val tmdbImageUrlProvider: TmdbImageUrlProvider
+) : ShowDetailsViewState(show, relatedShows, tmdbImageUrlProvider)
+
+data class NotFollowedShowDetailsViewState(
+    override val show: TiviShow,
+    override val relatedShows: List<RelatedShowsListItem>,
+    override val tmdbImageUrlProvider: TmdbImageUrlProvider
+) : ShowDetailsViewState(show, relatedShows, tmdbImageUrlProvider)
