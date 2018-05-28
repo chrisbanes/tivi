@@ -30,8 +30,8 @@ import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.trakt.calls.FollowedShowsCall
 import me.banes.chris.tivi.trakt.calls.WatchedShowsCall
 import me.banes.chris.tivi.util.AppRxSchedulers
+import me.banes.chris.tivi.util.Logger
 import me.banes.chris.tivi.util.NetworkDetector
-import timber.log.Timber
 import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
@@ -40,8 +40,9 @@ class LibraryViewModel @Inject constructor(
     private val followedShowsCall: FollowedShowsCall,
     private val traktManager: TraktManager,
     tmdbManager: TmdbManager,
-    private val networkDetector: NetworkDetector
-) : HomeFragmentViewModel(traktManager) {
+    private val networkDetector: NetworkDetector,
+    logger: Logger
+) : HomeFragmentViewModel(traktManager, logger) {
     val data = MutableLiveData<LibraryViewState>()
 
     init {
@@ -51,7 +52,7 @@ class LibraryViewModel @Inject constructor(
                 tmdbManager.imageProvider,
                 ::LibraryViewState)
                 .observeOn(schedulers.main)
-                .subscribe(data::setValue, Timber::e)
+                .subscribe(data::setValue, logger::e)
 
         refresh()
     }
@@ -60,7 +61,7 @@ class LibraryViewModel @Inject constructor(
         disposables += Observables.combineLatest(
                 networkDetector.waitForConnection().toObservable(),
                 traktManager.state.filter { it == TraktAuthState.LOGGED_IN }
-        ).subscribe({ onRefresh() }, Timber::e)
+        ).subscribe({ onRefresh() }, logger::e)
     }
 
     private fun onRefresh() {
@@ -72,7 +73,7 @@ class LibraryViewModel @Inject constructor(
             try {
                 watchedShowsCall.refresh(Unit)
             } catch (e: Exception) {
-                Timber.e(e, "Error while refreshing watched shows")
+                logger.e(e, "Error while refreshing watched shows")
             }
         }
     }

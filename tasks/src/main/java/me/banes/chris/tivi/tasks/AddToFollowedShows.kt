@@ -26,14 +26,15 @@ import me.banes.chris.tivi.actions.ShowTasks
 import me.banes.chris.tivi.data.daos.FollowedShowsDao
 import me.banes.chris.tivi.data.entities.FollowedShowEntry
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
-import timber.log.Timber
+import me.banes.chris.tivi.util.Logger
 import javax.inject.Inject
 
 class AddToFollowedShows @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val followedShowsDao: FollowedShowsDao,
     private val seasonFetcher: SeasonFetcher,
-    private val showTasks: ShowTasks
+    private val showTasks: ShowTasks,
+    private val logger: Logger
 ) : Job() {
 
     companion object {
@@ -52,7 +53,7 @@ class AddToFollowedShows @Inject constructor(
     override fun onRunJob(params: Params): Result {
         val showId = params.extras.getLong(PARAM_SHOW_ID, -1)
 
-        Timber.d("$TAG job running for id: $showId")
+        logger.d("$TAG job running for id: $showId")
 
         return runBlocking {
             val entryId = withContext(dispatchers.database) {

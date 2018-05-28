@@ -24,13 +24,14 @@ import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.data.daos.FollowedShowsDao
 import me.banes.chris.tivi.data.daos.SeasonsDao
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
-import timber.log.Timber
+import me.banes.chris.tivi.util.Logger
 import javax.inject.Inject
 
 class RemoveFromFollowedShows @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val seasonsDao: SeasonsDao,
-    private val followedShowsDao: FollowedShowsDao
+    private val followedShowsDao: FollowedShowsDao,
+    private val logger: Logger
 ) : Job() {
 
     companion object {
@@ -49,7 +50,7 @@ class RemoveFromFollowedShows @Inject constructor(
     override fun onRunJob(params: Params): Result {
         val showId = params.extras.getLong(PARAM_SHOW_ID, -1)
 
-        Timber.d("$TAG job running for id: $showId")
+        logger.d("$TAG job running for id: $showId")
 
         return runBlocking {
             withContext(dispatchers.database) {

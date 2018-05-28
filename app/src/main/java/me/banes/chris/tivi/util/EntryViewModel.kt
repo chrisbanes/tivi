@@ -31,14 +31,14 @@ import me.banes.chris.tivi.calls.PaginatedCall
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.tmdb.TmdbManager
-import timber.log.Timber
 
 open class EntryViewModel<LI : ListItem<out Entry>>(
     private val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
     private val call: ListCall<Unit, LI>,
     tmdbManager: TmdbManager,
-    private val networkDetector: NetworkDetector
+    private val networkDetector: NetworkDetector,
+    private val logger: Logger
 ) : TiviViewModel() {
 
     private val messages = BehaviorSubject.create<UiResource>()
@@ -65,7 +65,6 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
     )
 
     init {
-
         refresh()
     }
 
@@ -85,7 +84,7 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
 
     fun refresh() {
         disposables += networkDetector.waitForConnection()
-                .subscribe({ onRefresh() }, Timber::e)
+                .subscribe({ onRefresh() }, logger::e)
     }
 
     private fun onRefresh() {
@@ -101,7 +100,7 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
     }
 
     private fun onError(t: Throwable) {
-        Timber.e(t)
+        logger.e(t)
         sendMessage(UiResource(Status.ERROR, t.localizedMessage))
     }
 

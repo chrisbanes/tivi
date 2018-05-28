@@ -29,8 +29,8 @@ import me.banes.chris.tivi.trakt.calls.RelatedShowsCall
 import me.banes.chris.tivi.trakt.calls.ShowDetailsCall
 import me.banes.chris.tivi.trakt.calls.ShowSeasonsCall
 import me.banes.chris.tivi.util.AppRxSchedulers
+import me.banes.chris.tivi.util.Logger
 import me.banes.chris.tivi.util.TiviViewModel
-import timber.log.Timber
 import javax.inject.Inject
 
 class ShowDetailsFragmentViewModel @Inject constructor(
@@ -40,7 +40,8 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     private val seasonsCall: ShowSeasonsCall,
     private val tmdbManager: TmdbManager,
     private val showTasks: ShowTasks,
-    private val followedShowsDao: FollowedShowsDao
+    private val followedShowsDao: FollowedShowsDao,
+    private val logger: Logger
 ) : TiviViewModel() {
 
     var showId: Long? = null
@@ -96,7 +97,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
                         }
                     }
                     .observeOn(schedulers.main)
-                    .subscribe(data::setValue, Timber::e)
+                    .subscribe(data::setValue, logger::e)
         }
     }
 
@@ -104,9 +105,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         // TODO nothing really to do here
     }
 
-    private fun onRefreshError(t: Throwable) {
-        Timber.e(t, "Error while refreshing")
-    }
+    private fun onRefreshError(t: Throwable) = logger.e(t, "Error while refreshing")
 
     fun addToMyShows() {
         showId?.let {
@@ -124,7 +123,5 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         navigatorShow: ShowDetailsNavigator,
         show: TiviShow,
         sharedElementHelper: SharedElementHelper? = null
-    ) {
-        navigatorShow.showShowDetails(show, sharedElementHelper)
-    }
+    ) = navigatorShow.showShowDetails(show, sharedElementHelper)
 }

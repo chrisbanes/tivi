@@ -21,7 +21,7 @@ interface Logger {
     fun v( message: String, vararg args: Any)
 
     /** Log a verbose exception and a message with optional format args.  */
-    fun v(t: Throwable,  message: String, vararg args: Any)
+    fun v(t: Throwable, message: String, vararg args: Any)
 
     /** Log a verbose exception.  */
     fun v(t: Throwable)
@@ -30,7 +30,7 @@ interface Logger {
     fun d( message: String, vararg args: Any)
 
     /** Log a debug exception and a message with optional format args.  */
-    fun d(t: Throwable,  message: String, vararg args: Any)
+    fun d(t: Throwable, message: String, vararg args: Any)
 
     /** Log a debug exception.  */
     fun d(t: Throwable)
@@ -39,7 +39,7 @@ interface Logger {
     fun i( message: String, vararg args: Any)
 
     /** Log an info exception and a message with optional format args.  */
-    fun i(t: Throwable,  message: String, vararg args: Any)
+    fun i(t: Throwable, message: String, vararg args: Any)
 
     /** Log an info exception.  */
     fun i(t: Throwable)
@@ -48,7 +48,7 @@ interface Logger {
     fun w( message: String, vararg args: Any)
 
     /** Log a warning exception and a message with optional format args.  */
-    fun w(t: Throwable,  message: String, vararg args: Any)
+    fun w(t: Throwable, message: String, vararg args: Any)
 
     /** Log a warning exception.  */
     fun w(t: Throwable)
@@ -57,7 +57,7 @@ interface Logger {
     fun e(message: String, vararg args: Any)
 
     /** Log an error exception and a message with optional format args.  */
-    fun e(t: Throwable,  message: String, vararg args: Any)
+    fun e(t: Throwable, message: String, vararg args: Any)
 
     /** Log an error exception.  */
     fun e(t: Throwable)
@@ -66,7 +66,7 @@ interface Logger {
     fun wtf( message: String, vararg args: Any)
 
     /** Log an assert exception and a message with optional format args.  */
-    fun wtf(t: Throwable,  message: String, vararg args: Any)
+    fun wtf(t: Throwable, message: String, vararg args: Any)
 
     /** Log an assert exception.  */
     fun wtf(t: Throwable)
