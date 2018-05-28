@@ -33,8 +33,8 @@ class ShowTasksImpl : ShowTasks {
                 .scheduleAsync()
     }
 
-    override fun syncShowWatchedEpisodes(followedShowId: Long) {
-        SyncShowWatchedProgress.buildRequest(followedShowId)
+    override fun syncShowWatchedEpisodes(showId: Long) {
+        SyncShowWatchedProgress.buildRequest(showId)
                 .startNow()
                 .build()
                 .scheduleAsync()

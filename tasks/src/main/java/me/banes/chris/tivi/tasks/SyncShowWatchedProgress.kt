@@ -49,25 +49,25 @@ class SyncShowWatchedProgress @Inject constructor(
 ) : Job() {
     companion object {
         const val TAG = "sync-show-watched-episodes"
-        private const val PARAM_FOLLOWED_ID = "show-id"
+        private const val PARAM_SHOW_ID = "show-id"
 
         fun buildRequest(followedId: Long): JobRequest.Builder {
             return JobRequest.Builder(TAG).addExtras(
                     PersistableBundleCompat().apply {
-                        putLong(PARAM_FOLLOWED_ID, followedId)
+                        putLong(PARAM_SHOW_ID, followedId)
                     }
             )
         }
     }
 
     override fun onRunJob(params: Params): Result {
-        val followedId = params.extras.getLong(PARAM_FOLLOWED_ID, -1)
-        Timber.d("$TAG job running for id: $followedId")
+        val showId = params.extras.getLong(PARAM_SHOW_ID, -1)
+        Timber.d("$TAG job running for show id: $showId")
 
         val authState = traktManager.state.blockingFirst()
         if (authState == TraktAuthState.LOGGED_IN) {
             return runBlocking {
-                sync(followedId)
+                sync(showId)
                 Result.SUCCESS
             }
         }
@@ -75,9 +75,9 @@ class SyncShowWatchedProgress @Inject constructor(
         return Result.FAILURE
     }
 
-    private suspend fun sync(followedId: Long) {
-        val followedEntry = withContext(dispatchers.database) { followedShowsDao.entryWithId(followedId) }
-            ?: throw IllegalArgumentException("Followed entry with id: $followedId does not exist")
+    private suspend fun sync(showId: Long) {
+        val followedEntry = withContext(dispatchers.database) { followedShowsDao.entryWithShowId(showId) }
+            ?: throw IllegalArgumentException("Followed entry with id: $showId does not exist")
         val show = followedEntry.show!!
 
         // TODO fetch all un-synced watches from DB and send to Trakt

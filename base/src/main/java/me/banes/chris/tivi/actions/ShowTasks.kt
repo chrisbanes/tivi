@@ -19,6 +19,6 @@ package me.banes.chris.tivi.actions
 interface ShowTasks {
     fun followShow(showId: Long)
     fun unfollowShow(showId: Long)
-    fun syncShowWatchedEpisodes(followedShowId: Long)
+    fun syncShowWatchedEpisodes(showId: Long)
     fun syncAllShows()
 }
