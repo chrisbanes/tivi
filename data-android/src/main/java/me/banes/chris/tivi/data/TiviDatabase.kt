@@ -19,8 +19,9 @@ package me.banes.chris.tivi.data
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverters
+import me.banes.chris.tivi.data.daos.EpisodeWatchEntryDao
 import me.banes.chris.tivi.data.daos.EpisodesDao
-import me.banes.chris.tivi.data.daos.MyShowsDao
+import me.banes.chris.tivi.data.daos.FollowedShowsDao
 import me.banes.chris.tivi.data.daos.PopularDao
 import me.banes.chris.tivi.data.daos.RelatedShowsDao
 import me.banes.chris.tivi.data.daos.SeasonsDao
@@ -29,7 +30,8 @@ import me.banes.chris.tivi.data.daos.TrendingDao
 import me.banes.chris.tivi.data.daos.UserDao
 import me.banes.chris.tivi.data.daos.WatchedShowDao
 import me.banes.chris.tivi.data.entities.Episode
-import me.banes.chris.tivi.data.entities.MyShowsEntry
+import me.banes.chris.tivi.data.entities.EpisodeWatchEntry
+import me.banes.chris.tivi.data.entities.FollowedShowEntry
 import me.banes.chris.tivi.data.entities.PopularEntry
 import me.banes.chris.tivi.data.entities.RelatedShowEntry
 import me.banes.chris.tivi.data.entities.Season
@@ -45,12 +47,13 @@ import me.banes.chris.tivi.data.entities.WatchedShowEntry
             PopularEntry::class,
             TraktUser::class,
             WatchedShowEntry::class,
-            MyShowsEntry::class,
+            FollowedShowEntry::class,
             Season::class,
             Episode::class,
-            RelatedShowEntry::class
+            RelatedShowEntry::class,
+            EpisodeWatchEntry::class
         ],
-        version = 14
+        version = 15
 )
 @TypeConverters(TiviTypeConverters::class)
 abstract class TiviDatabase : RoomDatabase() {
@@ -59,8 +62,9 @@ abstract class TiviDatabase : RoomDatabase() {
     abstract fun popularDao(): PopularDao
     abstract fun userDao(): UserDao
     abstract fun watchedShowsDao(): WatchedShowDao
-    abstract fun myShowsDao(): MyShowsDao
+    abstract fun followedShowsDao(): FollowedShowsDao
     abstract fun seasonsDao(): SeasonsDao
     abstract fun episodesDao(): EpisodesDao
     abstract fun relatedShowsDao(): RelatedShowsDao
+    abstract fun episodeWatchesDao(): EpisodeWatchEntryDao
 }

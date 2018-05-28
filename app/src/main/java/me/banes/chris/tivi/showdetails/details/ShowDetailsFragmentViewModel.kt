@@ -20,8 +20,8 @@ import android.arch.lifecycle.MutableLiveData
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
 import me.banes.chris.tivi.SharedElementHelper
-import me.banes.chris.tivi.actions.TiviActions
-import me.banes.chris.tivi.data.daos.MyShowsDao
+import me.banes.chris.tivi.actions.ShowTasks
+import me.banes.chris.tivi.data.daos.FollowedShowsDao
 import me.banes.chris.tivi.data.entities.TiviShow
 import me.banes.chris.tivi.showdetails.ShowDetailsNavigator
 import me.banes.chris.tivi.tmdb.TmdbManager
@@ -29,8 +29,8 @@ import me.banes.chris.tivi.trakt.calls.RelatedShowsCall
 import me.banes.chris.tivi.trakt.calls.ShowDetailsCall
 import me.banes.chris.tivi.trakt.calls.ShowSeasonsCall
 import me.banes.chris.tivi.util.AppRxSchedulers
+import me.banes.chris.tivi.util.Logger
 import me.banes.chris.tivi.util.TiviViewModel
-import timber.log.Timber
 import javax.inject.Inject
 
 class ShowDetailsFragmentViewModel @Inject constructor(
@@ -39,8 +39,9 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     private val relatedShows: RelatedShowsCall,
     private val seasonsCall: ShowSeasonsCall,
     private val tmdbManager: TmdbManager,
-    private val tiviActions: TiviActions,
-    private val myShowsDao: MyShowsDao
+    private val showTasks: ShowTasks,
+    private val followedShowsDao: FollowedShowsDao,
+    private val logger: Logger
 ) : TiviViewModel() {
 
     var showId: Long? = null
@@ -56,16 +57,17 @@ class ShowDetailsFragmentViewModel @Inject constructor(
             }
         }
 
-    val data = MutableLiveData<ShowDetailsFragmentViewState>()
+    val data = MutableLiveData<ShowDetailsViewState>()
 
     private fun refresh() {
         showId?.let { id ->
             launchWithParent {
                 showCall.refresh(id)
             }
-            launchWithParent {
-                seasonsCall.refresh(id)
-            }
+
+            // TODO re-add some sort of season refresh
+            showTasks.syncShowWatchedEpisodes(id)
+
             launchWithParent {
                 relatedShows.refresh(id)
             }
@@ -73,16 +75,29 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     }
 
     private fun setupLiveData() {
-        showId?.let {
-            disposables += Flowables.combineLatest(
-                    showCall.data(it),
-                    relatedShows.data(it),
-                    seasonsCall.data(it),
-                    tmdbManager.imageProvider,
-                    myShowsDao.showEntry(it).map { it > 0 },
-                    ::ShowDetailsFragmentViewState)
+        showId?.let { id ->
+            disposables += followedShowsDao.entryCountWithShowId(id)
+                    .subscribeOn(schedulers.database)
+                    .flatMap {
+                        if (it > 0) {
+                            // Followed show
+                            Flowables.combineLatest(
+                                    showCall.data(id),
+                                    relatedShows.data(id),
+                                    seasonsCall.data(id),
+                                    tmdbManager.imageProvider,
+                                    ::FollowedShowDetailsViewState)
+                        } else {
+                            // Not followed
+                            Flowables.combineLatest(
+                                    showCall.data(id),
+                                    relatedShows.data(id),
+                                    tmdbManager.imageProvider,
+                                    ::NotFollowedShowDetailsViewState)
+                        }
+                    }
                     .observeOn(schedulers.main)
-                    .subscribe(data::setValue, Timber::e)
+                    .subscribe(data::setValue, logger::e)
         }
     }
 
@@ -90,19 +105,17 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         // TODO nothing really to do here
     }
 
-    private fun onRefreshError(t: Throwable) {
-        Timber.e(t, "Error while refreshing")
-    }
+    private fun onRefreshError(t: Throwable) = logger.e(t, "Error while refreshing")
 
     fun addToMyShows() {
         showId?.let {
-            tiviActions.addShowToMyShows(it)
+            showTasks.followShow(it)
         }
     }
 
     fun removeFromMyShows() {
         showId?.let {
-            tiviActions.removeShowFromMyShows(it)
+            showTasks.unfollowShow(it)
         }
     }
 
@@ -110,7 +123,5 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         navigatorShow: ShowDetailsNavigator,
         show: TiviShow,
         sharedElementHelper: SharedElementHelper? = null
-    ) {
-        navigatorShow.showShowDetails(show, sharedElementHelper)
-    }
+    ) = navigatorShow.showShowDetails(show, sharedElementHelper)
 }

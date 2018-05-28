@@ -28,11 +28,13 @@ import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.AppNavigator
+import me.banes.chris.tivi.actions.ShowTasks
 import me.banes.chris.tivi.data.entities.TraktUser
 import me.banes.chris.tivi.inject.ApplicationLevel
 import me.banes.chris.tivi.trakt.calls.UserMeCall
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
+import me.banes.chris.tivi.util.Logger
 import me.banes.chris.tivi.util.NetworkDetector
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
@@ -41,7 +43,6 @@ import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ClientAuthentication
 import net.openid.appauth.TokenResponse
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Provider
@@ -58,7 +59,9 @@ class TraktManager @Inject constructor(
     private val clientAuth: Lazy<ClientAuthentication>,
     @Named("auth") private val authPrefs: SharedPreferences,
     private val userMeCall: UserMeCall,
-    private val networkDetector: NetworkDetector
+    private val networkDetector: NetworkDetector,
+    private val showTasks: ShowTasks,
+    private val logger: Logger
 ) {
     private val authState = BehaviorSubject.create<AuthState>()!!
 
@@ -69,7 +72,7 @@ class TraktManager @Inject constructor(
     init {
         // Observer which updates local state
         disposables += authState.observeOn(schedulers.main)
-                .subscribe(::updateAuthState, Timber::e)
+                .subscribe(::updateAuthState, logger::e)
 
         // Read the auth state from prefs
         launch(dispatchers.main) {
@@ -92,7 +95,7 @@ class TraktManager @Inject constructor(
             _state.onNext(TraktAuthState.LOGGED_IN)
 
             disposables += networkDetector.waitForConnection()
-                    .subscribe({ refreshUserProfile() }, Timber::e)
+                    .subscribe({ refreshUserProfile() }, logger::e)
         } else {
             _state.onNext(TraktAuthState.LOGGED_OUT)
         }
@@ -103,7 +106,7 @@ class TraktManager @Inject constructor(
             try {
                 userMeCall.refresh(Unit)
             } catch (e: Exception) {
-                Timber.e(e, "Error while refreshing user profile")
+                logger.e(e, "Error while refreshing user profile")
             }
         }
     }
@@ -120,7 +123,7 @@ class TraktManager @Inject constructor(
     }
 
     fun onAuthException(exception: AuthorizationException) {
-        Timber.d(exception, "AuthException")
+        logger.d(exception, "AuthException")
     }
 
     fun userObservable(): Flowable<TraktUser> = userMeCall.data()
@@ -141,6 +144,8 @@ class TraktManager @Inject constructor(
         launch(dispatchers.disk) {
             persistAuthState(newState)
         }
+        // Now trigger a sync of all shows
+        showTasks.syncAllShows()
     }
 
     private fun readAuthState(): AuthState {

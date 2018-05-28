@@ -30,14 +30,16 @@ import me.banes.chris.tivi.AppNavigator
 import me.banes.chris.tivi.BuildConfig
 import me.banes.chris.tivi.TiviAppNavigator
 import me.banes.chris.tivi.TiviApplication
-import me.banes.chris.tivi.actions.TiviActions
-import me.banes.chris.tivi.actions.TiviActionsImpl
+import me.banes.chris.tivi.actions.ShowTasks
 import me.banes.chris.tivi.appinitializers.AndroidJobInitializer
 import me.banes.chris.tivi.appinitializers.AppInitializers
 import me.banes.chris.tivi.appinitializers.ThreeTenBpInitializer
 import me.banes.chris.tivi.appinitializers.TimberInitializer
+import me.banes.chris.tivi.tasks.ShowTasksImpl
+import me.banes.chris.tivi.util.AndroidLogger
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
+import me.banes.chris.tivi.util.Logger
 import java.io.File
 import javax.inject.Named
 import javax.inject.Singleton
@@ -45,20 +47,16 @@ import javax.inject.Singleton
 @Module
 class AppModule {
     @Provides
-    fun provideContext(application: TiviApplication): Context {
-        return application.applicationContext
-    }
+    fun provideContext(application: TiviApplication): Context = application.applicationContext
 
     @Singleton
     @Provides
-    fun provideRxSchedulers(): AppRxSchedulers {
-        return AppRxSchedulers(
-                Schedulers.single(),
-                Schedulers.io(),
-                Schedulers.io(),
-                AndroidSchedulers.mainThread()
-        )
-    }
+    fun provideRxSchedulers(): AppRxSchedulers = AppRxSchedulers(
+            database = Schedulers.single(),
+            disk = Schedulers.io(),
+            network = Schedulers.io(),
+            main = AndroidSchedulers.mainThread()
+    )
 
     @Singleton
     @Provides
@@ -79,52 +77,42 @@ class AppModule {
     @Provides
     @Singleton
     @Named("cache")
-    fun provideCacheDir(application: TiviApplication): File {
-        return application.cacheDir
-    }
+    fun provideCacheDir(application: TiviApplication): File = application.cacheDir
 
     @Provides
     fun provideAppManagers(
         androidJobInitializer: AndroidJobInitializer,
         timberManager: TimberInitializer,
         threeTenManager: ThreeTenBpInitializer
-    ): AppInitializers {
-        return AppInitializers(androidJobInitializer, timberManager, threeTenManager)
-    }
+    ) = AppInitializers(androidJobInitializer, timberManager, threeTenManager)
 
     @Provides
     @Singleton
     @Named("app")
-    fun provideAppNavigator(context: Context): AppNavigator {
-        return TiviAppNavigator(context)
-    }
+    fun provideAppNavigator(context: Context): AppNavigator = TiviAppNavigator(context)
 
     @Provides
     @Singleton
-    fun provideTiviActions(): TiviActions {
-        return TiviActionsImpl()
-    }
+    fun provideTiviActions(): ShowTasks = ShowTasksImpl()
 
     @Provides
     @Named("tmdb-api")
-    fun provideTmdbApiKey(): String {
-        return BuildConfig.TMDB_API_KEY
-    }
+    fun provideTmdbApiKey(): String = BuildConfig.TMDB_API_KEY
 
     @Provides
     @Named("trakt-client-id")
-    fun provideTraktClientId(): String {
-        return BuildConfig.TRAKT_CLIENT_ID
-    }
+    fun provideTraktClientId(): String = BuildConfig.TRAKT_CLIENT_ID
 
     @Provides
     @Named("trakt-client-secret")
-    fun provideTraktClientSecret(): String {
-        return BuildConfig.TRAKT_CLIENT_SECRET
-    }
+    fun provideTraktClientSecret(): String = BuildConfig.TRAKT_CLIENT_SECRET
 
     @Singleton
     @Provides
     @ApplicationLevel
     fun provideCompositeDisposable() = CompositeDisposable()
+
+    @Singleton
+    @Provides
+    fun provideLogger(): Logger = AndroidLogger
 }

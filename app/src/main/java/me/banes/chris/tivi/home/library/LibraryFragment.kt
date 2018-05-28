@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.fragment_summary.*
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
-import me.banes.chris.tivi.data.entities.MyShowsEntry
+import me.banes.chris.tivi.data.entities.FollowedShowEntry
 import me.banes.chris.tivi.data.entities.WatchedShowEntry
 import me.banes.chris.tivi.extensions.observeK
 import me.banes.chris.tivi.home.HomeFragment
@@ -46,7 +46,7 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
             ListItemSharedElementHelper(summary_rv)
         }
 
-        override fun onMyShowsHeaderClicked(items: List<ListItem<MyShowsEntry>>?) {
+        override fun onMyShowsHeaderClicked(items: List<ListItem<FollowedShowEntry>>?) {
             viewModel.onMyShowsHeaderClicked(homeNavigator, listItemSharedElementHelper.createForItems(items))
         }
 
@@ -78,7 +78,7 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         super.onActivityCreated(savedInstanceState)
 
         viewModel.data.observeK(this) { model ->
-            controller.setData(model?.myShows, model?.watched, model?.tmdbImageUrlProvider)
+            controller.setData(model?.followedShow, model?.watched, model?.tmdbImageUrlProvider)
             scheduleStartPostponedTransitions()
         }
     }

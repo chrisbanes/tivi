@@ -56,7 +56,7 @@ data class Season(
 ) : TiviEntity, TmdbIdEntity, TraktIdEntity {
     @Ignore constructor() : this(null)
 
-    fun needsEpisodeUpdate(): Boolean {
-        return lastEpisodeUpdate?.isBefore(OffsetDateTime.now().minusDays(1)) != false
+    companion object {
+        const val NUMBER_SPECIALS = 0
     }
 }

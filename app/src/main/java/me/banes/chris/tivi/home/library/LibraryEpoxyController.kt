@@ -21,7 +21,7 @@ import com.airbnb.epoxy.Typed3EpoxyController
 import me.banes.chris.tivi.R
 import me.banes.chris.tivi.data.Entry
 import me.banes.chris.tivi.data.entities.ListItem
-import me.banes.chris.tivi.data.entities.MyShowsEntry
+import me.banes.chris.tivi.data.entities.FollowedShowEntry
 import me.banes.chris.tivi.data.entities.WatchedShowEntry
 import me.banes.chris.tivi.emptyState
 import me.banes.chris.tivi.header
@@ -31,29 +31,29 @@ import me.banes.chris.tivi.ui.epoxy.TotalSpanOverride
 
 class LibraryEpoxyController(
     private val callbacks: Callbacks
-) : Typed3EpoxyController<List<ListItem<MyShowsEntry>>, List<ListItem<WatchedShowEntry>>, TmdbImageUrlProvider>() {
+) : Typed3EpoxyController<List<ListItem<FollowedShowEntry>>, List<ListItem<WatchedShowEntry>>, TmdbImageUrlProvider>() {
 
     interface Callbacks {
-        fun onMyShowsHeaderClicked(items: List<ListItem<MyShowsEntry>>?)
+        fun onMyShowsHeaderClicked(items: List<ListItem<FollowedShowEntry>>?)
         fun onWatchedHeaderClicked(items: List<ListItem<WatchedShowEntry>>?)
         fun onItemClicked(item: ListItem<out Entry>)
     }
 
     override fun buildModels(
-        myShows: List<ListItem<MyShowsEntry>>?,
+        followedShow: List<ListItem<FollowedShowEntry>>?,
         watched: List<ListItem<WatchedShowEntry>>?,
         tmdbImageUrlProvider: TmdbImageUrlProvider?
     ) {
         header {
             id("myshows_header")
-            title(R.string.library_myshows)
+            title(R.string.library_followed_shows)
             spanSizeOverride(TotalSpanOverride)
             buttonClickListener(View.OnClickListener {
-                callbacks.onMyShowsHeaderClicked(myShows)
+                callbacks.onMyShowsHeaderClicked(followedShow)
             })
         }
-        if (myShows != null && !myShows.isEmpty()) {
-            myShows.take(spanCount * 2).forEach { item ->
+        if (followedShow != null && !followedShow.isEmpty()) {
+            followedShow.take(spanCount * 2).forEach { item ->
                 posterGridItem {
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)

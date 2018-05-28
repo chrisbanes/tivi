@@ -26,7 +26,7 @@
     <string name="discover_popular">Popular</string>
 
     <string name="library_title">Library</string>
-    <string name="library_myshows">My Shows</string>
+    <string name="library_followed_shows">Followed</string>
     <string name="library_watched">Watched</string>
 
     <string name="login">Login</string>
@@ -58,5 +58,8 @@
     <string name="genre_label_comedy">Comedy</string>
     <string name="genre_label_horror">Horror</string>
     <string name="genre_label_mystery">Mystery</string>
+
+    <string name="follow_show_add">Follow show</string>
+    <string name="follow_show_remove">Un-follow show</string>
 
 </resources>

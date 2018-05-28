@@ -144,7 +144,7 @@ class ShowDetailsFragment : TiviFragment() {
             }
         }
 
-    private fun update(viewState: ShowDetailsFragmentViewState) {
+    private fun update(viewState: ShowDetailsViewState) {
         val show = viewState.show
         val imageProvider = viewState.tmdbImageUrlProvider
 
@@ -168,11 +168,12 @@ class ShowDetailsFragment : TiviFragment() {
         }
 
         details_toolbar.menu.let {
-            it.findItem(R.id.details_menu_add_myshows)?.isVisible = !viewState.inMyShows
-            it.findItem(R.id.details_menu_remove_myshows)?.isVisible = viewState.inMyShows
+            val isFollowed = viewState is FollowedShowDetailsViewState
+            it.findItem(R.id.details_menu_add_myshows)?.isVisible = !isFollowed
+            it.findItem(R.id.details_menu_remove_myshows)?.isVisible = isFollowed
         }
 
-        controller.setData(show, viewState.relatedShows, viewState.seasons, imageProvider)
+        controller.setData(viewState)
 
         scheduleStartPostponedTransitions()
     }

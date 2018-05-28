@@ -23,11 +23,12 @@ import io.reactivex.rxkotlin.plusAssign
 import me.banes.chris.tivi.data.entities.TraktUser
 import me.banes.chris.tivi.trakt.TraktAuthState
 import me.banes.chris.tivi.trakt.TraktManager
+import me.banes.chris.tivi.util.Logger
 import me.banes.chris.tivi.util.TiviViewModel
-import timber.log.Timber
 
 abstract class HomeFragmentViewModel(
-    private val traktManager: TraktManager
+    private val traktManager: TraktManager,
+    protected val logger: Logger
 ) : TiviViewModel() {
 
     private val _authUiState = MutableLiveData<TraktAuthState>()
@@ -40,7 +41,7 @@ abstract class HomeFragmentViewModel(
         _authUiState.value = TraktAuthState.LOGGED_OUT
 
         disposables += traktManager.state
-                .subscribe(_authUiState::setValue, Timber::e)
+                .subscribe(_authUiState::setValue, logger::e)
     }
 
     fun onProfileItemClicked() {

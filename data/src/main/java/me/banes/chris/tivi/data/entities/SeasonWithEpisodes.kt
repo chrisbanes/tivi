@@ -24,8 +24,10 @@ class SeasonWithEpisodes {
     @Embedded
     var season: Season? = null
 
-    @Relation(parentColumn = "id", entityColumn = "season_id")
-    var episodes: List<Episode>? = null
+    @Relation(parentColumn = "id", entityColumn = "season_id", entity = Episode::class)
+    var episodes: List<EpisodesWithWatches> = emptyList()
+
+    fun isWatched() = episodes.all { it.isWatched() }
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
