@@ -31,11 +31,12 @@ import me.banes.chris.tivi.data.daos.EpisodeWatchEntryDao
 import me.banes.chris.tivi.data.daos.EpisodesDao
 import me.banes.chris.tivi.data.daos.FollowedShowsDao
 import me.banes.chris.tivi.data.entities.EpisodeWatchEntry
+import me.banes.chris.tivi.data.sync.Syncer
 import me.banes.chris.tivi.extensions.fetchBodyWithRetry
 import me.banes.chris.tivi.trakt.TraktAuthState
 import me.banes.chris.tivi.trakt.TraktManager
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
-import timber.log.Timber
+import me.banes.chris.tivi.util.Logger
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -46,7 +47,8 @@ class SyncShowWatchedProgress @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val traktManager: TraktManager,
     private val usersService: Provider<Users>,
-    private val databaseTransactionRunner: DatabaseTransactionRunner
+    private val databaseTransactionRunner: DatabaseTransactionRunner,
+    private val logger: Logger
 ) : Job() {
     companion object {
         const val TAG = "sync-show-watched-episodes"
@@ -63,7 +65,7 @@ class SyncShowWatchedProgress @Inject constructor(
 
     override fun onRunJob(params: Params): Result {
         val showId = params.extras.getLong(PARAM_SHOW_ID, -1)
-        Timber.d("$TAG job running for show id: $showId")
+        logger.d("$TAG job running for show id: $showId")
 
         val authState = traktManager.state.blockingFirst()
         if (authState == TraktAuthState.LOGGED_IN) {
@@ -100,7 +102,8 @@ class SyncShowWatchedProgress @Inject constructor(
                         episodeWatchEntryDao::update,
                         HistoryEntry::id,
                         ::mapEntry,
-                        { old, new -> new.copy(id = old.id) }
+                        { old, new -> new.copy(id = old.id) },
+                        logger
                 )
                 syncer.sync(watchedProgress)
             }

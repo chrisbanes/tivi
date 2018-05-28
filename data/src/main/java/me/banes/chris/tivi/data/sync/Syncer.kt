@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package me.banes.chris.tivi.tasks
+package me.banes.chris.tivi.data.sync
 
-import android.support.v4.util.ArraySet
-import timber.log.Timber
+import me.banes.chris.tivi.util.Logger
 
 class Syncer<NT, ET, ID>(
     private val currentIdsFunc: () -> Collection<ID>,
@@ -27,11 +26,12 @@ class Syncer<NT, ET, ID>(
     private val entryUpdateFunc: (ET) -> Unit,
     private val entityIdMapperFunc: (NT) -> ID,
     private val entityMapperFunc: (NT) -> ET,
-    private val entityMergerFunc: (ET, ET) -> ET
+    private val entityMergerFunc: (ET, ET) -> ET,
+    private val logger: Logger? = null
 ) {
     fun sync(networkValues: Collection<NT>) {
-        val currentIds = ArraySet<ID>(currentIdsFunc())
-        Timber.d("Got current IDs as: $currentIds")
+        val currentIds = HashSet<ID>(currentIdsFunc())
+        logger?.d("Got current IDs as: $currentIds")
 
         networkValues.forEach { value ->
             val id = entityIdMapperFunc(value)
@@ -42,11 +42,11 @@ class Syncer<NT, ET, ID>(
                 val dbEntry = entryFetchFunc(id)!!
                 val merged = entityMergerFunc(dbEntry, newEntry)
                 entryUpdateFunc(merged)
-                Timber.d("Updated entry with id: $id")
+                logger?.d("Updated entry with id: $id")
             } else {
                 // Not currently in the DB, so lets insert
                 entryInsertFunc(newEntry)
-                Timber.d("Insert entry with id: $id")
+                logger?.d("Insert entry with id: $id")
             }
             // Finally remove the id from the set
             currentIds.remove(id)
@@ -54,7 +54,7 @@ class Syncer<NT, ET, ID>(
 
         // Anything left in the set needs to be deleted from the database
         currentIds.forEach { id ->
-            Timber.d("Remove entry with id: $id")
+            logger?.d("Remove entry with id: $id")
             entryDeleteFunc(id)
         }
     }
