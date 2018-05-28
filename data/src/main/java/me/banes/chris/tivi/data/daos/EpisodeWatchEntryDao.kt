@@ -22,9 +22,15 @@ import me.banes.chris.tivi.data.entities.EpisodeWatchEntry
 
 @Dao
 abstract class EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry> {
-    @Query("SELECT * from episode_watch_entries WHERE episode_id = :episodeId")
+    @Query("SELECT * FROM episode_watch_entries WHERE episode_id = :episodeId")
     abstract fun watchesForEpisode(episodeId: Long): List<EpisodeWatchEntry>
 
-    @Query("SELECT * from episode_watch_entries WHERE trakt_id = :traktId")
+    @Query("SELECT * FROM episode_watch_entries WHERE trakt_id = :traktId")
     abstract fun entryWithTraktId(traktId: Long): EpisodeWatchEntry?
+
+    @Query("SELECT trakt_id FROM episode_watch_entries")
+    abstract fun entryTraktIds(): List<Long>
+
+    @Query("DELETE FROM episode_watch_entries WHERE trakt_id = :traktId")
+    abstract fun deleteWithTraktId(traktId: Long)
 }

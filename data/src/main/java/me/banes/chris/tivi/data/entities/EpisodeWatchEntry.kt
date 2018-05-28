@@ -25,8 +25,8 @@ import org.threeten.bp.OffsetDateTime
 
 @Entity(tableName = "episode_watch_entries",
         indices = [
-            Index(value = "episode_id"),
-            Index(value = "trakt_id", unique = true)
+            Index(value = ["episode_id"]),
+            Index(value = ["trakt_id"], unique = true)
         ],
         foreignKeys = [
             ForeignKey(

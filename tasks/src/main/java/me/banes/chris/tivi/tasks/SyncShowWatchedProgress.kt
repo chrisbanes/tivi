@@ -19,6 +19,7 @@ package me.banes.chris.tivi.tasks
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
 import com.evernote.android.job.util.support.PersistableBundleCompat
+import com.uwetrottmann.trakt5.entities.HistoryEntry
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.enums.HistoryType
@@ -77,7 +78,7 @@ class SyncShowWatchedProgress @Inject constructor(
 
     private suspend fun sync(showId: Long) {
         val followedEntry = withContext(dispatchers.database) { followedShowsDao.entryWithShowId(showId) }
-            ?: throw IllegalArgumentException("Followed entry with id: $showId does not exist")
+                ?: throw IllegalArgumentException("Followed entry with id: $showId does not exist")
         val show = followedEntry.show!!
 
         // TODO fetch all un-synced watches from DB and send to Trakt
@@ -91,33 +92,31 @@ class SyncShowWatchedProgress @Inject constructor(
 
         withContext(dispatchers.database) {
             databaseTransactionRunner.runInTransaction {
-                // Probably want to delete all current
-
-                watchedProgress.forEach { historyEntry ->
-                    // We only care about episode watch entries
-                    val traktEpisode = historyEntry.episode ?: return@forEach
-
-                    // Fetch our entity for the history entry
-                    val currentEntry = episodeWatchEntryDao.entryWithTraktId(historyEntry.id)
-
-                    // Now fetch the episode entity from the database
-                    val traktId = traktEpisode.ids.trakt
-                    val episode = episodesDao.episodeWithTraktId(traktId)
-                            ?: throw IllegalArgumentException("Episode with id $traktId does not exist.")
-
-                    if (currentEntry != null) {
-                        // TODO update?
-                    } else {
-                        val entry = EpisodeWatchEntry(
-                                episodeId = episode.id!!,
-                                traktId = historyEntry.id,
-                                watchedAt = historyEntry.watched_at,
-                                source = EpisodeWatchEntry.SOURCE_TRAKT
-                        )
-                        episodeWatchEntryDao.insert(entry)
-                    }
-                }
+                val syncer = Syncer(
+                        episodeWatchEntryDao::entryTraktIds,
+                        episodeWatchEntryDao::entryWithTraktId,
+                        episodeWatchEntryDao::deleteWithTraktId,
+                        episodeWatchEntryDao::insert,
+                        episodeWatchEntryDao::update,
+                        HistoryEntry::id,
+                        ::mapEntry,
+                        { old, new -> new.copy(id = old.id) }
+                )
+                syncer.sync(watchedProgress)
             }
         }
+    }
+
+    private fun mapEntry(historyEntry: HistoryEntry): EpisodeWatchEntry {
+        val episodeTraktId = historyEntry.episode.ids.trakt
+        val episode = episodesDao.episodeWithTraktId(episodeTraktId)
+                ?: throw IllegalArgumentException("Episode with id $episodeTraktId does not exist.")
+
+        return EpisodeWatchEntry(
+                episodeId = episode.id!!,
+                traktId = historyEntry.id,
+                watchedAt = historyEntry.watched_at,
+                source = EpisodeWatchEntry.SOURCE_TRAKT
+        )
     }
 }
