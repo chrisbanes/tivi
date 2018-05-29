@@ -56,7 +56,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "me.banes.chris.tivi"
+        applicationId "app.tivi"
         minSdkVersion buildConfig.minSdk
         targetSdkVersion buildConfig.targetSdk
         versionCode 11
@@ -73,7 +73,7 @@ android {
         buildConfigField "String", "TRAKT_CLIENT_SECRET", "\"" + propOrDef("TIVI_TRAKT_CLIENT_SECRET", "") + "\""
         buildConfigField "String", "TMDB_API_KEY", "\"" + propOrDef("TIVI_TMDB_API_KEY", "") + "\""
 
-        manifestPlaceholders += ['appAuthRedirectScheme': 'me.banes.chris.tivi']
+        manifestPlaceholders += ['appAuthRedirectScheme': 'app.tivi']
 
         // Crashlytics. Disabled by default
         manifestPlaceholders += ["fabric-api-key": propOrDef("TIVI_FABRIC_API_KEY", "")]

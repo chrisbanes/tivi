@@ -49,7 +49,7 @@
         android:background="?attr/statusBarScrim"
         android:elevation="4dp"
         android:fitsSystemWindows="true"
-        app:layout_behavior="me.banes.chris.tivi.ui.StatusBarHeightBehavior" />
+        app:layout_behavior="app.tivi.ui.StatusBarHeightBehavior" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/summary_rv"

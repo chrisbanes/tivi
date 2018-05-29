@@ -16,5 +16,5 @@
   ~
   -->
 
-<manifest package="me.banes.chris.tivi.trakt.auth">
+<manifest package="app.tivi.trakt.auth">
 </manifest>

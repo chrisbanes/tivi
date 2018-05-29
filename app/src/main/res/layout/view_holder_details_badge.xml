@@ -46,7 +46,7 @@
             app:layout_constraintVertical_chainStyle="packed"
             tools:src="@drawable/ic_details_rating" />
 
-        <me.banes.chris.tivi.ui.widget.BaselineGridTextView
+        <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/details_badge_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

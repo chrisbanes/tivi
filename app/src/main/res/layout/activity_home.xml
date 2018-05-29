@@ -21,7 +21,7 @@
     android:id="@+id/home_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="me.banes.chris.tivi.home.HomeActivity">
+    tools:context=".home.HomeActivity">
 
     <FrameLayout
         android:id="@+id/home_content"

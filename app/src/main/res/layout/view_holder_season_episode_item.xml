@@ -22,7 +22,7 @@
     <data>
         <variable
             name="episode"
-            type="me.banes.chris.tivi.data.entities.Episode" />
+            type="app.tivi.data.entities.Episode" />
         <variable
             name="watched"
             type="boolean" />

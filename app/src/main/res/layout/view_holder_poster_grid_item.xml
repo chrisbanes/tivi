@@ -29,7 +29,7 @@
         <variable name="annotationLabel" type="String" />
         <variable name="annotationIcon" type="int" />
         <variable name="transitionName" type="String" />
-        <variable name="tmdbImageUrlProvider" type="me.banes.chris.tivi.tmdb.TmdbImageUrlProvider" />
+        <variable name="tmdbImageUrlProvider" type="app.tivi.tmdb.TmdbImageUrlProvider" />
         <variable name="clickListener" type="android.view.View.OnClickListener" />
     </data>
 
