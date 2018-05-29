@@ -51,7 +51,7 @@ android {
     playAccountConfigs {
         defaultAccountConfig {
             serviceAccountEmail = propOrDef('TIVI_PLAY_PUBLISHER_ACCOUNT', "")
-            pk12File = rootProject.file('signing/play-account.p12')
+            jsonFile = rootProject.file('signing/play-account.json')
         }
     }
 
