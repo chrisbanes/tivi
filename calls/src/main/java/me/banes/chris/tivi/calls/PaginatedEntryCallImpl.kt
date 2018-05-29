@@ -17,7 +17,6 @@
 package me.banes.chris.tivi.calls
 
 import android.arch.paging.DataSource
-import android.database.sqlite.SQLiteConstraintException
 import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.withContext
 import me.banes.chris.tivi.ShowFetcher
@@ -29,7 +28,7 @@ import me.banes.chris.tivi.data.entities.ListItem
 import me.banes.chris.tivi.extensions.parallelForEach
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
-import timber.log.Timber
+import me.banes.chris.tivi.util.Logger
 
 abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>, out ED : PaginatedEntryDao<ET, LI>>(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
@@ -38,6 +37,7 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
     private val showFetcher: ShowFetcher,
     protected val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
+    private val logger: Logger,
     override val pageSize: Int = 21
 ) : PaginatedCall<Unit, LI> {
 
@@ -89,11 +89,11 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
                 else -> entryDao.deletePage(page)
             }
             items.forEach { entry ->
-                Timber.d("Saving entry: %s", entry)
+                logger.d("Saving entry: %s", entry)
                 try {
                     entryDao.insert(entry)
-                } catch (e: SQLiteConstraintException) {
-                    Timber.d(e, "Ignoring SQLiteConstraintException while inserting %s", entry)
+                } catch (e: RuntimeException) {
+                    logger.d(e, "Ignoring exception while inserting %s", entry)
                 }
             }
         }

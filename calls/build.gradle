@@ -15,38 +15,19 @@
  *
  */
 
-apply plugin: 'com.android.library'
-
-apply plugin: 'kotlin-android'
+apply plugin: 'kotlin'
 apply plugin: 'kotlin-kapt'
-
-android {
-    compileSdkVersion buildConfig.compileSdk
-
-    defaultConfig {
-        minSdkVersion buildConfig.minSdk
-    }
-
-    lintOptions {
-        disable 'GradleCompatible'
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-}
 
 dependencies {
     implementation project(":base")
-    implementation project(":base-android")
     implementation project(":show-fetcher")
     implementation project(':seasons-fetcher')
     implementation project(":trakt")
     implementation project(":tmdb")
     implementation project(":data")
-    implementation project(":data-android")
 
-    api "io.reactivex.rxjava2:rxjava:${versions.rx}"
+    compile "android.arch.paging:common:${versions.androidx.paging}"
+
+    implementation "io.reactivex.rxjava2:rxjava:${versions.rx}"
     implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
 }

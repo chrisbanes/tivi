@@ -30,6 +30,7 @@ import me.banes.chris.tivi.data.entities.PopularListItem
 import me.banes.chris.tivi.extensions.fetchBodyWithRetry
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
+import me.banes.chris.tivi.util.Logger
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -40,14 +41,16 @@ class PopularCall @Inject constructor(
     private val showFetcher: ShowFetcher,
     private val showsService: Provider<Shows>,
     schedulers: AppRxSchedulers,
-    dispatchers: AppCoroutineDispatchers
+    dispatchers: AppCoroutineDispatchers,
+    logger: Logger
 ) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularListItem, PopularDao>(
         databaseTransactionRunner,
         showDao,
         popularDao,
         showFetcher,
         schedulers,
-        dispatchers
+        dispatchers,
+        logger
 ) {
 
     override suspend fun networkCall(page: Int): List<ItemWithIndex<Show>> {

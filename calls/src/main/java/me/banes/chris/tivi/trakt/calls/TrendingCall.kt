@@ -29,6 +29,7 @@ import me.banes.chris.tivi.data.entities.TrendingListItem
 import me.banes.chris.tivi.extensions.fetchBodyWithRetry
 import me.banes.chris.tivi.util.AppCoroutineDispatchers
 import me.banes.chris.tivi.util.AppRxSchedulers
+import me.banes.chris.tivi.util.Logger
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -39,14 +40,16 @@ class TrendingCall @Inject constructor(
     private val showFetcher: ShowFetcher,
     private val showsService: Provider<Shows>,
     schedulers: AppRxSchedulers,
-    dispatchers: AppCoroutineDispatchers
+    dispatchers: AppCoroutineDispatchers,
+    logger: Logger
 ) : PaginatedEntryCallImpl<TrendingShow, TrendingEntry, TrendingListItem, TrendingDao>(
         databaseTransactionRunner,
         showDao,
         trendingDao,
         showFetcher,
         schedulers,
-        dispatchers
+        dispatchers,
+        logger
 ) {
     override suspend fun networkCall(page: Int): List<TrendingShow> {
         // We add one to the page since Trakt uses a 1-based index whereas we use 0-based
