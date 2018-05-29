@@ -18,7 +18,6 @@ package app.tivi.showdetails.details
 
 import android.content.Context
 import android.view.View
-import com.airbnb.epoxy.TypedEpoxyController
 import app.tivi.PosterGridItemBindingModel_
 import app.tivi.R
 import app.tivi.data.entities.TiviShow
@@ -32,6 +31,7 @@ import app.tivi.seasonHeader
 import app.tivi.ui.epoxy.TotalSpanOverride
 import app.tivi.ui.epoxy.carousel
 import app.tivi.ui.epoxy.withModelsFrom
+import com.airbnb.epoxy.TypedEpoxyController
 
 class ShowDetailsEpoxyController(
     private val context: Context,

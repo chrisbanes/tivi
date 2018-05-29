@@ -19,13 +19,13 @@ package app.tivi.home.watched
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.View
-import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.WatchedShowListItem
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.util.EntryGridFragment
+import kotlinx.android.synthetic.main.fragment_rv_grid.*
 
 class WatchedShowsFragment : EntryGridFragment<WatchedShowListItem, WatchedShowsViewModel>(WatchedShowsViewModel::class.java) {
 

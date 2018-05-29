@@ -20,9 +20,9 @@ import android.arch.paging.DataSource
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
-import io.reactivex.Flowable
 import app.tivi.data.entities.TrendingEntry
 import app.tivi.data.entities.TrendingListItem
+import io.reactivex.Flowable
 
 @Dao
 abstract class TrendingDao : PaginatedEntryDao<TrendingEntry, TrendingListItem> {

@@ -19,12 +19,12 @@ package app.tivi.home
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MutableLiveData
-import io.reactivex.rxkotlin.plusAssign
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.Logger
 import app.tivi.util.TiviViewModel
+import io.reactivex.rxkotlin.plusAssign
 
 abstract class HomeFragmentViewModel(
     private val traktManager: TraktManager,

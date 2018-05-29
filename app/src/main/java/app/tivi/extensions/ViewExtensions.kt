@@ -21,9 +21,9 @@ import android.graphics.Bitmap
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.view.MenuItem
 import android.widget.ImageView
+import app.tivi.GlideApp
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import app.tivi.GlideApp
 
 fun ImageView.loadFromUrl(imageUrl: String) {
     GlideApp.with(this).load(imageUrl).into(this)

@@ -16,11 +16,6 @@
 
 package app.tivi.trakt.calls
 
-import com.uwetrottmann.trakt5.entities.UserSlug
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.services.Users
-import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.withContext
 import app.tivi.calls.Call
 import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.UserDao
@@ -28,6 +23,11 @@ import app.tivi.data.entities.TraktUser
 import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
+import com.uwetrottmann.trakt5.entities.UserSlug
+import com.uwetrottmann.trakt5.enums.Extended
+import com.uwetrottmann.trakt5.services.Users
+import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 import javax.inject.Provider
 

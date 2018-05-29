@@ -19,8 +19,6 @@ package app.tivi.data
 import android.arch.persistence.room.Room
 import android.content.Context
 import android.os.Debug
-import dagger.Module
-import dagger.Provides
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.FollowedShowsDao
@@ -31,6 +29,8 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.daos.UserDao
 import app.tivi.data.daos.WatchedShowDao
+import dagger.Module
+import dagger.Provides
 import javax.inject.Singleton
 
 @Module

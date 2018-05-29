@@ -20,9 +20,9 @@ import android.arch.paging.DataSource
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
-import io.reactivex.Flowable
 import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.data.entities.WatchedShowListItem
+import io.reactivex.Flowable
 
 @Dao
 abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowListItem> {

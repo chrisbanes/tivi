@@ -16,12 +16,12 @@
 
 package app.tivi.trakt.calls
 
-import io.reactivex.Flowable
 import app.tivi.SeasonFetcher
 import app.tivi.calls.Call
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.entities.SeasonWithEpisodes
 import app.tivi.util.AppRxSchedulers
+import io.reactivex.Flowable
 import javax.inject.Inject
 
 class ShowSeasonsCall @Inject constructor(

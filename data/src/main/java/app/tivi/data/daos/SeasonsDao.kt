@@ -19,10 +19,10 @@ package app.tivi.data.daos
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
-import io.reactivex.Flowable
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.Season.Companion.NUMBER_SPECIALS
 import app.tivi.data.entities.SeasonWithEpisodes
+import io.reactivex.Flowable
 
 @Dao
 abstract class SeasonsDao : EntityDao<Season> {

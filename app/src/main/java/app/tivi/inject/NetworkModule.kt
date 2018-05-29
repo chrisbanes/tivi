@@ -16,12 +16,12 @@
 
 package app.tivi.inject
 
-import dagger.Module
-import dagger.Provides
 import app.tivi.BuildConfig
 import app.tivi.TiviApplication
 import app.tivi.util.AndroidNetworkDetector
 import app.tivi.util.NetworkDetector
+import dagger.Module
+import dagger.Provides
 import okhttp3.logging.HttpLoggingInterceptor
 import javax.inject.Singleton
 

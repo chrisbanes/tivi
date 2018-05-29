@@ -16,12 +16,12 @@
 
 package app.tivi
 
-import com.uwetrottmann.trakt5.entities.Show
-import kotlinx.coroutines.experimental.withContext
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.tmdb.TmdbShowFetcher
 import app.tivi.trakt.TraktShowFetcher
 import app.tivi.util.AppCoroutineDispatchers
+import com.uwetrottmann.trakt5.entities.Show
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 

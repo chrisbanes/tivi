@@ -16,16 +16,6 @@
 
 package app.tivi.tasks
 
-import com.evernote.android.job.Job
-import com.evernote.android.job.JobRequest
-import com.evernote.android.job.util.support.PersistableBundleCompat
-import com.uwetrottmann.trakt5.entities.HistoryEntry
-import com.uwetrottmann.trakt5.entities.UserSlug
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.enums.HistoryType
-import com.uwetrottmann.trakt5.services.Users
-import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.withContext
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
@@ -37,6 +27,16 @@ import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
+import com.evernote.android.job.Job
+import com.evernote.android.job.JobRequest
+import com.evernote.android.job.util.support.PersistableBundleCompat
+import com.uwetrottmann.trakt5.entities.HistoryEntry
+import com.uwetrottmann.trakt5.entities.UserSlug
+import com.uwetrottmann.trakt5.enums.Extended
+import com.uwetrottmann.trakt5.enums.HistoryType
+import com.uwetrottmann.trakt5.services.Users
+import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 import javax.inject.Provider
 

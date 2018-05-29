@@ -17,7 +17,6 @@
 package app.tivi.home.discover
 
 import android.view.View
-import com.airbnb.epoxy.Typed3EpoxyController
 import app.tivi.R
 import app.tivi.data.Entry
 import app.tivi.data.entities.ListItem
@@ -28,6 +27,7 @@ import app.tivi.header
 import app.tivi.posterGridItem
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.TotalSpanOverride
+import com.airbnb.epoxy.Typed3EpoxyController
 
 class DiscoverEpoxyController(
     private val callbacks: Callbacks

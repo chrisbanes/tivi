@@ -16,15 +16,15 @@
 
 package app.tivi.trakt
 
-import com.uwetrottmann.trakt5.TraktV2
-import com.uwetrottmann.trakt5.entities.Show
-import com.uwetrottmann.trakt5.enums.Extended
-import kotlinx.coroutines.experimental.withContext
 import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.TiviShow
 import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.util.AppCoroutineDispatchers
+import com.uwetrottmann.trakt5.TraktV2
+import com.uwetrottmann.trakt5.entities.Show
+import com.uwetrottmann.trakt5.enums.Extended
+import kotlinx.coroutines.experimental.withContext
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton

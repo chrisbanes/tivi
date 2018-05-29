@@ -30,7 +30,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.doOnLayout
 import androidx.core.view.updatePadding
-import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import app.tivi.R
 import app.tivi.TiviFragment
 import app.tivi.api.Status
@@ -40,6 +39,7 @@ import app.tivi.extensions.observeK
 import app.tivi.ui.EndlessRecyclerViewScrollListener
 import app.tivi.ui.ProgressTimeLatch
 import app.tivi.ui.SpacingItemDecorator
+import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import javax.inject.Inject
 
 @SuppressLint("ValidFragment")

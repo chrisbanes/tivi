@@ -18,15 +18,6 @@ package app.tivi.trakt
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.uwetrottmann.trakt5.TraktV2
-import dagger.Lazy
-import io.reactivex.Flowable
-import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.subjects.BehaviorSubject
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
 import app.tivi.AppNavigator
 import app.tivi.actions.ShowTasks
 import app.tivi.data.entities.TraktUser
@@ -36,6 +27,15 @@ import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.NetworkDetector
+import com.uwetrottmann.trakt5.TraktV2
+import dagger.Lazy
+import io.reactivex.Flowable
+import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withContext
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationRequest

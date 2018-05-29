@@ -23,7 +23,6 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_summary.*
 import app.tivi.R
 import app.tivi.data.Entry
 import app.tivi.data.entities.ListItem
@@ -36,6 +35,7 @@ import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.util.GridToGridTransitioner
+import kotlinx.android.synthetic.main.fragment_summary.*
 
 internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     private lateinit var gridLayoutManager: GridLayoutManager

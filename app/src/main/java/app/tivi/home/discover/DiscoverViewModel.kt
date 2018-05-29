@@ -17,8 +17,6 @@
 package app.tivi.home.discover
 
 import android.arch.lifecycle.MutableLiveData
-import io.reactivex.rxkotlin.Flowables
-import io.reactivex.rxkotlin.plusAssign
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
 import app.tivi.home.HomeFragmentViewModel
@@ -30,6 +28,8 @@ import app.tivi.trakt.calls.TrendingCall
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.NetworkDetector
+import io.reactivex.rxkotlin.Flowables
+import io.reactivex.rxkotlin.plusAssign
 import javax.inject.Inject
 
 class DiscoverViewModel @Inject constructor(

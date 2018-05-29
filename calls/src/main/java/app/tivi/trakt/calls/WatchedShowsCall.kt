@@ -17,11 +17,6 @@
 package app.tivi.trakt.calls
 
 import android.arch.paging.DataSource
-import com.uwetrottmann.trakt5.entities.UserSlug
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.services.Users
-import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.withContext
 import app.tivi.ShowFetcher
 import app.tivi.calls.ListCall
 import app.tivi.data.DatabaseTransactionRunner
@@ -33,6 +28,11 @@ import app.tivi.extensions.parallelForEach
 import app.tivi.extensions.parallelMap
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
+import com.uwetrottmann.trakt5.entities.UserSlug
+import com.uwetrottmann.trakt5.enums.Extended
+import com.uwetrottmann.trakt5.services.Users
+import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 import javax.inject.Provider
 

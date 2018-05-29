@@ -18,9 +18,9 @@ package app.tivi.data.daos
 
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
+import app.tivi.data.entities.TiviShow
 import io.reactivex.Flowable
 import io.reactivex.Maybe
-import app.tivi.data.entities.TiviShow
 
 @Dao
 abstract class TiviShowDao : EntityDao<TiviShow> {

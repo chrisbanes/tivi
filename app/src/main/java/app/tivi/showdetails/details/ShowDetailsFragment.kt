@@ -29,7 +29,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.doOnLayout
-import kotlinx.android.synthetic.main.fragment_show_details.*
 import app.tivi.GlideApp
 import app.tivi.R
 import app.tivi.SharedElementHelper
@@ -44,6 +43,7 @@ import app.tivi.ui.NoopApplyWindowInsetsListener
 import app.tivi.ui.RoundRectViewOutline
 import app.tivi.ui.transitions.DrawableAlphaProperty
 import app.tivi.util.ScrimUtil
+import kotlinx.android.synthetic.main.fragment_show_details.*
 import javax.inject.Inject
 
 class ShowDetailsFragment : TiviFragment() {

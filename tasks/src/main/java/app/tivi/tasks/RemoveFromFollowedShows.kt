@@ -16,15 +16,15 @@
 
 package app.tivi.tasks
 
+import app.tivi.data.daos.FollowedShowsDao
+import app.tivi.data.daos.SeasonsDao
+import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.util.Logger
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
 import com.evernote.android.job.util.support.PersistableBundleCompat
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withContext
-import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.daos.SeasonsDao
-import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.Logger
 import javax.inject.Inject
 
 class RemoveFromFollowedShows @Inject constructor(

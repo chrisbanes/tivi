@@ -17,9 +17,9 @@
 package app.tivi.data.daos
 
 import android.arch.paging.DataSource
-import io.reactivex.Flowable
 import app.tivi.data.Entry
 import app.tivi.data.entities.ListItem
+import io.reactivex.Flowable
 
 /**
  * This interface represents a DAO which contains entities which are part of a single collective list.

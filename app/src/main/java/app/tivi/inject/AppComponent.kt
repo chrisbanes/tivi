@@ -16,16 +16,16 @@
 
 package app.tivi.inject
 
-import dagger.Component
-import dagger.android.AndroidInjector
-import dagger.android.support.AndroidSupportInjectionModule
 import app.tivi.TiviApplication
 import app.tivi.data.DatabaseModule
 import app.tivi.home.HomeBuilder
-import app.tivi.tasks.JobsCreator
 import app.tivi.showdetails.ShowDetailsBuilder
+import app.tivi.tasks.JobsCreator
 import app.tivi.tmdb.TmdbModule
 import app.tivi.trakt.TraktAuthModule
+import dagger.Component
+import dagger.android.AndroidInjector
+import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton
 
 @Singleton

@@ -17,11 +17,11 @@
 package app.tivi.trakt.calls
 
 import android.arch.paging.DataSource
-import io.reactivex.Flowable
 import app.tivi.calls.ListCall
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.FollowedShowsListItem
 import app.tivi.util.AppRxSchedulers
+import io.reactivex.Flowable
 import javax.inject.Inject
 
 class FollowedShowsCall @Inject constructor(

@@ -16,9 +16,9 @@
 
 package app.tivi.data.daos
 
-import io.reactivex.Flowable
 import app.tivi.data.MultipleEntry
 import app.tivi.data.entities.ListItem
+import io.reactivex.Flowable
 
 /**
  * This interface represents a DAO which contains entities which are part of a collective list for a given show.

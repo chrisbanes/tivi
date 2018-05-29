@@ -18,8 +18,8 @@ package app.tivi.data.daos
 
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
-import io.reactivex.Flowable
 import app.tivi.data.entities.TraktUser
+import io.reactivex.Flowable
 
 @Dao
 interface UserDao : EntityDao<TraktUser> {

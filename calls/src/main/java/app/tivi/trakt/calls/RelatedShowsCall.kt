@@ -16,10 +16,6 @@
 
 package app.tivi.trakt.calls
 
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.services.Shows
-import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.withContext
 import app.tivi.ShowFetcher
 import app.tivi.calls.Call
 import app.tivi.data.DatabaseTransactionRunner
@@ -31,6 +27,10 @@ import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.extensions.parallelForEach
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
+import com.uwetrottmann.trakt5.enums.Extended
+import com.uwetrottmann.trakt5.services.Shows
+import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 import javax.inject.Provider
 

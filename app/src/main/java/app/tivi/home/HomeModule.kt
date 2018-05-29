@@ -16,10 +16,10 @@
 
 package app.tivi.home
 
-import dagger.Module
-import dagger.Provides
 import app.tivi.AppNavigator
 import app.tivi.TiviAppActivityNavigator
+import dagger.Module
+import dagger.Provides
 
 @Module
 class HomeModule {

@@ -17,12 +17,12 @@
 package app.tivi.showdetails
 
 import android.arch.lifecycle.ViewModel
+import app.tivi.inject.ViewModelKey
+import app.tivi.showdetails.details.ShowDetailsFragmentBuilder
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
-import app.tivi.inject.ViewModelKey
-import app.tivi.showdetails.details.ShowDetailsFragmentBuilder
 
 @Module
 internal abstract class ShowDetailsBuilder {

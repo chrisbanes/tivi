@@ -20,10 +20,6 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.paging.LivePagedListBuilder
 import android.arch.paging.PagedList
-import io.reactivex.BackpressureStrategy
-import io.reactivex.rxkotlin.Flowables
-import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.subjects.BehaviorSubject
 import app.tivi.api.Status
 import app.tivi.api.UiResource
 import app.tivi.calls.ListCall
@@ -31,6 +27,10 @@ import app.tivi.calls.PaginatedCall
 import app.tivi.data.Entry
 import app.tivi.data.entities.ListItem
 import app.tivi.tmdb.TmdbManager
+import io.reactivex.BackpressureStrategy
+import io.reactivex.rxkotlin.Flowables
+import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.subjects.BehaviorSubject
 
 open class EntryViewModel<LI : ListItem<out Entry>>(
     private val schedulers: AppRxSchedulers,

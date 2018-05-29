@@ -24,7 +24,6 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.view.ViewGroup
 import androidx.core.view.forEach
-import kotlinx.android.synthetic.main.activity_home.*
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.TiviActivity
@@ -38,6 +37,7 @@ import app.tivi.home.trending.TrendingShowsFragment
 import app.tivi.home.watched.FollowedShowsFragment
 import app.tivi.home.watched.WatchedShowsFragment
 import app.tivi.trakt.TraktConstants
+import kotlinx.android.synthetic.main.activity_home.*
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import javax.inject.Inject

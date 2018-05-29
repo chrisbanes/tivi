@@ -16,9 +16,9 @@
 
 package app.tivi.data.daos
 
-import io.reactivex.Flowable
 import app.tivi.data.PaginatedEntry
 import app.tivi.data.entities.ListItem
+import io.reactivex.Flowable
 
 interface PaginatedEntryDao<EC : PaginatedEntry, LI : ListItem<EC>> : EntryDao<EC, LI> {
     fun entriesPage(page: Int): Flowable<List<LI>>

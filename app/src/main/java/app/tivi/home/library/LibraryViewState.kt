@@ -16,8 +16,8 @@
 
 package app.tivi.home.library
 
-import app.tivi.data.entities.ListItem
 import app.tivi.data.entities.FollowedShowEntry
+import app.tivi.data.entities.ListItem
 import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.tmdb.TmdbImageUrlProvider
 

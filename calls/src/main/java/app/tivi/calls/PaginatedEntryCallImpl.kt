@@ -17,8 +17,6 @@
 package app.tivi.calls
 
 import android.arch.paging.DataSource
-import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.withContext
 import app.tivi.ShowFetcher
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.PaginatedEntry
@@ -29,6 +27,8 @@ import app.tivi.extensions.parallelForEach
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
+import io.reactivex.Flowable
+import kotlinx.coroutines.experimental.withContext
 
 abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>, out ED : PaginatedEntryDao<ET, LI>>(
     private val databaseTransactionRunner: DatabaseTransactionRunner,

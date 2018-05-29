@@ -19,7 +19,6 @@ package app.tivi.home.trending
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.View
-import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import app.tivi.PosterGridItemBindingModel_
 import app.tivi.R
 import app.tivi.SharedElementHelper
@@ -28,6 +27,7 @@ import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.util.EntryGridEpoxyController
 import app.tivi.util.EntryGridFragment
+import kotlinx.android.synthetic.main.fragment_rv_grid.*
 
 class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsViewModel>(TrendingShowsViewModel::class.java) {
 

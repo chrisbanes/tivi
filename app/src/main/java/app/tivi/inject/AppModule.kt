@@ -19,13 +19,6 @@ package app.tivi.inject
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import dagger.Module
-import dagger.Provides
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.rx2.asCoroutineDispatcher
 import app.tivi.AppNavigator
 import app.tivi.BuildConfig
 import app.tivi.TiviAppNavigator
@@ -40,6 +33,13 @@ import app.tivi.util.AndroidLogger
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
+import dagger.Module
+import dagger.Provides
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.rx2.asCoroutineDispatcher
 import java.io.File
 import javax.inject.Named
 import javax.inject.Singleton

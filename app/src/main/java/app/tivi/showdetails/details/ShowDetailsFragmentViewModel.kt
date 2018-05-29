@@ -17,8 +17,6 @@
 package app.tivi.showdetails.details
 
 import android.arch.lifecycle.MutableLiveData
-import io.reactivex.rxkotlin.Flowables
-import io.reactivex.rxkotlin.plusAssign
 import app.tivi.SharedElementHelper
 import app.tivi.actions.ShowTasks
 import app.tivi.data.daos.FollowedShowsDao
@@ -31,6 +29,8 @@ import app.tivi.trakt.calls.ShowSeasonsCall
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.TiviViewModel
+import io.reactivex.rxkotlin.Flowables
+import io.reactivex.rxkotlin.plusAssign
 import javax.inject.Inject
 
 class ShowDetailsFragmentViewModel @Inject constructor(

@@ -16,10 +16,10 @@
 
 package app.tivi
 
-import dagger.android.AndroidInjector
-import dagger.android.DaggerApplication
 import app.tivi.appinitializers.AppInitializers
 import app.tivi.inject.DaggerAppComponent
+import dagger.android.AndroidInjector
+import dagger.android.DaggerApplication
 import javax.inject.Inject
 
 class TiviApplication : DaggerApplication() {

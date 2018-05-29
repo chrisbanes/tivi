@@ -16,14 +16,14 @@
 
 package app.tivi.tasks
 
-import com.evernote.android.job.Job
-import com.evernote.android.job.JobRequest
-import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.withContext
 import app.tivi.SeasonFetcher
 import app.tivi.actions.ShowTasks
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.util.AppCoroutineDispatchers
+import com.evernote.android.job.Job
+import com.evernote.android.job.JobRequest
+import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 class SyncAllFollowedShows @Inject constructor(

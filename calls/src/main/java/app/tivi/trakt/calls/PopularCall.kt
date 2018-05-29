@@ -16,9 +16,6 @@
 
 package app.tivi.trakt.calls
 
-import com.uwetrottmann.trakt5.entities.Show
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.services.Shows
 import app.tivi.ShowFetcher
 import app.tivi.api.ItemWithIndex
 import app.tivi.calls.PaginatedEntryCallImpl
@@ -31,6 +28,9 @@ import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
+import com.uwetrottmann.trakt5.entities.Show
+import com.uwetrottmann.trakt5.enums.Extended
+import com.uwetrottmann.trakt5.services.Shows
 import javax.inject.Inject
 import javax.inject.Provider
 

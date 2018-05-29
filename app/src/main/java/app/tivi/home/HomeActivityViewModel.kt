@@ -18,8 +18,8 @@ package app.tivi.home
 
 import android.arch.lifecycle.LiveData
 import app.tivi.trakt.TraktManager
-import app.tivi.util.TiviViewModel
 import app.tivi.util.SingleLiveEvent
+import app.tivi.util.TiviViewModel
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import javax.inject.Inject

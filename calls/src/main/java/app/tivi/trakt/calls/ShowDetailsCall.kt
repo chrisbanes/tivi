@@ -16,12 +16,12 @@
 
 package app.tivi.trakt.calls
 
-import io.reactivex.Flowable
 import app.tivi.ShowFetcher
 import app.tivi.calls.Call
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.TiviShow
 import app.tivi.util.AppRxSchedulers
+import io.reactivex.Flowable
 import javax.inject.Inject
 
 class ShowDetailsCall @Inject constructor(

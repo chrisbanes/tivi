@@ -16,17 +16,17 @@
 
 package app.tivi.tasks
 
-import com.evernote.android.job.Job
-import com.evernote.android.job.JobRequest
-import com.evernote.android.job.util.support.PersistableBundleCompat
-import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.withContext
 import app.tivi.SeasonFetcher
 import app.tivi.actions.ShowTasks
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
+import com.evernote.android.job.Job
+import com.evernote.android.job.JobRequest
+import com.evernote.android.job.util.support.PersistableBundleCompat
+import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 class AddToFollowedShows @Inject constructor(

@@ -17,9 +17,6 @@
 package app.tivi.home.library
 
 import android.arch.lifecycle.MutableLiveData
-import io.reactivex.rxkotlin.Flowables
-import io.reactivex.rxkotlin.Observables
-import io.reactivex.rxkotlin.plusAssign
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
 import app.tivi.home.HomeFragmentViewModel
@@ -32,6 +29,9 @@ import app.tivi.trakt.calls.WatchedShowsCall
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.NetworkDetector
+import io.reactivex.rxkotlin.Flowables
+import io.reactivex.rxkotlin.Observables
+import io.reactivex.rxkotlin.plusAssign
 import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(

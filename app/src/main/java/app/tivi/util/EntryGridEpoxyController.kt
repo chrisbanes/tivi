@@ -17,7 +17,6 @@
 package app.tivi.util
 
 import android.view.View
-import com.airbnb.epoxy.paging.PagingEpoxyController
 import app.tivi.PosterGridItemBindingModel_
 import app.tivi.data.Entry
 import app.tivi.data.entities.ListItem
@@ -25,6 +24,7 @@ import app.tivi.emptyState
 import app.tivi.infiniteLoading
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.TotalSpanOverride
+import com.airbnb.epoxy.paging.PagingEpoxyController
 
 open class EntryGridEpoxyController<LI : ListItem<out Entry>> : PagingEpoxyController<LI>() {
     internal var callbacks: Callbacks<LI>? = null

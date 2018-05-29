@@ -17,8 +17,8 @@
 package app.tivi.appinitializers
 
 import android.app.Application
-import com.evernote.android.job.JobManager
 import app.tivi.tasks.TiviJobCreator
+import com.evernote.android.job.JobManager
 import javax.inject.Inject
 
 class AndroidJobInitializer @Inject constructor(
