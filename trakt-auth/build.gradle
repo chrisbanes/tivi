@@ -25,7 +25,7 @@ android {
 
     defaultConfig {
         minSdkVersion buildConfig.minSdk
-        manifestPlaceholders += ['appAuthRedirectScheme': 'me.banes.chris.tivi']
+        manifestPlaceholders += ['appAuthRedirectScheme': 'app.tivi']
     }
 
     lintOptions {

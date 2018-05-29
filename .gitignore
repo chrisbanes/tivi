@@ -12,6 +12,7 @@ captures
 # Do not commit plain release keys
 signing/app-release.jks
 signing/play-account.p12
+signing/play-account.json
 
 # Do not commit firebase config
 google-services.json

@@ -22,7 +22,7 @@
     <data>
         <import type="android.view.View" />
         <import type="java.util.List" />
-        <import type="me.banes.chris.tivi.data.entities.Genre" />
+        <import type="app.tivi.data.entities.Genre" />
 
         <variable name="title" type="String" />
         <variable name="subtitle" type="String" />
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <me.banes.chris.tivi.ui.widget.BaselineGridTextView
+        <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/details_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
             app:layout_constraintVertical_chainStyle="packed"
             tools:text="@sample/shows.txt" />
 
-        <me.banes.chris.tivi.ui.widget.BaselineGridTextView
+        <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/details_subtitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
             app:layout_goneMarginTop="0dp"
             tools:text="@sample/shows.txt" />
 
-        <me.banes.chris.tivi.ui.widget.BaselineGridTextView
+        <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/details_categories"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

@@ -21,7 +21,7 @@
     <data>
         <variable
             name="season"
-            type="me.banes.chris.tivi.data.entities.Season" />
+            type="app.tivi.data.entities.Season" />
     </data>
 
     <FrameLayout

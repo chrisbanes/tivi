@@ -78,6 +78,6 @@
         android:layout_marginStart="16dp"
         android:elevation="3dp"
         android:transitionName="poster"
-        app:layout_behavior="me.banes.chris.tivi.showdetails.details.DetailPosterBehavior" />
+        app:layout_behavior="app.tivi.showdetails.details.DetailPosterBehavior" />
 
 </android.support.design.widget.CoordinatorLayout>

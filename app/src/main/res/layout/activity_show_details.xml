@@ -20,7 +20,7 @@
     android:id="@+id/details_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="me.banes.chris.tivi.showdetails.ShowDetailsActivity">
+    tools:context=".showdetails.ShowDetailsActivity">
 
     <FrameLayout
         android:id="@+id/details_content"

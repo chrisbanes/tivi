@@ -105,8 +105,8 @@
 -keepnames class com.uwetrottmann.tmdb2.entities.** { *; }
 
 # Keep stuff for Room
--keep class me.banes.chris.tivi.data.TiviTypeConverters { *; }
--keep class me.banes.chris.tivi.data.entities.** { *; }
+-keep class app.tivi.data.TiviTypeConverters { *; }
+-keep class app.tivi.data.entities.** { *; }
 
 # Glide
 -keep public class * implements com.bumptech.glide.module.GlideModule
