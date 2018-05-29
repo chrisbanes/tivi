@@ -4,4 +4,4 @@
 rm -f signing/app-release.jks
 
 # Delete Play Store key
-rm -f signing/play-account.p12
+rm -f signing/play-account.json
