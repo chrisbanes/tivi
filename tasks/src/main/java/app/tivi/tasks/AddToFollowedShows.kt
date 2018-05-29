@@ -62,8 +62,9 @@ class AddToFollowedShows @Inject constructor(
 
             // Now refresh seasons
             seasonFetcher.load(showId)
+
             // And sync watched episodes
-            showTasks.syncShowWatchedEpisodes(entryId)
+            showTasks.syncShowWatchedEpisodes(showId)
 
             Result.SUCCESS
         }
