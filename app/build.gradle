@@ -59,8 +59,8 @@ android {
         applicationId "app.tivi"
         minSdkVersion buildConfig.minSdk
         targetSdkVersion buildConfig.targetSdk
-        versionCode 11
-        versionName "0.1.11"
+        versionCode 12
+        versionName "0.2"
 
         // For now we're sticking to just shipping APKs
         resConfigs "en"
