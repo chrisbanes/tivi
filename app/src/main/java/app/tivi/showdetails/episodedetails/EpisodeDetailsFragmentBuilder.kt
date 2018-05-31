@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,22 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails
+package app.tivi.showdetails.episodedetails
 
 import android.arch.lifecycle.ViewModel
 import app.tivi.inject.ViewModelKey
-import app.tivi.showdetails.details.ShowDetailsFragmentBuilder
-import app.tivi.showdetails.episodedetails.EpisodeDetailsFragmentBuilder
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
 
 @Module
-internal abstract class ShowDetailsBuilder {
-    @ContributesAndroidInjector(modules = [
-        ShowDetailsModule::class,
-        ShowDetailsFragmentBuilder::class,
-        EpisodeDetailsFragmentBuilder::class
-    ])
-    internal abstract fun bindDetailsActivity(): ShowDetailsActivity
+internal abstract class EpisodeDetailsFragmentBuilder {
+    @ContributesAndroidInjector
+    internal abstract fun bindEpisodeDetailsFragment(): EpisodeDetailsFragment
 
     @Binds
     @IntoMap
-    @ViewModelKey(ShowDetailsNavigatorViewModel::class)
-    abstract fun bindDetailsNavigatorViewModel(viewModel: ShowDetailsNavigatorViewModel): ViewModel
+    @ViewModelKey(EpisodeDetailsViewModel::class)
+    abstract fun bindEpisodeDetailsViewModel(viewModel: EpisodeDetailsViewModel): ViewModel
 }

@@ -20,6 +20,7 @@ import android.arch.lifecycle.MutableLiveData
 import app.tivi.SharedElementHelper
 import app.tivi.actions.ShowTasks
 import app.tivi.data.daos.FollowedShowsDao
+import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
@@ -120,8 +121,13 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     }
 
     fun onRelatedShowClicked(
-        navigatorShow: ShowDetailsNavigator,
+        showDetailsNavigator: ShowDetailsNavigator,
         show: TiviShow,
         sharedElementHelper: SharedElementHelper? = null
-    ) = navigatorShow.showShowDetails(show, sharedElementHelper)
+    ) = showDetailsNavigator.showShowDetails(show, sharedElementHelper)
+
+    fun showEpisodeDetails(
+        showDetailsNavigator: ShowDetailsNavigator,
+        episode: Episode
+    ) = showDetailsNavigator.showEpisodeDetails(episode)
 }

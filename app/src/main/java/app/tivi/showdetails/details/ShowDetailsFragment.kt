@@ -69,7 +69,8 @@ class ShowDetailsFragment : TiviFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ShowDetailsFragmentViewModel::class.java)
-        showDetailsNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(ShowDetailsNavigatorViewModel::class.java)
+        showDetailsNavigator = ViewModelProviders.of(requireActivity(), viewModelFactory)
+                .get(ShowDetailsNavigatorViewModel::class.java)
 
         arguments?.let {
             viewModel.showId = it.getLong(KEY_SHOW_ID)

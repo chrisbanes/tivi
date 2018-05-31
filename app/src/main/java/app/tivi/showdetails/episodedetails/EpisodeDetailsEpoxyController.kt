@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails
+package app.tivi.showdetails.episodedetails
 
-import app.tivi.SharedElementHelper
-import app.tivi.data.entities.Episode
-import app.tivi.data.entities.TiviShow
+import android.content.Context
+import com.airbnb.epoxy.TypedEpoxyController
 
-interface ShowDetailsNavigator {
-    fun showShowDetails(show: TiviShow, sharedElements: SharedElementHelper?)
-    fun showEpisodeDetails(episode: Episode)
+class EpisodeDetailsEpoxyController(
+    private val context: Context,
+    private val callbacks: Callbacks
+) : TypedEpoxyController<EpisodeDetailsViewState>() {
+
+    interface Callbacks {
+        // TODO
+    }
+
+    override fun buildModels(viewState: EpisodeDetailsViewState) {
+        // TODO
+    }
 }
