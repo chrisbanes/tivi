@@ -19,6 +19,7 @@ package app.tivi.data.daos
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import app.tivi.data.entities.Episode
+import io.reactivex.Flowable
 
 @Dao
 abstract class EpisodesDao : EntityDao<Episode> {
@@ -30,4 +31,7 @@ abstract class EpisodesDao : EntityDao<Episode> {
 
     @Query("SELECT * from episodes WHERE id = :id")
     abstract fun episodeWithId(id: Long): Episode?
+
+    @Query("SELECT * from episodes WHERE id = :id")
+    abstract fun episodeWithIdFlowable(id: Long): Flowable<Episode>
 }

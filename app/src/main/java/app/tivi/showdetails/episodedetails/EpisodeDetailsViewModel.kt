@@ -1,5 +1,6 @@
 package app.tivi.showdetails.episodedetails
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.util.TiviViewModel
 import javax.inject.Inject
@@ -12,17 +13,20 @@ class EpisodeDetailsViewModel @Inject constructor(
         set(value) {
             if (field != value) {
                 field = value
-                if (value != null) {
-                    // TODO
-                } else {
-                    data.value = null
-                }
+                refresh()
             }
         }
 
-    val data = MutableLiveData<EpisodeDetailsViewState>()
+    private val _data = MutableLiveData<EpisodeDetailsViewState>()
+    val data: LiveData<EpisodeDetailsViewState>
+        get() = _data
 
     private fun refresh() {
-        // TODO
+        val epId = episodeId
+        if (epId != null) {
+
+        } else {
+            _data.value = null
+        }
     }
 }

@@ -63,6 +63,12 @@ class TraktAuthModule {
     @Provides
     fun provideTraktShowsService(traktV2: TraktV2) = traktV2.shows()
 
+    @Provides
+    fun provideTraktEpisodesService(traktV2: TraktV2) = traktV2.episodes()
+
+    @Provides
+    fun provideTraktSeasonsService(traktV2: TraktV2) = traktV2.seasons()
+
     @Singleton
     @Provides
     fun provideAuthConfig(): AuthorizationServiceConfiguration {

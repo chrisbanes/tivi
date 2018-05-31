@@ -146,6 +146,7 @@ dependencies {
     implementation project(":tmdb")
     implementation project(":show-fetcher")
     implementation project(':seasons-fetcher')
+    implementation project(':episode-fetcher')
     implementation project(":calls")
     implementation project(":tasks")
 
