@@ -32,7 +32,6 @@ import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
 import com.uwetrottmann.trakt5.entities.Episode as TraktEpisode
-import com.uwetrottmann.trakt5.entities.Season as TraktSeason
 
 @Singleton
 class TraktEpisodeFetcher @Inject constructor(

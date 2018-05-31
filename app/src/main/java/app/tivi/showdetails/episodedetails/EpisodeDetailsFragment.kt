@@ -67,7 +67,6 @@ class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         controller = EpisodeDetailsEpoxyController(requireContext(), object : EpisodeDetailsEpoxyController.Callbacks {
-
         })
 
         details_rv.setController(controller)
