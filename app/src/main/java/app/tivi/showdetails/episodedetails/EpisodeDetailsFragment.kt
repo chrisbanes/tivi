@@ -19,7 +19,6 @@ package app.tivi.showdetails.episodedetails
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.design.widget.BottomSheetDialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,10 +27,11 @@ import app.tivi.R
 import app.tivi.extensions.observeK
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
+import app.tivi.util.DaggerBottomSheetFragment
 import kotlinx.android.synthetic.main.fragment_episode_details.*
 import javax.inject.Inject
 
-class EpisodeDetailsFragment : BottomSheetDialogFragment() {
+class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
     companion object {
         private const val KEY_EPISODE_ID = "episode_id"
 

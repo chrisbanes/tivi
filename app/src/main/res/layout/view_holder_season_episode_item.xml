@@ -24,13 +24,18 @@
             name="episode"
             type="app.tivi.data.entities.Episode" />
         <variable
+            name="clickListener"
+            type="android.view.View.OnClickListener" />
+        <variable
             name="watched"
             type="boolean" />
     </data>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:onClick="@{clickListener}">
 
         <TextView
             android:id="@+id/episode_title"

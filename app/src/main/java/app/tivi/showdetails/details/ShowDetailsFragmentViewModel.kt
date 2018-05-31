@@ -126,7 +126,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         sharedElementHelper: SharedElementHelper? = null
     ) = showDetailsNavigator.showShowDetails(show, sharedElementHelper)
 
-    fun showEpisodeDetails(
+    fun onRelatedShowClicked(
         showDetailsNavigator: ShowDetailsNavigator,
         episode: Episode
     ) = showDetailsNavigator.showEpisodeDetails(episode)
