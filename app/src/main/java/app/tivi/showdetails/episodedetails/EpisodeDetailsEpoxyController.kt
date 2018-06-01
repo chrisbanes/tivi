@@ -17,6 +17,8 @@
 package app.tivi.showdetails.episodedetails
 
 import android.content.Context
+import app.tivi.epDetailsSummary
+import app.tivi.ui.epoxy.TotalSpanOverride
 import com.airbnb.epoxy.TypedEpoxyController
 
 class EpisodeDetailsEpoxyController(
@@ -29,6 +31,10 @@ class EpisodeDetailsEpoxyController(
     }
 
     override fun buildModels(viewState: EpisodeDetailsViewState) {
-        // TODO
+        epDetailsSummary {
+            id("episode_summary")
+            episode(viewState.episode)
+            spanSizeOverride(TotalSpanOverride)
+        }
     }
 }

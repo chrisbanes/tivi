@@ -15,24 +15,63 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/details_coordinator"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?attr/colorBackgroundFloating"
-    android:orientation="vertical">
-    
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="240dp" />
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.airbnb.epoxy.EpoxyRecyclerView
-        android:id="@+id/details_rv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layoutManager="android.support.v7.widget.GridLayoutManager"
-        tools:lisitem="@layout/viewdetai" />
+    <data>
+        <variable
+            name="episode"
+            type="app.tivi.data.entities.Episode" />
+    </data>
 
-</LinearLayout>
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/ep_details_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorBackgroundFloating"
+        >
+
+        <ImageView
+            android:id="@+id/ep_details_fanart"
+            android:layout_width="0dp"
+            android:layout_height="240dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <app.tivi.ui.widget.BaselineGridTextView
+            android:id="@+id/ep_details_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:ellipsize="end"
+            android:text="@{episode.title}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            app:layout_constraintBottom_toBottomOf="@+id/ep_details_fanart"
+            app:layout_constraintStart_toStartOf="@+id/ep_details_fanart"
+            tools:text="@sample/shows.txt" />
+
+        <com.airbnb.epoxy.EpoxyRecyclerView
+            android:id="@+id/ep_details_rv"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:minHeight="100dp"
+            app:layoutManager="android.support.v7.widget.GridLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ep_details_fanart" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/ep_details_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_eye_24dp"
+            app:elevation="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/ep_details_rv"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

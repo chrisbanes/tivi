@@ -23,7 +23,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import app.tivi.R
+import androidx.core.view.doOnLayout
+import androidx.core.view.updatePadding
+import app.tivi.databinding.FragmentEpisodeDetailsBinding
+import app.tivi.extensions.marginBottom
+import app.tivi.extensions.marginTop
 import app.tivi.extensions.observeK
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
@@ -49,6 +53,8 @@ class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
 
     private lateinit var showDetailsNavigator: ShowDetailsNavigator
 
+    private lateinit var binding: FragmentEpisodeDetailsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(EpisodeDetailsViewModel::class.java)
@@ -60,8 +66,10 @@ class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_episode_details, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentEpisodeDetailsBinding.inflate(layoutInflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -69,7 +77,11 @@ class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
         controller = EpisodeDetailsEpoxyController(requireContext(), object : EpisodeDetailsEpoxyController.Callbacks {
         })
 
-        details_rv.setController(controller)
+        ep_details_fab.doOnLayout {
+            ep_details_rv.updatePadding(bottom = it.height + it.marginBottom + it.marginTop)
+        }
+
+        ep_details_rv.setController(controller)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -78,6 +90,8 @@ class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
     }
 
     private fun update(viewState: EpisodeDetailsViewState) {
+        binding.episode = viewState.episode
+
         controller.setData(viewState)
     }
 }
