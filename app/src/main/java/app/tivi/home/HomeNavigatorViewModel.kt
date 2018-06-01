@@ -55,23 +55,23 @@ class HomeNavigatorViewModel @Inject constructor(
         _upClickedCall.call()
     }
 
-    private val _showPopularCall = SingleLiveEvent<SharedElementHelper>()
+    private val _showPopularCall = SingleLiveEvent<SharedElementHelper>(errorOnNoObservers = true)
     val showPopularCall: LiveData<SharedElementHelper>
         get() = _showPopularCall
 
-    private val _showTrendingCall = SingleLiveEvent<SharedElementHelper>()
+    private val _showTrendingCall = SingleLiveEvent<SharedElementHelper>(errorOnNoObservers = true)
     val showTrendingCall: LiveData<SharedElementHelper>
         get() = _showTrendingCall
 
-    private val _showWatchedCall = SingleLiveEvent<SharedElementHelper>()
+    private val _showWatchedCall = SingleLiveEvent<SharedElementHelper>(errorOnNoObservers = true)
     val showWatchedCall: LiveData<SharedElementHelper>
         get() = _showWatchedCall
 
-    private val _showMyShowsCall = SingleLiveEvent<SharedElementHelper>()
+    private val _showMyShowsCall = SingleLiveEvent<SharedElementHelper>(errorOnNoObservers = true)
     val showMyShowsCall: LiveData<SharedElementHelper>
         get() = _showMyShowsCall
 
-    private val _upClickedCall = SingleLiveEvent<Unit>()
+    private val _upClickedCall = SingleLiveEvent<Unit>(errorOnNoObservers = true)
     val upClickedCall: LiveData<Unit>
         get() = _upClickedCall
 }

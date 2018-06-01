@@ -39,7 +39,7 @@ class ShowDetailsNavigatorViewModel @Inject constructor(
         _showEpisodeDetailsCall.value = episode.id
     }
 
-    private val _showEpisodeDetailsCall = SingleLiveEvent<Long>()
+    private val _showEpisodeDetailsCall = SingleLiveEvent<Long>(errorOnNoObservers = true)
     val showEpisodeDetailsCall: LiveData<Long>
         get() = _showEpisodeDetailsCall
 }
