@@ -23,19 +23,28 @@
         <variable
             name="episode"
             type="app.tivi.data.entities.Episode" />
+
+        <variable
+            name="tmdbImageUrlProvider"
+            type="app.tivi.tmdb.TmdbImageUrlProvider" />
     </data>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/ep_details_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorBackgroundFloating"
-        >
+        android:background="?attr/colorBackgroundFloating">
 
         <ImageView
             android:id="@+id/ep_details_fanart"
             android:layout_width="0dp"
-            android:layout_height="240dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="w,1:1.5"
+            android:elevation="4dp"
+            android:scaleType="centerCrop"
+            android:tmdbBackdropPath="@{episode.tmdbBackdropPath}"
+            android:tmdbImageUrlProvider="@{tmdbImageUrlProvider}"
+            app:foregroundScrim="@{@color/content_scrim_dark}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -45,10 +54,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            android:elevation="4dp"
             android:ellipsize="end"
             android:text="@{episode.title}"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark"
             app:layout_constraintBottom_toBottomOf="@+id/ep_details_fanart"
+            app:layout_constraintEnd_toStartOf="@+id/ep_details_fab"
             app:layout_constraintStart_toStartOf="@+id/ep_details_fanart"
             tools:text="@sample/shows.txt" />
 
@@ -68,7 +80,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:src="@drawable/ic_eye_24dp"
-            app:elevation="0dp"
             app:layout_constraintBottom_toTopOf="@+id/ep_details_rv"
             app:layout_constraintEnd_toEndOf="parent" />
 

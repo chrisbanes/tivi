@@ -40,4 +40,6 @@
     <color name="status_bar_scrim_dark">#000000</color>
     <color name="status_bar_scrim_translucent_dark">#8F222222</color>
 
+    <color name="content_scrim_dark">#262626</color>
+
 </resources>

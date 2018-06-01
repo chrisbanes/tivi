@@ -32,7 +32,6 @@ import app.tivi.extensions.observeK
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
 import app.tivi.util.DaggerBottomSheetFragment
-import kotlinx.android.synthetic.main.fragment_episode_details.*
 import javax.inject.Inject
 
 class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
@@ -77,11 +76,11 @@ class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
         controller = EpisodeDetailsEpoxyController(requireContext(), object : EpisodeDetailsEpoxyController.Callbacks {
         })
 
-        ep_details_fab.doOnLayout {
-            ep_details_rv.updatePadding(bottom = it.height + it.marginBottom + it.marginTop)
+        binding.epDetailsFab.doOnLayout { fab ->
+            binding.epDetailsRv.updatePadding(bottom = fab.height + fab.marginBottom + fab.marginTop)
         }
 
-        ep_details_rv.setController(controller)
+        binding.epDetailsRv.setController(controller)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -91,6 +90,7 @@ class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
 
     private fun update(viewState: EpisodeDetailsViewState) {
         binding.episode = viewState.episode
+        binding.tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
 
         controller.setData(viewState)
     }

@@ -30,7 +30,7 @@ class EpisodeDetailsCall @Inject constructor(
     private val schedulers: AppRxSchedulers
 ) : Call<Long, Episode> {
     override suspend fun refresh(param: Long) {
-        episodeFetcher.update(param)
+        episodeFetcher.update(param, true)
     }
 
     override fun data(param: Long): Flowable<Episode> {

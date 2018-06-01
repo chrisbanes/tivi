@@ -17,7 +17,9 @@
 package app.tivi.showdetails.episodedetails
 
 import app.tivi.data.entities.Episode
+import app.tivi.tmdb.TmdbImageUrlProvider
 
 data class EpisodeDetailsViewState(
-    val episode: Episode
+    val episode: Episode,
+    val tmdbImageUrlProvider: TmdbImageUrlProvider
 )

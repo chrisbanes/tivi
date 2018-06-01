@@ -20,8 +20,9 @@ import app.tivi.data.daos.EpisodesDao
 import app.tivi.tmdb.TmdbEpisodeFetcher
 import app.tivi.trakt.TraktEpisodeFetcher
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.experimental.async
+import app.tivi.util.Logger
 import kotlinx.coroutines.experimental.withContext
+import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -30,26 +31,26 @@ class EpisodeFetcher @Inject constructor(
     private val episodeDao: EpisodesDao,
     private val dispatchers: AppCoroutineDispatchers,
     private val traktEpisodeFetcher: TraktEpisodeFetcher,
-    private val tmdbEpisodeFetcher: TmdbEpisodeFetcher
+    private val tmdbEpisodeFetcher: TmdbEpisodeFetcher,
+    private val logger: Logger
 ) {
-    suspend fun update(episodeId: Long) {
+    suspend fun update(episodeId: Long, forceRefresh: Boolean = false) {
         val show = withContext(dispatchers.database) {
             episodeDao.episodeWithId(episodeId)!!
         }
-
-        val traktJob = if (show.needsUpdateFromTrakt()) {
-            async { traktEpisodeFetcher.updateEpisodeData(episodeId) }
-        } else {
-            null
+        if (forceRefresh || show.needsUpdateFromTrakt()) {
+            try {
+                traktEpisodeFetcher.updateEpisodeData(episodeId)
+            } catch (e: HttpException) {
+                logger.e("Error while fetching episode data from Trakt", e)
+            }
         }
-
-        val tmdbJob = if (show.needsUpdateFromTmdb()) {
-            async { tmdbEpisodeFetcher.updateEpisodeData(episodeId) }
-        } else {
-            null
+        if (forceRefresh || show.needsUpdateFromTmdb()) {
+            try {
+                tmdbEpisodeFetcher.updateEpisodeData(episodeId)
+            } catch (e: HttpException) {
+                logger.e("Error while fetching episode data from TMDb", e)
+            }
         }
-
-        traktJob?.await()
-        tmdbJob?.await()
     }
 }

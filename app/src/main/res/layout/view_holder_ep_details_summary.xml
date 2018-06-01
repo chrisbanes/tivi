@@ -16,7 +16,6 @@
   -->
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -25,22 +24,15 @@
             type="app.tivi.data.entities.Episode" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <app.tivi.ui.widget.BaselineGridTextView
+        android:id="@+id/ep_details_summary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:ellipsize="end"
+        android:padding="16dp"
+        android:text="@{episode.summary}"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:maxLinesToggle="@{@integer/details_summary_collapsed_lines}"
+        tools:text="@sample/episode_summary.txt" />
 
-        <app.tivi.ui.widget.BaselineGridTextView
-            android:id="@+id/ep_details_summary"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:text="@{episode.summary}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="@sample/episode_summary.txt" />
-
-    </android.support.constraint.ConstraintLayout>
 </layout>

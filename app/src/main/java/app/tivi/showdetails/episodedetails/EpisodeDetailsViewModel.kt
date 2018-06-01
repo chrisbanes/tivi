@@ -18,21 +18,25 @@ package app.tivi.showdetails.episodedetails
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.calls.EpisodeDetailsCall
 import app.tivi.util.Logger
 import app.tivi.util.TiviViewModel
+import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
 import javax.inject.Inject
 
 class EpisodeDetailsViewModel @Inject constructor(
-    val episodeDetailsCall: EpisodeDetailsCall,
-    val logger: Logger
+    private val episodeDetailsCall: EpisodeDetailsCall,
+    private val tmdbManager: TmdbManager,
+    private val logger: Logger
 ) : TiviViewModel() {
 
     var episodeId: Long? = null
         set(value) {
             if (field != value) {
                 field = value
+                setupLiveData(value!!)
                 refresh()
             }
         }
@@ -42,12 +46,8 @@ class EpisodeDetailsViewModel @Inject constructor(
         get() = _data
 
     private fun refresh() {
-        disposables.clear()
-
         val epId = episodeId
         if (epId != null) {
-            setupLiveData(epId)
-
             launchWithParent {
                 episodeDetailsCall.refresh(epId)
             }
@@ -57,8 +57,12 @@ class EpisodeDetailsViewModel @Inject constructor(
     }
 
     private fun setupLiveData(episodeId: Long) {
-        disposables += episodeDetailsCall.data(episodeId)
-                .map(::EpisodeDetailsViewState)
+        disposables.clear()
+
+        disposables += Flowables.combineLatest(
+                episodeDetailsCall.data(episodeId),
+                tmdbManager.imageProvider,
+                ::EpisodeDetailsViewState)
                 .subscribe(_data::postValue, logger::e)
     }
 }
