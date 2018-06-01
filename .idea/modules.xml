@@ -14,6 +14,7 @@
       <module fileurl="file://$PROJECT_DIR$/tasks/tasks.iml" filepath="$PROJECT_DIR$/tasks/tasks.iml" />
       <module fileurl="file://$PROJECT_DIR$/tivi.iml" filepath="$PROJECT_DIR$/tivi.iml" />
       <module fileurl="file://$PROJECT_DIR$/tmdb/tmdb.iml" filepath="$PROJECT_DIR$/tmdb/tmdb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tmdb-episode-fetcher/tmdb-episode-fetcher.iml" filepath="$PROJECT_DIR$/tmdb-episode-fetcher/tmdb-episode-fetcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/tmdb-show-fetcher/tmdb-show-fetcher.iml" filepath="$PROJECT_DIR$/tmdb-show-fetcher/tmdb-show-fetcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/trakt/trakt.iml" filepath="$PROJECT_DIR$/trakt/trakt.iml" />
       <module fileurl="file://$PROJECT_DIR$/trakt-auth/trakt-auth.iml" filepath="$PROJECT_DIR$/trakt-auth/trakt-auth.iml" />

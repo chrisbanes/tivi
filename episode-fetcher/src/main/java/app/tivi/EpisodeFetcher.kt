@@ -16,15 +16,40 @@
 
 package app.tivi
 
+import app.tivi.data.daos.EpisodesDao
+import app.tivi.tmdb.TmdbEpisodeFetcher
 import app.tivi.trakt.TraktEpisodeFetcher
+import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class EpisodeFetcher @Inject constructor(
-    private val traktEpisodeFetcher: TraktEpisodeFetcher
+    private val episodeDao: EpisodesDao,
+    private val dispatchers: AppCoroutineDispatchers,
+    private val traktEpisodeFetcher: TraktEpisodeFetcher,
+    private val tmdbEpisodeFetcher: TmdbEpisodeFetcher
 ) {
     suspend fun update(episodeId: Long) {
-        traktEpisodeFetcher.updateEpisodeData(episodeId)
+        val show = withContext(dispatchers.database) {
+            episodeDao.episodeWithId(episodeId)!!
+        }
+
+        val traktJob = if (show.needsUpdateFromTrakt()) {
+            async { traktEpisodeFetcher.updateEpisodeData(episodeId) }
+        } else {
+            null
+        }
+
+        val tmdbJob = if (show.needsUpdateFromTmdb()) {
+            async { tmdbEpisodeFetcher.updateEpisodeData(episodeId) }
+        } else {
+            null
+        }
+
+        traktJob?.await()
+        tmdbJob?.await()
     }
 }

@@ -29,6 +29,9 @@ abstract class EpisodesDao : EntityDao<Episode> {
     @Query("SELECT * from episodes WHERE trakt_id = :traktId")
     abstract fun episodeWithTraktId(traktId: Int): Episode?
 
+    @Query("SELECT * from episodes WHERE tmdb_id = :tmdbId")
+    abstract fun episodeWithTmdbId(tmdbId: Int): Episode?
+
     @Query("SELECT * from episodes WHERE id = :id")
     abstract fun episodeWithId(id: Long): Episode?
 

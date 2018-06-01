@@ -19,6 +19,7 @@
             <option value="$PROJECT_DIR$/show-fetcher" />
             <option value="$PROJECT_DIR$/tasks" />
             <option value="$PROJECT_DIR$/tmdb" />
+            <option value="$PROJECT_DIR$/tmdb-episode-fetcher" />
             <option value="$PROJECT_DIR$/tmdb-show-fetcher" />
             <option value="$PROJECT_DIR$/trakt" />
             <option value="$PROJECT_DIR$/trakt-auth" />
