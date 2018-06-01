@@ -25,6 +25,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.doOnLayout
 import androidx.core.view.updatePadding
+import app.tivi.R
 import app.tivi.databinding.FragmentEpisodeDetailsBinding
 import app.tivi.extensions.marginBottom
 import app.tivi.extensions.marginTop
@@ -91,6 +92,19 @@ class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
     private fun update(viewState: EpisodeDetailsViewState) {
         binding.episode = viewState.episode
         binding.tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
+
+        binding.epDetailsFab.apply {
+            when (viewState.action) {
+                EpisodeDetailsViewState.Action.WATCH -> setImageResource(R.drawable.ic_eye_24dp)
+                EpisodeDetailsViewState.Action.UNWATCH -> setImageResource(R.drawable.ic_eye_off_24dp)
+            }
+            setOnClickListener {
+                when (viewState.action) {
+                    EpisodeDetailsViewState.Action.WATCH -> viewModel.markWatched()
+                    EpisodeDetailsViewState.Action.UNWATCH -> viewModel.markUnwatched()
+                }
+            }
+        }
 
         controller.setData(viewState)
     }

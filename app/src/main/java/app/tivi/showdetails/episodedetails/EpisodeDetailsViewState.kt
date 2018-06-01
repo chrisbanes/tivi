@@ -17,9 +17,16 @@
 package app.tivi.showdetails.episodedetails
 
 import app.tivi.data.entities.Episode
+import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.tmdb.TmdbImageUrlProvider
 
 data class EpisodeDetailsViewState(
     val episode: Episode,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider
-)
+    val watches: List<EpisodeWatchEntry>,
+    val tmdbImageUrlProvider: TmdbImageUrlProvider,
+    val action: Action
+) {
+    enum class Action {
+        WATCH, UNWATCH
+    }
+}

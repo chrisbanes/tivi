@@ -20,6 +20,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.calls.EpisodeDetailsCall
+import app.tivi.trakt.calls.EpisodeWatchesCall
 import app.tivi.util.Logger
 import app.tivi.util.TiviViewModel
 import io.reactivex.rxkotlin.Flowables
@@ -28,6 +29,7 @@ import javax.inject.Inject
 
 class EpisodeDetailsViewModel @Inject constructor(
     private val episodeDetailsCall: EpisodeDetailsCall,
+    private val episodeWatchesCall: EpisodeWatchesCall,
     private val tmdbManager: TmdbManager,
     private val logger: Logger
 ) : TiviViewModel() {
@@ -59,10 +61,28 @@ class EpisodeDetailsViewModel @Inject constructor(
     private fun setupLiveData(episodeId: Long) {
         disposables.clear()
 
+        val watches = episodeWatchesCall.data(episodeId)
+
         disposables += Flowables.combineLatest(
                 episodeDetailsCall.data(episodeId),
+                watches,
                 tmdbManager.imageProvider,
-                ::EpisodeDetailsViewState)
-                .subscribe(_data::postValue, logger::e)
+                watches.map {
+                    if (it.isEmpty()) {
+                        EpisodeDetailsViewState.Action.WATCH
+                    } else {
+                        EpisodeDetailsViewState.Action.UNWATCH
+                    }
+                },
+                ::EpisodeDetailsViewState
+        ).subscribe(_data::postValue, logger::e)
+    }
+
+    fun markWatched() {
+        // TODO
+    }
+
+    fun markUnwatched() {
+        // TODO
     }
 }
