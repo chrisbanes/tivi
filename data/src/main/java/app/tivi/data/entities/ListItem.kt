@@ -23,10 +23,10 @@ import java.util.Objects
 
 interface ListItem<ET : Entry> {
     var entry: ET?
-    var relations: List<TiviShow>?
+    var relations: List<TiviShow>
 
     val show: TiviShow?
-        get() = relations?.getOrNull(0)
+        get() = relations.getOrNull(0)
 
     fun generateStableId(): Long {
         return Objects.hash(entry!!::class, show!!.id!!).toLong()
@@ -35,7 +35,7 @@ interface ListItem<ET : Entry> {
 
 class TrendingListItem : ListItem<TrendingEntry> {
     @Embedded override var entry: TrendingEntry? = null
-    @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow>? = null
+    @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow> = emptyList()
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
@@ -48,7 +48,7 @@ class TrendingListItem : ListItem<TrendingEntry> {
 
 class PopularListItem : ListItem<PopularEntry> {
     @Embedded override var entry: PopularEntry? = null
-    @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow>? = null
+    @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow> = emptyList()
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
@@ -61,7 +61,7 @@ class PopularListItem : ListItem<PopularEntry> {
 
 class WatchedShowListItem : ListItem<WatchedShowEntry> {
     @Embedded override var entry: WatchedShowEntry? = null
-    @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow>? = null
+    @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow> = emptyList()
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
@@ -74,7 +74,7 @@ class WatchedShowListItem : ListItem<WatchedShowEntry> {
 
 class FollowedShowsListItem : ListItem<FollowedShowEntry> {
     @Embedded override var entry: FollowedShowEntry? = null
-    @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow>? = null
+    @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow> = emptyList()
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
@@ -87,7 +87,7 @@ class FollowedShowsListItem : ListItem<FollowedShowEntry> {
 
 class RelatedShowsListItem : ListItem<RelatedShowEntry> {
     @Embedded override var entry: RelatedShowEntry? = null
-    @Relation(parentColumn = "other_show_id", entityColumn = "id") override var relations: List<TiviShow>? = null
+    @Relation(parentColumn = "other_show_id", entityColumn = "id") override var relations: List<TiviShow> = emptyList()
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true

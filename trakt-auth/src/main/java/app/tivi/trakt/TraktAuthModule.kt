@@ -69,6 +69,9 @@ class TraktAuthModule {
     @Provides
     fun provideTraktSeasonsService(traktV2: TraktV2) = traktV2.seasons()
 
+    @Provides
+    fun provideTraktSyncService(traktV2: TraktV2) = traktV2.sync()
+
     @Singleton
     @Provides
     fun provideAuthConfig(): AuthorizationServiceConfiguration {

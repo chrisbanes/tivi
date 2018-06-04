@@ -17,5 +17,5 @@
 package app.tivi.data
 
 interface DatabaseTransactionRunner {
-    fun runInTransaction(run: () -> Unit)
+    fun <T> runInTransaction(run: () -> T): T
 }

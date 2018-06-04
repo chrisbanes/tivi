@@ -21,13 +21,18 @@ import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.sync.ItemSyncer
+import app.tivi.extensions.fetchBody
 import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
+import com.uwetrottmann.trakt5.entities.EpisodeIds
 import com.uwetrottmann.trakt5.entities.HistoryEntry
+import com.uwetrottmann.trakt5.entities.SyncEpisode
+import com.uwetrottmann.trakt5.entities.SyncItems
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.enums.HistoryType
+import com.uwetrottmann.trakt5.services.Sync
 import com.uwetrottmann.trakt5.services.Users
 import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
@@ -38,6 +43,7 @@ class TraktEpisodeWatchSyncer @Inject constructor(
     private val episodesDao: EpisodesDao,
     private val dispatchers: AppCoroutineDispatchers,
     private val usersService: Provider<Users>,
+    private val syncService: Provider<Sync>,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val logger: Logger
 ) {
@@ -53,8 +59,36 @@ class TraktEpisodeWatchSyncer @Inject constructor(
             logger
     )
 
-    suspend fun sendLocalWatchesToTrakt(traktId: Int) {
-        // TODO
+    suspend fun sendLocalWatchesToTrakt(showId: Long) {
+        val watches = withContext(dispatchers.database) {
+            databaseTransactionRunner.runInTransaction {
+                episodeWatchEntryDao.localWatchesForShowId(showId)
+                        .map { it to episodesDao.episodeWithId(it.episodeId)!! }
+            }
+        }
+
+        if (watches.isNotEmpty()) {
+            val items = SyncItems()
+            items.episodes = watches.map { (entry, episode) ->
+                SyncEpisode().apply {
+                    watched_at = entry.watchedAt
+                    ids = EpisodeIds.trakt(episode.traktId!!)
+                }
+            }
+
+            val response = withContext(dispatchers.network) {
+                syncService.get().addItemsToWatchedHistory(items).fetchBody()
+            }
+
+            // TODO maybe should do something else here
+            withContext(dispatchers.database) {
+                databaseTransactionRunner.runInTransaction {
+                    watches.forEach {
+                        episodeWatchEntryDao.delete(it.first)
+                    }
+                }
+            }
+        }
     }
 
     suspend fun refreshWatchesFromTrakt(traktId: Int) {

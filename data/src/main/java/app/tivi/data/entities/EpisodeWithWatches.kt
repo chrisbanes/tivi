@@ -20,7 +20,7 @@ import android.arch.persistence.room.Embedded
 import android.arch.persistence.room.Relation
 import java.util.Objects
 
-class EpisodesWithWatches {
+class EpisodeWithWatches {
     @Embedded
     var episode: Episode? = null
 
@@ -31,7 +31,7 @@ class EpisodesWithWatches {
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
-        other is EpisodesWithWatches -> watches == other.watches && episode == other.episode
+        other is EpisodeWithWatches -> watches == other.watches && episode == other.episode
         else -> false
     }
 
