@@ -24,8 +24,8 @@ import app.tivi.home.HomeNavigator
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
-import app.tivi.trakt.calls.FollowedShowsCall
-import app.tivi.trakt.calls.WatchedShowsCall
+import app.tivi.datasources.trakt.FollowedShowsDataSource
+import app.tivi.datasources.trakt.WatchedShowsDataSource
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.NetworkDetector
@@ -36,8 +36,8 @@ import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
-    private val watchedShowsCall: WatchedShowsCall,
-    private val followedShowsCall: FollowedShowsCall,
+    private val watchedShowsCall: WatchedShowsDataSource,
+    private val followedShowsCall: FollowedShowsDataSource,
     private val traktManager: TraktManager,
     tmdbManager: TmdbManager,
     private val networkDetector: NetworkDetector,

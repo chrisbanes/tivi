@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package app.tivi.trakt.calls
+package app.tivi.datasources.trakt
 
 import app.tivi.EpisodeFetcher
-import app.tivi.calls.Call
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.entities.Episode
+import app.tivi.datasources.RefreshableDataSource
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
 import javax.inject.Inject
 
-class EpisodeDetailsCall @Inject constructor(
+class EpisodeDetailsDataSource @Inject constructor(
     private val dao: EpisodesDao,
     private val episodeFetcher: EpisodeFetcher,
     private val schedulers: AppRxSchedulers
-) : Call<Long, Episode> {
+) : RefreshableDataSource<Long, Episode> {
     override suspend fun refresh(param: Long) {
         episodeFetcher.update(param, true)
     }

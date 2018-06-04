@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package app.tivi.trakt.calls
+package app.tivi.datasources.trakt
 
-import app.tivi.calls.Call
+import app.tivi.datasources.RefreshableDataSource
 import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.UserDao
 import app.tivi.data.entities.TraktUser
@@ -31,13 +31,13 @@ import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 import javax.inject.Provider
 
-class UserMeCall @Inject constructor(
+class UserMeDataSource @Inject constructor(
     private val dao: UserDao,
     private val usersService: Provider<Users>,
     private val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
     private val entityInserter: EntityInserter
-) : Call<Unit, TraktUser> {
+) : RefreshableDataSource<Unit, TraktUser> {
 
     override suspend fun refresh(param: Unit) {
         // Fetch network response on network dispatcher

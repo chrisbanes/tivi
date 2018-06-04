@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package app.tivi.trakt.calls
+package app.tivi.datasources.trakt
 
 import android.arch.paging.DataSource
 import app.tivi.ShowFetcher
-import app.tivi.calls.ListCall
+import app.tivi.datasources.ListRefreshableDataSource
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.entities.WatchedShowEntry
@@ -36,14 +36,14 @@ import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 import javax.inject.Provider
 
-class WatchedShowsCall @Inject constructor(
+class WatchedShowsDataSource @Inject constructor(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val watchShowDao: WatchedShowDao,
     private val showFetcher: ShowFetcher,
     private val usersService: Provider<Users>,
     private val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers
-) : ListCall<Unit, WatchedShowListItem> {
+) : ListRefreshableDataSource<Unit, WatchedShowListItem> {
 
     override val pageSize = 21
 

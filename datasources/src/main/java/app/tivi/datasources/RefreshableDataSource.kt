@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package app.tivi.calls
+package app.tivi.datasources
 
 import android.arch.paging.DataSource
 import io.reactivex.Flowable
 
-interface Call<in Param, DatabaseOutput> {
+interface RefreshableDataSource<in Param, DatabaseOutput> {
     fun data(param: Param): Flowable<DatabaseOutput>
     suspend fun refresh(param: Param)
 }
 
-interface ListCall<in Param, DatabaseOutput> : Call<Param, List<DatabaseOutput>> {
+interface ListRefreshableDataSource<in Param, DatabaseOutput> : RefreshableDataSource<Param, List<DatabaseOutput>> {
     fun dataSourceFactory(): DataSource.Factory<Int, DatabaseOutput>
     val pageSize: Int
 }

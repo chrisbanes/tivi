@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,25 @@
  * limitations under the License.
  */
 
-package app.tivi.trakt.calls
+package app.tivi.datasources.trakt
 
-import app.tivi.ShowFetcher
-import app.tivi.calls.Call
-import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.entities.TiviShow
+import app.tivi.data.daos.EpisodeWatchEntryDao
+import app.tivi.data.entities.EpisodeWatchEntry
+import app.tivi.datasources.RefreshableDataSource
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
 import javax.inject.Inject
 
-class ShowDetailsCall @Inject constructor(
-    private val dao: TiviShowDao,
-    private val showFetcher: ShowFetcher,
+class EpisodeWatchesDataSource @Inject constructor(
+    private val dao: EpisodeWatchEntryDao,
     private val schedulers: AppRxSchedulers
-) : Call<Long, TiviShow> {
+) : RefreshableDataSource<Long, List<EpisodeWatchEntry>> {
     override suspend fun refresh(param: Long) {
-        showFetcher.update(param)
+        // TODO
     }
 
-    override fun data(param: Long): Flowable<TiviShow> {
-        return dao.getShowWithIdFlowable(param)
+    override fun data(param: Long): Flowable<List<EpisodeWatchEntry>> {
+        return dao.watchesForEpisodeFlowable(param)
                 .subscribeOn(schedulers.database)
                 .distinctUntilChanged()
     }

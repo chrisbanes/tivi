@@ -147,7 +147,7 @@ dependencies {
     implementation project(":show-fetcher")
     implementation project(':seasons-fetcher')
     implementation project(':episode-fetcher')
-    implementation project(":calls")
+    implementation project(':datasources')
     implementation project(":tasks")
 
     implementation "android.arch.lifecycle:extensions:${versions.androidx.lifecycle}"

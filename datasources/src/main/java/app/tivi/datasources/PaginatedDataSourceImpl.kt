@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.calls
+package app.tivi.datasources
 
 import android.arch.paging.DataSource
 import app.tivi.ShowFetcher
@@ -30,7 +30,7 @@ import app.tivi.util.Logger
 import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.withContext
 
-abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>, out ED : PaginatedEntryDao<ET, LI>>(
+abstract class PaginatedDataSourceImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>, out ED : PaginatedEntryDao<ET, LI>>(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     protected val showDao: TiviShowDao,
     private val entryDao: ED,
@@ -39,7 +39,7 @@ abstract class PaginatedEntryCallImpl<TT, ET : PaginatedEntry, LI : ListItem<ET>
     private val dispatchers: AppCoroutineDispatchers,
     private val logger: Logger,
     override val pageSize: Int = 21
-) : PaginatedCall<Unit, LI> {
+) : PaginatedDataSource<Unit, LI> {
 
     override fun data(param: Unit): Flowable<List<LI>> {
         return entryDao.entries()

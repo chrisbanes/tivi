@@ -19,8 +19,8 @@ package app.tivi.showdetails.episodedetails
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.tmdb.TmdbManager
-import app.tivi.trakt.calls.EpisodeDetailsCall
-import app.tivi.trakt.calls.EpisodeWatchesCall
+import app.tivi.datasources.trakt.EpisodeDetailsDataSource
+import app.tivi.datasources.trakt.EpisodeWatchesDataSource
 import app.tivi.util.Logger
 import app.tivi.util.TiviViewModel
 import io.reactivex.rxkotlin.Flowables
@@ -28,8 +28,8 @@ import io.reactivex.rxkotlin.plusAssign
 import javax.inject.Inject
 
 class EpisodeDetailsViewModel @Inject constructor(
-    private val episodeDetailsCall: EpisodeDetailsCall,
-    private val episodeWatchesCall: EpisodeWatchesCall,
+    private val episodeDetailsCall: EpisodeDetailsDataSource,
+    private val episodeWatchesCall: EpisodeWatchesDataSource,
     private val tmdbManager: TmdbManager,
     private val logger: Logger
 ) : TiviViewModel() {

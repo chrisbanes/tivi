@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 
-package app.tivi.trakt.calls
+package app.tivi.datasources.trakt
 
-import app.tivi.calls.Call
-import app.tivi.data.daos.EpisodeWatchEntryDao
-import app.tivi.data.entities.EpisodeWatchEntry
+import app.tivi.SeasonFetcher
+import app.tivi.datasources.RefreshableDataSource
+import app.tivi.data.daos.SeasonsDao
+import app.tivi.data.entities.SeasonWithEpisodes
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
 import javax.inject.Inject
 
-class EpisodeWatchesCall @Inject constructor(
-    private val dao: EpisodeWatchEntryDao,
-    private val schedulers: AppRxSchedulers
-) : Call<Long, List<EpisodeWatchEntry>> {
+class ShowSeasonsDataSource @Inject constructor(
+    private val seasonsDao: SeasonsDao,
+    private val schedulers: AppRxSchedulers,
+    private val seasonFetcher: SeasonFetcher
+) : RefreshableDataSource<Long, List<SeasonWithEpisodes>> {
     override suspend fun refresh(param: Long) {
-        // TODO
+        seasonFetcher.load(param)
     }
 
-    override fun data(param: Long): Flowable<List<EpisodeWatchEntry>> {
-        return dao.watchesForEpisodeFlowable(param)
+    override fun data(param: Long): Flowable<List<SeasonWithEpisodes>> {
+        return seasonsDao.seasonsWithEpisodesForShowId(param)
                 .subscribeOn(schedulers.database)
-                .distinctUntilChanged()
     }
 }

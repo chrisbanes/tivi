@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package app.tivi.trakt.calls
+package app.tivi.datasources.trakt
 
 import android.arch.paging.DataSource
-import app.tivi.calls.ListCall
+import app.tivi.datasources.ListRefreshableDataSource
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.FollowedShowsListItem
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
 import javax.inject.Inject
 
-class FollowedShowsCall @Inject constructor(
+class FollowedShowsDataSource @Inject constructor(
     private val followedShowsDao: FollowedShowsDao,
     private val schedulers: AppRxSchedulers
-) : ListCall<Unit, FollowedShowsListItem> {
+) : ListRefreshableDataSource<Unit, FollowedShowsListItem> {
 
     override val pageSize = 21
 

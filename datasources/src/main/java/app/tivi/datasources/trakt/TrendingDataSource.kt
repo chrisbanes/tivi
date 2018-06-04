@@ -14,57 +14,53 @@
  * limitations under the License.
  */
 
-package app.tivi.trakt.calls
+package app.tivi.datasources.trakt
 
 import app.tivi.ShowFetcher
-import app.tivi.api.ItemWithIndex
-import app.tivi.calls.PaginatedEntryCallImpl
+import app.tivi.datasources.PaginatedDataSourceImpl
 import app.tivi.data.DatabaseTransactionRunner
-import app.tivi.data.daos.PopularDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.entities.PopularEntry
-import app.tivi.data.entities.PopularListItem
+import app.tivi.data.daos.TrendingDao
+import app.tivi.data.entities.TrendingEntry
+import app.tivi.data.entities.TrendingListItem
 import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
-import com.uwetrottmann.trakt5.entities.Show
+import com.uwetrottmann.trakt5.entities.TrendingShow
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
 import javax.inject.Inject
 import javax.inject.Provider
 
-class PopularCall @Inject constructor(
+class TrendingDataSource @Inject constructor(
     databaseTransactionRunner: DatabaseTransactionRunner,
     showDao: TiviShowDao,
-    popularDao: PopularDao,
+    trendingDao: TrendingDao,
     private val showFetcher: ShowFetcher,
     private val showsService: Provider<Shows>,
     schedulers: AppRxSchedulers,
     dispatchers: AppCoroutineDispatchers,
     logger: Logger
-) : PaginatedEntryCallImpl<ItemWithIndex<Show>, PopularEntry, PopularListItem, PopularDao>(
+) : PaginatedDataSourceImpl<TrendingShow, TrendingEntry, TrendingListItem, TrendingDao>(
         databaseTransactionRunner,
         showDao,
-        popularDao,
+        trendingDao,
         showFetcher,
         schedulers,
         dispatchers,
         logger
 ) {
-
-    override suspend fun networkCall(page: Int): List<ItemWithIndex<Show>> {
+    override suspend fun networkCall(page: Int): List<TrendingShow> {
         // We add one to the page since Trakt uses a 1-based index whereas we use 0-based
-        return showsService.get().popular(page + 1, pageSize, Extended.NOSEASONS)
-                .fetchBodyWithRetry()
-                .mapIndexed { index, show -> ItemWithIndex(show, index) }
+        return showsService.get().trending(page + 1, pageSize, Extended.NOSEASONS).fetchBodyWithRetry()
     }
 
-    override fun mapToEntry(networkEntity: ItemWithIndex<Show>, showId: Long, page: Int): PopularEntry {
-        return PopularEntry(showId = showId, page = page, pageOrder = networkEntity.index)
+    override fun mapToEntry(networkEntity: TrendingShow, showId: Long, page: Int): TrendingEntry {
+        return TrendingEntry(showId = showId, page = page, watchers = networkEntity.watchers)
     }
 
-    override suspend fun insertShowPlaceholder(response: ItemWithIndex<Show>): Long {
-        return showFetcher.insertPlaceholderIfNeeded(response.item)
+    override suspend fun insertShowPlaceholder(response: TrendingShow): Long {
+        return showFetcher.insertPlaceholderIfNeeded(response.show)
     }
 }

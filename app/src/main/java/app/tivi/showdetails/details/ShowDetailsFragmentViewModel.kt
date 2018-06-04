@@ -24,9 +24,9 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
-import app.tivi.trakt.calls.RelatedShowsCall
-import app.tivi.trakt.calls.ShowDetailsCall
-import app.tivi.trakt.calls.ShowSeasonsCall
+import app.tivi.datasources.trakt.RelatedShowsDataSource
+import app.tivi.datasources.trakt.ShowDetailsDataSource
+import app.tivi.datasources.trakt.ShowSeasonsDataSource
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.TiviViewModel
@@ -36,9 +36,9 @@ import javax.inject.Inject
 
 class ShowDetailsFragmentViewModel @Inject constructor(
     private val schedulers: AppRxSchedulers,
-    private val showCall: ShowDetailsCall,
-    private val relatedShows: RelatedShowsCall,
-    private val seasonsCall: ShowSeasonsCall,
+    private val showCall: ShowDetailsDataSource,
+    private val relatedShows: RelatedShowsDataSource,
+    private val seasonsCall: ShowSeasonsDataSource,
     private val tmdbManager: TmdbManager,
     private val showTasks: ShowTasks,
     private val followedShowsDao: FollowedShowsDao,

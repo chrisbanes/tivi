@@ -11,9 +11,9 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/base" />
             <option value="$PROJECT_DIR$/base-android" />
-            <option value="$PROJECT_DIR$/calls" />
             <option value="$PROJECT_DIR$/data" />
             <option value="$PROJECT_DIR$/data-android" />
+            <option value="$PROJECT_DIR$/datasources" />
             <option value="$PROJECT_DIR$/episode-fetcher" />
             <option value="$PROJECT_DIR$/seasons-fetcher" />
             <option value="$PROJECT_DIR$/show-fetcher" />

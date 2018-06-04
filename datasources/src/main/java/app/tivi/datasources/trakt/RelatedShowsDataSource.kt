@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package app.tivi.trakt.calls
+package app.tivi.datasources.trakt
 
 import app.tivi.ShowFetcher
-import app.tivi.calls.Call
+import app.tivi.datasources.RefreshableDataSource
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.TiviShowDao
@@ -34,7 +34,7 @@ import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 import javax.inject.Provider
 
-class RelatedShowsCall @Inject constructor(
+class RelatedShowsDataSource @Inject constructor(
     private val showDao: TiviShowDao,
     private val entryDao: RelatedShowsDao,
     private val transactionRunner: DatabaseTransactionRunner,
@@ -42,7 +42,7 @@ class RelatedShowsCall @Inject constructor(
     private val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
     private val showFetcher: ShowFetcher
-) : Call<Long, List<RelatedShowsListItem>> {
+) : RefreshableDataSource<Long, List<RelatedShowsListItem>> {
     override suspend fun refresh(param: Long) {
         val show = withContext(dispatchers.database) { showDao.getShowWithId(param) }
 
