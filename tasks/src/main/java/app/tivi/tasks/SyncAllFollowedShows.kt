@@ -16,7 +16,6 @@
 
 package app.tivi.tasks
 
-import app.tivi.SeasonFetcher
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.extensions.parallelForEach
 import app.tivi.util.AppCoroutineDispatchers
@@ -29,7 +28,6 @@ import javax.inject.Inject
 class SyncAllFollowedShows @Inject constructor(
     private val followedShowsDao: FollowedShowsDao,
     private val dispatchers: AppCoroutineDispatchers,
-    private val seasonFetcher: SeasonFetcher,
     private val syncer: TraktEpisodeWatchSyncer
 ) : Job() {
     companion object {
@@ -46,12 +44,7 @@ class SyncAllFollowedShows @Inject constructor(
                 followedShowsDao.entriesBlocking()
             }
             followedShows.parallelForEach {
-                // First update season/episodes
-                seasonFetcher.load(it.showId)
-                // Now send any local watches to trakt
-                syncer.sendLocalWatchesToTrakt(it.showId)
-                // Now refresh watches from Trakt
-                syncer.refreshWatchesFromTrakt(it.showId)
+                syncer.sync(it.showId)
             }
         }
         return Result.SUCCESS

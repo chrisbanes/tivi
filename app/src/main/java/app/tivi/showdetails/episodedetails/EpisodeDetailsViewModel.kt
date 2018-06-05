@@ -101,6 +101,14 @@ class EpisodeDetailsViewModel @Inject constructor(
     }
 
     fun markUnwatched() {
-        // TODO
+        launchWithParent(dispatchers.database) {
+            val entries = episodeWatchEntryDao.watchesForEpisode(episodeId!!)
+            entries.forEach {
+                val copy = it.copy(pendingAction = EpisodeWatchEntry.PENDING_ACTION_DELETE_FROM_TRAKT)
+                episodeWatchEntryDao.update(copy)
+            }
+            // FIXME, this should only sync the one show
+            showTasks.syncAllShows()
+        }
     }
 }

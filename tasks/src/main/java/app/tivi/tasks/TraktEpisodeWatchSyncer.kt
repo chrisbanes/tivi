@@ -61,17 +61,21 @@ class TraktEpisodeWatchSyncer @Inject constructor(
             logger
     )
 
-    suspend fun sendLocalWatchesToTrakt(showId: Long) {
-        val watches = withContext(dispatchers.database) {
-            databaseTransactionRunner.runInTransaction {
-                episodeWatchEntryDao.entriesPendingToTrakt(showId)
-                        .map { it to episodesDao.episodeWithId(it.episodeId)!! }
-            }
+    suspend fun sync(showId: Long) {
+        sendPendingDeleteWatchesToTrakt(showId)
+        sendPendingSendWatchesToTrakt(showId)
+        refreshWatchesFromTrakt(showId)
+    }
+
+    suspend fun sendPendingSendWatchesToTrakt(showId: Long) {
+        val sendActions = withContext(dispatchers.database) {
+            episodeWatchEntryDao.entriesWithSendPendingActions(showId)
+                    .map { it to episodesDao.episodeWithId(it.episodeId)!! }
         }
 
-        if (watches.isNotEmpty()) {
+        if (sendActions.isNotEmpty()) {
             val items = SyncItems()
-            items.episodes = watches.map { (entry, episode) ->
+            items.episodes = sendActions.map { (entry, episode) ->
                 SyncEpisode().apply {
                     watched_at = entry.watchedAt
                     ids = EpisodeIds.trakt(episode.traktId!!)
@@ -82,16 +86,49 @@ class TraktEpisodeWatchSyncer @Inject constructor(
                 syncService.get().addItemsToWatchedHistory(items).fetchBody()
             }
 
-            if (response.added.episodes != watches.size) {
+            if (response.added.episodes != sendActions.size) {
                 // TODO Something has gone wrong here, lets check the not found list
             }
 
             // Now update the database
             withContext(dispatchers.database) {
                 databaseTransactionRunner.runInTransaction {
-                    watches.forEach {
+                    sendActions.forEach {
                         val entry = it.first.copy(pendingAction = EpisodeWatchEntry.PENDING_ACTION_NOTHING)
                         episodeWatchEntryDao.update(entry)
+                    }
+                }
+            }
+        }
+    }
+
+    suspend fun sendPendingDeleteWatchesToTrakt(showId: Long) {
+        val deleteActions = withContext(dispatchers.database) {
+            episodeWatchEntryDao.entriesWithDeletePendingActions(showId)
+                    .map { it to episodesDao.episodeWithId(it.episodeId)!! }
+        }
+        if (deleteActions.isNotEmpty()) {
+            val items = SyncItems()
+            items.episodes = deleteActions.map { (entry, episode) ->
+                SyncEpisode().apply {
+                    watched_at = entry.watchedAt
+                    ids = EpisodeIds.trakt(episode.traktId!!)
+                }
+            }
+
+            val response = withContext(dispatchers.network) {
+                syncService.get().deleteItemsFromWatchedHistory(items).fetchBody()
+            }
+
+            if (response.deleted.episodes != deleteActions.size) {
+                // TODO Something has gone wrong here, lets check the not found list
+            }
+
+            // Now update the database
+            withContext(dispatchers.database) {
+                databaseTransactionRunner.runInTransaction {
+                    deleteActions.forEach {
+                        episodeWatchEntryDao.delete(it.first)
                     }
                 }
             }

@@ -60,10 +60,7 @@ class SyncShowWatchedProgress @Inject constructor(
                 } ?: throw IllegalArgumentException("Followed entry with id: $showId does not exist")
                 val show = followedEntry.show!!
 
-                // Send all un-synced watches from DB and send to Trakt
-                syncer.sendLocalWatchesToTrakt(show.id!!)
-                // Now sync anything down
-                syncer.refreshWatchesFromTrakt(show.id!!)
+                syncer.sync(show.id!!)
 
                 Result.SUCCESS
             }
