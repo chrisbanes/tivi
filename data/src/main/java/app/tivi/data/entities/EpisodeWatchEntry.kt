@@ -43,10 +43,11 @@ data class EpisodeWatchEntry(
     @ColumnInfo(name = "episode_id") val episodeId: Long,
     @ColumnInfo(name = "trakt_id") val traktId: Long,
     @ColumnInfo(name = "watched_at") val watchedAt: OffsetDateTime,
-    @ColumnInfo(name = "source") val source: Int
+    @ColumnInfo(name = "pending_action") val pendingAction: Int
 ) : TiviEntity {
     companion object {
-        const val SOURCE_TRAKT = 0
-        const val SOURCE_LOCAL = 1
+        const val PENDING_ACTION_NOTHING = 0
+        const val PENDING_ACTION_SEND_TRAKT = 1
+        const val PENDING_ACTION_DELETE_FROM_TRAKT = 2
     }
 }

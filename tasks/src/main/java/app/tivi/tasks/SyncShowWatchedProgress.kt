@@ -63,7 +63,7 @@ class SyncShowWatchedProgress @Inject constructor(
                 // Send all un-synced watches from DB and send to Trakt
                 syncer.sendLocalWatchesToTrakt(show.id!!)
                 // Now sync anything down
-                syncer.refreshWatchesFromTrakt(show.traktId!!)
+                syncer.refreshWatchesFromTrakt(show.id!!)
 
                 Result.SUCCESS
             }

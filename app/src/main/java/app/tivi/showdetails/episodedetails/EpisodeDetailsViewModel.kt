@@ -18,20 +18,28 @@ package app.tivi.showdetails.episodedetails
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import app.tivi.tmdb.TmdbManager
+import app.tivi.actions.ShowTasks
+import app.tivi.data.daos.EpisodeWatchEntryDao
+import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.datasources.trakt.EpisodeDetailsDataSource
 import app.tivi.datasources.trakt.EpisodeWatchesDataSource
+import app.tivi.tmdb.TmdbManager
+import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import app.tivi.util.TiviViewModel
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
+import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 
 class EpisodeDetailsViewModel @Inject constructor(
     private val episodeDetailsCall: EpisodeDetailsDataSource,
     private val episodeWatchesCall: EpisodeWatchesDataSource,
     private val tmdbManager: TmdbManager,
-    private val logger: Logger
+    private val logger: Logger,
+    private val showTasks: ShowTasks,
+    private val episodeWatchEntryDao: EpisodeWatchEntryDao,
+    private val dispatchers: AppCoroutineDispatchers
 ) : TiviViewModel() {
 
     var episodeId: Long? = null
@@ -79,7 +87,17 @@ class EpisodeDetailsViewModel @Inject constructor(
     }
 
     fun markWatched() {
-        // TODO
+        launchWithParent(dispatchers.database) {
+            val entry = EpisodeWatchEntry(
+                    episodeId = episodeId!!,
+                    traktId = 0,
+                    watchedAt = OffsetDateTime.now(),
+                    pendingAction = EpisodeWatchEntry.PENDING_ACTION_SEND_TRAKT
+            )
+            episodeWatchEntryDao.insert(entry)
+            // FIXME, this should only sync the one show
+            showTasks.syncAllShows()
+        }
     }
 
     fun markUnwatched() {

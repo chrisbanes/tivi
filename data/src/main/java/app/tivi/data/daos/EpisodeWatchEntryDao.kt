@@ -19,7 +19,7 @@ package app.tivi.data.daos
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import app.tivi.data.entities.EpisodeWatchEntry
-import app.tivi.data.entities.EpisodeWatchEntry.Companion.SOURCE_LOCAL
+import app.tivi.data.entities.EpisodeWatchEntry.Companion.PENDING_ACTION_SEND_TRAKT
 import io.reactivex.Flowable
 
 @Dao
@@ -40,8 +40,8 @@ abstract class EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry> {
                     " INNER JOIN episodes AS eps ON ew.episode_id = eps.id" +
                     " INNER JOIN seasons AS s ON eps.season_id = s.id" +
                     " INNER JOIN shows ON s.show_id = shows.id" +
-                    " WHERE shows.id = :showId AND ew.source = $SOURCE_LOCAL")
-    abstract fun localWatchesForShowId(showId: Long): List<EpisodeWatchEntry>
+                    " WHERE shows.id = :showId AND ew.pending_action = $PENDING_ACTION_SEND_TRAKT")
+    abstract fun entriesPendingToTrakt(showId: Long): List<EpisodeWatchEntry>
 
     @Query("DELETE FROM episode_watch_entries WHERE trakt_id = :traktId")
     abstract fun deleteWithTraktId(traktId: Long)

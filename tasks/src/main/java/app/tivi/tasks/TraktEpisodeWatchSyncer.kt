@@ -19,6 +19,7 @@ package app.tivi.tasks
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
+import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.sync.ItemSyncer
 import app.tivi.extensions.fetchBody
@@ -40,6 +41,7 @@ import javax.inject.Provider
 
 class TraktEpisodeWatchSyncer @Inject constructor(
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,
+    private val showDao: TiviShowDao,
     private val episodesDao: EpisodesDao,
     private val dispatchers: AppCoroutineDispatchers,
     private val usersService: Provider<Users>,
@@ -62,7 +64,7 @@ class TraktEpisodeWatchSyncer @Inject constructor(
     suspend fun sendLocalWatchesToTrakt(showId: Long) {
         val watches = withContext(dispatchers.database) {
             databaseTransactionRunner.runInTransaction {
-                episodeWatchEntryDao.localWatchesForShowId(showId)
+                episodeWatchEntryDao.entriesPendingToTrakt(showId)
                         .map { it to episodesDao.episodeWithId(it.episodeId)!! }
             }
         }
@@ -80,22 +82,28 @@ class TraktEpisodeWatchSyncer @Inject constructor(
                 syncService.get().addItemsToWatchedHistory(items).fetchBody()
             }
 
-            // TODO maybe should do something else here
+            if (response.added.episodes != watches.size) {
+                // TODO Something has gone wrong here, lets check the not found list
+            }
+
+            // Now update the database
             withContext(dispatchers.database) {
                 databaseTransactionRunner.runInTransaction {
                     watches.forEach {
-                        episodeWatchEntryDao.delete(it.first)
+                        val entry = it.first.copy(pendingAction = EpisodeWatchEntry.PENDING_ACTION_NOTHING)
+                        episodeWatchEntryDao.update(entry)
                     }
                 }
             }
         }
     }
 
-    suspend fun refreshWatchesFromTrakt(traktId: Int) {
+    suspend fun refreshWatchesFromTrakt(showId: Long) {
+        val show = withContext(dispatchers.database) { showDao.getShowWithId(showId)!! }
         // Fetch watched progress for show
         val watchedProgress = withContext(dispatchers.network) {
             // TODO use start and end dates
-            usersService.get().history(UserSlug.ME, HistoryType.SHOWS, traktId,
+            usersService.get().history(UserSlug.ME, HistoryType.SHOWS, show.traktId!!,
                     0, 10000, Extended.NOSEASONS, null, null).fetchBodyWithRetry()
         }
         // and sync the result
@@ -119,7 +127,7 @@ class TraktEpisodeWatchSyncer @Inject constructor(
                 episodeId = episode.id!!,
                 traktId = historyEntry.id,
                 watchedAt = historyEntry.watched_at,
-                source = EpisodeWatchEntry.SOURCE_TRAKT
+                pendingAction = EpisodeWatchEntry.PENDING_ACTION_NOTHING
         )
     }
 }
