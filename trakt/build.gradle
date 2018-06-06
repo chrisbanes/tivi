@@ -18,8 +18,7 @@
 apply plugin: 'kotlin'
 
 dependencies {
-    compile("com.uwetrottmann.trakt5:trakt-java:5.8.1", {
-        // Exclude this since we explicitly depend on threetenbp:no-tzdb above
-        exclude group: 'org.threeten', module: 'threetenbp'
-    })
+    compile fileTree(dir: 'libs', include: '*.jar')
+    implementation("com.squareup.retrofit2:retrofit:2.3.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.3.0")
 }

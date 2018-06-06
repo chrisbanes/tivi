@@ -90,9 +90,8 @@ class EpisodeDetailsViewModel @Inject constructor(
         launchWithParent(dispatchers.database) {
             val entry = EpisodeWatchEntry(
                     episodeId = episodeId!!,
-                    traktId = 0,
                     watchedAt = OffsetDateTime.now(),
-                    pendingAction = EpisodeWatchEntry.PENDING_ACTION_SEND_TRAKT
+                    pendingAction = EpisodeWatchEntry.PENDING_ACTION_UPLOAD
             )
             episodeWatchEntryDao.insert(entry)
             // FIXME, this should only sync the one show
@@ -104,8 +103,12 @@ class EpisodeDetailsViewModel @Inject constructor(
         launchWithParent(dispatchers.database) {
             val entries = episodeWatchEntryDao.watchesForEpisode(episodeId!!)
             entries.forEach {
-                val copy = it.copy(pendingAction = EpisodeWatchEntry.PENDING_ACTION_DELETE_FROM_TRAKT)
-                episodeWatchEntryDao.update(copy)
+                // We have a trakt id, so we need to do a sync
+                if (it.pendingAction != EpisodeWatchEntry.PENDING_ACTION_DELETE) {
+                    // If it is not set to be deleted, update it now
+                    val copy = it.copy(pendingAction = EpisodeWatchEntry.PENDING_ACTION_DELETE)
+                    episodeWatchEntryDao.update(copy)
+                }
             }
             // FIXME, this should only sync the one show
             showTasks.syncAllShows()

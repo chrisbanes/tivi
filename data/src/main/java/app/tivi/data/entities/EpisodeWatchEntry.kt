@@ -41,13 +41,13 @@ import org.threeten.bp.OffsetDateTime
 data class EpisodeWatchEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long? = null,
     @ColumnInfo(name = "episode_id") val episodeId: Long,
-    @ColumnInfo(name = "trakt_id") val traktId: Long,
+    @ColumnInfo(name = "trakt_id") var traktId: Long? = null,
     @ColumnInfo(name = "watched_at") val watchedAt: OffsetDateTime,
     @ColumnInfo(name = "pending_action") val pendingAction: Int
 ) : TiviEntity {
     companion object {
         const val PENDING_ACTION_NOTHING = 0
-        const val PENDING_ACTION_SEND_TRAKT = 1
-        const val PENDING_ACTION_DELETE_FROM_TRAKT = 2
+        const val PENDING_ACTION_UPLOAD = 1
+        const val PENDING_ACTION_DELETE = 2
     }
 }

@@ -29,5 +29,5 @@ interface EntityDao<in E : TiviEntity> {
     fun update(entity: E)
 
     @Delete
-    fun delete(entity: E)
+    fun delete(entity: E): Int
 }
