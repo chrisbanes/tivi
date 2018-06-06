@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
+package app.tivi.data
+
 import android.database.sqlite.SQLiteConstraintException
-import android.support.test.runner.AndroidJUnit4
-import app.tivi.data.BaseTest
-import app.tivi.data.SampleData
 import app.tivi.data.daos.EpisodesDao
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Assert.assertThat
 import org.junit.Test
-import org.junit.runner.RunWith
 
 class EpisodesTest : BaseTest() {
     private lateinit var episodeDao: EpisodesDao

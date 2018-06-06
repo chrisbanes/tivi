@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+package app.tivi.data
+
 import android.database.sqlite.SQLiteConstraintException
-import app.tivi.data.BaseTest
-import app.tivi.data.SampleData
 import app.tivi.data.daos.SeasonsDao
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
