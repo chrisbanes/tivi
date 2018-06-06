@@ -29,6 +29,8 @@ buildscript {
                     'palette'          : '27.1.1',
                     'recyclerview'     : '27.1.1',
                     'room'             : '1.1.0',
+                    'test_runner'      : '1.0.2',
+                    'test_rules'       : '1.0.2',
             ],
             'coroutines'     : '0.22.5',
             'dagger'         : '2.16',
@@ -41,6 +43,7 @@ buildscript {
             'rx'             : '2.1.12',
             'rxkotlin'       : '2.2.0',
             'rxlint'         : '1.6.1',
+            'threetenabp'    : '1.1.0',
     ]
 
     ext.buildConfig = [

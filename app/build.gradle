@@ -166,7 +166,7 @@ dependencies {
 
     implementation "androidx.core:core-ktx:${versions.androidx.core_ktx}"
 
-    implementation 'com.jakewharton.threetenabp:threetenabp:1.1.0'
+    implementation "com.jakewharton.threetenabp:threetenabp:${versions.threetenabp}"
 
     implementation "io.reactivex.rxjava2:rxjava:${versions.rx}"
     implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
@@ -191,10 +191,10 @@ dependencies {
 
     testImplementation 'junit:junit:4.12'
 
-    androidTestImplementation("com.android.support.test.espresso:espresso-core:${versions.espresso}", {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation "com.android.support.test:runner:${versions.androidx.test_runner}"
+    androidTestImplementation "com.android.support.test:rules:${versions.androidx.test_rules}"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso}"
+    androidTestImplementation "android.arch.persistence.room:runtime:${versions.androidx.room}"
 
     debugImplementation "nl.littlerobots.rxlint:rxlint:${versions.rxlint}"
 
