@@ -19,10 +19,8 @@ package app.tivi
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.assertion.ViewAssertions.matches
-import android.support.test.espresso.matcher.ViewMatchers.hasSibling
 import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
 import android.support.test.espresso.matcher.ViewMatchers.isRoot
-import android.support.test.espresso.matcher.ViewMatchers.withText
 import android.support.test.filters.LargeTest
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
@@ -30,8 +28,6 @@ import app.tivi.home.HomeActivity
 import app.tivi.utils.bottomNavItemWithTitle
 import app.tivi.utils.rotateLandscape
 import app.tivi.utils.toolbarWithTitle
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.notNullValue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -62,21 +58,5 @@ class HomeActivityNavigationTests {
 
         onView(toolbarWithTitle(R.string.library_title))
                 .check(matches(isDisplayed()))
-    }
-
-    @Test
-    fun testRotateRetainsMainFragment() {
-        // First click the trending header
-        onView(allOf(withText(R.string.header_more), hasSibling(withText(R.string.discover_trending))))
-                .perform(click())
-
-        // And assert that the trending fragment is shown
-        onView(toolbarWithTitle(R.string.discover_trending)).check(matches(notNullValue()))
-
-        // Now rotate the screen
-        onView(isRoot()).perform(rotateLandscape())
-
-        // And check that the trending show is still shown
-        onView(toolbarWithTitle(R.string.discover_trending)).check(matches(notNullValue()))
     }
 }
