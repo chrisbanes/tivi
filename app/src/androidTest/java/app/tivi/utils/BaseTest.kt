@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package app.tivi.data
+package app.tivi.utils
 
 import android.arch.persistence.room.Room
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
+import app.tivi.data.TiviDatabase
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.junit.After
 import org.junit.Before
@@ -32,7 +33,9 @@ abstract class BaseTest {
     @Before
     open fun setup() {
         val context = InstrumentationRegistry.getTargetContext()
-        db = Room.inMemoryDatabaseBuilder(context, TiviDatabase::class.java).build()
+        db = Room.inMemoryDatabaseBuilder(context, TiviDatabase::class.java)
+                .allowMainThreadQueries()
+                .build()
 
         AndroidThreeTen.init(context)
     }

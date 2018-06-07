@@ -39,6 +39,7 @@ buildscript {
             'glide'          : '4.7.1',
             'kotlin'         : '1.2.41',
             'ktlint'         : '0.19.0',
+            'mockito'        : '2.18.3',
             'material_design': '27.1.1',
             'rx'             : '2.1.12',
             'rxkotlin'       : '2.2.0',

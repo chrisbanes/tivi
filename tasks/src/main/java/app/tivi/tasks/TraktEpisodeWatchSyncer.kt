@@ -152,7 +152,7 @@ class TraktEpisodeWatchSyncer @Inject constructor(
         syncWatchesFromTrakt(watchedProgress)
     }
 
-    private suspend fun syncWatchesFromTrakt(watches: List<HistoryEntry>) {
+    suspend fun syncWatchesFromTrakt(watches: List<HistoryEntry>) {
         withContext(dispatchers.database) {
             databaseTransactionRunner.runInTransaction {
                 watchSyncer.sync(watches)

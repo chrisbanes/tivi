@@ -18,6 +18,14 @@ package app.tivi.data
 
 import android.database.sqlite.SQLiteConstraintException
 import app.tivi.data.daos.SeasonsDao
+import app.tivi.utils.BaseTest
+import app.tivi.utils.deleteShow
+import app.tivi.utils.insertShow
+import app.tivi.utils.seasonOne
+import app.tivi.utils.seasonOneId
+import app.tivi.utils.seasonSpecials
+import app.tivi.utils.seasonTwo
+import app.tivi.utils.showId
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Assert.assertThat
@@ -30,52 +38,52 @@ class SeasonsTest : BaseTest() {
         super.setup()
         seasonsDao = db.seasonsDao()
         // We'll assume that there's a show in the db
-        SampleData.insertShow(db)
+        insertShow(db)
     }
 
     @Test
     fun insertSeason() {
-        seasonsDao.insert(SampleData.seasonOne)
+        seasonsDao.insert(seasonOne)
 
-        assertThat(seasonsDao.seasonWithId(SampleData.seasonOneId), `is`(SampleData.seasonOne))
+        assertThat(seasonsDao.seasonWithId(seasonOneId), `is`(seasonOne))
     }
 
     @Test(expected = SQLiteConstraintException::class)
     fun insert_withSameTraktId() {
-        seasonsDao.insert(SampleData.seasonOne)
+        seasonsDao.insert(seasonOne)
 
         // Make a copy with a null id
-        val copy = SampleData.seasonOne.copy(id = null)
+        val copy = seasonOne.copy(id = null)
 
         seasonsDao.insert(copy)
     }
 
     @Test
     fun specialsOrder() {
-        seasonsDao.insert(SampleData.seasonSpecials)
-        seasonsDao.insert(SampleData.seasonOne)
-        seasonsDao.insert(SampleData.seasonTwo)
+        seasonsDao.insert(seasonSpecials)
+        seasonsDao.insert(seasonOne)
+        seasonsDao.insert(seasonTwo)
 
         // Specials should always be last
-        assertThat(seasonsDao.seasonsForShowId(SampleData.showId),
-                `is`(listOf(SampleData.seasonOne, SampleData.seasonTwo, SampleData.seasonSpecials))
+        assertThat(seasonsDao.seasonsForShowId(showId),
+                `is`(listOf(seasonOne, seasonTwo, seasonSpecials))
         )
     }
 
     @Test
     fun deleteSeason() {
-        seasonsDao.insert(SampleData.seasonOne)
-        seasonsDao.delete(SampleData.seasonOne)
+        seasonsDao.insert(seasonOne)
+        seasonsDao.delete(seasonOne)
 
-        assertThat(seasonsDao.seasonWithId(SampleData.seasonOneId), `is`(nullValue()))
+        assertThat(seasonsDao.seasonWithId(seasonOneId), `is`(nullValue()))
     }
 
     @Test
     fun deleteShow_deletesSeason() {
-        seasonsDao.insert(SampleData.seasonOne)
+        seasonsDao.insert(seasonOne)
         // Now delete show
-        SampleData.deleteShow(db)
+        deleteShow(db)
 
-        assertThat(seasonsDao.seasonWithId(SampleData.seasonOneId), `is`(nullValue()))
+        assertThat(seasonsDao.seasonWithId(seasonOneId), `is`(nullValue()))
     }
 }

@@ -18,6 +18,11 @@ package app.tivi.data
 
 import android.database.sqlite.SQLiteConstraintException
 import app.tivi.data.daos.EpisodesDao
+import app.tivi.utils.BaseTest
+import app.tivi.utils.deleteSeason
+import app.tivi.utils.episodeOne
+import app.tivi.utils.insertSeason
+import app.tivi.utils.insertShow
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Assert.assertThat
@@ -30,36 +35,36 @@ class EpisodesTest : BaseTest() {
         super.setup()
         episodeDao = db.episodesDao()
         // We'll assume that there's a show and season in the db
-        SampleData.insertShow(db)
-        SampleData.insertSeason(db)
+        insertShow(db)
+        insertSeason(db)
     }
 
     @Test
     fun insert() {
-        episodeDao.insert(SampleData.episodeOne)
-        assertThat(episodeDao.episodeWithId(SampleData.episodeOne.id!!), `is`(SampleData.episodeOne))
+        episodeDao.insert(episodeOne)
+        assertThat(episodeDao.episodeWithId(episodeOne.id!!), `is`(episodeOne))
     }
 
     @Test(expected = SQLiteConstraintException::class)
     fun insert_withSameTraktId() {
-        episodeDao.insert(SampleData.episodeOne)
+        episodeDao.insert(episodeOne)
         // Make a copy with a null id
-        val copy = SampleData.episodeOne.copy(id = null)
+        val copy = episodeOne.copy(id = null)
         episodeDao.insert(copy)
     }
 
     @Test
     fun delete() {
-        episodeDao.insert(SampleData.episodeOne)
-        episodeDao.delete(SampleData.episodeOne)
-        assertThat(episodeDao.episodeWithId(SampleData.episodeOne.id!!), `is`(nullValue()))
+        episodeDao.insert(episodeOne)
+        episodeDao.delete(episodeOne)
+        assertThat(episodeDao.episodeWithId(episodeOne.id!!), `is`(nullValue()))
     }
 
     @Test
     fun deleteSeason_deletesEpisode() {
-        episodeDao.insert(SampleData.episodeOne)
+        episodeDao.insert(episodeOne)
         // Now delete season
-        SampleData.deleteSeason(db)
-        assertThat(episodeDao.episodeWithId(SampleData.episodeOne.id!!), `is`(nullValue()))
+        deleteSeason(db)
+        assertThat(episodeDao.episodeWithId(episodeOne.id!!), `is`(nullValue()))
     }
 }

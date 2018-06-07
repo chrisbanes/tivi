@@ -18,6 +18,16 @@ package app.tivi.data
 
 import android.database.sqlite.SQLiteConstraintException
 import app.tivi.data.daos.EpisodeWatchEntryDao
+import app.tivi.utils.BaseTest
+import app.tivi.utils.deleteEpisodes
+import app.tivi.utils.episodeWatch1
+import app.tivi.utils.episodeWatch1Id
+import app.tivi.utils.episodeWatchPendingDelete
+import app.tivi.utils.episodeWatchPendingSend
+import app.tivi.utils.insertEpisodes
+import app.tivi.utils.insertSeason
+import app.tivi.utils.insertShow
+import app.tivi.utils.showId
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Assert.assertThat
@@ -32,59 +42,59 @@ class EpisodeWatchEntryTest : BaseTest() {
         episodeWatchEntryDao = db.episodeWatchesDao()
 
         // We'll assume that there's a show, season and episodes in the db
-        SampleData.insertShow(db)
-        SampleData.insertSeason(db)
-        SampleData.insertEpisodes(db)
+        insertShow(db)
+        insertSeason(db)
+        insertEpisodes(db)
     }
 
     @Test
     fun insert() {
-        episodeWatchEntryDao.insert(SampleData.episodeWatch)
-        assertThat(episodeWatchEntryDao.entryWithId(SampleData.episodeWatchId), `is`(SampleData.episodeWatch))
+        episodeWatchEntryDao.insert(episodeWatch1)
+        assertThat(episodeWatchEntryDao.entryWithId(episodeWatch1Id), `is`(episodeWatch1))
     }
 
     @Test(expected = SQLiteConstraintException::class)
     fun insert_withSameTraktId() {
-        episodeWatchEntryDao.insert(SampleData.episodeWatch)
+        episodeWatchEntryDao.insert(episodeWatch1)
         // Make a copy with a null id
-        val copy = SampleData.episodeWatch.copy(id = null)
+        val copy = episodeWatch1.copy(id = null)
         episodeWatchEntryDao.insert(copy)
     }
 
     @Test
     fun fetchEntries_WithPendingSendAction() {
-        episodeWatchEntryDao.insert(SampleData.episodeWatch)
-        episodeWatchEntryDao.insert(SampleData.episodeWatchPendingDelete)
-        episodeWatchEntryDao.insert(SampleData.episodeWatchPendingSend)
+        episodeWatchEntryDao.insert(episodeWatch1)
+        episodeWatchEntryDao.insert(episodeWatchPendingDelete)
+        episodeWatchEntryDao.insert(episodeWatchPendingSend)
         assertThat(
-                episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(SampleData.showId),
-                `is`(listOf(SampleData.episodeWatchPendingSend))
+                episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId),
+                `is`(listOf(episodeWatchPendingSend))
         )
     }
 
     @Test
     fun fetchEntries_WithPendingDeleteAction() {
-        episodeWatchEntryDao.insert(SampleData.episodeWatch)
-        episodeWatchEntryDao.insert(SampleData.episodeWatchPendingDelete)
-        episodeWatchEntryDao.insert(SampleData.episodeWatchPendingSend)
+        episodeWatchEntryDao.insert(episodeWatch1)
+        episodeWatchEntryDao.insert(episodeWatchPendingDelete)
+        episodeWatchEntryDao.insert(episodeWatchPendingSend)
         assertThat(
-                episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(SampleData.showId),
-                `is`(listOf(SampleData.episodeWatchPendingDelete))
+                episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId),
+                `is`(listOf(episodeWatchPendingDelete))
         )
     }
 
     @Test
     fun delete() {
-        episodeWatchEntryDao.insert(SampleData.episodeWatch)
-        episodeWatchEntryDao.delete(SampleData.episodeWatch)
-        assertThat(episodeWatchEntryDao.entryWithId(SampleData.episodeWatchId), `is`(nullValue()))
+        episodeWatchEntryDao.insert(episodeWatch1)
+        episodeWatchEntryDao.delete(episodeWatch1)
+        assertThat(episodeWatchEntryDao.entryWithId(episodeWatch1Id), `is`(nullValue()))
     }
 
     @Test
     fun deleteEpisode_deletesWatch() {
-        episodeWatchEntryDao.insert(SampleData.episodeWatch)
+        episodeWatchEntryDao.insert(episodeWatch1)
         // Now delete episode
-        SampleData.deleteEpisodes(db)
-        assertThat(episodeWatchEntryDao.entryWithId(SampleData.episodeWatchId), `is`(nullValue()))
+        deleteEpisodes(db)
+        assertThat(episodeWatchEntryDao.entryWithId(episodeWatch1Id), `is`(nullValue()))
     }
 }
