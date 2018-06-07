@@ -26,7 +26,6 @@ import app.tivi.util.Logger
  * @param NID Network ID type
  */
 class ItemSyncer<ET : TiviEntity, NT, NID>(
-    private val currentEntitiesFunc: () -> Collection<ET>,
     private val entryInsertFunc: (ET) -> Long,
     private val entryUpdateFunc: (ET) -> Unit,
     private val entryDeleteFunc: (ET) -> Int,
@@ -35,8 +34,8 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
     private val networkEntityToLocalEntityMapperFunc: (NT, Long?) -> ET,
     private val logger: Logger? = null
 ) {
-    fun sync(networkValues: Collection<NT>) {
-        val currentDbEntities = ArrayList(currentEntitiesFunc())
+    fun sync(currentValues: Collection<ET>, networkValues: Collection<NT>) {
+        val currentDbEntities = ArrayList(currentValues)
 
         networkValues.forEach { networkEntity ->
             val remoteId = networkEntityToIdFunc(networkEntity)
@@ -66,13 +65,11 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
 
 fun <ET : TiviEntity, NT, NID> syncerForEntity(
     entityDao: EntityDao<ET>,
-    currentEntitiesFunc: () -> Collection<ET>,
     localEntityToIdFunc: (ET) -> NID,
     networkEntityToIdFunc: (NT) -> NID,
     networkEntityToLocalEntityMapperFunc: (NT, Long?) -> ET,
     logger: Logger? = null
 ) = ItemSyncer(
-        currentEntitiesFunc,
         entityDao::insert,
         entityDao::update,
         entityDao::delete,

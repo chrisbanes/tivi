@@ -19,6 +19,9 @@ package app.tivi.utils
 import com.uwetrottmann.trakt5.entities.Episode
 import com.uwetrottmann.trakt5.entities.EpisodeIds
 import com.uwetrottmann.trakt5.entities.HistoryEntry
+import com.uwetrottmann.trakt5.entities.SyncErrors
+import com.uwetrottmann.trakt5.entities.SyncResponse
+import com.uwetrottmann.trakt5.entities.SyncStats
 import com.uwetrottmann.trakt5.enums.HistoryType
 
 val traktEpisode1 = Episode().apply {
@@ -41,4 +44,11 @@ val traktHistoryEntry2 = HistoryEntry().apply {
     action = "watch"
     type = HistoryType.EPISODES.toString()
     episode = traktEpisode1
+}
+
+fun syncResponse(added: Int = 0, existing: Int = 0 , deleted: Int = 0, notFound: Int = 0) = SyncResponse().apply {
+    this.added = SyncStats().apply { episodes = added }
+    this.existing = SyncStats().apply { episodes = existing }
+    this.deleted = SyncStats().apply { episodes = deleted }
+    this.not_found = SyncErrors().apply { episodes = emptyList() }
 }

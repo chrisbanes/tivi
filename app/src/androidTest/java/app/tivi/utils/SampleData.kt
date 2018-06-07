@@ -82,20 +82,5 @@ val episodeWatch1 = EpisodeWatchEntry(
 val episodeWatch2Id = 2L
 val episodeWatch2 = episodeWatch1.copy(id = episodeWatch2Id, traktId = 4385783)
 
-val episodeWatchPendingUploadId = 2L
-val episodeWatchPendingSend = EpisodeWatchEntry(
-        id = episodeWatchPendingUploadId,
-        watchedAt = OffsetDateTime.now(),
-        episodeId = episodeOne.id!!,
-        traktId = null,
-        pendingAction = EpisodeWatchEntry.PENDING_ACTION_UPLOAD
-)
-
-val episodeWatchPendingDeleteId = 3L
-val episodeWatchPendingDelete = EpisodeWatchEntry(
-        id = episodeWatchPendingDeleteId,
-        watchedAt = OffsetDateTime.now(),
-        episodeId = episodeOne.id!!,
-        traktId = null,
-        pendingAction = EpisodeWatchEntry.PENDING_ACTION_DELETE
-)
+val episodeWatch2PendingSend = episodeWatch2.copy(pendingAction = EpisodeWatchEntry.PENDING_ACTION_UPLOAD)
+val episodeWatch2PendingDelete = episodeWatch2.copy(pendingAction = EpisodeWatchEntry.PENDING_ACTION_DELETE)

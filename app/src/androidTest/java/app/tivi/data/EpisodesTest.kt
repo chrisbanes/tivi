@@ -18,7 +18,7 @@ package app.tivi.data
 
 import android.database.sqlite.SQLiteConstraintException
 import app.tivi.data.daos.EpisodesDao
-import app.tivi.utils.BaseTest
+import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.deleteSeason
 import app.tivi.utils.episodeOne
 import app.tivi.utils.insertSeason
@@ -28,7 +28,7 @@ import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Assert.assertThat
 import org.junit.Test
 
-class EpisodesTest : BaseTest() {
+class EpisodesTest : BaseDatabaseTest() {
     private lateinit var episodeDao: EpisodesDao
 
     override fun setup() {

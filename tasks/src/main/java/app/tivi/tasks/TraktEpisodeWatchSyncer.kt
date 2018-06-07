@@ -51,7 +51,6 @@ class TraktEpisodeWatchSyncer @Inject constructor(
 ) {
     private val watchSyncer = syncerForEntity(
             episodeWatchEntryDao,
-            episodeWatchEntryDao::entriesWithNoPendingAction,
             EpisodeWatchEntry::traktId,
             HistoryEntry::id,
             ::mapToEpisodeWatchEntry,
@@ -149,13 +148,14 @@ class TraktEpisodeWatchSyncer @Inject constructor(
         }
 
         // and sync the result
-        syncWatchesFromTrakt(watchedProgress)
+        syncWatchesFromTrakt(showId, watchedProgress)
     }
 
-    suspend fun syncWatchesFromTrakt(watches: List<HistoryEntry>) {
+    suspend fun syncWatchesFromTrakt(showId: Long, watches: List<HistoryEntry>) {
         withContext(dispatchers.database) {
             databaseTransactionRunner.runInTransaction {
-                watchSyncer.sync(watches)
+                val currentWatches = episodeWatchEntryDao.entriesForShowIdWithNoPendingAction(showId)
+                watchSyncer.sync(currentWatches, watches)
             }
         }
     }

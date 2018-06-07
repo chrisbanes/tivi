@@ -25,6 +25,9 @@ interface EntityDao<in E : TiviEntity> {
     @Insert
     fun insert(entity: E): Long
 
+    @Insert
+    fun insertAll(vararg entity: E)
+
     @Update
     fun update(entity: E)
 

@@ -18,12 +18,12 @@ package app.tivi.data
 
 import android.database.sqlite.SQLiteConstraintException
 import app.tivi.data.daos.EpisodeWatchEntryDao
-import app.tivi.utils.BaseTest
+import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.deleteEpisodes
 import app.tivi.utils.episodeWatch1
 import app.tivi.utils.episodeWatch1Id
-import app.tivi.utils.episodeWatchPendingDelete
-import app.tivi.utils.episodeWatchPendingSend
+import app.tivi.utils.episodeWatch2PendingDelete
+import app.tivi.utils.episodeWatch2PendingSend
 import app.tivi.utils.insertEpisodes
 import app.tivi.utils.insertSeason
 import app.tivi.utils.insertShow
@@ -33,7 +33,7 @@ import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Assert.assertThat
 import org.junit.Test
 
-class EpisodeWatchEntryTest : BaseTest() {
+class EpisodeWatchEntryTest : BaseDatabaseTest() {
     private lateinit var episodeWatchEntryDao: EpisodeWatchEntryDao
 
     override fun setup() {
@@ -63,23 +63,17 @@ class EpisodeWatchEntryTest : BaseTest() {
 
     @Test
     fun fetchEntries_WithPendingSendAction() {
-        episodeWatchEntryDao.insert(episodeWatch1)
-        episodeWatchEntryDao.insert(episodeWatchPendingDelete)
-        episodeWatchEntryDao.insert(episodeWatchPendingSend)
-        assertThat(
-                episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId),
-                `is`(listOf(episodeWatchPendingSend))
+        episodeWatchEntryDao.insertAll(episodeWatch1, episodeWatch2PendingSend)
+        assertThat(episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId),
+                `is`(listOf(episodeWatch2PendingSend))
         )
     }
 
     @Test
     fun fetchEntries_WithPendingDeleteAction() {
-        episodeWatchEntryDao.insert(episodeWatch1)
-        episodeWatchEntryDao.insert(episodeWatchPendingDelete)
-        episodeWatchEntryDao.insert(episodeWatchPendingSend)
-        assertThat(
-                episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId),
-                `is`(listOf(episodeWatchPendingDelete))
+        episodeWatchEntryDao.insertAll(episodeWatch1, episodeWatch2PendingDelete)
+        assertThat(episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId),
+                `is`(listOf(episodeWatch2PendingDelete))
         )
     }
 
