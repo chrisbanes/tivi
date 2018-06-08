@@ -34,16 +34,14 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="?android:attr/listPreferredItemHeight">
 
         <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/watch_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
             android:ellipsize="end"
             android:text="@{dateTimeFormatter.format(watch.watchedAt)}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
@@ -57,9 +55,7 @@
             android:id="@+id/watch_ic_sync"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginTop="8dp"
             android:src="@drawable/ic_upload_24dp"
             android:visible="@{watch.pendingAction != EpisodeWatchEntry.PENDING_ACTION_NOTHING}"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -70,9 +66,7 @@
             android:id="@+id/watch_ic_watch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginTop="8dp"
             android:src="@{watch.pendingAction != EpisodeWatchEntry.PENDING_ACTION_DELETE ? @drawable/ic_eye_24dp : @drawable/ic_eye_off_24dp}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

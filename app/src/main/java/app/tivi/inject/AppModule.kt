@@ -19,7 +19,6 @@ package app.tivi.inject
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import android.text.format.DateFormat as AndroidDateFormat
 import app.tivi.AppNavigator
 import app.tivi.BuildConfig
 import app.tivi.TiviAppNavigator
@@ -46,6 +45,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import javax.inject.Named
 import javax.inject.Singleton
+import android.text.format.DateFormat as AndroidDateFormat
 
 @Module
 class AppModule {
@@ -122,8 +122,8 @@ class AppModule {
     @Singleton
     @Provides
     fun provideDateTimeFormatter(application: TiviApplication): DateTimeFormatter {
-        val dateF = AndroidDateFormat.getMediumDateFormat(application) as SimpleDateFormat;
-        val timeF = AndroidDateFormat.getTimeFormat(application) as SimpleDateFormat;
+        val dateF = AndroidDateFormat.getMediumDateFormat(application) as SimpleDateFormat
+        val timeF = AndroidDateFormat.getTimeFormat(application) as SimpleDateFormat
         return DateTimeFormatter.ofPattern("${dateF.toPattern()} ${timeF.toPattern()}")
     }
 }

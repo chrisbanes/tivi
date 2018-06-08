@@ -136,13 +136,13 @@ class ShowDetailsEpoxyController(
                     season(season.season)
                     spanSizeOverride(TotalSpanOverride)
                 }
-
                 season.episodes.forEach { episodeWithWatches ->
                     seasonEpisodeItem {
                         val episode = episodeWithWatches.episode!!
                         id("episode_${episode.id}")
                         episode(episode)
                         watched(episodeWithWatches.isWatched())
+                        hasPendingActions(episodeWithWatches.hasPending())
                         spanSizeOverride(TotalSpanOverride)
                         clickListener { view -> callbacks.onEpisodeClicked(episode, view) }
                     }

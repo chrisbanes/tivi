@@ -74,7 +74,7 @@ class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        controller = EpisodeDetailsEpoxyController(requireContext(), object : EpisodeDetailsEpoxyController.Callbacks {
+        controller = EpisodeDetailsEpoxyController(object : EpisodeDetailsEpoxyController.Callbacks {
         })
 
         binding.epDetailsFab.doOnLayout { fab ->

@@ -67,7 +67,7 @@
         <com.airbnb.epoxy.EpoxyRecyclerView
             android:id="@+id/ep_details_rv"
             android:layout_width="0dp"
-            android:layout_height="200dp"
+            android:layout_height="300dp"
             android:minHeight="100dp"
             app:layoutManager="android.support.v7.widget.GridLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"

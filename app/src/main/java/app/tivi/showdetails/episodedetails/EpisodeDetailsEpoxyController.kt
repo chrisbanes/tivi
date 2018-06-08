@@ -16,7 +16,6 @@
 
 package app.tivi.showdetails.episodedetails
 
-import android.content.Context
 import app.tivi.R
 import app.tivi.epDetailsSummary
 import app.tivi.epDetailsWatchItem

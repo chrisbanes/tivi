@@ -20,12 +20,19 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="episode"
             type="app.tivi.data.entities.Episode" />
+
         <variable
             name="clickListener"
             type="android.view.View.OnClickListener" />
+
+        <variable
+            name="hasPendingActions"
+            type="boolean" />
+
         <variable
             name="watched"
             type="boolean" />
@@ -33,7 +40,7 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?android:attr/listPreferredItemHeight"
         android:background="?android:attr/selectableItemBackground"
         android:onClick="@{clickListener}">
 
@@ -44,20 +51,30 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="16dp"
             android:gravity="center_vertical"
-            android:padding="@dimen/header_margin"
             android:text="@{episode.title}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            app:layout_constraintEnd_toStartOf="@+id/episode_watched"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/episode_watches_pending"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="A tale of two halves" />
+
+        <ImageView
+            android:id="@+id/episode_watches_pending"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_upload_24dp"
+            android:visible="@{hasPendingActions}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/episode_watched"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/episode_watched"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginTop="8dp"
             android:src="@drawable/ic_eye_24dp"
             android:tint="?android:attr/colorControlNormal"
             android:visible="@{watched}"
