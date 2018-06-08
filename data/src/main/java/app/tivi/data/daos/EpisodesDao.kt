@@ -37,4 +37,10 @@ abstract class EpisodesDao : EntityDao<Episode> {
 
     @Query("SELECT * from episodes WHERE id = :id")
     abstract fun episodeWithIdFlowable(id: Long): Flowable<Episode>
+
+    @Query("SELECT shows.id FROM shows" +
+            " INNER JOIN seasons AS s ON s.show_id = shows.id" +
+            " INNER JOIN episodes AS eps ON eps.season_id = s.id" +
+            " WHERE eps.id = :episodeId")
+    abstract fun showIdForEpisodeId(episodeId: Long): Long
 }

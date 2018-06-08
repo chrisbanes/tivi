@@ -20,6 +20,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.actions.ShowTasks
 import app.tivi.data.daos.EpisodeWatchEntryDao
+import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.datasources.trakt.EpisodeDetailsDataSource
 import app.tivi.datasources.trakt.EpisodeWatchesDataSource
@@ -38,6 +39,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     private val tmdbManager: TmdbManager,
     private val logger: Logger,
     private val showTasks: ShowTasks,
+    private val episodesDao: EpisodesDao,
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,
     private val dispatchers: AppCoroutineDispatchers
 ) : TiviViewModel() {
@@ -87,6 +89,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     }
 
     fun markWatched() {
+        val epId = episodeId!!
         launchWithParent(dispatchers.database) {
             val entry = EpisodeWatchEntry(
                     episodeId = episodeId!!,
@@ -94,14 +97,14 @@ class EpisodeDetailsViewModel @Inject constructor(
                     pendingAction = EpisodeWatchEntry.PENDING_ACTION_UPLOAD
             )
             episodeWatchEntryDao.insert(entry)
-            // FIXME, this should only sync the one show
-            showTasks.syncAllShows()
+            showTasks.syncShowWatchedEpisodes(episodesDao.showIdForEpisodeId(epId))
         }
     }
 
     fun markUnwatched() {
+        val epId = episodeId!!
         launchWithParent(dispatchers.database) {
-            val entries = episodeWatchEntryDao.watchesForEpisode(episodeId!!)
+            val entries = episodeWatchEntryDao.watchesForEpisode(epId)
             entries.forEach {
                 // We have a trakt id, so we need to do a sync
                 if (it.pendingAction != EpisodeWatchEntry.PENDING_ACTION_DELETE) {
@@ -110,8 +113,7 @@ class EpisodeDetailsViewModel @Inject constructor(
                     episodeWatchEntryDao.update(copy)
                 }
             }
-            // FIXME, this should only sync the one show
-            showTasks.syncAllShows()
+            showTasks.syncShowWatchedEpisodes(episodesDao.showIdForEpisodeId(epId))
         }
     }
 }

@@ -23,6 +23,7 @@ import app.tivi.utils.deleteSeason
 import app.tivi.utils.episodeOne
 import app.tivi.utils.insertSeason
 import app.tivi.utils.insertShow
+import app.tivi.utils.showId
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Assert.assertThat
@@ -66,5 +67,11 @@ class EpisodesTest : BaseDatabaseTest() {
         // Now delete season
         deleteSeason(db)
         assertThat(episodeDao.episodeWithId(episodeOne.id!!), `is`(nullValue()))
+    }
+
+    @Test
+    fun showIdForEpisodeId() {
+        episodeDao.insert(episodeOne)
+        assertThat(episodeDao.showIdForEpisodeId(episodeOne.id!!), `is`(showId))
     }
 }
