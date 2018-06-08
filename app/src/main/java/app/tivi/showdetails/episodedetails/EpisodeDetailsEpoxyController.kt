@@ -17,12 +17,14 @@
 package app.tivi.showdetails.episodedetails
 
 import android.content.Context
+import app.tivi.R
 import app.tivi.epDetailsSummary
+import app.tivi.epDetailsWatchItem
+import app.tivi.header
 import app.tivi.ui.epoxy.TotalSpanOverride
 import com.airbnb.epoxy.TypedEpoxyController
 
 class EpisodeDetailsEpoxyController(
-    private val context: Context,
     private val callbacks: Callbacks
 ) : TypedEpoxyController<EpisodeDetailsViewState>() {
 
@@ -35,6 +37,20 @@ class EpisodeDetailsEpoxyController(
             id("episode_summary")
             episode(viewState.episode)
             spanSizeOverride(TotalSpanOverride)
+        }
+
+        if (viewState.watches.isNotEmpty()) {
+            header {
+                id("watches_header")
+                title(R.string.episode_watches)
+            }
+            for (entry in viewState.watches) {
+                epDetailsWatchItem {
+                    id("watch_${entry.id}")
+                    dateTimeFormatter(viewState.dateTimeFormatter)
+                    watch(entry)
+                }
+            }
         }
     }
 }
