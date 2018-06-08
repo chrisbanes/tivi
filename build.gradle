@@ -17,11 +17,11 @@
 
 buildscript {
     ext.versions = [
-            'android_gradle' : '3.1.2',
+            'android_gradle' : '3.2.0-alpha17',
             'androidx'       : [
                     'appcompat'        : '27.1.1',
                     'browser'          : '27.1.1',
-                    'constraint_layout': '1.1.0',
+                    'constraint_layout': '1.1.1',
                     'core_ktx'         : '0.3',
                     'fragment'         : '27.1.1',
                     'lifecycle'        : '1.1.1',
@@ -35,16 +35,17 @@ buildscript {
             'coroutines'     : '0.22.5',
             'dagger'         : '2.16',
             'epoxy'          : '2.12.0',
-            'espresso'       : '3.0.1',
+            'espresso'       : '3.0.2',
             'glide'          : '4.7.1',
-            'kotlin'         : '1.2.41',
+            'kotlin'         : '1.2.50-eap-62',
             'ktlint'         : '0.19.0',
             'mockito'        : '2.18.3',
             'material_design': '27.1.1',
-            'rx'             : '2.1.12',
+            'rx'             : '2.1.14',
             'rxkotlin'       : '2.2.0',
             'rxlint'         : '1.6.1',
             'threetenabp'    : '1.1.0',
+            'retrofit'       : '2.4.0',
     ]
 
     ext.buildConfig = [
@@ -56,6 +57,7 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
         maven { url 'https://maven.fabric.io/public' }
     }
 
@@ -69,12 +71,12 @@ buildscript {
 
         classpath 'com.github.triplet.gradle:play-publisher:1.2.2'
 
-        classpath 'io.fabric.tools:gradle:1.25.3'
+        classpath 'io.fabric.tools:gradle:1.25.4'
     }
 }
 
 plugins {
-    id "com.diffplug.gradle.spotless" version "3.12.0"
+    id "com.diffplug.gradle.spotless" version "3.13.0"
     id 'com.github.ben-manes.versions' version "0.17.0"
 }
 
@@ -82,6 +84,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
         maven { url 'https://maven.fabric.io/public' }
     }
 
@@ -99,19 +102,6 @@ subprojects {
             target "**/*.kt"
             ktlint(versions.ktlint)
             licenseHeaderFile project.rootProject.file('spotless/copyright.kt')
-        }
-    }
-
-    /**
-     * Remove this when fixed https://github.com/Takhion/kotlin-metadata/issues/8
-     */
-    configurations.all {
-        resolutionStrategy {
-            eachDependency { DependencyResolveDetails details ->
-                if (details.requested.name == 'kotlin-compiler-embeddable') {
-                    details.useVersion "1.2.30"
-                }
-            }
         }
     }
 }

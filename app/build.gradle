@@ -199,7 +199,7 @@ dependencies {
 
     debugImplementation "nl.littlerobots.rxlint:rxlint:${versions.rxlint}"
 
-    implementation('com.crashlytics.sdk.android:crashlytics:2.9.2@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.3@aar') {
         transitive = true
     }
 
