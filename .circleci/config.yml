@@ -96,10 +96,7 @@ jobs:
           command: ftl-tests/setup.sh
       - run:
           name: Run tests on Firebase Test Lab
-          command: ftl-tests/run-tests.sh
-      - run:
-          name: Download results
-          command: ftl-tests/download-results.sh firebase_test_results
+          command: ftl-tests/run-tests.sh $CIRCLE_BUILD_NUM firebase_test_results
           when: always
       - store_artifacts:
           path: firebase_test_results
