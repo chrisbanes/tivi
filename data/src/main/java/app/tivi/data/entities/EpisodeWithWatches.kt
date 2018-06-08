@@ -29,7 +29,13 @@ class EpisodeWithWatches {
 
     fun isWatched() = watches.isNotEmpty()
 
-    fun hasPending() = watches.any { it.pendingAction != EpisodeWatchEntry.PENDING_ACTION_NOTHING }
+    fun hasPending() = watches.any {
+        it.pendingAction != EpisodeWatchEntry.PENDING_ACTION_NOTHING
+    }
+
+    fun onlyPendingDeletes() = watches.all {
+        it.pendingAction == EpisodeWatchEntry.PENDING_ACTION_DELETE
+    }
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true

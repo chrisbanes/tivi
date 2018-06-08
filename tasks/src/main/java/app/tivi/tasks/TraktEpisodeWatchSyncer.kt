@@ -143,9 +143,7 @@ class TraktEpisodeWatchSyncer @Inject constructor(
             // TODO use start and end dates
             usersService.get().history(UserSlug.ME, HistoryType.SHOWS, show.traktId!!,
                     0, 10000, Extended.NOSEASONS, null, null).fetchBodyWithRetry()
-        }.filter {
-            it.action == "watch" && it.type == "episode"
-        }
+        }.filter { it.type == "episode" }
 
         // and sync the result
         syncWatchesFromTrakt(showId, watchedProgress)
