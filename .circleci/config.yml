@@ -31,8 +31,11 @@ jobs:
       - run:
           <<: *update_sdk
       - checkout
+      - run:
+          name: Generate cache key
+          command: ./checksum.sh /tmp/checksum.txt
       - restore_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+          key: gradle-{{ checksum "/tmp/checksum.txt" }}
       - run:
           name: Download Dependencies
           command: ./gradlew dependencies
@@ -49,7 +52,7 @@ jobs:
           paths:
             - ~/.gradle/caches
             - ~/.gradle/wrapper
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+          key: gradle-{{ checksum "/tmp/checksum.txt" }}
       - store_artifacts:
           path: app/build/outputs/apk
           destination: apks
@@ -72,8 +75,11 @@ jobs:
       - run:
           <<: *update_sdk
       - checkout
+      - run:
+          name: Generate cache key
+          command: ./checksum.sh /tmp/checksum.txt
       - restore_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+          key: gradle-{{ checksum "/tmp/checksum.txt" }}
       - attach_workspace:
           at: ~/tivi
       - run:
