@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2018 Google, Inc.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="episode"
+            type="app.tivi.data.entities.Episode" />
+
+        <variable
+            name="tmdbImageUrlProvider"
+            type="app.tivi.tmdb.TmdbImageUrlProvider" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/ep_details_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorBackgroundFloating">
+
+        <ImageView
+            android:id="@+id/ep_details_fanart"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="w,1:1.5"
+            android:elevation="4dp"
+            android:scaleType="centerCrop"
+            android:tmdbBackdropPath="@{episode.tmdbBackdropPath}"
+            android:tmdbImageUrlProvider="@{tmdbImageUrlProvider}"
+            app:foregroundScrim="@{@color/content_scrim_dark}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <app.tivi.ui.widget.BaselineGridTextView
+            android:id="@+id/ep_details_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:elevation="4dp"
+            android:ellipsize="end"
+            android:text="@{episode.title}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark"
+            app:layout_constraintBottom_toBottomOf="@+id/ep_details_fanart"
+            app:layout_constraintEnd_toStartOf="@+id/ep_details_fab"
+            app:layout_constraintStart_toStartOf="@+id/ep_details_fanart"
+            tools:text="@sample/shows.txt" />
+
+        <com.airbnb.epoxy.EpoxyRecyclerView
+            android:id="@+id/ep_details_rv"
+            android:layout_width="0dp"
+            android:layout_height="300dp"
+            android:minHeight="100dp"
+            app:layoutManager="android.support.v7.widget.GridLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ep_details_fanart" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/ep_details_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_eye_24dp"
+            app:layout_constraintBottom_toTopOf="@+id/ep_details_rv"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

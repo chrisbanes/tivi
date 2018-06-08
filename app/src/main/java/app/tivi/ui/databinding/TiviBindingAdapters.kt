@@ -17,6 +17,7 @@
 package app.tivi.ui.databinding
 
 import android.databinding.BindingAdapter
+import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -28,6 +29,7 @@ import app.tivi.extensions.loadFromUrl
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.GenreStringer
 import app.tivi.ui.MaxLinesToggleClickListener
+import app.tivi.util.ScrimUtil
 
 @BindingAdapter("android:tmdbPosterPath", "android:tmdbImageUrlProvider")
 fun loadPoster(view: ImageView, posterPath: String?, tmdbImageUrlProvider: TmdbImageUrlProvider?) {
@@ -38,6 +40,20 @@ fun loadPoster(view: ImageView, posterPath: String?, tmdbImageUrlProvider: TmdbI
             view.loadFromUrl(
                     tmdbImageUrlProvider.getPosterUrl(posterPath, 0),
                     tmdbImageUrlProvider.getPosterUrl(posterPath, it.width)
+            )
+        }
+    }
+}
+
+@BindingAdapter("android:tmdbBackdropPath", "android:tmdbImageUrlProvider")
+fun loadBackdrop(view: ImageView, backdropPath: String?, tmdbImageUrlProvider: TmdbImageUrlProvider?) {
+    GlideApp.with(view).clear(view)
+
+    if (backdropPath != null && tmdbImageUrlProvider != null) {
+        view.doOnLayout {
+            view.loadFromUrl(
+                    tmdbImageUrlProvider.getBackdropUrl(backdropPath, 0),
+                    tmdbImageUrlProvider.getBackdropUrl(backdropPath, it.width)
             )
         }
     }
@@ -84,4 +100,14 @@ fun maxLinesClickListener(view: TextView, collapsedMaxLines: Int) {
     view.maxLines = collapsedMaxLines
     // Now set click listener
     view.setOnClickListener(MaxLinesToggleClickListener(collapsedMaxLines))
+}
+
+@BindingAdapter("bind:backgroundScrim")
+fun backgroundScrim(view: View, color: Int) {
+    view.background = ScrimUtil.makeCubicGradientScrimDrawable(color, 16, Gravity.BOTTOM)
+}
+
+@BindingAdapter("bind:foregroundScrim")
+fun foregroundScrim(view: View, color: Int) {
+    view.foreground = ScrimUtil.makeCubicGradientScrimDrawable(color, 16, Gravity.BOTTOM)
 }

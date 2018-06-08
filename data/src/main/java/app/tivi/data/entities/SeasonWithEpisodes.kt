@@ -25,7 +25,7 @@ class SeasonWithEpisodes {
     var season: Season? = null
 
     @Relation(parentColumn = "id", entityColumn = "season_id", entity = Episode::class)
-    var episodes: List<EpisodesWithWatches> = emptyList()
+    var episodes: List<EpisodeWithWatches> = emptyList()
 
     fun isWatched() = episodes.all { it.isWatched() }
 

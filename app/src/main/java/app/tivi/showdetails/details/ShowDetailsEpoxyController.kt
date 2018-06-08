@@ -20,6 +20,7 @@ import android.content.Context
 import android.view.View
 import app.tivi.PosterGridItemBindingModel_
 import app.tivi.R
+import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
 import app.tivi.detailsBadge
 import app.tivi.detailsSummary
@@ -40,6 +41,7 @@ class ShowDetailsEpoxyController(
 
     interface Callbacks {
         fun onRelatedShowClicked(show: TiviShow, view: View)
+        fun onEpisodeClicked(episode: Episode, view: View)
     }
 
     override fun buildModels(viewState: ShowDetailsViewState) {
@@ -134,14 +136,13 @@ class ShowDetailsEpoxyController(
                     season(season.season)
                     spanSizeOverride(TotalSpanOverride)
                 }
-
                 season.episodes.forEach { episodeWithWatches ->
                     seasonEpisodeItem {
                         val episode = episodeWithWatches.episode!!
                         id("episode_${episode.id}")
-                        episode(episode)
-                        watched(episodeWithWatches.isWatched())
+                        episodeWithWatches(episodeWithWatches)
                         spanSizeOverride(TotalSpanOverride)
+                        clickListener { view -> callbacks.onEpisodeClicked(episode, view) }
                     }
                 }
             }

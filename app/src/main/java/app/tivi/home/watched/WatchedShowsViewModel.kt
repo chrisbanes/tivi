@@ -20,7 +20,7 @@ import app.tivi.SharedElementHelper
 import app.tivi.data.entities.WatchedShowListItem
 import app.tivi.home.HomeNavigator
 import app.tivi.tmdb.TmdbManager
-import app.tivi.trakt.calls.WatchedShowsCall
+import app.tivi.datasources.trakt.WatchedShowsDataSource
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.EntryViewModel
@@ -31,7 +31,7 @@ import javax.inject.Inject
 class WatchedShowsViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     coroutineDispatchers: AppCoroutineDispatchers,
-    call: WatchedShowsCall,
+    call: WatchedShowsDataSource,
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector,
     logger: Logger

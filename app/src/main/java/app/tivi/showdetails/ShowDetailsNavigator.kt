@@ -17,8 +17,10 @@
 package app.tivi.showdetails
 
 import app.tivi.SharedElementHelper
+import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
 
 interface ShowDetailsNavigator {
     fun showShowDetails(show: TiviShow, sharedElements: SharedElementHelper?)
+    fun showEpisodeDetails(episode: Episode)
 }

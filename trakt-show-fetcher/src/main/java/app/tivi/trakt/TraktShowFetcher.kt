@@ -21,24 +21,25 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.TiviShow
 import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.util.AppCoroutineDispatchers
-import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
+import com.uwetrottmann.trakt5.services.Shows
 import kotlinx.coroutines.experimental.withContext
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Singleton
 class TraktShowFetcher @Inject constructor(
     private val showDao: TiviShowDao,
-    private val trakt: TraktV2,
+    private val showService: Provider<Shows>,
     private val dispatchers: AppCoroutineDispatchers,
     private val entityInserter: EntityInserter
 ) {
     suspend fun updateShow(traktId: Int) {
         val response = withContext(dispatchers.network) {
-            trakt.shows().summary(traktId.toString(), Extended.FULL).fetchBodyWithRetry()
+            showService.get().summary(traktId.toString(), Extended.FULL).fetchBodyWithRetry()
         }
         withContext(dispatchers.database) {
             upsertShow(response, true)

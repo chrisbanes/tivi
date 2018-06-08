@@ -28,11 +28,13 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.doOnLayout
 import app.tivi.GlideApp
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.TiviFragment
+import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
 import app.tivi.extensions.loadFromUrl
 import app.tivi.extensions.observeK
@@ -47,15 +49,12 @@ import kotlinx.android.synthetic.main.fragment_show_details.*
 import javax.inject.Inject
 
 class ShowDetailsFragment : TiviFragment() {
-
     companion object {
         private const val KEY_SHOW_ID = "show_id"
 
         fun create(id: Long): ShowDetailsFragment {
             return ShowDetailsFragment().apply {
-                arguments = Bundle().apply {
-                    putLong(KEY_SHOW_ID, id)
-                }
+                arguments = bundleOf(KEY_SHOW_ID to id)
             }
         }
     }
@@ -69,7 +68,8 @@ class ShowDetailsFragment : TiviFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ShowDetailsFragmentViewModel::class.java)
-        showDetailsNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(ShowDetailsNavigatorViewModel::class.java)
+        showDetailsNavigator = ViewModelProviders.of(requireActivity(), viewModelFactory)
+                .get(ShowDetailsNavigatorViewModel::class.java)
 
         arguments?.let {
             viewModel.showId = it.getLong(KEY_SHOW_ID)
@@ -98,6 +98,10 @@ class ShowDetailsFragment : TiviFragment() {
                             addSharedElement(view, "poster")
                         }
                 )
+            }
+
+            override fun onEpisodeClicked(episode: Episode, view: View) {
+                viewModel.onRelatedShowClicked(showDetailsNavigator, episode)
             }
         })
 

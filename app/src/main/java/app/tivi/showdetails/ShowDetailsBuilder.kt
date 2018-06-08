@@ -19,6 +19,7 @@ package app.tivi.showdetails
 import android.arch.lifecycle.ViewModel
 import app.tivi.inject.ViewModelKey
 import app.tivi.showdetails.details.ShowDetailsFragmentBuilder
+import app.tivi.showdetails.episodedetails.EpisodeDetailsFragmentBuilder
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -26,8 +27,12 @@ import dagger.multibindings.IntoMap
 
 @Module
 internal abstract class ShowDetailsBuilder {
-    @ContributesAndroidInjector(modules = [ShowDetailsModule::class, ShowDetailsFragmentBuilder::class])
-    internal abstract fun showDetailsActivity(): ShowDetailsActivity
+    @ContributesAndroidInjector(modules = [
+        ShowDetailsModule::class,
+        ShowDetailsFragmentBuilder::class,
+        EpisodeDetailsFragmentBuilder::class
+    ])
+    internal abstract fun bindDetailsActivity(): ShowDetailsActivity
 
     @Binds
     @IntoMap

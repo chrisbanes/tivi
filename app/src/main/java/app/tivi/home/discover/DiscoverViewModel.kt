@@ -23,8 +23,8 @@ import app.tivi.home.HomeFragmentViewModel
 import app.tivi.home.HomeNavigator
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktManager
-import app.tivi.trakt.calls.PopularCall
-import app.tivi.trakt.calls.TrendingCall
+import app.tivi.datasources.trakt.PopularDataSource
+import app.tivi.datasources.trakt.TrendingDataSource
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.NetworkDetector
@@ -34,8 +34,8 @@ import javax.inject.Inject
 
 class DiscoverViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
-    private val popularCall: PopularCall,
-    private val trendingCall: TrendingCall,
+    private val popularCall: PopularDataSource,
+    private val trendingCall: TrendingDataSource,
     traktManager: TraktManager,
     tmdbManager: TmdbManager,
     private val networkDetector: NetworkDetector,

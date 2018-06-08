@@ -18,31 +18,29 @@ package app.tivi.trakt
 
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
-import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.util.AppCoroutineDispatchers
-import com.uwetrottmann.trakt5.TraktV2
 import com.uwetrottmann.trakt5.enums.Extended
+import com.uwetrottmann.trakt5.services.Seasons
 import kotlinx.coroutines.experimental.withContext
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
+import javax.inject.Provider
 import javax.inject.Singleton
-import com.uwetrottmann.trakt5.entities.Episode as TraktEpisode
 import com.uwetrottmann.trakt5.entities.Season as TraktSeason
 
 @Singleton
 class TraktSeasonFetcher @Inject constructor(
     private val showDao: TiviShowDao,
     private val seasonDao: SeasonsDao,
-    private val episodesDao: EpisodesDao,
-    private val trakt: TraktV2,
+    private val seasonsService: Provider<Seasons>,
     private val dispatchers: AppCoroutineDispatchers,
     private val entityInserter: EntityInserter,
-    private val transactionRunner: DatabaseTransactionRunner
+    private val transactionRunner: DatabaseTransactionRunner,
+    private val traktEpisodeFetcher: TraktEpisodeFetcher
 ) {
     suspend fun updateSeasonData(showId: Long) {
         val show = withContext(dispatchers.database) {
@@ -50,7 +48,7 @@ class TraktSeasonFetcher @Inject constructor(
         } ?: throw IllegalArgumentException("Show with id[$showId] does not exist")
 
         val response = withContext(dispatchers.network) {
-            trakt.seasons().summary(show.traktId!!.toString(), Extended.FULLEPISODES).fetchBodyWithRetry()
+            seasonsService.get().summary(show.traktId!!.toString(), Extended.FULLEPISODES).fetchBodyWithRetry()
         }
 
         withContext(dispatchers.database) {
@@ -60,7 +58,7 @@ class TraktSeasonFetcher @Inject constructor(
                     val seasonId = upsertSeason(showId, traktSeason)
                     // Now upsert all the episodes
                     traktSeason.episodes?.forEach {
-                        upsertEpisode(seasonId, it)
+                        traktEpisodeFetcher.upsertEpisode(seasonId, it)
                     }
                 }
             }
@@ -83,23 +81,6 @@ class TraktSeasonFetcher @Inject constructor(
             lastTraktUpdate = OffsetDateTime.now()
         }.let {
             entityInserter.insertOrUpdate(seasonDao, it)
-        }
-    }
-
-    private fun upsertEpisode(seasonId: Long, traktEpisode: TraktEpisode) {
-        (episodesDao.episodeWithTraktId(traktEpisode.ids.trakt) ?: Episode()).apply {
-            updateProperty(this::seasonId, seasonId)
-            updateProperty(this::traktId, traktEpisode.ids.trakt)
-            updateProperty(this::tmdbId, traktEpisode.ids.tmdb)
-            updateProperty(this::title, traktEpisode.title)
-            updateProperty(this::number, traktEpisode.number)
-            updateProperty(this::summary, traktEpisode.overview)
-            updateProperty(this::firstAired, traktEpisode.first_aired)
-            updateProperty(this::rating, traktEpisode.rating?.toFloat())
-            updateProperty(this::votes, traktEpisode.votes)
-            lastTraktUpdate = OffsetDateTime.now()
-        }.also {
-            entityInserter.insertOrUpdate(episodesDao, it)
         }
     }
 }

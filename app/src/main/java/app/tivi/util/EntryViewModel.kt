@@ -22,8 +22,8 @@ import android.arch.paging.LivePagedListBuilder
 import android.arch.paging.PagedList
 import app.tivi.api.Status
 import app.tivi.api.UiResource
-import app.tivi.calls.ListCall
-import app.tivi.calls.PaginatedCall
+import app.tivi.datasources.ListRefreshableDataSource
+import app.tivi.datasources.PaginatedDataSource
 import app.tivi.data.Entry
 import app.tivi.data.entities.ListItem
 import app.tivi.tmdb.TmdbManager
@@ -35,7 +35,7 @@ import io.reactivex.subjects.BehaviorSubject
 open class EntryViewModel<LI : ListItem<out Entry>>(
     private val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
-    private val call: ListCall<Unit, LI>,
+    private val call: ListRefreshableDataSource<Unit, LI>,
     tmdbManager: TmdbManager,
     private val networkDetector: NetworkDetector,
     private val logger: Logger
@@ -69,7 +69,7 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
     }
 
     fun onListScrolledToEnd() {
-        if (call is PaginatedCall<*, *>) {
+        if (call is PaginatedDataSource<*, *>) {
             launchWithParent(dispatchers.main) {
                 sendMessage(UiResource(Status.LOADING_MORE))
                 try {

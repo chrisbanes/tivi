@@ -16,12 +16,17 @@
 
 package app.tivi.showdetails
 
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import app.tivi.R
 import app.tivi.TiviActivity
+import app.tivi.extensions.observeNotNull
 import app.tivi.showdetails.details.ShowDetailsFragment
+import app.tivi.showdetails.episodedetails.EpisodeDetailsFragment
+import javax.inject.Inject
 
 class ShowDetailsActivity : TiviActivity() {
 
@@ -35,9 +40,17 @@ class ShowDetailsActivity : TiviActivity() {
         }
     }
 
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var navigatorViewModel: ShowDetailsNavigatorViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_details)
+
+        navigatorViewModel = ViewModelProviders.of(this, viewModelFactory)
+                .get(ShowDetailsNavigatorViewModel::class.java)
+
+        navigatorViewModel.showEpisodeDetailsCall.observeNotNull(this, ::showEpisodeDetails)
 
         postponeEnterTransition()
     }
@@ -51,5 +64,10 @@ class ShowDetailsActivity : TiviActivity() {
         } else {
             // TODO finish?
         }
+    }
+
+    private fun showEpisodeDetails(episodeId: Long) {
+        EpisodeDetailsFragment.create(episodeId)
+                .show(supportFragmentManager, "episode")
     }
 }

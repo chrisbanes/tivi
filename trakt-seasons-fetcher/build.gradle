@@ -19,6 +19,7 @@ apply plugin: 'kotlin'
 
 dependencies {
     compile project(":trakt")
+    implementation project(':trakt-episode-fetcher')
 
     implementation project(":data")
     implementation project(":base")

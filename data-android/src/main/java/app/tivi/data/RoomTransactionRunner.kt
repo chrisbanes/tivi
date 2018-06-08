@@ -16,6 +16,8 @@
 
 package app.tivi.data
 
+import java.util.concurrent.Callable
+
 class RoomTransactionRunner(private val db: TiviDatabase) : DatabaseTransactionRunner {
-    override fun runInTransaction(run: () -> Unit) = db.runInTransaction(run)
+    override fun <T> runInTransaction(run: () -> T): T = db.runInTransaction(Callable<T> { run() })
 }

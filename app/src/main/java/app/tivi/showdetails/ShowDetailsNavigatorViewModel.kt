@@ -16,10 +16,13 @@
 
 package app.tivi.showdetails
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
 import app.tivi.AppNavigator
 import app.tivi.SharedElementHelper
+import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
+import app.tivi.util.SingleLiveEvent
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -31,4 +34,12 @@ class ShowDetailsNavigatorViewModel @Inject constructor(
             appNavigatorProvider.get().startShowDetails(show.id!!, sharedElements)
         }
     }
+
+    override fun showEpisodeDetails(episode: Episode) {
+        _showEpisodeDetailsCall.value = episode.id
+    }
+
+    private val _showEpisodeDetailsCall = SingleLiveEvent<Long>(errorOnNoObservers = true)
+    val showEpisodeDetailsCall: LiveData<Long>
+        get() = _showEpisodeDetailsCall
 }

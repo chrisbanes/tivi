@@ -20,6 +20,8 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import app.tivi.GlideApp
 import com.bumptech.glide.request.target.SimpleTarget
@@ -47,3 +49,21 @@ fun MenuItem.loadIconFromUrl(context: Context, imageUrl: String) {
                 }
             })
 }
+
+val View.marginLeft: Int
+    get() = (layoutParams as? ViewGroup.MarginLayoutParams)?.leftMargin ?: 0
+
+val View.marginTop: Int
+    get() = (layoutParams as? ViewGroup.MarginLayoutParams)?.topMargin ?: 0
+
+val View.marginRight: Int
+    get() = (layoutParams as? ViewGroup.MarginLayoutParams)?.rightMargin ?: 0
+
+val View.marginBottom: Int
+    get() = (layoutParams as? ViewGroup.MarginLayoutParams)?.bottomMargin ?: 0
+
+val View.marginStart: Int
+    get() = (layoutParams as? ViewGroup.MarginLayoutParams)?.marginStart ?: 0
+
+val View.marginEnd: Int
+    get() = (layoutParams as? ViewGroup.MarginLayoutParams)?.marginEnd ?: 0

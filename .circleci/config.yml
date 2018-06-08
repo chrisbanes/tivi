@@ -1,5 +1,12 @@
 version: 2.0
 
+config_gcloud: &config_gcloud
+  docker:
+    - image: google/cloud-sdk:latest
+  working_directory: ~/tivi
+  environment:
+    TERM: dumb
+
 defaults: &defaults
   docker:
     - image: circleci/android:api-27-alpha
@@ -34,7 +41,7 @@ jobs:
           command: signing/setup.sh $ENCRYPT_KEY
       - run:
           name: Check and assemble APKs
-          command: ./gradlew check assemble dependencyUpdates
+          command: ./gradlew check assemble app:assembleAndroidTest dependencyUpdates
       - run:
           name: Cleanup secrets
           command: signing/cleanup.sh
@@ -78,12 +85,35 @@ jobs:
       - run:
           name: Cleanup secrets
           command: signing/cleanup.sh
+  test_instrumented:
+    <<: *config_gcloud
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/tivi
+      - run:
+          name: Setup Google Cloud auth
+          command: ftl-tests/setup.sh
+      - run:
+          name: Run tests on Firebase Test Lab
+          command: ftl-tests/run-tests.sh
+      - run:
+          name: Download results
+          command: ftl-tests/download-results.sh firebase_test_results
+          when: always
+      - store_artifacts:
+          path: firebase_test_results
+      - store_test_results:
+          path: firebase_test_results
 
 workflows:
   version: 2
   build_and_test:
     jobs:
       - build
+      - test_instrumented:
+          requires:
+            - build
       - deploy_to_play:
           requires:
             - build

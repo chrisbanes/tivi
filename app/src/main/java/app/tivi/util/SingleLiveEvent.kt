@@ -23,12 +23,12 @@ import android.support.annotation.MainThread
 import android.util.Log
 import java.util.concurrent.atomic.AtomicBoolean
 
-class SingleLiveEvent<T> : MutableLiveData<T>() {
-
+class SingleLiveEvent<T>(private val errorOnNoObservers: Boolean = false) : MutableLiveData<T>() {
     companion object {
         private val TAG = "SingleLiveEvent"
     }
-    private val mPending = AtomicBoolean(false)
+
+    private val pending = AtomicBoolean(false)
 
     @MainThread
     override fun observe(owner: LifecycleOwner, observer: Observer<T>) {
@@ -37,7 +37,7 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
         }
         // Observe the internal MutableLiveData
         super.observe(owner, Observer<T> { t ->
-            if (mPending.compareAndSet(true, false)) {
+            if (pending.compareAndSet(true, false)) {
                 observer.onChanged(t)
             }
         })
@@ -45,7 +45,10 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
 
     @MainThread
     override fun setValue(t: T?) {
-        mPending.set(true)
+        if (errorOnNoObservers && !hasActiveObservers()) {
+            throw IllegalStateException("setValue called but there are no active observers")
+        }
+        pending.set(true)
         super.setValue(t)
     }
 

@@ -11,16 +11,19 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/base" />
             <option value="$PROJECT_DIR$/base-android" />
-            <option value="$PROJECT_DIR$/calls" />
             <option value="$PROJECT_DIR$/data" />
             <option value="$PROJECT_DIR$/data-android" />
+            <option value="$PROJECT_DIR$/datasources" />
+            <option value="$PROJECT_DIR$/episode-fetcher" />
             <option value="$PROJECT_DIR$/seasons-fetcher" />
             <option value="$PROJECT_DIR$/show-fetcher" />
             <option value="$PROJECT_DIR$/tasks" />
             <option value="$PROJECT_DIR$/tmdb" />
+            <option value="$PROJECT_DIR$/tmdb-episode-fetcher" />
             <option value="$PROJECT_DIR$/tmdb-show-fetcher" />
             <option value="$PROJECT_DIR$/trakt" />
             <option value="$PROJECT_DIR$/trakt-auth" />
+            <option value="$PROJECT_DIR$/trakt-episode-fetcher" />
             <option value="$PROJECT_DIR$/trakt-seasons-fetcher" />
             <option value="$PROJECT_DIR$/trakt-show-fetcher" />
           </set>

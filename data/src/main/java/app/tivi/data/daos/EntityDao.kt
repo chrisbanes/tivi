@@ -16,6 +16,7 @@
 
 package app.tivi.data.daos
 
+import android.arch.persistence.room.Delete
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.Update
 import app.tivi.data.entities.TiviEntity
@@ -24,6 +25,12 @@ interface EntityDao<in E : TiviEntity> {
     @Insert
     fun insert(entity: E): Long
 
+    @Insert
+    fun insertAll(vararg entity: E)
+
     @Update
     fun update(entity: E)
+
+    @Delete
+    fun delete(entity: E): Int
 }

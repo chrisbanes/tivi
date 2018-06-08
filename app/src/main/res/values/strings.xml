@@ -62,4 +62,6 @@
     <string name="follow_show_add">Follow show</string>
     <string name="follow_show_remove">Un-follow show</string>
 
+    <string name="episode_watches">Episode watches</string>
+
 </resources>
