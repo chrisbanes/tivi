@@ -32,7 +32,7 @@ class TmdbManager @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val tmdbClient: Tmdb
 ) {
-    private val imageProviderSubject = BehaviorSubject.createDefault(TmdbImageUrlProvider())!!
+    private val imageProviderSubject = BehaviorSubject.createDefault(TmdbImageUrlProvider())
     val imageProvider = imageProviderSubject.toFlowable(BackpressureStrategy.LATEST)!!
 
     init {
