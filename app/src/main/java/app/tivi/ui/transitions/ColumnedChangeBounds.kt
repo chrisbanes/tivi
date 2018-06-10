@@ -85,13 +85,11 @@ class ColumnedChangeBounds : Transition() {
         val endLeft = endBounds.left
 
         val startTop = startBounds.top
-        val endTop = endBounds.top
 
         val startRight = startBounds.right
         val endRight = endBounds.right
 
         val startBottom = startBounds.bottom
-        val endBottom = endBounds.bottom
 
         val startWidth = startRight - startLeft
         val startHeight = startBottom - startTop
