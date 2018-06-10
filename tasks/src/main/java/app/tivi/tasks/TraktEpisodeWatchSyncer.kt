@@ -88,12 +88,10 @@ class TraktEpisodeWatchSyncer @Inject constructor(
 
             // Now update the database
             withContext(dispatchers.database) {
-                databaseTransactionRunner.runInTransaction {
-                    sendActions.forEach {
-                        val entry = it.first.copy(pendingAction = EpisodeWatchEntry.PENDING_ACTION_NOTHING)
-                        episodeWatchEntryDao.update(entry)
-                    }
-                }
+                episodeWatchEntryDao.updateEntriesToPendingAction(
+                        sendActions.mapNotNull { it.first.id },
+                        EpisodeWatchEntry.PENDING_ACTION_NOTHING
+                )
             }
         }
     }
@@ -124,12 +122,7 @@ class TraktEpisodeWatchSyncer @Inject constructor(
 
             // Now update the database
             withContext(dispatchers.database) {
-                databaseTransactionRunner.runInTransaction {
-                    deleteActions.forEach {
-                        logger.d("Deleting local watch entry: $it")
-                        episodeWatchEntryDao.deleteWithId(it.id!!)
-                    }
-                }
+                episodeWatchEntryDao.deleteWithIds(deleteActions.mapNotNull { it.id })
             }
         }
     }

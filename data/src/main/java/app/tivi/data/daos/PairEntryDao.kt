@@ -25,5 +25,5 @@ import io.reactivex.Flowable
  */
 interface PairEntryDao<EC : MultipleEntry, LI : ListItem<EC>> : EntityDao<EC> {
     fun entries(showId: Long): Flowable<List<LI>>
-    fun deleteAll(showId: Long)
+    fun deleteWithShowId(showId: Long)
 }

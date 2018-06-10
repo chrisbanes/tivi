@@ -18,11 +18,11 @@ package app.tivi.datasources.trakt
 
 import android.arch.paging.DataSource
 import app.tivi.ShowFetcher
-import app.tivi.datasources.ListRefreshableDataSource
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.data.entities.WatchedShowListItem
+import app.tivi.datasources.ListRefreshableDataSource
 import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.extensions.parallelForEach
 import app.tivi.extensions.parallelMap
@@ -71,7 +71,7 @@ class WatchedShowsDataSource @Inject constructor(
         withContext(dispatchers.database) {
             databaseTransactionRunner.runInTransaction {
                 watchShowDao.deleteAll()
-                shows.forEach { watchShowDao.insert(it) }
+                watchShowDao.insertAll(shows)
             }
         }
 
