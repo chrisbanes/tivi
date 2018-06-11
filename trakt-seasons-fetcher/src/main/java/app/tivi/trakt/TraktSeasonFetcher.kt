@@ -66,8 +66,7 @@ class TraktSeasonFetcher @Inject constructor(
     }
 
     private fun upsertSeason(showId: Long, traktSeason: TraktSeason): Long {
-        return (seasonDao.seasonWithSeasonTraktId(traktSeason.ids.trakt) ?: Season()).apply {
-            updateProperty(this::showId, showId)
+        return (seasonDao.seasonWithSeasonTraktId(traktSeason.ids.trakt) ?: Season(showId = showId)).apply {
             updateProperty(this::traktId, traktSeason.ids.trakt)
             updateProperty(this::tmdbId, traktSeason.ids.tmdb)
             updateProperty(this::number, traktSeason.number)

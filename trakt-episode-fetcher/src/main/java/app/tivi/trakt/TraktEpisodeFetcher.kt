@@ -70,8 +70,7 @@ class TraktEpisodeFetcher @Inject constructor(
     }
 
     fun upsertEpisode(seasonId: Long, traktEpisode: TraktEpisode) {
-        (episodesDao.episodeWithTraktId(traktEpisode.ids.trakt) ?: Episode()).apply {
-            updateProperty(this::seasonId, seasonId)
+        (episodesDao.episodeWithTraktId(traktEpisode.ids.trakt) ?: Episode(seasonId = seasonId)).apply {
             updateProperty(this::traktId, traktEpisode.ids.trakt)
             updateProperty(this::tmdbId, traktEpisode.ids.tmdb)
             updateProperty(this::title, traktEpisode.title)
