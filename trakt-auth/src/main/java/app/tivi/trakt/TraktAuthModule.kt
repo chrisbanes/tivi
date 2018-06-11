@@ -82,6 +82,9 @@ class TraktAuthModule {
     }
 
     @Provides
+    fun provideAuthState(traktManager: TraktManager) = traktManager.state.blockingLast()!!
+
+    @Provides
     fun provideAuthRequest(
         serviceConfig: AuthorizationServiceConfiguration,
         @Named("trakt-client-id") clientId: String

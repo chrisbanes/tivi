@@ -42,11 +42,11 @@ class TmdbShowFetcher @Inject constructor(
                 (showDao.getShowWithTmdbId(tmdbShow.id) ?: TiviShow())
                         .apply {
                             updateProperty(this::tmdbId, tmdbShow.id)
-                            updateProperty(this::title, tmdbShow.name)
-                            updateProperty(this::summary, tmdbShow.overview)
+                            updateProperty(this::title, tmdbShow.name, false)
+                            updateProperty(this::summary, tmdbShow.overview, false)
                             updateProperty(this::tmdbBackdropPath, tmdbShow.backdrop_path)
                             updateProperty(this::tmdbPosterPath, tmdbShow.poster_path)
-                            updateProperty(this::homepage, tmdbShow.homepage)
+                            updateProperty(this::homepage, tmdbShow.homepage, false)
                             lastTmdbUpdate = OffsetDateTime.now()
                         }.also {
                             entityInserter.insertOrUpdate(showDao, it)

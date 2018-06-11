@@ -22,9 +22,9 @@ import kotlin.reflect.KMutableProperty0
 interface TiviEntity {
     val id: Long?
 
-    fun <T> updateProperty(entityVar: KMutableProperty0<T?>, updateVal: T?) {
-        when {
-            updateVal != null -> entityVar.set(updateVal)
+    fun <T> updateProperty(entityVar: KMutableProperty0<T?>, updateVal: T?, updateAlways: Boolean = true) {
+        if (updateVal != null && (updateAlways || entityVar.get() == null)) {
+            entityVar.set(updateVal)
         }
     }
 }

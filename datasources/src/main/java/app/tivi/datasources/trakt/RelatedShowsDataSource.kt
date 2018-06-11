@@ -17,12 +17,12 @@
 package app.tivi.datasources.trakt
 
 import app.tivi.ShowFetcher
-import app.tivi.datasources.RefreshableDataSource
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.RelatedShowsListItem
+import app.tivi.datasources.RefreshableDataSource
 import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.extensions.parallelForEach
 import app.tivi.util.AppCoroutineDispatchers
@@ -58,10 +58,8 @@ class RelatedShowsDataSource @Inject constructor(
 
             withContext(dispatchers.database) {
                 transactionRunner.runInTransaction {
-                    entryDao.deleteAll(param)
-                    related.forEach {
-                        entryDao.insert(it)
-                    }
+                    entryDao.deleteWithShowId(param)
+                    entryDao.insertAll(related)
                 }
             }
 

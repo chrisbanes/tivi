@@ -55,7 +55,7 @@ class AppModule {
     @Singleton
     @Provides
     fun provideRxSchedulers(): AppRxSchedulers = AppRxSchedulers(
-            database = Schedulers.single(),
+            database = Schedulers.io(),
             disk = Schedulers.io(),
             network = Schedulers.io(),
             main = AndroidSchedulers.mainThread()

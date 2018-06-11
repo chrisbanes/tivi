@@ -68,12 +68,11 @@ class TmdbEpisodeFetcher @Inject constructor(
     }
 
     private fun upsertEpisode(seasonId: Long, tmdbEpisode: TvEpisode) {
-        (episodesDao.episodeWithTmdbId(tmdbEpisode.id) ?: Episode()).apply {
-            updateProperty(this::seasonId, seasonId)
+        (episodesDao.episodeWithTmdbId(tmdbEpisode.id) ?: Episode(seasonId = seasonId)).apply {
             updateProperty(this::tmdbId, tmdbEpisode.id)
-            updateProperty(this::title, tmdbEpisode.name)
-            updateProperty(this::number, tmdbEpisode.episode_number)
-            updateProperty(this::summary, tmdbEpisode.overview)
+            updateProperty(this::title, tmdbEpisode.name, false)
+            updateProperty(this::number, tmdbEpisode.episode_number, false)
+            updateProperty(this::summary, tmdbEpisode.overview, false)
             updateProperty(this::tmdbBackdropPath, tmdbEpisode.still_path)
             lastTmdbUpdate = OffsetDateTime.now()
         }.also {

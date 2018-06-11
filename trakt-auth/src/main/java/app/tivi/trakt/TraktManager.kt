@@ -21,8 +21,8 @@ import androidx.core.content.edit
 import app.tivi.AppNavigator
 import app.tivi.actions.ShowTasks
 import app.tivi.data.entities.TraktUser
-import app.tivi.inject.ApplicationLevel
 import app.tivi.datasources.trakt.UserMeDataSource
+import app.tivi.inject.ApplicationLevel
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
@@ -63,9 +63,9 @@ class TraktManager @Inject constructor(
     private val showTasks: ShowTasks,
     private val logger: Logger
 ) {
-    private val authState = BehaviorSubject.create<AuthState>()!!
+    private val authState = BehaviorSubject.create<AuthState>()
 
-    private val _state = BehaviorSubject.createDefault(TraktAuthState.LOGGED_OUT)!!
+    private val _state = BehaviorSubject.createDefault(TraktAuthState.LOGGED_OUT)
     val state: Observable<TraktAuthState>
         get() = _state
 

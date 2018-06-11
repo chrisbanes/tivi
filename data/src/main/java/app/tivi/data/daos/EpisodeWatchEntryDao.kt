@@ -54,8 +54,14 @@ abstract class EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry> {
             " WHERE shows.id = :showId AND ew.pending_action = :pendingAction")
     internal abstract fun entriesForShowIdWithPendingAction(showId: Long, pendingAction: Int): List<EpisodeWatchEntry>
 
+    @Query("UPDATE episode_watch_entries SET pending_action = :pendingAction WHERE id IN (:ids)")
+    abstract fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: Int): Int
+
     @Query("DELETE FROM episode_watch_entries WHERE id = :id")
     abstract fun deleteWithId(id: Long): Int
+
+    @Query("DELETE FROM episode_watch_entries WHERE id IN (:ids)")
+    abstract fun deleteWithIds(ids: List<Long>): Int
 
     @Query("DELETE FROM episode_watch_entries WHERE trakt_id = :traktId")
     abstract fun deleteWithTraktId(traktId: Long): Int

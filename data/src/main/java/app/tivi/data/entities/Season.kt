@@ -19,7 +19,6 @@ package app.tivi.data.entities
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
-import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.OffsetDateTime
@@ -37,7 +36,7 @@ import org.threeten.bp.OffsetDateTime
         ])
 data class Season(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override var id: Long? = null,
-    @ColumnInfo(name = "show_id") var showId: Long? = null,
+    @ColumnInfo(name = "show_id") var showId: Long,
     @ColumnInfo(name = "trakt_id") override var traktId: Int? = null,
     @ColumnInfo(name = "tmdb_id") override var tmdbId: Int? = null,
     @ColumnInfo(name = "title") var title: String? = null,
@@ -54,8 +53,6 @@ data class Season(
     @ColumnInfo(name = "tmdb_updated") override var lastTmdbUpdate: OffsetDateTime? = null,
     @ColumnInfo(name = "episodes_updated") var lastEpisodeUpdate: OffsetDateTime? = null
 ) : TiviEntity, TmdbIdEntity, TraktIdEntity {
-    @Ignore constructor() : this(null)
-
     companion object {
         const val NUMBER_SPECIALS = 0
     }

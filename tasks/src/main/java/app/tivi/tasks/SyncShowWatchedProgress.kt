@@ -17,8 +17,6 @@
 package app.tivi.tasks
 
 import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.trakt.TraktAuthState
-import app.tivi.trakt.TraktManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import com.evernote.android.job.Job
@@ -32,7 +30,6 @@ class SyncShowWatchedProgress @Inject constructor(
     private val syncer: TraktEpisodeWatchSyncer,
     private val followedShowsDao: FollowedShowsDao,
     private val dispatchers: AppCoroutineDispatchers,
-    private val traktManager: TraktManager,
     private val logger: Logger
 ) : Job() {
     companion object {
@@ -52,20 +49,15 @@ class SyncShowWatchedProgress @Inject constructor(
         val showId = params.extras.getLong(PARAM_SHOW_ID, -1)
         logger.d("$TAG job running for show id: $showId")
 
-        val authState = traktManager.state.blockingFirst()
-        if (authState == TraktAuthState.LOGGED_IN) {
-            return runBlocking {
-                val followedEntry = withContext(dispatchers.database) {
-                    followedShowsDao.entryWithShowId(showId)
-                } ?: throw IllegalArgumentException("Followed entry with id: $showId does not exist")
-                val show = followedEntry.show!!
+        return runBlocking {
+            val followedEntry = withContext(dispatchers.database) {
+                followedShowsDao.entryWithShowId(showId)
+            } ?: throw IllegalArgumentException("Followed entry with id: $showId does not exist")
+            val show = followedEntry.show!!
 
-                syncer.sync(show.id!!)
+            syncer.sync(show.id!!)
 
-                Result.SUCCESS
-            }
+            Result.SUCCESS
         }
-
-        return Result.FAILURE
     }
 }

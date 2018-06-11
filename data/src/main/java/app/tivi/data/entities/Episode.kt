@@ -37,7 +37,7 @@ import org.threeten.bp.OffsetDateTime
 )
 data class Episode(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override var id: Long? = null,
-    @ColumnInfo(name = "season_id") var seasonId: Long? = null,
+    @ColumnInfo(name = "season_id") var seasonId: Long,
     @ColumnInfo(name = "trakt_id") override var traktId: Int? = null,
     @ColumnInfo(name = "tmdb_id") override var tmdbId: Int? = null,
     @ColumnInfo(name = "title") var title: String? = null,

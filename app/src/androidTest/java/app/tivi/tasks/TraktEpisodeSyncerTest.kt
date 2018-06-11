@@ -18,6 +18,7 @@ package app.tivi.tasks
 
 import app.tivi.data.RoomTransactionRunner
 import app.tivi.data.daos.EpisodeWatchEntryDao
+import app.tivi.trakt.TraktAuthState
 import app.tivi.util.AndroidLogger
 import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.episodeOne
@@ -77,7 +78,8 @@ class TraktEpisodeSyncerTest : BaseDatabaseTest() {
                 Provider { userService },
                 Provider { syncService },
                 RoomTransactionRunner(db),
-                AndroidLogger
+                AndroidLogger,
+                Provider { TraktAuthState.LOGGED_OUT }
         )
 
         insertShow(db)
@@ -121,7 +123,7 @@ class TraktEpisodeSyncerTest : BaseDatabaseTest() {
 
         episodeWatchDao.insertAll(episodeWatch1, episodeWatch2PendingDelete)
         // Now sync pending deletes
-        episodeSyncer.sendPendingDeleteWatchesToTrakt(showId)
+        episodeSyncer.processPendingDeleteWatches(showId)
         // Assert that only the pending is no longer present
         assertThat(episodeWatchDao.watchesForEpisode(episodeOne.id!!),
                 equalTo(listOf(episodeWatch1)))
@@ -133,7 +135,7 @@ class TraktEpisodeSyncerTest : BaseDatabaseTest() {
 
         episodeWatchDao.insertAll(episodeWatch1, episodeWatch2PendingSend)
         // Now sync pending to trakt
-        episodeSyncer.sendPendingSendWatchesToTrakt(showId)
+        episodeSyncer.processPendingSendWatches(showId)
         // Assert that only the pending is no longer pending
         assertThat(episodeWatchDao.watchesForEpisode(episodeOne.id!!),
                 equalTo(listOf(episodeWatch1, episodeWatch2)))
