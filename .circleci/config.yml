@@ -119,7 +119,7 @@ workflows:
             - build
       - deploy_to_play:
           requires:
-            - build
+            - test_instrumented
           filters:
             branches:
               only: deploy
