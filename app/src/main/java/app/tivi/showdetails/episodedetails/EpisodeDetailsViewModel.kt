@@ -18,7 +18,7 @@ package app.tivi.showdetails.episodedetails
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import app.tivi.actions.ShowTasks
+import app.tivi.calls.SyncShowWatchedEpisodesCall
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.entities.EpisodeWatchEntry
@@ -31,6 +31,7 @@ import app.tivi.util.TiviViewModel
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
+import kotlinx.coroutines.experimental.withContext
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import javax.inject.Inject
@@ -40,11 +41,11 @@ class EpisodeDetailsViewModel @Inject constructor(
     private val episodeWatchesCall: EpisodeWatchesDataSource,
     private val tmdbManager: TmdbManager,
     private val logger: Logger,
-    private val showTasks: ShowTasks,
     private val episodesDao: EpisodesDao,
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,
     private val dispatchers: AppCoroutineDispatchers,
-    private val dateTimeFormatter: DateTimeFormatter
+    private val dateTimeFormatter: DateTimeFormatter,
+    private val syncShowWatchedEpisodesCall: SyncShowWatchedEpisodesCall
 ) : TiviViewModel() {
 
     var episodeId: Long? = null
@@ -94,30 +95,34 @@ class EpisodeDetailsViewModel @Inject constructor(
 
     fun markWatched() {
         val epId = episodeId!!
-        launchWithParent(dispatchers.database) {
-            val entry = EpisodeWatchEntry(
-                    episodeId = episodeId!!,
-                    watchedAt = OffsetDateTime.now(),
-                    pendingAction = EpisodeWatchEntry.PENDING_ACTION_UPLOAD
-            )
-            episodeWatchEntryDao.insert(entry)
-            showTasks.syncShowWatchedEpisodes(episodesDao.showIdForEpisodeId(epId))
+        launchWithParent {
+            withContext(dispatchers.database) {
+                val entry = EpisodeWatchEntry(
+                        episodeId = episodeId!!,
+                        watchedAt = OffsetDateTime.now(),
+                        pendingAction = EpisodeWatchEntry.PENDING_ACTION_UPLOAD
+                )
+                episodeWatchEntryDao.insert(entry)
+            }
+            syncShowWatchedEpisodesCall.doWork(episodesDao.showIdForEpisodeId(epId))
         }
     }
 
     fun markUnwatched() {
         val epId = episodeId!!
-        launchWithParent(dispatchers.database) {
-            val entries = episodeWatchEntryDao.watchesForEpisode(epId)
-            entries.forEach {
-                // We have a trakt id, so we need to do a sync
-                if (it.pendingAction != EpisodeWatchEntry.PENDING_ACTION_DELETE) {
-                    // If it is not set to be deleted, update it now
-                    val copy = it.copy(pendingAction = EpisodeWatchEntry.PENDING_ACTION_DELETE)
-                    episodeWatchEntryDao.update(copy)
+        launchWithParent {
+            withContext(dispatchers.database) {
+                val entries = episodeWatchEntryDao.watchesForEpisode(epId)
+                entries.forEach {
+                    // We have a trakt id, so we need to do a sync
+                    if (it.pendingAction != EpisodeWatchEntry.PENDING_ACTION_DELETE) {
+                        // If it is not set to be deleted, update it now
+                        val copy = it.copy(pendingAction = EpisodeWatchEntry.PENDING_ACTION_DELETE)
+                        episodeWatchEntryDao.update(copy)
+                    }
                 }
             }
-            showTasks.syncShowWatchedEpisodes(episodesDao.showIdForEpisodeId(epId))
+            syncShowWatchedEpisodesCall.doWork(episodesDao.showIdForEpisodeId(epId))
         }
     }
 }
