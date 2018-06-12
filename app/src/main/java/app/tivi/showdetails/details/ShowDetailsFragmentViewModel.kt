@@ -23,11 +23,11 @@ import app.tivi.calls.SyncShowWatchedEpisodesCall
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
-import app.tivi.showdetails.ShowDetailsNavigator
-import app.tivi.tmdb.TmdbManager
 import app.tivi.datasources.trakt.RelatedShowsDataSource
 import app.tivi.datasources.trakt.ShowDetailsDataSource
 import app.tivi.datasources.trakt.ShowSeasonsDataSource
+import app.tivi.showdetails.ShowDetailsNavigator
+import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.TiviViewModel
@@ -68,17 +68,19 @@ class ShowDetailsFragmentViewModel @Inject constructor(
                 showCall.refresh(id)
             }
             launchWithParent {
-                showWatchedEpisodesCall.doWork(id)
+                relatedShows.refresh(id)
             }
             launchWithParent {
-                relatedShows.refresh(id)
+                if (followedShowsDao.entryCountWithShowId(id) > 0) {
+                    showWatchedEpisodesCall.doWork(id)
+                }
             }
         }
     }
 
     private fun setupLiveData() {
         showId?.let { id ->
-            disposables += followedShowsDao.entryCountWithShowId(id)
+            disposables += followedShowsDao.entryCountWithShowIdFlowable(id)
                     .subscribeOn(schedulers.database)
                     .flatMap {
                         if (it > 0) {
@@ -102,12 +104,6 @@ class ShowDetailsFragmentViewModel @Inject constructor(
                     .subscribe(data::setValue, logger::e)
         }
     }
-
-    private fun onRefreshSuccess() {
-        // TODO nothing really to do here
-    }
-
-    private fun onRefreshError(t: Throwable) = logger.e(t, "Error while refreshing")
 
     fun addToMyShows() {
         showId?.let {

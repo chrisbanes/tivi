@@ -51,5 +51,8 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowsListI
     abstract fun deleteWithShowId(showId: Long)
 
     @Query("SELECT COUNT(*) FROM myshows_entries WHERE show_id = :showId")
-    abstract fun entryCountWithShowId(showId: Long): Flowable<Int>
+    abstract fun entryCountWithShowIdFlowable(showId: Long): Flowable<Int>
+
+    @Query("SELECT COUNT(*) FROM myshows_entries WHERE show_id = :showId")
+    abstract fun entryCountWithShowId(showId: Long): Int
 }
