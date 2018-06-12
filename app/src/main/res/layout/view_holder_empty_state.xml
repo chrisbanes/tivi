@@ -20,8 +20,14 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable name="message" type="String" />
-        <variable name="emoji" type="String" />
+
+        <variable
+            name="message"
+            type="String" />
+
+        <variable
+            name="emoji"
+            type="String" />
     </data>
 
     <android.support.constraint.ConstraintLayout

@@ -57,10 +57,10 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:src="@drawable/ic_upload_24dp"
-            android:visible="@{watch.pendingAction != EpisodeWatchEntry.PENDING_ACTION_NOTHING}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/watch_ic_watch"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:visible="@{watch.pendingAction != EpisodeWatchEntry.PENDING_ACTION_NOTHING}" />
 
         <ImageView
             android:id="@+id/watch_ic_watch"

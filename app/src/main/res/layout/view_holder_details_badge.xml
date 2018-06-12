@@ -20,17 +20,26 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable name="label" type="String" />
-        <variable name="contentDescription" type="String" />
-        <variable name="icon" type="int" />
+
+        <variable
+            name="label"
+            type="String" />
+
+        <variable
+            name="contentDescription"
+            type="String" />
+
+        <variable
+            name="icon"
+            type="int" />
     </data>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:contentDescription="@{contentDescription}"
         android:foreground="?android:attr/selectableItemBackground"
-        android:transitionGroup="true"
-        android:contentDescription="@{contentDescription}">
+        android:transitionGroup="true">
 
         <ImageView
             android:id="@+id/details_badge_icon"
@@ -38,12 +47,12 @@
             android:layout_height="40dp"
             android:layout_marginTop="16dp"
             android:scaleType="fitCenter"
-            android:srcRes="@{icon}"
             app:layout_constraintBottom_toTopOf="@+id/details_badge_label"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
+            app:srcRes="@{icon}"
             tools:src="@drawable/ic_details_rating" />
 
         <app.tivi.ui.widget.BaselineGridTextView

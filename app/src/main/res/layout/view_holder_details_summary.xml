@@ -17,10 +17,13 @@
   -->
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable name="summary" type="String" />
+        <variable
+            name="summary"
+            type="String" />
     </data>
 
     <FrameLayout
@@ -36,9 +39,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:maxLinesToggle="@{@integer/details_summary_collapsed_lines}"
             android:text="@{summary}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            app:maxLinesToggle="@{@integer/details_summary_collapsed_lines}"
             tools:text="@sample/shows.txt" />
 
     </FrameLayout>

@@ -21,16 +21,38 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="android.content.Context" />
+
         <import type="android.view.View" />
 
-        <variable name="posterPath" type="String" />
-        <variable name="title" type="String" />
-        <variable name="annotationLabel" type="String" />
-        <variable name="annotationIcon" type="int" />
-        <variable name="transitionName" type="String" />
-        <variable name="tmdbImageUrlProvider" type="app.tivi.tmdb.TmdbImageUrlProvider" />
-        <variable name="clickListener" type="android.view.View.OnClickListener" />
+        <variable
+            name="posterPath"
+            type="String" />
+
+        <variable
+            name="title"
+            type="String" />
+
+        <variable
+            name="annotationLabel"
+            type="String" />
+
+        <variable
+            name="annotationIcon"
+            type="int" />
+
+        <variable
+            name="transitionName"
+            type="String" />
+
+        <variable
+            name="tmdbImageUrlProvider"
+            type="app.tivi.tmdb.TmdbImageUrlProvider" />
+
+        <variable
+            name="clickListener"
+            type="android.view.View.OnClickListener" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -59,8 +81,8 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
-            android:tmdbImageUrlProvider="@{tmdbImageUrlProvider}"
-            android:tmdbPosterPath="@{posterPath}"
+            app:tmdbImageUrlProvider="@{tmdbImageUrlProvider}"
+            app:tmdbPosterPath="@{posterPath}"
             app:layout_constraintDimensionRatio="w,1.5:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -74,7 +96,7 @@
             android:layout_height="wrap_content"
             android:drawableStart="@{annotationIcon != 0 ? context.getDrawable(annotationIcon) : null}"
             android:text="@{annotationLabel}"
-            android:visibleIfNotNull="@{annotationLabel}"
+            app:visibleIfNotNull="@{annotationLabel}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="100" />

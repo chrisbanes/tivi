@@ -20,9 +20,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="episodeWithWatches"
             type="app.tivi.data.entities.EpisodeWithWatches" />
+
         <variable
             name="clickListener"
             type="android.view.View.OnClickListener" />
@@ -55,10 +57,10 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:src="@drawable/ic_upload_24dp"
-            android:visible="@{episodeWithWatches.hasPending()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/episode_watched"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:visible="@{episodeWithWatches.hasPending()}" />
 
         <ImageView
             android:id="@+id/episode_watched"
@@ -66,10 +68,10 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:src="@{episodeWithWatches.onlyPendingDeletes() ? @drawable/ic_eye_off_24dp : @drawable/ic_eye_24dp}"
-            android:visible="@{episodeWithWatches.isWatched()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:visible="@{episodeWithWatches.isWatched()}" />
 
     </android.support.constraint.ConstraintLayout>
 
