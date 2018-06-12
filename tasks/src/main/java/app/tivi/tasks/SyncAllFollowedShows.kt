@@ -16,19 +16,14 @@
 
 package app.tivi.tasks
 
-import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.extensions.parallelForEach
-import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.calls.SyncAllFollowedShowsCall
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
 import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 class SyncAllFollowedShows @Inject constructor(
-    private val followedShowsDao: FollowedShowsDao,
-    private val dispatchers: AppCoroutineDispatchers,
-    private val syncer: TraktEpisodeWatchSyncer
+    private val call: SyncAllFollowedShowsCall
 ) : Job() {
     companion object {
         const val TAG = "sync-all-followed-shows"
@@ -40,12 +35,7 @@ class SyncAllFollowedShows @Inject constructor(
 
     override fun onRunJob(params: Params): Result {
         runBlocking {
-            val followedShows = withContext(dispatchers.database) {
-                followedShowsDao.entriesBlocking()
-            }
-            followedShows.parallelForEach {
-                syncer.sync(it.showId)
-            }
+            call.doWork(Unit)
         }
         return Result.SUCCESS
     }

@@ -16,21 +16,16 @@
 
 package app.tivi.tasks
 
-import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.daos.SeasonsDao
-import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.calls.UnfollowShowCall
 import app.tivi.util.Logger
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
 import com.evernote.android.job.util.support.PersistableBundleCompat
 import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 class RemoveFromFollowedShows @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
-    private val seasonsDao: SeasonsDao,
-    private val followedShowsDao: FollowedShowsDao,
+    private val unfollowShowCall: UnfollowShowCall,
     private val logger: Logger
 ) : Job() {
 
@@ -49,16 +44,10 @@ class RemoveFromFollowedShows @Inject constructor(
 
     override fun onRunJob(params: Params): Result {
         val showId = params.extras.getLong(PARAM_SHOW_ID, -1)
-
         logger.d("$TAG job running for id: $showId")
 
         return runBlocking {
-            withContext(dispatchers.database) {
-                followedShowsDao.deleteWithShowId(showId)
-
-                // Now remove all season/episode data from database
-                seasonsDao.deleteSeasonsForShowId(showId)
-            }
+            unfollowShowCall.doWork(showId)
             Result.SUCCESS
         }
     }

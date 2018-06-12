@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package app.tivi.tasks
+package app.tivi.calls
 
-import android.support.annotation.VisibleForTesting
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
@@ -152,7 +151,6 @@ class TraktEpisodeWatchSyncer @Inject constructor(
         syncWatchesFromTrakt(showId, watchedProgress)
     }
 
-    @VisibleForTesting
     suspend fun syncWatchesFromTrakt(showId: Long, watches: List<HistoryEntry>) {
         withContext(dispatchers.database) {
             databaseTransactionRunner.runInTransaction {

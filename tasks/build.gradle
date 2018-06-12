@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,10 +45,7 @@ android {
 
 dependencies {
     implementation project(":base")
-    implementation project(":base-android")
-    implementation project(":data")
-    implementation project(":seasons-fetcher")
-    implementation project(":trakt-auth")
+    implementation project(":calls")
 
     implementation 'com.evernote:android-job:1.2.5'
 

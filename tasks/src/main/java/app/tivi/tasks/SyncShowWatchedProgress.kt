@@ -16,20 +16,16 @@
 
 package app.tivi.tasks
 
-import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.calls.SyncShowWatchedEpisodesCall
 import app.tivi.util.Logger
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
 import com.evernote.android.job.util.support.PersistableBundleCompat
 import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 class SyncShowWatchedProgress @Inject constructor(
-    private val syncer: TraktEpisodeWatchSyncer,
-    private val followedShowsDao: FollowedShowsDao,
-    private val dispatchers: AppCoroutineDispatchers,
+    private val call: SyncShowWatchedEpisodesCall,
     private val logger: Logger
 ) : Job() {
     companion object {
@@ -50,13 +46,7 @@ class SyncShowWatchedProgress @Inject constructor(
         logger.d("$TAG job running for show id: $showId")
 
         return runBlocking {
-            val followedEntry = withContext(dispatchers.database) {
-                followedShowsDao.entryWithShowId(showId)
-            } ?: throw IllegalArgumentException("Followed entry with id: $showId does not exist")
-            val show = followedEntry.show!!
-
-            syncer.sync(show.id!!)
-
+            call.doWork(showId)
             Result.SUCCESS
         }
     }
