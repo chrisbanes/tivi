@@ -19,6 +19,7 @@ package app.tivi.showdetails.details
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.SharedElementHelper
 import app.tivi.actions.ShowTasks
+import app.tivi.calls.SyncShowWatchedEpisodesCall
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
@@ -39,6 +40,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     private val showCall: ShowDetailsDataSource,
     private val relatedShows: RelatedShowsDataSource,
     private val seasonsCall: ShowSeasonsDataSource,
+    private val showWatchedEpisodesCall: SyncShowWatchedEpisodesCall,
     private val tmdbManager: TmdbManager,
     private val showTasks: ShowTasks,
     private val followedShowsDao: FollowedShowsDao,
@@ -65,10 +67,9 @@ class ShowDetailsFragmentViewModel @Inject constructor(
             launchWithParent {
                 showCall.refresh(id)
             }
-
-            // TODO re-add some sort of season refresh
-            showTasks.syncShowWatchedEpisodes(id)
-
+            launchWithParent {
+                showWatchedEpisodesCall.doWork(id)
+            }
             launchWithParent {
                 relatedShows.refresh(id)
             }

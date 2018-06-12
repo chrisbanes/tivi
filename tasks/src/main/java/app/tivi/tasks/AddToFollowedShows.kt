@@ -16,24 +16,18 @@
 
 package app.tivi.tasks
 
-import app.tivi.SeasonFetcher
-import app.tivi.actions.ShowTasks
-import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.calls.FollowShowCall
+import app.tivi.calls.SyncShowWatchedEpisodesCall
 import app.tivi.util.Logger
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
 import com.evernote.android.job.util.support.PersistableBundleCompat
 import kotlinx.coroutines.experimental.runBlocking
-import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 class AddToFollowedShows @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
-    private val followedShowsDao: FollowedShowsDao,
-    private val seasonFetcher: SeasonFetcher,
-    private val showTasks: ShowTasks,
+    private val followShowCall: FollowShowCall,
+    private val syncShowWatchedEpisodesCall: SyncShowWatchedEpisodesCall,
     private val logger: Logger
 ) : Job() {
 
@@ -52,20 +46,11 @@ class AddToFollowedShows @Inject constructor(
 
     override fun onRunJob(params: Params): Result {
         val showId = params.extras.getLong(PARAM_SHOW_ID, -1)
-
         logger.d("$TAG job running for id: $showId")
 
         return runBlocking {
-            val entryId = withContext(dispatchers.database) {
-                followedShowsDao.insert(FollowedShowEntry(showId = showId))
-            }
-
-            // Now refresh seasons
-            seasonFetcher.load(showId)
-
-            // And sync watched episodes
-            showTasks.syncShowWatchedEpisodes(showId)
-
+            followShowCall.doWork(showId)
+            syncShowWatchedEpisodesCall.doWork(showId)
             Result.SUCCESS
         }
     }

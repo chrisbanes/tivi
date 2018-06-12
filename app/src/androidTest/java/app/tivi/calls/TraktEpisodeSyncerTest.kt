@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.tasks
+package app.tivi.calls
 
 import app.tivi.data.RoomTransactionRunner
 import app.tivi.data.daos.EpisodeWatchEntryDao
