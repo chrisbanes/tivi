@@ -20,13 +20,24 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="android.view.View" />
+
         <import type="java.util.List" />
+
         <import type="app.tivi.data.entities.Genre" />
 
-        <variable name="title" type="String" />
-        <variable name="subtitle" type="String" />
-        <variable name="genres" type="List&lt;Genre&gt;" />
+        <variable
+            name="title"
+            type="String" />
+
+        <variable
+            name="subtitle"
+            type="String" />
+
+        <variable
+            name="genres"
+            type="List&lt;Genre&gt;" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -57,12 +68,12 @@
             android:ellipsize="end"
             android:text="@{subtitle}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:visibleIfNotNull="@{subtitle}"
             app:layout_constraintBottom_toTopOf="@+id/details_categories"
             app:layout_constraintEnd_toEndOf="@+id/details_title"
             app:layout_constraintStart_toStartOf="@+id/details_title"
             app:layout_constraintTop_toBottomOf="@+id/details_title"
             app:layout_goneMarginTop="0dp"
+            app:visibleIfNotNull="@{subtitle}"
             tools:text="@sample/shows.txt" />
 
         <app.tivi.ui.widget.BaselineGridTextView
@@ -71,9 +82,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:ellipsize="end"
-            android:genreString="@{genres}"
-            android:genreContentDescriptionString="@{genres}"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            app:genreContentDescriptionString="@{genres}"
+            app:genreString="@{genres}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/details_title"
             app:layout_constraintStart_toStartOf="@+id/details_title"

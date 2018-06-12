@@ -20,6 +20,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="episode"
             type="app.tivi.data.entities.Episode" />
@@ -39,15 +40,15 @@
             android:id="@+id/ep_details_fanart"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintDimensionRatio="w,1:1.5"
             android:elevation="4dp"
             android:scaleType="centerCrop"
-            android:tmdbBackdropPath="@{episode.tmdbBackdropPath}"
-            android:tmdbImageUrlProvider="@{tmdbImageUrlProvider}"
             app:foregroundScrim="@{@color/content_scrim_dark}"
+            app:layout_constraintDimensionRatio="w,1:1.5"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:tmdbBackdropPath="@{episode.tmdbBackdropPath}"
+            app:tmdbImageUrlProvider="@{tmdbImageUrlProvider}" />
 
         <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/ep_details_title"

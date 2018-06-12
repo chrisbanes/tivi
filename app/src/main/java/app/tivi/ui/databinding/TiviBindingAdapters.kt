@@ -31,7 +31,7 @@ import app.tivi.ui.GenreStringer
 import app.tivi.ui.MaxLinesToggleClickListener
 import app.tivi.util.ScrimUtil
 
-@BindingAdapter("android:tmdbPosterPath", "android:tmdbImageUrlProvider")
+@BindingAdapter("tmdbPosterPath", "tmdbImageUrlProvider")
 fun loadPoster(view: ImageView, posterPath: String?, tmdbImageUrlProvider: TmdbImageUrlProvider?) {
     GlideApp.with(view).clear(view)
 
@@ -45,7 +45,7 @@ fun loadPoster(view: ImageView, posterPath: String?, tmdbImageUrlProvider: TmdbI
     }
 }
 
-@BindingAdapter("android:tmdbBackdropPath", "android:tmdbImageUrlProvider")
+@BindingAdapter("tmdbBackdropPath", "tmdbImageUrlProvider")
 fun loadBackdrop(view: ImageView, backdropPath: String?, tmdbImageUrlProvider: TmdbImageUrlProvider?) {
     GlideApp.with(view).clear(view)
 
@@ -59,7 +59,7 @@ fun loadBackdrop(view: ImageView, backdropPath: String?, tmdbImageUrlProvider: T
     }
 }
 
-@BindingAdapter("android:genreString")
+@BindingAdapter("genreString")
 fun genreString(view: TextView, genres: List<Genre>?) {
     val genreText = genres?.joinToString(" // ") {
         "${view.context.getString(GenreStringer.getLabel(it))} ${GenreStringer.getEmoji(it)}"
@@ -67,7 +67,7 @@ fun genreString(view: TextView, genres: List<Genre>?) {
     view.text = genreText
 }
 
-@BindingAdapter("android:genreContentDescriptionString")
+@BindingAdapter("genreContentDescriptionString")
 fun genreContentDescriptionString(view: TextView, genres: List<Genre>?) {
     val genreContentDescription = genres?.joinToString(", ") {
         view.context.getString(GenreStringer.getLabel(it))
@@ -75,17 +75,17 @@ fun genreContentDescriptionString(view: TextView, genres: List<Genre>?) {
     view.contentDescription = genreContentDescription
 }
 
-@BindingAdapter("android:visibleIfNotNull")
+@BindingAdapter("visibleIfNotNull")
 fun visibleIfNotNull(view: View, target: Any?) {
     view.visibility = if (target == null) View.GONE else View.VISIBLE
 }
 
-@BindingAdapter("android:visible")
+@BindingAdapter("visible")
 fun visible(view: View, value: Boolean) {
     view.isVisible = value
 }
 
-@BindingAdapter("android:srcRes")
+@BindingAdapter("srcRes")
 fun imageViewSrcRes(view: ImageView, drawableRes: Int) {
     if (drawableRes != 0) {
         view.setImageResource(drawableRes)
@@ -94,7 +94,7 @@ fun imageViewSrcRes(view: ImageView, drawableRes: Int) {
     }
 }
 
-@BindingAdapter("android:maxLinesToggle")
+@BindingAdapter("maxLinesToggle")
 fun maxLinesClickListener(view: TextView, collapsedMaxLines: Int) {
     // Default to collapsed
     view.maxLines = collapsedMaxLines
@@ -102,12 +102,12 @@ fun maxLinesClickListener(view: TextView, collapsedMaxLines: Int) {
     view.setOnClickListener(MaxLinesToggleClickListener(collapsedMaxLines))
 }
 
-@BindingAdapter("bind:backgroundScrim")
+@BindingAdapter("backgroundScrim")
 fun backgroundScrim(view: View, color: Int) {
     view.background = ScrimUtil.makeCubicGradientScrimDrawable(color, 16, Gravity.BOTTOM)
 }
 
-@BindingAdapter("bind:foregroundScrim")
+@BindingAdapter("foregroundScrim")
 fun foregroundScrim(view: View, color: Int) {
     view.foreground = ScrimUtil.makeCubicGradientScrimDrawable(color, 16, Gravity.BOTTOM)
 }
