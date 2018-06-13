@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package app.tivi.calls
+package app.tivi.interactors
 
-interface Call<in Param> {
+interface Interactor<in Param> {
     suspend fun doWork(param: Param)
 }

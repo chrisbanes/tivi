@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.calls
+package app.tivi.interactors
 
 import app.tivi.SeasonFetcher
 import app.tivi.data.daos.FollowedShowsDao
@@ -23,11 +23,11 @@ import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
-class FollowShowCall @Inject constructor(
+class FollowShowInteractor @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val followedShowsDao: FollowedShowsDao,
     private val seasonFetcher: SeasonFetcher
-) : Call<Long> {
+) : Interactor<Long> {
     override suspend fun doWork(param: Long) {
         withContext(dispatchers.database) {
             followedShowsDao.insert(FollowedShowEntry(showId = param))

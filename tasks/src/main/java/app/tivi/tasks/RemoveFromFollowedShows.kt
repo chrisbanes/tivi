@@ -16,7 +16,7 @@
 
 package app.tivi.tasks
 
-import app.tivi.calls.UnfollowShowCall
+import app.tivi.interactors.UnfollowShowInteractor
 import app.tivi.util.Logger
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
@@ -25,7 +25,7 @@ import kotlinx.coroutines.experimental.runBlocking
 import javax.inject.Inject
 
 class RemoveFromFollowedShows @Inject constructor(
-    private val unfollowShowCall: UnfollowShowCall,
+    private val unfollowShowCall: UnfollowShowInteractor,
     private val logger: Logger
 ) : Job() {
 

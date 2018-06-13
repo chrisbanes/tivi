@@ -16,8 +16,8 @@
 
 package app.tivi.tasks
 
-import app.tivi.calls.FollowShowCall
-import app.tivi.calls.SyncShowWatchedEpisodesCall
+import app.tivi.interactors.FollowShowInteractor
+import app.tivi.interactors.SyncShowWatchedEpisodesInteractor
 import app.tivi.util.Logger
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
@@ -26,8 +26,8 @@ import kotlinx.coroutines.experimental.runBlocking
 import javax.inject.Inject
 
 class AddToFollowedShows @Inject constructor(
-    private val followShowCall: FollowShowCall,
-    private val syncShowWatchedEpisodesCall: SyncShowWatchedEpisodesCall,
+    private val followShowCall: FollowShowInteractor,
+    private val syncShowWatchedEpisodesCall: SyncShowWatchedEpisodesInteractor,
     private val logger: Logger
 ) : Job() {
 

@@ -18,7 +18,7 @@ package app.tivi.showdetails.episodedetails
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import app.tivi.calls.SyncShowWatchedEpisodesCall
+import app.tivi.interactors.SyncShowWatchedEpisodesInteractor
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.entities.EpisodeWatchEntry
@@ -45,7 +45,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,
     private val dispatchers: AppCoroutineDispatchers,
     private val dateTimeFormatter: DateTimeFormatter,
-    private val syncShowWatchedEpisodesCall: SyncShowWatchedEpisodesCall
+    private val syncShowWatchedEpisodesCall: SyncShowWatchedEpisodesInteractor
 ) : TiviViewModel() {
 
     var episodeId: Long? = null

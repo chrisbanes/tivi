@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package app.tivi.calls
+package app.tivi.interactors
 
+import app.tivi.SeasonFetcher
 import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.daos.SeasonsDao
 import app.tivi.utils.BaseDatabaseTest
-import app.tivi.utils.insertEpisodes
-import app.tivi.utils.insertSeason
 import app.tivi.utils.insertShow
-import app.tivi.utils.seasonOneId
 import app.tivi.utils.showId
 import app.tivi.utils.testCoroutineDispatchers
 import kotlinx.coroutines.experimental.runBlocking
 import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.nullValue
+import org.hamcrest.Matchers.notNullValue
 import org.junit.Assert.assertThat
 import org.junit.Test
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 
-class UnfollowShowTest : BaseDatabaseTest() {
-    private lateinit var unfollowShowCall: UnfollowShowCall
+class FollowInteractorTest : BaseDatabaseTest() {
+    private lateinit var followShowCall: FollowShowInteractor
     private lateinit var followShowsDao: FollowedShowsDao
-    private lateinit var seasonsDao: SeasonsDao
+    private lateinit var seasonFetcher: SeasonFetcher
 
     override fun setup() {
         super.setup()
@@ -42,21 +42,17 @@ class UnfollowShowTest : BaseDatabaseTest() {
         insertShow(db)
 
         followShowsDao = db.followedShowsDao()
-        seasonsDao = db.seasonsDao()
-
-        unfollowShowCall = UnfollowShowCall(testCoroutineDispatchers, seasonsDao, followShowsDao)
+        seasonFetcher = mock(SeasonFetcher::class.java)
+        followShowCall = FollowShowInteractor(testCoroutineDispatchers, followShowsDao, seasonFetcher)
     }
 
     @Test
     fun test_doWork() {
         runBlocking {
-            insertSeason(db)
-            insertEpisodes(db)
+            followShowCall.doWork(showId)
 
-            unfollowShowCall.doWork(showId)
-
-            assertThat(followShowsDao.entryWithShowId(showId), `is`(nullValue()))
-            assertThat(seasonsDao.seasonWithId(seasonOneId), `is`(nullValue()))
+            assertThat(followShowsDao.entryWithShowId(showId), `is`(notNullValue()))
+            verify(seasonFetcher, times(1)).load(showId)
         }
     }
 }

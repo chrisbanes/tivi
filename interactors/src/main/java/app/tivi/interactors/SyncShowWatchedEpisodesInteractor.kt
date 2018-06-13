@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package app.tivi.calls
+package app.tivi.interactors
 
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
-class SyncShowWatchedEpisodesCall @Inject constructor(
+class SyncShowWatchedEpisodesInteractor @Inject constructor(
     private val syncer: TraktEpisodeWatchSyncer,
     private val followedShowsDao: FollowedShowsDao,
     private val dispatchers: AppCoroutineDispatchers
-) : Call<Long> {
+) : Interactor<Long> {
     override suspend fun doWork(showId: Long) {
         val followedEntry = withContext(dispatchers.database) {
             followedShowsDao.entryWithShowId(showId)

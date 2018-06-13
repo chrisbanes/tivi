@@ -16,14 +16,14 @@
 
 package app.tivi.tasks
 
-import app.tivi.calls.SyncAllFollowedShowsCall
+import app.tivi.interactors.SyncAllFollowedShowsInteractor
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
 import kotlinx.coroutines.experimental.runBlocking
 import javax.inject.Inject
 
 class SyncAllFollowedShows @Inject constructor(
-    private val call: SyncAllFollowedShowsCall
+    private val call: SyncAllFollowedShowsInteractor
 ) : Job() {
     companion object {
         const val TAG = "sync-all-followed-shows"

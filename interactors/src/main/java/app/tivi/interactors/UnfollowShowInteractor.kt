@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.calls
+package app.tivi.interactors
 
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.daos.SeasonsDao
@@ -22,11 +22,11 @@ import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
-class UnfollowShowCall @Inject constructor(
+class UnfollowShowInteractor @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val seasonsDao: SeasonsDao,
     private val followedShowsDao: FollowedShowsDao
-) : Call<Long> {
+) : Interactor<Long> {
     override suspend fun doWork(showId: Long) {
         withContext(dispatchers.database) {
             followedShowsDao.deleteWithShowId(showId)
