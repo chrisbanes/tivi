@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,17 +12,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-apply plugin: 'kotlin'
-apply plugin: 'kotlin-kapt'
+package app.tivi
 
-dependencies {
-    compile project(':trakt-seasons-fetcher')
+import app.tivi.trakt.TraktSeasonFetcher
+import javax.inject.Inject
+import javax.inject.Singleton
 
-    implementation project(":data")
-    implementation project(":base")
-
-    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+@Singleton
+class SeasonFetcherImpl @Inject constructor(
+    private val traktSeasonFetcher: TraktSeasonFetcher
+) : SeasonFetcher {
+    override suspend fun load(showId: Long) {
+        traktSeasonFetcher.updateSeasonData(showId)
+    }
 }
