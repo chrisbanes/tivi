@@ -21,7 +21,7 @@ buildscript {
             'androidx'       : [
                     'appcompat'        : '27.1.1',
                     'browser'          : '27.1.1',
-                    'constraint_layout': '1.1.1',
+                    'constraint_layout': '1.1.2',
                     'core_ktx'         : '0.3',
                     'fragment'         : '27.1.1',
                     'lifecycle'        : '1.1.1',
@@ -37,7 +37,7 @@ buildscript {
             'epoxy'          : '2.12.0',
             'espresso'       : '3.0.2',
             'glide'          : '4.7.1',
-            'kotlin'         : '1.2.41',
+            'kotlin'         : '1.2.50',
             'ktlint'         : '0.19.0',
             'mockito'        : '2.18.3',
             'material_design': '27.1.1',
