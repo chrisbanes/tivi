@@ -28,11 +28,11 @@ class FollowShowCall @Inject constructor(
     private val followedShowsDao: FollowedShowsDao,
     private val seasonFetcher: SeasonFetcher
 ) : Call<Long> {
-    override suspend fun doWork(showId: Long) {
+    override suspend fun doWork(param: Long) {
         withContext(dispatchers.database) {
-            followedShowsDao.insert(FollowedShowEntry(showId = showId))
+            followedShowsDao.insert(FollowedShowEntry(showId = param))
         }
         // Now refresh seasons
-        seasonFetcher.load(showId)
+        seasonFetcher.load(param)
     }
 }
