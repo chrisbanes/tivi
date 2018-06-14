@@ -18,14 +18,15 @@ package app.tivi.showdetails.details
 
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.SharedElementHelper
-import app.tivi.actions.ShowTasks
-import app.tivi.interactors.SyncShowWatchedEpisodesInteractor
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
 import app.tivi.datasources.trakt.RelatedShowsDataSource
 import app.tivi.datasources.trakt.ShowDetailsDataSource
 import app.tivi.datasources.trakt.ShowSeasonsDataSource
+import app.tivi.interactors.FollowShowInteractor
+import app.tivi.interactors.SyncShowWatchedEpisodesInteractor
+import app.tivi.interactors.UnfollowShowInteractor
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppRxSchedulers
@@ -42,7 +43,8 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     private val seasonsCall: ShowSeasonsDataSource,
     private val showWatchedEpisodesCall: SyncShowWatchedEpisodesInteractor,
     private val tmdbManager: TmdbManager,
-    private val showTasks: ShowTasks,
+    private val followShowCall: FollowShowInteractor,
+    private val unfollowShowCall: UnfollowShowInteractor,
     private val followedShowsDao: FollowedShowsDao,
     private val logger: Logger
 ) : TiviViewModel() {
@@ -106,14 +108,19 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     }
 
     fun addToMyShows() {
-        showId?.let {
-            showTasks.followShow(it)
+        showId?.let { id ->
+            launchWithParent {
+                followShowCall.invoke(id)
+                showWatchedEpisodesCall.invoke(id)
+            }
         }
     }
 
     fun removeFromMyShows() {
-        showId?.let {
-            showTasks.unfollowShow(it)
+        showId?.let { id ->
+            launchWithParent {
+                unfollowShowCall.invoke(id)
+            }
         }
     }
 
