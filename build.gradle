@@ -32,7 +32,7 @@ buildscript {
                     'test_runner'      : '1.0.2',
                     'test_rules'       : '1.0.2',
             ],
-            'coroutines'     : '0.22.5',
+            'coroutines'     : '0.23.1',
             'dagger'         : '2.16',
             'epoxy'          : '2.12.0',
             'espresso'       : '3.0.2',
