@@ -17,5 +17,5 @@
 package app.tivi.interactors
 
 interface Interactor<in Param> {
-    suspend fun doWork(param: Param)
+    suspend fun invoke(param: Param)
 }

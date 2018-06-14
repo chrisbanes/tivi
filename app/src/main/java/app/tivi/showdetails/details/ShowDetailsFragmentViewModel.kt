@@ -72,7 +72,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
             }
             launchWithParent {
                 if (followedShowsDao.entryCountWithShowId(id) > 0) {
-                    showWatchedEpisodesCall.doWork(id)
+                    showWatchedEpisodesCall.invoke(id)
                 }
             }
         }

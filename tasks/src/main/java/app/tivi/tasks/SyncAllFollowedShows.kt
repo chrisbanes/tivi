@@ -35,7 +35,7 @@ class SyncAllFollowedShows @Inject constructor(
 
     override fun onRunJob(params: Params): Result {
         runBlocking {
-            call.doWork(Unit)
+            call.invoke(Unit)
         }
         return Result.SUCCESS
     }

@@ -28,7 +28,7 @@ class FollowShowInteractor @Inject constructor(
     private val followedShowsDao: FollowedShowsDao,
     private val seasonFetcher: SeasonFetcher
 ) : Interactor<Long> {
-    override suspend fun doWork(param: Long) {
+    override suspend fun invoke(param: Long) {
         withContext(dispatchers.database) {
             followedShowsDao.insert(FollowedShowEntry(showId = param))
         }

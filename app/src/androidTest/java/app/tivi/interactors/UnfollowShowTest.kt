@@ -53,7 +53,7 @@ class UnfollowShowTest : BaseDatabaseTest() {
             insertSeason(db)
             insertEpisodes(db)
 
-            unfollowShowCall.doWork(showId)
+            unfollowShowCall.invoke(showId)
 
             assertThat(followShowsDao.entryWithShowId(showId), `is`(nullValue()))
             assertThat(seasonsDao.seasonWithId(seasonOneId), `is`(nullValue()))

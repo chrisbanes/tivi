@@ -27,7 +27,7 @@ class SyncAllFollowedShowsInteractor @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val syncer: TraktEpisodeWatchSyncer
 ) : Interactor<Unit> {
-    override suspend fun doWork(param: Unit) {
+    override suspend fun invoke(param: Unit) {
         val followedShows = withContext(dispatchers.database) {
             followedShowsDao.entriesBlocking()
         }

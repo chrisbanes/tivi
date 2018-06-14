@@ -49,8 +49,8 @@ class AddToFollowedShows @Inject constructor(
         logger.d("$TAG job running for id: $showId")
 
         return runBlocking {
-            followShowCall.doWork(showId)
-            syncShowWatchedEpisodesCall.doWork(showId)
+            followShowCall.invoke(showId)
+            syncShowWatchedEpisodesCall.invoke(showId)
             Result.SUCCESS
         }
     }

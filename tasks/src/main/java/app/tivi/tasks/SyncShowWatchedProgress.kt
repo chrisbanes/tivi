@@ -46,7 +46,7 @@ class SyncShowWatchedProgress @Inject constructor(
         logger.d("$TAG job running for show id: $showId")
 
         return runBlocking {
-            call.doWork(showId)
+            call.invoke(showId)
             Result.SUCCESS
         }
     }

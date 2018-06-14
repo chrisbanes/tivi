@@ -104,7 +104,7 @@ class EpisodeDetailsViewModel @Inject constructor(
                 )
                 episodeWatchEntryDao.insert(entry)
             }
-            syncShowWatchedEpisodesCall.doWork(episodesDao.showIdForEpisodeId(epId))
+            syncShowWatchedEpisodesCall.invoke(episodesDao.showIdForEpisodeId(epId))
         }
     }
 
@@ -122,7 +122,7 @@ class EpisodeDetailsViewModel @Inject constructor(
                     }
                 }
             }
-            syncShowWatchedEpisodesCall.doWork(episodesDao.showIdForEpisodeId(epId))
+            syncShowWatchedEpisodesCall.invoke(episodesDao.showIdForEpisodeId(epId))
         }
     }
 }

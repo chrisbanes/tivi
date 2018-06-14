@@ -47,7 +47,7 @@ class RemoveFromFollowedShows @Inject constructor(
         logger.d("$TAG job running for id: $showId")
 
         return runBlocking {
-            unfollowShowCall.doWork(showId)
+            unfollowShowCall.invoke(showId)
             Result.SUCCESS
         }
     }

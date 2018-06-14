@@ -49,7 +49,7 @@ class FollowInteractorTest : BaseDatabaseTest() {
     @Test
     fun test_doWork() {
         runBlocking {
-            followShowCall.doWork(showId)
+            followShowCall.invoke(showId)
 
             assertThat(followShowsDao.entryWithShowId(showId), `is`(notNullValue()))
             verify(seasonFetcher, times(1)).load(showId)
