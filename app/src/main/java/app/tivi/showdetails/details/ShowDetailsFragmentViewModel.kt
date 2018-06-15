@@ -29,6 +29,7 @@ import app.tivi.interactors.SyncShowWatchedEpisodesInteractor
 import app.tivi.interactors.UnfollowShowInteractor
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
+import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.TiviViewModel
@@ -38,6 +39,7 @@ import javax.inject.Inject
 
 class ShowDetailsFragmentViewModel @Inject constructor(
     private val schedulers: AppRxSchedulers,
+    private val dispatchers: AppCoroutineDispatchers,
     private val showCall: ShowDetailsDataSource,
     private val relatedShows: RelatedShowsDataSource,
     private val seasonsCall: ShowSeasonsDataSource,
@@ -65,7 +67,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     val data = MutableLiveData<ShowDetailsViewState>()
 
     private fun refresh() {
-        showId?.let { id ->
+        showId?.also { id ->
             launchWithParent {
                 showCall.refresh(id)
             }
@@ -84,8 +86,10 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         showId?.let { id ->
             disposables += followedShowsDao.entryCountWithShowIdFlowable(id)
                     .subscribeOn(schedulers.io)
+                    .map { it > 0 }
+                    .distinctUntilChanged()
                     .flatMap {
-                        if (it > 0) {
+                        if (it) {
                             // Followed show
                             Flowables.combineLatest(
                                     showCall.data(id),

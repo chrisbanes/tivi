@@ -18,12 +18,12 @@ package app.tivi.datasources.trakt
 
 import app.tivi.ShowFetcher
 import app.tivi.api.ItemWithIndex
-import app.tivi.datasources.PaginatedDataSourceImpl
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.PopularDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.PopularEntry
 import app.tivi.data.entities.PopularListItem
+import app.tivi.datasources.PaginatedDataSourceImpl
 import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
@@ -52,7 +52,6 @@ class PopularDataSource @Inject constructor(
         dispatchers,
         logger
 ) {
-
     override suspend fun networkCall(page: Int): List<ItemWithIndex<Show>> {
         // We add one to the page since Trakt uses a 1-based index whereas we use 0-based
         return showsService.get().popular(page + 1, pageSize, Extended.NOSEASONS)

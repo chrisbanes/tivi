@@ -43,8 +43,8 @@ abstract class PaginatedDataSourceImpl<TT, ET : PaginatedEntry, LI : ListItem<ET
 
     override fun data(param: Unit): Flowable<List<LI>> {
         return entryDao.entries()
-                .distinctUntilChanged()
                 .subscribeOn(schedulers.io)
+                .distinctUntilChanged()
     }
 
     override fun data(page: Int): Flowable<List<LI>> {
@@ -56,21 +56,14 @@ abstract class PaginatedDataSourceImpl<TT, ET : PaginatedEntry, LI : ListItem<ET
     override fun dataSourceFactory(): DataSource.Factory<Int, LI> = entryDao.entriesDataSource()
 
     private suspend fun loadPage(page: Int = 0, resetOnSave: Boolean = false) {
-        return withContext(dispatchers.io) { networkCall(page) }
-                .map {
-                    val id = insertShowPlaceholder(it)
-                    mapToEntry(it, id, page)
-                }
-                .also {
-                    // Save the entry list
-                    withContext(dispatchers.io) {
-                        savePage(it, page, resetOnSave)
-                    }
-                }
-                .parallelForEach {
-                    // Now trigger a refresh of each show
-                    showFetcher.update(it.showId)
-                }
+        withContext(dispatchers.io) {
+            networkCall(page)
+                    .map { mapToEntry(it, insertShowPlaceholder(it), page) }
+                    .also { savePage(it, page, resetOnSave) }
+        }.parallelForEach {
+            // Now trigger a refresh of each show
+            showFetcher.update(it.showId)
+        }
     }
 
     override suspend fun refresh(param: Unit) {
@@ -78,8 +71,9 @@ abstract class PaginatedDataSourceImpl<TT, ET : PaginatedEntry, LI : ListItem<ET
     }
 
     override suspend fun loadNextPage() {
-        withContext(dispatchers.io) { entryDao.getLastPage() }
-                .also { loadPage(it + 1) }
+        withContext(dispatchers.io) {
+            loadPage(entryDao.getLastPage() + 1)
+        }
     }
 
     private fun savePage(items: List<ET>, page: Int, resetOnSave: Boolean) {

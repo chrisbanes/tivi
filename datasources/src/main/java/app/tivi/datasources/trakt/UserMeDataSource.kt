@@ -16,10 +16,10 @@
 
 package app.tivi.datasources.trakt
 
-import app.tivi.datasources.RefreshableDataSource
 import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.UserDao
 import app.tivi.data.entities.TraktUser
+import app.tivi.datasources.RefreshableDataSource
 import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
@@ -40,25 +40,22 @@ class UserMeDataSource @Inject constructor(
 ) : RefreshableDataSource<Unit, TraktUser> {
 
     override suspend fun refresh(param: Unit) {
-        val networkResponse = withContext(dispatchers.io) {
-            usersService.get().profile(UserSlug.ME, Extended.FULL).fetchBodyWithRetry()
-        }
+        withContext(dispatchers.io) {
+            val response = usersService.get().profile(UserSlug.ME, Extended.FULL)
+                    .fetchBodyWithRetry()
 
-        networkResponse.let {
             // Map to our entity
-            TraktUser(
-                    username = it.username,
-                    name = it.name,
-                    location = it.location,
-                    about = it.about,
-                    avatarUrl = it.images?.avatar?.full,
-                    joined = it.joined_at
+            val user = TraktUser(
+                    username = response.username,
+                    name = response.name,
+                    location = response.location,
+                    about = response.about,
+                    avatarUrl = response.images?.avatar?.full,
+                    joined = response.joined_at
             )
-        }.also {
-            withContext(dispatchers.io) {
-                dao.deleteAll()
-                entityInserter.insertOrUpdate(dao, it)
-            }
+
+            dao.deleteAll()
+            entityInserter.insertOrUpdate(dao, user)
         }
     }
 
