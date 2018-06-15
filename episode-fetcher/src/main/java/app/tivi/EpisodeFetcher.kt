@@ -35,7 +35,7 @@ class EpisodeFetcher @Inject constructor(
     private val logger: Logger
 ) {
     suspend fun update(episodeId: Long, forceRefresh: Boolean = false) {
-        val show = withContext(dispatchers.database) {
+        val show = withContext(dispatchers.io) {
             episodeDao.episodeWithId(episodeId)!!
         }
         if (forceRefresh || show.needsUpdateFromTrakt()) {

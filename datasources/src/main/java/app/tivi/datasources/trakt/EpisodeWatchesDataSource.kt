@@ -33,7 +33,7 @@ class EpisodeWatchesDataSource @Inject constructor(
 
     override fun data(param: Long): Flowable<List<EpisodeWatchEntry>> {
         return dao.watchesForEpisodeFlowable(param)
-                .subscribeOn(schedulers.database)
+                .subscribeOn(schedulers.io)
                 .distinctUntilChanged()
     }
 }

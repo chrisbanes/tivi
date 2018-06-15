@@ -29,7 +29,7 @@ class FollowShowInteractor @Inject constructor(
     private val seasonFetcher: SeasonFetcher
 ) : Interactor<Long> {
     override suspend operator fun invoke(param: Long) {
-        withContext(dispatchers.database) {
+        withContext(dispatchers.io) {
             followedShowsDao.insert(FollowedShowEntry(showId = param))
         }
         // Now refresh seasons

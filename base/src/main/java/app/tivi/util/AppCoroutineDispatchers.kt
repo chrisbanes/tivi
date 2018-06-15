@@ -19,8 +19,7 @@ package app.tivi.util
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 
 data class AppCoroutineDispatchers(
-    val database: CoroutineDispatcher,
-    val disk: CoroutineDispatcher,
-    val network: CoroutineDispatcher,
+    val io: CoroutineDispatcher,
+    val computation: CoroutineDispatcher,
     val main: CoroutineDispatcher
 )

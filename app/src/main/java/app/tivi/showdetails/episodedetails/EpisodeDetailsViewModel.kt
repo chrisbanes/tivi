@@ -96,7 +96,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     fun markWatched() {
         val epId = episodeId!!
         launchWithParent {
-            withContext(dispatchers.database) {
+            withContext(dispatchers.io) {
                 val entry = EpisodeWatchEntry(
                         episodeId = episodeId!!,
                         watchedAt = OffsetDateTime.now(),
@@ -111,7 +111,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     fun markUnwatched() {
         val epId = episodeId!!
         launchWithParent {
-            withContext(dispatchers.database) {
+            withContext(dispatchers.io) {
                 val entries = episodeWatchEntryDao.watchesForEpisode(epId)
                 entries.forEach {
                     // We have a trakt id, so we need to do a sync

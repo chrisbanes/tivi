@@ -28,7 +28,7 @@ class SyncAllFollowedShowsInteractor @Inject constructor(
     private val syncer: TraktEpisodeWatchSyncer
 ) : Interactor<Unit> {
     override suspend operator fun invoke(param: Unit) {
-        val followedShows = withContext(dispatchers.database) {
+        val followedShows = withContext(dispatchers.io) {
             followedShowsDao.entriesBlocking()
         }
         followedShows.parallelForEach {

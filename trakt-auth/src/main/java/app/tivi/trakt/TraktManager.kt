@@ -76,7 +76,7 @@ class TraktManager @Inject constructor(
 
         // Read the auth state from prefs
         launch(dispatchers.main) {
-            val state = withContext(dispatchers.disk) {
+            val state = withContext(dispatchers.io) {
                 readAuthState()
             }
             authState.onNext(state)
@@ -141,7 +141,7 @@ class TraktManager @Inject constructor(
         // Update our local state
         authState.onNext(newState)
         // Persist auth state
-        launch(dispatchers.disk) {
+        launch(dispatchers.io) {
             persistAuthState(newState)
         }
         // Now trigger a sync of all shows

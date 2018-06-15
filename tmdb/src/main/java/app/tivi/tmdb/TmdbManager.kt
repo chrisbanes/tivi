@@ -42,7 +42,7 @@ class TmdbManager @Inject constructor(
     private fun refreshConfiguration() {
         launch(dispatchers.main) {
             try {
-                val config = withContext(dispatchers.network) {
+                val config = withContext(dispatchers.io) {
                     tmdbClient.configurationService().configuration().fetchBodyWithRetry()
                 }
                 onConfigurationLoaded(config)

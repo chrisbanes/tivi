@@ -43,15 +43,15 @@ class TraktSeasonFetcher @Inject constructor(
     private val traktEpisodeFetcher: TraktEpisodeFetcher
 ) {
     suspend fun updateSeasonData(showId: Long) {
-        val show = withContext(dispatchers.database) {
+        val show = withContext(dispatchers.io) {
             showDao.getShowWithId(showId)
         } ?: throw IllegalArgumentException("Show with id[$showId] does not exist")
 
-        val response = withContext(dispatchers.network) {
+        val response = withContext(dispatchers.io) {
             seasonsService.get().summary(show.traktId!!.toString(), Extended.FULLEPISODES).fetchBodyWithRetry()
         }
 
-        withContext(dispatchers.database) {
+        withContext(dispatchers.io) {
             transactionRunner.runInTransaction {
                 response.forEach { traktSeason ->
                     // Upsert the season

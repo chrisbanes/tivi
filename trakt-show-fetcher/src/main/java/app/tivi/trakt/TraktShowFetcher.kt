@@ -38,16 +38,16 @@ class TraktShowFetcher @Inject constructor(
     private val entityInserter: EntityInserter
 ) {
     suspend fun updateShow(traktId: Int) {
-        val response = withContext(dispatchers.network) {
+        val response = withContext(dispatchers.io) {
             showService.get().summary(traktId.toString(), Extended.FULL).fetchBodyWithRetry()
         }
-        withContext(dispatchers.database) {
+        withContext(dispatchers.io) {
             upsertShow(response, true)
         }
     }
 
     suspend fun insertPlaceholderIfNeeded(show: Show): Long {
-        return withContext(dispatchers.database) { upsertShow(show) }
+        return withContext(dispatchers.io) { upsertShow(show) }
     }
 
     private fun upsertShow(traktShow: Show, updateTime: Boolean = false): Long {

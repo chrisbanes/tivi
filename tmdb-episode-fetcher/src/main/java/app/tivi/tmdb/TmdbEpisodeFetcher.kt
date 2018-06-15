@@ -42,25 +42,25 @@ class TmdbEpisodeFetcher @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner
 ) {
     suspend fun updateEpisodeData(episodeId: Long) {
-        val episode = withContext(dispatchers.database) {
+        val episode = withContext(dispatchers.io) {
             episodesDao.episodeWithId(episodeId)
         } ?: throw IllegalArgumentException("Episode with id[$episodeId] does not exist")
 
-        val season = withContext(dispatchers.database) {
+        val season = withContext(dispatchers.io) {
             seasonsDao.seasonWithId(episode.seasonId!!)
         } ?: throw IllegalArgumentException("Season with id[${episode.seasonId}] does not exist")
 
-        val show = withContext(dispatchers.database) {
+        val show = withContext(dispatchers.io) {
             showDao.getShowWithId(season.showId!!)
         } ?: throw IllegalArgumentException("Show with id[${season.showId}] does not exist")
 
-        val response = withContext(dispatchers.network) {
+        val response = withContext(dispatchers.io) {
             tmdb.tvEpisodesService()
                     .episode(show.tmdbId!!, season.number!!, episode.number!!)
                     .fetchBodyWithRetry()
         }
 
-        withContext(dispatchers.database) {
+        withContext(dispatchers.io) {
             transactionRunner.runInTransaction {
                 upsertEpisode(season.id!!, response)
             }

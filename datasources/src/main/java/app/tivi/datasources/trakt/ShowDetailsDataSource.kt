@@ -35,7 +35,7 @@ class ShowDetailsDataSource @Inject constructor(
 
     override fun data(param: Long): Flowable<TiviShow> {
         return dao.getShowWithIdFlowable(param)
-                .subscribeOn(schedulers.database)
+                .subscribeOn(schedulers.io)
                 .distinctUntilChanged()
     }
 }

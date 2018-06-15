@@ -35,10 +35,10 @@ class TmdbShowFetcher @Inject constructor(
     private val entityInserter: EntityInserter
 ) {
     suspend fun updateShow(tmdbId: Int) {
-        return withContext(dispatchers.network) {
+        return withContext(dispatchers.io) {
             tmdb.tvService().tv(tmdbId).fetchBodyWithRetry()
         }.let { tmdbShow ->
-            withContext(dispatchers.database) {
+            withContext(dispatchers.io) {
                 (showDao.getShowWithTmdbId(tmdbShow.id) ?: TiviShow())
                         .apply {
                             updateProperty(this::tmdbId, tmdbShow.id)

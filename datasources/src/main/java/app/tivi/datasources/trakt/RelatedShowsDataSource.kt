@@ -44,35 +44,34 @@ class RelatedShowsDataSource @Inject constructor(
     private val showFetcher: ShowFetcher
 ) : RefreshableDataSource<Long, List<RelatedShowsListItem>> {
     override suspend fun refresh(param: Long) {
-        val show = withContext(dispatchers.database) { showDao.getShowWithId(param) }
+        val related = withContext(dispatchers.io) {
+            val show = showDao.getShowWithId(param)!!
+            val results = showsService.get().related(show.traktId.toString(), 0, 10, Extended.NOSEASONS)
+                    .fetchBodyWithRetry()
 
-        if (show != null) {
-            val related = withContext(dispatchers.network) {
-                showsService.get().related(show.traktId.toString(), 0, 10, Extended.NOSEASONS).fetchBodyWithRetry()
-            }.mapIndexed { index, relatedShow ->
+            results.mapIndexed { index, relatedShow ->
                 // Now insert a placeholder for each show if needed
                 val relatedShowId = showFetcher.insertPlaceholderIfNeeded(relatedShow)
                 // Map to related show entry
                 RelatedShowEntry(showId = param, otherShowId = relatedShowId, orderIndex = index)
-            }
-
-            withContext(dispatchers.database) {
+            }.also {
+                // Save map entities to db
                 transactionRunner.runInTransaction {
                     entryDao.deleteWithShowId(param)
-                    entryDao.insertAll(related)
+                    entryDao.insertAll(it)
                 }
             }
+        }
 
-            // Finally trigger a refresh for each show
-            related.parallelForEach {
-                showFetcher.update(it.otherShowId)
-            }
+        // Finally trigger a refresh for each show
+        related.parallelForEach {
+            showFetcher.update(it.otherShowId)
         }
     }
 
     override fun data(param: Long): Flowable<List<RelatedShowsListItem>> {
         return entryDao.entries(param)
-                .observeOn(schedulers.database)
+                .subscribeOn(schedulers.io)
                 .startWith(Flowable.just(emptyList()))
                 .distinctUntilChanged()
     }

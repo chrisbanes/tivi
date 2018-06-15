@@ -37,7 +37,7 @@ class ShowFetcher @Inject constructor(
     }
 
     suspend fun update(showId: Long, force: Boolean = false) {
-        val show = withContext(dispatchers.database) { showDao.getShowWithId(showId)!! }
+        val show = withContext(dispatchers.io) { showDao.getShowWithId(showId)!! }
         if (force || show.needsUpdateFromTrakt()) {
             traktShowFetcher.updateShow(show.traktId!!)
         }

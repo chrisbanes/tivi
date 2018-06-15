@@ -83,7 +83,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     private fun setupLiveData() {
         showId?.let { id ->
             disposables += followedShowsDao.entryCountWithShowIdFlowable(id)
-                    .subscribeOn(schedulers.database)
+                    .subscribeOn(schedulers.io)
                     .flatMap {
                         if (it > 0) {
                             // Followed show

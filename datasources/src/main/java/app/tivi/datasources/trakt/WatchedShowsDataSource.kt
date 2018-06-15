@@ -51,14 +51,14 @@ class WatchedShowsDataSource @Inject constructor(
 
     override fun data(param: Unit): Flowable<List<WatchedShowListItem>> {
         return watchShowDao.entries()
+                .subscribeOn(schedulers.io)
                 .distinctUntilChanged()
-                .subscribeOn(schedulers.database)
     }
 
     override fun dataSourceFactory(): DataSource.Factory<Int, WatchedShowListItem> = watchShowDao.entriesDataSource()
 
     override suspend fun refresh(param: Unit) {
-        val networkResponse = withContext(dispatchers.network) {
+        val networkResponse = withContext(dispatchers.io) {
             usersService.get().watchedShows(UserSlug.ME, Extended.NOSEASONS).fetchBodyWithRetry()
         }
 
@@ -68,7 +68,7 @@ class WatchedShowsDataSource @Inject constructor(
         }
 
         // Now save it to the database
-        withContext(dispatchers.database) {
+        withContext(dispatchers.io) {
             databaseTransactionRunner.runInTransaction {
                 watchShowDao.deleteAll()
                 watchShowDao.insertAll(shows)

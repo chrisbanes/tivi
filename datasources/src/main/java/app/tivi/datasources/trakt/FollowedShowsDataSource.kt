@@ -17,9 +17,9 @@
 package app.tivi.datasources.trakt
 
 import android.arch.paging.DataSource
-import app.tivi.datasources.ListRefreshableDataSource
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.FollowedShowsListItem
+import app.tivi.datasources.ListRefreshableDataSource
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
 import javax.inject.Inject
@@ -35,8 +35,8 @@ class FollowedShowsDataSource @Inject constructor(
 
     override fun data(param: Unit): Flowable<List<FollowedShowsListItem>> {
         return followedShowsDao.entries()
+                .subscribeOn(schedulers.io)
                 .distinctUntilChanged()
-                .subscribeOn(schedulers.database)
     }
 
     override fun dataSourceFactory(): DataSource.Factory<Int, FollowedShowsListItem> = followedShowsDao.entriesDataSource()

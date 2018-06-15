@@ -44,26 +44,26 @@ abstract class PaginatedDataSourceImpl<TT, ET : PaginatedEntry, LI : ListItem<ET
     override fun data(param: Unit): Flowable<List<LI>> {
         return entryDao.entries()
                 .distinctUntilChanged()
-                .subscribeOn(schedulers.database)
+                .subscribeOn(schedulers.io)
     }
 
     override fun data(page: Int): Flowable<List<LI>> {
         return entryDao.entriesPage(page)
-                .subscribeOn(schedulers.database)
+                .subscribeOn(schedulers.io)
                 .distinctUntilChanged()
     }
 
     override fun dataSourceFactory(): DataSource.Factory<Int, LI> = entryDao.entriesDataSource()
 
     private suspend fun loadPage(page: Int = 0, resetOnSave: Boolean = false) {
-        return withContext(dispatchers.network) { networkCall(page) }
+        return withContext(dispatchers.io) { networkCall(page) }
                 .map {
                     val id = insertShowPlaceholder(it)
                     mapToEntry(it, id, page)
                 }
                 .also {
                     // Save the entry list
-                    withContext(dispatchers.database) {
+                    withContext(dispatchers.io) {
                         savePage(it, page, resetOnSave)
                     }
                 }
@@ -78,7 +78,7 @@ abstract class PaginatedDataSourceImpl<TT, ET : PaginatedEntry, LI : ListItem<ET
     }
 
     override suspend fun loadNextPage() {
-        withContext(dispatchers.database) { entryDao.getLastPage() }
+        withContext(dispatchers.io) { entryDao.getLastPage() }
                 .also { loadPage(it + 1) }
     }
 

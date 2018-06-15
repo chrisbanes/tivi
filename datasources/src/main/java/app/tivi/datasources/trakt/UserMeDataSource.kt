@@ -40,8 +40,7 @@ class UserMeDataSource @Inject constructor(
 ) : RefreshableDataSource<Unit, TraktUser> {
 
     override suspend fun refresh(param: Unit) {
-        // Fetch network response on network dispatcher
-        val networkResponse = withContext(dispatchers.network) {
+        val networkResponse = withContext(dispatchers.io) {
             usersService.get().profile(UserSlug.ME, Extended.FULL).fetchBodyWithRetry()
         }
 
@@ -56,8 +55,7 @@ class UserMeDataSource @Inject constructor(
                     joined = it.joined_at
             )
         }.also {
-            // Save to the database on the database dispatcher
-            withContext(dispatchers.database) {
+            withContext(dispatchers.io) {
                 dao.deleteAll()
                 entityInserter.insertOrUpdate(dao, it)
             }
@@ -68,6 +66,6 @@ class UserMeDataSource @Inject constructor(
 
     override fun data(param: Unit): Flowable<TraktUser> {
         return dao.getTraktUser()
-                .subscribeOn(schedulers.database)
+                .subscribeOn(schedulers.io)
     }
 }

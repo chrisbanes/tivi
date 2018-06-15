@@ -35,6 +35,6 @@ class ShowSeasonsDataSource @Inject constructor(
 
     override fun data(param: Long): Flowable<List<SeasonWithEpisodes>> {
         return seasonsDao.seasonsWithEpisodesForShowId(param)
-                .subscribeOn(schedulers.database)
+                .subscribeOn(schedulers.io)
     }
 }

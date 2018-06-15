@@ -55,18 +55,16 @@ class AppModule {
     @Singleton
     @Provides
     fun provideRxSchedulers(): AppRxSchedulers = AppRxSchedulers(
-            database = Schedulers.io(),
-            disk = Schedulers.io(),
-            network = Schedulers.io(),
+            io = Schedulers.io(),
+            computation = Schedulers.computation(),
             main = AndroidSchedulers.mainThread()
     )
 
     @Singleton
     @Provides
     fun provideCoroutineDispatchers(schedulers: AppRxSchedulers) = AppCoroutineDispatchers(
-            database = schedulers.database.asCoroutineDispatcher(),
-            disk = schedulers.disk.asCoroutineDispatcher(),
-            network = schedulers.network.asCoroutineDispatcher(),
+            io = schedulers.io.asCoroutineDispatcher(),
+            computation = schedulers.computation.asCoroutineDispatcher(),
             main = UI
     )
 
