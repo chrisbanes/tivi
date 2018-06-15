@@ -19,12 +19,12 @@ package app.tivi.home.discover
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
+import app.tivi.datasources.trakt.PopularDataSource
+import app.tivi.datasources.trakt.TrendingDataSource
 import app.tivi.home.HomeFragmentViewModel
 import app.tivi.home.HomeNavigator
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktManager
-import app.tivi.datasources.trakt.PopularDataSource
-import app.tivi.datasources.trakt.TrendingDataSource
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.NetworkDetector

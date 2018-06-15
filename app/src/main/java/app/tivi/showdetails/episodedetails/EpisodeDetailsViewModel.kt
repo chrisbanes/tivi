@@ -18,12 +18,12 @@ package app.tivi.showdetails.episodedetails
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import app.tivi.interactors.SyncShowWatchedEpisodesInteractor
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.datasources.trakt.EpisodeDetailsDataSource
 import app.tivi.datasources.trakt.EpisodeWatchesDataSource
+import app.tivi.interactors.SyncShowWatchedEpisodesInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
@@ -45,7 +45,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,
     private val dispatchers: AppCoroutineDispatchers,
     private val dateTimeFormatter: DateTimeFormatter,
-    private val syncShowWatchedEpisodesCall: SyncShowWatchedEpisodesInteractor
+    private val syncShowWatchedEpisodes: SyncShowWatchedEpisodesInteractor
 ) : TiviViewModel() {
 
     var episodeId: Long? = null
@@ -104,7 +104,7 @@ class EpisodeDetailsViewModel @Inject constructor(
                 )
                 episodeWatchEntryDao.insert(entry)
             }
-            syncShowWatchedEpisodesCall.invoke(episodesDao.showIdForEpisodeId(epId))
+            syncShowWatchedEpisodes(episodesDao.showIdForEpisodeId(epId))
         }
     }
 
@@ -122,7 +122,7 @@ class EpisodeDetailsViewModel @Inject constructor(
                     }
                 }
             }
-            syncShowWatchedEpisodesCall.invoke(episodesDao.showIdForEpisodeId(epId))
+            syncShowWatchedEpisodes(episodesDao.showIdForEpisodeId(epId))
         }
     }
 }

@@ -18,9 +18,9 @@ package app.tivi.home.popular
 
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.PopularListItem
+import app.tivi.datasources.trakt.PopularDataSource
 import app.tivi.home.HomeNavigator
 import app.tivi.tmdb.TmdbManager
-import app.tivi.datasources.trakt.PopularDataSource
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.EntryViewModel

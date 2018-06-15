@@ -25,7 +25,7 @@ import kotlinx.coroutines.experimental.runBlocking
 import javax.inject.Inject
 
 class RemoveFromFollowedShows @Inject constructor(
-    private val unfollowShowCall: UnfollowShowInteractor,
+    private val unfollowShow: UnfollowShowInteractor,
     private val logger: Logger
 ) : Job() {
 
@@ -47,7 +47,7 @@ class RemoveFromFollowedShows @Inject constructor(
         logger.d("$TAG job running for id: $showId")
 
         return runBlocking {
-            unfollowShowCall.invoke(showId)
+            unfollowShow(showId)
             Result.SUCCESS
         }
     }

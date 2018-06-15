@@ -16,15 +16,15 @@
 
 package app.tivi.utils
 
-import android.content.ContextWrapper
 import android.app.Activity
 import android.content.Context
-import android.view.ViewGroup
-import android.support.test.espresso.UiController
-import android.support.test.espresso.matcher.ViewMatchers.isRoot
+import android.content.ContextWrapper
 import android.content.pm.ActivityInfo
+import android.support.test.espresso.UiController
 import android.support.test.espresso.ViewAction
+import android.support.test.espresso.matcher.ViewMatchers.isRoot
 import android.view.View
+import android.view.ViewGroup
 import org.hamcrest.Matcher
 
 fun rotateLandscape(): ViewAction {

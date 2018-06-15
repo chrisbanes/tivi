@@ -26,8 +26,8 @@ import kotlinx.coroutines.experimental.runBlocking
 import javax.inject.Inject
 
 class AddToFollowedShows @Inject constructor(
-    private val followShowCall: FollowShowInteractor,
-    private val syncShowWatchedEpisodesCall: SyncShowWatchedEpisodesInteractor,
+    private val followShow: FollowShowInteractor,
+    private val syncShowWatchedEpisodes: SyncShowWatchedEpisodesInteractor,
     private val logger: Logger
 ) : Job() {
 
@@ -49,8 +49,8 @@ class AddToFollowedShows @Inject constructor(
         logger.d("$TAG job running for id: $showId")
 
         return runBlocking {
-            followShowCall.invoke(showId)
-            syncShowWatchedEpisodesCall.invoke(showId)
+            followShow(showId)
+            syncShowWatchedEpisodes(showId)
             Result.SUCCESS
         }
     }

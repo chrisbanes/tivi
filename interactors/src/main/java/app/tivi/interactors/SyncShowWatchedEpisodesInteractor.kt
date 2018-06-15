@@ -26,7 +26,7 @@ class SyncShowWatchedEpisodesInteractor @Inject constructor(
     private val followedShowsDao: FollowedShowsDao,
     private val dispatchers: AppCoroutineDispatchers
 ) : Interactor<Long> {
-    override suspend fun invoke(showId: Long) {
+    override suspend operator fun invoke(showId: Long) {
         val followedEntry = withContext(dispatchers.database) {
             followedShowsDao.entryWithShowId(showId)
         } ?: throw IllegalArgumentException("Followed entry with id: $showId does not exist")

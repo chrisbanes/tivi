@@ -18,9 +18,9 @@ package app.tivi.home.trending
 
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TrendingListItem
+import app.tivi.datasources.trakt.TrendingDataSource
 import app.tivi.home.HomeNavigator
 import app.tivi.tmdb.TmdbManager
-import app.tivi.datasources.trakt.TrendingDataSource
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.EntryViewModel

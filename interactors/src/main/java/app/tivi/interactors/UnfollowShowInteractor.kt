@@ -27,7 +27,7 @@ class UnfollowShowInteractor @Inject constructor(
     private val seasonsDao: SeasonsDao,
     private val followedShowsDao: FollowedShowsDao
 ) : Interactor<Long> {
-    override suspend fun invoke(showId: Long) {
+    override suspend operator fun invoke(showId: Long) {
         withContext(dispatchers.database) {
             followedShowsDao.deleteWithShowId(showId)
             // Now remove all season/episode data from database

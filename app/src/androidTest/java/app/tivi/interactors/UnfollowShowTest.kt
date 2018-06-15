@@ -32,7 +32,7 @@ import org.junit.Assert.assertThat
 import org.junit.Test
 
 class UnfollowShowTest : BaseDatabaseTest() {
-    private lateinit var unfollowShowCall: UnfollowShowInteractor
+    private lateinit var unfollowShow: UnfollowShowInteractor
     private lateinit var followShowsDao: FollowedShowsDao
     private lateinit var seasonsDao: SeasonsDao
 
@@ -44,7 +44,7 @@ class UnfollowShowTest : BaseDatabaseTest() {
         followShowsDao = db.followedShowsDao()
         seasonsDao = db.seasonsDao()
 
-        unfollowShowCall = UnfollowShowInteractor(testCoroutineDispatchers, seasonsDao, followShowsDao)
+        unfollowShow = UnfollowShowInteractor(testCoroutineDispatchers, seasonsDao, followShowsDao)
     }
 
     @Test
@@ -53,7 +53,7 @@ class UnfollowShowTest : BaseDatabaseTest() {
             insertSeason(db)
             insertEpisodes(db)
 
-            unfollowShowCall.invoke(showId)
+            unfollowShow(showId)
 
             assertThat(followShowsDao.entryWithShowId(showId), `is`(nullValue()))
             assertThat(seasonsDao.seasonWithId(seasonOneId), `is`(nullValue()))

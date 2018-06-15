@@ -32,7 +32,7 @@ import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 
 class FollowInteractorTest : BaseDatabaseTest() {
-    private lateinit var followShowCall: FollowShowInteractor
+    private lateinit var followShow: FollowShowInteractor
     private lateinit var followShowsDao: FollowedShowsDao
     private lateinit var seasonFetcher: SeasonFetcher
 
@@ -43,13 +43,13 @@ class FollowInteractorTest : BaseDatabaseTest() {
 
         followShowsDao = db.followedShowsDao()
         seasonFetcher = mock(SeasonFetcher::class.java)
-        followShowCall = FollowShowInteractor(testCoroutineDispatchers, followShowsDao, seasonFetcher)
+        followShow = FollowShowInteractor(testCoroutineDispatchers, followShowsDao, seasonFetcher)
     }
 
     @Test
     fun test_doWork() {
         runBlocking {
-            followShowCall.invoke(showId)
+            followShow(showId)
 
             assertThat(followShowsDao.entryWithShowId(showId), `is`(notNullValue()))
             verify(seasonFetcher, times(1)).load(showId)

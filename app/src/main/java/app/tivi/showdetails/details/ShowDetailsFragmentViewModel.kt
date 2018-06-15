@@ -41,10 +41,10 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     private val showCall: ShowDetailsDataSource,
     private val relatedShows: RelatedShowsDataSource,
     private val seasonsCall: ShowSeasonsDataSource,
-    private val showWatchedEpisodesCall: SyncShowWatchedEpisodesInteractor,
+    private val syncShowWatchedEpisodes: SyncShowWatchedEpisodesInteractor,
     private val tmdbManager: TmdbManager,
-    private val followShowCall: FollowShowInteractor,
-    private val unfollowShowCall: UnfollowShowInteractor,
+    private val followShow: FollowShowInteractor,
+    private val unfollowShow: UnfollowShowInteractor,
     private val followedShowsDao: FollowedShowsDao,
     private val logger: Logger
 ) : TiviViewModel() {
@@ -74,7 +74,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
             }
             launchWithParent {
                 if (followedShowsDao.entryCountWithShowId(id) > 0) {
-                    showWatchedEpisodesCall.invoke(id)
+                    syncShowWatchedEpisodes(id)
                 }
             }
         }
@@ -110,8 +110,8 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     fun addToMyShows() {
         showId?.let { id ->
             launchWithParent {
-                followShowCall.invoke(id)
-                showWatchedEpisodesCall.invoke(id)
+                followShow(id)
+                syncShowWatchedEpisodes(id)
             }
         }
     }
@@ -119,7 +119,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     fun removeFromMyShows() {
         showId?.let { id ->
             launchWithParent {
-                unfollowShowCall.invoke(id)
+                unfollowShow(id)
             }
         }
     }

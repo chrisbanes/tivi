@@ -23,7 +23,7 @@ import kotlinx.coroutines.experimental.runBlocking
 import javax.inject.Inject
 
 class SyncAllFollowedShows @Inject constructor(
-    private val call: SyncAllFollowedShowsInteractor
+    private val syncAllFollowedShows: SyncAllFollowedShowsInteractor
 ) : Job() {
     companion object {
         const val TAG = "sync-all-followed-shows"
@@ -35,7 +35,7 @@ class SyncAllFollowedShows @Inject constructor(
 
     override fun onRunJob(params: Params): Result {
         runBlocking {
-            call.invoke(Unit)
+            syncAllFollowedShows(Unit)
         }
         return Result.SUCCESS
     }
