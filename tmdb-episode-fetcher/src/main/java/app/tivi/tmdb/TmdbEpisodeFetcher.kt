@@ -22,6 +22,7 @@ import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.Episode
+import app.tivi.data.entities.copyDynamic
 import app.tivi.extensions.fetchBodyWithRetry
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.TvEpisode
@@ -56,15 +57,14 @@ class TmdbEpisodeFetcher @Inject constructor(
     }
 
     private fun upsertEpisode(seasonId: Long, tmdbEpisode: TvEpisode) {
-        (episodesDao.episodeWithTmdbId(tmdbEpisode.id) ?: Episode(seasonId = seasonId)).apply {
-            updateProperty(this::tmdbId, tmdbEpisode.id)
-            updateProperty(this::title, tmdbEpisode.name, false)
-            updateProperty(this::number, tmdbEpisode.episode_number, false)
-            updateProperty(this::summary, tmdbEpisode.overview, false)
-            updateProperty(this::tmdbBackdropPath, tmdbEpisode.still_path)
+        val ep = (episodesDao.episodeWithTmdbId(tmdbEpisode.id) ?: Episode(seasonId = seasonId)).copyDynamic {
+            tmdbId = tmdbEpisode.id
+            if (title == null) title = tmdbEpisode.name
+            if (number == null) number = tmdbEpisode.episode_number
+            if (summary == null) summary = tmdbEpisode.overview
+            tmdbBackdropPath = tmdbEpisode.still_path
             lastTmdbUpdate = OffsetDateTime.now()
-        }.also {
-            entityInserter.insertOrUpdate(episodesDao, it)
         }
+        entityInserter.insertOrUpdate(episodesDao, ep)
     }
 }

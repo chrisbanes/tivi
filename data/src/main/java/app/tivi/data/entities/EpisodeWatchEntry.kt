@@ -41,7 +41,7 @@ import org.threeten.bp.OffsetDateTime
 data class EpisodeWatchEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long? = null,
     @ColumnInfo(name = "episode_id") val episodeId: Long,
-    @ColumnInfo(name = "trakt_id") var traktId: Long? = null,
+    @ColumnInfo(name = "trakt_id") val traktId: Long? = null,
     @ColumnInfo(name = "watched_at") val watchedAt: OffsetDateTime,
     @ColumnInfo(name = "pending_action") val pendingAction: Int = PENDING_ACTION_NOTHING
 ) : TiviEntity {
