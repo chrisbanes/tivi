@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-package app.tivi.calls
+package app.tivi.interactors
 
 import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.extensions.parallelForEach
 import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.experimental.CoroutineDispatcher
 import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
-class SyncAllFollowedShowsCall @Inject constructor(
+class SyncShowWatchedEpisodesInteractor @Inject constructor(
+    private val syncer: TraktEpisodeWatchSyncer,
     private val followedShowsDao: FollowedShowsDao,
-    private val dispatchers: AppCoroutineDispatchers,
-    private val syncer: TraktEpisodeWatchSyncer
-) : Call<Unit> {
-    override suspend fun doWork(param: Unit) {
-        val followedShows = withContext(dispatchers.database) {
-            followedShowsDao.entriesBlocking()
-        }
-        followedShows.parallelForEach {
-            syncer.sync(it.showId)
-        }
+    private val dispatchers: AppCoroutineDispatchers
+) : Interactor<Long> {
+    override val dispatcher: CoroutineDispatcher = dispatchers.io
+
+    override suspend operator fun invoke(showId: Long) {
+        val followedEntry = withContext(dispatchers.io) {
+            followedShowsDao.entryWithShowId(showId)
+        } ?: throw IllegalArgumentException("Followed entry with showId: $showId does not exist")
+        val show = followedEntry.show!!
+
+        syncer.sync(show.id!!)
     }
 }

@@ -19,8 +19,7 @@ package app.tivi.util
 import io.reactivex.Scheduler
 
 data class AppRxSchedulers(
-    val database: Scheduler,
-    val disk: Scheduler,
-    val network: Scheduler,
+    val io: Scheduler,
+    val computation: Scheduler,
     val main: Scheduler
 )

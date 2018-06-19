@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.calls
+package app.tivi
 
-interface Call<in Param> {
-    suspend fun doWork(param: Param)
+import dagger.Module
+import dagger.Provides
+
+@Module
+class SeasonFetcherModule {
+    @Provides
+    fun provideSeasonFetcher(impl: SeasonFetcherImpl): SeasonFetcher = impl
 }

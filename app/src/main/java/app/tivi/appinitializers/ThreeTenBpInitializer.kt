@@ -31,7 +31,7 @@ class ThreeTenBpInitializer @Inject constructor(
         AndroidThreeTen.init(application)
 
         // Query the ZoneRulesProvider so that it is loaded on a background coroutine
-        launch(dispatchers.disk) {
+        launch(dispatchers.io) {
             ZoneRulesProvider.getAvailableZoneIds()
         }
     }

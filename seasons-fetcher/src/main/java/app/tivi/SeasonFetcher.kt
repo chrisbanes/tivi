@@ -16,15 +16,6 @@
 
 package app.tivi
 
-import app.tivi.trakt.TraktSeasonFetcher
-import javax.inject.Inject
-import javax.inject.Singleton
-
-@Singleton
-class SeasonFetcher @Inject constructor(
-    private val traktSeasonFetcher: TraktSeasonFetcher
-) {
-    suspend fun load(showId: Long) {
-        traktSeasonFetcher.updateSeasonData(showId)
-    }
+interface SeasonFetcher {
+    suspend fun load(showId: Long)
 }

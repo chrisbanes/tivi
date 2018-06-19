@@ -16,25 +16,19 @@
 
 package app.tivi.datasources.trakt
 
-import app.tivi.SeasonFetcher
-import app.tivi.datasources.RefreshableDataSource
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.entities.SeasonWithEpisodes
+import app.tivi.datasources.DataSource
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
 import javax.inject.Inject
 
 class ShowSeasonsDataSource @Inject constructor(
     private val seasonsDao: SeasonsDao,
-    private val schedulers: AppRxSchedulers,
-    private val seasonFetcher: SeasonFetcher
-) : RefreshableDataSource<Long, List<SeasonWithEpisodes>> {
-    override suspend fun refresh(param: Long) {
-        seasonFetcher.load(param)
-    }
-
+    private val schedulers: AppRxSchedulers
+) : DataSource<Long, List<SeasonWithEpisodes>> {
     override fun data(param: Long): Flowable<List<SeasonWithEpisodes>> {
         return seasonsDao.seasonsWithEpisodesForShowId(param)
-                .subscribeOn(schedulers.database)
+                .subscribeOn(schedulers.io)
     }
 }

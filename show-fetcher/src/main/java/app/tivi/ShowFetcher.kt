@@ -19,16 +19,13 @@ package app.tivi
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.tmdb.TmdbShowFetcher
 import app.tivi.trakt.TraktShowFetcher
-import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.trakt5.entities.Show
-import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ShowFetcher @Inject constructor(
     private val showDao: TiviShowDao,
-    private val dispatchers: AppCoroutineDispatchers,
     private val traktShowFetcher: TraktShowFetcher,
     private val tmdbShowFetcher: TmdbShowFetcher
 ) {
@@ -37,7 +34,8 @@ class ShowFetcher @Inject constructor(
     }
 
     suspend fun update(showId: Long, force: Boolean = false) {
-        val show = withContext(dispatchers.database) { showDao.getShowWithId(showId)!! }
+        val show = showDao.getShowWithId(showId)!!
+
         if (force || show.needsUpdateFromTrakt()) {
             traktShowFetcher.updateShow(show.traktId!!)
         }

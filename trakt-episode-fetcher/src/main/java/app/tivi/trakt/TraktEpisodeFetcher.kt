@@ -23,10 +23,8 @@ import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.Episode
 import app.tivi.extensions.fetchBodyWithRetry
-import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Episodes
-import kotlinx.coroutines.experimental.withContext
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Provider
@@ -39,33 +37,23 @@ class TraktEpisodeFetcher @Inject constructor(
     private val seasonsDao: SeasonsDao,
     private val episodesDao: EpisodesDao,
     private val episodesService: Provider<Episodes>,
-    private val dispatchers: AppCoroutineDispatchers,
     private val entityInserter: EntityInserter,
     private val transactionRunner: DatabaseTransactionRunner
 ) {
     suspend fun updateEpisodeData(episodeId: Long) {
-        val episode = withContext(dispatchers.database) {
-            episodesDao.episodeWithId(episodeId)
-        } ?: throw IllegalArgumentException("Episode with id[$episodeId] does not exist")
+        val episode = episodesDao.episodeWithId(episodeId)
+                ?: throw IllegalArgumentException("Episode with id[$episodeId] does not exist")
+        val season = seasonsDao.seasonWithId(episode.seasonId)
+                ?: throw IllegalArgumentException("Season with id[${episode.seasonId}] does not exist")
+        val show = showDao.getShowWithId(season.showId)
+                ?: throw IllegalArgumentException("Show with id[${season.showId}] does not exist")
 
-        val season = withContext(dispatchers.database) {
-            seasonsDao.seasonWithId(episode.seasonId!!)
-        } ?: throw IllegalArgumentException("Season with id[${episode.seasonId}] does not exist")
+        val response = episodesService.get()
+                .summary(show.traktId.toString(), season.number!!, episode.number!!, Extended.FULL)
+                .fetchBodyWithRetry()
 
-        val show = withContext(dispatchers.database) {
-            showDao.getShowWithId(season.showId!!)
-        } ?: throw IllegalArgumentException("Show with id[${season.showId}] does not exist")
-
-        val response = withContext(dispatchers.network) {
-            episodesService.get()
-                    .summary(show.traktId.toString(), season.number!!, episode.number!!, Extended.FULL)
-                    .fetchBodyWithRetry()
-        }
-
-        withContext(dispatchers.database) {
-            transactionRunner.runInTransaction {
-                upsertEpisode(season.id!!, response)
-            }
+        transactionRunner.runInTransaction {
+            upsertEpisode(season.id!!, response)
         }
     }
 

@@ -18,31 +18,41 @@ package app.tivi.showdetails.details
 
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.SharedElementHelper
-import app.tivi.actions.ShowTasks
-import app.tivi.calls.SyncShowWatchedEpisodesCall
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
 import app.tivi.datasources.trakt.RelatedShowsDataSource
 import app.tivi.datasources.trakt.ShowDetailsDataSource
 import app.tivi.datasources.trakt.ShowSeasonsDataSource
+import app.tivi.interactors.FollowShowInteractor
+import app.tivi.interactors.RefreshShowDetailsInteractor
+import app.tivi.interactors.RelatedShowsInteractor
+import app.tivi.interactors.SyncShowWatchedEpisodesInteractor
+import app.tivi.interactors.UnfollowShowInteractor
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
+import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.TiviViewModel
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 class ShowDetailsFragmentViewModel @Inject constructor(
     private val schedulers: AppRxSchedulers,
-    private val showCall: ShowDetailsDataSource,
-    private val relatedShows: RelatedShowsDataSource,
-    private val seasonsCall: ShowSeasonsDataSource,
-    private val showWatchedEpisodesCall: SyncShowWatchedEpisodesCall,
+    private val dispatchers: AppCoroutineDispatchers,
+    private val showDetailsDataSource: ShowDetailsDataSource,
+    private val showDetailsInteractor: RefreshShowDetailsInteractor,
+    private val relatedShowsDataSource: RelatedShowsDataSource,
+    private val relatedShowsInteractor: RelatedShowsInteractor,
+    private val seasonsDataSource: ShowSeasonsDataSource,
+    private val refreshShowSeasons: RefreshShowDetailsInteractor,
+    private val syncShowWatchedEpisodes: SyncShowWatchedEpisodesInteractor,
     private val tmdbManager: TmdbManager,
-    private val showTasks: ShowTasks,
+    private val followShowInteractor: FollowShowInteractor,
+    private val unfollowShowInteractor: UnfollowShowInteractor,
     private val followedShowsDao: FollowedShowsDao,
     private val logger: Logger
 ) : TiviViewModel() {
@@ -63,16 +73,13 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     val data = MutableLiveData<ShowDetailsViewState>()
 
     private fun refresh() {
-        showId?.let { id ->
-            launchWithParent {
-                showCall.refresh(id)
-            }
-            launchWithParent {
-                relatedShows.refresh(id)
-            }
-            launchWithParent {
+        showId?.also { id ->
+            launchInteractor(showDetailsInteractor, id)
+            launchInteractor(relatedShowsInteractor, id)
+            launchWithParent(dispatchers.io) {
                 if (followedShowsDao.entryCountWithShowId(id) > 0) {
-                    showWatchedEpisodesCall.doWork(id)
+                    refreshShowSeasons(id)
+                    syncShowWatchedEpisodes(id)
                 }
             }
         }
@@ -81,21 +88,23 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     private fun setupLiveData() {
         showId?.let { id ->
             disposables += followedShowsDao.entryCountWithShowIdFlowable(id)
-                    .subscribeOn(schedulers.database)
+                    .subscribeOn(schedulers.io)
+                    .map { it > 0 }
+                    .distinctUntilChanged()
                     .flatMap {
-                        if (it > 0) {
+                        if (it) {
                             // Followed show
                             Flowables.combineLatest(
-                                    showCall.data(id),
-                                    relatedShows.data(id),
-                                    seasonsCall.data(id),
+                                    showDetailsDataSource.data(id),
+                                    relatedShowsDataSource.data(id),
+                                    seasonsDataSource.data(id),
                                     tmdbManager.imageProvider,
                                     ::FollowedShowDetailsViewState)
                         } else {
                             // Not followed
                             Flowables.combineLatest(
-                                    showCall.data(id),
-                                    relatedShows.data(id),
+                                    showDetailsDataSource.data(id),
+                                    relatedShowsDataSource.data(id),
                                     tmdbManager.imageProvider,
                                     ::NotFollowedShowDetailsViewState)
                         }
@@ -106,14 +115,21 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     }
 
     fun addToMyShows() {
-        showId?.let {
-            showTasks.followShow(it)
+        showId?.let { id ->
+            launchWithParent {
+                withContext(followShowInteractor.dispatcher) {
+                    followShowInteractor(id)
+                }
+                withContext(syncShowWatchedEpisodes.dispatcher) {
+                    syncShowWatchedEpisodes(id)
+                }
+            }
         }
     }
 
     fun removeFromMyShows() {
-        showId?.let {
-            showTasks.unfollowShow(it)
+        showId?.let { id ->
+            launchInteractor(unfollowShowInteractor, id)
         }
     }
 

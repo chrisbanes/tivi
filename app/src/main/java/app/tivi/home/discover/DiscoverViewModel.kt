@@ -19,12 +19,14 @@ package app.tivi.home.discover
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
-import app.tivi.home.HomeFragmentViewModel
-import app.tivi.home.HomeNavigator
-import app.tivi.tmdb.TmdbManager
-import app.tivi.trakt.TraktManager
 import app.tivi.datasources.trakt.PopularDataSource
 import app.tivi.datasources.trakt.TrendingDataSource
+import app.tivi.home.HomeFragmentViewModel
+import app.tivi.home.HomeNavigator
+import app.tivi.interactors.PopularShowsInteractor
+import app.tivi.interactors.TrendingShowsInteractor
+import app.tivi.tmdb.TmdbManager
+import app.tivi.trakt.TraktManager
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.NetworkDetector
@@ -34,8 +36,10 @@ import javax.inject.Inject
 
 class DiscoverViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
-    private val popularCall: PopularDataSource,
-    private val trendingCall: TrendingDataSource,
+    popularDataSource: PopularDataSource,
+    private val popularShowsInteractor: PopularShowsInteractor,
+    trendingDataSource: TrendingDataSource,
+    private val trendingShowsInteractor: TrendingShowsInteractor,
     traktManager: TraktManager,
     tmdbManager: TmdbManager,
     private val networkDetector: NetworkDetector,
@@ -46,8 +50,8 @@ class DiscoverViewModel @Inject constructor(
 
     init {
         disposables += Flowables.combineLatest(
-                trendingCall.data(0),
-                popularCall.data(0),
+                trendingDataSource.data(0),
+                popularDataSource.data(0),
                 tmdbManager.imageProvider,
                 ::DiscoverViewState)
                 .observeOn(schedulers.main)
@@ -62,20 +66,8 @@ class DiscoverViewModel @Inject constructor(
     }
 
     private fun onRefresh() {
-        launchWithParent {
-            try {
-                popularCall.refresh(Unit)
-            } catch (e: Exception) {
-                logger.e(e, "Error while refreshing popular shows")
-            }
-        }
-        launchWithParent {
-            try {
-                trendingCall.refresh(Unit)
-            } catch (e: Exception) {
-                logger.e(e, "Error while refreshing trending shows")
-            }
-        }
+        launchInteractor(popularShowsInteractor.asRefreshInteractor(), Unit)
+        launchInteractor(trendingShowsInteractor.asRefreshInteractor(), Unit)
     }
 
     fun onTrendingHeaderClicked(navigator: HomeNavigator, sharedElementHelper: SharedElementHelper? = null) {

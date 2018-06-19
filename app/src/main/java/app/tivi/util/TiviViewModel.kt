@@ -17,6 +17,7 @@
 package app.tivi.util
 
 import android.arch.lifecycle.ViewModel
+import app.tivi.interactors.Interactor
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.DefaultDispatcher
@@ -42,4 +43,8 @@ open class TiviViewModel : ViewModel() {
         context: CoroutineContext = DefaultDispatcher,
         block: suspend CoroutineScope.() -> Unit
     ) = launch(context = context, parent = viewModelJob, block = block)
+
+    fun <P> launchInteractor(interactor: Interactor<P>, param: P) {
+        launch(context = interactor.dispatcher, parent = viewModelJob, block = { interactor(param) })
+    }
 }

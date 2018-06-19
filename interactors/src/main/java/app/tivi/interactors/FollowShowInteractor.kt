@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package app.tivi.calls
+package app.tivi.interactors
 
+import app.tivi.SeasonFetcher
 import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.daos.SeasonsDao
+import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
-class UnfollowShowCall @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
-    private val seasonsDao: SeasonsDao,
-    private val followedShowsDao: FollowedShowsDao
-) : Call<Long> {
-    override suspend fun doWork(showId: Long) {
-        withContext(dispatchers.database) {
-            followedShowsDao.deleteWithShowId(showId)
-            // Now remove all season/episode data from database
-            seasonsDao.deleteSeasonsForShowId(showId)
-        }
+class FollowShowInteractor @Inject constructor(
+    dispatchers: AppCoroutineDispatchers,
+    private val followedShowsDao: FollowedShowsDao,
+    private val seasonFetcher: SeasonFetcher
+) : Interactor<Long> {
+    override val dispatcher: CoroutineDispatcher = dispatchers.io
+
+    override suspend operator fun invoke(param: Long) {
+        followedShowsDao.insert(FollowedShowEntry(showId = param))
+        // Now refresh seasons
+        seasonFetcher.load(param)
     }
 }

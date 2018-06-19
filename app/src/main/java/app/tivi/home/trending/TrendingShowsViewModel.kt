@@ -18,9 +18,10 @@ package app.tivi.home.trending
 
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TrendingListItem
-import app.tivi.home.HomeNavigator
-import app.tivi.tmdb.TmdbManager
 import app.tivi.datasources.trakt.TrendingDataSource
+import app.tivi.home.HomeNavigator
+import app.tivi.interactors.TrendingShowsInteractor
+import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.EntryViewModel
@@ -30,12 +31,22 @@ import javax.inject.Inject
 
 class TrendingShowsViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
-    coroutineDispatchers: AppCoroutineDispatchers,
-    call: TrendingDataSource,
+    dispatchers: AppCoroutineDispatchers,
+    dataSource: TrendingDataSource,
+    interactor: TrendingShowsInteractor,
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector,
     logger: Logger
-) : EntryViewModel<TrendingListItem>(schedulers, coroutineDispatchers, call, tmdbManager, networkDetector, logger) {
+) : EntryViewModel<TrendingListItem>(
+        schedulers,
+        dispatchers,
+        dataSource,
+        interactor.asRefreshInteractor(),
+        interactor.asLoadMoreInteractor(),
+        tmdbManager,
+        networkDetector,
+        logger
+) {
     fun onUpClicked(navigator: HomeNavigator) {
         navigator.onUpClicked()
     }

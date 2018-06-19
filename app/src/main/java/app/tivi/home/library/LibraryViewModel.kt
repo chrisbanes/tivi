@@ -19,13 +19,14 @@ package app.tivi.home.library
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
+import app.tivi.datasources.trakt.FollowedShowsDataSource
+import app.tivi.datasources.trakt.WatchedShowsDataSource
 import app.tivi.home.HomeFragmentViewModel
 import app.tivi.home.HomeNavigator
+import app.tivi.interactors.RefreshWatchedShowsInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
-import app.tivi.datasources.trakt.FollowedShowsDataSource
-import app.tivi.datasources.trakt.WatchedShowsDataSource
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.NetworkDetector
@@ -36,8 +37,9 @@ import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
-    private val watchedShowsCall: WatchedShowsDataSource,
-    private val followedShowsCall: FollowedShowsDataSource,
+    watchedShowsDataSource: WatchedShowsDataSource,
+    private val watchedShowsInteractor: RefreshWatchedShowsInteractor,
+    followedDataSource: FollowedShowsDataSource,
     private val traktManager: TraktManager,
     tmdbManager: TmdbManager,
     private val networkDetector: NetworkDetector,
@@ -47,8 +49,8 @@ class LibraryViewModel @Inject constructor(
 
     init {
         disposables += Flowables.combineLatest(
-                watchedShowsCall.data().map { it.take(20) },
-                followedShowsCall.data().map { it.take(20) },
+                watchedShowsDataSource.data(Unit).map { it.take(20) },
+                followedDataSource.data().map { it.take(20) },
                 tmdbManager.imageProvider,
                 ::LibraryViewState)
                 .observeOn(schedulers.main)
@@ -69,13 +71,7 @@ class LibraryViewModel @Inject constructor(
     }
 
     private fun refreshWatched() {
-        launchWithParent {
-            try {
-                watchedShowsCall.refresh(Unit)
-            } catch (e: Exception) {
-                logger.e(e, "Error while refreshing watched shows")
-            }
-        }
+        launchInteractor(watchedShowsInteractor, Unit)
     }
 
     fun onWatchedHeaderClicked(navigator: HomeNavigator, sharedElements: SharedElementHelper) {

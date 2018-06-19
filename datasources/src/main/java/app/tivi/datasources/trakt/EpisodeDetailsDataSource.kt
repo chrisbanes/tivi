@@ -16,26 +16,20 @@
 
 package app.tivi.datasources.trakt
 
-import app.tivi.EpisodeFetcher
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.entities.Episode
-import app.tivi.datasources.RefreshableDataSource
+import app.tivi.datasources.DataSource
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
 import javax.inject.Inject
 
 class EpisodeDetailsDataSource @Inject constructor(
     private val dao: EpisodesDao,
-    private val episodeFetcher: EpisodeFetcher,
     private val schedulers: AppRxSchedulers
-) : RefreshableDataSource<Long, Episode> {
-    override suspend fun refresh(param: Long) {
-        episodeFetcher.update(param, true)
-    }
-
+) : DataSource<Long, Episode> {
     override fun data(param: Long): Flowable<Episode> {
         return dao.episodeWithIdFlowable(param)
-                .subscribeOn(schedulers.database)
+                .subscribeOn(schedulers.io)
                 .distinctUntilChanged()
     }
 }
