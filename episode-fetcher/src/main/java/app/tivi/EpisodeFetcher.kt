@@ -19,9 +19,7 @@ package app.tivi
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.tmdb.TmdbEpisodeFetcher
 import app.tivi.trakt.TraktEpisodeFetcher
-import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
-import kotlinx.coroutines.experimental.withContext
 import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -29,15 +27,13 @@ import javax.inject.Singleton
 @Singleton
 class EpisodeFetcher @Inject constructor(
     private val episodeDao: EpisodesDao,
-    private val dispatchers: AppCoroutineDispatchers,
     private val traktEpisodeFetcher: TraktEpisodeFetcher,
     private val tmdbEpisodeFetcher: TmdbEpisodeFetcher,
     private val logger: Logger
 ) {
     suspend fun update(episodeId: Long, forceRefresh: Boolean = false) {
-        val show = withContext(dispatchers.io) {
-            episodeDao.episodeWithId(episodeId)!!
-        }
+        val show = episodeDao.episodeWithId(episodeId)!!
+
         if (forceRefresh || show.needsUpdateFromTrakt()) {
             try {
                 traktEpisodeFetcher.updateEpisodeData(episodeId)

@@ -16,23 +16,17 @@
 
 package app.tivi.datasources.trakt
 
-import app.tivi.ShowFetcher
-import app.tivi.datasources.RefreshableDataSource
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.TiviShow
+import app.tivi.datasources.DataSource
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
 import javax.inject.Inject
 
 class ShowDetailsDataSource @Inject constructor(
     private val dao: TiviShowDao,
-    private val showFetcher: ShowFetcher,
     private val schedulers: AppRxSchedulers
-) : RefreshableDataSource<Long, TiviShow> {
-    override suspend fun refresh(param: Long) {
-        showFetcher.update(param)
-    }
-
+) : DataSource<Long, TiviShow> {
     override fun data(param: Long): Flowable<TiviShow> {
         return dao.getShowWithIdFlowable(param)
                 .subscribeOn(schedulers.io)

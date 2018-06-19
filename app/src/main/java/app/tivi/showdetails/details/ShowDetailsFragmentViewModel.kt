@@ -25,6 +25,8 @@ import app.tivi.datasources.trakt.RelatedShowsDataSource
 import app.tivi.datasources.trakt.ShowDetailsDataSource
 import app.tivi.datasources.trakt.ShowSeasonsDataSource
 import app.tivi.interactors.FollowShowInteractor
+import app.tivi.interactors.RefreshShowDetailsInteractor
+import app.tivi.interactors.RelatedShowsInteractor
 import app.tivi.interactors.SyncShowWatchedEpisodesInteractor
 import app.tivi.interactors.UnfollowShowInteractor
 import app.tivi.showdetails.ShowDetailsNavigator
@@ -35,18 +37,22 @@ import app.tivi.util.Logger
 import app.tivi.util.TiviViewModel
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 class ShowDetailsFragmentViewModel @Inject constructor(
     private val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
-    private val showCall: ShowDetailsDataSource,
-    private val relatedShows: RelatedShowsDataSource,
-    private val seasonsCall: ShowSeasonsDataSource,
+    private val showDetailsDataSource: ShowDetailsDataSource,
+    private val showDetailsInteractor: RefreshShowDetailsInteractor,
+    private val relatedShowsDataSource: RelatedShowsDataSource,
+    private val relatedShowsInteractor: RelatedShowsInteractor,
+    private val seasonsDataSource: ShowSeasonsDataSource,
+    private val refreshShowSeasons: RefreshShowDetailsInteractor,
     private val syncShowWatchedEpisodes: SyncShowWatchedEpisodesInteractor,
     private val tmdbManager: TmdbManager,
-    private val followShow: FollowShowInteractor,
-    private val unfollowShow: UnfollowShowInteractor,
+    private val followShowInteractor: FollowShowInteractor,
+    private val unfollowShowInteractor: UnfollowShowInteractor,
     private val followedShowsDao: FollowedShowsDao,
     private val logger: Logger
 ) : TiviViewModel() {
@@ -68,14 +74,11 @@ class ShowDetailsFragmentViewModel @Inject constructor(
 
     private fun refresh() {
         showId?.also { id ->
-            launchWithParent {
-                showCall.refresh(id)
-            }
-            launchWithParent {
-                relatedShows.refresh(id)
-            }
-            launchWithParent {
+            launchInteractor(showDetailsInteractor, id)
+            launchInteractor(relatedShowsInteractor, id)
+            launchWithParent(dispatchers.io) {
                 if (followedShowsDao.entryCountWithShowId(id) > 0) {
+                    refreshShowSeasons(id)
                     syncShowWatchedEpisodes(id)
                 }
             }
@@ -92,16 +95,16 @@ class ShowDetailsFragmentViewModel @Inject constructor(
                         if (it) {
                             // Followed show
                             Flowables.combineLatest(
-                                    showCall.data(id),
-                                    relatedShows.data(id),
-                                    seasonsCall.data(id),
+                                    showDetailsDataSource.data(id),
+                                    relatedShowsDataSource.data(id),
+                                    seasonsDataSource.data(id),
                                     tmdbManager.imageProvider,
                                     ::FollowedShowDetailsViewState)
                         } else {
                             // Not followed
                             Flowables.combineLatest(
-                                    showCall.data(id),
-                                    relatedShows.data(id),
+                                    showDetailsDataSource.data(id),
+                                    relatedShowsDataSource.data(id),
                                     tmdbManager.imageProvider,
                                     ::NotFollowedShowDetailsViewState)
                         }
@@ -114,17 +117,19 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     fun addToMyShows() {
         showId?.let { id ->
             launchWithParent {
-                followShow(id)
-                syncShowWatchedEpisodes(id)
+                withContext(followShowInteractor.dispatcher) {
+                    followShowInteractor(id)
+                }
+                withContext(syncShowWatchedEpisodes.dispatcher) {
+                    syncShowWatchedEpisodes(id)
+                }
             }
         }
     }
 
     fun removeFromMyShows() {
         showId?.let { id ->
-            launchWithParent {
-                unfollowShow(id)
-            }
+            launchInteractor(unfollowShowInteractor, id)
         }
     }
 

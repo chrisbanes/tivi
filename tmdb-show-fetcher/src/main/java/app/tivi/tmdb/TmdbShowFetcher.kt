@@ -20,9 +20,7 @@ import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.TiviShow
 import app.tivi.extensions.fetchBodyWithRetry
-import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.tmdb2.Tmdb
-import kotlinx.coroutines.experimental.withContext
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,27 +29,22 @@ import javax.inject.Singleton
 class TmdbShowFetcher @Inject constructor(
     private val showDao: TiviShowDao,
     private val tmdb: Tmdb,
-    private val dispatchers: AppCoroutineDispatchers,
     private val entityInserter: EntityInserter
 ) {
     suspend fun updateShow(tmdbId: Int) {
-        return withContext(dispatchers.io) {
-            tmdb.tvService().tv(tmdbId).fetchBodyWithRetry()
-        }.let { tmdbShow ->
-            withContext(dispatchers.io) {
-                (showDao.getShowWithTmdbId(tmdbShow.id) ?: TiviShow())
-                        .apply {
-                            updateProperty(this::tmdbId, tmdbShow.id)
-                            updateProperty(this::title, tmdbShow.name, false)
-                            updateProperty(this::summary, tmdbShow.overview, false)
-                            updateProperty(this::tmdbBackdropPath, tmdbShow.backdrop_path)
-                            updateProperty(this::tmdbPosterPath, tmdbShow.poster_path)
-                            updateProperty(this::homepage, tmdbShow.homepage, false)
-                            lastTmdbUpdate = OffsetDateTime.now()
-                        }.also {
-                            entityInserter.insertOrUpdate(showDao, it)
-                        }
-            }
-        }
+        val tmdbShow = tmdb.tvService().tv(tmdbId).fetchBodyWithRetry()
+
+        (showDao.getShowWithTmdbId(tmdbShow.id) ?: TiviShow())
+                .apply {
+                    updateProperty(this::tmdbId, tmdbShow.id)
+                    updateProperty(this::title, tmdbShow.name, false)
+                    updateProperty(this::summary, tmdbShow.overview, false)
+                    updateProperty(this::tmdbBackdropPath, tmdbShow.backdrop_path)
+                    updateProperty(this::tmdbPosterPath, tmdbShow.poster_path)
+                    updateProperty(this::homepage, tmdbShow.homepage, false)
+                    lastTmdbUpdate = OffsetDateTime.now()
+                }.also {
+                    entityInserter.insertOrUpdate(showDao, it)
+                }
     }
 }

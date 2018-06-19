@@ -20,6 +20,7 @@ import app.tivi.SharedElementHelper
 import app.tivi.data.entities.PopularListItem
 import app.tivi.datasources.trakt.PopularDataSource
 import app.tivi.home.HomeNavigator
+import app.tivi.interactors.PopularShowsInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
@@ -30,12 +31,22 @@ import javax.inject.Inject
 
 class PopularShowsViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
-    coroutineDispatchers: AppCoroutineDispatchers,
-    call: PopularDataSource,
+    dispatchers: AppCoroutineDispatchers,
+    dataSource: PopularDataSource,
+    interactor: PopularShowsInteractor,
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector,
     logger: Logger
-) : EntryViewModel<PopularListItem>(schedulers, coroutineDispatchers, call, tmdbManager, networkDetector, logger) {
+) : EntryViewModel<PopularListItem>(
+        schedulers,
+        dispatchers,
+        dataSource,
+        interactor.asRefreshInteractor(),
+        interactor.asLoadMoreInteractor(),
+        tmdbManager,
+        networkDetector,
+        logger
+) {
     fun onUpClicked(navigator: HomeNavigator) {
         navigator.onUpClicked()
     }

@@ -20,4 +20,4 @@ import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.android.UI
 
 // Everything on the UI
-val testCoroutineDispatchers = AppCoroutineDispatchers(UI, UI, UI, UI)
+val testCoroutineDispatchers = AppCoroutineDispatchers(UI, UI, UI)

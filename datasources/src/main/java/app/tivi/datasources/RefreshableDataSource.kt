@@ -16,15 +16,13 @@
 
 package app.tivi.datasources
 
-import android.arch.paging.DataSource
 import io.reactivex.Flowable
+import android.arch.paging.DataSource as PagingDataSource
 
-interface RefreshableDataSource<in Param, DatabaseOutput> {
-    fun data(param: Param): Flowable<DatabaseOutput>
-    suspend fun refresh(param: Param)
+interface DataSource<in P, O> {
+    fun data(param: P): Flowable<O>
 }
 
-interface ListRefreshableDataSource<in Param, DatabaseOutput> : RefreshableDataSource<Param, List<DatabaseOutput>> {
-    fun dataSourceFactory(): DataSource.Factory<Int, DatabaseOutput>
-    val pageSize: Int
+interface ListDataSource<in P, O> : DataSource<P, List<O>> {
+    fun dataSourceFactory(): PagingDataSource.Factory<Int, O>
 }

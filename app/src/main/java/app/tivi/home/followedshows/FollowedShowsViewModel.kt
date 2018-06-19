@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.home.watched
+package app.tivi.home.followedshows
 
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.FollowedShowsListItem
 import app.tivi.datasources.trakt.FollowedShowsDataSource
 import app.tivi.home.HomeNavigator
+import app.tivi.interactors.emptyInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
@@ -30,12 +31,21 @@ import javax.inject.Inject
 
 class FollowedShowsViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
-    coroutineDispatchers: AppCoroutineDispatchers,
-    call: FollowedShowsDataSource,
+    dispatchers: AppCoroutineDispatchers,
+    dataSource: FollowedShowsDataSource,
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector,
     logger: Logger
-) : EntryViewModel<FollowedShowsListItem>(schedulers, coroutineDispatchers, call, tmdbManager, networkDetector, logger) {
+) : EntryViewModel<FollowedShowsListItem>(
+        schedulers,
+        dispatchers,
+        dataSource,
+        emptyInteractor(),
+        emptyInteractor(),
+        tmdbManager,
+        networkDetector,
+        logger
+) {
     fun onUpClicked(navigator: HomeNavigator) {
         navigator.onUpClicked()
     }

@@ -19,7 +19,7 @@ package app.tivi.interactors
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.extensions.parallelForEach
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
 class SyncAllFollowedShowsInteractor @Inject constructor(
@@ -27,10 +27,11 @@ class SyncAllFollowedShowsInteractor @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val syncer: TraktEpisodeWatchSyncer
 ) : Interactor<Unit> {
+    override val dispatcher: CoroutineDispatcher = dispatchers.io
+
     override suspend operator fun invoke(param: Unit) {
-        val followedShows = withContext(dispatchers.io) {
-            followedShowsDao.entriesBlocking()
-        }
+        val followedShows = followedShowsDao.entriesBlocking()
+
         followedShows.parallelForEach {
             syncer.sync(it.showId)
         }

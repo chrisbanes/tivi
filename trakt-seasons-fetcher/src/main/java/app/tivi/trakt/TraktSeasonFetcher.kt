@@ -22,10 +22,8 @@ import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.Season
 import app.tivi.extensions.fetchBodyWithRetry
-import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Seasons
-import kotlinx.coroutines.experimental.withContext
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Provider
@@ -37,29 +35,24 @@ class TraktSeasonFetcher @Inject constructor(
     private val showDao: TiviShowDao,
     private val seasonDao: SeasonsDao,
     private val seasonsService: Provider<Seasons>,
-    private val dispatchers: AppCoroutineDispatchers,
     private val entityInserter: EntityInserter,
     private val transactionRunner: DatabaseTransactionRunner,
     private val traktEpisodeFetcher: TraktEpisodeFetcher
 ) {
     suspend fun updateSeasonData(showId: Long) {
-        val show = withContext(dispatchers.io) {
-            showDao.getShowWithId(showId)
-        } ?: throw IllegalArgumentException("Show with id[$showId] does not exist")
+        val show = showDao.getShowWithId(showId)
+                ?: throw IllegalArgumentException("Show with id[$showId] does not exist")
 
-        val response = withContext(dispatchers.io) {
-            seasonsService.get().summary(show.traktId!!.toString(), Extended.FULLEPISODES).fetchBodyWithRetry()
-        }
+        val response = seasonsService.get().summary(show.traktId!!.toString(), Extended.FULLEPISODES)
+                .fetchBodyWithRetry()
 
-        withContext(dispatchers.io) {
-            transactionRunner.runInTransaction {
-                response.forEach { traktSeason ->
-                    // Upsert the season
-                    val seasonId = upsertSeason(showId, traktSeason)
-                    // Now upsert all the episodes
-                    traktSeason.episodes?.forEach {
-                        traktEpisodeFetcher.upsertEpisode(seasonId, it)
-                    }
+        transactionRunner.runInTransaction {
+            response.forEach { traktSeason ->
+                // Upsert the season
+                val seasonId = upsertSeason(showId, traktSeason)
+                // Now upsert all the episodes
+                traktSeason.episodes?.forEach {
+                    traktEpisodeFetcher.upsertEpisode(seasonId, it)
                 }
             }
         }

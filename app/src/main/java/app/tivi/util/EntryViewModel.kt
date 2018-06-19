@@ -24,31 +24,34 @@ import app.tivi.api.Status
 import app.tivi.api.UiResource
 import app.tivi.data.Entry
 import app.tivi.data.entities.ListItem
-import app.tivi.datasources.ListRefreshableDataSource
-import app.tivi.datasources.PaginatedDataSource
+import app.tivi.datasources.ListDataSource
+import app.tivi.interactors.Interactor
 import app.tivi.tmdb.TmdbManager
 import io.reactivex.BackpressureStrategy
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.experimental.withContext
 
 open class EntryViewModel<LI : ListItem<out Entry>>(
     private val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
-    private val call: ListRefreshableDataSource<Unit, LI>,
+    private val dataSource: ListDataSource<Unit, LI>,
+    private val refreshInteractor: Interactor<Unit>,
+    private val loadMoreInteractor: Interactor<Unit>,
     tmdbManager: TmdbManager,
     private val networkDetector: NetworkDetector,
-    private val logger: Logger
+    private val logger: Logger,
+    private val pageSize: Int = 21
 ) : TiviViewModel() {
-
     private val messages = BehaviorSubject.create<UiResource>()
 
     val liveList by lazy(mode = LazyThreadSafetyMode.NONE) {
         LivePagedListBuilder<Int, LI>(
-                call.dataSourceFactory(),
+                dataSource.dataSourceFactory(),
                 PagedList.Config.Builder().run {
-                    setPageSize(call.pageSize * 3)
-                    setPrefetchDistance(call.pageSize)
+                    setPageSize(pageSize * 3)
+                    setPrefetchDistance(pageSize)
                     setEnablePlaceholders(false)
                     build()
                 }
@@ -69,15 +72,15 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
     }
 
     fun onListScrolledToEnd() {
-        if (call is PaginatedDataSource<*, *>) {
-            launchWithParent(dispatchers.main) {
-                sendMessage(UiResource(Status.LOADING_MORE))
-                try {
-                    call.loadNextPage()
-                    onSuccess()
-                } catch (e: Exception) {
-                    onError(e)
+        launchWithParent(dispatchers.main) {
+            sendMessage(UiResource(Status.LOADING_MORE))
+            try {
+                withContext(loadMoreInteractor.dispatcher) {
+                    loadMoreInteractor(Unit)
                 }
+                onSuccess()
+            } catch (e: Exception) {
+                onError(e)
             }
         }
     }
@@ -91,7 +94,9 @@ open class EntryViewModel<LI : ListItem<out Entry>>(
         launchWithParent(dispatchers.main) {
             sendMessage(UiResource(Status.REFRESHING))
             try {
-                call.refresh(Unit)
+                withContext(refreshInteractor.dispatcher) {
+                    refreshInteractor(Unit)
+                }
                 onSuccess()
             } catch (e: Exception) {
                 onError(e)

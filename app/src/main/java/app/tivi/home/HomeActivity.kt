@@ -34,7 +34,7 @@ import app.tivi.home.discover.DiscoverFragment
 import app.tivi.home.library.LibraryFragment
 import app.tivi.home.popular.PopularShowsFragment
 import app.tivi.home.trending.TrendingShowsFragment
-import app.tivi.home.watched.FollowedShowsFragment
+import app.tivi.home.followedshows.FollowedShowsFragment
 import app.tivi.home.watched.WatchedShowsFragment
 import app.tivi.trakt.TraktConstants
 import kotlinx.android.synthetic.main.activity_home.*

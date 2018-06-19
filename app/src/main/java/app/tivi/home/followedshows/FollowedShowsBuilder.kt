@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.home.watched
+package app.tivi.home.followedshows
 
 import android.arch.lifecycle.ViewModel
 import app.tivi.inject.ViewModelKey

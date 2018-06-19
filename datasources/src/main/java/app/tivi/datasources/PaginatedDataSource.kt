@@ -18,7 +18,6 @@ package app.tivi.datasources
 
 import io.reactivex.Flowable
 
-interface PaginatedDataSource<in Param, DatabaseOutput> : ListRefreshableDataSource<Param, DatabaseOutput> {
-    fun data(page: Int): Flowable<List<DatabaseOutput>>
-    suspend fun loadNextPage()
+interface PaginatedDataSource<in P, O> : ListDataSource<P, O> {
+    fun data(page: Int): Flowable<List<O>>
 }

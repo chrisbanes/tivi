@@ -20,18 +20,18 @@ import app.tivi.SeasonFetcher
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
 class FollowShowInteractor @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
+    dispatchers: AppCoroutineDispatchers,
     private val followedShowsDao: FollowedShowsDao,
     private val seasonFetcher: SeasonFetcher
 ) : Interactor<Long> {
+    override val dispatcher: CoroutineDispatcher = dispatchers.io
+
     override suspend operator fun invoke(param: Long) {
-        withContext(dispatchers.io) {
-            followedShowsDao.insert(FollowedShowEntry(showId = param))
-        }
+        followedShowsDao.insert(FollowedShowEntry(showId = param))
         // Now refresh seasons
         seasonFetcher.load(param)
     }

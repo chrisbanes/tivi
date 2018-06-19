@@ -17,67 +17,22 @@
 package app.tivi.datasources.trakt
 
 import android.arch.paging.DataSource
-import app.tivi.ShowFetcher
-import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.WatchedShowDao
-import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.data.entities.WatchedShowListItem
-import app.tivi.datasources.ListRefreshableDataSource
-import app.tivi.extensions.fetchBodyWithRetry
-import app.tivi.extensions.parallelForEach
-import app.tivi.extensions.parallelMap
-import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.datasources.ListDataSource
 import app.tivi.util.AppRxSchedulers
-import com.uwetrottmann.trakt5.entities.UserSlug
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.services.Users
 import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
-import javax.inject.Provider
 
 class WatchedShowsDataSource @Inject constructor(
-    private val databaseTransactionRunner: DatabaseTransactionRunner,
-    private val watchShowDao: WatchedShowDao,
-    private val showFetcher: ShowFetcher,
-    private val usersService: Provider<Users>,
-    private val schedulers: AppRxSchedulers,
-    private val dispatchers: AppCoroutineDispatchers
-) : ListRefreshableDataSource<Unit, WatchedShowListItem> {
-
-    override val pageSize = 21
-
-    fun data() = data(Unit)
-
+    private val watchedShowDao: WatchedShowDao,
+    private val schedulers: AppRxSchedulers
+) : ListDataSource<Unit, WatchedShowListItem> {
     override fun data(param: Unit): Flowable<List<WatchedShowListItem>> {
-        return watchShowDao.entries()
+        return watchedShowDao.entries()
                 .subscribeOn(schedulers.io)
                 .distinctUntilChanged()
     }
 
-    override fun dataSourceFactory(): DataSource.Factory<Int, WatchedShowListItem> = watchShowDao.entriesDataSource()
-
-    override suspend fun refresh(param: Unit) {
-        val networkResponse = withContext(dispatchers.io) {
-            usersService.get().watchedShows(UserSlug.ME, Extended.NOSEASONS).fetchBodyWithRetry()
-        }
-
-        val shows = networkResponse.parallelMap { traktEntry ->
-            val showId = showFetcher.insertPlaceholderIfNeeded(traktEntry.show)
-            WatchedShowEntry(null, showId, traktEntry.last_watched_at)
-        }
-
-        // Now save it to the database
-        withContext(dispatchers.io) {
-            databaseTransactionRunner.runInTransaction {
-                watchShowDao.deleteAll()
-                watchShowDao.insertAll(shows)
-            }
-        }
-
-        shows.parallelForEach {
-            // Now trigger a refresh of each show
-            showFetcher.update(it.showId)
-        }
-    }
+    override fun dataSourceFactory(): DataSource.Factory<Int, WatchedShowListItem> = watchedShowDao.entriesDataSource()
 }

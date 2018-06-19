@@ -23,6 +23,7 @@ import app.tivi.actions.ShowTasks
 import app.tivi.data.entities.TraktUser
 import app.tivi.datasources.trakt.UserMeDataSource
 import app.tivi.inject.ApplicationLevel
+import app.tivi.interactors.UserDetailsMeInteractor
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
@@ -58,7 +59,8 @@ class TraktManager @Inject constructor(
     private val authService: AuthorizationService,
     private val clientAuth: Lazy<ClientAuthentication>,
     @Named("auth") private val authPrefs: SharedPreferences,
-    private val userMeCall: UserMeDataSource,
+    private val userMeDataSource: UserMeDataSource,
+    private val userMeInteractor: UserDetailsMeInteractor,
     private val networkDetector: NetworkDetector,
     private val showTasks: ShowTasks,
     private val logger: Logger
@@ -102,9 +104,9 @@ class TraktManager @Inject constructor(
     }
 
     private fun refreshUserProfile() {
-        launch {
+        launch(userMeInteractor.dispatcher) {
             try {
-                userMeCall.refresh(Unit)
+                userMeInteractor(Unit)
             } catch (e: Exception) {
                 logger.e(e, "Error while refreshing user profile")
             }
@@ -126,7 +128,7 @@ class TraktManager @Inject constructor(
         logger.d(exception, "AuthException")
     }
 
-    fun userObservable(): Flowable<TraktUser> = userMeCall.data()
+    fun userObservable(): Flowable<TraktUser> = userMeDataSource.data()
 
     private fun performTokenExchange(response: AuthorizationResponse) {
         authService.performTokenRequest(

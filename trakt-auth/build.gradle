@@ -44,6 +44,7 @@ dependencies {
     implementation project(":data")
     implementation project(":trakt")
     implementation project(':datasources')
+    implementation project(':interactors')
 
     api "io.reactivex.rxjava2:rxjava:${versions.rx}"
     implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"

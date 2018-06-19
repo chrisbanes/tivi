@@ -16,48 +16,17 @@
 
 package app.tivi.datasources.trakt
 
-import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.UserDao
 import app.tivi.data.entities.TraktUser
-import app.tivi.datasources.RefreshableDataSource
-import app.tivi.extensions.fetchBodyWithRetry
-import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.datasources.DataSource
 import app.tivi.util.AppRxSchedulers
-import com.uwetrottmann.trakt5.entities.UserSlug
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.services.Users
 import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
-import javax.inject.Provider
 
 class UserMeDataSource @Inject constructor(
     private val dao: UserDao,
-    private val usersService: Provider<Users>,
-    private val schedulers: AppRxSchedulers,
-    private val dispatchers: AppCoroutineDispatchers,
-    private val entityInserter: EntityInserter
-) : RefreshableDataSource<Unit, TraktUser> {
-
-    override suspend fun refresh(param: Unit) {
-        withContext(dispatchers.io) {
-            val response = usersService.get().profile(UserSlug.ME, Extended.FULL)
-                    .fetchBodyWithRetry()
-
-            // Map to our entity
-            val user = TraktUser(
-                    username = response.username,
-                    name = response.name,
-                    location = response.location,
-                    about = response.about,
-                    avatarUrl = response.images?.avatar?.full,
-                    joined = response.joined_at
-            )
-
-            dao.deleteAll()
-            entityInserter.insertOrUpdate(dao, user)
-        }
-    }
+    private val schedulers: AppRxSchedulers
+) : DataSource<Unit, TraktUser> {
 
     fun data() = data(Unit)
 

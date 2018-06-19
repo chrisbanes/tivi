@@ -16,6 +16,31 @@
 
 package app.tivi.interactors
 
+import kotlinx.coroutines.experimental.CoroutineDispatcher
+import kotlinx.coroutines.experimental.CoroutineStart
+import kotlinx.coroutines.experimental.DefaultDispatcher
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.launch
+import kotlin.coroutines.experimental.CoroutineContext
+
 interface Interactor<in P> {
+    val dispatcher: CoroutineDispatcher
     suspend operator fun invoke(param: P)
 }
+
+fun <T> emptyInteractor(): Interactor<T> = EmptyInteractor as Interactor<T>
+
+internal object EmptyInteractor : Interactor<Unit> {
+    override val dispatcher: CoroutineDispatcher
+        get() = DefaultDispatcher
+
+    override suspend fun invoke(param: Unit) = Unit
+}
+
+fun <P> launchInteractor(
+    interactor: Interactor<P>,
+    param: P,
+    context: CoroutineContext = interactor.dispatcher,
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    parent: Job? = null
+) = launch(context = context, parent = parent, block = { interactor(param) })

@@ -16,51 +16,29 @@
 
 package app.tivi.datasources.trakt
 
-import app.tivi.ShowFetcher
-import app.tivi.datasources.PaginatedDataSourceImpl
-import app.tivi.data.DatabaseTransactionRunner
-import app.tivi.data.daos.TiviShowDao
+import android.arch.paging.DataSource
 import app.tivi.data.daos.TrendingDao
-import app.tivi.data.entities.TrendingEntry
 import app.tivi.data.entities.TrendingListItem
-import app.tivi.extensions.fetchBodyWithRetry
-import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.datasources.PaginatedDataSource
 import app.tivi.util.AppRxSchedulers
-import app.tivi.util.Logger
-import com.uwetrottmann.trakt5.entities.TrendingShow
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.services.Shows
+import io.reactivex.Flowable
 import javax.inject.Inject
-import javax.inject.Provider
 
 class TrendingDataSource @Inject constructor(
-    databaseTransactionRunner: DatabaseTransactionRunner,
-    showDao: TiviShowDao,
-    trendingDao: TrendingDao,
-    private val showFetcher: ShowFetcher,
-    private val showsService: Provider<Shows>,
-    schedulers: AppRxSchedulers,
-    dispatchers: AppCoroutineDispatchers,
-    logger: Logger
-) : PaginatedDataSourceImpl<TrendingShow, TrendingEntry, TrendingListItem, TrendingDao>(
-        databaseTransactionRunner,
-        showDao,
-        trendingDao,
-        showFetcher,
-        schedulers,
-        dispatchers,
-        logger
-) {
-    override suspend fun networkCall(page: Int): List<TrendingShow> {
-        // We add one to the page since Trakt uses a 1-based index whereas we use 0-based
-        return showsService.get().trending(page + 1, pageSize, Extended.NOSEASONS).fetchBodyWithRetry()
+    private val trendingDao: TrendingDao,
+    private val schedulers: AppRxSchedulers
+) : PaginatedDataSource<Unit, TrendingListItem> {
+    override fun data(param: Unit): Flowable<List<TrendingListItem>> {
+        return trendingDao.entries()
+                .subscribeOn(schedulers.io)
+                .distinctUntilChanged()
     }
 
-    override fun mapToEntry(networkEntity: TrendingShow, showId: Long, page: Int): TrendingEntry {
-        return TrendingEntry(showId = showId, page = page, watchers = networkEntity.watchers)
+    override fun data(page: Int): Flowable<List<TrendingListItem>> {
+        return trendingDao.entriesPage(page)
+                .subscribeOn(schedulers.io)
+                .distinctUntilChanged()
     }
 
-    override suspend fun insertShowPlaceholder(response: TrendingShow): Long {
-        return showFetcher.insertPlaceholderIfNeeded(response.show)
-    }
+    override fun dataSourceFactory(): DataSource.Factory<Int, TrendingListItem> = trendingDao.entriesDataSource()
 }

@@ -16,22 +16,27 @@
 
 package app.tivi.interactors
 
-import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.daos.SeasonsDao
-import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
-import javax.inject.Inject
 
-class UnfollowShowInteractor @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
-    private val seasonsDao: SeasonsDao,
-    private val followedShowsDao: FollowedShowsDao
-) : Interactor<Long> {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
+interface PagedShowInteractor : Interactor<Int> {
+    companion object {
+        const val NEXT_PAGE = -1
+        const val REFRESH = 0
+    }
 
-    override suspend operator fun invoke(showId: Long) {
-        followedShowsDao.deleteWithShowId(showId)
-        // Now remove all season/episode data from database
-        seasonsDao.deleteSeasonsForShowId(showId)
+    val pageSize: Int
+
+    fun asLoadMoreInteractor(): Interactor<Unit> = object : Interactor<Unit> {
+        override val dispatcher: CoroutineDispatcher
+            get() = this@PagedShowInteractor.dispatcher
+
+        override suspend fun invoke(param: Unit) = invoke(NEXT_PAGE)
+    }
+
+    fun asRefreshInteractor(): Interactor<Unit> = object : Interactor<Unit> {
+        override val dispatcher: CoroutineDispatcher
+            get() = this@PagedShowInteractor.dispatcher
+
+        override suspend fun invoke(param: Unit) = invoke(REFRESH)
     }
 }
