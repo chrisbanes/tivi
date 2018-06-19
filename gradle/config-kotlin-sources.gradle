@@ -1,0 +1,59 @@
+/*
+ * Copyright 2018 Google, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+if (project.plugins.hasPlugin("kotlin")
+        || project.plugins.hasPlugin("org.jetbrains.kotlin.kapt")
+        || project.plugins.hasPlugin("org.jetbrains.kotlin.android")
+        || project.plugins.hasPlugin("org.jetbrains.kotlin.jvm")
+        || project.plugins.hasPlugin("kotlin-android")
+        || project.plugins.hasPlugin("kotlin-kapt")) {
+    if (project.plugins.hasPlugin("com.android.application") || project.plugins.hasPlugin("com.android.library")) {
+        project.android.sourceSets {
+            main.java.srcDirs += 'src/main/kotlin'
+            debug.java.srcDirs += 'src/debug/kotlin'
+            release.java.srcDirs += 'src/release/kotlin'
+            test.java.srcDirs += 'src/test/kotlin'
+
+            // For kapt stubs
+            main.java.srcDirs += [file("$buildDir/generated/source/kapt/main")]
+            debug.java.srcDirs += [file("$buildDir/generated/source/kapt/debug")]
+            release.java.srcDirs += [file("$buildDir/generated/source/kapt/release")]
+            test.java.srcDirs += [file("$buildDir/generated/source/kapt/test")]
+
+            // For kotlin code gen during kapt
+            main.java.srcDirs += [file("$buildDir/generated/source/kaptKotlin/main")]
+            debug.java.srcDirs += [file("$buildDir/generated/source/kaptKotlin/debug")]
+            release.java.srcDirs += [file("$buildDir/generated/source/kaptKotlin/release")]
+            test.java.srcDirs += [file("$buildDir/generated/source/kaptKotlin/test")]
+        }
+    } else {
+        apply plugin: 'idea'
+
+        idea {
+            module {
+                sourceDirs += files(
+                        'build/generated/source/kapt/main',
+                        'build/generated/source/kaptKotlin/main',
+                        'build/tmp/kapt/main/kotlinGenerated')
+                generatedSourceDirs += files(
+                        'build/generated/source/kapt/main',
+                        'build/generated/source/kaptKotlin/main',
+                        'build/tmp/kapt/main/kotlinGenerated')
+            }
+        }
+    }
+}
+
