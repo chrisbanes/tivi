@@ -82,7 +82,7 @@ class TraktAuthModule {
     }
 
     @Provides
-    fun provideAuthState(traktManager: TraktManager) = traktManager.state.blockingLast()!!
+    fun provideAuthState(traktManager: TraktManager) = traktManager.state.blockingFirst()
 
     @Provides
     fun provideAuthRequest(

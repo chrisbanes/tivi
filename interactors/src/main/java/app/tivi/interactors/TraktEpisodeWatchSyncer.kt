@@ -134,6 +134,7 @@ class TraktEpisodeWatchSyncer @Inject constructor(
 
     suspend fun refreshWatchesFromTrakt(showId: Long) {
         if (traktAuthState.get() != TraktAuthState.LOGGED_IN) {
+            logger.i("Not logged in. Can't refreshWatchesFromTrakt()")
             return
         }
 
