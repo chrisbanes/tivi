@@ -25,11 +25,14 @@ interface ListItem<ET : Entry> {
     var entry: ET?
     var relations: List<TiviShow>
 
-    val show: TiviShow?
-        get() = relations.getOrNull(0)
+    val show: TiviShow
+        get() {
+            assert(relations.size == 1)
+            return relations[0]
+        }
 
     fun generateStableId(): Long {
-        return Objects.hash(entry!!::class, show!!.id!!).toLong()
+        return Objects.hash(entry!!::class, show.id!!).toLong()
     }
 }
 

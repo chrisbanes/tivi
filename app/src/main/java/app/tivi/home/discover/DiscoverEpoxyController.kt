@@ -57,11 +57,11 @@ class DiscoverEpoxyController(
                 posterGridItem {
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
-                    posterPath(item.show?.tmdbPosterPath)
-                    title(item.show?.title)
+                    posterPath(item.show.tmdbPosterPath)
+                    title(item.show.title)
                     annotationLabel(item.entry?.watchers.toString())
                     annotationIcon(R.drawable.ic_eye_12dp)
-                    transitionName("trending_${item.show?.homepage}")
+                    transitionName("trending_${item.show.homepage}")
                     clickListener(View.OnClickListener {
                         callbacks.onItemClicked(item)
                     })
@@ -87,9 +87,9 @@ class DiscoverEpoxyController(
                 posterGridItem {
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
-                    posterPath(item.show?.tmdbPosterPath)
-                    title(item.show?.title)
-                    transitionName("popular_${item.show?.homepage}")
+                    posterPath(item.show.tmdbPosterPath)
+                    title(item.show.title)
+                    transitionName("popular_${item.show.homepage}")
                     clickListener(View.OnClickListener {
                         callbacks.onItemClicked(item)
                     })

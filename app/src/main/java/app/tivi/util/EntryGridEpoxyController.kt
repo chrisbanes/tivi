@@ -76,9 +76,9 @@ open class EntryGridEpoxyController<LI : ListItem<out Entry>> : PagingEpoxyContr
         return PosterGridItemBindingModel_()
                 .id(item.generateStableId())
                 .tmdbImageUrlProvider(tmdbImageUrlProvider)
-                .title(item.show?.title)
-                .posterPath(item.show?.tmdbPosterPath)
-                .transitionName(item.show?.homepage)
+                .title(item.show.title)
+                .posterPath(item.show.tmdbPosterPath)
+                .transitionName(item.show.homepage)
                 .clickListener(View.OnClickListener {
                     callbacks?.onItemClicked(item)
                 })

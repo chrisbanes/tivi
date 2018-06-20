@@ -51,6 +51,6 @@ class FollowedShowsViewModel @Inject constructor(
     }
 
     fun onItemClicked(item: FollowedShowsListItem, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
-        navigator.showShowDetails(item.show!!, sharedElements)
+        navigator.showShowDetails(item.show, sharedElements)
     }
 }

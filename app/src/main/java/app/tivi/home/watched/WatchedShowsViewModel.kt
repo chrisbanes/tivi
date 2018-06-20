@@ -53,6 +53,6 @@ class WatchedShowsViewModel @Inject constructor(
     }
 
     fun onItemClicked(item: WatchedShowListItem, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
-        navigator.showShowDetails(item.show!!, sharedElements)
+        navigator.showShowDetails(item.show, sharedElements)
     }
 }

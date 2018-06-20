@@ -33,7 +33,7 @@ class SyncShowWatchedEpisodesInteractor @Inject constructor(
         val followedEntry = withContext(dispatchers.io) {
             followedShowsDao.entryWithShowId(showId)
         } ?: throw IllegalArgumentException("Followed entry with showId: $showId does not exist")
-        val show = followedEntry.show!!
+        val show = followedEntry.show
 
         syncer.sync(show.id!!)
     }

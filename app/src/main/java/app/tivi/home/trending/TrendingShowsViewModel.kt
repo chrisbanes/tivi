@@ -52,6 +52,6 @@ class TrendingShowsViewModel @Inject constructor(
     }
 
     fun onItemClicked(item: TrendingListItem, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
-        navigator.showShowDetails(item.show!!, sharedElements)
+        navigator.showShowDetails(item.show, sharedElements)
     }
 }

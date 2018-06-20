@@ -55,7 +55,7 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         }
 
         override fun onItemClicked(item: ListItem<out Entry>) {
-            viewModel.onItemPostedClicked(homeNavigator, item.show!!,
+            viewModel.onItemPostedClicked(homeNavigator, item.show,
                     listItemSharedElementHelper.createForItem(item, "poster")
             )
         }

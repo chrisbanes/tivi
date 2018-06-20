@@ -57,9 +57,9 @@ class LibraryEpoxyController(
                 posterGridItem {
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
-                    posterPath(item.show?.tmdbPosterPath)
-                    title(item.show?.title)
-                    transitionName("myshows_${item.show?.homepage}")
+                    posterPath(item.show.tmdbPosterPath)
+                    title(item.show.title)
+                    transitionName("myshows_${item.show.homepage}")
                     clickListener(View.OnClickListener {
                         callbacks.onItemClicked(item)
                     })
@@ -85,9 +85,9 @@ class LibraryEpoxyController(
                 posterGridItem {
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
-                    posterPath(item.show?.tmdbPosterPath)
-                    title(item.show?.title)
-                    transitionName("watched_${item.show?.homepage}")
+                    posterPath(item.show.tmdbPosterPath)
+                    title(item.show.title)
+                    transitionName("watched_${item.show.homepage}")
                     clickListener(View.OnClickListener {
                         callbacks.onItemClicked(item)
                     })

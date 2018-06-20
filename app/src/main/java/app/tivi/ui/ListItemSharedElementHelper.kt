@@ -31,7 +31,7 @@ class ListItemSharedElementHelper(private val recyclerView: RecyclerView) {
     fun createForItems(items: List<ListItem<out Entry>>?): SharedElementHelper {
         val sharedElementHelper = SharedElementHelper()
         items?.forEach {
-            val homepage = it.show?.homepage
+            val homepage = it.show.homepage
             if (homepage != null) {
                 addSharedElement(sharedElementHelper, it, homepage)
             }

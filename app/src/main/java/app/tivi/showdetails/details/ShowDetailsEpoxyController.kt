@@ -116,7 +116,7 @@ class ShowDetailsEpoxyController(
                 paddingDp(4)
                 hasFixedSize(true)
                 withModelsFrom(related) { relatedEntry ->
-                    val relatedShow = relatedEntry.show!!
+                    val relatedShow = relatedEntry.show
                     PosterGridItemBindingModel_()
                             .id("related_${relatedShow.id}")
                             .title(relatedShow.title)

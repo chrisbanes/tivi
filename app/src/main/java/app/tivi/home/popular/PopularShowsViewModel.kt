@@ -52,6 +52,6 @@ class PopularShowsViewModel @Inject constructor(
     }
 
     fun onItemClicked(item: PopularListItem, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
-        navigator.showShowDetails(item.show!!, sharedElements)
+        navigator.showShowDetails(item.show, sharedElements)
     }
 }
