@@ -18,6 +18,7 @@ package app.tivi.interactors
 
 import app.tivi.data.RoomTransactionRunner
 import app.tivi.data.daos.EpisodeWatchEntryDao
+import app.tivi.interactors.syncers.TraktEpisodeWatchSyncer
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.TimberLogger
 import app.tivi.utils.BaseDatabaseTest

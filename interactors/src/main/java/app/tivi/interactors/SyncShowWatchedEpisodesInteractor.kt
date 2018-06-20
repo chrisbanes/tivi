@@ -17,6 +17,7 @@
 package app.tivi.interactors
 
 import app.tivi.data.daos.FollowedShowsDao
+import app.tivi.interactors.syncers.TraktEpisodeWatchSyncer
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import kotlinx.coroutines.experimental.withContext
