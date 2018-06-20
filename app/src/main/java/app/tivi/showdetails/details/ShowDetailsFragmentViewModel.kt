@@ -16,6 +16,7 @@
 
 package app.tivi.showdetails.details
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.SharedElementHelper
 import app.tivi.data.daos.FollowedShowsDao
@@ -65,12 +66,14 @@ class ShowDetailsFragmentViewModel @Inject constructor(
                     setupLiveData()
                     refresh()
                 } else {
-                    data.value = null
+                    _data.value = null
                 }
             }
         }
 
-    val data = MutableLiveData<ShowDetailsViewState>()
+    private val _data = MutableLiveData<ShowDetailsViewState>()
+    val data: LiveData<ShowDetailsViewState>
+        get() = _data
 
     private fun refresh() {
         showId?.also { id ->
@@ -110,7 +113,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
                         }
                     }
                     .observeOn(schedulers.main)
-                    .subscribe(data::setValue, logger::e)
+                    .subscribe(_data::setValue, logger::e)
         }
     }
 
