@@ -109,7 +109,6 @@ class ShowDetailsFragment : TiviFragment() {
 
         details_toolbar.apply {
             inflateMenu(R.menu.details_toolbar)
-
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.details_menu_add_myshows -> viewModel.addToMyShows()
@@ -173,8 +172,8 @@ class ShowDetailsFragment : TiviFragment() {
 
         details_toolbar.menu.let {
             val isFollowed = viewState is FollowedShowDetailsViewState
-            it.findItem(R.id.details_menu_add_myshows)?.isVisible = !isFollowed
-            it.findItem(R.id.details_menu_remove_myshows)?.isVisible = isFollowed
+            it.findItem(R.id.details_menu_add_myshows).isVisible = !isFollowed
+            it.findItem(R.id.details_menu_remove_myshows).isVisible = isFollowed
         }
 
         controller.setData(viewState)
