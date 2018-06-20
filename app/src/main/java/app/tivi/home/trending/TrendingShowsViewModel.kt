@@ -17,7 +17,7 @@
 package app.tivi.home.trending
 
 import app.tivi.SharedElementHelper
-import app.tivi.data.entities.TrendingListItem
+import app.tivi.data.entities.TrendingEntryWithShow
 import app.tivi.datasources.trakt.TrendingDataSource
 import app.tivi.home.HomeNavigator
 import app.tivi.interactors.TrendingShowsInteractor
@@ -37,7 +37,7 @@ class TrendingShowsViewModel @Inject constructor(
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector,
     logger: Logger
-) : EntryViewModel<TrendingListItem>(
+) : EntryViewModel<TrendingEntryWithShow>(
         schedulers,
         dispatchers,
         dataSource,
@@ -51,7 +51,7 @@ class TrendingShowsViewModel @Inject constructor(
         navigator.onUpClicked()
     }
 
-    fun onItemClicked(item: TrendingListItem, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
+    fun onItemClicked(item: TrendingEntryWithShow, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
         navigator.showShowDetails(item.show, sharedElements)
     }
 }

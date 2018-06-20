@@ -16,12 +16,12 @@
 
 package app.tivi.home.discover
 
-import app.tivi.data.entities.PopularListItem
-import app.tivi.data.entities.TrendingListItem
+import app.tivi.data.entities.PopularEntryWithShow
+import app.tivi.data.entities.TrendingEntryWithShow
 import app.tivi.tmdb.TmdbImageUrlProvider
 
 data class DiscoverViewState(
-    val trendingItems: List<TrendingListItem>,
-    val popularItems: List<PopularListItem>,
+    val trendingItems: List<TrendingEntryWithShow>,
+    val popularItems: List<PopularEntryWithShow>,
     val tmdbImageUrlProvider: TmdbImageUrlProvider
 )

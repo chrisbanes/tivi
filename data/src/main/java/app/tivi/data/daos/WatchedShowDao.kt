@@ -21,18 +21,18 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
 import app.tivi.data.entities.WatchedShowEntry
-import app.tivi.data.entities.WatchedShowListItem
+import app.tivi.data.entities.WatchedShowEntryWithShow
 import io.reactivex.Flowable
 
 @Dao
-abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowListItem> {
+abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow> {
     @Transaction
     @Query("SELECT * FROM watched_entries ORDER BY datetime(last_watched) DESC")
-    abstract override fun entries(): Flowable<List<WatchedShowListItem>>
+    abstract override fun entries(): Flowable<List<WatchedShowEntryWithShow>>
 
     @Transaction
     @Query("SELECT * FROM watched_entries ORDER BY datetime(last_watched) DESC")
-    abstract override fun entriesDataSource(): DataSource.Factory<Int, WatchedShowListItem>
+    abstract override fun entriesDataSource(): DataSource.Factory<Int, WatchedShowEntryWithShow>
 
     @Query("DELETE FROM watched_entries")
     abstract override fun deleteAll()

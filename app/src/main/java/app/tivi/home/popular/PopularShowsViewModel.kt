@@ -17,7 +17,7 @@
 package app.tivi.home.popular
 
 import app.tivi.SharedElementHelper
-import app.tivi.data.entities.PopularListItem
+import app.tivi.data.entities.PopularEntryWithShow
 import app.tivi.datasources.trakt.PopularDataSource
 import app.tivi.home.HomeNavigator
 import app.tivi.interactors.PopularShowsInteractor
@@ -37,7 +37,7 @@ class PopularShowsViewModel @Inject constructor(
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector,
     logger: Logger
-) : EntryViewModel<PopularListItem>(
+) : EntryViewModel<PopularEntryWithShow>(
         schedulers,
         dispatchers,
         dataSource,
@@ -51,7 +51,7 @@ class PopularShowsViewModel @Inject constructor(
         navigator.onUpClicked()
     }
 
-    fun onItemClicked(item: PopularListItem, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
+    fun onItemClicked(item: PopularEntryWithShow, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
         navigator.showShowDetails(item.show, sharedElements)
     }
 }

@@ -17,13 +17,13 @@
 package app.tivi.data.daos
 
 import app.tivi.data.MultipleEntry
-import app.tivi.data.entities.ListItem
+import app.tivi.data.entities.EntryWithShow
 import io.reactivex.Flowable
 
 /**
  * This interface represents a DAO which contains entities which are part of a collective list for a given show.
  */
-interface PairEntryDao<EC : MultipleEntry, LI : ListItem<EC>> : EntityDao<EC> {
+interface PairEntryDao<EC : MultipleEntry, LI : EntryWithShow<EC>> : EntityDao<EC> {
     fun entries(showId: Long): Flowable<List<LI>>
     fun deleteWithShowId(showId: Long)
 }

@@ -19,16 +19,16 @@ package app.tivi.ui
 import android.support.v7.widget.RecyclerView
 import app.tivi.SharedElementHelper
 import app.tivi.data.Entry
-import app.tivi.data.entities.ListItem
+import app.tivi.data.entities.EntryWithShow
 
 class ListItemSharedElementHelper(private val recyclerView: RecyclerView) {
-    fun createForItem(item: ListItem<out Entry>, transitionName: String): SharedElementHelper {
+    fun createForItem(item: EntryWithShow<out Entry>, transitionName: String): SharedElementHelper {
         val sharedElementHelper = SharedElementHelper()
         addSharedElement(sharedElementHelper, item, transitionName)
         return sharedElementHelper
     }
 
-    fun createForItems(items: List<ListItem<out Entry>>?): SharedElementHelper {
+    fun createForItems(items: List<EntryWithShow<out Entry>>?): SharedElementHelper {
         val sharedElementHelper = SharedElementHelper()
         items?.forEach {
             val homepage = it.show.homepage
@@ -41,7 +41,7 @@ class ListItemSharedElementHelper(private val recyclerView: RecyclerView) {
 
     private fun addSharedElement(
         sharedElementHelper: SharedElementHelper,
-        item: ListItem<out Entry>,
+        item: EntryWithShow<out Entry>,
         transitionName: String
     ) {
         recyclerView.findViewHolderForItemId(item.generateStableId())?.let {

@@ -20,12 +20,12 @@ import app.tivi.ShowFetcher
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.PaginatedEntry
 import app.tivi.data.daos.PaginatedEntryDao
-import app.tivi.data.entities.ListItem
+import app.tivi.data.entities.EntryWithShow
 import app.tivi.extensions.parallelForEach
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 
-class PagedInteractorHelper<TT, ET : PaginatedEntry, LI : ListItem<ET>, out ED : PaginatedEntryDao<ET, LI>>(
+class PagedInteractorHelper<TT, ET : PaginatedEntry, LI : EntryWithShow<ET>, out ED : PaginatedEntryDao<ET, LI>>(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val entryDao: ED,
     private val showFetcher: ShowFetcher,

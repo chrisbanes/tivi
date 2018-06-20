@@ -17,7 +17,7 @@
 package app.tivi.home.watched
 
 import app.tivi.SharedElementHelper
-import app.tivi.data.entities.WatchedShowListItem
+import app.tivi.data.entities.WatchedShowEntryWithShow
 import app.tivi.datasources.trakt.WatchedShowsDataSource
 import app.tivi.home.HomeNavigator
 import app.tivi.interactors.RefreshWatchedShowsInteractor
@@ -38,7 +38,7 @@ class WatchedShowsViewModel @Inject constructor(
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector,
     logger: Logger
-) : EntryViewModel<WatchedShowListItem>(
+) : EntryViewModel<WatchedShowEntryWithShow>(
         schedulers,
         dispatchers,
         dataSource,
@@ -52,7 +52,7 @@ class WatchedShowsViewModel @Inject constructor(
         navigator.onUpClicked()
     }
 
-    fun onItemClicked(item: WatchedShowListItem, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
+    fun onItemClicked(item: WatchedShowEntryWithShow, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
         navigator.showShowDetails(item.show, sharedElements)
     }
 }

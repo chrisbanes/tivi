@@ -20,7 +20,7 @@ import android.view.View
 import app.tivi.R
 import app.tivi.data.Entry
 import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.ListItem
+import app.tivi.data.entities.EntryWithShow
 import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.emptyState
 import app.tivi.header
@@ -31,17 +31,17 @@ import com.airbnb.epoxy.Typed3EpoxyController
 
 class LibraryEpoxyController(
     private val callbacks: Callbacks
-) : Typed3EpoxyController<List<ListItem<FollowedShowEntry>>, List<ListItem<WatchedShowEntry>>, TmdbImageUrlProvider>() {
+) : Typed3EpoxyController<List<EntryWithShow<FollowedShowEntry>>, List<EntryWithShow<WatchedShowEntry>>, TmdbImageUrlProvider>() {
 
     interface Callbacks {
-        fun onMyShowsHeaderClicked(items: List<ListItem<FollowedShowEntry>>?)
-        fun onWatchedHeaderClicked(items: List<ListItem<WatchedShowEntry>>?)
-        fun onItemClicked(item: ListItem<out Entry>)
+        fun onMyShowsHeaderClicked(items: List<EntryWithShow<FollowedShowEntry>>?)
+        fun onWatchedHeaderClicked(items: List<EntryWithShow<WatchedShowEntry>>?)
+        fun onItemClicked(item: EntryWithShow<out Entry>)
     }
 
     override fun buildModels(
-        followedShow: List<ListItem<FollowedShowEntry>>?,
-        watched: List<ListItem<WatchedShowEntry>>?,
+        followedShow: List<EntryWithShow<FollowedShowEntry>>?,
+        watched: List<EntryWithShow<WatchedShowEntry>>?,
         tmdbImageUrlProvider: TmdbImageUrlProvider?
     ) {
         header {

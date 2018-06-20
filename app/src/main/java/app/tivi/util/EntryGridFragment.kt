@@ -34,7 +34,7 @@ import app.tivi.R
 import app.tivi.TiviFragment
 import app.tivi.api.Status
 import app.tivi.data.Entry
-import app.tivi.data.entities.ListItem
+import app.tivi.data.entities.EntryWithShow
 import app.tivi.extensions.observeK
 import app.tivi.ui.EndlessRecyclerViewScrollListener
 import app.tivi.ui.ProgressTimeLatch
@@ -43,7 +43,7 @@ import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
-abstract class EntryGridFragment<LI : ListItem<out Entry>, VM : EntryViewModel<LI>>(
+abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewModel<LI>>(
     private val vmClass: Class<VM>
 ) : TiviFragment() {
 

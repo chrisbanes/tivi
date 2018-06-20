@@ -26,7 +26,7 @@ import android.view.ViewGroup
 import app.tivi.R
 import app.tivi.data.Entry
 import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.ListItem
+import app.tivi.data.entities.EntryWithShow
 import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.extensions.observeK
 import app.tivi.home.HomeFragment
@@ -46,15 +46,15 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
             ListItemSharedElementHelper(summary_rv)
         }
 
-        override fun onMyShowsHeaderClicked(items: List<ListItem<FollowedShowEntry>>?) {
+        override fun onMyShowsHeaderClicked(items: List<EntryWithShow<FollowedShowEntry>>?) {
             viewModel.onMyShowsHeaderClicked(homeNavigator, listItemSharedElementHelper.createForItems(items))
         }
 
-        override fun onWatchedHeaderClicked(items: List<ListItem<WatchedShowEntry>>?) {
+        override fun onWatchedHeaderClicked(items: List<EntryWithShow<WatchedShowEntry>>?) {
             viewModel.onWatchedHeaderClicked(homeNavigator, listItemSharedElementHelper.createForItems(items))
         }
 
-        override fun onItemClicked(item: ListItem<out Entry>) {
+        override fun onItemClicked(item: EntryWithShow<out Entry>) {
             viewModel.onItemPostedClicked(homeNavigator, item.show,
                     listItemSharedElementHelper.createForItem(item, "poster")
             )

@@ -17,12 +17,12 @@
 package app.tivi.home.library
 
 import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.ListItem
+import app.tivi.data.entities.EntryWithShow
 import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.tmdb.TmdbImageUrlProvider
 
 data class LibraryViewState(
-    val watched: List<ListItem<WatchedShowEntry>>,
-    val followedShow: List<ListItem<FollowedShowEntry>>,
+    val watched: List<EntryWithShow<WatchedShowEntry>>,
+    val followedShow: List<EntryWithShow<FollowedShowEntry>>,
     val tmdbImageUrlProvider: TmdbImageUrlProvider
 )

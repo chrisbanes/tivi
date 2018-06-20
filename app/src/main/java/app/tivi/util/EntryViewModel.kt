@@ -23,7 +23,7 @@ import android.arch.paging.PagedList
 import app.tivi.api.Status
 import app.tivi.api.UiResource
 import app.tivi.data.Entry
-import app.tivi.data.entities.ListItem
+import app.tivi.data.entities.EntryWithShow
 import app.tivi.datasources.ListDataSource
 import app.tivi.interactors.Interactor
 import app.tivi.tmdb.TmdbManager
@@ -33,7 +33,7 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.withContext
 
-open class EntryViewModel<LI : ListItem<out Entry>>(
+open class EntryViewModel<LI : EntryWithShow<out Entry>>(
     private val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
     private val dataSource: ListDataSource<Unit, LI>,

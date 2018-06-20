@@ -21,7 +21,7 @@ import android.arch.persistence.room.Relation
 import app.tivi.data.Entry
 import java.util.Objects
 
-interface ListItem<ET : Entry> {
+interface EntryWithShow<ET : Entry> {
     var entry: ET?
     var relations: List<TiviShow>
 
@@ -36,65 +36,65 @@ interface ListItem<ET : Entry> {
     }
 }
 
-class TrendingListItem : ListItem<TrendingEntry> {
+class TrendingEntryWithShow : EntryWithShow<TrendingEntry> {
     @Embedded override var entry: TrendingEntry? = null
     @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow> = emptyList()
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
-        other is TrendingListItem -> entry == other.entry && relations == other.relations
+        other is TrendingEntryWithShow -> entry == other.entry && relations == other.relations
         else -> false
     }
 
     override fun hashCode(): Int = Objects.hash(entry, relations)
 }
 
-class PopularListItem : ListItem<PopularEntry> {
+class PopularEntryWithShow : EntryWithShow<PopularEntry> {
     @Embedded override var entry: PopularEntry? = null
     @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow> = emptyList()
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
-        other is PopularListItem -> entry == other.entry && relations == other.relations
+        other is PopularEntryWithShow -> entry == other.entry && relations == other.relations
         else -> false
     }
 
     override fun hashCode(): Int = Objects.hash(entry, relations)
 }
 
-class WatchedShowListItem : ListItem<WatchedShowEntry> {
+class WatchedShowEntryWithShow : EntryWithShow<WatchedShowEntry> {
     @Embedded override var entry: WatchedShowEntry? = null
     @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow> = emptyList()
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
-        other is WatchedShowListItem -> entry == other.entry && relations == other.relations
+        other is WatchedShowEntryWithShow -> entry == other.entry && relations == other.relations
         else -> false
     }
 
     override fun hashCode(): Int = Objects.hash(entry, relations)
 }
 
-class FollowedShowsListItem : ListItem<FollowedShowEntry> {
+class FollowedShowsEntryWithShow : EntryWithShow<FollowedShowEntry> {
     @Embedded override var entry: FollowedShowEntry? = null
     @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow> = emptyList()
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
-        other is FollowedShowsListItem -> entry == other.entry && relations == other.relations
+        other is FollowedShowsEntryWithShow -> entry == other.entry && relations == other.relations
         else -> false
     }
 
     override fun hashCode(): Int = Objects.hash(entry, relations)
 }
 
-class RelatedShowsListItem : ListItem<RelatedShowEntry> {
+class RelatedShowsEntryWithShow : EntryWithShow<RelatedShowEntry> {
     @Embedded override var entry: RelatedShowEntry? = null
     @Relation(parentColumn = "other_show_id", entityColumn = "id") override var relations: List<TiviShow> = emptyList()
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
-        other is RelatedShowsListItem -> entry == other.entry && relations == other.relations
+        other is RelatedShowsEntryWithShow -> entry == other.entry && relations == other.relations
         else -> false
     }
 

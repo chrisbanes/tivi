@@ -22,14 +22,14 @@ import android.view.View
 import app.tivi.PosterGridItemBindingModel_
 import app.tivi.R
 import app.tivi.SharedElementHelper
-import app.tivi.data.entities.TrendingListItem
+import app.tivi.data.entities.TrendingEntryWithShow
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.util.EntryGridEpoxyController
 import app.tivi.util.EntryGridFragment
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
 
-class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsViewModel>(TrendingShowsViewModel::class.java) {
+class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingShowsViewModel>(TrendingShowsViewModel::class.java) {
 
     private lateinit var homeNavigator: HomeNavigator
 
@@ -49,9 +49,9 @@ class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsV
         }
     }
 
-    override fun createController(): EntryGridEpoxyController<TrendingListItem> {
-        return object : EntryGridEpoxyController<TrendingListItem>() {
-            override fun buildItemModel(item: TrendingListItem): PosterGridItemBindingModel_ {
+    override fun createController(): EntryGridEpoxyController<TrendingEntryWithShow> {
+        return object : EntryGridEpoxyController<TrendingEntryWithShow>() {
+            override fun buildItemModel(item: TrendingEntryWithShow): PosterGridItemBindingModel_ {
                 return super.buildItemModel(item)
                         .annotationLabel(item.entry?.watchers.toString())
                         .annotationIcon(R.drawable.ic_eye_12dp)
@@ -59,7 +59,7 @@ class TrendingShowsFragment : EntryGridFragment<TrendingListItem, TrendingShowsV
         }
     }
 
-    override fun onItemClicked(item: TrendingListItem) {
+    override fun onItemClicked(item: TrendingEntryWithShow) {
         val sharedElements = SharedElementHelper()
         grid_recyclerview.findViewHolderForItemId(item.generateStableId())?.let {
             sharedElements.addSharedElement(it.itemView, "poster")

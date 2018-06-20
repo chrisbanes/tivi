@@ -18,7 +18,7 @@ package app.tivi.datasources.trakt
 
 import android.arch.paging.DataSource
 import app.tivi.data.daos.PopularDao
-import app.tivi.data.entities.PopularListItem
+import app.tivi.data.entities.PopularEntryWithShow
 import app.tivi.datasources.PaginatedDataSource
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
@@ -27,18 +27,18 @@ import javax.inject.Inject
 class PopularDataSource @Inject constructor(
     private val popularDao: PopularDao,
     private val schedulers: AppRxSchedulers
-) : PaginatedDataSource<Unit, PopularListItem> {
-    override fun data(param: Unit): Flowable<List<PopularListItem>> {
+) : PaginatedDataSource<Unit, PopularEntryWithShow> {
+    override fun data(param: Unit): Flowable<List<PopularEntryWithShow>> {
         return popularDao.entries()
                 .subscribeOn(schedulers.io)
                 .distinctUntilChanged()
     }
 
-    override fun data(page: Int): Flowable<List<PopularListItem>> {
+    override fun data(page: Int): Flowable<List<PopularEntryWithShow>> {
         return popularDao.entriesPage(page)
                 .subscribeOn(schedulers.io)
                 .distinctUntilChanged()
     }
 
-    override fun dataSourceFactory(): DataSource.Factory<Int, PopularListItem> = popularDao.entriesDataSource()
+    override fun dataSourceFactory(): DataSource.Factory<Int, PopularEntryWithShow> = popularDao.entriesDataSource()
 }
