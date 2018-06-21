@@ -14,28 +14,8 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.extensions
 
-import org.threeten.bp.OffsetDateTime
+fun CharSequence?.isLongerThan(other: CharSequence?) = lengthOrZero() > other.lengthOrZero()
 
-interface TiviEntity {
-    val id: Long?
-}
-
-interface TraktIdEntity {
-    val traktId: Int?
-    val lastTraktUpdate: OffsetDateTime?
-
-    fun needsUpdateFromTrakt(): Boolean {
-        return traktId != null && (lastTraktUpdate?.isBefore(OffsetDateTime.now().minusDays(1)) != false)
-    }
-}
-
-interface TmdbIdEntity {
-    val tmdbId: Int?
-    val lastTmdbUpdate: OffsetDateTime?
-
-    fun needsUpdateFromTmdb(): Boolean {
-        return tmdbId != null && (lastTmdbUpdate?.isBefore(OffsetDateTime.now().minusDays(1)) != false)
-    }
-}
+fun CharSequence?.lengthOrZero() = this?.length ?: 0

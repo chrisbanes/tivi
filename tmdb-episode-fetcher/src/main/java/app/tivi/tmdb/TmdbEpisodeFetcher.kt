@@ -24,6 +24,7 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.copyDynamic
 import app.tivi.extensions.fetchBodyWithRetry
+import app.tivi.extensions.isLongerThan
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.TvEpisode
 import org.threeten.bp.OffsetDateTime
@@ -59,9 +60,13 @@ class TmdbEpisodeFetcher @Inject constructor(
     private fun upsertEpisode(seasonId: Long, tmdbEpisode: TvEpisode) {
         val ep = (episodesDao.episodeWithTmdbId(tmdbEpisode.id) ?: Episode(seasonId = seasonId)).copyDynamic {
             tmdbId = tmdbEpisode.id
-            if (title.isNullOrEmpty()) title = tmdbEpisode.name
+            if (tmdbEpisode.name.isLongerThan(title)) {
+                title = tmdbEpisode.name
+            }
             if (number == null) number = tmdbEpisode.episode_number
-            if (summary.isNullOrEmpty()) summary = tmdbEpisode.overview
+            if (tmdbEpisode.overview.isLongerThan(summary)) {
+                summary = tmdbEpisode.overview
+            }
             tmdbBackdropPath = tmdbEpisode.still_path
             lastTmdbUpdate = OffsetDateTime.now()
         }
