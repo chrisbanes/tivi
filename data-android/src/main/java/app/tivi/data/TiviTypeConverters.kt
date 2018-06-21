@@ -17,6 +17,7 @@
 package app.tivi.data
 
 import android.arch.persistence.room.TypeConverter
+import app.tivi.data.entities.PendingAction
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.format.DateTimeFormatter
 
@@ -34,4 +35,12 @@ object TiviTypeConverters {
     @TypeConverter
     @JvmStatic
     fun fromOffsetDateTime(date: OffsetDateTime?): String? = date?.format(formatter)
+
+    @TypeConverter
+    @JvmStatic
+    fun fromPendingAction(action: PendingAction): String = action.value
+
+    @TypeConverter
+    @JvmStatic
+    fun toPendingAction(action: String): PendingAction = PendingAction.values().first { it.value == action }
 }

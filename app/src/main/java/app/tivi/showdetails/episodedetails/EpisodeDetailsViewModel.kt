@@ -21,6 +21,7 @@ import android.arch.lifecycle.MutableLiveData
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.entities.EpisodeWatchEntry
+import app.tivi.data.entities.PendingAction
 import app.tivi.datasources.trakt.EpisodeDetailsDataSource
 import app.tivi.datasources.trakt.EpisodeWatchesDataSource
 import app.tivi.interactors.RefreshEpisodeDetailsInteractor
@@ -100,7 +101,7 @@ class EpisodeDetailsViewModel @Inject constructor(
                 val entry = EpisodeWatchEntry(
                         episodeId = episodeId!!,
                         watchedAt = OffsetDateTime.now(),
-                        pendingAction = EpisodeWatchEntry.PENDING_ACTION_UPLOAD
+                        pendingAction = PendingAction.UPLOAD
                 )
                 episodeWatchEntryDao.insert(entry)
             }
@@ -115,9 +116,9 @@ class EpisodeDetailsViewModel @Inject constructor(
                 val entries = episodeWatchEntryDao.watchesForEpisode(epId)
                 entries.forEach {
                     // We have a trakt id, so we need to do a sync
-                    if (it.pendingAction != EpisodeWatchEntry.PENDING_ACTION_DELETE) {
+                    if (it.pendingAction != PendingAction.DELETE) {
                         // If it is not set to be deleted, update it now
-                        val copy = it.copy(pendingAction = EpisodeWatchEntry.PENDING_ACTION_DELETE)
+                        val copy = it.copy(pendingAction = PendingAction.DELETE)
                         episodeWatchEntryDao.update(copy)
                     }
                 }

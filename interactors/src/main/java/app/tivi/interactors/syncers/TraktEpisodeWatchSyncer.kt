@@ -21,6 +21,7 @@ import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.EpisodeWatchEntry
+import app.tivi.data.entities.PendingAction
 import app.tivi.data.sync.syncerForEntity
 import app.tivi.extensions.fetchBody
 import app.tivi.extensions.fetchBodyWithRetry
@@ -94,7 +95,7 @@ class TraktEpisodeWatchSyncer @Inject constructor(
             withContext(dispatchers.io) {
                 episodeWatchEntryDao.updateEntriesToPendingAction(
                         sendActions.mapNotNull { it.first.id },
-                        EpisodeWatchEntry.PENDING_ACTION_NOTHING
+                        PendingAction.NOTHING.value
                 )
             }
         }
@@ -170,8 +171,7 @@ class TraktEpisodeWatchSyncer @Inject constructor(
                 id = dbId,
                 episodeId = episode.id!!,
                 traktId = historyEntry.id,
-                watchedAt = historyEntry.watched_at,
-                pendingAction = EpisodeWatchEntry.PENDING_ACTION_NOTHING
+                watchedAt = historyEntry.watched_at
         )
     }
 }
