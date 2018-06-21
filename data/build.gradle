@@ -37,7 +37,7 @@ dependencies {
     compile "io.reactivex.rxjava2:rxjava:${versions.rx}"
 
     kapt 'io.sweers.copydynamic:copydynamic:0.1.2'
-    compileOnly 'io.sweers.copydynamic:copydynamic-annotations:0.1.2'
+    compile 'io.sweers.copydynamic:copydynamic-annotations:0.1.2'
 
     compile 'org.threeten:threetenbp:1.3.6:no-tzdb'
 }
