@@ -58,17 +58,18 @@ class TraktEpisodeFetcher @Inject constructor(
     }
 
     fun upsertEpisode(seasonId: Long, traktEpisode: TraktEpisode) {
-        (episodesDao.episodeWithTraktId(traktEpisode.ids.trakt) ?: Episode(seasonId = seasonId)).apply {
-            updateProperty(this::traktId, traktEpisode.ids.trakt)
-            updateProperty(this::tmdbId, traktEpisode.ids.tmdb)
-            updateProperty(this::title, traktEpisode.title)
-            updateProperty(this::number, traktEpisode.number)
-            updateProperty(this::summary, traktEpisode.overview)
-            updateProperty(this::firstAired, traktEpisode.first_aired)
-            updateProperty(this::rating, traktEpisode.rating?.toFloat())
-            updateProperty(this::votes, traktEpisode.votes)
-            lastTraktUpdate = OffsetDateTime.now()
-        }.also {
+        (episodesDao.episodeWithTraktId(traktEpisode.ids.trakt) ?: Episode(seasonId = seasonId)).copy(
+                seasonId = seasonId,
+                traktId = traktEpisode.ids.trakt,
+                tmdbId = traktEpisode.ids.tmdb,
+                title = traktEpisode.title,
+                number = traktEpisode.number,
+                summary = traktEpisode.overview,
+                firstAired = traktEpisode.first_aired,
+                rating = traktEpisode.rating?.toFloat(),
+                votes = traktEpisode.votes,
+                lastTraktUpdate = OffsetDateTime.now()
+        ).also {
             entityInserter.insertOrUpdate(episodesDao, it)
         }
     }

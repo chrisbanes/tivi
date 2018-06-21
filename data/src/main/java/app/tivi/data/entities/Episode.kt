@@ -21,9 +21,12 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
+import io.sweers.copydynamic.annotations.CopyDynamic
 import org.threeten.bp.OffsetDateTime
 
-@Entity(tableName = "episodes",
+@CopyDynamic
+@Entity(
+        tableName = "episodes",
         indices = [
             Index(value = ["season_id", "number"], unique = true)
         ],
@@ -36,19 +39,19 @@ import org.threeten.bp.OffsetDateTime
         ]
 )
 data class Episode(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override var id: Long? = null,
-    @ColumnInfo(name = "season_id") var seasonId: Long,
-    @ColumnInfo(name = "trakt_id") override var traktId: Int? = null,
-    @ColumnInfo(name = "tmdb_id") override var tmdbId: Int? = null,
-    @ColumnInfo(name = "title") var title: String? = null,
-    @ColumnInfo(name = "overview") var summary: String? = null,
-    @ColumnInfo(name = "number") var number: Int? = null,
-    @ColumnInfo(name = "first_aired") var firstAired: OffsetDateTime? = null,
-    @ColumnInfo(name = "rating") var rating: Float? = null,
-    @ColumnInfo(name = "votes") var votes: Int? = null,
-    @ColumnInfo(name = "tmdb_poster_path") var tmdbPosterPath: String? = null,
-    @ColumnInfo(name = "tmdb_backdrop_path") var tmdbBackdropPath: String? = null,
-    @ColumnInfo(name = "trakt_updated") override var lastTraktUpdate: OffsetDateTime? = null,
-    @ColumnInfo(name = "tmdb_updated") override var lastTmdbUpdate: OffsetDateTime? = null,
-    @ColumnInfo(name = "last_watched_at") var lastWatched: OffsetDateTime? = null
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override val id: Long? = null,
+    @ColumnInfo(name = "season_id") val seasonId: Long,
+    @ColumnInfo(name = "trakt_id") override val traktId: Int? = null,
+    @ColumnInfo(name = "tmdb_id") override val tmdbId: Int? = null,
+    @ColumnInfo(name = "title") val title: String? = null,
+    @ColumnInfo(name = "overview") val summary: String? = null,
+    @ColumnInfo(name = "number") val number: Int? = null,
+    @ColumnInfo(name = "first_aired") val firstAired: OffsetDateTime? = null,
+    @ColumnInfo(name = "rating") val rating: Float? = null,
+    @ColumnInfo(name = "votes") val votes: Int? = null,
+    @ColumnInfo(name = "tmdb_poster_path") val tmdbPosterPath: String? = null,
+    @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null,
+    @ColumnInfo(name = "trakt_updated") override val lastTraktUpdate: OffsetDateTime? = null,
+    @ColumnInfo(name = "tmdb_updated") override val lastTmdbUpdate: OffsetDateTime? = null,
+    @ColumnInfo(name = "last_watched_at") val lastWatched: OffsetDateTime? = null
 ) : TiviEntity, TraktIdEntity, TmdbIdEntity

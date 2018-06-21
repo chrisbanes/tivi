@@ -21,8 +21,10 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
+import io.sweers.copydynamic.annotations.CopyDynamic
 import org.threeten.bp.OffsetDateTime
 
+@CopyDynamic
 @Entity(tableName = "shows",
         indices = [
             Index(value = ["trakt_id"], unique = true),
@@ -30,28 +32,27 @@ import org.threeten.bp.OffsetDateTime
         ])
 data class TiviShow(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override val id: Long? = null,
-    @ColumnInfo(name = "title") var title: String? = null,
-    @ColumnInfo(name = "original_title") var originalTitle: String? = null,
-    @ColumnInfo(name = "trakt_id") override var traktId: Int? = null,
-    @ColumnInfo(name = "tmdb_id") override var tmdbId: Int? = null,
-    @ColumnInfo(name = "tmdb_poster_path") var tmdbPosterPath: String? = null,
-    @ColumnInfo(name = "tmdb_backdrop_path") var tmdbBackdropPath: String? = null,
-    @ColumnInfo(name = "trakt_updated") override var lastTraktUpdate: OffsetDateTime? = null,
-    @ColumnInfo(name = "tmdb_updated") override var lastTmdbUpdate: OffsetDateTime? = null,
-    @ColumnInfo(name = "overview") var summary: String? = null,
-    @ColumnInfo(name = "homepage") var homepage: String? = null,
-    @ColumnInfo(name = "rating") var rating: Float? = null,
-    @ColumnInfo(name = "certification") var certification: String? = null,
-    @ColumnInfo(name = "country") var country: String? = null,
-    @ColumnInfo(name = "network") var network: String? = null,
-    @ColumnInfo(name = "runtime") var runtime: Int? = null,
-    @ColumnInfo(name = "genres") var _genres: String? = null
+    @ColumnInfo(name = "title") val title: String? = null,
+    @ColumnInfo(name = "original_title") val originalTitle: String? = null,
+    @ColumnInfo(name = "trakt_id") override val traktId: Int? = null,
+    @ColumnInfo(name = "tmdb_id") override val tmdbId: Int? = null,
+    @ColumnInfo(name = "tmdb_poster_path") val tmdbPosterPath: String? = null,
+    @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null,
+    @ColumnInfo(name = "trakt_updated") override val lastTraktUpdate: OffsetDateTime? = null,
+    @ColumnInfo(name = "tmdb_updated") override val lastTmdbUpdate: OffsetDateTime? = null,
+    @ColumnInfo(name = "overview") val summary: String? = null,
+    @ColumnInfo(name = "homepage") val homepage: String? = null,
+    @ColumnInfo(name = "rating") val rating: Float? = null,
+    @ColumnInfo(name = "certification") val certification: String? = null,
+    @ColumnInfo(name = "country") val country: String? = null,
+    @ColumnInfo(name = "network") val network: String? = null,
+    @ColumnInfo(name = "runtime") val runtime: Int? = null,
+    @ColumnInfo(name = "genres") val _genres: String? = null
 ) : TiviEntity, TraktIdEntity, TmdbIdEntity {
-    @Ignore constructor(): this(null)
+    @Ignore constructor() : this(null)
 
-    val genres: List<Genre>?
-        get() = _genres?.split(",")
-                ?.mapNotNull {
-                    Genre.fromTraktValue(it.trim())
-                }
+    @delegate:Ignore
+    val genres by lazy(LazyThreadSafetyMode.NONE) {
+        _genres?.split(",")?.mapNotNull { Genre.fromTraktValue(it.trim()) } ?: emptyList()
+    }
 }

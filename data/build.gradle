@@ -16,6 +16,17 @@
  */
 
 apply plugin: 'kotlin'
+apply plugin: 'kotlin-kapt'
+
+kapt {
+    arguments {
+        arg("copydynamic.generated", "javax.annotation.Generated")
+    }
+}
+
+apply {
+    from(rootProject.file("gradle/config-kotlin-sources.gradle"))
+}
 
 dependencies {
     implementation project(":base")
@@ -24,6 +35,9 @@ dependencies {
     implementation "android.arch.paging:common:${versions.androidx.paging}"
 
     compile "io.reactivex.rxjava2:rxjava:${versions.rx}"
+
+    kapt 'io.sweers.copydynamic:copydynamic:0.1.2'
+    compile 'io.sweers.copydynamic:copydynamic-annotations:0.1.2'
 
     compile 'org.threeten:threetenbp:1.3.6:no-tzdb'
 }

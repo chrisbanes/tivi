@@ -59,19 +59,19 @@ class TraktSeasonFetcher @Inject constructor(
     }
 
     private fun upsertSeason(showId: Long, traktSeason: TraktSeason): Long {
-        return (seasonDao.seasonWithSeasonTraktId(traktSeason.ids.trakt) ?: Season(showId = showId)).apply {
-            updateProperty(this::traktId, traktSeason.ids.trakt)
-            updateProperty(this::tmdbId, traktSeason.ids.tmdb)
-            updateProperty(this::number, traktSeason.number)
-            updateProperty(this::title, traktSeason.title)
-            updateProperty(this::summary, traktSeason.overview)
-            updateProperty(this::rating, traktSeason.rating?.toFloat())
-            updateProperty(this::votes, traktSeason.votes)
-            updateProperty(this::episodeCount, traktSeason.episode_count)
-            updateProperty(this::airedEpisodes, traktSeason.aired_episodes)
-            updateProperty(this::network, traktSeason.network)
+        return (seasonDao.seasonWithSeasonTraktId(traktSeason.ids.trakt) ?: Season(showId = showId)).copy(
+            traktId = traktSeason.ids.trakt,
+            tmdbId = traktSeason.ids.tmdb,
+            number = traktSeason.number,
+            title = traktSeason.title,
+            summary = traktSeason.overview,
+            rating = traktSeason.rating?.toFloat(),
+            votes = traktSeason.votes,
+            episodeCount = traktSeason.episode_count,
+            airedEpisodes = traktSeason.aired_episodes,
+            network = traktSeason.network,
             lastTraktUpdate = OffsetDateTime.now()
-        }.let {
+        ).let {
             entityInserter.insertOrUpdate(seasonDao, it)
         }
     }

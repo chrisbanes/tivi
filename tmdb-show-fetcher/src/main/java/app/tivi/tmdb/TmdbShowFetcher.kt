@@ -19,6 +19,7 @@ package app.tivi.tmdb
 import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.entities.copyDynamic
 import app.tivi.extensions.fetchBodyWithRetry
 import com.uwetrottmann.tmdb2.Tmdb
 import org.threeten.bp.OffsetDateTime
@@ -34,17 +35,16 @@ class TmdbShowFetcher @Inject constructor(
     suspend fun updateShow(tmdbId: Int) {
         val tmdbShow = tmdb.tvService().tv(tmdbId).fetchBodyWithRetry()
 
-        (showDao.getShowWithTmdbId(tmdbShow.id) ?: TiviShow())
-                .apply {
-                    updateProperty(this::tmdbId, tmdbShow.id)
-                    updateProperty(this::title, tmdbShow.name, false)
-                    updateProperty(this::summary, tmdbShow.overview, false)
-                    updateProperty(this::tmdbBackdropPath, tmdbShow.backdrop_path)
-                    updateProperty(this::tmdbPosterPath, tmdbShow.poster_path)
-                    updateProperty(this::homepage, tmdbShow.homepage, false)
-                    lastTmdbUpdate = OffsetDateTime.now()
-                }.also {
-                    entityInserter.insertOrUpdate(showDao, it)
-                }
+        val show = (showDao.getShowWithTmdbId(tmdbShow.id) ?: TiviShow()).copyDynamic {
+            this.tmdbId = tmdbShow.id
+            if (title.isNullOrEmpty()) title = tmdbShow.name
+            if (summary.isNullOrEmpty()) summary = tmdbShow.overview
+            tmdbBackdropPath = tmdbShow.backdrop_path
+            tmdbPosterPath = tmdbShow.poster_path
+            if (homepage.isNullOrEmpty()) homepage = tmdbShow.homepage
+            lastTmdbUpdate = OffsetDateTime.now()
+        }
+
+        entityInserter.insertOrUpdate(showDao, show)
     }
 }
