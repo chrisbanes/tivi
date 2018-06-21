@@ -14,28 +14,18 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.extensions
 
-import org.threeten.bp.OffsetDateTime
+import kotlin.reflect.KMutableProperty0
 
-interface TiviEntity {
-    val id: Long?
-}
-
-interface TraktIdEntity {
-    val traktId: Int?
-    val lastTraktUpdate: OffsetDateTime?
-
-    fun needsUpdateFromTrakt(): Boolean {
-        return traktId != null && (lastTraktUpdate?.isBefore(OffsetDateTime.now().minusDays(1)) != false)
+fun <T> updateProperty(entityVar: KMutableProperty0<T?>, updateVal: T?, updateAlways: Boolean = true) {
+    if (updateVal != null && (updateAlways || entityVar.get() == null)) {
+        entityVar.set(updateVal)
     }
 }
 
-interface TmdbIdEntity {
-    val tmdbId: Int?
-    val lastTmdbUpdate: OffsetDateTime?
-
-    fun needsUpdateFromTmdb(): Boolean {
-        return tmdbId != null && (lastTmdbUpdate?.isBefore(OffsetDateTime.now().minusDays(1)) != false)
+fun updateProperty(entityVar: KMutableProperty0<String?>, updateVal: String?) {
+    if (updateVal.isLongerThan(entityVar.get())) {
+        entityVar.set(updateVal)
     }
 }

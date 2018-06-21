@@ -21,6 +21,7 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.copyDynamic
 import app.tivi.extensions.fetchBodyWithRetry
+import app.tivi.extensions.updateProperty
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
@@ -44,18 +45,20 @@ class TraktShowFetcher @Inject constructor(
 
     private fun upsertShow(traktShow: Show, updateTime: Boolean = false): Long {
         return (showDao.getShowWithTraktId(traktShow.ids.trakt) ?: TiviShow()).copyDynamic {
-            traktId = traktShow.ids.trakt
-            tmdbId = traktShow.ids.tmdb
-            title = traktShow.title
-            summary = traktShow.overview
-            homepage = traktShow.homepage
-            rating = traktShow.rating?.toFloat()
-            certification = traktShow.certification
-            runtime = traktShow.runtime
-            network = traktShow.network
-            country = traktShow.country
-            _genres = traktShow.genres?.joinToString(",")
-            if (updateTime) lastTraktUpdate = OffsetDateTime.now()
+            updateProperty(this::traktId, traktShow.ids.trakt)
+            updateProperty(this::tmdbId, traktShow.ids.tmdb)
+            updateProperty(this::title, traktShow.title)
+            updateProperty(this::summary, traktShow.overview)
+            updateProperty(this::homepage, traktShow.homepage)
+            updateProperty(this::rating, traktShow.rating?.toFloat())
+            updateProperty(this::certification, traktShow.certification)
+            updateProperty(this::runtime, traktShow.runtime)
+            updateProperty(this::network, traktShow.network)
+            updateProperty(this::country, traktShow.country)
+            updateProperty(this::_genres, traktShow.genres?.joinToString(","))
+            if (updateTime) {
+                lastTraktUpdate = OffsetDateTime.now()
+            }
         }.let {
             entityInserter.insertOrUpdate(showDao, it)
         }
