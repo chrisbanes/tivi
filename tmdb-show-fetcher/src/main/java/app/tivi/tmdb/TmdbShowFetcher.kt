@@ -37,11 +37,11 @@ class TmdbShowFetcher @Inject constructor(
 
         val show = (showDao.getShowWithTmdbId(tmdbShow.id) ?: TiviShow()).copyDynamic {
             this.tmdbId = tmdbShow.id
-            if (title == null) title = tmdbShow.name
-            if (summary == null) summary = tmdbShow.overview
+            if (title.isNullOrEmpty()) title = tmdbShow.name
+            if (summary.isNullOrEmpty()) summary = tmdbShow.overview
             tmdbBackdropPath = tmdbShow.backdrop_path
             tmdbPosterPath = tmdbShow.poster_path
-            if (homepage == null) homepage = tmdbShow.homepage
+            if (homepage.isNullOrEmpty()) homepage = tmdbShow.homepage
             lastTmdbUpdate = OffsetDateTime.now()
         }
 

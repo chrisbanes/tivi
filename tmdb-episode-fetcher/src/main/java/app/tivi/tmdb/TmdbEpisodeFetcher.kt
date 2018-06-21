@@ -59,9 +59,9 @@ class TmdbEpisodeFetcher @Inject constructor(
     private fun upsertEpisode(seasonId: Long, tmdbEpisode: TvEpisode) {
         val ep = (episodesDao.episodeWithTmdbId(tmdbEpisode.id) ?: Episode(seasonId = seasonId)).copyDynamic {
             tmdbId = tmdbEpisode.id
-            if (title == null) title = tmdbEpisode.name
+            if (title.isNullOrEmpty()) title = tmdbEpisode.name
             if (number == null) number = tmdbEpisode.episode_number
-            if (summary == null) summary = tmdbEpisode.overview
+            if (summary.isNullOrEmpty()) summary = tmdbEpisode.overview
             tmdbBackdropPath = tmdbEpisode.still_path
             lastTmdbUpdate = OffsetDateTime.now()
         }
