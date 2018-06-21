@@ -20,7 +20,7 @@ import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TrendingEntryWithShow
 import app.tivi.datasources.trakt.TrendingDataSource
 import app.tivi.home.HomeNavigator
-import app.tivi.interactors.TrendingShowsInteractor
+import app.tivi.interactors.FetchTrendingShowsInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
@@ -33,7 +33,7 @@ class TrendingShowsViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     dispatchers: AppCoroutineDispatchers,
     dataSource: TrendingDataSource,
-    interactor: TrendingShowsInteractor,
+    interactor: FetchTrendingShowsInteractor,
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector,
     logger: Logger

@@ -39,5 +39,6 @@ import app.tivi.data.Entry
 )
 data class FollowedShowEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long? = null,
-    @ColumnInfo(name = "show_id") override val showId: Long
+    @ColumnInfo(name = "show_id") override val showId: Long,
+    @ColumnInfo(name = "pending_action") val pendingAction: PendingAction = PendingAction.NOTHING
 ) : Entry

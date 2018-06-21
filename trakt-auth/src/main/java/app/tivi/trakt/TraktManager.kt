@@ -23,7 +23,7 @@ import app.tivi.actions.ShowTasks
 import app.tivi.data.entities.TraktUser
 import app.tivi.datasources.trakt.UserMeDataSource
 import app.tivi.inject.ApplicationLevel
-import app.tivi.interactors.UserDetailsMeInteractor
+import app.tivi.interactors.FetchUserDetailsMeInteractor
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
@@ -60,7 +60,7 @@ class TraktManager @Inject constructor(
     private val clientAuth: Lazy<ClientAuthentication>,
     @Named("auth") private val authPrefs: SharedPreferences,
     private val userMeDataSource: UserMeDataSource,
-    private val userMeInteractor: UserDetailsMeInteractor,
+    private val userMeInteractor: FetchUserDetailsMeInteractor,
     private val networkDetector: NetworkDetector,
     private val showTasks: ShowTasks,
     private val logger: Logger

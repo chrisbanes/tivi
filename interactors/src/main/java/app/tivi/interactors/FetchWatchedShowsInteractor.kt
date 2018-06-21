@@ -32,7 +32,7 @@ import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 import javax.inject.Provider
 
-class RefreshWatchedShowsInteractor @Inject constructor(
+class FetchWatchedShowsInteractor @Inject constructor(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val watchShowDao: WatchedShowDao,
     private val showFetcher: ShowFetcher,

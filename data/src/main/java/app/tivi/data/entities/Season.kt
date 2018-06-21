@@ -52,8 +52,7 @@ data class Season(
     @ColumnInfo(name = "tmdb_poster_path") val tmdbPosterPath: String? = null,
     @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null,
     @ColumnInfo(name = "trakt_updated") override val lastTraktUpdate: OffsetDateTime? = null,
-    @ColumnInfo(name = "tmdb_updated") override val lastTmdbUpdate: OffsetDateTime? = null,
-    @ColumnInfo(name = "episodes_updated") val lastEpisodeUpdate: OffsetDateTime? = null
+    @ColumnInfo(name = "tmdb_updated") override val lastTmdbUpdate: OffsetDateTime? = null
 ) : TiviEntity, TmdbIdEntity, TraktIdEntity {
     companion object {
         const val NUMBER_SPECIALS = 0

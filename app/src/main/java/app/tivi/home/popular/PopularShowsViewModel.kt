@@ -20,7 +20,7 @@ import app.tivi.SharedElementHelper
 import app.tivi.data.entities.PopularEntryWithShow
 import app.tivi.datasources.trakt.PopularDataSource
 import app.tivi.home.HomeNavigator
-import app.tivi.interactors.PopularShowsInteractor
+import app.tivi.interactors.FetchPopularShowsInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
@@ -33,7 +33,7 @@ class PopularShowsViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     dispatchers: AppCoroutineDispatchers,
     dataSource: PopularDataSource,
-    interactor: PopularShowsInteractor,
+    interactor: FetchPopularShowsInteractor,
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector,
     logger: Logger

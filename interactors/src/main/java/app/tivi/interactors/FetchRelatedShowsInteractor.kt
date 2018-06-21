@@ -30,7 +30,7 @@ import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 import javax.inject.Provider
 
-class RelatedShowsInteractor @Inject constructor(
+class FetchRelatedShowsInteractor @Inject constructor(
     private val showDao: TiviShowDao,
     private val entryDao: RelatedShowsDao,
     private val transactionRunner: DatabaseTransactionRunner,

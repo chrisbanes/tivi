@@ -25,10 +25,10 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.datasources.trakt.RelatedShowsDataSource
 import app.tivi.datasources.trakt.ShowDetailsDataSource
 import app.tivi.datasources.trakt.ShowSeasonsDataSource
+import app.tivi.interactors.FetchRelatedShowsInteractor
+import app.tivi.interactors.FetchShowDetailsInteractor
 import app.tivi.interactors.FollowShowInteractor
-import app.tivi.interactors.RefreshShowDetailsInteractor
-import app.tivi.interactors.RelatedShowsInteractor
-import app.tivi.interactors.SyncShowWatchedEpisodesInteractor
+import app.tivi.interactors.SyncTraktFollowedShowWatchedProgressInteractor
 import app.tivi.interactors.UnfollowShowInteractor
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
@@ -45,12 +45,12 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     private val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
     private val showDetailsDataSource: ShowDetailsDataSource,
-    private val showDetailsInteractor: RefreshShowDetailsInteractor,
+    private val showDetailsInteractor: FetchShowDetailsInteractor,
     private val relatedShowsDataSource: RelatedShowsDataSource,
-    private val relatedShowsInteractor: RelatedShowsInteractor,
+    private val relatedShowsInteractor: FetchRelatedShowsInteractor,
     private val seasonsDataSource: ShowSeasonsDataSource,
-    private val refreshShowSeasons: RefreshShowDetailsInteractor,
-    private val syncShowWatchedEpisodes: SyncShowWatchedEpisodesInteractor,
+    private val refreshShowSeasons: FetchShowDetailsInteractor,
+    private val syncTraktFollowedShowWatchedProgress: SyncTraktFollowedShowWatchedProgressInteractor,
     private val tmdbManager: TmdbManager,
     private val followShowInteractor: FollowShowInteractor,
     private val unfollowShowInteractor: UnfollowShowInteractor,
@@ -82,7 +82,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
             launchWithParent(dispatchers.io) {
                 if (followedShowsDao.entryCountWithShowId(id) > 0) {
                     refreshShowSeasons(id)
-                    syncShowWatchedEpisodes(id)
+                    syncTraktFollowedShowWatchedProgress(id)
                 }
             }
         }
@@ -123,8 +123,8 @@ class ShowDetailsFragmentViewModel @Inject constructor(
                 withContext(followShowInteractor.dispatcher) {
                     followShowInteractor(id)
                 }
-                withContext(syncShowWatchedEpisodes.dispatcher) {
-                    syncShowWatchedEpisodes(id)
+                withContext(syncTraktFollowedShowWatchedProgress.dispatcher) {
+                    syncTraktFollowedShowWatchedProgress(id)
                 }
             }
         }

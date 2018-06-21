@@ -16,22 +16,18 @@
 
 package app.tivi.interactors
 
-import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.entities.FollowedShowEntry
+import app.tivi.EpisodeFetcher
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
-class FollowShowInteractor @Inject constructor(
-    dispatchers: AppCoroutineDispatchers,
-    private val followedShowsDao: FollowedShowsDao,
-    private val syncFollowedShowInteractor: SyncFollowedShowInteractor
+class FetchEpisodeDetailsInteractor @Inject constructor(
+    private val episodeFetcher: EpisodeFetcher,
+    dispatchers: AppCoroutineDispatchers
 ) : Interactor<Long> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend operator fun invoke(param: Long) {
-        followedShowsDao.insert(FollowedShowEntry(showId = param))
-        // Now refresh the show
-        syncFollowedShowInteractor(param)
+        episodeFetcher.update(param, true)
     }
 }

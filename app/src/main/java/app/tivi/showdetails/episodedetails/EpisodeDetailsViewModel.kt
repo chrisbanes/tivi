@@ -24,8 +24,8 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.datasources.trakt.EpisodeDetailsDataSource
 import app.tivi.datasources.trakt.EpisodeWatchesDataSource
-import app.tivi.interactors.RefreshEpisodeDetailsInteractor
-import app.tivi.interactors.SyncShowWatchedEpisodesInteractor
+import app.tivi.interactors.FetchEpisodeDetailsInteractor
+import app.tivi.interactors.SyncTraktFollowedShowWatchedProgressInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
@@ -40,7 +40,7 @@ import javax.inject.Inject
 
 class EpisodeDetailsViewModel @Inject constructor(
     private val episodeDetailsDataSource: EpisodeDetailsDataSource,
-    private val episodeDetailsInteractor: RefreshEpisodeDetailsInteractor,
+    private val episodeDetailsInteractor: FetchEpisodeDetailsInteractor,
     private val episodeWatchesCall: EpisodeWatchesDataSource,
     private val tmdbManager: TmdbManager,
     private val logger: Logger,
@@ -48,7 +48,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,
     private val dispatchers: AppCoroutineDispatchers,
     private val dateTimeFormatter: DateTimeFormatter,
-    private val syncShowWatchedEpisodes: SyncShowWatchedEpisodesInteractor
+    private val syncTraktFollowedShowWatchedProgress: SyncTraktFollowedShowWatchedProgressInteractor
 ) : TiviViewModel() {
 
     var episodeId: Long? = null
@@ -105,7 +105,7 @@ class EpisodeDetailsViewModel @Inject constructor(
                 )
                 episodeWatchEntryDao.insert(entry)
             }
-            syncShowWatchedEpisodes(episodesDao.showIdForEpisodeId(epId))
+            syncTraktFollowedShowWatchedProgress(episodesDao.showIdForEpisodeId(epId))
         }
     }
 
@@ -123,7 +123,7 @@ class EpisodeDetailsViewModel @Inject constructor(
                     }
                 }
             }
-            syncShowWatchedEpisodes(episodesDao.showIdForEpisodeId(epId))
+            syncTraktFollowedShowWatchedProgress(episodesDao.showIdForEpisodeId(epId))
         }
     }
 }

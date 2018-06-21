@@ -91,7 +91,7 @@ class TraktEpisodeWatchSyncer @Inject constructor(
                 }
             }
 
-            // Now update the io
+            // Now update the database
             withContext(dispatchers.io) {
                 episodeWatchEntryDao.updateEntriesToPendingAction(
                         sendActions.mapNotNull { it.first.id },
@@ -126,7 +126,7 @@ class TraktEpisodeWatchSyncer @Inject constructor(
                 }
             }
 
-            // Now update the io
+            // Now update the database
             withContext(dispatchers.io) {
                 episodeWatchEntryDao.deleteWithIds(deleteActions.mapNotNull { it.id })
             }

@@ -28,7 +28,6 @@ class RemoveFromFollowedShows @Inject constructor(
     private val unfollowShow: UnfollowShowInteractor,
     private val logger: Logger
 ) : Job() {
-
     companion object {
         const val TAG = "myshows-remove"
 

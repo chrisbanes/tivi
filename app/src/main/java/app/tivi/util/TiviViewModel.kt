@@ -44,7 +44,9 @@ open class TiviViewModel : ViewModel() {
         block: suspend CoroutineScope.() -> Unit
     ) = launch(context = context, parent = viewModelJob, block = block)
 
-    fun <P> launchInteractor(interactor: Interactor<P>, param: P) {
-        launch(context = interactor.dispatcher, parent = viewModelJob, block = { interactor(param) })
-    }
+    fun <P> launchInteractor(interactor: Interactor<P>, param: P) =
+            launch(context = interactor.dispatcher, parent = viewModelJob, block = { interactor(param) })
+
+    fun launchInteractor(interactor: Interactor<Unit>) =
+            launch(context = interactor.dispatcher, parent = viewModelJob, block = { interactor(Unit) })
 }
