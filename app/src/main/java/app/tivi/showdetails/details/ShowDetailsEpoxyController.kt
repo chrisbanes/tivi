@@ -53,7 +53,7 @@ class ShowDetailsEpoxyController(
             id("title")
             title(show.title)
             subtitle(show.originalTitle)
-            genres(show.getGenres())
+            genres(show.genres)
             spanSizeOverride(TotalSpanOverride)
         }
 

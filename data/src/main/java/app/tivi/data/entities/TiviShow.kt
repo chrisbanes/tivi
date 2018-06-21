@@ -51,6 +51,8 @@ data class TiviShow(
 ) : TiviEntity, TraktIdEntity, TmdbIdEntity {
     @Ignore constructor() : this(null)
 
-    fun getGenres() = _genres?.split(",")
-            ?.mapNotNull { Genre.fromTraktValue(it.trim()) }
+    @delegate:Ignore
+    val genres by lazy(LazyThreadSafetyMode.NONE) {
+        _genres?.split(",")?.mapNotNull { Genre.fromTraktValue(it.trim()) } ?: emptyList()
+    }
 }
