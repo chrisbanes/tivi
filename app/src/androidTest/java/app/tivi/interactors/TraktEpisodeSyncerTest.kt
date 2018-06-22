@@ -78,7 +78,7 @@ class TraktEpisodeSyncerTest : BaseDatabaseTest() {
                 Provider { userService },
                 Provider { syncService },
                 RoomTransactionRunner(db),
-                TimberLogger,
+                TimberLogger(),
                 Provider { TraktAuthState.LOGGED_OUT }
         )
 

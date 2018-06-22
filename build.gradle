@@ -21,6 +21,7 @@ buildscript {
             'androidx'       : [
                     'appcompat'        : '27.1.1',
                     'browser'          : '27.1.1',
+                    'core'             : '1.1.1',
                     'constraint_layout': '1.1.2',
                     'core_ktx'         : '0.3',
                     'fragment'         : '27.1.1',
