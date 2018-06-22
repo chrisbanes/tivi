@@ -50,7 +50,7 @@ dependencies {
     implementation "android.arch.persistence.room:rxjava2:${versions.androidx.room}"
     kapt "android.arch.persistence.room:compiler:${versions.androidx.room}"
 
-    api "android.arch.paging:runtime:${versions.androidx.paging}"
+    implementation "android.arch.paging:runtime:${versions.androidx.paging}"
 
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
 }
