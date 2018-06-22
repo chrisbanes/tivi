@@ -19,6 +19,7 @@ package app.tivi.utils
 import app.tivi.data.TiviDatabase
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
+import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import org.threeten.bp.OffsetDateTime
@@ -71,7 +72,7 @@ fun insertEpisodes(db: TiviDatabase) = episodes.forEach { db.episodesDao().inser
 
 fun deleteEpisodes(db: TiviDatabase) = episodes.forEach { db.episodesDao().delete(it) }
 
-val episodeWatch1Id = 1L
+const val episodeWatch1Id = 1L
 val episodeWatch1 = EpisodeWatchEntry(
         id = episodeWatch1Id,
         watchedAt = OffsetDateTime.now(),
@@ -79,8 +80,8 @@ val episodeWatch1 = EpisodeWatchEntry(
         traktId = 435214
 )
 
-val episodeWatch2Id = 2L
+const val episodeWatch2Id = 2L
 val episodeWatch2 = episodeWatch1.copy(id = episodeWatch2Id, traktId = 4385783)
 
-val episodeWatch2PendingSend = episodeWatch2.copy(pendingAction = EpisodeWatchEntry.PENDING_ACTION_UPLOAD)
-val episodeWatch2PendingDelete = episodeWatch2.copy(pendingAction = EpisodeWatchEntry.PENDING_ACTION_DELETE)
+val episodeWatch2PendingSend = episodeWatch2.copy(pendingAction = PendingAction.UPLOAD)
+val episodeWatch2PendingDelete = episodeWatch2.copy(pendingAction = PendingAction.DELETE)
