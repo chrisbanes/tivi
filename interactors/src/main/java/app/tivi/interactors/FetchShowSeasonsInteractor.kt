@@ -28,6 +28,6 @@ class FetchShowSeasonsInteractor @Inject constructor(
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend operator fun invoke(param: Long) {
-        seasonFetcher.load(param)
+        seasonFetcher.update(param)
     }
 }

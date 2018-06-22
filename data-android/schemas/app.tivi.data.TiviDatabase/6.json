@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 6,
-    "identityHash": "14d0187c1af4c4852a926bc25b221366",
+    "identityHash": "e33f613a83ebbc492664c080a13852cd",
     "entities": [
       {
         "tableName": "shows",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `trakt_updated` TEXT, `tmdb_updated` TEXT, `overview` TEXT, `homepage` TEXT, `rating` REAL, `certification` TEXT, `country` TEXT, `network` TEXT, `runtime` INTEGER, `genres` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `trakt_updated` TEXT NOT NULL, `tmdb_updated` TEXT NOT NULL, `overview` TEXT, `homepage` TEXT, `rating` REAL, `certification` TEXT, `country` TEXT, `network` TEXT, `runtime` INTEGER, `genres` TEXT, `seasons_updated` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -54,13 +54,13 @@
             "fieldPath": "lastTraktUpdate",
             "columnName": "trakt_updated",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "lastTmdbUpdate",
             "columnName": "tmdb_updated",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "summary",
@@ -109,6 +109,12 @@
             "columnName": "genres",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "lastSeasonsUpdate",
+            "columnName": "seasons_updated",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -419,7 +425,7 @@
       },
       {
         "tableName": "seasons",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `show_id` INTEGER NOT NULL, `trakt_id` INTEGER, `tmdb_id` INTEGER, `title` TEXT, `overview` TEXT, `number` INTEGER, `ep_count` INTEGER, `ep_aired` INTEGER, `rating` REAL, `network` TEXT, `votes` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `trakt_updated` TEXT, `tmdb_updated` TEXT, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `show_id` INTEGER NOT NULL, `trakt_id` INTEGER, `tmdb_id` INTEGER, `title` TEXT, `overview` TEXT, `number` INTEGER, `ep_count` INTEGER, `ep_aired` INTEGER, `rating` REAL, `network` TEXT, `votes` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `trakt_updated` TEXT NOT NULL, `tmdb_updated` TEXT NOT NULL, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -509,13 +515,13 @@
             "fieldPath": "lastTraktUpdate",
             "columnName": "trakt_updated",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "lastTmdbUpdate",
             "columnName": "tmdb_updated",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -551,7 +557,7 @@
       },
       {
         "tableName": "episodes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `season_id` INTEGER NOT NULL, `trakt_id` INTEGER, `tmdb_id` INTEGER, `title` TEXT, `overview` TEXT, `number` INTEGER, `first_aired` TEXT, `rating` REAL, `votes` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `trakt_updated` TEXT, `tmdb_updated` TEXT, `last_watched_at` TEXT, FOREIGN KEY(`season_id`) REFERENCES `seasons`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `season_id` INTEGER NOT NULL, `trakt_id` INTEGER, `tmdb_id` INTEGER, `title` TEXT, `overview` TEXT, `number` INTEGER, `first_aired` TEXT, `rating` REAL, `votes` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `trakt_updated` TEXT NOT NULL, `tmdb_updated` TEXT NOT NULL, `last_watched_at` TEXT NOT NULL, FOREIGN KEY(`season_id`) REFERENCES `seasons`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -629,19 +635,19 @@
             "fieldPath": "lastTraktUpdate",
             "columnName": "trakt_updated",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "lastTmdbUpdate",
             "columnName": "tmdb_updated",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "lastWatched",
             "columnName": "last_watched_at",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -829,7 +835,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"14d0187c1af4c4852a926bc25b221366\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"e33f613a83ebbc492664c080a13852cd\")"
     ]
   }
 }

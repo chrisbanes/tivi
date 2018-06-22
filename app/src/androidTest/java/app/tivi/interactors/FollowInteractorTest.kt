@@ -52,7 +52,7 @@ class FollowInteractorTest : BaseDatabaseTest() {
             followShow(showId)
 
             assertThat(followShowsDao.entryWithShowId(showId), `is`(notNullValue()))
-            verify(seasonFetcher, times(1)).load(showId)
+            verify(seasonFetcher, times(1)).update(showId)
         }
     }
 }

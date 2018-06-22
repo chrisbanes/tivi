@@ -45,7 +45,7 @@ class SyncFollowedShowInteractor @Inject constructor(
         // First update the show details
         showFetcher.update(entry.showId, false)
         // Then update the seasons/episodes
-        seasonFetcher.load(entry.showId)
+        seasonFetcher.update(entry.showId, false)
         // Finally update any watched progress
         if (authed) {
             traktEpisodeWatchedSyncer.sync(entry.showId)
