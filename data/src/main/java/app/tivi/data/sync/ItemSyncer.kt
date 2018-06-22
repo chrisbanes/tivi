@@ -42,10 +42,12 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
             val dbEntityForId = currentDbEntities.find { localEntityToIdFunc(it) == remoteId }
 
             if (dbEntityForId != null) {
-                // This is currently in the DB, so lets merge it with the saved version and update it
-                entryUpdateFunc(networkEntityToLocalEntityMapperFunc(networkEntity, dbEntityForId.id))
-                logger?.d("Updated entry with remote id: $remoteId")
-
+                val newEntity = networkEntityToLocalEntityMapperFunc(networkEntity, dbEntityForId.id)
+                if (dbEntityForId != newEntity) {
+                    // This is currently in the DB, so lets merge it with the saved version and update it
+                    entryUpdateFunc(networkEntityToLocalEntityMapperFunc(networkEntity, dbEntityForId.id))
+                    logger?.d("Updated entry with remote id: $remoteId")
+                }
                 // Remove it from the list so that it is not deleted
                 currentDbEntities.remove(dbEntityForId)
             } else {

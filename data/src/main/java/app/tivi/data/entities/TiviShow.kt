@@ -48,7 +48,8 @@ data class TiviShow(
     @ColumnInfo(name = "network") val network: String? = null,
     @ColumnInfo(name = "runtime") val runtime: Int? = null,
     @ColumnInfo(name = "genres") val _genres: String? = null,
-    @ColumnInfo(name = "seasons_updated") val lastSeasonsUpdate: OffsetDateTime = OffsetDateTime.MIN
+    @ColumnInfo(name = "seasons_updated") val lastSeasonsUpdate: OffsetDateTime = OffsetDateTime.MIN,
+    @ColumnInfo(name = "watched_episodes_updated") val lastWatchedEpisodesUpdate: OffsetDateTime = OffsetDateTime.MIN
 ) : TiviEntity, TraktIdEntity, TmdbIdEntity {
     @Ignore constructor() : this(null)
 

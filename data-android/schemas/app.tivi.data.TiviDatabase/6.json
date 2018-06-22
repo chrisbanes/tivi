@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 6,
-    "identityHash": "e33f613a83ebbc492664c080a13852cd",
+    "identityHash": "1486e1524380bb69ef725767c0240723",
     "entities": [
       {
         "tableName": "shows",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `trakt_updated` TEXT NOT NULL, `tmdb_updated` TEXT NOT NULL, `overview` TEXT, `homepage` TEXT, `rating` REAL, `certification` TEXT, `country` TEXT, `network` TEXT, `runtime` INTEGER, `genres` TEXT, `seasons_updated` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `trakt_updated` TEXT NOT NULL, `tmdb_updated` TEXT NOT NULL, `overview` TEXT, `homepage` TEXT, `rating` REAL, `certification` TEXT, `country` TEXT, `network` TEXT, `runtime` INTEGER, `genres` TEXT, `seasons_updated` TEXT NOT NULL, `watched_episodes_updated` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -113,6 +113,12 @@
           {
             "fieldPath": "lastSeasonsUpdate",
             "columnName": "seasons_updated",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastWatchedEpisodesUpdate",
+            "columnName": "watched_episodes_updated",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -835,7 +841,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"e33f613a83ebbc492664c080a13852cd\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"1486e1524380bb69ef725767c0240723\")"
     ]
   }
 }
