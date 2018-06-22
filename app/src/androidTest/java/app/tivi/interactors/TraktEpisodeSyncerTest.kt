@@ -19,7 +19,7 @@ package app.tivi.interactors
 import app.tivi.data.RoomTransactionRunner
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.trakt.TraktAuthState
-import app.tivi.util.AndroidLogger
+import app.tivi.util.TimberLogger
 import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.episodeOne
 import app.tivi.utils.episodeWatch1
@@ -78,7 +78,7 @@ class TraktEpisodeSyncerTest : BaseDatabaseTest() {
                 Provider { userService },
                 Provider { syncService },
                 RoomTransactionRunner(db),
-                AndroidLogger,
+                TimberLogger(),
                 Provider { TraktAuthState.LOGGED_OUT }
         )
 

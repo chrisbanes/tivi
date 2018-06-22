@@ -17,8 +17,15 @@
 package app.tivi.util
 
 import timber.log.Timber
+import javax.inject.Inject
 
-object AndroidLogger : Logger {
+class TimberLogger @Inject constructor() : Logger {
+    fun setup(debugMode: Boolean) {
+        if (debugMode) {
+            Timber.plant(Timber.DebugTree())
+        }
+    }
+
     override fun v(message: String, vararg args: Any) = Timber.v(message, args)
 
     override fun v(t: Throwable, message: String, vararg args: Any) = Timber.v(t, message, args)

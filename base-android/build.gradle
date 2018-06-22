@@ -26,10 +26,6 @@ android {
         minSdkVersion buildConfig.minSdk
     }
 
-    lintOptions {
-        disable 'GradleCompatible'
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -39,6 +35,8 @@ android {
 dependencies {
     implementation project(":base")
     implementation "com.android.support:support-fragment:${versions.androidx.fragment}"
+    implementation 'com.jakewharton.timber:timber:4.7.0'
 
-    api 'com.jakewharton.timber:timber:4.7.0'
+    implementation "android.arch.core:runtime:${versions.androidx.core}"
+    implementation "android.arch.core:common:${versions.androidx.core}"
 }

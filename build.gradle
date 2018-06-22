@@ -21,23 +21,24 @@ buildscript {
             'androidx'       : [
                     'appcompat'        : '27.1.1',
                     'browser'          : '27.1.1',
-                    'constraint_layout': '1.1.1',
+                    'core'             : '1.1.1',
+                    'constraint_layout': '1.1.2',
                     'core_ktx'         : '0.3',
                     'fragment'         : '27.1.1',
                     'lifecycle'        : '1.1.1',
                     'paging'           : '1.0.0',
                     'palette'          : '27.1.1',
                     'recyclerview'     : '27.1.1',
-                    'room'             : '1.1.0',
+                    'room'             : '1.1.1',
                     'test_runner'      : '1.0.2',
                     'test_rules'       : '1.0.2',
             ],
-            'coroutines'     : '0.22.5',
+            'coroutines'     : '0.23.3',
             'dagger'         : '2.16',
-            'epoxy'          : '2.12.0',
+            'epoxy'          : '2.13.0',
             'espresso'       : '3.0.2',
             'glide'          : '4.7.1',
-            'kotlin'         : '1.2.41',
+            'kotlin'         : '1.2.50',
             'ktlint'         : '0.19.0',
             'mockito'        : '2.18.3',
             'material_design': '27.1.1',
@@ -67,7 +68,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:${versions.kotlin}"
 
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.3'
 
         classpath 'com.github.triplet.gradle:play-publisher:1.2.2'
 
@@ -77,7 +78,7 @@ buildscript {
 
 plugins {
     id "com.diffplug.gradle.spotless" version "3.13.0"
-    id 'com.github.ben-manes.versions' version "0.17.0"
+    id 'com.github.ben-manes.versions' version "0.20.0"
 }
 
 allprojects {
