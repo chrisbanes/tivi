@@ -39,6 +39,5 @@ android {
 dependencies {
     implementation project(":base")
     implementation "com.android.support:support-fragment:${versions.androidx.fragment}"
-
-    api 'com.jakewharton.timber:timber:4.7.0'
+    implementation 'com.jakewharton.timber:timber:4.7.0'
 }

@@ -29,10 +29,10 @@ import app.tivi.appinitializers.AppInitializers
 import app.tivi.appinitializers.ThreeTenBpInitializer
 import app.tivi.appinitializers.TimberInitializer
 import app.tivi.tasks.ShowTasksImpl
-import app.tivi.util.AndroidLogger
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
+import app.tivi.util.TimberLogger
 import dagger.Module
 import dagger.Provides
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -115,7 +115,7 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideLogger(): Logger = AndroidLogger
+    fun provideLogger(logger: TimberLogger): Logger = logger
 
     @Singleton
     @Provides
