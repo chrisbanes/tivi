@@ -17,6 +17,7 @@
 package app.tivi.interactors
 
 import app.tivi.data.daos.FollowedShowsDao
+import app.tivi.data.entities.PendingAction
 import app.tivi.extensions.parallelForEach
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.AppCoroutineDispatchers
@@ -43,8 +44,7 @@ class SyncAllFollowedShowsInteractor @Inject constructor(
 
         // Now iterate through the followed shows and update them
         val followedShows = followedShowsDao.entriesBlocking()
-        followedShows.parallelForEach {
-            syncFollowedShowInteractor(it.showId)
-        }
+        followedShows.filter { it.pendingAction != PendingAction.DELETE }
+                .parallelForEach { syncFollowedShowInteractor(it.showId) }
     }
 }
