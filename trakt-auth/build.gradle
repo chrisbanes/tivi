@@ -48,5 +48,7 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
 
     implementation "androidx.core:core-ktx:${versions.androidx.core_ktx}"
+
     api "net.openid:appauth:0.7.0"
+    implementation "com.android.support:customtabs:${versions.androidx.browser}"
 }
