@@ -30,16 +30,6 @@ abstract class JobsCreator {
 
     @Binds
     @IntoMap
-    @StringKey(AddToFollowedShows.TAG)
-    abstract fun bindAddToFollowedShows(job: AddToFollowedShows): Job
-
-    @Binds
-    @IntoMap
-    @StringKey(RemoveFromFollowedShows.TAG)
-    abstract fun bindRemoveFromFollowedShows(job: RemoveFromFollowedShows): Job
-
-    @Binds
-    @IntoMap
     @StringKey(SyncAllFollowedShows.TAG)
     abstract fun bindSyncAllFollowedShows(job: SyncAllFollowedShows): Job
 
