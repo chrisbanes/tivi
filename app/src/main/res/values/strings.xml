@@ -64,4 +64,6 @@
 
     <string name="episode_watches">Episode watches</string>
 
+    <string name="first_aired">First aired: %1$s</string>
+
 </resources>

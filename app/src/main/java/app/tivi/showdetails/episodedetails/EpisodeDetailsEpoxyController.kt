@@ -17,6 +17,7 @@
 package app.tivi.showdetails.episodedetails
 
 import app.tivi.R
+import app.tivi.epDetailsFirstAiredItem
 import app.tivi.epDetailsSummary
 import app.tivi.epDetailsWatchItem
 import app.tivi.header
@@ -37,17 +38,25 @@ class EpisodeDetailsEpoxyController(
             episode(viewState.episode)
             spanSizeOverride(TotalSpanOverride)
         }
+        epDetailsFirstAiredItem {
+            id("first_aired")
+            episode(viewState.episode)
+            dateTimeFormatter(viewState.dateTimeFormatter)
+            spanSizeOverride(TotalSpanOverride)
+        }
 
         if (viewState.watches.isNotEmpty()) {
             header {
                 id("watches_header")
                 title(R.string.episode_watches)
+                spanSizeOverride(TotalSpanOverride)
             }
             for (entry in viewState.watches) {
                 epDetailsWatchItem {
                     id("watch_${entry.id}")
                     dateTimeFormatter(viewState.dateTimeFormatter)
                     watch(entry)
+                    spanSizeOverride(TotalSpanOverride)
                 }
             }
         }
