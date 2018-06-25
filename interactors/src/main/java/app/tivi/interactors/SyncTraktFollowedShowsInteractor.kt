@@ -16,18 +16,19 @@
 
 package app.tivi.interactors
 
-import app.tivi.ShowFetcher
+import app.tivi.interactors.syncers.TraktFollowedShowsSyncer
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
-class RefreshShowDetailsInteractor @Inject constructor(
-    private val showFetcher: ShowFetcher,
-    dispatchers: AppCoroutineDispatchers
-) : Interactor<Long> {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
+class SyncTraktFollowedShowsInteractor @Inject constructor(
+    private val syncer: TraktFollowedShowsSyncer,
+    private val dispatchers: AppCoroutineDispatchers
+) : Interactor<Unit> {
+    override val dispatcher: CoroutineDispatcher
+        get() = dispatchers.io
 
-    override suspend operator fun invoke(param: Long) {
-        showFetcher.update(param)
+    override suspend fun invoke(param: Unit) {
+        syncer.sync()
     }
 }

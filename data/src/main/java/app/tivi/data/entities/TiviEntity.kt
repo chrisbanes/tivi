@@ -24,18 +24,18 @@ interface TiviEntity {
 
 interface TraktIdEntity {
     val traktId: Int?
-    val lastTraktUpdate: OffsetDateTime?
+    val lastTraktUpdate: OffsetDateTime
 
     fun needsUpdateFromTrakt(): Boolean {
-        return traktId != null && (lastTraktUpdate?.isBefore(OffsetDateTime.now().minusDays(1)) != false)
+        return traktId != null && lastTraktUpdate.isBefore(OffsetDateTime.now().minusDays(1))
     }
 }
 
 interface TmdbIdEntity {
     val tmdbId: Int?
-    val lastTmdbUpdate: OffsetDateTime?
+    val lastTmdbUpdate: OffsetDateTime
 
     fun needsUpdateFromTmdb(): Boolean {
-        return tmdbId != null && (lastTmdbUpdate?.isBefore(OffsetDateTime.now().minusDays(1)) != false)
+        return tmdbId != null && lastTmdbUpdate.isBefore(OffsetDateTime.now().minusDays(1))
     }
 }

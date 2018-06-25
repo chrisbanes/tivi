@@ -24,7 +24,7 @@ import javax.inject.Singleton
 class SeasonFetcherImpl @Inject constructor(
     private val traktSeasonFetcher: TraktSeasonFetcher
 ) : SeasonFetcher {
-    override suspend fun load(showId: Long) {
-        traktSeasonFetcher.updateSeasonData(showId)
+    override suspend fun update(showId: Long, forceRefresh: Boolean) {
+        traktSeasonFetcher.updateSeasonData(showId, forceRefresh)
     }
 }

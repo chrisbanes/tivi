@@ -21,6 +21,7 @@ import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.Season
+import app.tivi.data.entities.TiviShow
 import app.tivi.extensions.fetchBodyWithRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Seasons
@@ -39,38 +40,49 @@ class TraktSeasonFetcher @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val traktEpisodeFetcher: TraktEpisodeFetcher
 ) {
-    suspend fun updateSeasonData(showId: Long) {
+    suspend fun updateSeasonData(showId: Long, forceRefresh: Boolean = false) {
         val show = showDao.getShowWithId(showId)
                 ?: throw IllegalArgumentException("Show with id[$showId] does not exist")
 
-        val response = seasonsService.get().summary(show.traktId!!.toString(), Extended.FULLEPISODES)
-                .fetchBodyWithRetry()
+        if (forceRefresh || needUpdate(show)) {
+            val response = seasonsService.get().summary(show.traktId!!.toString(), Extended.FULLEPISODES)
+                    .fetchBodyWithRetry()
 
-        transactionRunner.runInTransaction {
-            response.forEach { traktSeason ->
-                // Upsert the season
-                val seasonId = upsertSeason(showId, traktSeason)
-                // Now upsert all the episodes
-                traktSeason.episodes?.forEach {
-                    traktEpisodeFetcher.upsertEpisode(seasonId, it)
+            transactionRunner.runInTransaction {
+                response.forEach { traktSeason ->
+                    // Upsert the season
+                    val seasonId = upsertSeason(showId, traktSeason)
+                    // Now upsert all the episodes
+                    traktSeason.episodes?.forEach {
+                        traktEpisodeFetcher.upsertEpisode(seasonId, it)
+                    }
                 }
+
+                // Update the last season update timestamp
+                showDao.getShowWithId(showId)
+                        ?.copy(lastSeasonsUpdate = OffsetDateTime.now())
+                        ?.also(showDao::update)
             }
         }
     }
 
+    private fun needUpdate(show: TiviShow): Boolean {
+        return show.lastSeasonsUpdate.isBefore(OffsetDateTime.now().minusDays(1))
+    }
+
     private fun upsertSeason(showId: Long, traktSeason: TraktSeason): Long {
         return (seasonDao.seasonWithSeasonTraktId(traktSeason.ids.trakt) ?: Season(showId = showId)).copy(
-            traktId = traktSeason.ids.trakt,
-            tmdbId = traktSeason.ids.tmdb,
-            number = traktSeason.number,
-            title = traktSeason.title,
-            summary = traktSeason.overview,
-            rating = traktSeason.rating?.toFloat(),
-            votes = traktSeason.votes,
-            episodeCount = traktSeason.episode_count,
-            airedEpisodes = traktSeason.aired_episodes,
-            network = traktSeason.network,
-            lastTraktUpdate = OffsetDateTime.now()
+                traktId = traktSeason.ids.trakt,
+                tmdbId = traktSeason.ids.tmdb,
+                number = traktSeason.number,
+                title = traktSeason.title,
+                summary = traktSeason.overview,
+                rating = traktSeason.rating?.toFloat(),
+                votes = traktSeason.votes,
+                episodeCount = traktSeason.episode_count,
+                airedEpisodes = traktSeason.aired_episodes,
+                network = traktSeason.network,
+                lastTraktUpdate = OffsetDateTime.now()
         ).let {
             entityInserter.insertOrUpdate(seasonDao, it)
         }

@@ -38,8 +38,8 @@ data class TiviShow(
     @ColumnInfo(name = "tmdb_id") override val tmdbId: Int? = null,
     @ColumnInfo(name = "tmdb_poster_path") val tmdbPosterPath: String? = null,
     @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null,
-    @ColumnInfo(name = "trakt_updated") override val lastTraktUpdate: OffsetDateTime? = null,
-    @ColumnInfo(name = "tmdb_updated") override val lastTmdbUpdate: OffsetDateTime? = null,
+    @ColumnInfo(name = "trakt_updated") override val lastTraktUpdate: OffsetDateTime = OffsetDateTime.MIN,
+    @ColumnInfo(name = "tmdb_updated") override val lastTmdbUpdate: OffsetDateTime = OffsetDateTime.MIN,
     @ColumnInfo(name = "overview") val summary: String? = null,
     @ColumnInfo(name = "homepage") val homepage: String? = null,
     @ColumnInfo(name = "rating") val rating: Float? = null,
@@ -47,7 +47,9 @@ data class TiviShow(
     @ColumnInfo(name = "country") val country: String? = null,
     @ColumnInfo(name = "network") val network: String? = null,
     @ColumnInfo(name = "runtime") val runtime: Int? = null,
-    @ColumnInfo(name = "genres") val _genres: String? = null
+    @ColumnInfo(name = "genres") val _genres: String? = null,
+    @ColumnInfo(name = "seasons_updated") val lastSeasonsUpdate: OffsetDateTime = OffsetDateTime.MIN,
+    @ColumnInfo(name = "watched_episodes_updated") val lastWatchedEpisodesUpdate: OffsetDateTime = OffsetDateTime.MIN
 ) : TiviEntity, TraktIdEntity, TmdbIdEntity {
     @Ignore constructor() : this(null)
 

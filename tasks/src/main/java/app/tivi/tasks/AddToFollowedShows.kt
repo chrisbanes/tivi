@@ -17,7 +17,6 @@
 package app.tivi.tasks
 
 import app.tivi.interactors.FollowShowInteractor
-import app.tivi.interactors.SyncShowWatchedEpisodesInteractor
 import app.tivi.util.Logger
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
@@ -27,10 +26,8 @@ import javax.inject.Inject
 
 class AddToFollowedShows @Inject constructor(
     private val followShow: FollowShowInteractor,
-    private val syncShowWatchedEpisodes: SyncShowWatchedEpisodesInteractor,
     private val logger: Logger
 ) : Job() {
-
     companion object {
         const val TAG = "myshows-add"
         private const val PARAM_SHOW_ID = "show-id"
@@ -50,7 +47,6 @@ class AddToFollowedShows @Inject constructor(
 
         return runBlocking {
             followShow(showId)
-            syncShowWatchedEpisodes(showId)
             Result.SUCCESS
         }
     }

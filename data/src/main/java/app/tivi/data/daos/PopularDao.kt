@@ -21,22 +21,22 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
 import app.tivi.data.entities.PopularEntry
-import app.tivi.data.entities.PopularListItem
+import app.tivi.data.entities.PopularEntryWithShow
 import io.reactivex.Flowable
 
 @Dao
-abstract class PopularDao : PaginatedEntryDao<PopularEntry, PopularListItem> {
+abstract class PopularDao : PaginatedEntryDao<PopularEntry, PopularEntryWithShow> {
     @Transaction
     @Query("SELECT * FROM popular_shows ORDER BY page, page_order")
-    abstract override fun entries(): Flowable<List<PopularListItem>>
+    abstract override fun entries(): Flowable<List<PopularEntryWithShow>>
 
     @Transaction
     @Query("SELECT * FROM popular_shows ORDER BY page, page_order")
-    abstract override fun entriesDataSource(): DataSource.Factory<Int, PopularListItem>
+    abstract override fun entriesDataSource(): DataSource.Factory<Int, PopularEntryWithShow>
 
     @Transaction
     @Query("SELECT * FROM popular_shows WHERE page = :page")
-    abstract override fun entriesPage(page: Int): Flowable<List<PopularListItem>>
+    abstract override fun entriesPage(page: Int): Flowable<List<PopularEntryWithShow>>
 
     @Query("DELETE FROM popular_shows WHERE page = :page")
     abstract override fun deletePage(page: Int)

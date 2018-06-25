@@ -19,6 +19,7 @@ package app.tivi.data.daos
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import app.tivi.data.entities.EpisodeWatchEntry
+import app.tivi.data.entities.PendingAction
 import io.reactivex.Flowable
 
 @Dao
@@ -36,15 +37,15 @@ abstract class EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry> {
     abstract fun entryWithTraktId(traktId: Long): EpisodeWatchEntry?
 
     fun entriesForShowIdWithNoPendingAction(showId: Long): List<EpisodeWatchEntry> {
-        return entriesForShowIdWithPendingAction(showId, EpisodeWatchEntry.PENDING_ACTION_NOTHING)
+        return entriesForShowIdWithPendingAction(showId, PendingAction.NOTHING.value)
     }
 
     fun entriesForShowIdWithSendPendingActions(showId: Long): List<EpisodeWatchEntry> {
-        return entriesForShowIdWithPendingAction(showId, EpisodeWatchEntry.PENDING_ACTION_UPLOAD)
+        return entriesForShowIdWithPendingAction(showId, PendingAction.UPLOAD.value)
     }
 
     fun entriesForShowIdWithDeletePendingActions(showId: Long): List<EpisodeWatchEntry> {
-        return entriesForShowIdWithPendingAction(showId, EpisodeWatchEntry.PENDING_ACTION_DELETE)
+        return entriesForShowIdWithPendingAction(showId, PendingAction.DELETE.value)
     }
 
     @Query("SELECT ew.* FROM episode_watch_entries AS ew" +
@@ -52,10 +53,10 @@ abstract class EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry> {
             " INNER JOIN seasons AS s ON eps.season_id = s.id" +
             " INNER JOIN shows ON s.show_id = shows.id" +
             " WHERE shows.id = :showId AND ew.pending_action = :pendingAction")
-    internal abstract fun entriesForShowIdWithPendingAction(showId: Long, pendingAction: Int): List<EpisodeWatchEntry>
+    internal abstract fun entriesForShowIdWithPendingAction(showId: Long, pendingAction: String): List<EpisodeWatchEntry>
 
     @Query("UPDATE episode_watch_entries SET pending_action = :pendingAction WHERE id IN (:ids)")
-    abstract fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: Int): Int
+    abstract fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: String): Int
 
     @Query("DELETE FROM episode_watch_entries WHERE id = :id")
     abstract fun deleteWithId(id: Long): Int

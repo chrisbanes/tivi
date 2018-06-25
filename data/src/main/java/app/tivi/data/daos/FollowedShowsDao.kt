@@ -21,31 +21,32 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
 import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.FollowedShowsListItem
+import app.tivi.data.entities.FollowedShowsEntryWithShow
+import app.tivi.data.entities.PendingAction
 import io.reactivex.Flowable
 
 @Dao
-abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowsListItem> {
+abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowsEntryWithShow> {
     @Transaction
     @Query("SELECT * FROM myshows_entries")
     abstract fun entriesBlocking(): List<FollowedShowEntry>
 
     @Transaction
     @Query("SELECT * FROM myshows_entries")
-    abstract override fun entries(): Flowable<List<FollowedShowsListItem>>
+    abstract override fun entries(): Flowable<List<FollowedShowsEntryWithShow>>
 
     @Transaction
     @Query("SELECT * FROM myshows_entries")
-    abstract override fun entriesDataSource(): DataSource.Factory<Int, FollowedShowsListItem>
+    abstract override fun entriesDataSource(): DataSource.Factory<Int, FollowedShowsEntryWithShow>
 
     @Query("DELETE FROM myshows_entries")
     abstract override fun deleteAll()
 
     @Query("SELECT * FROM myshows_entries WHERE id = :id")
-    abstract fun entryWithId(id: Long): FollowedShowsListItem?
+    abstract fun entryWithId(id: Long): FollowedShowsEntryWithShow?
 
     @Query("SELECT * FROM myshows_entries WHERE show_id = :showId")
-    abstract fun entryWithShowId(showId: Long): FollowedShowsListItem?
+    abstract fun entryWithShowId(showId: Long): FollowedShowEntry
 
     @Query("DELETE FROM myshows_entries WHERE show_id = :showId")
     abstract fun deleteWithShowId(showId: Long)
@@ -55,4 +56,19 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowsListI
 
     @Query("SELECT COUNT(*) FROM myshows_entries WHERE show_id = :showId")
     abstract fun entryCountWithShowId(showId: Long): Int
+
+    fun entriesWithNoPendingAction() = entriesWithPendingAction(PendingAction.NOTHING.value)
+
+    fun entriesWithSendPendingActions() = entriesWithPendingAction(PendingAction.UPLOAD.value)
+
+    fun entriesWithDeletePendingActions() = entriesWithPendingAction(PendingAction.DELETE.value)
+
+    @Query("SELECT * FROM myshows_entries WHERE pending_action = :pendingAction")
+    internal abstract fun entriesWithPendingAction(pendingAction: String): List<FollowedShowEntry>
+
+    @Query("UPDATE myshows_entries SET pending_action = :pendingAction WHERE id IN (:ids)")
+    abstract fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: String): Int
+
+    @Query("DELETE FROM myshows_entries WHERE id IN (:ids)")
+    abstract fun deleteWithIds(ids: List<Long>): Int
 }

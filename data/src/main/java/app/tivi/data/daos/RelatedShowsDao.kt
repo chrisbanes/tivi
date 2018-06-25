@@ -20,14 +20,14 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
 import app.tivi.data.entities.RelatedShowEntry
-import app.tivi.data.entities.RelatedShowsListItem
+import app.tivi.data.entities.RelatedShowsEntryWithShow
 import io.reactivex.Flowable
 
 @Dao
-abstract class RelatedShowsDao : PairEntryDao<RelatedShowEntry, RelatedShowsListItem> {
+abstract class RelatedShowsDao : PairEntryDao<RelatedShowEntry, RelatedShowsEntryWithShow> {
     @Transaction
     @Query("SELECT * FROM related_shows WHERE show_id = :showId ORDER BY order_index")
-    abstract override fun entries(showId: Long): Flowable<List<RelatedShowsListItem>>
+    abstract override fun entries(showId: Long): Flowable<List<RelatedShowsEntryWithShow>>
 
     @Query("DELETE FROM related_shows WHERE show_id = :showId")
     abstract override fun deleteWithShowId(showId: Long)

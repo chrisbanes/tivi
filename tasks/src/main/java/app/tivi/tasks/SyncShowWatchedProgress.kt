@@ -16,7 +16,7 @@
 
 package app.tivi.tasks
 
-import app.tivi.interactors.SyncShowWatchedEpisodesInteractor
+import app.tivi.interactors.SyncTraktFollowedShowWatchedProgressInteractor
 import app.tivi.util.Logger
 import com.evernote.android.job.Job
 import com.evernote.android.job.JobRequest
@@ -25,7 +25,7 @@ import kotlinx.coroutines.experimental.runBlocking
 import javax.inject.Inject
 
 class SyncShowWatchedProgress @Inject constructor(
-    private val syncShowWatchedEpisodes: SyncShowWatchedEpisodesInteractor,
+    private val syncTraktFollowedShowWatchedProgress: SyncTraktFollowedShowWatchedProgressInteractor,
     private val logger: Logger
 ) : Job() {
     companion object {
@@ -46,7 +46,7 @@ class SyncShowWatchedProgress @Inject constructor(
         logger.d("$TAG job running for show id: $showId")
 
         return runBlocking {
-            syncShowWatchedEpisodes(showId)
+            syncTraktFollowedShowWatchedProgress(showId)
             Result.SUCCESS
         }
     }

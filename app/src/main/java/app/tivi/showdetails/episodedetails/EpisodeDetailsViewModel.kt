@@ -21,10 +21,11 @@ import android.arch.lifecycle.MutableLiveData
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.entities.EpisodeWatchEntry
+import app.tivi.data.entities.PendingAction
 import app.tivi.datasources.trakt.EpisodeDetailsDataSource
 import app.tivi.datasources.trakt.EpisodeWatchesDataSource
-import app.tivi.interactors.RefreshEpisodeDetailsInteractor
-import app.tivi.interactors.SyncShowWatchedEpisodesInteractor
+import app.tivi.interactors.FetchEpisodeDetailsInteractor
+import app.tivi.interactors.SyncTraktFollowedShowWatchedProgressInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
@@ -32,14 +33,13 @@ import app.tivi.util.TiviViewModel
 import io.reactivex.Flowable
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
-import kotlinx.coroutines.experimental.withContext
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import javax.inject.Inject
 
 class EpisodeDetailsViewModel @Inject constructor(
     private val episodeDetailsDataSource: EpisodeDetailsDataSource,
-    private val episodeDetailsInteractor: RefreshEpisodeDetailsInteractor,
+    private val episodeDetailsInteractor: FetchEpisodeDetailsInteractor,
     private val episodeWatchesCall: EpisodeWatchesDataSource,
     private val tmdbManager: TmdbManager,
     private val logger: Logger,
@@ -47,7 +47,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,
     private val dispatchers: AppCoroutineDispatchers,
     private val dateTimeFormatter: DateTimeFormatter,
-    private val syncShowWatchedEpisodes: SyncShowWatchedEpisodesInteractor
+    private val syncTraktFollowedShowWatchedProgress: SyncTraktFollowedShowWatchedProgressInteractor
 ) : TiviViewModel() {
 
     var episodeId: Long? = null
@@ -95,34 +95,31 @@ class EpisodeDetailsViewModel @Inject constructor(
 
     fun markWatched() {
         val epId = episodeId!!
-        launchWithParent {
-            withContext(dispatchers.io) {
-                val entry = EpisodeWatchEntry(
-                        episodeId = episodeId!!,
-                        watchedAt = OffsetDateTime.now(),
-                        pendingAction = EpisodeWatchEntry.PENDING_ACTION_UPLOAD
-                )
-                episodeWatchEntryDao.insert(entry)
-            }
-            syncShowWatchedEpisodes(episodesDao.showIdForEpisodeId(epId))
+        launchWithParent(dispatchers.io) {
+            val entry = EpisodeWatchEntry(
+                    episodeId = episodeId!!,
+                    watchedAt = OffsetDateTime.now(),
+                    pendingAction = PendingAction.UPLOAD
+            )
+            episodeWatchEntryDao.insert(entry)
+
+            syncTraktFollowedShowWatchedProgress(episodesDao.showIdForEpisodeId(epId))
         }
     }
 
     fun markUnwatched() {
         val epId = episodeId!!
-        launchWithParent {
-            withContext(dispatchers.io) {
-                val entries = episodeWatchEntryDao.watchesForEpisode(epId)
-                entries.forEach {
-                    // We have a trakt id, so we need to do a sync
-                    if (it.pendingAction != EpisodeWatchEntry.PENDING_ACTION_DELETE) {
-                        // If it is not set to be deleted, update it now
-                        val copy = it.copy(pendingAction = EpisodeWatchEntry.PENDING_ACTION_DELETE)
-                        episodeWatchEntryDao.update(copy)
-                    }
+        launchWithParent(dispatchers.io) {
+            val entries = episodeWatchEntryDao.watchesForEpisode(epId)
+            entries.forEach {
+                // We have a trakt id, so we need to do a sync
+                if (it.pendingAction != PendingAction.DELETE) {
+                    // If it is not set to be deleted, update it now
+                    val copy = it.copy(pendingAction = PendingAction.DELETE)
+                    episodeWatchEntryDao.update(copy)
                 }
             }
-            syncShowWatchedEpisodes(episodesDao.showIdForEpisodeId(epId))
+            syncTraktFollowedShowWatchedProgress(episodesDao.showIdForEpisodeId(epId))
         }
     }
 }

@@ -19,7 +19,7 @@ package app.tivi.home.discover
 import android.view.View
 import app.tivi.R
 import app.tivi.data.Entry
-import app.tivi.data.entities.ListItem
+import app.tivi.data.entities.EntryWithShow
 import app.tivi.data.entities.PopularEntry
 import app.tivi.data.entities.TrendingEntry
 import app.tivi.emptyState
@@ -31,17 +31,17 @@ import com.airbnb.epoxy.Typed3EpoxyController
 
 class DiscoverEpoxyController(
     private val callbacks: Callbacks
-) : Typed3EpoxyController<List<ListItem<TrendingEntry>>, List<ListItem<PopularEntry>>, TmdbImageUrlProvider>() {
+) : Typed3EpoxyController<List<EntryWithShow<TrendingEntry>>, List<EntryWithShow<PopularEntry>>, TmdbImageUrlProvider>() {
 
     interface Callbacks {
-        fun onTrendingHeaderClicked(items: List<ListItem<TrendingEntry>>?)
-        fun onPopularHeaderClicked(items: List<ListItem<PopularEntry>>?)
-        fun onItemClicked(item: ListItem<out Entry>)
+        fun onTrendingHeaderClicked(items: List<EntryWithShow<TrendingEntry>>?)
+        fun onPopularHeaderClicked(items: List<EntryWithShow<PopularEntry>>?)
+        fun onItemClicked(item: EntryWithShow<out Entry>)
     }
 
     override fun buildModels(
-        trending: List<ListItem<TrendingEntry>>?,
-        popular: List<ListItem<PopularEntry>>?,
+        trending: List<EntryWithShow<TrendingEntry>>?,
+        popular: List<EntryWithShow<PopularEntry>>?,
         tmdbImageUrlProvider: TmdbImageUrlProvider?
     ) {
         header {
@@ -57,11 +57,11 @@ class DiscoverEpoxyController(
                 posterGridItem {
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
-                    posterPath(item.show?.tmdbPosterPath)
-                    title(item.show?.title)
+                    posterPath(item.show.tmdbPosterPath)
+                    title(item.show.title)
                     annotationLabel(item.entry?.watchers.toString())
                     annotationIcon(R.drawable.ic_eye_12dp)
-                    transitionName("trending_${item.show?.homepage}")
+                    transitionName("trending_${item.show.homepage}")
                     clickListener(View.OnClickListener {
                         callbacks.onItemClicked(item)
                     })
@@ -87,9 +87,9 @@ class DiscoverEpoxyController(
                 posterGridItem {
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
-                    posterPath(item.show?.tmdbPosterPath)
-                    title(item.show?.title)
-                    transitionName("popular_${item.show?.homepage}")
+                    posterPath(item.show.tmdbPosterPath)
+                    title(item.show.title)
+                    transitionName("popular_${item.show.homepage}")
                     clickListener(View.OnClickListener {
                         callbacks.onItemClicked(item)
                     })

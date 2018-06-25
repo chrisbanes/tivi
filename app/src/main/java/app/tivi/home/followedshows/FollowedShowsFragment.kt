@@ -21,13 +21,13 @@ import android.os.Bundle
 import android.view.View
 import app.tivi.R
 import app.tivi.SharedElementHelper
-import app.tivi.data.entities.FollowedShowsListItem
+import app.tivi.data.entities.FollowedShowsEntryWithShow
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.util.EntryGridFragment
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
 
-class FollowedShowsFragment : EntryGridFragment<FollowedShowsListItem, FollowedShowsViewModel>(FollowedShowsViewModel::class.java) {
+class FollowedShowsFragment : EntryGridFragment<FollowedShowsEntryWithShow, FollowedShowsViewModel>(FollowedShowsViewModel::class.java) {
 
     private lateinit var homeNavigator: HomeNavigator
 
@@ -47,7 +47,7 @@ class FollowedShowsFragment : EntryGridFragment<FollowedShowsListItem, FollowedS
         }
     }
 
-    override fun onItemClicked(item: FollowedShowsListItem) {
+    override fun onItemClicked(item: FollowedShowsEntryWithShow) {
         val sharedElements = SharedElementHelper()
         grid_recyclerview.findViewHolderForItemId(item.generateStableId())?.let {
             sharedElements.addSharedElement(it.itemView, "poster")

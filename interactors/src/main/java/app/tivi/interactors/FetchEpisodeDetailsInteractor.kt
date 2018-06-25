@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-package app.tivi.data.daos
+package app.tivi.interactors
 
-import app.tivi.data.PaginatedEntry
-import app.tivi.data.entities.EntryWithShow
-import io.reactivex.Flowable
+import app.tivi.EpisodeFetcher
+import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.experimental.CoroutineDispatcher
+import javax.inject.Inject
 
-interface PaginatedEntryDao<EC : PaginatedEntry, LI : EntryWithShow<EC>> : EntryDao<EC, LI> {
-    fun entriesPage(page: Int): Flowable<List<LI>>
-    fun deletePage(page: Int)
-    fun getLastPage(): Int
+class FetchEpisodeDetailsInteractor @Inject constructor(
+    private val episodeFetcher: EpisodeFetcher,
+    dispatchers: AppCoroutineDispatchers
+) : Interactor<Long> {
+    override val dispatcher: CoroutineDispatcher = dispatchers.io
+
+    override suspend operator fun invoke(param: Long) {
+        episodeFetcher.update(param, true)
+    }
 }

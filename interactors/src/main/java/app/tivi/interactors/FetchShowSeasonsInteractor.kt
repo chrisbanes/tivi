@@ -16,25 +16,18 @@
 
 package app.tivi.interactors
 
-import app.tivi.data.daos.FollowedShowsDao
+import app.tivi.SeasonFetcher
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
-import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
-class SyncShowWatchedEpisodesInteractor @Inject constructor(
-    private val syncer: TraktEpisodeWatchSyncer,
-    private val followedShowsDao: FollowedShowsDao,
-    private val dispatchers: AppCoroutineDispatchers
+class FetchShowSeasonsInteractor @Inject constructor(
+    private val seasonFetcher: SeasonFetcher,
+    dispatchers: AppCoroutineDispatchers
 ) : Interactor<Long> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(showId: Long) {
-        val followedEntry = withContext(dispatchers.io) {
-            followedShowsDao.entryWithShowId(showId)
-        } ?: throw IllegalArgumentException("Followed entry with showId: $showId does not exist")
-        val show = followedEntry.show!!
-
-        syncer.sync(show.id!!)
+    override suspend operator fun invoke(param: Long) {
+        seasonFetcher.update(param)
     }
 }

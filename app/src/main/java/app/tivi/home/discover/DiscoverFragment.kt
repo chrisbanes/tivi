@@ -25,7 +25,7 @@ import android.view.View
 import android.view.ViewGroup
 import app.tivi.R
 import app.tivi.data.Entry
-import app.tivi.data.entities.ListItem
+import app.tivi.data.entities.EntryWithShow
 import app.tivi.data.entities.PopularEntry
 import app.tivi.data.entities.TrendingEntry
 import app.tivi.extensions.observeK
@@ -46,16 +46,16 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
             ListItemSharedElementHelper(summary_rv)
         }
 
-        override fun onTrendingHeaderClicked(items: List<ListItem<TrendingEntry>>?) {
+        override fun onTrendingHeaderClicked(items: List<EntryWithShow<TrendingEntry>>?) {
             viewModel.onTrendingHeaderClicked(homeNavigator, listItemSharedElementHelper.createForItems(items))
         }
 
-        override fun onPopularHeaderClicked(items: List<ListItem<PopularEntry>>?) {
+        override fun onPopularHeaderClicked(items: List<EntryWithShow<PopularEntry>>?) {
             viewModel.onPopularHeaderClicked(homeNavigator, listItemSharedElementHelper.createForItems(items))
         }
 
-        override fun onItemClicked(item: ListItem<out Entry>) {
-            viewModel.onItemPostedClicked(homeNavigator, item.show!!,
+        override fun onItemClicked(item: EntryWithShow<out Entry>) {
+            viewModel.onItemPostedClicked(homeNavigator, item.show,
                     listItemSharedElementHelper.createForItem(item, "poster"))
         }
     })

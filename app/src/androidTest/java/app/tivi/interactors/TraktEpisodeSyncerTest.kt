@@ -18,6 +18,7 @@ package app.tivi.interactors
 
 import app.tivi.data.RoomTransactionRunner
 import app.tivi.data.daos.EpisodeWatchEntryDao
+import app.tivi.interactors.syncers.TraktEpisodeWatchSyncer
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.TimberLogger
 import app.tivi.utils.BaseDatabaseTest
@@ -31,7 +32,6 @@ import app.tivi.utils.insertSeason
 import app.tivi.utils.insertShow
 import app.tivi.utils.showId
 import app.tivi.utils.syncResponse
-import app.tivi.utils.testCoroutineDispatchers
 import app.tivi.utils.traktHistoryEntry1
 import app.tivi.utils.traktHistoryEntry2
 import com.uwetrottmann.trakt5.entities.SyncItems
@@ -74,7 +74,6 @@ class TraktEpisodeSyncerTest : BaseDatabaseTest() {
                 episodeWatchDao,
                 db.showDao(),
                 db.episodesDao(),
-                testCoroutineDispatchers,
                 Provider { userService },
                 Provider { syncService },
                 RoomTransactionRunner(db),

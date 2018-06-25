@@ -23,8 +23,8 @@ import app.tivi.datasources.trakt.PopularDataSource
 import app.tivi.datasources.trakt.TrendingDataSource
 import app.tivi.home.HomeFragmentViewModel
 import app.tivi.home.HomeNavigator
-import app.tivi.interactors.PopularShowsInteractor
-import app.tivi.interactors.TrendingShowsInteractor
+import app.tivi.interactors.FetchPopularShowsInteractor
+import app.tivi.interactors.FetchTrendingShowsInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktManager
 import app.tivi.util.AppRxSchedulers
@@ -37,9 +37,9 @@ import javax.inject.Inject
 class DiscoverViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     popularDataSource: PopularDataSource,
-    private val popularShowsInteractor: PopularShowsInteractor,
+    private val fetchPopularShowsInteractor: FetchPopularShowsInteractor,
     trendingDataSource: TrendingDataSource,
-    private val trendingShowsInteractor: TrendingShowsInteractor,
+    private val trendingShowsInteractor: FetchTrendingShowsInteractor,
     traktManager: TraktManager,
     tmdbManager: TmdbManager,
     private val networkDetector: NetworkDetector,
@@ -66,7 +66,7 @@ class DiscoverViewModel @Inject constructor(
     }
 
     private fun onRefresh() {
-        launchInteractor(popularShowsInteractor.asRefreshInteractor(), Unit)
+        launchInteractor(fetchPopularShowsInteractor.asRefreshInteractor(), Unit)
         launchInteractor(trendingShowsInteractor.asRefreshInteractor(), Unit)
     }
 

@@ -17,25 +17,21 @@
 package app.tivi.interactors
 
 import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.PendingAction
+import app.tivi.interactors.syncers.TraktEpisodeWatchSyncer
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
-class FollowShowInteractor @Inject constructor(
-    dispatchers: AppCoroutineDispatchers,
+class SyncTraktFollowedShowWatchedProgressInteractor @Inject constructor(
+    private val syncer: TraktEpisodeWatchSyncer,
     private val followedShowsDao: FollowedShowsDao,
-    private val syncFollowedShowInteractor: SyncFollowedShowInteractor,
-    private val syncTraktFollowedShowsInteractor: SyncTraktFollowedShowsInteractor
+    dispatchers: AppCoroutineDispatchers
 ) : Interactor<Long> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(param: Long) {
-        followedShowsDao.insert(FollowedShowEntry(showId = param, pendingAction = PendingAction.UPLOAD))
-        // Now refresh the show
-        syncFollowedShowInteractor(param)
-        // Now sync followed shows
-        syncTraktFollowedShowsInteractor(Unit)
+    override suspend operator fun invoke(showId: Long) {
+        val entry = followedShowsDao.entryWithShowId(showId)
+                ?: throw IllegalArgumentException("Followed entry with showId: $showId does not exist")
+        syncer.sync(entry.showId)
     }
 }

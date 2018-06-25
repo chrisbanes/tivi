@@ -18,6 +18,7 @@ package app.tivi.interactors
 
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.daos.SeasonsDao
+import app.tivi.data.entities.PendingAction
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
@@ -25,13 +26,19 @@ import javax.inject.Inject
 class UnfollowShowInteractor @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val seasonsDao: SeasonsDao,
-    private val followedShowsDao: FollowedShowsDao
+    private val followedShowsDao: FollowedShowsDao,
+    private val syncTraktFollowedShowsInteractor: SyncTraktFollowedShowsInteractor
 ) : Interactor<Long> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend operator fun invoke(showId: Long) {
-        followedShowsDao.deleteWithShowId(showId)
+        // Update the followed show to be deleted
+        followedShowsDao.entryWithShowId(showId)
+                .copy(pendingAction = PendingAction.DELETE)
+                .also(followedShowsDao::update)
         // Now remove all season/episode data from database
         seasonsDao.deleteSeasonsForShowId(showId)
+        // Now sync followed shows
+        syncTraktFollowedShowsInteractor(Unit)
     }
 }

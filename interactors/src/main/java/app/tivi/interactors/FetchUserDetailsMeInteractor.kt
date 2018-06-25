@@ -28,7 +28,7 @@ import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 import javax.inject.Provider
 
-class UserDetailsMeInteractor @Inject constructor(
+class FetchUserDetailsMeInteractor @Inject constructor(
     private val dao: UserDao,
     private val usersService: Provider<Users>,
     private val dispatchers: AppCoroutineDispatchers,

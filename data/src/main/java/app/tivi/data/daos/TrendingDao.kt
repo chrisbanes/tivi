@@ -21,22 +21,22 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
 import app.tivi.data.entities.TrendingEntry
-import app.tivi.data.entities.TrendingListItem
+import app.tivi.data.entities.TrendingEntryWithShow
 import io.reactivex.Flowable
 
 @Dao
-abstract class TrendingDao : PaginatedEntryDao<TrendingEntry, TrendingListItem> {
+abstract class TrendingDao : PaginatedEntryDao<TrendingEntry, TrendingEntryWithShow> {
     @Transaction
     @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC, id ASC")
-    abstract override fun entries(): Flowable<List<TrendingListItem>>
+    abstract override fun entries(): Flowable<List<TrendingEntryWithShow>>
 
     @Transaction
     @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC, id ASC")
-    abstract override fun entriesDataSource(): DataSource.Factory<Int, TrendingListItem>
+    abstract override fun entriesDataSource(): DataSource.Factory<Int, TrendingEntryWithShow>
 
     @Transaction
     @Query("SELECT * FROM trending_shows WHERE page = :page ORDER BY watchers DESC, id ASC")
-    abstract override fun entriesPage(page: Int): Flowable<List<TrendingListItem>>
+    abstract override fun entriesPage(page: Int): Flowable<List<TrendingEntryWithShow>>
 
     @Query("DELETE FROM trending_shows WHERE page = :page")
     abstract override fun deletePage(page: Int)

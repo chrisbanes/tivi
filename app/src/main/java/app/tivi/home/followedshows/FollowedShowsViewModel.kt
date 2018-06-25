@@ -17,7 +17,7 @@
 package app.tivi.home.followedshows
 
 import app.tivi.SharedElementHelper
-import app.tivi.data.entities.FollowedShowsListItem
+import app.tivi.data.entities.FollowedShowsEntryWithShow
 import app.tivi.datasources.trakt.FollowedShowsDataSource
 import app.tivi.home.HomeNavigator
 import app.tivi.interactors.emptyInteractor
@@ -36,7 +36,7 @@ class FollowedShowsViewModel @Inject constructor(
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector,
     logger: Logger
-) : EntryViewModel<FollowedShowsListItem>(
+) : EntryViewModel<FollowedShowsEntryWithShow>(
         schedulers,
         dispatchers,
         dataSource,
@@ -50,7 +50,7 @@ class FollowedShowsViewModel @Inject constructor(
         navigator.onUpClicked()
     }
 
-    fun onItemClicked(item: FollowedShowsListItem, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
-        navigator.showShowDetails(item.show!!, sharedElements)
+    fun onItemClicked(item: FollowedShowsEntryWithShow, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
+        navigator.showShowDetails(item.show, sharedElements)
     }
 }

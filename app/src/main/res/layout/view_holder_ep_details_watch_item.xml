@@ -20,8 +20,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <import type="app.tivi.data.entities.EpisodeWatchEntry" />
+        <import type="app.tivi.data.entities.PendingAction" />
 
         <variable
             name="watch"
@@ -60,14 +60,14 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/watch_ic_watch"
             app:layout_constraintTop_toTopOf="parent"
-            app:visible="@{watch.pendingAction != EpisodeWatchEntry.PENDING_ACTION_NOTHING}" />
+            app:visible="@{watch.pendingAction != PendingAction.NOTHING}" />
 
         <ImageView
             android:id="@+id/watch_ic_watch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:src="@{watch.pendingAction != EpisodeWatchEntry.PENDING_ACTION_DELETE ? @drawable/ic_eye_24dp : @drawable/ic_eye_off_24dp}"
+            android:src="@{watch.pendingAction != PendingAction.DELETE ? @drawable/ic_eye_24dp : @drawable/ic_eye_off_24dp}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

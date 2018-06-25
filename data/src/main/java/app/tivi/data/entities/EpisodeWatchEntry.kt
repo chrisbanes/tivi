@@ -43,11 +43,5 @@ data class EpisodeWatchEntry(
     @ColumnInfo(name = "episode_id") val episodeId: Long,
     @ColumnInfo(name = "trakt_id") val traktId: Long? = null,
     @ColumnInfo(name = "watched_at") val watchedAt: OffsetDateTime,
-    @ColumnInfo(name = "pending_action") val pendingAction: Int = PENDING_ACTION_NOTHING
-) : TiviEntity {
-    companion object {
-        const val PENDING_ACTION_NOTHING = 0
-        const val PENDING_ACTION_UPLOAD = 1
-        const val PENDING_ACTION_DELETE = 2
-    }
-}
+    @ColumnInfo(name = "pending_action") val pendingAction: PendingAction = PendingAction.NOTHING
+) : TiviEntity

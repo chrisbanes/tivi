@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package app.tivi.interactors
+package app.tivi.interactors.syncers
 
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.EpisodeWatchEntry
+import app.tivi.data.entities.PendingAction
 import app.tivi.data.sync.syncerForEntity
 import app.tivi.extensions.fetchBody
 import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.trakt.TraktAuthState
-import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import com.uwetrottmann.trakt5.entities.EpisodeIds
 import com.uwetrottmann.trakt5.entities.HistoryEntry
@@ -36,7 +36,7 @@ import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.enums.HistoryType
 import com.uwetrottmann.trakt5.services.Sync
 import com.uwetrottmann.trakt5.services.Users
-import kotlinx.coroutines.experimental.withContext
+import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -44,7 +44,6 @@ class TraktEpisodeWatchSyncer @Inject constructor(
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,
     private val showDao: TiviShowDao,
     private val episodesDao: EpisodesDao,
-    private val dispatchers: AppCoroutineDispatchers,
     private val usersService: Provider<Users>,
     private val syncService: Provider<Sync>,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
@@ -59,17 +58,24 @@ class TraktEpisodeWatchSyncer @Inject constructor(
             logger
     )
 
-    suspend fun sync(showId: Long) {
+    suspend fun sync(showId: Long, forceSync: Boolean = false) {
         processPendingDeleteWatches(showId)
         processPendingSendWatches(showId)
-        refreshWatchesFromTrakt(showId)
+
+        val show = showDao.getShowWithId(showId)!!
+        if (forceSync || show.lastWatchedEpisodesUpdate.isBefore(OffsetDateTime.now().minusHours(1))) {
+            refreshWatchesFromTrakt(show.id!!, show.traktId!!)
+
+            // Now update timestamp
+            showDao.getShowWithId(showId)
+                    ?.copy(lastWatchedEpisodesUpdate = OffsetDateTime.now())
+                    ?.also(showDao::update)
+        }
     }
 
-    suspend fun processPendingSendWatches(showId: Long) {
-        val sendActions = withContext(dispatchers.io) {
-            episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId)
-                    .map { it to episodesDao.episodeWithId(it.episodeId)!! }
-        }
+    fun processPendingSendWatches(showId: Long) {
+        val sendActions = episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId)
+                .map { it to episodesDao.episodeWithId(it.episodeId)!! }
 
         if (sendActions.isNotEmpty()) {
             val items = SyncItems()
@@ -81,29 +87,24 @@ class TraktEpisodeWatchSyncer @Inject constructor(
             }
 
             if (traktAuthState.get() == TraktAuthState.LOGGED_IN) {
-                val response = withContext(dispatchers.io) {
-                    syncService.get().addItemsToWatchedHistory(items).fetchBody()
-                }
+                val response = syncService.get().addItemsToWatchedHistory(items).fetchBody()
 
                 if (response.added.episodes != sendActions.size) {
                     // TODO Something has gone wrong here, lets check the not found list
                 }
             }
 
-            // Now update the io
-            withContext(dispatchers.io) {
-                episodeWatchEntryDao.updateEntriesToPendingAction(
-                        sendActions.mapNotNull { it.first.id },
-                        EpisodeWatchEntry.PENDING_ACTION_NOTHING
-                )
-            }
+            // Now update the database
+            episodeWatchEntryDao.updateEntriesToPendingAction(
+                    sendActions.mapNotNull { it.first.id },
+                    PendingAction.NOTHING.value
+            )
         }
     }
 
-    suspend fun processPendingDeleteWatches(showId: Long) {
-        val deleteActions = withContext(dispatchers.io) {
-            episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId)
-        }
+    fun processPendingDeleteWatches(showId: Long) {
+        val deleteActions = episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId)
+
         if (deleteActions.isNotEmpty()) {
             val deleteIds = deleteActions.mapNotNull { it.traktId }
 
@@ -111,11 +112,10 @@ class TraktEpisodeWatchSyncer @Inject constructor(
                 logger.d("Deleting watches from Trakt: $deleteIds")
 
                 if (traktAuthState.get() == TraktAuthState.LOGGED_IN) {
-                    val response = withContext(dispatchers.io) {
-                        val items = SyncItems()
-                        items.ids = deleteIds
-                        syncService.get().deleteItemsFromWatchedHistory(items).fetchBody()
-                    }
+                    val items = SyncItems()
+                    items.ids = deleteIds
+
+                    val response = syncService.get().deleteItemsFromWatchedHistory(items).fetchBody()
 
                     logger.d("Response from deleting watches from Trakt: $response")
 
@@ -125,39 +125,29 @@ class TraktEpisodeWatchSyncer @Inject constructor(
                 }
             }
 
-            // Now update the io
-            withContext(dispatchers.io) {
-                episodeWatchEntryDao.deleteWithIds(deleteActions.mapNotNull { it.id })
-            }
+            // Now update the database
+            episodeWatchEntryDao.deleteWithIds(deleteActions.mapNotNull { it.id })
         }
     }
 
-    suspend fun refreshWatchesFromTrakt(showId: Long) {
+    private suspend fun refreshWatchesFromTrakt(showId: Long, traktId: Int) {
         if (traktAuthState.get() != TraktAuthState.LOGGED_IN) {
             logger.i("Not logged in. Can't refreshWatchesFromTrakt()")
             return
         }
-
-        val show = withContext(dispatchers.io) {
-            showDao.getShowWithId(showId)!!
-        }
         // Fetch watched progress for show and filter out watches
-        val watchedProgress = withContext(dispatchers.io) {
-            // TODO use start and end dates
-            usersService.get().history(UserSlug.ME, HistoryType.SHOWS, show.traktId!!,
-                    0, 10000, Extended.NOSEASONS, null, null).fetchBodyWithRetry()
-        }.filter { it.type == "episode" }
-
+        val watchedProgress = usersService.get().history(UserSlug.ME, HistoryType.SHOWS, traktId,
+                0, 10000, Extended.NOSEASONS, null, null)
+                .fetchBodyWithRetry()
+                .filter { it.type == "episode" }
         // and sync the result
         syncWatchesFromTrakt(showId, watchedProgress)
     }
 
-    suspend fun syncWatchesFromTrakt(showId: Long, watches: List<HistoryEntry>) {
-        withContext(dispatchers.io) {
-            databaseTransactionRunner.runInTransaction {
-                val currentWatches = episodeWatchEntryDao.entriesForShowIdWithNoPendingAction(showId)
-                watchSyncer.sync(currentWatches, watches)
-            }
+    fun syncWatchesFromTrakt(showId: Long, watches: List<HistoryEntry>) {
+        databaseTransactionRunner.runInTransaction {
+            val currentWatches = episodeWatchEntryDao.entriesForShowIdWithNoPendingAction(showId)
+            watchSyncer.sync(currentWatches, watches)
         }
     }
 
@@ -170,8 +160,7 @@ class TraktEpisodeWatchSyncer @Inject constructor(
                 id = dbId,
                 episodeId = episode.id!!,
                 traktId = historyEntry.id,
-                watchedAt = historyEntry.watched_at,
-                pendingAction = EpisodeWatchEntry.PENDING_ACTION_NOTHING
+                watchedAt = historyEntry.watched_at
         )
     }
 }

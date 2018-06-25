@@ -18,13 +18,13 @@ package app.tivi.data.daos
 
 import android.arch.paging.DataSource
 import app.tivi.data.Entry
-import app.tivi.data.entities.ListItem
+import app.tivi.data.entities.EntryWithShow
 import io.reactivex.Flowable
 
 /**
  * This interface represents a DAO which contains entities which are part of a single collective list.
  */
-interface EntryDao<EC : Entry, LI : ListItem<EC>> : EntityDao<EC> {
+interface EntryDao<EC : Entry, LI : EntryWithShow<EC>> : EntityDao<EC> {
     fun entries(): Flowable<List<LI>>
     fun entriesDataSource(): DataSource.Factory<Int, LI>
     fun deleteAll()

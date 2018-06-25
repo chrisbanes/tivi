@@ -17,10 +17,10 @@
 package app.tivi.home.watched
 
 import app.tivi.SharedElementHelper
-import app.tivi.data.entities.WatchedShowListItem
+import app.tivi.data.entities.WatchedShowEntryWithShow
 import app.tivi.datasources.trakt.WatchedShowsDataSource
 import app.tivi.home.HomeNavigator
-import app.tivi.interactors.RefreshWatchedShowsInteractor
+import app.tivi.interactors.FetchWatchedShowsInteractor
 import app.tivi.interactors.emptyInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
@@ -34,11 +34,11 @@ class WatchedShowsViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     dispatchers: AppCoroutineDispatchers,
     dataSource: WatchedShowsDataSource,
-    interactor: RefreshWatchedShowsInteractor,
+    interactor: FetchWatchedShowsInteractor,
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector,
     logger: Logger
-) : EntryViewModel<WatchedShowListItem>(
+) : EntryViewModel<WatchedShowEntryWithShow>(
         schedulers,
         dispatchers,
         dataSource,
@@ -52,7 +52,7 @@ class WatchedShowsViewModel @Inject constructor(
         navigator.onUpClicked()
     }
 
-    fun onItemClicked(item: WatchedShowListItem, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
-        navigator.showShowDetails(item.show!!, sharedElements)
+    fun onItemClicked(item: WatchedShowEntryWithShow, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
+        navigator.showShowDetails(item.show, sharedElements)
     }
 }

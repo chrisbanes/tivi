@@ -16,18 +16,18 @@
 
 package app.tivi.interactors
 
-import app.tivi.SeasonFetcher
+import app.tivi.ShowFetcher
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
-class RefreshShowSeasonsInteractor @Inject constructor(
-    private val seasonFetcher: SeasonFetcher,
+class FetchShowDetailsInteractor @Inject constructor(
+    private val showFetcher: ShowFetcher,
     dispatchers: AppCoroutineDispatchers
 ) : Interactor<Long> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend operator fun invoke(param: Long) {
-        seasonFetcher.load(param)
+        showFetcher.update(param)
     }
 }

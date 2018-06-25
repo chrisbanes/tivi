@@ -16,35 +16,39 @@
 
 package app.tivi.interactors
 
+import app.tivi.SeasonFetcher
+import app.tivi.ShowFetcher
 import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.entities.PendingAction
-import app.tivi.extensions.parallelForEach
+import app.tivi.interactors.syncers.TraktEpisodeWatchSyncer
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 import javax.inject.Provider
 
-class SyncAllFollowedShowsInteractor @Inject constructor(
+class SyncFollowedShowInteractor @Inject constructor(
     private val followedShowsDao: FollowedShowsDao,
     dispatchers: AppCoroutineDispatchers,
-    private val loggedIn: Provider<TraktAuthState>,
-    private val syncTraktFollowedShowsInteractor: SyncTraktFollowedShowsInteractor,
-    private val syncFollowedShowInteractor: SyncFollowedShowInteractor
-) : Interactor<Unit> {
+    private val traktEpisodeWatchedSyncer: TraktEpisodeWatchSyncer,
+    private val showFetcher: ShowFetcher,
+    private val seasonFetcher: SeasonFetcher,
+    private val loggedIn: Provider<TraktAuthState>
+) : Interactor<Long> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(param: Unit) {
+    override suspend operator fun invoke(param: Long) {
+        val entry = followedShowsDao.entryWithShowId(param)
+                ?: throw IllegalArgumentException("Followed entry with showId: $param does not exist")
+
         val authed = loggedIn.get() == TraktAuthState.LOGGED_IN
 
+        // First update the show details
+        showFetcher.update(entry.showId, false)
+        // Then update the seasons/episodes
+        seasonFetcher.update(entry.showId, false)
+        // Finally update any watched progress
         if (authed) {
-            // First sync the followed shows to/from Trakt
-            syncTraktFollowedShowsInteractor(Unit)
+            traktEpisodeWatchedSyncer.sync(entry.showId, false)
         }
-
-        // Now iterate through the followed shows and update them
-        val followedShows = followedShowsDao.entriesBlocking()
-        followedShows.filter { it.pendingAction != PendingAction.DELETE }
-                .parallelForEach { syncFollowedShowInteractor(it.showId) }
     }
 }

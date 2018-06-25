@@ -51,7 +51,7 @@ data class Episode(
     @ColumnInfo(name = "votes") val votes: Int? = null,
     @ColumnInfo(name = "tmdb_poster_path") val tmdbPosterPath: String? = null,
     @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null,
-    @ColumnInfo(name = "trakt_updated") override val lastTraktUpdate: OffsetDateTime? = null,
-    @ColumnInfo(name = "tmdb_updated") override val lastTmdbUpdate: OffsetDateTime? = null,
-    @ColumnInfo(name = "last_watched_at") val lastWatched: OffsetDateTime? = null
+    @ColumnInfo(name = "trakt_updated") override val lastTraktUpdate: OffsetDateTime = OffsetDateTime.MIN,
+    @ColumnInfo(name = "tmdb_updated") override val lastTmdbUpdate: OffsetDateTime = OffsetDateTime.MIN,
+    @ColumnInfo(name = "last_watched_at") val lastWatched: OffsetDateTime = OffsetDateTime.MIN
 ) : TiviEntity, TraktIdEntity, TmdbIdEntity

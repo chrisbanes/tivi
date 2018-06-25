@@ -23,7 +23,8 @@ import app.tivi.datasources.trakt.FollowedShowsDataSource
 import app.tivi.datasources.trakt.WatchedShowsDataSource
 import app.tivi.home.HomeFragmentViewModel
 import app.tivi.home.HomeNavigator
-import app.tivi.interactors.RefreshWatchedShowsInteractor
+import app.tivi.interactors.FetchWatchedShowsInteractor
+import app.tivi.interactors.SyncAllFollowedShowsInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
@@ -38,8 +39,9 @@ import javax.inject.Inject
 class LibraryViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     watchedShowsDataSource: WatchedShowsDataSource,
-    private val watchedShowsInteractor: RefreshWatchedShowsInteractor,
+    private val watchedShowsInteractor: FetchWatchedShowsInteractor,
     followedDataSource: FollowedShowsDataSource,
+    private val followedShowsInteractor: SyncAllFollowedShowsInteractor,
     private val traktManager: TraktManager,
     tmdbManager: TmdbManager,
     private val networkDetector: NetworkDetector,
@@ -67,11 +69,8 @@ class LibraryViewModel @Inject constructor(
     }
 
     private fun onRefresh() {
-        refreshWatched()
-    }
-
-    private fun refreshWatched() {
-        launchInteractor(watchedShowsInteractor, Unit)
+        launchInteractor(watchedShowsInteractor)
+        launchInteractor(followedShowsInteractor)
     }
 
     fun onWatchedHeaderClicked(navigator: HomeNavigator, sharedElements: SharedElementHelper) {
