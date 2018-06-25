@@ -40,9 +40,11 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.rx2.asCoroutineDispatcher
+import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
 import java.io.File
 import java.text.SimpleDateFormat
+import java.util.Locale
 import javax.inject.Named
 import javax.inject.Singleton
 import android.text.format.DateFormat as AndroidDateFormat
@@ -123,5 +125,7 @@ class AppModule {
         val dateF = AndroidDateFormat.getMediumDateFormat(application) as SimpleDateFormat
         val timeF = AndroidDateFormat.getTimeFormat(application) as SimpleDateFormat
         return DateTimeFormatter.ofPattern("${dateF.toPattern()} ${timeF.toPattern()}")
+                .withLocale(Locale.getDefault())
+                .withZone(ZoneId.systemDefault())
     }
 }
