@@ -22,6 +22,7 @@ class ShowTasksImpl : ShowTasks {
     override fun syncShowWatchedEpisodes(showId: Long) {
         SyncShowWatchedProgress.buildRequest(showId)
                 .startNow()
+                .setUpdateCurrent(true)
                 .build()
                 .scheduleAsync()
     }
@@ -29,6 +30,7 @@ class ShowTasksImpl : ShowTasks {
     override fun syncFollowedShows() {
         SyncAllFollowedShows.buildRequest()
                 .startNow()
+                .setUpdateCurrent(true)
                 .build()
                 .scheduleAsync()
     }
