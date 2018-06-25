@@ -46,7 +46,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowsEntry
     abstract fun entryWithId(id: Long): FollowedShowsEntryWithShow?
 
     @Query("SELECT * FROM myshows_entries WHERE show_id = :showId")
-    abstract fun entryWithShowId(showId: Long): FollowedShowEntry?
+    abstract fun entryWithShowId(showId: Long): FollowedShowEntry
 
     @Query("DELETE FROM myshows_entries WHERE show_id = :showId")
     abstract fun deleteWithShowId(showId: Long)

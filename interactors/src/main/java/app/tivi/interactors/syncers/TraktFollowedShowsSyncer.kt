@@ -38,7 +38,7 @@ import com.uwetrottmann.trakt5.services.Users
 import javax.inject.Inject
 import javax.inject.Provider
 
-class TraktFollowedShowsSyncer @Inject constructor(
+open class TraktFollowedShowsSyncer @Inject constructor(
     private val dao: FollowedShowsDao,
     private val showDao: TiviShowDao,
     private val usersService: Provider<Users>,
@@ -99,7 +99,6 @@ class TraktFollowedShowsSyncer @Inject constructor(
                 items.shows = deleteActions.map(this::mapToSyncShow)
 
                 val response = usersService.get().deleteListItems(UserSlug.ME, listId.toString(), items).fetchBody()
-
 
                 logger.d("Response from deleting items from Trakt: $response")
 

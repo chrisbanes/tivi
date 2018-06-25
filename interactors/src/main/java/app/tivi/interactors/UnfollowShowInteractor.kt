@@ -34,8 +34,8 @@ class UnfollowShowInteractor @Inject constructor(
     override suspend operator fun invoke(showId: Long) {
         // Update the followed show to be deleted
         followedShowsDao.entryWithShowId(showId)
-                ?.copy(pendingAction = PendingAction.DELETE)
-                ?.also(followedShowsDao::update)
+                .copy(pendingAction = PendingAction.DELETE)
+                .also(followedShowsDao::update)
         // Now remove all season/episode data from database
         seasonsDao.deleteSeasonsForShowId(showId)
         // Now sync followed shows

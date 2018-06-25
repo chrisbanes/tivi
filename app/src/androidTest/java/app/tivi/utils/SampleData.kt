@@ -19,6 +19,7 @@ package app.tivi.utils
 import app.tivi.data.TiviDatabase
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
+import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
@@ -85,3 +86,10 @@ val episodeWatch2 = episodeWatch1.copy(id = episodeWatch2Id, traktId = 4385783)
 
 val episodeWatch2PendingSend = episodeWatch2.copy(pendingAction = PendingAction.UPLOAD)
 val episodeWatch2PendingDelete = episodeWatch2.copy(pendingAction = PendingAction.DELETE)
+
+fun insertFollowedShow(db: TiviDatabase) = db.followedShowsDao().insert(followedShow)
+
+const val followedShowId = 1L
+val followedShow = FollowedShowEntry(followedShowId, showId)
+val followedShowPendingDelete = followedShow.copy(pendingAction = PendingAction.DELETE)
+val followedShowPendingUpload = followedShow.copy(pendingAction = PendingAction.UPLOAD)
