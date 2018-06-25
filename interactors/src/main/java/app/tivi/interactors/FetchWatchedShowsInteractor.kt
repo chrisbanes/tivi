@@ -53,11 +53,9 @@ class FetchWatchedShowsInteractor @Inject constructor(
         }
 
         // Now save it to the database
-        withContext(dispatchers.io) {
-            databaseTransactionRunner.runInTransaction {
-                watchShowDao.deleteAll()
-                watchShowDao.insertAll(shows)
-            }
+        databaseTransactionRunner.runInTransaction {
+            watchShowDao.deleteAll()
+            watchShowDao.insertAll(shows)
         }
 
         shows.parallelForEach {

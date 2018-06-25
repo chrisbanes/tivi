@@ -96,31 +96,28 @@ class EpisodeDetailsViewModel @Inject constructor(
 
     fun markWatched() {
         val epId = episodeId!!
-        launchWithParent {
-            withContext(dispatchers.io) {
-                val entry = EpisodeWatchEntry(
-                        episodeId = episodeId!!,
-                        watchedAt = OffsetDateTime.now(),
-                        pendingAction = PendingAction.UPLOAD
-                )
-                episodeWatchEntryDao.insert(entry)
-            }
+        launchWithParent(dispatchers.io) {
+            val entry = EpisodeWatchEntry(
+                    episodeId = episodeId!!,
+                    watchedAt = OffsetDateTime.now(),
+                    pendingAction = PendingAction.UPLOAD
+            )
+            episodeWatchEntryDao.insert(entry)
+
             syncTraktFollowedShowWatchedProgress(episodesDao.showIdForEpisodeId(epId))
         }
     }
 
     fun markUnwatched() {
         val epId = episodeId!!
-        launchWithParent {
-            withContext(dispatchers.io) {
-                val entries = episodeWatchEntryDao.watchesForEpisode(epId)
-                entries.forEach {
-                    // We have a trakt id, so we need to do a sync
-                    if (it.pendingAction != PendingAction.DELETE) {
-                        // If it is not set to be deleted, update it now
-                        val copy = it.copy(pendingAction = PendingAction.DELETE)
-                        episodeWatchEntryDao.update(copy)
-                    }
+        launchWithParent(dispatchers.io) {
+            val entries = episodeWatchEntryDao.watchesForEpisode(epId)
+            entries.forEach {
+                // We have a trakt id, so we need to do a sync
+                if (it.pendingAction != PendingAction.DELETE) {
+                    // If it is not set to be deleted, update it now
+                    val copy = it.copy(pendingAction = PendingAction.DELETE)
+                    episodeWatchEntryDao.update(copy)
                 }
             }
             syncTraktFollowedShowWatchedProgress(episodesDao.showIdForEpisodeId(epId))

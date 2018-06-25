@@ -27,7 +27,6 @@ import app.tivi.extensions.fetchBody
 import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.extensions.parallelForEach
 import app.tivi.trakt.TraktAuthState
-import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.entities.ShowIds
@@ -36,14 +35,12 @@ import com.uwetrottmann.trakt5.entities.SyncShow
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Users
-import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 import javax.inject.Provider
 
 class TraktFollowedShowsSyncer @Inject constructor(
     private val dao: FollowedShowsDao,
     private val showDao: TiviShowDao,
-    private val dispatchers: AppCoroutineDispatchers,
     private val usersService: Provider<Users>,
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val logger: Logger,
@@ -70,46 +67,39 @@ class TraktFollowedShowsSyncer @Inject constructor(
     }
 
     suspend fun processPendingSend(listId: Int) {
-        val sendActions = withContext(dispatchers.io) {
-            dao.entriesWithSendPendingActions()
-        }
+        val sendActions = dao.entriesWithSendPendingActions()
 
         if (sendActions.isNotEmpty()) {
             val items = SyncItems()
             items.shows = sendActions.map(this::mapToSyncShow)
 
             if (traktAuthState.get() == TraktAuthState.LOGGED_IN) {
-                val response = withContext(dispatchers.io) {
-                    usersService.get().addListItems(UserSlug.ME, listId.toString(), items).fetchBody()
-                }
+                val response = usersService.get().addListItems(UserSlug.ME, listId.toString(), items)
+                        .fetchBody()
 
                 // TODO check response
             }
 
             // Now update the database
-            withContext(dispatchers.io) {
-                dao.updateEntriesToPendingAction(
-                        sendActions.mapNotNull(FollowedShowEntry::id),
-                        PendingAction.NOTHING.value
-                )
-            }
+            dao.updateEntriesToPendingAction(
+                    sendActions.mapNotNull(FollowedShowEntry::id),
+                    PendingAction.NOTHING.value
+            )
         }
     }
 
     suspend fun processPendingDelete(listId: Int) {
-        val deleteActions = withContext(dispatchers.io) {
-            dao.entriesWithDeletePendingActions()
-        }
+        val deleteActions = dao.entriesWithDeletePendingActions()
+
         if (deleteActions.isNotEmpty()) {
             logger.d("Deleting followed show from Trakt: $deleteActions")
 
             if (traktAuthState.get() == TraktAuthState.LOGGED_IN) {
-                val response = withContext(dispatchers.io) {
-                    val items = SyncItems()
-                    items.shows = deleteActions.map(this::mapToSyncShow)
+                val items = SyncItems()
+                items.shows = deleteActions.map(this::mapToSyncShow)
 
-                    usersService.get().deleteListItems(UserSlug.ME, listId.toString(), items).fetchBody()
-                }
+                val response = usersService.get().deleteListItems(UserSlug.ME, listId.toString(), items).fetchBody()
+
 
                 logger.d("Response from deleting items from Trakt: $response")
 
@@ -119,9 +109,7 @@ class TraktFollowedShowsSyncer @Inject constructor(
             }
 
             // Now update the database
-            withContext(dispatchers.io) {
-                dao.deleteWithIds(deleteActions.mapNotNull(FollowedShowEntry::id))
-            }
+            dao.deleteWithIds(deleteActions.mapNotNull(FollowedShowEntry::id))
         }
     }
 
@@ -132,9 +120,9 @@ class TraktFollowedShowsSyncer @Inject constructor(
         }
 
         // Fetch watched progress for show and filter out watches
-        val traktResponse = withContext(dispatchers.io) {
-            usersService.get().listItems(UserSlug.ME, listId.toString(), Extended.NOSEASONS).fetchBodyWithRetry()
-        }.mapNotNull { it.show }
+        val traktResponse = usersService.get().listItems(UserSlug.ME, listId.toString(), Extended.NOSEASONS)
+                .fetchBodyWithRetry()
+                .mapNotNull { it.show }
 
         // and sync the result
         syncFromTraktResponse(traktResponse)
