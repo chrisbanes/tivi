@@ -25,6 +25,7 @@ import app.tivi.api.UiResource
 import app.tivi.data.Entry
 import app.tivi.data.entities.EntryWithShow
 import app.tivi.datasources.ListDataSource
+import app.tivi.extensions.distinctUntilChanged
 import app.tivi.interactors.Interactor
 import app.tivi.tmdb.TmdbManager
 import io.reactivex.BackpressureStrategy
@@ -55,9 +56,7 @@ open class EntryViewModel<LI : EntryWithShow<out Entry>>(
                     setEnablePlaceholders(false)
                     build()
                 }
-        ).run {
-            build()
-        }
+        ).build().distinctUntilChanged()
     }
 
     val viewState: LiveData<EntryViewState> = LiveDataReactiveStreams.fromPublisher(
