@@ -16,53 +16,60 @@
   ~
   -->
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/summary_coordinator"
-    android:layout_width="match_parent"
+    android:id="@+id/summary_swipe_refresh"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    app:statusBarBackground="@null">
+    android:layout_width="match_parent">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/summary_appbarlayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/navigationBackgroundColor"
-        android:theme="?attr/actionBarTheme"
-        android:transitionGroup="true">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/summary_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways|snap"
-            app:popupTheme="?attr/actionBarPopupTheme" />
-
-    </android.support.design.widget.AppBarLayout>
-
-    <View
-        android:id="@+id/summary_status_scrim"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="?attr/statusBarScrim"
-        android:elevation="4dp"
-        android:fitsSystemWindows="true"
-        app:layout_behavior="app.tivi.ui.StatusBarHeightBehavior" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/summary_rv"
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/summary_coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="6dp"
-        android:paddingLeft="2dp"
-        android:paddingRight="2dp"
-        android:paddingTop="6dp"
-        app:layoutManager="android.support.v7.widget.GridLayoutManager"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:spanCount="@integer/grid_condensed_span_count"
-        tools:listitem="@layout/view_holder_details_summary" />
+        android:fitsSystemWindows="true"
+        app:statusBarBackground="@null">
 
-</android.support.design.widget.CoordinatorLayout>
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/summary_appbarlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/navigationBackgroundColor"
+            android:theme="?attr/actionBarTheme"
+            android:transitionGroup="true">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/summary_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+                app:popupTheme="?attr/actionBarPopupTheme" />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <View
+            android:id="@+id/summary_status_scrim"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="?attr/statusBarScrim"
+            android:elevation="4dp"
+            android:fitsSystemWindows="true"
+            app:layout_behavior="app.tivi.ui.StatusBarHeightBehavior" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/summary_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="6dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:paddingTop="6dp"
+            app:layoutManager="android.support.v7.widget.GridLayoutManager"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:spanCount="@integer/grid_condensed_span_count"
+            tools:listitem="@layout/view_holder_details_summary" />
+
+    </android.support.design.widget.CoordinatorLayout>
+
+</android.support.v4.widget.SwipeRefreshLayout>

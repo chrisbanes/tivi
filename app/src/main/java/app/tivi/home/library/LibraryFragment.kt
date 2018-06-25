@@ -25,8 +25,8 @@ import android.view.View
 import android.view.ViewGroup
 import app.tivi.R
 import app.tivi.data.Entry
-import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.EntryWithShow
+import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.extensions.observeK
 import app.tivi.home.HomeFragment
@@ -105,6 +105,8 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
                 onMenuItemClicked(it)
             }
         }
+
+        summary_swipe_refresh.setOnRefreshListener(viewModel::refresh)
     }
 
     override fun getMenu(): Menu? = summary_toolbar.menu

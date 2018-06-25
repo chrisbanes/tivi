@@ -57,11 +57,9 @@ class LibraryViewModel @Inject constructor(
                 ::LibraryViewState)
                 .observeOn(schedulers.main)
                 .subscribe(data::setValue, logger::e)
-
-        refresh()
     }
 
-    private fun refresh() {
+    fun refresh() {
         disposables += Observables.combineLatest(
                 networkDetector.waitForConnection().toObservable(),
                 traktManager.state.filter { it == TraktAuthState.LOGGED_IN }

@@ -103,6 +103,8 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
                 onMenuItemClicked(it)
             }
         }
+
+        summary_swipe_refresh.setOnRefreshListener(viewModel::refresh)
     }
 
     override fun getMenu(): Menu? = summary_toolbar.menu

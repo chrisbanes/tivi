@@ -56,11 +56,9 @@ class DiscoverViewModel @Inject constructor(
                 ::DiscoverViewState)
                 .observeOn(schedulers.main)
                 .subscribe(data::setValue, logger::e)
-
-        refresh()
     }
 
-    private fun refresh() {
+    fun refresh() {
         disposables += networkDetector.waitForConnection()
                 .subscribe({ onRefresh() }, logger::e)
     }
