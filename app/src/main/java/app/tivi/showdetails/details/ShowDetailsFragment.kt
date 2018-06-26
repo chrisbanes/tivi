@@ -35,7 +35,6 @@ import app.tivi.SharedElementHelper
 import app.tivi.TiviFragment
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
-import app.tivi.extensions.loadFromUrl
 import app.tivi.extensions.observeK
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
@@ -164,9 +163,11 @@ class ShowDetailsFragment : TiviFragment() {
 
         show.tmdbPosterPath?.let { path ->
             details_poster.doOnLayout {
-                details_poster.loadFromUrl(
-                        imageProvider.getPosterUrl(path, 0),
-                        imageProvider.getPosterUrl(path, details_poster.width))
+                GlideApp.with(this)
+                        .load(imageProvider.getPosterUrl(path, details_poster.width))
+                        .thumbnail(GlideApp.with(this)
+                                .load(imageProvider.getPosterUrl(path, 0)))
+                        .into(details_poster)
             }
         }
 

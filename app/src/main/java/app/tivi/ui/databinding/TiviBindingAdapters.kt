@@ -24,7 +24,6 @@ import android.widget.TextView
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import app.tivi.data.entities.Genre
-import app.tivi.extensions.loadFromUrl
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.GenreStringer
 import app.tivi.ui.MaxLinesToggleClickListener
@@ -32,29 +31,31 @@ import app.tivi.ui.glide.GlideApp
 import app.tivi.util.ScrimUtil
 
 @BindingAdapter("tmdbPosterPath", "tmdbImageUrlProvider")
-fun loadPoster(view: ImageView, posterPath: String?, tmdbImageUrlProvider: TmdbImageUrlProvider?) {
+fun loadPoster(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider?) {
     GlideApp.with(view).clear(view)
 
-    if (posterPath != null && tmdbImageUrlProvider != null) {
+    if (path != null && urlProvider != null) {
         view.doOnLayout {
-            view.loadFromUrl(
-                    tmdbImageUrlProvider.getPosterUrl(posterPath, 0),
-                    tmdbImageUrlProvider.getPosterUrl(posterPath, it.width)
-            )
+            GlideApp.with(view)
+                    .saturateOnLoad()
+                    .load(urlProvider.getPosterUrl(path, it.width))
+                    .thumbnail(GlideApp.with(view).load(urlProvider.getPosterUrl(path, 0)))
+                    .into(view)
         }
     }
 }
 
 @BindingAdapter("tmdbBackdropPath", "tmdbImageUrlProvider")
-fun loadBackdrop(view: ImageView, backdropPath: String?, tmdbImageUrlProvider: TmdbImageUrlProvider?) {
+fun loadBackdrop(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider?) {
     GlideApp.with(view).clear(view)
 
-    if (backdropPath != null && tmdbImageUrlProvider != null) {
+    if (path != null && urlProvider != null) {
         view.doOnLayout {
-            view.loadFromUrl(
-                    tmdbImageUrlProvider.getBackdropUrl(backdropPath, 0),
-                    tmdbImageUrlProvider.getBackdropUrl(backdropPath, it.width)
-            )
+            GlideApp.with(view)
+                    .saturateOnLoad()
+                    .load(urlProvider.getBackdropUrl(path, it.width))
+                    .thumbnail(GlideApp.with(view).load(urlProvider.getBackdropUrl(path, 0)))
+                    .into(view)
         }
     }
 }
