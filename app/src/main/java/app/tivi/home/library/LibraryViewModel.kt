@@ -16,11 +16,13 @@
 
 package app.tivi.home.library
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
 import app.tivi.datasources.trakt.FollowedShowsDataSource
 import app.tivi.datasources.trakt.WatchedShowsDataSource
+import app.tivi.extensions.toFlowable
 import app.tivi.home.HomeFragmentViewModel
 import app.tivi.home.HomeNavigator
 import app.tivi.interactors.FetchWatchedShowsInteractor
@@ -31,6 +33,7 @@ import app.tivi.trakt.TraktManager
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.NetworkDetector
+import app.tivi.util.RxLoadingCounter
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.plusAssign
@@ -47,16 +50,21 @@ class LibraryViewModel @Inject constructor(
     private val networkDetector: NetworkDetector,
     logger: Logger
 ) : HomeFragmentViewModel(traktManager, logger) {
-    val data = MutableLiveData<LibraryViewState>()
+    private val _data = MutableLiveData<LibraryViewState>()
+    val data: LiveData<LibraryViewState>
+        get() = _data
+
+    private val loadingState = RxLoadingCounter()
 
     init {
         disposables += Flowables.combineLatest(
-                watchedShowsDataSource.data(Unit).map { it.take(20) },
-                followedDataSource.data().map { it.take(20) },
+                watchedShowsDataSource.data(Unit).map { it.take(8) },
+                followedDataSource.data().map { it.take(8) },
                 tmdbManager.imageProvider,
+                loadingState.observable.toFlowable(),
                 ::LibraryViewState)
                 .observeOn(schedulers.main)
-                .subscribe(data::setValue, logger::e)
+                .subscribe(_data::setValue, logger::e)
     }
 
     fun refresh() {
@@ -67,8 +75,11 @@ class LibraryViewModel @Inject constructor(
     }
 
     private fun onRefresh() {
-        launchInteractor(watchedShowsInteractor)
-        launchInteractor(followedShowsInteractor)
+        loadingState.addLoader()
+        launchInteractor(watchedShowsInteractor).invokeOnCompletion { loadingState.removeLoader() }
+
+        loadingState.addLoader()
+        launchInteractor(followedShowsInteractor).invokeOnCompletion { loadingState.removeLoader() }
     }
 
     fun onWatchedHeaderClicked(navigator: HomeNavigator, sharedElements: SharedElementHelper) {

@@ -24,5 +24,6 @@ import app.tivi.tmdb.TmdbImageUrlProvider
 data class LibraryViewState(
     val watched: List<EntryWithShow<WatchedShowEntry>>,
     val followedShow: List<EntryWithShow<FollowedShowEntry>>,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider
+    val tmdbImageUrlProvider: TmdbImageUrlProvider,
+    val isLoading: Boolean
 )

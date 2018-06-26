@@ -16,6 +16,7 @@
 
 package app.tivi.extensions
 
+import io.reactivex.BackpressureStrategy
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.Maybe
@@ -28,3 +29,5 @@ fun <T> Single<T>.emptySubscribe() = subscribe(Functions.emptyConsumer(), Functi
 fun <T> Flowable<T>.emptySubscribe() = subscribe(Functions.emptyConsumer(), Functions.ERROR_CONSUMER)
 fun <T> Observable<T>.emptySubscribe() = subscribe(Functions.emptyConsumer(), Functions.ERROR_CONSUMER)
 fun Completable.emptySubscribe() = subscribe(Functions.EMPTY_ACTION, Functions.ERROR_CONSUMER)
+
+fun <T> Observable<T>.toFlowable() = toFlowable(BackpressureStrategy.LATEST)

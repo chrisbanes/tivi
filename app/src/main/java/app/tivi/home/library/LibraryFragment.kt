@@ -28,7 +28,7 @@ import app.tivi.data.Entry
 import app.tivi.data.entities.EntryWithShow
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.WatchedShowEntry
-import app.tivi.extensions.observeK
+import app.tivi.extensions.observeNotNull
 import app.tivi.home.HomeFragment
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeNavigatorViewModel
@@ -77,8 +77,10 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel.data.observeK(this) { model ->
-            controller.setData(model?.followedShow, model?.watched, model?.tmdbImageUrlProvider)
+        viewModel.data.observeNotNull(this) { model ->
+            controller.setData(model.followedShow, model.watched, model.tmdbImageUrlProvider)
+            summary_swipe_refresh.isRefreshing = model.isLoading
+
             scheduleStartPostponedTransitions()
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-package app.tivi.home.discover
+package app.tivi.util
 
-import app.tivi.data.entities.PopularEntryWithShow
-import app.tivi.data.entities.TrendingEntryWithShow
-import app.tivi.tmdb.TmdbImageUrlProvider
+import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
 
-data class DiscoverViewState(
-    val trendingItems: List<TrendingEntryWithShow>,
-    val popularItems: List<PopularEntryWithShow>,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    val isLoading: Boolean
-)
+class RxLoadingCounter {
+    private var loaders = 0
+    private val loadingState = BehaviorSubject.createDefault(loaders)
+
+    val observable: Observable<Boolean>
+        get() = loadingState.map { it > 0 }
+
+    fun addLoader() {
+        loadingState.onNext(++loaders)
+    }
+
+    fun removeLoader() {
+        loadingState.onNext(--loaders)
+    }
+}

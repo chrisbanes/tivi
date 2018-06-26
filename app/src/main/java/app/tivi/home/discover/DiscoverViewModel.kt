@@ -16,11 +16,13 @@
 
 package app.tivi.home.discover
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
 import app.tivi.datasources.trakt.PopularDataSource
 import app.tivi.datasources.trakt.TrendingDataSource
+import app.tivi.extensions.toFlowable
 import app.tivi.home.HomeFragmentViewModel
 import app.tivi.home.HomeNavigator
 import app.tivi.interactors.FetchPopularShowsInteractor
@@ -30,6 +32,7 @@ import app.tivi.trakt.TraktManager
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.NetworkDetector
+import app.tivi.util.RxLoadingCounter
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
 import javax.inject.Inject
@@ -39,23 +42,27 @@ class DiscoverViewModel @Inject constructor(
     popularDataSource: PopularDataSource,
     private val fetchPopularShowsInteractor: FetchPopularShowsInteractor,
     trendingDataSource: TrendingDataSource,
-    private val trendingShowsInteractor: FetchTrendingShowsInteractor,
+    private val fetchTrendingShowsInteractor: FetchTrendingShowsInteractor,
     traktManager: TraktManager,
     tmdbManager: TmdbManager,
     private val networkDetector: NetworkDetector,
     logger: Logger
 ) : HomeFragmentViewModel(traktManager, logger) {
+    private val _data = MutableLiveData<DiscoverViewState>()
+    val data: LiveData<DiscoverViewState>
+        get() = _data
 
-    val data = MutableLiveData<DiscoverViewState>()
+    private val loadingState = RxLoadingCounter()
 
     init {
         disposables += Flowables.combineLatest(
-                trendingDataSource.data(0),
-                popularDataSource.data(0),
+                trendingDataSource.data(0).map { it.take(8) },
+                popularDataSource.data(0).map { it.take(8) },
                 tmdbManager.imageProvider,
+                loadingState.observable.toFlowable(),
                 ::DiscoverViewState)
                 .observeOn(schedulers.main)
-                .subscribe(data::setValue, logger::e)
+                .subscribe(_data::setValue, logger::e)
     }
 
     fun refresh() {
@@ -64,8 +71,13 @@ class DiscoverViewModel @Inject constructor(
     }
 
     private fun onRefresh() {
-        launchInteractor(fetchPopularShowsInteractor.asRefreshInteractor(), Unit)
-        launchInteractor(trendingShowsInteractor.asRefreshInteractor(), Unit)
+        loadingState.addLoader()
+        launchInteractor(fetchPopularShowsInteractor.asRefreshInteractor())
+                .invokeOnCompletion { loadingState.removeLoader() }
+
+        loadingState.addLoader()
+        launchInteractor(fetchTrendingShowsInteractor.asRefreshInteractor())
+                .invokeOnCompletion { loadingState.removeLoader() }
     }
 
     fun onTrendingHeaderClicked(navigator: HomeNavigator, sharedElementHelper: SharedElementHelper? = null) {

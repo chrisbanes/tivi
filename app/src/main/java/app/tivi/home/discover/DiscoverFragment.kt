@@ -28,7 +28,7 @@ import app.tivi.data.Entry
 import app.tivi.data.entities.EntryWithShow
 import app.tivi.data.entities.PopularEntry
 import app.tivi.data.entities.TrendingEntry
-import app.tivi.extensions.observeK
+import app.tivi.extensions.observeNotNull
 import app.tivi.home.HomeFragment
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeNavigatorViewModel
@@ -71,8 +71,9 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel.data.observeK(this) { model ->
-            controller.setData(model?.trendingItems, model?.popularItems, model?.tmdbImageUrlProvider)
+        viewModel.data.observeNotNull(this) { model ->
+            controller.setData(model.trendingItems, model.popularItems, model.tmdbImageUrlProvider)
+            summary_swipe_refresh.isRefreshing = model.isLoading
             scheduleStartPostponedTransitions()
         }
     }
