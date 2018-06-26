@@ -23,12 +23,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
-import app.tivi.GlideApp
 import app.tivi.data.entities.Genre
 import app.tivi.extensions.loadFromUrl
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.GenreStringer
 import app.tivi.ui.MaxLinesToggleClickListener
+import app.tivi.ui.glide.GlideApp
 import app.tivi.util.ScrimUtil
 
 @BindingAdapter("tmdbPosterPath", "tmdbImageUrlProvider")

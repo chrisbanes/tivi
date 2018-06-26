@@ -23,16 +23,20 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import app.tivi.GlideApp
+import app.tivi.ui.glide.GlideApp
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 
 fun ImageView.loadFromUrl(imageUrl: String) {
-    GlideApp.with(this).load(imageUrl).into(this)
+    GlideApp.with(this)
+            .saturateOnLoad()
+            .load(imageUrl)
+            .into(this)
 }
 
 fun ImageView.loadFromUrl(thumbnailUrl: String, imageUrl: String) {
     GlideApp.with(this)
+            .saturateOnLoad()
             .load(imageUrl)
             .thumbnail(GlideApp.with(this).load(thumbnailUrl))
             .into(this)

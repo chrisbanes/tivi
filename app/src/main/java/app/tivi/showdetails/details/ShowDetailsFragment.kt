@@ -30,7 +30,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.doOnLayout
-import app.tivi.GlideApp
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.TiviFragment
@@ -43,6 +42,7 @@ import app.tivi.showdetails.ShowDetailsNavigatorViewModel
 import app.tivi.ui.GlidePaletteListener
 import app.tivi.ui.NoopApplyWindowInsetsListener
 import app.tivi.ui.RoundRectViewOutline
+import app.tivi.ui.glide.GlideApp
 import app.tivi.ui.transitions.DrawableAlphaProperty
 import app.tivi.util.ScrimUtil
 import kotlinx.android.synthetic.main.fragment_show_details.*
