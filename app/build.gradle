@@ -45,6 +45,9 @@ if (haveFabricApiKey) {
     apply plugin: 'io.fabric'
 }
 
+def appVersionCode = propOrDef("tivi.versioncode", 17) as Integer
+println("APK version code: " + appVersionCode)
+
 android {
     compileSdkVersion buildConfig.compileSdk
 
@@ -59,7 +62,7 @@ android {
         applicationId "app.tivi"
         minSdkVersion buildConfig.minSdk
         targetSdkVersion buildConfig.targetSdk
-        versionCode 17
+        versionCode appVersionCode
         versionName "0.2.4"
 
         // For now we're sticking to just shipping APKs
