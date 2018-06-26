@@ -16,7 +16,6 @@
 
 package app.tivi.util
 
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.paging.LivePagedListBuilder
 import android.arch.paging.PagedList
@@ -26,9 +25,9 @@ import app.tivi.data.Entry
 import app.tivi.data.entities.EntryWithShow
 import app.tivi.datasources.ListDataSource
 import app.tivi.extensions.distinctUntilChanged
+import app.tivi.extensions.toFlowable
 import app.tivi.interactors.Interactor
 import app.tivi.tmdb.TmdbManager
-import io.reactivex.BackpressureStrategy
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
@@ -59,11 +58,8 @@ open class EntryViewModel<LI : EntryWithShow<out Entry>>(
         ).build().distinctUntilChanged()
     }
 
-    val viewState: LiveData<EntryViewState> = LiveDataReactiveStreams.fromPublisher(
-            Flowables.combineLatest(
-                    messages.toFlowable(BackpressureStrategy.LATEST),
-                    tmdbManager.imageProvider,
-                    ::EntryViewState)
+    val viewState = LiveDataReactiveStreams.fromPublisher(
+            Flowables.combineLatest(messages.toFlowable(), tmdbManager.imageProvider, ::EntryViewState)
     )
 
     init {

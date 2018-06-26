@@ -17,10 +17,10 @@
 package app.tivi.tmdb
 
 import app.tivi.extensions.fetchBodyWithRetry
+import app.tivi.extensions.toFlowable
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.Configuration
-import io.reactivex.BackpressureStrategy
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
@@ -33,7 +33,7 @@ class TmdbManager @Inject constructor(
     private val tmdbClient: Tmdb
 ) {
     private val imageProviderSubject = BehaviorSubject.createDefault(TmdbImageUrlProvider())
-    val imageProvider = imageProviderSubject.toFlowable(BackpressureStrategy.LATEST)!!
+    val imageProvider = imageProviderSubject.toFlowable()!!
 
     init {
         refreshConfiguration()
