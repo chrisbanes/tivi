@@ -44,7 +44,7 @@ jobs:
           command: signing/setup.sh $ENCRYPT_KEY
       - run:
           name: Check and assemble APKs
-          command: ./gradlew check assemble app:assembleAndroidTest dependencyUpdates
+          command: ./gradlew check assemble app:assembleAndroidTest dependencyUpdates -Ptivi.versioncode=$CIRCLE_BUILD_NUM
       - run:
           name: Cleanup secrets
           command: signing/cleanup.sh
@@ -87,7 +87,7 @@ jobs:
           command: signing/setup.sh $ENCRYPT_KEY
       - run:
           name: Deploy to Alpha channel
-          command: ./gradlew publishRelease
+          command: ./gradlew publishRelease -Ptivi.versioncode=$CIRCLE_BUILD_NUM
       - run:
           name: Cleanup secrets
           command: signing/cleanup.sh
@@ -117,9 +117,19 @@ workflows:
       - test_instrumented:
           requires:
             - build
+  nightly:
+    triggers:
+      - schedule:
+          # 17:17 UTC is ~03:17 Sydney time
+          cron: "17 17 * * *"
+          filters:
+            branches:
+              only: master
+    jobs:
+      - build
+      - test_instrumented:
+          requires:
+            - build
       - deploy_to_play:
           requires:
             - test_instrumented
-          filters:
-            branches:
-              only: deploy

@@ -107,7 +107,7 @@ subprojects {
     }
 }
 
-String propOrDef(String propertyName, String defaultValue) {
+Object propOrDef(String propertyName, Object defaultValue) {
     def propertyValue = project.properties[propertyName]
     return propertyValue != null ? propertyValue : defaultValue
 }
