@@ -16,43 +16,8 @@
 
 package app.tivi.extensions
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import app.tivi.ui.glide.GlideApp
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
-
-fun ImageView.loadFromUrl(imageUrl: String) {
-    GlideApp.with(this)
-            .saturateOnLoad()
-            .load(imageUrl)
-            .into(this)
-}
-
-fun ImageView.loadFromUrl(thumbnailUrl: String, imageUrl: String) {
-    GlideApp.with(this)
-            .saturateOnLoad()
-            .load(imageUrl)
-            .thumbnail(GlideApp.with(this).load(thumbnailUrl))
-            .into(this)
-}
-
-fun MenuItem.loadIconFromUrl(context: Context, imageUrl: String) {
-    GlideApp.with(context).asBitmap()
-            .load(imageUrl)
-            .into(object : SimpleTarget<Bitmap>(100, 100) {
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    icon = RoundedBitmapDrawableFactory.create(context.resources, resource).apply {
-                        isCircular = true
-                    }
-                }
-            })
-}
 
 val View.marginLeft: Int
     get() = (layoutParams as? ViewGroup.MarginLayoutParams)?.leftMargin ?: 0

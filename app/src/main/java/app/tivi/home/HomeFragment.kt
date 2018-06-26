@@ -23,9 +23,10 @@ import android.view.MenuItem
 import android.view.View
 import app.tivi.R
 import app.tivi.TiviFragment
-import app.tivi.extensions.loadIconFromUrl
 import app.tivi.extensions.observeK
 import app.tivi.trakt.TraktAuthState
+import app.tivi.ui.glide.GlideApp
+import app.tivi.ui.glide.asGlideTarget
 import javax.inject.Inject
 
 abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
@@ -51,10 +52,13 @@ abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
 
         viewModel.userProfileLiveData.observeK(this) { user ->
             if (user != null) {
-                findUserAvatarMenuItem()?.let {
-                    it.title = user.name
+                findUserAvatarMenuItem()?.let { menuItem ->
+                    menuItem.title = user.name
                     if (user.avatarUrl != null) {
-                        it.loadIconFromUrl(context!!, user.avatarUrl!!)
+                        GlideApp.with(requireContext())
+                                .load(user.avatarUrl)
+                                .circleCrop()
+                                .into(menuItem.asGlideTarget())
                     }
                 }
             } else {
