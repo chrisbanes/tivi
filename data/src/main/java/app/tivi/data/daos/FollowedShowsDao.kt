@@ -41,8 +41,8 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowsEntry
     abstract fun entriesBlocking(): List<FollowedShowEntry>
 
     @Transaction
-    @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
-    abstract override fun entries(): Flowable<List<FollowedShowsEntryWithShow>>
+    @Query("$ENTRY_QUERY_ORDER_LAST_WATCHED LIMIT :count OFFSET :offset")
+    abstract override fun entriesFlowable(count: Int, offset: Int): Flowable<List<FollowedShowsEntryWithShow>>
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)

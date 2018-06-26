@@ -23,6 +23,7 @@ interface DataSource<in P, O> {
     fun data(param: P): Flowable<O>
 }
 
-interface ListDataSource<in P, O> : DataSource<P, List<O>> {
+interface ListDataSource<in P, O> {
+    fun data(param: P, count: Int, offset: Int = 0): Flowable<List<O>>
     fun dataSourceFactory(): PagingDataSource.Factory<Int, O>
 }

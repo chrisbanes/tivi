@@ -19,7 +19,7 @@ package app.tivi.datasources.trakt
 import android.arch.paging.DataSource
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.entities.TrendingEntryWithShow
-import app.tivi.datasources.PaginatedDataSource
+import app.tivi.datasources.ListDataSource
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
 import javax.inject.Inject
@@ -27,15 +27,9 @@ import javax.inject.Inject
 class TrendingDataSource @Inject constructor(
     private val trendingDao: TrendingDao,
     private val schedulers: AppRxSchedulers
-) : PaginatedDataSource<Unit, TrendingEntryWithShow> {
-    override fun data(param: Unit): Flowable<List<TrendingEntryWithShow>> {
-        return trendingDao.entries()
-                .subscribeOn(schedulers.io)
-                .distinctUntilChanged()
-    }
-
-    override fun data(page: Int): Flowable<List<TrendingEntryWithShow>> {
-        return trendingDao.entriesPage(page)
+) : ListDataSource<Unit, TrendingEntryWithShow> {
+    override fun data(param: Unit, count: Int, offset: Int): Flowable<List<TrendingEntryWithShow>> {
+        return trendingDao.entriesFlowable(count, offset)
                 .subscribeOn(schedulers.io)
                 .distinctUntilChanged()
     }

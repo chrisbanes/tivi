@@ -58,8 +58,8 @@ class LibraryViewModel @Inject constructor(
 
     init {
         disposables += Flowables.combineLatest(
-                watchedShowsDataSource.data(Unit).map { it.take(8) },
-                followedDataSource.data().map { it.take(8) },
+                watchedShowsDataSource.data(Unit, 0, 8),
+                followedDataSource.data(Unit, 0, 8),
                 tmdbManager.imageProvider,
                 loadingState.observable.toFlowable(),
                 ::LibraryViewState)

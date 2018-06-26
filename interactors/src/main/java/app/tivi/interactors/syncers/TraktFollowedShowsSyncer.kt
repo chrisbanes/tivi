@@ -88,7 +88,7 @@ open class TraktFollowedShowsSyncer @Inject constructor(
         }
     }
 
-    suspend fun processPendingDelete(listId: Int) {
+    fun processPendingDelete(listId: Int) {
         val deleteActions = dao.entriesWithDeletePendingActions()
 
         if (deleteActions.isNotEmpty()) {

@@ -18,10 +18,8 @@ package app.tivi.data.daos
 
 import app.tivi.data.PaginatedEntry
 import app.tivi.data.entities.EntryWithShow
-import io.reactivex.Flowable
 
 interface PaginatedEntryDao<EC : PaginatedEntry, LI : EntryWithShow<EC>> : EntryDao<EC, LI> {
-    fun entriesPage(page: Int): Flowable<List<LI>>
     fun deletePage(page: Int)
     fun getLastPage(): Int
 }
