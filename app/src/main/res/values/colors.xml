@@ -42,4 +42,6 @@
 
     <color name="content_scrim_dark">#262626</color>
 
+    <color name="grid_item_background_color">#424242</color>
+
 </resources>
