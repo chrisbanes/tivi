@@ -39,7 +39,6 @@ fun loadPoster(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider
             GlideApp.with(view)
                     .saturateOnLoad()
                     .load(urlProvider.getPosterUrl(path, it.width))
-                    .thumbnail(GlideApp.with(view).load(urlProvider.getPosterUrl(path, 0)))
                     .into(view)
         }
     }
@@ -54,7 +53,10 @@ fun loadBackdrop(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvid
             GlideApp.with(view)
                     .saturateOnLoad()
                     .load(urlProvider.getBackdropUrl(path, it.width))
-                    .thumbnail(GlideApp.with(view).load(urlProvider.getBackdropUrl(path, 0)))
+                    .thumbnail(
+                            GlideApp.with(view)
+                                    .load(urlProvider.getBackdropUrl(path, 0))
+                    )
                     .into(view)
         }
     }
