@@ -30,7 +30,8 @@ class ImageLoadingColorMatrix : ColorMatrix() {
         set(value) {
             System.arraycopy(array, 0, elements, 0, 20)
 
-            // Desaturate over [0, 1], taken from ColorMatrix.setSaturation
+            // Taken from ColorMatrix.setSaturation. We can't use that though since it resets the matrix
+            // before applying the values
             val invSat = 1 - value
             val r = 0.213f * invSat
             val g = 0.715f * invSat
@@ -52,28 +53,19 @@ class ImageLoadingColorMatrix : ColorMatrix() {
     var alphaFraction = 1f
         set(value) {
             System.arraycopy(array, 0, elements, 0, 20)
-
-            // We phase this over the first 2/3 of the window
-            val phaseMax = 2 / 3f
-            // Compute the alpha change over period [0, 0.66667]
-            elements[18] = value.coerceAtMost(phaseMax) / phaseMax
-
+            elements[18] = value
             set(elements)
         }
 
-    var gammaFraction = 1f
+    var darkenFraction = 1f
         set(value) {
             System.arraycopy(array, 0, elements, 0, 20)
 
-            // The gamma is phased over the first [0, 0.8333]
-            val phaseMax = 5 / 6f
-            val invValue = 1 - (value.coerceAtMost(phaseMax) / phaseMax)
-
             // We substract to make the picture look darker, it will automatically clamp
-            val blackening = invValue * MAX_GAMMA_SUBTRACTION * 255
-            elements[4] = -blackening
-            elements[9] = -blackening
-            elements[14] = -blackening
+            val darkening = (1 - value) * MAX_DARKEN_PERCENTAGE * 255
+            elements[4] = -darkening
+            elements[9] = -darkening
+            elements[14] = -darkening
 
             set(elements)
         }
@@ -93,18 +85,18 @@ class ImageLoadingColorMatrix : ColorMatrix() {
             }
         }
 
-        private val gammaFloatProp = object : FloatProp<ImageLoadingColorMatrix>("gamma") {
-            override operator fun get(o: ImageLoadingColorMatrix): Float = o.gammaFraction
+        private val darkenFloatProp = object : FloatProp<ImageLoadingColorMatrix>("darken") {
+            override operator fun get(o: ImageLoadingColorMatrix): Float = o.darkenFraction
             override operator fun set(o: ImageLoadingColorMatrix, value: Float) {
-                o.gammaFraction = value
+                o.darkenFraction = value
             }
         }
 
         val PROP_SATURATION = createFloatProperty(saturationFloatProp)
         val PROP_ALPHA = createFloatProperty(alphaFloatProp)
-        val PROP_GAMMA = createFloatProperty(gammaFloatProp)
+        val PROP_DARKEN = createFloatProperty(darkenFloatProp)
 
         // This means that we darken the image by 20%
-        private const val MAX_GAMMA_SUBTRACTION = 0.20f
+        private const val MAX_DARKEN_PERCENTAGE = 0.20f
     }
 }
