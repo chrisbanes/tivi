@@ -216,7 +216,7 @@ dependencies {
 
 afterEvaluate {
     kaptDebugKotlin.dependsOn dataBindingExportFeaturePackageIdsDebug
-    //kaptReleaseKotlin.dependsOn dataBindingExportFeaturePackageIdsRelease
+    kaptReleaseKotlin.dependsOn dataBindingExportFeaturePackageIdsRelease
 }
 
 def getGitHash() {
