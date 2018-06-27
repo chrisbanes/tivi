@@ -18,21 +18,25 @@ package app.tivi.ui.animations
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.drawable.Drawable
 import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.view.View
 import androidx.core.animation.doOnEnd
-import app.tivi.ui.graphics.TiviColorMatrix
+import app.tivi.ui.graphics.ImageLoadingColorMatrix
 
 fun saturateDrawableAnimator(current: Drawable, view: View): Animator {
     view.setHasTransientState(true)
-    val cm = TiviColorMatrix()
+    val cm = ImageLoadingColorMatrix()
 
-    val animator = ObjectAnimator.ofFloat(cm, TiviColorMatrix.PROP_SATURATION, 0f, 1f)
+    val satPvh = PropertyValuesHolder.ofFloat(ImageLoadingColorMatrix.PROP_SATURATION,0f, 1f)
+    val gammaPvh = PropertyValuesHolder.ofFloat(ImageLoadingColorMatrix.PROP_GAMMA, 0f, 1f)
+
+    val animator = ObjectAnimator.ofPropertyValuesHolder(cm, satPvh, gammaPvh)
     animator.duration = 2000L
     animator.interpolator = FastOutSlowInInterpolator()
-    animator.addUpdateListener { _ -> current.colorFilter = ColorMatrixColorFilter(cm) }
+    animator.addUpdateListener { current.colorFilter = ColorMatrixColorFilter(cm) }
     animator.doOnEnd {
         current.clearColorFilter()
         view.setHasTransientState(false)
