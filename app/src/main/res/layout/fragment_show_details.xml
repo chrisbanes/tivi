@@ -77,6 +77,7 @@
         android:layout_height="120dp"
         android:layout_marginStart="16dp"
         android:elevation="3dp"
+        android:background="@drawable/placeholder"
         android:transitionName="poster"
         app:layout_behavior="app.tivi.showdetails.details.DetailPosterBehavior" />
 
