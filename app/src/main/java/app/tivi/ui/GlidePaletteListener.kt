@@ -48,8 +48,10 @@ class GlidePaletteListener(private val listener: (Palette) -> Unit) : RequestLis
     ): Boolean {
         // First check the cache
         synchronized(cacheLock) {
-            cache[model]?.let {
-                listener(it)
+            val cached = cache[model]
+            if (cached != null) {
+                // If the cache has a result now, use it
+                listener(cached)
                 // We don't want to handle updating the target
                 return false
             }
@@ -61,16 +63,17 @@ class GlidePaletteListener(private val listener: (Palette) -> Unit) : RequestLis
                     .clearTargets()
                     .maximumColorCount(4)
                     .setRegion(0, Math.round(bitmap.height * 0.9f), bitmap.width, bitmap.height)
-                    .generate { newPalette ->
+                    .generate { palette ->
                         synchronized(cacheLock) {
-                            cache[model]?.let {
+                            val cached = cache[model]
+                            if (cached != null) {
                                 // If the cache has a result now, just return it to maintain equality
-                                listener(it)
-                            } ?: let {
+                                listener(cached)
+                            } else if (palette != null) {
                                 // Else we'll save the newly generated one
-                                cache.put(model, newPalette)
+                                cache.put(model, palette)
                                 // Now invoke the listener
-                                listener(newPalette)
+                                listener(palette)
                             }
                         }
                     }

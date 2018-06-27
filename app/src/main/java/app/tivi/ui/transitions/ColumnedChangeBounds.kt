@@ -287,12 +287,14 @@ class ColumnedChangeBounds : Transition() {
     ): Rect? {
         // This view might not necessarily be the root of the item view
         val rvItemView = parent.findContainingItemView(view)
-        for (i in parent.getChildAdapterPosition(rvItemView) - 1 downTo 0) {
-            parent.findViewHolderForAdapterPosition(i)?.let {
-                getTransitionValues(it.itemView, false)?.let {
-                    (it.values[PROPNAME_BOUNDS] as? Rect)?.let {
-                        if (it.right > right) {
-                            return it
+        if (rvItemView != null) {
+            for (i in parent.getChildAdapterPosition(rvItemView) - 1 downTo 0) {
+                parent.findViewHolderForAdapterPosition(i)?.let {
+                    getTransitionValues(it.itemView, false)?.let {
+                        (it.values[PROPNAME_BOUNDS] as? Rect)?.let {
+                            if (it.right > right) {
+                                return it
+                            }
                         }
                     }
                 }
