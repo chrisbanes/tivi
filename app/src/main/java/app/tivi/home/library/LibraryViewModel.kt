@@ -73,6 +73,10 @@ class LibraryViewModel @Inject constructor(
                 .observeOn(schedulers.main)
                 .subscribe(_data::setValue, logger::e)
 
+        disposables += currentFilter.distinctUntilChanged()
+                .observeOn(schedulers.main)
+                .subscribe({ refresh() }, logger::e)
+
         // Trigger the default filter
         currentFilter.onNext(FOLLOWED)
     }

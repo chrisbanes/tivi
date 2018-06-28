@@ -23,8 +23,6 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import app.tivi.R
 import app.tivi.data.Entry
 import app.tivi.data.entities.EntryWithShow
@@ -45,7 +43,7 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
 
     private val controller = LibraryEpoxyController(object : LibraryEpoxyController.Callbacks {
         private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
-            ListItemSharedElementHelper(summary_rv)
+            ListItemSharedElementHelper(library_rv)
         }
 
         override fun onMyShowsHeaderClicked(items: List<EntryWithShow<FollowedShowEntry>>?) {
@@ -60,6 +58,13 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
             viewModel.onItemPostedClicked(homeNavigator, item.show,
                     listItemSharedElementHelper.createForItem(item, "poster")
             )
+        }
+    })
+
+    private val filterController = LibraryFiltersEpoxyController(object : LibraryFiltersEpoxyController.Callbacks {
+        override fun onFilterSelected(filter: LibraryFilter) {
+            closeFilterPanel()
+            viewModel.onFilterSelected(filter)
         }
     })
 
@@ -85,24 +90,11 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
     }
 
     private fun update(viewState: LibraryViewState) {
-        library_filter_spinner.apply {
-            adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, viewState.allowedFilters)
-            onItemSelectedListener = null
-
-            // Select the current item
-            setSelection(viewState.allowedFilters.indexOf(viewState.filter))
-
-            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onNothingSelected(av: AdapterView<*>?) = Unit
-
-                override fun onItemSelected(av: AdapterView<*>?, v: View?, position: Int, id: Long) {
-                    viewModel.onFilterSelected(viewState.allowedFilters[position])
-                }
-            }
-        }
-
+        filterController.setData(viewState)
         controller.setData(viewState)
-        summary_swipe_refresh.isRefreshing = viewState.isLoading
+
+        // Close the filter pane if needed
+        closeFilterPanel()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -111,33 +103,34 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         postponeEnterTransition()
 
         // Setup span and columns
-        gridLayoutManager = summary_rv.layoutManager as GridLayoutManager
+        gridLayoutManager = library_rv.layoutManager as GridLayoutManager
         gridLayoutManager.spanSizeLookup = controller.spanSizeLookup
         controller.spanCount = gridLayoutManager.spanCount
 
-        summary_rv.apply {
+        library_rv.apply {
             adapter = controller.adapter
             addItemDecoration(SpacingItemDecorator(paddingLeft))
         }
 
-        summary_toolbar.apply {
+        library_filters_rv.adapter = filterController.adapter
+
+        library_toolbar.apply {
             title = getString(R.string.library_title)
             inflateMenu(R.menu.home_toolbar)
             setOnMenuItemClickListener {
                 onMenuItemClicked(it)
             }
         }
-
-        summary_swipe_refresh.setOnRefreshListener(viewModel::refresh)
     }
 
-    override fun getMenu(): Menu? = summary_toolbar.menu
+    private fun closeFilterPanel() {
+        library_motion.transitionToStart()
+    }
+
+    override fun getMenu(): Menu? = library_toolbar.menu
 
     internal fun scrollToTop() {
-        summary_rv.apply {
-            stopScroll()
-            smoothScrollToPosition(0)
-        }
-        summary_appbarlayout.setExpanded(true)
+        library_rv.stopScroll()
+        library_rv.smoothScrollToPosition(0)
     }
 }
