@@ -84,8 +84,8 @@ class LibraryViewModel @Inject constructor(
     private fun createFilterViewStateFlowable(filter: LibraryFilter) = Flowables.combineLatest(
             Flowable.just(LibraryFilter.values().asList()),
             Flowable.just(filter),
-            if (filter == WATCHED) watchedShowsDataSource.data(Unit, 8, 0) else emptyFlowableList(),
-            if (filter == FOLLOWED) followedDataSource.data(Unit, 8, 0) else emptyFlowableList(),
+            if (filter == WATCHED) watchedShowsDataSource.data(Unit, 100, 0) else emptyFlowableList(),
+            if (filter == FOLLOWED) followedDataSource.data(Unit, 100, 0) else emptyFlowableList(),
             tmdbManager.imageProvider,
             loadingState.observable.toFlowable(),
             ::LibraryViewState)

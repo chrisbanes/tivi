@@ -47,7 +47,7 @@ class LibraryEpoxyController(private val callbacks: Callbacks) : TypedEpoxyContr
                     })
                 }
                 if (viewState.followedShow.isNotEmpty()) {
-                    viewState.followedShow.take(spanCount * 2).forEach { item ->
+                    viewState.followedShow.forEach { item ->
                         posterGridItem {
                             id(item.generateStableId())
                             tmdbImageUrlProvider(viewState.tmdbImageUrlProvider)
@@ -76,7 +76,7 @@ class LibraryEpoxyController(private val callbacks: Callbacks) : TypedEpoxyContr
                     })
                 }
                 if (viewState.watched.isNotEmpty()) {
-                    viewState.watched.take(spanCount * 2).forEach { item ->
+                    viewState.watched.forEach { item ->
                         posterGridItem {
                             id(item.generateStableId())
                             tmdbImageUrlProvider(viewState.tmdbImageUrlProvider)
