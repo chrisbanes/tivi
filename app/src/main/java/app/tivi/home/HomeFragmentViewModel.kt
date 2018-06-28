@@ -25,6 +25,7 @@ import app.tivi.trakt.TraktManager
 import app.tivi.util.Logger
 import app.tivi.util.TiviViewModel
 import io.reactivex.rxkotlin.plusAssign
+import net.openid.appauth.AuthorizationService
 
 abstract class HomeFragmentViewModel(
     private val traktManager: TraktManager,
@@ -48,11 +49,7 @@ abstract class HomeFragmentViewModel(
         // TODO
     }
 
-    fun onLoginItemClicked() {
-        startAuthProcess(0)
-    }
-
-    private fun startAuthProcess(requestCode: Int) {
-        traktManager.startAuth(requestCode)
+    fun onLoginItemClicked(authService: AuthorizationService) {
+        traktManager.startAuth(0, authService)
     }
 }
