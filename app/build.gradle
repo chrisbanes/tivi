@@ -129,6 +129,7 @@ android {
         debug {
             signingConfig signingConfigs.debug
             versionNameSuffix "-dev [${getGitHash()}]"
+            applicationIdSuffix ".debug"
         }
 
         release {
