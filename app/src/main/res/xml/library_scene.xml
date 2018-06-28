@@ -25,7 +25,8 @@
         <OnSwipe
             app:dragDirection="dragUp"
             app:touchAnchorId="@id/library_rv"
-            app:touchAnchorSide="top" />
+            app:touchAnchorSide="top"
+            app:moveWhenScrollAtTop="true" />
 
         <ConstraintSet android:id="@+id/start">
             <Constraint
