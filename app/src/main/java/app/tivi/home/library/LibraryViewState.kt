@@ -16,16 +16,16 @@
 
 package app.tivi.home.library
 
-import app.tivi.data.entities.EntryWithShow
-import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.WatchedShowEntry
+import android.arch.paging.PagedList
+import app.tivi.data.entities.FollowedShowEntryWithShow
+import app.tivi.data.entities.WatchedShowEntryWithShow
 import app.tivi.tmdb.TmdbImageUrlProvider
 
 data class LibraryViewState(
     val allowedFilters: List<LibraryFilter>,
     val filter: LibraryFilter,
-    val watched: List<EntryWithShow<WatchedShowEntry>>,
-    val followedShow: List<EntryWithShow<FollowedShowEntry>>,
+    val watched: PagedList<WatchedShowEntryWithShow>?,
+    val followed: PagedList<FollowedShowEntryWithShow>?,
     val tmdbImageUrlProvider: TmdbImageUrlProvider,
     val isLoading: Boolean
 )

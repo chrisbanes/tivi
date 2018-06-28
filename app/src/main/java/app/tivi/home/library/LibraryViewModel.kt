@@ -18,11 +18,13 @@ package app.tivi.home.library
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.arch.paging.DataSource
+import android.arch.paging.PagedList
+import android.arch.paging.RxPagedListBuilder
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
 import app.tivi.datasources.trakt.FollowedShowsDataSource
 import app.tivi.datasources.trakt.WatchedShowsDataSource
-import app.tivi.extensions.emptyFlowableList
 import app.tivi.extensions.toFlowable
 import app.tivi.home.HomeFragmentViewModel
 import app.tivi.home.HomeNavigator
@@ -37,6 +39,7 @@ import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.NetworkDetector
 import app.tivi.util.RxLoadingCounter
+import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.Flowables
@@ -46,7 +49,7 @@ import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
-    schedulers: AppRxSchedulers,
+    private val schedulers: AppRxSchedulers,
     private val watchedShowsDataSource: WatchedShowsDataSource,
     private val watchedShowsInteractor: FetchWatchedShowsInteractor,
     private val followedDataSource: FollowedShowsDataSource,
@@ -66,6 +69,14 @@ class LibraryViewModel @Inject constructor(
 
     private var refreshDisposable: Disposable? = null
 
+    private val pagingConfig by lazy(LazyThreadSafetyMode.NONE) {
+        PagedList.Config.Builder()
+                .setPageSize(60)
+                .setPrefetchDistance(20)
+                .setEnablePlaceholders(false)
+                .build()
+    }
+
     init {
         disposables += currentFilter.toFlowable()
                 .distinctUntilChanged()
@@ -81,14 +92,35 @@ class LibraryViewModel @Inject constructor(
         currentFilter.onNext(FOLLOWED)
     }
 
-    private fun createFilterViewStateFlowable(filter: LibraryFilter) = Flowables.combineLatest(
-            Flowable.just(LibraryFilter.values().asList()),
-            Flowable.just(filter),
-            if (filter == WATCHED) watchedShowsDataSource.data(Unit, 100, 0) else emptyFlowableList(),
-            if (filter == FOLLOWED) followedDataSource.data(Unit, 100, 0) else emptyFlowableList(),
-            tmdbManager.imageProvider,
-            loadingState.observable.toFlowable(),
-            ::LibraryViewState)
+    private fun createFilterViewStateFlowable(filter: LibraryFilter): Flowable<LibraryViewState> {
+        val watched = when (filter) {
+            WATCHED -> dataSourceToFlowable(watchedShowsDataSource.dataSourceFactory())
+            else -> Flowable.just(null)
+        }
+        val followed = when (filter) {
+            FOLLOWED -> dataSourceToFlowable(followedDataSource.dataSourceFactory())
+            else -> Flowable.just(null)
+        }
+
+        return Flowables.combineLatest(
+                Flowable.just(LibraryFilter.values().asList()),
+                Flowable.just(filter),
+                watched,
+                followed,
+                tmdbManager.imageProvider,
+                loadingState.observable.toFlowable(),
+                ::LibraryViewState
+        )
+    }
+
+    private fun <T> dataSourceToFlowable(source: DataSource.Factory<Int, T>): Flowable<PagedList<T>> {
+        return RxPagedListBuilder(source, pagingConfig)
+                .setFetchScheduler(schedulers.io)
+                .setNotifyScheduler(schedulers.main)
+                .setBoundaryCallback(object : PagedList.BoundaryCallback<T>() {
+                })
+                .buildFlowable(BackpressureStrategy.LATEST)
+    }
 
     fun refresh() {
         if (refreshDisposable != null) {

@@ -43,11 +43,11 @@ class LibraryEpoxyController(private val callbacks: Callbacks) : TypedEpoxyContr
                     title(R.string.library_followed_shows)
                     spanSizeOverride(TotalSpanOverride)
                     buttonClickListener(View.OnClickListener {
-                        callbacks.onMyShowsHeaderClicked(viewState.followedShow)
+                        callbacks.onMyShowsHeaderClicked(viewState.followed)
                     })
                 }
-                if (viewState.followedShow.isNotEmpty()) {
-                    viewState.followedShow.forEach { item ->
+                if (viewState.followed?.isNotEmpty() == true) {
+                    viewState.followed.forEach { item ->
                         posterGridItem {
                             id(item.generateStableId())
                             tmdbImageUrlProvider(viewState.tmdbImageUrlProvider)
@@ -75,7 +75,7 @@ class LibraryEpoxyController(private val callbacks: Callbacks) : TypedEpoxyContr
                         callbacks.onWatchedHeaderClicked(viewState.watched)
                     })
                 }
-                if (viewState.watched.isNotEmpty()) {
+                if (viewState.watched?.isNotEmpty() == true) {
                     viewState.watched.forEach { item ->
                         posterGridItem {
                             id(item.generateStableId())

@@ -26,7 +26,7 @@ buildscript {
                     'core_ktx'         : '0.3',
                     'fragment'         : '28.0.0-alpha3',
                     'lifecycle'        : '1.1.1',
-                    'paging'           : '1.0.0',
+                    'paging'           : '1.0.1',
                     'palette'          : '28.0.0-alpha3',
                     'recyclerview'     : '28.0.0-alpha3',
                     'room'             : '1.1.1',

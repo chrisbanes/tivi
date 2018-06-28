@@ -75,26 +75,26 @@ class WatchedShowEntryWithShow : EntryWithShow<WatchedShowEntry> {
     override fun hashCode(): Int = Objects.hash(entry, relations)
 }
 
-class FollowedShowsEntryWithShow : EntryWithShow<FollowedShowEntry> {
+class FollowedShowEntryWithShow : EntryWithShow<FollowedShowEntry> {
     @Embedded override var entry: FollowedShowEntry? = null
     @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow> = emptyList()
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
-        other is FollowedShowsEntryWithShow -> entry == other.entry && relations == other.relations
+        other is FollowedShowEntryWithShow -> entry == other.entry && relations == other.relations
         else -> false
     }
 
     override fun hashCode(): Int = Objects.hash(entry, relations)
 }
 
-class RelatedShowsEntryWithShow : EntryWithShow<RelatedShowEntry> {
+class RelatedShowEntryWithShow : EntryWithShow<RelatedShowEntry> {
     @Embedded override var entry: RelatedShowEntry? = null
     @Relation(parentColumn = "other_show_id", entityColumn = "id") override var relations: List<TiviShow> = emptyList()
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
-        other is RelatedShowsEntryWithShow -> entry == other.entry && relations == other.relations
+        other is RelatedShowEntryWithShow -> entry == other.entry && relations == other.relations
         else -> false
     }
 

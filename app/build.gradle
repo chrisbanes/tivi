@@ -164,6 +164,7 @@ dependencies {
     kapt "android.arch.lifecycle:compiler:${versions.androidx.lifecycle}"
 
     implementation "android.arch.paging:runtime:${versions.androidx.paging}"
+    implementation "android.arch.paging:rxjava2:${versions.androidx.paging}"
 
     implementation "com.android.support:appcompat-v7:${versions.androidx.appcompat}"
     implementation "com.android.support:design:${versions.material_design}"

@@ -21,12 +21,12 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
 import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.FollowedShowsEntryWithShow
+import app.tivi.data.entities.FollowedShowEntryWithShow
 import app.tivi.data.entities.PendingAction
 import io.reactivex.Flowable
 
 @Dao
-abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowsEntryWithShow> {
+abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryWithShow> {
     companion object {
         const val ENTRY_QUERY_ORDER_LAST_WATCHED = "SELECT fs.* FROM myshows_entries as fs" +
                 " INNER JOIN seasons AS s ON fs.show_id = s.show_id" +
@@ -41,17 +41,17 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowsEntry
 
     @Transaction
     @Query("$ENTRY_QUERY_ORDER_LAST_WATCHED LIMIT :count OFFSET :offset")
-    abstract override fun entriesFlowable(count: Int, offset: Int): Flowable<List<FollowedShowsEntryWithShow>>
+    abstract override fun entriesFlowable(count: Int, offset: Int): Flowable<List<FollowedShowEntryWithShow>>
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
-    abstract override fun entriesDataSource(): DataSource.Factory<Int, FollowedShowsEntryWithShow>
+    abstract override fun entriesDataSource(): DataSource.Factory<Int, FollowedShowEntryWithShow>
 
     @Query("DELETE FROM myshows_entries")
     abstract override fun deleteAll()
 
     @Query("SELECT * FROM myshows_entries WHERE id = :id")
-    abstract fun entryWithId(id: Long): FollowedShowsEntryWithShow?
+    abstract fun entryWithId(id: Long): FollowedShowEntryWithShow?
 
     @Query("SELECT * FROM myshows_entries WHERE show_id = :showId")
     abstract fun entryWithShowId(showId: Long): FollowedShowEntry
