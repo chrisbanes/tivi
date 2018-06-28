@@ -35,7 +35,7 @@ import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.util.GridToGridTransitioner
-import kotlinx.android.synthetic.main.fragment_summary.*
+import kotlinx.android.synthetic.main.fragment_discover.*
 
 internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     private lateinit var gridLayoutManager: GridLayoutManager
@@ -79,7 +79,7 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_summary, container, false)
+        return inflater.inflate(R.layout.fragment_discover, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -22,9 +22,12 @@ import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
 import app.tivi.datasources.trakt.FollowedShowsDataSource
 import app.tivi.datasources.trakt.WatchedShowsDataSource
+import app.tivi.extensions.emptyFlowableList
 import app.tivi.extensions.toFlowable
 import app.tivi.home.HomeFragmentViewModel
 import app.tivi.home.HomeNavigator
+import app.tivi.home.library.LibraryFilter.FOLLOWED
+import app.tivi.home.library.LibraryFilter.WATCHED
 import app.tivi.interactors.FetchWatchedShowsInteractor
 import app.tivi.interactors.SyncAllFollowedShowsInteractor
 import app.tivi.tmdb.TmdbManager
@@ -34,19 +37,22 @@ import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.NetworkDetector
 import app.tivi.util.RxLoadingCounter
+import io.reactivex.Flowable
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
-    watchedShowsDataSource: WatchedShowsDataSource,
+    private val watchedShowsDataSource: WatchedShowsDataSource,
     private val watchedShowsInteractor: FetchWatchedShowsInteractor,
-    followedDataSource: FollowedShowsDataSource,
+    private val followedDataSource: FollowedShowsDataSource,
     private val followedShowsInteractor: SyncAllFollowedShowsInteractor,
     private val traktManager: TraktManager,
-    tmdbManager: TmdbManager,
+    private val tmdbManager: TmdbManager,
     private val networkDetector: NetworkDetector,
     logger: Logger
 ) : HomeFragmentViewModel(traktManager, logger) {
@@ -56,30 +62,59 @@ class LibraryViewModel @Inject constructor(
 
     private val loadingState = RxLoadingCounter()
 
+    private val currentFilter = BehaviorSubject.create<LibraryFilter>()
+
+    private var refreshDisposable: Disposable? = null
+
     init {
-        disposables += Flowables.combineLatest(
-                watchedShowsDataSource.data(Unit, 0, 8),
-                followedDataSource.data(Unit, 0, 8),
-                tmdbManager.imageProvider,
-                loadingState.observable.toFlowable(),
-                ::LibraryViewState)
+        disposables += currentFilter.toFlowable()
+                .distinctUntilChanged()
+                .flatMap(::createFilterViewStateFlowable)
                 .observeOn(schedulers.main)
                 .subscribe(_data::setValue, logger::e)
+
+        // Trigger the default filter
+        currentFilter.onNext(FOLLOWED)
     }
+
+    private fun createFilterViewStateFlowable(filter: LibraryFilter) = Flowables.combineLatest(
+            Flowable.just(LibraryFilter.values().asList()),
+            Flowable.just(filter),
+            if (filter == WATCHED) watchedShowsDataSource.data(Unit, 8, 0) else emptyFlowableList(),
+            if (filter == FOLLOWED) followedDataSource.data(Unit, 8, 0) else emptyFlowableList(),
+            tmdbManager.imageProvider,
+            loadingState.observable.toFlowable(),
+            ::LibraryViewState)
 
     fun refresh() {
+        if (refreshDisposable != null) {
+            refreshDisposable?.dispose()
+            refreshDisposable = null
+        }
+
         disposables += Observables.combineLatest(
                 networkDetector.waitForConnection().toObservable(),
-                traktManager.state.filter { it == TraktAuthState.LOGGED_IN }
-        ).subscribe({ onRefresh() }, logger::e)
+                traktManager.state.filter { it == TraktAuthState.LOGGED_IN })
+                .firstOrError()
+                .subscribe({ refreshFilter() }, logger::e)
+                .also { refreshDisposable = it }
     }
 
-    private fun onRefresh() {
-        loadingState.addLoader()
-        launchInteractor(watchedShowsInteractor).invokeOnCompletion { loadingState.removeLoader() }
-
-        loadingState.addLoader()
-        launchInteractor(followedShowsInteractor).invokeOnCompletion { loadingState.removeLoader() }
+    private fun refreshFilter() {
+        when (currentFilter.value) {
+            FOLLOWED -> {
+                loadingState.addLoader()
+                launchInteractor(followedShowsInteractor).invokeOnCompletion {
+                    loadingState.removeLoader()
+                }
+            }
+            WATCHED -> {
+                loadingState.addLoader()
+                launchInteractor(watchedShowsInteractor).invokeOnCompletion {
+                    loadingState.removeLoader()
+                }
+            }
+        }
     }
 
     fun onWatchedHeaderClicked(navigator: HomeNavigator, sharedElements: SharedElementHelper) {
@@ -88,6 +123,10 @@ class LibraryViewModel @Inject constructor(
 
     fun onMyShowsHeaderClicked(navigator: HomeNavigator, sharedElements: SharedElementHelper) {
         navigator.showMyShows(sharedElements)
+    }
+
+    fun onFilterSelected(filter: LibraryFilter) {
+        currentFilter.onNext(filter)
     }
 
     fun onItemPostedClicked(navigator: HomeNavigator, show: TiviShow, sharedElements: SharedElementHelper? = null) {

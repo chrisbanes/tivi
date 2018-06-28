@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2017 Google, Inc.
+  ~ Copyright 2018 Google, Inc.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  ~
   -->
 
 <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -43,7 +42,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_scrollFlags="scroll|enterAlways|snap"
-                app:popupTheme="?attr/actionBarPopupTheme" />
+                app:popupTheme="?attr/actionBarPopupTheme">
+
+                <Spinner
+                    android:id="@+id/library_filter_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+            </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.AppBarLayout>
 
@@ -66,7 +72,7 @@
             android:paddingRight="2dp"
             android:paddingTop="6dp"
             app:layoutManager="android.support.v7.widget.GridLayoutManager"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior"
             app:spanCount="@integer/grid_condensed_span_count"
             tools:listitem="@layout/view_holder_details_summary" />
 

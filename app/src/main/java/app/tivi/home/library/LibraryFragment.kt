@@ -23,6 +23,8 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import app.tivi.R
 import app.tivi.data.Entry
 import app.tivi.data.entities.EntryWithShow
@@ -35,7 +37,7 @@ import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.util.GridToGridTransitioner
-import kotlinx.android.synthetic.main.fragment_summary.*
+import kotlinx.android.synthetic.main.fragment_library.*
 
 class LibraryFragment : HomeFragment<LibraryViewModel>() {
     private lateinit var homeNavigator: HomeNavigator
@@ -71,18 +73,36 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_summary, container, false)
+        return inflater.inflate(R.layout.fragment_library, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        viewModel.data.observeNotNull(this) { model ->
-            controller.setData(model.followedShow, model.watched, model.tmdbImageUrlProvider)
-            summary_swipe_refresh.isRefreshing = model.isLoading
-
+        viewModel.data.observeNotNull(this) { viewState ->
+            update(viewState)
             scheduleStartPostponedTransitions()
         }
+    }
+
+    private fun update(viewState: LibraryViewState) {
+        library_filter_spinner.apply {
+            adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, viewState.allowedFilters)
+            onItemSelectedListener = null
+
+            // Select the current item
+            setSelection(viewState.allowedFilters.indexOf(viewState.filter))
+
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(av: AdapterView<*>?) = Unit
+
+                override fun onItemSelected(av: AdapterView<*>?, v: View?, position: Int, id: Long) {
+                    viewModel.onFilterSelected(viewState.allowedFilters[position])
+                }
+            }
+        }
+
+        controller.setData(viewState)
+        summary_swipe_refresh.isRefreshing = viewState.isLoading
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

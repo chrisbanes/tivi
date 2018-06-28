@@ -36,8 +36,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowsEntry
                 " ORDER BY datetime(ew.watched_at) DESC"
     }
 
-    @Transaction
-    @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
+    @Query("SELECT * FROM myshows_entries")
     abstract fun entriesBlocking(): List<FollowedShowEntry>
 
     @Transaction

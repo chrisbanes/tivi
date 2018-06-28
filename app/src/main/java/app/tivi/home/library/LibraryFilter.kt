@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,7 @@
 
 package app.tivi.home.library
 
-import app.tivi.data.entities.EntryWithShow
-import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.WatchedShowEntry
-import app.tivi.tmdb.TmdbImageUrlProvider
-
-data class LibraryViewState(
-    val allowedFilters: List<LibraryFilter>,
-    val filter: LibraryFilter,
-    val watched: List<EntryWithShow<WatchedShowEntry>>,
-    val followedShow: List<EntryWithShow<FollowedShowEntry>>,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    val isLoading: Boolean
-)
+enum class LibraryFilter {
+    FOLLOWED,
+    WATCHED
+}

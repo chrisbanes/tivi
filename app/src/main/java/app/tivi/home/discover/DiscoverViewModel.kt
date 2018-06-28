@@ -56,8 +56,8 @@ class DiscoverViewModel @Inject constructor(
 
     init {
         disposables += Flowables.combineLatest(
-                trendingDataSource.data(Unit, 0, 8),
-                popularDataSource.data(Unit, 0, 8),
+                trendingDataSource.data(Unit, 8, 0),
+                popularDataSource.data(Unit, 8, 0),
                 tmdbManager.imageProvider,
                 loadingState.observable.toFlowable(),
                 ::DiscoverViewState)
