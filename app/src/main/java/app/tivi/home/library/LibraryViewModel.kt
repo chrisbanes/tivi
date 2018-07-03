@@ -92,25 +92,25 @@ class LibraryViewModel @Inject constructor(
         currentFilter.onNext(FOLLOWED)
     }
 
-    private fun createFilterViewStateFlowable(filter: LibraryFilter): Flowable<LibraryViewState> {
-        val watched = when (filter) {
-            WATCHED -> dataSourceToFlowable(watchedShowsDataSource.dataSourceFactory())
-            else -> Flowable.just(null)
+    private fun createFilterViewStateFlowable(filter: LibraryFilter): Flowable<LibraryViewState> = when (filter) {
+        WATCHED -> {
+            Flowables.combineLatest(
+                    Flowable.just(LibraryFilter.values().asList()),
+                    Flowable.just(filter),
+                    tmdbManager.imageProvider,
+                    loadingState.observable.toFlowable(),
+                    dataSourceToFlowable(watchedShowsDataSource.dataSourceFactory()),
+                    ::LibraryWatchedViewState)
         }
-        val followed = when (filter) {
-            FOLLOWED -> dataSourceToFlowable(followedDataSource.dataSourceFactory())
-            else -> Flowable.just(null)
+        FOLLOWED -> {
+            Flowables.combineLatest(
+                    Flowable.just(LibraryFilter.values().asList()),
+                    Flowable.just(filter),
+                    tmdbManager.imageProvider,
+                    loadingState.observable.toFlowable(),
+                    dataSourceToFlowable(followedDataSource.dataSourceFactory()),
+                    ::LibraryFollowedViewState)
         }
-
-        return Flowables.combineLatest(
-                Flowable.just(LibraryFilter.values().asList()),
-                Flowable.just(filter),
-                watched,
-                followed,
-                tmdbManager.imageProvider,
-                loadingState.observable.toFlowable(),
-                ::LibraryViewState
-        )
     }
 
     private fun <T> dataSourceToFlowable(source: DataSource.Factory<Int, T>): Flowable<PagedList<T>> {

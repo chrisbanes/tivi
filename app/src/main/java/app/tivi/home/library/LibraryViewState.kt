@@ -21,11 +21,25 @@ import app.tivi.data.entities.FollowedShowEntryWithShow
 import app.tivi.data.entities.WatchedShowEntryWithShow
 import app.tivi.tmdb.TmdbImageUrlProvider
 
-data class LibraryViewState(
-    val allowedFilters: List<LibraryFilter>,
-    val filter: LibraryFilter,
-    val watched: PagedList<WatchedShowEntryWithShow>?,
-    val followed: PagedList<FollowedShowEntryWithShow>?,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    val isLoading: Boolean
+sealed class LibraryViewState(
+    open val allowedFilters: List<LibraryFilter>,
+    open val filter: LibraryFilter,
+    open val tmdbImageUrlProvider: TmdbImageUrlProvider,
+    open val isLoading: Boolean
 )
+
+data class LibraryFollowedViewState(
+    override val allowedFilters: List<LibraryFilter>,
+    override val filter: LibraryFilter,
+    override val tmdbImageUrlProvider: TmdbImageUrlProvider,
+    override val isLoading: Boolean,
+    val followedShows: PagedList<FollowedShowEntryWithShow>
+) : LibraryViewState(allowedFilters, filter, tmdbImageUrlProvider, isLoading)
+
+data class LibraryWatchedViewState(
+    override val allowedFilters: List<LibraryFilter>,
+    override val filter: LibraryFilter,
+    override val tmdbImageUrlProvider: TmdbImageUrlProvider,
+    override val isLoading: Boolean,
+    val watchedShows: PagedList<WatchedShowEntryWithShow>
+) : LibraryViewState(allowedFilters, filter, tmdbImageUrlProvider, isLoading)

@@ -17,13 +17,11 @@
 package app.tivi.home.library
 
 import android.view.View
-import app.tivi.R
 import app.tivi.data.Entry
 import app.tivi.data.entities.EntryWithShow
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.emptyState
-import app.tivi.header
 import app.tivi.posterGridItem
 import app.tivi.ui.epoxy.TotalSpanOverride
 import com.airbnb.epoxy.TypedEpoxyController
@@ -36,18 +34,10 @@ class LibraryEpoxyController(private val callbacks: Callbacks) : TypedEpoxyContr
     }
 
     override fun buildModels(viewState: LibraryViewState) {
-        when (viewState.filter) {
-            LibraryFilter.FOLLOWED -> {
-                header {
-                    id("myshows_header")
-                    title(R.string.library_followed_shows)
-                    spanSizeOverride(TotalSpanOverride)
-                    buttonClickListener(View.OnClickListener {
-                        callbacks.onMyShowsHeaderClicked(viewState.followed)
-                    })
-                }
-                if (viewState.followed?.isNotEmpty() == true) {
-                    viewState.followed.forEach { item ->
+        when {
+            viewState is LibraryFollowedViewState -> {
+                if (viewState.followedShows.isNotEmpty()) {
+                    viewState.followedShows.forEach { item ->
                         posterGridItem {
                             id(item.generateStableId())
                             tmdbImageUrlProvider(viewState.tmdbImageUrlProvider)
@@ -66,17 +56,9 @@ class LibraryEpoxyController(private val callbacks: Callbacks) : TypedEpoxyContr
                     }
                 }
             }
-            LibraryFilter.WATCHED -> {
-                header {
-                    id("watched_header")
-                    title(R.string.library_watched)
-                    spanSizeOverride(TotalSpanOverride)
-                    buttonClickListener(View.OnClickListener {
-                        callbacks.onWatchedHeaderClicked(viewState.watched)
-                    })
-                }
-                if (viewState.watched?.isNotEmpty() == true) {
-                    viewState.watched.forEach { item ->
+            viewState is LibraryWatchedViewState -> {
+                if (viewState.watchedShows.isNotEmpty()) {
+                    viewState.watchedShows.forEach { item ->
                         posterGridItem {
                             id(item.generateStableId())
                             tmdbImageUrlProvider(viewState.tmdbImageUrlProvider)
