@@ -214,11 +214,6 @@ dependencies {
     implementation 'com.evernote:android-job:1.2.5'
 }
 
-afterEvaluate {
-    kaptDebugKotlin.dependsOn dataBindingExportFeaturePackageIdsDebug
-    kaptReleaseKotlin.dependsOn dataBindingExportFeaturePackageIdsRelease
-}
-
 def getGitHash() {
     def stdout = new ByteArrayOutputStream()
     exec {
