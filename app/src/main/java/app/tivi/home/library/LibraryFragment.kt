@@ -24,42 +24,36 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import app.tivi.R
-import app.tivi.data.Entry
-import app.tivi.data.entities.EntryWithShow
-import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.WatchedShowEntry
+import app.tivi.data.entities.FollowedShowEntryWithShow
+import app.tivi.data.entities.WatchedShowEntryWithShow
 import app.tivi.extensions.observeNotNull
 import app.tivi.home.HomeFragment
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
+import app.tivi.ui.epoxy.EmptyEpoxyController
 import app.tivi.util.GridToGridTransitioner
+import com.airbnb.epoxy.EpoxyController
 import kotlinx.android.synthetic.main.fragment_library.*
 
 class LibraryFragment : HomeFragment<LibraryViewModel>() {
     private lateinit var homeNavigator: HomeNavigator
     private lateinit var gridLayoutManager: GridLayoutManager
 
-    private val controller = LibraryEpoxyController(object : LibraryEpoxyController.Callbacks {
-        private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
-            ListItemSharedElementHelper(library_rv)
-        }
+    private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
+        ListItemSharedElementHelper(library_rv)
+    }
 
-        override fun onMyShowsHeaderClicked(items: List<EntryWithShow<FollowedShowEntry>>?) {
-            viewModel.onMyShowsHeaderClicked(homeNavigator, listItemSharedElementHelper.createForItems(items))
+    private var controller: EpoxyController = EmptyEpoxyController
+        set(value) {
+            if (field != value) {
+                field = value
+                library_rv.adapter = value.adapter
+                value.spanCount = gridLayoutManager.spanCount
+                gridLayoutManager.spanSizeLookup = controller.spanSizeLookup
+            }
         }
-
-        override fun onWatchedHeaderClicked(items: List<EntryWithShow<WatchedShowEntry>>?) {
-            viewModel.onWatchedHeaderClicked(homeNavigator, listItemSharedElementHelper.createForItems(items))
-        }
-
-        override fun onItemClicked(item: EntryWithShow<out Entry>) {
-            viewModel.onItemPostedClicked(homeNavigator, item.show,
-                    listItemSharedElementHelper.createForItem(item, "poster")
-            )
-        }
-    })
 
     private val filterController = LibraryFiltersEpoxyController(object : LibraryFiltersEpoxyController.Callbacks {
         override fun onFilterSelected(filter: LibraryFilter) {
@@ -91,7 +85,23 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
 
     private fun update(viewState: LibraryViewState) {
         filterController.setData(viewState)
-        controller.setData(viewState)
+
+        when (viewState) {
+            is LibraryWatchedViewState -> {
+                val c = (controller as? LibraryWatchedEpoxyController ?: createWatchedController())
+                c.tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
+                c.setList(viewState.watchedShows)
+                c.isEmpty = viewState.isEmpty
+                controller = c
+            }
+            is LibraryFollowedViewState -> {
+                val c = controller as? LibraryFollowedEpoxyController ?: createFollowedController()
+                c.tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
+                c.setList(viewState.followedShows)
+                c.isEmpty = viewState.isEmpty
+                controller = c
+            }
+        }
 
         // Close the filter pane if needed
         closeFilterPanel()
@@ -104,11 +114,8 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
 
         // Setup span and columns
         gridLayoutManager = library_rv.layoutManager as GridLayoutManager
-        gridLayoutManager.spanSizeLookup = controller.spanSizeLookup
-        controller.spanCount = gridLayoutManager.spanCount
 
         library_rv.apply {
-            adapter = controller.adapter
             addItemDecoration(SpacingItemDecorator(paddingLeft))
         }
 
@@ -117,14 +124,8 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         library_toolbar.apply {
             title = getString(R.string.library_title)
             inflateMenu(R.menu.home_toolbar)
-            setOnMenuItemClickListener {
-                onMenuItemClicked(it)
-            }
+            setOnMenuItemClickListener(this@LibraryFragment::onMenuItemClicked)
         }
-    }
-
-    private fun closeFilterPanel() {
-        library_motion.transitionToStart()
     }
 
     override fun getMenu(): Menu? = library_toolbar.menu
@@ -133,4 +134,26 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         library_rv.stopScroll()
         library_rv.smoothScrollToPosition(0)
     }
+
+    private fun closeFilterPanel() {
+        library_motion.transitionToStart()
+    }
+
+    private fun createWatchedController() = LibraryWatchedEpoxyController(
+            object : LibraryWatchedEpoxyController.Callbacks {
+                override fun onItemClicked(item: WatchedShowEntryWithShow) {
+                    viewModel.onItemPostedClicked(homeNavigator, item.show,
+                            listItemSharedElementHelper.createForItem(item, "poster")
+                    )
+                }
+            })
+
+    private fun createFollowedController() = LibraryFollowedEpoxyController(
+            object : LibraryFollowedEpoxyController.Callbacks {
+                override fun onItemClicked(item: FollowedShowEntryWithShow) {
+                    viewModel.onItemPostedClicked(homeNavigator, item.show,
+                            listItemSharedElementHelper.createForItem(item, "poster")
+                    )
+                }
+            })
 }

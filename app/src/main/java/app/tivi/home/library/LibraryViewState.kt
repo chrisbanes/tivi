@@ -25,7 +25,8 @@ sealed class LibraryViewState(
     open val allowedFilters: List<LibraryFilter>,
     open val filter: LibraryFilter,
     open val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    open val isLoading: Boolean
+    open val isLoading: Boolean,
+    open val isEmpty: Boolean
 )
 
 data class LibraryFollowedViewState(
@@ -33,13 +34,15 @@ data class LibraryFollowedViewState(
     override val filter: LibraryFilter,
     override val tmdbImageUrlProvider: TmdbImageUrlProvider,
     override val isLoading: Boolean,
+    override val isEmpty: Boolean,
     val followedShows: PagedList<FollowedShowEntryWithShow>
-) : LibraryViewState(allowedFilters, filter, tmdbImageUrlProvider, isLoading)
+) : LibraryViewState(allowedFilters, filter, tmdbImageUrlProvider, isLoading, isEmpty)
 
 data class LibraryWatchedViewState(
     override val allowedFilters: List<LibraryFilter>,
     override val filter: LibraryFilter,
     override val tmdbImageUrlProvider: TmdbImageUrlProvider,
     override val isLoading: Boolean,
+    override val isEmpty: Boolean,
     val watchedShows: PagedList<WatchedShowEntryWithShow>
-) : LibraryViewState(allowedFilters, filter, tmdbImageUrlProvider, isLoading)
+) : LibraryViewState(allowedFilters, filter, tmdbImageUrlProvider, isLoading, isEmpty)

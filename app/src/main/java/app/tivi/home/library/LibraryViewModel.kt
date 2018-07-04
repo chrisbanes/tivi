@@ -22,6 +22,7 @@ import android.arch.paging.DataSource
 import android.arch.paging.PagedList
 import android.arch.paging.RxPagedListBuilder
 import app.tivi.SharedElementHelper
+import app.tivi.data.entities.EntryWithShow
 import app.tivi.data.entities.TiviShow
 import app.tivi.datasources.trakt.FollowedShowsDataSource
 import app.tivi.datasources.trakt.WatchedShowsDataSource
@@ -66,6 +67,7 @@ class LibraryViewModel @Inject constructor(
     private val loadingState = RxLoadingCounter()
 
     private val currentFilter = BehaviorSubject.create<LibraryFilter>()
+    private val isEmpty = BehaviorSubject.createDefault(false)
 
     private var refreshDisposable: Disposable? = null
 
@@ -81,6 +83,7 @@ class LibraryViewModel @Inject constructor(
         disposables += currentFilter.toFlowable()
                 .distinctUntilChanged()
                 .flatMap(::createFilterViewStateFlowable)
+                .distinctUntilChanged()
                 .observeOn(schedulers.main)
                 .subscribe(_data::setValue, logger::e)
 
@@ -99,6 +102,7 @@ class LibraryViewModel @Inject constructor(
                     Flowable.just(filter),
                     tmdbManager.imageProvider,
                     loadingState.observable.toFlowable(),
+                    isEmpty.toFlowable(),
                     dataSourceToFlowable(watchedShowsDataSource.dataSourceFactory()),
                     ::LibraryWatchedViewState)
         }
@@ -108,16 +112,28 @@ class LibraryViewModel @Inject constructor(
                     Flowable.just(filter),
                     tmdbManager.imageProvider,
                     loadingState.observable.toFlowable(),
+                    isEmpty.toFlowable(),
                     dataSourceToFlowable(followedDataSource.dataSourceFactory()),
                     ::LibraryFollowedViewState)
         }
     }
 
-    private fun <T> dataSourceToFlowable(source: DataSource.Factory<Int, T>): Flowable<PagedList<T>> {
-        return RxPagedListBuilder(source, pagingConfig)
+    private fun <T : EntryWithShow<*>> dataSourceToFlowable(f: DataSource.Factory<Int, T>): Flowable<PagedList<T>> {
+        return RxPagedListBuilder(f, pagingConfig)
                 .setFetchScheduler(schedulers.io)
                 .setNotifyScheduler(schedulers.main)
                 .setBoundaryCallback(object : PagedList.BoundaryCallback<T>() {
+                    override fun onZeroItemsLoaded() {
+                        isEmpty.onNext(true)
+                    }
+
+                    override fun onItemAtEndLoaded(itemAtEnd: T) {
+                        isEmpty.onNext(false)
+                    }
+
+                    override fun onItemAtFrontLoaded(itemAtFront: T) {
+                        isEmpty.onNext(false)
+                    }
                 })
                 .buildFlowable(BackpressureStrategy.LATEST)
     }
@@ -151,14 +167,6 @@ class LibraryViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    fun onWatchedHeaderClicked(navigator: HomeNavigator, sharedElements: SharedElementHelper) {
-        navigator.showWatched(sharedElements)
-    }
-
-    fun onMyShowsHeaderClicked(navigator: HomeNavigator, sharedElements: SharedElementHelper) {
-        navigator.showMyShows(sharedElements)
     }
 
     fun onFilterSelected(filter: LibraryFilter) {
