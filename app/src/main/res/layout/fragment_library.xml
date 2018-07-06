@@ -34,28 +34,23 @@
 
     <com.airbnb.epoxy.EpoxyRecyclerView
         android:id="@+id/library_filters_rv"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
         android:background="@color/content_scrim_dark"
         android:orientation="vertical"
-        android:visibility="visible"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/library_toolbar"
         tools:listitem="@layout/view_holder_library_filter_item" />
 
     <com.airbnb.epoxy.EpoxyRecyclerView
         android:id="@+id/library_rv"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="?android:attr/colorBackground"
         android:elevation="2dp"
         app:layoutManager="android.support.v7.widget.GridLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/library_toolbar"
+        app:layout_constraintTop_toBottomOf="@id/library_filters_rv"
         app:spanCount="@integer/grid_condensed_span_count"
         tools:listitem="@layout/view_holder_details_summary" />
 
