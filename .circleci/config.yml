@@ -111,25 +111,23 @@ jobs:
 
 workflows:
   version: 2
-  build_and_test:
+  build_test_deploy:
     jobs:
-      - build
-      - test_instrumented:
-          requires:
-            - build
-  nightly:
-    triggers:
-      - schedule:
-          # 17:17 UTC is ~03:17 Sydney time
-          cron: "17 17 * * *"
+      - build:
           filters:
-            branches:
-              only: master
-    jobs:
-      - build
+            tags:
+              only: /.*/
       - test_instrumented:
           requires:
             - build
+          filters:
+            tags:
+              only: /.*/
       - deploy_to_play:
           requires:
             - test_instrumented
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
