@@ -80,7 +80,7 @@ jobs:
           command: ./gradlew dependencies
       - run:
           name: Assemble and Test APKs
-          command: ./gradlew assembleDebug app:assembleDebugAndroidTest -Ptivi.versioncode=$CIRCLE_BUILD_NUM
+          command: ./gradlew bundleDebug assembleDebug app:assembleDebugAndroidTest -Ptivi.versioncode=$CIRCLE_BUILD_NUM
       - <<: *clean_secrets
       - <<: *save_cache
       - store_artifacts:
@@ -125,7 +125,7 @@ jobs:
       - <<: *decrypt_secrets
       - run:
           name: Check and assemble APKs
-          command: ./gradlew assembleRelease -Ptivi.versioncode=$CIRCLE_BUILD_NUM
+          command: ./gradlew bundleRelease assembleRelease -Ptivi.versioncode=$CIRCLE_BUILD_NUM
       - <<: *clean_secrets
       - store_artifacts:
           path: app/build/outputs/apk
@@ -137,7 +137,6 @@ jobs:
           path: app/build/reports
           destination: reports
       - <<: *persist_workspace
-
   test_instrumented:
     <<: *config_gcloud
     steps:
