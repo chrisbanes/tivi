@@ -40,10 +40,10 @@ import app.tivi.trakt.TraktConstants
 import kotlinx.android.synthetic.main.activity_home.*
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
+import net.openid.appauth.AuthorizationService
 import javax.inject.Inject
 
 class HomeActivity : TiviActivity() {
-
     companion object {
         val ROOT_FRAGMENT = "root"
     }
@@ -51,6 +51,10 @@ class HomeActivity : TiviActivity() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: HomeActivityViewModel
     private lateinit var navigatorViewModel: HomeNavigatorViewModel
+
+    val authService by lazy(LazyThreadSafetyMode.NONE) {
+        AuthorizationService(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -186,7 +190,7 @@ class HomeActivity : TiviActivity() {
             TraktConstants.INTENT_ACTION_HANDLE_AUTH_RESPONSE -> {
                 val response = AuthorizationResponse.fromIntent(intent)
                 val error = AuthorizationException.fromIntent(intent)
-                viewModel.onAuthResponse(response, error)
+                viewModel.onAuthResponse(authService, response, error)
             }
         }
     }

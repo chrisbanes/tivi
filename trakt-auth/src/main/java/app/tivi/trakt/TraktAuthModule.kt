@@ -23,7 +23,6 @@ import com.uwetrottmann.trakt5.TraktV2
 import dagger.Module
 import dagger.Provides
 import net.openid.appauth.AuthorizationRequest
-import net.openid.appauth.AuthorizationService
 import net.openid.appauth.AuthorizationServiceConfiguration
 import net.openid.appauth.ClientAuthentication
 import net.openid.appauth.ClientSecretBasic
@@ -94,11 +93,6 @@ class TraktAuthModule {
                 clientId,
                 ResponseTypeValues.CODE,
                 Uri.parse(TraktConstants.URI_AUTH_CALLBACK)).build()
-    }
-
-    @Provides
-    fun provideAuthService(context: Context): AuthorizationService {
-        return AuthorizationService(context)
     }
 
     @Singleton

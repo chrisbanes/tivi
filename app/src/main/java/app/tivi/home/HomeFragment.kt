@@ -73,7 +73,7 @@ abstract class HomeFragment<VM : HomeFragmentViewModel> : TiviFragment() {
             true
         }
         R.id.home_menu_user_login -> {
-            viewModel.onLoginItemClicked()
+            viewModel.onLoginItemClicked((requireActivity() as HomeActivity).authService)
             true
         }
         else -> false

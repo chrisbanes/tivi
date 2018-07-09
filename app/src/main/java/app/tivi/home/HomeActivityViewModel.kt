@@ -22,6 +22,7 @@ import app.tivi.util.SingleLiveEvent
 import app.tivi.util.TiviViewModel
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
+import net.openid.appauth.AuthorizationService
 import javax.inject.Inject
 
 internal class HomeActivityViewModel @Inject constructor(
@@ -49,10 +50,14 @@ internal class HomeActivityViewModel @Inject constructor(
         mutableNavLiveData.value = item
     }
 
-    fun onAuthResponse(response: AuthorizationResponse?, ex: AuthorizationException?) {
+    fun onAuthResponse(
+        authService: AuthorizationService,
+        response: AuthorizationResponse?,
+        ex: AuthorizationException?
+    ) {
         when {
+            response != null -> traktManager.onAuthResponse(authService, response)
             ex != null -> traktManager.onAuthException(ex)
-            response != null -> traktManager.onAuthResponse(response)
         }
     }
 }

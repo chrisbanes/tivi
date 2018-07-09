@@ -17,8 +17,6 @@
 package app.tivi.actions
 
 interface ShowTasks {
-    fun followShow(showId: Long)
-    fun unfollowShow(showId: Long)
     fun syncShowWatchedEpisodes(showId: Long)
-    fun syncAllShows()
+    fun syncFollowedShows()
 }

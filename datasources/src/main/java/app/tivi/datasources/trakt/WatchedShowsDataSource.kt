@@ -28,11 +28,12 @@ class WatchedShowsDataSource @Inject constructor(
     private val watchedShowDao: WatchedShowDao,
     private val schedulers: AppRxSchedulers
 ) : ListDataSource<Unit, WatchedShowEntryWithShow> {
-    override fun data(param: Unit): Flowable<List<WatchedShowEntryWithShow>> {
-        return watchedShowDao.entries()
+    override fun data(param: Unit, count: Int, offset: Int): Flowable<List<WatchedShowEntryWithShow>> {
+        return watchedShowDao.entriesFlowable(count, offset)
                 .subscribeOn(schedulers.io)
                 .distinctUntilChanged()
     }
 
-    override fun dataSourceFactory(): DataSource.Factory<Int, WatchedShowEntryWithShow> = watchedShowDao.entriesDataSource()
+    override fun dataSourceFactory(): DataSource.Factory<Int, WatchedShowEntryWithShow> =
+            watchedShowDao.entriesDataSource()
 }

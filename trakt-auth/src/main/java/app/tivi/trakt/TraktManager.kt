@@ -56,7 +56,6 @@ class TraktManager @Inject constructor(
     @ApplicationLevel private val disposables: CompositeDisposable,
     @Named("app") private val appNavigator: AppNavigator,
     private val requestProvider: Provider<AuthorizationRequest>,
-    private val authService: AuthorizationService,
     private val clientAuth: Lazy<ClientAuthentication>,
     @Named("auth") private val authPrefs: SharedPreferences,
     private val userMeDataSource: UserMeDataSource,
@@ -113,15 +112,19 @@ class TraktManager @Inject constructor(
         }
     }
 
-    fun startAuth(requestCode: Int) {
+    fun startAuth(requestCode: Int, authService: AuthorizationService) {
         authService.performAuthorizationRequest(
                 requestProvider.get(),
                 appNavigator.provideAuthHandleResponseIntent(requestCode)
         )
     }
 
-    fun onAuthResponse(response: AuthorizationResponse) {
-        performTokenExchange(response)
+    fun onAuthResponse(authService: AuthorizationService, response: AuthorizationResponse) {
+        authService.performTokenRequest(
+                response.createTokenExchangeRequest(),
+                clientAuth.get(),
+                ::onTokenExchangeResponse
+        )
     }
 
     fun onAuthException(exception: AuthorizationException) {
@@ -129,14 +132,6 @@ class TraktManager @Inject constructor(
     }
 
     fun userObservable(): Flowable<TraktUser> = userMeDataSource.data()
-
-    private fun performTokenExchange(response: AuthorizationResponse) {
-        authService.performTokenRequest(
-                response.createTokenExchangeRequest(),
-                clientAuth.get(),
-                ::onTokenExchangeResponse
-        )
-    }
 
     private fun onTokenExchangeResponse(response: TokenResponse?, ex: AuthorizationException?) {
         val newState = AuthState().apply { update(response, ex) }
@@ -147,7 +142,7 @@ class TraktManager @Inject constructor(
             persistAuthState(newState)
         }
         // Now trigger a sync of all shows
-        showTasks.syncAllShows()
+        showTasks.syncFollowedShows()
     }
 
     private fun readAuthState(): AuthState {

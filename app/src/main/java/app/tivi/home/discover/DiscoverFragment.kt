@@ -28,14 +28,14 @@ import app.tivi.data.Entry
 import app.tivi.data.entities.EntryWithShow
 import app.tivi.data.entities.PopularEntry
 import app.tivi.data.entities.TrendingEntry
-import app.tivi.extensions.observeK
+import app.tivi.extensions.observeNotNull
 import app.tivi.home.HomeFragment
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.util.GridToGridTransitioner
-import kotlinx.android.synthetic.main.fragment_summary.*
+import kotlinx.android.synthetic.main.fragment_discover.*
 
 internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     private lateinit var gridLayoutManager: GridLayoutManager
@@ -71,14 +71,15 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel.data.observeK(this) { model ->
-            controller.setData(model?.trendingItems, model?.popularItems, model?.tmdbImageUrlProvider)
+        viewModel.data.observeNotNull(this) { model ->
+            controller.setData(model.trendingItems, model.popularItems, model.tmdbImageUrlProvider)
+            summary_swipe_refresh.isRefreshing = model.isLoading
             scheduleStartPostponedTransitions()
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_summary, container, false)
+        return inflater.inflate(R.layout.fragment_discover, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -103,6 +104,8 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
                 onMenuItemClicked(it)
             }
         }
+
+        summary_swipe_refresh.setOnRefreshListener(viewModel::refresh)
     }
 
     override fun getMenu(): Menu? = summary_toolbar.menu

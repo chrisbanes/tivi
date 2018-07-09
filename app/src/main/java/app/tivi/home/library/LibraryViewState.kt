@@ -16,13 +16,33 @@
 
 package app.tivi.home.library
 
-import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.EntryWithShow
-import app.tivi.data.entities.WatchedShowEntry
+import android.arch.paging.PagedList
+import app.tivi.data.entities.FollowedShowEntryWithShow
+import app.tivi.data.entities.WatchedShowEntryWithShow
 import app.tivi.tmdb.TmdbImageUrlProvider
 
-data class LibraryViewState(
-    val watched: List<EntryWithShow<WatchedShowEntry>>,
-    val followedShow: List<EntryWithShow<FollowedShowEntry>>,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider
+sealed class LibraryViewState(
+    open val allowedFilters: List<LibraryFilter>,
+    open val filter: LibraryFilter,
+    open val tmdbImageUrlProvider: TmdbImageUrlProvider,
+    open val isLoading: Boolean,
+    open val isEmpty: Boolean
 )
+
+data class LibraryFollowedViewState(
+    override val allowedFilters: List<LibraryFilter>,
+    override val filter: LibraryFilter,
+    override val tmdbImageUrlProvider: TmdbImageUrlProvider,
+    override val isLoading: Boolean,
+    override val isEmpty: Boolean,
+    val followedShows: PagedList<FollowedShowEntryWithShow>
+) : LibraryViewState(allowedFilters, filter, tmdbImageUrlProvider, isLoading, isEmpty)
+
+data class LibraryWatchedViewState(
+    override val allowedFilters: List<LibraryFilter>,
+    override val filter: LibraryFilter,
+    override val tmdbImageUrlProvider: TmdbImageUrlProvider,
+    override val isLoading: Boolean,
+    override val isEmpty: Boolean,
+    val watchedShows: PagedList<WatchedShowEntryWithShow>
+) : LibraryViewState(allowedFilters, filter, tmdbImageUrlProvider, isLoading, isEmpty)

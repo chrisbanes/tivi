@@ -17,7 +17,7 @@
 package app.tivi.datasources.trakt
 
 import app.tivi.data.daos.RelatedShowsDao
-import app.tivi.data.entities.RelatedShowsEntryWithShow
+import app.tivi.data.entities.RelatedShowEntryWithShow
 import app.tivi.datasources.DataSource
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
@@ -26,8 +26,8 @@ import javax.inject.Inject
 class RelatedShowsDataSource @Inject constructor(
     private val entryDao: RelatedShowsDao,
     private val schedulers: AppRxSchedulers
-) : DataSource<Long, List<RelatedShowsEntryWithShow>> {
-    override fun data(param: Long): Flowable<List<RelatedShowsEntryWithShow>> {
+) : DataSource<Long, List<RelatedShowEntryWithShow>> {
+    override fun data(param: Long): Flowable<List<RelatedShowEntryWithShow>> {
         return entryDao.entries(param)
                 .subscribeOn(schedulers.io)
                 .startWith(Flowable.just(emptyList()))

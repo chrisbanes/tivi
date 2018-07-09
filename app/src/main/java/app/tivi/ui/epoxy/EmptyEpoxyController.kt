@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package app.tivi.datasources
+package app.tivi.ui.epoxy
 
-import io.reactivex.Flowable
+import com.airbnb.epoxy.EpoxyController
 
-interface PaginatedDataSource<in P, O> : ListDataSource<P, O> {
-    fun data(page: Int): Flowable<List<O>>
+object EmptyEpoxyController : EpoxyController() {
+    override fun buildModels() {
+    }
 }

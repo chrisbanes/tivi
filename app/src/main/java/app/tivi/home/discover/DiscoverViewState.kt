@@ -23,5 +23,6 @@ import app.tivi.tmdb.TmdbImageUrlProvider
 data class DiscoverViewState(
     val trendingItems: List<TrendingEntryWithShow>,
     val popularItems: List<PopularEntryWithShow>,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider
+    val tmdbImageUrlProvider: TmdbImageUrlProvider,
+    val isLoading: Boolean
 )

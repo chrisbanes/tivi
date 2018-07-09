@@ -19,30 +19,18 @@ package app.tivi.tasks
 import app.tivi.actions.ShowTasks
 
 class ShowTasksImpl : ShowTasks {
-    override fun followShow(showId: Long) {
-        AddToFollowedShows.buildRequest(showId)
-                .startNow()
-                .build()
-                .scheduleAsync()
-    }
-
-    override fun unfollowShow(showId: Long) {
-        RemoveFromFollowedShows.buildRequest(showId)
-                .startNow()
-                .build()
-                .scheduleAsync()
-    }
-
     override fun syncShowWatchedEpisodes(showId: Long) {
         SyncShowWatchedProgress.buildRequest(showId)
                 .startNow()
+                .setUpdateCurrent(true)
                 .build()
                 .scheduleAsync()
     }
 
-    override fun syncAllShows() {
+    override fun syncFollowedShows() {
         SyncAllFollowedShows.buildRequest()
                 .startNow()
+                .setUpdateCurrent(true)
                 .build()
                 .scheduleAsync()
     }

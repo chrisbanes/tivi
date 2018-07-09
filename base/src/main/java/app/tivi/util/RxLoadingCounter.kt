@@ -14,16 +14,26 @@
  * limitations under the License.
  */
 
-package app.tivi.datasources
+package app.tivi.util
 
-import io.reactivex.Flowable
-import android.arch.paging.DataSource as PagingDataSource
+import app.tivi.extensions.toFlowable
+import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
 
-interface DataSource<in P, O> {
-    fun data(param: P): Flowable<O>
-}
+class RxLoadingCounter {
+    private var loaders = 0
+    private val loadingState = BehaviorSubject.createDefault(loaders)
 
-interface ListDataSource<in P, O> {
-    fun data(param: P, count: Int, offset: Int = 0): Flowable<List<O>>
-    fun dataSourceFactory(): PagingDataSource.Factory<Int, O>
+    val observable: Observable<Boolean>
+        get() = loadingState.map { it > 0 }
+
+    val flowable by lazy(LazyThreadSafetyMode.NONE) { observable.toFlowable() }
+
+    fun addLoader() {
+        loadingState.onNext(++loaders)
+    }
+
+    fun removeLoader() {
+        loadingState.onNext(--loaders)
+    }
 }

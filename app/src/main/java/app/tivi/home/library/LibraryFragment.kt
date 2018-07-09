@@ -24,40 +24,41 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import app.tivi.R
-import app.tivi.data.Entry
-import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.EntryWithShow
-import app.tivi.data.entities.WatchedShowEntry
-import app.tivi.extensions.observeK
+import app.tivi.data.entities.FollowedShowEntryWithShow
+import app.tivi.data.entities.WatchedShowEntryWithShow
+import app.tivi.extensions.observeNotNull
 import app.tivi.home.HomeFragment
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
+import app.tivi.ui.epoxy.EmptyEpoxyController
 import app.tivi.util.GridToGridTransitioner
-import kotlinx.android.synthetic.main.fragment_summary.*
+import com.airbnb.epoxy.EpoxyController
+import kotlinx.android.synthetic.main.fragment_library.*
 
 class LibraryFragment : HomeFragment<LibraryViewModel>() {
     private lateinit var homeNavigator: HomeNavigator
     private lateinit var gridLayoutManager: GridLayoutManager
 
-    private val controller = LibraryEpoxyController(object : LibraryEpoxyController.Callbacks {
-        private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
-            ListItemSharedElementHelper(summary_rv)
+    private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
+        ListItemSharedElementHelper(library_rv)
+    }
+
+    private var controller: EpoxyController = EmptyEpoxyController
+        set(value) {
+            if (field != value) {
+                field = value
+                library_rv.adapter = value.adapter
+                value.spanCount = gridLayoutManager.spanCount
+                gridLayoutManager.spanSizeLookup = controller.spanSizeLookup
+            }
         }
 
-        override fun onMyShowsHeaderClicked(items: List<EntryWithShow<FollowedShowEntry>>?) {
-            viewModel.onMyShowsHeaderClicked(homeNavigator, listItemSharedElementHelper.createForItems(items))
-        }
-
-        override fun onWatchedHeaderClicked(items: List<EntryWithShow<WatchedShowEntry>>?) {
-            viewModel.onWatchedHeaderClicked(homeNavigator, listItemSharedElementHelper.createForItems(items))
-        }
-
-        override fun onItemClicked(item: EntryWithShow<out Entry>) {
-            viewModel.onItemPostedClicked(homeNavigator, item.show,
-                    listItemSharedElementHelper.createForItem(item, "poster")
-            )
+    private val filterController = LibraryFiltersEpoxyController(object : LibraryFiltersEpoxyController.Callbacks {
+        override fun onFilterSelected(filter: LibraryFilter) {
+            closeFilterPanel()
+            viewModel.onFilterSelected(filter)
         }
     })
 
@@ -71,16 +72,39 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_summary, container, false)
+        return inflater.inflate(R.layout.fragment_library, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        viewModel.data.observeK(this) { model ->
-            controller.setData(model?.followedShow, model?.watched, model?.tmdbImageUrlProvider)
+        viewModel.data.observeNotNull(this) { viewState ->
+            update(viewState)
             scheduleStartPostponedTransitions()
         }
+    }
+
+    private fun update(viewState: LibraryViewState) {
+        filterController.setData(viewState)
+
+        when (viewState) {
+            is LibraryWatchedViewState -> {
+                val c = (controller as? LibraryWatchedEpoxyController ?: createWatchedController())
+                c.tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
+                c.setList(viewState.watchedShows)
+                c.isEmpty = viewState.isEmpty
+                controller = c
+            }
+            is LibraryFollowedViewState -> {
+                val c = controller as? LibraryFollowedEpoxyController ?: createFollowedController()
+                c.tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
+                c.setList(viewState.followedShows)
+                c.isEmpty = viewState.isEmpty
+                controller = c
+            }
+        }
+
+        // Close the filter pane if needed
+        closeFilterPanel()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -89,31 +113,47 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         postponeEnterTransition()
 
         // Setup span and columns
-        gridLayoutManager = summary_rv.layoutManager as GridLayoutManager
-        gridLayoutManager.spanSizeLookup = controller.spanSizeLookup
-        controller.spanCount = gridLayoutManager.spanCount
+        gridLayoutManager = library_rv.layoutManager as GridLayoutManager
 
-        summary_rv.apply {
-            adapter = controller.adapter
+        library_rv.apply {
             addItemDecoration(SpacingItemDecorator(paddingLeft))
         }
 
-        summary_toolbar.apply {
+        library_filters_rv.adapter = filterController.adapter
+
+        library_toolbar.apply {
             title = getString(R.string.library_title)
             inflateMenu(R.menu.home_toolbar)
-            setOnMenuItemClickListener {
-                onMenuItemClicked(it)
-            }
+            setOnMenuItemClickListener(this@LibraryFragment::onMenuItemClicked)
         }
     }
 
-    override fun getMenu(): Menu? = summary_toolbar.menu
+    override fun getMenu(): Menu? = library_toolbar.menu
 
     internal fun scrollToTop() {
-        summary_rv.apply {
-            stopScroll()
-            smoothScrollToPosition(0)
-        }
-        summary_appbarlayout.setExpanded(true)
+        library_rv.stopScroll()
+        library_rv.smoothScrollToPosition(0)
     }
+
+    private fun closeFilterPanel() {
+        library_motion.transitionToStart()
+    }
+
+    private fun createWatchedController() = LibraryWatchedEpoxyController(
+            object : LibraryWatchedEpoxyController.Callbacks {
+                override fun onItemClicked(item: WatchedShowEntryWithShow) {
+                    viewModel.onItemPostedClicked(homeNavigator, item.show,
+                            listItemSharedElementHelper.createForItem(item, "poster")
+                    )
+                }
+            })
+
+    private fun createFollowedController() = LibraryFollowedEpoxyController(
+            object : LibraryFollowedEpoxyController.Callbacks {
+                override fun onItemClicked(item: FollowedShowEntryWithShow) {
+                    viewModel.onItemPostedClicked(homeNavigator, item.show,
+                            listItemSharedElementHelper.createForItem(item, "poster")
+                    )
+                }
+            })
 }

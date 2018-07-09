@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package app.tivi.data.daos
+package app.tivi.home.library
 
-import app.tivi.data.PaginatedEntry
-import app.tivi.data.entities.EntryWithShow
-
-interface PaginatedEntryDao<EC : PaginatedEntry, LI : EntryWithShow<EC>> : EntryDao<EC, LI> {
-    fun deletePage(page: Int)
-    fun getLastPage(): Int
+enum class LibraryFilter {
+    FOLLOWED,
+    WATCHED
 }
