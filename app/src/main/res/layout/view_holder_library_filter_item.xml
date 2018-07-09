@@ -38,6 +38,18 @@
         android:onClick="@{clickListener}"
         android:transitionGroup="true">
 
+        <ImageView
+            android:id="@+id/filter_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical"
+            android:src="@{context.getDrawable(filter.iconResource)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_clock_24dp" />
+
         <TextView
             android:id="@+id/header_title"
             android:layout_width="0dp"
@@ -45,23 +57,13 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="16dp"
             android:gravity="center_vertical"
-            android:text="@{filter.toString()}"
+            android:text="@{filter.labelResource}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/filter_icon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Followed" />
-
-        <ImageView
-            android:id="@+id/filter_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginEnd="16dp"
-            android:gravity="center_vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>
