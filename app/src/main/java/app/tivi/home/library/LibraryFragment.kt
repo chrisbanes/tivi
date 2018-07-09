@@ -86,6 +86,8 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
     private fun update(viewState: LibraryViewState) {
         filterController.setData(viewState)
 
+        library_toolbar.setTitle(viewState.filter.labelResource)
+
         when (viewState) {
             is LibraryWatchedViewState -> {
                 val c = (controller as? LibraryWatchedEpoxyController ?: createWatchedController())
