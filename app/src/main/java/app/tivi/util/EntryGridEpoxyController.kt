@@ -19,7 +19,7 @@ package app.tivi.util
 import android.view.View
 import app.tivi.PosterGridItemBindingModel_
 import app.tivi.data.Entry
-import app.tivi.data.entities.EntryWithShow
+import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.emptyState
 import app.tivi.infiniteLoading
 import app.tivi.tmdb.TmdbImageUrlProvider

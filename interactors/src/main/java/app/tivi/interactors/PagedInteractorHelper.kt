@@ -20,7 +20,7 @@ import app.tivi.ShowFetcher
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.PaginatedEntry
 import app.tivi.data.daos.PaginatedEntryDao
-import app.tivi.data.entities.EntryWithShow
+import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.extensions.parallelForEach
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger

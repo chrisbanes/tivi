@@ -17,8 +17,8 @@
 package app.tivi.home.library
 
 import android.arch.paging.PagedList
-import app.tivi.data.entities.FollowedShowEntryWithShow
-import app.tivi.data.entities.WatchedShowEntryWithShow
+import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.tmdb.TmdbImageUrlProvider
 
 sealed class LibraryViewState(

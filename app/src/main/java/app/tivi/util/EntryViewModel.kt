@@ -22,7 +22,7 @@ import android.arch.paging.PagedList
 import app.tivi.api.Status
 import app.tivi.api.UiResource
 import app.tivi.data.Entry
-import app.tivi.data.entities.EntryWithShow
+import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.datasources.ListDataSource
 import app.tivi.extensions.distinctUntilChanged
 import app.tivi.extensions.toFlowable

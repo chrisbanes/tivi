@@ -18,7 +18,7 @@ package app.tivi.data.daos
 
 import android.arch.paging.DataSource
 import app.tivi.data.Entry
-import app.tivi.data.entities.EntryWithShow
+import app.tivi.data.resultentities.EntryWithShow
 import io.reactivex.Flowable
 
 /**

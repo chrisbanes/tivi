@@ -17,7 +17,7 @@
 package app.tivi.home.trending
 
 import app.tivi.SharedElementHelper
-import app.tivi.data.entities.TrendingEntryWithShow
+import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.datasources.trakt.TrendingDataSource
 import app.tivi.home.HomeNavigator
 import app.tivi.interactors.FetchTrendingShowsInteractor

@@ -17,7 +17,7 @@
 package app.tivi.home.popular
 
 import app.tivi.SharedElementHelper
-import app.tivi.data.entities.PopularEntryWithShow
+import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.datasources.trakt.PopularDataSource
 import app.tivi.home.HomeNavigator
 import app.tivi.interactors.FetchPopularShowsInteractor

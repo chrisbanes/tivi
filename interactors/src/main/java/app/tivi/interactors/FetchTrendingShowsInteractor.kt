@@ -20,7 +20,7 @@ import app.tivi.ShowFetcher
 import app.tivi.api.ItemWithIndex
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.TrendingDao
-import app.tivi.data.entities.TrendingEntry
+import app.tivi.data.entities.TrendingShowEntry
 import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.interactors.PagedShowInteractor.Companion.NEXT_PAGE
 import app.tivi.interactors.PagedShowInteractor.Companion.REFRESH
@@ -49,7 +49,7 @@ class FetchTrendingShowsInteractor @Inject constructor(
             showFetcher,
             dispatchers,
             logger,
-            { entity, showId, page -> TrendingEntry(showId = showId, page = page, watchers = entity.item.watchers) },
+            { entity, showId, page -> TrendingShowEntry(showId = showId, page = page, watchers = entity.item.watchers) },
             { response -> showFetcher.insertPlaceholderIfNeeded(response.item.show) },
             { page ->
                 showsService.get().trending(page + 1, pageSize, Extended.NOSEASONS)

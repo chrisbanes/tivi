@@ -17,7 +17,7 @@
 package app.tivi.home.followedshows
 
 import app.tivi.SharedElementHelper
-import app.tivi.data.entities.FollowedShowEntryWithShow
+import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.datasources.trakt.FollowedShowsDataSource
 import app.tivi.home.HomeNavigator
 import app.tivi.interactors.emptyInteractor

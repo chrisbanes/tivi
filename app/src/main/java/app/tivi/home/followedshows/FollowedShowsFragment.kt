@@ -21,7 +21,7 @@ import android.os.Bundle
 import android.view.View
 import app.tivi.R
 import app.tivi.SharedElementHelper
-import app.tivi.data.entities.FollowedShowEntryWithShow
+import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.util.EntryGridFragment

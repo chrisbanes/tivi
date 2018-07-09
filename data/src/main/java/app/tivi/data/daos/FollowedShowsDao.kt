@@ -21,8 +21,8 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
 import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.FollowedShowEntryWithShow
 import app.tivi.data.entities.PendingAction
+import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import io.reactivex.Flowable
 
 @Dao

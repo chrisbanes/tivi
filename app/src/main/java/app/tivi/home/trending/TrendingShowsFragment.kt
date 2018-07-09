@@ -22,7 +22,7 @@ import android.view.View
 import app.tivi.PosterGridItemBindingModel_
 import app.tivi.R
 import app.tivi.SharedElementHelper
-import app.tivi.data.entities.TrendingEntryWithShow
+import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.util.EntryGridEpoxyController

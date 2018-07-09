@@ -34,7 +34,7 @@ import app.tivi.R
 import app.tivi.TiviFragment
 import app.tivi.api.Status
 import app.tivi.data.Entry
-import app.tivi.data.entities.EntryWithShow
+import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.extensions.observeK
 import app.tivi.ui.EndlessRecyclerViewScrollListener
 import app.tivi.ui.ProgressTimeLatch

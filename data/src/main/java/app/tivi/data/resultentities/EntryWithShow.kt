@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 
-package app.tivi.data.daos
+package app.tivi.data.resultentities
 
-import app.tivi.data.PaginatedEntry
-import app.tivi.data.resultentities.EntryWithShow
+import app.tivi.data.Entry
+import app.tivi.data.entities.TiviShow
+import java.util.Objects
 
-interface PaginatedEntryDao<EC : PaginatedEntry, LI : EntryWithShow<EC>> : EntryDao<EC, LI> {
-    fun deletePage(page: Int)
-    fun getLastPage(): Int
+interface EntryWithShow<ET : Entry> {
+    var entry: ET?
+    var relations: List<TiviShow>
+
+    val show: TiviShow
+        get() {
+            assert(relations.size == 1)
+            return relations[0]
+        }
+
+    fun generateStableId(): Long {
+        return Objects.hash(entry!!::class, show.id!!).toLong()
+    }
 }

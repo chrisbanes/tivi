@@ -25,9 +25,9 @@ import android.view.View
 import android.view.ViewGroup
 import app.tivi.R
 import app.tivi.data.Entry
-import app.tivi.data.entities.EntryWithShow
-import app.tivi.data.entities.PopularEntry
-import app.tivi.data.entities.TrendingEntry
+import app.tivi.data.resultentities.EntryWithShow
+import app.tivi.data.resultentities.PopularEntryWithShow
+import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.extensions.observeNotNull
 import app.tivi.home.HomeFragment
 import app.tivi.home.HomeNavigator
@@ -46,11 +46,11 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
             ListItemSharedElementHelper(summary_rv)
         }
 
-        override fun onTrendingHeaderClicked(items: List<EntryWithShow<TrendingEntry>>?) {
+        override fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>?) {
             viewModel.onTrendingHeaderClicked(homeNavigator, listItemSharedElementHelper.createForItems(items))
         }
 
-        override fun onPopularHeaderClicked(items: List<EntryWithShow<PopularEntry>>?) {
+        override fun onPopularHeaderClicked(items: List<PopularEntryWithShow>?) {
             viewModel.onPopularHeaderClicked(homeNavigator, listItemSharedElementHelper.createForItems(items))
         }
 

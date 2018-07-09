@@ -23,7 +23,7 @@
 
         <variable
             name="episodeWithWatches"
-            type="app.tivi.data.entities.EpisodeWithWatches" />
+            type="app.tivi.data.resultentities.EpisodeWithWatches" />
 
         <variable
             name="clickListener"

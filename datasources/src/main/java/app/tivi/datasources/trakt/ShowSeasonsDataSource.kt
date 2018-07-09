@@ -17,7 +17,7 @@
 package app.tivi.datasources.trakt
 
 import app.tivi.data.daos.SeasonsDao
-import app.tivi.data.entities.SeasonWithEpisodes
+import app.tivi.data.resultentities.SeasonWithEpisodes
 import app.tivi.datasources.DataSource
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable

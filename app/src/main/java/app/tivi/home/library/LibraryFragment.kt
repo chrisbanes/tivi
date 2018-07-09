@@ -24,8 +24,8 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import app.tivi.R
-import app.tivi.data.entities.FollowedShowEntryWithShow
-import app.tivi.data.entities.WatchedShowEntryWithShow
+import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.extensions.observeNotNull
 import app.tivi.home.HomeFragment
 import app.tivi.home.HomeNavigator

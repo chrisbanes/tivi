@@ -19,7 +19,7 @@ package app.tivi.ui
 import android.support.v7.widget.RecyclerView
 import app.tivi.SharedElementHelper
 import app.tivi.data.Entry
-import app.tivi.data.entities.EntryWithShow
+import app.tivi.data.resultentities.EntryWithShow
 
 class ListItemSharedElementHelper(private val recyclerView: RecyclerView) {
     fun createForItem(item: EntryWithShow<out Entry>, transitionName: String): SharedElementHelper {

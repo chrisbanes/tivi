@@ -22,8 +22,8 @@ import android.arch.paging.DataSource
 import android.arch.paging.PagedList
 import android.arch.paging.RxPagedListBuilder
 import app.tivi.SharedElementHelper
-import app.tivi.data.entities.EntryWithShow
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.datasources.trakt.FollowedShowsDataSource
 import app.tivi.datasources.trakt.WatchedShowsDataSource
 import app.tivi.extensions.toFlowable

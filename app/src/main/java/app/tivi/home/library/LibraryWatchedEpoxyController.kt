@@ -17,7 +17,7 @@
 package app.tivi.home.library
 
 import android.view.View
-import app.tivi.data.entities.WatchedShowEntryWithShow
+import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.emptyState
 import app.tivi.posterGridItem
 import app.tivi.tmdb.TmdbImageUrlProvider

@@ -14,34 +14,23 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.resultentities
 
 import android.arch.persistence.room.Embedded
 import android.arch.persistence.room.Relation
+import app.tivi.data.entities.TiviShow
+import app.tivi.data.entities.TrendingShowEntry
 import java.util.Objects
 
-class EpisodeWithWatches {
-    @Embedded
-    var episode: Episode? = null
-
-    @Relation(parentColumn = "id", entityColumn = "episode_id")
-    var watches: List<EpisodeWatchEntry> = emptyList()
-
-    fun isWatched() = watches.isNotEmpty()
-
-    fun hasPending() = watches.any {
-        it.pendingAction != PendingAction.NOTHING
-    }
-
-    fun onlyPendingDeletes() = watches.all {
-        it.pendingAction == PendingAction.DELETE
-    }
+class TrendingEntryWithShow : EntryWithShow<TrendingShowEntry> {
+    @Embedded override var entry: TrendingShowEntry? = null
+    @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow> = emptyList()
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
-        other is EpisodeWithWatches -> watches == other.watches && episode == other.episode
+        other is TrendingEntryWithShow -> entry == other.entry && relations == other.relations
         else -> false
     }
 
-    override fun hashCode(): Int = Objects.hash(episode, watches)
+    override fun hashCode(): Int = Objects.hash(entry, relations)
 }
