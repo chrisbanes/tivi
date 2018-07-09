@@ -30,6 +30,6 @@ fun <T> Flowable<T>.emptySubscribe() = subscribe(Functions.emptyConsumer(), Func
 fun <T> Observable<T>.emptySubscribe() = subscribe(Functions.emptyConsumer(), Functions.ERROR_CONSUMER)
 fun Completable.emptySubscribe() = subscribe(Functions.EMPTY_ACTION, Functions.ERROR_CONSUMER)
 
-fun <T> Observable<T>.toFlowable() = toFlowable(BackpressureStrategy.LATEST)
+fun <T> Observable<T>.toFlowable() = toFlowable(BackpressureStrategy.LATEST)!!
 
 fun <T> emptyFlowableList() = Flowable.just(emptyList<T>())

@@ -60,29 +60,35 @@ class LibraryViewModel @Inject constructor(
     private val networkDetector: NetworkDetector,
     logger: Logger
 ) : HomeFragmentViewModel(traktManager, logger) {
-    private val _data = MutableLiveData<LibraryViewState>()
-    val data: LiveData<LibraryViewState>
-        get() = _data
+    companion object {
+        private val DEFAULT_FILTER = FOLLOWED
 
-    private val loadingState = RxLoadingCounter()
-
-    private val currentFilter = BehaviorSubject.create<LibraryFilter>()
-    private val isEmpty = BehaviorSubject.createDefault(false)
-
-    private var refreshDisposable: Disposable? = null
-
-    private val pagingConfig by lazy(LazyThreadSafetyMode.NONE) {
-        PagedList.Config.Builder()
+        private val PAGING_CONFIG = PagedList.Config.Builder()
                 .setPageSize(60)
                 .setPrefetchDistance(20)
                 .setEnablePlaceholders(false)
                 .build()
     }
 
+    private val _data = MutableLiveData<LibraryViewState>()
+    val data: LiveData<LibraryViewState>
+        get() = _data
+
+    private val loadingState = RxLoadingCounter()
+
+    private val currentFilter = BehaviorSubject.createDefault(DEFAULT_FILTER)
+
+    private val currentAvailableFilters = BehaviorSubject.createDefault(LibraryFilter.values().asList())
+    private val currentAvailableFiltersFlowable = currentAvailableFilters.toFlowable()
+
+    private val isEmpty = BehaviorSubject.createDefault(false)
+    private val isEmptyFlowable = isEmpty.toFlowable()
+
+    private var refreshDisposable: Disposable? = null
+
     init {
         disposables += currentFilter.toFlowable()
-                .distinctUntilChanged()
-                .flatMap(::createFilterViewStateFlowable)
+                .switchMap(::createFilterViewStateFlowable)
                 .distinctUntilChanged()
                 .observeOn(schedulers.main)
                 .subscribe(_data::setValue, logger::e)
@@ -90,36 +96,33 @@ class LibraryViewModel @Inject constructor(
         disposables += currentFilter.distinctUntilChanged()
                 .observeOn(schedulers.main)
                 .subscribe({ refresh() }, logger::e)
-
-        // Trigger the default filter
-        currentFilter.onNext(FOLLOWED)
     }
 
     private fun createFilterViewStateFlowable(filter: LibraryFilter): Flowable<LibraryViewState> = when (filter) {
         WATCHED -> {
             Flowables.combineLatest(
-                    Flowable.just(LibraryFilter.values().asList()),
+                    currentAvailableFiltersFlowable,
                     Flowable.just(filter),
                     tmdbManager.imageProvider,
-                    loadingState.observable.toFlowable(),
-                    isEmpty.toFlowable(),
+                    loadingState.flowable,
+                    isEmptyFlowable,
                     dataSourceToFlowable(watchedShowsDataSource.dataSourceFactory()),
                     ::LibraryWatchedViewState)
         }
         FOLLOWED -> {
             Flowables.combineLatest(
-                    Flowable.just(LibraryFilter.values().asList()),
+                    currentAvailableFiltersFlowable,
                     Flowable.just(filter),
                     tmdbManager.imageProvider,
-                    loadingState.observable.toFlowable(),
-                    isEmpty.toFlowable(),
+                    loadingState.flowable,
+                    isEmptyFlowable,
                     dataSourceToFlowable(followedDataSource.dataSourceFactory()),
                     ::LibraryFollowedViewState)
         }
     }
 
     private fun <T : EntryWithShow<*>> dataSourceToFlowable(f: DataSource.Factory<Int, T>): Flowable<PagedList<T>> {
-        return RxPagedListBuilder(f, pagingConfig)
+        return RxPagedListBuilder(f, PAGING_CONFIG)
                 .setFetchScheduler(schedulers.io)
                 .setNotifyScheduler(schedulers.main)
                 .setBoundaryCallback(object : PagedList.BoundaryCallback<T>() {

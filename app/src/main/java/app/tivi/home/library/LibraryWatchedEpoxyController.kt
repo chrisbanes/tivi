@@ -16,6 +16,7 @@
 
 package app.tivi.home.library
 
+import android.view.View
 import app.tivi.data.entities.WatchedShowEntryWithShow
 import app.tivi.emptyState
 import app.tivi.posterGridItem
@@ -44,7 +45,7 @@ class LibraryWatchedEpoxyController(
                     posterPath(item.show.tmdbPosterPath)
                     title(item.show.title)
                     transitionName("show_${item.show.homepage}")
-                    clickListener(android.view.View.OnClickListener {
+                    clickListener(View.OnClickListener {
                         callbacks.onItemClicked(item)
                     })
                 }
