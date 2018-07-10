@@ -26,6 +26,7 @@ import android.view.ViewGroup
 import app.tivi.R
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
+import app.tivi.databinding.FragmentLibraryBinding
 import app.tivi.extensions.observeNotNull
 import app.tivi.home.HomeFragment
 import app.tivi.home.HomeNavigator
@@ -35,21 +36,22 @@ import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.epoxy.EmptyEpoxyController
 import app.tivi.util.GridToGridTransitioner
 import com.airbnb.epoxy.EpoxyController
-import kotlinx.android.synthetic.main.fragment_library.*
 
 class LibraryFragment : HomeFragment<LibraryViewModel>() {
     private lateinit var homeNavigator: HomeNavigator
     private lateinit var gridLayoutManager: GridLayoutManager
 
+    private lateinit var binding: FragmentLibraryBinding
+
     private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
-        ListItemSharedElementHelper(library_rv)
+        ListItemSharedElementHelper(binding.libraryRv)
     }
 
     private var controller: EpoxyController = EmptyEpoxyController
         set(value) {
             if (field != value) {
                 field = value
-                library_rv.adapter = value.adapter
+                binding.libraryRv.adapter = value.adapter
                 value.spanCount = gridLayoutManager.spanCount
                 gridLayoutManager.spanSizeLookup = controller.spanSizeLookup
             }
@@ -72,7 +74,8 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_library, container, false)
+        binding = FragmentLibraryBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -84,9 +87,9 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
     }
 
     private fun update(viewState: LibraryViewState) {
-        filterController.setData(viewState)
+        binding.state = viewState
 
-        library_toolbar.setTitle(viewState.filter.labelResource)
+        filterController.setData(viewState)
 
         when (viewState) {
             is LibraryWatchedViewState -> {
@@ -111,34 +114,41 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         postponeEnterTransition()
 
         // Setup span and columns
-        gridLayoutManager = library_rv.layoutManager as GridLayoutManager
+        gridLayoutManager = binding.libraryRv.layoutManager as GridLayoutManager
 
-        library_rv.apply {
+        binding.libraryRv.apply {
             addItemDecoration(SpacingItemDecorator(paddingLeft))
         }
 
-        library_filters_rv.adapter = filterController.adapter
+        binding.libraryFiltersRv.adapter = filterController.adapter
 
-        library_toolbar.apply {
-            title = getString(R.string.library_title)
-            inflateMenu(R.menu.home_toolbar)
-            setOnMenuItemClickListener(this@LibraryFragment::onMenuItemClicked)
+        binding.libraryToolbar.setOnMenuItemClickListener(this@LibraryFragment::onMenuItemClicked)
+
+        binding.librarySwipeRefresh.setOnRefreshListener(viewModel::refresh)
+
+        binding.libraryToolbarTitle.setOnClickListener {
+            // TODO this should look at direction
+            val motion = binding.libraryMotion
+            if (motion.progress > 0.5f) {
+                motion.transitionToStart()
+            } else {
+                motion.transitionToEnd()
+            }
         }
     }
 
-    override fun getMenu(): Menu? = library_toolbar.menu
+    override fun getMenu(): Menu? = binding.libraryToolbar.menu
 
     internal fun scrollToTop() {
-        library_rv.stopScroll()
-        library_rv.smoothScrollToPosition(0)
+        binding.libraryRv.stopScroll()
+        binding.libraryRv.smoothScrollToPosition(0)
     }
 
     private fun closeFilterPanel() {
-        library_motion.transitionToStart()
+        binding.libraryMotion.transitionToStart()
     }
 
     private fun createWatchedController() = LibraryWatchedEpoxyController(

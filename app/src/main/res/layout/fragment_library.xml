@@ -15,43 +15,72 @@
   ~ limitations under the License.
   -->
 
-<android.support.constraint.motion.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/library_motion"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layoutDescription="@xml/library_scene">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/library_toolbar"
+    <data>
+        <variable
+            name="state"
+            type="app.tivi.home.library.LibraryViewState" />
+    </data>
+
+    <android.support.constraint.motion.MotionLayout
+        android:id="@+id/library_motion"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/navigationBackgroundColor"
-        android:elevation="4dp"
-        app:layout_scrollFlags="scroll|enterAlways|snap"
-        app:popupTheme="?attr/actionBarPopupTheme" />
+        android:layout_height="match_parent"
+        app:layoutDescription="@xml/library_scene">
 
-    <com.airbnb.epoxy.EpoxyRecyclerView
-        android:id="@+id/library_filters_rv"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/content_scrim_dark"
-        android:orientation="vertical"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@id/library_toolbar"
-        tools:listitem="@layout/view_holder_library_filter_item" />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/library_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/navigationBackgroundColor"
+            android:elevation="4dp"
+            app:menu="@menu/home_toolbar"
+            app:popupTheme="?attr/actionBarPopupTheme"
+            app:showTitle="false">
 
-    <com.airbnb.epoxy.EpoxyRecyclerView
-        android:id="@+id/library_rv"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="?android:attr/colorBackground"
-        android:elevation="2dp"
-        app:layoutManager="android.support.v7.widget.GridLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/library_filters_rv"
-        app:spanCount="@integer/grid_condensed_span_count"
-        tools:listitem="@layout/view_holder_details_summary" />
+            <TextView
+                android:id="@+id/library_toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:gravity="center_vertical"
+                android:text="@{state.filter.labelResource != 0 ? context.getString(state.filter.labelResource) : @string/library_title}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
-</android.support.constraint.motion.MotionLayout>
+        </android.support.v7.widget.Toolbar>
+
+        <com.airbnb.epoxy.EpoxyRecyclerView
+            android:id="@+id/library_filters_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/content_scrim_dark"
+            android:orientation="vertical"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/library_toolbar"
+            tools:listitem="@layout/view_holder_library_filter_item" />
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/library_swipe_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="?android:attr/colorBackground"
+            android:elevation="2dp"
+            app:isRefreshing="@{state.isLoading}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/library_toolbar">
+
+            <com.airbnb.epoxy.EpoxyRecyclerView
+                android:id="@+id/library_rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="android.support.v7.widget.GridLayoutManager"
+                app:spanCount="@integer/grid_condensed_span_count"
+                tools:listitem="@layout/view_holder_details_summary" />
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+    </android.support.constraint.motion.MotionLayout>
+</layout>

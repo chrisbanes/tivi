@@ -25,23 +25,26 @@
 
         <OnSwipe
             app:dragDirection="dragUp"
-            app:touchAnchorId="@id/library_filters_rv"
-            app:touchAnchorSide="bottom" />
+            app:moveWhenScrollAtTop="true"
+            app:touchAnchorId="@id/library_swipe_refresh"
+            app:touchAnchorSide="top" />
 
         <ConstraintSet android:id="@+id/start">
             <Constraint
-                android:id="@id/library_filters_rv"
+                android:id="@id/library_swipe_refresh"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/library_toolbar" />
         </ConstraintSet>
 
         <ConstraintSet android:id="@+id/end">
             <Constraint
-                android:id="@id/library_filters_rv"
+                android:id="@id/library_swipe_refresh"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/library_toolbar" />
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/library_filters_rv" />
         </ConstraintSet>
 
     </Transition>
