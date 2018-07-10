@@ -44,6 +44,7 @@ data class TiviShow(
     @ColumnInfo(name = "homepage") val homepage: String? = null,
     @ColumnInfo(name = "rating") val rating: Float? = null,
     @ColumnInfo(name = "certification") val certification: String? = null,
+    @ColumnInfo(name = "first_aired") val firstAired: OffsetDateTime? = null,
     @ColumnInfo(name = "country") val country: String? = null,
     @ColumnInfo(name = "network") val network: String? = null,
     @ColumnInfo(name = "runtime") val runtime: Int? = null,

@@ -41,4 +41,10 @@
         <item name="android:textAppearance">@style/TextAppearance.Tivi.PosterAnnotation</item>
     </style>
 
+    <style name="TextAppearance.Tivi.ShowTitle.Date" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+    </style>
+
 </resources>

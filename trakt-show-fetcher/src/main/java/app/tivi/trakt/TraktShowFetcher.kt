@@ -55,6 +55,7 @@ class TraktShowFetcher @Inject constructor(
             updateProperty(this::runtime, traktShow.runtime)
             updateProperty(this::network, traktShow.network)
             updateProperty(this::country, traktShow.country)
+            updateProperty(this::firstAired, traktShow.first_aired)
             updateProperty(this::_genres, traktShow.genres?.joinToString(","))
             if (updateTime) {
                 lastTraktUpdate = OffsetDateTime.now()

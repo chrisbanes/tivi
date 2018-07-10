@@ -17,13 +17,21 @@
 package app.tivi.ui.databinding
 
 import android.databinding.BindingAdapter
+import android.graphics.Color
+import android.text.style.ForegroundColorSpan
+import android.text.style.TextAppearanceSpan
+import android.text.style.TypefaceSpan
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.text.buildSpannedString
+import androidx.core.text.inSpans
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
+import app.tivi.R
 import app.tivi.data.entities.Genre
+import app.tivi.data.entities.TiviShow
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.GenreStringer
 import app.tivi.ui.MaxLinesToggleClickListener
@@ -64,10 +72,19 @@ fun loadBackdrop(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvid
 
 @BindingAdapter("genreString")
 fun genreString(view: TextView, genres: List<Genre>?) {
-    val genreText = genres?.joinToString(" // ") {
-        "${view.context.getString(GenreStringer.getLabel(it))} ${GenreStringer.getEmoji(it)}"
+    if (genres != null && genres.isNotEmpty()) {
+        view.text = buildSpannedString {
+            for (i in 0 until genres.size) {
+                val genre = genres[i]
+                append(view.context.getString(GenreStringer.getLabel(genre)))
+                append("\u00A0")
+                inSpans(ForegroundColorSpan(Color.WHITE)) {
+                    append(GenreStringer.getEmoji(genre))
+                }
+                if (i < genres.size - 1) append(" \u2022 ")
+            }
+        }
     }
-    view.text = genreText
 }
 
 @BindingAdapter("genreContentDescriptionString")
@@ -113,4 +130,21 @@ fun backgroundScrim(view: View, color: Int) {
 @BindingAdapter("foregroundScrim")
 fun foregroundScrim(view: View, color: Int) {
     view.foreground = ScrimUtil.makeCubicGradientScrimDrawable(color, 16, Gravity.BOTTOM)
+}
+
+@BindingAdapter("showTitle")
+fun showTitle(view: TextView, show: TiviShow) {
+    view.text = buildSpannedString {
+        inSpans(TypefaceSpan("sans-serif-medium")) {
+            append(show.title)
+        }
+        show.firstAired?.also { firstAired ->
+            append(" ")
+            inSpans(TextAppearanceSpan(view.context, R.style.TextAppearance_Tivi_ShowTitle_Date)) {
+                append("(")
+                append(firstAired.year.toString())
+                append(")")
+            }
+        }
+    }
 }
