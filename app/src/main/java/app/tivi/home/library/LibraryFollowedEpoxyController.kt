@@ -42,8 +42,7 @@ class LibraryFollowedEpoxyController(
                 posterGridItem {
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
-                    posterPath(item.show.tmdbPosterPath)
-                    title(item.show.title)
+                    tiviShow(item.show)
                     transitionName("show_${item.show.homepage}")
                     clickListener(View.OnClickListener {
                         callbacks.onItemClicked(item)
