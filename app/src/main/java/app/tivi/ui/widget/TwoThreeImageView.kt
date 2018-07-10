@@ -17,11 +17,11 @@
 package app.tivi.ui.widget
 
 import android.content.Context
+import android.support.v7.widget.AppCompatImageView
 import android.util.AttributeSet
 import android.view.View.MeasureSpec.EXACTLY
-import android.widget.ImageView
 
-class TwoThreeImageView(context: Context?, attrs: AttributeSet?) : ImageView(context, attrs) {
+class TwoThreeImageView(context: Context?, attrs: AttributeSet?) : AppCompatImageView(context, attrs) {
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val height = MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec) * 3 / 2, EXACTLY)
         super.onMeasure(widthMeasureSpec, height)
