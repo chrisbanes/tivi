@@ -44,7 +44,7 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
     private lateinit var binding: FragmentLibraryBinding
 
     private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
-        ListItemSharedElementHelper(binding.libraryRv)
+        ListItemSharedElementHelper(binding.libraryRv) { it.findViewById(R.id.show_poster) }
     }
 
     private var controller: EpoxyController = EmptyEpoxyController
