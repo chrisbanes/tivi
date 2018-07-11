@@ -39,7 +39,7 @@
             android:layout_marginStart="@dimen/header_margin"
             android:gravity="center_vertical"
             android:text="@{season.title}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textAppearance="?attr/textAppearanceBody2"
             tools:text="Season 01" />
 
     </FrameLayout>

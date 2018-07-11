@@ -74,7 +74,7 @@
             android:layout_margin="16dp"
             android:gravity="center_vertical"
             app:showTitle="@{tiviShow}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textAppearance="?attr/textAppearanceHeadline6"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/show_poster"
             app:layout_constraintTop_toTopOf="parent"

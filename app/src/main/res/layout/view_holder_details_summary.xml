@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:text="@{summary}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textAppearance="?attr/textAppearanceBody2"
             app:maxLinesToggle="@{@integer/details_summary_collapsed_lines}"
             tools:text="@sample/shows.txt" />
 

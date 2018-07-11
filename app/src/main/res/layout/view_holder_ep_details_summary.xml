@@ -33,7 +33,7 @@
         android:ellipsize="end"
         android:padding="16dp"
         android:text="@{episode.summary}"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textAppearance="?attr/textAppearanceBody1"
         app:maxLinesToggle="@{@integer/details_summary_collapsed_lines}"
         tools:text="@sample/episode_summary.txt" />
 

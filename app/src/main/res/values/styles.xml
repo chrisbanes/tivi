@@ -17,7 +17,7 @@
 
 <resources>
 
-    <style name="Widget.Tivi.BottomNav" parent="Widget.Design.BottomNavigationView">
+    <style name="Widget.Tivi.BottomNav" parent="Widget.MaterialComponents.BottomNavigationView">
         <item name="android:background">?attr/navigationBackgroundColor</item>
         <item name="android:elevation">4dp</item>
         <item name="android:theme">@style/ThemeOverlay.AppCompat.ActionBar</item>
@@ -25,8 +25,9 @@
         <item name="itemTextColor">@color/bottom_nav_item_colors</item>
     </style>
 
-    <style name="TextAppearance.Tivi.PosterAnnotation" parent="TextAppearance.AppCompat.Body2">
-        <item name="android:textSize">10sp</item>
+    <style name="Widget.Tivi.Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="titleTextAppearance">?attr/textAppearanceHeadline6</item>
+        <item name="subtitleTextAppearance">?attr/textAppearanceSubtitle2</item>
     </style>
 
     <style name="Widget.Tivi.GridItem.Annotation" parent="android:Widget.TextView">
@@ -39,12 +40,6 @@
         <item name="android:paddingRight">6dp</item>
         <item name="android:paddingTop">4dp</item>
         <item name="android:textAppearance">@style/TextAppearance.Tivi.PosterAnnotation</item>
-    </style>
-
-    <style name="TextAppearance.Tivi.ShowTitle.Date" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">italic</item>
-        <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
 </resources>

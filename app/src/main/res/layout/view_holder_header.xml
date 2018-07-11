@@ -51,7 +51,7 @@
             android:layout_marginStart="@dimen/header_margin"
             android:gravity="center_vertical"
             android:text="@{title}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
             tools:text="Popular" />
 
         <TextView
@@ -65,7 +65,7 @@
             android:onClick="@{buttonClickListener}"
             android:text="@{buttonTitle != 0 ? context.getString(buttonTitle) : @string/header_more}"
             android:textAllCaps="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textAppearance="?attr/textAppearanceButton"
             android:textColor="@color/colorAccent"
             app:visibleIfNotNull="@{buttonClickListener}" />
 

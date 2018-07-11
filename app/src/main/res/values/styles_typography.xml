@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2018 Google, Inc.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+    <style name="TextAppearance.Tivi.PosterAnnotation" parent="TextAppearance.Tivi.Body2">
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="TextAppearance.Tivi.ShowTitle.Date" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+    </style>
+
+    <style name="TextAppearance.Tivi.Headline1" parent="TextAppearance.MaterialComponents.Headline1">
+        <item name="fontFamily">@font/barlow_300</item>
+        <item name="android:textSize">101.03sp</item>
+        <item name="android:letterSpacing">-0.15</item>
+    </style>
+
+    <style name="TextAppearance.Tivi.Headline2" parent="TextAppearance.MaterialComponents.Headline2">
+        <item name="fontFamily">@font/barlow_300</item>
+        <item name="android:textSize">63.15sp</item>
+        <item name="android:letterSpacing">-0.005</item>
+    </style>
+
+    <style name="TextAppearance.Tivi.Headline3" parent="TextAppearance.MaterialComponents.Headline3">
+        <item name="fontFamily">@font/barlow_400</item>
+        <item name="android:textSize">50.12sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.Tivi.Headline4" parent="TextAppearance.MaterialComponents.Headline4">
+        <item name="fontFamily">@font/barlow_400</item>
+        <item name="android:textSize">35.5sp</item>
+        <item name="android:letterSpacing">0.0025</item>
+    </style>
+
+    <style name="TextAppearance.Tivi.Headline5" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="fontFamily">@font/barlow_400</item>
+        <item name="android:textSize">25.06sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.Tivi.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontFamily">@font/barlow_500</item>
+        <item name="android:textSize">20.76sp</item>
+        <item name="android:letterSpacing">0.0025</item>
+    </style>
+
+    <style name="TextAppearance.Tivi.Body1" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="fontFamily">@font/barlow_400</item>
+        <item name="android:textSize">16.71sp</item>
+        <item name="android:letterSpacing">0.005</item>
+    </style>
+
+    <style name="TextAppearance.Tivi.Body2" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="fontFamily">@font/barlow_400</item>
+        <item name="android:textSize">14.62sp</item>
+        <item name="android:letterSpacing">0.0025</item>
+    </style>
+
+    <style name="TextAppearance.Tivi.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="fontFamily">@font/barlow_400</item>
+        <item name="android:textSize">16.71sp</item>
+        <item name="android:letterSpacing">0.0015</item>
+    </style>
+
+    <style name="TextAppearance.Tivi.Subtitle2" parent="TextAppearance.MaterialComponents.Subtitle2">
+        <item name="fontFamily">@font/barlow_400</item>
+        <item name="android:textSize">14.62sp</item>
+        <item name="android:letterSpacing">0.001</item>
+    </style>
+
+    <style name="TextAppearance.Tivi.Button" parent="TextAppearance.MaterialComponents.Button">
+        <item name="fontFamily">@font/barlow_500</item>
+        <item name="android:textSize">14.53sp</item>
+        <item name="android:letterSpacing">0.0125</item>
+    </style>
+
+    <style name="TextAppearance.Tivi.Caption" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="fontFamily">@font/barlow_400</item>
+        <item name="android:textSize">12.53sp</item>
+        <item name="android:letterSpacing">0.004</item>
+    </style>
+
+    <style name="TextAppearance.Tivi.Overline" parent="TextAppearance.MaterialComponents.Overline">
+        <item name="fontFamily">@font/barlow_400</item>
+        <item name="android:textSize">12.53sp</item>
+        <item name="android:letterSpacing">0.2</item>
+    </style>
+</resources>

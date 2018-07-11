@@ -36,6 +36,7 @@ import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.GenreStringer
 import app.tivi.ui.MaxLinesToggleClickListener
 import app.tivi.ui.glide.GlideApp
+import app.tivi.ui.text.textAppearanceSpanForAttribute
 import app.tivi.util.ScrimUtil
 
 @BindingAdapter("tmdbPosterPath", "tmdbImageUrlProvider")
@@ -135,12 +136,12 @@ fun foregroundScrim(view: View, color: Int) {
 @BindingAdapter("showTitle")
 fun showTitle(view: TextView, show: TiviShow) {
     view.text = buildSpannedString {
-        inSpans(TypefaceSpan("sans-serif-medium")) {
+        inSpans(textAppearanceSpanForAttribute(view.context, R.attr.textAppearanceHeadline6)) {
             append(show.title)
         }
         show.firstAired?.also { firstAired ->
             append(" ")
-            inSpans(TextAppearanceSpan(view.context, R.style.TextAppearance_Tivi_ShowTitle_Date)) {
+            inSpans(textAppearanceSpanForAttribute(view.context, R.attr.textAppearanceCaption)) {
                 append("(")
                 append(firstAired.year.toString())
                 append(")")

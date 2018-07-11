@@ -44,7 +44,7 @@
             android:layout_marginStart="16dp"
             android:ellipsize="end"
             android:text="@{dateTimeFormatter.format(watch.watchedAt)}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textAppearance="?attr/textAppearanceBody1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/watch_ic_sync"
             app:layout_constraintStart_toStartOf="parent"

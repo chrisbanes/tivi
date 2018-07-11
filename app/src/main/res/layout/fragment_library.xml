@@ -48,7 +48,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:gravity="center_vertical"
                 android:text="@{state.filter.labelResource != 0 ? context.getString(state.filter.labelResource) : @string/library_title}"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                android:textAppearance="?attr/textAppearanceHeadline6" />
 
         </android.support.v7.widget.Toolbar>
 
