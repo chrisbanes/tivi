@@ -205,7 +205,7 @@ dependencies {
     androidTestImplementation "com.android.support.test:rules:${versions.androidx.test_rules}"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso}"
     androidTestImplementation "android.arch.persistence.room:runtime:${versions.androidx.room}"
-    androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito:2.16.0'
+    androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito:2.19.0'
 
     debugImplementation "nl.littlerobots.rxlint:rxlint:${versions.rxlint}"
 
