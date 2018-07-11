@@ -28,6 +28,6 @@ class FetchEpisodeDetailsInteractor @Inject constructor(
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend operator fun invoke(param: Long) {
-        episodeFetcher.update(param, true)
+        episodeFetcher.update(param)
     }
 }

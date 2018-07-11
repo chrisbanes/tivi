@@ -16,26 +16,14 @@
 
 package app.tivi.data.entities
 
-import org.threeten.bp.OffsetDateTime
-
 interface TiviEntity {
     val id: Long?
 }
 
 interface TraktIdEntity {
     val traktId: Int?
-    val lastTraktUpdate: OffsetDateTime
-
-    fun needsUpdateFromTrakt(): Boolean {
-        return traktId != null && lastTraktUpdate.isBefore(OffsetDateTime.now().minusDays(1))
-    }
 }
 
 interface TmdbIdEntity {
     val tmdbId: Int?
-    val lastTmdbUpdate: OffsetDateTime
-
-    fun needsUpdateFromTmdb(): Boolean {
-        return tmdbId != null && lastTmdbUpdate.isBefore(OffsetDateTime.now().minusDays(1))
-    }
 }

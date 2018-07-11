@@ -71,6 +71,7 @@ class TraktEpisodeSyncerTest : BaseDatabaseTest() {
                 .thenReturn(mockSyncResponseCall as Call<SyncResponse>)
 
         episodeSyncer = TraktEpisodeWatchSyncer(
+                db.lastRequestDao(),
                 episodeWatchDao,
                 db.showDao(),
                 db.episodesDao(),

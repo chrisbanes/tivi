@@ -43,9 +43,9 @@ class SyncFollowedShowInteractor @Inject constructor(
         val authed = loggedIn.get() == TraktAuthState.LOGGED_IN
 
         // First update the show details
-        showFetcher.update(entry.showId, false)
+        showFetcher.updateIfNeeded(entry.showId)
         // Then update the seasons/episodes
-        seasonFetcher.update(entry.showId, false)
+        seasonFetcher.update(entry.showId)
         // Finally update any watched progress
         if (authed) {
             traktEpisodeWatchedSyncer.sync(entry.showId, false)

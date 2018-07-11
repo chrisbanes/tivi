@@ -19,6 +19,7 @@ package app.tivi.interactors
 import app.tivi.ShowFetcher
 import app.tivi.api.ItemWithIndex
 import app.tivi.data.DatabaseTransactionRunner
+import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.entities.TrendingShowEntry
 import app.tivi.extensions.fetchBodyWithRetry
@@ -35,6 +36,7 @@ import javax.inject.Provider
 class FetchTrendingShowsInteractor @Inject constructor(
     databaseTransactionRunner: DatabaseTransactionRunner,
     private val trendingDao: TrendingDao,
+    private val lastRequests: LastRequestDao,
     private val showFetcher: ShowFetcher,
     private val showsService: Provider<Shows>,
     dispatchers: AppCoroutineDispatchers,
@@ -46,6 +48,7 @@ class FetchTrendingShowsInteractor @Inject constructor(
     private val helper = PagedInteractorHelper(
             databaseTransactionRunner,
             trendingDao,
+            lastRequests,
             showFetcher,
             dispatchers,
             logger,

@@ -25,7 +25,6 @@ import app.tivi.extensions.updateProperty
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
-import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -38,12 +37,12 @@ class TraktShowFetcher @Inject constructor(
 ) {
     suspend fun updateShow(traktId: Int) {
         val response = showService.get().summary(traktId.toString(), Extended.FULL).fetchBodyWithRetry()
-        upsertShow(response, true)
+        upsertShow(response)
     }
 
     fun insertPlaceholderIfNeeded(show: Show): Long = upsertShow(show)
 
-    private fun upsertShow(traktShow: Show, updateTime: Boolean = false): Long {
+    private fun upsertShow(traktShow: Show): Long {
         return (showDao.getShowWithTraktId(traktShow.ids.trakt) ?: TiviShow()).copyDynamic {
             updateProperty(this::traktId, traktShow.ids.trakt)
             updateProperty(this::tmdbId, traktShow.ids.tmdb)
@@ -57,9 +56,6 @@ class TraktShowFetcher @Inject constructor(
             updateProperty(this::country, traktShow.country)
             updateProperty(this::firstAired, traktShow.first_aired)
             updateProperty(this::_genres, traktShow.genres?.joinToString(","))
-            if (updateTime) {
-                lastTraktUpdate = OffsetDateTime.now()
-            }
         }.let {
             entityInserter.insertOrUpdate(showDao, it)
         }

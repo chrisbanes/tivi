@@ -16,16 +16,20 @@
 
 package app.tivi
 
+import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.TiviShowDao
+import app.tivi.data.entities.Request.SHOW_DETAILS
 import app.tivi.tmdb.TmdbShowFetcher
 import app.tivi.trakt.TraktShowFetcher
 import com.uwetrottmann.trakt5.entities.Show
+import org.threeten.bp.Period
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ShowFetcher @Inject constructor(
     private val showDao: TiviShowDao,
+    private val lastRequests: LastRequestDao,
     private val traktShowFetcher: TraktShowFetcher,
     private val tmdbShowFetcher: TmdbShowFetcher
 ) {
@@ -33,14 +37,18 @@ class ShowFetcher @Inject constructor(
         return traktShowFetcher.insertPlaceholderIfNeeded(show)
     }
 
-    suspend fun update(showId: Long, force: Boolean = false) {
+    suspend fun updateIfNeeded(showId: Long) {
+        if (lastRequests.isRequestBefore(SHOW_DETAILS, showId, Period.ofDays(1))) {
+            update(showId)
+        }
+    }
+
+    suspend fun update(showId: Long) {
         val show = showDao.getShowWithId(showId)!!
 
-        if (force || show.needsUpdateFromTrakt()) {
-            traktShowFetcher.updateShow(show.traktId!!)
-        }
-        if (force || show.needsUpdateFromTmdb()) {
-            tmdbShowFetcher.updateShow(show.tmdbId!!)
-        }
+        traktShowFetcher.updateShow(show.traktId!!)
+        tmdbShowFetcher.updateShow(show.tmdbId!!)
+
+        lastRequests.updateLastRequest(SHOW_DETAILS, showId)
     }
 }

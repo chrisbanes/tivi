@@ -16,37 +16,37 @@
 
 package app.tivi
 
-import app.tivi.data.daos.EpisodesDao
+import app.tivi.data.daos.LastRequestDao
+import app.tivi.data.entities.Request.EPISODE_DETAILS
 import app.tivi.tmdb.TmdbEpisodeFetcher
 import app.tivi.trakt.TraktEpisodeFetcher
 import app.tivi.util.Logger
+import org.threeten.bp.Period
 import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class EpisodeFetcher @Inject constructor(
-    private val episodeDao: EpisodesDao,
+    private val lastRequests: LastRequestDao,
     private val traktEpisodeFetcher: TraktEpisodeFetcher,
     private val tmdbEpisodeFetcher: TmdbEpisodeFetcher,
     private val logger: Logger
 ) {
-    suspend fun update(episodeId: Long, forceRefresh: Boolean = false) {
-        val show = episodeDao.episodeWithId(episodeId)!!
-
-        if (forceRefresh || show.needsUpdateFromTrakt()) {
-            try {
-                traktEpisodeFetcher.updateEpisodeData(episodeId)
-            } catch (e: HttpException) {
-                logger.e("Error while fetching episode data from Trakt", e)
-            }
+    suspend fun updateIfOld(episodeId: Long) {
+        if (lastRequests.isRequestBefore(EPISODE_DETAILS, episodeId, Period.ofDays(1))) {
+            update(episodeId)
         }
-        if (forceRefresh || show.needsUpdateFromTmdb()) {
-            try {
-                tmdbEpisodeFetcher.updateEpisodeData(episodeId)
-            } catch (e: HttpException) {
-                logger.e("Error while fetching episode data from TMDb", e)
-            }
+    }
+
+    suspend fun update(episodeId: Long) {
+        try {
+            tmdbEpisodeFetcher.updateEpisodeData(episodeId)
+            traktEpisodeFetcher.updateEpisodeData(episodeId)
+
+            lastRequests.updateLastRequest(EPISODE_DETAILS, episodeId)
+        } catch (e: HttpException) {
+            logger.e("Error while fetching episode data from Trakt", e)
         }
     }
 }

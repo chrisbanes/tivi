@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package app.tivi
+package app.tivi.data.entities
 
-interface SeasonFetcher {
-    suspend fun update(showId: Long)
-    suspend fun updateIfNeeded(showId: Long)
+enum class Request(val tag: String) {
+    SHOW_DETAILS("show_details"),
+    SHOW_SEASONS("show_seasons"),
+    EPISODE_DETAILS("episode_details"),
+    SHOW_EPISODE_WATCHES("show_episode_watches")
 }
