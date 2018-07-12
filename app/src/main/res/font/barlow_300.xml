@@ -19,4 +19,4 @@
     app:fontProviderAuthority="com.google.android.gms.fonts"
     app:fontProviderCerts="@array/com_google_android_gms_fonts_certs"
     app:fontProviderPackage="com.google.android.gms"
-    app:fontProviderQuery="name=Barlow&amp;weight300" />
+    app:fontProviderQuery="name=Barlow&amp;weight=300" />
