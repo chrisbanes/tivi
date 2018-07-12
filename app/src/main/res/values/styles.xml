@@ -23,6 +23,8 @@
         <item name="android:theme">@style/ThemeOverlay.AppCompat.ActionBar</item>
         <item name="itemIconTint">@color/bottom_nav_item_colors</item>
         <item name="itemTextColor">@color/bottom_nav_item_colors</item>
+        <item name="itemTextAppearanceInactive">?attr/textAppearanceCaption</item>
+        <item name="itemTextAppearance">?attr/textAppearanceCaption</item>
     </style>
 
     <style name="Widget.Tivi.Toolbar" parent="Widget.AppCompat.Toolbar">
