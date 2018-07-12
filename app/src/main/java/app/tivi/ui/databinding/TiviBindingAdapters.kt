@@ -17,10 +17,7 @@
 package app.tivi.ui.databinding
 
 import android.databinding.BindingAdapter
-import android.graphics.Color
-import android.text.style.ForegroundColorSpan
-import android.text.style.TextAppearanceSpan
-import android.text.style.TypefaceSpan
+import android.support.text.emoji.EmojiCompat
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
@@ -74,17 +71,18 @@ fun loadBackdrop(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvid
 @BindingAdapter("genreString")
 fun genreString(view: TextView, genres: List<Genre>?) {
     if (genres != null && genres.isNotEmpty()) {
-        view.text = buildSpannedString {
+        val spanned = buildSpannedString {
             for (i in 0 until genres.size) {
                 val genre = genres[i]
-                append(view.context.getString(GenreStringer.getLabel(genre)))
-                append("\u00A0")
-                inSpans(ForegroundColorSpan(Color.WHITE)) {
-                    append(GenreStringer.getEmoji(genre))
+                inSpans(textAppearanceSpanForAttribute(view.context, R.attr.textAppearanceCaption)) {
+                    append(view.context.getString(GenreStringer.getLabel(genre)))
                 }
+                append("\u00A0") // nbsp
+                append(GenreStringer.getEmoji(genre))
                 if (i < genres.size - 1) append(" \u2022 ")
             }
         }
+        view.text = EmojiCompat.get().process(spanned)
     }
 }
 

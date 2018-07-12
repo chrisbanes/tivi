@@ -76,6 +76,8 @@
             app:visibleIfNotNull="@{subtitle}"
             tools:text="@sample/shows.txt" />
 
+        <!-- The text color is set to an opaque color for Emoji.
+             The caption text appearance is set via spans. -->
         <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/details_categories"
             android:layout_width="0dp"
@@ -83,6 +85,7 @@
             android:layout_marginTop="4dp"
             android:ellipsize="end"
             android:textAppearance="?attr/textAppearanceCaption"
+            android:textColor="#000000"
             app:genreContentDescriptionString="@{genres}"
             app:genreString="@{genres}"
             app:layout_constraintBottom_toBottomOf="parent"
