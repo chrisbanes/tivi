@@ -79,7 +79,7 @@ class LibraryViewModel @Inject constructor(
     private val currentFilter = BehaviorSubject.createDefault(DEFAULT_FILTER)
 
     private val currentAvailableFilters = BehaviorSubject.createDefault(LibraryFilter.values().asList())
-    private val currentAvailableFiltersFlowable = currentAvailableFilters.toFlowable()
+    private val availableFiltersFlowable = currentAvailableFilters.toFlowable()
 
     private val isEmpty = BehaviorSubject.createDefault(false)
     private val isEmptyFlowable = isEmpty.toFlowable()
@@ -101,7 +101,7 @@ class LibraryViewModel @Inject constructor(
     private fun createFilterViewStateFlowable(filter: LibraryFilter): Flowable<LibraryViewState> = when (filter) {
         WATCHED -> {
             Flowables.combineLatest(
-                    currentAvailableFiltersFlowable,
+                    availableFiltersFlowable,
                     Flowable.just(filter),
                     tmdbManager.imageProvider,
                     loadingState.flowable,
@@ -111,7 +111,7 @@ class LibraryViewModel @Inject constructor(
         }
         FOLLOWED -> {
             Flowables.combineLatest(
-                    currentAvailableFiltersFlowable,
+                    availableFiltersFlowable,
                     Flowable.just(filter),
                     tmdbManager.imageProvider,
                     loadingState.flowable,
@@ -123,8 +123,6 @@ class LibraryViewModel @Inject constructor(
 
     private fun <T : EntryWithShow<*>> dataSourceToFlowable(f: DataSource.Factory<Int, T>): Flowable<PagedList<T>> {
         return RxPagedListBuilder(f, PAGING_CONFIG)
-                .setFetchScheduler(schedulers.io)
-                .setNotifyScheduler(schedulers.main)
                 .setBoundaryCallback(object : PagedList.BoundaryCallback<T>() {
                     override fun onZeroItemsLoaded() {
                         isEmpty.onNext(true)
@@ -142,10 +140,11 @@ class LibraryViewModel @Inject constructor(
     }
 
     fun refresh() {
-        if (refreshDisposable != null) {
-            refreshDisposable?.dispose()
-            refreshDisposable = null
+        refreshDisposable?.let {
+            it.dispose()
+            disposables.remove(it)
         }
+        refreshDisposable = null
 
         disposables += Observables.combineLatest(
                 networkDetector.waitForConnection().toObservable(),
