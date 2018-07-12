@@ -44,11 +44,14 @@ class ShowFetcher @Inject constructor(
     }
 
     suspend fun update(showId: Long) {
-        val show = showDao.getShowWithId(showId)!!
-
-        traktShowFetcher.updateShow(show.traktId!!)
-        tmdbShowFetcher.updateShow(show.tmdbId!!)
-
+        val traktId = showDao.getTraktIdForShowId(showId)
+        if (traktId != null) {
+            traktShowFetcher.updateShow(traktId)
+        }
+        val tmdbId = showDao.getTmdbIdForShowId(showId)
+        if (tmdbId != null) {
+            tmdbShowFetcher.updateShow(tmdbId)
+        }
         lastRequests.updateLastRequest(SHOW_DETAILS, showId)
     }
 }
