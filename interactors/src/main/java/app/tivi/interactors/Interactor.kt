@@ -44,4 +44,4 @@ fun <P> launchInteractor(
     context: CoroutineContext = interactor.dispatcher,
     start: CoroutineStart = CoroutineStart.DEFAULT,
     parent: Job? = null
-) = launch(context = context, parent = parent, block = { interactor(param) })
+) = launch(context = context, start = start, parent = parent, block = { interactor(param) })
