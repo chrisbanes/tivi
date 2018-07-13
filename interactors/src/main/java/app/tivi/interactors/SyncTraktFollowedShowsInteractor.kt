@@ -24,11 +24,13 @@ import javax.inject.Inject
 class SyncTraktFollowedShowsInteractor @Inject constructor(
     private val syncer: TraktFollowedShowsSyncer,
     private val dispatchers: AppCoroutineDispatchers
-) : Interactor<Unit> {
+) : Interactor<SyncTraktFollowedShowsInteractor.Params> {
     override val dispatcher: CoroutineDispatcher
         get() = dispatchers.io
 
-    override suspend fun invoke(param: Unit) {
+    override suspend fun invoke(param: Params) {
         syncer.sync()
     }
+
+    data class Params(val forceLoad: Boolean)
 }

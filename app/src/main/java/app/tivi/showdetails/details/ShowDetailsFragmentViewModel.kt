@@ -77,12 +77,12 @@ class ShowDetailsFragmentViewModel @Inject constructor(
 
     private fun refresh() {
         showId?.also { id ->
-            launchInteractor(showDetailsInteractor, id)
-            launchInteractor(relatedShowsInteractor, id)
+            launchInteractor(showDetailsInteractor, FetchShowDetailsInteractor.Params(id, true))
+            launchInteractor(relatedShowsInteractor, FetchRelatedShowsInteractor.Params(id, true))
             launchWithParent(dispatchers.io) {
                 if (followedShowsDao.entryCountWithShowId(id) > 0) {
-                    refreshShowSeasons(id)
-                    syncTraktFollowedShowWatchedProgress(id)
+                    refreshShowSeasons(FetchShowDetailsInteractor.Params(id, true))
+                    syncTraktFollowedShowWatchedProgress(SyncTraktFollowedShowWatchedProgressInteractor.Params(id, true))
                 }
             }
         }
@@ -121,10 +121,10 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         showId?.let { id ->
             launchWithParent {
                 withContext(followShowInteractor.dispatcher) {
-                    followShowInteractor(id)
+                    followShowInteractor(FollowShowInteractor.Params(id, true))
                 }
                 withContext(syncTraktFollowedShowWatchedProgress.dispatcher) {
-                    syncTraktFollowedShowWatchedProgress(id)
+                    syncTraktFollowedShowWatchedProgress(SyncTraktFollowedShowWatchedProgressInteractor.Params(id, true))
                 }
             }
         }
@@ -132,7 +132,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
 
     fun removeFromMyShows() {
         showId?.let { id ->
-            launchInteractor(unfollowShowInteractor, id)
+            launchInteractor(unfollowShowInteractor, UnfollowShowInteractor.Params(id, true))
         }
     }
 

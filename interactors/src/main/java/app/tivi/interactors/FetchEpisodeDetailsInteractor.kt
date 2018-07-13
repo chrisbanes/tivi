@@ -24,10 +24,12 @@ import javax.inject.Inject
 class FetchEpisodeDetailsInteractor @Inject constructor(
     private val episodeFetcher: EpisodeFetcher,
     dispatchers: AppCoroutineDispatchers
-) : Interactor<Long> {
+) : Interactor<FetchEpisodeDetailsInteractor.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(param: Long) {
-        episodeFetcher.update(param)
+    override suspend fun invoke(param: Params) {
+        episodeFetcher.update(param.episodeId)
     }
+
+    data class Params(val episodeId: Long, val forceLoad: Boolean)
 }

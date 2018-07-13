@@ -28,14 +28,16 @@ class FollowShowInteractor @Inject constructor(
     private val followedShowsDao: FollowedShowsDao,
     private val syncFollowedShowInteractor: SyncFollowedShowInteractor,
     private val syncTraktFollowedShowsInteractor: SyncTraktFollowedShowsInteractor
-) : Interactor<Long> {
+) : Interactor<FollowShowInteractor.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(param: Long) {
-        followedShowsDao.insert(FollowedShowEntry(showId = param, pendingAction = PendingAction.UPLOAD))
+    override suspend operator fun invoke(param: Params) {
+        followedShowsDao.insert(FollowedShowEntry(showId = param.showId, pendingAction = PendingAction.UPLOAD))
         // Now refresh the show
-        syncFollowedShowInteractor(param)
+        syncFollowedShowInteractor(SyncFollowedShowInteractor.Params(param.showId, param.forceLoad))
         // Now sync followed shows
-        syncTraktFollowedShowsInteractor(Unit)
+        syncTraktFollowedShowsInteractor(SyncTraktFollowedShowsInteractor.Params(param.forceLoad))
     }
+
+    data class Params(val showId: Long, val forceLoad: Boolean)
 }

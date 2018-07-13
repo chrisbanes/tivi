@@ -36,7 +36,7 @@ class SyncAllFollowedShows @Inject constructor(
 
     override fun onRunJob(params: Params): Result {
         runBlocking {
-            launchInteractor(syncAllFollowedShows, Unit).join()
+            launchInteractor(syncAllFollowedShows, SyncAllFollowedShowsInteractor.Params(true)).join()
         }
         return Result.SUCCESS
     }

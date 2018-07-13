@@ -105,7 +105,7 @@ class TraktManager @Inject constructor(
     private fun refreshUserProfile() {
         launch(userMeInteractor.dispatcher) {
             try {
-                userMeInteractor(Unit)
+                userMeInteractor(FetchUserDetailsMeInteractor.Params(false))
             } catch (e: Exception) {
                 logger.e(e, "Error while refreshing user profile")
             }

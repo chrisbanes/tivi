@@ -26,12 +26,14 @@ class SyncTraktFollowedShowWatchedProgressInteractor @Inject constructor(
     private val syncer: TraktEpisodeWatchSyncer,
     private val followedShowsDao: FollowedShowsDao,
     dispatchers: AppCoroutineDispatchers
-) : Interactor<Long> {
+) : Interactor<SyncTraktFollowedShowWatchedProgressInteractor.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(showId: Long) {
-        val entry = followedShowsDao.entryWithShowId(showId)
-                ?: throw IllegalArgumentException("Followed entry with showId: $showId does not exist")
+    override suspend operator fun invoke(param: Params) {
+        val entry = followedShowsDao.entryWithShowId(param.showId)
+                ?: throw IllegalArgumentException("Followed entry with showId: $param.showId does not exist")
         syncer.sync(entry.showId)
     }
+
+    data class Params(val showId: Long, val forceLoad: Boolean)
 }

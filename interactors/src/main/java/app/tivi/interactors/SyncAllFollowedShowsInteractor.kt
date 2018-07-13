@@ -31,15 +31,15 @@ class SyncAllFollowedShowsInteractor @Inject constructor(
     private val loggedIn: Provider<TraktAuthState>,
     private val syncTraktFollowedShowsInteractor: SyncTraktFollowedShowsInteractor,
     private val syncFollowedShowInteractor: SyncFollowedShowInteractor
-) : Interactor<Unit> {
+) : Interactor<SyncAllFollowedShowsInteractor.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(param: Unit) {
+    override suspend operator fun invoke(param: Params) {
         val authed = loggedIn.get() == TraktAuthState.LOGGED_IN
 
         if (authed) {
             // First sync the followed shows to/from Trakt
-            syncTraktFollowedShowsInteractor(Unit)
+            syncTraktFollowedShowsInteractor(SyncTraktFollowedShowsInteractor.Params(param.forceLoad))
         }
 
         // Now iterate through the followed shows and update them
@@ -47,7 +47,9 @@ class SyncAllFollowedShowsInteractor @Inject constructor(
         followedShows.filter {
             it.pendingAction != PendingAction.DELETE
         }.parallelForEach(dispatcher) {
-            syncFollowedShowInteractor(it.showId)
+            syncFollowedShowInteractor(SyncFollowedShowInteractor.Params(it.showId, param.forceLoad))
         }
     }
+
+    data class Params(val forceLoad: Boolean)
 }

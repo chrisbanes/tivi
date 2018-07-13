@@ -28,6 +28,7 @@ interface Interactor<in P> {
     suspend operator fun invoke(param: P)
 }
 
+@Suppress("UNCHECKED_CAST")
 fun <T> emptyInteractor(): Interactor<T> = EmptyInteractor as Interactor<T>
 
 internal object EmptyInteractor : Interactor<Unit> {

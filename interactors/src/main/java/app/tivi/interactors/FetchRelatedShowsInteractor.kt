@@ -40,22 +40,24 @@ class FetchRelatedShowsInteractor @Inject constructor(
     private val showsService: Provider<Shows>,
     private val dispatchers: AppCoroutineDispatchers,
     private val showFetcher: ShowFetcher
-) : Interactor<Long> {
+) : Interactor<FetchRelatedShowsInteractor.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(param: Long) {
-        val results = showsService.get().related(showDao.getTraktIdForShowId(param)?.toString(), 0, 10, Extended.NOSEASONS)
+    override suspend operator fun invoke(param: Params) {
+        val traktId = showDao.getTraktIdForShowId(param.showId)?.toString()
+
+        val results = showsService.get().related(traktId, 0, 10, Extended.NOSEASONS)
                 .fetchBodyWithRetry()
 
         val related = results.mapIndexed { index, relatedShow ->
             // Now insert a placeholder for each show if needed
             val relatedShowId = showFetcher.insertPlaceholderIfNeeded(relatedShow)
             // Map to related show entry
-            RelatedShowEntry(showId = param, otherShowId = relatedShowId, orderIndex = index)
+            RelatedShowEntry(showId = param.showId, otherShowId = relatedShowId, orderIndex = index)
         }.also {
             // Save map entities to db
             transactionRunner.runInTransaction {
-                entryDao.deleteWithShowId(param)
+                entryDao.deleteWithShowId(param.showId)
                 entryDao.insertAll(it)
             }
         }
@@ -68,4 +70,6 @@ class FetchRelatedShowsInteractor @Inject constructor(
             }
         }
     }
+
+    data class Params(val showId: Long, val forceLoad: Boolean)
 }

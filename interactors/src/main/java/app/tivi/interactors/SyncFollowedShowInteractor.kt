@@ -31,11 +31,11 @@ class SyncFollowedShowInteractor @Inject constructor(
     private val traktEpisodeWatchedSyncer: TraktEpisodeWatchSyncer,
     private val seasonFetcher: SeasonFetcher,
     private val loggedIn: Provider<TraktAuthState>
-) : Interactor<Long> {
+) : Interactor<SyncFollowedShowInteractor.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(param: Long) {
-        val entry = followedShowsDao.entryWithShowId(param)
+    override suspend operator fun invoke(param: Params) {
+        val entry = followedShowsDao.entryWithShowId(param.showId)
                 ?: throw IllegalArgumentException("Followed entry with showId: $param does not exist")
 
         val authed = loggedIn.get() == TraktAuthState.LOGGED_IN
@@ -47,4 +47,6 @@ class SyncFollowedShowInteractor @Inject constructor(
             traktEpisodeWatchedSyncer.sync(entry.showId, false)
         }
     }
+
+    data class Params(val showId: Long, val forceLoad: Boolean)
 }

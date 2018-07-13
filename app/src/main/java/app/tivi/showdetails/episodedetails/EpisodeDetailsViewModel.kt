@@ -66,7 +66,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     private fun refresh() {
         val epId = episodeId
         if (epId != null) {
-            launchInteractor(episodeDetailsInteractor, epId)
+            launchInteractor(episodeDetailsInteractor, FetchEpisodeDetailsInteractor.Params(epId, true))
         } else {
             _data.value = null
         }
@@ -103,7 +103,8 @@ class EpisodeDetailsViewModel @Inject constructor(
             )
             episodeWatchEntryDao.insert(entry)
 
-            syncTraktFollowedShowWatchedProgress(episodesDao.showIdForEpisodeId(epId))
+            syncTraktFollowedShowWatchedProgress(
+                    SyncTraktFollowedShowWatchedProgressInteractor.Params(episodesDao.showIdForEpisodeId(epId), true))
         }
     }
 
@@ -119,7 +120,8 @@ class EpisodeDetailsViewModel @Inject constructor(
                     episodeWatchEntryDao.update(copy)
                 }
             }
-            syncTraktFollowedShowWatchedProgress(episodesDao.showIdForEpisodeId(epId))
+            syncTraktFollowedShowWatchedProgress(
+                    SyncTraktFollowedShowWatchedProgressInteractor.Params(episodesDao.showIdForEpisodeId(epId), true))
         }
     }
 }

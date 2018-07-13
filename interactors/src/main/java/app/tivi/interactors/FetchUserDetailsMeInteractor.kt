@@ -33,10 +33,10 @@ class FetchUserDetailsMeInteractor @Inject constructor(
     private val usersService: Provider<Users>,
     private val dispatchers: AppCoroutineDispatchers,
     private val entityInserter: EntityInserter
-) : Interactor<Unit> {
+) : Interactor<FetchUserDetailsMeInteractor.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(param: Unit) {
+    override suspend operator fun invoke(param: Params) {
         val response = usersService.get().profile(UserSlug.ME, Extended.FULL)
                 .fetchBodyWithRetry()
 
@@ -53,4 +53,6 @@ class FetchUserDetailsMeInteractor @Inject constructor(
         dao.deleteAll()
         entityInserter.insertOrUpdate(dao, user)
     }
+
+    data class Params(val forceLoad: Boolean)
 }

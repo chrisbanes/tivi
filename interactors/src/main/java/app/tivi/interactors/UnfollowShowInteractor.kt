@@ -28,17 +28,19 @@ class UnfollowShowInteractor @Inject constructor(
     private val seasonsDao: SeasonsDao,
     private val followedShowsDao: FollowedShowsDao,
     private val syncTraktFollowedShowsInteractor: SyncTraktFollowedShowsInteractor
-) : Interactor<Long> {
+) : Interactor<UnfollowShowInteractor.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(showId: Long) {
+    override suspend operator fun invoke(param: Params) {
         // Update the followed show to be deleted
-        followedShowsDao.entryWithShowId(showId)
-                .copy(pendingAction = PendingAction.DELETE)
-                .also(followedShowsDao::update)
+        followedShowsDao.entryWithShowId(param.showId)
+                ?.copy(pendingAction = PendingAction.DELETE)
+                ?.also(followedShowsDao::update)
         // Now remove all season/episode data from database
-        seasonsDao.deleteSeasonsForShowId(showId)
+        seasonsDao.deleteSeasonsForShowId(param.showId)
         // Now sync followed shows
-        syncTraktFollowedShowsInteractor(Unit)
+        syncTraktFollowedShowsInteractor(SyncTraktFollowedShowsInteractor.Params(param.forceLoad))
     }
+
+    data class Params(val showId: Long, val forceLoad: Boolean)
 }
