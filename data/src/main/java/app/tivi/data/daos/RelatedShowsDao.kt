@@ -20,7 +20,7 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
 import app.tivi.data.entities.RelatedShowEntry
-import app.tivi.data.entities.RelatedShowEntryWithShow
+import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import io.reactivex.Flowable
 
 @Dao

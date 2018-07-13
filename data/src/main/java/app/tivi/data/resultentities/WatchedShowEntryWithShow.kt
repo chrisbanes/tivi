@@ -14,26 +14,23 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.resultentities
 
 import android.arch.persistence.room.Embedded
 import android.arch.persistence.room.Relation
+import app.tivi.data.entities.TiviShow
+import app.tivi.data.entities.WatchedShowEntry
 import java.util.Objects
 
-class SeasonWithEpisodes {
-    @Embedded
-    var season: Season? = null
-
-    @Relation(parentColumn = "id", entityColumn = "season_id", entity = Episode::class)
-    var episodes: List<EpisodeWithWatches> = emptyList()
-
-    fun isWatched() = episodes.all { it.isWatched() }
+class WatchedShowEntryWithShow : EntryWithShow<WatchedShowEntry> {
+    @Embedded override var entry: WatchedShowEntry? = null
+    @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow> = emptyList()
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
-        other is SeasonWithEpisodes -> season == other.season && episodes == other.episodes
+        other is WatchedShowEntryWithShow -> entry == other.entry && relations == other.relations
         else -> false
     }
 
-    override fun hashCode(): Int = Objects.hash(season, episodes)
+    override fun hashCode(): Int = Objects.hash(entry, relations)
 }

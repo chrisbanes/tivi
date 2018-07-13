@@ -27,7 +27,6 @@ import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.extensions.isLongerThan
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.TvEpisode
-import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -68,7 +67,6 @@ class TmdbEpisodeFetcher @Inject constructor(
                 summary = tmdbEpisode.overview
             }
             tmdbBackdropPath = tmdbEpisode.still_path
-            lastTmdbUpdate = OffsetDateTime.now()
         }
         entityInserter.insertOrUpdate(episodesDao, ep)
     }

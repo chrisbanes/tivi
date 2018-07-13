@@ -171,6 +171,7 @@ dependencies {
     implementation "com.android.support:customtabs:${versions.androidx.browser}"
     implementation "com.android.support:palette-v7:${versions.androidx.palette}"
     implementation "com.android.support:recyclerview-v7:${versions.androidx.recyclerview}"
+    implementation "com.android.support:support-emoji:${versions.androidx.emoji}"
 
     implementation "com.android.support.constraint:constraint-layout:${versions.androidx.constraint_layout}"
 

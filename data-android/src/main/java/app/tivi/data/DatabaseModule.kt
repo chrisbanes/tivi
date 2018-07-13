@@ -19,16 +19,6 @@ package app.tivi.data
 import android.arch.persistence.room.Room
 import android.content.Context
 import android.os.Debug
-import app.tivi.data.daos.EpisodeWatchEntryDao
-import app.tivi.data.daos.EpisodesDao
-import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.daos.PopularDao
-import app.tivi.data.daos.RelatedShowsDao
-import app.tivi.data.daos.SeasonsDao
-import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.daos.TrendingDao
-import app.tivi.data.daos.UserDao
-import app.tivi.data.daos.WatchedShowDao
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -47,34 +37,37 @@ class DatabaseModule {
     }
 
     @Provides
-    fun provideTiviShowDao(db: TiviDatabase): TiviShowDao = db.showDao()
+    fun provideTiviShowDao(db: TiviDatabase) = db.showDao()
 
     @Provides
-    fun provideUserDao(db: TiviDatabase): UserDao = db.userDao()
+    fun provideUserDao(db: TiviDatabase) = db.userDao()
 
     @Provides
-    fun provideTrendingDao(db: TiviDatabase): TrendingDao = db.trendingDao()
+    fun provideTrendingDao(db: TiviDatabase) = db.trendingDao()
 
     @Provides
-    fun providePopularDao(db: TiviDatabase): PopularDao = db.popularDao()
+    fun providePopularDao(db: TiviDatabase) = db.popularDao()
 
     @Provides
-    fun provideWatchedDao(db: TiviDatabase): WatchedShowDao = db.watchedShowsDao()
+    fun provideWatchedDao(db: TiviDatabase) = db.watchedShowsDao()
 
     @Provides
-    fun provideFollowedShowsDao(db: TiviDatabase): FollowedShowsDao = db.followedShowsDao()
+    fun provideFollowedShowsDao(db: TiviDatabase) = db.followedShowsDao()
 
     @Provides
-    fun provideSeasonsDao(db: TiviDatabase): SeasonsDao = db.seasonsDao()
+    fun provideSeasonsDao(db: TiviDatabase) = db.seasonsDao()
 
     @Provides
-    fun provideEpisodesDao(db: TiviDatabase): EpisodesDao = db.episodesDao()
+    fun provideEpisodesDao(db: TiviDatabase) = db.episodesDao()
 
     @Provides
-    fun provideRelatedShowsDao(db: TiviDatabase): RelatedShowsDao = db.relatedShowsDao()
+    fun provideRelatedShowsDao(db: TiviDatabase) = db.relatedShowsDao()
 
     @Provides
-    fun provideEpisodeWatchesDao(db: TiviDatabase): EpisodeWatchEntryDao = db.episodeWatchesDao()
+    fun provideEpisodeWatchesDao(db: TiviDatabase) = db.episodeWatchesDao()
+
+    @Provides
+    fun provideLastRequestsDao(db: TiviDatabase) = db.lastRequestDao()
 
     @Singleton
     @Provides

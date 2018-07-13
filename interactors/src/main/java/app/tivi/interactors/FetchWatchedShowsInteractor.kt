@@ -18,7 +18,9 @@ package app.tivi.interactors
 
 import app.tivi.ShowFetcher
 import app.tivi.data.DatabaseTransactionRunner
+import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.WatchedShowDao
+import app.tivi.data.entities.Request
 import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.extensions.parallelForEach
@@ -34,6 +36,7 @@ import javax.inject.Provider
 
 class FetchWatchedShowsInteractor @Inject constructor(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
+    private val lastRequests: LastRequestDao,
     private val watchShowDao: WatchedShowDao,
     private val showFetcher: ShowFetcher,
     private val usersService: Provider<Users>,
@@ -47,7 +50,7 @@ class FetchWatchedShowsInteractor @Inject constructor(
             usersService.get().watchedShows(UserSlug.ME, Extended.NOSEASONS).fetchBodyWithRetry()
         }
 
-        val shows = networkResponse.parallelMap { traktEntry ->
+        val shows = networkResponse.parallelMap(dispatcher) { traktEntry ->
             val showId = showFetcher.insertPlaceholderIfNeeded(traktEntry.show)
             WatchedShowEntry(null, showId, traktEntry.last_watched_at)
         }
@@ -58,9 +61,11 @@ class FetchWatchedShowsInteractor @Inject constructor(
             watchShowDao.insertAll(shows)
         }
 
-        shows.parallelForEach {
-            // Now trigger a refresh of each show
-            showFetcher.update(it.showId)
+        shows.parallelForEach(dispatcher) {
+            // Now trigger a refresh of each show if it hasn't been refreshed before
+            if (lastRequests.hasNotBeenRequested(Request.SHOW_DETAILS, it.showId)) {
+                showFetcher.update(it.showId)
+            }
         }
     }
 }

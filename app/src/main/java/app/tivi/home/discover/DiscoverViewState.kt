@@ -16,8 +16,8 @@
 
 package app.tivi.home.discover
 
-import app.tivi.data.entities.PopularEntryWithShow
-import app.tivi.data.entities.TrendingEntryWithShow
+import app.tivi.data.resultentities.PopularEntryWithShow
+import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.tmdb.TmdbImageUrlProvider
 
 data class DiscoverViewState(

@@ -19,8 +19,9 @@ package app.tivi.interactors
 import app.tivi.ShowFetcher
 import app.tivi.api.ItemWithIndex
 import app.tivi.data.DatabaseTransactionRunner
+import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.PopularDao
-import app.tivi.data.entities.PopularEntry
+import app.tivi.data.entities.PopularShowEntry
 import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.interactors.PagedShowInteractor.Companion.NEXT_PAGE
 import app.tivi.interactors.PagedShowInteractor.Companion.REFRESH
@@ -35,6 +36,7 @@ import javax.inject.Provider
 class FetchPopularShowsInteractor @Inject constructor(
     databaseTransactionRunner: DatabaseTransactionRunner,
     private val popularShowsDao: PopularDao,
+    private val lastRequests: LastRequestDao,
     private val showFetcher: ShowFetcher,
     private val showsService: Provider<Shows>,
     dispatchers: AppCoroutineDispatchers,
@@ -46,10 +48,11 @@ class FetchPopularShowsInteractor @Inject constructor(
     private val helper = PagedInteractorHelper(
             databaseTransactionRunner,
             popularShowsDao,
+            lastRequests,
             showFetcher,
             dispatchers,
             logger,
-            { entity, showId, page -> PopularEntry(showId = showId, page = page, pageOrder = entity.index) },
+            { entity, showId, page -> PopularShowEntry(showId = showId, page = page, pageOrder = entity.index) },
             { response -> showFetcher.insertPlaceholderIfNeeded(response.item) },
             { page ->
                 showsService.get().popular(page + 1, pageSize, Extended.NOSEASONS)

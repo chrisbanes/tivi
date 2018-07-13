@@ -52,7 +52,7 @@
             android:layout_marginStart="96dp"
             android:ellipsize="end"
             android:text="@{title}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textAppearance="?attr/textAppearanceHeadline6"
             app:layout_constraintBottom_toTopOf="@+id/details_subtitle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -67,7 +67,7 @@
             android:layout_marginTop="4dp"
             android:ellipsize="end"
             android:text="@{subtitle}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textAppearance="?attr/textAppearanceBody1"
             app:layout_constraintBottom_toTopOf="@+id/details_categories"
             app:layout_constraintEnd_toEndOf="@+id/details_title"
             app:layout_constraintStart_toStartOf="@+id/details_title"
@@ -76,13 +76,16 @@
             app:visibleIfNotNull="@{subtitle}"
             tools:text="@sample/shows.txt" />
 
+        <!-- The text color is set to an opaque color for Emoji.
+             The caption text appearance is set via spans. -->
         <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/details_categories"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:ellipsize="end"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:textAppearance="?attr/textAppearanceCaption"
+            android:textColor="#000000"
             app:genreContentDescriptionString="@{genres}"
             app:genreString="@{genres}"
             app:layout_constraintBottom_toBottomOf="parent"

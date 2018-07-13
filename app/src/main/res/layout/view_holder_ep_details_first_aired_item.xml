@@ -43,7 +43,7 @@
             android:layout_marginStart="16dp"
             android:ellipsize="end"
             android:text="@{@string/first_aired(dateTimeFormatter.format(episode.firstAired))}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textAppearance="?attr/textAppearanceBody1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

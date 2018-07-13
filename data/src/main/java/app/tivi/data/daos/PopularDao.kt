@@ -20,12 +20,12 @@ import android.arch.paging.DataSource
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
-import app.tivi.data.entities.PopularEntry
-import app.tivi.data.entities.PopularEntryWithShow
+import app.tivi.data.entities.PopularShowEntry
+import app.tivi.data.resultentities.PopularEntryWithShow
 import io.reactivex.Flowable
 
 @Dao
-abstract class PopularDao : PaginatedEntryDao<PopularEntry, PopularEntryWithShow> {
+abstract class PopularDao : PaginatedEntryDao<PopularShowEntry, PopularEntryWithShow> {
     @Transaction
     @Query("SELECT * FROM popular_shows ORDER BY page, page_order LIMIT :count OFFSET :offset")
     abstract override fun entriesFlowable(count: Int, offset: Int): Flowable<List<PopularEntryWithShow>>

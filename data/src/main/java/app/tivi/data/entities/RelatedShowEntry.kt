@@ -26,7 +26,7 @@ import app.tivi.data.MultipleEntry
 @Entity(tableName = "related_shows",
         indices = [
             Index(value = ["show_id"]),
-            Index(value = "other_show_id")
+            Index(value = ["other_show_id"])
         ],
         foreignKeys = [
             ForeignKey(

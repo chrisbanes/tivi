@@ -16,9 +16,9 @@
 
 package app.tivi.showdetails.details
 
-import app.tivi.data.entities.RelatedShowEntryWithShow
-import app.tivi.data.entities.SeasonWithEpisodes
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.resultentities.RelatedShowEntryWithShow
+import app.tivi.data.resultentities.SeasonWithEpisodes
 import app.tivi.tmdb.TmdbImageUrlProvider
 
 sealed class ShowDetailsViewState(

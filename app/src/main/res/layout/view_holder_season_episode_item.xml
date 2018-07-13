@@ -23,7 +23,7 @@
 
         <variable
             name="episodeWithWatches"
-            type="app.tivi.data.entities.EpisodeWithWatches" />
+            type="app.tivi.data.resultentities.EpisodeWithWatches" />
 
         <variable
             name="clickListener"
@@ -44,7 +44,7 @@
             android:layout_marginStart="16dp"
             android:gravity="center_vertical"
             android:text="@{episodeWithWatches.episode.title}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textAppearance="?attr/textAppearanceBody1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/episode_watches_pending"
             app:layout_constraintStart_toStartOf="parent"

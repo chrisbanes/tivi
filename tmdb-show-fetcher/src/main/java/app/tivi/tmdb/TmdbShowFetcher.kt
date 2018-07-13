@@ -22,7 +22,6 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.copyDynamic
 import app.tivi.extensions.fetchBodyWithRetry
 import com.uwetrottmann.tmdb2.Tmdb
-import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -42,7 +41,6 @@ class TmdbShowFetcher @Inject constructor(
             tmdbBackdropPath = tmdbShow.backdrop_path
             tmdbPosterPath = tmdbShow.poster_path
             if (homepage.isNullOrEmpty()) homepage = tmdbShow.homepage
-            lastTmdbUpdate = OffsetDateTime.now()
         }
 
         entityInserter.insertOrUpdate(showDao, show)

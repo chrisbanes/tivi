@@ -19,8 +19,10 @@ package app.tivi.interactors
 import app.tivi.ShowFetcher
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.PaginatedEntry
+import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.PaginatedEntryDao
-import app.tivi.data.entities.EntryWithShow
+import app.tivi.data.entities.Request
+import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.extensions.parallelForEach
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
@@ -28,6 +30,7 @@ import app.tivi.util.Logger
 class PagedInteractorHelper<TT, ET : PaginatedEntry, LI : EntryWithShow<ET>, out ED : PaginatedEntryDao<ET, LI>>(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val entryDao: ED,
+    private val lastRequests: LastRequestDao,
     private val showFetcher: ShowFetcher,
     private val dispatchers: AppCoroutineDispatchers,
     private val logger: Logger,
@@ -40,8 +43,10 @@ class PagedInteractorHelper<TT, ET : PaginatedEntry, LI : EntryWithShow<ET>, out
                 .map { mapToEntry(it, insertShowPlaceholder(it), page) }
                 .also { savePage(it, page, resetOnSave) }
                 .parallelForEach(dispatchers.io) {
-                    // Now trigger a refresh of each show
-                    showFetcher.update(it.showId)
+                    // Now trigger a refresh of each show if it hasn't been refreshed before
+                    if (lastRequests.hasNotBeenRequested(Request.SHOW_DETAILS, it.showId)) {
+                        showFetcher.updateIfNeeded(it.showId)
+                    }
                 }
     }
 

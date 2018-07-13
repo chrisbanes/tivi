@@ -19,9 +19,9 @@ package app.tivi.home.discover
 import android.view.View
 import app.tivi.R
 import app.tivi.data.Entry
-import app.tivi.data.entities.EntryWithShow
-import app.tivi.data.entities.PopularEntry
-import app.tivi.data.entities.TrendingEntry
+import app.tivi.data.resultentities.EntryWithShow
+import app.tivi.data.resultentities.PopularEntryWithShow
+import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.emptyState
 import app.tivi.header
 import app.tivi.posterGridItem
@@ -31,17 +31,17 @@ import com.airbnb.epoxy.Typed3EpoxyController
 
 class DiscoverEpoxyController(
     private val callbacks: Callbacks
-) : Typed3EpoxyController<List<EntryWithShow<TrendingEntry>>, List<EntryWithShow<PopularEntry>>, TmdbImageUrlProvider>() {
+) : Typed3EpoxyController<List<TrendingEntryWithShow>, List<PopularEntryWithShow>, TmdbImageUrlProvider>() {
 
     interface Callbacks {
-        fun onTrendingHeaderClicked(items: List<EntryWithShow<TrendingEntry>>?)
-        fun onPopularHeaderClicked(items: List<EntryWithShow<PopularEntry>>?)
+        fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>?)
+        fun onPopularHeaderClicked(items: List<PopularEntryWithShow>?)
         fun onItemClicked(item: EntryWithShow<out Entry>)
     }
 
     override fun buildModels(
-        trending: List<EntryWithShow<TrendingEntry>>?,
-        popular: List<EntryWithShow<PopularEntry>>?,
+        trendingShows: List<TrendingEntryWithShow>?,
+        popularShows: List<PopularEntryWithShow>?,
         tmdbImageUrlProvider: TmdbImageUrlProvider?
     ) {
         header {
@@ -49,16 +49,15 @@ class DiscoverEpoxyController(
             title(R.string.discover_trending)
             spanSizeOverride(TotalSpanOverride)
             buttonClickListener(View.OnClickListener {
-                callbacks.onTrendingHeaderClicked(trending)
+                callbacks.onTrendingHeaderClicked(trendingShows)
             })
         }
-        if (trending != null && !trending.isEmpty()) {
-            trending.take(spanCount * 2).forEach { item ->
+        if (trendingShows != null && trendingShows.isNotEmpty()) {
+            trendingShows.take(spanCount * 2).forEach { item ->
                 posterGridItem {
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
-                    posterPath(item.show.tmdbPosterPath)
-                    title(item.show.title)
+                    tiviShow(item.show)
                     annotationLabel(item.entry?.watchers.toString())
                     annotationIcon(R.drawable.ic_eye_12dp)
                     transitionName("trending_${item.show.homepage}")
@@ -79,16 +78,15 @@ class DiscoverEpoxyController(
             title(R.string.discover_popular)
             spanSizeOverride(TotalSpanOverride)
             buttonClickListener(View.OnClickListener {
-                callbacks.onPopularHeaderClicked(popular)
+                callbacks.onPopularHeaderClicked(popularShows)
             })
         }
-        if (popular != null && !popular.isEmpty()) {
-            popular.take(spanCount * 2).forEach { item ->
+        if (popularShows != null && popularShows.isNotEmpty()) {
+            popularShows.take(spanCount * 2).forEach { item ->
                 posterGridItem {
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
-                    posterPath(item.show.tmdbPosterPath)
-                    title(item.show.title)
+                    tiviShow(item.show)
                     transitionName("popular_${item.show.homepage}")
                     clickListener(View.OnClickListener {
                         callbacks.onItemClicked(item)

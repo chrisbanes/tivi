@@ -17,5 +17,6 @@
 package app.tivi
 
 interface SeasonFetcher {
-    suspend fun update(showId: Long, forceRefresh: Boolean = false)
+    suspend fun update(showId: Long)
+    suspend fun updateIfNeeded(showId: Long)
 }

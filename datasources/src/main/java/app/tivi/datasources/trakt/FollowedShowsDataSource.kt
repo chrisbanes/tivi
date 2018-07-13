@@ -18,7 +18,7 @@ package app.tivi.datasources.trakt
 
 import android.arch.paging.DataSource
 import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.entities.FollowedShowEntryWithShow
+import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.datasources.ListDataSource
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable

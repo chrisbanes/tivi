@@ -18,14 +18,10 @@ package app.tivi.interactors
 
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.daos.SeasonsDao
-import app.tivi.interactors.syncers.TraktFollowedShowsSyncer
 import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.insertShow
-import app.tivi.utils.testCoroutineDispatchers
 import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Test
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
 
 class UnfollowShowTest : BaseDatabaseTest() {
     private lateinit var unfollowShow: UnfollowShowInteractor
@@ -43,22 +39,22 @@ class UnfollowShowTest : BaseDatabaseTest() {
         followShowsDao = db.followedShowsDao()
         seasonsDao = db.seasonsDao()
 
-        runBlocking {
-            val traktFollowedShowsSyncer = mock(TraktFollowedShowsSyncer::class.java)
-            `when`(traktFollowedShowsSyncer.sync()).thenReturn(Unit)
-
-            syncTraktFollowedShowsInteractor = SyncTraktFollowedShowsInteractor(
-                    traktFollowedShowsSyncer,
-                    testCoroutineDispatchers
-            )
-        }
-
-        unfollowShow = UnfollowShowInteractor(
-                testCoroutineDispatchers,
-                seasonsDao,
-                followShowsDao,
-                syncTraktFollowedShowsInteractor
-        )
+//        runBlocking {
+//            val traktFollowedShowsSyncer = mock(TraktFollowedShowsSyncer::class.java)
+//            `when`(traktFollowedShowsSyncer.sync()).thenReturn(Unit)
+//
+//            syncTraktFollowedShowsInteractor = SyncTraktFollowedShowsInteractor(
+//                    traktFollowedShowsSyncer,
+//                    testCoroutineDispatchers
+//            )
+//        }
+//
+//        unfollowShow = UnfollowShowInteractor(
+//                testCoroutineDispatchers,
+//                seasonsDao,
+//                followShowsDao,
+//                syncTraktFollowedShowsInteractor
+//        )
     }
 
     @Test

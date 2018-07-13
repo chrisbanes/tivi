@@ -18,7 +18,7 @@ package app.tivi.showdetails.details
 
 import android.content.Context
 import android.view.View
-import app.tivi.PosterGridItemBindingModel_
+import app.tivi.DetailsRelatedItemBindingModel_
 import app.tivi.R
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
@@ -117,11 +117,10 @@ class ShowDetailsEpoxyController(
                 hasFixedSize(true)
                 withModelsFrom(related) { relatedEntry ->
                     val relatedShow = relatedEntry.show
-                    PosterGridItemBindingModel_()
+                    DetailsRelatedItemBindingModel_()
                             .id("related_${relatedShow.id}")
-                            .title(relatedShow.title)
+                            .tiviShow(relatedShow)
                             .tmdbImageUrlProvider(tmdbImageUrlProvider)
-                            .posterPath(relatedShow.tmdbPosterPath)
                             .clickListener { view ->
                                 callbacks.onRelatedShowClicked(relatedShow, view)
                             }

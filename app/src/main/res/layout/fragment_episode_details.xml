@@ -58,7 +58,7 @@
             android:elevation="4dp"
             android:ellipsize="end"
             android:text="@{episode.title}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textAppearance="?attr/textAppearanceHeadline6"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"
             app:layout_constraintBottom_toBottomOf="@+id/ep_details_fanart"
             app:layout_constraintEnd_toStartOf="@+id/ep_details_fab"

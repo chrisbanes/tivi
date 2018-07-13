@@ -22,6 +22,7 @@ import android.arch.persistence.room.TypeConverters
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.FollowedShowsDao
+import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.PopularDao
 import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.SeasonsDao
@@ -32,28 +33,30 @@ import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.PopularEntry
+import app.tivi.data.entities.LastRequest
+import app.tivi.data.entities.PopularShowEntry
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TraktUser
-import app.tivi.data.entities.TrendingEntry
+import app.tivi.data.entities.TrendingShowEntry
 import app.tivi.data.entities.WatchedShowEntry
 
 @Database(
         entities = [
             TiviShow::class,
-            TrendingEntry::class,
-            PopularEntry::class,
+            TrendingShowEntry::class,
+            PopularShowEntry::class,
             TraktUser::class,
             WatchedShowEntry::class,
             FollowedShowEntry::class,
             Season::class,
             Episode::class,
             RelatedShowEntry::class,
-            EpisodeWatchEntry::class
+            EpisodeWatchEntry::class,
+            LastRequest::class
         ],
-        version = 6
+        version = 9
 )
 @TypeConverters(TiviTypeConverters::class)
 abstract class TiviDatabase : RoomDatabase() {
@@ -67,4 +70,5 @@ abstract class TiviDatabase : RoomDatabase() {
     abstract fun episodesDao(): EpisodesDao
     abstract fun relatedShowsDao(): RelatedShowsDao
     abstract fun episodeWatchesDao(): EpisodeWatchEntryDao
+    abstract fun lastRequestDao(): LastRequestDao
 }

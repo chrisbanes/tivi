@@ -17,7 +17,7 @@
 package app.tivi.home.watched
 
 import app.tivi.SharedElementHelper
-import app.tivi.data.entities.WatchedShowEntryWithShow
+import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.datasources.trakt.WatchedShowsDataSource
 import app.tivi.home.HomeNavigator
 import app.tivi.interactors.FetchWatchedShowsInteractor

@@ -18,9 +18,11 @@ package app.tivi.interactors
 
 import app.tivi.ShowFetcher
 import app.tivi.data.DatabaseTransactionRunner
+import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.RelatedShowEntry
+import app.tivi.data.entities.Request
 import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.extensions.parallelForEach
 import app.tivi.util.AppCoroutineDispatchers
@@ -31,6 +33,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 class FetchRelatedShowsInteractor @Inject constructor(
+    private val lastRequests: LastRequestDao,
     private val showDao: TiviShowDao,
     private val entryDao: RelatedShowsDao,
     private val transactionRunner: DatabaseTransactionRunner,
@@ -58,8 +61,11 @@ class FetchRelatedShowsInteractor @Inject constructor(
         }
 
         // Finally refresh each show
-        related.parallelForEach(dispatchers.io) {
-            showFetcher.update(it.otherShowId)
+        related.parallelForEach(dispatcher) {
+            // Now trigger a refresh of each show if it hasn't been refreshed before
+            if (lastRequests.hasNotBeenRequested(Request.SHOW_DETAILS, it.otherShowId)) {
+                showFetcher.update(it.otherShowId)
+            }
         }
     }
 }

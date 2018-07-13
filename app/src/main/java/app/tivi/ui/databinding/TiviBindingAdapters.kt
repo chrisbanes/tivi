@@ -17,17 +17,23 @@
 package app.tivi.ui.databinding
 
 import android.databinding.BindingAdapter
+import android.support.text.emoji.EmojiCompat
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.text.buildSpannedString
+import androidx.core.text.inSpans
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
+import app.tivi.R
 import app.tivi.data.entities.Genre
+import app.tivi.data.entities.TiviShow
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.GenreStringer
 import app.tivi.ui.MaxLinesToggleClickListener
 import app.tivi.ui.glide.GlideApp
+import app.tivi.ui.text.textAppearanceSpanForAttribute
 import app.tivi.util.ScrimUtil
 
 @BindingAdapter("tmdbPosterPath", "tmdbImageUrlProvider")
@@ -64,10 +70,20 @@ fun loadBackdrop(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvid
 
 @BindingAdapter("genreString")
 fun genreString(view: TextView, genres: List<Genre>?) {
-    val genreText = genres?.joinToString(" // ") {
-        "${view.context.getString(GenreStringer.getLabel(it))} ${GenreStringer.getEmoji(it)}"
+    if (genres != null && genres.isNotEmpty()) {
+        val spanned = buildSpannedString {
+            for (i in 0 until genres.size) {
+                val genre = genres[i]
+                inSpans(textAppearanceSpanForAttribute(view.context, R.attr.textAppearanceCaption)) {
+                    append(view.context.getString(GenreStringer.getLabel(genre)))
+                }
+                append("\u00A0") // nbsp
+                append(GenreStringer.getEmoji(genre))
+                if (i < genres.size - 1) append(" \u2022 ")
+            }
+        }
+        view.text = EmojiCompat.get().process(spanned)
     }
-    view.text = genreText
 }
 
 @BindingAdapter("genreContentDescriptionString")
@@ -113,4 +129,21 @@ fun backgroundScrim(view: View, color: Int) {
 @BindingAdapter("foregroundScrim")
 fun foregroundScrim(view: View, color: Int) {
     view.foreground = ScrimUtil.makeCubicGradientScrimDrawable(color, 16, Gravity.BOTTOM)
+}
+
+@BindingAdapter("showTitle")
+fun showTitle(view: TextView, show: TiviShow) {
+    view.text = buildSpannedString {
+        inSpans(textAppearanceSpanForAttribute(view.context, R.attr.textAppearanceHeadline6)) {
+            append(show.title)
+        }
+        show.firstAired?.also { firstAired ->
+            append(" ")
+            inSpans(textAppearanceSpanForAttribute(view.context, R.attr.textAppearanceCaption)) {
+                append("(")
+                append(firstAired.year.toString())
+                append(")")
+            }
+        }
+    }
 }

@@ -16,7 +16,6 @@
 
 package app.tivi.ui
 
-import android.content.Context
 import android.support.annotation.StringRes
 import app.tivi.R
 import app.tivi.data.entities.Genre
@@ -25,13 +24,13 @@ object GenreStringer {
     fun getEmoji(genre: Genre): String = when (genre) {
         Genre.DRAMA -> "\uD83D\uDE28"
         Genre.FANTASY -> "\uD83E\uDDD9"
-        Genre.SCIENCE_FICTION -> "☄️"
+        Genre.SCIENCE_FICTION -> "\uD83D\uDE80️"
         Genre.ACTION -> "\uD83E\uDD20"
         Genre.ADVENTURE -> "\uD83C\uDFDE️"
-        Genre.CRIME -> "\uD83D\uDE93"
+        Genre.CRIME -> "\uD83D\uDC6E"
         Genre.THRILLER -> "\uD83D\uDDE1️"
         Genre.COMEDY -> "\uD83E\uDD23"
-        Genre.HORROR -> "\uD83D\uDC7B"
+        Genre.HORROR -> "\uD83E\uDDDF"
         Genre.MYSTERY -> "\uD83D\uDD75️"
     }
 
@@ -47,11 +46,5 @@ object GenreStringer {
         Genre.COMEDY -> R.string.genre_label_comedy
         Genre.HORROR -> R.string.genre_label_horror
         Genre.MYSTERY -> R.string.genre_label_mystery
-    }
-
-    fun joinStrings(context: Context, genres: Collection<Genre>): String {
-        return genres.joinToString(" // ") {
-            "${context.getString(GenreStringer.getLabel(it))} ${GenreStringer.getEmoji(it)}"
-        }
     }
 }

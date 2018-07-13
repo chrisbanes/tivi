@@ -17,7 +17,7 @@
 package app.tivi.data.daos
 
 import app.tivi.data.MultipleEntry
-import app.tivi.data.entities.EntryWithShow
+import app.tivi.data.resultentities.EntryWithShow
 import io.reactivex.Flowable
 
 /**

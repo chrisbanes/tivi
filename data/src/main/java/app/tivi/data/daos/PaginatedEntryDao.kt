@@ -17,7 +17,7 @@
 package app.tivi.data.daos
 
 import app.tivi.data.PaginatedEntry
-import app.tivi.data.entities.EntryWithShow
+import app.tivi.data.resultentities.EntryWithShow
 
 interface PaginatedEntryDao<EC : PaginatedEntry, LI : EntryWithShow<EC>> : EntryDao<EC, LI> {
     fun deletePage(page: Int)

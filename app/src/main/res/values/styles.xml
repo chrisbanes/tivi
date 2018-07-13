@@ -17,16 +17,19 @@
 
 <resources>
 
-    <style name="Widget.Tivi.BottomNav" parent="Widget.Design.BottomNavigationView">
+    <style name="Widget.Tivi.BottomNav" parent="Widget.MaterialComponents.BottomNavigationView">
         <item name="android:background">?attr/navigationBackgroundColor</item>
         <item name="android:elevation">4dp</item>
         <item name="android:theme">@style/ThemeOverlay.AppCompat.ActionBar</item>
         <item name="itemIconTint">@color/bottom_nav_item_colors</item>
         <item name="itemTextColor">@color/bottom_nav_item_colors</item>
+        <item name="itemTextAppearanceInactive">?attr/textAppearanceCaption</item>
+        <item name="itemTextAppearance">?attr/textAppearanceCaption</item>
     </style>
 
-    <style name="TextAppearance.Tivi.PosterAnnotation" parent="TextAppearance.AppCompat.Body2">
-        <item name="android:textSize">10sp</item>
+    <style name="Widget.Tivi.Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="titleTextAppearance">?attr/textAppearanceHeadline6</item>
+        <item name="subtitleTextAppearance">?attr/textAppearanceSubtitle2</item>
     </style>
 
     <style name="Widget.Tivi.GridItem.Annotation" parent="android:Widget.TextView">

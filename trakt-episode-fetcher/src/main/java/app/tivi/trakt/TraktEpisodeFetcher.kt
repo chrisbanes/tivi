@@ -25,7 +25,6 @@ import app.tivi.data.entities.Episode
 import app.tivi.extensions.fetchBodyWithRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Episodes
-import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -67,8 +66,7 @@ class TraktEpisodeFetcher @Inject constructor(
                 summary = traktEpisode.overview,
                 firstAired = traktEpisode.first_aired,
                 rating = traktEpisode.rating?.toFloat(),
-                votes = traktEpisode.votes,
-                lastTraktUpdate = OffsetDateTime.now()
+                votes = traktEpisode.votes
         ).also {
             entityInserter.insertOrUpdate(episodesDao, it)
         }

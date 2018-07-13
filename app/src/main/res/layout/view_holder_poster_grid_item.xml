@@ -27,12 +27,8 @@
         <import type="android.view.View" />
 
         <variable
-            name="posterPath"
-            type="String" />
-
-        <variable
-            name="title"
-            type="String" />
+            name="tiviShow"
+            type="app.tivi.data.entities.TiviShow" />
 
         <variable
             name="annotationLabel"
@@ -61,7 +57,6 @@
         android:background="@color/grid_item_background_color"
         android:foreground="?android:attr/selectableItemBackground"
         android:onClick="@{clickListener}"
-        android:orientation="vertical"
         android:transitionGroup="true"
         android:transitionName="@{transitionName}">
 
@@ -71,8 +66,8 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="8dp"
-            android:text="@{title}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:text="@{tiviShow.title}"
+            android:textAppearance="?attr/textAppearanceBody2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -89,7 +84,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tmdbImageUrlProvider="@{tmdbImageUrlProvider}"
-            app:tmdbPosterPath="@{posterPath}" />
+            app:tmdbPosterPath="@{tiviShow.tmdbPosterPath}" />
 
         <TextView
             android:id="@+id/show_annotation"

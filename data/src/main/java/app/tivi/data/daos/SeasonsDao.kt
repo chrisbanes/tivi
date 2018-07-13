@@ -21,7 +21,7 @@ import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.Season.Companion.NUMBER_SPECIALS
-import app.tivi.data.entities.SeasonWithEpisodes
+import app.tivi.data.resultentities.SeasonWithEpisodes
 import io.reactivex.Flowable
 
 @Dao

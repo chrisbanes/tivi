@@ -16,15 +16,27 @@
 
 package app.tivi
 
+import app.tivi.data.daos.LastRequestDao
+import app.tivi.data.entities.Request
 import app.tivi.trakt.TraktSeasonFetcher
+import org.threeten.bp.Period
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class SeasonFetcherImpl @Inject constructor(
+    private val lastRequestDao: LastRequestDao,
     private val traktSeasonFetcher: TraktSeasonFetcher
 ) : SeasonFetcher {
-    override suspend fun update(showId: Long, forceRefresh: Boolean) {
-        traktSeasonFetcher.updateSeasonData(showId, forceRefresh)
+    override suspend fun updateIfNeeded(showId: Long) {
+        if (lastRequestDao.isRequestBefore(Request.SHOW_SEASONS, showId, Period.ofDays(1))) {
+            update(showId)
+        }
+    }
+
+    override suspend fun update(showId: Long) {
+        traktSeasonFetcher.updateSeasonData(showId)
+        // Update the timestamp
+        lastRequestDao.updateLastRequest(Request.SHOW_SEASONS, showId)
     }
 }

@@ -17,7 +17,7 @@
 package app.tivi.datasources.trakt
 
 import app.tivi.data.daos.RelatedShowsDao
-import app.tivi.data.entities.RelatedShowEntryWithShow
+import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.datasources.DataSource
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable

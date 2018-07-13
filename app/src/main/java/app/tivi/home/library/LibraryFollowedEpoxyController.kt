@@ -17,9 +17,9 @@
 package app.tivi.home.library
 
 import android.view.View
-import app.tivi.data.entities.FollowedShowEntryWithShow
+import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.emptyState
-import app.tivi.posterGridItem
+import app.tivi.libraryFollowedItem
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.EpoxyModelProperty
 import app.tivi.ui.epoxy.TotalSpanOverride
@@ -39,12 +39,12 @@ class LibraryFollowedEpoxyController(
             }
         } else {
             list.forEach { item ->
-                posterGridItem {
+                libraryFollowedItem {
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
-                    posterPath(item.show.tmdbPosterPath)
-                    title(item.show.title)
-                    transitionName("show_${item.show.homepage}")
+                    tiviShow(item.show)
+                    posterTransitionName("show_${item.show.homepage}")
+                    spanSizeOverride(TotalSpanOverride)
                     clickListener(View.OnClickListener {
                         callbacks.onItemClicked(item)
                     })

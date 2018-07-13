@@ -19,9 +19,11 @@ package app.tivi.interactors.syncers
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
+import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
+import app.tivi.data.entities.Request.SHOW_EPISODE_WATCHES
 import app.tivi.data.sync.syncerForEntity
 import app.tivi.extensions.fetchBody
 import app.tivi.extensions.fetchBodyWithRetry
@@ -36,11 +38,12 @@ import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.enums.HistoryType
 import com.uwetrottmann.trakt5.services.Sync
 import com.uwetrottmann.trakt5.services.Users
-import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.Period
 import javax.inject.Inject
 import javax.inject.Provider
 
 class TraktEpisodeWatchSyncer @Inject constructor(
+    private val lastRequests: LastRequestDao,
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,
     private val showDao: TiviShowDao,
     private val episodesDao: EpisodesDao,
@@ -58,22 +61,31 @@ class TraktEpisodeWatchSyncer @Inject constructor(
             logger
     )
 
+    fun pushPendingToTrakt(showId: Long) = processPendingDeleteWatches(showId) || processPendingSendWatches(showId)
+
     suspend fun sync(showId: Long, forceSync: Boolean = false) {
-        processPendingDeleteWatches(showId)
-        processPendingSendWatches(showId)
+        var sync = forceSync
+        sync = processPendingDeleteWatches(showId) || sync
+        sync = processPendingSendWatches(showId) || sync
 
-        val show = showDao.getShowWithId(showId)!!
-        if (forceSync || show.lastWatchedEpisodesUpdate.isBefore(OffsetDateTime.now().minusHours(1))) {
-            refreshWatchesFromTrakt(show.id!!, show.traktId!!)
-
+        if (sync || shouldUpdate(showId)) {
+            val show = showDao.getShowWithId(showId)!!
+            refreshWatchesFromTrakt(showId, show.traktId!!)
             // Now update timestamp
-            showDao.getShowWithId(showId)
-                    ?.copy(lastWatchedEpisodesUpdate = OffsetDateTime.now())
-                    ?.also(showDao::update)
+            lastRequests.updateLastRequest(SHOW_EPISODE_WATCHES, showId)
         }
     }
 
-    fun processPendingSendWatches(showId: Long) {
+    private fun shouldUpdate(showId: Long): Boolean {
+        return lastRequests.isRequestBefore(SHOW_EPISODE_WATCHES, showId, Period.ofDays(1))
+    }
+
+    /**
+     * Send any pending watches to Trakt.
+     *
+     * @return true if there were any pending actions
+     */
+    fun processPendingSendWatches(showId: Long): Boolean {
         val sendActions = episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId)
                 .map { it to episodesDao.episodeWithId(it.episodeId)!! }
 
@@ -99,10 +111,18 @@ class TraktEpisodeWatchSyncer @Inject constructor(
                     sendActions.mapNotNull { it.first.id },
                     PendingAction.NOTHING.value
             )
+            return true
         }
+
+        return false
     }
 
-    fun processPendingDeleteWatches(showId: Long) {
+    /**
+     * Send any pending deletes to Trakt.
+     *
+     * @return true if there were any pending actions
+     */
+    fun processPendingDeleteWatches(showId: Long): Boolean {
         val deleteActions = episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId)
 
         if (deleteActions.isNotEmpty()) {
@@ -124,10 +144,13 @@ class TraktEpisodeWatchSyncer @Inject constructor(
                     }
                 }
             }
-
             // Now update the database
             episodeWatchEntryDao.deleteWithIds(deleteActions.mapNotNull { it.id })
+
+            return true
         }
+
+        return false
     }
 
     private suspend fun refreshWatchesFromTrakt(showId: Long, traktId: Int) {
