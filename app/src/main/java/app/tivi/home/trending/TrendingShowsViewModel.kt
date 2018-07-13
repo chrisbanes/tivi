@@ -27,13 +27,14 @@ import app.tivi.util.AppRxSchedulers
 import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
 import app.tivi.util.NetworkDetector
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 class TrendingShowsViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     dispatchers: AppCoroutineDispatchers,
     dataSource: TrendingDataSource,
-    interactor: FetchTrendingShowsInteractor,
+    private val interactor: FetchTrendingShowsInteractor,
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector,
     logger: Logger
@@ -41,8 +42,6 @@ class TrendingShowsViewModel @Inject constructor(
         schedulers,
         dispatchers,
         dataSource,
-        interactor.asRefreshInteractor(),
-        interactor.asLoadMoreInteractor(),
         tmdbManager,
         networkDetector,
         logger
@@ -53,5 +52,17 @@ class TrendingShowsViewModel @Inject constructor(
 
     fun onItemClicked(item: TrendingEntryWithShow, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
         navigator.showShowDetails(item.show, sharedElements)
+    }
+
+    override suspend fun callLoadMore() {
+        withContext(interactor.dispatcher) {
+            interactor(FetchTrendingShowsInteractor.Params(FetchTrendingShowsInteractor.Params.NEXT_PAGE))
+        }
+    }
+
+    override suspend fun callRefresh() {
+        withContext(interactor.dispatcher) {
+            interactor(FetchTrendingShowsInteractor.Params(FetchTrendingShowsInteractor.Params.REFRESH))
+        }
     }
 }

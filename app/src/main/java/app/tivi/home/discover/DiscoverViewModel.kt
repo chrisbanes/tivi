@@ -72,11 +72,11 @@ class DiscoverViewModel @Inject constructor(
 
     private fun onRefresh() {
         loadingState.addLoader()
-        launchInteractor(fetchPopularShowsInteractor.asRefreshInteractor())
+        launchInteractor(fetchPopularShowsInteractor, FetchPopularShowsInteractor.Params(FetchPopularShowsInteractor.Params.NEXT_PAGE))
                 .invokeOnCompletion { loadingState.removeLoader() }
 
         loadingState.addLoader()
-        launchInteractor(fetchTrendingShowsInteractor.asRefreshInteractor())
+        launchInteractor(fetchTrendingShowsInteractor, FetchTrendingShowsInteractor.Params(FetchTrendingShowsInteractor.Params.NEXT_PAGE))
                 .invokeOnCompletion { loadingState.removeLoader() }
     }
 

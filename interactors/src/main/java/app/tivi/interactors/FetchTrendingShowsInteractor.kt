@@ -23,8 +23,6 @@ import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.entities.TrendingShowEntry
 import app.tivi.extensions.fetchBodyWithRetry
-import app.tivi.interactors.PagedShowInteractor.Companion.NEXT_PAGE
-import app.tivi.interactors.PagedShowInteractor.Companion.REFRESH
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import com.uwetrottmann.trakt5.enums.Extended
@@ -41,8 +39,8 @@ class FetchTrendingShowsInteractor @Inject constructor(
     private val showsService: Provider<Shows>,
     dispatchers: AppCoroutineDispatchers,
     logger: Logger
-) : PagedShowInteractor {
-    override val pageSize: Int = 21
+) : Interactor<FetchTrendingShowsInteractor.Params> {
+    private val pageSize: Int = 21
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     private val helper = PagedInteractorHelper(
@@ -61,11 +59,18 @@ class FetchTrendingShowsInteractor @Inject constructor(
             }
     )
 
-    override suspend fun invoke(param: Int) {
-        if (param == NEXT_PAGE) {
+    override suspend fun invoke(param: Params) {
+        if (param.page == Params.NEXT_PAGE) {
             helper.loadPage(trendingDao.getLastPage() + 1, false)
         } else {
-            helper.loadPage(param, resetOnSave = param == REFRESH)
+            helper.loadPage(param.page, resetOnSave = param.page == Params.REFRESH)
+        }
+    }
+
+    data class Params(val page: Int) {
+        companion object {
+            const val NEXT_PAGE = -1
+            const val REFRESH = 0
         }
     }
 }

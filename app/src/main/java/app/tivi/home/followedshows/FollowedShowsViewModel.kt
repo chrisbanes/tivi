@@ -20,7 +20,6 @@ import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.datasources.trakt.FollowedShowsDataSource
 import app.tivi.home.HomeNavigator
-import app.tivi.interactors.emptyInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
@@ -40,8 +39,6 @@ class FollowedShowsViewModel @Inject constructor(
         schedulers,
         dispatchers,
         dataSource,
-        emptyInteractor(),
-        emptyInteractor(),
         tmdbManager,
         networkDetector,
         logger

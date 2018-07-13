@@ -41,11 +41,11 @@ class FetchWatchedShowsInteractor @Inject constructor(
     private val showFetcher: ShowFetcher,
     private val usersService: Provider<Users>,
     private val dispatchers: AppCoroutineDispatchers
-) : Interactor<Unit> {
+) : Interactor<FetchWatchedShowsInteractor.Params> {
     override val dispatcher: CoroutineDispatcher
         get() = dispatchers.io
 
-    override suspend fun invoke(param: Unit) {
+    override suspend fun invoke(param: Params) {
         val networkResponse = withContext(dispatchers.io) {
             usersService.get().watchedShows(UserSlug.ME, Extended.NOSEASONS).fetchBodyWithRetry()
         }
@@ -68,4 +68,6 @@ class FetchWatchedShowsInteractor @Inject constructor(
             }
         }
     }
+
+    data class Params(val forceLoad: Boolean)
 }

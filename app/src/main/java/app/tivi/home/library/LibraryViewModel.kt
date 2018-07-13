@@ -164,7 +164,7 @@ class LibraryViewModel @Inject constructor(
             }
             WATCHED -> {
                 loadingState.addLoader()
-                launchInteractor(watchedShowsInteractor).invokeOnCompletion {
+                launchInteractor(watchedShowsInteractor, FetchWatchedShowsInteractor.Params(false)).invokeOnCompletion {
                     loadingState.removeLoader()
                 }
             }

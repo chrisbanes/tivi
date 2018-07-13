@@ -27,7 +27,7 @@ import app.tivi.extensions.parallelForEach
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 
-class PagedInteractorHelper<TT, ET : PaginatedEntry, LI : EntryWithShow<ET>, out ED : PaginatedEntryDao<ET, LI>>(
+internal class PagedInteractorHelper<TT, ET : PaginatedEntry, LI : EntryWithShow<ET>, out ED : PaginatedEntryDao<ET, LI>>(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val entryDao: ED,
     private val lastRequests: LastRequestDao,
