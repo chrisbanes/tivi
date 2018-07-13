@@ -50,7 +50,7 @@ class FetchWatchedShowsInteractor @Inject constructor(
             usersService.get().watchedShows(UserSlug.ME, Extended.NOSEASONS).fetchBodyWithRetry()
         }
 
-        val shows = networkResponse.parallelMap { traktEntry ->
+        val shows = networkResponse.parallelMap(dispatcher) { traktEntry ->
             val showId = showFetcher.insertPlaceholderIfNeeded(traktEntry.show)
             WatchedShowEntry(null, showId, traktEntry.last_watched_at)
         }
@@ -61,7 +61,7 @@ class FetchWatchedShowsInteractor @Inject constructor(
             watchShowDao.insertAll(shows)
         }
 
-        shows.parallelForEach {
+        shows.parallelForEach(dispatcher) {
             // Now trigger a refresh of each show if it hasn't been refreshed before
             if (lastRequests.hasNotBeenRequested(Request.SHOW_DETAILS, it.showId)) {
                 showFetcher.update(it.showId)

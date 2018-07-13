@@ -43,10 +43,10 @@ class SyncAllFollowedShowsInteractor @Inject constructor(
         }
 
         // Now iterate through the followed shows and update them
-        val followedShows = followedShowsDao.entriesBlocking()
+        val followedShows = followedShowsDao.entries()
         followedShows.filter {
             it.pendingAction != PendingAction.DELETE
-        }.parallelForEach {
+        }.parallelForEach(dispatcher) {
             syncFollowedShowInteractor(it.showId)
         }
     }

@@ -61,7 +61,7 @@ class FetchRelatedShowsInteractor @Inject constructor(
         }
 
         // Finally refresh each show
-        related.parallelForEach(dispatchers.io) {
+        related.parallelForEach(dispatcher) {
             // Now trigger a refresh of each show if it hasn't been refreshed before
             if (lastRequests.hasNotBeenRequested(Request.SHOW_DETAILS, it.otherShowId)) {
                 showFetcher.update(it.otherShowId)

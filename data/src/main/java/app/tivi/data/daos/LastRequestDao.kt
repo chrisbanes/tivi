@@ -49,6 +49,7 @@ abstract class LastRequestDao : EntityDao<LastRequest> {
     }
 
     fun updateLastRequest(request: Request, entityId: Long, timestamp: Instant = Instant.now()) {
+        // We just use insert here since we have a unique index and onConflict = REPLACE above
         val r = LastRequest(request = request, entityId = entityId, timestamp = timestamp)
         insert(r)
     }

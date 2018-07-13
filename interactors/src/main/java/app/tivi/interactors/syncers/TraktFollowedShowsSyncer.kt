@@ -134,8 +134,13 @@ open class TraktFollowedShowsSyncer @Inject constructor(
         }
 
         // Now sync the entries
-        databaseTransactionRunner.runInTransaction {
-            syncer.sync(dao.entriesBlocking(), shows)
+        val result = databaseTransactionRunner.runInTransaction {
+            syncer.sync(dao.entries(), shows)
+        }
+
+        // Finally update any new shows' info
+        result.added.forEach {
+            showFetcher.updateIfNeeded(it.showId)
         }
     }
 

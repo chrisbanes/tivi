@@ -37,7 +37,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     }
 
     @Query("SELECT * FROM myshows_entries")
-    abstract fun entriesBlocking(): List<FollowedShowEntry>
+    abstract fun entries(): List<FollowedShowEntry>
 
     @Transaction
     @Query("$ENTRY_QUERY_ORDER_LAST_WATCHED LIMIT :count OFFSET :offset")

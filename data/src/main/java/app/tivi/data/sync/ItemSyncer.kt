@@ -34,26 +34,34 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
     private val networkEntityToLocalEntityMapperFunc: (NT, Long?) -> ET,
     private val logger: Logger? = null
 ) {
-    fun sync(currentValues: Collection<ET>, networkValues: Collection<NT>) {
+    fun sync(currentValues: Collection<ET>, networkValues: Collection<NT>): ItemSyncerResult<ET> {
         val currentDbEntities = ArrayList(currentValues)
+
+        val removed = ArrayList<ET>()
+        val added = ArrayList<ET>()
+        val updated = ArrayList<ET>()
 
         networkValues.forEach { networkEntity ->
             val remoteId = networkEntityToIdFunc(networkEntity)
             val dbEntityForId = currentDbEntities.find { localEntityToIdFunc(it) == remoteId }
 
             if (dbEntityForId != null) {
-                val newEntity = networkEntityToLocalEntityMapperFunc(networkEntity, dbEntityForId.id)
-                if (dbEntityForId != newEntity) {
+                var entity = networkEntityToLocalEntityMapperFunc(networkEntity, dbEntityForId.id)
+                if (dbEntityForId != entity) {
                     // This is currently in the DB, so lets merge it with the saved version and update it
-                    entryUpdateFunc(networkEntityToLocalEntityMapperFunc(networkEntity, dbEntityForId.id))
+                    entity = networkEntityToLocalEntityMapperFunc(networkEntity, dbEntityForId.id)
+                    entryUpdateFunc(entity)
                     logger?.d("Updated entry with remote id: $remoteId")
                 }
                 // Remove it from the list so that it is not deleted
                 currentDbEntities.remove(dbEntityForId)
+                updated += entity
             } else {
                 // Not currently in the DB, so lets insert
-                entryInsertFunc(networkEntityToLocalEntityMapperFunc(networkEntity, null))
+                val entity = networkEntityToLocalEntityMapperFunc(networkEntity, null)
+                entryInsertFunc(entity)
                 logger?.d("Insert entry with remote id: $remoteId")
+                added += entity
             }
         }
 
@@ -61,8 +69,17 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
         currentDbEntities.forEach {
             logger?.d("Remove entry with remote id: $it")
             entryDeleteFunc(it)
+            removed += it
         }
+
+        return ItemSyncerResult(added, removed, updated)
     }
+
+    data class ItemSyncerResult<ET : TiviEntity>(
+        val added: List<ET>,
+        val deleted: List<ET>,
+        val updated: List<ET>
+    )
 }
 
 fun <ET : TiviEntity, NT, NID> syncerForEntity(
