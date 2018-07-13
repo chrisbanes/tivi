@@ -22,7 +22,6 @@ import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
-import app.tivi.data.sync.syncerForEntity
 import app.tivi.extensions.fetchBody
 import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.extensions.parallelForEach

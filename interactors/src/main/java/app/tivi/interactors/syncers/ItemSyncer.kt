@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.data.sync
+package app.tivi.interactors.syncers
 
 import app.tivi.data.daos.EntityDao
 import app.tivi.data.entities.TiviEntity
