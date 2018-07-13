@@ -16,20 +16,20 @@
 
 package app.tivi.interactors
 
-import app.tivi.EpisodeFetcher
+import app.tivi.SeasonFetcher
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
-class FetchEpisodeDetailsInteractor @Inject constructor(
-    private val episodeFetcher: EpisodeFetcher,
+class UpdateShowSeasons @Inject constructor(
+    private val seasonFetcher: SeasonFetcher,
     dispatchers: AppCoroutineDispatchers
-) : Interactor<FetchEpisodeDetailsInteractor.Params> {
+) : Interactor<UpdateShowSeasons.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend fun invoke(param: Params) {
-        episodeFetcher.update(param.episodeId)
+    override suspend operator fun invoke(param: Params) {
+        seasonFetcher.update(param.showId)
     }
 
-    data class Params(val episodeId: Long, val forceLoad: Boolean)
+    data class Params(val showId: Long, val forceLoad: Boolean)
 }

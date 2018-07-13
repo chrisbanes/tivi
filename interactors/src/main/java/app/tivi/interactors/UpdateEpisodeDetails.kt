@@ -16,21 +16,20 @@
 
 package app.tivi.interactors
 
-import app.tivi.interactors.syncers.TraktFollowedShowsSyncer
+import app.tivi.EpisodeFetcher
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
-class SyncTraktFollowedShowsInteractor @Inject constructor(
-    private val syncer: TraktFollowedShowsSyncer,
-    private val dispatchers: AppCoroutineDispatchers
-) : Interactor<SyncTraktFollowedShowsInteractor.Params> {
-    override val dispatcher: CoroutineDispatcher
-        get() = dispatchers.io
+class UpdateEpisodeDetails @Inject constructor(
+    private val episodeFetcher: EpisodeFetcher,
+    dispatchers: AppCoroutineDispatchers
+) : Interactor<UpdateEpisodeDetails.Params> {
+    override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend fun invoke(param: Params) {
-        syncer.sync()
+        episodeFetcher.update(param.episodeId)
     }
 
-    data class Params(val forceLoad: Boolean)
+    data class Params(val episodeId: Long, val forceLoad: Boolean)
 }

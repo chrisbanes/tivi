@@ -28,12 +28,12 @@ import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 import javax.inject.Provider
 
-class FetchUserDetailsMeInteractor @Inject constructor(
+class UpdateUserDetailsMe @Inject constructor(
     private val dao: UserDao,
     private val usersService: Provider<Users>,
     private val dispatchers: AppCoroutineDispatchers,
     private val entityInserter: EntityInserter
-) : Interactor<FetchUserDetailsMeInteractor.Params> {
+) : Interactor<UpdateUserDetailsMe.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend operator fun invoke(param: Params) {

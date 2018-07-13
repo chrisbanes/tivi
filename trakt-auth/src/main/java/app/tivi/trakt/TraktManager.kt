@@ -23,7 +23,7 @@ import app.tivi.actions.ShowTasks
 import app.tivi.data.entities.TraktUser
 import app.tivi.datasources.trakt.UserMeDataSource
 import app.tivi.inject.ApplicationLevel
-import app.tivi.interactors.FetchUserDetailsMeInteractor
+import app.tivi.interactors.UpdateUserDetailsMe
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
@@ -59,7 +59,7 @@ class TraktManager @Inject constructor(
     private val clientAuth: Lazy<ClientAuthentication>,
     @Named("auth") private val authPrefs: SharedPreferences,
     private val userMeDataSource: UserMeDataSource,
-    private val userMeInteractor: FetchUserDetailsMeInteractor,
+    private val updateUserMe: UpdateUserDetailsMe,
     private val networkDetector: NetworkDetector,
     private val showTasks: ShowTasks,
     private val logger: Logger
@@ -103,9 +103,9 @@ class TraktManager @Inject constructor(
     }
 
     private fun refreshUserProfile() {
-        launch(userMeInteractor.dispatcher) {
+        launch(updateUserMe.dispatcher) {
             try {
-                userMeInteractor(FetchUserDetailsMeInteractor.Params(false))
+                updateUserMe(UpdateUserDetailsMe.Params(false))
             } catch (e: Exception) {
                 logger.e(e, "Error while refreshing user profile")
             }

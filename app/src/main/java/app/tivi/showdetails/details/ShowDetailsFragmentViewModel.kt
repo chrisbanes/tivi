@@ -25,11 +25,11 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.datasources.trakt.RelatedShowsDataSource
 import app.tivi.datasources.trakt.ShowDetailsDataSource
 import app.tivi.datasources.trakt.ShowSeasonsDataSource
-import app.tivi.interactors.FetchRelatedShowsInteractor
-import app.tivi.interactors.FetchShowDetailsInteractor
-import app.tivi.interactors.FollowShowInteractor
-import app.tivi.interactors.SyncTraktFollowedShowWatchedProgressInteractor
-import app.tivi.interactors.UnfollowShowInteractor
+import app.tivi.interactors.FollowShow
+import app.tivi.interactors.SyncFollowedShowWatchedProgress
+import app.tivi.interactors.UnfollowShow
+import app.tivi.interactors.UpdateRelatedShows
+import app.tivi.interactors.UpdateShowDetails
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
@@ -45,15 +45,15 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     private val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
     private val showDetailsDataSource: ShowDetailsDataSource,
-    private val showDetailsInteractor: FetchShowDetailsInteractor,
+    private val updateShowDetails: UpdateShowDetails,
     private val relatedShowsDataSource: RelatedShowsDataSource,
-    private val relatedShowsInteractor: FetchRelatedShowsInteractor,
+    private val updateRelatedShows: UpdateRelatedShows,
     private val seasonsDataSource: ShowSeasonsDataSource,
-    private val refreshShowSeasons: FetchShowDetailsInteractor,
-    private val syncTraktFollowedShowWatchedProgress: SyncTraktFollowedShowWatchedProgressInteractor,
+    private val refreshShowSeasons: UpdateShowDetails,
+    private val syncFollowedShowWatchedProgress: SyncFollowedShowWatchedProgress,
     private val tmdbManager: TmdbManager,
-    private val followShowInteractor: FollowShowInteractor,
-    private val unfollowShowInteractor: UnfollowShowInteractor,
+    private val followShow: FollowShow,
+    private val unfollowShow: UnfollowShow,
     private val followedShowsDao: FollowedShowsDao,
     private val logger: Logger
 ) : TiviViewModel() {
@@ -77,12 +77,12 @@ class ShowDetailsFragmentViewModel @Inject constructor(
 
     private fun refresh() {
         showId?.also { id ->
-            launchInteractor(showDetailsInteractor, FetchShowDetailsInteractor.Params(id, true))
-            launchInteractor(relatedShowsInteractor, FetchRelatedShowsInteractor.Params(id, true))
+            launchInteractor(updateShowDetails, UpdateShowDetails.Params(id, true))
+            launchInteractor(updateRelatedShows, UpdateRelatedShows.Params(id, true))
             launchWithParent(dispatchers.io) {
                 if (followedShowsDao.entryCountWithShowId(id) > 0) {
-                    refreshShowSeasons(FetchShowDetailsInteractor.Params(id, true))
-                    syncTraktFollowedShowWatchedProgress(SyncTraktFollowedShowWatchedProgressInteractor.Params(id, true))
+                    refreshShowSeasons(UpdateShowDetails.Params(id, true))
+                    syncFollowedShowWatchedProgress(SyncFollowedShowWatchedProgress.Params(id, true))
                 }
             }
         }
@@ -120,11 +120,11 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     fun addToMyShows() {
         showId?.let { id ->
             launchWithParent {
-                withContext(followShowInteractor.dispatcher) {
-                    followShowInteractor(FollowShowInteractor.Params(id, true))
+                withContext(followShow.dispatcher) {
+                    followShow(FollowShow.Params(id, true))
                 }
-                withContext(syncTraktFollowedShowWatchedProgress.dispatcher) {
-                    syncTraktFollowedShowWatchedProgress(SyncTraktFollowedShowWatchedProgressInteractor.Params(id, true))
+                withContext(syncFollowedShowWatchedProgress.dispatcher) {
+                    syncFollowedShowWatchedProgress(SyncFollowedShowWatchedProgress.Params(id, true))
                 }
             }
         }
@@ -132,7 +132,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
 
     fun removeFromMyShows() {
         showId?.let { id ->
-            launchInteractor(unfollowShowInteractor, UnfollowShowInteractor.Params(id, true))
+            launchInteractor(unfollowShow, UnfollowShow.Params(id, true))
         }
     }
 

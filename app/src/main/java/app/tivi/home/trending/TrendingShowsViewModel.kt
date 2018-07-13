@@ -20,7 +20,7 @@ import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.datasources.trakt.TrendingDataSource
 import app.tivi.home.HomeNavigator
-import app.tivi.interactors.FetchTrendingShowsInteractor
+import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
@@ -34,7 +34,7 @@ class TrendingShowsViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     dispatchers: AppCoroutineDispatchers,
     dataSource: TrendingDataSource,
-    private val interactor: FetchTrendingShowsInteractor,
+    private val interactor: UpdateTrendingShows,
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector,
     logger: Logger
@@ -56,13 +56,13 @@ class TrendingShowsViewModel @Inject constructor(
 
     override suspend fun callLoadMore() {
         withContext(interactor.dispatcher) {
-            interactor(FetchTrendingShowsInteractor.Params(FetchTrendingShowsInteractor.Params.NEXT_PAGE))
+            interactor(UpdateTrendingShows.Params(UpdateTrendingShows.Params.NEXT_PAGE))
         }
     }
 
     override suspend fun callRefresh() {
         withContext(interactor.dispatcher) {
-            interactor(FetchTrendingShowsInteractor.Params(FetchTrendingShowsInteractor.Params.REFRESH))
+            interactor(UpdateTrendingShows.Params(UpdateTrendingShows.Params.REFRESH))
         }
     }
 }

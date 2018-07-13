@@ -31,8 +31,8 @@ import app.tivi.home.HomeFragmentViewModel
 import app.tivi.home.HomeNavigator
 import app.tivi.home.library.LibraryFilter.FOLLOWED
 import app.tivi.home.library.LibraryFilter.WATCHED
-import app.tivi.interactors.FetchWatchedShowsInteractor
-import app.tivi.interactors.SyncAllFollowedShowsInteractor
+import app.tivi.interactors.SyncFollowedShows
+import app.tivi.interactors.UpdateWatchedShows
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
@@ -52,9 +52,9 @@ import javax.inject.Inject
 class LibraryViewModel @Inject constructor(
     private val schedulers: AppRxSchedulers,
     private val watchedShowsDataSource: WatchedShowsDataSource,
-    private val watchedShowsInteractor: FetchWatchedShowsInteractor,
+    private val updateWatchedShows: UpdateWatchedShows,
     private val followedDataSource: FollowedShowsDataSource,
-    private val followedShowsInteractor: SyncAllFollowedShowsInteractor,
+    private val syncFollowedShows: SyncFollowedShows,
     private val traktManager: TraktManager,
     private val tmdbManager: TmdbManager,
     private val networkDetector: NetworkDetector,
@@ -158,13 +158,13 @@ class LibraryViewModel @Inject constructor(
         when (currentFilter.value) {
             FOLLOWED -> {
                 loadingState.addLoader()
-                launchInteractor(followedShowsInteractor, SyncAllFollowedShowsInteractor.Params(false)).invokeOnCompletion {
+                launchInteractor(syncFollowedShows, SyncFollowedShows.Params(false)).invokeOnCompletion {
                     loadingState.removeLoader()
                 }
             }
             WATCHED -> {
                 loadingState.addLoader()
-                launchInteractor(watchedShowsInteractor, FetchWatchedShowsInteractor.Params(false)).invokeOnCompletion {
+                launchInteractor(updateWatchedShows, UpdateWatchedShows.Params(false)).invokeOnCompletion {
                     loadingState.removeLoader()
                 }
             }

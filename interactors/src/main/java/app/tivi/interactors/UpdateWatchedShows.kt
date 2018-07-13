@@ -34,14 +34,14 @@ import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 import javax.inject.Provider
 
-class FetchWatchedShowsInteractor @Inject constructor(
+class UpdateWatchedShows @Inject constructor(
     private val databaseTransactionRunner: DatabaseTransactionRunner,
     private val lastRequests: LastRequestDao,
     private val watchShowDao: WatchedShowDao,
     private val showFetcher: ShowFetcher,
     private val usersService: Provider<Users>,
     private val dispatchers: AppCoroutineDispatchers
-) : Interactor<FetchWatchedShowsInteractor.Params> {
+) : Interactor<UpdateWatchedShows.Params> {
     override val dispatcher: CoroutineDispatcher
         get() = dispatchers.io
 

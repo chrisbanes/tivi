@@ -17,26 +17,22 @@
 package app.tivi.interactors
 
 import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.PendingAction
+import app.tivi.interactors.syncers.TraktEpisodeWatchSyncer
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
-class FollowShowInteractor @Inject constructor(
-    dispatchers: AppCoroutineDispatchers,
+class SyncFollowedShowWatchedProgress @Inject constructor(
+    private val syncer: TraktEpisodeWatchSyncer,
     private val followedShowsDao: FollowedShowsDao,
-    private val syncFollowedShowInteractor: SyncFollowedShowInteractor,
-    private val syncTraktFollowedShowsInteractor: SyncTraktFollowedShowsInteractor
-) : Interactor<FollowShowInteractor.Params> {
+    dispatchers: AppCoroutineDispatchers
+) : Interactor<SyncFollowedShowWatchedProgress.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend operator fun invoke(param: Params) {
-        followedShowsDao.insert(FollowedShowEntry(showId = param.showId, pendingAction = PendingAction.UPLOAD))
-        // Now refresh the show
-        syncFollowedShowInteractor(SyncFollowedShowInteractor.Params(param.showId, param.forceLoad))
-        // Now sync followed shows
-        syncTraktFollowedShowsInteractor(SyncTraktFollowedShowsInteractor.Params(param.forceLoad))
+        val entry = followedShowsDao.entryWithShowId(param.showId)
+                ?: throw IllegalArgumentException("Followed entry with showId: $param.showId does not exist")
+        syncer.sync(entry.showId)
     }
 
     data class Params(val showId: Long, val forceLoad: Boolean)

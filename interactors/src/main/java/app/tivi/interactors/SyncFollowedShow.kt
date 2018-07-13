@@ -16,40 +16,37 @@
 
 package app.tivi.interactors
 
+import app.tivi.SeasonFetcher
 import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.entities.PendingAction
-import app.tivi.extensions.parallelForEach
+import app.tivi.interactors.syncers.TraktEpisodeWatchSyncer
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 import javax.inject.Provider
 
-class SyncAllFollowedShowsInteractor @Inject constructor(
+class SyncFollowedShow @Inject constructor(
     private val followedShowsDao: FollowedShowsDao,
     dispatchers: AppCoroutineDispatchers,
-    private val loggedIn: Provider<TraktAuthState>,
-    private val syncTraktFollowedShowsInteractor: SyncTraktFollowedShowsInteractor,
-    private val syncFollowedShowInteractor: SyncFollowedShowInteractor
-) : Interactor<SyncAllFollowedShowsInteractor.Params> {
+    private val traktEpisodeWatchedSyncer: TraktEpisodeWatchSyncer,
+    private val seasonFetcher: SeasonFetcher,
+    private val loggedIn: Provider<TraktAuthState>
+) : Interactor<SyncFollowedShow.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend operator fun invoke(param: Params) {
+        val entry = followedShowsDao.entryWithShowId(param.showId)
+                ?: throw IllegalArgumentException("Followed entry with showId: $param does not exist")
+
         val authed = loggedIn.get() == TraktAuthState.LOGGED_IN
 
+        // Then update the seasons/episodes
+        seasonFetcher.updateIfNeeded(entry.showId)
+        // Finally update any watched progress
         if (authed) {
-            // First sync the followed shows to/from Trakt
-            syncTraktFollowedShowsInteractor(SyncTraktFollowedShowsInteractor.Params(param.forceLoad))
-        }
-
-        // Now iterate through the followed shows and update them
-        val followedShows = followedShowsDao.entries()
-        followedShows.filter {
-            it.pendingAction != PendingAction.DELETE
-        }.parallelForEach(dispatcher) {
-            syncFollowedShowInteractor(SyncFollowedShowInteractor.Params(it.showId, param.forceLoad))
+            traktEpisodeWatchedSyncer.sync(entry.showId, false)
         }
     }
 
-    data class Params(val forceLoad: Boolean)
+    data class Params(val showId: Long, val forceLoad: Boolean)
 }

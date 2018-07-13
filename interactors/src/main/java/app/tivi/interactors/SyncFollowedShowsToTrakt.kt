@@ -16,20 +16,21 @@
 
 package app.tivi.interactors
 
-import app.tivi.SeasonFetcher
+import app.tivi.interactors.syncers.TraktFollowedShowsSyncer
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
-class FetchShowSeasonsInteractor @Inject constructor(
-    private val seasonFetcher: SeasonFetcher,
-    dispatchers: AppCoroutineDispatchers
-) : Interactor<FetchShowSeasonsInteractor.Params> {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
+class SyncFollowedShowsToTrakt @Inject constructor(
+    private val syncer: TraktFollowedShowsSyncer,
+    private val dispatchers: AppCoroutineDispatchers
+) : Interactor<SyncFollowedShowsToTrakt.Params> {
+    override val dispatcher: CoroutineDispatcher
+        get() = dispatchers.io
 
-    override suspend operator fun invoke(param: Params) {
-        seasonFetcher.update(param.showId)
+    override suspend fun invoke(param: Params) {
+        syncer.sync()
     }
 
-    data class Params(val showId: Long, val forceLoad: Boolean)
+    data class Params(val forceLoad: Boolean)
 }

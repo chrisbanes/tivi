@@ -25,7 +25,7 @@ import org.junit.Test
 import org.mockito.Mockito.mock
 
 class FollowInteractorTest : BaseDatabaseTest() {
-    private lateinit var followShow: FollowShowInteractor
+    private lateinit var followShow: FollowShow
     private lateinit var followShowsDao: FollowedShowsDao
     private lateinit var seasonFetcher: SeasonFetcher
 
@@ -36,7 +36,7 @@ class FollowInteractorTest : BaseDatabaseTest() {
 
         followShowsDao = db.followedShowsDao()
         seasonFetcher = mock(SeasonFetcher::class.java)
-        //followShow = FollowShowInteractor(testCoroutineDispatchers, followShowsDao, seasonFetcher)
+        //followShow = FollowShow(testCoroutineDispatchers, followShowsDao, seasonFetcher)
     }
 
     @Test

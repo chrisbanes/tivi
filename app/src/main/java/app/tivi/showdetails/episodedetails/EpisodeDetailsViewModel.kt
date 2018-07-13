@@ -24,8 +24,8 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.datasources.trakt.EpisodeDetailsDataSource
 import app.tivi.datasources.trakt.EpisodeWatchesDataSource
-import app.tivi.interactors.FetchEpisodeDetailsInteractor
-import app.tivi.interactors.SyncTraktFollowedShowWatchedProgressInteractor
+import app.tivi.interactors.SyncFollowedShowWatchedProgress
+import app.tivi.interactors.UpdateEpisodeDetails
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
@@ -39,7 +39,7 @@ import javax.inject.Inject
 
 class EpisodeDetailsViewModel @Inject constructor(
     private val episodeDetailsDataSource: EpisodeDetailsDataSource,
-    private val episodeDetailsInteractor: FetchEpisodeDetailsInteractor,
+    private val updateEpisodeDetails: UpdateEpisodeDetails,
     private val episodeWatchesCall: EpisodeWatchesDataSource,
     private val tmdbManager: TmdbManager,
     private val logger: Logger,
@@ -47,7 +47,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,
     private val dispatchers: AppCoroutineDispatchers,
     private val dateTimeFormatter: DateTimeFormatter,
-    private val syncTraktFollowedShowWatchedProgress: SyncTraktFollowedShowWatchedProgressInteractor
+    private val syncFollowedShowWatchedProgress: SyncFollowedShowWatchedProgress
 ) : TiviViewModel() {
 
     var episodeId: Long? = null
@@ -66,7 +66,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     private fun refresh() {
         val epId = episodeId
         if (epId != null) {
-            launchInteractor(episodeDetailsInteractor, FetchEpisodeDetailsInteractor.Params(epId, true))
+            launchInteractor(updateEpisodeDetails, UpdateEpisodeDetails.Params(epId, true))
         } else {
             _data.value = null
         }
@@ -103,8 +103,8 @@ class EpisodeDetailsViewModel @Inject constructor(
             )
             episodeWatchEntryDao.insert(entry)
 
-            syncTraktFollowedShowWatchedProgress(
-                    SyncTraktFollowedShowWatchedProgressInteractor.Params(episodesDao.showIdForEpisodeId(epId), true))
+            syncFollowedShowWatchedProgress(
+                    SyncFollowedShowWatchedProgress.Params(episodesDao.showIdForEpisodeId(epId), true))
         }
     }
 
@@ -120,8 +120,8 @@ class EpisodeDetailsViewModel @Inject constructor(
                     episodeWatchEntryDao.update(copy)
                 }
             }
-            syncTraktFollowedShowWatchedProgress(
-                    SyncTraktFollowedShowWatchedProgressInteractor.Params(episodesDao.showIdForEpisodeId(epId), true))
+            syncFollowedShowWatchedProgress(
+                    SyncFollowedShowWatchedProgress.Params(episodesDao.showIdForEpisodeId(epId), true))
         }
     }
 }

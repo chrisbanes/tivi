@@ -32,7 +32,7 @@ import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 import javax.inject.Provider
 
-class FetchRelatedShowsInteractor @Inject constructor(
+class UpdateRelatedShows @Inject constructor(
     private val lastRequests: LastRequestDao,
     private val showDao: TiviShowDao,
     private val entryDao: RelatedShowsDao,
@@ -40,7 +40,7 @@ class FetchRelatedShowsInteractor @Inject constructor(
     private val showsService: Provider<Shows>,
     private val dispatchers: AppCoroutineDispatchers,
     private val showFetcher: ShowFetcher
-) : Interactor<FetchRelatedShowsInteractor.Params> {
+) : Interactor<UpdateRelatedShows.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend operator fun invoke(param: Params) {

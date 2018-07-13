@@ -20,7 +20,7 @@ import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.datasources.trakt.WatchedShowsDataSource
 import app.tivi.home.HomeNavigator
-import app.tivi.interactors.FetchWatchedShowsInteractor
+import app.tivi.interactors.UpdateWatchedShows
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
@@ -34,7 +34,7 @@ class WatchedShowsViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     dispatchers: AppCoroutineDispatchers,
     dataSource: WatchedShowsDataSource,
-    private val interactor: FetchWatchedShowsInteractor,
+    private val interactor: UpdateWatchedShows,
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector,
     logger: Logger
@@ -56,7 +56,7 @@ class WatchedShowsViewModel @Inject constructor(
 
     override suspend fun callRefresh() {
         withContext(interactor.dispatcher) {
-            interactor(FetchWatchedShowsInteractor.Params(true))
+            interactor(UpdateWatchedShows.Params(true))
         }
     }
 }

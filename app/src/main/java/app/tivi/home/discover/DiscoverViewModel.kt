@@ -25,8 +25,8 @@ import app.tivi.datasources.trakt.TrendingDataSource
 import app.tivi.extensions.toFlowable
 import app.tivi.home.HomeFragmentViewModel
 import app.tivi.home.HomeNavigator
-import app.tivi.interactors.FetchPopularShowsInteractor
-import app.tivi.interactors.FetchTrendingShowsInteractor
+import app.tivi.interactors.UpdatePopularShows
+import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktManager
 import app.tivi.util.AppRxSchedulers
@@ -40,9 +40,9 @@ import javax.inject.Inject
 class DiscoverViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     popularDataSource: PopularDataSource,
-    private val fetchPopularShowsInteractor: FetchPopularShowsInteractor,
+    private val updatePopularShows: UpdatePopularShows,
     trendingDataSource: TrendingDataSource,
-    private val fetchTrendingShowsInteractor: FetchTrendingShowsInteractor,
+    private val updateTrendingShows: UpdateTrendingShows,
     traktManager: TraktManager,
     tmdbManager: TmdbManager,
     private val networkDetector: NetworkDetector,
@@ -72,11 +72,11 @@ class DiscoverViewModel @Inject constructor(
 
     private fun onRefresh() {
         loadingState.addLoader()
-        launchInteractor(fetchPopularShowsInteractor, FetchPopularShowsInteractor.Params(FetchPopularShowsInteractor.Params.NEXT_PAGE))
+        launchInteractor(updatePopularShows, UpdatePopularShows.Params(UpdatePopularShows.Params.NEXT_PAGE))
                 .invokeOnCompletion { loadingState.removeLoader() }
 
         loadingState.addLoader()
-        launchInteractor(fetchTrendingShowsInteractor, FetchTrendingShowsInteractor.Params(FetchTrendingShowsInteractor.Params.NEXT_PAGE))
+        launchInteractor(updateTrendingShows, UpdateTrendingShows.Params(UpdateTrendingShows.Params.NEXT_PAGE))
                 .invokeOnCompletion { loadingState.removeLoader() }
     }
 

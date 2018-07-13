@@ -24,9 +24,9 @@ import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Test
 
 class UnfollowShowTest : BaseDatabaseTest() {
-    private lateinit var unfollowShow: UnfollowShowInteractor
+    private lateinit var unfollowShow: UnfollowShow
 
-    private lateinit var syncTraktFollowedShowsInteractor: SyncTraktFollowedShowsInteractor
+    private lateinit var syncFollowedShowsToTrakt: SyncFollowedShowsToTrakt
 
     private lateinit var followShowsDao: FollowedShowsDao
     private lateinit var seasonsDao: SeasonsDao
@@ -43,17 +43,17 @@ class UnfollowShowTest : BaseDatabaseTest() {
 //            val traktFollowedShowsSyncer = mock(TraktFollowedShowsSyncer::class.java)
 //            `when`(traktFollowedShowsSyncer.sync()).thenReturn(Unit)
 //
-//            syncTraktFollowedShowsInteractor = SyncTraktFollowedShowsInteractor(
+//            syncFollowedShowsToTrakt = SyncFollowedShowsToTrakt(
 //                    traktFollowedShowsSyncer,
 //                    testCoroutineDispatchers
 //            )
 //        }
 //
-//        unfollowShow = UnfollowShowInteractor(
+//        unfollowShow = UnfollowShow(
 //                testCoroutineDispatchers,
 //                seasonsDao,
 //                followShowsDao,
-//                syncTraktFollowedShowsInteractor
+//                syncFollowedShowsToTrakt
 //        )
     }
 
@@ -68,6 +68,6 @@ class UnfollowShowTest : BaseDatabaseTest() {
 //        // Verify that a sync was started
 //        assertThat(followShowsDao.entryWithShowId(showId), `is`(followedShowPendingDelete))
 //        assertThat(seasonsDao.seasonWithId(seasonOneId), `is`(nullValue()))
-//        verify(syncTraktFollowedShowsInteractor, times(1)).invoke(any())
+//        verify(syncFollowedShowsToTrakt, times(1)).invoke(any())
     }
 }

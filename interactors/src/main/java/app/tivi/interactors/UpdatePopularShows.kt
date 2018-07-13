@@ -20,8 +20,8 @@ import app.tivi.ShowFetcher
 import app.tivi.api.ItemWithIndex
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.LastRequestDao
-import app.tivi.data.daos.TrendingDao
-import app.tivi.data.entities.TrendingShowEntry
+import app.tivi.data.daos.PopularDao
+import app.tivi.data.entities.PopularShowEntry
 import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
@@ -31,29 +31,29 @@ import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 import javax.inject.Provider
 
-class FetchTrendingShowsInteractor @Inject constructor(
+class UpdatePopularShows @Inject constructor(
     databaseTransactionRunner: DatabaseTransactionRunner,
-    private val trendingDao: TrendingDao,
+    private val popularShowsDao: PopularDao,
     private val lastRequests: LastRequestDao,
     private val showFetcher: ShowFetcher,
     private val showsService: Provider<Shows>,
     dispatchers: AppCoroutineDispatchers,
     logger: Logger
-) : Interactor<FetchTrendingShowsInteractor.Params> {
+) : Interactor<UpdatePopularShows.Params> {
     private val pageSize: Int = 21
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     private val helper = PagedInteractorHelper(
             databaseTransactionRunner,
-            trendingDao,
+            popularShowsDao,
             lastRequests,
             showFetcher,
             dispatchers,
             logger,
-            { entity, showId, page -> TrendingShowEntry(showId = showId, page = page, watchers = entity.item.watchers) },
-            { response -> showFetcher.insertPlaceholderIfNeeded(response.item.show) },
+            { entity, showId, page -> PopularShowEntry(showId = showId, page = page, pageOrder = entity.index) },
+            { response -> showFetcher.insertPlaceholderIfNeeded(response.item) },
             { page ->
-                showsService.get().trending(page + 1, pageSize, Extended.NOSEASONS)
+                showsService.get().popular(page + 1, pageSize, Extended.NOSEASONS)
                         .fetchBodyWithRetry()
                         .mapIndexed { index, show -> ItemWithIndex(show, index) }
             }
@@ -61,7 +61,7 @@ class FetchTrendingShowsInteractor @Inject constructor(
 
     override suspend fun invoke(param: Params) {
         if (param.page == Params.NEXT_PAGE) {
-            helper.loadPage(trendingDao.getLastPage() + 1, false)
+            helper.loadPage(popularShowsDao.getLastPage() + 1, false)
         } else {
             helper.loadPage(param.page, resetOnSave = param.page == Params.REFRESH)
         }
