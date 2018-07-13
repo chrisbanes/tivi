@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/datasources" />
             <option value="$PROJECT_DIR$/episode-fetcher" />
             <option value="$PROJECT_DIR$/interactors" />
+            <option value="$PROJECT_DIR$/repositories" />
             <option value="$PROJECT_DIR$/seasons-fetcher" />
             <option value="$PROJECT_DIR$/show-fetcher" />
             <option value="$PROJECT_DIR$/tasks" />

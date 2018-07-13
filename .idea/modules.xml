@@ -10,6 +10,7 @@
       <module fileurl="file://$PROJECT_DIR$/datasources/datasources.iml" filepath="$PROJECT_DIR$/datasources/datasources.iml" />
       <module fileurl="file://$PROJECT_DIR$/episode-fetcher/episode-fetcher.iml" filepath="$PROJECT_DIR$/episode-fetcher/episode-fetcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/interactors/interactors.iml" filepath="$PROJECT_DIR$/interactors/interactors.iml" />
+      <module fileurl="file://$PROJECT_DIR$/repositories/repositories.iml" filepath="$PROJECT_DIR$/repositories/repositories.iml" />
       <module fileurl="file://$PROJECT_DIR$/seasons-fetcher/seasons-fetcher.iml" filepath="$PROJECT_DIR$/seasons-fetcher/seasons-fetcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/show-fetcher/show-fetcher.iml" filepath="$PROJECT_DIR$/show-fetcher/show-fetcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/tasks/tasks.iml" filepath="$PROJECT_DIR$/tasks/tasks.iml" />
