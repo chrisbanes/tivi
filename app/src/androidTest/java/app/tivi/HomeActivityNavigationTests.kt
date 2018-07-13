@@ -21,13 +21,13 @@ import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
 import android.support.test.espresso.matcher.ViewMatchers.isRoot
+import android.support.test.espresso.matcher.ViewMatchers.withId
 import android.support.test.filters.LargeTest
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import app.tivi.home.HomeActivity
 import app.tivi.utils.bottomNavItemWithTitle
 import app.tivi.utils.rotateLandscape
-import app.tivi.utils.toolbarWithTitle
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -45,7 +45,7 @@ class HomeActivityNavigationTests {
         onView(bottomNavItemWithTitle(R.id.home_bottom_nav, R.string.home_nav_library))
                 .perform(click())
 
-        onView(toolbarWithTitle(R.string.library_title))
+        onView(withId(R.id.library_rv))
                 .check(matches(isDisplayed()))
     }
 
@@ -56,7 +56,7 @@ class HomeActivityNavigationTests {
         onView(bottomNavItemWithTitle(R.id.home_bottom_nav, R.string.home_nav_library))
                 .perform(click())
 
-        onView(toolbarWithTitle(R.string.library_title))
+        onView(withId(R.id.library_rv))
                 .check(matches(isDisplayed()))
     }
 }
