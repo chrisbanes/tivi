@@ -18,6 +18,8 @@ package app.tivi.data.shows
 
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.copyDynamic
+import app.tivi.data.resultentities.RelatedShowEntryWithShow
+import app.tivi.extensions.parallelForEach
 import javax.inject.Inject
 
 class ShowRepository @Inject constructor(
@@ -36,26 +38,58 @@ class ShowRepository @Inject constructor(
         val tmdbResult = tmdbShowDataSource.getShow(showId)
         val localResult = localShowStore.getShow(showId) ?: TiviShow()
 
-        return localResult.copyDynamic {
-            title = traktResult.title ?: title
-            summary = traktResult.summary ?: summary
-            homepage = traktResult.summary ?: summary
-            rating = traktResult.rating ?: rating
-            certification = traktResult.certification ?: certification
-            runtime = traktResult.runtime ?: runtime
-            country = traktResult.country ?: country
-            firstAired = traktResult.firstAired ?: firstAired
-            _genres = traktResult._genres ?: _genres
+        return mergeShow(localResult, traktResult, tmdbResult)
+                .also { localShowStore.saveShow(it) }
+    }
 
-            // Trakt specific stuff
-            traktId = traktResult.traktId ?: traktId
+    override fun observeRelatedShows(showId: Long) = localShowStore.observeRelatedShows(showId)
 
-            // TMDb specific stuff
-            tmdbId = tmdbResult.tmdbId ?: traktResult.tmdbId ?: tmdbId
-            tmdbPosterPath = tmdbResult.tmdbPosterPath ?: tmdbPosterPath
-            tmdbBackdropPath = tmdbResult.tmdbBackdropPath ?: tmdbBackdropPath
-        }.also {
-            localShowStore.saveShow(it)
+    override suspend fun getRelatedShows(showId: Long): List<RelatedShowEntryWithShow> {
+        val localResult = localShowStore.getRelatedShows(showId)
+        if (localResult.isNotEmpty()) {
+            return localResult
         }
+
+        return traktShowDataSource.getRelatedShows(showId)
+                .map {
+                    val relatedShowId = localShowStore.getIdForTraktId(it.show.traktId!!)
+                            ?: localShowStore.saveShow(it.show)
+                    it.entry!!.copy(otherShowId = relatedShowId)
+                }
+                .also {
+                    // Save the related entries
+                    localShowStore.saveRelatedShows(showId, it)
+                    // Now update all of the related shows if needed
+                    it.parallelForEach {
+                        getShow(it.otherShowId)
+                    }
+                }
+                .let {
+                    localShowStore.getRelatedShows(showId)
+                }
+    }
+
+    private fun mergeShow(
+        localResult: TiviShow = TiviShow.EMPTY_SHOW,
+        traktResult: TiviShow = TiviShow.EMPTY_SHOW,
+        tmdbResult: TiviShow = TiviShow.EMPTY_SHOW
+    ) = localResult.copyDynamic {
+        title = traktResult.title ?: title
+        summary = traktResult.summary ?: summary
+        homepage = traktResult.summary ?: summary
+        rating = traktResult.rating ?: rating
+        certification = traktResult.certification ?: certification
+        runtime = traktResult.runtime ?: runtime
+        country = traktResult.country ?: country
+        firstAired = traktResult.firstAired ?: firstAired
+        _genres = traktResult._genres ?: _genres
+
+        // Trakt specific stuff
+        traktId = traktResult.traktId ?: traktId
+
+        // TMDb specific stuff
+        tmdbId = tmdbResult.tmdbId ?: traktResult.tmdbId ?: tmdbId
+        tmdbPosterPath = tmdbResult.tmdbPosterPath ?: tmdbPosterPath
+        tmdbBackdropPath = tmdbResult.tmdbBackdropPath ?: tmdbBackdropPath
     }
 }

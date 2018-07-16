@@ -24,6 +24,7 @@ import io.reactivex.Flowable
  * This interface represents a DAO which contains entities which are part of a collective list for a given show.
  */
 interface PairEntryDao<EC : MultipleEntry, LI : EntryWithShow<EC>> : EntityDao<EC> {
-    fun entries(showId: Long): Flowable<List<LI>>
+    fun entries(showId: Long): List<LI>
+    fun entriesFlowable(showId: Long): Flowable<List<LI>>
     fun deleteWithShowId(showId: Long)
 }

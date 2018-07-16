@@ -17,9 +17,10 @@
 package app.tivi.data.shows
 
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import io.reactivex.Flowable
 
-interface ShowStore {
+interface ShowStore : ShowDataSource {
     fun observeShow(showId: Long): Flowable<TiviShow>
-    suspend fun getShow(showId: Long): TiviShow
+    fun observeRelatedShows(showId: Long): Flowable<List<RelatedShowEntryWithShow>>
 }

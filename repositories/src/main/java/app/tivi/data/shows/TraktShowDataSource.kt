@@ -16,8 +16,11 @@
 
 package app.tivi.data.shows
 
+import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.extensions.fetchBodyWithRetry
+import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
 import javax.inject.Inject
@@ -28,10 +31,26 @@ class TraktShowDataSource @Inject constructor(
     private val showService: Provider<Shows>
 ) : ShowDataSource {
     override suspend fun getShow(showId: Long): TiviShow {
-        val traktId = traktIdMapper.map(showId)!!
+        val traktId = traktIdMapper.map(showId) ?: return TiviShow.EMPTY_SHOW
         val traktShow = showService.get().summary(traktId.toString(), Extended.FULL).fetchBodyWithRetry()
-        
-        return TiviShow(
+        return mapToTiviShow(traktShow)
+    }
+
+    override suspend fun getRelatedShows(showId: Long): List<RelatedShowEntryWithShow> {
+        val traktId = traktIdMapper.map(showId) ?: return emptyList()
+
+        val results = showService.get().related(traktId.toString(), 0, 10, Extended.NOSEASONS)
+                .fetchBodyWithRetry()
+
+        return results.mapIndexed { index, relatedShow ->
+            RelatedShowEntryWithShow().apply {
+                relations = listOf(mapToTiviShow(relatedShow))
+                entry = RelatedShowEntry(showId = showId, otherShowId = 0, orderIndex = index)
+            }
+        }
+    }
+
+    private fun mapToTiviShow(traktShow: Show) = TiviShow(
             traktId = traktShow.ids.trakt,
             tmdbId = traktShow.ids.tmdb,
             title = traktShow.title,
@@ -44,6 +63,5 @@ class TraktShowDataSource @Inject constructor(
             country = traktShow.country,
             firstAired = traktShow.first_aired,
             _genres = traktShow.genres?.joinToString(",")
-        )
-    }
+    )
 }

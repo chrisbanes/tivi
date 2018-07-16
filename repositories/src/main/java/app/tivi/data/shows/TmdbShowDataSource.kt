@@ -17,6 +17,7 @@
 package app.tivi.data.shows
 
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.extensions.fetchBodyWithRetry
 import com.uwetrottmann.tmdb2.Tmdb
 import javax.inject.Inject
@@ -26,7 +27,8 @@ class TmdbShowDataSource @Inject constructor(
     private val tmdb: Tmdb
 ) : ShowDataSource {
     override suspend fun getShow(showId: Long): TiviShow {
-        val tmdbId = tmdbIdMapper.map(showId)!!
+        val tmdbId = tmdbIdMapper.map(showId) ?: return TiviShow.EMPTY_SHOW
+
         val tmdbShow = tmdb.tvService().tv(tmdbId).fetchBodyWithRetry()
 
         return TiviShow(
@@ -38,4 +40,6 @@ class TmdbShowDataSource @Inject constructor(
                 homepage = tmdbShow.homepage
         )
     }
+
+    override suspend fun getRelatedShows(showId: Long): List<RelatedShowEntryWithShow> = emptyList()
 }

@@ -22,6 +22,10 @@ import javax.inject.Singleton
 
 @Singleton
 class EntityInserter @Inject constructor() {
+    fun <E : TiviEntity> insertOrUpdate(dao: EntityDao<E>, entities: List<E>) {
+        entities.forEach { insertOrUpdate(dao, it) }
+    }
+
     fun <E : TiviEntity> insertOrUpdate(dao: EntityDao<E>, entity: E): Long = when {
         entity.id == null -> dao.insert(entity)
         else -> {

@@ -33,4 +33,3 @@ class ShowTmdbIdMapper @Inject constructor(
 ) {
     fun map(showId: Long) = showDao.getTmdbIdForShowId(showId)
 }
-

@@ -28,7 +28,7 @@ class RelatedShowsDataSource @Inject constructor(
     private val schedulers: AppRxSchedulers
 ) : DataSource<Long, List<RelatedShowEntryWithShow>> {
     override fun data(param: Long): Flowable<List<RelatedShowEntryWithShow>> {
-        return entryDao.entries(param)
+        return entryDao.entriesFlowable(param)
                 .subscribeOn(schedulers.io)
                 .startWith(Flowable.just(emptyList()))
                 .distinctUntilChanged()

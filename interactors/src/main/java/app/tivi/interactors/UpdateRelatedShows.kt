@@ -16,59 +16,25 @@
 
 package app.tivi.interactors
 
-import app.tivi.ShowFetcher
-import app.tivi.data.DatabaseTransactionRunner
-import app.tivi.data.daos.LastRequestDao
-import app.tivi.data.daos.RelatedShowsDao
-import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.entities.RelatedShowEntry
-import app.tivi.data.entities.Request
-import app.tivi.extensions.fetchBodyWithRetry
-import app.tivi.extensions.parallelForEach
+import app.tivi.data.resultentities.RelatedShowEntryWithShow
+import app.tivi.data.shows.ShowRepository
 import app.tivi.util.AppCoroutineDispatchers
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.services.Shows
+import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
-import javax.inject.Provider
 
 class UpdateRelatedShows @Inject constructor(
-    private val lastRequests: LastRequestDao,
-    private val showDao: TiviShowDao,
-    private val entryDao: RelatedShowsDao,
-    private val transactionRunner: DatabaseTransactionRunner,
-    private val showsService: Provider<Shows>,
     private val dispatchers: AppCoroutineDispatchers,
-    private val showFetcher: ShowFetcher
-) : Interactor<UpdateRelatedShows.Params> {
+    private val showRepository: ShowRepository
+) : Interactor2<UpdateRelatedShows.Params, List<RelatedShowEntryWithShow>> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend operator fun invoke(param: Params) {
-        val traktId = showDao.getTraktIdForShowId(param.showId)?.toString()
+        showRepository.getRelatedShows(param.showId)
+    }
 
-        val results = showsService.get().related(traktId, 0, 10, Extended.NOSEASONS)
-                .fetchBodyWithRetry()
-
-        val related = results.mapIndexed { index, relatedShow ->
-            // Now insert a placeholder for each show if needed
-            val relatedShowId = showFetcher.insertPlaceholderIfNeeded(relatedShow)
-            // Map to related show entry
-            RelatedShowEntry(showId = param.showId, otherShowId = relatedShowId, orderIndex = index)
-        }.also {
-            // Save map entities to db
-            transactionRunner.runInTransaction {
-                entryDao.deleteWithShowId(param.showId)
-                entryDao.insertAll(it)
-            }
-        }
-
-        // Finally refresh each show
-        related.parallelForEach(dispatcher) {
-            // Now trigger a refresh of each show if it hasn't been refreshed before
-            if (lastRequests.hasNotBeenRequested(Request.SHOW_DETAILS, it.otherShowId)) {
-                showFetcher.update(it.otherShowId)
-            }
-        }
+    override fun observe(param: Params): Flowable<List<RelatedShowEntryWithShow>> {
+        return showRepository.observeRelatedShows(param.showId)
     }
 
     data class Params(val showId: Long, val forceLoad: Boolean)

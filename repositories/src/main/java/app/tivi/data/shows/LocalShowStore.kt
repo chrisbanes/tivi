@@ -16,19 +16,39 @@
 
 package app.tivi.data.shows
 
+import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
+import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.TiviShowDao
+import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.TiviShow
 import io.reactivex.Flowable
 import javax.inject.Inject
 
 class LocalShowStore @Inject constructor(
     private val entityInserter: EntityInserter,
-    private val showDao: TiviShowDao
+    private val transactionRunner: DatabaseTransactionRunner,
+    private val showDao: TiviShowDao,
+    private val relatedShowsDao: RelatedShowsDao
 ) : ShowStore {
     override suspend fun getShow(showId: Long) = showDao.getShowWithId(showId)
 
     override fun observeShow(showId: Long): Flowable<TiviShow> = showDao.getShowWithIdFlowable(showId)
 
+    fun getIdForTraktId(traktId: Int) = showDao.getIdForTraktId(traktId)
+
     fun saveShow(show: TiviShow) = entityInserter.insertOrUpdate(showDao, show)
+
+    override suspend fun getRelatedShows(showId: Long) = relatedShowsDao.entries(showId)
+
+    override fun observeRelatedShows(showId: Long) = relatedShowsDao.entriesFlowable(showId)
+
+    fun saveRelatedShows(showId: Long, relatedShows: List<RelatedShowEntry>) {
+        if (relatedShows.isNotEmpty()) {
+            transactionRunner.runInTransaction {
+                relatedShowsDao.deleteWithShowId(showId)
+                entityInserter.insertOrUpdate(relatedShowsDao, relatedShows)
+            }
+        }
+    }
 }

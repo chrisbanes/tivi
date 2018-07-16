@@ -16,6 +16,7 @@
 
 package app.tivi.interactors
 
+import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import kotlinx.coroutines.experimental.CoroutineStart
 import kotlinx.coroutines.experimental.DefaultDispatcher
@@ -26,6 +27,10 @@ import kotlin.coroutines.experimental.CoroutineContext
 interface Interactor<in P> {
     val dispatcher: CoroutineDispatcher
     suspend operator fun invoke(param: P)
+}
+
+interface Interactor2<P, T> : Interactor<P> {
+    fun observe(param: P): Flowable<T>
 }
 
 @Suppress("UNCHECKED_CAST")

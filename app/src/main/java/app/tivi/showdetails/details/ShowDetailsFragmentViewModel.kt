@@ -23,7 +23,6 @@ import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
 import app.tivi.datasources.trakt.RelatedShowsDataSource
-import app.tivi.datasources.trakt.ShowDetailsDataSource
 import app.tivi.datasources.trakt.ShowSeasonsDataSource
 import app.tivi.interactors.FollowShow
 import app.tivi.interactors.SyncFollowedShowWatchedProgress
@@ -44,7 +43,6 @@ import javax.inject.Inject
 class ShowDetailsFragmentViewModel @Inject constructor(
     private val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
-    private val showDetailsDataSource: ShowDetailsDataSource,
     private val updateShowDetails: UpdateShowDetails,
     private val relatedShowsDataSource: RelatedShowsDataSource,
     private val updateRelatedShows: UpdateRelatedShows,
@@ -98,7 +96,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
                         if (it) {
                             // Followed show
                             Flowables.combineLatest(
-                                    showDetailsDataSource.data(id),
+                                    updateShowDetails.observe(UpdateShowDetails.Params(id)),
                                     relatedShowsDataSource.data(id),
                                     seasonsDataSource.data(id),
                                     tmdbManager.imageProvider,
@@ -106,7 +104,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
                         } else {
                             // Not followed
                             Flowables.combineLatest(
-                                    showDetailsDataSource.data(id),
+                                    updateShowDetails.observe(UpdateShowDetails.Params(id)),
                                     relatedShowsDataSource.data(id),
                                     tmdbManager.imageProvider,
                                     ::NotFollowedShowDetailsViewState)

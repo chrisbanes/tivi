@@ -17,7 +17,9 @@
 package app.tivi.data.shows
 
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.resultentities.RelatedShowEntryWithShow
 
 interface ShowDataSource {
     suspend fun getShow(showId: Long): TiviShow
+    suspend fun getRelatedShows(showId: Long): List<RelatedShowEntryWithShow>
 }
