@@ -96,7 +96,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
                         if (it) {
                             // Followed show
                             Flowables.combineLatest(
-                                    updateShowDetails.observe(UpdateShowDetails.Params(id)),
+                                    updateShowDetails.observe(),
                                     relatedShowsDataSource.data(id),
                                     seasonsDataSource.data(id),
                                     tmdbManager.imageProvider,
@@ -104,7 +104,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
                         } else {
                             // Not followed
                             Flowables.combineLatest(
-                                    updateShowDetails.observe(UpdateShowDetails.Params(id)),
+                                    updateShowDetails.observe(),
                                     relatedShowsDataSource.data(id),
                                     tmdbManager.imageProvider,
                                     ::NotFollowedShowDetailsViewState)
@@ -126,6 +126,11 @@ class ShowDetailsFragmentViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        updateShowDetails.clear()
     }
 
     fun removeFromMyShows() {

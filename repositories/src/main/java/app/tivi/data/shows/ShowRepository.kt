@@ -26,31 +26,32 @@ class ShowRepository @Inject constructor(
     private val localShowStore: LocalShowStore,
     private val tmdbShowDataSource: TmdbShowDataSource,
     private val traktShowDataSource: TraktShowDataSource
-) : ShowStore, ShowDataSource {
-
-    override fun observeShow(showId: Long) = localShowStore.observeShow(showId)
+) {
+    fun observeShow(showId: Long) = localShowStore.observeShow(showId)
 
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
      */
-    override suspend fun getShow(showId: Long): TiviShow {
+    fun getShow(showId: Long): TiviShow = localShowStore.getShow(showId)
+
+    /**
+     * Updates the show with the given id from all network sources, saves the result to the database
+     */
+    suspend fun updateShow(showId: Long) {
         val traktResult = traktShowDataSource.getShow(showId)
         val tmdbResult = tmdbShowDataSource.getShow(showId)
-        val localResult = localShowStore.getShow(showId) ?: TiviShow()
+        val localResult = localShowStore.getShow(showId) ?: TiviShow.EMPTY_SHOW
 
-        return mergeShow(localResult, traktResult, tmdbResult)
-                .also { localShowStore.saveShow(it) }
+        val show = mergeShow(localResult, traktResult, tmdbResult)
+        localShowStore.saveShow(show)
     }
 
-    override fun observeRelatedShows(showId: Long) = localShowStore.observeRelatedShows(showId)
+    fun observeRelatedShows(showId: Long) = localShowStore.observeRelatedShows(showId)
 
-    override suspend fun getRelatedShows(showId: Long): List<RelatedShowEntryWithShow> {
-        val localResult = localShowStore.getRelatedShows(showId)
-        if (localResult.isNotEmpty()) {
-            return localResult
-        }
+    fun getRelatedShows(showId: Long) = localShowStore.getRelatedShows(showId)
 
-        return traktShowDataSource.getRelatedShows(showId)
+    suspend fun updateRelatedShows(showId: Long) {
+        traktShowDataSource.getRelatedShows(showId)
                 .map {
                     val relatedShowId = localShowStore.getIdForTraktId(it.show.traktId!!)
                             ?: localShowStore.saveShow(it.show)
@@ -61,11 +62,8 @@ class ShowRepository @Inject constructor(
                     localShowStore.saveRelatedShows(showId, it)
                     // Now update all of the related shows if needed
                     it.parallelForEach {
-                        getShow(it.otherShowId)
+                        updateShow(it.otherShowId)
                     }
-                }
-                .let {
-                    localShowStore.getRelatedShows(showId)
                 }
     }
 

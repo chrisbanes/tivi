@@ -19,23 +19,18 @@ package app.tivi.interactors
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.shows.ShowRepository
 import app.tivi.util.AppCoroutineDispatchers
-import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
 class UpdateRelatedShows @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val showRepository: ShowRepository
-) : Interactor2<UpdateRelatedShows.Params, List<RelatedShowEntryWithShow>> {
+) : SubjectInteractor<UpdateRelatedShows.Params, List<RelatedShowEntryWithShow>>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(param: Params) {
-        showRepository.getRelatedShows(param.showId)
-    }
+    override suspend fun execute(param: Params) = showRepository.updateRelatedShows(param.showId)
 
-    override fun observe(param: Params): Flowable<List<RelatedShowEntryWithShow>> {
-        return showRepository.observeRelatedShows(param.showId)
-    }
+    override fun createObservable(param: Params) = showRepository.observeRelatedShows(param.showId)
 
     data class Params(val showId: Long, val forceLoad: Boolean)
 }

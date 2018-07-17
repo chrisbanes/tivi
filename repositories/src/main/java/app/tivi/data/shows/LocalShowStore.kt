@@ -30,18 +30,18 @@ class LocalShowStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val showDao: TiviShowDao,
     private val relatedShowsDao: RelatedShowsDao
-) : ShowStore {
-    override suspend fun getShow(showId: Long) = showDao.getShowWithId(showId)
+) {
+    fun getShow(showId: Long) = showDao.getShowWithId(showId)
 
-    override fun observeShow(showId: Long): Flowable<TiviShow> = showDao.getShowWithIdFlowable(showId)
+    fun observeShow(showId: Long): Flowable<TiviShow> = showDao.getShowWithIdFlowable(showId)
 
     fun getIdForTraktId(traktId: Int) = showDao.getIdForTraktId(traktId)
 
     fun saveShow(show: TiviShow) = entityInserter.insertOrUpdate(showDao, show)
 
-    override suspend fun getRelatedShows(showId: Long) = relatedShowsDao.entries(showId)
+    fun getRelatedShows(showId: Long) = relatedShowsDao.entries(showId)
 
-    override fun observeRelatedShows(showId: Long) = relatedShowsDao.entriesFlowable(showId)
+    fun observeRelatedShows(showId: Long) = relatedShowsDao.entriesFlowable(showId)
 
     fun saveRelatedShows(showId: Long, relatedShows: List<RelatedShowEntry>) {
         if (relatedShows.isNotEmpty()) {
