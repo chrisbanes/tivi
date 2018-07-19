@@ -30,6 +30,8 @@ apply {
 
 dependencies {
     implementation project(":base")
+    implementation project(":trakt")
+    implementation project(":tmdb")
 
     implementation "android.arch.persistence.room:common:${versions.androidx.room}"
     implementation "android.arch.paging:common:${versions.androidx.paging}"

@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package app.tivi.data.shows
+package app.tivi.data.mappers
 
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.resultentities.RelatedShowEntryWithShow
+import com.uwetrottmann.tmdb2.entities.TvShow
+import javax.inject.Inject
 
-interface ShowDataSource {
-    suspend fun getShow(showId: Long): TiviShow
-    suspend fun getRelatedShows(showId: Long): List<RelatedShowEntryWithShow>
+class TmdbShowToTiviShow @Inject constructor() : Mapper<TvShow, TiviShow> {
+    override fun map(from: TvShow) = TiviShow(
+            tmdbId = from.id,
+            title = from.name,
+            summary = from.overview,
+            tmdbBackdropPath = from.backdrop_path,
+            tmdbPosterPath = from.poster_path,
+            homepage = from.homepage
+    )
 }

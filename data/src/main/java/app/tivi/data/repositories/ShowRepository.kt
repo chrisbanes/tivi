@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package app.tivi.data.shows
+package app.tivi.data.repositories
 
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.copyDynamic
-import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.extensions.parallelForEach
 import javax.inject.Inject
 

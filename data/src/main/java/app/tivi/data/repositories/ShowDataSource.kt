@@ -1,5 +1,5 @@
 /*
- * Copyright 201 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,17 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-apply plugin: 'kotlin'
+package app.tivi.data.repositories
 
-dependencies {
-    implementation project(":base")
-    implementation project(":trakt")
-    implementation project(":tmdb")
-    implementation project(":data")
-    implementation project(":show-fetcher")
-    implementation project(':seasons-fetcher')
-    implementation project(':episode-fetcher')
+import app.tivi.data.entities.TiviShow
+import app.tivi.data.resultentities.RelatedShowEntryWithShow
+
+interface ShowDataSource {
+    suspend fun getShow(showId: Long): TiviShow
+    suspend fun getRelatedShows(showId: Long): List<RelatedShowEntryWithShow>
 }

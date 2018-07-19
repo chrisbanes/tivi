@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.data.shows
+package app.tivi.data.repositories
 
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter

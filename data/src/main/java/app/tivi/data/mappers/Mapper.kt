@@ -14,22 +14,8 @@
  * limitations under the License.
  */
 
-package app.tivi.data.shows
+package app.tivi.data.mappers
 
-import app.tivi.data.daos.TiviShowDao
-import javax.inject.Inject
-import javax.inject.Singleton
-
-@Singleton
-class ShowTraktIdMapper @Inject constructor(
-    private val showDao: TiviShowDao
-) {
-    fun map(showId: Long) = showDao.getTraktIdForShowId(showId)
-}
-
-@Singleton
-class ShowTmdbIdMapper @Inject constructor(
-    private val showDao: TiviShowDao
-) {
-    fun map(showId: Long) = showDao.getTmdbIdForShowId(showId)
+interface Mapper<F, T> {
+    fun map(from: F): T
 }
