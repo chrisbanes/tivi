@@ -51,7 +51,7 @@ class TmdbEpisodeFetcher @Inject constructor(
                 .episode(show.tmdbId!!, season.number!!, episode.number!!)
                 .fetchBodyWithRetry()
 
-        transactionRunner.runInTransaction {
+        transactionRunner {
             upsertEpisode(season.id!!, response)
         }
     }

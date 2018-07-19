@@ -167,7 +167,7 @@ class TraktEpisodeWatchSyncer @Inject constructor(
     }
 
     fun syncWatchesFromTrakt(showId: Long, watches: List<HistoryEntry>) {
-        databaseTransactionRunner.runInTransaction {
+        databaseTransactionRunner {
             val currentWatches = episodeWatchEntryDao.entriesForShowIdWithNoPendingAction(showId)
             watchSyncer.sync(currentWatches, watches)
         }

@@ -45,7 +45,7 @@ class LocalShowStore @Inject constructor(
 
     fun saveRelatedShows(showId: Long, relatedShows: List<RelatedShowEntry>) {
         if (relatedShows.isNotEmpty()) {
-            transactionRunner.runInTransaction {
+            transactionRunner {
                 relatedShowsDao.deleteWithShowId(showId)
                 entityInserter.insertOrUpdate(relatedShowsDao, relatedShows)
             }

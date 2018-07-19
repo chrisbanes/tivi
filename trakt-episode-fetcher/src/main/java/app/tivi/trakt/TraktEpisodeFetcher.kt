@@ -51,7 +51,7 @@ class TraktEpisodeFetcher @Inject constructor(
                 .summary(show.traktId.toString(), season.number!!, episode.number!!, Extended.FULL)
                 .fetchBodyWithRetry()
 
-        transactionRunner.runInTransaction {
+        transactionRunner {
             upsertEpisode(season.id!!, response)
         }
     }

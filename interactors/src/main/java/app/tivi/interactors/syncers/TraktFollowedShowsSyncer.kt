@@ -133,7 +133,7 @@ open class TraktFollowedShowsSyncer @Inject constructor(
         }
 
         // Now sync the entries
-        val result = databaseTransactionRunner.runInTransaction {
+        val result = databaseTransactionRunner {
             syncer.sync(dao.entries(), shows)
         }
 

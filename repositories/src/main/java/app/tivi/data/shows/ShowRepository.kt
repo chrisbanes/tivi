@@ -32,7 +32,7 @@ class ShowRepository @Inject constructor(
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
      */
-    fun getShow(showId: Long): TiviShow = localShowStore.getShow(showId)
+    fun getShow(showId: Long) = localShowStore.getShow(showId)
 
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
@@ -53,17 +53,17 @@ class ShowRepository @Inject constructor(
     suspend fun updateRelatedShows(showId: Long) {
         traktShowDataSource.getRelatedShows(showId)
                 .map {
+                    // Grab the show id if it exists, or save the show and use it's generated ID
                     val relatedShowId = localShowStore.getIdForTraktId(it.show.traktId!!)
                             ?: localShowStore.saveShow(it.show)
+                    // Make a copy of the entry with the id
                     it.entry!!.copy(otherShowId = relatedShowId)
                 }
                 .also {
                     // Save the related entries
                     localShowStore.saveRelatedShows(showId, it)
                     // Now update all of the related shows if needed
-                    it.parallelForEach {
-                        updateShow(it.otherShowId)
-                    }
+                    it.parallelForEach { updateShow(it.otherShowId) }
                 }
     }
 

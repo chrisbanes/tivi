@@ -51,7 +51,7 @@ internal class PagedInteractorHelper<TT, ET : PaginatedEntry, LI : EntryWithShow
     }
 
     private fun savePage(items: List<ET>, page: Int, resetOnSave: Boolean) {
-        databaseTransactionRunner.runInTransaction {
+        databaseTransactionRunner {
             when {
                 resetOnSave -> entryDao.deleteAll()
                 else -> entryDao.deletePage(page)

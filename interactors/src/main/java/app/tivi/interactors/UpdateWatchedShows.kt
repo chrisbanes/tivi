@@ -56,7 +56,7 @@ class UpdateWatchedShows @Inject constructor(
         }
 
         // Now save it to the database
-        databaseTransactionRunner.runInTransaction {
+        databaseTransactionRunner {
             watchShowDao.deleteAll()
             watchShowDao.insertAll(shows)
         }

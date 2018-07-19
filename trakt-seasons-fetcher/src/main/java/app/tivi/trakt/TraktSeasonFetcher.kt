@@ -45,7 +45,7 @@ class TraktSeasonFetcher @Inject constructor(
         val response = seasonsService.get().summary(show.traktId!!.toString(), Extended.FULLEPISODES)
                 .fetchBodyWithRetry()
 
-        transactionRunner.runInTransaction {
+        transactionRunner {
             response.forEach { traktSeason ->
                 // Upsert the season
                 val seasonId = upsertSeason(showId, traktSeason)
