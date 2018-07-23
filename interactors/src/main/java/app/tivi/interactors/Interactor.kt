@@ -38,7 +38,7 @@ interface Interactor2<P, T> : Interactor<P> {
 }
 
 abstract class SubjectInteractor<P, T> : Interactor2<P, T> {
-    private var disposable : Disposable? = null
+    private var disposable: Disposable? = null
     private val subject: BehaviorSubject<T> = BehaviorSubject.create()
 
     final override suspend fun invoke(param: P) {
