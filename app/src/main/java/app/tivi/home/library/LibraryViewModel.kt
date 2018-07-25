@@ -25,7 +25,6 @@ import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.datasources.trakt.FollowedShowsDataSource
-import app.tivi.datasources.trakt.WatchedShowsDataSource
 import app.tivi.extensions.toFlowable
 import app.tivi.home.HomeFragmentViewModel
 import app.tivi.home.HomeNavigator
@@ -51,7 +50,6 @@ import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
     private val schedulers: AppRxSchedulers,
-    private val watchedShowsDataSource: WatchedShowsDataSource,
     private val updateWatchedShows: UpdateWatchedShows,
     private val followedDataSource: FollowedShowsDataSource,
     private val syncFollowedShows: SyncFollowedShows,
@@ -106,7 +104,7 @@ class LibraryViewModel @Inject constructor(
                     tmdbManager.imageProvider,
                     loadingState.flowable,
                     isEmptyFlowable,
-                    dataSourceToFlowable(watchedShowsDataSource.dataSourceFactory()),
+                    dataSourceToFlowable(updateWatchedShows.observe()),
                     ::LibraryWatchedViewState)
         }
         FOLLOWED -> {

@@ -41,7 +41,7 @@ class PopularShowsViewModel @Inject constructor(
 ) : EntryViewModel<PopularEntryWithShow>(
         schedulers,
         dispatchers,
-        dataSource,
+        dataSource.dataSourceFactory(),
         tmdbManager,
         networkDetector,
         logger

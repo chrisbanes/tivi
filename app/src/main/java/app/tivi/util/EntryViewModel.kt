@@ -17,13 +17,13 @@
 package app.tivi.util
 
 import android.arch.lifecycle.LiveDataReactiveStreams
+import android.arch.paging.DataSource
 import android.arch.paging.LivePagedListBuilder
 import android.arch.paging.PagedList
 import app.tivi.api.Status
 import app.tivi.api.UiResource
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.datasources.ListDataSource
 import app.tivi.extensions.distinctUntilChanged
 import app.tivi.extensions.toFlowable
 import app.tivi.tmdb.TmdbManager
@@ -34,7 +34,7 @@ import io.reactivex.subjects.BehaviorSubject
 abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
     private val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
-    private val dataSource: ListDataSource<Unit, LI>,
+    private val dataSource: DataSource.Factory<Int, LI>,
     tmdbManager: TmdbManager,
     private val networkDetector: NetworkDetector,
     private val logger: Logger,
@@ -44,7 +44,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
 
     val liveList by lazy(mode = LazyThreadSafetyMode.NONE) {
         LivePagedListBuilder<Int, LI>(
-                dataSource.dataSourceFactory(),
+                dataSource,
                 PagedList.Config.Builder().run {
                     setPageSize(pageSize * 3)
                     setPrefetchDistance(pageSize)

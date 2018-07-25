@@ -16,6 +16,7 @@
 
 package app.tivi.interactors
 
+import android.arch.paging.DataSource
 import app.tivi.extensions.toFlowable
 import io.reactivex.Flowable
 import io.reactivex.disposables.Disposable
@@ -34,7 +35,11 @@ interface Interactor<in P> {
 
 interface Interactor2<P, T> : Interactor<P> {
     fun observe(): Flowable<T>
-    fun clear() = Unit
+    fun clear()
+}
+
+interface PagingInteractor<P, T> : Interactor<P> {
+    fun observe(): DataSource.Factory<Int, T>
 }
 
 abstract class SubjectInteractor<P, T> : Interactor2<P, T> {

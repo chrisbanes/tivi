@@ -16,57 +16,26 @@
 
 package app.tivi.interactors
 
-import app.tivi.ShowFetcher
-import app.tivi.data.DatabaseTransactionRunner
-import app.tivi.data.daos.LastRequestDao
-import app.tivi.data.daos.WatchedShowDao
-import app.tivi.data.entities.Request
-import app.tivi.data.entities.WatchedShowEntry
-import app.tivi.extensions.fetchBodyWithRetry
-import app.tivi.extensions.parallelForEach
-import app.tivi.extensions.parallelMap
+import android.arch.paging.DataSource
+import app.tivi.data.repositories.watchedshows.WatchedShowsRepository
+import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.util.AppCoroutineDispatchers
-import com.uwetrottmann.trakt5.entities.UserSlug
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.services.Users
 import kotlinx.coroutines.experimental.CoroutineDispatcher
-import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
-import javax.inject.Provider
 
 class UpdateWatchedShows @Inject constructor(
-    private val databaseTransactionRunner: DatabaseTransactionRunner,
-    private val lastRequests: LastRequestDao,
-    private val watchShowDao: WatchedShowDao,
-    private val showFetcher: ShowFetcher,
-    private val usersService: Provider<Users>,
-    private val dispatchers: AppCoroutineDispatchers
-) : Interactor<UpdateWatchedShows.Params> {
+    private val dispatchers: AppCoroutineDispatchers,
+    private val watchedShowsRepository: WatchedShowsRepository
+) : PagingInteractor<UpdateWatchedShows.Params, WatchedShowEntryWithShow> {
     override val dispatcher: CoroutineDispatcher
         get() = dispatchers.io
 
     override suspend fun invoke(param: Params) {
-        val networkResponse = withContext(dispatchers.io) {
-            usersService.get().watchedShows(UserSlug.ME, Extended.NOSEASONS).fetchBodyWithRetry()
-        }
+        watchedShowsRepository.updateWatchedShows()
+    }
 
-        val shows = networkResponse.parallelMap(dispatcher) { traktEntry ->
-            val showId = showFetcher.insertPlaceholderIfNeeded(traktEntry.show)
-            WatchedShowEntry(null, showId, traktEntry.last_watched_at)
-        }
-
-        // Now save it to the database
-        databaseTransactionRunner {
-            watchShowDao.deleteAll()
-            watchShowDao.insertAll(shows)
-        }
-
-        shows.parallelForEach(dispatcher) {
-            // Now trigger a refresh of each show if it hasn't been refreshed before
-            if (lastRequests.hasNotBeenRequested(Request.SHOW_DETAILS, it.showId)) {
-                showFetcher.update(it.showId)
-            }
-        }
+    override fun observe(): DataSource.Factory<Int, WatchedShowEntryWithShow> {
+        return watchedShowsRepository.observeWatchedShowsPagedList()
     }
 
     data class Params(val forceLoad: Boolean)

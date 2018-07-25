@@ -41,7 +41,7 @@ class TrendingShowsViewModel @Inject constructor(
 ) : EntryViewModel<TrendingEntryWithShow>(
         schedulers,
         dispatchers,
-        dataSource,
+        dataSource.dataSourceFactory(),
         tmdbManager,
         networkDetector,
         logger

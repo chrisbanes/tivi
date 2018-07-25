@@ -38,7 +38,7 @@ class FollowedShowsViewModel @Inject constructor(
 ) : EntryViewModel<FollowedShowEntryWithShow>(
         schedulers,
         dispatchers,
-        dataSource,
+        dataSource.dataSourceFactory(),
         tmdbManager,
         networkDetector,
         logger

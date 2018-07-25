@@ -146,7 +146,7 @@ open class TraktFollowedShowsSyncer @Inject constructor(
     private fun mapToEpisodeWatchEntry(show: Show, id: Long?): FollowedShowEntry {
         return FollowedShowEntry(
                 id = id,
-                showId = showDao.getIdForTraktId(show.ids.trakt)
+                showId = showDao.getIdForTraktId(show.ids.trakt)!!
         )
     }
 

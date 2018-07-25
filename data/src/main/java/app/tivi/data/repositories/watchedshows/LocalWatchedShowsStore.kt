@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.relatedshows
+package app.tivi.data.repositories.watchedshows
 
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
-import app.tivi.data.daos.RelatedShowsDao
-import app.tivi.data.entities.RelatedShowEntry
+import app.tivi.data.daos.WatchedShowDao
+import app.tivi.data.entities.WatchedShowEntry
 import javax.inject.Inject
 
-class LocalRelatedShowsStore @Inject constructor(
+class LocalWatchedShowsStore @Inject constructor(
     private val entityInserter: EntityInserter,
     private val transactionRunner: DatabaseTransactionRunner,
-    private val relatedShowsDao: RelatedShowsDao
+    private val watchedShowDao: WatchedShowDao
 ) {
-    fun getRelatedShows(showId: Long) = relatedShowsDao.entries(showId)
+    fun getWatchedShows() = watchedShowDao.entries()
 
-    fun observeRelatedShows(showId: Long) = relatedShowsDao.entriesFlowable(showId)
+    fun observePagedList() = watchedShowDao.entriesDataSource()
 
-    fun saveRelatedShows(showId: Long, relatedShows: List<RelatedShowEntry>) = transactionRunner {
-        relatedShowsDao.deleteWithShowId(showId)
-        entityInserter.insertOrUpdate(relatedShowsDao, relatedShows)
+    fun saveWatchedShows(watchedShows: List<WatchedShowEntry>) = transactionRunner {
+        watchedShowDao.deleteAll()
+        entityInserter.insertOrUpdate(watchedShowDao, watchedShows)
     }
 }

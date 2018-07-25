@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-package app.tivi.data.mappers
+package app.tivi.data.repositories.watchedshows
 
-import app.tivi.data.daos.TiviShowDao
-import javax.inject.Inject
-import javax.inject.Singleton
+import app.tivi.data.resultentities.WatchedShowEntryWithShow
 
-@Singleton
-class ShowIdToTraktIdMapper @Inject constructor(
-    private val showDao: TiviShowDao
-) : Mapper<Long, Int?> {
-    override fun map(from: Long) = showDao.getTraktIdForShowId(from)
-}
-
-@Singleton
-class ShowIdToTmdbIdMapper @Inject constructor(
-    private val showDao: TiviShowDao
-) : Mapper<Long, Int?> {
-    override fun map(from: Long) = showDao.getTmdbIdForShowId(from)
+interface WatchedShowsDataSource {
+    suspend fun getWatchedShows(): List<WatchedShowEntryWithShow>
 }
