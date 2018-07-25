@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories
+package app.tivi.data.repositories.shows
 
-import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
-import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.TiviShow
 import io.reactivex.Flowable
 import javax.inject.Inject
 
 class LocalShowStore @Inject constructor(
     private val entityInserter: EntityInserter,
-    private val transactionRunner: DatabaseTransactionRunner,
-    private val showDao: TiviShowDao,
-    private val relatedShowsDao: RelatedShowsDao
+    private val showDao: TiviShowDao
 ) {
     fun getShow(showId: Long) = showDao.getShowWithId(showId)
 
@@ -38,17 +33,4 @@ class LocalShowStore @Inject constructor(
     fun getIdForTraktId(traktId: Int) = showDao.getIdForTraktId(traktId)
 
     fun saveShow(show: TiviShow) = entityInserter.insertOrUpdate(showDao, show)
-
-    fun getRelatedShows(showId: Long) = relatedShowsDao.entries(showId)
-
-    fun observeRelatedShows(showId: Long) = relatedShowsDao.entriesFlowable(showId)
-
-    fun saveRelatedShows(showId: Long, relatedShows: List<RelatedShowEntry>) {
-        if (relatedShows.isNotEmpty()) {
-            transactionRunner {
-                relatedShowsDao.deleteWithShowId(showId)
-                entityInserter.insertOrUpdate(relatedShowsDao, relatedShows)
-            }
-        }
-    }
 }

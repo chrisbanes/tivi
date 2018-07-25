@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories
+package app.tivi.data.repositories.shows
 
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.copyDynamic
-import app.tivi.extensions.parallelForEach
 import javax.inject.Inject
 
 class ShowRepository @Inject constructor(
@@ -31,7 +30,10 @@ class ShowRepository @Inject constructor(
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
      */
-    fun getShow(showId: Long) = localShowStore.getShow(showId)
+    suspend fun getShow(showId: Long) {
+        updateShow(showId)
+        localShowStore.getShow(showId)
+    }
 
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
@@ -43,27 +45,6 @@ class ShowRepository @Inject constructor(
 
         val show = mergeShow(localResult, traktResult, tmdbResult)
         localShowStore.saveShow(show)
-    }
-
-    fun observeRelatedShows(showId: Long) = localShowStore.observeRelatedShows(showId)
-
-    fun getRelatedShows(showId: Long) = localShowStore.getRelatedShows(showId)
-
-    suspend fun updateRelatedShows(showId: Long) {
-        traktShowDataSource.getRelatedShows(showId)
-                .map {
-                    // Grab the show id if it exists, or save the show and use it's generated ID
-                    val relatedShowId = localShowStore.getIdForTraktId(it.show.traktId!!)
-                            ?: localShowStore.saveShow(it.show)
-                    // Make a copy of the entry with the id
-                    it.entry!!.copy(otherShowId = relatedShowId)
-                }
-                .also {
-                    // Save the related entries
-                    localShowStore.saveRelatedShows(showId, it)
-                    // Now update all of the related shows if needed
-                    it.parallelForEach { updateShow(it.otherShowId) }
-                }
     }
 
     private fun mergeShow(

@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories
+package app.tivi.data.repositories.relatedshows
 
-import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 
-interface ShowDataSource {
-    suspend fun getShow(showId: Long): TiviShow
+interface RelatedShowsDataSource {
     suspend fun getRelatedShows(showId: Long): List<RelatedShowEntryWithShow>
 }

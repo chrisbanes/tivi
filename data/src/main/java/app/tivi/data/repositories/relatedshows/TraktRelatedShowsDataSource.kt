@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories
+package app.tivi.data.repositories.relatedshows
 
 import app.tivi.data.entities.RelatedShowEntry
-import app.tivi.data.entities.TiviShow
+import app.tivi.data.mappers.ShowIdToTraktIdMapper
 import app.tivi.data.mappers.TraktShowToTiviShow
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.extensions.fetchBodyWithRetry
@@ -26,17 +26,11 @@ import com.uwetrottmann.trakt5.services.Shows
 import javax.inject.Inject
 import javax.inject.Provider
 
-class TraktShowDataSource @Inject constructor(
-    private val traktIdMapper: ShowTraktIdMapper,
+class TraktRelatedShowsDataSource @Inject constructor(
+    private val traktIdMapper: ShowIdToTraktIdMapper,
     private val showService: Provider<Shows>,
     private val mapper: TraktShowToTiviShow
-) : ShowDataSource {
-    override suspend fun getShow(showId: Long): TiviShow {
-        val traktId = traktIdMapper.map(showId) ?: return TiviShow.EMPTY_SHOW
-        val traktShow = showService.get().summary(traktId.toString(), Extended.FULL).fetchBodyWithRetry()
-        return mapper.map(traktShow)
-    }
-
+) : RelatedShowsDataSource {
     override suspend fun getRelatedShows(showId: Long): List<RelatedShowEntryWithShow> {
         val traktId = traktIdMapper.map(showId) ?: return emptyList()
 

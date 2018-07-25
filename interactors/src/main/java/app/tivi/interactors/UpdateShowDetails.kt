@@ -17,7 +17,7 @@
 package app.tivi.interactors
 
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.repositories.ShowRepository
+import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
