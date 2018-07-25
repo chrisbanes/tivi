@@ -39,7 +39,7 @@ interface Interactor2<P, T> : Interactor<P> {
 }
 
 interface PagingInteractor<P, T> : Interactor<P> {
-    fun observe(): DataSource.Factory<Int, T>
+    fun dataSourceFactory(): DataSource.Factory<Int, T>
 }
 
 abstract class SubjectInteractor<P, T> : Interactor2<P, T> {

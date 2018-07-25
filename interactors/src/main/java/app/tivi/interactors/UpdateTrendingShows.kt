@@ -16,61 +16,39 @@
 
 package app.tivi.interactors
 
-import app.tivi.ShowFetcher
-import app.tivi.api.ItemWithIndex
-import app.tivi.data.DatabaseTransactionRunner
-import app.tivi.data.daos.LastRequestDao
-import app.tivi.data.daos.TrendingDao
-import app.tivi.data.entities.TrendingShowEntry
-import app.tivi.extensions.fetchBodyWithRetry
+import android.arch.paging.DataSource
+import app.tivi.data.repositories.trendingshows.TrendingShowsRepository
+import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.Logger
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.services.Shows
+import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
-import javax.inject.Provider
 
 class UpdateTrendingShows @Inject constructor(
-    databaseTransactionRunner: DatabaseTransactionRunner,
-    private val trendingDao: TrendingDao,
-    private val lastRequests: LastRequestDao,
-    private val showFetcher: ShowFetcher,
-    private val showsService: Provider<Shows>,
     dispatchers: AppCoroutineDispatchers,
-    logger: Logger
-) : Interactor<UpdateTrendingShows.Params> {
-    private val pageSize: Int = 21
+    private val trendingShowsRepository: TrendingShowsRepository
+) : PagingInteractor<UpdateTrendingShows.Params, TrendingEntryWithShow>,
+        SubjectInteractor<UpdateTrendingShows.Params, List<TrendingEntryWithShow>>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    private val helper = PagedInteractorHelper(
-            databaseTransactionRunner,
-            trendingDao,
-            lastRequests,
-            showFetcher,
-            dispatchers,
-            logger,
-            { entity, showId, page -> TrendingShowEntry(showId = showId, page = page, watchers = entity.item.watchers) },
-            { response -> showFetcher.insertPlaceholderIfNeeded(response.item.show) },
-            { page ->
-                showsService.get().trending(page + 1, pageSize, Extended.NOSEASONS)
-                        .fetchBodyWithRetry()
-                        .mapIndexed { index, show -> ItemWithIndex(show, index) }
-            }
-    )
+    override fun dataSourceFactory(): DataSource.Factory<Int, TrendingEntryWithShow> {
+        return trendingShowsRepository.observeForPaging()
+    }
 
-    override suspend fun invoke(param: Params) {
-        if (param.page == Params.NEXT_PAGE) {
-            helper.loadPage(trendingDao.getLastPage() + 1, false)
-        } else {
-            helper.loadPage(param.page, resetOnSave = param.page == Params.REFRESH)
+    override fun createObservable(param: Params): Flowable<List<TrendingEntryWithShow>> {
+        return trendingShowsRepository.observeForFlowable()
+    }
+
+    override suspend fun execute(param: Params) {
+        when (param.page) {
+            Page.NEXT_PAGE -> trendingShowsRepository.loadNextPage()
+            Page.REFRESH -> trendingShowsRepository.refresh()
         }
     }
 
-    data class Params(val page: Int) {
-        companion object {
-            const val NEXT_PAGE = -1
-            const val REFRESH = 0
-        }
+    data class Params(val page: Page)
+
+    enum class Page {
+        NEXT_PAGE, REFRESH
     }
 }

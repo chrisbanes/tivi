@@ -39,7 +39,7 @@ class WatchedShowsViewModel @Inject constructor(
 ) : EntryViewModel<WatchedShowEntryWithShow>(
         schedulers,
         dispatchers,
-        interactor.observe(),
+        interactor.dataSourceFactory(),
         tmdbManager,
         networkDetector,
         logger

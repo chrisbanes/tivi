@@ -34,7 +34,7 @@ class UpdateWatchedShows @Inject constructor(
         watchedShowsRepository.updateWatchedShows()
     }
 
-    override fun observe(): DataSource.Factory<Int, WatchedShowEntryWithShow> {
+    override fun dataSourceFactory(): DataSource.Factory<Int, WatchedShowEntryWithShow> {
         return watchedShowsRepository.observeWatchedShowsPagedList()
     }
 

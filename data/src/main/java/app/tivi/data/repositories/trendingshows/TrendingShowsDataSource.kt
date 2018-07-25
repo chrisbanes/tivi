@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package app.tivi.data.daos
+package app.tivi.data.repositories.trendingshows
 
-import app.tivi.data.PaginatedEntry
-import app.tivi.data.resultentities.EntryWithShow
+import app.tivi.data.resultentities.TrendingEntryWithShow
 
-interface PaginatedEntryDao<EC : PaginatedEntry, LI : EntryWithShow<EC>> : EntryDao<EC, LI> {
-    fun deletePage(page: Int)
-    fun getLastPage(): Int?
+interface TrendingShowsDataSource {
+    suspend fun getTrendingShows(page: Int, pageSize: Int): List<TrendingEntryWithShow>
 }

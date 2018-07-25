@@ -104,7 +104,7 @@ class LibraryViewModel @Inject constructor(
                     tmdbManager.imageProvider,
                     loadingState.flowable,
                     isEmptyFlowable,
-                    dataSourceToFlowable(updateWatchedShows.observe()),
+                    dataSourceToFlowable(updateWatchedShows.dataSourceFactory()),
                     ::LibraryWatchedViewState)
         }
         FOLLOWED -> {
