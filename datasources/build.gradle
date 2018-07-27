@@ -20,7 +20,6 @@ apply plugin: 'kotlin-kapt'
 
 dependencies {
     implementation project(":base")
-    implementation project(":show-fetcher")
     implementation project(':seasons-fetcher')
     implementation project(':episode-fetcher')
     implementation project(":trakt")

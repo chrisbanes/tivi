@@ -22,7 +22,6 @@ dependencies {
     implementation project(":trakt")
     implementation project(":tmdb")
     implementation project(":data")
-    implementation project(":show-fetcher")
     implementation project(':seasons-fetcher')
     implementation project(':episode-fetcher')
 }

@@ -17,16 +17,13 @@
             <option value="$PROJECT_DIR$/episode-fetcher" />
             <option value="$PROJECT_DIR$/interactors" />
             <option value="$PROJECT_DIR$/seasons-fetcher" />
-            <option value="$PROJECT_DIR$/show-fetcher" />
             <option value="$PROJECT_DIR$/tasks" />
             <option value="$PROJECT_DIR$/tmdb" />
             <option value="$PROJECT_DIR$/tmdb-episode-fetcher" />
-            <option value="$PROJECT_DIR$/tmdb-show-fetcher" />
             <option value="$PROJECT_DIR$/trakt" />
             <option value="$PROJECT_DIR$/trakt-auth" />
             <option value="$PROJECT_DIR$/trakt-episode-fetcher" />
             <option value="$PROJECT_DIR$/trakt-seasons-fetcher" />
-            <option value="$PROJECT_DIR$/trakt-show-fetcher" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
