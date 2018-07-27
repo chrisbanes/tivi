@@ -20,7 +20,6 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
-import app.tivi.datasources.trakt.PopularDataSource
 import app.tivi.extensions.toFlowable
 import app.tivi.home.HomeFragmentViewModel
 import app.tivi.home.HomeNavigator
@@ -38,7 +37,6 @@ import javax.inject.Inject
 
 class DiscoverViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
-    popularDataSource: PopularDataSource,
     private val updatePopularShows: UpdatePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,
     traktManager: TraktManager,
@@ -55,7 +53,7 @@ class DiscoverViewModel @Inject constructor(
     init {
         disposables += Flowables.combineLatest(
                 updateTrendingShows.observe(),
-                popularDataSource.data(Unit, 8, 0),
+                updatePopularShows.observe(),
                 tmdbManager.imageProvider,
                 loadingState.observable.toFlowable(),
                 ::DiscoverViewState)
@@ -70,7 +68,7 @@ class DiscoverViewModel @Inject constructor(
 
     private fun onRefresh() {
         loadingState.addLoader()
-        launchInteractor(updatePopularShows, UpdatePopularShows.Params(UpdatePopularShows.Params.REFRESH))
+        launchInteractor(updatePopularShows, UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH))
                 .invokeOnCompletion { loadingState.removeLoader() }
 
         loadingState.addLoader()

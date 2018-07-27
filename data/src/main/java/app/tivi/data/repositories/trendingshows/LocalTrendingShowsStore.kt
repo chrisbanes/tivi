@@ -16,18 +16,23 @@
 
 package app.tivi.data.repositories.trendingshows
 
+import android.arch.paging.DataSource
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.entities.TrendingShowEntry
+import app.tivi.data.resultentities.TrendingEntryWithShow
+import io.reactivex.Flowable
 import javax.inject.Inject
 
 class LocalTrendingShowsStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val trendingShowsDao: TrendingDao
 ) {
-    fun observeForFlowable(count: Int, offset: Int) = trendingShowsDao.entriesFlowable(count, offset)
+    fun observeForFlowable(count: Int, offset: Int): Flowable<List<TrendingEntryWithShow>> {
+        return trendingShowsDao.entriesFlowable(count, offset)
+    }
 
-    fun observeForPaging() = trendingShowsDao.entriesDataSource()
+    fun observeForPaging(): DataSource.Factory<Int, TrendingEntryWithShow> = trendingShowsDao.entriesDataSource()
 
     fun saveTrendingShowsPage(page: Int, entries: List<TrendingShowEntry>) = transactionRunner {
         trendingShowsDao.deletePage(page)
@@ -36,5 +41,5 @@ class LocalTrendingShowsStore @Inject constructor(
 
     fun deleteAll() = trendingShowsDao.deleteAll()
 
-    fun getLastPage() = trendingShowsDao.getLastPage()
+    fun getLastPage(): Int? = trendingShowsDao.getLastPage()
 }

@@ -18,7 +18,6 @@ package app.tivi.home.popular
 
 import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.PopularEntryWithShow
-import app.tivi.datasources.trakt.PopularDataSource
 import app.tivi.home.HomeNavigator
 import app.tivi.interactors.UpdatePopularShows
 import app.tivi.tmdb.TmdbManager
@@ -33,7 +32,6 @@ import javax.inject.Inject
 class PopularShowsViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     dispatchers: AppCoroutineDispatchers,
-    dataSource: PopularDataSource,
     private val interactor: UpdatePopularShows,
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector,
@@ -41,7 +39,7 @@ class PopularShowsViewModel @Inject constructor(
 ) : EntryViewModel<PopularEntryWithShow>(
         schedulers,
         dispatchers,
-        dataSource.dataSourceFactory(),
+        interactor.dataSourceFactory(),
         tmdbManager,
         networkDetector,
         logger
@@ -56,13 +54,13 @@ class PopularShowsViewModel @Inject constructor(
 
     override suspend fun callLoadMore() {
         withContext(interactor.dispatcher) {
-            interactor(UpdatePopularShows.Params(UpdatePopularShows.Params.NEXT_PAGE))
+            interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.NEXT_PAGE))
         }
     }
 
     override suspend fun callRefresh() {
         withContext(interactor.dispatcher) {
-            interactor(UpdatePopularShows.Params(UpdatePopularShows.Params.REFRESH))
+            interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH))
         }
     }
 }

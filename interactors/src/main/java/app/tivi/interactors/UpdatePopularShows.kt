@@ -16,61 +16,39 @@
 
 package app.tivi.interactors
 
-import app.tivi.ShowFetcher
-import app.tivi.api.ItemWithIndex
-import app.tivi.data.DatabaseTransactionRunner
-import app.tivi.data.daos.LastRequestDao
-import app.tivi.data.daos.PopularDao
-import app.tivi.data.entities.PopularShowEntry
-import app.tivi.extensions.fetchBodyWithRetry
+import android.arch.paging.DataSource
+import app.tivi.data.repositories.popularshows.PopularShowsRepository
+import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.Logger
-import com.uwetrottmann.trakt5.enums.Extended
-import com.uwetrottmann.trakt5.services.Shows
+import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
-import javax.inject.Provider
 
 class UpdatePopularShows @Inject constructor(
-    databaseTransactionRunner: DatabaseTransactionRunner,
-    private val popularShowsDao: PopularDao,
-    private val lastRequests: LastRequestDao,
-    private val showFetcher: ShowFetcher,
-    private val showsService: Provider<Shows>,
     dispatchers: AppCoroutineDispatchers,
-    logger: Logger
-) : Interactor<UpdatePopularShows.Params> {
-    private val pageSize: Int = 21
+    private val popularShowsRepository: PopularShowsRepository
+) : PagingInteractor<UpdatePopularShows.Params, PopularEntryWithShow>,
+        SubjectInteractor<UpdatePopularShows.Params, List<PopularEntryWithShow>>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    private val helper = PagedInteractorHelper(
-            databaseTransactionRunner,
-            popularShowsDao,
-            lastRequests,
-            showFetcher,
-            dispatchers,
-            logger,
-            { entity, showId, page -> PopularShowEntry(showId = showId, page = page, pageOrder = entity.index) },
-            { response -> showFetcher.insertPlaceholderIfNeeded(response.item) },
-            { page ->
-                showsService.get().popular(page + 1, pageSize, Extended.NOSEASONS)
-                        .fetchBodyWithRetry()
-                        .mapIndexed { index, show -> ItemWithIndex(show, index) }
-            }
-    )
+    override fun dataSourceFactory(): DataSource.Factory<Int, PopularEntryWithShow> {
+        return popularShowsRepository.observeForPaging()
+    }
 
-    override suspend fun invoke(param: Params) {
-        if (param.page == Params.NEXT_PAGE) {
-            helper.loadPage(popularShowsDao.getLastPage() + 1, false)
-        } else {
-            helper.loadPage(param.page, resetOnSave = param.page == Params.REFRESH)
+    override fun createObservable(param: Params): Flowable<List<PopularEntryWithShow>> {
+        return popularShowsRepository.observeForFlowable()
+    }
+
+    override suspend fun execute(param: Params) {
+        when (param.page) {
+            Page.NEXT_PAGE -> popularShowsRepository.loadNextPage()
+            Page.REFRESH -> popularShowsRepository.refresh()
         }
     }
 
-    data class Params(val page: Int) {
-        companion object {
-            const val NEXT_PAGE = -1
-            const val REFRESH = 0
-        }
+    data class Params(val page: Page)
+
+    enum class Page {
+        NEXT_PAGE, REFRESH
     }
 }
