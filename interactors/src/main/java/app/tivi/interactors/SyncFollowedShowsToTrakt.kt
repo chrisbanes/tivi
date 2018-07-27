@@ -16,20 +16,20 @@
 
 package app.tivi.interactors
 
-import app.tivi.interactors.syncers.TraktFollowedShowsSyncer
+import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
 class SyncFollowedShowsToTrakt @Inject constructor(
-    private val syncer: TraktFollowedShowsSyncer,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
+    private val followedShowsRepository: FollowedShowsRepository
 ) : Interactor<SyncFollowedShowsToTrakt.Params> {
     override val dispatcher: CoroutineDispatcher
         get() = dispatchers.io
 
     override suspend fun invoke(param: Params) {
-        syncer.sync()
+        followedShowsRepository.syncFollowedShows()
     }
 
     data class Params(val forceLoad: Boolean)

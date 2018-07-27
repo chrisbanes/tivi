@@ -28,9 +28,8 @@ class TmdbShowDataSource @Inject constructor(
     private val tmdb: Tmdb,
     private val mapper: TmdbShowToTiviShow
 ) : ShowDataSource {
-    override suspend fun getShow(showId: Long): TiviShow {
-        val tmdbId = tmdbIdMapper.map(showId) ?: return TiviShow.EMPTY_SHOW
-        val tmdbShow = tmdb.tvService().tv(tmdbId).fetchBodyWithRetry()
-        return mapper.map(tmdbShow)
+    override suspend fun getShow(showId: Long): TiviShow? = tmdbIdMapper.map(showId)?.let {
+        val tmdbShow = tmdb.tvService().tv(it).fetchBodyWithRetry()
+        mapper.map(tmdbShow)
     }
 }

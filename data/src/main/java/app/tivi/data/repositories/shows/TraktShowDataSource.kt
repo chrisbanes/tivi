@@ -30,9 +30,8 @@ class TraktShowDataSource @Inject constructor(
     private val showService: Provider<Shows>,
     private val mapper: TraktShowToTiviShow
 ) : ShowDataSource {
-    override suspend fun getShow(showId: Long): TiviShow {
-        val traktId = traktIdMapper.map(showId) ?: return TiviShow.EMPTY_SHOW
-        val traktShow = showService.get().summary(traktId.toString(), Extended.FULL).fetchBodyWithRetry()
-        return mapper.map(traktShow)
+    override suspend fun getShow(showId: Long): TiviShow? = traktIdMapper.map(showId)?.let {
+        val show = showService.get().summary(it.toString(), Extended.FULL).fetchBodyWithRetry()
+        mapper.map(show)
     }
 }

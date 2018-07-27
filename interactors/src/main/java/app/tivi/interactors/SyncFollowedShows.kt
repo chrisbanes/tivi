@@ -16,39 +16,25 @@
 
 package app.tivi.interactors
 
-import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.entities.PendingAction
-import app.tivi.extensions.parallelForEach
-import app.tivi.trakt.TraktAuthState
+import android.arch.paging.DataSource
+import app.tivi.data.repositories.followedshows.FollowedShowsRepository
+import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
-import javax.inject.Provider
 
 class SyncFollowedShows @Inject constructor(
-    private val followedShowsDao: FollowedShowsDao,
     dispatchers: AppCoroutineDispatchers,
-    private val loggedIn: Provider<TraktAuthState>,
-    private val syncFollowedShowsToTrakt: SyncFollowedShowsToTrakt,
-    private val syncFollowedShow: SyncFollowedShow
-) : Interactor<SyncFollowedShows.Params> {
+    private val followedShowsRepository: FollowedShowsRepository
+) : PagingInteractor<SyncFollowedShows.Params, FollowedShowEntryWithShow> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(param: Params) {
-        val authed = loggedIn.get() == TraktAuthState.LOGGED_IN
+    override suspend fun invoke(param: Params) {
+        followedShowsRepository.syncFollowedShows()
+    }
 
-        if (authed) {
-            // First sync the followed shows to/from Trakt
-            syncFollowedShowsToTrakt(SyncFollowedShowsToTrakt.Params(param.forceLoad))
-        }
-
-        // Now iterate through the followed shows and update them
-        val followedShows = followedShowsDao.entries()
-        followedShows.filter {
-            it.pendingAction != PendingAction.DELETE
-        }.parallelForEach(dispatcher) {
-            syncFollowedShow(SyncFollowedShow.Params(it.showId, param.forceLoad))
-        }
+    override fun dataSourceFactory(): DataSource.Factory<Int, FollowedShowEntryWithShow> {
+        return followedShowsRepository.observeFollowedShows()
     }
 
     data class Params(val forceLoad: Boolean)

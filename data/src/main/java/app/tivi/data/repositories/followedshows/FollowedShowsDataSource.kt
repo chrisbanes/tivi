@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.shows
+package app.tivi.data.repositories.followedshows
 
-import app.tivi.data.entities.TiviShow
+import app.tivi.data.resultentities.FollowedShowEntryWithShow
 
-interface ShowDataSource {
-    suspend fun getShow(showId: Long): TiviShow?
+interface FollowedShowsDataSource {
+    suspend fun getListShows(listId: Int): List<FollowedShowEntryWithShow>
+
+    suspend fun addShowIdsToList(listId: Int, showTraktIds: List<Long>)
+
+    suspend fun removeShowIdsFromList(listId: Int, showTraktIds: List<Long>)
 }

@@ -30,44 +30,44 @@ class ShowRepository @Inject constructor(
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
      */
-    suspend fun getShow(showId: Long) {
+    suspend fun getShow(showId: Long): TiviShow {
         updateShow(showId)
-        localShowStore.getShow(showId)
+        return localShowStore.getShow(showId)!!
     }
 
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
      */
     suspend fun updateShow(showId: Long) {
-        val traktResult = traktShowDataSource.getShow(showId)
-        val tmdbResult = tmdbShowDataSource.getShow(showId)
+        val traktResult = traktShowDataSource.getShow(showId) ?: TiviShow.EMPTY_SHOW
+        val tmdbResult = tmdbShowDataSource.getShow(showId) ?: TiviShow.EMPTY_SHOW
         val localResult = localShowStore.getShow(showId) ?: TiviShow.EMPTY_SHOW
 
-        val show = mergeShow(localResult, traktResult, tmdbResult)
-        localShowStore.saveShow(show)
+        val merged = mergeShow(localResult, traktResult, tmdbResult)
+        if (merged != localResult) {
+            localShowStore.saveShow(merged)
+        }
     }
 
-    private fun mergeShow(
-        localResult: TiviShow = TiviShow.EMPTY_SHOW,
-        traktResult: TiviShow = TiviShow.EMPTY_SHOW,
-        tmdbResult: TiviShow = TiviShow.EMPTY_SHOW
-    ) = localResult.copyDynamic {
-        title = traktResult.title ?: title
-        summary = traktResult.summary ?: summary
-        homepage = traktResult.summary ?: summary
-        rating = traktResult.rating ?: rating
-        certification = traktResult.certification ?: certification
-        runtime = traktResult.runtime ?: runtime
-        country = traktResult.country ?: country
-        firstAired = traktResult.firstAired ?: firstAired
-        _genres = traktResult._genres ?: _genres
+    private fun mergeShow(localResult: TiviShow, traktResult: TiviShow, tmdbResult: TiviShow): TiviShow {
+        return localResult.copyDynamic {
+            title = traktResult.title ?: title
+            summary = traktResult.summary ?: summary
+            homepage = traktResult.summary ?: summary
+            rating = traktResult.rating ?: rating
+            certification = traktResult.certification ?: certification
+            runtime = traktResult.runtime ?: runtime
+            country = traktResult.country ?: country
+            firstAired = traktResult.firstAired ?: firstAired
+            _genres = traktResult._genres ?: _genres
 
-        // Trakt specific stuff
-        traktId = traktResult.traktId ?: traktId
+            // Trakt specific stuff
+            traktId = traktResult.traktId ?: traktId
 
-        // TMDb specific stuff
-        tmdbId = tmdbResult.tmdbId ?: traktResult.tmdbId ?: tmdbId
-        tmdbPosterPath = tmdbResult.tmdbPosterPath ?: tmdbPosterPath
-        tmdbBackdropPath = tmdbResult.tmdbBackdropPath ?: tmdbBackdropPath
+            // TMDb specific stuff
+            tmdbId = tmdbResult.tmdbId ?: traktResult.tmdbId ?: tmdbId
+            tmdbPosterPath = tmdbResult.tmdbPosterPath ?: tmdbPosterPath
+            tmdbBackdropPath = tmdbResult.tmdbBackdropPath ?: tmdbBackdropPath
+        }
     }
 }

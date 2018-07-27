@@ -24,7 +24,6 @@ import android.arch.paging.RxPagedListBuilder
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.datasources.trakt.FollowedShowsDataSource
 import app.tivi.extensions.toFlowable
 import app.tivi.home.HomeFragmentViewModel
 import app.tivi.home.HomeNavigator
@@ -51,7 +50,6 @@ import javax.inject.Inject
 class LibraryViewModel @Inject constructor(
     private val schedulers: AppRxSchedulers,
     private val updateWatchedShows: UpdateWatchedShows,
-    private val followedDataSource: FollowedShowsDataSource,
     private val syncFollowedShows: SyncFollowedShows,
     private val traktManager: TraktManager,
     private val tmdbManager: TmdbManager,
@@ -114,7 +112,7 @@ class LibraryViewModel @Inject constructor(
                     tmdbManager.imageProvider,
                     loadingState.flowable,
                     isEmptyFlowable,
-                    dataSourceToFlowable(followedDataSource.dataSourceFactory()),
+                    dataSourceToFlowable(syncFollowedShows.dataSourceFactory()),
                     ::LibraryFollowedViewState)
         }
     }
