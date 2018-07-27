@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories.shows
 
+import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.TiviShow
@@ -24,7 +25,8 @@ import javax.inject.Inject
 
 class LocalShowStore @Inject constructor(
     private val entityInserter: EntityInserter,
-    private val showDao: TiviShowDao
+    private val showDao: TiviShowDao,
+    private val transactionRunner: DatabaseTransactionRunner
 ) {
     fun getShow(showId: Long) = showDao.getShowWithId(showId)
 
@@ -33,4 +35,13 @@ class LocalShowStore @Inject constructor(
     fun getIdForTraktId(traktId: Int) = showDao.getIdForTraktId(traktId)
 
     fun saveShow(show: TiviShow) = entityInserter.insertOrUpdate(showDao, show)
+
+    /**
+     * Gets the ID for the show with the given trakt Id. If the trakt Id does not exist in the
+     * database, it is inserted and the generated ID is returned.
+     */
+    fun getIdOrSavePlaceholder(show: TiviShow): Long = transactionRunner {
+        val showForTraktId = show.traktId?.let { showDao.getShowWithTraktId(it) }
+        showForTraktId?.id ?: showDao.insert(show)
+    }
 }

@@ -18,7 +18,6 @@ package app.tivi.data.repositories.followedshows
 
 import android.arch.paging.DataSource
 import app.tivi.data.DatabaseTransactionRunner
-import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.FollowedShowEntry
@@ -30,7 +29,6 @@ import javax.inject.Singleton
 
 @Singleton
 class LocalFollowedShowsStore @Inject constructor(
-    private val entityInserter: EntityInserter,
     private val transactionRunner: DatabaseTransactionRunner,
     private val followedShowsDao: FollowedShowsDao,
     private val showDao: TiviShowDao

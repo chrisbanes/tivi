@@ -56,8 +56,7 @@ class FollowedShowsRepository @Inject constructor(
         traktDataSource.getListShows(listId)
                 .map {
                     // Grab the show id if it exists, or save the show and use it's generated ID
-                    val showId = localShowStore.getIdForTraktId(it.show.traktId!!)
-                            ?: localShowStore.saveShow(it.show)
+                    val showId = localShowStore.getIdOrSavePlaceholder(it.show)
                     // Make a copy of the entry with the id
                     it.entry!!.copy(showId = showId)
                 }

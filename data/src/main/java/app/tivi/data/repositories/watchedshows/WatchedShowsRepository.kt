@@ -38,8 +38,7 @@ class WatchedShowsRepository @Inject constructor(
         traktDataSource.getWatchedShows()
                 .map {
                     // Grab the show id if it exists, or save the show and use it's generated ID
-                    val watchedShowId = localShowStore.getIdForTraktId(it.show.traktId!!)
-                            ?: localShowStore.saveShow(it.show)
+                    val watchedShowId = localShowStore.getIdOrSavePlaceholder(it.show)
                     // Make a copy of the entry with the id
                     it.entry!!.copy(showId = watchedShowId)
                 }

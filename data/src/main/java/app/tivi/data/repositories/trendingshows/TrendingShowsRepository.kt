@@ -44,7 +44,7 @@ class TrendingShowsRepository @Inject constructor(
         traktDataSource.getTrendingShows(page, 20)
                 .map {
                     // Grab the show id if it exists, or save the show and use it's generated ID
-                    val showId = showStore.getIdForTraktId(it.show.traktId!!) ?: showStore.saveShow(it.show)
+                    val showId = showStore.getIdOrSavePlaceholder(it.show)
                     // Make a copy of the entry with the id
                     it.entry!!.copy(showId = showId)
                 }
