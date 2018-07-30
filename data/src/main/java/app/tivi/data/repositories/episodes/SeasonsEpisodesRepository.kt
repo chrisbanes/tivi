@@ -87,10 +87,10 @@ class SeasonsEpisodesRepository @Inject constructor(
     )
 
     private fun mergeEpisode(local: Episode, trakt: Episode, tmdb: Episode) = local.copy(
-            title = trakt.title ?: local.title,
-            summary = trakt.summary ?: local.summary,
-            number = trakt.number ?: local.number,
-            firstAired = trakt.firstAired ?: local.firstAired,
+            title = trakt.title ?: tmdb.title ?: local.title,
+            summary = trakt.summary ?: tmdb.summary ?: local.summary,
+            number = trakt.number ?: tmdb.number ?: local.number,
+            firstAired = trakt.firstAired ?: tmdb.firstAired ?: local.firstAired,
 
             // Trakt specific stuff
             traktId = trakt.traktId ?: local.traktId,

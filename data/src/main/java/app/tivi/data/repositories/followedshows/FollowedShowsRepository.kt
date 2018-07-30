@@ -22,11 +22,13 @@ import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
 import app.tivi.trakt.TraktAuthState
+import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import javax.inject.Inject
 import javax.inject.Provider
 
 class FollowedShowsRepository @Inject constructor(
+    private val dispatchers: AppCoroutineDispatchers,
     private val localStore: LocalFollowedShowsStore,
     private val localShowStore: LocalShowStore,
     private val traktDataSource: TraktFollowedShowsDataSource,
@@ -64,7 +66,9 @@ class FollowedShowsRepository @Inject constructor(
                     // Save the related entries
                     localStore.sync(it)
                     // Now update all of the related shows if needed
-                    it.parallelForEach { showRepository.updateShow(it.showId) }
+                    it.parallelForEach(dispatchers.io) {
+                        showRepository.updateShow(it.showId)
+                    }
                 }
     }
 
