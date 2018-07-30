@@ -22,8 +22,11 @@ import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.entities.Episode
+import app.tivi.data.entities.EpisodeWatchEntry
+import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
+import app.tivi.data.syncers.syncerForEntity
 import io.reactivex.Flowable
 import javax.inject.Inject
 
@@ -34,6 +37,12 @@ class LocalSeasonsEpisodesStore @Inject constructor(
     private val episodesDao: EpisodesDao,
     private val episodeWatchEntryDao: EpisodeWatchEntryDao
 ) {
+    private val syncer = syncerForEntity(
+            episodeWatchEntryDao,
+            { episodesDao.episodeTraktIdForId(it.episodeId)!! },
+            { entity, id -> entity.copy(id = id) }
+    )
+
     fun observeEpisode(episodeId: Long): Flowable<Episode> {
         return episodesDao.episodeWithIdFlowable(episodeId)
     }
@@ -46,9 +55,9 @@ class LocalSeasonsEpisodesStore @Inject constructor(
      * Gets the ID for the season with the given trakt Id. If the trakt Id does not exist in the
      * database, it is inserted and the generated ID is returned.
      */
-    fun getSeasonIdOrSavePlaceholder(season: Season): Long = transactionRunner {
-        val seasonForTraktId = season.traktId?.let { seasonsDao.seasonWithSeasonTraktId(it) }
-        seasonForTraktId?.id ?: seasonsDao.insert(season)
+    fun getEpisodeIdOrSavePlaceholder(episode: Episode): Long = transactionRunner {
+        val episodeWithTraktId = episode.traktId?.let { episodesDao.episodeWithTraktId(it) }
+        episodeWithTraktId?.id ?: episodesDao.insert(episode)
     }
 
     fun getSeason(id: Long) = seasonsDao.seasonWithId(id)
@@ -68,5 +77,20 @@ class LocalSeasonsEpisodesStore @Inject constructor(
                 entityInserter.insertOrUpdate(episodesDao, it.copy(seasonId = seasonId))
             }
         }
+    }
+
+    fun getEntriesWithAddAction(showId: Long) = episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId)
+
+    fun getEntriesWithDeleteAction(showId: Long) = episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId)
+
+    fun deleteWatchEntriesWithIds(ids: List<Long>) = episodeWatchEntryDao.deleteWithIds(ids)
+
+    fun updateWatchEntriesWithAction(ids: List<Long>, action: PendingAction): Int {
+        return episodeWatchEntryDao.updateEntriesToPendingAction(ids, action.value)
+    }
+
+    fun syncWatchEntries(showId: Long, watches: List<EpisodeWatchEntry>) = transactionRunner {
+        val currentWatches = episodeWatchEntryDao.entriesForShowIdWithNoPendingAction(showId)
+        syncer.sync(currentWatches, watches)
     }
 }

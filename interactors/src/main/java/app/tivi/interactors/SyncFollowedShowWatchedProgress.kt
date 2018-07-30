@@ -17,13 +17,13 @@
 package app.tivi.interactors
 
 import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.interactors.syncers.TraktEpisodeWatchSyncer
+import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
 class SyncFollowedShowWatchedProgress @Inject constructor(
-    private val syncer: TraktEpisodeWatchSyncer,
+    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     private val followedShowsDao: FollowedShowsDao,
     dispatchers: AppCoroutineDispatchers
 ) : Interactor<SyncFollowedShowWatchedProgress.Params> {
@@ -32,7 +32,8 @@ class SyncFollowedShowWatchedProgress @Inject constructor(
     override suspend operator fun invoke(param: Params) {
         val entry = followedShowsDao.entryWithShowId(param.showId)
                 ?: throw IllegalArgumentException("Followed entry with showId does not exist. $param")
-        syncer.sync(entry.showId)
+
+        seasonsEpisodesRepository.syncEpisodeWatches(entry.showId)
     }
 
     data class Params(val showId: Long, val forceLoad: Boolean)

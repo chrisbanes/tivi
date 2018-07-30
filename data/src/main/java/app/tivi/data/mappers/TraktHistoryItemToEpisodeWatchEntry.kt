@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.episodes
+package app.tivi.data.mappers
 
-import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
-import app.tivi.data.entities.Season
+import com.uwetrottmann.trakt5.entities.HistoryEntry
+import javax.inject.Inject
+import com.uwetrottmann.trakt5.entities.Season as TraktSeason
 
-interface SeasonsEpisodesDataSource {
-    suspend fun getSeasonsEpisodes(showId: Long): List<Pair<Season, List<Episode>>>
-    suspend fun getShowEpisodeWatches(showId: Long): List<Pair<Episode, EpisodeWatchEntry>>
-    suspend fun addEpisodeWatches(watches: List<EpisodeWatchEntry>)
-    suspend fun removeEpisodeWatches(watches: List<EpisodeWatchEntry>)
+class TraktHistoryItemToEpisodeWatchEntry @Inject constructor() : Mapper<HistoryEntry, EpisodeWatchEntry> {
+    override fun map(from: HistoryEntry) = EpisodeWatchEntry(
+            episodeId = 0,
+            traktId = from.id,
+            watchedAt = from.watched_at
+    )
 }
