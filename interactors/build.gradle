@@ -22,5 +22,4 @@ dependencies {
     implementation project(":trakt")
     implementation project(":tmdb")
     implementation project(":data")
-    implementation project(':episode-fetcher')
 }

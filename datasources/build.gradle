@@ -20,7 +20,6 @@ apply plugin: 'kotlin-kapt'
 
 dependencies {
     implementation project(":base")
-    implementation project(':episode-fetcher')
     implementation project(":trakt")
     implementation project(":tmdb")
     implementation project(":data")
