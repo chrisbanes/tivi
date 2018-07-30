@@ -51,8 +51,8 @@ class ShowRepository @Inject constructor(
     private fun mergeShow(local: TiviShow, trakt: TiviShow, tmdb: TiviShow) = local.copy(
             title = trakt.title ?: local.title,
             summary = trakt.summary ?: local.summary,
-            homepage = trakt.summary ?: local.summary,
-            rating = trakt.rating ?: local.rating,
+            homepage = trakt.homepage ?: local.homepage,
+            network = trakt.network ?: local.network,
             certification = trakt.certification ?: local.certification,
             runtime = trakt.runtime ?: local.runtime,
             country = trakt.country ?: local.country,
@@ -61,6 +61,7 @@ class ShowRepository @Inject constructor(
 
             // Trakt specific stuff
             traktId = trakt.traktId ?: local.traktId,
+            traktRating = trakt.traktRating ?: local.traktRating,
 
             // TMDb specific stuff
             tmdbId = tmdb.tmdbId ?: trakt.tmdbId ?: local.tmdbId,

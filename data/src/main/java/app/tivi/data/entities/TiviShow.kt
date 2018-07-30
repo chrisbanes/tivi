@@ -40,7 +40,7 @@ data class TiviShow(
     @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null,
     @ColumnInfo(name = "overview") val summary: String? = null,
     @ColumnInfo(name = "homepage") val homepage: String? = null,
-    @ColumnInfo(name = "trakt_rating") val rating: Float? = null,
+    @ColumnInfo(name = "trakt_rating") val traktRating: Float? = null,
     @ColumnInfo(name = "certification") val certification: String? = null,
     @ColumnInfo(name = "first_aired") val firstAired: OffsetDateTime? = null,
     @ColumnInfo(name = "country") val country: String? = null,

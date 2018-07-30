@@ -27,7 +27,7 @@ class TraktShowToTiviShow @Inject constructor() : Mapper<Show, TiviShow> {
             title = from.title,
             summary = from.overview,
             homepage = from.homepage,
-            rating = from.rating?.toFloat(),
+            traktRating = from.rating?.toFloat(),
             certification = from.certification,
             runtime = from.runtime,
             network = from.network,
