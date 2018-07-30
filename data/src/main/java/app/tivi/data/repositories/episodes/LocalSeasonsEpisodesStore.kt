@@ -51,9 +51,15 @@ class LocalSeasonsEpisodesStore @Inject constructor(
         seasonForTraktId?.id ?: seasonsDao.insert(season)
     }
 
+    fun getSeason(id: Long) = seasonsDao.seasonWithId(id)
+
     fun getSeasonWithTraktId(traktId: Int) = seasonsDao.seasonWithSeasonTraktId(traktId)
 
+    fun getEpisode(id: Long) = episodesDao.episodeWithId(id)
+
     fun getEpisodeWithTraktId(traktId: Int) = episodesDao.episodeWithTraktId(traktId)
+
+    fun save(episode: Episode) = entityInserter.insertOrUpdate(episodesDao, episode)
 
     fun save(data: List<Pair<Season, List<Episode>>>) = transactionRunner {
         data.forEach { (season, episodes) ->

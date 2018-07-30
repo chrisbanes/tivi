@@ -31,7 +31,7 @@ class SyncFollowedShowWatchedProgress @Inject constructor(
 
     override suspend operator fun invoke(param: Params) {
         val entry = followedShowsDao.entryWithShowId(param.showId)
-                ?: throw IllegalArgumentException("Followed entry with showId: $param.showId does not exist")
+                ?: throw IllegalArgumentException("Followed entry with showId does not exist. $param")
         syncer.sync(entry.showId)
     }
 

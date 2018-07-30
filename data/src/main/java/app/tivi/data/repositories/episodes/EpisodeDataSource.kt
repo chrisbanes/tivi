@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-package app.tivi.datasources.trakt
+package app.tivi.data.repositories.episodes
 
-import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.entities.Episode
-import app.tivi.datasources.DataSource
-import app.tivi.util.AppRxSchedulers
-import io.reactivex.Flowable
-import javax.inject.Inject
 
-class EpisodeDetailsDataSource @Inject constructor(
-    private val dao: EpisodesDao,
-    private val schedulers: AppRxSchedulers
-) : DataSource<Long, Episode> {
-    override fun data(param: Long): Flowable<Episode> {
-        return dao.episodeWithIdFlowable(param)
-                .subscribeOn(schedulers.io)
-                .distinctUntilChanged()
-    }
+interface EpisodeDataSource {
+    suspend fun getEpisode(showId: Long, seasonNumber: Int, episodeNumber: Int): Episode?
 }

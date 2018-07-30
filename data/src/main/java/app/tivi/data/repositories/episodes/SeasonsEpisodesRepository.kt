@@ -22,9 +22,12 @@ import javax.inject.Inject
 
 class SeasonsEpisodesRepository @Inject constructor(
     private val localStore: LocalSeasonsEpisodesStore,
-    private val traktDataSource: TraktSeasonsEpisodesDataSource
+    private val traktDataSource: TraktSeasonsEpisodesDataSource,
+    private val tmdbDataSource: TmdbSeasonsEpisodesDataSource
 ) {
     fun observeSeasonsForShow(showId: Long) = localStore.observeShowSeasonsWithEpisodes(showId)
+
+    fun observeEpisode(episodeId: Long) = localStore.observeEpisode(episodeId)
 
     suspend fun updateSeasonsEpisodes(showId: Long) {
         traktDataSource.getSeasonsEpisodes(showId)
@@ -44,6 +47,17 @@ class SeasonsEpisodesRepository @Inject constructor(
                     // Save the seasons + episodes
                     localStore.save(it)
                 }
+    }
+
+    suspend fun updateEpisode(episodeId: Long) {
+        val local = localStore.getEpisode(episodeId)!!
+        val season = localStore.getSeason(local.seasonId)!!
+
+        // TODO move these to async()s to be concurrent
+        val trakt = traktDataSource.getEpisode(season.showId, season.number!!, local.number!!) ?: Episode.EMPTY
+        val tmdb = tmdbDataSource.getEpisode(season.showId, season.number, local.number) ?: Episode.EMPTY
+
+        localStore.save(mergeEpisode(local, trakt, tmdb))
     }
 
     private fun mergeSeason(local: Season, trakt: Season, tmdb: Season) = local.copy(

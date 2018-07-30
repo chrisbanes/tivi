@@ -23,6 +23,7 @@ import app.tivi.data.mappers.TraktEpisodeToEpisode
 import app.tivi.data.mappers.TraktSeasonToSeason
 import app.tivi.extensions.fetchBodyWithRetry
 import com.uwetrottmann.trakt5.enums.Extended
+import com.uwetrottmann.trakt5.services.Episodes
 import com.uwetrottmann.trakt5.services.Seasons
 import javax.inject.Inject
 import javax.inject.Provider
@@ -30,15 +31,24 @@ import javax.inject.Provider
 class TraktSeasonsEpisodesDataSource @Inject constructor(
     private val traktIdMapper: ShowIdToTraktIdMapper,
     private val seasonsService: Provider<Seasons>,
+    private val episodesService: Provider<Episodes>,
     private val seasonMapper: TraktSeasonToSeason,
     private val episodeMapper: TraktEpisodeToEpisode
-) : SeasonsEpisodesDataSource {
-    override suspend fun getSeasonsEpisodes(showId: Long): List<Pair<Season, List<Episode>>> {
-        val traktId = traktIdMapper.map(showId) ?: return emptyList()
-
-        val results = seasonsService.get().summary(traktId.toString(), Extended.FULLEPISODES)
+) : SeasonsEpisodesDataSource, EpisodeDataSource {
+    override suspend fun getEpisode(showId: Long, seasonNumber: Int, episodeNumber: Int): Episode {
+        val showTraktId = traktIdMapper.map(showId)
+        return episodesService.get().summary(showTraktId.toString(), seasonNumber, episodeNumber, Extended.FULL)
                 .fetchBodyWithRetry()
+                .let(episodeMapper::map)
+    }
 
-        return results.map { seasonMapper.map(it).copy(showId = showId) to it.episodes.map(episodeMapper::map) }
+    override suspend fun getSeasonsEpisodes(showId: Long): List<Pair<Season, List<Episode>>> {
+        val showTraktId = traktIdMapper.map(showId) ?: return emptyList()
+
+        return seasonsService.get().summary(showTraktId.toString(), Extended.FULLEPISODES)
+                .fetchBodyWithRetry()
+                .map {
+                    seasonMapper.map(it).copy(showId = showId) to it.episodes.map(episodeMapper::map)
+                }
     }
 }

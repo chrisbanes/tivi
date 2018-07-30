@@ -22,7 +22,6 @@ import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
-import app.tivi.datasources.trakt.EpisodeDetailsDataSource
 import app.tivi.datasources.trakt.EpisodeWatchesDataSource
 import app.tivi.interactors.SyncFollowedShowWatchedProgress
 import app.tivi.interactors.UpdateEpisodeDetails
@@ -38,7 +37,6 @@ import org.threeten.bp.format.DateTimeFormatter
 import javax.inject.Inject
 
 class EpisodeDetailsViewModel @Inject constructor(
-    private val episodeDetailsDataSource: EpisodeDetailsDataSource,
     private val updateEpisodeDetails: UpdateEpisodeDetails,
     private val episodeWatchesCall: EpisodeWatchesDataSource,
     private val tmdbManager: TmdbManager,
@@ -78,7 +76,7 @@ class EpisodeDetailsViewModel @Inject constructor(
         val watches = episodeWatchesCall.data(episodeId)
 
         disposables += Flowables.combineLatest(
-                episodeDetailsDataSource.data(episodeId),
+                updateEpisodeDetails.observe(),
                 watches,
                 tmdbManager.imageProvider,
                 watches.map {
