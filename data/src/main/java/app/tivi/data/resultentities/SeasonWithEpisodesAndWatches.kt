@@ -22,16 +22,18 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import java.util.Objects
 
-class SeasonWithEpisodes {
+class SeasonWithEpisodesAndWatches {
     @Embedded
     var season: Season? = null
 
-    @Relation(parentColumn = "id", entityColumn = "season_id")
-    var episodes: List<Episode> = emptyList()
+    @Relation(parentColumn = "id", entityColumn = "season_id", entity = Episode::class)
+    var episodes: List<EpisodeWithWatches> = emptyList()
+
+    fun isWatched() = episodes.all { it.isWatched() }
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
-        other is SeasonWithEpisodes -> season == other.season && episodes == other.episodes
+        other is SeasonWithEpisodesAndWatches -> season == other.season && episodes == other.episodes
         else -> false
     }
 

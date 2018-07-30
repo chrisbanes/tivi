@@ -47,9 +47,11 @@ data class Episode(
     @ColumnInfo(name = "overview") val summary: String? = null,
     @ColumnInfo(name = "number") val number: Int? = null,
     @ColumnInfo(name = "first_aired") val firstAired: OffsetDateTime? = null,
-    @ColumnInfo(name = "rating") val rating: Float? = null,
-    @ColumnInfo(name = "votes") val votes: Int? = null,
-    @ColumnInfo(name = "tmdb_poster_path") val tmdbPosterPath: String? = null,
-    @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null,
-    @ColumnInfo(name = "last_watched_at") val lastWatched: OffsetDateTime = OffsetDateTime.MIN
-) : TiviEntity, TraktIdEntity, TmdbIdEntity
+    @ColumnInfo(name = "trakt_rating") val traktRating: Float? = null,
+    @ColumnInfo(name = "trakt_rating_votes") val traktRatingVotes: Int? = null,
+    @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null
+) : TiviEntity, TraktIdEntity, TmdbIdEntity {
+    companion object {
+        val EMPTY = Episode(seasonId = 0)
+    }
+}

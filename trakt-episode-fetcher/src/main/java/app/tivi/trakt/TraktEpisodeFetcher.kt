@@ -65,8 +65,8 @@ class TraktEpisodeFetcher @Inject constructor(
                 number = traktEpisode.number,
                 summary = traktEpisode.overview,
                 firstAired = traktEpisode.first_aired,
-                rating = traktEpisode.rating?.toFloat(),
-                votes = traktEpisode.votes
+                traktRating = traktEpisode.rating?.toFloat(),
+                traktRatingVotes = traktEpisode.votes
         ).also {
             entityInserter.insertOrUpdate(episodesDao, it)
         }

@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package app.tivi
+package app.tivi.data.mappers
 
-import dagger.Module
-import dagger.Provides
+import app.tivi.data.entities.Episode
+import com.uwetrottmann.tmdb2.entities.TvEpisode
+import javax.inject.Inject
 
-@Module
-class SeasonFetcherModule {
-    @Provides
-    fun provideSeasonFetcher(impl: SeasonFetcherImpl): SeasonFetcher = impl
+class TmdbEpisodeToEpisode @Inject constructor() : Mapper<TvEpisode, Episode> {
+    override fun map(from: TvEpisode) = Episode(
+            seasonId = 0,
+            tmdbId = from.id,
+            title = from.name,
+            number = from.episode_number,
+            summary = from.overview,
+            tmdbBackdropPath = from.still_path
+    )
 }

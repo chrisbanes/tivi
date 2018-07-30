@@ -16,8 +16,8 @@
 
 package app.tivi.interactors
 
-import app.tivi.SeasonFetcher
 import app.tivi.data.daos.FollowedShowsDao
+import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.interactors.syncers.TraktEpisodeWatchSyncer
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.AppCoroutineDispatchers
@@ -29,7 +29,7 @@ class SyncFollowedShow @Inject constructor(
     private val followedShowsDao: FollowedShowsDao,
     dispatchers: AppCoroutineDispatchers,
     private val traktEpisodeWatchedSyncer: TraktEpisodeWatchSyncer,
-    private val seasonFetcher: SeasonFetcher,
+    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     private val loggedIn: Provider<TraktAuthState>
 ) : Interactor<SyncFollowedShow.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
@@ -41,7 +41,7 @@ class SyncFollowedShow @Inject constructor(
         val authed = loggedIn.get() == TraktAuthState.LOGGED_IN
 
         // Then update the seasons/episodes
-        seasonFetcher.updateIfNeeded(entry.showId)
+        seasonsEpisodesRepository.updateSeasonsEpisodes(entry.showId)
         // Finally update any watched progress
         if (authed) {
             traktEpisodeWatchedSyncer.sync(entry.showId, false)

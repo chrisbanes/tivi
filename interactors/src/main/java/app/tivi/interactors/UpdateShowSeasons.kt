@@ -16,19 +16,25 @@
 
 package app.tivi.interactors
 
-import app.tivi.SeasonFetcher
+import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
+import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.util.AppCoroutineDispatchers
+import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
 class UpdateShowSeasons @Inject constructor(
-    private val seasonFetcher: SeasonFetcher,
+    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     dispatchers: AppCoroutineDispatchers
-) : Interactor<UpdateShowSeasons.Params> {
+) : SubjectInteractor<UpdateShowSeasons.Params, List<SeasonWithEpisodesAndWatches>>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(param: Params) {
-        seasonFetcher.update(param.showId)
+    override fun createObservable(param: Params): Flowable<List<SeasonWithEpisodesAndWatches>> {
+        return seasonsEpisodesRepository.observeSeasonsForShow(param.showId)
+    }
+
+    override suspend fun execute(param: Params) {
+        seasonsEpisodesRepository.updateSeasonsEpisodes(param.showId)
     }
 
     data class Params(val showId: Long, val forceLoad: Boolean)

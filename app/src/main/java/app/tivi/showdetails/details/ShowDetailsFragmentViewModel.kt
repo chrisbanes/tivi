@@ -22,12 +22,12 @@ import app.tivi.SharedElementHelper
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
-import app.tivi.datasources.trakt.ShowSeasonsDataSource
 import app.tivi.interactors.FollowShow
 import app.tivi.interactors.SyncFollowedShowWatchedProgress
 import app.tivi.interactors.UnfollowShow
 import app.tivi.interactors.UpdateRelatedShows
 import app.tivi.interactors.UpdateShowDetails
+import app.tivi.interactors.UpdateShowSeasons
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
@@ -44,8 +44,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val updateShowDetails: UpdateShowDetails,
     private val updateRelatedShows: UpdateRelatedShows,
-    private val seasonsDataSource: ShowSeasonsDataSource,
-    private val refreshShowSeasons: UpdateShowDetails,
+    private val updateShowSeasons: UpdateShowSeasons,
     private val syncFollowedShowWatchedProgress: SyncFollowedShowWatchedProgress,
     private val tmdbManager: TmdbManager,
     private val followShow: FollowShow,
@@ -77,7 +76,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
             launchInteractor(updateRelatedShows, UpdateRelatedShows.Params(id, true))
             launchWithParent(dispatchers.io) {
                 if (followedShowsDao.entryCountWithShowId(id) > 0) {
-                    refreshShowSeasons(UpdateShowDetails.Params(id, true))
+                    updateShowSeasons(UpdateShowSeasons.Params(id, true))
                     syncFollowedShowWatchedProgress(SyncFollowedShowWatchedProgress.Params(id, true))
                 }
             }
@@ -96,7 +95,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
                             Flowables.combineLatest(
                                     updateShowDetails.observe(),
                                     updateRelatedShows.observe(),
-                                    seasonsDataSource.data(id),
+                                    updateShowSeasons.observe(),
                                     tmdbManager.imageProvider,
                                     ::FollowedShowDetailsViewState)
                         } else {

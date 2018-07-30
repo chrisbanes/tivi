@@ -17,7 +17,6 @@
 package app.tivi.data.repositories.shows
 
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.entities.copyDynamic
 import javax.inject.Inject
 
 class ShowRepository @Inject constructor(
@@ -49,25 +48,23 @@ class ShowRepository @Inject constructor(
         }
     }
 
-    private fun mergeShow(localResult: TiviShow, traktResult: TiviShow, tmdbResult: TiviShow): TiviShow {
-        return localResult.copyDynamic {
-            title = traktResult.title ?: title
-            summary = traktResult.summary ?: summary
-            homepage = traktResult.summary ?: summary
-            rating = traktResult.rating ?: rating
-            certification = traktResult.certification ?: certification
-            runtime = traktResult.runtime ?: runtime
-            country = traktResult.country ?: country
-            firstAired = traktResult.firstAired ?: firstAired
-            _genres = traktResult._genres ?: _genres
+    private fun mergeShow(local: TiviShow, trakt: TiviShow, tmdb: TiviShow) = local.copy(
+            title = trakt.title ?: local.title,
+            summary = trakt.summary ?: local.summary,
+            homepage = trakt.summary ?: local.summary,
+            rating = trakt.rating ?: local.rating,
+            certification = trakt.certification ?: local.certification,
+            runtime = trakt.runtime ?: local.runtime,
+            country = trakt.country ?: local.country,
+            firstAired = trakt.firstAired ?: local.firstAired,
+            _genres = trakt._genres ?: local._genres,
 
             // Trakt specific stuff
-            traktId = traktResult.traktId ?: traktId
+            traktId = trakt.traktId ?: local.traktId,
 
             // TMDb specific stuff
-            tmdbId = tmdbResult.tmdbId ?: traktResult.tmdbId ?: tmdbId
-            tmdbPosterPath = tmdbResult.tmdbPosterPath ?: tmdbPosterPath
-            tmdbBackdropPath = tmdbResult.tmdbBackdropPath ?: tmdbBackdropPath
-        }
-    }
+            tmdbId = tmdb.tmdbId ?: trakt.tmdbId ?: local.tmdbId,
+            tmdbPosterPath = tmdb.tmdbPosterPath ?: local.tmdbPosterPath,
+            tmdbBackdropPath = tmdb.tmdbBackdropPath ?: local.tmdbBackdropPath
+    )
 }

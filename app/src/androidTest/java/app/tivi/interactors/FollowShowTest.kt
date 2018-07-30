@@ -16,18 +16,15 @@
 
 package app.tivi.interactors
 
-import app.tivi.SeasonFetcher
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.insertShow
 import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Test
-import org.mockito.Mockito.mock
 
 class FollowInteractorTest : BaseDatabaseTest() {
     private lateinit var followShow: FollowShow
     private lateinit var followShowsDao: FollowedShowsDao
-    private lateinit var seasonFetcher: SeasonFetcher
 
     override fun setup() {
         super.setup()
@@ -35,7 +32,6 @@ class FollowInteractorTest : BaseDatabaseTest() {
         insertShow(db)
 
         followShowsDao = db.followedShowsDao()
-        seasonFetcher = mock(SeasonFetcher::class.java)
         //followShow = FollowShow(testCoroutineDispatchers, followShowsDao, seasonFetcher)
     }
 

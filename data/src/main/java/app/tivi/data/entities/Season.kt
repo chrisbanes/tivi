@@ -43,15 +43,16 @@ data class Season(
     @ColumnInfo(name = "title") val title: String? = null,
     @ColumnInfo(name = "overview") val summary: String? = null,
     @ColumnInfo(name = "number") val number: Int? = null,
-    @ColumnInfo(name = "ep_count") val episodeCount: Int? = null,
-    @ColumnInfo(name = "ep_aired") val airedEpisodes: Int? = null,
-    @ColumnInfo(name = "rating") val rating: Float? = null,
     @ColumnInfo(name = "network") val network: String? = null,
-    @ColumnInfo(name = "votes") val votes: Int? = null,
+    @ColumnInfo(name = "ep_count") val episodeCount: Int? = null,
+    @ColumnInfo(name = "ep_aired") val episodesAired: Int? = null,
+    @ColumnInfo(name = "trakt_rating") val traktRating: Float? = null,
+    @ColumnInfo(name = "trakt_votes") val traktRatingVotes: Int? = null,
     @ColumnInfo(name = "tmdb_poster_path") val tmdbPosterPath: String? = null,
     @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null
 ) : TiviEntity, TmdbIdEntity, TraktIdEntity {
     companion object {
         const val NUMBER_SPECIALS = 0
+        val EMPTY = Season(showId = 0)
     }
 }

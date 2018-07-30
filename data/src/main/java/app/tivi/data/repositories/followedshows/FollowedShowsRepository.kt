@@ -42,7 +42,7 @@ class FollowedShowsRepository @Inject constructor(
     }
 
     suspend fun syncFollowedShows() {
-        val listId = getFollowedTraktListId()
+        val listId = if (traktAuthState.get() == TraktAuthState.LOGGED_IN) getFollowedTraktListId() else null
 
         processPendingAdditions(listId)
         processPendingDelete(listId)
