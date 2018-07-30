@@ -17,9 +17,12 @@
 package app.tivi.data.repositories.shows
 
 import app.tivi.data.entities.TiviShow
+import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.experimental.async
 import javax.inject.Inject
 
 class ShowRepository @Inject constructor(
+    private val dispatchers: AppCoroutineDispatchers,
     private val localShowStore: LocalShowStore,
     private val tmdbShowDataSource: TmdbShowDataSource,
     private val traktShowDataSource: TraktShowDataSource
@@ -38,14 +41,16 @@ class ShowRepository @Inject constructor(
      * Updates the show with the given id from all network sources, saves the result to the database
      */
     suspend fun updateShow(showId: Long) {
-        val traktResult = traktShowDataSource.getShow(showId) ?: TiviShow.EMPTY_SHOW
-        val tmdbResult = tmdbShowDataSource.getShow(showId) ?: TiviShow.EMPTY_SHOW
-        val localResult = localShowStore.getShow(showId) ?: TiviShow.EMPTY_SHOW
-
-        val merged = mergeShow(localResult, traktResult, tmdbResult)
-        if (merged != localResult) {
-            localShowStore.saveShow(merged)
+        val traktResult = async(dispatchers.io) {
+            traktShowDataSource.getShow(showId) ?: TiviShow.EMPTY_SHOW
         }
+        val tmdbResult = async(dispatchers.io) {
+            tmdbShowDataSource.getShow(showId) ?: TiviShow.EMPTY_SHOW
+        }
+        val localResult = async(dispatchers.io) {
+            localShowStore.getShow(showId) ?: TiviShow.EMPTY_SHOW
+        }
+        localShowStore.saveShow(mergeShow(localResult.await(), traktResult.await(), tmdbResult.await()))
     }
 
     private fun mergeShow(local: TiviShow, trakt: TiviShow, tmdb: TiviShow) = local.copy(

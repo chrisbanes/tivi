@@ -18,9 +18,12 @@ package app.tivi.data.repositories.episodes
 
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
+import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.experimental.async
 import javax.inject.Inject
 
 class SeasonsEpisodesRepository @Inject constructor(
+    private val dispatchers: AppCoroutineDispatchers,
     private val localStore: LocalSeasonsEpisodesStore,
     private val traktDataSource: TraktSeasonsEpisodesDataSource,
     private val tmdbDataSource: TmdbSeasonsEpisodesDataSource
@@ -53,11 +56,14 @@ class SeasonsEpisodesRepository @Inject constructor(
         val local = localStore.getEpisode(episodeId)!!
         val season = localStore.getSeason(local.seasonId)!!
 
-        // TODO move these to async()s to be concurrent
-        val trakt = traktDataSource.getEpisode(season.showId, season.number!!, local.number!!) ?: Episode.EMPTY
-        val tmdb = tmdbDataSource.getEpisode(season.showId, season.number, local.number) ?: Episode.EMPTY
+        val trakt = async(dispatchers.io) {
+            traktDataSource.getEpisode(season.showId, season.number!!, local.number!!) ?: Episode.EMPTY
+        }
+        val tmdb = async(dispatchers.io) {
+            tmdbDataSource.getEpisode(season.showId, season.number!!, local.number!!) ?: Episode.EMPTY
+        }
 
-        localStore.save(mergeEpisode(local, trakt, tmdb))
+        localStore.save(mergeEpisode(local, trakt.await(), tmdb.await()))
     }
 
     private fun mergeSeason(local: Season, trakt: Season, tmdb: Season) = local.copy(
