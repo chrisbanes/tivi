@@ -19,7 +19,6 @@ package app.tivi.data.mappers
 import app.tivi.data.entities.EpisodeWatchEntry
 import com.uwetrottmann.trakt5.entities.HistoryEntry
 import javax.inject.Inject
-import com.uwetrottmann.trakt5.entities.Season as TraktSeason
 
 class TraktHistoryItemToEpisodeWatchEntry @Inject constructor() : Mapper<HistoryEntry, EpisodeWatchEntry> {
     override fun map(from: HistoryEntry) = EpisodeWatchEntry(
