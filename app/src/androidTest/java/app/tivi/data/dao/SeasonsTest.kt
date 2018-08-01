@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.data
+package app.tivi.data.dao
 
 import android.database.sqlite.SQLiteConstraintException
 import app.tivi.data.daos.SeasonsDao

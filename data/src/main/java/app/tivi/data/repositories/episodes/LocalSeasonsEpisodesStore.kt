@@ -39,7 +39,7 @@ class LocalSeasonsEpisodesStore @Inject constructor(
 ) {
     private val syncer = syncerForEntity(
             episodeWatchEntryDao,
-            { episodesDao.episodeTraktIdForId(it.episodeId)!! },
+            { it.traktId },
             { entity, id -> entity.copy(id = id) }
     )
 
@@ -78,6 +78,8 @@ class LocalSeasonsEpisodesStore @Inject constructor(
             }
         }
     }
+
+    fun getEpisodeWatches(showId: Long) = episodeWatchEntryDao.entriesForShowId(showId)
 
     fun getEntriesWithAddAction(showId: Long) = episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId)
 

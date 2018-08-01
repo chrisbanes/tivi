@@ -41,7 +41,7 @@ private class OrientationChangeAction(private val orientation: Int) : ViewAction
     }
 
     override fun getDescription(): String {
-        return "Rotating to " + orientation
+        return "Rotating to $orientation"
     }
 
     override fun perform(uiController: UiController, view: View) {

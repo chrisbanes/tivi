@@ -22,7 +22,6 @@ import app.tivi.AppNavigator
 import app.tivi.actions.ShowTasks
 import app.tivi.data.entities.TraktUser
 import app.tivi.datasources.trakt.UserMeDataSource
-import app.tivi.inject.ApplicationLevel
 import app.tivi.interactors.UpdateUserDetailsMe
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
@@ -53,7 +52,7 @@ import javax.inject.Singleton
 class TraktManager @Inject constructor(
     private val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
-    @ApplicationLevel private val disposables: CompositeDisposable,
+    private val disposables: CompositeDisposable,
     @Named("app") private val appNavigator: AppNavigator,
     private val requestProvider: Provider<AuthorizationRequest>,
     private val clientAuth: Lazy<ClientAuthentication>,

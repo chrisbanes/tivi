@@ -17,60 +17,18 @@
 package app.tivi.data.repositories.shows
 
 import app.tivi.data.entities.TiviShow
-import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.experimental.async
-import javax.inject.Inject
+import io.reactivex.Flowable
 
-class ShowRepository @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
-    private val localShowStore: LocalShowStore,
-    private val tmdbShowDataSource: TmdbShowDataSource,
-    private val traktShowDataSource: TraktShowDataSource
-) {
-    fun observeShow(showId: Long) = localShowStore.observeShow(showId)
+interface ShowRepository {
+    /**
+     * Updates the show with the given id from all network sources, saves the result to the database
+     */
+    suspend fun getShow(showId: Long): TiviShow
 
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
      */
-    suspend fun getShow(showId: Long): TiviShow {
-        updateShow(showId)
-        return localShowStore.getShow(showId)!!
-    }
+    suspend fun updateShow(showId: Long)
 
-    /**
-     * Updates the show with the given id from all network sources, saves the result to the database
-     */
-    suspend fun updateShow(showId: Long) {
-        val traktResult = async(dispatchers.io) {
-            traktShowDataSource.getShow(showId) ?: TiviShow.EMPTY_SHOW
-        }
-        val tmdbResult = async(dispatchers.io) {
-            tmdbShowDataSource.getShow(showId) ?: TiviShow.EMPTY_SHOW
-        }
-        val localResult = async(dispatchers.io) {
-            localShowStore.getShow(showId) ?: TiviShow.EMPTY_SHOW
-        }
-        localShowStore.saveShow(mergeShow(localResult.await(), traktResult.await(), tmdbResult.await()))
-    }
-
-    private fun mergeShow(local: TiviShow, trakt: TiviShow, tmdb: TiviShow) = local.copy(
-            title = trakt.title ?: local.title,
-            summary = trakt.summary ?: local.summary,
-            homepage = trakt.homepage ?: local.homepage,
-            network = trakt.network ?: local.network,
-            certification = trakt.certification ?: local.certification,
-            runtime = trakt.runtime ?: local.runtime,
-            country = trakt.country ?: local.country,
-            firstAired = trakt.firstAired ?: local.firstAired,
-            _genres = trakt._genres ?: local._genres,
-
-            // Trakt specific stuff
-            traktId = trakt.traktId ?: local.traktId,
-            traktRating = trakt.traktRating ?: local.traktRating,
-
-            // TMDb specific stuff
-            tmdbId = tmdb.tmdbId ?: trakt.tmdbId ?: local.tmdbId,
-            tmdbPosterPath = tmdb.tmdbPosterPath ?: local.tmdbPosterPath,
-            tmdbBackdropPath = tmdb.tmdbBackdropPath ?: local.tmdbBackdropPath
-    )
+    fun observeShow(showId: Long): Flowable<TiviShow>
 }

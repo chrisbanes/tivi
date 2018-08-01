@@ -21,9 +21,9 @@ import app.tivi.data.entities.PendingAction
 import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
+import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.Logger
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -31,10 +31,9 @@ class FollowedShowsRepository @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val localStore: LocalFollowedShowsStore,
     private val localShowStore: LocalShowStore,
-    private val traktDataSource: TraktFollowedShowsDataSource,
+    @Trakt private val dataSource: FollowedShowsDataSource,
     private val showRepository: ShowRepository,
-    private val traktAuthState: Provider<TraktAuthState>,
-    private val logger: Logger
+    private val traktAuthState: Provider<TraktAuthState>
 ) {
     fun observeFollowedShows() = localStore.observeForPaging()
 
@@ -55,17 +54,17 @@ class FollowedShowsRepository @Inject constructor(
     }
 
     private suspend fun pullDownTraktFollowedList(listId: Int) {
-        traktDataSource.getListShows(listId)
+        dataSource.getListShows(listId)
                 .map {
                     // Grab the show id if it exists, or save the show and use it's generated ID
-                    val showId = localShowStore.getIdOrSavePlaceholder(it.show)
-                    // Make a copy of the entry with the id
-                    it.entry!!.copy(showId = showId)
+                    val showId = localShowStore.getIdOrSavePlaceholder(it)
+                    // Create a followed show entry with the show id
+                    FollowedShowEntry(showId = showId)
                 }
                 .also {
                     // Save the related entries
                     localStore.sync(it)
-                    // Now update all of the related shows if needed
+                    // Now update all of the followed shows if needed
                     it.parallelForEach(dispatchers.io) {
                         showRepository.updateShow(it.showId)
                     }
@@ -73,41 +72,34 @@ class FollowedShowsRepository @Inject constructor(
     }
 
     private suspend fun processPendingAdditions(listId: Int?) {
-        val sendActions = localStore.getEntriesWithAddAction()
+        val pending = localStore.getEntriesWithAddAction()
 
-        if (sendActions.isNotEmpty()) {
+        if (pending.isNotEmpty()) {
             if (listId != null && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
-                val traktIds = sendActions.mapNotNull {
-                    val show = showRepository.getShow(it.showId)
-                    show.traktId?.toLong()
-                }
-                traktDataSource.addShowIdsToList(listId, traktIds)
+                val shows = pending.mapNotNull { localShowStore.getShow(it.showId) }
+                dataSource.addShowIdsToList(listId, shows)
             }
 
             // Now update the database
-            localStore.updateEntriesWithAction(sendActions.mapNotNull { it.id }, PendingAction.NOTHING)
+            localStore.updateEntriesWithAction(pending.mapNotNull { it.id }, PendingAction.NOTHING)
         }
     }
 
     private suspend fun processPendingDelete(listId: Int?) {
-        val sendActions = localStore.getEntriesWithDeleteAction()
+        val pending = localStore.getEntriesWithDeleteAction()
 
-        if (sendActions.isNotEmpty()) {
+        if (pending.isNotEmpty()) {
             if (listId != null && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
-                val traktIds = sendActions.mapNotNull {
-                    val show = showRepository.getShow(it.showId)
-                    show.traktId?.toLong()
-                }
-                traktDataSource.removeShowIdsFromList(listId, traktIds)
+                val shows = pending.mapNotNull { localShowStore.getShow(it.showId) }
+                dataSource.removeShowIdsFromList(listId, shows)
             }
 
             // Now update the database
-            localStore.deleteEntriesInIds(sendActions.mapNotNull { it.id })
+            localStore.deleteEntriesInIds(pending.mapNotNull { it.id })
         }
     }
 
     private suspend fun getFollowedTraktListId(): Int? {
-        return localStore.traktListId
-                ?: traktDataSource.getFollowedListId().also { localStore.traktListId = it }
+        return localStore.traktListId ?: dataSource.getFollowedListId()?.also { localStore.traktListId = it }
     }
 }

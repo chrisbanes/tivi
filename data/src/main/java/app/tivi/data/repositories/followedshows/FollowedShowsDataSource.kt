@@ -16,12 +16,14 @@
 
 package app.tivi.data.repositories.followedshows
 
-import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.data.entities.TiviShow
 
 interface FollowedShowsDataSource {
-    suspend fun getListShows(listId: Int): List<FollowedShowEntryWithShow>
+    suspend fun getListShows(listId: Int): List<TiviShow>
 
-    suspend fun addShowIdsToList(listId: Int, showTraktIds: List<Long>)
+    suspend fun addShowIdsToList(listId: Int, shows: List<TiviShow>)
 
-    suspend fun removeShowIdsFromList(listId: Int, showTraktIds: List<Long>)
+    suspend fun removeShowIdsFromList(listId: Int, shows: List<TiviShow>)
+
+    suspend fun getFollowedListId(): Int?
 }

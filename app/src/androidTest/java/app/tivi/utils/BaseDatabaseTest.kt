@@ -29,6 +29,7 @@ import java.io.IOException
 @RunWith(AndroidJUnit4::class)
 abstract class BaseDatabaseTest {
     lateinit var db: TiviDatabase
+        private set
 
     @Before
     open fun setup() {

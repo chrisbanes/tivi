@@ -17,6 +17,7 @@
 package app.tivi.inject
 
 import app.tivi.TiviApplication
+import app.tivi.data.DataModule
 import app.tivi.data.DatabaseModule
 import app.tivi.home.HomeBuilder
 import app.tivi.showdetails.ShowDetailsBuilder
@@ -34,6 +35,7 @@ import javax.inject.Singleton
     AppModule::class,
     JobsCreator::class,
     DatabaseModule::class,
+    DataModule::class,
     ViewModelBuilder::class,
     HomeBuilder::class,
     ShowDetailsBuilder::class,

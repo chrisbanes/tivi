@@ -16,9 +16,8 @@
 
 package app.tivi.data.repositories.followedshows
 
-import app.tivi.data.entities.FollowedShowEntry
+import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TraktShowToTiviShow
-import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.extensions.fetchBody
 import app.tivi.extensions.fetchBodyWithRetry
 import com.uwetrottmann.trakt5.entities.SyncItems
@@ -34,42 +33,40 @@ class TraktFollowedShowsDataSource @Inject constructor(
     private val usersService: Provider<Users>,
     private val mapper: TraktShowToTiviShow
 ) : FollowedShowsDataSource {
-    override suspend fun addShowIdsToList(listId: Int, showTraktIds: List<Long>) {
-        usersService.get().addListItems(UserSlug.ME, listId.toString(), SyncItems().apply {
-            ids = showTraktIds
-        }).fetchBody()
+    override suspend fun addShowIdsToList(listId: Int, shows: List<TiviShow>) {
+        usersService.get().addListItems(
+                UserSlug.ME,
+                listId.toString(),
+                SyncItems().ids(shows.mapNotNull { it.traktId?.toLong() })
+        ).fetchBody()
     }
 
-    override suspend fun removeShowIdsFromList(listId: Int, showTraktIds: List<Long>) {
-        usersService.get().deleteListItems(UserSlug.ME, listId.toString(), SyncItems().apply {
-            ids = showTraktIds
-        }).fetchBody()
+    override suspend fun removeShowIdsFromList(listId: Int, shows: List<TiviShow>) {
+        usersService.get().deleteListItems(
+                UserSlug.ME,
+                listId.toString(),
+                SyncItems().ids(shows.mapNotNull { it.traktId?.toLong() })
+        ).fetchBody()
     }
 
-    override suspend fun getListShows(listId: Int): List<FollowedShowEntryWithShow> {
+    override suspend fun getListShows(listId: Int): List<TiviShow> {
         val results = usersService.get().listItems(UserSlug.ME, listId.toString(), Extended.NOSEASONS)
                 .fetchBodyWithRetry()
                 .mapNotNull { it.show }
-
-        return results.map { show ->
-            FollowedShowEntryWithShow().apply {
-                relations = listOf(mapper.map(show))
-                entry = FollowedShowEntry(showId = 0)
-            }
-        }
+        return results.map(mapper::map)
     }
 
-    suspend fun getFollowedListId(): Int {
+    override suspend fun getFollowedListId(): Int {
         val list = usersService.get().lists(UserSlug.ME).fetchBodyWithRetry()
                 .first { it.name == "Following" }
 
         return if (list != null) {
             list.ids.trakt
         } else {
-            val newList = usersService.get().createList(UserSlug.ME, TraktList().apply {
-                name = "Following"
-                privacy = ListPrivacy.PRIVATE
-            }).fetchBodyWithRetry()
+            val newList = usersService.get().createList(
+                    UserSlug.ME,
+                    TraktList().name("Following").privacy(ListPrivacy.PRIVATE)
+            ).fetchBodyWithRetry()
             newList.ids.trakt
         }
     }
