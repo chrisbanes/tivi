@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package app.tivi.data
+package app.tivi.data.mappers
 
-import app.tivi.data.repositories.episodes.EpisodesModule
-import app.tivi.data.repositories.followedshows.FollowedShowsModule
-import app.tivi.data.repositories.shows.ShowsModule
-import dagger.Module
+import app.tivi.data.daos.TiviShowDao
+import javax.inject.Inject
+import javax.inject.Singleton
 
-@Module(includes = [
-    EpisodesModule::class,
-    ShowsModule::class,
-    FollowedShowsModule::class
-])
-abstract class DataModule
+@Singleton
+class ShowIdToTmdbIdMapper @Inject constructor(
+    private val showDao: TiviShowDao
+) : Mapper<Long, Int?> {
+    override fun map(from: Long) = showDao.getTmdbIdForShowId(from)
+}

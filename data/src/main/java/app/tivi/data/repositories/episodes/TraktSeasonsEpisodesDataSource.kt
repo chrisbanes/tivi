@@ -19,17 +19,19 @@ package app.tivi.data.repositories.episodes
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.Season
+import app.tivi.data.mappers.EpisodeIdToTraktIdMapper
 import app.tivi.data.mappers.ShowIdToTraktIdMapper
 import app.tivi.data.mappers.TraktEpisodeToEpisode
 import app.tivi.data.mappers.TraktHistoryItemToEpisodeWatchEntry
 import app.tivi.data.mappers.TraktSeasonToSeason
 import app.tivi.extensions.fetchBody
 import app.tivi.extensions.fetchBodyWithRetry
+import com.uwetrottmann.trakt5.entities.EpisodeIds
+import com.uwetrottmann.trakt5.entities.SyncEpisode
 import com.uwetrottmann.trakt5.entities.SyncItems
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.enums.HistoryType
-import com.uwetrottmann.trakt5.services.Episodes
 import com.uwetrottmann.trakt5.services.Seasons
 import com.uwetrottmann.trakt5.services.Sync
 import com.uwetrottmann.trakt5.services.Users
@@ -37,24 +39,17 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 class TraktSeasonsEpisodesDataSource @Inject constructor(
-    private val traktIdMapper: ShowIdToTraktIdMapper,
+    private val showIdToTraktIdMapper: ShowIdToTraktIdMapper,
+    private val episodeIdToTraktIdMapper: EpisodeIdToTraktIdMapper,
     private val seasonsService: Provider<Seasons>,
-    private val episodesService: Provider<Episodes>,
     private val usersService: Provider<Users>,
     private val syncService: Provider<Sync>,
     private val seasonMapper: TraktSeasonToSeason,
     private val episodeMapper: TraktEpisodeToEpisode,
     private val historyItemMapper: TraktHistoryItemToEpisodeWatchEntry
-) : SeasonsEpisodesDataSource, EpisodeDataSource {
-    override suspend fun getEpisode(showId: Long, seasonNumber: Int, episodeNumber: Int): Episode {
-        val showTraktId = traktIdMapper.map(showId)
-        return episodesService.get().summary(showTraktId.toString(), seasonNumber, episodeNumber, Extended.FULL)
-                .fetchBodyWithRetry()
-                .let(episodeMapper::map)
-    }
-
+) : SeasonsEpisodesDataSource {
     override suspend fun getSeasonsEpisodes(showId: Long): List<Pair<Season, List<Episode>>> {
-        val showTraktId = traktIdMapper.map(showId) ?: return emptyList()
+        val showTraktId = showIdToTraktIdMapper.map(showId) ?: return emptyList()
 
         return seasonsService.get().summary(showTraktId.toString(), Extended.FULLEPISODES)
                 .fetchBodyWithRetry()
@@ -64,7 +59,7 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
     }
 
     override suspend fun getShowEpisodeWatches(showId: Long): List<Pair<Episode, EpisodeWatchEntry>> {
-        val showTraktId = traktIdMapper.map(showId) ?: return emptyList()
+        val showTraktId = showIdToTraktIdMapper.map(showId) ?: return emptyList()
 
         return usersService.get().history(UserSlug.ME, HistoryType.SHOWS, showTraktId,
                 0, 10000, Extended.NOSEASONS, null, null)
@@ -74,12 +69,15 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
     }
 
     override suspend fun addEpisodeWatches(watches: List<EpisodeWatchEntry>) {
-        val traktIds = watches.mapNotNull { it.traktId }
-        if (traktIds.isNotEmpty()) {
+        if (watches.isNotEmpty()) {
             val items = SyncItems()
-            items.ids = traktIds
+            items.episodes = watches.mapNotNull {
+                episodeIdToTraktIdMapper.map(it.episodeId)?.let {
+                    SyncEpisode().id(EpisodeIds.trakt(it))
+                }
+            }
 
-            val response = syncService.get().deleteItemsFromWatchedHistory(items).fetchBody()
+            val response = syncService.get().addItemsToWatchedHistory(items).fetchBody()
             // TODO check response
         }
     }
@@ -90,7 +88,7 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
             val items = SyncItems()
             items.ids = traktIds
 
-            val response = syncService.get().addItemsToWatchedHistory(items).fetchBody()
+            val response = syncService.get().deleteItemsFromWatchedHistory(items).fetchBody()
             // TODO check response
         }
     }

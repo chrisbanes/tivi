@@ -17,6 +17,8 @@
 package app.tivi.data.repositories.shows
 
 import app.tivi.data.entities.TiviShow
+import app.tivi.inject.Tmdb
+import app.tivi.inject.Trakt
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.async
 import javax.inject.Inject
@@ -24,8 +26,8 @@ import javax.inject.Inject
 class ShowRepositoryImpl @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val localShowStore: LocalShowStore,
-    private val tmdbShowDataSource: TmdbShowDataSource,
-    private val traktShowDataSource: TraktShowDataSource
+    @Tmdb private val tmdbShowDataSource: ShowDataSource,
+    @Trakt private val traktShowDataSource: ShowDataSource
 ) : ShowRepository {
     override fun observeShow(showId: Long) = localShowStore.observeShow(showId)
 

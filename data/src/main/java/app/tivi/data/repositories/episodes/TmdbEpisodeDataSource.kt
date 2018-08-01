@@ -24,7 +24,7 @@ import com.uwetrottmann.tmdb2.Tmdb
 import retrofit2.HttpException
 import javax.inject.Inject
 
-class TmdbSeasonsEpisodesDataSource @Inject constructor(
+class TmdbEpisodeDataSource @Inject constructor(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
     private val tmdb: Tmdb,
     private val episodeMapper: TmdbEpisodeToEpisode

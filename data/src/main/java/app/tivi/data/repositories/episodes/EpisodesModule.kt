@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package app.tivi.data.mappers
+package app.tivi.data.repositories.episodes
 
-import app.tivi.data.daos.TiviShowDao
-import javax.inject.Inject
-import javax.inject.Singleton
+import app.tivi.inject.Tmdb
+import app.tivi.inject.Trakt
+import dagger.Binds
+import dagger.Module
 
-@Singleton
-class ShowIdToTraktIdMapper @Inject constructor(
-    private val showDao: TiviShowDao
-) : Mapper<Long, Int?> {
-    override fun map(from: Long) = showDao.getTraktIdForShowId(from)
-}
+@Module
+abstract class EpisodesModule {
+    @Binds
+    @Trakt
+    abstract fun bind(source: TraktSeasonsEpisodesDataSource): SeasonsEpisodesDataSource
 
-@Singleton
-class ShowIdToTmdbIdMapper @Inject constructor(
-    private val showDao: TiviShowDao
-) : Mapper<Long, Int?> {
-    override fun map(from: Long) = showDao.getTmdbIdForShowId(from)
+    @Binds
+    @Trakt
+    abstract fun bind(source: TraktEpisodeDataSource): EpisodeDataSource
+
+    @Binds
+    @Tmdb
+    abstract fun bind(source: TmdbEpisodeDataSource): EpisodeDataSource
 }

@@ -47,6 +47,10 @@ class LocalSeasonsEpisodesStore @Inject constructor(
         return episodesDao.episodeWithIdFlowable(episodeId)
     }
 
+    fun observeEpisodeWatches(episodeId: Long): Flowable<List<EpisodeWatchEntry>> {
+        return episodeWatchEntryDao.watchesForEpisodeFlowable(episodeId)
+    }
+
     fun observeShowSeasonsWithEpisodes(showId: Long): Flowable<List<SeasonWithEpisodesAndWatches>> {
         return seasonsDao.seasonsWithEpisodesForShowId(showId)
     }

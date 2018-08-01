@@ -39,6 +39,8 @@ class SeasonsEpisodesRepository @Inject constructor(
 
     fun observeEpisode(episodeId: Long) = localStore.observeEpisode(episodeId)
 
+    fun observeEpisodeWatches(episodeId: Long) = localStore.observeEpisodeWatches(episodeId)
+
     suspend fun updateSeasonsEpisodes(showId: Long) {
         traktSeasonsDataSource.getSeasonsEpisodes(showId)
                 .map { (traktSeason, episodes) ->

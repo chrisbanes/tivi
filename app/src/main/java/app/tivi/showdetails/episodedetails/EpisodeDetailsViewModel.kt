@@ -22,9 +22,10 @@ import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
-import app.tivi.datasources.trakt.EpisodeWatchesDataSource
 import app.tivi.interactors.SyncFollowedShowWatchedProgress
 import app.tivi.interactors.UpdateEpisodeDetails
+import app.tivi.interactors.UpdateEpisodeWatches
+import app.tivi.showdetails.episodedetails.EpisodeDetailsViewState.Action
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
@@ -38,7 +39,7 @@ import javax.inject.Inject
 
 class EpisodeDetailsViewModel @Inject constructor(
     private val updateEpisodeDetails: UpdateEpisodeDetails,
-    private val episodeWatchesCall: EpisodeWatchesDataSource,
+    private val updateEpisodeWatches: UpdateEpisodeWatches,
     private val tmdbManager: TmdbManager,
     private val logger: Logger,
     private val episodesDao: EpisodesDao,
@@ -52,7 +53,6 @@ class EpisodeDetailsViewModel @Inject constructor(
         set(value) {
             if (field != value) {
                 field = value
-                setupLiveData(value!!)
                 refresh()
             }
         }
@@ -61,30 +61,31 @@ class EpisodeDetailsViewModel @Inject constructor(
     val data: LiveData<EpisodeDetailsViewState>
         get() = _data
 
+    init {
+        setupLiveData()
+    }
+
     private fun refresh() {
         val epId = episodeId
         if (epId != null) {
             launchInteractor(updateEpisodeDetails, UpdateEpisodeDetails.Params(epId, true))
+            launchInteractor(updateEpisodeWatches, UpdateEpisodeWatches.Params(epId, true))
         } else {
             _data.value = null
         }
     }
 
-    private fun setupLiveData(episodeId: Long) {
+    private fun setupLiveData() {
         disposables.clear()
 
-        val watches = episodeWatchesCall.data(episodeId)
+        val watches = updateEpisodeWatches.observe()
 
         disposables += Flowables.combineLatest(
                 updateEpisodeDetails.observe(),
                 watches,
                 tmdbManager.imageProvider,
                 watches.map {
-                    if (it.isEmpty()) {
-                        EpisodeDetailsViewState.Action.WATCH
-                    } else {
-                        EpisodeDetailsViewState.Action.UNWATCH
-                    }
+                    if (it.isEmpty()) { Action.WATCH } else { Action.UNWATCH }
                 },
                 Flowable.just(dateTimeFormatter),
                 ::EpisodeDetailsViewState
