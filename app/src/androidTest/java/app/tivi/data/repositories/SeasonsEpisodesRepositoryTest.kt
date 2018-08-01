@@ -28,8 +28,6 @@ import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.episodeOne
 import app.tivi.utils.episodeWatch1
 import app.tivi.utils.episodeWatch2
-import app.tivi.utils.episodeWatch2PendingDelete
-import app.tivi.utils.episodeWatch2PendingSend
 import app.tivi.utils.insertEpisodes
 import app.tivi.utils.insertSeason
 import app.tivi.utils.insertShow
@@ -93,9 +91,9 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
                 listOf(episodeOne to episodeWatch1, episodeOne to episodeWatch2)
         )
         // Sync
-        repository.syncEpisodeWatches(showId)
+        repository.syncEpisodeWatchesForShow(showId)
         // Assert that both are in the db
-        assertThat(localEpisodeStore.getEpisodeWatches(showId), `is`(listOf(episodeWatch1, episodeWatch2)))
+        assertThat(localEpisodeStore.getEpisodeWatchesForShow(showId), `is`(listOf(episodeWatch1, episodeWatch2)))
     }
 
     @Test
@@ -106,9 +104,9 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         `when`(traktSeasonsDataSource.getShowEpisodeWatches(showId))
                 .thenReturn(listOf(episodeOne to episodeWatch1, episodeOne to episodeWatch2))
         // Now re-sync with the same response
-        repository.syncEpisodeWatches(showId)
+        repository.syncEpisodeWatchesForShow(showId)
         // Assert that both are in the db
-        assertThat(localEpisodeStore.getEpisodeWatches(showId), `is`(listOf(episodeWatch1, episodeWatch2)))
+        assertThat(localEpisodeStore.getEpisodeWatchesForShow(showId), `is`(listOf(episodeWatch1, episodeWatch2)))
     }
 
     @Test
@@ -119,9 +117,9 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         `when`(traktSeasonsDataSource.getShowEpisodeWatches(showId))
                 .thenReturn(listOf(episodeOne to episodeWatch2))
         // Now re-sync
-        repository.syncEpisodeWatches(showId)
+        repository.syncEpisodeWatchesForShow(showId)
         // Assert that only the second is in the db
-        assertThat(localEpisodeStore.getEpisodeWatches(showId), `is`(listOf(episodeWatch2)))
+        assertThat(localEpisodeStore.getEpisodeWatchesForShow(showId), `is`(listOf(episodeWatch2)))
     }
 
     @Test
@@ -131,30 +129,8 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         // Return a empty response
         `when`(traktSeasonsDataSource.getShowEpisodeWatches(showId)).thenReturn(emptyList())
         // Now re-sync
-        repository.syncEpisodeWatches(showId)
+        repository.syncEpisodeWatchesForShow(showId)
         // Assert that the database is empty
-        assertThat(localEpisodeStore.getEpisodeWatches(showId), `is`(emptyList()))
-    }
-
-    @Test
-    fun testSync_pendingDelete() = runBlocking {
-        loggedInState = TraktAuthState.LOGGED_OUT
-
-        episodeWatchDao.insert(episodeWatch2PendingDelete)
-        // Now re-sync
-        repository.syncEpisodeWatches(showId)
-        // Assert that the database is empty
-        assertThat(localEpisodeStore.getEpisodeWatches(showId), `is`(emptyList()))
-    }
-
-    @Test
-    fun testSync_pendingAdd() = runBlocking {
-        loggedInState = TraktAuthState.LOGGED_OUT
-
-        episodeWatchDao.insert(episodeWatch2PendingSend)
-        // Now re-sync
-        repository.syncEpisodeWatches(showId)
-        // Assert that the database has episode watch 2 (not pending)
-        assertThat(localEpisodeStore.getEpisodeWatches(showId), `is`(listOf(episodeWatch2)))
+        assertThat(localEpisodeStore.getEpisodeWatchesForShow(showId), `is`(emptyList()))
     }
 }

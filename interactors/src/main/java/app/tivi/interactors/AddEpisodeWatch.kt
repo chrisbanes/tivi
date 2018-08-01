@@ -16,25 +16,21 @@
 
 package app.tivi.interactors
 
-import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
+import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 
-class SyncFollowedShowWatchedProgress @Inject constructor(
-    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
-    private val followedShowsDao: FollowedShowsDao,
-    dispatchers: AppCoroutineDispatchers
-) : Interactor<SyncFollowedShowWatchedProgress.Params> {
+class AddEpisodeWatch @Inject constructor(
+    dispatchers: AppCoroutineDispatchers,
+    private val seasonsEpisodesRepository: SeasonsEpisodesRepository
+) : Interactor<AddEpisodeWatch.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend operator fun invoke(param: Params) {
-        val entry = followedShowsDao.entryWithShowId(param.showId)
-                ?: throw IllegalArgumentException("Followed entry with showId does not exist. $param")
-
-        seasonsEpisodesRepository.syncEpisodeWatchesForShow(entry.showId)
+        seasonsEpisodesRepository.addEpisodeWatch(param.episodeId, param.timestamp)
     }
 
-    data class Params(val showId: Long, val forceLoad: Boolean)
+    data class Params(val episodeId: Long, val timestamp: OffsetDateTime)
 }

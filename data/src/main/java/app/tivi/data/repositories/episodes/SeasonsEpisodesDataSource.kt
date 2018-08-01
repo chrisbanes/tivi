@@ -23,6 +23,7 @@ import app.tivi.data.entities.Season
 interface SeasonsEpisodesDataSource {
     suspend fun getSeasonsEpisodes(showId: Long): List<Pair<Season, List<Episode>>>
     suspend fun getShowEpisodeWatches(showId: Long): List<Pair<Episode, EpisodeWatchEntry>>
+    suspend fun getEpisodeWatches(episodeId: Long): List<EpisodeWatchEntry>
     suspend fun addEpisodeWatches(watches: List<EpisodeWatchEntry>)
     suspend fun removeEpisodeWatches(watches: List<EpisodeWatchEntry>)
 }

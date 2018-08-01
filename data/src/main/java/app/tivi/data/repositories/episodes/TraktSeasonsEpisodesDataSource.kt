@@ -68,6 +68,15 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
                 .map { episodeMapper.map(it.episode) to historyItemMapper.map(it) }
     }
 
+    override suspend fun getEpisodeWatches(episodeId: Long): List<EpisodeWatchEntry> {
+        val episodeTraktId = episodeIdToTraktIdMapper.map(episodeId) ?: return emptyList()
+
+        return usersService.get().history(UserSlug.ME, HistoryType.EPISODES, episodeTraktId,
+                0, 10000, Extended.NOSEASONS, null, null)
+                .fetchBodyWithRetry()
+                .map { historyItemMapper.map(it) }
+    }
+
     override suspend fun addEpisodeWatches(watches: List<EpisodeWatchEntry>) {
         if (watches.isNotEmpty()) {
             val items = SyncItems()

@@ -74,6 +74,8 @@ class LocalSeasonsEpisodesStore @Inject constructor(
 
     fun save(episode: Episode) = entityInserter.insertOrUpdate(episodesDao, episode)
 
+    fun save(watch: EpisodeWatchEntry) = entityInserter.insertOrUpdate(episodeWatchEntryDao, watch)
+
     fun save(data: List<Pair<Season, List<Episode>>>) = transactionRunner {
         data.forEach { (season, episodes) ->
             val seasonId = entityInserter.insertOrUpdate(seasonsDao, season)
@@ -83,7 +85,9 @@ class LocalSeasonsEpisodesStore @Inject constructor(
         }
     }
 
-    fun getEpisodeWatches(showId: Long) = episodeWatchEntryDao.entriesForShowId(showId)
+    fun getEpisodeWatchesForShow(showId: Long) = episodeWatchEntryDao.entriesForShowId(showId)
+
+    fun getWatchesForEpisode(episodeId: Long) = episodeWatchEntryDao.watchesForEpisode(episodeId)
 
     fun getEntriesWithAddAction(showId: Long) = episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId)
 
@@ -95,8 +99,13 @@ class LocalSeasonsEpisodesStore @Inject constructor(
         return episodeWatchEntryDao.updateEntriesToPendingAction(ids, action.value)
     }
 
-    fun syncWatchEntries(showId: Long, watches: List<EpisodeWatchEntry>) = transactionRunner {
+    fun syncShowWatchEntries(showId: Long, watches: List<EpisodeWatchEntry>) = transactionRunner {
         val currentWatches = episodeWatchEntryDao.entriesForShowIdWithNoPendingAction(showId)
+        syncer.sync(currentWatches, watches)
+    }
+
+    fun syncEpisodeWatchEntries(episodeId: Long, watches: List<EpisodeWatchEntry>) = transactionRunner {
+        val currentWatches = episodeWatchEntryDao.watchesForEpisode(episodeId)
         syncer.sync(currentWatches, watches)
     }
 }

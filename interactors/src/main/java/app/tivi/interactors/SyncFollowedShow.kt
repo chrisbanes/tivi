@@ -42,7 +42,7 @@ class SyncFollowedShow @Inject constructor(
         seasonsEpisodesRepository.updateSeasonsEpisodes(entry.showId)
         // Finally update any watched progress
         if (authed) {
-            seasonsEpisodesRepository.syncEpisodeWatches(entry.showId)
+            seasonsEpisodesRepository.syncEpisodeWatchesForShow(entry.showId)
         }
     }
 

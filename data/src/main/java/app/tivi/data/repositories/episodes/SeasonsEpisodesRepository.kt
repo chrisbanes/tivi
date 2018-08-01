@@ -17,6 +17,7 @@
 package app.tivi.data.repositories.episodes
 
 import app.tivi.data.entities.Episode
+import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.inject.Tmdb
@@ -24,6 +25,7 @@ import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.async
+import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -74,15 +76,44 @@ class SeasonsEpisodesRepository @Inject constructor(
         localStore.save(mergeEpisode(local, trakt.await(), tmdb.await()))
     }
 
-    suspend fun syncEpisodeWatches(showId: Long) {
-        processPendingDelete(showId)
-        processPendingAdditions(showId)
+    suspend fun syncEpisodeWatchesForShow(showId: Long) {
+        processShowWatchesPendingDelete(showId)
+        processShowWatchesPendingAdditions(showId)
         if (traktAuthState.get() == TraktAuthState.LOGGED_IN) {
-            refreshWatchesFromRemote(showId)
+            refreshShowWatchesFromRemote(showId)
         }
     }
 
-    private suspend fun processPendingAdditions(showId: Long) {
+    suspend fun syncEpisodeWatches(episodeId: Long) {
+        processEpisodeWatchesPendingDelete(episodeId)
+        processEpisodeWatchesPendingAdditions(episodeId)
+        if (traktAuthState.get() == TraktAuthState.LOGGED_IN) {
+            refreshEpisodeWatchesFromRemote(episodeId)
+        }
+    }
+
+    suspend fun addEpisodeWatch(episodeId: Long, timestamp: OffsetDateTime) {
+        val entry = EpisodeWatchEntry(
+                episodeId = episodeId,
+                watchedAt = timestamp,
+                pendingAction = PendingAction.UPLOAD
+        )
+        localStore.save(entry)
+
+        syncEpisodeWatches(episodeId)
+    }
+
+    suspend fun removeAllEpisodeWatches(episodeId: Long) {
+        val watchesForEpisode = localStore.getWatchesForEpisode(episodeId)
+        if (watchesForEpisode.isNotEmpty()) {
+            val ids = watchesForEpisode.mapNotNull { it.id }
+            // First mark them as pending deletion
+            localStore.updateWatchEntriesWithAction(ids, PendingAction.DELETE)
+        }
+        syncEpisodeWatches(episodeId)
+    }
+
+    private suspend fun processShowWatchesPendingAdditions(showId: Long) {
         val entries = localStore.getEntriesWithAddAction(showId)
         if (entries.isNotEmpty() && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
             traktSeasonsDataSource.addEpisodeWatches(entries)
@@ -91,7 +122,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         localStore.updateWatchEntriesWithAction(entries.mapNotNull { it.id }, PendingAction.NOTHING)
     }
 
-    private suspend fun processPendingDelete(showId: Long) {
+    private suspend fun processShowWatchesPendingDelete(showId: Long) {
         val entries = localStore.getEntriesWithDeleteAction(showId)
         if (entries.isNotEmpty() && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
             traktSeasonsDataSource.removeEpisodeWatches(entries)
@@ -100,14 +131,40 @@ class SeasonsEpisodesRepository @Inject constructor(
         localStore.deleteWatchEntriesWithIds(entries.mapNotNull { it.id })
     }
 
-    private suspend fun refreshWatchesFromRemote(showId: Long) {
+    private suspend fun refreshShowWatchesFromRemote(showId: Long) {
         traktSeasonsDataSource.getShowEpisodeWatches(showId)
                 .map { (episode, watchEntry) ->
                     // Grab the episode id if it exists, or save the episode and use it's generated ID
                     val episodeId = localStore.getEpisodeIdOrSavePlaceholder(episode)
                     watchEntry.copy(episodeId = episodeId)
                 }
-                .also { localStore.syncWatchEntries(showId, it) }
+                .also { localStore.syncShowWatchEntries(showId, it) }
+    }
+
+    private suspend fun refreshEpisodeWatchesFromRemote(episodeId: Long) {
+        traktSeasonsDataSource.getEpisodeWatches(episodeId)
+                .map { it.copy(episodeId = episodeId) }
+                .also { localStore.syncEpisodeWatchEntries(episodeId, it) }
+    }
+
+    private suspend fun processEpisodeWatchesPendingAdditions(episodeId: Long) {
+        val entries = localStore.getWatchesForEpisode(episodeId)
+                .filter { it.pendingAction == PendingAction.UPLOAD }
+        if (entries.isNotEmpty() && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
+            traktSeasonsDataSource.addEpisodeWatches(entries)
+        }
+        // Now update the database
+        localStore.updateWatchEntriesWithAction(entries.mapNotNull { it.id }, PendingAction.NOTHING)
+    }
+
+    private suspend fun processEpisodeWatchesPendingDelete(episodeId: Long) {
+        val entries = localStore.getWatchesForEpisode(episodeId)
+                .filter { it.pendingAction == PendingAction.DELETE }
+        if (entries.isNotEmpty() && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
+            traktSeasonsDataSource.removeEpisodeWatches(entries)
+        }
+        // Now update the database
+        localStore.deleteWatchEntriesWithIds(entries.mapNotNull { it.id })
     }
 
     private fun mergeSeason(local: Season, trakt: Season, tmdb: Season) = local.copy(
