@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.shows
+package app.tivi.data.entities
 
-import app.tivi.data.entities.Result
-import app.tivi.data.entities.TiviShow
+sealed class Result<T>
 
-interface ShowDataSource {
-    suspend fun getShow(showId: Long): Result<TiviShow>
-}
+data class Success<T>(val data: T) : Result<T>()
+
+data class ErrorResult<T>(val exception: Exception) : Result<T>()

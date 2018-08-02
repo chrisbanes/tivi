@@ -16,10 +16,13 @@
 
 package app.tivi.data.repositories.shows
 
+import app.tivi.data.RetrofitRunner
+import app.tivi.data.entities.ErrorResult
+import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.ShowIdToTraktIdMapper
 import app.tivi.data.mappers.TraktShowToTiviShow
-import app.tivi.extensions.fetchBodyWithRetry
+import app.tivi.extensions.executeWithRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
 import javax.inject.Inject
@@ -28,10 +31,17 @@ import javax.inject.Provider
 class TraktShowDataSource @Inject constructor(
     private val traktIdMapper: ShowIdToTraktIdMapper,
     private val showService: Provider<Shows>,
-    private val mapper: TraktShowToTiviShow
+    private val mapper: TraktShowToTiviShow,
+    private val retrofitRunner: RetrofitRunner
 ) : ShowDataSource {
-    override suspend fun getShow(showId: Long): TiviShow? = traktIdMapper.map(showId)?.let {
-        val show = showService.get().summary(it.toString(), Extended.FULL).fetchBodyWithRetry()
-        mapper.map(show)
+    override suspend fun getShow(showId: Long): Result<TiviShow> {
+        val traktId = traktIdMapper.map(showId)
+        return if (traktId != null) {
+            retrofitRunner.executeForResponse(mapper) {
+                showService.get().summary(traktId.toString(), Extended.FULL).executeWithRetry()
+            }
+        } else {
+            ErrorResult(IllegalArgumentException("TraktId for show with id $showId does not exist"))
+        }
     }
 }

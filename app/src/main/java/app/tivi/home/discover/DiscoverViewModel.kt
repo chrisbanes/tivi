@@ -59,6 +59,8 @@ class DiscoverViewModel @Inject constructor(
                 ::DiscoverViewState)
                 .observeOn(schedulers.main)
                 .subscribe(_data::setValue, logger::e)
+
+        refresh()
     }
 
     fun refresh() {

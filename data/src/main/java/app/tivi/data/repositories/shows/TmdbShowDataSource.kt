@@ -16,20 +16,30 @@
 
 package app.tivi.data.repositories.shows
 
+import app.tivi.data.RetrofitRunner
+import app.tivi.data.entities.ErrorResult
+import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.ShowIdToTmdbIdMapper
 import app.tivi.data.mappers.TmdbShowToTiviShow
-import app.tivi.extensions.fetchBodyWithRetry
+import app.tivi.extensions.executeWithRetry
 import com.uwetrottmann.tmdb2.Tmdb
 import javax.inject.Inject
 
 class TmdbShowDataSource @Inject constructor(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
     private val tmdb: Tmdb,
-    private val mapper: TmdbShowToTiviShow
+    private val mapper: TmdbShowToTiviShow,
+    private val retrofitRunner: RetrofitRunner
 ) : ShowDataSource {
-    override suspend fun getShow(showId: Long): TiviShow? = tmdbIdMapper.map(showId)?.let {
-        val tmdbShow = tmdb.tvService().tv(it).fetchBodyWithRetry()
-        mapper.map(tmdbShow)
+    override suspend fun getShow(showId: Long): Result<TiviShow> {
+        val tmdbId = tmdbIdMapper.map(showId)
+        return if (tmdbId != null) {
+            retrofitRunner.executeForResponse(mapper) {
+                tmdb.tvService().tv(tmdbId).executeWithRetry()
+            }
+        } else {
+            ErrorResult(IllegalArgumentException("TmdbId for show with id $showId does not exist"))
+        }
     }
 }

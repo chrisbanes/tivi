@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories.shows
 
+import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
@@ -44,10 +45,18 @@ class ShowRepositoryImpl @Inject constructor(
      */
     override suspend fun updateShow(showId: Long) {
         val traktResult = async(dispatchers.io) {
-            traktShowDataSource.getShow(showId) ?: TiviShow.EMPTY_SHOW
+            val response = traktShowDataSource.getShow(showId)
+            when (response) {
+                is Success -> response.data
+                else -> TiviShow.EMPTY_SHOW
+            }
         }
         val tmdbResult = async(dispatchers.io) {
-            tmdbShowDataSource.getShow(showId) ?: TiviShow.EMPTY_SHOW
+            val response = tmdbShowDataSource.getShow(showId)
+            when (response) {
+                is Success -> response.data
+                else -> TiviShow.EMPTY_SHOW
+            }
         }
         val localResult = async(dispatchers.io) {
             localShowStore.getShow(showId) ?: TiviShow.EMPTY_SHOW
