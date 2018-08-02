@@ -36,7 +36,9 @@ class ShowRepositoryImpl @Inject constructor(
      * Updates the show with the given id from all network sources, saves the result to the database
      */
     override suspend fun getShow(showId: Long): TiviShow {
-        updateShow(showId)
+        if (needsUpdate(showId)) {
+            updateShow(showId)
+        }
         return localShowStore.getShow(showId)!!
     }
 
@@ -62,6 +64,13 @@ class ShowRepositoryImpl @Inject constructor(
             localShowStore.getShow(showId) ?: TiviShow.EMPTY_SHOW
         }
         localShowStore.saveShow(mergeShow(localResult.await(), traktResult.await(), tmdbResult.await()))
+    }
+
+    override suspend fun needsUpdate(showId: Long): Boolean {
+        // TODO this should really look at request times or something
+        val show = localShowStore.getShow(showId)
+                ?: throw IllegalArgumentException("Show with id $showId does not exist")
+        return show.tmdbPosterPath.isNullOrEmpty() || show.tmdbBackdropPath.isNullOrEmpty()
     }
 
     private fun mergeShow(local: TiviShow, trakt: TiviShow, tmdb: TiviShow) = local.copy(

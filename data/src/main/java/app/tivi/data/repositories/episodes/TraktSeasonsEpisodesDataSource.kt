@@ -23,12 +23,9 @@ import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.Season
 import app.tivi.data.mappers.EpisodeIdToTraktIdMapper
-import app.tivi.data.mappers.Mapper
 import app.tivi.data.mappers.ShowIdToTraktIdMapper
-import app.tivi.data.mappers.SingleToListMapper
 import app.tivi.data.mappers.TraktEpisodeToEpisode
 import app.tivi.data.mappers.TraktHistoryItemToEpisodeWatchEntry
-import app.tivi.data.mappers.TraktSeasonToSeason
 import app.tivi.data.mappers.TraktSeasonToSeasonWithEpisodes
 import app.tivi.data.mappers.toListMapper
 import app.tivi.extensions.executeWithRetry

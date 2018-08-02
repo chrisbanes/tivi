@@ -66,7 +66,9 @@ class FollowedShowsRepository @Inject constructor(
                     localStore.sync(it)
                     // Now update all of the followed shows if needed
                     it.parallelForEach(dispatchers.io) {
-                        showRepository.updateShow(it.showId)
+                        if (showRepository.needsUpdate(it.showId)) {
+                            showRepository.updateShow(it.showId)
+                        }
                     }
                 }
     }

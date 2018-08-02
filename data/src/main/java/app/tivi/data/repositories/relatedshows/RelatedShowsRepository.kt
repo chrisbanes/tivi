@@ -19,9 +19,11 @@ package app.tivi.data.repositories.relatedshows
 import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
+import app.tivi.util.AppCoroutineDispatchers
 import javax.inject.Inject
 
 class RelatedShowsRepository @Inject constructor(
+    private val dispatchers: AppCoroutineDispatchers,
     private val localStore: LocalRelatedShowsStore,
     private val localShowStore: LocalShowStore,
     private val traktDataSource: TraktRelatedShowsDataSource,
@@ -46,7 +48,11 @@ class RelatedShowsRepository @Inject constructor(
                     // Save the related entries
                     localStore.saveRelatedShows(showId, it)
                     // Now update all of the related shows if needed
-                    it.parallelForEach { showRepository.updateShow(it.otherShowId) }
+                    it.parallelForEach(dispatchers.io) {
+                        if (showRepository.needsUpdate(it.otherShowId)) {
+                            showRepository.updateShow(it.otherShowId)
+                        }
+                    }
                 }
     }
 }

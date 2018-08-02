@@ -21,10 +21,12 @@ import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.extensions.parallelForEach
+import app.tivi.util.AppCoroutineDispatchers
 import io.reactivex.Flowable
 import javax.inject.Inject
 
 class PopularShowsRepository @Inject constructor(
+    private val dispatchers: AppCoroutineDispatchers,
     private val localStore: LocalPopularShowsStore,
     private val showStore: LocalShowStore,
     private val traktDataSource: TraktPopularShowsDataSource,
@@ -58,7 +60,11 @@ class PopularShowsRepository @Inject constructor(
                     // Save the popular entries
                     localStore.savePopularShowsPage(page, it)
                     // Now update all of the related shows if needed
-                    it.parallelForEach { showRepository.updateShow(it.showId) }
+                    it.parallelForEach(dispatchers.io) {
+                        if (showRepository.needsUpdate(it.showId)) {
+                            showRepository.updateShow(it.showId)
+                        }
+                    }
                 }
     }
 }
