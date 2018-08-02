@@ -16,8 +16,9 @@
 
 package app.tivi.data.repositories.relatedshows
 
-import app.tivi.data.resultentities.RelatedShowEntryWithShow
+import app.tivi.data.entities.RelatedShowEntry
+import app.tivi.data.entities.TiviShow
 
 interface RelatedShowsDataSource {
-    suspend fun getRelatedShows(showId: Long): List<RelatedShowEntryWithShow>
+    suspend fun getRelatedShows(showId: Long): List<Pair<TiviShow, RelatedShowEntry>>
 }

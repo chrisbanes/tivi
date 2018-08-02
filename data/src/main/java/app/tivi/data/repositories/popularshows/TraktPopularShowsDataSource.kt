@@ -17,8 +17,8 @@
 package app.tivi.data.repositories.popularshows
 
 import app.tivi.data.entities.PopularShowEntry
+import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TraktShowToTiviShow
-import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.extensions.fetchBodyWithRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
@@ -29,14 +29,11 @@ class TraktPopularShowsDataSource @Inject constructor(
     private val showService: Provider<Shows>,
     private val mapper: TraktShowToTiviShow
 ) : PopularShowsDataSource {
-    override suspend fun getTrendingShows(page: Int, pageSize: Int): List<PopularEntryWithShow> {
+    override suspend fun getPopularShows(page: Int, pageSize: Int): List<Pair<TiviShow, PopularShowEntry>> {
         // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
-        val results = showService.get().trending(page + 1, pageSize, Extended.NOSEASONS).fetchBodyWithRetry()
-        return results.mapIndexed { index, watchedShow ->
-            PopularEntryWithShow().apply {
-                relations = listOf(mapper.map(watchedShow.show))
-                entry = PopularShowEntry(showId = 0, pageOrder = index, page = page)
-            }
+        val results = showService.get().popular(page + 1, pageSize, Extended.NOSEASONS).fetchBodyWithRetry()
+        return results.mapIndexed { index, show ->
+            mapper.map(show) to PopularShowEntry(showId = 0, pageOrder = index, page = page)
         }
     }
 }

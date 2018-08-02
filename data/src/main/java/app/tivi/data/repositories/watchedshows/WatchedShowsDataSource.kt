@@ -16,8 +16,9 @@
 
 package app.tivi.data.repositories.watchedshows
 
-import app.tivi.data.resultentities.WatchedShowEntryWithShow
+import app.tivi.data.entities.TiviShow
+import app.tivi.data.entities.WatchedShowEntry
 
 interface WatchedShowsDataSource {
-    suspend fun getWatchedShows(): List<WatchedShowEntryWithShow>
+    suspend fun getWatchedShows(): List<Pair<TiviShow, WatchedShowEntry>>
 }

@@ -44,12 +44,12 @@ class PopularShowsRepository @Inject constructor(
     }
 
     private suspend fun updatePopularShows(page: Int, resetOnSave: Boolean) {
-        traktDataSource.getTrendingShows(page, 20)
-                .map {
+        traktDataSource.getPopularShows(page, 20)
+                .map { (show, entry) ->
                     // Grab the show id if it exists, or save the show and use it's generated ID
-                    val showId = showStore.getIdOrSavePlaceholder(it.show)
+                    val showId = showStore.getIdOrSavePlaceholder(show)
                     // Make a copy of the entry with the id
-                    it.entry!!.copy(showId = showId)
+                    entry.copy(showId = showId)
                 }
                 .also {
                     if (resetOnSave) {

@@ -17,9 +17,9 @@
 package app.tivi.data.repositories.relatedshows
 
 import app.tivi.data.entities.RelatedShowEntry
+import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.ShowIdToTraktIdMapper
 import app.tivi.data.mappers.TraktShowToTiviShow
-import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.extensions.fetchBodyWithRetry
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
@@ -31,17 +31,14 @@ class TraktRelatedShowsDataSource @Inject constructor(
     private val showService: Provider<Shows>,
     private val mapper: TraktShowToTiviShow
 ) : RelatedShowsDataSource {
-    override suspend fun getRelatedShows(showId: Long): List<RelatedShowEntryWithShow> {
+    override suspend fun getRelatedShows(showId: Long): List<Pair<TiviShow, RelatedShowEntry>> {
         val traktId = traktIdMapper.map(showId) ?: return emptyList()
 
         val results = showService.get().related(traktId.toString(), 0, 10, Extended.NOSEASONS)
                 .fetchBodyWithRetry()
 
         return results.mapIndexed { index, relatedShow ->
-            RelatedShowEntryWithShow().apply {
-                relations = listOf(mapper.map(relatedShow))
-                entry = RelatedShowEntry(showId = showId, otherShowId = 0, orderIndex = index)
-            }
+            mapper.map(relatedShow) to RelatedShowEntry(showId = showId, otherShowId = 0, orderIndex = index)
         }
     }
 }

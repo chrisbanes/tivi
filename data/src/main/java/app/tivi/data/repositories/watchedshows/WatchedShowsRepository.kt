@@ -36,11 +36,11 @@ class WatchedShowsRepository @Inject constructor(
 
     suspend fun updateWatchedShows() {
         traktDataSource.getWatchedShows()
-                .map {
+                .map { (show, entry) ->
                     // Grab the show id if it exists, or save the show and use it's generated ID
-                    val watchedShowId = localShowStore.getIdOrSavePlaceholder(it.show)
+                    val watchedShowId = localShowStore.getIdOrSavePlaceholder(show)
                     // Make a copy of the entry with the id
-                    it.entry!!.copy(showId = watchedShowId)
+                    entry.copy(showId = watchedShowId)
                 }
                 .also {
                     // Save the related entries

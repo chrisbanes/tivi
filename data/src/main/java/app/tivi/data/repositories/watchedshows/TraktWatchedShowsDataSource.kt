@@ -16,9 +16,9 @@
 
 package app.tivi.data.repositories.watchedshows
 
+import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.data.mappers.TraktShowToTiviShow
-import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.extensions.fetchBodyWithRetry
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
@@ -30,14 +30,10 @@ class TraktWatchedShowsDataSource @Inject constructor(
     private val usersService: Provider<Users>,
     private val mapper: TraktShowToTiviShow
 ) : WatchedShowsDataSource {
-    override suspend fun getWatchedShows(): List<WatchedShowEntryWithShow> {
+    override suspend fun getWatchedShows(): List<Pair<TiviShow, WatchedShowEntry>> {
         val results = usersService.get().watchedShows(UserSlug.ME, Extended.NOSEASONS).fetchBodyWithRetry()
-
-        return results.map { watchedShow ->
-            WatchedShowEntryWithShow().apply {
-                relations = listOf(mapper.map(watchedShow.show))
-                entry = WatchedShowEntry(showId = 0, lastWatched = watchedShow.last_watched_at)
-            }
+        return results.map {
+            mapper.map(it.show) to WatchedShowEntry(showId = 0, lastWatched = it.last_watched_at)
         }
     }
 }

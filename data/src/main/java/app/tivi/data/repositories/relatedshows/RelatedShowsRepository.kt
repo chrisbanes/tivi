@@ -36,11 +36,11 @@ class RelatedShowsRepository @Inject constructor(
 
     suspend fun updateRelatedShows(showId: Long) {
         traktDataSource.getRelatedShows(showId)
-                .map {
+                .map { (show, entry) ->
                     // Grab the show id if it exists, or save the show and use it's generated ID
-                    val relatedShowId = localShowStore.getIdOrSavePlaceholder(it.show)
+                    val relatedShowId = localShowStore.getIdOrSavePlaceholder(show)
                     // Make a copy of the entry with the id
-                    it.entry!!.copy(otherShowId = relatedShowId)
+                    entry.copy(otherShowId = relatedShowId)
                 }
                 .also {
                     // Save the related entries
