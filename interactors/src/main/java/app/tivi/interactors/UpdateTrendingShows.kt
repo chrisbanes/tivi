@@ -20,12 +20,14 @@ import android.arch.paging.DataSource
 import app.tivi.data.repositories.trendingshows.TrendingShowsRepository
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
 class UpdateTrendingShows @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
+    private val schedulers: AppRxSchedulers,
     private val trendingShowsRepository: TrendingShowsRepository
 ) : PagingInteractor<UpdateTrendingShows.Params, TrendingEntryWithShow>,
         SubjectInteractor<UpdateTrendingShows.Params, List<TrendingEntryWithShow>>() {
@@ -37,6 +39,7 @@ class UpdateTrendingShows @Inject constructor(
 
     override fun createObservable(param: Params): Flowable<List<TrendingEntryWithShow>> {
         return trendingShowsRepository.observeForFlowable()
+                .subscribeOn(schedulers.io)
     }
 
     override suspend fun execute(param: Params) {

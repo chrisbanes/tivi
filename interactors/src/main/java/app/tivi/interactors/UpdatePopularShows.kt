@@ -20,12 +20,14 @@ import android.arch.paging.DataSource
 import app.tivi.data.repositories.popularshows.PopularShowsRepository
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
 class UpdatePopularShows @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
+    private val schedulers: AppRxSchedulers,
     private val popularShowsRepository: PopularShowsRepository
 ) : PagingInteractor<UpdatePopularShows.Params, PopularEntryWithShow>,
         SubjectInteractor<UpdatePopularShows.Params, List<PopularEntryWithShow>>() {
@@ -37,6 +39,7 @@ class UpdatePopularShows @Inject constructor(
 
     override fun createObservable(param: Params): Flowable<List<PopularEntryWithShow>> {
         return popularShowsRepository.observeForFlowable()
+                .subscribeOn(schedulers.io)
     }
 
     override suspend fun execute(param: Params) {
