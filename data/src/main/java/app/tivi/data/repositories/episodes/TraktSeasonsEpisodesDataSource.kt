@@ -16,14 +16,22 @@
 
 package app.tivi.data.repositories.episodes
 
+import app.tivi.data.RetrofitRunner
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
+import app.tivi.data.entities.ErrorResult
+import app.tivi.data.entities.Result
 import app.tivi.data.entities.Season
 import app.tivi.data.mappers.EpisodeIdToTraktIdMapper
+import app.tivi.data.mappers.Mapper
 import app.tivi.data.mappers.ShowIdToTraktIdMapper
+import app.tivi.data.mappers.SingleToListMapper
 import app.tivi.data.mappers.TraktEpisodeToEpisode
 import app.tivi.data.mappers.TraktHistoryItemToEpisodeWatchEntry
 import app.tivi.data.mappers.TraktSeasonToSeason
+import app.tivi.data.mappers.TraktSeasonToSeasonWithEpisodes
+import app.tivi.data.mappers.toListMapper
+import app.tivi.extensions.executeWithRetry
 import app.tivi.extensions.fetchBody
 import app.tivi.extensions.fetchBodyWithRetry
 import com.uwetrottmann.trakt5.entities.EpisodeIds
@@ -44,18 +52,20 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
     private val seasonsService: Provider<Seasons>,
     private val usersService: Provider<Users>,
     private val syncService: Provider<Sync>,
-    private val seasonMapper: TraktSeasonToSeason,
+    private val seasonMapper: TraktSeasonToSeasonWithEpisodes,
     private val episodeMapper: TraktEpisodeToEpisode,
-    private val historyItemMapper: TraktHistoryItemToEpisodeWatchEntry
+    private val historyItemMapper: TraktHistoryItemToEpisodeWatchEntry,
+    private val retrofitRunner: RetrofitRunner
 ) : SeasonsEpisodesDataSource {
-    override suspend fun getSeasonsEpisodes(showId: Long): List<Pair<Season, List<Episode>>> {
-        val showTraktId = showIdToTraktIdMapper.map(showId) ?: return emptyList()
-
-        return seasonsService.get().summary(showTraktId.toString(), Extended.FULLEPISODES)
-                .fetchBodyWithRetry()
-                .map {
-                    seasonMapper.map(it).copy(showId = showId) to it.episodes.map(episodeMapper::map)
-                }
+    override suspend fun getSeasonsEpisodes(showId: Long): Result<List<Pair<Season, List<Episode>>>> {
+        val showTraktId = showIdToTraktIdMapper.map(showId)
+        if (showTraktId != null) {
+            return retrofitRunner.executeForResponse(seasonMapper.toListMapper()) {
+                seasonsService.get().summary(showTraktId.toString(), Extended.FULLEPISODES).executeWithRetry()
+            }
+        } else {
+            return ErrorResult(IllegalArgumentException("TraktId does not exist for show with id: $showId"))
+        }
     }
 
     override suspend fun getShowEpisodeWatches(showId: Long): List<Pair<Episode, EpisodeWatchEntry>> {

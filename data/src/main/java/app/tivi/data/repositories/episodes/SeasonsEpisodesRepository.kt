@@ -20,6 +20,7 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
+import app.tivi.data.entities.Success
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
@@ -44,11 +45,12 @@ class SeasonsEpisodesRepository @Inject constructor(
     fun observeEpisodeWatches(episodeId: Long) = localStore.observeEpisodeWatches(episodeId)
 
     suspend fun updateSeasonsEpisodes(showId: Long) {
-        traktSeasonsDataSource.getSeasonsEpisodes(showId)
-                .map { (traktSeason, episodes) ->
-                    val localSeason = localStore.getSeasonWithTraktId(traktSeason.traktId!!)
-                            ?: Season(showId = showId)
-                    val mergedSeason = mergeSeason(localSeason, traktSeason, Season.EMPTY)
+        val result = traktSeasonsDataSource.getSeasonsEpisodes(showId)
+        when {
+            (result is Success && result.responseModified) -> {
+                result.data.map { (season, episodes) ->
+                    val localSeason = localStore.getSeasonWithTraktId(season.traktId!!) ?: Season(showId = showId)
+                    val mergedSeason = mergeSeason(localSeason, season, Season.EMPTY)
 
                     val mergedEpisodes = episodes.map {
                         val localEpisode = localStore.getEpisodeWithTraktId(it.traktId!!)
@@ -56,11 +58,12 @@ class SeasonsEpisodesRepository @Inject constructor(
                         mergeEpisode(localEpisode, it, Episode.EMPTY)
                     }
                     (mergedSeason to mergedEpisodes)
-                }
-                .also {
+                }.also {
                     // Save the seasons + episodes
                     localStore.save(it)
                 }
+            }
+        }
     }
 
     suspend fun updateEpisode(episodeId: Long) {

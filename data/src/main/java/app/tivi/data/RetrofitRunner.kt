@@ -29,10 +29,12 @@ import javax.inject.Singleton
 class RetrofitRunner @Inject constructor() {
     suspend fun <T, E> executeForResponse(mapper: Mapper<T, E>, request: suspend () -> Response<T>): Result<E> {
         val response = request()
-        return if (response.isSuccessful) {
-            Success(mapper.map(response.body()!!))
+        if (response.isSuccessful) {
+            val okHttpNetworkResponse = response.raw().networkResponse()
+            val notModified = okHttpNetworkResponse == null || okHttpNetworkResponse.code() == 304
+            return Success(data = mapper.map(response.body()!!), responseModified = !notModified)
         } else {
-            ErrorResult(response.toException())
+            return ErrorResult(response.toException())
         }
     }
 }

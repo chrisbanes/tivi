@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.mappers
 
-sealed class Result<T>
+internal class SingleToListMapper<F, T>(private val singleMapper: Mapper<F, T>) : Mapper<List<F>, List<T>> {
+    override fun map(from: List<F>): List<T> {
+        return from.map(singleMapper::map)
+    }
+}
 
-data class Success<T>(val data: T, val responseModified: Boolean = true) : Result<T>()
-
-data class ErrorResult<T>(val exception: Exception) : Result<T>()
+fun <F, T> Mapper<F, T>.toListMapper(): Mapper<List<F>, List<T>> = SingleToListMapper(this)
