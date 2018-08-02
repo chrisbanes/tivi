@@ -17,6 +17,7 @@
 package app.tivi.interactors
 
 import android.arch.paging.DataSource
+import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.util.AppCoroutineDispatchers
@@ -25,12 +26,21 @@ import javax.inject.Inject
 
 class SyncFollowedShows @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
-    private val followedShowsRepository: FollowedShowsRepository
+    private val followedShowsRepository: FollowedShowsRepository,
+    private val seasonsEpisodesRepository: SeasonsEpisodesRepository
 ) : PagingInteractor<SyncFollowedShows.Params, FollowedShowEntryWithShow> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend fun invoke(param: Params) {
         followedShowsRepository.syncFollowedShows()
+
+        // Finally sync the watches
+        followedShowsRepository.getFollowedShows().forEach {
+            // Download the seasons + episodes
+            seasonsEpisodesRepository.updateSeasonsEpisodes(it.showId)
+            // And sync the episode watches
+            seasonsEpisodesRepository.syncEpisodeWatchesForShow(it.showId)
+        }
     }
 
     override fun dataSourceFactory(): DataSource.Factory<Int, FollowedShowEntryWithShow> {
