@@ -63,9 +63,9 @@ android {
         minSdkVersion buildConfig.minSdk
         targetSdkVersion buildConfig.targetSdk
         versionCode appVersionCode
-        versionName "0.2.4"
+        versionName "0.2.5"
 
-        // For now we're sticking to just shipping APKs
+        // For now we're sticking to just shipping EN
         resConfigs "en"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
