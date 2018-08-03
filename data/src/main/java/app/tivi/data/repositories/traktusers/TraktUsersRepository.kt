@@ -32,13 +32,19 @@ class TraktUsersRepository @Inject constructor(
         val response = traktDataSource.getUser(username)
         when {
             response is Success && response.responseModified -> {
-                var user = response.data
-                if (username == "me") {
-                    user = user.copy(isMe = true)
-                }
-                localStore.save(user)
-                localStore.updateLastRequest(username)
+            var user = response.data
+            // Tag the user as 'me' if that's what we're requesting
+            if (username == "me") {
+                user = user.copy(isMe = true)
             }
+            // Make sure we use the current DB id (if present)
+            val localUser = localStore.getUser(user.username)
+            if (localUser != null) {
+                user = user.copy(id = localUser.id)
+            }
+            localStore.save(user)
+            localStore.updateLastRequest(username)
+        }
         }
     }
 

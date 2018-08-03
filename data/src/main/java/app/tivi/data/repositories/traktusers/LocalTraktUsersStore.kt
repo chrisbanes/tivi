@@ -46,22 +46,22 @@ class LocalTraktUsersStore @Inject constructor(
     }
 
     fun updateLastRequest(username: String) {
-        val userId = when (username) {
+        val id = when (username) {
             "me" -> userDao.getIdForMe()
             else -> userDao.getIdForUsername(username)
         }
-        if (userId != null) {
-            lastRequestDao.updateLastRequest(Request.FOLLOWED_SHOWS, userId)
+        if (id != null) {
+            lastRequestDao.updateLastRequest(Request.USER_PROFILE, id)
         }
     }
 
     fun isLastRequestBefore(username: String, threshold: TemporalAmount): Boolean {
-        val userId = when (username) {
+        val id = when (username) {
             "me" -> userDao.getIdForMe()
             else -> userDao.getIdForUsername(username)
         }
         return when {
-            userId != null -> lastRequestDao.isRequestBefore(Request.USER_PROFILE, userId, threshold)
+            id != null -> lastRequestDao.isRequestBefore(Request.USER_PROFILE, id, threshold)
             else -> true
         }
     }
