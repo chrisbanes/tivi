@@ -22,4 +22,5 @@ enum class Request(val tag: String) {
     EPISODE_DETAILS("episode_details"),
     SHOW_EPISODE_WATCHES("show_episode_watches"),
     FOLLOWED_SHOWS("followed_shows"),
+    USER_PROFILE("user_profile"),
 }

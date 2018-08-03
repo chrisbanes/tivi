@@ -152,7 +152,6 @@ dependencies {
     implementation project(":trakt")
     implementation project(":trakt-auth")
     implementation project(":tmdb")
-    implementation project(':datasources')
     implementation project(':interactors')
     implementation project(":tasks")
 

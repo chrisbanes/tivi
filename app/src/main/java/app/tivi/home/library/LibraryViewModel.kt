@@ -30,6 +30,7 @@ import app.tivi.home.HomeNavigator
 import app.tivi.home.library.LibraryFilter.FOLLOWED
 import app.tivi.home.library.LibraryFilter.WATCHED
 import app.tivi.interactors.SyncFollowedShows
+import app.tivi.interactors.UpdateUserDetails
 import app.tivi.interactors.UpdateWatchedShows
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
@@ -48,14 +49,15 @@ import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
-    private val schedulers: AppRxSchedulers,
+    schedulers: AppRxSchedulers,
     private val updateWatchedShows: UpdateWatchedShows,
     private val syncFollowedShows: SyncFollowedShows,
     private val traktManager: TraktManager,
     private val tmdbManager: TmdbManager,
+    updateUserDetails: UpdateUserDetails,
     private val networkDetector: NetworkDetector,
     logger: Logger
-) : HomeFragmentViewModel(traktManager, logger) {
+) : HomeFragmentViewModel(traktManager, updateUserDetails, networkDetector, logger) {
     companion object {
         private val DEFAULT_FILTER = FOLLOWED
 

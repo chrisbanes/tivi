@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google, Inc.
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,20 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-apply plugin: 'kotlin'
-apply plugin: 'kotlin-kapt'
+package app.tivi.data.mappers
 
-dependencies {
-    implementation project(":base")
-    implementation project(":trakt")
-    implementation project(":tmdb")
-    implementation project(":data")
+import app.tivi.data.entities.TraktUser
+import com.uwetrottmann.trakt5.entities.User
+import javax.inject.Inject
 
-    compile "android.arch.paging:common:${versions.androidx.paging}"
-
-    implementation "io.reactivex.rxjava2:rxjava:${versions.rx}"
-    implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
+class UserToTraktUser @Inject constructor() : Mapper<User, TraktUser> {
+    override fun map(from: User) = TraktUser(
+            username = from.username,
+            name = from.name,
+            location = from.location,
+            about = from.about,
+            avatarUrl = from.images?.avatar?.full,
+            joined = from.joined_at,
+            vip = from.vip
+    )
 }

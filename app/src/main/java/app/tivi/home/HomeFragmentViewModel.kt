@@ -20,15 +20,19 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.data.entities.TraktUser
+import app.tivi.interactors.UpdateUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.Logger
+import app.tivi.util.NetworkDetector
 import app.tivi.util.TiviViewModel
 import io.reactivex.rxkotlin.plusAssign
 import net.openid.appauth.AuthorizationService
 
 abstract class HomeFragmentViewModel(
     private val traktManager: TraktManager,
+    private val updateUserDetails: UpdateUserDetails,
+    private val networkDetector: NetworkDetector,
     protected val logger: Logger
 ) : TiviViewModel() {
 
@@ -36,13 +40,27 @@ abstract class HomeFragmentViewModel(
     val authUiState: LiveData<TraktAuthState>
         get() = _authUiState
 
-    val userProfileLiveData: LiveData<TraktUser> = LiveDataReactiveStreams.fromPublisher(traktManager.userObservable())
+    val userProfileLiveData: LiveData<TraktUser> = LiveDataReactiveStreams.fromPublisher(updateUserDetails.observe())
 
     init {
         _authUiState.value = TraktAuthState.LOGGED_OUT
 
         disposables += traktManager.state
-                .subscribe(_authUiState::setValue, logger::e)
+                .distinctUntilChanged()
+                .subscribe(::onAuthStateChanged, logger::e)
+    }
+
+    private fun onAuthStateChanged(authState: TraktAuthState) {
+        _authUiState.value = authState
+
+        if (authState == TraktAuthState.LOGGED_IN) {
+            disposables += networkDetector.waitForConnection()
+                    .subscribe({ refreshUserProfile() }, logger::e)
+        }
+    }
+
+    private fun refreshUserProfile() {
+        launchInteractor(updateUserDetails, UpdateUserDetails.Params("me", false))
     }
 
     fun onProfileItemClicked() {
