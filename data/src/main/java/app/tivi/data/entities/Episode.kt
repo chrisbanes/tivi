@@ -21,10 +21,8 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
-import io.sweers.copydynamic.annotations.CopyDynamic
 import org.threeten.bp.OffsetDateTime
 
-@CopyDynamic
 @Entity(
         tableName = "episodes",
         indices = [

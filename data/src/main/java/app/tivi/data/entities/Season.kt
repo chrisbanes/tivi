@@ -21,9 +21,7 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.ForeignKey
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
-import io.sweers.copydynamic.annotations.CopyDynamic
 
-@CopyDynamic
 @Entity(tableName = "seasons",
         indices = [
             Index(value = ["show_id", "number"], unique = true)
