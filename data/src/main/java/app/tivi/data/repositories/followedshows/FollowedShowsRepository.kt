@@ -24,6 +24,7 @@ import app.tivi.extensions.parallelForEach
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.AppCoroutineDispatchers
+import org.threeten.bp.Duration
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -42,6 +43,10 @@ class FollowedShowsRepository @Inject constructor(
         return localStore.getEntries()
     }
 
+    fun needFollowedShowsSync(): Boolean {
+        return localStore.isLastFollowedShowsSyncBefore(Duration.ofHours(3))
+    }
+
     suspend fun syncFollowedShows() {
         val listId = if (traktAuthState.get() == TraktAuthState.LOGGED_IN) getFollowedTraktListId() else null
 
@@ -51,6 +56,8 @@ class FollowedShowsRepository @Inject constructor(
         if (listId != null) {
             pullDownTraktFollowedList(listId)
         }
+
+        localStore.updateLastFollowedShowsSync()
     }
 
     private suspend fun pullDownTraktFollowedList(listId: Int) {

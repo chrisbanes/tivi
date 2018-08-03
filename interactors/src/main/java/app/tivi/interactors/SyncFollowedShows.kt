@@ -28,19 +28,25 @@ import javax.inject.Inject
 class SyncFollowedShows @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val followedShowsRepository: FollowedShowsRepository,
-    private val seasonsEpisodesRepository: SeasonsEpisodesRepository
+    private val repository: SeasonsEpisodesRepository
 ) : PagingInteractor<SyncFollowedShows.Params, FollowedShowEntryWithShow> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend fun invoke(param: Params) {
-        followedShowsRepository.syncFollowedShows()
+        if (param.forceLoad || followedShowsRepository.needFollowedShowsSync()) {
+            followedShowsRepository.syncFollowedShows()
 
-        // Finally sync the watches
-        followedShowsRepository.getFollowedShows().parallelForEach(dispatchers.io) {
-            // Download the seasons + episodes
-            seasonsEpisodesRepository.updateSeasonsEpisodes(it.showId)
-            // And sync the episode watches
-            seasonsEpisodesRepository.syncEpisodeWatchesForShow(it.showId)
+            // Finally sync the watches
+            followedShowsRepository.getFollowedShows().parallelForEach(dispatchers.io) {
+                // Download the seasons + episodes
+                if (param.forceLoad || repository.needShowSeasonsUpdate(it.showId)) {
+                    repository.updateSeasonsEpisodes(it.showId)
+                }
+                // And sync the episode watches
+                if (param.forceLoad || repository.needShowEpisodeWatchesSync(it.showId)) {
+                    repository.syncEpisodeWatchesForShow(it.showId)
+                }
+            }
         }
     }
 

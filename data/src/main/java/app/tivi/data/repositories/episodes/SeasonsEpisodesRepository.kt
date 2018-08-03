@@ -26,7 +26,9 @@ import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.async
+import org.threeten.bp.Duration
 import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.Period
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -43,6 +45,10 @@ class SeasonsEpisodesRepository @Inject constructor(
     fun observeEpisode(episodeId: Long) = localStore.observeEpisode(episodeId)
 
     fun observeEpisodeWatches(episodeId: Long) = localStore.observeEpisodeWatches(episodeId)
+
+    fun needShowSeasonsUpdate(showId: Long): Boolean {
+        return localStore.lastShowSeasonsFetchBefore(showId, Period.ofDays(7))
+    }
 
     suspend fun updateSeasonsEpisodes(showId: Long) {
         val result = traktSeasonsDataSource.getSeasonsEpisodes(showId)
@@ -64,6 +70,9 @@ class SeasonsEpisodesRepository @Inject constructor(
                 }
             }
         }
+        if (result is Success) {
+            localStore.updateShowSeasonsFetchLastRequest(showId)
+        }
     }
 
     suspend fun updateEpisode(episodeId: Long) {
@@ -84,15 +93,12 @@ class SeasonsEpisodesRepository @Inject constructor(
         processShowWatchesPendingAdditions(showId)
         if (traktAuthState.get() == TraktAuthState.LOGGED_IN) {
             refreshShowWatchesFromRemote(showId)
+            localStore.updateShowEpisodeWatchesLastRequest(showId)
         }
     }
 
-    suspend fun syncEpisodeWatches(episodeId: Long) {
-        processEpisodeWatchesPendingDelete(episodeId)
-        processEpisodeWatchesPendingAdditions(episodeId)
-        if (traktAuthState.get() == TraktAuthState.LOGGED_IN) {
-            refreshEpisodeWatchesFromRemote(episodeId)
-        }
+    fun needShowEpisodeWatchesSync(showId: Long): Boolean {
+        return localStore.lastShowEpisodeWatchesSyncBefore(showId, Duration.ofHours(1))
     }
 
     suspend fun addEpisodeWatch(episodeId: Long, timestamp: OffsetDateTime) {
@@ -114,6 +120,14 @@ class SeasonsEpisodesRepository @Inject constructor(
             localStore.updateWatchEntriesWithAction(ids, PendingAction.DELETE)
         }
         syncEpisodeWatches(episodeId)
+    }
+
+    private suspend fun syncEpisodeWatches(episodeId: Long) {
+        processEpisodeWatchesPendingDelete(episodeId)
+        processEpisodeWatchesPendingAdditions(episodeId)
+        if (traktAuthState.get() == TraktAuthState.LOGGED_IN) {
+            refreshEpisodeWatchesFromRemote(episodeId)
+        }
     }
 
     private suspend fun processShowWatchesPendingAdditions(showId: Long) {

@@ -18,30 +18,26 @@ package app.tivi.interactors
 
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
-import app.tivi.trakt.TraktAuthState
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
-import javax.inject.Provider
 
 class SyncFollowedShow @Inject constructor(
     private val followedShowsDao: FollowedShowsDao,
     dispatchers: AppCoroutineDispatchers,
-    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
-    private val loggedIn: Provider<TraktAuthState>
+    private val seasonsEpisodesRepository: SeasonsEpisodesRepository
 ) : Interactor<SyncFollowedShow.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend operator fun invoke(param: Params) {
         val entry = followedShowsDao.entryWithShowId(param.showId)
                 ?: throw IllegalArgumentException("Followed entry with showId: $param does not exist")
-
-        val authed = loggedIn.get() == TraktAuthState.LOGGED_IN
-
         // Then update the seasons/episodes
-        seasonsEpisodesRepository.updateSeasonsEpisodes(entry.showId)
+        if (param.forceLoad || seasonsEpisodesRepository.needShowSeasonsUpdate(entry.showId)) {
+            seasonsEpisodesRepository.updateSeasonsEpisodes(entry.showId)
+        }
         // Finally update any watched progress
-        if (authed) {
+        if (param.forceLoad || seasonsEpisodesRepository.needShowEpisodeWatchesSync(entry.showId)) {
             seasonsEpisodesRepository.syncEpisodeWatchesForShow(entry.showId)
         }
     }

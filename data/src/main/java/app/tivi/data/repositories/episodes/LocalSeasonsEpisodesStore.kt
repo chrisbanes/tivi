@@ -20,14 +20,17 @@ import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
+import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
+import app.tivi.data.entities.Request
 import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.syncers.syncerForEntity
 import io.reactivex.Flowable
+import org.threeten.bp.temporal.TemporalAmount
 import javax.inject.Inject
 
 class LocalSeasonsEpisodesStore @Inject constructor(
@@ -35,7 +38,8 @@ class LocalSeasonsEpisodesStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val seasonsDao: SeasonsDao,
     private val episodesDao: EpisodesDao,
-    private val episodeWatchEntryDao: EpisodeWatchEntryDao
+    private val episodeWatchEntryDao: EpisodeWatchEntryDao,
+    private val lastRequestDao: LastRequestDao
 ) {
     private val syncer = syncerForEntity(
             episodeWatchEntryDao,
@@ -83,6 +87,22 @@ class LocalSeasonsEpisodesStore @Inject constructor(
                 entityInserter.insertOrUpdate(episodesDao, it.copy(seasonId = seasonId))
             }
         }
+    }
+
+    fun lastShowSeasonsFetchBefore(showId: Long, threshold: TemporalAmount): Boolean {
+        return lastRequestDao.isRequestBefore(Request.SHOW_SEASONS, showId, threshold)
+    }
+
+    fun updateShowSeasonsFetchLastRequest(showId: Long) {
+        lastRequestDao.updateLastRequest(Request.SHOW_SEASONS, showId)
+    }
+
+    fun lastShowEpisodeWatchesSyncBefore(showId: Long, threshold: TemporalAmount): Boolean {
+        return lastRequestDao.isRequestBefore(Request.SHOW_EPISODE_WATCHES, showId, threshold)
+    }
+
+    fun updateShowEpisodeWatchesLastRequest(showId: Long) {
+        lastRequestDao.updateLastRequest(Request.SHOW_EPISODE_WATCHES, showId)
     }
 
     fun getEpisodeWatchesForShow(showId: Long) = episodeWatchEntryDao.entriesForShowId(showId)

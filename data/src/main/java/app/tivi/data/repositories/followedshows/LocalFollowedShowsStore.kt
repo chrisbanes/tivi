@@ -19,11 +19,14 @@ package app.tivi.data.repositories.followedshows
 import android.arch.paging.DataSource
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.FollowedShowsDao
+import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
+import app.tivi.data.entities.Request
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.syncers.syncerForEntity
+import org.threeten.bp.temporal.TemporalAmount
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -31,7 +34,8 @@ import javax.inject.Singleton
 class LocalFollowedShowsStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val followedShowsDao: FollowedShowsDao,
-    private val showDao: TiviShowDao
+    private val showDao: TiviShowDao,
+    private val lastRequestDao: LastRequestDao
 ) {
     var traktListId: Int? = null
 
@@ -57,5 +61,13 @@ class LocalFollowedShowsStore @Inject constructor(
 
     fun sync(entities: List<FollowedShowEntry>) = transactionRunner {
         syncer.sync(followedShowsDao.entries(), entities)
+    }
+
+    fun updateLastFollowedShowsSync() {
+        lastRequestDao.updateLastRequest(Request.FOLLOWED_SHOWS, 0)
+    }
+
+    fun isLastFollowedShowsSyncBefore(threshold: TemporalAmount): Boolean {
+        return lastRequestDao.isRequestBefore(Request.FOLLOWED_SHOWS, 0, threshold)
     }
 }
