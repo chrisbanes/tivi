@@ -44,13 +44,13 @@ class RelatedShowsRepository @Inject constructor(
                     // Make a copy of the entry with the id
                     entry.copy(otherShowId = relatedShowId)
                 }
-                .also {
+                .also { entries ->
                     // Save the related entries
-                    localStore.saveRelatedShows(showId, it)
+                    localStore.saveRelatedShows(showId, entries)
                     // Now update all of the related shows if needed
-                    it.parallelForEach(dispatchers.io) {
-                        if (showRepository.needsUpdate(it.otherShowId)) {
-                            showRepository.updateShow(it.otherShowId)
+                    entries.parallelForEach(dispatchers.io) { entry ->
+                        if (showRepository.needsUpdate(entry.otherShowId)) {
+                            showRepository.updateShow(entry.otherShowId)
                         }
                     }
                 }

@@ -22,6 +22,7 @@ import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.async
+import org.threeten.bp.Period
 import javax.inject.Inject
 
 class ShowRepositoryImpl @Inject constructor(
@@ -46,31 +47,29 @@ class ShowRepositoryImpl @Inject constructor(
      * Updates the show with the given id from all network sources, saves the result to the database
      */
     override suspend fun updateShow(showId: Long) {
-        val traktResult = async(dispatchers.io) {
-            val response = traktShowDataSource.getShow(showId)
-            when (response) {
-                is Success -> response.data
-                else -> TiviShow.EMPTY_SHOW
-            }
+        val traktJob = async(dispatchers.io) { traktShowDataSource.getShow(showId) }
+        val tmdbJob = async(dispatchers.io) { tmdbShowDataSource.getShow(showId) }
+        val localJob = async(dispatchers.io) { localShowStore.getShow(showId) ?: TiviShow.EMPTY_SHOW }
+
+        val traktResult = traktJob.await()
+        val tmdbResult = tmdbJob.await()
+
+        localShowStore.saveShow(
+                mergeShow(
+                        localJob.await(),
+                        (traktResult as? Success)?.data ?: TiviShow.EMPTY_SHOW,
+                        (tmdbResult as? Success)?.data ?: TiviShow.EMPTY_SHOW
+                )
+        )
+
+        if (tmdbResult is Success && traktResult is Success) {
+            // If the network requests were successful, update the last request timestamp
+            localShowStore.updateLastRequest(showId)
         }
-        val tmdbResult = async(dispatchers.io) {
-            val response = tmdbShowDataSource.getShow(showId)
-            when (response) {
-                is Success -> response.data
-                else -> TiviShow.EMPTY_SHOW
-            }
-        }
-        val localResult = async(dispatchers.io) {
-            localShowStore.getShow(showId) ?: TiviShow.EMPTY_SHOW
-        }
-        localShowStore.saveShow(mergeShow(localResult.await(), traktResult.await(), tmdbResult.await()))
     }
 
     override suspend fun needsUpdate(showId: Long): Boolean {
-        // TODO this should really look at request times or something
-        val show = localShowStore.getShow(showId)
-                ?: throw IllegalArgumentException("Show with id $showId does not exist")
-        return show.tmdbPosterPath.isNullOrEmpty() || show.tmdbBackdropPath.isNullOrEmpty()
+        return localShowStore.lastRequestBefore(showId, Period.ofDays(7))
     }
 
     private fun mergeShow(local: TiviShow, trakt: TiviShow, tmdb: TiviShow) = local.copy(

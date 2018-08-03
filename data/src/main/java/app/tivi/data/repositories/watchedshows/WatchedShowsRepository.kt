@@ -44,13 +44,13 @@ class WatchedShowsRepository @Inject constructor(
                     // Make a copy of the entry with the id
                     entry.copy(showId = watchedShowId)
                 }
-                .also {
+                .also { entries ->
                     // Save the related entries
-                    localStore.saveWatchedShows(it)
+                    localStore.saveWatchedShows(entries)
                     // Now update all of the related shows if needed
-                    it.parallelForEach(dispatchers.io) {
-                        if (showRepository.needsUpdate(it.showId)) {
-                            showRepository.updateShow(it.showId)
+                    entries.parallelForEach(dispatchers.io) { entry ->
+                        if (showRepository.needsUpdate(entry.showId)) {
+                            showRepository.updateShow(entry.showId)
                         }
                     }
                 }

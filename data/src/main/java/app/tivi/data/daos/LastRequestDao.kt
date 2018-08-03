@@ -42,10 +42,7 @@ abstract class LastRequestDao : EntityDao<LastRequest> {
 
     fun isRequestBefore(request: Request, entityId: Long, threshold: TemporalAmount): Boolean {
         val lastRequest = lastRequest(request, entityId)
-        return when {
-            lastRequest != null -> lastRequest.timestamp.isBefore(Instant.now().minus(threshold))
-            else -> true
-        }
+        return lastRequest?.timestamp?.isBefore(Instant.now().minus(threshold)) ?: true
     }
 
     fun updateLastRequest(request: Request, entityId: Long, timestamp: Instant = Instant.now()) {

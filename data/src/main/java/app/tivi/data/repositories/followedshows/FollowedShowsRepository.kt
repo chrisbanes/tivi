@@ -61,13 +61,13 @@ class FollowedShowsRepository @Inject constructor(
                     // Create a followed show entry with the show id
                     FollowedShowEntry(showId = showId)
                 }
-                .also {
+                .also { entries ->
                     // Save the related entries
-                    localStore.sync(it)
+                    localStore.sync(entries)
                     // Now update all of the followed shows if needed
-                    it.parallelForEach(dispatchers.io) {
-                        if (showRepository.needsUpdate(it.showId)) {
-                            showRepository.updateShow(it.showId)
+                    entries.parallelForEach(dispatchers.io) { entry ->
+                        if (showRepository.needsUpdate(entry.showId)) {
+                            showRepository.updateShow(entry.showId)
                         }
                     }
                 }

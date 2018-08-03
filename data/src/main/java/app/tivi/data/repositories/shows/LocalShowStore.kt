@@ -18,14 +18,18 @@ package app.tivi.data.repositories.shows
 
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
+import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.TiviShowDao
+import app.tivi.data.entities.Request
 import app.tivi.data.entities.TiviShow
 import io.reactivex.Flowable
+import org.threeten.bp.temporal.TemporalAmount
 import javax.inject.Inject
 
 class LocalShowStore @Inject constructor(
     private val entityInserter: EntityInserter,
     private val showDao: TiviShowDao,
+    private val lastRequestDao: LastRequestDao,
     private val transactionRunner: DatabaseTransactionRunner
 ) {
     fun getShow(showId: Long) = showDao.getShowWithId(showId)
@@ -35,6 +39,12 @@ class LocalShowStore @Inject constructor(
     fun getIdForTraktId(traktId: Int) = showDao.getIdForTraktId(traktId)
 
     fun saveShow(show: TiviShow) = entityInserter.insertOrUpdate(showDao, show)
+
+    fun lastRequestBefore(showId: Long, threshold: TemporalAmount): Boolean {
+        return lastRequestDao.isRequestBefore(Request.SHOW_DETAILS, showId, threshold)
+    }
+
+    fun updateLastRequest(showId: Long) = lastRequestDao.updateLastRequest(Request.SHOW_DETAILS, showId)
 
     /**
      * Gets the ID for the show with the given trakt Id. If the trakt Id does not exist in the

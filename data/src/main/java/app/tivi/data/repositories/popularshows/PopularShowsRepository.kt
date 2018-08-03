@@ -53,16 +53,16 @@ class PopularShowsRepository @Inject constructor(
                     // Make a copy of the entry with the id
                     entry.copy(showId = showId)
                 }
-                .also {
+                .also { entries ->
                     if (resetOnSave) {
                         localStore.deleteAll()
                     }
                     // Save the popular entries
-                    localStore.savePopularShowsPage(page, it)
+                    localStore.savePopularShowsPage(page, entries)
                     // Now update all of the related shows if needed
-                    it.parallelForEach(dispatchers.io) {
-                        if (showRepository.needsUpdate(it.showId)) {
-                            showRepository.updateShow(it.showId)
+                    entries.parallelForEach(dispatchers.io) { entry ->
+                        if (showRepository.needsUpdate(entry.showId)) {
+                            showRepository.updateShow(entry.showId)
                         }
                     }
                 }
