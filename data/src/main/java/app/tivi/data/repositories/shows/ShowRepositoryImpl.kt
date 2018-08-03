@@ -68,7 +68,7 @@ class ShowRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun needsUpdate(showId: Long): Boolean {
+    override fun needsUpdate(showId: Long): Boolean {
         return localShowStore.lastRequestBefore(showId, Period.ofDays(7))
     }
 

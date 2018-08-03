@@ -67,7 +67,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         val txRunner = RoomTransactionRunner(db)
 
         localEpisodeStore = LocalSeasonsEpisodesStore(EntityInserter(txRunner), txRunner,
-                db.seasonsDao(), db.episodesDao(), episodeWatchDao)
+                db.seasonsDao(), db.episodesDao(), episodeWatchDao, db.lastRequestDao())
 
         repository = SeasonsEpisodesRepository(
                 testCoroutineDispatchers,
@@ -78,7 +78,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
                 Provider { loggedInState }
         )
 
-        // We'll assume that there's a show and season in the db
+        // We'll assume that there's a show with season and episodes in the db
         insertShow(db)
         insertSeason(db)
         insertEpisodes(db)

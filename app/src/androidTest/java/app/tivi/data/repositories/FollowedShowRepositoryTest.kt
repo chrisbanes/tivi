@@ -41,6 +41,7 @@ import kotlinx.coroutines.experimental.runBlocking
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Test
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
@@ -57,12 +58,13 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
 
     override fun setup() {
         super.setup()
-        // We'll assume that there's a show and season in the db
+        // We'll assume that there's a show in the db
         insertShow(db)
 
         followShowsDao = db.followedShowsDao()
 
         showRepository = mock(ShowRepository::class.java)
+        `when`(showRepository.needsUpdate(any(Long::class.java))).thenReturn(true)
 
         traktDataSource = mock(FollowedShowsDataSource::class.java)
 
@@ -70,8 +72,8 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
 
         repository = FollowedShowsRepository(
                 testCoroutineDispatchers,
-                LocalFollowedShowsStore(txRunner, db.followedShowsDao(), db.showDao()),
-                LocalShowStore(EntityInserter(txRunner), db.showDao(), txRunner),
+                LocalFollowedShowsStore(txRunner, db.followedShowsDao(), db.showDao(), db.lastRequestDao()),
+                LocalShowStore(EntityInserter(txRunner), db.showDao(), db.lastRequestDao(), txRunner),
                 traktDataSource,
                 showRepository,
                 Provider { TraktAuthState.LOGGED_IN }
