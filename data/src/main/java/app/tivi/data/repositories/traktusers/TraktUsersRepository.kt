@@ -19,7 +19,9 @@ package app.tivi.data.repositories.traktusers
 import app.tivi.data.entities.Success
 import org.threeten.bp.Period
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class TraktUsersRepository @Inject constructor(
     private val localStore: LocalTraktUsersStore,
     private val traktDataSource: TraktUsersDataSource

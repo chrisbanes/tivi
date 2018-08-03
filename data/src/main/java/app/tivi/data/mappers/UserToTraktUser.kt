@@ -19,7 +19,9 @@ package app.tivi.data.mappers
 import app.tivi.data.entities.TraktUser
 import com.uwetrottmann.trakt5.entities.User
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class UserToTraktUser @Inject constructor() : Mapper<User, TraktUser> {
     override fun map(from: User) = TraktUser(
             username = from.username,

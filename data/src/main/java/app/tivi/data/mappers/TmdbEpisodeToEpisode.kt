@@ -19,7 +19,9 @@ package app.tivi.data.mappers
 import app.tivi.data.entities.Episode
 import com.uwetrottmann.tmdb2.entities.TvEpisode
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class TmdbEpisodeToEpisode @Inject constructor() : Mapper<TvEpisode, Episode> {
     override fun map(from: TvEpisode) = Episode(
             seasonId = 0,

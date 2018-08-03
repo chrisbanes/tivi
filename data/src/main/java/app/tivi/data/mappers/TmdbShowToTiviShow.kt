@@ -19,7 +19,9 @@ package app.tivi.data.mappers
 import app.tivi.data.entities.TiviShow
 import com.uwetrottmann.tmdb2.entities.TvShow
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class TmdbShowToTiviShow @Inject constructor() : Mapper<TvShow, TiviShow> {
     override fun map(from: TvShow) = TiviShow(
             tmdbId = from.id,

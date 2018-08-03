@@ -24,7 +24,9 @@ import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.async
 import org.threeten.bp.Period
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ShowRepositoryImpl @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val localShowStore: LocalShowStore,

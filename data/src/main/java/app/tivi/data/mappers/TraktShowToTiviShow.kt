@@ -19,7 +19,9 @@ package app.tivi.data.mappers
 import app.tivi.data.entities.TiviShow
 import com.uwetrottmann.trakt5.entities.Show
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class TraktShowToTiviShow @Inject constructor() : Mapper<Show, TiviShow> {
     override fun map(from: Show) = TiviShow(
             traktId = from.ids.trakt,

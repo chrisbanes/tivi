@@ -27,7 +27,9 @@ import app.tivi.util.AppCoroutineDispatchers
 import org.threeten.bp.Duration
 import javax.inject.Inject
 import javax.inject.Provider
+import javax.inject.Singleton
 
+@Singleton
 class FollowedShowsRepository @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val localStore: LocalFollowedShowsStore,

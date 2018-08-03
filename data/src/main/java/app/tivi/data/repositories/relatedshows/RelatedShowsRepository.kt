@@ -21,7 +21,9 @@ import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
 import app.tivi.util.AppCoroutineDispatchers
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class RelatedShowsRepository @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val localStore: LocalRelatedShowsStore,

@@ -18,8 +18,10 @@ package app.tivi.data.mappers
 
 import app.tivi.data.entities.Season
 import javax.inject.Inject
+import javax.inject.Singleton
 import com.uwetrottmann.trakt5.entities.Season as TraktSeason
 
+@Singleton
 class TraktSeasonToSeason @Inject constructor() : Mapper<TraktSeason, Season> {
     override fun map(from: TraktSeason) = Season(
             showId = 0,

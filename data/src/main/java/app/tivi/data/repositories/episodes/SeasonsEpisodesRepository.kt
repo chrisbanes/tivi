@@ -31,7 +31,9 @@ import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.Period
 import javax.inject.Inject
 import javax.inject.Provider
+import javax.inject.Singleton
 
+@Singleton
 class SeasonsEpisodesRepository @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val localStore: LocalSeasonsEpisodesStore,
