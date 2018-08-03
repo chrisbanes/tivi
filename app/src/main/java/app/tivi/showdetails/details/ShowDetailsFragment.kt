@@ -58,11 +58,38 @@ class ShowDetailsFragment : TiviFragment() {
         }
     }
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var viewModel: ShowDetailsFragmentViewModel
     private lateinit var controller: ShowDetailsEpoxyController
     private lateinit var showDetailsNavigator: ShowDetailsNavigator
+
+    private var colorSwatch: Palette.Swatch = Palette.Swatch(Color.WHITE, 0)
+        set(value) {
+            if (field != value) {
+                val background = ColorDrawable(value.rgb)
+                details_coordinator.background = background
+                ObjectAnimator.ofInt(background, DrawableAlphaProperty, 0, 255).start()
+
+                val scrim = ScrimUtil.makeCubicGradientScrimDrawable(value.rgb, 10, Gravity.BOTTOM)
+                val drawable = LayerDrawable(arrayOf(scrim)).apply {
+                    setLayerGravity(0, Gravity.FILL)
+                    setLayerInsetTop(0, details_backdrop.height / 2)
+                }
+                details_backdrop.foreground = drawable
+                ObjectAnimator.ofInt(drawable, DrawableAlphaProperty, 0, 255).start()
+
+                field = value
+            }
+        }
+
+    private val glidePaletteListener = GlidePaletteListener {
+        val dominant = it.dominantSwatch
+        if (dominant != null) {
+            colorSwatch = dominant
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -127,36 +154,17 @@ class ShowDetailsFragment : TiviFragment() {
         }
     }
 
-    private var colorSwatch: Palette.Swatch = Palette.Swatch(Color.BLACK, 0)
-        set(value) {
-            if (field != value) {
-                val background = ColorDrawable(value.rgb)
-                details_coordinator.background = background
-                ObjectAnimator.ofInt(background, DrawableAlphaProperty, 0, 255).start()
-
-                val scrim = ScrimUtil.makeCubicGradientScrimDrawable(value.rgb, 10, Gravity.BOTTOM)
-                val drawable = LayerDrawable(arrayOf(scrim)).apply {
-                    setLayerGravity(0, Gravity.FILL)
-                    setLayerInsetTop(0, details_backdrop.height / 2)
-                }
-                details_backdrop.foreground = drawable
-                ObjectAnimator.ofInt(drawable, DrawableAlphaProperty, 0, 255).start()
-
-                field = value
-            }
-        }
-
     private fun update(viewState: ShowDetailsViewState) {
         val show = viewState.show
         val imageProvider = viewState.tmdbImageUrlProvider
 
         show.tmdbBackdropPath?.let { path ->
-            details_backdrop.doOnLayout {
+            details_backdrop.doOnLayout { _ ->
                 GlideApp.with(this)
                         .load(imageProvider.getBackdropUrl(path, details_backdrop.width))
                         .thumbnail(GlideApp.with(this).load(imageProvider.getBackdropUrl(path, 0)))
                         .disallowHardwareConfig()
-                        .listener(GlidePaletteListener { colorSwatch = it.dominantSwatch!! })
+                        .listener(glidePaletteListener)
                         .into(details_backdrop)
             }
         }

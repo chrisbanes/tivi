@@ -21,5 +21,5 @@ import app.tivi.data.resultentities.EntryWithShow
 
 interface PaginatedEntryDao<EC : PaginatedEntry, LI : EntryWithShow<EC>> : EntryDao<EC, LI> {
     fun deletePage(page: Int)
-    fun getLastPage(): Int
+    fun getLastPage(): Int?
 }

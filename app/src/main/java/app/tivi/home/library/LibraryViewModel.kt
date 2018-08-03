@@ -24,15 +24,14 @@ import android.arch.paging.RxPagedListBuilder
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.datasources.trakt.FollowedShowsDataSource
-import app.tivi.datasources.trakt.WatchedShowsDataSource
 import app.tivi.extensions.toFlowable
 import app.tivi.home.HomeFragmentViewModel
 import app.tivi.home.HomeNavigator
 import app.tivi.home.library.LibraryFilter.FOLLOWED
 import app.tivi.home.library.LibraryFilter.WATCHED
-import app.tivi.interactors.FetchWatchedShowsInteractor
-import app.tivi.interactors.SyncAllFollowedShowsInteractor
+import app.tivi.interactors.SyncFollowedShows
+import app.tivi.interactors.UpdateUserDetails
+import app.tivi.interactors.UpdateWatchedShows
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
@@ -50,16 +49,15 @@ import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 
 class LibraryViewModel @Inject constructor(
-    private val schedulers: AppRxSchedulers,
-    private val watchedShowsDataSource: WatchedShowsDataSource,
-    private val watchedShowsInteractor: FetchWatchedShowsInteractor,
-    private val followedDataSource: FollowedShowsDataSource,
-    private val followedShowsInteractor: SyncAllFollowedShowsInteractor,
+    schedulers: AppRxSchedulers,
+    private val updateWatchedShows: UpdateWatchedShows,
+    private val syncFollowedShows: SyncFollowedShows,
     private val traktManager: TraktManager,
     private val tmdbManager: TmdbManager,
+    updateUserDetails: UpdateUserDetails,
     private val networkDetector: NetworkDetector,
     logger: Logger
-) : HomeFragmentViewModel(traktManager, logger) {
+) : HomeFragmentViewModel(traktManager, updateUserDetails, networkDetector, logger) {
     companion object {
         private val DEFAULT_FILTER = FOLLOWED
 
@@ -106,7 +104,7 @@ class LibraryViewModel @Inject constructor(
                     tmdbManager.imageProvider,
                     loadingState.flowable,
                     isEmptyFlowable,
-                    dataSourceToFlowable(watchedShowsDataSource.dataSourceFactory()),
+                    dataSourceToFlowable(updateWatchedShows.dataSourceFactory()),
                     ::LibraryWatchedViewState)
         }
         FOLLOWED -> {
@@ -116,7 +114,7 @@ class LibraryViewModel @Inject constructor(
                     tmdbManager.imageProvider,
                     loadingState.flowable,
                     isEmptyFlowable,
-                    dataSourceToFlowable(followedDataSource.dataSourceFactory()),
+                    dataSourceToFlowable(syncFollowedShows.dataSourceFactory()),
                     ::LibraryFollowedViewState)
         }
     }
@@ -158,13 +156,13 @@ class LibraryViewModel @Inject constructor(
         when (currentFilter.value) {
             FOLLOWED -> {
                 loadingState.addLoader()
-                launchInteractor(followedShowsInteractor).invokeOnCompletion {
+                launchInteractor(syncFollowedShows, SyncFollowedShows.Params(false)).invokeOnCompletion {
                     loadingState.removeLoader()
                 }
             }
             WATCHED -> {
                 loadingState.addLoader()
-                launchInteractor(watchedShowsInteractor).invokeOnCompletion {
+                launchInteractor(updateWatchedShows, UpdateWatchedShows.Params(false)).invokeOnCompletion {
                     loadingState.removeLoader()
                 }
             }

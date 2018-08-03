@@ -18,32 +18,28 @@ package app.tivi.home.watched
 
 import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
-import app.tivi.datasources.trakt.WatchedShowsDataSource
 import app.tivi.home.HomeNavigator
-import app.tivi.interactors.FetchWatchedShowsInteractor
-import app.tivi.interactors.emptyInteractor
+import app.tivi.interactors.UpdateWatchedShows
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
 import app.tivi.util.NetworkDetector
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 class WatchedShowsViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     dispatchers: AppCoroutineDispatchers,
-    dataSource: WatchedShowsDataSource,
-    interactor: FetchWatchedShowsInteractor,
+    private val interactor: UpdateWatchedShows,
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector,
     logger: Logger
 ) : EntryViewModel<WatchedShowEntryWithShow>(
         schedulers,
         dispatchers,
-        dataSource,
-        interactor,
-        emptyInteractor(),
+        interactor.dataSourceFactory(),
         tmdbManager,
         networkDetector,
         logger
@@ -54,5 +50,11 @@ class WatchedShowsViewModel @Inject constructor(
 
     fun onItemClicked(item: WatchedShowEntryWithShow, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
         navigator.showShowDetails(item.show, sharedElements)
+    }
+
+    override suspend fun callRefresh() {
+        withContext(interactor.dispatcher) {
+            interactor(UpdateWatchedShows.Params(true))
+        }
     }
 }

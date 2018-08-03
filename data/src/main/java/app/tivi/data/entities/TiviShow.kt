@@ -21,10 +21,8 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
-import io.sweers.copydynamic.annotations.CopyDynamic
 import org.threeten.bp.OffsetDateTime
 
-@CopyDynamic
 @Entity(tableName = "shows",
         indices = [
             Index(value = ["trakt_id"], unique = true),
@@ -40,7 +38,7 @@ data class TiviShow(
     @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null,
     @ColumnInfo(name = "overview") val summary: String? = null,
     @ColumnInfo(name = "homepage") val homepage: String? = null,
-    @ColumnInfo(name = "rating") val rating: Float? = null,
+    @ColumnInfo(name = "trakt_rating") val traktRating: Float? = null,
     @ColumnInfo(name = "certification") val certification: String? = null,
     @ColumnInfo(name = "first_aired") val firstAired: OffsetDateTime? = null,
     @ColumnInfo(name = "country") val country: String? = null,
@@ -53,5 +51,9 @@ data class TiviShow(
     @delegate:Ignore
     val genres by lazy(LazyThreadSafetyMode.NONE) {
         _genres?.split(",")?.mapNotNull { Genre.fromTraktValue(it.trim()) } ?: emptyList()
+    }
+
+    companion object {
+        val EMPTY_SHOW = TiviShow()
     }
 }

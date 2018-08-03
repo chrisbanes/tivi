@@ -55,6 +55,13 @@ abstract class EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry> {
             " WHERE shows.id = :showId AND ew.pending_action = :pendingAction")
     internal abstract fun entriesForShowIdWithPendingAction(showId: Long, pendingAction: String): List<EpisodeWatchEntry>
 
+    @Query("SELECT ew.* FROM episode_watch_entries AS ew" +
+            " INNER JOIN episodes AS eps ON ew.episode_id = eps.id" +
+            " INNER JOIN seasons AS s ON eps.season_id = s.id" +
+            " INNER JOIN shows ON s.show_id = shows.id" +
+            " WHERE shows.id = :showId")
+    abstract fun entriesForShowId(showId: Long): List<EpisodeWatchEntry>
+
     @Query("UPDATE episode_watch_entries SET pending_action = :pendingAction WHERE id IN (:ids)")
     abstract fun updateEntriesToPendingAction(ids: List<Long>, pendingAction: String): Int
 

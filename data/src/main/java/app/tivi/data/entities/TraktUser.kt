@@ -18,10 +18,14 @@ package app.tivi.data.entities
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import org.threeten.bp.OffsetDateTime
 
-@Entity(tableName = "users")
+@Entity(
+        tableName = "users",
+        indices = [Index(value = ["username"], unique = true)]
+)
 data class TraktUser(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override val id: Long? = null,
     @ColumnInfo(name = "username") val username: String,
@@ -29,5 +33,7 @@ data class TraktUser(
     @ColumnInfo(name = "joined_date") val joined: OffsetDateTime? = null,
     @ColumnInfo(name = "location") val location: String? = null,
     @ColumnInfo(name = "about") val about: String? = null,
-    @ColumnInfo(name = "avatar_url") val avatarUrl: String? = null
+    @ColumnInfo(name = "avatar_url") val avatarUrl: String? = null,
+    @ColumnInfo(name = "vip") val vip: Boolean? = null,
+    @ColumnInfo(name = "is_me") val isMe: Boolean = false
 ) : TiviEntity

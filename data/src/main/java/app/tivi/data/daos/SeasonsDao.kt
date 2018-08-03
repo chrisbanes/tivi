@@ -21,14 +21,14 @@ import android.arch.persistence.room.Query
 import android.arch.persistence.room.Transaction
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.Season.Companion.NUMBER_SPECIALS
-import app.tivi.data.resultentities.SeasonWithEpisodes
+import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import io.reactivex.Flowable
 
 @Dao
 abstract class SeasonsDao : EntityDao<Season> {
     @Transaction
     @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number=$NUMBER_SPECIALS, number")
-    abstract fun seasonsWithEpisodesForShowId(showId: Long): Flowable<List<SeasonWithEpisodes>>
+    abstract fun seasonsWithEpisodesForShowId(showId: Long): Flowable<List<SeasonWithEpisodesAndWatches>>
 
     @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number=$NUMBER_SPECIALS, number")
     abstract fun seasonsForShowId(showId: Long): List<Season>

@@ -57,7 +57,7 @@ class ShowDetailsEpoxyController(
             spanSizeOverride(TotalSpanOverride)
         }
 
-        show.rating?.let { rating ->
+        show.traktRating?.let { rating ->
             detailsBadge {
                 val ratingOutOfOneHundred = Math.round(rating * 10)
                 id("rating")

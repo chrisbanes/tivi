@@ -112,9 +112,7 @@ class AppModule {
     @Named("trakt-client-secret")
     fun provideTraktClientSecret(): String = BuildConfig.TRAKT_CLIENT_SECRET
 
-    @Singleton
     @Provides
-    @ApplicationLevel
     fun provideCompositeDisposable() = CompositeDisposable()
 
     @Singleton

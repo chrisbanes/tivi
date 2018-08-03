@@ -20,13 +20,12 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
-import app.tivi.datasources.trakt.PopularDataSource
-import app.tivi.datasources.trakt.TrendingDataSource
 import app.tivi.extensions.toFlowable
 import app.tivi.home.HomeFragmentViewModel
 import app.tivi.home.HomeNavigator
-import app.tivi.interactors.FetchPopularShowsInteractor
-import app.tivi.interactors.FetchTrendingShowsInteractor
+import app.tivi.interactors.UpdatePopularShows
+import app.tivi.interactors.UpdateTrendingShows
+import app.tivi.interactors.UpdateUserDetails
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktManager
 import app.tivi.util.AppRxSchedulers
@@ -39,15 +38,14 @@ import javax.inject.Inject
 
 class DiscoverViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
-    popularDataSource: PopularDataSource,
-    private val fetchPopularShowsInteractor: FetchPopularShowsInteractor,
-    trendingDataSource: TrendingDataSource,
-    private val fetchTrendingShowsInteractor: FetchTrendingShowsInteractor,
+    private val updatePopularShows: UpdatePopularShows,
+    private val updateTrendingShows: UpdateTrendingShows,
     traktManager: TraktManager,
     tmdbManager: TmdbManager,
+    updateUserDetails: UpdateUserDetails,
     private val networkDetector: NetworkDetector,
     logger: Logger
-) : HomeFragmentViewModel(traktManager, logger) {
+) : HomeFragmentViewModel(traktManager, updateUserDetails, networkDetector, logger) {
     private val _data = MutableLiveData<DiscoverViewState>()
     val data: LiveData<DiscoverViewState>
         get() = _data
@@ -56,13 +54,15 @@ class DiscoverViewModel @Inject constructor(
 
     init {
         disposables += Flowables.combineLatest(
-                trendingDataSource.data(Unit, 8, 0),
-                popularDataSource.data(Unit, 8, 0),
+                updateTrendingShows.observe(),
+                updatePopularShows.observe(),
                 tmdbManager.imageProvider,
                 loadingState.observable.toFlowable(),
                 ::DiscoverViewState)
                 .observeOn(schedulers.main)
                 .subscribe(_data::setValue, logger::e)
+
+        refresh()
     }
 
     fun refresh() {
@@ -72,11 +72,11 @@ class DiscoverViewModel @Inject constructor(
 
     private fun onRefresh() {
         loadingState.addLoader()
-        launchInteractor(fetchPopularShowsInteractor.asRefreshInteractor())
+        launchInteractor(updatePopularShows, UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH))
                 .invokeOnCompletion { loadingState.removeLoader() }
 
         loadingState.addLoader()
-        launchInteractor(fetchTrendingShowsInteractor.asRefreshInteractor())
+        launchInteractor(updateTrendingShows, UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH))
                 .invokeOnCompletion { loadingState.removeLoader() }
     }
 

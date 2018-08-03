@@ -16,6 +16,11 @@
 
 package app.tivi.interactors
 
+import android.arch.paging.DataSource
+import app.tivi.extensions.toFlowable
+import io.reactivex.Flowable
+import io.reactivex.disposables.Disposable
+import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import kotlinx.coroutines.experimental.CoroutineStart
 import kotlinx.coroutines.experimental.DefaultDispatcher
@@ -28,6 +33,42 @@ interface Interactor<in P> {
     suspend operator fun invoke(param: P)
 }
 
+interface Interactor2<P, T> : Interactor<P> {
+    fun observe(): Flowable<T>
+    fun clear()
+}
+
+interface PagingInteractor<P, T> : Interactor<P> {
+    fun dataSourceFactory(): DataSource.Factory<Int, T>
+}
+
+abstract class SubjectInteractor<P, T> : Interactor2<P, T> {
+    private var disposable: Disposable? = null
+    private val subject: BehaviorSubject<T> = BehaviorSubject.create()
+
+    final override suspend fun invoke(param: P) {
+        setSource(createObservable(param))
+        execute(param)
+    }
+
+    protected abstract fun createObservable(param: P): Flowable<T>
+
+    protected abstract suspend fun execute(param: P)
+
+    override fun clear() {
+        disposable?.dispose()
+        disposable = null
+    }
+
+    final override fun observe(): Flowable<T> = subject.toFlowable()
+
+    private fun setSource(source: Flowable<T>) {
+        disposable?.dispose()
+        disposable = source.subscribe(subject::onNext, subject::onError)
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
 fun <T> emptyInteractor(): Interactor<T> = EmptyInteractor as Interactor<T>
 
 internal object EmptyInteractor : Interactor<Unit> {
@@ -43,4 +84,4 @@ fun <P> launchInteractor(
     context: CoroutineContext = interactor.dispatcher,
     start: CoroutineStart = CoroutineStart.DEFAULT,
     parent: Job? = null
-) = launch(context = context, parent = parent, block = { interactor(param) })
+) = launch(context = context, start = start, parent = parent, block = { interactor(param) })

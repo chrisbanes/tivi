@@ -18,31 +18,28 @@ package app.tivi.home.popular
 
 import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.PopularEntryWithShow
-import app.tivi.datasources.trakt.PopularDataSource
 import app.tivi.home.HomeNavigator
-import app.tivi.interactors.FetchPopularShowsInteractor
+import app.tivi.interactors.UpdatePopularShows
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
 import app.tivi.util.NetworkDetector
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 class PopularShowsViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     dispatchers: AppCoroutineDispatchers,
-    dataSource: PopularDataSource,
-    interactor: FetchPopularShowsInteractor,
+    private val interactor: UpdatePopularShows,
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector,
     logger: Logger
 ) : EntryViewModel<PopularEntryWithShow>(
         schedulers,
         dispatchers,
-        dataSource,
-        interactor.asRefreshInteractor(),
-        interactor.asLoadMoreInteractor(),
+        interactor.dataSourceFactory(),
         tmdbManager,
         networkDetector,
         logger
@@ -53,5 +50,17 @@ class PopularShowsViewModel @Inject constructor(
 
     fun onItemClicked(item: PopularEntryWithShow, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
         navigator.showShowDetails(item.show, sharedElements)
+    }
+
+    override suspend fun callLoadMore() {
+        withContext(interactor.dispatcher) {
+            interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.NEXT_PAGE))
+        }
+    }
+
+    override suspend fun callRefresh() {
+        withContext(interactor.dispatcher) {
+            interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH))
+        }
     }
 }

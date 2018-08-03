@@ -20,17 +20,11 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import app.tivi.AppNavigator
 import app.tivi.actions.ShowTasks
-import app.tivi.data.entities.TraktUser
-import app.tivi.datasources.trakt.UserMeDataSource
-import app.tivi.inject.ApplicationLevel
-import app.tivi.interactors.FetchUserDetailsMeInteractor
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
-import app.tivi.util.NetworkDetector
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
-import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
@@ -51,16 +45,13 @@ import javax.inject.Singleton
 
 @Singleton
 class TraktManager @Inject constructor(
-    private val schedulers: AppRxSchedulers,
+    schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
-    @ApplicationLevel private val disposables: CompositeDisposable,
+    private val disposables: CompositeDisposable,
     @Named("app") private val appNavigator: AppNavigator,
     private val requestProvider: Provider<AuthorizationRequest>,
     private val clientAuth: Lazy<ClientAuthentication>,
     @Named("auth") private val authPrefs: SharedPreferences,
-    private val userMeDataSource: UserMeDataSource,
-    private val userMeInteractor: FetchUserDetailsMeInteractor,
-    private val networkDetector: NetworkDetector,
     private val showTasks: ShowTasks,
     private val logger: Logger
 ) {
@@ -94,21 +85,8 @@ class TraktManager @Inject constructor(
     private fun updateAuthState(authState: AuthState) {
         if (authState.isAuthorized) {
             _state.onNext(TraktAuthState.LOGGED_IN)
-
-            disposables += networkDetector.waitForConnection()
-                    .subscribe({ refreshUserProfile() }, logger::e)
         } else {
             _state.onNext(TraktAuthState.LOGGED_OUT)
-        }
-    }
-
-    private fun refreshUserProfile() {
-        launch(userMeInteractor.dispatcher) {
-            try {
-                userMeInteractor(Unit)
-            } catch (e: Exception) {
-                logger.e(e, "Error while refreshing user profile")
-            }
         }
     }
 
@@ -130,8 +108,6 @@ class TraktManager @Inject constructor(
     fun onAuthException(exception: AuthorizationException) {
         logger.d(exception, "AuthException")
     }
-
-    fun userObservable(): Flowable<TraktUser> = userMeDataSource.data()
 
     private fun onTokenExchangeResponse(response: TokenResponse?, ex: AuthorizationException?) {
         val newState = AuthState().apply { update(response, ex) }

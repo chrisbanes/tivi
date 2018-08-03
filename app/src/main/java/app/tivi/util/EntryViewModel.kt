@@ -17,28 +17,24 @@
 package app.tivi.util
 
 import android.arch.lifecycle.LiveDataReactiveStreams
+import android.arch.paging.DataSource
 import android.arch.paging.LivePagedListBuilder
 import android.arch.paging.PagedList
 import app.tivi.api.Status
 import app.tivi.api.UiResource
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.datasources.ListDataSource
 import app.tivi.extensions.distinctUntilChanged
 import app.tivi.extensions.toFlowable
-import app.tivi.interactors.Interactor
 import app.tivi.tmdb.TmdbManager
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
-import kotlinx.coroutines.experimental.withContext
 
-open class EntryViewModel<LI : EntryWithShow<out Entry>>(
+abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
     private val schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
-    private val dataSource: ListDataSource<Unit, LI>,
-    private val refreshInteractor: Interactor<Unit>,
-    private val loadMoreInteractor: Interactor<Unit>,
+    private val dataSource: DataSource.Factory<Int, LI>,
     tmdbManager: TmdbManager,
     private val networkDetector: NetworkDetector,
     private val logger: Logger,
@@ -48,7 +44,7 @@ open class EntryViewModel<LI : EntryWithShow<out Entry>>(
 
     val liveList by lazy(mode = LazyThreadSafetyMode.NONE) {
         LivePagedListBuilder<Int, LI>(
-                dataSource.dataSourceFactory(),
+                dataSource,
                 PagedList.Config.Builder().run {
                     setPageSize(pageSize * 3)
                     setPrefetchDistance(pageSize)
@@ -70,9 +66,7 @@ open class EntryViewModel<LI : EntryWithShow<out Entry>>(
         launchWithParent(dispatchers.main) {
             sendMessage(UiResource(Status.LOADING_MORE))
             try {
-                withContext(loadMoreInteractor.dispatcher) {
-                    loadMoreInteractor(Unit)
-                }
+                callLoadMore()
                 onSuccess()
             } catch (e: Exception) {
                 onError(e)
@@ -89,15 +83,17 @@ open class EntryViewModel<LI : EntryWithShow<out Entry>>(
         launchWithParent(dispatchers.main) {
             sendMessage(UiResource(Status.REFRESHING))
             try {
-                withContext(refreshInteractor.dispatcher) {
-                    refreshInteractor(Unit)
-                }
+                callRefresh()
                 onSuccess()
             } catch (e: Exception) {
                 onError(e)
             }
         }
     }
+
+    protected open suspend fun callRefresh() = Unit
+
+    protected open suspend fun callLoadMore() = Unit
 
     private fun onError(t: Throwable) {
         logger.e(t)

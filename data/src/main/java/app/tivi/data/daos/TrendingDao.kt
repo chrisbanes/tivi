@@ -41,5 +41,5 @@ abstract class TrendingDao : PaginatedEntryDao<TrendingShowEntry, TrendingEntryW
     abstract override fun deleteAll()
 
     @Query("SELECT MAX(page) from trending_shows")
-    abstract override fun getLastPage(): Int
+    abstract override fun getLastPage(): Int?
 }

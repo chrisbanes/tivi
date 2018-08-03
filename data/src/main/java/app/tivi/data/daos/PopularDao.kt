@@ -41,5 +41,5 @@ abstract class PopularDao : PaginatedEntryDao<PopularShowEntry, PopularEntryWith
     abstract override fun deleteAll()
 
     @Query("SELECT MAX(page) from popular_shows")
-    abstract override fun getLastPage(): Int
+    abstract override fun getLastPage(): Int?
 }

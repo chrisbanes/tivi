@@ -16,8 +16,8 @@
 
 package app.tivi.inject
 
-import app.tivi.SeasonFetcherModule
 import app.tivi.TiviApplication
+import app.tivi.data.DataModule
 import app.tivi.data.DatabaseModule
 import app.tivi.home.HomeBuilder
 import app.tivi.showdetails.ShowDetailsBuilder
@@ -35,13 +35,13 @@ import javax.inject.Singleton
     AppModule::class,
     JobsCreator::class,
     DatabaseModule::class,
+    DataModule::class,
     ViewModelBuilder::class,
     HomeBuilder::class,
     ShowDetailsBuilder::class,
     TraktAuthModule::class,
     TmdbModule::class,
-    NetworkModule::class,
-    SeasonFetcherModule::class
+    NetworkModule::class
 ])
 interface AppComponent : AndroidInjector<TiviApplication> {
     @Component.Builder

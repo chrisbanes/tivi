@@ -16,6 +16,14 @@
 
 package app.tivi.inject
 
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.EXPRESSION)
-@Retention(AnnotationRetention.SOURCE)
-annotation class ApplicationLevel
+import javax.inject.Qualifier
+
+@Retention(AnnotationRetention.RUNTIME)
+@Qualifier
+@MustBeDocumented
+annotation class Trakt
+
+@Retention(AnnotationRetention.RUNTIME)
+@Qualifier
+@MustBeDocumented
+annotation class Tmdb

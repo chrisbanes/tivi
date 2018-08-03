@@ -18,31 +18,28 @@ package app.tivi.home.trending
 
 import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.TrendingEntryWithShow
-import app.tivi.datasources.trakt.TrendingDataSource
 import app.tivi.home.HomeNavigator
-import app.tivi.interactors.FetchTrendingShowsInteractor
+import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
 import app.tivi.util.NetworkDetector
+import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 class TrendingShowsViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     dispatchers: AppCoroutineDispatchers,
-    dataSource: TrendingDataSource,
-    interactor: FetchTrendingShowsInteractor,
+    private val interactor: UpdateTrendingShows,
     tmdbManager: TmdbManager,
     networkDetector: NetworkDetector,
     logger: Logger
 ) : EntryViewModel<TrendingEntryWithShow>(
         schedulers,
         dispatchers,
-        dataSource,
-        interactor.asRefreshInteractor(),
-        interactor.asLoadMoreInteractor(),
+        interactor.dataSourceFactory(),
         tmdbManager,
         networkDetector,
         logger
@@ -53,5 +50,17 @@ class TrendingShowsViewModel @Inject constructor(
 
     fun onItemClicked(item: TrendingEntryWithShow, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
         navigator.showShowDetails(item.show, sharedElements)
+    }
+
+    override suspend fun callLoadMore() {
+        withContext(interactor.dispatcher) {
+            interactor(UpdateTrendingShows.Params(UpdateTrendingShows.Page.NEXT_PAGE))
+        }
+    }
+
+    override suspend fun callRefresh() {
+        withContext(interactor.dispatcher) {
+            interactor(UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH))
+        }
     }
 }

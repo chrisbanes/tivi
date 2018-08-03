@@ -38,11 +38,13 @@ class EpisodeDetailsEpoxyController(
             episode(viewState.episode)
             spanSizeOverride(TotalSpanOverride)
         }
-        epDetailsFirstAiredItem {
-            id("first_aired")
-            episode(viewState.episode)
-            dateTimeFormatter(viewState.dateTimeFormatter)
-            spanSizeOverride(TotalSpanOverride)
+        if (viewState.episode.firstAired != null) {
+            epDetailsFirstAiredItem {
+                id("first_aired")
+                episode(viewState.episode)
+                dateTimeFormatter(viewState.dateTimeFormatter)
+                spanSizeOverride(TotalSpanOverride)
+            }
         }
 
         if (viewState.watches.isNotEmpty()) {

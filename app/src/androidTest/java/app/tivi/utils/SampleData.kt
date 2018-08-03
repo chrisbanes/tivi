@@ -28,6 +28,9 @@ import org.threeten.bp.OffsetDateTime
 const val showId = 1L
 val show = TiviShow(id = showId, title = "Down Under", traktId = 243)
 
+const val show2Id = 2L
+val show2 = TiviShow(id = show2Id, title = "G'day mate", traktId = 546)
+
 fun insertShow(db: TiviDatabase) = db.showDao().insert(show)
 
 fun deleteShow(db: TiviDatabase) = db.showDao().delete(show)
@@ -87,9 +90,12 @@ val episodeWatch2 = episodeWatch1.copy(id = episodeWatch2Id, traktId = 4385783)
 val episodeWatch2PendingSend = episodeWatch2.copy(pendingAction = PendingAction.UPLOAD)
 val episodeWatch2PendingDelete = episodeWatch2.copy(pendingAction = PendingAction.DELETE)
 
-fun insertFollowedShow(db: TiviDatabase) = db.followedShowsDao().insert(followedShow)
+fun insertFollowedShow(db: TiviDatabase) = db.followedShowsDao().insert(followedShow1)
 
 const val followedShowId = 1L
-val followedShow = FollowedShowEntry(followedShowId, showId)
-val followedShowPendingDelete = followedShow.copy(pendingAction = PendingAction.DELETE)
-val followedShowPendingUpload = followedShow.copy(pendingAction = PendingAction.UPLOAD)
+val followedShow1 = FollowedShowEntry(followedShowId, showId)
+val followedShow1PendingDelete = followedShow1.copy(pendingAction = PendingAction.DELETE)
+val followedShow1PendingUpload = followedShow1.copy(pendingAction = PendingAction.UPLOAD)
+
+const val followedShow2Id = 2L
+val followedShow2 = FollowedShowEntry(followedShow2Id, show2Id)

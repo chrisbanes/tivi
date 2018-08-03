@@ -19,32 +19,29 @@ package app.tivi.extensions
 import kotlinx.coroutines.experimental.delay
 import retrofit2.Call
 import retrofit2.HttpException
+import retrofit2.Response
 import java.io.IOException
 
-fun <T> Call<T>.fetchBody(): T {
-    return execute().let {
-        if (!it.isSuccessful) throw HttpException(it)
-        it.body()!!
-    }
+fun <T> Call<T>.fetchBody(): T = execute().bodyOrThrow()
+
+fun <T> Response<T>.bodyOrThrow(): T {
+    if (!isSuccessful) throw HttpException(this)
+    return body()!!
 }
 
-suspend inline fun <T> Call<T>.fetchBodyWithRetry(
+fun <T> Response<T>.toException() = HttpException(this)
+
+suspend inline fun <T> Call<T>.executeWithRetry(
     firstDelay: Int = 100,
     maxAttempts: Int = 3,
     shouldRetry: (Exception) -> Boolean = ::defaultShouldRetry
-): T {
+): Response<T> {
     var nextDelay = firstDelay
     repeat(maxAttempts - 1) { attempt ->
-        // Clone a new ready call if needed
-        val call = if (!isExecuted) {
-            this
-        } else {
-            clone()
-        }
-
-        // Execute the call
         try {
-            return call.fetchBody()
+            // Clone a new ready call if needed
+            val call = if (isExecuted) clone() else this
+            return call.execute()
         } catch (e: Exception) {
             // The response failed, so lets see if we should retry again
             if (attempt == (maxAttempts - 1) || !shouldRetry(e)) {
@@ -58,8 +55,14 @@ suspend inline fun <T> Call<T>.fetchBodyWithRetry(
     }
 
     // We should never hit here
-    throw IllegalStateException("Unknown exception from fetchBodyWithRetry")
+    throw IllegalStateException("Unknown exception from executeWithRetry")
 }
+
+suspend inline fun <T> Call<T>.fetchBodyWithRetry(
+    firstDelay: Int = 100,
+    maxAttempts: Int = 3,
+    shouldRetry: (Exception) -> Boolean = ::defaultShouldRetry
+) = executeWithRetry(firstDelay, maxAttempts, shouldRetry).bodyOrThrow()
 
 fun defaultShouldRetry(exception: Exception) = when (exception) {
     is HttpException -> exception.code() == 429
