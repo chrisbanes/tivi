@@ -26,7 +26,6 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 
 class GlidePaletteListener(private val listener: (Palette) -> Unit) : RequestListener<Drawable> {
-
     companion object {
         private val cache = LruCache<Any, Palette>(20)
         private val cacheLock = Any()
@@ -61,6 +60,7 @@ class GlidePaletteListener(private val listener: (Palette) -> Unit) : RequestLis
             val bitmap = resource.bitmap
             Palette.Builder(bitmap)
                     .clearTargets()
+                    .clearFilters()
                     .maximumColorCount(4)
                     .setRegion(0, Math.round(bitmap.height * 0.9f), bitmap.width, bitmap.height)
                     .generate { palette ->
