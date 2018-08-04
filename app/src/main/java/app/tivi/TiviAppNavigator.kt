@@ -22,8 +22,11 @@ import android.content.Context
 import android.content.Intent
 import app.tivi.showdetails.ShowDetailsActivity
 import app.tivi.trakt.TraktConstants
+import javax.inject.Inject
 
-internal open class TiviAppNavigator(private val context: Context) : AppNavigator {
+open class TiviAppNavigator @Inject constructor(
+    private val context: Context
+) : AppNavigator {
     override fun provideAuthHandleResponseIntent(requestCode: Int): PendingIntent {
         val intent = Intent(TraktConstants.INTENT_ACTION_HANDLE_AUTH_RESPONSE)
         return PendingIntent.getActivity(context, requestCode, intent, 0)
