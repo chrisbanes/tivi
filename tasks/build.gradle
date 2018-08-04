@@ -47,7 +47,9 @@ dependencies {
     implementation project(":base")
     implementation project(':interactors')
 
-    implementation 'com.evernote:android-job:1.2.5'
+    implementation "android.arch.work:work-firebase:${versions.androidx.work}"
+    implementation "android.arch.work:work-runtime-ktx:${versions.androidx.work}"
 
+    implementation "com.google.dagger:dagger-android:${versions.dagger}"
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
 }

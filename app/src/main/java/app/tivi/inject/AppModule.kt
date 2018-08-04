@@ -24,7 +24,6 @@ import app.tivi.BuildConfig
 import app.tivi.TiviAppNavigator
 import app.tivi.TiviApplication
 import app.tivi.actions.ShowTasks
-import app.tivi.appinitializers.AndroidJobInitializer
 import app.tivi.appinitializers.AppInitializers
 import app.tivi.appinitializers.EmojiInitializer
 import app.tivi.appinitializers.ThreeTenBpInitializer
@@ -85,11 +84,10 @@ class AppModule {
 
     @Provides
     fun provideAppManagers(
-        androidJobInitializer: AndroidJobInitializer,
         timberManager: TimberInitializer,
         threeTenManager: ThreeTenBpInitializer,
         emoji: EmojiInitializer
-    ) = AppInitializers(androidJobInitializer, timberManager, threeTenManager, emoji)
+    ) = AppInitializers(timberManager, threeTenManager, emoji)
 
     @Provides
     @Singleton

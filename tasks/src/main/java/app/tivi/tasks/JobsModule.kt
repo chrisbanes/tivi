@@ -16,8 +16,7 @@
 
 package app.tivi.tasks
 
-import android.content.Context
-import com.evernote.android.job.JobManager
+import androidx.work.WorkManager
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -26,7 +25,5 @@ import javax.inject.Singleton
 class JobsModule {
     @Provides
     @Singleton
-    fun provideJobManager(context: Context): JobManager {
-        return JobManager.create(context.applicationContext)
-    }
+    fun provideWorkManager(): WorkManager = WorkManager.getInstance()
 }

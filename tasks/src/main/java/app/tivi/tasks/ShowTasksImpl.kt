@@ -16,22 +16,26 @@
 
 package app.tivi.tasks
 
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import app.tivi.actions.ShowTasks
+import javax.inject.Inject
 
-class ShowTasksImpl : ShowTasks {
+class ShowTasksImpl @Inject constructor(
+    private val workManager: WorkManager
+) : ShowTasks {
     override fun syncShowWatchedEpisodes(showId: Long) {
-        SyncShowWatchedProgress.buildRequest(showId)
-                .startNow()
-                .setUpdateCurrent(true)
+        val request = OneTimeWorkRequest.Builder(SyncShowWatchedProgress::class.java)
+                .addTag(SyncShowWatchedProgress.TAG)
+                .setInputData(SyncShowWatchedProgress.buildData(showId))
                 .build()
-                .scheduleAsync()
+        workManager.enqueue(request)
     }
 
     override fun syncFollowedShows() {
-        SyncAllFollowedShows.buildRequest()
-                .startNow()
-                .setUpdateCurrent(true)
+        val request = OneTimeWorkRequest.Builder(SyncAllFollowedShows::class.java)
+                .addTag(SyncAllFollowedShows.TAG)
                 .build()
-                .scheduleAsync()
+        workManager.enqueue(request)
     }
 }

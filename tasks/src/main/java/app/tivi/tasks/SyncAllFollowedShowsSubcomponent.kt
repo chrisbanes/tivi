@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.appinitializers
+package app.tivi.tasks
 
-import android.app.Application
-import app.tivi.tasks.TiviJobCreator
-import com.evernote.android.job.JobManager
-import javax.inject.Inject
+import dagger.Subcomponent
+import dagger.android.AndroidInjector
 
-class AndroidJobInitializer @Inject constructor(
-    private val jobManager: JobManager,
-    private val jobCreator: TiviJobCreator
-) : AppInitializer {
-    override fun init(application: Application) {
-        jobManager.addJobCreator(jobCreator)
-    }
+@Subcomponent
+interface SyncAllFollowedShowsSubcomponent : AndroidInjector<SyncAllFollowedShows> {
+    @Subcomponent.Builder
+    abstract class Builder : AndroidInjector.Builder<SyncAllFollowedShows>()
 }

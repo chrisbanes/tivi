@@ -169,6 +169,11 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:${versions.androidx.recyclerview}"
     implementation "com.android.support:support-emoji:${versions.androidx.emoji}"
 
+    implementation("android.arch.work:work-runtime-ktx:${versions.androidx.work}") {
+        // We have to exclude this since it wants 1.1.1-rc1 and we're using 1.1.1
+        exclude group: 'android.arch.persistence.room', module: 'runtime'
+    }
+
     implementation "com.android.support.constraint:constraint-layout:${versions.androidx.constraint_layout}"
 
     implementation "androidx.core:core-ktx:${versions.androidx.core_ktx}"
@@ -209,8 +214,6 @@ dependencies {
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
         transitive = true
     }
-
-    implementation 'com.evernote:android-job:1.2.5'
 }
 
 def getGitHash() {

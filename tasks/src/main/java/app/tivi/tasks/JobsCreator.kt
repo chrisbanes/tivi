@@ -16,25 +16,28 @@
 
 package app.tivi.tasks
 
-import com.evernote.android.job.Job
-import com.evernote.android.job.JobCreator
+import androidx.work.Worker
 import dagger.Binds
 import dagger.Module
+import dagger.android.AndroidInjector
 import dagger.multibindings.IntoMap
-import dagger.multibindings.StringKey
 
-@Module(includes = [JobsModule::class])
+@Module(
+        includes = [
+            JobsModule::class
+        ],
+        subcomponents = [
+            SyncAllFollowedShowsSubcomponent::class,
+            SyncShowWatchedProgressSubcomponent::class
+        ])
 abstract class JobsCreator {
     @Binds
-    internal abstract fun bindJobCreator(creator: TiviJobCreator): JobCreator
+    @IntoMap
+    @WorkerKey(SyncAllFollowedShows::class)
+    abstract fun bindSyncAllFollowedShows(builder: SyncAllFollowedShowsSubcomponent.Builder): AndroidInjector.Factory<out Worker>
 
     @Binds
     @IntoMap
-    @StringKey(SyncAllFollowedShows.TAG)
-    abstract fun bindSyncAllFollowedShows(job: SyncAllFollowedShows): Job
-
-    @Binds
-    @IntoMap
-    @StringKey(SyncShowWatchedProgress.TAG)
-    abstract fun bindSyncShowWatchedProgress(job: SyncShowWatchedProgress): Job
+    @WorkerKey(SyncShowWatchedProgress::class)
+    abstract fun bindSyncShowWatchedProgress(job: SyncShowWatchedProgressSubcomponent.Builder): AndroidInjector.Factory<out Worker>
 }

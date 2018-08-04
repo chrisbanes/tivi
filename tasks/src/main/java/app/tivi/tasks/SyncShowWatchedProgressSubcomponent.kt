@@ -16,23 +16,11 @@
 
 package app.tivi.tasks
 
-import com.evernote.android.job.Job
-import com.evernote.android.job.JobCreator
-import javax.inject.Inject
-import javax.inject.Provider
+import dagger.Subcomponent
+import dagger.android.AndroidInjector
 
-/**
- * JobCreator which uses Dagger to create the instances.
- */
-class TiviJobCreator @Inject constructor(
-    private val creators: @JvmSuppressWildcards Map<String, Provider<Job>>
-) : JobCreator {
-    override fun create(tag: String): Job {
-        val creator = creators[tag] ?: throw IllegalArgumentException("Unknown job tag: $tag")
-        try {
-            return creator.get()
-        } catch (e: Exception) {
-            throw RuntimeException(e)
-        }
-    }
+@Subcomponent
+interface SyncShowWatchedProgressSubcomponent : AndroidInjector<SyncShowWatchedProgress> {
+    @Subcomponent.Builder
+    abstract class Builder : AndroidInjector.Builder<SyncShowWatchedProgress>()
 }
