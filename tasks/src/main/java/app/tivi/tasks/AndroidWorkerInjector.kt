@@ -38,7 +38,6 @@ internal object AndroidWorkerInjector {
     }
 }
 
-
 interface HasWorkerInjector {
     fun workerInjector(): AndroidInjector<Worker>
 }

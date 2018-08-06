@@ -24,7 +24,6 @@ import app.tivi.util.Logger
 import app.tivi.util.TimberLogger
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import javax.inject.Named
 import javax.inject.Singleton
 

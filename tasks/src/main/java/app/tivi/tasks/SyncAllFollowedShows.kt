@@ -27,6 +27,7 @@ class SyncAllFollowedShows @Inject constructor(
 ) : Worker() {
     companion object {
         const val TAG = "sync-all-followed-shows"
+        const val NIGHTLY_SYNC_TAG = "night-sync-all-followed-shows"
     }
 
     override fun doWork(): Result {

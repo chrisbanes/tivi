@@ -16,9 +16,14 @@
 
 package app.tivi.tasks
 
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
+import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import app.tivi.actions.ShowTasks
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ShowTasksImpl @Inject constructor(
@@ -37,5 +42,24 @@ class ShowTasksImpl @Inject constructor(
                 .addTag(SyncAllFollowedShows.TAG)
                 .build()
         workManager.enqueue(request)
+    }
+
+    override fun setupNightSyncs() {
+        val request = PeriodicWorkRequest.Builder(SyncAllFollowedShows::class.java,
+                24, TimeUnit.HOURS, 6, TimeUnit.HOURS)
+                .setConstraints(
+                        Constraints.Builder()
+                                .setRequiredNetworkType(NetworkType.UNMETERED)
+                                .setRequiresCharging(true)
+                                .setRequiresDeviceIdle(true)
+                                .build()
+                )
+                .build()
+
+        workManager.enqueueUniquePeriodicWork(
+                SyncAllFollowedShows.NIGHTLY_SYNC_TAG,
+                ExistingPeriodicWorkPolicy.REPLACE,
+                request
+        )
     }
 }

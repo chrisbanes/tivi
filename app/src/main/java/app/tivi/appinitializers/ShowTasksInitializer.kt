@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package app.tivi.actions
+package app.tivi.appinitializers
 
-interface ShowTasks {
-    fun syncShowWatchedEpisodes(showId: Long)
-    fun syncFollowedShows()
-    fun setupNightSyncs()
+import android.app.Application
+import app.tivi.actions.ShowTasks
+import javax.inject.Inject
+
+class ShowTasksInitializer @Inject constructor(
+    private val showTasks: ShowTasks
+) : AppInitializer {
+    override fun init(application: Application) {
+        showTasks.setupNightSyncs()
+    }
 }
