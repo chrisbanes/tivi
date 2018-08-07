@@ -22,13 +22,13 @@ import app.tivi.interactors.launchInteractor
 import kotlinx.coroutines.experimental.runBlocking
 import javax.inject.Inject
 
-class SyncAllFollowedShows @Inject constructor(
-    private val syncFollowedShows: SyncFollowedShows
-) : Worker() {
+class SyncAllFollowedShows : Worker() {
     companion object {
         const val TAG = "sync-all-followed-shows"
         const val NIGHTLY_SYNC_TAG = "night-sync-all-followed-shows"
     }
+
+    @Inject lateinit var syncFollowedShows: SyncFollowedShows
 
     override fun doWork(): Result {
         AndroidWorkerInjector.inject(this)

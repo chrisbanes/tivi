@@ -23,10 +23,7 @@ import app.tivi.util.Logger
 import kotlinx.coroutines.experimental.runBlocking
 import javax.inject.Inject
 
-class SyncShowWatchedProgress @Inject constructor(
-    private val syncFollowedShowWatchedProgress: SyncFollowedShowWatchedProgress,
-    private val logger: Logger
-) : Worker() {
+class SyncShowWatchedProgress : Worker() {
     companion object {
         const val TAG = "sync-show-watched-episodes"
         private const val PARAM_SHOW_ID = "show-id"
@@ -35,6 +32,9 @@ class SyncShowWatchedProgress @Inject constructor(
                 .putLong(PARAM_SHOW_ID, showId)
                 .build()
     }
+
+    @Inject lateinit var syncFollowedShowWatchedProgress: SyncFollowedShowWatchedProgress
+    @Inject lateinit var logger: Logger
 
     override fun doWork(): Result {
         AndroidWorkerInjector.inject(this)

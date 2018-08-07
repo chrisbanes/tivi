@@ -155,10 +155,11 @@ class LibraryViewModel @Inject constructor(
     private fun refreshFilter() {
         when (currentFilter.value) {
             FOLLOWED -> {
-                loadingState.addLoader()
-                launchInteractor(syncFollowedShows, SyncFollowedShows.Params(false)).invokeOnCompletion {
-                    loadingState.removeLoader()
-                }
+
+//                loadingState.addLoader()
+//                launchInteractor(syncFollowedShows, SyncFollowedShows.Params(false)).invokeOnCompletion {
+//                    loadingState.removeLoader()
+//                }
             }
             WATCHED -> {
                 loadingState.addLoader()
