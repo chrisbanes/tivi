@@ -16,34 +16,31 @@
 
 package app.tivi.tasks
 
+import androidx.work.Data
+import androidx.work.Worker
 import app.tivi.interactors.SyncFollowedShowWatchedProgress
 import app.tivi.util.Logger
-import com.evernote.android.job.Job
-import com.evernote.android.job.JobRequest
-import com.evernote.android.job.util.support.PersistableBundleCompat
 import kotlinx.coroutines.experimental.runBlocking
 import javax.inject.Inject
 
-class SyncShowWatchedProgress @Inject constructor(
-    private val syncFollowedShowWatchedProgress: SyncFollowedShowWatchedProgress,
-    private val logger: Logger
-) : Job() {
+class SyncShowWatchedProgress : Worker() {
     companion object {
         const val TAG = "sync-show-watched-episodes"
         private const val PARAM_SHOW_ID = "show-id"
 
-        fun buildRequest(followedId: Long): JobRequest.Builder {
-            return JobRequest.Builder(TAG).addExtras(
-                    PersistableBundleCompat().apply {
-                        putLong(PARAM_SHOW_ID, followedId)
-                    }
-            )
-        }
+        fun buildData(showId: Long) = Data.Builder()
+                .putLong(PARAM_SHOW_ID, showId)
+                .build()
     }
 
-    override fun onRunJob(params: Params): Result {
-        val showId = params.extras.getLong(PARAM_SHOW_ID, -1)
-        logger.d("$TAG job running for show id: $showId")
+    @Inject lateinit var syncFollowedShowWatchedProgress: SyncFollowedShowWatchedProgress
+    @Inject lateinit var logger: Logger
+
+    override fun doWork(): Result {
+        AndroidWorkerInjector.inject(this)
+
+        val showId = inputData.getLong(PARAM_SHOW_ID, -1)
+        logger.d("$TAG worker running for show id: $showId")
 
         return runBlocking {
             syncFollowedShowWatchedProgress(SyncFollowedShowWatchedProgress.Params(showId, true))

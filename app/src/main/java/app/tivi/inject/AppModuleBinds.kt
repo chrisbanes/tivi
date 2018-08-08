@@ -14,16 +14,31 @@
  * limitations under the License.
  */
 
-package app.tivi.tasks
+package app.tivi.inject
 
-import androidx.work.WorkManager
+import app.tivi.AppNavigator
+import app.tivi.TiviAppNavigator
+import app.tivi.actions.ShowTasks
+import app.tivi.tasks.ShowTasksImpl
+import app.tivi.util.Logger
+import app.tivi.util.TimberLogger
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
-class JobsModule {
-    @Provides
+abstract class AppModuleBinds {
     @Singleton
-    fun provideWorkManager(): WorkManager = WorkManager.getInstance()
+    @Binds
+    abstract fun provideTiviActions(bind: ShowTasksImpl): ShowTasks
+
+    @Singleton
+    @Named("app")
+    @Binds
+    abstract fun provideAppNavigator(bind: TiviAppNavigator): AppNavigator
+
+    @Singleton
+    @Binds
+    abstract fun provideLogger(bind: TimberLogger): Logger
 }

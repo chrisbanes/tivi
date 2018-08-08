@@ -16,25 +16,23 @@
 
 package app.tivi.tasks
 
+import androidx.work.Worker
 import app.tivi.interactors.SyncFollowedShows
 import app.tivi.interactors.launchInteractor
-import com.evernote.android.job.Job
-import com.evernote.android.job.JobRequest
 import kotlinx.coroutines.experimental.runBlocking
 import javax.inject.Inject
 
-class SyncAllFollowedShows @Inject constructor(
-    private val syncFollowedShows: SyncFollowedShows
-) : Job() {
+class SyncAllFollowedShows : Worker() {
     companion object {
         const val TAG = "sync-all-followed-shows"
-
-        fun buildRequest(): JobRequest.Builder {
-            return JobRequest.Builder(TAG)
-        }
+        const val NIGHTLY_SYNC_TAG = "night-sync-all-followed-shows"
     }
 
-    override fun onRunJob(params: Params): Result {
+    @Inject lateinit var syncFollowedShows: SyncFollowedShows
+
+    override fun doWork(): Result {
+        AndroidWorkerInjector.inject(this)
+
         runBlocking {
             launchInteractor(syncFollowedShows, SyncFollowedShows.Params(true)).join()
         }

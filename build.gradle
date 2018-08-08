@@ -33,6 +33,7 @@ buildscript {
                     'room'             : '1.1.1',
                     'test_runner'      : '1.0.2',
                     'test_rules'       : '1.0.2',
+                    'work'             : '1.0.0-alpha06'
             ],
             'coroutines'     : '0.24.0',
             'dagger'         : '2.16',

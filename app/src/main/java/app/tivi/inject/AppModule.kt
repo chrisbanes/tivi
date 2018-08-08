@@ -19,21 +19,15 @@ package app.tivi.inject
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import app.tivi.AppNavigator
 import app.tivi.BuildConfig
-import app.tivi.TiviAppNavigator
 import app.tivi.TiviApplication
-import app.tivi.actions.ShowTasks
-import app.tivi.appinitializers.AndroidJobInitializer
 import app.tivi.appinitializers.AppInitializers
 import app.tivi.appinitializers.EmojiInitializer
+import app.tivi.appinitializers.ShowTasksInitializer
 import app.tivi.appinitializers.ThreeTenBpInitializer
 import app.tivi.appinitializers.TimberInitializer
-import app.tivi.tasks.ShowTasksImpl
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
-import app.tivi.util.Logger
-import app.tivi.util.TimberLogger
 import dagger.Module
 import dagger.Provides
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -50,7 +44,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 import android.text.format.DateFormat as AndroidDateFormat
 
-@Module
+@Module(includes = [AppModuleBinds::class])
 class AppModule {
     @Provides
     fun provideContext(application: TiviApplication): Context = application.applicationContext
@@ -85,20 +79,11 @@ class AppModule {
 
     @Provides
     fun provideAppManagers(
-        androidJobInitializer: AndroidJobInitializer,
+        showTasksInitializer: ShowTasksInitializer,
         timberManager: TimberInitializer,
         threeTenManager: ThreeTenBpInitializer,
-        emoji: EmojiInitializer
-    ) = AppInitializers(androidJobInitializer, timberManager, threeTenManager, emoji)
-
-    @Provides
-    @Singleton
-    @Named("app")
-    fun provideAppNavigator(context: Context): AppNavigator = TiviAppNavigator(context)
-
-    @Provides
-    @Singleton
-    fun provideTiviActions(): ShowTasks = ShowTasksImpl()
+        emojiInitializer: EmojiInitializer
+    ) = AppInitializers(showTasksInitializer, timberManager, threeTenManager, emojiInitializer)
 
     @Provides
     @Named("tmdb-api")
@@ -114,10 +99,6 @@ class AppModule {
 
     @Provides
     fun provideCompositeDisposable() = CompositeDisposable()
-
-    @Singleton
-    @Provides
-    fun provideLogger(logger: TimberLogger): Logger = logger
 
     @Singleton
     @Provides

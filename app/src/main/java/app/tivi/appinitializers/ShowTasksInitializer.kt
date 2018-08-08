@@ -14,25 +14,16 @@
  * limitations under the License.
  */
 
-package app.tivi.tasks
+package app.tivi.appinitializers
 
-import com.evernote.android.job.Job
-import com.evernote.android.job.JobCreator
+import android.app.Application
+import app.tivi.actions.ShowTasks
 import javax.inject.Inject
-import javax.inject.Provider
 
-/**
- * JobCreator which uses Dagger to create the instances.
- */
-class TiviJobCreator @Inject constructor(
-    private val creators: @JvmSuppressWildcards Map<String, Provider<Job>>
-) : JobCreator {
-    override fun create(tag: String): Job {
-        val creator = creators[tag] ?: throw IllegalArgumentException("Unknown job tag: $tag")
-        try {
-            return creator.get()
-        } catch (e: Exception) {
-            throw RuntimeException(e)
-        }
+class ShowTasksInitializer @Inject constructor(
+    private val showTasks: ShowTasks
+) : AppInitializer {
+    override fun init(application: Application) {
+        showTasks.setupNightSyncs()
     }
 }

@@ -16,22 +16,50 @@
 
 package app.tivi.tasks
 
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import app.tivi.actions.ShowTasks
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class ShowTasksImpl : ShowTasks {
+class ShowTasksImpl @Inject constructor(
+    private val workManager: WorkManager
+) : ShowTasks {
     override fun syncShowWatchedEpisodes(showId: Long) {
-        SyncShowWatchedProgress.buildRequest(showId)
-                .startNow()
-                .setUpdateCurrent(true)
+        val request = OneTimeWorkRequest.Builder(SyncShowWatchedProgress::class.java)
+                .addTag(SyncShowWatchedProgress.TAG)
+                .setInputData(SyncShowWatchedProgress.buildData(showId))
                 .build()
-                .scheduleAsync()
+        workManager.enqueue(request)
     }
 
     override fun syncFollowedShows() {
-        SyncAllFollowedShows.buildRequest()
-                .startNow()
-                .setUpdateCurrent(true)
+        val request = OneTimeWorkRequest.Builder(SyncAllFollowedShows::class.java)
+                .addTag(SyncAllFollowedShows.TAG)
                 .build()
-                .scheduleAsync()
+        workManager.enqueue(request)
+    }
+
+    override fun setupNightSyncs() {
+        val request = PeriodicWorkRequest.Builder(SyncAllFollowedShows::class.java,
+                24, TimeUnit.HOURS, 6, TimeUnit.HOURS)
+                .setConstraints(
+                        Constraints.Builder()
+                                .setRequiredNetworkType(NetworkType.UNMETERED)
+                                .setRequiresCharging(true)
+                                .setRequiresDeviceIdle(true)
+                                .build()
+                )
+                .build()
+
+        workManager.enqueueUniquePeriodicWork(
+                SyncAllFollowedShows.NIGHTLY_SYNC_TAG,
+                ExistingPeriodicWorkPolicy.REPLACE,
+                request
+        )
     }
 }

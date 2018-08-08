@@ -16,14 +16,11 @@
 
 package app.tivi.tasks
 
-import androidx.work.WorkManager
-import dagger.Module
-import dagger.Provides
-import javax.inject.Singleton
+import dagger.Subcomponent
+import dagger.android.AndroidInjector
 
-@Module
-class JobsModule {
-    @Provides
-    @Singleton
-    fun provideWorkManager(): WorkManager = WorkManager.getInstance()
+@Subcomponent
+interface SyncShowWatchedProgressSubcomponent : AndroidInjector<SyncShowWatchedProgress> {
+    @Subcomponent.Builder
+    abstract class Builder : AndroidInjector.Builder<SyncShowWatchedProgress>()
 }
