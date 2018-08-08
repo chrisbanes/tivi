@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-package app.tivi.data.mappers
+package app.tivi.data.repositories.search
 
-import app.tivi.data.entities.TiviShow
-import com.uwetrottmann.tmdb2.entities.TvShow
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class TmdbShowToTiviShow @Inject constructor() : Mapper<TvShow, TiviShow> {
-    override fun map(from: TvShow) = TiviShow(
-            tmdbId = from.id,
-            imdbId = from?.external_ids?.imdb_id,
-            title = from.name,
-            summary = from.overview,
-            tmdbBackdropPath = from.backdrop_path,
-            tmdbPosterPath = from.poster_path,
-            homepage = from.homepage
-    )
+class LocalSearchStore @Inject constructor(
+
+) {
+
 }

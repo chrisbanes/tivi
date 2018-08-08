@@ -19,12 +19,15 @@ package app.tivi.home.discover
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.SearchView
 import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import app.tivi.R
 import app.tivi.data.Entry
+import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
@@ -41,6 +44,8 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     private lateinit var gridLayoutManager: GridLayoutManager
     private lateinit var homeNavigator: HomeNavigator
 
+    private lateinit var searchView: SearchView
+
     private val controller = DiscoverEpoxyController(object : DiscoverEpoxyController.Callbacks {
         private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
             ListItemSharedElementHelper(summary_rv)
@@ -55,8 +60,12 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         }
 
         override fun onItemClicked(item: EntryWithShow<out Entry>) {
-            viewModel.onItemPostedClicked(homeNavigator, item.show,
+            viewModel.onItemPosterClicked(homeNavigator, item.show,
                     listItemSharedElementHelper.createForItem(item, "poster"))
+        }
+
+        override fun onSearchItemClicked(item: TiviShow) {
+            viewModel.onItemPosterClicked(homeNavigator, item, null)
         }
     })
 
@@ -72,7 +81,7 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel.data.observeNotNull(this) { model ->
-            controller.setData(model.trendingItems, model.popularItems, model.tmdbImageUrlProvider)
+            controller.setData(model)
             summary_swipe_refresh.isRefreshing = model.isLoading
             scheduleStartPostponedTransitions()
         }
@@ -99,11 +108,36 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
         summary_toolbar.apply {
             title = getString(R.string.discover_title)
-            inflateMenu(R.menu.home_toolbar)
-            setOnMenuItemClickListener {
-                onMenuItemClicked(it)
-            }
+            inflateMenu(R.menu.discover_toolbar)
+            setOnMenuItemClickListener(this@DiscoverFragment::onMenuItemClicked)
+
+            val searchItem = menu.findItem(R.id.discover_search)
+            searchItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+                override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+                    viewModel.onSearchOpened()
+                    return true
+                }
+
+                override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+                    viewModel.onSearchClosed()
+                    return true
+                }
+            })
+
+            searchView = menu.findItem(R.id.discover_search).actionView as SearchView
         }
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                viewModel.onSearchQueryChanged(query)
+                return true
+            }
+
+            override fun onQueryTextChange(query: String): Boolean {
+                viewModel.onSearchQueryChanged(query)
+                return true
+            }
+        })
 
         summary_swipe_refresh.setOnRefreshListener(viewModel::refresh)
     }

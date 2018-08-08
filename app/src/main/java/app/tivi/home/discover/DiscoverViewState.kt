@@ -16,13 +16,26 @@
 
 package app.tivi.home.discover
 
+import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.tmdb.TmdbImageUrlProvider
 
-data class DiscoverViewState(
+sealed class DiscoverViewState(
+    open val tmdbImageUrlProvider: TmdbImageUrlProvider,
+    open val isLoading: Boolean
+)
+
+data class EmptyDiscoverViewState(
     val trendingItems: List<TrendingEntryWithShow>,
     val popularItems: List<PopularEntryWithShow>,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    val isLoading: Boolean
-)
+    override val tmdbImageUrlProvider: TmdbImageUrlProvider,
+    override val isLoading: Boolean
+) : DiscoverViewState(tmdbImageUrlProvider, isLoading)
+
+data class SearchResultDiscoverViewState(
+    val query: String,
+    val results: List<TiviShow>,
+    override val tmdbImageUrlProvider: TmdbImageUrlProvider,
+    override val isLoading: Boolean
+) : DiscoverViewState(tmdbImageUrlProvider, isLoading)

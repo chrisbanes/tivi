@@ -42,6 +42,24 @@ interface PagingInteractor<P, T> : Interactor<P> {
     fun dataSourceFactory(): DataSource.Factory<Int, T>
 }
 
+abstract class RxInteractor<P, T> : Interactor2<P, T> {
+    private val subject: BehaviorSubject<T> = BehaviorSubject.create()
+
+    final override suspend fun invoke(param: P) {
+        val r = execute(param)
+        setValue(r)
+    }
+
+    protected abstract suspend fun execute(param: P): T
+
+    protected fun setValue(value: T) = subject.onNext(value)
+
+    final override fun observe(): Flowable<T> = subject.toFlowable()
+
+    override fun clear() {
+    }
+}
+
 abstract class SubjectInteractor<P, T> : Interactor2<P, T> {
     private var disposable: Disposable? = null
     private val subject: BehaviorSubject<T> = BehaviorSubject.create()

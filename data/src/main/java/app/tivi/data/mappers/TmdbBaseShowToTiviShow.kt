@@ -17,25 +17,17 @@
 package app.tivi.data.mappers
 
 import app.tivi.data.entities.TiviShow
-import com.uwetrottmann.trakt5.entities.Show
+import com.uwetrottmann.tmdb2.entities.BaseTvShow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TraktShowToTiviShow @Inject constructor() : Mapper<Show, TiviShow> {
-    override fun map(from: Show) = TiviShow(
-            traktId = from.ids.trakt,
-            tmdbId = from.ids.tmdb,
-            imdbId = from.ids.imdb,
-            title = from.title,
+class TmdbBaseShowToTiviShow @Inject constructor() : Mapper<BaseTvShow, TiviShow> {
+    override fun map(from: BaseTvShow) = TiviShow(
+            tmdbId = from.id,
+            title = from.name,
             summary = from.overview,
-            homepage = from.homepage,
-            traktRating = from.rating?.toFloat(),
-            certification = from.certification,
-            runtime = from.runtime,
-            network = from.network,
-            country = from.country,
-            firstAired = from.first_aired,
-            _genres = from.genres?.joinToString(",")
+            tmdbBackdropPath = from.backdrop_path,
+            tmdbPosterPath = from.poster_path
     )
 }

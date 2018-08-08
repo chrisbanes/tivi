@@ -23,6 +23,7 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.extensions.toFlowable
 import app.tivi.home.HomeFragmentViewModel
 import app.tivi.home.HomeNavigator
+import app.tivi.interactors.SearchShows
 import app.tivi.interactors.UpdatePopularShows
 import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.interactors.UpdateUserDetails
@@ -34,12 +35,15 @@ import app.tivi.util.NetworkDetector
 import app.tivi.util.RxLoadingCounter
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.subjects.BehaviorSubject
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class DiscoverViewModel @Inject constructor(
     schedulers: AppRxSchedulers,
     private val updatePopularShows: UpdatePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,
+    private val searchShows: SearchShows,
     traktManager: TraktManager,
     tmdbManager: TmdbManager,
     updateUserDetails: UpdateUserDetails,
@@ -50,15 +54,36 @@ class DiscoverViewModel @Inject constructor(
     val data: LiveData<DiscoverViewState>
         get() = _data
 
+    private var searchOpened = BehaviorSubject.createDefault(false)
+    private var searchQuery = BehaviorSubject.create<String>()
+
     private val loadingState = RxLoadingCounter()
 
     init {
-        disposables += Flowables.combineLatest(
-                updateTrendingShows.observe(),
-                updatePopularShows.observe(),
-                tmdbManager.imageProvider,
-                loadingState.observable.toFlowable(),
-                ::DiscoverViewState)
+        disposables += searchQuery.observeOn(schedulers.main)
+                .debounce(500, TimeUnit.MILLISECONDS, schedulers.io)
+                .filter { it.isNotEmpty() }
+                .distinctUntilChanged()
+                .subscribe(::runSearchQuery, logger::e)
+
+        disposables += searchOpened.toFlowable()
+                .switchMap { searchOpened ->
+                    if (searchOpened) {
+                        Flowables.combineLatest(
+                                searchQuery.toFlowable(),
+                                searchShows.observe(),
+                                tmdbManager.imageProvider,
+                                loadingState.observable.toFlowable(),
+                                ::SearchResultDiscoverViewState)
+                    } else {
+                        Flowables.combineLatest(
+                                updateTrendingShows.observe(),
+                                updatePopularShows.observe(),
+                                tmdbManager.imageProvider,
+                                loadingState.observable.toFlowable(),
+                                ::EmptyDiscoverViewState)
+                    }
+                }
                 .observeOn(schedulers.main)
                 .subscribe(_data::setValue, logger::e)
 
@@ -88,7 +113,20 @@ class DiscoverViewModel @Inject constructor(
         navigator.showPopular(sharedElementHelper)
     }
 
-    fun onItemPostedClicked(navigator: HomeNavigator, show: TiviShow, sharedElements: SharedElementHelper?) {
+    fun onItemPosterClicked(navigator: HomeNavigator, show: TiviShow, sharedElements: SharedElementHelper?) {
         navigator.showShowDetails(show, sharedElements)
     }
+
+    private fun runSearchQuery(query: String) {
+        launchInteractor(searchShows, SearchShows.Params(query))
+    }
+
+    fun onSearchOpened() = searchOpened.onNext(true)
+
+    fun onSearchClosed() {
+        searchOpened.onNext(false)
+        searchShows.clear()
+    }
+
+    fun onSearchQueryChanged(query: String) = searchQuery.onNext(query)
 }
