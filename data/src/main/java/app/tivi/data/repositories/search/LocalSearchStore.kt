@@ -18,6 +18,12 @@ package app.tivi.data.repositories.search
 
 import javax.inject.Inject
 
-class LocalSearchStore @Inject constructor(
+class LocalSearchStore @Inject constructor() {
+    private val cache = HashMap<String, LongArray>()
 
-)
+    fun getResults(query: String) = cache[query]
+
+    fun setResults(query: String, results: LongArray) {
+        cache[query] = results
+    }
+}

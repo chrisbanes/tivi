@@ -19,7 +19,6 @@ package app.tivi.data.repositories.search
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.repositories.shows.LocalShowStore
-import app.tivi.data.repositories.shows.ShowRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,16 +26,24 @@ import javax.inject.Singleton
 class SearchRepository @Inject constructor(
     private val localSearchStore: LocalSearchStore,
     private val localShowStore: LocalShowStore,
-    private val tmdbDataSource: TmdbSearchDataSource,
-    private val showRepository: ShowRepository
+    private val tmdbDataSource: TmdbSearchDataSource
 ) {
     suspend fun search(query: String): List<TiviShow> {
+        val cacheValues = localSearchStore.getResults(query)
+        if (cacheValues != null) {
+            return cacheValues.map { localShowStore.getShow(it)!! }
+        }
+
+        // We need to hit TMDb instead
         val tmdbResult = tmdbDataSource.search(query)
 
         return when (tmdbResult) {
             is Success -> tmdbResult.data.map {
                 val id = localShowStore.getIdOrSavePlaceholder(it)
-                it.copy(id = id)
+                localShowStore.getShow(id)!!
+            }.also { results ->
+                // We need to save the search results
+                localSearchStore.setResults(query, results.mapNotNull { it.id }.toLongArray())
             }
             else -> emptyList()
         }
