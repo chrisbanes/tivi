@@ -19,19 +19,20 @@ package app.tivi.interactors
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.repositories.search.SearchRepository
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.AppRxSchedulers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
 class SearchShows @Inject constructor(
     private val searchRepository: SearchRepository,
-    dispatchers: AppCoroutineDispatchers,
-    private val schedulers: AppRxSchedulers
-) : RxInteractor<SearchShows.Params, List<TiviShow>>() {
+    dispatchers: AppCoroutineDispatchers
+) : ChannelInteractor<SearchShows.Params, List<TiviShow>>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend fun execute(param: Params): List<TiviShow> {
-        return searchRepository.search(param.query)
+        return when {
+            param.query.isNotEmpty() -> searchRepository.search(param.query)
+            else -> emptyList()
+        }
     }
 
     data class Params(val query: String)

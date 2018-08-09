@@ -62,7 +62,6 @@ class DiscoverViewModel @Inject constructor(
     init {
         disposables += searchQuery.observeOn(schedulers.main)
                 .debounce(500, TimeUnit.MILLISECONDS, schedulers.io)
-                .filter { it.isNotEmpty() }
                 .distinctUntilChanged()
                 .subscribe(::runSearchQuery, logger::e)
 
@@ -125,7 +124,6 @@ class DiscoverViewModel @Inject constructor(
 
     fun onSearchClosed() {
         searchOpened.onNext(false)
-        searchShows.clear()
     }
 
     fun onSearchQueryChanged(query: String) = searchQuery.onNext(query)

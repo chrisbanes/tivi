@@ -25,7 +25,9 @@ import kotlinx.coroutines.experimental.CoroutineDispatcher
 import kotlinx.coroutines.experimental.CoroutineStart
 import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.rx2.asObservable
 import kotlin.coroutines.experimental.CoroutineContext
 
 interface Interactor<in P> {
@@ -42,21 +44,19 @@ interface PagingInteractor<P, T> : Interactor<P> {
     fun dataSourceFactory(): DataSource.Factory<Int, T>
 }
 
-abstract class RxInteractor<P, T> : Interactor2<P, T> {
-    private val subject: BehaviorSubject<T> = BehaviorSubject.create()
+abstract class ChannelInteractor<P, T> : Interactor2<P, T> {
+    private val channel = Channel<T>()
 
     final override suspend fun invoke(param: P) {
-        val r = execute(param)
-        setValue(r)
+        channel.offer(execute(param))
     }
+
+    final override fun observe(): Flowable<T> = channel.asObservable(dispatcher).toFlowable()
 
     protected abstract suspend fun execute(param: P): T
 
-    protected fun setValue(value: T) = subject.onNext(value)
-
-    final override fun observe(): Flowable<T> = subject.toFlowable()
-
     override fun clear() {
+        channel.close()
     }
 }
 
