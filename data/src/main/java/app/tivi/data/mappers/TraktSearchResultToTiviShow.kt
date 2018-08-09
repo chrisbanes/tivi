@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.search
+package app.tivi.data.mappers
 
+import app.tivi.data.entities.TiviShow
+import com.uwetrottmann.trakt5.entities.SearchResult
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class LocalSearchStore @Inject constructor(
-
-)
+@Singleton
+class TraktSearchResultToTiviShow @Inject constructor(
+    private val showMapper: TraktShowToTiviShow
+) : Mapper<SearchResult, TiviShow> {
+    override fun map(from: SearchResult) = showMapper.map(from.show)
+}

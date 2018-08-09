@@ -51,7 +51,8 @@ class LocalShowStore @Inject constructor(
      * database, it is inserted and the generated ID is returned.
      */
     fun getIdOrSavePlaceholder(show: TiviShow): Long = transactionRunner {
-        val showForTraktId = show.traktId?.let { showDao.getShowWithTraktId(it) }
-        showForTraktId?.id ?: showDao.insert(show)
+        show.traktId?.let { showDao.getShowWithTraktId(it)?.id }
+                ?: show.tmdbId?.let { showDao.getShowWithTmdbId(it)?.id }
+                ?: showDao.insert(show)
     }
 }

@@ -36,7 +36,6 @@ import app.tivi.util.Logger
 import app.tivi.util.TiviViewModel
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
-import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 class ShowDetailsFragmentViewModel @Inject constructor(
@@ -113,16 +112,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     }
 
     fun addToMyShows() {
-        showId?.let { id ->
-            launchWithParent {
-                withContext(followShow.dispatcher) {
-                    followShow(FollowShow.Params(id, true))
-                }
-                withContext(syncFollowedShowWatchedProgress.dispatcher) {
-                    syncFollowedShowWatchedProgress(SyncFollowedShowWatchedProgress.Params(id, true))
-                }
-            }
-        }
+        showId?.also { id -> launchInteractor(followShow, FollowShow.Params(id, true)) }
     }
 
     override fun onCleared() {
@@ -131,9 +121,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     }
 
     fun removeFromMyShows() {
-        showId?.let { id ->
-            launchInteractor(unfollowShow, UnfollowShow.Params(id, true))
-        }
+        showId?.let { id -> launchInteractor(unfollowShow, UnfollowShow.Params(id, true)) }
     }
 
     fun onRelatedShowClicked(
