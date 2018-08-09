@@ -23,7 +23,6 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import kotlinx.coroutines.experimental.CoroutineStart
-import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.launch
@@ -84,16 +83,6 @@ abstract class SubjectInteractor<P, T> : Interactor2<P, T> {
         disposable?.dispose()
         disposable = source.subscribe(subject::onNext, subject::onError)
     }
-}
-
-@Suppress("UNCHECKED_CAST")
-fun <T> emptyInteractor(): Interactor<T> = EmptyInteractor as Interactor<T>
-
-internal object EmptyInteractor : Interactor<Unit> {
-    override val dispatcher: CoroutineDispatcher
-        get() = DefaultDispatcher
-
-    override suspend fun invoke(param: Unit) = Unit
 }
 
 fun <P> launchInteractor(
