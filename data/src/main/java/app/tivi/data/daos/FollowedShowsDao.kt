@@ -34,6 +34,8 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
                 " INNER JOIN episode_watch_entries as ew ON ew.episode_id = eps.id" +
                 " GROUP BY fs.id" +
                 " ORDER BY datetime(ew.watched_at) DESC"
+
+        const val ENTRY_QUERY_ORDER_ADDED = "SELECT * FROM myshows_entries ORDER BY datetime(followed_at) DESC"
     }
 
     @Query("SELECT * FROM myshows_entries")
@@ -44,7 +46,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     abstract override fun entriesFlowable(count: Int, offset: Int): Flowable<List<FollowedShowEntryWithShow>>
 
     @Transaction
-    @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
+    @Query(ENTRY_QUERY_ORDER_ADDED)
     abstract override fun entriesDataSource(): DataSource.Factory<Int, FollowedShowEntryWithShow>
 
     @Query("DELETE FROM myshows_entries")

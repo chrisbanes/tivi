@@ -25,6 +25,7 @@ import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.AppCoroutineDispatchers
 import org.threeten.bp.Duration
+import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -57,7 +58,12 @@ class FollowedShowsRepository @Inject constructor(
         val entry = localStore.getEntryForShowId(showId)
         if (entry == null || entry.pendingAction == PendingAction.DELETE) {
             // If we don't have an entry, or it is marked for deletion, lets update it to be uploaded
-            val newEntry = FollowedShowEntry(id = entry?.id, showId = showId, pendingAction = PendingAction.UPLOAD)
+            val newEntry = FollowedShowEntry(
+                    id = entry?.id,
+                    showId = showId,
+                    followedAt = entry?.followedAt ?: OffsetDateTime.now(),
+                    pendingAction = PendingAction.UPLOAD
+            )
             localStore.save(newEntry)
             // Now sync it up
             syncFollowedShows()
@@ -90,11 +96,11 @@ class FollowedShowsRepository @Inject constructor(
 
     private suspend fun pullDownTraktFollowedList(listId: Int) {
         dataSource.getListShows(listId)
-                .map {
+                .map { (entry, show) ->
                     // Grab the show id if it exists, or save the show and use it's generated ID
-                    val showId = localShowStore.getIdOrSavePlaceholder(it)
+                    val showId = localShowStore.getIdOrSavePlaceholder(show)
                     // Create a followed show entry with the show id
-                    FollowedShowEntry(showId = showId)
+                    entry.copy(showId = showId)
                 }
                 .also { entries ->
                     // Save the related entries

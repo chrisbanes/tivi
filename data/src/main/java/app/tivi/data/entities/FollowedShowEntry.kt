@@ -22,6 +22,7 @@ import android.arch.persistence.room.ForeignKey
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import app.tivi.data.Entry
+import org.threeten.bp.OffsetDateTime
 
 @Entity(tableName = "myshows_entries",
         indices = [
@@ -40,5 +41,6 @@ import app.tivi.data.Entry
 data class FollowedShowEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long? = null,
     @ColumnInfo(name = "show_id") override val showId: Long,
+    @ColumnInfo(name = "followed_at") val followedAt: OffsetDateTime? = null,
     @ColumnInfo(name = "pending_action") val pendingAction: PendingAction = PendingAction.NOTHING
 ) : Entry

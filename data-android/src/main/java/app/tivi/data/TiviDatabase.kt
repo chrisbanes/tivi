@@ -56,7 +56,7 @@ import app.tivi.data.entities.WatchedShowEntry
             EpisodeWatchEntry::class,
             LastRequest::class
         ],
-        version = 12
+        version = 13
 )
 @TypeConverters(TiviTypeConverters::class)
 abstract class TiviDatabase : RoomDatabase() {

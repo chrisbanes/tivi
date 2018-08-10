@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.followedshows
+package app.tivi.data.mappers
 
 import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.TiviShow
+import com.uwetrottmann.trakt5.entities.ListEntry
+import javax.inject.Inject
+import javax.inject.Singleton
+import com.uwetrottmann.trakt5.entities.Episode as TraktEpisode
 
-interface FollowedShowsDataSource {
-    suspend fun getListShows(listId: Int): List<Pair<FollowedShowEntry, TiviShow>>
-
-    suspend fun addShowIdsToList(listId: Int, shows: List<TiviShow>)
-
-    suspend fun removeShowIdsFromList(listId: Int, shows: List<TiviShow>)
-
-    suspend fun getFollowedListId(): Int?
+@Singleton
+class TraktListEntryToFollowedShowEntry @Inject constructor() : Mapper<ListEntry, FollowedShowEntry> {
+    override fun map(from: ListEntry) = FollowedShowEntry(
+            showId = 0,
+            followedAt = from.listed_at
+    )
 }
