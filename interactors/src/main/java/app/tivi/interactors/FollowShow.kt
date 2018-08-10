@@ -24,7 +24,7 @@ import javax.inject.Inject
 class FollowShow @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
     private val followedShowsRepository: FollowedShowsRepository,
-    private val syncFollowedShow: SyncFollowedShow
+    private val updateFollowedShowSeasonData: UpdateFollowedShowSeasonData
 ) : Interactor<FollowShow.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
@@ -33,7 +33,7 @@ class FollowShow @Inject constructor(
 
         if (followedShowsRepository.isShowFollowed(param.showId)) {
             // Now refresh the show
-            syncFollowedShow(SyncFollowedShow.Params(param.showId, param.forceLoad))
+            updateFollowedShowSeasonData(UpdateFollowedShowSeasonData.Params(param.showId, param.forceLoad))
         }
     }
 

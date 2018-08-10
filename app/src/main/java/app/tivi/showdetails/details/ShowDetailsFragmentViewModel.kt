@@ -23,14 +23,12 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.interactors.FollowShow
-import app.tivi.interactors.SyncFollowedShowWatchedProgress
 import app.tivi.interactors.UnfollowShow
+import app.tivi.interactors.UpdateFollowedShowSeasonData
 import app.tivi.interactors.UpdateRelatedShows
 import app.tivi.interactors.UpdateShowDetails
-import app.tivi.interactors.UpdateShowSeasons
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
-import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.TiviViewModel
@@ -40,11 +38,9 @@ import javax.inject.Inject
 
 class ShowDetailsFragmentViewModel @Inject constructor(
     private val schedulers: AppRxSchedulers,
-    private val dispatchers: AppCoroutineDispatchers,
     private val updateShowDetails: UpdateShowDetails,
     private val updateRelatedShows: UpdateRelatedShows,
-    private val updateShowSeasons: UpdateShowSeasons,
-    private val syncFollowedShowWatchedProgress: SyncFollowedShowWatchedProgress,
+    private val updateShowSeasons: UpdateFollowedShowSeasonData,
     private val tmdbManager: TmdbManager,
     private val followShow: FollowShow,
     private val unfollowShow: UnfollowShow,
@@ -73,12 +69,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         showId?.also { id ->
             launchInteractor(updateShowDetails, UpdateShowDetails.Params(id, true))
             launchInteractor(updateRelatedShows, UpdateRelatedShows.Params(id, true))
-            launchWithParent(dispatchers.io) {
-                if (followedShowsRepository.isShowFollowed(id)) {
-                    updateShowSeasons(UpdateShowSeasons.Params(id, true))
-                    syncFollowedShowWatchedProgress(SyncFollowedShowWatchedProgress.Params(id, true))
-                }
-            }
+            launchInteractor(updateShowSeasons, UpdateFollowedShowSeasonData.Params(id, true))
         }
     }
 

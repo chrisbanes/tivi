@@ -18,18 +18,21 @@ package app.tivi.interactors
 
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
+import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
+import app.tivi.extensions.emptyFlowableList
 import app.tivi.util.AppCoroutineDispatchers
+import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
-class SyncFollowedShow @Inject constructor(
+class UpdateFollowedShowSeasonData @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     private val followedShowsRepository: FollowedShowsRepository
-) : Interactor<SyncFollowedShow.Params> {
+) : SubjectInteractor<UpdateFollowedShowSeasonData.Params, List<SeasonWithEpisodesAndWatches>>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(param: Params) {
+    override suspend fun execute(param: Params) {
         if (followedShowsRepository.isShowFollowed(param.showId)) {
             // Then update the seasons/episodes
             if (param.forceLoad || seasonsEpisodesRepository.needShowSeasonsUpdate(param.showId)) {
@@ -39,9 +42,12 @@ class SyncFollowedShow @Inject constructor(
             if (param.forceLoad || seasonsEpisodesRepository.needShowEpisodeWatchesSync(param.showId)) {
                 seasonsEpisodesRepository.syncEpisodeWatchesForShow(param.showId)
             }
-        } else {
-            throw IllegalArgumentException("Show with id [${param.showId}] is not a followed show")
         }
+    }
+
+    override fun createObservable(param: Params): Flowable<List<SeasonWithEpisodesAndWatches>> {
+        return seasonsEpisodesRepository.observeSeasonsForShow(param.showId)
+                .startWith(emptyFlowableList())
     }
 
     data class Params(val showId: Long, val forceLoad: Boolean)
