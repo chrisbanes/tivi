@@ -18,6 +18,7 @@ package app.tivi.interactors
 
 import app.tivi.data.repositories.relatedshows.RelatedShowsRepository
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
+import app.tivi.extensions.emptyFlowableList
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
@@ -35,6 +36,7 @@ class UpdateRelatedShows @Inject constructor(
 
     override fun createObservable(param: Params): Flowable<List<RelatedShowEntryWithShow>> {
         return repository.observeRelatedShows(param.showId)
+                .startWith(emptyFlowableList())
                 .subscribeOn(schedulers.io)
     }
 

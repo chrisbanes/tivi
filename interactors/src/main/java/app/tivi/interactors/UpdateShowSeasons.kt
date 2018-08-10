@@ -18,6 +18,7 @@ package app.tivi.interactors
 
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
+import app.tivi.extensions.emptyFlowableList
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
@@ -33,6 +34,7 @@ class UpdateShowSeasons @Inject constructor(
 
     override fun createObservable(param: Params): Flowable<List<SeasonWithEpisodesAndWatches>> {
         return seasonsEpisodesRepository.observeSeasonsForShow(param.showId)
+                .startWith(emptyFlowableList())
                 .subscribeOn(schedulers.io)
     }
 

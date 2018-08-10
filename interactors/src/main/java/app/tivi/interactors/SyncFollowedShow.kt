@@ -16,29 +16,31 @@
 
 package app.tivi.interactors
 
-import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
+import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
 class SyncFollowedShow @Inject constructor(
-    private val followedShowsDao: FollowedShowsDao,
     dispatchers: AppCoroutineDispatchers,
-    private val seasonsEpisodesRepository: SeasonsEpisodesRepository
+    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
+    private val followedShowsRepository: FollowedShowsRepository
 ) : Interactor<SyncFollowedShow.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend operator fun invoke(param: Params) {
-        val entry = followedShowsDao.entryWithShowId(param.showId)
-                ?: throw IllegalArgumentException("Followed entry with showId: $param does not exist")
-        // Then update the seasons/episodes
-        if (param.forceLoad || seasonsEpisodesRepository.needShowSeasonsUpdate(entry.showId)) {
-            seasonsEpisodesRepository.updateSeasonsEpisodes(entry.showId)
-        }
-        // Finally update any watched progress
-        if (param.forceLoad || seasonsEpisodesRepository.needShowEpisodeWatchesSync(entry.showId)) {
-            seasonsEpisodesRepository.syncEpisodeWatchesForShow(entry.showId)
+        if (followedShowsRepository.isShowFollowed(param.showId)) {
+            // Then update the seasons/episodes
+            if (param.forceLoad || seasonsEpisodesRepository.needShowSeasonsUpdate(param.showId)) {
+                seasonsEpisodesRepository.updateSeasonsEpisodes(param.showId)
+            }
+            // Finally update any watched progress
+            if (param.forceLoad || seasonsEpisodesRepository.needShowEpisodeWatchesSync(param.showId)) {
+                seasonsEpisodesRepository.syncEpisodeWatchesForShow(param.showId)
+            }
+        } else {
+            throw IllegalArgumentException("Show with id [${param.showId}] is not a followed show")
         }
     }
 

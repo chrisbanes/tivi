@@ -19,9 +19,9 @@ package app.tivi.showdetails.details
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.SharedElementHelper
-import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.interactors.FollowShow
 import app.tivi.interactors.SyncFollowedShowWatchedProgress
 import app.tivi.interactors.UnfollowShow
@@ -48,7 +48,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     private val tmdbManager: TmdbManager,
     private val followShow: FollowShow,
     private val unfollowShow: UnfollowShow,
-    private val followedShowsDao: FollowedShowsDao,
+    private val followedShowsRepository: FollowedShowsRepository,
     private val logger: Logger
 ) : TiviViewModel() {
 
@@ -74,7 +74,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
             launchInteractor(updateShowDetails, UpdateShowDetails.Params(id, true))
             launchInteractor(updateRelatedShows, UpdateRelatedShows.Params(id, true))
             launchWithParent(dispatchers.io) {
-                if (followedShowsDao.entryCountWithShowId(id) > 0) {
+                if (followedShowsRepository.isShowFollowed(id)) {
                     updateShowSeasons(UpdateShowSeasons.Params(id, true))
                     syncFollowedShowWatchedProgress(SyncFollowedShowWatchedProgress.Params(id, true))
                 }
@@ -83,23 +83,19 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     }
 
     private fun setupLiveData() {
-        showId?.let { id ->
-            disposables += followedShowsDao.entryCountWithShowIdFlowable(id)
+        showId?.also { id ->
+            disposables += followedShowsRepository.observeIsShowFollowed(id)
                     .subscribeOn(schedulers.io)
-                    .map { it > 0 }
                     .distinctUntilChanged()
-                    .flatMap {
-                        if (it) {
-                            // Followed show
-                            Flowables.combineLatest(
+                    .switchMap { isFollowed ->
+                        when {
+                            isFollowed -> Flowables.combineLatest(
                                     updateShowDetails.observe(),
                                     updateRelatedShows.observe(),
                                     updateShowSeasons.observe(),
                                     tmdbManager.imageProvider,
                                     ::FollowedShowDetailsViewState)
-                        } else {
-                            // Not followed
-                            Flowables.combineLatest(
+                            else -> Flowables.combineLatest(
                                     updateShowDetails.observe(),
                                     updateRelatedShows.observe(),
                                     tmdbManager.imageProvider,

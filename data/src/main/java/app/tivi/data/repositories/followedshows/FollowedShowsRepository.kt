@@ -40,6 +40,10 @@ class FollowedShowsRepository @Inject constructor(
 ) {
     fun observeFollowedShows() = localStore.observeForPaging()
 
+    fun observeIsShowFollowed(showId: Long) = localStore.observeIsShowFollowed(showId)
+
+    fun isShowFollowed(showId: Long) = localStore.isShowFollowed(showId)
+
     suspend fun getFollowedShows(): List<FollowedShowEntry> {
         syncFollowedShows()
         return localStore.getEntries()
@@ -47,6 +51,28 @@ class FollowedShowsRepository @Inject constructor(
 
     fun needFollowedShowsSync(): Boolean {
         return localStore.isLastFollowedShowsSyncBefore(Duration.ofHours(3))
+    }
+
+    suspend fun addFollowedShow(showId: Long) {
+        val entry = localStore.getEntryForShowId(showId)
+        if (entry == null || entry.pendingAction == PendingAction.DELETE) {
+            // If we don't have an entry, or it is marked for deletion, lets update it to be uploaded
+            val newEntry = FollowedShowEntry(id = entry?.id, showId = showId, pendingAction = PendingAction.UPLOAD)
+            localStore.save(newEntry)
+            // Now sync it up
+            syncFollowedShows()
+        }
+    }
+
+    suspend fun removeFollowedShow(showId: Long) {
+        // Update the followed show to be deleted
+        val entry = localStore.getEntryForShowId(showId)
+        if (entry != null) {
+            // Mark the show as pending deletion
+            entry.copy(pendingAction = PendingAction.DELETE).also(localStore::save)
+            // Now sync it up
+            syncFollowedShows()
+        }
     }
 
     suspend fun syncFollowedShows() {

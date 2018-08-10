@@ -52,10 +52,12 @@ class SeasonsEpisodesRepository @Inject constructor(
         return localStore.lastShowSeasonsFetchBefore(showId, Period.ofDays(7))
     }
 
+    fun removeShowSeasonData(showId: Long) = localStore.deleteShowSeasonData(showId)
+
     suspend fun updateSeasonsEpisodes(showId: Long) {
         val result = traktSeasonsDataSource.getSeasonsEpisodes(showId)
-        when {
-            (result is Success && result.responseModified) -> {
+        when (result) {
+            is Success -> {
                 result.data.map { (season, episodes) ->
                     val localSeason = localStore.getSeasonWithTraktId(season.traktId!!) ?: Season(showId = showId)
                     val mergedSeason = mergeSeason(localSeason, season, Season.EMPTY)
@@ -154,8 +156,12 @@ class SeasonsEpisodesRepository @Inject constructor(
         traktSeasonsDataSource.getShowEpisodeWatches(showId)
                 .map { (episode, watchEntry) ->
                     // Grab the episode id if it exists, or save the episode and use it's generated ID
-                    val episodeId = localStore.getEpisodeIdOrSavePlaceholder(episode)
-                    watchEntry.copy(episodeId = episodeId)
+                    val episodeId = localStore.getEpisodeIdForTraktId(episode.traktId!!)
+                    if (episodeId != null) {
+                        watchEntry.copy(episodeId = episodeId)
+                    } else {
+                        throw IllegalStateException("Episode with Trakt Id ${episode.traktId} does not exist")
+                    }
                 }
                 .also { localStore.syncShowWatchEntries(showId, it) }
     }

@@ -16,27 +16,25 @@
 
 package app.tivi.interactors
 
-import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.PendingAction
+import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
 class FollowShow @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
-    private val followedShowsDao: FollowedShowsDao,
-    private val syncFollowedShow: SyncFollowedShow,
-    private val syncFollowedShowsToTrakt: SyncFollowedShowsToTrakt
+    private val followedShowsRepository: FollowedShowsRepository,
+    private val syncFollowedShow: SyncFollowedShow
 ) : Interactor<FollowShow.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend operator fun invoke(param: Params) {
-        followedShowsDao.insert(FollowedShowEntry(showId = param.showId, pendingAction = PendingAction.UPLOAD))
-        // Now refresh the show
-        syncFollowedShow(SyncFollowedShow.Params(param.showId, param.forceLoad))
-        // Now sync followed shows
-        syncFollowedShowsToTrakt(SyncFollowedShowsToTrakt.Params(param.forceLoad))
+        followedShowsRepository.addFollowedShow(param.showId)
+
+        if (followedShowsRepository.isShowFollowed(param.showId)) {
+            // Now refresh the show
+            syncFollowedShow(SyncFollowedShow.Params(param.showId, param.forceLoad))
+        }
     }
 
     data class Params(val showId: Long, val forceLoad: Boolean)

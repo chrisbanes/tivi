@@ -18,6 +18,7 @@ package app.tivi.data.repositories.followedshows
 
 import android.arch.paging.DataSource
 import app.tivi.data.DatabaseTransactionRunner
+import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.TiviShowDao
@@ -33,6 +34,7 @@ import javax.inject.Singleton
 @Singleton
 class LocalFollowedShowsStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
+    private val entityInserter: EntityInserter,
     private val followedShowsDao: FollowedShowsDao,
     private val showDao: TiviShowDao,
     private val lastRequestDao: LastRequestDao
@@ -44,6 +46,8 @@ class LocalFollowedShowsStore @Inject constructor(
             { showDao.getTraktIdForShowId(it.showId)!! },
             { entity, id -> entity.copy(id = id) }
     )
+
+    fun getEntryForShowId(showId: Long): FollowedShowEntry? = followedShowsDao.entryWithShowId(showId)
 
     fun getEntries(): List<FollowedShowEntry> = followedShowsDao.entries()
 
@@ -59,6 +63,10 @@ class LocalFollowedShowsStore @Inject constructor(
 
     fun observeForPaging(): DataSource.Factory<Int, FollowedShowEntryWithShow> = followedShowsDao.entriesDataSource()
 
+    fun observeIsShowFollowed(showId: Long) = followedShowsDao.entryCountWithShowIdFlowable(showId).map { it > 0 }
+
+    fun isShowFollowed(showId: Long) = followedShowsDao.entryCountWithShowId(showId) > 0
+
     fun sync(entities: List<FollowedShowEntry>) = transactionRunner {
         syncer.sync(followedShowsDao.entries(), entities)
     }
@@ -69,5 +77,9 @@ class LocalFollowedShowsStore @Inject constructor(
 
     fun isLastFollowedShowsSyncBefore(threshold: TemporalAmount): Boolean {
         return lastRequestDao.isRequestBefore(Request.FOLLOWED_SHOWS, 0, threshold)
+    }
+
+    fun save(entry: FollowedShowEntry) {
+        entityInserter.insertOrUpdate(followedShowsDao, entry)
     }
 }

@@ -19,6 +19,7 @@ package app.tivi.interactors
 import android.arch.paging.DataSource
 import app.tivi.data.repositories.popularshows.PopularShowsRepository
 import app.tivi.data.resultentities.PopularEntryWithShow
+import app.tivi.extensions.emptyFlowableList
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
@@ -39,6 +40,7 @@ class UpdatePopularShows @Inject constructor(
 
     override fun createObservable(param: Params): Flowable<List<PopularEntryWithShow>> {
         return popularShowsRepository.observeForFlowable()
+                .startWith(emptyFlowableList())
                 .subscribeOn(schedulers.io)
     }
 

@@ -16,30 +16,23 @@
 
 package app.tivi.interactors
 
-import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.daos.SeasonsDao
-import app.tivi.data.entities.PendingAction
+import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
+import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
 class UnfollowShow @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
-    private val seasonsDao: SeasonsDao,
-    private val followedShowsDao: FollowedShowsDao,
-    private val syncFollowedShowsToTrakt: SyncFollowedShowsToTrakt
+    private val followedShowsRepository: FollowedShowsRepository,
+    private val seasonsEpisodesRepository: SeasonsEpisodesRepository
 ) : Interactor<UnfollowShow.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend operator fun invoke(param: Params) {
-        // Update the followed show to be deleted
-        followedShowsDao.entryWithShowId(param.showId)
-                ?.copy(pendingAction = PendingAction.DELETE)
-                ?.also(followedShowsDao::update)
+        followedShowsRepository.removeFollowedShow(param.showId)
         // Now remove all season/episode data from database
-        seasonsDao.deleteSeasonsForShowId(param.showId)
-        // Now sync followed shows
-        syncFollowedShowsToTrakt(SyncFollowedShowsToTrakt.Params(param.forceLoad))
+        seasonsEpisodesRepository.removeShowSeasonData(param.showId)
     }
 
     data class Params(val showId: Long, val forceLoad: Boolean)
