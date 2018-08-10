@@ -20,7 +20,6 @@ import app.tivi.data.entities.FollowedShowEntry
 import com.uwetrottmann.trakt5.entities.ListEntry
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.uwetrottmann.trakt5.entities.Episode as TraktEpisode
 
 @Singleton
 class TraktListEntryToFollowedShowEntry @Inject constructor() : Mapper<ListEntry, FollowedShowEntry> {
