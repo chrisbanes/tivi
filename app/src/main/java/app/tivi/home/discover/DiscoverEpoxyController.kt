@@ -16,7 +16,6 @@
 
 package app.tivi.home.discover
 
-import android.view.View
 import app.tivi.R
 import app.tivi.data.Entry
 import app.tivi.data.entities.TiviShow
@@ -34,10 +33,10 @@ class DiscoverEpoxyController(
 ) : TypedEpoxyController<DiscoverViewState>() {
 
     interface Callbacks {
-        fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>?)
-        fun onPopularHeaderClicked(items: List<PopularEntryWithShow>?)
-        fun onItemClicked(item: EntryWithShow<out Entry>)
-        fun onSearchItemClicked(item: TiviShow)
+        fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>)
+        fun onPopularHeaderClicked(items: List<PopularEntryWithShow>)
+        fun onItemClicked(viewHolderId: Long, item: EntryWithShow<out Entry>)
+        fun onSearchItemClicked(viewHolderId: Long, item: TiviShow)
     }
 
     override fun buildModels(viewState: DiscoverViewState) {
@@ -52,12 +51,13 @@ class DiscoverEpoxyController(
 
         viewState.results.forEach { result ->
             posterGridItem {
-                id(result.id)
+                val id = result.id!!
+                id(id)
                 tmdbImageUrlProvider(tmdbImageUrlProvider)
                 tiviShow(result)
-                clickListener(View.OnClickListener {
-                    callbacks.onSearchItemClicked(result)
-                })
+                clickListener { _ ->
+                    callbacks.onSearchItemClicked(id, result)
+                }
             }
         }
     }
@@ -71,22 +71,23 @@ class DiscoverEpoxyController(
             id("trending_header")
             title(R.string.discover_trending)
             spanSizeOverride(TotalSpanOverride)
-            buttonClickListener(View.OnClickListener {
+            buttonClickListener { _ ->
                 callbacks.onTrendingHeaderClicked(trendingShows)
-            })
+            }
         }
         if (trendingShows.isNotEmpty()) {
             trendingShows.take(spanCount * 2).forEach { item ->
                 posterGridItem {
-                    id(item.generateStableId())
+                    val id = item.generateStableId()
+                    id(id)
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
                     tiviShow(item.show)
                     annotationLabel(item.entry?.watchers.toString())
                     annotationIcon(R.drawable.ic_eye_12dp)
                     transitionName("trending_${item.show.homepage}")
-                    clickListener(View.OnClickListener {
-                        callbacks.onItemClicked(item)
-                    })
+                    clickListener { _ ->
+                        callbacks.onItemClicked(id, item)
+                    }
                 }
             }
         } else {
@@ -100,20 +101,21 @@ class DiscoverEpoxyController(
             id("popular_header")
             title(R.string.discover_popular)
             spanSizeOverride(TotalSpanOverride)
-            buttonClickListener(View.OnClickListener {
+            buttonClickListener { _ ->
                 callbacks.onPopularHeaderClicked(popularShows)
-            })
+            }
         }
         if (popularShows.isNotEmpty()) {
             popularShows.take(spanCount * 2).forEach { item ->
                 posterGridItem {
-                    id(item.generateStableId())
+                    val id = item.generateStableId()
+                    id(id)
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
                     tiviShow(item.show)
                     transitionName("popular_${item.show.homepage}")
-                    clickListener(View.OnClickListener {
-                        callbacks.onItemClicked(item)
-                    })
+                    clickListener { _ ->
+                        callbacks.onItemClicked(id, item)
+                    }
                 }
             }
         } else {

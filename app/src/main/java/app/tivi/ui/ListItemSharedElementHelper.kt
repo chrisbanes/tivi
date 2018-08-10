@@ -28,7 +28,13 @@ class ListItemSharedElementHelper(
 ) {
     fun createForItem(item: EntryWithShow<out Entry>, transitionName: String): SharedElementHelper {
         val sharedElementHelper = SharedElementHelper()
-        addSharedElement(sharedElementHelper, item, transitionName)
+        addSharedElement(sharedElementHelper, item.generateStableId(), transitionName)
+        return sharedElementHelper
+    }
+
+    fun createForId(viewHolderId: Long, transitionName: String): SharedElementHelper {
+        val sharedElementHelper = SharedElementHelper()
+        addSharedElement(sharedElementHelper, viewHolderId, transitionName)
         return sharedElementHelper
     }
 
@@ -37,7 +43,7 @@ class ListItemSharedElementHelper(
         items?.forEach {
             val homepage = it.show.homepage
             if (homepage != null) {
-                addSharedElement(sharedElementHelper, it, homepage)
+                addSharedElement(sharedElementHelper, it.generateStableId(), homepage)
             }
         }
         return sharedElementHelper
@@ -45,10 +51,10 @@ class ListItemSharedElementHelper(
 
     private fun addSharedElement(
         sharedElementHelper: SharedElementHelper,
-        item: EntryWithShow<out Entry>,
+        viewHolderId: Long,
         transitionName: String
     ) {
-        recyclerView.findViewHolderForItemId(item.generateStableId())?.let {
+        recyclerView.findViewHolderForItemId(viewHolderId)?.also {
             sharedElementHelper.addSharedElement(viewFinder(it.itemView), transitionName)
         }
     }

@@ -51,21 +51,24 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
             ListItemSharedElementHelper(summary_rv)
         }
 
-        override fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>?) {
-            viewModel.onTrendingHeaderClicked(homeNavigator, listItemSharedElementHelper.createForItems(items))
+        override fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>) {
+            viewModel.onTrendingHeaderClicked(homeNavigator,
+                    listItemSharedElementHelper.createForItems(items))
         }
 
-        override fun onPopularHeaderClicked(items: List<PopularEntryWithShow>?) {
-            viewModel.onPopularHeaderClicked(homeNavigator, listItemSharedElementHelper.createForItems(items))
+        override fun onPopularHeaderClicked(items: List<PopularEntryWithShow>) {
+            viewModel.onPopularHeaderClicked(homeNavigator,
+                    listItemSharedElementHelper.createForItems(items))
         }
 
-        override fun onItemClicked(item: EntryWithShow<out Entry>) {
+        override fun onItemClicked(viewHolderId: Long, item: EntryWithShow<out Entry>) {
             viewModel.onItemPosterClicked(homeNavigator, item.show,
-                    listItemSharedElementHelper.createForItem(item, "poster"))
+                    listItemSharedElementHelper.createForId(viewHolderId, "poster"))
         }
 
-        override fun onSearchItemClicked(item: TiviShow) {
-            viewModel.onItemPosterClicked(homeNavigator, item, null)
+        override fun onSearchItemClicked(viewHolderId: Long, item: TiviShow) {
+            viewModel.onItemPosterClicked(homeNavigator, item,
+                    listItemSharedElementHelper.createForId(viewHolderId, "poster"))
         }
     })
 
