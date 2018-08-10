@@ -16,24 +16,31 @@
 
 package app.tivi.interactors
 
-import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.util.AppCoroutineDispatchers
+import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
-class UnfollowShow @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
-    private val followedShowsRepository: FollowedShowsRepository,
-    private val seasonsEpisodesRepository: SeasonsEpisodesRepository
-) : Interactor<UnfollowShow.Params> {
+class ChangeShowFollowStatus @Inject constructor(
+    dispatchers: AppCoroutineDispatchers,
+    private val followedShowsRepository: FollowedShowsRepository
+) : SubjectInteractor<ChangeShowFollowStatus.Params, Boolean>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(param: Params) {
-        followedShowsRepository.removeFollowedShow(param.showId)
-        // Now remove all season/episode data from database
-        seasonsEpisodesRepository.removeShowSeasonData(param.showId)
+    override suspend fun execute(param: Params) {
+        when (param.action) {
+            Action.FOLLOW -> followedShowsRepository.addFollowedShow(param.showId)
+            Action.UNFOLLOW -> followedShowsRepository.removeFollowedShow(param.showId)
+            else -> Unit
+        }
     }
 
-    data class Params(val showId: Long, val forceLoad: Boolean)
+    override fun createObservable(param: Params): Flowable<Boolean> {
+        return followedShowsRepository.observeIsShowFollowed(param.showId)
+    }
+
+    data class Params(val showId: Long, val action: Action)
+
+    enum class Action { CHECK, FOLLOW, UNFOLLOW }
 }
