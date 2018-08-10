@@ -16,6 +16,8 @@
 
 package app.tivi.data.repositories.relatedshows
 
+import app.tivi.data.entities.RelatedShowEntry
+import app.tivi.data.entities.TiviShow
 import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
@@ -29,6 +31,7 @@ class RelatedShowsRepository @Inject constructor(
     private val localStore: LocalRelatedShowsStore,
     private val localShowStore: LocalShowStore,
     private val traktDataSource: TraktRelatedShowsDataSource,
+    private val tmdbDataSource: TmdbRelatedShowsDataSource,
     private val showRepository: ShowRepository
 ) {
     fun observeRelatedShows(showId: Long) = localStore.observeRelatedShows(showId)
@@ -39,22 +42,32 @@ class RelatedShowsRepository @Inject constructor(
     }
 
     suspend fun updateRelatedShows(showId: Long) {
-        traktDataSource.getRelatedShows(showId)
-                .map { (show, entry) ->
-                    // Grab the show id if it exists, or save the show and use it's generated ID
-                    val relatedShowId = localShowStore.getIdOrSavePlaceholder(show)
-                    // Make a copy of the entry with the id
-                    entry.copy(otherShowId = relatedShowId)
+        val tmdbResults = tmdbDataSource.getRelatedShows(showId)
+        if (tmdbResults.isNotEmpty()) {
+            process(showId, tmdbResults)
+        } else {
+            val traktResults = traktDataSource.getRelatedShows(showId)
+            if (traktResults.isNotEmpty()) {
+                process(showId, traktResults)
+            }
+        }
+    }
+
+    private suspend fun process(showId: Long, list: List<Pair<TiviShow, RelatedShowEntry>>) {
+        list.map { (show, entry) ->
+            // Grab the show id if it exists, or save the show and use it's generated ID
+            val relatedShowId = localShowStore.getIdOrSavePlaceholder(show)
+            // Make a copy of the entry with the id
+            entry.copy(otherShowId = relatedShowId)
+        }.also { entries ->
+            // Save the related entries
+            localStore.saveRelatedShows(showId, entries)
+            // Now update all of the related shows if needed
+            entries.parallelForEach(dispatchers.io) { entry ->
+                if (showRepository.needsUpdate(entry.otherShowId)) {
+                    showRepository.updateShow(entry.otherShowId)
                 }
-                .also { entries ->
-                    // Save the related entries
-                    localStore.saveRelatedShows(showId, entries)
-                    // Now update all of the related shows if needed
-                    entries.parallelForEach(dispatchers.io) { entry ->
-                        if (showRepository.needsUpdate(entry.otherShowId)) {
-                            showRepository.updateShow(entry.otherShowId)
-                        }
-                    }
-                }
+            }
+        }
     }
 }
