@@ -54,7 +54,7 @@ class WatchedShowsViewModel @Inject constructor(
 
     override suspend fun callRefresh() {
         withContext(interactor.dispatcher) {
-            interactor(UpdateWatchedShows.Params(true))
+            interactor(UpdateWatchedShows.ExecuteParams(true))
         }
     }
 }

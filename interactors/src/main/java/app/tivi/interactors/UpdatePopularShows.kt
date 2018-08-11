@@ -20,6 +20,7 @@ import android.arch.paging.DataSource
 import app.tivi.data.repositories.popularshows.PopularShowsRepository
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.extensions.emptyFlowableList
+import app.tivi.interactors.UpdatePopularShows.ExecuteParams
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
@@ -30,28 +31,32 @@ class UpdatePopularShows @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
     private val schedulers: AppRxSchedulers,
     private val popularShowsRepository: PopularShowsRepository
-) : PagingInteractor<UpdatePopularShows.Params, PopularEntryWithShow>,
-        SubjectInteractor<UpdatePopularShows.Params, List<PopularEntryWithShow>>() {
+) : PagingInteractor<PopularEntryWithShow>, SubjectInteractor<Unit, ExecuteParams, List<PopularEntryWithShow>>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
+
+    init {
+        // We don't have params, so lets set Unit to kick off the observable
+        setParams(Unit)
+    }
 
     override fun dataSourceFactory(): DataSource.Factory<Int, PopularEntryWithShow> {
         return popularShowsRepository.observeForPaging()
     }
 
-    override fun createObservable(param: Params): Flowable<List<PopularEntryWithShow>> {
+    override fun createObservable(params: Unit): Flowable<List<PopularEntryWithShow>> {
         return popularShowsRepository.observeForFlowable()
                 .startWith(emptyFlowableList())
                 .subscribeOn(schedulers.io)
     }
 
-    override suspend fun execute(param: Params) {
-        when (param.page) {
+    override suspend fun execute(params: Unit, executeParams: ExecuteParams) {
+        when (executeParams.page) {
             Page.NEXT_PAGE -> popularShowsRepository.loadNextPage()
             Page.REFRESH -> popularShowsRepository.refresh()
         }
     }
 
-    data class Params(val page: Page)
+    data class ExecuteParams(val page: Page)
 
     enum class Page {
         NEXT_PAGE, REFRESH

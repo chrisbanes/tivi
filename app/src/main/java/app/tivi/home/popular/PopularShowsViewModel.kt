@@ -54,13 +54,13 @@ class PopularShowsViewModel @Inject constructor(
 
     override suspend fun callLoadMore() {
         withContext(interactor.dispatcher) {
-            interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.NEXT_PAGE))
+            interactor(UpdatePopularShows.ExecuteParams(UpdatePopularShows.Page.NEXT_PAGE))
         }
     }
 
     override suspend fun callRefresh() {
         withContext(interactor.dispatcher) {
-            interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH))
+            interactor(UpdatePopularShows.ExecuteParams(UpdatePopularShows.Page.REFRESH))
         }
     }
 }

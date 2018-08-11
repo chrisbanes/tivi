@@ -25,22 +25,23 @@ import javax.inject.Inject
 class ChangeShowFollowStatus @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
     private val followedShowsRepository: FollowedShowsRepository
-) : SubjectInteractor<ChangeShowFollowStatus.Params, Boolean>() {
+) : SubjectInteractor<ChangeShowFollowStatus.Params, ChangeShowFollowStatus.ExecuteParams, Boolean>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend fun execute(param: Params) {
-        when (param.action) {
-            Action.FOLLOW -> followedShowsRepository.addFollowedShow(param.showId)
-            Action.UNFOLLOW -> followedShowsRepository.removeFollowedShow(param.showId)
-            else -> Unit
+    override suspend fun execute(params: Params, executeParams: ExecuteParams) {
+        when (executeParams.action) {
+            Action.FOLLOW -> followedShowsRepository.addFollowedShow(params.showId)
+            Action.UNFOLLOW -> followedShowsRepository.removeFollowedShow(params.showId)
         }
     }
 
-    override fun createObservable(param: Params): Flowable<Boolean> {
-        return followedShowsRepository.observeIsShowFollowed(param.showId)
+    override fun createObservable(params: Params): Flowable<Boolean> {
+        return followedShowsRepository.observeIsShowFollowed(params.showId)
     }
 
-    data class Params(val showId: Long, val action: Action)
+    data class Params(val showId: Long)
 
-    enum class Action { CHECK, FOLLOW, UNFOLLOW }
+    data class ExecuteParams(val action: Action)
+
+    enum class Action { FOLLOW, UNFOLLOW }
 }

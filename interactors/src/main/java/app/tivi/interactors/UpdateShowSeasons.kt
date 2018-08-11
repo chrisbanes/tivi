@@ -19,6 +19,8 @@ package app.tivi.interactors
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.extensions.emptyFlowableList
+import app.tivi.interactors.UpdateShowSeasons.ExecuteParams
+import app.tivi.interactors.UpdateShowSeasons.Params
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
@@ -29,18 +31,19 @@ class UpdateShowSeasons @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     dispatchers: AppCoroutineDispatchers,
     private val schedulers: AppRxSchedulers
-) : SubjectInteractor<UpdateShowSeasons.Params, List<SeasonWithEpisodesAndWatches>>() {
+) : SubjectInteractor<Params, ExecuteParams, List<SeasonWithEpisodesAndWatches>>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override fun createObservable(param: Params): Flowable<List<SeasonWithEpisodesAndWatches>> {
-        return seasonsEpisodesRepository.observeSeasonsForShow(param.showId)
+    override fun createObservable(params: Params): Flowable<List<SeasonWithEpisodesAndWatches>> {
+        return seasonsEpisodesRepository.observeSeasonsForShow(params.showId)
                 .startWith(emptyFlowableList())
                 .subscribeOn(schedulers.io)
     }
 
-    override suspend fun execute(param: Params) {
-        seasonsEpisodesRepository.updateSeasonsEpisodes(param.showId)
+    override suspend fun execute(params: Params, executeParams: ExecuteParams) {
+        seasonsEpisodesRepository.updateSeasonsEpisodes(params.showId)
     }
 
-    data class Params(val showId: Long, val forceLoad: Boolean)
+    data class Params(val showId: Long)
+    data class ExecuteParams(val forceLoad: Boolean)
 }

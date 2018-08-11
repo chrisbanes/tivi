@@ -34,50 +34,49 @@ interface Interactor<in P> {
     suspend operator fun invoke(param: P)
 }
 
-interface Interactor2<P, T> : Interactor<P> {
-    fun observe(): Flowable<T>
-    fun clear()
-}
-
-interface PagingInteractor<P, T> : Interactor<P> {
+interface PagingInteractor<T> {
     fun dataSourceFactory(): DataSource.Factory<Int, T>
 }
 
-abstract class ChannelInteractor<P, T> : Interactor2<P, T> {
+abstract class ChannelInteractor<P, T> : Interactor<P> {
     private val channel = Channel<T>()
 
     final override suspend fun invoke(param: P) {
         channel.offer(execute(param))
     }
 
-    final override fun observe(): Flowable<T> = channel.asObservable(dispatcher).toFlowable()
+    fun observe(): Flowable<T> = channel.asObservable(dispatcher).toFlowable()
 
     protected abstract suspend fun execute(param: P): T
 
-    override fun clear() {
+    fun clear() {
         channel.close()
     }
 }
 
-abstract class SubjectInteractor<P, T> : Interactor2<P, T> {
+abstract class SubjectInteractor<P : Any, EP, T> : Interactor<EP> {
     private var disposable: Disposable? = null
     private val subject: BehaviorSubject<T> = BehaviorSubject.create()
 
-    final override suspend fun invoke(param: P) {
-        setSource(createObservable(param))
-        execute(param)
+    private lateinit var params: P
+
+    fun setParams(params: P) {
+        this.params = params
+        setSource(createObservable(params))
     }
 
-    protected abstract fun createObservable(param: P): Flowable<T>
+    final override suspend fun invoke(executeParams: EP) = execute(this.params, executeParams)
 
-    protected abstract suspend fun execute(param: P)
+    protected abstract suspend fun execute(params: P, executeParams: EP)
 
-    override fun clear() {
+    protected abstract fun createObservable(params: P): Flowable<T>
+
+    fun clear() {
         disposable?.dispose()
         disposable = null
     }
 
-    final override fun observe(): Flowable<T> = subject.toFlowable()
+    fun observe(): Flowable<T> = subject.toFlowable()
 
     private fun setSource(source: Flowable<T>) {
         disposable?.dispose()

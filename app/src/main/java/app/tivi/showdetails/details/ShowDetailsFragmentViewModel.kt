@@ -22,7 +22,6 @@ import app.tivi.SharedElementHelper
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
 import app.tivi.interactors.ChangeShowFollowStatus
-import app.tivi.interactors.ChangeShowFollowStatus.Action.CHECK
 import app.tivi.interactors.ChangeShowFollowStatus.Action.FOLLOW
 import app.tivi.interactors.ChangeShowFollowStatus.Action.UNFOLLOW
 import app.tivi.interactors.UpdateFollowedShowSeasonData
@@ -56,7 +55,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
             if (field != value) {
                 field = value
                 if (value != null) {
-                    setupLiveData()
+                    setupLiveData(value)
                     refresh()
                 } else {
                     _data.value = null
@@ -69,49 +68,46 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         get() = _data
 
     private fun refresh() {
-        showId?.also { id ->
-            launchInteractor(updateShowDetails, UpdateShowDetails.Params(id, true))
-            launchInteractor(updateRelatedShows, UpdateRelatedShows.Params(id, true))
-            launchInteractor(updateShowSeasons, UpdateFollowedShowSeasonData.Params(id, true))
-        }
+        launchInteractor(updateShowDetails, UpdateShowDetails.ExecuteParams(true))
+        launchInteractor(updateRelatedShows, UpdateRelatedShows.ExecuteParams(true))
+        launchInteractor(updateShowSeasons, UpdateFollowedShowSeasonData.ExecuteParams(true))
     }
 
-    private fun setupLiveData() {
-        showId?.also { id ->
-            disposables += changeShowFollowStatus.observe()
-                    .subscribeOn(schedulers.io)
-                    .distinctUntilChanged()
-                    .switchMap { isFollowed ->
-                        when {
-                            isFollowed -> Flowables.combineLatest(
-                                    updateShowDetails.observe(),
-                                    updateRelatedShows.observe(),
-                                    updateShowSeasons.observe(),
-                                    tmdbManager.imageProvider,
-                                    ::FollowedShowDetailsViewState)
-                            else -> Flowables.combineLatest(
-                                    updateShowDetails.observe(),
-                                    updateRelatedShows.observe(),
-                                    tmdbManager.imageProvider,
-                                    ::NotFollowedShowDetailsViewState)
-                        }
-                    }
-                    .observeOn(schedulers.main)
-                    .subscribe(_data::setValue, logger::e)
+    private fun setupLiveData(showId: Long) {
+        updateShowDetails.setParams(UpdateShowDetails.Params(showId))
+        updateRelatedShows.setParams(UpdateRelatedShows.Params(showId))
+        updateShowSeasons.setParams(UpdateFollowedShowSeasonData.Params(showId))
+        changeShowFollowStatus.setParams(ChangeShowFollowStatus.Params(showId))
 
-            launchInteractor(changeShowFollowStatus, ChangeShowFollowStatus.Params(id, CHECK))
-        }
+        disposables += changeShowFollowStatus.observe()
+                .subscribeOn(schedulers.io)
+                .distinctUntilChanged()
+                .switchMap { isFollowed ->
+                    when {
+                        isFollowed -> Flowables.combineLatest(
+                                updateShowDetails.observe(),
+                                updateRelatedShows.observe(),
+                                updateShowSeasons.observe(),
+                                tmdbManager.imageProvider,
+                                ::FollowedShowDetailsViewState)
+                        else -> Flowables.combineLatest(
+                                updateShowDetails.observe(),
+                                updateRelatedShows.observe(),
+                                tmdbManager.imageProvider,
+                                ::NotFollowedShowDetailsViewState)
+                    }
+                }
+                .observeOn(schedulers.main)
+                .subscribe(_data::setValue, logger::e)
     }
 
     fun addToMyShows() {
-        showId?.also { id ->
-            launch(dispatchers.main) {
-                withContext(changeShowFollowStatus.dispatcher) {
-                    changeShowFollowStatus(ChangeShowFollowStatus.Params(id, FOLLOW))
-                }
-                withContext(updateShowSeasons.dispatcher) {
-                    updateShowSeasons(UpdateFollowedShowSeasonData.Params(id, true))
-                }
+        launch(dispatchers.main) {
+            withContext(changeShowFollowStatus.dispatcher) {
+                changeShowFollowStatus(ChangeShowFollowStatus.ExecuteParams(FOLLOW))
+            }
+            withContext(updateShowSeasons.dispatcher) {
+                updateShowSeasons(UpdateFollowedShowSeasonData.ExecuteParams(true))
             }
         }
     }
@@ -122,7 +118,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     }
 
     fun removeFromMyShows() {
-        showId?.let { id -> launchInteractor(changeShowFollowStatus, ChangeShowFollowStatus.Params(id, UNFOLLOW)) }
+        launchInteractor(changeShowFollowStatus, ChangeShowFollowStatus.ExecuteParams(UNFOLLOW))
     }
 
     fun onRelatedShowClicked(

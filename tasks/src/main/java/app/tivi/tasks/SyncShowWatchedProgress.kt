@@ -42,8 +42,10 @@ class SyncShowWatchedProgress : Worker() {
         val showId = inputData.getLong(PARAM_SHOW_ID, -1)
         logger.d("$TAG worker running for show id: $showId")
 
+        updateShowSeasonsAndWatchedProgress.setParams(UpdateFollowedShowSeasonData.Params(showId))
+
         return runBlocking {
-            updateShowSeasonsAndWatchedProgress(UpdateFollowedShowSeasonData.Params(showId, true))
+            updateShowSeasonsAndWatchedProgress(UpdateFollowedShowSeasonData.ExecuteParams(true))
             Result.SUCCESS
         }
     }

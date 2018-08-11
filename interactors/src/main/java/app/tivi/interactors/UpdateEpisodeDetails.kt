@@ -28,17 +28,19 @@ class UpdateEpisodeDetails @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     dispatchers: AppCoroutineDispatchers,
     private val schedulers: AppRxSchedulers
-) : SubjectInteractor<UpdateEpisodeDetails.Params, Episode>() {
+) : SubjectInteractor<UpdateEpisodeDetails.Params, UpdateEpisodeDetails.ExecuteParams, Episode>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override fun createObservable(param: Params): Flowable<Episode> {
-        return seasonsEpisodesRepository.observeEpisode(param.episodeId)
+    override fun createObservable(params: Params): Flowable<Episode> {
+        return seasonsEpisodesRepository.observeEpisode(params.episodeId)
                 .subscribeOn(schedulers.io)
     }
 
-    override suspend fun execute(param: Params) {
-        seasonsEpisodesRepository.updateEpisode(param.episodeId)
+    override suspend fun execute(params: Params, executeParams: ExecuteParams) {
+        seasonsEpisodesRepository.updateEpisode(params.episodeId)
     }
 
-    data class Params(val episodeId: Long, val forceLoad: Boolean)
+    data class Params(val episodeId: Long)
+
+    data class ExecuteParams(val forceLoad: Boolean)
 }

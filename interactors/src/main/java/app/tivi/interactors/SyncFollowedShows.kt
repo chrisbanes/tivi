@@ -29,10 +29,10 @@ class SyncFollowedShows @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val followedShowsRepository: FollowedShowsRepository,
     private val repository: SeasonsEpisodesRepository
-) : PagingInteractor<SyncFollowedShows.Params, FollowedShowEntryWithShow> {
+) : PagingInteractor<FollowedShowEntryWithShow>, Interactor<SyncFollowedShows.ExecuteParams> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend fun invoke(param: Params) {
+    override suspend fun invoke(param: ExecuteParams) {
         if (param.forceLoad || followedShowsRepository.needFollowedShowsSync()) {
             followedShowsRepository.syncFollowedShows()
 
@@ -54,5 +54,5 @@ class SyncFollowedShows @Inject constructor(
         return followedShowsRepository.observeFollowedShows()
     }
 
-    data class Params(val forceLoad: Boolean)
+    data class ExecuteParams(val forceLoad: Boolean)
 }
