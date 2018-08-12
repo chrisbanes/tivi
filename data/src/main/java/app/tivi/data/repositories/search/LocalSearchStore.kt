@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.followedshows
+package app.tivi.data.repositories.search
 
-import app.tivi.data.entities.FollowedShowEntry
-import app.tivi.data.entities.TiviShow
+import javax.inject.Inject
 
-interface FollowedShowsDataSource {
-    suspend fun getListShows(listId: Int): List<Pair<FollowedShowEntry, TiviShow>>
+class LocalSearchStore @Inject constructor() {
+    private val cache = HashMap<String, LongArray>()
 
-    suspend fun addShowIdsToList(listId: Int, shows: List<TiviShow>)
+    fun getResults(query: String) = cache[query]
 
-    suspend fun removeShowIdsFromList(listId: Int, shows: List<TiviShow>)
-
-    suspend fun getFollowedListId(): Int?
+    fun setResults(query: String, results: LongArray) {
+        cache[query] = results
+    }
 }

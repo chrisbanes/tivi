@@ -34,7 +34,7 @@ class SyncAllFollowedShows : Worker() {
         AndroidWorkerInjector.inject(this)
 
         runBlocking {
-            launchInteractor(syncFollowedShows, SyncFollowedShows.Params(true)).join()
+            launchInteractor(syncFollowedShows, SyncFollowedShows.ExecuteParams(true)).join()
         }
         return Result.SUCCESS
     }

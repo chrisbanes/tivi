@@ -49,19 +49,17 @@ class ShowRepositoryImpl @Inject constructor(
      * Updates the show with the given id from all network sources, saves the result to the database
      */
     override suspend fun updateShow(showId: Long) {
-        val traktJob = async(dispatchers.io) { traktShowDataSource.getShow(showId) }
-        val tmdbJob = async(dispatchers.io) { tmdbShowDataSource.getShow(showId) }
-        val localJob = async(dispatchers.io) { localShowStore.getShow(showId) ?: TiviShow.EMPTY_SHOW }
+        val localShow = localShowStore.getShow(showId) ?: TiviShow.EMPTY_SHOW
+        val traktJob = async(dispatchers.io) { traktShowDataSource.getShow(localShow) }
+        val tmdbJob = async(dispatchers.io) { tmdbShowDataSource.getShow(localShow) }
 
         val traktResult = traktJob.await()
         val tmdbResult = tmdbJob.await()
 
         localShowStore.saveShow(
-                mergeShow(
-                        localJob.await(),
+                mergeShow(localShow,
                         (traktResult as? Success)?.data ?: TiviShow.EMPTY_SHOW,
-                        (tmdbResult as? Success)?.data ?: TiviShow.EMPTY_SHOW
-                )
+                        (tmdbResult as? Success)?.data ?: TiviShow.EMPTY_SHOW)
         )
 
         if (tmdbResult is Success && traktResult is Success) {

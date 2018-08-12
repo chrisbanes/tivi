@@ -18,7 +18,7 @@ package app.tivi.tasks
 
 import androidx.work.Data
 import androidx.work.Worker
-import app.tivi.interactors.SyncFollowedShowWatchedProgress
+import app.tivi.interactors.UpdateFollowedShowSeasonData
 import app.tivi.util.Logger
 import kotlinx.coroutines.experimental.runBlocking
 import javax.inject.Inject
@@ -33,7 +33,7 @@ class SyncShowWatchedProgress : Worker() {
                 .build()
     }
 
-    @Inject lateinit var syncFollowedShowWatchedProgress: SyncFollowedShowWatchedProgress
+    @Inject lateinit var updateShowSeasonsAndWatchedProgress: UpdateFollowedShowSeasonData
     @Inject lateinit var logger: Logger
 
     override fun doWork(): Result {
@@ -42,8 +42,10 @@ class SyncShowWatchedProgress : Worker() {
         val showId = inputData.getLong(PARAM_SHOW_ID, -1)
         logger.d("$TAG worker running for show id: $showId")
 
+        updateShowSeasonsAndWatchedProgress.setParams(UpdateFollowedShowSeasonData.Params(showId))
+
         return runBlocking {
-            syncFollowedShowWatchedProgress(SyncFollowedShowWatchedProgress.Params(showId, true))
+            updateShowSeasonsAndWatchedProgress(UpdateFollowedShowSeasonData.ExecuteParams(true))
             Result.SUCCESS
         }
     }

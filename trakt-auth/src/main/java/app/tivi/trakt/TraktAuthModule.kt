@@ -71,6 +71,9 @@ class TraktAuthModule {
     @Provides
     fun provideTraktSyncService(traktV2: TraktV2) = traktV2.sync()
 
+    @Provides
+    fun provideTraktSearchService(traktV2: TraktV2) = traktV2.search()
+
     @Singleton
     @Provides
     fun provideAuthConfig(): AuthorizationServiceConfiguration {

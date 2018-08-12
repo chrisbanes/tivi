@@ -18,19 +18,30 @@ package app.tivi.interactors
 
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.util.AppCoroutineDispatchers
+import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
-class SyncFollowedShowsToTrakt @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
+class ChangeShowFollowStatus @Inject constructor(
+    dispatchers: AppCoroutineDispatchers,
     private val followedShowsRepository: FollowedShowsRepository
-) : Interactor<SyncFollowedShowsToTrakt.Params> {
-    override val dispatcher: CoroutineDispatcher
-        get() = dispatchers.io
+) : SubjectInteractor<ChangeShowFollowStatus.Params, ChangeShowFollowStatus.ExecuteParams, Boolean>() {
+    override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend fun invoke(param: Params) {
-        followedShowsRepository.syncFollowedShows()
+    override suspend fun execute(params: Params, executeParams: ExecuteParams) {
+        when (executeParams.action) {
+            Action.FOLLOW -> followedShowsRepository.addFollowedShow(params.showId)
+            Action.UNFOLLOW -> followedShowsRepository.removeFollowedShow(params.showId)
+        }
     }
 
-    data class Params(val forceLoad: Boolean)
+    override fun createObservable(params: Params): Flowable<Boolean> {
+        return followedShowsRepository.observeIsShowFollowed(params.showId)
+    }
+
+    data class Params(val showId: Long)
+
+    data class ExecuteParams(val action: Action)
+
+    enum class Action { FOLLOW, UNFOLLOW }
 }

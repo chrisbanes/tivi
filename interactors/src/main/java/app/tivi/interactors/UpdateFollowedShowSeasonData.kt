@@ -17,31 +17,39 @@
 package app.tivi.interactors
 
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
+import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.extensions.emptyFlowableList
-import app.tivi.interactors.UpdateShowSeasons.ExecuteParams
-import app.tivi.interactors.UpdateShowSeasons.Params
+import app.tivi.interactors.UpdateFollowedShowSeasonData.ExecuteParams
+import app.tivi.interactors.UpdateFollowedShowSeasonData.Params
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
-class UpdateShowSeasons @Inject constructor(
-    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
+class UpdateFollowedShowSeasonData @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
-    private val schedulers: AppRxSchedulers
+    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
+    private val followedShowsRepository: FollowedShowsRepository
 ) : SubjectInteractor<Params, ExecuteParams, List<SeasonWithEpisodesAndWatches>>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
+
+    override suspend fun execute(params: Params, executeParams: ExecuteParams) {
+        if (followedShowsRepository.isShowFollowed(params.showId)) {
+            // Then update the seasons/episodes
+            if (executeParams.forceLoad || seasonsEpisodesRepository.needShowSeasonsUpdate(params.showId)) {
+                seasonsEpisodesRepository.updateSeasonsEpisodes(params.showId)
+            }
+            // Finally update any watched progress
+            if (executeParams.forceLoad || seasonsEpisodesRepository.needShowEpisodeWatchesSync(params.showId)) {
+                seasonsEpisodesRepository.syncEpisodeWatchesForShow(params.showId)
+            }
+        }
+    }
 
     override fun createObservable(params: Params): Flowable<List<SeasonWithEpisodesAndWatches>> {
         return seasonsEpisodesRepository.observeSeasonsForShow(params.showId)
                 .startWith(emptyFlowableList())
-                .subscribeOn(schedulers.io)
-    }
-
-    override suspend fun execute(params: Params, executeParams: ExecuteParams) {
-        seasonsEpisodesRepository.updateSeasonsEpisodes(params.showId)
     }
 
     data class Params(val showId: Long)

@@ -47,7 +47,10 @@ class EpisodeDetailsViewModel @Inject constructor(
         set(value) {
             if (field != value) {
                 field = value
-                refresh()
+                if (value != null) {
+                    setup(value)
+                    refresh()
+                }
             }
         }
 
@@ -55,24 +58,13 @@ class EpisodeDetailsViewModel @Inject constructor(
     val data: LiveData<EpisodeDetailsViewState>
         get() = _data
 
-    init {
-        setupLiveData()
-    }
+    fun setup(episodeId: Long) {
+        updateEpisodeDetails.setParams(UpdateEpisodeDetails.Params(episodeId))
+        updateEpisodeWatches.setParams(UpdateEpisodeWatches.Params(episodeId))
 
-    private fun refresh() {
-        val epId = episodeId
-        if (epId != null) {
-            launchInteractor(updateEpisodeDetails, UpdateEpisodeDetails.Params(epId, true))
-            launchInteractor(updateEpisodeWatches, UpdateEpisodeWatches.Params(epId, true))
-        } else {
-            _data.value = null
-        }
-    }
-
-    private fun setupLiveData() {
         disposables.clear()
 
-        val watches = updateEpisodeWatches.observe()
+        val watches = updateEpisodeWatches.observe().share()
 
         disposables += Flowables.combineLatest(
                 updateEpisodeDetails.observe(),
@@ -84,6 +76,16 @@ class EpisodeDetailsViewModel @Inject constructor(
                 Flowable.just(dateTimeFormatter),
                 ::EpisodeDetailsViewState
         ).subscribe(_data::postValue, logger::e)
+    }
+
+    private fun refresh() {
+        val epId = episodeId
+        if (epId != null) {
+            launchInteractor(updateEpisodeDetails, UpdateEpisodeDetails.ExecuteParams(true))
+            launchInteractor(updateEpisodeWatches, UpdateEpisodeWatches.ExecuteParams(true))
+        } else {
+            _data.value = null
+        }
     }
 
     fun markWatched() {

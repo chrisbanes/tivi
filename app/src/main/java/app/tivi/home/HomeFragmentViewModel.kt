@@ -48,6 +48,8 @@ abstract class HomeFragmentViewModel(
         disposables += traktManager.state
                 .distinctUntilChanged()
                 .subscribe(::onAuthStateChanged, logger::e)
+
+        updateUserDetails.setParams(UpdateUserDetails.Params("me"))
     }
 
     private fun onAuthStateChanged(authState: TraktAuthState) {
@@ -60,7 +62,7 @@ abstract class HomeFragmentViewModel(
     }
 
     private fun refreshUserProfile() {
-        launchInteractor(updateUserDetails, UpdateUserDetails.Params("me", false))
+        launchInteractor(updateUserDetails, UpdateUserDetails.ExecuteParams(false))
     }
 
     fun onProfileItemClicked() {

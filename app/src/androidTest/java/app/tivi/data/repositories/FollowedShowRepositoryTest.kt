@@ -72,7 +72,8 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
 
         repository = FollowedShowsRepository(
                 testCoroutineDispatchers,
-                LocalFollowedShowsStore(txRunner, db.followedShowsDao(), db.showDao(), db.lastRequestDao()),
+                LocalFollowedShowsStore(txRunner, EntityInserter(txRunner),
+                        db.followedShowsDao(), db.showDao(), db.lastRequestDao()),
                 LocalShowStore(EntityInserter(txRunner), db.showDao(), db.lastRequestDao(), txRunner),
                 traktDataSource,
                 showRepository,
@@ -83,7 +84,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
     @Test
     fun testSync() = runBlocking {
         `when`(traktDataSource.getFollowedListId()).thenReturn(0)
-        `when`(traktDataSource.getListShows(0)).thenReturn(listOf(show))
+        `when`(traktDataSource.getListShows(0)).thenReturn(listOf(followedShow1 to show))
 
         assertThat(repository.getFollowedShows(), `is`(listOf(followedShow1)))
 
@@ -106,7 +107,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
         insertFollowedShow(db)
 
         `when`(traktDataSource.getFollowedListId()).thenReturn(0)
-        `when`(traktDataSource.getListShows(0)).thenReturn(listOf(show2))
+        `when`(traktDataSource.getListShows(0)).thenReturn(listOf(followedShow2 to show2))
 
         assertThat(repository.getFollowedShows(), `is`(listOf(followedShow2)))
 

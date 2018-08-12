@@ -26,6 +26,7 @@ class TraktShowToTiviShow @Inject constructor() : Mapper<Show, TiviShow> {
     override fun map(from: Show) = TiviShow(
             traktId = from.ids.trakt,
             tmdbId = from.ids.tmdb,
+            imdbId = from.ids.imdb,
             title = from.title,
             summary = from.overview,
             homepage = from.homepage,

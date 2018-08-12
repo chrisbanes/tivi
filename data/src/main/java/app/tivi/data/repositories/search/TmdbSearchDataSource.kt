@@ -14,30 +14,24 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.shows
+package app.tivi.data.repositories.search
 
 import app.tivi.data.RetrofitRunner
-import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.mappers.TmdbShowToTiviShow
+import app.tivi.data.mappers.TmdbShowResultsPageToTiviShows
 import app.tivi.extensions.executeWithRetry
 import com.uwetrottmann.tmdb2.Tmdb
 import javax.inject.Inject
 
-class TmdbShowDataSource @Inject constructor(
+class TmdbSearchDataSource @Inject constructor(
     private val tmdb: Tmdb,
-    private val mapper: TmdbShowToTiviShow,
+    private val mapper: TmdbShowResultsPageToTiviShows,
     private val retrofitRunner: RetrofitRunner
-) : ShowDataSource {
-    override suspend fun getShow(show: TiviShow): Result<TiviShow> {
-        val tmdbId = show.tmdbId
-        return if (tmdbId != null) {
-            retrofitRunner.executeForResponse(mapper) {
-                tmdb.tvService().tv(tmdbId).executeWithRetry()
-            }
-        } else {
-            ErrorResult(IllegalArgumentException("TmdbId for show does not exist [$show]"))
+) : SearchDataSource {
+    override suspend fun search(query: String): Result<List<TiviShow>> {
+        return retrofitRunner.executeForResponse(mapper) {
+            tmdb.searchService().tv(query, 1, null, null, null).executeWithRetry()
         }
     }
 }

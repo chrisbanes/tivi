@@ -16,25 +16,24 @@
 
 package app.tivi.interactors
 
-import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
+import app.tivi.data.entities.TiviShow
+import app.tivi.data.repositories.search.SearchRepository
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import javax.inject.Inject
 
-class SyncFollowedShowWatchedProgress @Inject constructor(
-    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
-    private val followedShowsDao: FollowedShowsDao,
+class SearchShows @Inject constructor(
+    private val searchRepository: SearchRepository,
     dispatchers: AppCoroutineDispatchers
-) : Interactor<SyncFollowedShowWatchedProgress.Params> {
+) : ChannelInteractor<SearchShows.Params, List<TiviShow>>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(param: Params) {
-        val entry = followedShowsDao.entryWithShowId(param.showId)
-                ?: throw IllegalArgumentException("Followed entry with showId does not exist. $param")
-
-        seasonsEpisodesRepository.syncEpisodeWatchesForShow(entry.showId)
+    override suspend fun execute(param: Params): List<TiviShow> {
+        return when {
+            param.query.isNotEmpty() -> searchRepository.search(param.query)
+            else -> emptyList()
+        }
     }
 
-    data class Params(val showId: Long, val forceLoad: Boolean)
+    data class Params(val query: String)
 }

@@ -20,5 +20,5 @@ import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
 
 interface ShowDataSource {
-    suspend fun getShow(showId: Long): Result<TiviShow>
+    suspend fun getShow(show: TiviShow): Result<TiviShow>
 }

@@ -20,28 +20,46 @@ import app.tivi.data.RetrofitRunner
 import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.mappers.ShowIdToTraktIdMapper
 import app.tivi.data.mappers.TraktShowToTiviShow
+import app.tivi.extensions.bodyOrThrow
 import app.tivi.extensions.executeWithRetry
 import com.uwetrottmann.trakt5.enums.Extended
+import com.uwetrottmann.trakt5.enums.IdType
+import com.uwetrottmann.trakt5.enums.Type
+import com.uwetrottmann.trakt5.services.Search
 import com.uwetrottmann.trakt5.services.Shows
 import javax.inject.Inject
 import javax.inject.Provider
 
 class TraktShowDataSource @Inject constructor(
-    private val traktIdMapper: ShowIdToTraktIdMapper,
     private val showService: Provider<Shows>,
+    private val searchService: Provider<Search>,
     private val mapper: TraktShowToTiviShow,
     private val retrofitRunner: RetrofitRunner
 ) : ShowDataSource {
-    override suspend fun getShow(showId: Long): Result<TiviShow> {
-        val traktId = traktIdMapper.map(showId)
-        return if (traktId != null) {
-            retrofitRunner.executeForResponse(mapper) {
-                showService.get().summary(traktId.toString(), Extended.FULL).executeWithRetry()
+    override suspend fun getShow(show: TiviShow): Result<TiviShow> {
+        var traktId = show.traktId
+
+        if (traktId == null && show.tmdbId != null) {
+            // We need to fetch the search for the trakt id
+            val response = searchService.get().idLookup(IdType.TMDB, show.tmdbId.toString(),
+                    Type.SHOW, Extended.NOSEASONS, 1, 1).execute()
+            if (response.isSuccessful) {
+                val body = response.bodyOrThrow()
+                if (body.isNotEmpty()) {
+                    traktId = body[0].show.ids.trakt
+                }
             }
-        } else {
-            ErrorResult(IllegalArgumentException("TraktId for show with id $showId does not exist"))
         }
+
+        return if (traktId != null) {
+            fetchFromTrakt(traktId.toString())
+        } else {
+            ErrorResult(IllegalArgumentException("TraktId for show does not exist: [$show]"))
+        }
+    }
+
+    private suspend fun fetchFromTrakt(traktId: String) = retrofitRunner.executeForResponse(mapper) {
+        showService.get().summary(traktId, Extended.FULL).executeWithRetry()
     }
 }

@@ -25,6 +25,7 @@ import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.AppCoroutineDispatchers
 import org.threeten.bp.Duration
+import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -40,6 +41,10 @@ class FollowedShowsRepository @Inject constructor(
 ) {
     fun observeFollowedShows() = localStore.observeForPaging()
 
+    fun observeIsShowFollowed(showId: Long) = localStore.observeIsShowFollowed(showId)
+
+    fun isShowFollowed(showId: Long) = localStore.isShowFollowed(showId)
+
     suspend fun getFollowedShows(): List<FollowedShowEntry> {
         syncFollowedShows()
         return localStore.getEntries()
@@ -47,6 +52,33 @@ class FollowedShowsRepository @Inject constructor(
 
     fun needFollowedShowsSync(): Boolean {
         return localStore.isLastFollowedShowsSyncBefore(Duration.ofHours(3))
+    }
+
+    suspend fun addFollowedShow(showId: Long) {
+        val entry = localStore.getEntryForShowId(showId)
+        if (entry == null || entry.pendingAction == PendingAction.DELETE) {
+            // If we don't have an entry, or it is marked for deletion, lets update it to be uploaded
+            val newEntry = FollowedShowEntry(
+                    id = entry?.id,
+                    showId = showId,
+                    followedAt = entry?.followedAt ?: OffsetDateTime.now(),
+                    pendingAction = PendingAction.UPLOAD
+            )
+            localStore.save(newEntry)
+            // Now sync it up
+            syncFollowedShows()
+        }
+    }
+
+    suspend fun removeFollowedShow(showId: Long) {
+        // Update the followed show to be deleted
+        val entry = localStore.getEntryForShowId(showId)
+        if (entry != null) {
+            // Mark the show as pending deletion
+            entry.copy(pendingAction = PendingAction.DELETE).also(localStore::save)
+            // Now sync it up
+            syncFollowedShows()
+        }
     }
 
     suspend fun syncFollowedShows() {
@@ -64,11 +96,11 @@ class FollowedShowsRepository @Inject constructor(
 
     private suspend fun pullDownTraktFollowedList(listId: Int) {
         dataSource.getListShows(listId)
-                .map {
+                .map { (entry, show) ->
                     // Grab the show id if it exists, or save the show and use it's generated ID
-                    val showId = localShowStore.getIdOrSavePlaceholder(it)
+                    val showId = localShowStore.getIdOrSavePlaceholder(show)
                     // Create a followed show entry with the show id
-                    FollowedShowEntry(showId = showId)
+                    entry.copy(showId = showId)
                 }
                 .also { entries ->
                     // Save the related entries

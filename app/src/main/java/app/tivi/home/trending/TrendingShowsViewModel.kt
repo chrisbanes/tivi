@@ -54,13 +54,13 @@ class TrendingShowsViewModel @Inject constructor(
 
     override suspend fun callLoadMore() {
         withContext(interactor.dispatcher) {
-            interactor(UpdateTrendingShows.Params(UpdateTrendingShows.Page.NEXT_PAGE))
+            interactor(UpdateTrendingShows.ExecuteParams(UpdateTrendingShows.Page.NEXT_PAGE))
         }
     }
 
     override suspend fun callRefresh() {
         withContext(interactor.dispatcher) {
-            interactor(UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH))
+            interactor(UpdateTrendingShows.ExecuteParams(UpdateTrendingShows.Page.REFRESH))
         }
     }
 }

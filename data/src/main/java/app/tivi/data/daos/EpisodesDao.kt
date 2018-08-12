@@ -38,6 +38,9 @@ abstract class EpisodesDao : EntityDao<Episode> {
     @Query("SELECT trakt_id from episodes WHERE id = :id")
     abstract fun episodeTraktIdForId(id: Long): Int?
 
+    @Query("SELECT id from episodes WHERE trakt_id = :traktId")
+    abstract fun episodeIdWithTraktId(traktId: Int): Long?
+
     @Query("SELECT * from episodes WHERE id = :id")
     abstract fun episodeWithIdFlowable(id: Long): Flowable<Episode>
 

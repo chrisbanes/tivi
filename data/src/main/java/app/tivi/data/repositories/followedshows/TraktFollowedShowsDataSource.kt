@@ -16,11 +16,15 @@
 
 package app.tivi.data.repositories.followedshows
 
+import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.mappers.TraktListEntryToFollowedShowEntry
 import app.tivi.data.mappers.TraktShowToTiviShow
 import app.tivi.extensions.fetchBody
 import app.tivi.extensions.fetchBodyWithRetry
+import com.uwetrottmann.trakt5.entities.ShowIds
 import com.uwetrottmann.trakt5.entities.SyncItems
+import com.uwetrottmann.trakt5.entities.SyncShow
 import com.uwetrottmann.trakt5.entities.TraktList
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
@@ -31,29 +35,43 @@ import javax.inject.Provider
 
 class TraktFollowedShowsDataSource @Inject constructor(
     private val usersService: Provider<Users>,
-    private val mapper: TraktShowToTiviShow
+    private val mapper: TraktShowToTiviShow,
+    private val listEntryMapper: TraktListEntryToFollowedShowEntry
 ) : FollowedShowsDataSource {
     override suspend fun addShowIdsToList(listId: Int, shows: List<TiviShow>) {
-        usersService.get().addListItems(
-                UserSlug.ME,
-                listId.toString(),
-                SyncItems().ids(shows.mapNotNull { it.traktId?.toLong() })
-        ).fetchBody()
+        val syncItems = SyncItems()
+        syncItems.shows = shows.map { show ->
+            SyncShow().apply {
+                ids = ShowIds().apply {
+                    trakt = show.traktId
+                    imdb = show.imdbId
+                    tmdb = show.tmdbId
+                }
+            }
+        }
+        usersService.get().addListItems(UserSlug.ME, listId.toString(), syncItems).fetchBody()
     }
 
     override suspend fun removeShowIdsFromList(listId: Int, shows: List<TiviShow>) {
-        usersService.get().deleteListItems(
-                UserSlug.ME,
-                listId.toString(),
-                SyncItems().ids(shows.mapNotNull { it.traktId?.toLong() })
-        ).fetchBody()
+        val syncItems = SyncItems()
+        syncItems.shows = shows.map { show ->
+            SyncShow().apply {
+                ids = ShowIds().apply {
+                    trakt = show.traktId
+                    imdb = show.imdbId
+                    tmdb = show.tmdbId
+                }
+            }
+        }
+        usersService.get().deleteListItems(UserSlug.ME, listId.toString(), syncItems).fetchBody()
     }
 
-    override suspend fun getListShows(listId: Int): List<TiviShow> {
-        val results = usersService.get().listItems(UserSlug.ME, listId.toString(), Extended.NOSEASONS)
+    override suspend fun getListShows(listId: Int): List<Pair<FollowedShowEntry, TiviShow>> {
+        return usersService.get().listItems(UserSlug.ME, listId.toString(), Extended.NOSEASONS)
                 .fetchBodyWithRetry()
-                .mapNotNull { it.show }
-        return results.map(mapper::map)
+                .mapNotNull {
+                    listEntryMapper.map(it) to mapper.map(it.show)
+                }
     }
 
     override suspend fun getFollowedListId(): Int {

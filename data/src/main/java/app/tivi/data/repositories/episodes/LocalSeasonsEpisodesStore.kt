@@ -64,8 +64,16 @@ class LocalSeasonsEpisodesStore @Inject constructor(
      * database, it is inserted and the generated ID is returned.
      */
     fun getEpisodeIdOrSavePlaceholder(episode: Episode): Long = transactionRunner {
-        val episodeWithTraktId = episode.traktId?.let { episodesDao.episodeWithTraktId(it) }
-        episodeWithTraktId?.id ?: episodesDao.insert(episode)
+        val episodeWithTraktId = episode.traktId?.let { episodesDao.episodeIdWithTraktId(it) }
+        episodeWithTraktId ?: episodesDao.insert(episode)
+    }
+
+    /**
+     * Gets the ID for the season with the given trakt Id. If the trakt Id does not exist in the
+     * database, it is inserted and the generated ID is returned.
+     */
+    fun getEpisodeIdForTraktId(traktId: Int): Long? {
+        return episodesDao.episodeIdWithTraktId(traktId)
     }
 
     fun getSeason(id: Long) = seasonsDao.seasonWithId(id)
@@ -114,6 +122,11 @@ class LocalSeasonsEpisodesStore @Inject constructor(
     fun getEntriesWithDeleteAction(showId: Long) = episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId)
 
     fun deleteWatchEntriesWithIds(ids: List<Long>) = episodeWatchEntryDao.deleteWithIds(ids)
+
+    fun deleteShowSeasonData(showId: Long) {
+        // Due to foreign keys, this will also delete the episodes and watches
+        seasonsDao.deleteSeasonsForShowId(showId)
+    }
 
     fun updateWatchEntriesWithAction(ids: List<Long>, action: PendingAction): Int {
         return episodeWatchEntryDao.updateEntriesToPendingAction(ids, action.value)

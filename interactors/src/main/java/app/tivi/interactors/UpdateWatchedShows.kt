@@ -26,11 +26,11 @@ import javax.inject.Inject
 class UpdateWatchedShows @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val watchedShowsRepository: WatchedShowsRepository
-) : PagingInteractor<UpdateWatchedShows.Params, WatchedShowEntryWithShow> {
+) : PagingInteractor<WatchedShowEntryWithShow>, Interactor<UpdateWatchedShows.ExecuteParams> {
     override val dispatcher: CoroutineDispatcher
         get() = dispatchers.io
 
-    override suspend fun invoke(param: Params) {
+    override suspend fun invoke(param: ExecuteParams) {
         watchedShowsRepository.updateWatchedShows()
     }
 
@@ -38,5 +38,5 @@ class UpdateWatchedShows @Inject constructor(
         return watchedShowsRepository.observeWatchedShowsPagedList()
     }
 
-    data class Params(val forceLoad: Boolean)
+    data class ExecuteParams(val forceLoad: Boolean)
 }

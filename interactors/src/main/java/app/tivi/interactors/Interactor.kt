@@ -23,9 +23,10 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.CoroutineDispatcher
 import kotlinx.coroutines.experimental.CoroutineStart
-import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.rx2.asObservable
 import kotlin.coroutines.experimental.CoroutineContext
 
 interface Interactor<in P> {
@@ -33,49 +34,54 @@ interface Interactor<in P> {
     suspend operator fun invoke(param: P)
 }
 
-interface Interactor2<P, T> : Interactor<P> {
-    fun observe(): Flowable<T>
-    fun clear()
-}
-
-interface PagingInteractor<P, T> : Interactor<P> {
+interface PagingInteractor<T> {
     fun dataSourceFactory(): DataSource.Factory<Int, T>
 }
 
-abstract class SubjectInteractor<P, T> : Interactor2<P, T> {
+abstract class ChannelInteractor<P, T> : Interactor<P> {
+    private val channel = Channel<T>()
+
+    final override suspend fun invoke(param: P) {
+        channel.offer(execute(param))
+    }
+
+    fun observe(): Flowable<T> = channel.asObservable(dispatcher).toFlowable()
+
+    protected abstract suspend fun execute(param: P): T
+
+    fun clear() {
+        channel.close()
+    }
+}
+
+abstract class SubjectInteractor<P : Any, EP, T> : Interactor<EP> {
     private var disposable: Disposable? = null
     private val subject: BehaviorSubject<T> = BehaviorSubject.create()
 
-    final override suspend fun invoke(param: P) {
-        setSource(createObservable(param))
-        execute(param)
+    private lateinit var params: P
+
+    fun setParams(params: P) {
+        this.params = params
+        setSource(createObservable(params))
     }
 
-    protected abstract fun createObservable(param: P): Flowable<T>
+    final override suspend fun invoke(executeParams: EP) = execute(this.params, executeParams)
 
-    protected abstract suspend fun execute(param: P)
+    protected abstract suspend fun execute(params: P, executeParams: EP)
 
-    override fun clear() {
+    protected abstract fun createObservable(params: P): Flowable<T>
+
+    fun clear() {
         disposable?.dispose()
         disposable = null
     }
 
-    final override fun observe(): Flowable<T> = subject.toFlowable()
+    fun observe(): Flowable<T> = subject.toFlowable()
 
     private fun setSource(source: Flowable<T>) {
         disposable?.dispose()
         disposable = source.subscribe(subject::onNext, subject::onError)
     }
-}
-
-@Suppress("UNCHECKED_CAST")
-fun <T> emptyInteractor(): Interactor<T> = EmptyInteractor as Interactor<T>
-
-internal object EmptyInteractor : Interactor<Unit> {
-    override val dispatcher: CoroutineDispatcher
-        get() = DefaultDispatcher
-
-    override suspend fun invoke(param: Unit) = Unit
 }
 
 fun <P> launchInteractor(
