@@ -33,12 +33,11 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [
     AndroidSupportInjectionModule::class,
+    AndroidWorkerInjectionModule::class,
     AppModule::class,
     JobsCreator::class,
-    AndroidWorkerInjectionModule::class,
     DatabaseModule::class,
     DataModule::class,
-    ViewModelBuilder::class,
     HomeBuilder::class,
     ShowDetailsBuilder::class,
     TraktAuthModule::class,

@@ -23,6 +23,7 @@ import app.tivi.home.popular.PopularBuilder
 import app.tivi.home.trending.TrendingBuilder
 import app.tivi.home.followedshows.FollowedShowsBuilder
 import app.tivi.home.watched.WatchedShowsBuilder
+import app.tivi.inject.ViewModelBuilder
 import app.tivi.inject.ViewModelKey
 import dagger.Binds
 import dagger.Module
@@ -32,6 +33,7 @@ import dagger.multibindings.IntoMap
 @Module
 internal abstract class HomeBuilder {
     @ContributesAndroidInjector(modules = [
+        ViewModelBuilder::class,
         HomeModule::class,
         DiscoverBuilder::class,
         TrendingBuilder::class,
