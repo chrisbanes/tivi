@@ -24,7 +24,7 @@ import dagger.multibindings.Multibinds
 import kotlin.reflect.KClass
 
 /**
- * Taken from https://gist.github.com/ferrerojosh/82bd92748f315155fa6a842f4ed64c82
+ * Adapted from https://gist.github.com/ferrerojosh/82bd92748f315155fa6a842f4ed64c82
  */
 internal object AndroidWorkerInjector {
     fun inject(worker: Worker) {
@@ -45,7 +45,7 @@ interface HasWorkerInjector {
 @Module
 abstract class AndroidWorkerInjectionModule {
     @Multibinds
-    abstract fun workerInjectorFactories(): Map<Class<out Worker>, AndroidInjector.Factory<out Worker>>
+    abstract fun workerInjectorFactories(): Map<String, AndroidInjector.Factory<out Worker>>
 }
 
 @MapKey
