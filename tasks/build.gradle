@@ -33,10 +33,6 @@ android {
         }
     }
 
-    lintOptions {
-        disable 'GradleCompatible'
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -47,7 +43,6 @@ dependencies {
     implementation project(":base")
     implementation project(':interactors')
 
-    implementation "android.arch.work:work-firebase:${versions.androidx.work}"
     implementation "android.arch.work:work-runtime-ktx:${versions.androidx.work}"
 
     implementation "com.google.dagger:dagger-android:${versions.dagger}"

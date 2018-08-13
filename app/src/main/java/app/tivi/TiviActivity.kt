@@ -19,23 +19,12 @@ package app.tivi
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.core.CrashlyticsCore
 import dagger.android.support.DaggerAppCompatActivity
-import io.fabric.sdk.android.Fabric
 
 /**
  * Base Activity class which supports LifecycleOwner and Dagger injection.
  */
 abstract class TiviActivity : DaggerAppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val crashlyticsCore = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()
-        val crashlytics = Crashlytics.Builder().core(crashlyticsCore).build()
-        Fabric.with(this, crashlytics)
-    }
-
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         handleIntent(intent)
