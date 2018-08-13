@@ -15,55 +15,53 @@
   ~ limitations under the License.
   -->
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.motion.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/details_coordinator"
+    android:id="@+id/details_motion"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    app:statusBarBackground="@null">
+    app:layoutDescription="@xml/scene_show_details">
+
+    <!-- This view is solely here to allow the poster to overlap the RV. -->
+    <View
+        android:id="@+id/details_poster_anchor"
+        android:layout_width="match_parent"
+        android:layout_height="336dp" />
 
     <ImageView
         android:id="@+id/details_backdrop"
         android:layout_width="match_parent"
-        android:layout_height="280dp"
-        android:fitsSystemWindows="true"
-        android:scaleType="centerCrop" />
+        android:layout_height="0dp"
+        android:layout_marginBottom="32dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="@id/details_poster_anchor"
+        app:layout_constraintTop_toTopOf="@id/details_poster_anchor" />
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/details_appbarlayout"
+    <!-- This view is solely here to allow the RV to overlap the backdrop. The overlap is
+         is defined by the bottom margin. -->
+    <View
+        android:id="@+id/details_backdrop_anchor"
         android:layout_width="match_parent"
-        android:layout_height="256dp"
-        android:background="@null"
-        android:fitsSystemWindows="true"
-        android:stateListAnimator="@null"
-        android:theme="?attr/actionBarTheme">
+        android:layout_height="0dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="@id/details_backdrop"
+        app:layout_constraintTop_toTopOf="@id/details_backdrop" />
 
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/details_ctl"
-            android:layout_width="match_parent"
-            android:layout_height="256dp"
-            android:fitsSystemWindows="true"
-            app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/details_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="?attr/actionBarPopupTheme" />
-
-        </android.support.design.widget.CollapsingToolbarLayout>
-
-    </android.support.design.widget.AppBarLayout>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/details_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="?attr/actionBarPopupTheme" />
 
     <com.airbnb.epoxy.EpoxyRecyclerView
         android:id="@+id/details_rv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="@drawable/round_rect_background"
         android:elevation="2dp"
         app:layoutManager="android.support.v7.widget.GridLayoutManager"
@@ -73,12 +71,11 @@
 
     <ImageView
         android:id="@+id/details_poster"
-        android:layout_width="80dp"
-        android:layout_height="120dp"
-        android:layout_marginStart="16dp"
-        android:elevation="3dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="@drawable/placeholder"
-        android:transitionName="poster"
-        app:layout_behavior="app.tivi.showdetails.details.DetailPosterBehavior" />
+        android:elevation="3dp"
+        android:scaleType="centerCrop"
+        android:transitionName="poster" />
 
-</android.support.design.widget.CoordinatorLayout>
+</android.support.constraint.motion.MotionLayout>

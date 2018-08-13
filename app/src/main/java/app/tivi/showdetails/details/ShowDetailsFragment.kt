@@ -69,7 +69,7 @@ class ShowDetailsFragment : TiviFragment() {
         set(value) {
             if (field != value) {
                 val background = ColorDrawable(value.rgb)
-                details_coordinator.background = background
+                details_motion.background = background
                 ObjectAnimator.ofInt(background, DrawableAlphaProperty, 0, 255).start()
 
                 val scrim = ScrimUtil.makeCubicGradientScrimDrawable(value.rgb, 10, Gravity.BOTTOM)
@@ -114,6 +114,8 @@ class ShowDetailsFragment : TiviFragment() {
             clipToOutline = true
             outlineProvider = RoundRectViewOutline
         }
+
+        details_motion.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 
         controller = ShowDetailsEpoxyController(requireContext(), object : ShowDetailsEpoxyController.Callbacks {
             override fun onRelatedShowClicked(show: TiviShow, view: View) {
