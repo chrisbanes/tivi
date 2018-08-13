@@ -17,7 +17,6 @@
 
 <android.support.constraint.motion.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/details_motion"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -27,55 +26,54 @@
     <View
         android:id="@+id/details_poster_anchor"
         android:layout_width="match_parent"
-        android:layout_height="336dp" />
+        android:layout_height="320dp" />
 
     <ImageView
         android:id="@+id/details_backdrop"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="32dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toBottomOf="@id/details_poster_anchor"
-        app:layout_constraintTop_toTopOf="@id/details_poster_anchor" />
-
-    <!-- This view is solely here to allow the RV to overlap the backdrop. The overlap is
-         is defined by the bottom margin. -->
-    <View
-        android:id="@+id/details_backdrop_anchor"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="@id/details_backdrop"
-        app:layout_constraintTop_toTopOf="@id/details_backdrop" />
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/details_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_marginTop="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="?attr/actionBarPopupTheme" />
+        android:scaleType="centerCrop" />
 
     <com.airbnb.epoxy.EpoxyRecyclerView
         android:id="@+id/details_rv"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/round_rect_background"
-        android:elevation="2dp"
+        android:background="?android:colorBackground"
         app:layoutManager="android.support.v7.widget.GridLayoutManager"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:spanCount="4"
-        tools:lisitem="@layout/viewdetai" />
+        app:spanCount="4" />
 
     <ImageView
         android:id="@+id/details_poster"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/placeholder"
-        android:elevation="3dp"
+        android:elevation="2dp"
         android:scaleType="centerCrop"
         android:transitionName="poster" />
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/details_coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <android.support.design.bottomappbar.BottomAppBar
+            android:id="@+id/details_bottom_appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="?android:attr/colorBackground"
+            android:elevation="8dp"
+            app:fabAlignmentMode="end" />
+
+        <app.tivi.ui.widget.CheckableFloatingActionButton
+            android:id="@+id/details_follow_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerInside"
+            android:src="@drawable/sl_follow_show"
+            app:layout_anchor="@id/details_bottom_appbar" />
+
+    </android.support.design.widget.CoordinatorLayout>
 
 </android.support.constraint.motion.MotionLayout>

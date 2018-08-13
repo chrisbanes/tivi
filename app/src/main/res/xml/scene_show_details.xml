@@ -36,20 +36,26 @@
             android:id="@id/details_rv"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/details_backdrop_anchor" />
+            app:layout_constraintTop_toBottomOf="@id/details_backdrop" />
 
         <Constraint
             android:id="@id/details_backdrop"
             android:layout_width="0dp"
-            android:layout_height="280dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="80dp"
+            app:layout_constraintBottom_toBottomOf="@id/details_poster_anchor"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@id/details_poster_anchor">
+
+            <CustomAttribute
+                app:attributeName="foreground"
+                app:customColorDrawableValue="#00000000" />
+
+        </Constraint>
 
         <Constraint
             android:id="@id/details_poster"
@@ -67,33 +73,34 @@
             android:id="@id/details_rv"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/details_toolbar" />
+            app:layout_constraintTop_toBottomOf="@id/details_backdrop" />
 
         <Constraint
             android:id="@id/details_backdrop"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="@id/details_toolbar"
+            android:layout_height="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <CustomAttribute
+                app:attributeName="foreground"
+                app:customColorDrawableValue="#AA000000" />
+
+        </Constraint>
 
         <Constraint
             android:id="@id/details_poster"
-            android:layout_width="0dp"
+            android:layout_width="80dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="4dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            app:layout_constraintBottom_toBottomOf="@id/details_toolbar"
-            app:layout_constraintDimensionRatio="h,1.5:1"
-            app:layout_constraintStart_toStartOf="@id/details_toolbar"
-            app:layout_constraintTop_toTopOf="@id/details_toolbar" />
+            android:alpha="0"
+            app:layout_constraintDimensionRatio="h,1:1.5"
+            app:layout_constraintStart_toStartOf="@id/details_rv"
+            app:layout_constraintTop_toBottomOf="@id/details_backdrop" />
 
     </ConstraintSet>
 

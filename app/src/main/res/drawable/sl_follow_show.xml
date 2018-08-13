@@ -14,7 +14,14 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-</menu>
+    <item
+        android:drawable="@drawable/ic_favorite_black_24dp"
+        android:state_checked="true" />
+
+    <item
+        android:id="@+id/not_liked"
+        android:drawable="@drawable/ic_favorite_border_black_24dp" />
+
+</selector>

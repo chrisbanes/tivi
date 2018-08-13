@@ -16,15 +16,9 @@
 
 package app.tivi.showdetails.details
 
-import android.animation.ObjectAnimator
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
-import android.support.v7.graphics.Palette
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,12 +32,9 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.extensions.observeK
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
-import app.tivi.ui.GlidePaletteListener
 import app.tivi.ui.NoopApplyWindowInsetsListener
 import app.tivi.ui.RoundRectViewOutline
 import app.tivi.ui.glide.GlideApp
-import app.tivi.ui.transitions.DrawableAlphaProperty
-import app.tivi.util.ScrimUtil
 import kotlinx.android.synthetic.main.fragment_show_details.*
 import javax.inject.Inject
 
@@ -64,32 +55,6 @@ class ShowDetailsFragment : TiviFragment() {
     private lateinit var viewModel: ShowDetailsFragmentViewModel
     private lateinit var controller: ShowDetailsEpoxyController
     private lateinit var showDetailsNavigator: ShowDetailsNavigator
-
-    private var colorSwatch: Palette.Swatch = Palette.Swatch(Color.WHITE, 0)
-        set(value) {
-            if (field != value) {
-                val background = ColorDrawable(value.rgb)
-                details_motion.background = background
-                ObjectAnimator.ofInt(background, DrawableAlphaProperty, 0, 255).start()
-
-                val scrim = ScrimUtil.makeCubicGradientScrimDrawable(value.rgb, 10, Gravity.BOTTOM)
-                val drawable = LayerDrawable(arrayOf(scrim)).apply {
-                    setLayerGravity(0, Gravity.FILL)
-                    setLayerInsetTop(0, details_backdrop.height / 2)
-                }
-                details_backdrop.foreground = drawable
-                ObjectAnimator.ofInt(drawable, DrawableAlphaProperty, 0, 255).start()
-
-                field = value
-            }
-        }
-
-    private val glidePaletteListener = GlidePaletteListener {
-        val dominant = it.dominantSwatch
-        if (dominant != null) {
-            colorSwatch = dominant
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -134,18 +99,6 @@ class ShowDetailsFragment : TiviFragment() {
         })
 
         details_rv.setController(controller)
-
-        details_toolbar.apply {
-            inflateMenu(R.menu.details_toolbar)
-            setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.details_menu_add_myshows -> viewModel.addToMyShows()
-                    R.id.details_menu_remove_myshows -> viewModel.removeFromMyShows()
-                    else -> TODO()
-                }
-                true
-            }
-        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -165,8 +118,6 @@ class ShowDetailsFragment : TiviFragment() {
                 GlideApp.with(this)
                         .load(imageProvider.getBackdropUrl(path, details_backdrop.width))
                         .thumbnail(GlideApp.with(this).load(imageProvider.getBackdropUrl(path, 0)))
-                        .disallowHardwareConfig()
-                        .listener(glidePaletteListener)
                         .into(details_backdrop)
             }
         }
@@ -181,10 +132,15 @@ class ShowDetailsFragment : TiviFragment() {
             }
         }
 
-        details_toolbar.menu.let {
-            val isFollowed = viewState is FollowedShowDetailsViewState
-            it.findItem(R.id.details_menu_add_myshows).isVisible = !isFollowed
-            it.findItem(R.id.details_menu_remove_myshows).isVisible = isFollowed
+        val isFollowed = viewState is FollowedShowDetailsViewState
+        details_follow_fab.isChecked = isFollowed
+
+        details_follow_fab.setOnClickListener {
+            if (isFollowed) {
+                viewModel.removeFromMyShows()
+            } else {
+                viewModel.addToMyShows()
+            }
         }
 
         controller.setData(viewState)
