@@ -19,7 +19,5 @@ apply plugin: 'kotlin'
 
 dependencies {
     implementation project(":base")
-    implementation project(":trakt")
-    implementation project(":tmdb")
     implementation project(":data")
 }

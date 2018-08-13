@@ -40,9 +40,8 @@ play {
     uploadImages = true
 }
 
-def haveFabricApiKey = !propOrDef("TIVI_FABRIC_API_KEY", "").isEmpty()
-if (haveFabricApiKey) {
-    apply plugin: 'io.fabric'
+if (file("google-services.json").exists()) {
+    apply plugin: 'com.google.gms.google-services'
 }
 
 def appVersionCode = propOrDef("tivi.versioncode", 17) as Integer
@@ -77,10 +76,6 @@ android {
         buildConfigField "String", "TMDB_API_KEY", "\"" + propOrDef("TIVI_TMDB_API_KEY", "") + "\""
 
         manifestPlaceholders += ['appAuthRedirectScheme': 'app.tivi']
-
-        // Crashlytics. Disabled by default
-        manifestPlaceholders += ["fabric-api-key": propOrDef("TIVI_FABRIC_API_KEY", "")]
-        ext.enableCrashlytics = false
     }
 
     signingConfigs {
@@ -112,6 +107,8 @@ android {
     lintOptions {
         // Disable lintVital. Not needed since lint is run on CI
         checkReleaseBuilds false
+        
+        disable 'GradleCompatible'
     }
 
     dataBinding {
@@ -137,9 +134,6 @@ android {
             shrinkResources true
             minifyEnabled true
             proguardFiles 'proguard-rules.pro'
-
-            // Enable crashlytics
-            ext.enableCrashlytics = haveFabricApiKey
         }
     }
 }
@@ -211,9 +205,7 @@ dependencies {
 
     debugImplementation "nl.littlerobots.rxlint:rxlint:${versions.rxlint}"
 
-    implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
-        transitive = true
-    }
+    implementation "com.google.firebase:firebase-core:${versions.firebase}"
 }
 
 def getGitHash() {
