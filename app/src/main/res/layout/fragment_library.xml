@@ -29,7 +29,7 @@
         android:id="@+id/library_motion"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutDescription="@xml/library_scene">
+        app:layoutDescription="@xml/scene_library">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/library_toolbar"
