@@ -16,10 +16,15 @@
 
 package app.tivi.data.repositories.watchedshows
 
+import app.tivi.data.RetrofitRunner
+import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.WatchedShowEntry
-import app.tivi.data.mappers.TraktShowToTiviShow
-import app.tivi.extensions.fetchBodyWithRetry
+import app.tivi.data.mappers.Mapper
+import app.tivi.data.mappers.TraktBaseShowToTiviShow
+import app.tivi.data.mappers.pairMapperOf
+import app.tivi.extensions.executeWithRetry
+import com.uwetrottmann.trakt5.entities.BaseShow
 import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Users
@@ -28,12 +33,19 @@ import javax.inject.Provider
 
 class TraktWatchedShowsDataSource @Inject constructor(
     private val usersService: Provider<Users>,
-    private val mapper: TraktShowToTiviShow
+    private val retrofitRunner: RetrofitRunner,
+    private val showMapper: TraktBaseShowToTiviShow
 ) : WatchedShowsDataSource {
-    override suspend fun getWatchedShows(): List<Pair<TiviShow, WatchedShowEntry>> {
-        val results = usersService.get().watchedShows(UserSlug.ME, Extended.NOSEASONS).fetchBodyWithRetry()
-        return results.map {
-            mapper.map(it.show) to WatchedShowEntry(showId = 0, lastWatched = it.last_watched_at)
+    private val entryMapper = object : Mapper<BaseShow, WatchedShowEntry> {
+        override fun map(from: BaseShow): WatchedShowEntry {
+            return WatchedShowEntry(showId = 0, lastWatched = from.last_watched_at)
+        }
+    }
+    private val responseMapper = pairMapperOf(showMapper, entryMapper)
+
+    override suspend fun getWatchedShows(): Result<List<Pair<TiviShow, WatchedShowEntry>>> {
+        return retrofitRunner.executeForResponse(responseMapper) {
+            usersService.get().watchedShows(UserSlug.ME, Extended.NOSEASONS).executeWithRetry()
         }
     }
 }

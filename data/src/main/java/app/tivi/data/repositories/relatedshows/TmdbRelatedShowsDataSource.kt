@@ -16,26 +16,37 @@
 
 package app.tivi.data.repositories.relatedshows
 
+import app.tivi.data.RetrofitRunner
 import app.tivi.data.entities.RelatedShowEntry
+import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.mappers.IndexedMapper
 import app.tivi.data.mappers.ShowIdToTmdbIdMapper
 import app.tivi.data.mappers.TmdbBaseShowToTiviShow
-import app.tivi.extensions.fetchBody
+import app.tivi.data.mappers.TmdbShowResultsPageUnwrapper
+import app.tivi.data.mappers.pairMapperOf
+import app.tivi.extensions.executeWithRetry
 import com.uwetrottmann.tmdb2.Tmdb
+import com.uwetrottmann.tmdb2.entities.BaseTvShow
 import javax.inject.Inject
 
 class TmdbRelatedShowsDataSource @Inject constructor(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
+    private val retrofitRunner: RetrofitRunner,
     private val tmdb: Tmdb,
-    private val mapper: TmdbBaseShowToTiviShow
+    private val showMapper: TmdbBaseShowToTiviShow
 ) : RelatedShowsDataSource {
-    override suspend fun getRelatedShows(showId: Long): List<Pair<TiviShow, RelatedShowEntry>> {
-        val traktId = tmdbIdMapper.map(showId) ?: return emptyList()
+    private val entryMapper = object : IndexedMapper<BaseTvShow, RelatedShowEntry> {
+        override fun map(index: Int, from: BaseTvShow): RelatedShowEntry {
+            return RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)
+        }
+    }
 
-        val results = tmdb.tvService().similar(traktId, 1, null).fetchBody()
+    private val resultMapper = TmdbShowResultsPageUnwrapper(pairMapperOf(showMapper, entryMapper))
 
-        return results.results.mapIndexed { index, relatedShow ->
-            mapper.map(relatedShow) to RelatedShowEntry(showId = showId, otherShowId = 0, orderIndex = index)
+    override suspend fun getRelatedShows(showId: Long): Result<List<Pair<TiviShow, RelatedShowEntry>>> {
+        return retrofitRunner.executeForResponse(resultMapper) {
+            tmdb.tvService().similar(tmdbIdMapper.map(showId), 1, null).executeWithRetry()
         }
     }
 }

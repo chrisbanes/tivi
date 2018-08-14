@@ -16,10 +16,15 @@
 
 package app.tivi.data.repositories.trendingshows
 
+import app.tivi.data.RetrofitRunner
+import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TrendingShowEntry
-import app.tivi.data.mappers.TraktShowToTiviShow
-import app.tivi.extensions.fetchBodyWithRetry
+import app.tivi.data.mappers.Mapper
+import app.tivi.data.mappers.TraktTrendingShowToTiviShow
+import app.tivi.data.mappers.pairMapperOf
+import app.tivi.extensions.executeWithRetry
+import com.uwetrottmann.trakt5.entities.TrendingShow
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
 import javax.inject.Inject
@@ -27,13 +32,20 @@ import javax.inject.Provider
 
 class TraktTrendingShowsDataSource @Inject constructor(
     private val showService: Provider<Shows>,
-    private val mapper: TraktShowToTiviShow
+    private val retrofitRunner: RetrofitRunner,
+    private val showMapper: TraktTrendingShowToTiviShow
 ) : TrendingShowsDataSource {
-    override suspend fun getTrendingShows(page: Int, pageSize: Int): List<Pair<TiviShow, TrendingShowEntry>> {
-        // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
-        val results = showService.get().trending(page + 1, pageSize, Extended.NOSEASONS).fetchBodyWithRetry()
-        return results.map { show ->
-            mapper.map(show.show) to TrendingShowEntry(showId = 0, watchers = show.watchers, page = page)
+    private val entryMapper = object : Mapper<TrendingShow, TrendingShowEntry> {
+        override fun map(from: TrendingShow): TrendingShowEntry {
+            return TrendingShowEntry(showId = 0, watchers = from.watchers, page = 0)
+        }
+    }
+    private val responseMapper = pairMapperOf(showMapper, entryMapper)
+
+    override suspend fun getTrendingShows(page: Int, pageSize: Int): Result<List<Pair<TiviShow, TrendingShowEntry>>> {
+        return retrofitRunner.executeForResponse(responseMapper) {
+            // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
+            showService.get().trending(page + 1, pageSize, Extended.NOSEASONS).executeWithRetry()
         }
     }
 }

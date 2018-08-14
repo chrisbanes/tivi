@@ -19,6 +19,7 @@ package app.tivi.data.repositories
 import app.tivi.data.RoomTransactionRunner
 import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.EpisodeWatchEntryDao
+import app.tivi.data.entities.Success
 import app.tivi.data.repositories.episodes.EpisodeDataSource
 import app.tivi.data.repositories.episodes.LocalSeasonsEpisodesStore
 import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
@@ -88,7 +89,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
     fun testSyncEpisodeWatches() = runBlocking {
         // Return a response with 2 items
         `when`(traktSeasonsDataSource.getShowEpisodeWatches(showId)).thenReturn(
-                listOf(episodeOne to episodeWatch1, episodeOne to episodeWatch2)
+                Success(listOf(episodeOne to episodeWatch1, episodeOne to episodeWatch2))
         )
         // Sync
         repository.syncEpisodeWatchesForShow(showId)
@@ -102,7 +103,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         episodeWatchDao.insertAll(episodeWatch1, episodeWatch2)
         // Return a response with the same items
         `when`(traktSeasonsDataSource.getShowEpisodeWatches(showId))
-                .thenReturn(listOf(episodeOne to episodeWatch1, episodeOne to episodeWatch2))
+                .thenReturn(Success(listOf(episodeOne to episodeWatch1, episodeOne to episodeWatch2)))
         // Now re-sync with the same response
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that both are in the db
@@ -115,7 +116,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         episodeWatchDao.insertAll(episodeWatch1, episodeWatch2)
         // Return a response with just the second item
         `when`(traktSeasonsDataSource.getShowEpisodeWatches(showId))
-                .thenReturn(listOf(episodeOne to episodeWatch2))
+                .thenReturn(Success(listOf(episodeOne to episodeWatch2)))
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that only the second is in the db
@@ -127,7 +128,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         // Insert both the watches
         episodeWatchDao.insertAll(episodeWatch1, episodeWatch2)
         // Return a empty response
-        `when`(traktSeasonsDataSource.getShowEpisodeWatches(showId)).thenReturn(emptyList())
+        `when`(traktSeasonsDataSource.getShowEpisodeWatches(showId)).thenReturn(Success(emptyList()))
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that the database is empty

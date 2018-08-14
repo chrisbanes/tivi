@@ -18,6 +18,7 @@ package app.tivi.data.repositories.followedshows
 
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
+import app.tivi.data.entities.Success
 import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
@@ -95,14 +96,15 @@ class FollowedShowsRepository @Inject constructor(
     }
 
     private suspend fun pullDownTraktFollowedList(listId: Int) {
-        dataSource.getListShows(listId)
-                .map { (entry, show) ->
+        val response = dataSource.getListShows(listId)
+        when (response) {
+            is Success ->
+                response.data.map { (entry, show) ->
                     // Grab the show id if it exists, or save the show and use it's generated ID
                     val showId = localShowStore.getIdOrSavePlaceholder(show)
                     // Create a followed show entry with the show id
                     entry.copy(showId = showId)
-                }
-                .also { entries ->
+                }.also { entries ->
                     // Save the related entries
                     localStore.sync(entries)
                     // Now update all of the followed shows if needed
@@ -112,32 +114,43 @@ class FollowedShowsRepository @Inject constructor(
                         }
                     }
                 }
+        }
     }
 
     private suspend fun processPendingAdditions(listId: Int?) {
         val pending = localStore.getEntriesWithAddAction()
+        if (pending.isEmpty()) {
+            return
+        }
 
-        if (pending.isNotEmpty()) {
-            if (listId != null && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
-                val shows = pending.mapNotNull { localShowStore.getShow(it.showId) }
-                dataSource.addShowIdsToList(listId, shows)
+        if (listId != null && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
+            val shows = pending.mapNotNull { localShowStore.getShow(it.showId) }
+            val response = dataSource.addShowIdsToList(listId, shows)
+            if (response is Success) {
+                // Now update the database
+                localStore.updateEntriesWithAction(pending.mapNotNull { it.id }, PendingAction.NOTHING)
             }
-
-            // Now update the database
+        } else {
+            // We're not logged in, so just update the database
             localStore.updateEntriesWithAction(pending.mapNotNull { it.id }, PendingAction.NOTHING)
         }
     }
 
     private suspend fun processPendingDelete(listId: Int?) {
         val pending = localStore.getEntriesWithDeleteAction()
+        if (pending.isEmpty()) {
+            return
+        }
 
-        if (pending.isNotEmpty()) {
-            if (listId != null && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
-                val shows = pending.mapNotNull { localShowStore.getShow(it.showId) }
-                dataSource.removeShowIdsFromList(listId, shows)
+        if (listId != null && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
+            val shows = pending.mapNotNull { localShowStore.getShow(it.showId) }
+            val response = dataSource.removeShowIdsFromList(listId, shows)
+            if (response is Success) {
+                // Now update the database
+                localStore.deleteEntriesInIds(pending.mapNotNull { it.id })
             }
-
-            // Now update the database
+        } else {
+            // We're not logged in, so just update the database
             localStore.deleteEntriesInIds(pending.mapNotNull { it.id })
         }
     }

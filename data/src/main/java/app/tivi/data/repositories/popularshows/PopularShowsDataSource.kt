@@ -17,8 +17,9 @@
 package app.tivi.data.repositories.popularshows
 
 import app.tivi.data.entities.PopularShowEntry
+import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
 
 interface PopularShowsDataSource {
-    suspend fun getPopularShows(page: Int, pageSize: Int): List<Pair<TiviShow, PopularShowEntry>>
+    suspend fun getPopularShows(page: Int, pageSize: Int): Result<List<Pair<TiviShow, PopularShowEntry>>>
 }

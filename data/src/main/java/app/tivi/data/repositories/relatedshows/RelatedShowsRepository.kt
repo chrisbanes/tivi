@@ -17,6 +17,7 @@
 package app.tivi.data.repositories.relatedshows
 
 import app.tivi.data.entities.RelatedShowEntry
+import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
@@ -43,13 +44,15 @@ class RelatedShowsRepository @Inject constructor(
 
     suspend fun updateRelatedShows(showId: Long) {
         val tmdbResults = tmdbDataSource.getRelatedShows(showId)
-        if (tmdbResults.isNotEmpty()) {
-            process(showId, tmdbResults)
-        } else {
-            val traktResults = traktDataSource.getRelatedShows(showId)
-            if (traktResults.isNotEmpty()) {
-                process(showId, traktResults)
-            }
+        if (tmdbResults is Success) {
+            process(showId, tmdbResults.data)
+            return
+        }
+
+        val traktResults = traktDataSource.getRelatedShows(showId)
+        if (traktResults is Success) {
+            process(showId, traktResults.data)
+            return
         }
     }
 
@@ -58,7 +61,7 @@ class RelatedShowsRepository @Inject constructor(
             // Grab the show id if it exists, or save the show and use it's generated ID
             val relatedShowId = localShowStore.getIdOrSavePlaceholder(show)
             // Make a copy of the entry with the id
-            entry.copy(otherShowId = relatedShowId)
+            entry.copy(showId = showId, otherShowId = relatedShowId)
         }.also { entries ->
             // Save the related entries
             localStore.saveRelatedShows(showId, entries)

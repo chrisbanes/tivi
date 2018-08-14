@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories.trendingshows
 
+import app.tivi.data.entities.Success
 import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
@@ -45,14 +46,15 @@ class TrendingShowsRepository @Inject constructor(
     }
 
     private suspend fun updateTrendingShows(page: Int, resetOnSave: Boolean) {
-        traktDataSource.getTrendingShows(page, 20)
-                .map { (show, entry) ->
+        val response = traktDataSource.getTrendingShows(page, 20)
+        when (response) {
+            is Success -> {
+                response.data.map { (show, entry) ->
                     // Grab the show id if it exists, or save the show and use it's generated ID
                     val showId = showStore.getIdOrSavePlaceholder(show)
                     // Make a copy of the entry with the id
-                    entry.copy(showId = showId)
-                }
-                .also { entries ->
+                    entry.copy(showId = showId, page = page)
+                }.also { entries ->
                     if (resetOnSave) {
                         localStore.deleteAll()
                     }
@@ -64,5 +66,7 @@ class TrendingShowsRepository @Inject constructor(
                             showRepository.updateShow(entry.showId)
                     }
                 }
+            }
+        }
     }
 }

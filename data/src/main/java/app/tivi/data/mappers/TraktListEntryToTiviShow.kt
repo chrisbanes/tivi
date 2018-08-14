@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.relatedshows
+package app.tivi.data.mappers
 
-import app.tivi.data.entities.RelatedShowEntry
-import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
+import com.uwetrottmann.trakt5.entities.ListEntry
+import javax.inject.Inject
+import javax.inject.Singleton
 
-interface RelatedShowsDataSource {
-    suspend fun getRelatedShows(showId: Long): Result<List<Pair<TiviShow, RelatedShowEntry>>>
+@Singleton
+class TraktListEntryToTiviShow @Inject constructor(
+    private val showMapper: TraktShowToTiviShow
+) : Mapper<ListEntry, TiviShow> {
+    override fun map(from: ListEntry) = showMapper.map(from.show)
 }
