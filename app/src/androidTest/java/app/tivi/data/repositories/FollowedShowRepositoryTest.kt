@@ -19,6 +19,7 @@ package app.tivi.data.repositories
 import app.tivi.data.RoomTransactionRunner
 import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.FollowedShowsDao
+import app.tivi.data.entities.Success
 import app.tivi.data.repositories.followedshows.FollowedShowsDataSource
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.repositories.followedshows.LocalFollowedShowsStore
@@ -84,7 +85,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
     @Test
     fun testSync() = runBlocking {
         `when`(traktDataSource.getFollowedListId()).thenReturn(0)
-        `when`(traktDataSource.getListShows(0)).thenReturn(listOf(followedShow1 to show))
+        `when`(traktDataSource.getListShows(0)).thenReturn(Success(listOf(followedShow1 to show)))
 
         assertThat(repository.getFollowedShows(), `is`(listOf(followedShow1)))
 
@@ -97,7 +98,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
         insertFollowedShow(db)
 
         `when`(traktDataSource.getFollowedListId()).thenReturn(0)
-        `when`(traktDataSource.getListShows(0)).thenReturn(listOf())
+        `when`(traktDataSource.getListShows(0)).thenReturn(Success(emptyList()))
 
         assertThat(repository.getFollowedShows(), `is`(emptyList()))
     }
@@ -107,7 +108,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
         insertFollowedShow(db)
 
         `when`(traktDataSource.getFollowedListId()).thenReturn(0)
-        `when`(traktDataSource.getListShows(0)).thenReturn(listOf(followedShow2 to show2))
+        `when`(traktDataSource.getListShows(0)).thenReturn(Success(listOf(followedShow2 to show2)))
 
         assertThat(repository.getFollowedShows(), `is`(listOf(followedShow2)))
 
