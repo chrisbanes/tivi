@@ -21,13 +21,42 @@
     <Transition
         app:constraintSetEnd="@+id/end"
         app:constraintSetStart="@+id/start"
-        app:duration="300">
+        app:duration="200">
 
         <OnSwipe
             app:dragDirection="dragUp"
             app:moveWhenScrollAtTop="true"
             app:touchAnchorId="@id/details_rv"
             app:touchAnchorSide="top" />
+
+        <KeyFrameSet>
+            <!-- See https://issuetracker.google.com/issues/112546214 for why we're using percentX
+                 instead of percentY -->
+            <KeyPosition
+                app:framePosition="20"
+                app:keyPositionType="pathRelative"
+                app:percentX="0.7"
+                app:target="@id/details_poster" />
+
+            <KeyPosition
+                app:framePosition="50"
+                app:keyPositionType="pathRelative"
+                app:percentX="0.6"
+                app:target="@id/details_poster" />
+
+            <!-- This looks weird. We need a hard change from elevated to not-elevated at 20% so we set 2 key
+                 attributes, one at 20% and other at 21%. If we don't do this, we get an interpolated elevation. -->
+            <KeyAttribute
+                android:elevation="@dimen/details_poster_elevation"
+                app:framePosition="20"
+                app:target="@id/details_poster" />
+
+            <KeyAttribute
+                android:elevation="0dp"
+                app:framePosition="21"
+                app:target="@id/details_poster" />
+
+        </KeyFrameSet>
 
     </Transition>
 
@@ -53,7 +82,7 @@
 
             <CustomAttribute
                 app:attributeName="foreground"
-                app:customColorDrawableValue="#00000000" />
+                app:customColorDrawableValue="@android:color/transparent" />
 
         </Constraint>
 
@@ -62,6 +91,7 @@
             android:layout_width="80dp"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
+            android:elevation="@dimen/details_poster_elevation"
             app:layout_constraintBottom_toBottomOf="@id/details_poster_anchor"
             app:layout_constraintDimensionRatio="h,1:1.5"
             app:layout_constraintStart_toStartOf="@id/details_rv" />
@@ -88,7 +118,7 @@
 
             <CustomAttribute
                 app:attributeName="foreground"
-                app:customColorDrawableValue="#AA000000" />
+                app:customColorDrawableValue="@color/content_scrim_dark" />
 
         </Constraint>
 
@@ -97,7 +127,7 @@
             android:layout_width="80dp"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
-            android:alpha="0"
+            android:elevation="0dp"
             app:layout_constraintDimensionRatio="h,1:1.5"
             app:layout_constraintStart_toStartOf="@id/details_rv"
             app:layout_constraintTop_toBottomOf="@id/details_backdrop" />

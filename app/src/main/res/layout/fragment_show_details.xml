@@ -34,27 +34,28 @@
         android:layout_height="0dp"
         android:scaleType="centerCrop" />
 
-    <com.airbnb.epoxy.EpoxyRecyclerView
-        android:id="@+id/details_rv"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="?android:colorBackground"
-        app:layoutManager="android.support.v7.widget.GridLayoutManager"
-        app:spanCount="4" />
-
     <ImageView
         android:id="@+id/details_poster"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/placeholder"
-        android:elevation="2dp"
         android:scaleType="centerCrop"
         android:transitionName="poster" />
+
+    <com.airbnb.epoxy.EpoxyRecyclerView
+        android:id="@+id/details_rv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:elevation="1dp"
+        android:background="?android:colorBackground"
+        app:layoutManager="android.support.v7.widget.GridLayoutManager"
+        app:spanCount="4" />
 
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/details_coordinator"
         android:layout_width="match_parent"
         android:layout_height="100dp"
+        android:elevation="1dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <android.support.design.bottomappbar.BottomAppBar
