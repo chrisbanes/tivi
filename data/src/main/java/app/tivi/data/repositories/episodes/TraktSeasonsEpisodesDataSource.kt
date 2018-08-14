@@ -19,10 +19,10 @@ package app.tivi.data.repositories.episodes
 import app.tivi.data.RetrofitRunner
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
-import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.Season
 import app.tivi.data.mappers.EpisodeIdToTraktIdMapper
+import app.tivi.data.mappers.Mapper
 import app.tivi.data.mappers.ShowIdToTraktIdMapper
 import app.tivi.data.mappers.TraktEpisodeToEpisode
 import app.tivi.data.mappers.TraktHistoryItemToEpisodeWatchEntry
@@ -30,8 +30,8 @@ import app.tivi.data.mappers.TraktSeasonToSeasonWithEpisodes
 import app.tivi.data.mappers.toListMapper
 import app.tivi.extensions.executeWithRetry
 import app.tivi.extensions.fetchBody
-import app.tivi.extensions.fetchBodyWithRetry
 import com.uwetrottmann.trakt5.entities.EpisodeIds
+import com.uwetrottmann.trakt5.entities.HistoryEntry
 import com.uwetrottmann.trakt5.entities.SyncEpisode
 import com.uwetrottmann.trakt5.entities.SyncItems
 import com.uwetrottmann.trakt5.entities.UserSlug
@@ -56,41 +56,42 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
 ) : SeasonsEpisodesDataSource {
     override suspend fun getSeasonsEpisodes(showId: Long): Result<List<Pair<Season, List<Episode>>>> {
         val showTraktId = showIdToTraktIdMapper.map(showId)
-        if (showTraktId != null) {
-            return retrofitRunner.executeForResponse(seasonMapper.toListMapper()) {
-                seasonsService.get().summary(showTraktId.toString(), Extended.FULLEPISODES).executeWithRetry()
-            }
-        } else {
-            return ErrorResult(IllegalArgumentException("TraktId does not exist for show with id: $showId"))
+        return retrofitRunner.executeForResponse(seasonMapper.toListMapper()) {
+            seasonsService.get().summary(showTraktId.toString(), Extended.FULLEPISODES).executeWithRetry()
         }
     }
 
-    override suspend fun getShowEpisodeWatches(showId: Long): List<Pair<Episode, EpisodeWatchEntry>> {
-        val showTraktId = showIdToTraktIdMapper.map(showId) ?: return emptyList()
+    override suspend fun getShowEpisodeWatches(showId: Long): Result<List<Pair<Episode, EpisodeWatchEntry>>> {
+        val showTraktId = showIdToTraktIdMapper.map(showId)
 
-        return usersService.get().history(UserSlug.ME, HistoryType.SHOWS, showTraktId,
-                0, 10000, Extended.NOSEASONS, null, null)
-                .fetchBodyWithRetry()
-                .filter { it.type == "episode" }
-                .map { episodeMapper.map(it.episode) to historyItemMapper.map(it) }
+        val mapper = object : Mapper<HistoryEntry, Pair<Episode, EpisodeWatchEntry>> {
+            override fun map(from: HistoryEntry): Pair<Episode, EpisodeWatchEntry> {
+                return episodeMapper.map(from.episode) to historyItemMapper.map(from)
+            }
+        }
+
+        return retrofitRunner.executeForResponse(mapper.toListMapper()) {
+            usersService.get().history(UserSlug.ME, HistoryType.SHOWS, showTraktId,
+                    0, 10000, Extended.NOSEASONS, null, null)
+                    .execute()
+        }
     }
 
-    override suspend fun getEpisodeWatches(episodeId: Long): List<EpisodeWatchEntry> {
-        val episodeTraktId = episodeIdToTraktIdMapper.map(episodeId) ?: return emptyList()
+    override suspend fun getEpisodeWatches(episodeId: Long): Result<List<EpisodeWatchEntry>> {
+        val episodeTraktId = episodeIdToTraktIdMapper.map(episodeId)
 
-        return usersService.get().history(UserSlug.ME, HistoryType.EPISODES, episodeTraktId,
-                0, 10000, Extended.NOSEASONS, null, null)
-                .fetchBodyWithRetry()
-                .map { historyItemMapper.map(it) }
+        return retrofitRunner.executeForResponse(historyItemMapper.toListMapper()) {
+            usersService.get().history(UserSlug.ME, HistoryType.EPISODES, episodeTraktId,
+                    0, 10000, Extended.NOSEASONS, null, null)
+                    .execute()
+        }
     }
 
     override suspend fun addEpisodeWatches(watches: List<EpisodeWatchEntry>) {
         if (watches.isNotEmpty()) {
             val items = SyncItems()
             items.episodes = watches.mapNotNull {
-                episodeIdToTraktIdMapper.map(it.episodeId)?.let {
-                    SyncEpisode().id(EpisodeIds.trakt(it))
-                }
+                SyncEpisode().id(EpisodeIds.trakt(episodeIdToTraktIdMapper.map(it.episodeId)))
             }
 
             val response = syncService.get().addItemsToWatchedHistory(items).fetchBody()

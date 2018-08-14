@@ -17,9 +17,7 @@
 package app.tivi.data.mappers
 
 internal class SingleToListMapper<F, T>(private val singleMapper: Mapper<F, T>) : Mapper<List<F>, List<T>> {
-    override fun map(from: List<F>): List<T> {
-        return from.map(singleMapper::map)
-    }
+    override fun map(from: List<F>): List<T> = from.map(singleMapper::map)
 }
 
 fun <F, T> Mapper<F, T>.toListMapper(): Mapper<List<F>, List<T>> = SingleToListMapper(this)

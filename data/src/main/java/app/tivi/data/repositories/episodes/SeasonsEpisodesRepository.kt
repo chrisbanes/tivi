@@ -153,8 +153,11 @@ class SeasonsEpisodesRepository @Inject constructor(
     }
 
     private suspend fun refreshShowWatchesFromRemote(showId: Long) {
-        traktSeasonsDataSource.getShowEpisodeWatches(showId)
-                .map { (episode, watchEntry) ->
+        val response = traktSeasonsDataSource.getShowEpisodeWatches(showId)
+
+        when (response) {
+            is Success -> {
+                response.data.map { (episode, watchEntry) ->
                     // Grab the episode id if it exists, or save the episode and use it's generated ID
                     val episodeId = localStore.getEpisodeIdForTraktId(episode.traktId!!)
                     if (episodeId != null) {
@@ -162,14 +165,24 @@ class SeasonsEpisodesRepository @Inject constructor(
                     } else {
                         throw IllegalStateException("Episode with Trakt Id ${episode.traktId} does not exist")
                     }
+                }.also {
+                    localStore.syncShowWatchEntries(showId, it)
                 }
-                .also { localStore.syncShowWatchEntries(showId, it) }
+            }
+        }
     }
 
     private suspend fun refreshEpisodeWatchesFromRemote(episodeId: Long) {
-        traktSeasonsDataSource.getEpisodeWatches(episodeId)
-                .map { it.copy(episodeId = episodeId) }
-                .also { localStore.syncEpisodeWatchEntries(episodeId, it) }
+        val response = traktSeasonsDataSource.getEpisodeWatches(episodeId)
+        when (response) {
+            is Success -> {
+                response.data.map {
+                    it.copy(episodeId = episodeId)
+                }.also {
+                    localStore.syncEpisodeWatchEntries(episodeId, it)
+                }
+            }
+        }
     }
 
     private suspend fun processEpisodeWatchesPendingAdditions(episodeId: Long) {

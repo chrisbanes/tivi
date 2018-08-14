@@ -23,6 +23,8 @@ import javax.inject.Singleton
 @Singleton
 class ShowIdToTraktIdMapper @Inject constructor(
     private val showDao: TiviShowDao
-) : Mapper<Long, Int?> {
-    override fun map(from: Long) = showDao.getTraktIdForShowId(from)
+) : Mapper<Long, Int> {
+    override fun map(from: Long): Int {
+        return showDao.getTraktIdForShowId(from) ?: throw IllegalArgumentException("Show with id $from does not exist")
+    }
 }
