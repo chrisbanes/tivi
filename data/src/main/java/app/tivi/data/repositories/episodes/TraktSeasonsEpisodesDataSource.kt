@@ -29,7 +29,6 @@ import app.tivi.data.mappers.TraktSeasonToSeasonWithEpisodes
 import app.tivi.data.mappers.pairMapperOf
 import app.tivi.data.mappers.toListMapper
 import app.tivi.extensions.executeWithRetry
-import app.tivi.extensions.fetchBody
 import com.uwetrottmann.trakt5.entities.EpisodeIds
 import com.uwetrottmann.trakt5.entities.SyncEpisode
 import com.uwetrottmann.trakt5.entities.SyncItems
@@ -76,26 +75,22 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
         }
     }
 
-    override suspend fun addEpisodeWatches(watches: List<EpisodeWatchEntry>) {
-        if (watches.isNotEmpty()) {
+    override suspend fun addEpisodeWatches(watches: List<EpisodeWatchEntry>): Result<Unit> {
+        return retrofitRunner.executeForResponse {
             val items = SyncItems()
-            items.episodes = watches.mapNotNull {
+            items.episodes = watches.map {
                 SyncEpisode().id(EpisodeIds.trakt(episodeIdToTraktIdMapper.map(it.episodeId)))
             }
-
-            val response = syncService.get().addItemsToWatchedHistory(items).fetchBody()
-            // TODO check response
+            syncService.get().addItemsToWatchedHistory(items).executeWithRetry()
         }
     }
 
-    override suspend fun removeEpisodeWatches(watches: List<EpisodeWatchEntry>) {
-        val traktIds = watches.mapNotNull { it.traktId }
-        if (traktIds.isNotEmpty()) {
+    override suspend fun removeEpisodeWatches(watches: List<EpisodeWatchEntry>): Result<Unit> {
+        return retrofitRunner.executeForResponse {
             val items = SyncItems()
-            items.ids = traktIds
+            items.ids = watches.mapNotNull { it.traktId }
 
-            val response = syncService.get().deleteItemsFromWatchedHistory(items).fetchBody()
-            // TODO check response
+            syncService.get().deleteItemsFromWatchedHistory(items).executeWithRetry()
         }
     }
 }
