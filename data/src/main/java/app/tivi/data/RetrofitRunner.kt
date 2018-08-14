@@ -42,4 +42,11 @@ class RetrofitRunner @Inject constructor() {
             ErrorResult(e)
         }
     }
+
+    suspend fun <T> executeForResponse(request: suspend () -> Response<T>): Result<Unit> {
+        val unitMapper = object : Mapper<T, Unit> {
+            override fun map(from: T) = Unit
+        }
+        return executeForResponse(unitMapper, request)
+    }
 }

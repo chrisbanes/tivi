@@ -119,28 +119,38 @@ class FollowedShowsRepository @Inject constructor(
 
     private suspend fun processPendingAdditions(listId: Int?) {
         val pending = localStore.getEntriesWithAddAction()
+        if (pending.isEmpty()) {
+            return
+        }
 
-        if (pending.isNotEmpty()) {
-            if (listId != null && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
-                val shows = pending.mapNotNull { localShowStore.getShow(it.showId) }
-                dataSource.addShowIdsToList(listId, shows)
+        if (listId != null && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
+            val shows = pending.mapNotNull { localShowStore.getShow(it.showId) }
+            val response = dataSource.addShowIdsToList(listId, shows)
+            if (response is Success) {
+                // Now update the database
+                localStore.updateEntriesWithAction(pending.mapNotNull { it.id }, PendingAction.NOTHING)
             }
-
-            // Now update the database
+        } else {
+            // We're not logged in, so just update the database
             localStore.updateEntriesWithAction(pending.mapNotNull { it.id }, PendingAction.NOTHING)
         }
     }
 
     private suspend fun processPendingDelete(listId: Int?) {
         val pending = localStore.getEntriesWithDeleteAction()
+        if (pending.isEmpty()) {
+            return
+        }
 
-        if (pending.isNotEmpty()) {
-            if (listId != null && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
-                val shows = pending.mapNotNull { localShowStore.getShow(it.showId) }
-                dataSource.removeShowIdsFromList(listId, shows)
+        if (listId != null && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
+            val shows = pending.mapNotNull { localShowStore.getShow(it.showId) }
+            val response = dataSource.removeShowIdsFromList(listId, shows)
+            if (response is Success) {
+                // Now update the database
+                localStore.deleteEntriesInIds(pending.mapNotNull { it.id })
             }
-
-            // Now update the database
+        } else {
+            // We're not logged in, so just update the database
             localStore.deleteEntriesInIds(pending.mapNotNull { it.id })
         }
     }

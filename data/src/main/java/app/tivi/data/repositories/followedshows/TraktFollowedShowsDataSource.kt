@@ -24,7 +24,6 @@ import app.tivi.data.mappers.TraktListEntryToFollowedShowEntry
 import app.tivi.data.mappers.TraktListEntryToTiviShow
 import app.tivi.data.mappers.pairMapperOf
 import app.tivi.extensions.executeWithRetry
-import app.tivi.extensions.fetchBody
 import app.tivi.extensions.fetchBodyWithRetry
 import com.uwetrottmann.trakt5.entities.ShowIds
 import com.uwetrottmann.trakt5.entities.SyncItems
@@ -43,9 +42,12 @@ class TraktFollowedShowsDataSource @Inject constructor(
     private val listEntryToShowMapper: TraktListEntryToTiviShow,
     private val listEntryToFollowedEntry: TraktListEntryToFollowedShowEntry
 ) : FollowedShowsDataSource {
+    companion object {
+        private val LIST_NAME = "Following"
+    }
     private val listShowsMapper = pairMapperOf(listEntryToFollowedEntry, listEntryToShowMapper)
 
-    override suspend fun addShowIdsToList(listId: Int, shows: List<TiviShow>) {
+    override suspend fun addShowIdsToList(listId: Int, shows: List<TiviShow>): Result<Unit> {
         val syncItems = SyncItems()
         syncItems.shows = shows.map { show ->
             SyncShow().apply {
@@ -56,10 +58,12 @@ class TraktFollowedShowsDataSource @Inject constructor(
                 }
             }
         }
-        usersService.get().addListItems(UserSlug.ME, listId.toString(), syncItems).fetchBody()
+        return retrofitRunner.executeForResponse {
+            usersService.get().addListItems(UserSlug.ME, listId.toString(), syncItems).executeWithRetry()
+        }
     }
 
-    override suspend fun removeShowIdsFromList(listId: Int, shows: List<TiviShow>) {
+    override suspend fun removeShowIdsFromList(listId: Int, shows: List<TiviShow>): Result<Unit> {
         val syncItems = SyncItems()
         syncItems.shows = shows.map { show ->
             SyncShow().apply {
@@ -70,7 +74,9 @@ class TraktFollowedShowsDataSource @Inject constructor(
                 }
             }
         }
-        usersService.get().deleteListItems(UserSlug.ME, listId.toString(), syncItems).fetchBody()
+        return retrofitRunner.executeForResponse {
+            usersService.get().deleteListItems(UserSlug.ME, listId.toString(), syncItems).executeWithRetry()
+        }
     }
 
     override suspend fun getListShows(listId: Int): Result<List<Pair<FollowedShowEntry, TiviShow>>> {
@@ -82,16 +88,17 @@ class TraktFollowedShowsDataSource @Inject constructor(
 
     override suspend fun getFollowedListId(): Int {
         val list = usersService.get().lists(UserSlug.ME).fetchBodyWithRetry()
-                .first { it.name == "Following" }
+                .first { it.name == LIST_NAME }
 
         return if (list != null) {
             list.ids.trakt
         } else {
-            val newList = usersService.get().createList(
+            usersService.get().createList(
                     UserSlug.ME,
-                    TraktList().name("Following").privacy(ListPrivacy.PRIVATE)
-            ).fetchBodyWithRetry()
-            newList.ids.trakt
+                    TraktList().name(LIST_NAME).privacy(ListPrivacy.PRIVATE)
+            ).fetchBodyWithRetry().let {
+                it.ids.trakt
+            }
         }
     }
 }
