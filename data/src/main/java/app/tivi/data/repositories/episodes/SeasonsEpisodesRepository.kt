@@ -82,14 +82,21 @@ class SeasonsEpisodesRepository @Inject constructor(
     suspend fun updateEpisode(episodeId: Long) {
         val local = localStore.getEpisode(episodeId)!!
         val season = localStore.getSeason(local.seasonId)!!
-        val trakt = async(dispatchers.io) {
-            traktEpisodeDataSource.getEpisode(season.showId, season.number!!, local.number!!) ?: Episode.EMPTY
+        val traktResult = async(dispatchers.io) {
+            traktEpisodeDataSource.getEpisode(season.showId, season.number!!, local.number!!)
         }
-        val tmdb = async(dispatchers.io) {
-            tmdbEpisodeDataSource.getEpisode(season.showId, season.number!!, local.number!!) ?: Episode.EMPTY
+        val tmdbResult = async(dispatchers.io) {
+            tmdbEpisodeDataSource.getEpisode(season.showId, season.number!!, local.number!!)
         }
 
-        localStore.save(mergeEpisode(local, trakt.await(), tmdb.await()))
+        val trakt = traktResult.await().let {
+            if (it is Success) it.data else Episode.EMPTY
+        }
+        val tmdb = tmdbResult.await().let {
+            if (it is Success) it.data else Episode.EMPTY
+        }
+
+        localStore.save(mergeEpisode(local, trakt, tmdb))
     }
 
     suspend fun syncEpisodeWatchesForShow(showId: Long) {

@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories.watchedshows
 
+import app.tivi.data.entities.Success
 import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
@@ -39,14 +40,15 @@ class WatchedShowsRepository @Inject constructor(
     }
 
     suspend fun updateWatchedShows() {
-        traktDataSource.getWatchedShows()
-                .map { (show, entry) ->
+        val response = traktDataSource.getWatchedShows()
+        when (response) {
+            is Success -> {
+                response.data.map { (show, entry) ->
                     // Grab the show id if it exists, or save the show and use it's generated ID
                     val watchedShowId = localShowStore.getIdOrSavePlaceholder(show)
                     // Make a copy of the entry with the id
                     entry.copy(showId = watchedShowId)
-                }
-                .also { entries ->
+                }.also { entries ->
                     // Save the related entries
                     localStore.saveWatchedShows(entries)
                     // Now update all of the related shows if needed
@@ -56,5 +58,7 @@ class WatchedShowsRepository @Inject constructor(
                         }
                     }
                 }
+            }
+        }
     }
 }

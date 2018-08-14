@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.relatedshows
+package app.tivi.data.mappers
 
-import app.tivi.data.entities.RelatedShowEntry
-import app.tivi.data.entities.Result
-import app.tivi.data.entities.TiviShow
+import com.uwetrottmann.tmdb2.entities.BaseTvShow
+import com.uwetrottmann.tmdb2.entities.TvShowResultsPage
 
-interface RelatedShowsDataSource {
-    suspend fun getRelatedShows(showId: Long): Result<List<Pair<TiviShow, RelatedShowEntry>>>
+class TmdbShowResultsPageUnwrapper<T>(
+    private val tmdbShowMapper: Mapper<List<BaseTvShow>, List<T>>
+) : Mapper<TvShowResultsPage, List<T>> {
+    override fun map(from: TvShowResultsPage): List<T> = tmdbShowMapper.map(from.results)
 }

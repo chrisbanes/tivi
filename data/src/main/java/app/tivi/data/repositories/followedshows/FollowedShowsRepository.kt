@@ -18,6 +18,7 @@ package app.tivi.data.repositories.followedshows
 
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
+import app.tivi.data.entities.Success
 import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
@@ -95,14 +96,15 @@ class FollowedShowsRepository @Inject constructor(
     }
 
     private suspend fun pullDownTraktFollowedList(listId: Int) {
-        dataSource.getListShows(listId)
-                .map { (entry, show) ->
+        val response = dataSource.getListShows(listId)
+        when (response) {
+            is Success ->
+                response.data.map { (entry, show) ->
                     // Grab the show id if it exists, or save the show and use it's generated ID
                     val showId = localShowStore.getIdOrSavePlaceholder(show)
                     // Create a followed show entry with the show id
                     entry.copy(showId = showId)
-                }
-                .also { entries ->
+                }.also { entries ->
                     // Save the related entries
                     localStore.sync(entries)
                     // Now update all of the followed shows if needed
@@ -112,6 +114,7 @@ class FollowedShowsRepository @Inject constructor(
                         }
                     }
                 }
+        }
     }
 
     private suspend fun processPendingAdditions(listId: Int?) {

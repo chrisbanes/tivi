@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.relatedshows
+package app.tivi.data.mappers
 
-import app.tivi.data.entities.RelatedShowEntry
-import app.tivi.data.entities.Result
-import app.tivi.data.entities.TiviShow
+import app.tivi.data.entities.Episode
+import com.uwetrottmann.trakt5.entities.HistoryEntry
+import javax.inject.Inject
+import javax.inject.Singleton
 
-interface RelatedShowsDataSource {
-    suspend fun getRelatedShows(showId: Long): Result<List<Pair<TiviShow, RelatedShowEntry>>>
+@Singleton
+class TraktHistoryEntryToEpisode @Inject constructor(
+    private val mapper: TraktEpisodeToEpisode
+) : Mapper<HistoryEntry, Episode> {
+    override fun map(from: HistoryEntry) = mapper.map(from.episode)
 }

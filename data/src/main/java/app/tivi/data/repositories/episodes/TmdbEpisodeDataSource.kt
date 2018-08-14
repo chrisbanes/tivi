@@ -16,31 +16,24 @@
 
 package app.tivi.data.repositories.episodes
 
+import app.tivi.data.RetrofitRunner
 import app.tivi.data.entities.Episode
+import app.tivi.data.entities.Result
 import app.tivi.data.mappers.ShowIdToTmdbIdMapper
 import app.tivi.data.mappers.TmdbEpisodeToEpisode
-import app.tivi.extensions.fetchBodyWithRetry
+import app.tivi.extensions.executeWithRetry
 import com.uwetrottmann.tmdb2.Tmdb
-import retrofit2.HttpException
 import javax.inject.Inject
 
 class TmdbEpisodeDataSource @Inject constructor(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
     private val tmdb: Tmdb,
+    private val retrofitRunner: RetrofitRunner,
     private val episodeMapper: TmdbEpisodeToEpisode
 ) : EpisodeDataSource {
-    override suspend fun getEpisode(showId: Long, seasonNumber: Int, episodeNumber: Int): Episode? {
-        val showTmdbId = tmdbIdMapper.map(showId)
-                ?: throw IllegalStateException("Show with show id [$showId] does not exist")
-        try {
-            return tmdb.tvEpisodesService().episode(showTmdbId, seasonNumber, episodeNumber)
-                    .fetchBodyWithRetry()
-                    .let(episodeMapper::map)
-        } catch (e: HttpException) {
-            when {
-                e.code() == 404 -> return null
-                else -> throw e
-            }
+    override suspend fun getEpisode(showId: Long, seasonNumber: Int, episodeNumber: Int): Result<Episode> {
+        return retrofitRunner.executeForResponse(episodeMapper) {
+            tmdb.tvEpisodesService().episode(tmdbIdMapper.map(showId), seasonNumber, episodeNumber).executeWithRetry()
         }
     }
 }

@@ -17,7 +17,8 @@
 package app.tivi.data.repositories.episodes
 
 import app.tivi.data.entities.Episode
+import app.tivi.data.entities.Result
 
 interface EpisodeDataSource {
-    suspend fun getEpisode(showId: Long, seasonNumber: Int, episodeNumber: Int): Episode?
+    suspend fun getEpisode(showId: Long, seasonNumber: Int, episodeNumber: Int): Result<Episode>
 }
