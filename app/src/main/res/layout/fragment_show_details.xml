@@ -22,14 +22,14 @@
     android:layout_height="match_parent"
     app:layoutDescription="@xml/scene_show_details">
 
-    <!-- This needs to be update to use WindowInsets. See https://issuetracker.google.com/issues/112605433 -->
-    <View
+    <!-- This needs to be updated to use WindowInsets. See https://issuetracker.google.com/issues/112605433 -->
+    <Space
         android:id="@+id/details_status_bar_anchor"
         android:layout_width="match_parent"
         android:layout_height="26dp" />
 
-    <!-- This view is solely here to allow the poster to overlap the RV. -->
-    <View
+    <!-- This view is here to allow the poster to overlap the RV. -->
+    <Space
         android:id="@+id/details_poster_anchor"
         android:layout_width="match_parent"
         android:layout_height="320dp" />
@@ -48,39 +48,32 @@
         android:scaleType="centerCrop"
         android:transitionName="poster" />
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/details_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintTop_toBottomOf="@+id/details_status_bar_anchor"
+        app:navigationIcon="?attr/homeAsUpIndicator" />
+
     <com.airbnb.epoxy.EpoxyRecyclerView
         android:id="@+id/details_rv"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:elevation="1dp"
         android:background="?android:colorBackground"
+        android:elevation="1dp"
         app:layoutManager="android.support.v7.widget.GridLayoutManager"
         app:spanCount="4" />
 
-    <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/details_coordinator"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:elevation="1dp"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <android.support.design.bottomappbar.BottomAppBar
-            android:id="@+id/details_bottom_appbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="?android:attr/colorBackground"
-            android:elevation="8dp"
-            app:fabAlignmentMode="end" />
-
-        <app.tivi.ui.widget.CheckableFloatingActionButton
-            android:id="@+id/details_follow_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scaleType="centerInside"
-            android:src="@drawable/sl_follow_show"
-            app:layout_anchor="@id/details_bottom_appbar" />
-
-    </android.support.design.widget.CoordinatorLayout>
+    <app.tivi.ui.widget.CheckableFloatingActionButton
+        android:id="@+id/details_follow_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/sl_follow_show"
+        app:layout_constraintBottom_toTopOf="@+id/details_rv"
+        app:layout_constraintEnd_toEndOf="@+id/details_rv"
+        app:layout_constraintTop_toTopOf="@+id/details_rv" />
 
 </android.support.constraint.motion.MotionLayout>

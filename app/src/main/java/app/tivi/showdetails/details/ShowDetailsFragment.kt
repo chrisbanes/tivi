@@ -19,6 +19,7 @@ package app.tivi.showdetails.details
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.constraint.motion.MotionLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -80,6 +81,25 @@ class ShowDetailsFragment : TiviFragment() {
             // Just return insets
             insets
         }
+
+        details_motion.setTransitionListener(object : MotionLayout.TransitionListener {
+            val fab = details_follow_fab
+            override fun onTransitionChange(motionLayout: MotionLayout, startId: Int, endId: Int, progress: Float) {
+                if (fab.y < details_toolbar.y + details_toolbar.height) {
+                    fab.hide()
+                } else {
+                    fab.show()
+                }
+            }
+
+            override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {
+                if (currentId == R.id.end) {
+                    fab.visibility = View.GONE
+                } else {
+                    fab.visibility = View.VISIBLE
+                }
+            }
+        })
 
         // Make the MotionLayout draw behind the status bar
         details_motion.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
