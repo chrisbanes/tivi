@@ -97,6 +97,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
                                 ::NotFollowedShowDetailsViewState)
                     }
                 }
+                .distinctUntilChanged()
                 .observeOn(schedulers.main)
                 .subscribe(_data::setValue, logger::e)
     }
