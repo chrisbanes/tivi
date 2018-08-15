@@ -93,14 +93,8 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
             // transitions
             itemAnimator = null
 
-            adapter = controller.adapter
-
+            setController(controller)
             addItemDecoration(SpacingItemDecorator(paddingLeft))
-            addOnScrollListener(EndlessRecyclerViewScrollListener(layoutManager, { _: Int, _: RecyclerView ->
-                if (userVisibleHint) {
-                    viewModel.onListScrolledToEnd()
-                }
-            }))
         }
         originalRvTopPadding = grid_recyclerview.paddingTop
 
