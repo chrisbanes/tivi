@@ -22,6 +22,12 @@
     android:layout_height="match_parent"
     app:layoutDescription="@xml/scene_show_details">
 
+    <!-- This needs to be update to use WindowInsets. See https://issuetracker.google.com/issues/112605433 -->
+    <View
+        android:id="@+id/details_status_bar_anchor"
+        android:layout_width="match_parent"
+        android:layout_height="26dp" />
+
     <!-- This view is solely here to allow the poster to overlap the RV. -->
     <View
         android:id="@+id/details_poster_anchor"

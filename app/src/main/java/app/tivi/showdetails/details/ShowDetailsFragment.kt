@@ -29,10 +29,9 @@ import app.tivi.SharedElementHelper
 import app.tivi.TiviFragment
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
-import app.tivi.extensions.observeK
+import app.tivi.extensions.observeNotNull
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
-import app.tivi.ui.NoopApplyWindowInsetsListener
 import app.tivi.ui.RoundRectViewOutline
 import app.tivi.ui.glide.GlideApp
 import kotlinx.android.synthetic.main.fragment_show_details.*
@@ -73,14 +72,22 @@ class ShowDetailsFragment : TiviFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        details_backdrop.setOnApplyWindowInsetsListener(NoopApplyWindowInsetsListener)
+        details_motion.setOnApplyWindowInsetsListener { _, insets ->
+            val lp = details_status_bar_anchor.layoutParams
+            lp.height = insets.systemWindowInsetTop
+            details_status_bar_anchor.requestLayout()
+
+            // Just return insets
+            insets
+        }
+
+        // Make the MotionLayout draw behind the status bar
+        details_motion.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 
         details_poster.apply {
             clipToOutline = true
             outlineProvider = RoundRectViewOutline
         }
-
-        details_motion.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 
         controller = ShowDetailsEpoxyController(requireContext(), object : ShowDetailsEpoxyController.Callbacks {
             override fun onRelatedShowClicked(show: TiviShow, view: View) {
@@ -103,10 +110,7 @@ class ShowDetailsFragment : TiviFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        viewModel.data.observeK(this) {
-            it?.let(this::update)
-        }
+        viewModel.data.observeNotNull(this, this::update)
     }
 
     private fun update(viewState: ShowDetailsViewState) {
