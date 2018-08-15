@@ -36,7 +36,6 @@ import app.tivi.api.Status
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.extensions.observeK
-import app.tivi.ui.EndlessRecyclerViewScrollListener
 import app.tivi.ui.ProgressTimeLatch
 import app.tivi.ui.SpacingItemDecorator
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
@@ -93,14 +92,8 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
             // transitions
             itemAnimator = null
 
-            adapter = controller.adapter
-
+            setController(controller)
             addItemDecoration(SpacingItemDecorator(paddingLeft))
-            addOnScrollListener(EndlessRecyclerViewScrollListener(layoutManager, { _: Int, _: RecyclerView ->
-                if (userVisibleHint) {
-                    viewModel.onListScrolledToEnd()
-                }
-            }))
         }
         originalRvTopPadding = grid_recyclerview.paddingTop
 

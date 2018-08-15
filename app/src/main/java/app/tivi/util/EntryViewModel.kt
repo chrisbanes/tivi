@@ -51,7 +51,11 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
                     setEnablePlaceholders(false)
                     build()
                 }
-        ).build().distinctUntilChanged()
+        ).setBoundaryCallback(object : PagedList.BoundaryCallback<LI>() {
+            override fun onItemAtEndLoaded(itemAtEnd: LI) {
+                onListScrolledToEnd()
+            }
+        }).build().distinctUntilChanged()
     }
 
     val viewState = LiveDataReactiveStreams.fromPublisher(
