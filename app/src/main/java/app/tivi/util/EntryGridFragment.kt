@@ -36,7 +36,6 @@ import app.tivi.api.Status
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.extensions.observeK
-import app.tivi.ui.EndlessRecyclerViewScrollListener
 import app.tivi.ui.ProgressTimeLatch
 import app.tivi.ui.SpacingItemDecorator
 import kotlinx.android.synthetic.main.fragment_rv_grid.*

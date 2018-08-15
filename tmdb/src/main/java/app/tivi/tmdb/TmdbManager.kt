@@ -33,7 +33,7 @@ class TmdbManager @Inject constructor(
     private val tmdbClient: Tmdb
 ) {
     private val imageProviderSubject = BehaviorSubject.createDefault(TmdbImageUrlProvider())
-    val imageProvider = imageProviderSubject.toFlowable()!!
+    val imageProvider = imageProviderSubject.toFlowable()
 
     init {
         refreshConfiguration()
