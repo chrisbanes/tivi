@@ -40,6 +40,22 @@
         android:layout_height="0dp"
         android:scaleType="centerCrop" />
 
+    <View
+        android:id="@+id/details_backdrop_scrim"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/details_backdrop"
+        app:layout_constraintEnd_toEndOf="@id/details_backdrop"
+        app:layout_constraintStart_toStartOf="@id/details_backdrop"
+        app:layout_constraintTop_toTopOf="@id/details_backdrop" />
+
+    <View
+        android:id="@+id/details_corner_cutout_background"
+        android:layout_width="@dimen/details_corner_cutout"
+        android:layout_height="@dimen/details_corner_cutout"
+        app:layout_constraintStart_toStartOf="@id/details_rv"
+        app:layout_constraintTop_toTopOf="@id/details_rv" />
+
     <ImageView
         android:id="@+id/details_poster"
         android:layout_width="0dp"

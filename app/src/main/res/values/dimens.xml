@@ -19,5 +19,8 @@
 <resources>
     <dimen name="header_margin">14dp</dimen>
     <dimen name="image_round_rect_radius">4dp</dimen>
+
+    <dimen name="details_corner_cutout">64dp</dimen>
+    <dimen name="details_poster_not_elevation">1dp</dimen>
     <dimen name="details_poster_elevation">4dp</dimen>
 </resources>
