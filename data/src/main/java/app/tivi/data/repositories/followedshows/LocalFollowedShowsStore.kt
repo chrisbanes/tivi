@@ -27,6 +27,7 @@ import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Request
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.syncers.syncerForEntity
+import io.reactivex.Flowable
 import org.threeten.bp.temporal.TemporalAmount
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -63,7 +64,10 @@ class LocalFollowedShowsStore @Inject constructor(
 
     fun observeForPaging(): DataSource.Factory<Int, FollowedShowEntryWithShow> = followedShowsDao.entriesDataSource()
 
-    fun observeIsShowFollowed(showId: Long) = followedShowsDao.entryCountWithShowIdFlowable(showId).map { it > 0 }
+    fun observeIsShowFollowed(showId: Long): Flowable<Boolean> {
+        return followedShowsDao.entryCountWithShowIdNotPendingDeleteFlowable(showId)
+                .map { it > 0 }
+    }
 
     fun isShowFollowed(showId: Long) = followedShowsDao.entryCountWithShowId(showId) > 0
 

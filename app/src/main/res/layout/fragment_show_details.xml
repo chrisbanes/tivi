@@ -15,70 +15,65 @@
   ~ limitations under the License.
   -->
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.motion.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/details_coordinator"
+    android:id="@+id/details_motion"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    app:statusBarBackground="@null">
+    app:layoutDescription="@xml/scene_show_details">
+
+    <!-- This needs to be updated to use WindowInsets. See https://issuetracker.google.com/issues/112605433 -->
+    <Space
+        android:id="@+id/details_status_bar_anchor"
+        android:layout_width="match_parent"
+        android:layout_height="26dp" />
+
+    <!-- This view is here to allow the poster to overlap the RV. -->
+    <Space
+        android:id="@+id/details_poster_anchor"
+        android:layout_width="match_parent"
+        android:layout_height="320dp" />
 
     <ImageView
         android:id="@+id/details_backdrop"
-        android:layout_width="match_parent"
-        android:layout_height="280dp"
-        android:fitsSystemWindows="true"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:scaleType="centerCrop" />
-
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/details_appbarlayout"
-        android:layout_width="match_parent"
-        android:layout_height="256dp"
-        android:background="@null"
-        android:fitsSystemWindows="true"
-        android:stateListAnimator="@null"
-        android:theme="?attr/actionBarTheme">
-
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/details_ctl"
-            android:layout_width="match_parent"
-            android:layout_height="256dp"
-            android:fitsSystemWindows="true"
-            app:layout_scrollFlags="scroll|enterAlwaysCollapsed">
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/details_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="?attr/actionBarPopupTheme" />
-
-        </android.support.design.widget.CollapsingToolbarLayout>
-
-    </android.support.design.widget.AppBarLayout>
-
-    <com.airbnb.epoxy.EpoxyRecyclerView
-        android:id="@+id/details_rv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:background="@drawable/round_rect_background"
-        android:elevation="2dp"
-        app:layoutManager="android.support.v7.widget.GridLayoutManager"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:spanCount="4"
-        tools:lisitem="@layout/viewdetai" />
 
     <ImageView
         android:id="@+id/details_poster"
-        android:layout_width="80dp"
-        android:layout_height="120dp"
-        android:layout_marginStart="16dp"
-        android:elevation="3dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="@drawable/placeholder"
-        android:transitionName="poster"
-        app:layout_behavior="app.tivi.showdetails.details.DetailPosterBehavior" />
+        android:scaleType="centerCrop"
+        android:transitionName="poster" />
 
-</android.support.design.widget.CoordinatorLayout>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/details_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintTop_toBottomOf="@+id/details_status_bar_anchor"
+        app:navigationIcon="?attr/homeAsUpIndicator" />
+
+    <com.airbnb.epoxy.EpoxyRecyclerView
+        android:id="@+id/details_rv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="?android:colorBackground"
+        android:elevation="1dp"
+        app:layoutManager="android.support.v7.widget.GridLayoutManager"
+        app:spanCount="4" />
+
+    <app.tivi.ui.widget.CheckableFloatingActionButton
+        android:id="@+id/details_follow_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/sl_follow_show"
+        app:layout_constraintBottom_toTopOf="@+id/details_rv"
+        app:layout_constraintEnd_toEndOf="@+id/details_rv"
+        app:layout_constraintTop_toTopOf="@+id/details_rv" />
+
+</android.support.constraint.motion.MotionLayout>

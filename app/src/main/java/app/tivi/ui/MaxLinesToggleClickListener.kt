@@ -17,6 +17,7 @@
 package app.tivi.ui
 
 import android.support.v4.view.animation.FastOutSlowInInterpolator
+import android.support.v7.widget.RecyclerView
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.view.View
@@ -30,8 +31,21 @@ class MaxLinesToggleClickListener(private val collapsedLines: Int) : View.OnClic
     }
 
     override fun onClick(view: View) {
-        TransitionManager.beginDelayedTransition(view.parent as ViewGroup, transition)
+        TransitionManager.beginDelayedTransition(findParent(view), transition)
         val textView = view as TextView
         textView.maxLines = if (textView.maxLines > collapsedLines) collapsedLines else Int.MAX_VALUE
+    }
+
+    private fun findParent(view: View): ViewGroup {
+        var parentView: View? = view
+        while (parentView != null) {
+            val parent = parentView.parent as View?
+            if (parent is RecyclerView) {
+                return parent
+            }
+            parentView = parent
+        }
+        // If we reached here we didn't find a RecyclerView in the parent tree, so lets just use our parent
+        return view.parent as ViewGroup
     }
 }

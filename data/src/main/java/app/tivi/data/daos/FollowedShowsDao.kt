@@ -58,8 +58,8 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     @Query("SELECT * FROM myshows_entries WHERE show_id = :showId")
     abstract fun entryWithShowId(showId: Long): FollowedShowEntry?
 
-    @Query("SELECT COUNT(*) FROM myshows_entries WHERE show_id = :showId")
-    abstract fun entryCountWithShowIdFlowable(showId: Long): Flowable<Int>
+    @Query("SELECT COUNT(*) FROM myshows_entries WHERE show_id = :showId AND pending_action != 'delete'")
+    abstract fun entryCountWithShowIdNotPendingDeleteFlowable(showId: Long): Flowable<Int>
 
     @Query("SELECT COUNT(*) FROM myshows_entries WHERE show_id = :showId")
     abstract fun entryCountWithShowId(showId: Long): Int

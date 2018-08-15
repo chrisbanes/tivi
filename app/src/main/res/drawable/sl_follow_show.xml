@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2017 Google, Inc.
+  ~ Copyright 2018 Google, Inc.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -13,11 +13,15 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  ~
   -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-<resources>
-    <dimen name="header_margin">14dp</dimen>
-    <dimen name="image_round_rect_radius">4dp</dimen>
-    <dimen name="details_poster_elevation">4dp</dimen>
-</resources>
+    <item
+        android:drawable="@drawable/ic_favorite_black_24dp"
+        android:state_checked="true" />
+
+    <item
+        android:id="@+id/not_liked"
+        android:drawable="@drawable/ic_favorite_border_black_24dp" />
+
+</selector>

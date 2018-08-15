@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2018 Google, Inc.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        app:constraintSetEnd="@+id/end"
+        app:constraintSetStart="@+id/start"
+        app:duration="200">
+
+        <OnSwipe
+            app:dragDirection="dragUp"
+            app:moveWhenScrollAtTop="true"
+            app:touchAnchorId="@id/details_rv"
+            app:touchAnchorSide="top" />
+
+        <KeyFrameSet>
+            <!-- See https://issuetracker.google.com/issues/112546214 for why we're using percentX
+                 instead of percentY -->
+            <KeyPosition
+                app:framePosition="20"
+                app:keyPositionType="pathRelative"
+                app:percentX="0.7"
+                app:target="@id/details_poster" />
+
+            <KeyPosition
+                app:framePosition="50"
+                app:keyPositionType="pathRelative"
+                app:percentX="0.6"
+                app:target="@id/details_poster" />
+
+            <!-- This looks weird. We need a hard change from elevated to not-elevated at 20% so we set 2 key
+                 attributes, one at 20% and other at 21%. If we don't do this, we get an interpolated elevation. -->
+            <KeyAttribute
+                android:elevation="@dimen/details_poster_elevation"
+                app:framePosition="20"
+                app:target="@id/details_poster" />
+
+            <KeyAttribute
+                android:elevation="0dp"
+                app:framePosition="21"
+                app:target="@id/details_poster" />
+
+        </KeyFrameSet>
+
+    </Transition>
+
+    <ConstraintSet android:id="@+id/start">
+        <Constraint
+            android:id="@id/details_rv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/details_backdrop" />
+
+        <Constraint
+            android:id="@id/details_backdrop"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="80dp"
+            app:layout_constraintBottom_toBottomOf="@id/details_poster_anchor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/details_poster_anchor">
+
+            <CustomAttribute
+                app:attributeName="foreground"
+                app:customColorDrawableValue="@android:color/transparent" />
+
+        </Constraint>
+
+        <Constraint
+            android:id="@id/details_poster"
+            android:layout_width="80dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:elevation="@dimen/details_poster_elevation"
+            app:layout_constraintBottom_toBottomOf="@id/details_poster_anchor"
+            app:layout_constraintDimensionRatio="h,1:1.5"
+            app:layout_constraintStart_toStartOf="@id/details_rv" />
+
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+        <Constraint
+            android:id="@id/details_rv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/details_backdrop" />
+
+        <Constraint
+            android:id="@id/details_backdrop"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/details_status_bar_anchor"
+            app:layout_constraintEnd_toEndOf="@id/details_status_bar_anchor"
+            app:layout_constraintStart_toStartOf="@id/details_status_bar_anchor"
+            app:layout_constraintTop_toTopOf="@id/details_status_bar_anchor">
+
+            <CustomAttribute
+                app:attributeName="foreground"
+                app:customColorDrawableValue="@color/status_bar_scrim_translucent_dark" />
+
+        </Constraint>
+
+        <Constraint
+            android:id="@id/details_poster"
+            android:layout_width="80dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:elevation="0dp"
+            app:layout_constraintDimensionRatio="h,1:1.5"
+            app:layout_constraintStart_toStartOf="@id/details_rv"
+            app:layout_constraintTop_toBottomOf="@id/details_backdrop" />
+
+    </ConstraintSet>
+
+
+</MotionScene>

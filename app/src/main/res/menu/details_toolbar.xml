@@ -17,13 +17,4 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/details_menu_add_myshows"
-        android:title="@string/follow_show_add"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/details_menu_remove_myshows"
-        android:title="@string/follow_show_remove"
-        app:showAsAction="never" />
 </menu>
