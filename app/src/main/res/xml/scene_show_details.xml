@@ -111,14 +111,15 @@
         <Constraint
             android:id="@id/details_backdrop"
             android:layout_width="0dp"
-            android:layout_height="24dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/details_status_bar_anchor"
+            app:layout_constraintEnd_toEndOf="@id/details_status_bar_anchor"
+            app:layout_constraintStart_toStartOf="@id/details_status_bar_anchor"
+            app:layout_constraintTop_toTopOf="@id/details_status_bar_anchor">
 
             <CustomAttribute
                 app:attributeName="foreground"
-                app:customColorDrawableValue="@color/content_scrim_dark" />
+                app:customColorDrawableValue="@color/status_bar_scrim_translucent_dark" />
 
         </Constraint>
 
