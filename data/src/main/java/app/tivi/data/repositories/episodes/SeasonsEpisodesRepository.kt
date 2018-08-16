@@ -160,13 +160,10 @@ class SeasonsEpisodesRepository @Inject constructor(
 
         when (response) {
             is Success -> {
-                response.data.map { (episode, watchEntry) ->
-                    // Grab the episode id if it exists, or save the episode and use it's generated ID
-                    val episodeId = localStore.getEpisodeIdForTraktId(episode.traktId!!)
-                    if (episodeId != null) {
-                        watchEntry.copy(episodeId = episodeId)
-                    } else {
-                        throw IllegalStateException("Episode with Trakt Id ${episode.traktId} does not exist")
+                response.data.mapNotNull { (episode, watchEntry) ->
+                    // Grab the episode id if it exists
+                    localStore.getEpisodeIdForTraktId(episode.traktId!!)?.let {
+                        watchEntry.copy(episodeId = it)
                     }
                 }.also {
                     localStore.syncShowWatchEntries(showId, it)

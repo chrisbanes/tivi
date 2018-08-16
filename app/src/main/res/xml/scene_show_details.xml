@@ -60,24 +60,24 @@
             android:id="@id/details_rv"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginTop="40dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/details_backdrop" />
+            app:layout_constraintTop_toTopOf="@id/details_poster" />
 
         <Constraint
             android:id="@id/details_backdrop"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="80dp"
-            app:layout_constraintBottom_toBottomOf="@id/details_poster_anchor"
+            app:layout_constraintBottom_toBottomOf="@id/details_corner_cutout_background"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/details_poster_anchor" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
             android:id="@id/details_backdrop_scrim"
-            app:layout_constraintBottom_toTopOf="@id/details_backdrop"
+            app:layout_constraintBottom_toBottomOf="@id/details_backdrop"
             app:layout_constraintEnd_toEndOf="@id/details_backdrop"
             app:layout_constraintStart_toStartOf="@id/details_backdrop"
             app:layout_constraintTop_toTopOf="@id/details_backdrop">
@@ -92,9 +92,10 @@
             android:id="@id/details_poster"
             android:layout_width="80dp"
             android:layout_height="0dp"
+            android:layout_marginTop="200dp"
             android:layout_marginStart="16dp"
             android:elevation="@dimen/details_poster_elevation"
-            app:layout_constraintBottom_toBottomOf="@id/details_poster_anchor"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintDimensionRatio="h,1:1.5"
             app:layout_constraintStart_toStartOf="@id/details_rv" />
 
@@ -108,39 +109,38 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/details_backdrop" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
             android:id="@id/details_backdrop"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="@id/details_status_bar_anchor"
-            app:layout_constraintEnd_toEndOf="@id/details_status_bar_anchor"
-            app:layout_constraintStart_toStartOf="@id/details_status_bar_anchor"
-            app:layout_constraintTop_toTopOf="@id/details_status_bar_anchor" />
+            android:layout_height="@dimen/details_corner_cutout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
             android:id="@id/details_backdrop_scrim"
-            app:layout_constraintBottom_toTopOf="@id/details_backdrop"
+            app:layout_constraintBottom_toBottomOf="@id/details_backdrop"
             app:layout_constraintEnd_toEndOf="@id/details_backdrop"
             app:layout_constraintStart_toStartOf="@id/details_backdrop"
             app:layout_constraintTop_toTopOf="@id/details_backdrop">
 
             <CustomAttribute
-                app:attributeName="foreground"
+                app:attributeName="background"
                 app:customColorDrawableValue="@color/status_bar_scrim_translucent_dark" />
 
         </Constraint>
 
         <Constraint
             android:id="@id/details_poster"
-            android:layout_width="80dp"
+            android:layout_width="74dp"
             android:layout_height="0dp"
             android:layout_marginStart="@dimen/details_corner_cutout"
             android:elevation="@dimen/details_poster_not_elevation"
             app:layout_constraintDimensionRatio="h,1:1.5"
             app:layout_constraintStart_toStartOf="@id/details_rv"
-            app:layout_constraintTop_toBottomOf="@id/details_backdrop" />
+            app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor" />
 
     </ConstraintSet>
 

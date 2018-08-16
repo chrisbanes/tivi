@@ -21,28 +21,19 @@
 
     <data>
 
-        <import type="android.view.View" />
-
-        <import type="java.util.List" />
-
-        <import type="app.tivi.data.entities.Genre" />
+        <variable
+            name="entity"
+            type="app.tivi.data.entities.TiviShow" />
 
         <variable
-            name="title"
-            type="String" />
-
-        <variable
-            name="subtitle"
-            type="String" />
-
-        <variable
-            name="genres"
-            type="List&lt;Genre&gt;" />
+            name="background"
+            type="android.graphics.drawable.Drawable" />
     </data>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@{background}"
         android:padding="16dp">
 
         <app.tivi.ui.widget.BaselineGridTextView
@@ -51,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="96dp"
             android:ellipsize="end"
-            android:text="@{title}"
+            android:text="@{entity.title}"
             android:textAppearance="?attr/textAppearanceHeadline6"
             app:layout_constraintBottom_toTopOf="@+id/details_subtitle"
             app:layout_constraintEnd_toEndOf="parent"
@@ -66,14 +57,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:ellipsize="end"
-            android:text="@{subtitle}"
+            android:text="@{entity.originalTitle}"
             android:textAppearance="?attr/textAppearanceBody1"
             app:layout_constraintBottom_toTopOf="@+id/details_categories"
             app:layout_constraintEnd_toEndOf="@+id/details_title"
             app:layout_constraintStart_toStartOf="@+id/details_title"
             app:layout_constraintTop_toBottomOf="@+id/details_title"
             app:layout_goneMarginTop="0dp"
-            app:visibleIfNotNull="@{subtitle}"
+            app:visibleIfNotNull="@{entity.originalTitle}"
             tools:text="@sample/shows.txt" />
 
         <!-- The text color is set to an opaque color for Emoji.
@@ -86,8 +77,8 @@
             android:ellipsize="end"
             android:textAppearance="?attr/textAppearanceCaption"
             android:textColor="#000000"
-            app:genreContentDescriptionString="@{genres}"
-            app:genreString="@{genres}"
+            app:genreContentDescriptionString="@{entity.genres}"
+            app:genreString="@{entity.genres}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/details_title"
             app:layout_constraintStart_toStartOf="@+id/details_title"

@@ -22,17 +22,12 @@
     android:layout_height="match_parent"
     app:layoutDescription="@xml/scene_show_details">
 
-    <!-- This needs to be updated to use WindowInsets. See https://issuetracker.google.com/issues/112605433 -->
-    <Space
-        android:id="@+id/details_status_bar_anchor"
-        android:layout_width="match_parent"
-        android:layout_height="26dp" />
-
-    <!-- This view is here to allow the poster to overlap the RV. -->
-    <Space
-        android:id="@+id/details_poster_anchor"
-        android:layout_width="match_parent"
-        android:layout_height="320dp" />
+    <View
+        android:id="@+id/details_corner_cutout_background"
+        android:layout_width="@dimen/details_corner_cutout"
+        android:layout_height="@dimen/details_corner_cutout"
+        app:layout_constraintStart_toStartOf="@id/details_rv"
+        app:layout_constraintTop_toTopOf="@id/details_rv" />
 
     <ImageView
         android:id="@+id/details_backdrop"
@@ -44,17 +39,10 @@
         android:id="@+id/details_backdrop_scrim"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/details_backdrop"
+        app:layout_constraintBottom_toBottomOf="@id/details_backdrop"
         app:layout_constraintEnd_toEndOf="@id/details_backdrop"
         app:layout_constraintStart_toStartOf="@id/details_backdrop"
         app:layout_constraintTop_toTopOf="@id/details_backdrop" />
-
-    <View
-        android:id="@+id/details_corner_cutout_background"
-        android:layout_width="@dimen/details_corner_cutout"
-        android:layout_height="@dimen/details_corner_cutout"
-        app:layout_constraintStart_toStartOf="@id/details_rv"
-        app:layout_constraintTop_toTopOf="@id/details_rv" />
 
     <ImageView
         android:id="@+id/details_poster"
@@ -76,10 +64,15 @@
         android:id="@+id/details_rv"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="?android:colorBackground"
-        android:elevation="1dp"
         app:layoutManager="android.support.v7.widget.GridLayoutManager"
         app:spanCount="4" />
+
+    <!-- This needs to be updated to use WindowInsets. See https://issuetracker.google.com/issues/112605433 -->
+    <View
+        android:id="@+id/details_status_bar_anchor"
+        android:layout_width="match_parent"
+        android:background="@color/status_bar_scrim_translucent_dark"
+        android:layout_height="24dp" />
 
     <app.tivi.ui.widget.CheckableFloatingActionButton
         android:id="@+id/details_follow_fab"

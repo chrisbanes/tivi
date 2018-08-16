@@ -17,6 +17,7 @@
 package app.tivi.showdetails.details
 
 import android.content.Context
+import android.support.design.shape.CutCornerTreatment
 import android.view.View
 import app.tivi.DetailsRelatedItemBindingModel_
 import app.tivi.R
@@ -26,6 +27,8 @@ import app.tivi.detailsBadge
 import app.tivi.detailsSummary
 import app.tivi.detailsTitle
 import app.tivi.emptyState
+import app.tivi.extensions.materialShapeDrawableOf
+import app.tivi.extensions.resolveColor
 import app.tivi.header
 import app.tivi.seasonEpisodeItem
 import app.tivi.seasonHeader
@@ -51,10 +54,17 @@ class ShowDetailsEpoxyController(
 
         detailsTitle {
             id("title")
-            title(show.title)
-            subtitle(show.originalTitle)
-            genres(show.genres)
+            entity(show)
             spanSizeOverride(TotalSpanOverride)
+
+            val shapeDrawable = materialShapeDrawableOf {
+                topLeftCorner = CutCornerTreatment(context.resources.getDimension(R.dimen.details_corner_cutout))
+            }
+            shapeDrawable.shadowElevation = context.resources.getDimensionPixelSize(R.dimen.details_card_elevation)
+            shapeDrawable.isShadowEnabled = true
+            shapeDrawable.setTint(context.theme.resolveColor(android.R.attr.colorBackground))
+
+            background(shapeDrawable)
         }
 
         show.traktRating?.let { rating ->
@@ -94,7 +104,7 @@ class ShowDetailsEpoxyController(
 
         detailsSummary {
             id("summary")
-            summary(show.summary)
+            entity(show)
             spanSizeOverride(TotalSpanOverride)
         }
 
