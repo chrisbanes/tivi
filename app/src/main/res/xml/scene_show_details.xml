@@ -43,6 +43,7 @@
             <KeyAttribute
                 android:elevation="@dimen/details_poster_elevation"
                 android:rotation="45"
+                android:rotationY="20"
                 app:framePosition="20"
                 app:target="@id/details_poster" />
 
@@ -79,13 +80,19 @@
         </Constraint>
 
         <Constraint
-            android:id="@id/details_title"
+            android:id="@id/details_title_background"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="96dp"
             android:elevation="0dp"
             app:layout_constraintBottom_toBottomOf="@id/details_poster"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent">
+
+            <CustomAttribute
+                app:attributeName="progress"
+                app:customFloatValue="1.0" />
+
+        </Constraint>
 
         <Constraint
             android:id="@id/details_poster"
@@ -105,7 +112,7 @@
             android:id="@id/details_backdrop"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="@id/details_title"
+            app:layout_constraintBottom_toBottomOf="@id/details_title_background"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -124,13 +131,19 @@
         </Constraint>
 
         <Constraint
-            android:id="@id/details_title"
+            android:id="@id/details_title_background"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="?android:attr/actionBarSize"
             android:elevation="4dp"
             app:layout_constraintEnd_toEndOf="@id/details_rv"
             app:layout_constraintStart_toStartOf="@id/details_rv"
-            app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor" />
+            app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor">
+
+            <CustomAttribute
+                app:attributeName="progress"
+                app:customFloatValue="0.0" />
+
+        </Constraint>
 
         <Constraint
             android:id="@id/details_poster"

@@ -20,7 +20,6 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.constraint.motion.MotionLayout
-import android.support.design.shape.CutCornerTreatment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +31,6 @@ import app.tivi.TiviFragment
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
 import app.tivi.databinding.FragmentShowDetailsBinding
-import app.tivi.extensions.materialShapeDrawableOf
 import app.tivi.extensions.observeNotNull
 import app.tivi.extensions.resolveColor
 import app.tivi.showdetails.ShowDetailsNavigator
@@ -144,13 +142,10 @@ class ShowDetailsFragment : TiviFragment() {
             }
         })
 
-        val shapeDrawable = materialShapeDrawableOf {
-            topLeftCorner = CutCornerTreatment(resources.getDimension(R.dimen.details_corner_cutout))
+        binding.detailsTitleBackground.apply {
+            cutSize = resources.getDimension(R.dimen.details_corner_cutout)
+            color = view.context.theme.resolveColor(android.R.attr.colorBackground)
         }
-        shapeDrawable.shadowElevation = resources.getDimensionPixelSize(R.dimen.details_card_elevation)
-        shapeDrawable.isShadowEnabled = true
-        shapeDrawable.setTint(view.context.theme.resolveColor(android.R.attr.colorBackground))
-        details_title.background = shapeDrawable
 
         details_rv.setController(controller)
     }

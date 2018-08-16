@@ -17,7 +17,6 @@
 package app.tivi.showdetails.details
 
 import android.content.Context
-import android.support.design.shape.CutCornerTreatment
 import android.view.View
 import app.tivi.DetailsRelatedItemBindingModel_
 import app.tivi.R
@@ -25,10 +24,7 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
 import app.tivi.detailsBadge
 import app.tivi.detailsSummary
-import app.tivi.detailsTitle
 import app.tivi.emptyState
-import app.tivi.extensions.materialShapeDrawableOf
-import app.tivi.extensions.resolveColor
 import app.tivi.header
 import app.tivi.seasonEpisodeItem
 import app.tivi.seasonHeader

@@ -16,7 +16,8 @@
   -->
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -65,10 +66,37 @@
             app:tmdbBackdropPath="@{state.show.tmdbPosterPath}"
             app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider}" />
 
-        <include
+        <app.tivi.ui.widget.TopLeftCutoutBackgroundView
+            android:id="@+id/details_title_background"
+            android:layout_width="0dp"
+            android:layout_height="0dp" />
+
+        <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/details_title"
-            layout="@layout/view_holder_details_title"
-            app:entity="@{state.show}" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="112dp"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:text="@{state.show.title}"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            app:layout_constraintTop_toTopOf="@+id/details_title_background"
+            tools:text="@sample/shows.txt" />
+
+        <!-- The text color is set to an opaque color for Emoji.
+             The caption text appearance is set via spans. -->
+        <app.tivi.ui.widget.BaselineGridTextView
+            android:id="@+id/details_categories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="112dp"
+            android:ellipsize="end"
+            android:textAppearance="?attr/textAppearanceCaption"
+            android:textColor="#000000"
+            app:genreContentDescriptionString="@{state.show.genres}"
+            app:genreString="@{state.show.genres}"
+            app:layout_constraintTop_toBottomOf="@+id/details_title"
+            tools:text="Drama // Fantasy" />
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/details_toolbar"
@@ -87,7 +115,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/details_title"
+            app:layout_constraintTop_toBottomOf="@id/details_title_background"
             app:spanCount="4" />
 
         <!-- This needs to be updated to use WindowInsets. See https://issuetracker.google.com/issues/112605433 -->
@@ -104,9 +132,9 @@
             android:layout_marginEnd="16dp"
             android:scaleType="centerInside"
             android:src="@drawable/sl_follow_show"
-            app:layout_constraintBottom_toTopOf="@+id/details_rv"
-            app:layout_constraintEnd_toEndOf="@+id/details_rv"
-            app:layout_constraintTop_toTopOf="@+id/details_rv" />
+            app:layout_constraintBottom_toTopOf="@+id/details_title_background"
+            app:layout_constraintEnd_toEndOf="@+id/details_title_background"
+            app:layout_constraintTop_toTopOf="@+id/details_title_background" />
 
     </android.support.constraint.motion.MotionLayout>
 </layout>
