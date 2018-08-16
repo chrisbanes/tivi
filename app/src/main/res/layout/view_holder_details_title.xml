@@ -24,46 +24,33 @@
         <variable
             name="entity"
             type="app.tivi.data.entities.TiviShow" />
-
-        <variable
-            name="background"
-            type="android.graphics.drawable.Drawable" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@{background}"
+        android:orientation="vertical"
         android:padding="16dp">
 
         <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/details_title"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="96dp"
             android:ellipsize="end"
             android:text="@{entity.title}"
             android:textAppearance="?attr/textAppearanceHeadline6"
-            app:layout_constraintBottom_toTopOf="@+id/details_subtitle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
             tools:text="@sample/shows.txt" />
 
         <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/details_subtitle"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="96dp"
             android:layout_marginTop="4dp"
             android:ellipsize="end"
             android:text="@{entity.originalTitle}"
             android:textAppearance="?attr/textAppearanceBody1"
-            app:layout_constraintBottom_toTopOf="@+id/details_categories"
-            app:layout_constraintEnd_toEndOf="@+id/details_title"
-            app:layout_constraintStart_toStartOf="@+id/details_title"
-            app:layout_constraintTop_toBottomOf="@+id/details_title"
-            app:layout_goneMarginTop="0dp"
             app:visibleIfNotNull="@{entity.originalTitle}"
             tools:text="@sample/shows.txt" />
 
@@ -71,19 +58,16 @@
              The caption text appearance is set via spans. -->
         <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/details_categories"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="96dp"
             android:layout_marginTop="4dp"
             android:ellipsize="end"
             android:textAppearance="?attr/textAppearanceCaption"
             android:textColor="#000000"
             app:genreContentDescriptionString="@{entity.genres}"
             app:genreString="@{entity.genres}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/details_title"
-            app:layout_constraintStart_toStartOf="@+id/details_title"
-            app:layout_constraintTop_toBottomOf="@+id/details_subtitle"
             tools:text="Drama // Fantasy" />
 
-    </android.support.constraint.ConstraintLayout>
+    </LinearLayout>
 </layout>

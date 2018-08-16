@@ -52,21 +52,6 @@ class ShowDetailsEpoxyController(
         val tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
         val related = viewState.relatedShows
 
-        detailsTitle {
-            id("title")
-            entity(show)
-            spanSizeOverride(TotalSpanOverride)
-
-            val shapeDrawable = materialShapeDrawableOf {
-                topLeftCorner = CutCornerTreatment(context.resources.getDimension(R.dimen.details_corner_cutout))
-            }
-            shapeDrawable.shadowElevation = context.resources.getDimensionPixelSize(R.dimen.details_card_elevation)
-            shapeDrawable.isShadowEnabled = true
-            shapeDrawable.setTint(context.theme.resolveColor(android.R.attr.colorBackground))
-
-            background(shapeDrawable)
-        }
-
         show.traktRating?.let { rating ->
             detailsBadge {
                 val ratingOutOfOneHundred = Math.round(rating * 10)

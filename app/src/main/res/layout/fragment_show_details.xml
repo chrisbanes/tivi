@@ -15,74 +15,98 @@
   ~ limitations under the License.
   -->
 
-<android.support.constraint.motion.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/details_motion"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layoutDescription="@xml/scene_show_details">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <View
-        android:id="@+id/details_corner_cutout_background"
-        android:layout_width="@dimen/details_corner_cutout"
-        android:layout_height="@dimen/details_corner_cutout"
-        app:layout_constraintStart_toStartOf="@id/details_rv"
-        app:layout_constraintTop_toTopOf="@id/details_rv" />
+    <data>
 
-    <ImageView
-        android:id="@+id/details_backdrop"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:scaleType="centerCrop" />
+        <variable
+            name="state"
+            type="app.tivi.showdetails.details.ShowDetailsViewState" />
+    </data>
 
-    <View
-        android:id="@+id/details_backdrop_scrim"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@id/details_backdrop"
-        app:layout_constraintEnd_toEndOf="@id/details_backdrop"
-        app:layout_constraintStart_toStartOf="@id/details_backdrop"
-        app:layout_constraintTop_toTopOf="@id/details_backdrop" />
-
-    <ImageView
-        android:id="@+id/details_poster"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/placeholder"
-        android:scaleType="centerCrop"
-        android:transitionName="poster" />
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/details_toolbar"
+    <android.support.constraint.motion.MotionLayout
+        android:id="@+id/details_motion"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:layout_constraintTop_toBottomOf="@+id/details_status_bar_anchor"
-        app:navigationIcon="?attr/homeAsUpIndicator" />
+        android:layout_height="match_parent"
+        app:layoutDescription="@xml/scene_show_details">
 
-    <com.airbnb.epoxy.EpoxyRecyclerView
-        android:id="@+id/details_rv"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layoutManager="android.support.v7.widget.GridLayoutManager"
-        app:spanCount="4" />
+        <View
+            android:id="@+id/details_corner_cutout_background"
+            android:layout_width="@dimen/details_corner_cutout"
+            android:layout_height="@dimen/details_corner_cutout"
+            app:layout_constraintStart_toStartOf="@id/details_rv"
+            app:layout_constraintTop_toTopOf="@id/details_rv" />
 
-    <!-- This needs to be updated to use WindowInsets. See https://issuetracker.google.com/issues/112605433 -->
-    <View
-        android:id="@+id/details_status_bar_anchor"
-        android:layout_width="match_parent"
-        android:background="@color/status_bar_scrim_translucent_dark"
-        android:layout_height="24dp" />
+        <ImageView
+            android:id="@+id/details_backdrop"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            app:tmdbBackdropPath="@{state.show.tmdbBackdropPath}"
+            app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider}" />
 
-    <app.tivi.ui.widget.CheckableFloatingActionButton
-        android:id="@+id/details_follow_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/sl_follow_show"
-        app:layout_constraintBottom_toTopOf="@+id/details_rv"
-        app:layout_constraintEnd_toEndOf="@+id/details_rv"
-        app:layout_constraintTop_toTopOf="@+id/details_rv" />
+        <View
+            android:id="@+id/details_backdrop_scrim"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/details_backdrop"
+            app:layout_constraintEnd_toEndOf="@id/details_backdrop"
+            app:layout_constraintStart_toStartOf="@id/details_backdrop"
+            app:layout_constraintTop_toTopOf="@id/details_backdrop" />
 
-</android.support.constraint.motion.MotionLayout>
+        <ImageView
+            android:id="@+id/details_poster"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/placeholder"
+            android:scaleType="centerCrop"
+            android:transitionName="poster"
+            app:tmdbBackdropPath="@{state.show.tmdbPosterPath}"
+            app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider}" />
+
+        <include
+            android:id="@+id/details_title"
+            layout="@layout/view_holder_details_title"
+            app:entity="@{state.show}" />
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/details_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_constraintTop_toBottomOf="@+id/details_status_bar_anchor"
+            app:navigationIcon="?attr/homeAsUpIndicator" />
+
+        <com.airbnb.epoxy.EpoxyRecyclerView
+            android:id="@+id/details_rv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?android:attr/colorBackground"
+            app:layoutManager="android.support.v7.widget.GridLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/details_title"
+            app:spanCount="4" />
+
+        <!-- This needs to be updated to use WindowInsets. See https://issuetracker.google.com/issues/112605433 -->
+        <View
+            android:id="@+id/details_status_bar_anchor"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:background="@color/status_bar_scrim_translucent_dark" />
+
+        <app.tivi.ui.widget.CheckableFloatingActionButton
+            android:id="@+id/details_follow_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/sl_follow_show"
+            app:layout_constraintBottom_toTopOf="@+id/details_rv"
+            app:layout_constraintEnd_toEndOf="@+id/details_rv"
+            app:layout_constraintTop_toTopOf="@+id/details_rv" />
+
+    </android.support.constraint.motion.MotionLayout>
+</layout>

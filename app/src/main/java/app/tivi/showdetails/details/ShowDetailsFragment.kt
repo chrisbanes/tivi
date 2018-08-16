@@ -20,6 +20,7 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.constraint.motion.MotionLayout
+import android.support.design.shape.CutCornerTreatment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,11 +31,13 @@ import app.tivi.SharedElementHelper
 import app.tivi.TiviFragment
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
+import app.tivi.databinding.FragmentShowDetailsBinding
+import app.tivi.extensions.materialShapeDrawableOf
 import app.tivi.extensions.observeNotNull
+import app.tivi.extensions.resolveColor
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
 import app.tivi.ui.RoundRectViewOutline
-import app.tivi.ui.glide.GlideApp
 import kotlinx.android.synthetic.main.fragment_show_details.*
 import javax.inject.Inject
 
@@ -55,6 +58,8 @@ class ShowDetailsFragment : TiviFragment() {
     private lateinit var controller: ShowDetailsEpoxyController
     private lateinit var showDetailsNavigator: ShowDetailsNavigator
 
+    private lateinit var binding: FragmentShowDetailsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ShowDetailsFragmentViewModel::class.java)
@@ -66,8 +71,10 @@ class ShowDetailsFragment : TiviFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            inflater.inflate(R.layout.fragment_show_details, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentShowDetailsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -137,6 +144,14 @@ class ShowDetailsFragment : TiviFragment() {
             }
         })
 
+        val shapeDrawable = materialShapeDrawableOf {
+            topLeftCorner = CutCornerTreatment(resources.getDimension(R.dimen.details_corner_cutout))
+        }
+        shapeDrawable.shadowElevation = resources.getDimensionPixelSize(R.dimen.details_card_elevation)
+        shapeDrawable.isShadowEnabled = true
+        shapeDrawable.setTint(view.context.theme.resolveColor(android.R.attr.colorBackground))
+        details_title.background = shapeDrawable
+
         details_rv.setController(controller)
     }
 
@@ -146,27 +161,7 @@ class ShowDetailsFragment : TiviFragment() {
     }
 
     private fun update(viewState: ShowDetailsViewState) {
-        val show = viewState.show
-        val imageProvider = viewState.tmdbImageUrlProvider
-
-        show.tmdbBackdropPath?.let { path ->
-            details_backdrop.doOnLayout { _ ->
-                GlideApp.with(this)
-                        .load(imageProvider.getBackdropUrl(path, details_backdrop.width))
-                        .thumbnail(GlideApp.with(this).load(imageProvider.getBackdropUrl(path, 0)))
-                        .into(details_backdrop)
-            }
-        }
-
-        show.tmdbPosterPath?.let { path ->
-            details_poster.doOnLayout {
-                GlideApp.with(this)
-                        .load(imageProvider.getPosterUrl(path, details_poster.width))
-                        .thumbnail(GlideApp.with(this)
-                                .load(imageProvider.getPosterUrl(path, 0)))
-                        .into(details_poster)
-            }
-        }
+        binding.state = viewState
 
         val isFollowed = viewState is FollowedShowDetailsViewState
         details_follow_fab.isChecked = isFollowed
