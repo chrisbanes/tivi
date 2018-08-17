@@ -19,8 +19,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Transition
-        app:constraintSetEnd="@+id/end"
-        app:constraintSetStart="@+id/start"
+        app:constraintSetEnd="@id/end"
+        app:constraintSetStart="@id/start"
         app:duration="200">
 
         <OnSwipe
@@ -35,14 +35,14 @@
             <KeyPosition
                 app:framePosition="20"
                 app:keyPositionType="pathRelative"
-                app:percentX="0.4"
+                app:percentX="0.45"
                 app:target="@id/details_poster" />
 
             <!-- This looks weird. We need a quick change from elevated to not-so-elevated at 20% so we set 2 key
                  attributes, one at 20% and other at 25%. -->
             <KeyAttribute
                 android:elevation="@dimen/details_poster_elevation"
-                android:rotation="45"
+                android:rotation="55"
                 android:rotationY="20"
                 app:framePosition="20"
                 app:target="@id/details_poster" />
@@ -61,7 +61,7 @@
             android:id="@id/details_backdrop"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="@id/details_corner_cutout_background"
+            app:layout_constraintBottom_toBottomOf="@id/details_title_background"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -83,16 +83,36 @@
             android:id="@id/details_title_background"
             android:layout_width="0dp"
             android:layout_height="96dp"
-            android:elevation="0dp"
             app:layout_constraintBottom_toBottomOf="@id/details_poster"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
             <CustomAttribute
-                app:attributeName="progress"
+                app:attributeName="cutProgress"
                 app:customFloatValue="1.0" />
 
         </Constraint>
+
+        <Constraint
+            android:id="@id/details_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            app:layout_constraintBottom_toTopOf="@id/details_subtitle"
+            app:layout_constraintEnd_toEndOf="@id/details_title_background"
+            app:layout_constraintStart_toEndOf="@id/details_poster"
+            app:layout_constraintTop_toBottomOf="@id/details_title_background" />
+
+        <Constraint
+            android:id="@id/details_subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            app:layout_constraintBottom_toTopOf="@id/details_title_background"
+            app:layout_constraintEnd_toEndOf="@id/details_title_background"
+            app:layout_constraintStart_toEndOf="@id/details_poster"
+            app:layout_constraintTop_toBottomOf="@id/details_title" />
 
         <Constraint
             android:id="@id/details_poster"
@@ -134,16 +154,38 @@
             android:id="@id/details_title_background"
             android:layout_width="0dp"
             android:layout_height="?android:attr/actionBarSize"
-            android:elevation="4dp"
+            android:elevation="@dimen/details_appbar_elevation"
             app:layout_constraintEnd_toEndOf="@id/details_rv"
             app:layout_constraintStart_toStartOf="@id/details_rv"
             app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor">
 
             <CustomAttribute
-                app:attributeName="progress"
+                app:attributeName="cutProgress"
                 app:customFloatValue="0.0" />
 
         </Constraint>
+
+        <Constraint
+            android:id="@id/details_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="72dp"
+            android:elevation="@dimen/details_appbar_elevation"
+            app:layout_constraintBottom_toTopOf="@id/details_subtitle"
+            app:layout_constraintEnd_toEndOf="@id/details_title_background"
+            app:layout_constraintStart_toStartOf="@id/details_title_background"
+            app:layout_constraintTop_toBottomOf="@id/details_title_background" />
+
+        <Constraint
+            android:id="@id/details_subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="72dp"
+            android:elevation="@dimen/details_appbar_elevation"
+            app:layout_constraintBottom_toTopOf="@id/details_title_background"
+            app:layout_constraintEnd_toEndOf="@id/details_title_background"
+            app:layout_constraintStart_toStartOf="@id/details_title_background"
+            app:layout_constraintTop_toBottomOf="@id/details_title" />
 
         <Constraint
             android:id="@id/details_poster"

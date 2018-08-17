@@ -32,7 +32,6 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
 import app.tivi.databinding.FragmentShowDetailsBinding
 import app.tivi.extensions.observeNotNull
-import app.tivi.extensions.resolveColor
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
 import app.tivi.ui.RoundRectViewOutline
@@ -141,11 +140,6 @@ class ShowDetailsFragment : TiviFragment() {
                 viewModel.onRelatedShowClicked(showDetailsNavigator, episode)
             }
         })
-
-        binding.detailsTitleBackground.apply {
-            cutSize = resources.getDimension(R.dimen.details_corner_cutout)
-            color = view.context.theme.resolveColor(android.R.attr.colorBackground)
-        }
 
         details_rv.setController(controller)
     }

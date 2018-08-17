@@ -18,23 +18,32 @@ package app.tivi.ui.widget
 
 import android.content.Context
 import android.graphics.Color
-import android.support.design.animation.AnimationUtils
+import android.graphics.Outline
+import android.graphics.Path
 import android.support.design.shape.CutCornerTreatment
 import android.support.design.shape.MaterialShapeDrawable
 import android.support.design.shape.ShapePathModel
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewOutlineProvider
 import app.tivi.R
+import app.tivi.ui.animations.lerp
 
-class TopLeftCutoutBackgroundView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defaultStyleAttr: Int = 0
-) : View(context, attrs, defaultStyleAttr) {
+class TopLeftCutoutBackgroundView : View {
+    private val shapeDrawable: MaterialShapeDrawable = MaterialShapeDrawable()
 
-    private val shapeDrawable: MaterialShapeDrawable = MaterialShapeDrawable().apply {
-        shadowElevation = resources.getDimensionPixelSize(R.dimen.details_card_elevation)
-        isShadowEnabled = true
+    constructor(context: Context) : this(context, null)
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+        val a = context.obtainStyledAttributes(attrs, R.styleable.TopLeftCutoutBackgroundView)
+        color = a.getColor(R.styleable.TopLeftCutoutBackgroundView_backgroundColor, Color.MAGENTA)
+        maxCutSize = a.getDimension(R.styleable.TopLeftCutoutBackgroundView_topLeftCutSize, 0f)
+        a.recycle()
+
+        background = shapeDrawable
+        syncCutSize()
+
+        outlineProvider = MaterialShapeDrawableOutlineProvider()
     }
 
     var color: Int = Color.MAGENTA
@@ -43,13 +52,13 @@ class TopLeftCutoutBackgroundView @JvmOverloads constructor(
             field = value
         }
 
-    var cutSize: Float = 0f
+    var maxCutSize: Float = 0f
         set(value) {
             field = value
             syncCutSize()
         }
 
-    var progress: Float = 1f
+    var cutProgress: Float = 1f
         set(value) {
             if (value != field) {
                 field = value
@@ -58,18 +67,17 @@ class TopLeftCutoutBackgroundView @JvmOverloads constructor(
         }
 
     private fun syncCutSize() {
-        val cutSize = cutSize
-        val progress = progress
-
         val shapeModel = shapeDrawable.shapedViewModel ?: ShapePathModel()
-
-        shapeModel.topLeftCorner = CutCornerTreatment(AnimationUtils.lerp(cutSize, 0f, 1f - progress))
-
+        shapeModel.topLeftCorner = CutCornerTreatment(lerp(0f, maxCutSize, cutProgress))
         shapeDrawable.shapedViewModel = shapeModel
     }
 
-    init {
-        background = shapeDrawable
-        syncCutSize()
+    inner class MaterialShapeDrawableOutlineProvider : ViewOutlineProvider() {
+        private val path = Path()
+
+        override fun getOutline(view: View, outline: Outline) {
+            shapeDrawable.getPathForSize(view.width, view.height, path)
+            outline.setConvexPath(path)
+        }
     }
 }

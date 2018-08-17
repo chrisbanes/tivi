@@ -14,13 +14,6 @@
  * limitations under the License.
  */
 
-package app.tivi.extensions
+package app.tivi.ui.animations
 
-import android.support.design.shape.MaterialShapeDrawable
-import android.support.design.shape.ShapePathModel
-
-inline fun materialShapeDrawableOf(builder: ShapePathModel.() -> Unit): MaterialShapeDrawable {
-    val pathModel = ShapePathModel()
-    builder(pathModel)
-    return MaterialShapeDrawable(pathModel)
-}
+fun lerp(startValue: Float, endValue: Float, fraction: Float) = startValue + fraction * (endValue - startValue)
