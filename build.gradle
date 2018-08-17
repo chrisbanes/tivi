@@ -61,6 +61,8 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://maven.fabric.io/public' }
+
         jcenter()
     }
 
@@ -75,6 +77,7 @@ buildscript {
         classpath 'com.github.triplet.gradle:play-publisher:1.2.2'
 
         classpath 'com.google.gms:google-services:4.0.1'
+        classpath 'io.fabric.tools:gradle:1.25.4'
     }
 }
 
@@ -88,7 +91,6 @@ allprojects {
         google()
         mavenCentral()
         jcenter()
-        maven { url 'https://maven.fabric.io/public' }
     }
 
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {

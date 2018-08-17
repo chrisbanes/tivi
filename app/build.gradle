@@ -42,6 +42,7 @@ play {
 
 if (file("google-services.json").exists()) {
     apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'io.fabric'
 }
 
 def appVersionCode = propOrDef("tivi.versioncode", 17) as Integer
@@ -206,6 +207,7 @@ dependencies {
     debugImplementation "nl.littlerobots.rxlint:rxlint:${versions.rxlint}"
 
     implementation "com.google.firebase:firebase-core:${versions.firebase}"
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.3'
 }
 
 def getGitHash() {
