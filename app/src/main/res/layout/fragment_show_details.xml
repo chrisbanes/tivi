@@ -122,6 +122,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:checked="@{state.followed}"
             android:scaleType="centerInside"
             android:src="@drawable/sl_follow_show"
             app:layout_constraintBottom_toTopOf="@id/details_appbar_background"

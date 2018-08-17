@@ -119,21 +119,19 @@ class ShowDetailsEpoxyController(
             }
         }
 
-        if (viewState is FollowedShowDetailsViewState) {
-            viewState.seasons.forEach { season ->
-                seasonHeader {
-                    id("season_${season.season!!.id}_header")
-                    season(season.season)
+        viewState.seasons.forEach { season ->
+            seasonHeader {
+                id("season_${season.season!!.id}_header")
+                season(season.season)
+                spanSizeOverride(TotalSpanOverride)
+            }
+            season.episodes.forEach { episodeWithWatches ->
+                seasonEpisodeItem {
+                    val episode = episodeWithWatches.episode!!
+                    id("episode_${episode.id}")
+                    episodeWithWatches(episodeWithWatches)
                     spanSizeOverride(TotalSpanOverride)
-                }
-                season.episodes.forEach { episodeWithWatches ->
-                    seasonEpisodeItem {
-                        val episode = episodeWithWatches.episode!!
-                        id("episode_${episode.id}")
-                        episodeWithWatches(episodeWithWatches)
-                        spanSizeOverride(TotalSpanOverride)
-                        clickListener { view -> callbacks.onEpisodeClicked(episode, view) }
-                    }
+                    clickListener { view -> callbacks.onEpisodeClicked(episode, view) }
                 }
             }
         }

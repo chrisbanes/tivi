@@ -34,7 +34,6 @@ import app.tivi.extensions.observeNotNull
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
 import app.tivi.ui.RoundRectViewOutline
-import kotlinx.android.synthetic.main.fragment_show_details.*
 import javax.inject.Inject
 
 class ShowDetailsFragment : TiviFragment() {
@@ -75,47 +74,51 @@ class ShowDetailsFragment : TiviFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        details_motion.setOnApplyWindowInsetsListener { _, insets ->
-            val lp = details_status_bar_anchor.layoutParams
+        binding.detailsMotion.setOnApplyWindowInsetsListener { _, insets ->
+            val lp = binding.detailsStatusBarAnchor.layoutParams
             lp.height = insets.systemWindowInsetTop
-            details_status_bar_anchor.requestLayout()
+            binding.detailsStatusBarAnchor.requestLayout()
 
             // Just return insets
             insets
         }
 
-        details_motion.setTransitionListener(object : MotionLayout.TransitionListener {
-            val fab = details_follow_fab
+        // Make the MotionLayout draw behind the status bar
+        binding.detailsMotion.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+
+        binding.detailsMotion.setTransitionListener(object : MotionLayout.TransitionListener {
             override fun onTransitionChange(motionLayout: MotionLayout, startId: Int, endId: Int, progress: Float) {
-                if (fab.y < details_toolbar.y + details_toolbar.height) {
-                    fab.hide()
+                if (binding.detailsFollowFab.y < binding.detailsToolbar.y + binding.detailsToolbar.height) {
+                    binding.detailsFollowFab.hide()
                 } else {
-                    fab.show()
+                    binding.detailsFollowFab.show()
                 }
 
-                details_poster.visibility = View.VISIBLE
+                binding.detailsPoster.visibility = View.VISIBLE
             }
 
             override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {
                 when (currentId) {
                     R.id.end -> {
-                        fab.visibility = View.GONE
-                        details_poster.visibility = View.GONE
+                        binding.detailsFollowFab.visibility = View.GONE
+                        binding.detailsPoster.visibility = View.GONE
                     }
                     R.id.start -> {
-                        fab.visibility = View.VISIBLE
-                        details_poster.visibility = View.VISIBLE
+                        binding.detailsFollowFab.visibility = View.VISIBLE
+                        binding.detailsPoster.visibility = View.VISIBLE
                     }
                 }
             }
         })
 
-        // Make the MotionLayout draw behind the status bar
-        details_motion.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-
-        details_poster.apply {
+        binding.detailsPoster.apply {
             clipToOutline = true
             outlineProvider = RoundRectViewOutline
+        }
+
+        binding.detailsFollowFab.setOnClickListener {
+            viewModel.onToggleMyShowsButtonClicked()
         }
 
         controller = ShowDetailsEpoxyController(requireContext(), object : ShowDetailsEpoxyController.Callbacks {
@@ -134,7 +137,7 @@ class ShowDetailsFragment : TiviFragment() {
             }
         })
 
-        details_rv.setController(controller)
+        binding.detailsRv.setController(controller)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -144,20 +147,7 @@ class ShowDetailsFragment : TiviFragment() {
 
     private fun update(viewState: ShowDetailsViewState) {
         binding.state = viewState
-
-        val isFollowed = viewState is FollowedShowDetailsViewState
-        details_follow_fab.isChecked = isFollowed
-
-        details_follow_fab.setOnClickListener {
-            if (isFollowed) {
-                viewModel.removeFromMyShows()
-            } else {
-                viewModel.addToMyShows()
-            }
-        }
-
         controller.setData(viewState)
-
         scheduleStartPostponedTransitions()
     }
 }

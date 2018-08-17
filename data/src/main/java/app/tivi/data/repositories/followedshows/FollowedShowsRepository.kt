@@ -55,6 +55,14 @@ class FollowedShowsRepository @Inject constructor(
         return localStore.isLastFollowedShowsSyncBefore(Duration.ofHours(3))
     }
 
+    suspend fun toggleFollowedShow(showId: Long) {
+        if (isShowFollowed(showId)) {
+            removeFollowedShow(showId)
+        } else {
+            addFollowedShow(showId)
+        }
+    }
+
     suspend fun addFollowedShow(showId: Long) {
         val entry = localStore.getEntryForShowId(showId)
         if (entry == null || entry.pendingAction == PendingAction.DELETE) {

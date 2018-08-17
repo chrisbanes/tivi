@@ -21,21 +21,10 @@ import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.tmdb.TmdbImageUrlProvider
 
-sealed class ShowDetailsViewState(
-    open val show: TiviShow,
-    open val relatedShows: List<RelatedShowEntryWithShow>,
-    open val tmdbImageUrlProvider: TmdbImageUrlProvider
-)
-
-data class FollowedShowDetailsViewState(
-    override val show: TiviShow,
-    override val relatedShows: List<RelatedShowEntryWithShow>,
+data class ShowDetailsViewState(
+    val isFollowed: Boolean,
+    val show: TiviShow,
+    val relatedShows: List<RelatedShowEntryWithShow>,
     val seasons: List<SeasonWithEpisodesAndWatches>,
-    override val tmdbImageUrlProvider: TmdbImageUrlProvider
-) : ShowDetailsViewState(show, relatedShows, tmdbImageUrlProvider)
-
-data class NotFollowedShowDetailsViewState(
-    override val show: TiviShow,
-    override val relatedShows: List<RelatedShowEntryWithShow>,
-    override val tmdbImageUrlProvider: TmdbImageUrlProvider
-) : ShowDetailsViewState(show, relatedShows, tmdbImageUrlProvider)
+    val tmdbImageUrlProvider: TmdbImageUrlProvider
+)
