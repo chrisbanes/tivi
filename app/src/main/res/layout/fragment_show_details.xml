@@ -61,6 +61,14 @@
             app:tmdbBackdropPath="@{state.show.tmdbPosterPath}"
             app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider}" />
 
+        <!-- Needed to fill a rounding error gap in MotionLayout. See https://issuetracker.google.com/112728689 -->
+        <View
+            android:id="@+id/details_gap_filler"
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="?android:attr/colorBackground"
+            app:layout_constraintBottom_toTopOf="@id/details_rv" />
+
         <app.tivi.ui.widget.TopLeftCutoutBackgroundView
             android:id="@+id/details_appbar_background"
             android:layout_width="0dp"
