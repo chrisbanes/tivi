@@ -16,6 +16,7 @@
 
 package app.tivi.showdetails.details
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -98,6 +99,7 @@ class ShowDetailsFragment : TiviFragment() {
                 binding.detailsPoster.visibility = View.VISIBLE
             }
 
+            @SuppressLint("RestrictedApi")
             override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {
                 when (currentId) {
                     R.id.end -> {
