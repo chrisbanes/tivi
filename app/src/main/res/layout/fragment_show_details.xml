@@ -60,7 +60,7 @@
             app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider}" />
 
         <app.tivi.ui.widget.TopLeftCutoutBackgroundView
-            android:id="@+id/details_title_background"
+            android:id="@+id/details_appbar_background"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:backgroundColor="?android:attr/colorBackground"
@@ -89,12 +89,11 @@
             app:genreString="@{state.show.genres}"
             tools:text="Drama // Fantasy" />
 
-        <android.support.v7.widget.Toolbar
+        <app.tivi.ui.widget.TintingToolbar
             android:id="@+id/details_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:navigationIcon="?attr/homeAsUpIndicator" />
 
         <com.airbnb.epoxy.EpoxyRecyclerView
@@ -106,7 +105,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/details_title_background"
+            app:layout_constraintTop_toBottomOf="@id/details_appbar_background"
             app:spanCount="4" />
 
         <!-- This needs to be updated to use WindowInsets. See https://issuetracker.google.com/issues/112605433 -->
@@ -123,9 +122,9 @@
             android:layout_marginEnd="16dp"
             android:scaleType="centerInside"
             android:src="@drawable/sl_follow_show"
-            app:layout_constraintBottom_toTopOf="@id/details_title_background"
-            app:layout_constraintEnd_toEndOf="@id/details_title_background"
-            app:layout_constraintTop_toTopOf="@id/details_title_background" />
+            app:layout_constraintBottom_toTopOf="@id/details_appbar_background"
+            app:layout_constraintEnd_toEndOf="@id/details_appbar_background"
+            app:layout_constraintTop_toTopOf="@id/details_appbar_background" />
 
     </android.support.constraint.motion.MotionLayout>
 </layout>
