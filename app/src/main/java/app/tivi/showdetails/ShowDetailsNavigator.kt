@@ -23,4 +23,5 @@ import app.tivi.data.entities.TiviShow
 interface ShowDetailsNavigator {
     fun showShowDetails(show: TiviShow, sharedElements: SharedElementHelper?)
     fun showEpisodeDetails(episode: Episode)
+    fun navigateUp()
 }

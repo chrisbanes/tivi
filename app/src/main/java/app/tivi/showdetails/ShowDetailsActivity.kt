@@ -50,7 +50,12 @@ class ShowDetailsActivity : TiviActivity() {
         navigatorViewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(ShowDetailsNavigatorViewModel::class.java)
 
-        navigatorViewModel.showEpisodeDetailsCall.observeNotNull(this, ::showEpisodeDetails)
+        navigatorViewModel.events.observeNotNull(this) {
+            when (it) {
+                is NavigateUpEvent -> onNavigateUp()
+                is ShowEpisodeDetailsEvent -> showEpisodeDetails(it.episodeId)
+            }
+        }
 
         postponeEnterTransition()
     }

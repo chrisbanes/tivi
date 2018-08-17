@@ -113,4 +113,6 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         showDetailsNavigator: ShowDetailsNavigator,
         episode: Episode
     ) = showDetailsNavigator.showEpisodeDetails(episode)
+
+    fun onUpClicked(showDetailsNavigator: ShowDetailsNavigator) = showDetailsNavigator.navigateUp()
 }

@@ -123,6 +123,10 @@ class ShowDetailsFragment : TiviFragment() {
             viewModel.onToggleMyShowsButtonClicked()
         }
 
+        binding.detailsToolbar.setNavigationOnClickListener {
+            viewModel.onUpClicked(showDetailsNavigator)
+        }
+
         controller = ShowDetailsEpoxyController(requireContext(), object : ShowDetailsEpoxyController.Callbacks {
             override fun onRelatedShowClicked(show: TiviShow, view: View) {
                 viewModel.onRelatedShowClicked(

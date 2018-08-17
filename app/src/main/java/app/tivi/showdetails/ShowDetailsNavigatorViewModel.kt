@@ -36,10 +36,18 @@ class ShowDetailsNavigatorViewModel @Inject constructor(
     }
 
     override fun showEpisodeDetails(episode: Episode) {
-        _showEpisodeDetailsCall.value = episode.id
+        _events.value = ShowEpisodeDetailsEvent(episode.id!!)
     }
 
-    private val _showEpisodeDetailsCall = SingleLiveEvent<Long>(errorOnNoObservers = true)
-    val showEpisodeDetailsCall: LiveData<Long>
-        get() = _showEpisodeDetailsCall
+    override fun navigateUp() {
+        _events.value = NavigateUpEvent
+    }
+
+    private val _events = SingleLiveEvent<ShowDetailsNavigatorEvent>(errorOnNoObservers = true)
+    val events: LiveData<ShowDetailsNavigatorEvent>
+        get() = _events
 }
+
+sealed class ShowDetailsNavigatorEvent
+object NavigateUpEvent : ShowDetailsNavigatorEvent()
+data class ShowEpisodeDetailsEvent(val episodeId: Long) : ShowDetailsNavigatorEvent()
