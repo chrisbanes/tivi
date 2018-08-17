@@ -24,7 +24,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.core.view.doOnLayout
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.TiviFragment
@@ -117,12 +116,6 @@ class ShowDetailsFragment : TiviFragment() {
         details_poster.apply {
             clipToOutline = true
             outlineProvider = RoundRectViewOutline
-        }
-
-        // Need to update the pivot so that it is top center
-        details_poster.doOnLayout {
-            it.pivotX = it.width / 2f
-            it.pivotY = 0f
         }
 
         controller = ShowDetailsEpoxyController(requireContext(), object : ShowDetailsEpoxyController.Callbacks {

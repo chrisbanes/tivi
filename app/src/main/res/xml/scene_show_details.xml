@@ -35,15 +35,15 @@
             <KeyPosition
                 app:framePosition="20"
                 app:keyPositionType="pathRelative"
-                app:percentX="0.45"
+                app:percentX="0.62"
                 app:target="@id/details_poster" />
 
             <!-- This looks weird. We need a quick change from elevated to not-so-elevated at 20% so we set 2 key
                  attributes, one at 20% and other at 25%. -->
             <KeyAttribute
                 android:elevation="@dimen/details_poster_elevation"
-                android:rotation="55"
-                android:rotationY="20"
+                android:rotation="45"
+                android:rotationY="15"
                 app:framePosition="20"
                 app:target="@id/details_poster" />
 
@@ -101,7 +101,7 @@
         <Constraint
             android:id="@id/details_appbar_background"
             android:layout_width="0dp"
-            android:layout_height="96dp"
+            android:layout_height="88dp"
             app:layout_constraintBottom_toBottomOf="@id/details_poster"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">

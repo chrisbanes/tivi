@@ -55,6 +55,8 @@
             android:layout_height="0dp"
             android:background="@drawable/placeholder"
             android:scaleType="centerCrop"
+            android:transformPivotX="0px"
+            android:transformPivotY="0px"
             android:transitionName="poster"
             app:tmdbBackdropPath="@{state.show.tmdbPosterPath}"
             app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider}" />
