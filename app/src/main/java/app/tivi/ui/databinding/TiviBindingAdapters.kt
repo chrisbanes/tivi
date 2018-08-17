@@ -82,7 +82,13 @@ fun genreString(view: TextView, genres: List<Genre>?) {
                 if (i < genres.size - 1) append(" \u2022 ")
             }
         }
-        view.text = EmojiCompat.get().process(spanned)
+
+        val emojiCompat = EmojiCompat.get()
+        view.text = if (emojiCompat.loadState == EmojiCompat.LOAD_STATE_SUCCEEDED) {
+            emojiCompat.process(spanned)
+        } else {
+            spanned
+        }
     }
 }
 
