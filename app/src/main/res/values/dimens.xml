@@ -19,5 +19,10 @@
 <resources>
     <dimen name="header_margin">14dp</dimen>
     <dimen name="image_round_rect_radius">4dp</dimen>
+
+    <dimen name="details_appbar_elevation">4dp</dimen>
+
+    <dimen name="details_corner_cutout">64dp</dimen>
+    <dimen name="details_poster_not_elevation">0dp</dimen>
     <dimen name="details_poster_elevation">4dp</dimen>
 </resources>

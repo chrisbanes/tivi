@@ -30,6 +30,7 @@ class ChangeShowFollowStatus @Inject constructor(
 
     override suspend fun execute(params: Params, executeParams: ExecuteParams) {
         when (executeParams.action) {
+            Action.TOGGLE -> followedShowsRepository.toggleFollowedShow(params.showId)
             Action.FOLLOW -> followedShowsRepository.addFollowedShow(params.showId)
             Action.UNFOLLOW -> followedShowsRepository.removeFollowedShow(params.showId)
         }
@@ -43,5 +44,5 @@ class ChangeShowFollowStatus @Inject constructor(
 
     data class ExecuteParams(val action: Action)
 
-    enum class Action { FOLLOW, UNFOLLOW }
+    enum class Action { FOLLOW, UNFOLLOW, TOGGLE }
 }

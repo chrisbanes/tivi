@@ -22,14 +22,15 @@
 
     <data>
         <variable
-            name="summary"
-            type="String" />
+            name="entity"
+            type="app.tivi.data.entities.TiviShow" />
     </data>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:addStatesFromChildren="true"
+        android:background="?android:colorBackground"
         android:foreground="?android:attr/selectableItemBackground"
         android:padding="16dp"
         android:transitionGroup="true">
@@ -39,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:text="@{summary}"
+            android:text="@{entity.summary}"
             android:textAppearance="?attr/textAppearanceBody2"
             app:maxLinesToggle="@{@integer/details_summary_collapsed_lines}"
             tools:text="@sample/shows.txt" />

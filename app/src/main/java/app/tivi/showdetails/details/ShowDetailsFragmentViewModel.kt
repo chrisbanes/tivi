@@ -22,8 +22,7 @@ import app.tivi.SharedElementHelper
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
 import app.tivi.interactors.ChangeShowFollowStatus
-import app.tivi.interactors.ChangeShowFollowStatus.Action.FOLLOW
-import app.tivi.interactors.ChangeShowFollowStatus.Action.UNFOLLOW
+import app.tivi.interactors.ChangeShowFollowStatus.Action.TOGGLE
 import app.tivi.interactors.UpdateFollowedShowSeasonData
 import app.tivi.interactors.UpdateRelatedShows
 import app.tivi.interactors.UpdateShowDetails
@@ -33,10 +32,9 @@ import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.TiviViewModel
+import io.reactivex.Flowable
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
 class ShowDetailsFragmentViewModel @Inject constructor(
@@ -83,34 +81,17 @@ class ShowDetailsFragmentViewModel @Inject constructor(
                 .subscribeOn(schedulers.io)
                 .distinctUntilChanged()
                 .switchMap { isFollowed ->
-                    when {
-                        isFollowed -> Flowables.combineLatest(
-                                updateShowDetails.observe(),
-                                updateRelatedShows.observe(),
-                                updateShowSeasons.observe(),
-                                tmdbManager.imageProvider,
-                                ::FollowedShowDetailsViewState)
-                        else -> Flowables.combineLatest(
-                                updateShowDetails.observe(),
-                                updateRelatedShows.observe(),
-                                tmdbManager.imageProvider,
-                                ::NotFollowedShowDetailsViewState)
-                    }
+                    Flowables.combineLatest(
+                            Flowable.just(isFollowed),
+                            updateShowDetails.observe(),
+                            updateRelatedShows.observe(),
+                            if (isFollowed) updateShowSeasons.observe() else Flowable.just(emptyList()),
+                            tmdbManager.imageProvider,
+                            ::ShowDetailsViewState)
                 }
                 .distinctUntilChanged()
                 .observeOn(schedulers.main)
                 .subscribe(_data::setValue, logger::e)
-    }
-
-    fun addToMyShows() {
-        launch(dispatchers.main) {
-            withContext(changeShowFollowStatus.dispatcher) {
-                changeShowFollowStatus(ChangeShowFollowStatus.ExecuteParams(FOLLOW))
-            }
-            withContext(updateShowSeasons.dispatcher) {
-                updateShowSeasons(UpdateFollowedShowSeasonData.ExecuteParams(true))
-            }
-        }
     }
 
     override fun onCleared() {
@@ -118,8 +99,8 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         updateShowDetails.clear()
     }
 
-    fun removeFromMyShows() {
-        launchInteractor(changeShowFollowStatus, ChangeShowFollowStatus.ExecuteParams(UNFOLLOW))
+    fun onToggleMyShowsButtonClicked() {
+        launchInteractor(changeShowFollowStatus, ChangeShowFollowStatus.ExecuteParams(TOGGLE))
     }
 
     fun onRelatedShowClicked(
@@ -132,4 +113,6 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         showDetailsNavigator: ShowDetailsNavigator,
         episode: Episode
     ) = showDetailsNavigator.showEpisodeDetails(episode)
+
+    fun onUpClicked(showDetailsNavigator: ShowDetailsNavigator) = showDetailsNavigator.navigateUp()
 }

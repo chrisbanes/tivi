@@ -15,65 +15,126 @@
   ~ limitations under the License.
   -->
 
-<android.support.constraint.motion.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/details_motion"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layoutDescription="@xml/scene_show_details">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- This needs to be updated to use WindowInsets. See https://issuetracker.google.com/issues/112605433 -->
-    <Space
-        android:id="@+id/details_status_bar_anchor"
+    <data>
+
+        <variable
+            name="state"
+            type="app.tivi.showdetails.details.ShowDetailsViewState" />
+    </data>
+
+    <android.support.constraint.motion.MotionLayout
+        android:id="@+id/details_motion"
         android:layout_width="match_parent"
-        android:layout_height="26dp" />
+        android:layout_height="match_parent"
+        app:layoutDescription="@xml/scene_show_details">
 
-    <!-- This view is here to allow the poster to overlap the RV. -->
-    <Space
-        android:id="@+id/details_poster_anchor"
-        android:layout_width="match_parent"
-        android:layout_height="320dp" />
+        <ImageView
+            android:id="@+id/details_backdrop"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            app:tmdbBackdropPath="@{state.show.tmdbBackdropPath}"
+            app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider}" />
 
-    <ImageView
-        android:id="@+id/details_backdrop"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:scaleType="centerCrop" />
+        <View
+            android:id="@+id/details_backdrop_scrim"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/details_backdrop"
+            app:layout_constraintEnd_toEndOf="@id/details_backdrop"
+            app:layout_constraintStart_toStartOf="@id/details_backdrop"
+            app:layout_constraintTop_toTopOf="@id/details_backdrop" />
 
-    <ImageView
-        android:id="@+id/details_poster"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/placeholder"
-        android:scaleType="centerCrop"
-        android:transitionName="poster" />
+        <ImageView
+            android:id="@+id/details_poster"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/placeholder"
+            android:scaleType="centerCrop"
+            android:transformPivotX="0px"
+            android:transformPivotY="0px"
+            android:transitionName="poster"
+            app:tmdbBackdropPath="@{state.show.tmdbPosterPath}"
+            app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider}" />
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/details_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:layout_constraintTop_toBottomOf="@+id/details_status_bar_anchor"
-        app:navigationIcon="?attr/homeAsUpIndicator" />
+        <!-- Needed to fill a rounding error gap in MotionLayout. See https://issuetracker.google.com/112728689 -->
+        <View
+            android:id="@+id/details_gap_filler"
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="?android:attr/colorBackground"
+            app:layout_constraintBottom_toTopOf="@id/details_rv" />
 
-    <com.airbnb.epoxy.EpoxyRecyclerView
-        android:id="@+id/details_rv"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="?android:colorBackground"
-        android:elevation="1dp"
-        app:layoutManager="android.support.v7.widget.GridLayoutManager"
-        app:spanCount="4" />
+        <app.tivi.ui.widget.TopLeftCutoutBackgroundView
+            android:id="@+id/details_appbar_background"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:backgroundColor="?android:attr/colorBackground"
+            app:topLeftCutSize="@dimen/details_corner_cutout" />
 
-    <app.tivi.ui.widget.CheckableFloatingActionButton
-        android:id="@+id/details_follow_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/sl_follow_show"
-        app:layout_constraintBottom_toTopOf="@+id/details_rv"
-        app:layout_constraintEnd_toEndOf="@+id/details_rv"
-        app:layout_constraintTop_toTopOf="@+id/details_rv" />
+        <app.tivi.ui.widget.BaselineGridTextView
+            android:id="@+id/details_title"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:ellipsize="end"
+            android:text="@{state.show.title}"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            tools:text="@sample/shows.txt" />
 
-</android.support.constraint.motion.MotionLayout>
+        <!-- The text color is set to an opaque color for Emoji.
+             The caption text appearance is set via spans. -->
+        <app.tivi.ui.widget.BaselineGridTextView
+            android:id="@+id/details_subtitle"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:ellipsize="end"
+            android:textAppearance="?attr/textAppearanceCaption"
+            android:textColor="#000000"
+            app:genreContentDescriptionString="@{state.show.genres}"
+            app:genreString="@{state.show.genres}"
+            tools:text="Drama // Fantasy" />
+
+        <app.tivi.ui.widget.TintingToolbar
+            android:id="@+id/details_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:navigationIcon="?attr/homeAsUpIndicator" />
+
+        <com.airbnb.epoxy.EpoxyRecyclerView
+            android:id="@+id/details_rv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="?android:attr/colorBackground"
+            app:layoutManager="android.support.v7.widget.GridLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/details_appbar_background"
+            app:spanCount="4" />
+
+        <!-- This needs to be updated to use WindowInsets. See https://issuetracker.google.com/issues/112605433 -->
+        <View
+            android:id="@+id/details_status_bar_anchor"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:background="@color/status_bar_scrim_translucent_dark" />
+
+        <app.tivi.ui.widget.CheckableFloatingActionButton
+            android:id="@+id/details_follow_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:checked="@{state.followed}"
+            android:scaleType="centerInside"
+            android:src="@drawable/sl_follow_show"
+            app:layout_constraintBottom_toTopOf="@id/details_appbar_background"
+            app:layout_constraintEnd_toEndOf="@id/details_appbar_background"
+            app:layout_constraintTop_toTopOf="@id/details_appbar_background" />
+
+    </android.support.constraint.motion.MotionLayout>
+</layout>

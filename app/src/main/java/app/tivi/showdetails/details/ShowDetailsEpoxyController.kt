@@ -24,7 +24,6 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
 import app.tivi.detailsBadge
 import app.tivi.detailsSummary
-import app.tivi.detailsTitle
 import app.tivi.emptyState
 import app.tivi.header
 import app.tivi.seasonEpisodeItem
@@ -48,14 +47,6 @@ class ShowDetailsEpoxyController(
         val show = viewState.show
         val tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
         val related = viewState.relatedShows
-
-        detailsTitle {
-            id("title")
-            title(show.title)
-            subtitle(show.originalTitle)
-            genres(show.genres)
-            spanSizeOverride(TotalSpanOverride)
-        }
 
         show.traktRating?.let { rating ->
             detailsBadge {
@@ -94,7 +85,7 @@ class ShowDetailsEpoxyController(
 
         detailsSummary {
             id("summary")
-            summary(show.summary)
+            entity(show)
             spanSizeOverride(TotalSpanOverride)
         }
 
@@ -128,21 +119,19 @@ class ShowDetailsEpoxyController(
             }
         }
 
-        if (viewState is FollowedShowDetailsViewState) {
-            viewState.seasons.forEach { season ->
-                seasonHeader {
-                    id("season_${season.season!!.id}_header")
-                    season(season.season)
+        viewState.seasons.forEach { season ->
+            seasonHeader {
+                id("season_${season.season!!.id}_header")
+                season(season.season)
+                spanSizeOverride(TotalSpanOverride)
+            }
+            season.episodes.forEach { episodeWithWatches ->
+                seasonEpisodeItem {
+                    val episode = episodeWithWatches.episode!!
+                    id("episode_${episode.id}")
+                    episodeWithWatches(episodeWithWatches)
                     spanSizeOverride(TotalSpanOverride)
-                }
-                season.episodes.forEach { episodeWithWatches ->
-                    seasonEpisodeItem {
-                        val episode = episodeWithWatches.episode!!
-                        id("episode_${episode.id}")
-                        episodeWithWatches(episodeWithWatches)
-                        spanSizeOverride(TotalSpanOverride)
-                        clickListener { view -> callbacks.onEpisodeClicked(episode, view) }
-                    }
+                    clickListener { view -> callbacks.onEpisodeClicked(episode, view) }
                 }
             }
         }

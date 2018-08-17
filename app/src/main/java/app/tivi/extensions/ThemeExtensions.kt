@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails
+package app.tivi.extensions
 
-import app.tivi.SharedElementHelper
-import app.tivi.data.entities.Episode
-import app.tivi.data.entities.TiviShow
+import android.content.res.Resources
+import android.graphics.Color
+import android.support.annotation.AttrRes
+import android.util.TypedValue
 
-interface ShowDetailsNavigator {
-    fun showShowDetails(show: TiviShow, sharedElements: SharedElementHelper?)
-    fun showEpisodeDetails(episode: Episode)
-    fun navigateUp()
+private val typedValue = TypedValue()
+
+fun Resources.Theme.resolveColor(@AttrRes resId: Int, defaultColor: Int = Color.MAGENTA): Int {
+    return if (resolveAttribute(resId, typedValue, true)) {
+        typedValue.data
+    } else {
+        defaultColor
+    }
 }

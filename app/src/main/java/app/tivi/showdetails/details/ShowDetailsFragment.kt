@@ -16,6 +16,7 @@
 
 package app.tivi.showdetails.details
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -24,18 +25,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.core.view.doOnLayout
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.TiviFragment
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
+import app.tivi.databinding.FragmentShowDetailsBinding
 import app.tivi.extensions.observeNotNull
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
 import app.tivi.ui.RoundRectViewOutline
-import app.tivi.ui.glide.GlideApp
-import kotlinx.android.synthetic.main.fragment_show_details.*
 import javax.inject.Inject
 
 class ShowDetailsFragment : TiviFragment() {
@@ -49,12 +48,13 @@ class ShowDetailsFragment : TiviFragment() {
         }
     }
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var viewModel: ShowDetailsFragmentViewModel
     private lateinit var controller: ShowDetailsEpoxyController
     private lateinit var showDetailsNavigator: ShowDetailsNavigator
+
+    private lateinit var binding: FragmentShowDetailsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,46 +67,64 @@ class ShowDetailsFragment : TiviFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            inflater.inflate(R.layout.fragment_show_details, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentShowDetailsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        details_motion.setOnApplyWindowInsetsListener { _, insets ->
-            val lp = details_status_bar_anchor.layoutParams
+        binding.detailsMotion.setOnApplyWindowInsetsListener { _, insets ->
+            val lp = binding.detailsStatusBarAnchor.layoutParams
             lp.height = insets.systemWindowInsetTop
-            details_status_bar_anchor.requestLayout()
+            binding.detailsStatusBarAnchor.requestLayout()
 
             // Just return insets
             insets
         }
 
-        details_motion.setTransitionListener(object : MotionLayout.TransitionListener {
-            val fab = details_follow_fab
+        // Make the MotionLayout draw behind the status bar
+        binding.detailsMotion.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+
+        binding.detailsMotion.setTransitionListener(object : MotionLayout.TransitionListener {
             override fun onTransitionChange(motionLayout: MotionLayout, startId: Int, endId: Int, progress: Float) {
-                if (fab.y < details_toolbar.y + details_toolbar.height) {
-                    fab.hide()
+                if (binding.detailsFollowFab.y < binding.detailsToolbar.y + binding.detailsToolbar.height) {
+                    binding.detailsFollowFab.hide()
                 } else {
-                    fab.show()
+                    binding.detailsFollowFab.show()
                 }
+
+                binding.detailsPoster.visibility = View.VISIBLE
             }
 
+            @SuppressLint("RestrictedApi")
             override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {
-                if (currentId == R.id.end) {
-                    fab.visibility = View.GONE
-                } else {
-                    fab.visibility = View.VISIBLE
+                when (currentId) {
+                    R.id.end -> {
+                        binding.detailsFollowFab.visibility = View.GONE
+                        binding.detailsPoster.visibility = View.GONE
+                    }
+                    R.id.start -> {
+                        binding.detailsFollowFab.visibility = View.VISIBLE
+                        binding.detailsPoster.visibility = View.VISIBLE
+                    }
                 }
             }
         })
 
-        // Make the MotionLayout draw behind the status bar
-        details_motion.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-
-        details_poster.apply {
+        binding.detailsPoster.apply {
             clipToOutline = true
             outlineProvider = RoundRectViewOutline
+        }
+
+        binding.detailsFollowFab.setOnClickListener {
+            viewModel.onToggleMyShowsButtonClicked()
+        }
+
+        binding.detailsToolbar.setNavigationOnClickListener {
+            viewModel.onUpClicked(showDetailsNavigator)
         }
 
         controller = ShowDetailsEpoxyController(requireContext(), object : ShowDetailsEpoxyController.Callbacks {
@@ -125,7 +143,7 @@ class ShowDetailsFragment : TiviFragment() {
             }
         })
 
-        details_rv.setController(controller)
+        binding.detailsRv.setController(controller)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -134,41 +152,8 @@ class ShowDetailsFragment : TiviFragment() {
     }
 
     private fun update(viewState: ShowDetailsViewState) {
-        val show = viewState.show
-        val imageProvider = viewState.tmdbImageUrlProvider
-
-        show.tmdbBackdropPath?.let { path ->
-            details_backdrop.doOnLayout { _ ->
-                GlideApp.with(this)
-                        .load(imageProvider.getBackdropUrl(path, details_backdrop.width))
-                        .thumbnail(GlideApp.with(this).load(imageProvider.getBackdropUrl(path, 0)))
-                        .into(details_backdrop)
-            }
-        }
-
-        show.tmdbPosterPath?.let { path ->
-            details_poster.doOnLayout {
-                GlideApp.with(this)
-                        .load(imageProvider.getPosterUrl(path, details_poster.width))
-                        .thumbnail(GlideApp.with(this)
-                                .load(imageProvider.getPosterUrl(path, 0)))
-                        .into(details_poster)
-            }
-        }
-
-        val isFollowed = viewState is FollowedShowDetailsViewState
-        details_follow_fab.isChecked = isFollowed
-
-        details_follow_fab.setOnClickListener {
-            if (isFollowed) {
-                viewModel.removeFromMyShows()
-            } else {
-                viewModel.addToMyShows()
-            }
-        }
-
+        binding.state = viewState
         controller.setData(viewState)
-
         scheduleStartPostponedTransitions()
     }
 }
