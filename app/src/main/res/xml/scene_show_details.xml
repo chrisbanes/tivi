@@ -58,6 +58,12 @@
                 app:framePosition="75"
                 app:target="@id/details_appbar_background" />
 
+            <!-- We want the subtitle to fade out quickly, within the starting 75% -->
+            <KeyAttribute
+                android:alpha="0"
+                app:framePosition="75"
+                app:target="@id/details_subtitle" />
+
         </KeyFrameSet>
 
     </Transition>
@@ -204,21 +210,20 @@
             android:layout_marginEnd="48dp"
             android:layout_marginStart="64dp"
             android:elevation="@dimen/details_appbar_elevation"
-            app:layout_constraintBottom_toTopOf="@id/details_subtitle"
+            app:layout_constraintBottom_toBottomOf="@id/details_appbar_background"
             app:layout_constraintEnd_toEndOf="@id/details_appbar_background"
             app:layout_constraintStart_toStartOf="@id/details_appbar_background"
-            app:layout_constraintTop_toBottomOf="@id/details_appbar_background" />
+            app:layout_constraintTop_toTopOf="@id/details_appbar_background" />
 
         <Constraint
             android:id="@id/details_subtitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="48dp"
-            android:layout_marginStart="64dp"
             android:elevation="@dimen/details_appbar_elevation"
-            app:layout_constraintBottom_toTopOf="@id/details_appbar_background"
-            app:layout_constraintEnd_toEndOf="@id/details_appbar_background"
-            app:layout_constraintStart_toStartOf="@id/details_appbar_background"
+            android:visibility="invisible"
+            android:alpha="0"
+            app:layout_constraintEnd_toEndOf="@id/details_title"
+            app:layout_constraintStart_toStartOf="@id/details_title"
             app:layout_constraintTop_toBottomOf="@id/details_title" />
 
         <Constraint

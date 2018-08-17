@@ -92,7 +92,6 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:ellipsize="end"
-            android:singleLine="true"
             android:textAppearance="?attr/textAppearanceCaption"
             android:textColor="#000000"
             app:genreContentDescriptionString="@{state.show.genres}"
