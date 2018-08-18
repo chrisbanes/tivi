@@ -32,18 +32,18 @@ class SyncFollowedShows @Inject constructor(
 ) : PagingInteractor<FollowedShowEntryWithShow>, Interactor<SyncFollowedShows.ExecuteParams> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend fun invoke(param: ExecuteParams) {
-        if (param.forceLoad || followedShowsRepository.needFollowedShowsSync()) {
+    override suspend fun invoke(executeParams: ExecuteParams) {
+        if (executeParams.forceLoad || followedShowsRepository.needFollowedShowsSync()) {
             followedShowsRepository.syncFollowedShows()
 
             // Finally sync the watches
             followedShowsRepository.getFollowedShows().parallelForEach(dispatchers.io) {
                 // Download the seasons + episodes
-                if (param.forceLoad || repository.needShowSeasonsUpdate(it.showId)) {
+                if (executeParams.forceLoad || repository.needShowSeasonsUpdate(it.showId)) {
                     repository.updateSeasonsEpisodes(it.showId)
                 }
                 // And sync the episode watches
-                if (param.forceLoad || repository.needShowEpisodeWatchesSync(it.showId)) {
+                if (executeParams.forceLoad || repository.needShowEpisodeWatchesSync(it.showId)) {
                     repository.syncEpisodeWatchesForShow(it.showId)
                 }
             }

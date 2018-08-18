@@ -110,13 +110,7 @@
             android:layout_height="88dp"
             app:layout_constraintBottom_toBottomOf="@id/details_poster"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <CustomAttribute
-                app:attributeName="cutProgress"
-                app:customFloatValue="1.0" />
-
-        </Constraint>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Constraint
             android:id="@id/details_title"
@@ -195,13 +189,7 @@
             android:elevation="@dimen/details_appbar_elevation"
             app:layout_constraintEnd_toEndOf="@id/details_rv"
             app:layout_constraintStart_toStartOf="@id/details_rv"
-            app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor">
-
-            <CustomAttribute
-                app:attributeName="cutProgress"
-                app:customFloatValue="0.0" />
-
-        </Constraint>
+            app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor" />
 
         <Constraint
             android:id="@id/details_title"

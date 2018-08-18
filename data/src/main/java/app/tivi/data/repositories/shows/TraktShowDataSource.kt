@@ -41,14 +41,18 @@ class TraktShowDataSource @Inject constructor(
         var traktId = show.traktId
 
         if (traktId == null && show.tmdbId != null) {
-            // We need to fetch the search for the trakt id
-            val response = searchService.get().idLookup(IdType.TMDB, show.tmdbId.toString(),
-                    Type.SHOW, Extended.NOSEASONS, 1, 1).execute()
-            if (response.isSuccessful) {
-                val body = response.bodyOrThrow()
-                if (body.isNotEmpty()) {
-                    traktId = body[0].show.ids.trakt
+            try {
+                // We need to fetch the search for the trakt id
+                val response = searchService.get().idLookup(IdType.TMDB, show.tmdbId.toString(),
+                        Type.SHOW, Extended.NOSEASONS, 1, 1).executeWithRetry()
+                if (response.isSuccessful) {
+                    val body = response.bodyOrThrow()
+                    if (body.isNotEmpty()) {
+                        traktId = body[0].show.ids.trakt
+                    }
                 }
+            } catch (e: Exception) {
+                return ErrorResult(e)
             }
         }
 

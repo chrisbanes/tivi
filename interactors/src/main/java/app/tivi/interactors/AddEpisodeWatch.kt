@@ -28,8 +28,8 @@ class AddEpisodeWatch @Inject constructor(
 ) : Interactor<AddEpisodeWatch.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(param: Params) {
-        seasonsEpisodesRepository.addEpisodeWatch(param.episodeId, param.timestamp)
+    override suspend operator fun invoke(executeParams: Params) {
+        seasonsEpisodesRepository.addEpisodeWatch(executeParams.episodeId, executeParams.timestamp)
     }
 
     data class Params(val episodeId: Long, val timestamp: OffsetDateTime)
