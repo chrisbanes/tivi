@@ -196,6 +196,8 @@ dependencies {
     implementation "com.airbnb.android:epoxy-databinding:${versions.epoxy}"
     kapt "com.airbnb.android:epoxy-processor:${versions.epoxy}"
 
+    implementation 'com.github.rubensousa:gravitysnaphelper:1.5'
+
     testImplementation 'junit:junit:4.12'
 
     androidTestImplementation "com.android.support.test:runner:${versions.androidx.test_runner}"
