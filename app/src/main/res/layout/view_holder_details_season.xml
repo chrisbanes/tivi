@@ -24,12 +24,17 @@
         <variable
             name="season"
             type="app.tivi.data.resultentities.SeasonWithEpisodesAndWatches" />
+
+        <variable
+            name="clickListener"
+            type="android.view.View.OnClickListener" />
     </data>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:foreground="?android:attr/selectableItemBackground"
+        android:onClick="@{clickListener}"
         android:transitionGroup="true">
 
         <TextView
@@ -65,8 +70,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_marginTop="4dp"
-            android:progress="@{season.numberWatched}"
             android:max="@{season.numberEpisodes}"
+            android:progress="@{season.numberWatched}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/season_summary"
             app:layout_constraintStart_toStartOf="@+id/season_summary"

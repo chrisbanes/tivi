@@ -157,7 +157,7 @@ class ShowDetailsFragment : TiviFragment() {
 
     private fun update(viewState: ShowDetailsViewState) {
         binding.state = viewState
-        controller.setData(viewState)
+        controller.state = viewState
         scheduleStartPostponedTransitions()
     }
 }

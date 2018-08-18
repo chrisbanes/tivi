@@ -17,10 +17,12 @@
 package app.tivi.showdetails.details
 
 import android.content.Context
+import android.util.ArraySet
 import android.view.View
 import app.tivi.DetailsRelatedItemBindingModel_
 import app.tivi.R
 import app.tivi.data.entities.Episode
+import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.detailsBadge
 import app.tivi.detailsSeason
@@ -31,19 +33,30 @@ import app.tivi.seasonEpisodeItem
 import app.tivi.ui.epoxy.TotalSpanOverride
 import app.tivi.ui.epoxy.carousel
 import app.tivi.ui.epoxy.withModelsFrom
-import com.airbnb.epoxy.TypedEpoxyController
+import com.airbnb.epoxy.EpoxyController
 
 class ShowDetailsEpoxyController(
     private val context: Context,
     private val callbacks: Callbacks
-) : TypedEpoxyController<ShowDetailsViewState>() {
+) : EpoxyController() {
+    var state: ShowDetailsViewState? = null
+        set(value) {
+            field = value
+            requestModelBuild()
+        }
+
+    private val expandedSeasons = ArraySet<Long>()
 
     interface Callbacks {
         fun onRelatedShowClicked(show: TiviShow, view: View)
         fun onEpisodeClicked(episode: Episode, view: View)
     }
 
-    override fun buildModels(viewState: ShowDetailsViewState) {
+    override fun buildModels() {
+        state?.also(this::buildModels)
+    }
+
+    private fun buildModels(viewState: ShowDetailsViewState) {
         val show = viewState.show
         val tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
         val related = viewState.relatedShows
@@ -124,16 +137,32 @@ class ShowDetailsEpoxyController(
                 id("season_${season.season!!.id}")
                 season(season)
                 spanSizeOverride(TotalSpanOverride)
+                clickListener { _ -> toggleSeasonExpanded(season.season!!) }
             }
-            season.episodes.forEach { episodeWithWatches ->
-                seasonEpisodeItem {
-                    val episode = episodeWithWatches.episode!!
-                    id("episode_${episode.id}")
-                    episodeWithWatches(episodeWithWatches)
-                    spanSizeOverride(TotalSpanOverride)
-                    clickListener { view -> callbacks.onEpisodeClicked(episode, view) }
+
+            if (isSeasonExpanded(season.season!!)) {
+                season.episodes.forEach { episodeWithWatches ->
+                    seasonEpisodeItem {
+                        val episode = episodeWithWatches.episode!!
+                        id("episode_${episode.id}")
+                        episodeWithWatches(episodeWithWatches)
+                        spanSizeOverride(TotalSpanOverride)
+                        clickListener { view -> callbacks.onEpisodeClicked(episode, view) }
+                    }
                 }
             }
         }
+    }
+
+    private fun isSeasonExpanded(season: Season) = expandedSeasons.contains(season.id!!)
+
+    private fun toggleSeasonExpanded(season: Season) {
+        if (expandedSeasons.contains(season.id!!)) {
+            expandedSeasons.remove(season.id!!)
+        } else {
+            expandedSeasons.add(season.id!!)
+        }
+        // Trigger a model refresh
+        requestModelBuild()
     }
 }
