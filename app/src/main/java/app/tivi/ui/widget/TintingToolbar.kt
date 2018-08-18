@@ -17,6 +17,7 @@
 package app.tivi.ui.widget
 
 import android.content.Context
+import android.support.annotation.Keep
 import android.support.v7.widget.Toolbar
 import android.util.AttributeSet
 import app.tivi.R
@@ -27,16 +28,20 @@ class TintingToolbar @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = R.attr.toolbarStyle
 ) : Toolbar(context, attrs, defStyleAttr) {
-
+    @get:Keep
+    @set:Keep
     var iconTint: Int = context.theme.resolveColor(android.R.attr.colorControlNormal)
         set(value) {
-            navigationIcon = navigationIcon?.let {
-                it.setTint(value)
-                it.mutate()
+            if (value != field) {
+                navigationIcon = navigationIcon?.let {
+                    it.setTint(value)
+                    it.mutate()
+                }
+                overflowIcon = overflowIcon?.let {
+                    it.setTint(value)
+                    it.mutate()
+                }
             }
-            overflowIcon = overflowIcon?.let {
-                it.setTint(value)
-                it.mutate()
-            }
+            field = value
         }
 }
