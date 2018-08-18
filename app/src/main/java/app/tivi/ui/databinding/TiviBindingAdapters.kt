@@ -29,6 +29,7 @@ import androidx.core.view.isVisible
 import app.tivi.R
 import app.tivi.data.entities.Genre
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.GenreStringer
 import app.tivi.ui.MaxLinesToggleClickListener
@@ -152,4 +153,29 @@ fun showTitle(view: TextView, show: TiviShow) {
             }
         }
     }
+}
+
+@BindingAdapter("seasonSummaryText")
+fun seasonSummaryText(view: TextView, season: SeasonWithEpisodesAndWatches) {
+    val toWatch = season.numberToWatch
+    val toAir = season.numberToAir
+    val watched = season.numberWatched
+
+    val text = StringBuilder()
+    if (toWatch > 0) {
+        text.append(view.resources.getString(R.string.season_summary_to_watch, toWatch))
+    }
+    if (toAir > 0) {
+        if (text.isNotEmpty()) {
+            text.append(" \u2022 ")
+        }
+        text.append(view.resources.getString(R.string.season_summary_to_air, toAir))
+    }
+    if (watched > 0) {
+        if (text.isNotEmpty()) {
+            text.append(" \u2022 ")
+        }
+        text.append(view.resources.getString(R.string.season_summary_watched, watched))
+    }
+    view.text = text
 }

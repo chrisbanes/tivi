@@ -17,6 +17,7 @@
 package app.tivi.data.resultentities
 
 import android.arch.persistence.room.Embedded
+import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.Relation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -29,12 +30,33 @@ class SeasonWithEpisodesAndWatches {
     @Relation(parentColumn = "id", entityColumn = "season_id", entity = Episode::class)
     var episodes: List<EpisodeWithWatches> = emptyList()
 
-    fun isWatched() = episodes.all { it.isWatched() }
-
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
         other is SeasonWithEpisodesAndWatches -> season == other.season && episodes == other.episodes
         else -> false
+    }
+
+    @delegate:Ignore
+    val numberToWatch by lazy(LazyThreadSafetyMode.NONE) {
+        episodes.count { !it.isWatched() && it.episode?.isAired() == true }
+    }
+
+    @delegate:Ignore
+    val numberWatched by lazy(LazyThreadSafetyMode.NONE) {
+        episodes.count { it.isWatched() }
+    }
+
+    @delegate:Ignore
+    val numberToAir by lazy(LazyThreadSafetyMode.NONE) { numberEpisodes - numberAired }
+
+    @delegate:Ignore
+    val numberAired by lazy(LazyThreadSafetyMode.NONE) {
+        episodes.count { it.episode?.isAired() == true }
+    }
+
+    @delegate:Ignore
+    val numberEpisodes by lazy(LazyThreadSafetyMode.NONE) {
+        episodes.size
     }
 
     override fun hashCode(): Int = Objects.hash(season, episodes)

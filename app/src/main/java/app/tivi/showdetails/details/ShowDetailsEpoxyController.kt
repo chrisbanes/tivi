@@ -23,11 +23,11 @@ import app.tivi.R
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
 import app.tivi.detailsBadge
+import app.tivi.detailsSeason
 import app.tivi.detailsSummary
 import app.tivi.emptyState
 import app.tivi.header
 import app.tivi.seasonEpisodeItem
-import app.tivi.seasonHeader
 import app.tivi.ui.epoxy.TotalSpanOverride
 import app.tivi.ui.epoxy.carousel
 import app.tivi.ui.epoxy.withModelsFrom
@@ -120,9 +120,9 @@ class ShowDetailsEpoxyController(
         }
 
         viewState.seasons.forEach { season ->
-            seasonHeader {
-                id("season_${season.season!!.id}_header")
-                season(season.season)
+            detailsSeason {
+                id("season_${season.season!!.id}")
+                season(season)
                 spanSizeOverride(TotalSpanOverride)
             }
             season.episodes.forEach { episodeWithWatches ->

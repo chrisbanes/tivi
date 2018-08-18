@@ -66,4 +66,8 @@
 
     <string name="first_aired">First aired: %1$s</string>
 
+    <string name="season_summary_to_watch">%1$d to watch</string>
+    <string name="season_summary_to_air">%1$d to air</string>
+    <string name="season_summary_watched">%1$d watched</string>
+
 </resources>
