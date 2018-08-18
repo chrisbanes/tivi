@@ -31,7 +31,7 @@ import kotlin.coroutines.experimental.CoroutineContext
 
 interface Interactor<in P> {
     val dispatcher: CoroutineDispatcher
-    suspend operator fun invoke(param: P)
+    suspend operator fun invoke(executeParams: P)
 }
 
 interface PagingInteractor<T> {
@@ -41,13 +41,13 @@ interface PagingInteractor<T> {
 abstract class ChannelInteractor<P, T> : Interactor<P> {
     private val channel = Channel<T>()
 
-    final override suspend fun invoke(param: P) {
-        channel.offer(execute(param))
+    final override suspend fun invoke(executeParams: P) {
+        channel.offer(execute(executeParams))
     }
 
     fun observe(): Flowable<T> = channel.asObservable(dispatcher).toFlowable()
 
-    protected abstract suspend fun execute(param: P): T
+    protected abstract suspend fun execute(executeParams: P): T
 
     fun clear() {
         channel.close()
