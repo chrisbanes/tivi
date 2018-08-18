@@ -77,7 +77,11 @@ class TopLeftCutoutBackgroundView : View {
 
         override fun getOutline(view: View, outline: Outline) {
             shapeDrawable.getPathForSize(view.width, view.height, path)
-            outline.setConvexPath(path)
+            if (path.isConvex) {
+                outline.setConvexPath(path)
+            } else {
+                outline.setRect(0, 0, view.width, view.height)
+            }
         }
     }
 }
