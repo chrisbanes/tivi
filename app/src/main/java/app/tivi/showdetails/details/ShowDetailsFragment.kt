@@ -96,6 +96,8 @@ class ShowDetailsFragment : TiviFragment() {
                     binding.detailsFollowFab.show()
                 }
 
+                binding.detailsAppbarBackground.cutProgress = 1f - progress
+
                 binding.detailsPoster.visibility = View.VISIBLE
             }
 
@@ -103,10 +105,12 @@ class ShowDetailsFragment : TiviFragment() {
             override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {
                 when (currentId) {
                     R.id.end -> {
+                        binding.detailsAppbarBackground.cutProgress = 0f
                         binding.detailsFollowFab.visibility = View.GONE
                         binding.detailsPoster.visibility = View.GONE
                     }
                     R.id.start -> {
+                        binding.detailsAppbarBackground.cutProgress = 1f
                         binding.detailsFollowFab.visibility = View.VISIBLE
                         binding.detailsPoster.visibility = View.VISIBLE
                     }
