@@ -20,13 +20,16 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="season"
             type="app.tivi.data.resultentities.SeasonWithEpisodesAndWatches" />
 
         <variable
             name="clickListener"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="menuButtonClickListener"
             type="android.view.View.OnClickListener" />
     </data>
 
@@ -47,7 +50,7 @@
             android:gravity="center_vertical"
             android:text="@{season.season.title}"
             android:textAppearance="?attr/textAppearanceBody1"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/season_menu_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Season 01" />
@@ -57,7 +60,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            app:layout_constraintEnd_toEndOf="@+id/season_title"
+            app:layout_constraintEnd_toStartOf="@id/season_menu_button"
             app:layout_constraintStart_toStartOf="@+id/season_title"
             app:layout_constraintTop_toBottomOf="@+id/season_title"
             app:seasonSummaryText="@{season}"
@@ -73,10 +76,20 @@
             android:max="@{season.numberEpisodes}"
             android:progress="@{season.numberWatched}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/season_summary"
+            app:layout_constraintEnd_toStartOf="@id/season_menu_button"
             app:layout_constraintStart_toStartOf="@+id/season_summary"
             app:layout_constraintTop_toBottomOf="@id/season_summary"
             tools:progress="50" />
+
+        <ImageButton
+            android:id="@+id/season_menu_button"
+            style="?android:attr/actionOverflowButtonStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>
