@@ -34,8 +34,8 @@ class UpdateRelatedShows @Inject constructor(
 ) : SubjectInteractor<Params, ExecuteParams, List<RelatedShowEntryWithShow>>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend fun execute(param: Params, executeParams: ExecuteParams) {
-        repository.updateRelatedShows(param.showId)
+    override suspend fun execute(params: Params, executeParams: ExecuteParams) {
+        repository.updateRelatedShows(params.showId)
     }
 
     override fun createObservable(params: Params): Flowable<List<RelatedShowEntryWithShow>> {

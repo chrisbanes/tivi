@@ -24,12 +24,12 @@ import android.view.View
 @BindingMethods(
         BindingMethod(
                 type = View::class,
-                attribute = "app:outlineProviderInstance",
+                attribute = "outlineProviderInstance",
                 method = "setOutlineProvider"
         ),
         BindingMethod(
                 type = SwipeRefreshLayout::class,
-                attribute = "app:isRefreshing",
+                attribute = "isRefreshing",
                 method = "setRefreshing"
         )
 )

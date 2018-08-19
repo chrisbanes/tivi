@@ -43,7 +43,7 @@ class TopLeftCutoutBackgroundView : View {
         background = shapeDrawable
         syncCutSize()
 
-        outlineProvider = MaterialShapeDrawableOutlineProvider()
+        outlineProvider = MaterialShapeDrawableOutlineProvider(shapeDrawable)
     }
 
     var color: Int = Color.MAGENTA
@@ -72,12 +72,18 @@ class TopLeftCutoutBackgroundView : View {
         shapeDrawable.shapedViewModel = shapeModel
     }
 
-    inner class MaterialShapeDrawableOutlineProvider : ViewOutlineProvider() {
+    class MaterialShapeDrawableOutlineProvider(
+        private val shapeDrawable: MaterialShapeDrawable
+    ) : ViewOutlineProvider() {
         private val path = Path()
 
         override fun getOutline(view: View, outline: Outline) {
             shapeDrawable.getPathForSize(view.width, view.height, path)
-            outline.setConvexPath(path)
+            if (path.isConvex) {
+                outline.setConvexPath(path)
+            } else {
+                outline.setRect(0, 0, view.width, view.height)
+            }
         }
     }
 }

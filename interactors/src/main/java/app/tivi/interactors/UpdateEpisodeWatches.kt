@@ -32,13 +32,13 @@ class UpdateEpisodeWatches @Inject constructor(
 ) : SubjectInteractor<UpdateEpisodeWatches.Params, UpdateEpisodeWatches.ExecuteParams, List<EpisodeWatchEntry>>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override fun createObservable(param: Params): Flowable<List<EpisodeWatchEntry>> {
-        return seasonsEpisodesRepository.observeEpisodeWatches(param.episodeId)
+    override fun createObservable(params: Params): Flowable<List<EpisodeWatchEntry>> {
+        return seasonsEpisodesRepository.observeEpisodeWatches(params.episodeId)
                 .startWith(emptyFlowableList())
                 .subscribeOn(schedulers.io)
     }
 
-    override suspend fun execute(param: Params, executeParams: ExecuteParams) {
+    override suspend fun execute(params: Params, executeParams: ExecuteParams) {
         // TODO add refresh?
         // Don't do anything here
     }

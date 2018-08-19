@@ -28,9 +28,9 @@ class SearchShows @Inject constructor(
 ) : ChannelInteractor<SearchShows.Params, List<TiviShow>>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend fun execute(param: Params): List<TiviShow> {
+    override suspend fun execute(executeParams: Params): List<TiviShow> {
         return when {
-            param.query.isNotEmpty() -> searchRepository.search(param.query)
+            executeParams.query.isNotEmpty() -> searchRepository.search(executeParams.query)
             else -> emptyList()
         }
     }
