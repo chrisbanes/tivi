@@ -20,10 +20,10 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion buildConfig.compileSdk
+    compileSdkVersion BuildConfigs.compileSdk
 
     defaultConfig {
-        minSdkVersion buildConfig.minSdk
+        minSdkVersion BuildConfigs.minSdk
     }
 
     compileOptions {
@@ -33,10 +33,10 @@ android {
 }
 
 dependencies {
-    implementation project(":base")
-    implementation "com.android.support:support-fragment:${versions.androidx.fragment}"
-    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation project(Modules.base)
+    implementation Libraries.fragment
+    implementation Libraries.timber
 
-    implementation "android.arch.core:runtime:${versions.androidx.core}"
-    implementation "android.arch.core:common:${versions.androidx.core}"
+    implementation Libraries.core_runtime
+    implementation Libraries.core_common
 }

@@ -18,12 +18,12 @@
 apply plugin: 'kotlin'
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlin}"
-    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
-    compile "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${versions.coroutines}"
+    compile Libraries.kotlin_jdk8
+    compile Libraries.coroutines_core
+    compile Libraries.coroutines_rx2
 
-    compile "com.google.dagger:dagger:${versions.dagger}"
+    compile Libraries.dagger
 
-    compile "com.squareup.retrofit2:retrofit:${versions.retrofit}"
-    compile 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+    compile Libraries.retrofit
+    compile Libraries.logging
 }

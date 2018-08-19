@@ -21,10 +21,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion buildConfig.compileSdk
+    compileSdkVersion BuildConfigs.compileSdk
 
     defaultConfig {
-        minSdkVersion buildConfig.minSdk
+        minSdkVersion BuildConfigs.minSdk
         manifestPlaceholders += ['appAuthRedirectScheme': 'app.tivi']
     }
 
@@ -35,20 +35,20 @@ android {
 }
 
 dependencies {
-    implementation project(":base")
-    implementation project(":base-android")
-    implementation project(":data")
-    implementation project(":trakt")
-    implementation project(':datasources')
-    implementation project(':interactors')
+    implementation project(Modules.base)
+    implementation project(Modules.baseAndroid)
+    implementation project(Modules.data)
+    implementation project(Modules.trakt)
+    implementation project(Modules.datasources)
+    implementation project(Modules.interactors)
 
-    api "io.reactivex.rxjava2:rxjava:${versions.rx}"
-    implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
+    api Libraries.rxjava
+    implementation Libraries.rxkotlin
 
-    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+    kapt Libraries.dagger_compiler
 
-    implementation "androidx.core:core-ktx:${versions.androidx.core_ktx}"
+    implementation Libraries.core_ktx
 
-    api "net.openid:appauth:0.7.1"
-    implementation "com.android.support:customtabs:${versions.androidx.browser}"
+    api Libraries.openid_appauth
+    implementation Libraries.customtabs
 }

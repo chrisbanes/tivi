@@ -18,6 +18,6 @@
 apply plugin: 'kotlin'
 
 dependencies {
-    implementation project(":base")
-    implementation project(":data")
+    implementation project(Modules.base)
+    implementation project(Modules.data)
 }

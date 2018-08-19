@@ -21,12 +21,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion buildConfig.compileSdk
+    compileSdkVersion BuildConfigs.compileSdk
 
     defaultConfig {
-        minSdkVersion buildConfig.minSdk
+        minSdkVersion BuildConfigs.minSdk
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner Config.testRunner
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -42,15 +42,15 @@ android {
 }
 
 dependencies {
-    implementation project(":base")
-    implementation project(":base-android")
-    implementation project(":data")
+    implementation project(Modules.base)
+    implementation project(Modules.baseAndroid)
+    implementation project(Modules.data)
 
-    implementation "android.arch.persistence.room:runtime:${versions.androidx.room}"
-    implementation "android.arch.persistence.room:rxjava2:${versions.androidx.room}"
-    kapt "android.arch.persistence.room:compiler:${versions.androidx.room}"
+    implementation TestLibraries.room
+    implementation TestLibraries.room_rxjava
+    kapt TestLibraries.room_compiler
 
-    implementation "android.arch.paging:runtime:${versions.androidx.paging}"
+    implementation Libraries.paging_runtime
 
-    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+    kapt Libraries.dagger_compiler
 }

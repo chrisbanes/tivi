@@ -18,14 +18,14 @@
 apply plugin: 'kotlin'
 
 dependencies {
-    implementation project(":base")
-    implementation project(":trakt")
-    implementation project(":tmdb")
+    implementation project(Modules.base)
+    implementation project(Modules.trakt)
+    implementation project(Modules.tmdb)
 
-    compile "android.arch.persistence.room:common:${versions.androidx.room}"
-    compile "android.arch.paging:common:${versions.androidx.paging}"
+    compile Libraries.room
+    compile Libraries.paging_common
 
-    compile "io.reactivex.rxjava2:rxjava:${versions.rx}"
+    compile Libraries.rxjava
 
-    compile 'org.threeten:threetenbp:1.3.6:no-tzdb'
+    compile Libraries.threetenbp
 }

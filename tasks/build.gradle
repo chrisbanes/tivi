@@ -21,10 +21,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion buildConfig.compileSdk
+    compileSdkVersion BuildConfigs.compileSdk
 
     defaultConfig {
-        minSdkVersion buildConfig.minSdk
+        minSdkVersion BuildConfigs.minSdk
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -40,11 +40,11 @@ android {
 }
 
 dependencies {
-    implementation project(":base")
-    implementation project(':interactors')
+    implementation project(Modules.base)
+    implementation project(Modules.interactors)
 
-    implementation "android.arch.work:work-runtime-ktx:${versions.androidx.work}"
+    implementation Libraries.work
 
-    implementation "com.google.dagger:dagger-android:${versions.dagger}"
-    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+    implementation Libraries.dagger
+    kapt Libraries.dagger_compiler
 }

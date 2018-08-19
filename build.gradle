@@ -16,47 +16,6 @@
  */
 
 buildscript {
-    ext.versions = [
-            'android_gradle' : '3.2.0-beta05',
-            'androidx'       : [
-                    'appcompat'        : '28.0.0-rc01',
-                    'browser'          : '28.0.0-rc01',
-                    'core'             : '1.1.1',
-                    'constraint_layout': '2.0.0-alpha2',
-                    'core_ktx'         : '0.3',
-                    'fragment'         : '28.0.0-rc01',
-                    'emoji'            : '28.0.0-rc01',
-                    'lifecycle'        : '1.1.1',
-                    'paging'           : '1.0.1',
-                    'palette'          : '28.0.0-rc01',
-                    'recyclerview'     : '28.0.0-rc01',
-                    'room'             : '1.1.1',
-                    'test_runner'      : '1.0.2',
-                    'test_rules'       : '1.0.2',
-                    'work'             : '1.0.0-alpha06'
-            ],
-            'coroutines'     : '0.24.0',
-            'dagger'         : '2.17',
-            'epoxy'          : '2.16.1',
-            'espresso'       : '3.0.2',
-            'firebase'       : '16.0.1',
-            'glide'          : '4.7.1',
-            'kotlin'         : '1.2.60',
-            'ktlint'         : '0.19.0',
-            'mockito'        : '2.18.3',
-            'material_design': '28.0.0-rc01',
-            'rx'             : '2.2.0',
-            'rxkotlin'       : '2.3.0',
-            'rxlint'         : '1.6.1',
-            'threetenabp'    : '1.1.0',
-            'retrofit'       : '2.4.0',
-    ]
-
-    ext.buildConfig = [
-            'compileSdk': 28,
-            'minSdk'    : 23,
-            'targetSdk' : 28,
-    ]
 
     repositories {
         google()
@@ -67,10 +26,10 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.android.tools.build:gradle:${versions.android_gradle}"
+        classpath "com.android.tools.build:gradle:${Versions.android_gradle}"
 
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
-        classpath "org.jetbrains.kotlin:kotlin-android-extensions:${versions.kotlin}"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
+        classpath "org.jetbrains.kotlin:kotlin-android-extensions:${Versions.kotlin}"
 
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.3'
 
@@ -78,6 +37,7 @@ buildscript {
 
         classpath 'com.google.gms:google-services:4.0.1'
         classpath 'io.fabric.tools:gradle:1.25.4'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin_version}"
     }
 }
 
@@ -85,6 +45,7 @@ plugins {
     id "com.diffplug.gradle.spotless" version "3.14.0"
     id 'com.github.ben-manes.versions' version "0.20.0"
 }
+apply plugin: 'kotlin'
 
 allprojects {
     repositories {
@@ -105,9 +66,25 @@ subprojects {
     spotless {
         kotlin {
             target "**/*.kt"
-            ktlint(versions.ktlint)
+            ktlint(Versions.ktlint)
             licenseHeaderFile project.rootProject.file('spotless/copyright.kt')
         }
+    }
+}
+repositories {
+    mavenCentral()
+}/*
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$Versions.kotlin_version"
+}*/
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 
