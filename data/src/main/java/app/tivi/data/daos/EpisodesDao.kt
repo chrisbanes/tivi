@@ -24,7 +24,7 @@ import io.reactivex.Flowable
 @Dao
 abstract class EpisodesDao : EntityDao<Episode> {
     @Query("SELECT * from episodes WHERE season_id = :seasonId ORDER BY number")
-    abstract fun episodesFromSeasonId(seasonId: Long): List<Episode>?
+    abstract fun episodesFromSeasonId(seasonId: Long): List<Episode>
 
     @Query("SELECT * from episodes WHERE trakt_id = :traktId")
     abstract fun episodeWithTraktId(traktId: Int): Episode?

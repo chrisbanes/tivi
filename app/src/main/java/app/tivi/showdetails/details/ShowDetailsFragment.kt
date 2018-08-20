@@ -29,6 +29,7 @@ import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.TiviFragment
 import app.tivi.data.entities.Episode
+import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.databinding.FragmentShowDetailsBinding
 import app.tivi.extensions.observeNotNull
@@ -145,6 +146,10 @@ class ShowDetailsFragment : TiviFragment() {
             override fun onEpisodeClicked(episode: Episode, view: View) {
                 viewModel.onRelatedShowClicked(showDetailsNavigator, episode)
             }
+
+            override fun onMarkSeasonUnwatched(season: Season) = viewModel.onMarkSeasonUnwatched(season)
+
+            override fun onMarkSeasonWatched(season: Season) = viewModel.onMarkSeasonWatched(season)
         })
 
         binding.detailsRv.setController(controller)

@@ -28,7 +28,7 @@ class RemoveEpisodeWatches @Inject constructor(
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend operator fun invoke(executeParams: Params) {
-        seasonsEpisodesRepository.removeAllEpisodeWatches(executeParams.episodeId)
+        seasonsEpisodesRepository.markEpisodeUnwatched(executeParams.episodeId)
     }
 
     data class Params(val episodeId: Long)

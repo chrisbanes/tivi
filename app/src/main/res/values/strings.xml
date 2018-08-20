@@ -70,4 +70,7 @@
     <string name="season_summary_to_air">%1$d to air</string>
     <string name="season_summary_watched">%1$d watched</string>
 
+    <string name="popup_season_mark_all_watched">Mark all watched</string>
+    <string name="popup_season_mark_all_unwatched">Mark all unwatched</string>
+
 </resources>

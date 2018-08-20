@@ -15,19 +15,12 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <declare-styleable name="TiviTheme">
-        <attr name="navigationBackgroundColor" format="color" />
-        <attr name="statusBarScrim" format="color" />
-        <attr name="statusBarScrimTranslucent" format="color" />
-    </declare-styleable>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/season_mark_all_watched"
+        android:title="@string/popup_season_mark_all_watched" />
 
-    <declare-styleable name="TopLeftCutoutBackgroundView">
-        <attr name="topLeftCutSize" format="dimension" />
-        <attr name="backgroundColor" format="color" />
-    </declare-styleable>
-
-    <declare-styleable name="PopupMenuButton">
-        <attr name="menu" />
-    </declare-styleable>
-</resources>
+    <item
+        android:id="@+id/season_mark_all_unwatched"
+        android:title="@string/popup_season_mark_all_unwatched" />
+</menu>

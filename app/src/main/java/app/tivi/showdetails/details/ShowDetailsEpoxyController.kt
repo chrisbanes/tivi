@@ -17,6 +17,7 @@
 package app.tivi.showdetails.details
 
 import android.content.Context
+import android.support.v7.widget.PopupMenu
 import android.util.ArraySet
 import android.view.View
 import app.tivi.DetailsRelatedItemBindingModel_
@@ -33,6 +34,7 @@ import app.tivi.seasonEpisodeItem
 import app.tivi.ui.epoxy.TotalSpanOverride
 import app.tivi.ui.epoxy.carousel
 import app.tivi.ui.epoxy.withModelsFrom
+import app.tivi.ui.widget.PopupMenuButton
 import com.airbnb.epoxy.EpoxyController
 
 class ShowDetailsEpoxyController(
@@ -50,6 +52,8 @@ class ShowDetailsEpoxyController(
     interface Callbacks {
         fun onRelatedShowClicked(show: TiviShow, view: View)
         fun onEpisodeClicked(episode: Episode, view: View)
+        fun onMarkSeasonWatched(season: Season)
+        fun onMarkSeasonUnwatched(season: Season)
     }
 
     override fun buildModels() {
@@ -137,10 +141,27 @@ class ShowDetailsEpoxyController(
                 id("season_${season.season!!.id}")
                 season(season)
                 spanSizeOverride(TotalSpanOverride)
-                clickListener { _ -> toggleSeasonExpanded(season.season!!) }
+                clickListener { _ -> toggleSeasonExpanded(season.season!!.id!!) }
+
+                popupMenuListener(object : PopupMenuButton.PopupMenuListener {
+                    override fun onPreparePopupMenu(popupMenu: PopupMenu) {
+                        popupMenu.menu.run {
+                            findItem(R.id.season_mark_all_unwatched).isVisible = season.numberWatched > 0
+                            findItem(R.id.season_mark_all_watched).isVisible = season.numberWatched < season.numberAired
+                        }
+                    }
+                })
+
+                popupMenuClickListener { menuItem ->
+                    when (menuItem.itemId) {
+                        R.id.season_mark_all_watched -> callbacks.onMarkSeasonWatched(season.season!!)
+                        R.id.season_mark_all_unwatched -> callbacks.onMarkSeasonUnwatched(season.season!!)
+                    }
+                    true
+                }
             }
 
-            if (isSeasonExpanded(season.season!!)) {
+            if (isSeasonExpanded(season.season!!.id!!)) {
                 season.episodes.forEach { episodeWithWatches ->
                     seasonEpisodeItem {
                         val episode = episodeWithWatches.episode!!
@@ -154,13 +175,13 @@ class ShowDetailsEpoxyController(
         }
     }
 
-    private fun isSeasonExpanded(season: Season) = expandedSeasons.contains(season.id!!)
+    private fun isSeasonExpanded(seasonId: Long) = expandedSeasons.contains(seasonId)
 
-    private fun toggleSeasonExpanded(season: Season) {
-        if (expandedSeasons.contains(season.id!!)) {
-            expandedSeasons.remove(season.id!!)
+    private fun toggleSeasonExpanded(seasonId: Long) {
+        if (expandedSeasons.contains(seasonId)) {
+            expandedSeasons.remove(seasonId)
         } else {
-            expandedSeasons.add(season.id!!)
+            expandedSeasons.add(seasonId)
         }
         // Trigger a model refresh
         requestModelBuild()

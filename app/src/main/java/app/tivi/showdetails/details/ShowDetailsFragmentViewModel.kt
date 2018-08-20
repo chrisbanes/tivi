@@ -20,7 +20,10 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.Episode
+import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
+import app.tivi.interactors.ChangeSeasonWatchedStatus
+import app.tivi.interactors.ChangeSeasonWatchedStatus.Params
 import app.tivi.interactors.ChangeShowFollowStatus
 import app.tivi.interactors.ChangeShowFollowStatus.Action.TOGGLE
 import app.tivi.interactors.UpdateFollowedShowSeasonData
@@ -43,6 +46,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     private val updateShowDetails: UpdateShowDetails,
     private val updateRelatedShows: UpdateRelatedShows,
     private val updateShowSeasons: UpdateFollowedShowSeasonData,
+    private val changeSeasonWatchedStatus: ChangeSeasonWatchedStatus,
     private val tmdbManager: TmdbManager,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val logger: Logger
@@ -113,6 +117,14 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         showDetailsNavigator: ShowDetailsNavigator,
         episode: Episode
     ) = showDetailsNavigator.showEpisodeDetails(episode)
+
+    fun onMarkSeasonWatched(season: Season) {
+        launchInteractor(changeSeasonWatchedStatus, Params(season.id!!, ChangeSeasonWatchedStatus.Action.WATCHED))
+    }
+
+    fun onMarkSeasonUnwatched(season: Season) {
+        launchInteractor(changeSeasonWatchedStatus, Params(season.id!!, ChangeSeasonWatchedStatus.Action.UNWATCH))
+    }
 
     fun onUpClicked(showDetailsNavigator: ShowDetailsNavigator) = showDetailsNavigator.navigateUp()
 }

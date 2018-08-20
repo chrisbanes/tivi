@@ -20,6 +20,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="season"
             type="app.tivi.data.resultentities.SeasonWithEpisodesAndWatches" />
@@ -29,8 +30,12 @@
             type="android.view.View.OnClickListener" />
 
         <variable
-            name="menuButtonClickListener"
-            type="android.view.View.OnClickListener" />
+            name="popupMenuClickListener"
+            type="android.support.v7.widget.PopupMenu.OnMenuItemClickListener" />
+
+        <variable
+            name="popupMenuListener"
+            type="app.tivi.ui.widget.PopupMenuButton.PopupMenuListener" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -81,15 +86,17 @@
             app:layout_constraintTop_toBottomOf="@id/season_summary"
             tools:progress="50" />
 
-        <ImageButton
+        <app.tivi.ui.widget.PopupMenuButton
             android:id="@+id/season_menu_button"
-            style="?android:attr/actionOverflowButtonStyle"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginStart="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:menu="@menu/popup_season"
+            app:popupMenuClickListener="@{popupMenuClickListener}"
+            app:popupMenuListener="@{popupMenuListener}" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>

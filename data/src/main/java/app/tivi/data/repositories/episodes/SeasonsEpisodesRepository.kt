@@ -100,8 +100,20 @@ class SeasonsEpisodesRepository @Inject constructor(
     }
 
     suspend fun syncEpisodeWatchesForShow(showId: Long) {
-        processShowWatchesPendingDelete(showId)
-        processShowWatchesPendingAdditions(showId)
+        // Process any pending deletes
+        localStore.getEntriesWithDeleteAction(showId).also {
+            if (it.isNotEmpty()) {
+                processPendingDeletes(it)
+            }
+        }
+
+        // Process any pending adds
+        localStore.getEntriesWithAddAction(showId).also {
+            if (it.isNotEmpty()) {
+                processPendingAdditions(it)
+            }
+        }
+
         if (traktAuthState.get() == TraktAuthState.LOGGED_IN) {
             refreshShowWatchesFromRemote(showId)
             localStore.updateShowEpisodeWatchesLastRequest(showId)
@@ -112,7 +124,46 @@ class SeasonsEpisodesRepository @Inject constructor(
         return localStore.lastShowEpisodeWatchesSyncBefore(showId, Duration.ofHours(1))
     }
 
-    suspend fun addEpisodeWatch(episodeId: Long, timestamp: OffsetDateTime) {
+    suspend fun markSeasonWatched(seasonId: Long) {
+        val season = localStore.getSeason(seasonId)!!
+
+        val watchesToSave = ArrayList<EpisodeWatchEntry>()
+
+        localStore.getEpisodesInSeason(seasonId).forEach { episode ->
+            val watches = localStore.getWatchesForEpisode(episode.id!!)
+            if (watches.isEmpty()) {
+                watchesToSave += EpisodeWatchEntry(
+                        episodeId = episode.id,
+                        watchedAt = OffsetDateTime.now(),
+                        pendingAction = PendingAction.UPLOAD
+                )
+            }
+        }
+
+        if (watchesToSave.isNotEmpty()) {
+            localStore.saveWatches(watchesToSave)
+        }
+
+        // Should probably make this more granular
+        syncEpisodeWatchesForShow(season.showId)
+    }
+
+    suspend fun markSeasonUnwatched(seasonId: Long) {
+        val season = localStore.getSeason(seasonId)!!
+
+        val watches = ArrayList<EpisodeWatchEntry>()
+        localStore.getEpisodesInSeason(seasonId).forEach { episode ->
+            watches += localStore.getWatchesForEpisode(episode.id!!)
+        }
+        if (watches.isNotEmpty()) {
+            localStore.updateWatchEntriesWithAction(watches.mapNotNull { it.id }, PendingAction.DELETE)
+        }
+
+        // Should probably make this more granular
+        syncEpisodeWatchesForShow(season.showId)
+    }
+
+    suspend fun markEpisodeWatched(episodeId: Long, timestamp: OffsetDateTime) {
         val entry = EpisodeWatchEntry(
                 episodeId = episodeId,
                 watchedAt = timestamp,
@@ -123,7 +174,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         syncEpisodeWatches(episodeId)
     }
 
-    suspend fun removeAllEpisodeWatches(episodeId: Long) {
+    suspend fun markEpisodeUnwatched(episodeId: Long) {
         val watchesForEpisode = localStore.getWatchesForEpisode(episodeId)
         if (watchesForEpisode.isNotEmpty()) {
             val ids = watchesForEpisode.mapNotNull { it.id }
@@ -134,24 +185,24 @@ class SeasonsEpisodesRepository @Inject constructor(
     }
 
     private suspend fun syncEpisodeWatches(episodeId: Long) {
-        processEpisodeWatchesPendingDelete(episodeId)
-        processEpisodeWatchesPendingAdditions(episodeId)
+        val watches = localStore.getWatchesForEpisode(episodeId)
+
+        // Process any deletes first
+        watches.filter { it.pendingAction == PendingAction.DELETE }.also {
+            if (it.isNotEmpty()) {
+                processPendingDeletes(it)
+            }
+        }
+
+        // Process any uploads
+        watches.filter { it.pendingAction == PendingAction.UPLOAD }.also {
+            if (it.isNotEmpty()) {
+                processPendingAdditions(it)
+            }
+        }
+
         if (traktAuthState.get() == TraktAuthState.LOGGED_IN) {
             refreshEpisodeWatchesFromRemote(episodeId)
-        }
-    }
-
-    private suspend fun processShowWatchesPendingAdditions(showId: Long) {
-        val entries = localStore.getEntriesWithAddAction(showId)
-        if (entries.isNotEmpty()) {
-            processPendingAdditions(entries)
-        }
-    }
-
-    private suspend fun processShowWatchesPendingDelete(showId: Long) {
-        val entries = localStore.getEntriesWithDeleteAction(showId)
-        if (entries.isNotEmpty()) {
-            processPendingDeletes(entries)
         }
     }
 
@@ -182,22 +233,6 @@ class SeasonsEpisodesRepository @Inject constructor(
                     localStore.syncEpisodeWatchEntries(episodeId, it)
                 }
             }
-        }
-    }
-
-    private suspend fun processEpisodeWatchesPendingAdditions(episodeId: Long) {
-        val entries = localStore.getWatchesForEpisode(episodeId)
-                .filter { it.pendingAction == PendingAction.UPLOAD }
-        if (entries.isNotEmpty()) {
-            processPendingAdditions(entries)
-        }
-    }
-
-    private suspend fun processEpisodeWatchesPendingDelete(episodeId: Long) {
-        val entries = localStore.getWatchesForEpisode(episodeId)
-                .filter { it.pendingAction == PendingAction.DELETE }
-        if (entries.isNotEmpty()) {
-            processPendingDeletes(entries)
         }
     }
 
