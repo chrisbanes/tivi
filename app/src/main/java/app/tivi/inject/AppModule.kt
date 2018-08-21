@@ -23,6 +23,7 @@ import app.tivi.BuildConfig
 import app.tivi.TiviApplication
 import app.tivi.appinitializers.AppInitializers
 import app.tivi.appinitializers.EmojiInitializer
+import app.tivi.appinitializers.RxAndroidInitializer
 import app.tivi.appinitializers.ShowTasksInitializer
 import app.tivi.appinitializers.ThreeTenBpInitializer
 import app.tivi.appinitializers.TimberInitializer
@@ -79,11 +80,12 @@ class AppModule {
 
     @Provides
     fun provideAppManagers(
+        rxAndroidInitializer: RxAndroidInitializer,
         showTasksInitializer: ShowTasksInitializer,
         timberManager: TimberInitializer,
         threeTenManager: ThreeTenBpInitializer,
         emojiInitializer: EmojiInitializer
-    ) = AppInitializers(showTasksInitializer, timberManager, threeTenManager, emojiInitializer)
+    ) = AppInitializers(rxAndroidInitializer, showTasksInitializer, timberManager, threeTenManager, emojiInitializer)
 
     @Provides
     @Named("tmdb-api")
