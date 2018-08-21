@@ -30,7 +30,11 @@ class EpisodeWithWatches {
     @Relation(parentColumn = "id", entityColumn = "episode_id")
     var watches: List<EpisodeWatchEntry> = emptyList()
 
-    fun isWatched() = watches.isNotEmpty()
+    fun hasWatches() = watches.isNotEmpty()
+
+    fun isWatched() = watches.any {
+        it.pendingAction != PendingAction.DELETE
+    }
 
     fun hasPending() = watches.any {
         it.pendingAction != PendingAction.NOTHING

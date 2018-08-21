@@ -37,7 +37,7 @@ class SeasonWithEpisodesAndWatches {
     }
 
     @delegate:Ignore
-    val numberToWatch by lazy(LazyThreadSafetyMode.NONE) {
+    val numberAiredToWatch by lazy(LazyThreadSafetyMode.NONE) {
         episodes.count { !it.isWatched() && it.episode?.isAired() == true }
     }
 
@@ -47,7 +47,9 @@ class SeasonWithEpisodesAndWatches {
     }
 
     @delegate:Ignore
-    val numberToAir by lazy(LazyThreadSafetyMode.NONE) { numberEpisodes - numberAired }
+    val numberToAir by lazy(LazyThreadSafetyMode.NONE) {
+        numberEpisodes - numberAired
+    }
 
     @delegate:Ignore
     val numberAired by lazy(LazyThreadSafetyMode.NONE) {

@@ -157,7 +157,7 @@ fun showTitle(view: TextView, show: TiviShow) {
 
 @BindingAdapter("seasonSummaryText")
 fun seasonSummaryText(view: TextView, season: SeasonWithEpisodesAndWatches) {
-    val toWatch = season.numberToWatch
+    val toWatch = season.numberAiredToWatch
     val toAir = season.numberToAir
     val watched = season.numberWatched
 

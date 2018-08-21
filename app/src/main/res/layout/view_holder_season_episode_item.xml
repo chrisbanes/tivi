@@ -71,7 +71,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:visible="@{episodeWithWatches.isWatched()}" />
+            app:visible="@{episodeWithWatches.hasWatches()}" />
 
     </android.support.constraint.ConstraintLayout>
 
