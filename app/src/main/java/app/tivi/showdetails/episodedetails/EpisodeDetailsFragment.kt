@@ -33,6 +33,7 @@ import app.tivi.extensions.observeK
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
 import app.tivi.util.DaggerBottomSheetFragment
+import app.tivi.util.TiviDateFormatter
 import javax.inject.Inject
 
 class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
@@ -47,6 +48,7 @@ class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
     }
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var dateFormatter: TiviDateFormatter
 
     private lateinit var viewModel: EpisodeDetailsViewModel
     private lateinit var controller: EpisodeDetailsEpoxyController
@@ -75,8 +77,12 @@ class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        controller = EpisodeDetailsEpoxyController(object : EpisodeDetailsEpoxyController.Callbacks {
-        })
+        controller = EpisodeDetailsEpoxyController(
+                requireContext(),
+                dateFormatter,
+                object : EpisodeDetailsEpoxyController.Callbacks {
+                }
+        )
 
         binding.epDetailsFab.doOnLayout { fab ->
             binding.epDetailsRv.updatePadding(bottom = fab.height + fab.marginBottom + fab.marginTop)

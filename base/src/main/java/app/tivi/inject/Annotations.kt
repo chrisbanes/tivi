@@ -27,3 +27,18 @@ annotation class Trakt
 @Qualifier
 @MustBeDocumented
 annotation class Tmdb
+
+@Retention(AnnotationRetention.RUNTIME)
+@Qualifier
+@MustBeDocumented
+annotation class MediumDate
+
+@Retention(AnnotationRetention.RUNTIME)
+@Qualifier
+@MustBeDocumented
+annotation class MediumDateTime
+
+@Retention(AnnotationRetention.RUNTIME)
+@Qualifier
+@MustBeDocumented
+annotation class ShortDate

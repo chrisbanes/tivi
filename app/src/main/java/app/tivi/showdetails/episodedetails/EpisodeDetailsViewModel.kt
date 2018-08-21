@@ -26,11 +26,9 @@ import app.tivi.showdetails.episodedetails.EpisodeDetailsViewState.Action
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.Logger
 import app.tivi.util.TiviViewModel
-import io.reactivex.Flowable
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
 import org.threeten.bp.OffsetDateTime
-import org.threeten.bp.format.DateTimeFormatter
 import javax.inject.Inject
 
 class EpisodeDetailsViewModel @Inject constructor(
@@ -39,8 +37,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     private val addEpisodeWatch: AddEpisodeWatch,
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val tmdbManager: TmdbManager,
-    private val logger: Logger,
-    private val dateTimeFormatter: DateTimeFormatter
+    private val logger: Logger
 ) : TiviViewModel() {
 
     var episodeId: Long? = null
@@ -73,7 +70,6 @@ class EpisodeDetailsViewModel @Inject constructor(
                 watches.map {
                     if (it.isEmpty()) { Action.WATCH } else { Action.UNWATCH }
                 },
-                Flowable.just(dateTimeFormatter),
                 ::EpisodeDetailsViewState
         ).subscribe(_data::postValue, logger::e)
     }

@@ -20,10 +20,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="label"
-            type="String" />
+            type="CharSequence" />
 
         <variable
             name="contentDescription"
@@ -37,7 +36,6 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?android:colorBackground"
         android:contentDescription="@{contentDescription}"
         android:foreground="?android:attr/selectableItemBackground"
         android:transitionGroup="true">

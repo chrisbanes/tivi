@@ -19,14 +19,12 @@ package app.tivi.showdetails.episodedetails
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.tmdb.TmdbImageUrlProvider
-import org.threeten.bp.format.DateTimeFormatter
 
 data class EpisodeDetailsViewState(
     val episode: Episode,
     val watches: List<EpisodeWatchEntry>,
     val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    val action: Action,
-    val dateTimeFormatter: DateTimeFormatter
+    val action: Action
 ) {
     enum class Action {
         WATCH, UNWATCH

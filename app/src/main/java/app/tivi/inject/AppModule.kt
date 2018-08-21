@@ -104,10 +104,31 @@ class AppModule {
 
     @Singleton
     @Provides
+    @MediumDate
+    fun provideMediumDateFormatter(application: TiviApplication): DateTimeFormatter {
+        val dateF = AndroidDateFormat.getMediumDateFormat(application) as SimpleDateFormat
+        return DateTimeFormatter.ofPattern(dateF.toPattern())
+                .withLocale(Locale.getDefault())
+                .withZone(ZoneId.systemDefault())
+    }
+
+    @Singleton
+    @Provides
+    @MediumDateTime
     fun provideDateTimeFormatter(application: TiviApplication): DateTimeFormatter {
         val dateF = AndroidDateFormat.getMediumDateFormat(application) as SimpleDateFormat
         val timeF = AndroidDateFormat.getTimeFormat(application) as SimpleDateFormat
         return DateTimeFormatter.ofPattern("${dateF.toPattern()} ${timeF.toPattern()}")
+                .withLocale(Locale.getDefault())
+                .withZone(ZoneId.systemDefault())
+    }
+
+    @Singleton
+    @Provides
+    @ShortDate
+    fun provideShortDateFormatter(application: TiviApplication): DateTimeFormatter {
+        val dateF = AndroidDateFormat.getDateFormat(application) as SimpleDateFormat
+        return DateTimeFormatter.ofPattern(dateF.toPattern())
                 .withLocale(Locale.getDefault())
                 .withZone(ZoneId.systemDefault())
     }

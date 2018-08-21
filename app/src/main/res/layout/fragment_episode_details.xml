@@ -73,7 +73,8 @@
             app:layoutManager="android.support.v7.widget.GridLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ep_details_fanart" />
+            app:layout_constraintTop_toBottomOf="@+id/ep_details_fanart"
+            app:spanCount="3" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/ep_details_fab"
