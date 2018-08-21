@@ -42,14 +42,11 @@ import app.tivi.util.GridToGridTransitioner
 internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
     private lateinit var binding: FragmentDiscoverBinding
     private lateinit var searchView: SearchView
+    private lateinit var listItemSharedElementHelper: ListItemSharedElementHelper
 
     private lateinit var homeNavigator: HomeNavigator
 
     private val controller = DiscoverEpoxyController(object : DiscoverEpoxyController.Callbacks {
-        private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
-            ListItemSharedElementHelper(binding.summaryRv)
-        }
-
         override fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>) {
             viewModel.onTrendingHeaderClicked(homeNavigator,
                     listItemSharedElementHelper.createForItems(items))
@@ -103,6 +100,8 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
             setController(controller)
             addItemDecoration(SpacingItemDecorator(paddingLeft))
         }
+
+        listItemSharedElementHelper = ListItemSharedElementHelper(binding.summaryRv)
 
         binding.summaryToolbar.apply {
             inflateMenu(R.menu.discover_toolbar)
