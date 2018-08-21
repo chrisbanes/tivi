@@ -118,8 +118,9 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         episode: Episode
     ) = showDetailsNavigator.showEpisodeDetails(episode)
 
-    fun onMarkSeasonWatched(season: Season) {
-        launchInteractor(changeSeasonWatchedStatus, Params(season.id!!, ChangeSeasonWatchedStatus.Action.WATCHED))
+    fun onMarkSeasonWatched(season: Season, onlyAired: Boolean) {
+        launchInteractor(changeSeasonWatchedStatus,
+                Params(season.id!!, ChangeSeasonWatchedStatus.Action.WATCHED, onlyAired))
     }
 
     fun onMarkSeasonUnwatched(season: Season) {

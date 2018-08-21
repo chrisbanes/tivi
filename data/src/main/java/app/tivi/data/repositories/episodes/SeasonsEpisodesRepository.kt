@@ -124,20 +124,18 @@ class SeasonsEpisodesRepository @Inject constructor(
         return localStore.lastShowEpisodeWatchesSyncBefore(showId, Duration.ofHours(1))
     }
 
-    suspend fun markSeasonWatched(seasonId: Long) {
-        val season = localStore.getSeason(seasonId)!!
-
-        val watchesToSave = ArrayList<EpisodeWatchEntry>()
-
-        localStore.getEpisodesInSeason(seasonId).forEach { episode ->
-            val watches = localStore.getWatchesForEpisode(episode.id!!)
-            if (watches.isEmpty()) {
-                watchesToSave += EpisodeWatchEntry(
-                        episodeId = episode.id,
-                        watchedAt = OffsetDateTime.now(),
-                        pendingAction = PendingAction.UPLOAD
-                )
+    suspend fun markSeasonWatched(seasonId: Long, onlyAired: Boolean) {
+        val watchesToSave = localStore.getEpisodesInSeason(seasonId).mapNotNull { episode ->
+            if (!onlyAired || episode.firstAired?.isBefore(OffsetDateTime.now()) == true) {
+                if (!localStore.hasEpisodeBeenWatched(episode.id!!)) {
+                    return@mapNotNull EpisodeWatchEntry(
+                            episodeId = episode.id,
+                            watchedAt = OffsetDateTime.now(),
+                            pendingAction = PendingAction.UPLOAD
+                    )
+                }
             }
+            null
         }
 
         if (watchesToSave.isNotEmpty()) {
@@ -145,6 +143,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         }
 
         // Should probably make this more granular
+        val season = localStore.getSeason(seasonId)!!
         syncEpisodeWatchesForShow(season.showId)
     }
 

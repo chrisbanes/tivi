@@ -28,11 +28,11 @@ class ChangeSeasonWatchedStatus @Inject constructor(
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend operator fun invoke(executeParams: Params) = when (executeParams.action) {
-        Action.WATCHED -> seasonsEpisodesRepository.markSeasonWatched(executeParams.seasonId)
+        Action.WATCHED -> seasonsEpisodesRepository.markSeasonWatched(executeParams.seasonId, executeParams.onlyAired)
         Action.UNWATCH -> seasonsEpisodesRepository.markSeasonUnwatched(executeParams.seasonId)
     }
 
-    data class Params(val seasonId: Long, val action: Action)
+    data class Params(val seasonId: Long, val action: Action, val onlyAired: Boolean = true)
 
     enum class Action { WATCHED, UNWATCH }
 }

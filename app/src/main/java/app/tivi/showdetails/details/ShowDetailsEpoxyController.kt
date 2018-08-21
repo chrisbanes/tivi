@@ -52,7 +52,7 @@ class ShowDetailsEpoxyController(
     interface Callbacks {
         fun onRelatedShowClicked(show: TiviShow, view: View)
         fun onEpisodeClicked(episode: Episode, view: View)
-        fun onMarkSeasonWatched(season: Season)
+        fun onMarkSeasonWatched(season: Season, onlyAired: Boolean)
         fun onMarkSeasonUnwatched(season: Season)
     }
 
@@ -120,7 +120,7 @@ class ShowDetailsEpoxyController(
         } else {
             carousel {
                 id("related_shows")
-                numViewsToShowOnScreen(4f)
+                numViewsToShowOnScreen(4.5f)
                 paddingDp(4)
                 hasFixedSize(true)
                 withModelsFrom(related) { relatedEntry ->
@@ -154,7 +154,8 @@ class ShowDetailsEpoxyController(
 
                 popupMenuClickListener { menuItem ->
                     when (menuItem.itemId) {
-                        R.id.season_mark_all_watched -> callbacks.onMarkSeasonWatched(season.season!!)
+                        R.id.season_mark_all_watched -> callbacks.onMarkSeasonWatched(season.season!!, false)
+                        R.id.season_mark_aired_watched -> callbacks.onMarkSeasonWatched(season.season!!, true)
                         R.id.season_mark_all_unwatched -> callbacks.onMarkSeasonUnwatched(season.season!!)
                     }
                     true
@@ -168,7 +169,9 @@ class ShowDetailsEpoxyController(
                         id("episode_${episode.id}")
                         episodeWithWatches(episodeWithWatches)
                         spanSizeOverride(TotalSpanOverride)
-                        clickListener { view -> callbacks.onEpisodeClicked(episode, view) }
+                        clickListener { view ->
+                            callbacks.onEpisodeClicked(episode, view)
+                        }
                     }
                 }
             }

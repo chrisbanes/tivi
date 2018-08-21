@@ -149,7 +149,9 @@ class ShowDetailsFragment : TiviFragment() {
 
             override fun onMarkSeasonUnwatched(season: Season) = viewModel.onMarkSeasonUnwatched(season)
 
-            override fun onMarkSeasonWatched(season: Season) = viewModel.onMarkSeasonWatched(season)
+            override fun onMarkSeasonWatched(season: Season, onlyAired: Boolean) {
+                viewModel.onMarkSeasonWatched(season, onlyAired)
+            }
         })
 
         binding.detailsRv.setController(controller)
