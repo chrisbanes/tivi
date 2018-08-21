@@ -20,6 +20,7 @@ import android.content.Context
 import android.support.v7.widget.PopupMenu
 import android.util.ArraySet
 import android.view.View
+import androidx.core.view.forEach
 import app.tivi.DetailsRelatedItemBindingModel_
 import app.tivi.R
 import app.tivi.data.entities.Episode
@@ -145,9 +146,18 @@ class ShowDetailsEpoxyController(
 
                 popupMenuListener(object : PopupMenuButton.PopupMenuListener {
                     override fun onPreparePopupMenu(popupMenu: PopupMenu) {
-                        popupMenu.menu.run {
-                            findItem(R.id.season_mark_all_unwatched).isVisible = season.numberWatched > 0
-                            findItem(R.id.season_mark_all_watched).isVisible = season.numberWatched < season.numberAired
+                        popupMenu.menu.forEach {
+                            when (it.itemId) {
+                                R.id.season_mark_all_unwatched -> {
+                                    it.isVisible = season.numberWatched > 0
+                                }
+                                R.id.season_mark_all_watched -> {
+                                    it.isVisible = season.numberWatched < season.numberEpisodes
+                                }
+                                R.id.season_mark_aired_watched -> {
+                                    it.isVisible = season.numberWatched < season.numberAired
+                                }
+                            }
                         }
                     }
                 })
