@@ -24,9 +24,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
+import androidx.core.text.italic
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import app.tivi.R
+import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
@@ -36,6 +38,7 @@ import app.tivi.ui.MaxLinesToggleClickListener
 import app.tivi.ui.glide.GlideApp
 import app.tivi.ui.text.textAppearanceSpanForAttribute
 import app.tivi.util.ScrimUtil
+import org.threeten.bp.OffsetDateTime
 
 @BindingAdapter("tmdbPosterPath", "tmdbImageUrlProvider")
 fun loadPoster(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider?) {
@@ -152,6 +155,20 @@ fun showTitle(view: TextView, show: TiviShow) {
                 append(")")
             }
         }
+    }
+}
+
+@BindingAdapter("seasonTitleText")
+fun episodeTitleText(view: TextView, episode: Episode) {
+    val firstAired = episode.firstAired
+    if (firstAired == null || firstAired.isAfter(OffsetDateTime.now())) {
+        view.text = buildSpannedString {
+            italic {
+                append(episode.title)
+            }
+        }
+    } else {
+        view.text = episode.title
     }
 }
 

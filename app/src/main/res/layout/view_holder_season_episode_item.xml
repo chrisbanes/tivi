@@ -43,12 +43,12 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="16dp"
             android:gravity="center_vertical"
-            android:text="@{episodeWithWatches.episode.title}"
             android:textAppearance="?attr/textAppearanceBody1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/episode_watches_pending"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:seasonTitleText="@{episodeWithWatches.episode}"
             tools:text="A tale of two halves" />
 
         <ImageView
