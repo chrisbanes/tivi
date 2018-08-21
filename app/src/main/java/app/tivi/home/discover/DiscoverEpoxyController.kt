@@ -51,12 +51,11 @@ class DiscoverEpoxyController(
 
         viewState.results.forEach { result ->
             posterGridItem {
-                val id = result.id!!
-                id(id)
+                id(result.id!!)
                 tmdbImageUrlProvider(tmdbImageUrlProvider)
                 tiviShow(result)
-                clickListener { _ ->
-                    callbacks.onSearchItemClicked(id, result)
+                clickListener { model, _, _, _ ->
+                    callbacks.onSearchItemClicked(model.id(), result)
                 }
             }
         }
@@ -78,15 +77,14 @@ class DiscoverEpoxyController(
         if (trendingShows.isNotEmpty()) {
             trendingShows.take(spanCount * 2).forEach { item ->
                 posterGridItem {
-                    val id = item.generateStableId()
-                    id(id)
+                    id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
                     tiviShow(item.show)
                     annotationLabel(item.entry?.watchers.toString())
                     annotationIcon(R.drawable.ic_eye_12dp)
                     transitionName("trending_${item.show.homepage}")
-                    clickListener { _ ->
-                        callbacks.onItemClicked(id, item)
+                    clickListener { model, _, _, _ ->
+                        callbacks.onItemClicked(model.id(), item)
                     }
                 }
             }
@@ -108,13 +106,12 @@ class DiscoverEpoxyController(
         if (popularShows.isNotEmpty()) {
             popularShows.take(spanCount * 2).forEach { item ->
                 posterGridItem {
-                    val id = item.generateStableId()
-                    id(id)
+                    id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
                     tiviShow(item.show)
                     transitionName("popular_${item.show.homepage}")
-                    clickListener { _ ->
-                        callbacks.onItemClicked(id, item)
+                    clickListener { model, _, _, _ ->
+                        callbacks.onItemClicked(model.id(), item)
                     }
                 }
             }
