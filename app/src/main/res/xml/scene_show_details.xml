@@ -30,12 +30,10 @@
             app:touchAnchorSide="top" />
 
         <KeyFrameSet>
-            <!-- See https://issuetracker.google.com/issues/112546214 for why we're using percentX
-                 instead of percentY -->
             <KeyPosition
                 app:framePosition="20"
-                app:keyPositionType="pathRelative"
-                app:percentX="0.62"
+                app:keyPositionType="deltaRelative"
+                app:percentY="0.51"
                 app:target="@id/details_poster" />
 
             <!-- This looks weird. We need a quick change from elevated to not-so-elevated at 20% so we set 2 key
