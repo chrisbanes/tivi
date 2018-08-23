@@ -163,8 +163,10 @@ fun episodeTitleText(view: TextView, episode: Episode) {
     val firstAired = episode.firstAired
     if (firstAired == null || firstAired.isAfter(OffsetDateTime.now())) {
         view.text = buildSpannedString {
-            italic {
-                append(episode.title)
+            episode.title?.also { title ->
+                italic {
+                    append(title)
+                }
             }
         }
     } else {
