@@ -25,6 +25,7 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.doOnLayout
 import androidx.core.view.updatePadding
+import app.tivi.EpDetailsWatchItemBindingModel_
 import app.tivi.R
 import app.tivi.databinding.FragmentEpisodeDetailsBinding
 import app.tivi.extensions.marginBottom
@@ -34,6 +35,7 @@ import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
 import app.tivi.util.DaggerBottomSheetFragment
 import app.tivi.util.TiviDateFormatter
+import com.airbnb.epoxy.EpoxyTouchHelper
 import javax.inject.Inject
 
 class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
@@ -56,6 +58,21 @@ class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
     private lateinit var showDetailsNavigator: ShowDetailsNavigator
 
     private lateinit var binding: FragmentEpisodeDetailsBinding
+
+    private val swipeCallback = object : EpoxyTouchHelper.SwipeCallbacks<EpDetailsWatchItemBindingModel_>() {
+        override fun onSwipeCompleted(
+            model: EpDetailsWatchItemBindingModel_,
+            itemView: View,
+            position: Int,
+            direction: Int
+        ) {
+            model.watch().also(viewModel::removeWatchEntry)
+        }
+
+        override fun isSwipeEnabledForModel(model: EpDetailsWatchItemBindingModel_): Boolean {
+            return model.watch() != null
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,6 +106,11 @@ class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
         }
 
         binding.epDetailsRv.setController(controller)
+
+        EpoxyTouchHelper.initSwiping(binding.epDetailsRv)
+                .leftAndRight()
+                .withTarget(EpDetailsWatchItemBindingModel_::class.java)
+                .andCallbacks(swipeCallback)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

@@ -183,6 +183,14 @@ class SeasonsEpisodesRepository @Inject constructor(
         syncEpisodeWatches(episodeId)
     }
 
+    suspend fun removeEpisodeWatch(episodeWatchId: Long) {
+        val episodeWatch = localStore.getEpisodeWatch(episodeWatchId)
+        if (episodeWatch != null && episodeWatch.pendingAction != PendingAction.DELETE) {
+            localStore.save(episodeWatch.copy(pendingAction = PendingAction.DELETE))
+            syncEpisodeWatches(episodeWatch.episodeId)
+        }
+    }
+
     private suspend fun syncEpisodeWatches(episodeId: Long) {
         val watches = localStore.getWatchesForEpisode(episodeId)
 

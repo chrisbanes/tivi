@@ -83,7 +83,8 @@
             android:layout_margin="@dimen/spacing_normal"
             android:src="@drawable/ic_eye_24dp"
             app:layout_constraintBottom_toTopOf="@+id/ep_details_rv"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ep_details_rv" />
 
     </android.support.constraint.ConstraintLayout>
 

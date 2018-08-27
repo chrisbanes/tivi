@@ -18,7 +18,9 @@ package app.tivi.showdetails.episodedetails
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.interactors.AddEpisodeWatch
+import app.tivi.interactors.RemoveEpisodeWatch
 import app.tivi.interactors.RemoveEpisodeWatches
 import app.tivi.interactors.UpdateEpisodeDetails
 import app.tivi.interactors.UpdateEpisodeWatches
@@ -36,6 +38,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     private val updateEpisodeWatches: UpdateEpisodeWatches,
     private val addEpisodeWatch: AddEpisodeWatch,
     private val removeEpisodeWatches: RemoveEpisodeWatches,
+    private val removeEpisodeWatch: RemoveEpisodeWatch,
     private val tmdbManager: TmdbManager,
     private val logger: Logger
 ) : TiviViewModel() {
@@ -82,6 +85,10 @@ class EpisodeDetailsViewModel @Inject constructor(
         } else {
             _data.value = null
         }
+    }
+
+    fun removeWatchEntry(entry: EpisodeWatchEntry) {
+        launchInteractor(removeEpisodeWatch, RemoveEpisodeWatch.Params(entry.id!!))
     }
 
     fun markWatched() {

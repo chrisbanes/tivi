@@ -121,6 +121,8 @@ class LocalSeasonsEpisodesStore @Inject constructor(
 
     fun getWatchesForEpisode(episodeId: Long) = episodeWatchEntryDao.watchesForEpisode(episodeId)
 
+    fun getEpisodeWatch(watchId: Long) = episodeWatchEntryDao.entryWithId(watchId)
+
     fun hasEpisodeBeenWatched(episodeId: Long) = episodeWatchEntryDao.watchCountForEpisode(episodeId) > 0
 
     fun getEntriesWithAddAction(showId: Long) = episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId)
