@@ -26,6 +26,8 @@ import app.tivi.R
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
+import app.tivi.databinding.ViewHolderDetailsSeasonBinding
 import app.tivi.detailsBadge
 import app.tivi.detailsSeason
 import app.tivi.detailsSummary
@@ -144,23 +146,7 @@ class ShowDetailsEpoxyController(
                 spanSizeOverride(TotalSpanOverride)
                 clickListener { _ -> toggleSeasonExpanded(season.season!!.id!!) }
 
-                popupMenuListener(object : PopupMenuButton.PopupMenuListener {
-                    override fun onPreparePopupMenu(popupMenu: PopupMenu) {
-                        popupMenu.menu.forEach {
-                            when (it.itemId) {
-                                R.id.season_mark_all_unwatched -> {
-                                    it.isVisible = season.numberWatched > 0
-                                }
-                                R.id.season_mark_all_watched -> {
-                                    it.isVisible = season.numberWatched < season.numberEpisodes
-                                }
-                                R.id.season_mark_aired_watched -> {
-                                    it.isVisible = season.numberWatched < season.numberAired
-                                }
-                            }
-                        }
-                    }
-                })
+                popupMenuListener(SeasonPopupMenuListener(season))
 
                 popupMenuClickListener { menuItem ->
                     when (menuItem.itemId) {
@@ -169,6 +155,12 @@ class ShowDetailsEpoxyController(
                         R.id.season_mark_all_unwatched -> callbacks.onMarkSeasonUnwatched(season.season!!)
                     }
                     true
+                }
+
+                onBind { _, view, _ ->
+                    val binding = view.dataBinding as ViewHolderDetailsSeasonBinding
+                    val listener = binding.popupMenuListener as SeasonPopupMenuListener
+                    listener.season = binding.season!!
                 }
             }
 
@@ -198,5 +190,25 @@ class ShowDetailsEpoxyController(
         }
         // Trigger a model refresh
         requestModelBuild()
+    }
+
+    private class SeasonPopupMenuListener(
+        var season: SeasonWithEpisodesAndWatches
+    ) : PopupMenuButton.PopupMenuListener {
+        override fun onPreparePopupMenu(popupMenu: PopupMenu) {
+            popupMenu.menu.forEach {
+                when (it.itemId) {
+                    R.id.season_mark_all_unwatched -> {
+                        it.isVisible = season.numberWatched > 0
+                    }
+                    R.id.season_mark_all_watched -> {
+                        it.isVisible = season.numberWatched < season.numberEpisodes
+                    }
+                    R.id.season_mark_aired_watched -> {
+                        it.isVisible = season.numberWatched < season.numberAired
+                    }
+                }
+            }
+        }
     }
 }
