@@ -37,7 +37,7 @@ import app.tivi.data.PaginatedEntry
         ]
 )
 data class PopularShowEntry(
-    @PrimaryKey(autoGenerate = true) override val id: Long? = null,
+    @PrimaryKey(autoGenerate = true) override val id: Long = 0,
     @ColumnInfo(name = "show_id") override val showId: Long,
     @ColumnInfo(name = "page") override val page: Int,
     @ColumnInfo(name = "page_order") val pageOrder: Int

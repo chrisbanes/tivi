@@ -45,7 +45,7 @@ class LocalFollowedShowsStore @Inject constructor(
     private val syncer = syncerForEntity(
             followedShowsDao,
             { showDao.getTraktIdForShowId(it.showId)!! },
-            { entity, id -> entity.copy(id = id) }
+            { entity, id -> entity.copy(id = id ?: 0) }
     )
 
     fun getEntryForShowId(showId: Long): FollowedShowEntry? = followedShowsDao.entryWithShowId(showId)

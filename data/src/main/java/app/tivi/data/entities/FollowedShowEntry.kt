@@ -39,7 +39,7 @@ import org.threeten.bp.OffsetDateTime
         ]
 )
 data class FollowedShowEntry(
-    @PrimaryKey(autoGenerate = true) override val id: Long? = null,
+    @PrimaryKey(autoGenerate = true) override val id: Long = 0,
     @ColumnInfo(name = "show_id") override val showId: Long,
     @ColumnInfo(name = "followed_at") val followedAt: OffsetDateTime? = null,
     @ColumnInfo(name = "pending_action") val pendingAction: PendingAction = PendingAction.NOTHING

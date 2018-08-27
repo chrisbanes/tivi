@@ -17,7 +17,7 @@
 package app.tivi.data.entities
 
 interface TiviEntity {
-    val id: Long?
+    val id: Long
 }
 
 interface TraktIdEntity {

@@ -39,7 +39,7 @@ import org.threeten.bp.OffsetDateTime
         ]
 )
 data class EpisodeWatchEntry(
-    @PrimaryKey(autoGenerate = true) override val id: Long? = null,
+    @PrimaryKey(autoGenerate = true) override val id: Long = 0,
     @ColumnInfo(name = "episode_id") val episodeId: Long,
     @ColumnInfo(name = "trakt_id") val traktId: Long? = null,
     @ColumnInfo(name = "watched_at") val watchedAt: OffsetDateTime,
