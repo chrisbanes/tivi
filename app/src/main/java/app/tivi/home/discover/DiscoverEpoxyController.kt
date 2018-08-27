@@ -51,7 +51,7 @@ class DiscoverEpoxyController(
 
         viewState.results.forEach { result ->
             posterGridItem {
-                id(result.id!!)
+                id(result.id)
                 tmdbImageUrlProvider(tmdbImageUrlProvider)
                 tiviShow(result)
                 clickListener { model, _, _, _ ->

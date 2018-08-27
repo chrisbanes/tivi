@@ -56,8 +56,8 @@ class EpisodeWatchEntryTest : BaseDatabaseTest() {
     @Test(expected = SQLiteConstraintException::class)
     fun insert_withSameTraktId() {
         episodeWatchEntryDao.insert(episodeWatch1)
-        // Make a copy with a null id
-        val copy = episodeWatch1.copy(id = null)
+        // Make a copy with a 0 id
+        val copy = episodeWatch1.copy(id = 0)
         episodeWatchEntryDao.insert(copy)
     }
 

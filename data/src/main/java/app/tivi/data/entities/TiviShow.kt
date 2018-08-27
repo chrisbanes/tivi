@@ -27,9 +27,10 @@ import org.threeten.bp.OffsetDateTime
         indices = [
             Index(value = ["trakt_id"], unique = true),
             Index(value = ["tmdb_id"], unique = true)
-        ])
+        ]
+)
 data class TiviShow(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override val id: Long? = null,
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override val id: Long = 0,
     @ColumnInfo(name = "title") val title: String? = null,
     @ColumnInfo(name = "original_title") val originalTitle: String? = null,
     @ColumnInfo(name = "trakt_id") override val traktId: Int? = null,
@@ -47,7 +48,7 @@ data class TiviShow(
     @ColumnInfo(name = "runtime") val runtime: Int? = null,
     @ColumnInfo(name = "genres") val _genres: String? = null
 ) : TiviEntity, TraktIdEntity, TmdbIdEntity {
-    @Ignore constructor() : this(null)
+    @Ignore constructor() : this(0)
 
     @delegate:Ignore
     val genres by lazy(LazyThreadSafetyMode.NONE) {

@@ -31,6 +31,6 @@ interface EntryWithShow<ET : Entry> {
         }
 
     fun generateStableId(): Long {
-        return Objects.hash(entry!!::class, show.id!!).toLong()
+        return Objects.hash(entry!!::class, show.id).toLong()
     }
 }

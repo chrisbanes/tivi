@@ -46,7 +46,7 @@ import app.tivi.data.MultipleEntry
         ]
 )
 data class RelatedShowEntry(
-    @PrimaryKey(autoGenerate = true) override val id: Long? = null,
+    @PrimaryKey(autoGenerate = true) override val id: Long = 0,
     @ColumnInfo(name = "show_id") override val showId: Long,
     @ColumnInfo(name = "other_show_id") override val otherShowId: Long,
     @ColumnInfo(name = "order_index") val orderIndex: Int

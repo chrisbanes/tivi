@@ -44,7 +44,7 @@ class LocalSeasonsEpisodesStore @Inject constructor(
     private val syncer = syncerForEntity(
             episodeWatchEntryDao,
             { it.traktId },
-            { entity, id -> entity.copy(id = id) }
+            { entity, id -> entity.copy(id = id ?: 0) }
     )
 
     fun observeEpisode(episodeId: Long): Flowable<Episode> {

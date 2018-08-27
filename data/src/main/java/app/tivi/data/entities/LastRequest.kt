@@ -27,7 +27,7 @@ import org.threeten.bp.Instant
         indices = [Index(value = ["request", "entity_id"], unique = true)]
 )
 data class LastRequest(
-    @PrimaryKey @ColumnInfo(name = "id") override val id: Long? = null,
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override val id: Long = 0,
     @ColumnInfo(name = "request") val request: Request,
     @ColumnInfo(name = "entity_id") val entityId: Long,
     @ColumnInfo(name = "timestamp") val timestamp: Instant
