@@ -43,14 +43,14 @@ class EpisodesTest : BaseDatabaseTest() {
     @Test
     fun insert() {
         episodeDao.insert(episodeOne)
-        assertThat(episodeDao.episodeWithId(episodeOne.id!!), `is`(episodeOne))
+        assertThat(episodeDao.episodeWithId(episodeOne.id), `is`(episodeOne))
     }
 
     @Test(expected = SQLiteConstraintException::class)
     fun insert_withSameTraktId() {
         episodeDao.insert(episodeOne)
-        // Make a copy with a null id
-        val copy = episodeOne.copy(id = null)
+        // Make a copy with a 0 id
+        val copy = episodeOne.copy(id = 0)
         episodeDao.insert(copy)
     }
 
@@ -58,7 +58,7 @@ class EpisodesTest : BaseDatabaseTest() {
     fun delete() {
         episodeDao.insert(episodeOne)
         episodeDao.delete(episodeOne)
-        assertThat(episodeDao.episodeWithId(episodeOne.id!!), `is`(nullValue()))
+        assertThat(episodeDao.episodeWithId(episodeOne.id), `is`(nullValue()))
     }
 
     @Test
@@ -66,12 +66,12 @@ class EpisodesTest : BaseDatabaseTest() {
         episodeDao.insert(episodeOne)
         // Now delete season
         deleteSeason(db)
-        assertThat(episodeDao.episodeWithId(episodeOne.id!!), `is`(nullValue()))
+        assertThat(episodeDao.episodeWithId(episodeOne.id), `is`(nullValue()))
     }
 
     @Test
     fun showIdForEpisodeId() {
         episodeDao.insert(episodeOne)
-        assertThat(episodeDao.showIdForEpisodeId(episodeOne.id!!), `is`(showId))
+        assertThat(episodeDao.showIdForEpisodeId(episodeOne.id), `is`(showId))
     }
 }

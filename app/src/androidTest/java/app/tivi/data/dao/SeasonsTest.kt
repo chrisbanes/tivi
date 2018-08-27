@@ -52,8 +52,8 @@ class SeasonsTest : BaseDatabaseTest() {
     fun insert_withSameTraktId() {
         seasonsDao.insert(seasonOne)
 
-        // Make a copy with a null id
-        val copy = seasonOne.copy(id = null)
+        // Make a copy with a 0 id
+        val copy = seasonOne.copy(id = 0)
 
         seasonsDao.insert(copy)
     }

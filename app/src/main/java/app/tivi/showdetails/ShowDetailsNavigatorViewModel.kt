@@ -30,13 +30,11 @@ class ShowDetailsNavigatorViewModel @Inject constructor(
     private val appNavigatorProvider: Provider<AppNavigator>
 ) : ViewModel(), ShowDetailsNavigator {
     override fun showShowDetails(show: TiviShow, sharedElements: SharedElementHelper?) {
-        if (show.id != null) {
-            appNavigatorProvider.get().startShowDetails(show.id!!, sharedElements)
-        }
+        appNavigatorProvider.get().startShowDetails(show.id, sharedElements)
     }
 
     override fun showEpisodeDetails(episode: Episode) {
-        _events.value = ShowEpisodeDetailsEvent(episode.id!!)
+        _events.value = ShowEpisodeDetailsEvent(episode.id)
     }
 
     override fun navigateUp() {

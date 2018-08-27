@@ -46,9 +46,7 @@ class HomeNavigatorViewModel @Inject constructor(
     }
 
     override fun showShowDetails(show: TiviShow, sharedElements: SharedElementHelper?) {
-        if (show.id != null) {
-            appNavigatorProvider.get().startShowDetails(show.id!!, sharedElements)
-        }
+        appNavigatorProvider.get().startShowDetails(show.id, sharedElements)
     }
 
     override fun onUpClicked() {
