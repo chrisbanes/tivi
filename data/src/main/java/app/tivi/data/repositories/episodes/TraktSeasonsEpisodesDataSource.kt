@@ -22,6 +22,7 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.Season
 import app.tivi.data.mappers.EpisodeIdToTraktIdMapper
+import app.tivi.data.mappers.SeasonIdToTraktIdMapper
 import app.tivi.data.mappers.ShowIdToTraktIdMapper
 import app.tivi.data.mappers.TraktHistoryEntryToEpisode
 import app.tivi.data.mappers.TraktHistoryItemToEpisodeWatchEntry
@@ -43,6 +44,7 @@ import javax.inject.Provider
 
 class TraktSeasonsEpisodesDataSource @Inject constructor(
     private val showIdToTraktIdMapper: ShowIdToTraktIdMapper,
+    private val seasonIdToTraktIdMapper: SeasonIdToTraktIdMapper,
     private val episodeIdToTraktIdMapper: EpisodeIdToTraktIdMapper,
     private val seasonsService: Provider<Seasons>,
     private val usersService: Provider<Users>,
@@ -62,6 +64,14 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
     override suspend fun getShowEpisodeWatches(showId: Long): Result<List<Pair<Episode, EpisodeWatchEntry>>> {
         return retrofitRunner.executeForResponse(pairMapperOf(episodeMapper, historyItemMapper)) {
             usersService.get().history(UserSlug.ME, HistoryType.SHOWS, showIdToTraktIdMapper.map(showId),
+                    0, 10000, Extended.NOSEASONS, null, null)
+                    .executeWithRetry()
+        }
+    }
+
+    override suspend fun getSeasonWatches(seasonId: Long): Result<List<Pair<Episode, EpisodeWatchEntry>>> {
+        return retrofitRunner.executeForResponse(pairMapperOf(episodeMapper, historyItemMapper)) {
+            usersService.get().history(UserSlug.ME, HistoryType.SEASONS, seasonIdToTraktIdMapper.map(seasonId),
                     0, 10000, Extended.NOSEASONS, null, null)
                     .executeWithRetry()
         }

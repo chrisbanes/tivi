@@ -54,7 +54,7 @@
             android:id="@+id/ep_details_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_margin="@dimen/spacing_normal"
             android:elevation="4dp"
             android:ellipsize="end"
             android:text="@{episode.title}"
@@ -73,16 +73,18 @@
             app:layoutManager="android.support.v7.widget.GridLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ep_details_fanart" />
+            app:layout_constraintTop_toBottomOf="@+id/ep_details_fanart"
+            app:spanCount="3" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/ep_details_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_margin="@dimen/spacing_normal"
             android:src="@drawable/ic_eye_24dp"
             app:layout_constraintBottom_toTopOf="@+id/ep_details_rv"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ep_details_rv" />
 
     </android.support.constraint.ConstraintLayout>
 

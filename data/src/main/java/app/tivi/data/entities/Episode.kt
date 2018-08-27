@@ -52,4 +52,9 @@ data class Episode(
     companion object {
         val EMPTY = Episode(seasonId = 0)
     }
+
+    fun isAired() = when {
+        firstAired != null -> firstAired.isBefore(OffsetDateTime.now())
+        else -> false
+    }
 }

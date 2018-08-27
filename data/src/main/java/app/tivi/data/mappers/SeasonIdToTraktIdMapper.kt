@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails.episodedetails
+package app.tivi.data.mappers
 
-import app.tivi.data.entities.Episode
-import app.tivi.data.entities.EpisodeWatchEntry
-import app.tivi.tmdb.TmdbImageUrlProvider
+import app.tivi.data.daos.SeasonsDao
+import javax.inject.Inject
+import javax.inject.Singleton
 
-data class EpisodeDetailsViewState(
-    val episode: Episode,
-    val watches: List<EpisodeWatchEntry>,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    val action: Action
-) {
-    enum class Action {
-        WATCH, UNWATCH
+@Singleton
+class SeasonIdToTraktIdMapper @Inject constructor(
+    private val dao: SeasonsDao
+) : Mapper<Long, Int> {
+    override fun map(from: Long): Int {
+        return dao.traktIdForId(from) ?: throw IllegalArgumentException("Trakt Id for season id $from does not exist")
     }
 }

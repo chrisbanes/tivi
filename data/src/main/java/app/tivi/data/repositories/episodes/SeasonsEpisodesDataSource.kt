@@ -25,6 +25,7 @@ interface SeasonsEpisodesDataSource {
     suspend fun getSeasonsEpisodes(showId: Long): Result<List<Pair<Season, List<Episode>>>>
     suspend fun getShowEpisodeWatches(showId: Long): Result<List<Pair<Episode, EpisodeWatchEntry>>>
     suspend fun getEpisodeWatches(episodeId: Long): Result<List<EpisodeWatchEntry>>
+    suspend fun getSeasonWatches(seasonId: Long): Result<List<Pair<Episode, EpisodeWatchEntry>>>
     suspend fun addEpisodeWatches(watches: List<EpisodeWatchEntry>): Result<Unit>
     suspend fun removeEpisodeWatches(watches: List<EpisodeWatchEntry>): Result<Unit>
 }

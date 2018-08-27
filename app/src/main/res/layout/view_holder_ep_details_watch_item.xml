@@ -29,7 +29,7 @@
 
         <variable
             name="dateTimeFormatter"
-            type="org.threeten.bp.format.DateTimeFormatter" />
+            type="app.tivi.util.TiviDateFormatter" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -40,10 +40,10 @@
             android:id="@+id/watch_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginEnd="@dimen/spacing_small"
+            android:layout_marginStart="@dimen/spacing_normal"
             android:ellipsize="end"
-            android:text="@{dateTimeFormatter.format(watch.watchedAt)}"
+            android:text="@{dateTimeFormatter.formatMediumDateTime(watch.watchedAt)}"
             android:textAppearance="?attr/textAppearanceBody1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/watch_ic_sync"
@@ -55,7 +55,7 @@
             android:id="@+id/watch_ic_sync"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="@dimen/spacing_small"
             android:src="@drawable/ic_upload_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/watch_ic_watch"
@@ -66,7 +66,7 @@
             android:id="@+id/watch_ic_watch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="@dimen/spacing_normal"
             android:src="@{watch.pendingAction != PendingAction.DELETE ? @drawable/ic_eye_24dp : @drawable/ic_eye_off_24dp}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -18,7 +18,9 @@ package app.tivi.showdetails.episodedetails
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.interactors.AddEpisodeWatch
+import app.tivi.interactors.RemoveEpisodeWatch
 import app.tivi.interactors.RemoveEpisodeWatches
 import app.tivi.interactors.UpdateEpisodeDetails
 import app.tivi.interactors.UpdateEpisodeWatches
@@ -26,11 +28,9 @@ import app.tivi.showdetails.episodedetails.EpisodeDetailsViewState.Action
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.Logger
 import app.tivi.util.TiviViewModel
-import io.reactivex.Flowable
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
 import org.threeten.bp.OffsetDateTime
-import org.threeten.bp.format.DateTimeFormatter
 import javax.inject.Inject
 
 class EpisodeDetailsViewModel @Inject constructor(
@@ -38,9 +38,9 @@ class EpisodeDetailsViewModel @Inject constructor(
     private val updateEpisodeWatches: UpdateEpisodeWatches,
     private val addEpisodeWatch: AddEpisodeWatch,
     private val removeEpisodeWatches: RemoveEpisodeWatches,
+    private val removeEpisodeWatch: RemoveEpisodeWatch,
     private val tmdbManager: TmdbManager,
-    private val logger: Logger,
-    private val dateTimeFormatter: DateTimeFormatter
+    private val logger: Logger
 ) : TiviViewModel() {
 
     var episodeId: Long? = null
@@ -73,7 +73,6 @@ class EpisodeDetailsViewModel @Inject constructor(
                 watches.map {
                     if (it.isEmpty()) { Action.WATCH } else { Action.UNWATCH }
                 },
-                Flowable.just(dateTimeFormatter),
                 ::EpisodeDetailsViewState
         ).subscribe(_data::postValue, logger::e)
     }
@@ -86,6 +85,10 @@ class EpisodeDetailsViewModel @Inject constructor(
         } else {
             _data.value = null
         }
+    }
+
+    fun removeWatchEntry(entry: EpisodeWatchEntry) {
+        launchInteractor(removeEpisodeWatch, RemoveEpisodeWatch.Params(entry.id!!))
     }
 
     fun markWatched() {

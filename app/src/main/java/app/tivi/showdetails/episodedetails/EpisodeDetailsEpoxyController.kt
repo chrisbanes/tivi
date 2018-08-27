@@ -16,15 +16,19 @@
 
 package app.tivi.showdetails.episodedetails
 
+import android.content.Context
 import app.tivi.R
-import app.tivi.epDetailsFirstAiredItem
+import app.tivi.detailsBadge
 import app.tivi.epDetailsSummary
 import app.tivi.epDetailsWatchItem
 import app.tivi.header
 import app.tivi.ui.epoxy.TotalSpanOverride
+import app.tivi.util.TiviDateFormatter
 import com.airbnb.epoxy.TypedEpoxyController
 
 class EpisodeDetailsEpoxyController(
+    private val context: Context,
+    private val dateFormatter: TiviDateFormatter,
     private val callbacks: Callbacks
 ) : TypedEpoxyController<EpisodeDetailsViewState>() {
 
@@ -33,18 +37,29 @@ class EpisodeDetailsEpoxyController(
     }
 
     override fun buildModels(viewState: EpisodeDetailsViewState) {
+        val episode = viewState.episode
+
+        episode.traktRating?.also { rating ->
+            detailsBadge {
+                val ratingOutOfOneHundred = Math.round(rating * 10)
+                id("rating")
+                label(context.getString(R.string.percentage_format, ratingOutOfOneHundred))
+                icon(R.drawable.ic_details_rating)
+                contentDescription(context.getString(R.string.rating_content_description_format, ratingOutOfOneHundred))
+            }
+        }
+        episode.firstAired?.also { firstAired ->
+            detailsBadge {
+                id("aired")
+                label(dateFormatter.formatShortRelativeTime(firstAired))
+                icon(R.drawable.ic_details_date)
+            }
+        }
+
         epDetailsSummary {
             id("episode_summary")
-            episode(viewState.episode)
+            episode(episode)
             spanSizeOverride(TotalSpanOverride)
-        }
-        if (viewState.episode.firstAired != null) {
-            epDetailsFirstAiredItem {
-                id("first_aired")
-                episode(viewState.episode)
-                dateTimeFormatter(viewState.dateTimeFormatter)
-                spanSizeOverride(TotalSpanOverride)
-            }
         }
 
         if (viewState.watches.isNotEmpty()) {
@@ -56,7 +71,7 @@ class EpisodeDetailsEpoxyController(
             for (entry in viewState.watches) {
                 epDetailsWatchItem {
                     id("watch_${entry.id}")
-                    dateTimeFormatter(viewState.dateTimeFormatter)
+                    dateTimeFormatter(dateFormatter)
                     watch(entry)
                     spanSizeOverride(TotalSpanOverride)
                 }

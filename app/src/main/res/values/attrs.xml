@@ -26,4 +26,8 @@
         <attr name="topLeftCutSize" format="dimension" />
         <attr name="backgroundColor" format="color" />
     </declare-styleable>
+
+    <declare-styleable name="PopupMenuButton">
+        <attr name="menu" />
+    </declare-styleable>
 </resources>

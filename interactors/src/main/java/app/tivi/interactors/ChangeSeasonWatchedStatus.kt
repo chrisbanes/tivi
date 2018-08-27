@@ -19,18 +19,20 @@ package app.tivi.interactors
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
-import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 
-class AddEpisodeWatch @Inject constructor(
+class ChangeSeasonWatchedStatus @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository
-) : Interactor<AddEpisodeWatch.Params> {
+) : Interactor<ChangeSeasonWatchedStatus.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(executeParams: Params) {
-        seasonsEpisodesRepository.markEpisodeWatched(executeParams.episodeId, executeParams.timestamp)
+    override suspend operator fun invoke(executeParams: Params) = when (executeParams.action) {
+        Action.WATCHED -> seasonsEpisodesRepository.markSeasonWatched(executeParams.seasonId, executeParams.onlyAired)
+        Action.UNWATCH -> seasonsEpisodesRepository.markSeasonUnwatched(executeParams.seasonId)
     }
 
-    data class Params(val episodeId: Long, val timestamp: OffsetDateTime)
+    data class Params(val seasonId: Long, val action: Action, val onlyAired: Boolean = true)
+
+    enum class Action { WATCHED, UNWATCH }
 }

@@ -32,7 +32,7 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:layout_height="56dp"
         android:background="?android:attr/selectableItemBackground"
         android:onClick="@{clickListener}">
 
@@ -40,22 +40,22 @@
             android:id="@+id/episode_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginEnd="@dimen/spacing_small"
+            android:layout_marginStart="@dimen/spacing_normal"
             android:gravity="center_vertical"
-            android:text="@{episodeWithWatches.episode.title}"
             android:textAppearance="?attr/textAppearanceBody1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/episode_watches_pending"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:seasonTitleText="@{episodeWithWatches.episode}"
             tools:text="A tale of two halves" />
 
         <ImageView
             android:id="@+id/episode_watches_pending"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="@dimen/spacing_small"
             android:src="@drawable/ic_upload_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/episode_watched"
@@ -66,12 +66,12 @@
             android:id="@+id/episode_watched"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="@dimen/spacing_normal"
             android:src="@{episodeWithWatches.onlyPendingDeletes() ? @drawable/ic_eye_off_24dp : @drawable/ic_eye_24dp}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:visible="@{episodeWithWatches.isWatched()}" />
+            app:visible="@{episodeWithWatches.hasWatches()}" />
 
     </android.support.constraint.ConstraintLayout>
 

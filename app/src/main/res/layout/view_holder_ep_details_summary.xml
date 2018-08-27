@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:padding="16dp"
+        android:padding="@dimen/spacing_normal"
         android:text="@{episode.summary}"
         android:textAppearance="?attr/textAppearanceBody1"
         app:maxLinesToggle="@{@integer/details_summary_collapsed_lines}"

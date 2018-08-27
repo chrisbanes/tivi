@@ -27,6 +27,9 @@ abstract class EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry> {
     @Query("SELECT * FROM episode_watch_entries WHERE episode_id = :episodeId")
     abstract fun watchesForEpisode(episodeId: Long): List<EpisodeWatchEntry>
 
+    @Query("SELECT COUNT(id) FROM episode_watch_entries WHERE episode_id = :episodeId")
+    abstract fun watchCountForEpisode(episodeId: Long): Int
+
     @Query("SELECT * FROM episode_watch_entries WHERE episode_id = :episodeId")
     abstract fun watchesForEpisodeFlowable(episodeId: Long): Flowable<List<EpisodeWatchEntry>>
 

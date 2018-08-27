@@ -25,6 +25,7 @@ import app.tivi.appinitializers.AppInitializers
 import app.tivi.appinitializers.EmojiInitializer
 import app.tivi.appinitializers.RxAndroidInitializer
 import app.tivi.appinitializers.ShowTasksInitializer
+import app.tivi.appinitializers.SnappingInitializer
 import app.tivi.appinitializers.ThreeTenBpInitializer
 import app.tivi.appinitializers.TimberInitializer
 import app.tivi.util.AppCoroutineDispatchers
@@ -84,8 +85,10 @@ class AppModule {
         showTasksInitializer: ShowTasksInitializer,
         timberManager: TimberInitializer,
         threeTenManager: ThreeTenBpInitializer,
-        emojiInitializer: EmojiInitializer
-    ) = AppInitializers(rxAndroidInitializer, showTasksInitializer, timberManager, threeTenManager, emojiInitializer)
+        emojiInitializer: EmojiInitializer,
+        snappingInitializer: SnappingInitializer
+    ) = AppInitializers(rxAndroidInitializer, showTasksInitializer, timberManager, threeTenManager,
+            emojiInitializer, snappingInitializer)
 
     @Provides
     @Named("tmdb-api")
@@ -104,10 +107,31 @@ class AppModule {
 
     @Singleton
     @Provides
+    @MediumDate
+    fun provideMediumDateFormatter(application: TiviApplication): DateTimeFormatter {
+        val dateF = AndroidDateFormat.getMediumDateFormat(application) as SimpleDateFormat
+        return DateTimeFormatter.ofPattern(dateF.toPattern())
+                .withLocale(Locale.getDefault())
+                .withZone(ZoneId.systemDefault())
+    }
+
+    @Singleton
+    @Provides
+    @MediumDateTime
     fun provideDateTimeFormatter(application: TiviApplication): DateTimeFormatter {
         val dateF = AndroidDateFormat.getMediumDateFormat(application) as SimpleDateFormat
         val timeF = AndroidDateFormat.getTimeFormat(application) as SimpleDateFormat
         return DateTimeFormatter.ofPattern("${dateF.toPattern()} ${timeF.toPattern()}")
+                .withLocale(Locale.getDefault())
+                .withZone(ZoneId.systemDefault())
+    }
+
+    @Singleton
+    @Provides
+    @ShortDate
+    fun provideShortDateFormatter(application: TiviApplication): DateTimeFormatter {
+        val dateF = AndroidDateFormat.getDateFormat(application) as SimpleDateFormat
+        return DateTimeFormatter.ofPattern(dateF.toPattern())
                 .withLocale(Locale.getDefault())
                 .withZone(ZoneId.systemDefault())
     }

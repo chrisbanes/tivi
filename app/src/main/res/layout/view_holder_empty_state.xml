@@ -40,7 +40,7 @@
             android:id="@+id/show_poster"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="@dimen/spacing_small"
             android:scaleType="centerCrop"
             android:text="@{emoji ?? @string/empty_emoji}"
             android:textColor="@android:color/white"

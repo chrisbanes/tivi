@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2018 Google, Inc.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="season"
+            type="app.tivi.data.resultentities.SeasonWithEpisodesAndWatches" />
+
+        <variable
+            name="clickListener"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="popupMenuClickListener"
+            type="android.support.v7.widget.PopupMenu.OnMenuItemClickListener" />
+
+        <variable
+            name="popupMenuListener"
+            type="app.tivi.ui.widget.PopupMenuButton.PopupMenuListener" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:onClick="@{clickListener}"
+        android:transitionGroup="true">
+
+        <TextView
+            android:id="@+id/season_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spacing_normal"
+            android:layout_marginStart="@dimen/spacing_normal"
+            android:layout_marginTop="@dimen/spacing_normal"
+            android:gravity="center_vertical"
+            android:text="@{season.season.title}"
+            android:textAppearance="?attr/textAppearanceBody1"
+            app:layout_constraintEnd_toStartOf="@id/season_menu_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Season 01" />
+
+        <TextView
+            android:id="@+id/season_summary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_micro"
+            app:layout_constraintEnd_toStartOf="@id/season_menu_button"
+            app:layout_constraintStart_toStartOf="@+id/season_title"
+            app:layout_constraintTop_toBottomOf="@+id/season_title"
+            app:seasonSummaryText="@{season}"
+            tools:text="2 to watch • 4 to air • 8 watched" />
+
+        <ProgressBar
+            android:id="@+id/season_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_normal"
+            android:layout_marginTop="@dimen/spacing_micro"
+            android:max="@{season.numberEpisodes}"
+            android:progress="@{season.numberWatched}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/season_menu_button"
+            app:layout_constraintStart_toStartOf="@+id/season_summary"
+            app:layout_constraintTop_toBottomOf="@id/season_summary"
+            tools:progress="50" />
+
+        <app.tivi.ui.widget.PopupMenuButton
+            android:id="@+id/season_menu_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="@dimen/spacing_small"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:menu="@menu/popup_season"
+            app:popupMenuClickListener="@{popupMenuClickListener}"
+            app:popupMenuListener="@{popupMenuListener}" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>
