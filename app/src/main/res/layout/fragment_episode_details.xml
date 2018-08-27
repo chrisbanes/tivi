@@ -54,7 +54,7 @@
             android:id="@+id/ep_details_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_margin="@dimen/spacing_normal"
             android:elevation="4dp"
             android:ellipsize="end"
             android:text="@{episode.title}"
@@ -80,7 +80,7 @@
             android:id="@+id/ep_details_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_margin="@dimen/spacing_normal"
             android:src="@drawable/ic_eye_24dp"
             app:layout_constraintBottom_toTopOf="@+id/ep_details_rv"
             app:layout_constraintEnd_toEndOf="parent" />

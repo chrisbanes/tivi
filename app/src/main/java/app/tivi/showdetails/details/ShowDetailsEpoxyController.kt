@@ -29,15 +29,16 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.databinding.ViewHolderDetailsSeasonBinding
 import app.tivi.detailsBadge
+import app.tivi.detailsHeader
 import app.tivi.detailsSeason
 import app.tivi.detailsSummary
 import app.tivi.emptyState
-import app.tivi.header
 import app.tivi.seasonEpisodeItem
 import app.tivi.ui.epoxy.TotalSpanOverride
 import app.tivi.ui.epoxy.carousel
 import app.tivi.ui.epoxy.withModelsFrom
 import app.tivi.ui.widget.PopupMenuButton
+import com.airbnb.epoxy.Carousel
 import com.airbnb.epoxy.EpoxyController
 
 class ShowDetailsEpoxyController(
@@ -109,7 +110,7 @@ class ShowDetailsEpoxyController(
             spanSizeOverride(TotalSpanOverride)
         }
 
-        header {
+        detailsHeader {
             id("related_header")
             title(R.string.details_related)
             spanSizeOverride(TotalSpanOverride)
@@ -123,9 +124,13 @@ class ShowDetailsEpoxyController(
         } else {
             carousel {
                 id("related_shows")
-                numViewsToShowOnScreen(4.5f)
-                paddingDp(4)
+                numViewsToShowOnScreen(5.25f)
                 hasFixedSize(true)
+
+                val small = context.resources.getDimensionPixelSize(R.dimen.spacing_small)
+                val micro = context.resources.getDimensionPixelSize(R.dimen.spacing_micro)
+                padding(Carousel.Padding(micro, micro, small, small, micro))
+
                 withModelsFrom(related) { relatedEntry ->
                     val relatedShow = relatedEntry.show
                     DetailsRelatedItemBindingModel_()
@@ -139,40 +144,48 @@ class ShowDetailsEpoxyController(
             }
         }
 
-        viewState.seasons.forEach { season ->
-            detailsSeason {
-                id("season_${season.season!!.id}")
-                season(season)
+        if (viewState.seasons.isNotEmpty()) {
+            detailsHeader {
+                id("title_seasons")
+                title(R.string.show_details_seasons)
                 spanSizeOverride(TotalSpanOverride)
-                clickListener { _ -> toggleSeasonExpanded(season.season!!.id!!) }
-
-                popupMenuListener(SeasonPopupMenuListener(season))
-
-                popupMenuClickListener { menuItem ->
-                    when (menuItem.itemId) {
-                        R.id.season_mark_all_watched -> callbacks.onMarkSeasonWatched(season.season!!, false)
-                        R.id.season_mark_aired_watched -> callbacks.onMarkSeasonWatched(season.season!!, true)
-                        R.id.season_mark_all_unwatched -> callbacks.onMarkSeasonUnwatched(season.season!!)
-                    }
-                    true
-                }
-
-                onBind { _, view, _ ->
-                    val binding = view.dataBinding as ViewHolderDetailsSeasonBinding
-                    val listener = binding.popupMenuListener as SeasonPopupMenuListener
-                    listener.season = binding.season!!
-                }
             }
 
-            if (isSeasonExpanded(season.season!!.id!!)) {
-                season.episodes.forEach { episodeWithWatches ->
-                    seasonEpisodeItem {
-                        val episode = episodeWithWatches.episode!!
-                        id("episode_${episode.id}")
-                        episodeWithWatches(episodeWithWatches)
-                        spanSizeOverride(TotalSpanOverride)
-                        clickListener { view ->
-                            callbacks.onEpisodeClicked(episode, view)
+            for (season in viewState.seasons) {
+                detailsSeason {
+                    id("season_${season.season!!.id}")
+                    season(season)
+                    spanSizeOverride(TotalSpanOverride)
+                    clickListener { _ -> toggleSeasonExpanded(season.season!!.id!!) }
+
+                    popupMenuListener(SeasonPopupMenuListener(season))
+
+                    popupMenuClickListener { menuItem ->
+                        when (menuItem.itemId) {
+                            R.id.season_mark_all_watched -> callbacks.onMarkSeasonWatched(season.season!!, false)
+                            R.id.season_mark_aired_watched -> callbacks.onMarkSeasonWatched(season.season!!, true)
+                            R.id.season_mark_all_unwatched -> callbacks.onMarkSeasonUnwatched(season.season!!)
+                        }
+                        true
+                    }
+
+                    onBind { _, view, _ ->
+                        val binding = view.dataBinding as ViewHolderDetailsSeasonBinding
+                        val listener = binding.popupMenuListener as SeasonPopupMenuListener
+                        listener.season = binding.season!!
+                    }
+                }
+
+                if (isSeasonExpanded(season.season!!.id!!)) {
+                    season.episodes.forEach { episodeWithWatches ->
+                        seasonEpisodeItem {
+                            val episode = episodeWithWatches.episode!!
+                            id("episode_${episode.id}")
+                            episodeWithWatches(episodeWithWatches)
+                            spanSizeOverride(TotalSpanOverride)
+                            clickListener { view ->
+                                callbacks.onEpisodeClicked(episode, view)
+                            }
                         }
                     }
                 }

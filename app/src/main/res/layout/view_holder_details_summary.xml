@@ -32,7 +32,7 @@
         android:addStatesFromChildren="true"
         android:background="?android:colorBackground"
         android:foreground="?android:attr/selectableItemBackground"
-        android:padding="16dp"
+        android:padding="@dimen/spacing_normal"
         android:transitionGroup="true">
 
         <app.tivi.ui.widget.BaselineGridTextView

@@ -128,7 +128,7 @@
             android:id="@+id/details_follow_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="@dimen/spacing_normal"
             android:checked="@{state.followed}"
             android:scaleType="centerInside"
             android:src="@drawable/sl_follow_show"

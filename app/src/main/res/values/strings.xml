@@ -74,4 +74,6 @@
     <string name="popup_season_mark_aired_watched">Watch all aired</string>
     <string name="popup_season_mark_all_unwatched">Unwatch all</string>
 
+    <string name="show_details_seasons">Seasons</string>
+
 </resources>
