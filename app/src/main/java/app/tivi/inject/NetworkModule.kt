@@ -17,9 +17,6 @@
 package app.tivi.inject
 
 import app.tivi.BuildConfig
-import app.tivi.TiviApplication
-import app.tivi.util.AndroidNetworkDetector
-import app.tivi.util.NetworkDetector
 import dagger.Module
 import dagger.Provides
 import okhttp3.logging.HttpLoggingInterceptor
@@ -36,8 +33,4 @@ class NetworkModule {
             }
         }
     }
-
-    @Provides
-    @Singleton
-    fun provideNetworkDetector(application: TiviApplication): NetworkDetector = AndroidNetworkDetector(application)
 }

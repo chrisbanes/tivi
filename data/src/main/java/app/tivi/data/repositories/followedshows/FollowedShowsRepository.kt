@@ -136,11 +136,11 @@ class FollowedShowsRepository @Inject constructor(
             val response = dataSource.addShowIdsToList(listId, shows)
             if (response is Success) {
                 // Now update the database
-                localStore.updateEntriesWithAction(pending.mapNotNull { it.id }, PendingAction.NOTHING)
+                localStore.updateEntriesWithAction(pending.map { it.id }, PendingAction.NOTHING)
             }
         } else {
             // We're not logged in, so just update the database
-            localStore.updateEntriesWithAction(pending.mapNotNull { it.id }, PendingAction.NOTHING)
+            localStore.updateEntriesWithAction(pending.map { it.id }, PendingAction.NOTHING)
         }
     }
 
@@ -155,11 +155,11 @@ class FollowedShowsRepository @Inject constructor(
             val response = dataSource.removeShowIdsFromList(listId, shows)
             if (response is Success) {
                 // Now update the database
-                localStore.deleteEntriesInIds(pending.mapNotNull { it.id })
+                localStore.deleteEntriesInIds(pending.map { it.id })
             }
         } else {
             // We're not logged in, so just update the database
-            localStore.deleteEntriesInIds(pending.mapNotNull { it.id })
+            localStore.deleteEntriesInIds(pending.map { it.id })
         }
     }
 

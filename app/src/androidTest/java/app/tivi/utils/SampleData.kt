@@ -66,9 +66,9 @@ fun deleteSeason(db: TiviDatabase) = db.seasonsDao().delete(seasonOne)
 
 fun insertSeason(db: TiviDatabase) = db.seasonsDao().insert(seasonOne)
 
-val episodeOne = Episode(id = 0, title = "Kangaroo Court", seasonId = seasonOne.id!!, number = 0, traktId = 59830)
-val episodeTwo = Episode(id = 1, title = "Bushtucker", seasonId = seasonOne.id!!, number = 1, traktId = 33435)
-val episodeThree = Episode(id = 2, title = "Wallaby Bungee", seasonId = seasonOne.id!!, number = 2, traktId = 44542)
+val episodeOne = Episode(id = 0, title = "Kangaroo Court", seasonId = seasonOne.id, number = 0, traktId = 59830)
+val episodeTwo = Episode(id = 1, title = "Bushtucker", seasonId = seasonOne.id, number = 1, traktId = 33435)
+val episodeThree = Episode(id = 2, title = "Wallaby Bungee", seasonId = seasonOne.id, number = 2, traktId = 44542)
 
 val episodes = listOf(episodeOne, episodeTwo, episodeThree)
 
@@ -80,7 +80,7 @@ const val episodeWatch1Id = 1L
 val episodeWatch1 = EpisodeWatchEntry(
         id = episodeWatch1Id,
         watchedAt = OffsetDateTime.now(),
-        episodeId = episodeOne.id!!,
+        episodeId = episodeOne.id,
         traktId = 435214
 )
 

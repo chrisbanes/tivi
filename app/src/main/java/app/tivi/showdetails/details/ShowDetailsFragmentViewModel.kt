@@ -23,6 +23,7 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.interactors.ChangeSeasonWatchedStatus
+import app.tivi.interactors.ChangeSeasonWatchedStatus.Action
 import app.tivi.interactors.ChangeSeasonWatchedStatus.Params
 import app.tivi.interactors.ChangeShowFollowStatus
 import app.tivi.interactors.ChangeShowFollowStatus.Action.TOGGLE
@@ -31,7 +32,6 @@ import app.tivi.interactors.UpdateRelatedShows
 import app.tivi.interactors.UpdateShowDetails
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
-import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.TiviViewModel
@@ -41,7 +41,6 @@ import io.reactivex.rxkotlin.plusAssign
 import javax.inject.Inject
 
 class ShowDetailsFragmentViewModel @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
     private val schedulers: AppRxSchedulers,
     private val updateShowDetails: UpdateShowDetails,
     private val updateRelatedShows: UpdateRelatedShows,
@@ -119,12 +118,11 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     ) = showDetailsNavigator.showEpisodeDetails(episode)
 
     fun onMarkSeasonWatched(season: Season, onlyAired: Boolean) {
-        launchInteractor(changeSeasonWatchedStatus,
-                Params(season.id!!, ChangeSeasonWatchedStatus.Action.WATCHED, onlyAired))
+        launchInteractor(changeSeasonWatchedStatus, Params(season.id, Action.WATCHED, onlyAired))
     }
 
     fun onMarkSeasonUnwatched(season: Season) {
-        launchInteractor(changeSeasonWatchedStatus, Params(season.id!!, ChangeSeasonWatchedStatus.Action.UNWATCH))
+        launchInteractor(changeSeasonWatchedStatus, Params(season.id, Action.UNWATCH))
     }
 
     fun onUpClicked(showDetailsNavigator: ShowDetailsNavigator) = showDetailsNavigator.navigateUp()

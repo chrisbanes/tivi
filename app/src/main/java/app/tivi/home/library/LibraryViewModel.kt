@@ -37,13 +37,11 @@ import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
-import app.tivi.util.NetworkDetector
 import app.tivi.util.RxLoadingCounter
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.Flowables
-import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
@@ -55,9 +53,8 @@ class LibraryViewModel @Inject constructor(
     private val traktManager: TraktManager,
     private val tmdbManager: TmdbManager,
     updateUserDetails: UpdateUserDetails,
-    private val networkDetector: NetworkDetector,
     logger: Logger
-) : HomeFragmentViewModel(traktManager, updateUserDetails, networkDetector, logger) {
+) : HomeFragmentViewModel(traktManager, updateUserDetails, logger) {
     companion object {
         private val DEFAULT_FILTER = FOLLOWED
 
@@ -144,9 +141,8 @@ class LibraryViewModel @Inject constructor(
         }
         refreshDisposable = null
 
-        disposables += Observables.combineLatest(
-                networkDetector.waitForConnection().toObservable(),
-                traktManager.state.filter { it == TraktAuthState.LOGGED_IN })
+        disposables += traktManager.state
+                .filter { it == TraktAuthState.LOGGED_IN }
                 .firstOrError()
                 .subscribe({ refreshFilter() }, logger::e)
                 .also { refreshDisposable = it }

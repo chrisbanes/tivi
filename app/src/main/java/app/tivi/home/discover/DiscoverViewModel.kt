@@ -31,7 +31,6 @@ import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktManager
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
-import app.tivi.util.NetworkDetector
 import app.tivi.util.RxLoadingCounter
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
@@ -47,9 +46,8 @@ class DiscoverViewModel @Inject constructor(
     traktManager: TraktManager,
     tmdbManager: TmdbManager,
     updateUserDetails: UpdateUserDetails,
-    private val networkDetector: NetworkDetector,
     logger: Logger
-) : HomeFragmentViewModel(traktManager, updateUserDetails, networkDetector, logger) {
+) : HomeFragmentViewModel(traktManager, updateUserDetails, logger) {
     private val _data = MutableLiveData<DiscoverViewState>()
     val data: LiveData<DiscoverViewState>
         get() = _data
@@ -90,11 +88,6 @@ class DiscoverViewModel @Inject constructor(
     }
 
     fun refresh() {
-        disposables += networkDetector.waitForConnection()
-                .subscribe({ onRefresh() }, logger::e)
-    }
-
-    private fun onRefresh() {
         loadingState.addLoader()
         launchInteractor(updatePopularShows, UpdatePopularShows.ExecuteParams(UpdatePopularShows.Page.REFRESH))
                 .invokeOnCompletion { loadingState.removeLoader() }

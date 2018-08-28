@@ -43,7 +43,7 @@ class SearchRepository @Inject constructor(
                 localShowStore.getShow(id)!!
             }.also { results ->
                 // We need to save the search results
-                localSearchStore.setResults(query, results.mapNotNull { it.id }.toLongArray())
+                localSearchStore.setResults(query, results.map { it.id }.toLongArray())
             }
             else -> emptyList()
         }

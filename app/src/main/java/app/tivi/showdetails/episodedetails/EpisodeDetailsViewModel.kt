@@ -88,7 +88,7 @@ class EpisodeDetailsViewModel @Inject constructor(
     }
 
     fun removeWatchEntry(entry: EpisodeWatchEntry) {
-        launchInteractor(removeEpisodeWatch, RemoveEpisodeWatch.Params(entry.id!!))
+        launchInteractor(removeEpisodeWatch, RemoveEpisodeWatch.Params(entry.id))
     }
 
     fun markWatched() {

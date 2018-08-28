@@ -28,7 +28,6 @@ import app.tivi.extensions.distinctUntilChanged
 import app.tivi.extensions.toFlowable
 import app.tivi.tmdb.TmdbManager
 import io.reactivex.rxkotlin.Flowables
-import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
 
 abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
@@ -36,7 +35,6 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
     private val dispatchers: AppCoroutineDispatchers,
     private val dataSource: DataSource.Factory<Int, LI>,
     tmdbManager: TmdbManager,
-    private val networkDetector: NetworkDetector,
     private val logger: Logger,
     private val pageSize: Int = 21
 ) : TiviViewModel() {
@@ -79,11 +77,6 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
     }
 
     fun refresh() {
-        disposables += networkDetector.waitForConnection()
-                .subscribe({ onRefresh() }, logger::e)
-    }
-
-    private fun onRefresh() {
         launchWithParent(dispatchers.main) {
             sendMessage(UiResource(Status.REFRESHING))
             try {
