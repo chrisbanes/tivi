@@ -152,10 +152,10 @@ class SeasonsEpisodesRepository @Inject constructor(
 
         val watches = ArrayList<EpisodeWatchEntry>()
         localStore.getEpisodesInSeason(seasonId).forEach { episode ->
-            watches += localStore.getWatchesForEpisode(episode.id!!)
+            watches += localStore.getWatchesForEpisode(episode.id)
         }
         if (watches.isNotEmpty()) {
-            localStore.updateWatchEntriesWithAction(watches.mapNotNull { it.id }, PendingAction.DELETE)
+            localStore.updateWatchEntriesWithAction(watches.map { it.id }, PendingAction.DELETE)
         }
 
         // Should probably make this more granular
@@ -176,7 +176,7 @@ class SeasonsEpisodesRepository @Inject constructor(
     suspend fun markEpisodeUnwatched(episodeId: Long) {
         val watchesForEpisode = localStore.getWatchesForEpisode(episodeId)
         if (watchesForEpisode.isNotEmpty()) {
-            val ids = watchesForEpisode.mapNotNull { it.id }
+            val ids = watchesForEpisode.map { it.id }
             // First mark them as pending deletion
             localStore.updateWatchEntriesWithAction(ids, PendingAction.DELETE)
         }
@@ -248,11 +248,11 @@ class SeasonsEpisodesRepository @Inject constructor(
             val response = traktSeasonsDataSource.removeEpisodeWatches(entries)
             if (response is Success) {
                 // Now update the database
-                localStore.deleteWatchEntriesWithIds(entries.mapNotNull { it.id })
+                localStore.deleteWatchEntriesWithIds(entries.map { it.id })
             }
         } else {
             // We're not logged in so just update the database
-            localStore.deleteWatchEntriesWithIds(entries.mapNotNull { it.id })
+            localStore.deleteWatchEntriesWithIds(entries.map { it.id })
         }
     }
 
@@ -261,11 +261,11 @@ class SeasonsEpisodesRepository @Inject constructor(
             val response = traktSeasonsDataSource.addEpisodeWatches(entries)
             if (response is Success) {
                 // Now update the database
-                localStore.updateWatchEntriesWithAction(entries.mapNotNull { it.id }, PendingAction.NOTHING)
+                localStore.updateWatchEntriesWithAction(entries.map { it.id }, PendingAction.NOTHING)
             }
         } else {
             // We're not logged in so just update the database
-            localStore.updateWatchEntriesWithAction(entries.mapNotNull { it.id }, PendingAction.NOTHING)
+            localStore.updateWatchEntriesWithAction(entries.map { it.id }, PendingAction.NOTHING)
         }
     }
 

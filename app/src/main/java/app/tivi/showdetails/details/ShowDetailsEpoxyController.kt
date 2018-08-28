@@ -156,7 +156,7 @@ class ShowDetailsEpoxyController(
                     id("season_${season.season!!.id}")
                     season(season)
                     spanSizeOverride(TotalSpanOverride)
-                    clickListener { _ -> toggleSeasonExpanded(season.season!!.id!!) }
+                    clickListener { _ -> toggleSeasonExpanded(season.season!!.id) }
 
                     popupMenuListener(SeasonPopupMenuListener(season))
 
