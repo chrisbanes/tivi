@@ -127,7 +127,7 @@ class SeasonsEpisodesRepository @Inject constructor(
     suspend fun markSeasonWatched(seasonId: Long, onlyAired: Boolean) {
         val watchesToSave = localStore.getEpisodesInSeason(seasonId).mapNotNull { episode ->
             if (!onlyAired || episode.firstAired?.isBefore(OffsetDateTime.now()) == true) {
-                if (!localStore.hasEpisodeBeenWatched(episode.id!!)) {
+                if (!localStore.hasEpisodeBeenWatched(episode.id)) {
                     return@mapNotNull EpisodeWatchEntry(
                             episodeId = episode.id,
                             watchedAt = OffsetDateTime.now(),

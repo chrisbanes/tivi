@@ -176,7 +176,7 @@ class ShowDetailsEpoxyController(
                     }
                 }
 
-                if (isSeasonExpanded(season.season!!.id!!)) {
+                if (isSeasonExpanded(season.season!!.id)) {
                     season.episodes.forEach { episodeWithWatches ->
                         seasonEpisodeItem {
                             val episode = episodeWithWatches.episode!!

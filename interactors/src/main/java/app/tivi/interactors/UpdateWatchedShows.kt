@@ -30,7 +30,7 @@ class UpdateWatchedShows @Inject constructor(
     override val dispatcher: CoroutineDispatcher
         get() = dispatchers.io
 
-    override suspend fun invoke(param: ExecuteParams) {
+    override suspend fun invoke(executeParams: ExecuteParams) {
         watchedShowsRepository.updateWatchedShows()
     }
 

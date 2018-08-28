@@ -32,10 +32,10 @@ class EntityInserter @Inject constructor(
     }
 
     fun <E : TiviEntity> insertOrUpdate(dao: EntityDao<E>, entity: E): Long = when {
-        entity.id == null -> dao.insert(entity)
+        entity.id == 0L -> dao.insert(entity)
         else -> {
             dao.update(entity)
-            entity.id!!
+            entity.id
         }
     }
 }
