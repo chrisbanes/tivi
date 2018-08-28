@@ -16,6 +16,7 @@
 
 package app.tivi.interactors
 
+import app.tivi.data.entities.ActionDate
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.CoroutineDispatcher
@@ -28,11 +29,21 @@ class ChangeSeasonWatchedStatus @Inject constructor(
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend operator fun invoke(executeParams: Params) = when (executeParams.action) {
-        Action.WATCHED -> seasonsEpisodesRepository.markSeasonWatched(executeParams.seasonId, executeParams.onlyAired)
-        Action.UNWATCH -> seasonsEpisodesRepository.markSeasonUnwatched(executeParams.seasonId)
+        Action.WATCHED -> {
+            seasonsEpisodesRepository.markSeasonWatched(executeParams.seasonId,
+                    executeParams.onlyAired, executeParams.actionDate)
+        }
+        Action.UNWATCH -> {
+            seasonsEpisodesRepository.markSeasonUnwatched(executeParams.seasonId)
+        }
     }
 
-    data class Params(val seasonId: Long, val action: Action, val onlyAired: Boolean = true)
+    data class Params(
+        val seasonId: Long,
+        val action: Action,
+        val onlyAired: Boolean = true,
+        val actionDate: ActionDate = ActionDate.NOW
+    )
 
     enum class Action { WATCHED, UNWATCH }
 }

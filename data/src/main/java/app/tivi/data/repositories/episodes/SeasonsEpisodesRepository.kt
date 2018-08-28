@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories.episodes
 
+import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
@@ -124,13 +125,17 @@ class SeasonsEpisodesRepository @Inject constructor(
         return localStore.lastShowEpisodeWatchesSyncBefore(showId, Duration.ofHours(1))
     }
 
-    suspend fun markSeasonWatched(seasonId: Long, onlyAired: Boolean) {
+    suspend fun markSeasonWatched(seasonId: Long, onlyAired: Boolean, date: ActionDate) {
         val watchesToSave = localStore.getEpisodesInSeason(seasonId).mapNotNull { episode ->
             if (!onlyAired || episode.firstAired?.isBefore(OffsetDateTime.now()) == true) {
                 if (!localStore.hasEpisodeBeenWatched(episode.id)) {
+                    val timestamp = when (date) {
+                        ActionDate.NOW -> OffsetDateTime.now()
+                        ActionDate.AIR_DATE -> episode.firstAired?.plusHours(1) ?: OffsetDateTime.now()
+                    }
                     return@mapNotNull EpisodeWatchEntry(
                             episodeId = episode.id,
-                            watchedAt = OffsetDateTime.now(),
+                            watchedAt = timestamp,
                             pendingAction = PendingAction.UPLOAD
                     )
                 }

@@ -28,6 +28,7 @@ import androidx.core.os.bundleOf
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.TiviFragment
+import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
@@ -149,8 +150,8 @@ class ShowDetailsFragment : TiviFragment() {
 
             override fun onMarkSeasonUnwatched(season: Season) = viewModel.onMarkSeasonUnwatched(season)
 
-            override fun onMarkSeasonWatched(season: Season, onlyAired: Boolean) {
-                viewModel.onMarkSeasonWatched(season, onlyAired)
+            override fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
+                viewModel.onMarkSeasonWatched(season, onlyAired, date)
             }
         })
 

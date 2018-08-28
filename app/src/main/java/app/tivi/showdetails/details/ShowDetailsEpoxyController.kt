@@ -20,9 +20,9 @@ import android.content.Context
 import android.support.v7.widget.PopupMenu
 import android.util.ArraySet
 import android.view.View
-import androidx.core.view.forEach
 import app.tivi.DetailsRelatedItemBindingModel_
 import app.tivi.R
+import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
@@ -56,7 +56,7 @@ class ShowDetailsEpoxyController(
     interface Callbacks {
         fun onRelatedShowClicked(show: TiviShow, view: View)
         fun onEpisodeClicked(episode: Episode, view: View)
-        fun onMarkSeasonWatched(season: Season, onlyAired: Boolean)
+        fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate)
         fun onMarkSeasonUnwatched(season: Season)
     }
 
@@ -162,9 +162,21 @@ class ShowDetailsEpoxyController(
 
                     popupMenuClickListener { menuItem ->
                         when (menuItem.itemId) {
-                            R.id.season_mark_all_watched -> callbacks.onMarkSeasonWatched(season.season!!, false)
-                            R.id.season_mark_aired_watched -> callbacks.onMarkSeasonWatched(season.season!!, true)
-                            R.id.season_mark_all_unwatched -> callbacks.onMarkSeasonUnwatched(season.season!!)
+                            R.id.season_mark_all_watched_now -> {
+                                callbacks.onMarkSeasonWatched(season.season!!, false, ActionDate.NOW)
+                            }
+                            R.id.season_mark_all_watched_air_date -> {
+                                callbacks.onMarkSeasonWatched(season.season!!, false, ActionDate.AIR_DATE)
+                            }
+                            R.id.season_mark_aired_watched_now -> {
+                                callbacks.onMarkSeasonWatched(season.season!!, true, ActionDate.NOW)
+                            }
+                            R.id.season_mark_aired_watched_air_date -> {
+                                callbacks.onMarkSeasonWatched(season.season!!, true, ActionDate.AIR_DATE)
+                            }
+                            R.id.season_mark_all_unwatched -> {
+                                callbacks.onMarkSeasonUnwatched(season.season!!)
+                            }
                         }
                         true
                     }
@@ -209,18 +221,14 @@ class ShowDetailsEpoxyController(
         var season: SeasonWithEpisodesAndWatches
     ) : PopupMenuButton.PopupMenuListener {
         override fun onPreparePopupMenu(popupMenu: PopupMenu) {
-            popupMenu.menu.forEach {
-                when (it.itemId) {
-                    R.id.season_mark_all_unwatched -> {
-                        it.isVisible = season.numberWatched > 0
-                    }
-                    R.id.season_mark_all_watched -> {
-                        it.isVisible = season.numberWatched < season.numberEpisodes
-                    }
-                    R.id.season_mark_aired_watched -> {
-                        it.isVisible = season.numberWatched < season.numberAired
-                    }
-                }
+            popupMenu.menu.findItem(R.id.season_mark_all_unwatched).also {
+                it.isVisible = season.numberWatched > 0
+            }
+            popupMenu.menu.findItem(R.id.season_mark_watched_all).also {
+                it.isVisible = season.numberWatched < season.numberEpisodes
+            }
+            popupMenu.menu.findItem(R.id.season_mark_watched_aired).also {
+                it.isVisible = season.numberWatched < season.numberAired && season.numberAired < season.numberEpisodes
             }
         }
     }
