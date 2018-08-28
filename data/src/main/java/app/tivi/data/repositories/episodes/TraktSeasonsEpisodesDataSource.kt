@@ -89,7 +89,9 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
         return retrofitRunner.executeForResponse {
             val items = SyncItems()
             items.episodes = watches.map {
-                SyncEpisode().id(EpisodeIds.trakt(episodeIdToTraktIdMapper.map(it.episodeId)))
+                SyncEpisode()
+                        .id(EpisodeIds.trakt(episodeIdToTraktIdMapper.map(it.episodeId)))
+                        .watchedAt(it.watchedAt)
             }
             syncService.get().addItemsToWatchedHistory(items).executeWithRetry()
         }

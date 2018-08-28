@@ -70,8 +70,11 @@
     <string name="season_summary_to_air">%1$d to air</string>
     <string name="season_summary_watched">%1$d watched</string>
 
-    <string name="popup_season_mark_all_watched">Watch all</string>
-    <string name="popup_season_mark_aired_watched">Watch all aired</string>
+    <string name="popup_season_watch_now">Watch date: now</string>
+    <string name="popup_season_watch_air_date">Watch date: air date</string>
+
+    <string name="popup_season_mark_watched_all">Watch all</string>
+    <string name="popup_season_mark_watched_aired">Watch aired</string>
     <string name="popup_season_mark_all_unwatched">Unwatch all</string>
 
     <string name="show_details_seasons">Seasons</string>

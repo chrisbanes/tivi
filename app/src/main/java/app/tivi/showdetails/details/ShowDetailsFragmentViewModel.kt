@@ -19,6 +19,7 @@ package app.tivi.showdetails.details
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import app.tivi.SharedElementHelper
+import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
@@ -117,8 +118,9 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         episode: Episode
     ) = showDetailsNavigator.showEpisodeDetails(episode)
 
-    fun onMarkSeasonWatched(season: Season, onlyAired: Boolean) {
-        launchInteractor(changeSeasonWatchedStatus, Params(season.id, Action.WATCHED, onlyAired))
+    fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
+        launchInteractor(changeSeasonWatchedStatus,
+                Params(season.id, ChangeSeasonWatchedStatus.Action.WATCHED, onlyAired, date))
     }
 
     fun onMarkSeasonUnwatched(season: Season) {
