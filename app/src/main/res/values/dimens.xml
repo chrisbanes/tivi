@@ -22,6 +22,7 @@
 
     <dimen name="details_appbar_elevation">4dp</dimen>
 
+    <dimen name="spacing_large">24dp</dimen>
     <dimen name="spacing_normal">16dp</dimen>
     <dimen name="spacing_small">8dp</dimen>
     <dimen name="spacing_micro">4dp</dimen>

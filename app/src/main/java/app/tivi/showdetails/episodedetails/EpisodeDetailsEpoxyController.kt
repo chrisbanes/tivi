@@ -22,7 +22,6 @@ import app.tivi.detailsBadge
 import app.tivi.detailsHeader
 import app.tivi.epDetailsSummary
 import app.tivi.epDetailsWatchItem
-import app.tivi.header
 import app.tivi.ui.epoxy.TotalSpanOverride
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.epoxy.TypedEpoxyController

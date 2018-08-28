@@ -21,7 +21,7 @@ import android.support.annotation.Keep
 import android.support.v7.widget.Toolbar
 import android.util.AttributeSet
 import app.tivi.R
-import app.tivi.extensions.resolveColor
+import app.tivi.extensions.resolveThemeColor
 
 class TintingToolbar @JvmOverloads constructor(
     context: Context,
@@ -30,7 +30,7 @@ class TintingToolbar @JvmOverloads constructor(
 ) : Toolbar(context, attrs, defStyleAttr) {
     @get:Keep
     @set:Keep
-    var iconTint: Int = context.theme.resolveColor(android.R.attr.colorControlNormal)
+    var iconTint: Int = context.resolveThemeColor(android.R.attr.colorControlNormal)
         set(value) {
             if (value != field) {
                 navigationIcon = navigationIcon?.let {
