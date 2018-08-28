@@ -24,7 +24,6 @@ import app.tivi.interactors.UpdateUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.Logger
-import app.tivi.util.NetworkDetector
 import app.tivi.util.TiviViewModel
 import io.reactivex.rxkotlin.plusAssign
 import net.openid.appauth.AuthorizationService
@@ -32,7 +31,6 @@ import net.openid.appauth.AuthorizationService
 abstract class HomeFragmentViewModel(
     private val traktManager: TraktManager,
     private val updateUserDetails: UpdateUserDetails,
-    private val networkDetector: NetworkDetector,
     protected val logger: Logger
 ) : TiviViewModel() {
 
@@ -56,8 +54,7 @@ abstract class HomeFragmentViewModel(
         _authUiState.value = authState
 
         if (authState == TraktAuthState.LOGGED_IN) {
-            disposables += networkDetector.waitForConnection()
-                    .subscribe({ refreshUserProfile() }, logger::e)
+            refreshUserProfile()
         }
     }
 

@@ -25,7 +25,6 @@ import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
-import app.tivi.util.NetworkDetector
 import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
 
@@ -34,14 +33,12 @@ class WatchedShowsViewModel @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
     private val interactor: UpdateWatchedShows,
     tmdbManager: TmdbManager,
-    networkDetector: NetworkDetector,
     logger: Logger
 ) : EntryViewModel<WatchedShowEntryWithShow>(
         schedulers,
         dispatchers,
         interactor.dataSourceFactory(),
         tmdbManager,
-        networkDetector,
         logger
 ) {
     fun onUpClicked(navigator: HomeNavigator) {

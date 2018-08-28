@@ -25,7 +25,6 @@ import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
-import app.tivi.util.NetworkDetector
 import javax.inject.Inject
 
 class FollowedShowsViewModel @Inject constructor(
@@ -33,14 +32,12 @@ class FollowedShowsViewModel @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
     syncFollowedShows: SyncFollowedShows,
     tmdbManager: TmdbManager,
-    networkDetector: NetworkDetector,
     logger: Logger
 ) : EntryViewModel<FollowedShowEntryWithShow>(
         schedulers,
         dispatchers,
         syncFollowedShows.dataSourceFactory(),
         tmdbManager,
-        networkDetector,
         logger
 ) {
     fun onUpClicked(navigator: HomeNavigator) {
