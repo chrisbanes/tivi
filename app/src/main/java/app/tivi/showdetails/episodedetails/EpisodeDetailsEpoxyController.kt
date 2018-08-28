@@ -19,6 +19,7 @@ package app.tivi.showdetails.episodedetails
 import android.content.Context
 import app.tivi.R
 import app.tivi.detailsBadge
+import app.tivi.detailsHeader
 import app.tivi.epDetailsSummary
 import app.tivi.epDetailsWatchItem
 import app.tivi.header
@@ -63,7 +64,7 @@ class EpisodeDetailsEpoxyController(
         }
 
         if (viewState.watches.isNotEmpty()) {
-            header {
+            detailsHeader {
                 id("watches_header")
                 title(R.string.episode_watches)
                 spanSizeOverride(TotalSpanOverride)
