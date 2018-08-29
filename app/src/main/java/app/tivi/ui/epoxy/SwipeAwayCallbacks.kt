@@ -26,7 +26,6 @@ import android.view.View
 import app.tivi.ui.animations.lerp
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.EpoxyTouchHelper
-import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 abstract class SwipeAwayCallbacks<T : EpoxyModel<*>>(
@@ -47,6 +46,11 @@ abstract class SwipeAwayCallbacks<T : EpoxyModel<*>>(
 
     private val foregroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = accentColor
+    }
+
+    companion object {
+        const val MAX_ICON_SCALE = 1.3f
+        const val MIN_ICON_SCALE = 0.8f
     }
 
     override fun onSwipeStarted(
@@ -77,17 +81,18 @@ abstract class SwipeAwayCallbacks<T : EpoxyModel<*>>(
 
             canvas.clipRect(rect)
 
+            val startValue = iconBounds.right + padding / 2
+            val endValue = rect.left + itemView.width / 2
+            if (rect.right >= startValue) {
+                val fraction = ((rect.right - startValue) / (endValue - startValue)).coerceIn(0f, 1f)
+                val maxRadius = Math.hypot(rect.right.toDouble() - iconBounds.centerX(), iconBounds.centerY().toDouble())
+                radius = lerp(0f, maxRadius.toFloat(), fraction)
+            }
+
             val left = rect.left.roundToInt() + padding
             val top = (rect.top + (rect.height() - iconHeight) / 2).roundToInt()
             iconBounds.set(left, top, left + iconWidth, top + iconHeight)
             icon.bounds = iconBounds
-
-            val startValue = iconBounds.right
-            val endValue = rect.left + itemView.width / 3
-            val fraction = ((rect.right - startValue) / (endValue - startValue)).coerceIn(0f, 1f)
-
-            val maxRadius = Math.hypot(rect.right.toDouble() - iconBounds.centerX(), iconBounds.centerY().toDouble())
-            radius = lerp(0f, maxRadius.toFloat(), fraction)
 
         } else if (rect.right < canvas.width) {
             // Swiping right-to-left
@@ -95,6 +100,14 @@ abstract class SwipeAwayCallbacks<T : EpoxyModel<*>>(
             rect.right = canvas.width.toFloat()
 
             canvas.clipRect(rect)
+
+            val startValue = iconBounds.left - padding / 2
+            val endValue = rect.right - itemView.width / 2
+            if (rect.left <= startValue) {
+                val fraction = ((rect.left - startValue) / (endValue - startValue)).coerceIn(0f, 1f)
+                val maxRadius = Math.hypot(iconBounds.centerX() - rect.left.toDouble(), iconBounds.centerY().toDouble())
+                radius = lerp(0f, maxRadius.toFloat(), fraction)
+            }
 
             val right = rect.right.roundToInt() - padding
             val top = (rect.top + (rect.height() - iconHeight) / 2).roundToInt()
