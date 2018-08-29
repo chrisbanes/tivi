@@ -117,7 +117,7 @@ class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
         }
 
         EpoxyTouchHelper.initSwiping(binding.epDetailsRv)
-                .leftAndRight()
+                .let { if (view.layoutDirection == View.LAYOUT_DIRECTION_RTL) it.right() else it.left() }
                 .withTarget(EpDetailsWatchItemBindingModel_::class.java)
                 .andCallbacks(swipeCallback)
     }

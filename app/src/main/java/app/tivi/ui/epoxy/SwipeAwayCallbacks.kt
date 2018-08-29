@@ -93,7 +93,6 @@ abstract class SwipeAwayCallbacks<T : EpoxyModel<*>>(
             val top = (rect.top + (rect.height() - iconHeight) / 2).roundToInt()
             iconBounds.set(left, top, left + iconWidth, top + iconHeight)
             icon.bounds = iconBounds
-
         } else if (rect.right < canvas.width) {
             // Swiping right-to-left
             rect.left = rect.right
