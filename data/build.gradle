@@ -26,6 +26,7 @@ dependencies {
     compile "android.arch.paging:common:${versions.androidx.paging}"
 
     compile "io.reactivex.rxjava2:rxjava:${versions.rx}"
+    compile "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
 
     compile 'org.threeten:threetenbp:1.3.6:no-tzdb'
 }

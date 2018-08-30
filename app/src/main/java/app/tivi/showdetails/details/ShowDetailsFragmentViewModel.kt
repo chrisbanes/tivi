@@ -35,9 +35,8 @@ import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
-import app.tivi.util.TiviViewModel
-import io.reactivex.Flowable
-import io.reactivex.rxkotlin.Flowables
+import app.tivi.util.TiviMvRxViewModel
+import com.airbnb.mvrx.Success
 import io.reactivex.rxkotlin.plusAssign
 import javax.inject.Inject
 
@@ -50,20 +49,7 @@ class ShowDetailsFragmentViewModel @Inject constructor(
     private val tmdbManager: TmdbManager,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val logger: Logger
-) : TiviViewModel() {
-
-    var showId: Long? = null
-        set(value) {
-            if (field != value) {
-                field = value
-                if (value != null) {
-                    setupLiveData(value)
-                    refresh()
-                } else {
-                    _data.value = null
-                }
-            }
-        }
+) : TiviMvRxViewModel<ShowDetailsViewState>(ShowDetailsViewState(0)) {
 
     private val _data = MutableLiveData<ShowDetailsViewState>()
     val data: LiveData<ShowDetailsViewState>
@@ -75,27 +61,49 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         launchInteractor(updateShowSeasons, UpdateFollowedShowSeasonData.ExecuteParams(true))
     }
 
-    private fun setupLiveData(showId: Long) {
-        updateShowDetails.setParams(UpdateShowDetails.Params(showId))
-        updateRelatedShows.setParams(UpdateRelatedShows.Params(showId))
-        updateShowSeasons.setParams(UpdateFollowedShowSeasonData.Params(showId))
-        changeShowFollowStatus.setParams(ChangeShowFollowStatus.Params(showId))
-
-        disposables += changeShowFollowStatus.observe()
-                .subscribeOn(schedulers.io)
-                .distinctUntilChanged()
-                .switchMap { isFollowed ->
-                    Flowables.combineLatest(
-                            Flowable.just(isFollowed),
-                            updateShowDetails.observe(),
-                            updateRelatedShows.observe(),
-                            if (isFollowed) updateShowSeasons.observe() else Flowable.just(emptyList()),
-                            tmdbManager.imageProvider,
-                            ::ShowDetailsViewState)
+    init {
+        changeShowFollowStatus.observe()
+                .toObservable()
+                .observeOn(schedulers.io)
+                .execute {
+                    when (it) {
+                        is Success -> copy(isFollowed = it.invoke()!!)
+                        else -> copy(isFollowed = false)
+                    }
                 }
-                .distinctUntilChanged()
-                .observeOn(schedulers.main)
-                .subscribe(_data::setValue, logger::e)
+
+        updateShowDetails.observe()
+                .toObservable()
+                .observeOn(schedulers.io)
+                .execute { copy(show = it) }
+
+        updateRelatedShows.observe()
+                .toObservable()
+                .observeOn(schedulers.io)
+                .execute { copy(relatedShows = it) }
+
+        tmdbManager.imageProvider
+                .toObservable()
+                .observeOn(schedulers.io)
+                .execute { copy(tmdbImageUrlProvider = it) }
+
+        updateShowSeasons.observe()
+                .toObservable()
+                .observeOn(schedulers.io)
+                .execute { copy(seasons = it) }
+    }
+
+    fun setShowId(id: Long) {
+        setState {
+            copy(showId = id)
+        }
+
+        updateShowDetails.setParams(UpdateShowDetails.Params(id))
+        updateRelatedShows.setParams(UpdateRelatedShows.Params(id))
+        updateShowSeasons.setParams(UpdateFollowedShowSeasonData.Params(id))
+        changeShowFollowStatus.setParams(ChangeShowFollowStatus.Params(id))
+
+        refresh()
     }
 
     override fun onCleared() {

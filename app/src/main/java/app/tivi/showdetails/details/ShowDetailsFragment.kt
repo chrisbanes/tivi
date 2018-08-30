@@ -27,19 +27,19 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import app.tivi.R
 import app.tivi.SharedElementHelper
-import app.tivi.TiviFragment
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.databinding.FragmentShowDetailsBinding
-import app.tivi.extensions.observeNotNull
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
 import app.tivi.ui.RoundRectViewOutline
+import app.tivi.util.TiviMvRxFragment
+import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
-class ShowDetailsFragment : TiviFragment() {
+class ShowDetailsFragment : TiviMvRxFragment() {
     companion object {
         private const val KEY_SHOW_ID = "show_id"
 
@@ -61,11 +61,13 @@ class ShowDetailsFragment : TiviFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ShowDetailsFragmentViewModel::class.java)
+        viewModel.subscribe(this) { invalidate() }
+
         showDetailsNavigator = ViewModelProviders.of(requireActivity(), viewModelFactory)
                 .get(ShowDetailsNavigatorViewModel::class.java)
 
-        arguments?.let {
-            viewModel.showId = it.getLong(KEY_SHOW_ID)
+        arguments?.also {
+            viewModel.setShowId(it.getLong(KEY_SHOW_ID))
         }
     }
 
@@ -158,14 +160,11 @@ class ShowDetailsFragment : TiviFragment() {
         binding.detailsRv.setController(controller)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel.data.observeNotNull(this, this::update)
-    }
-
-    private fun update(viewState: ShowDetailsViewState) {
-        binding.state = viewState
-        controller.state = viewState
-        scheduleStartPostponedTransitions()
+    override fun invalidate() {
+        withState(viewModel) {
+            binding.state = it
+            controller.state = it
+            scheduleStartPostponedTransitions()
+        }
     }
 }

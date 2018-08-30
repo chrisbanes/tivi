@@ -16,7 +16,8 @@
 
 package app.tivi.util
 
-import android.arch.lifecycle.ViewModel
+import com.airbnb.mvrx.BaseMvRxViewModel
+import com.airbnb.mvrx.MvRxState
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.experimental.Job
 
@@ -24,7 +25,9 @@ import kotlinx.coroutines.experimental.Job
  * Simple ViewModel which exposes a [CompositeDisposable] and [Job] which are automatically cleared/stopped when
  * the ViewModel is cleared.
  */
-open class TiviViewModel : ViewModel(), ITiviViewModel {
+open class TiviMvRxViewModel<S : MvRxState>(
+    initialState: S
+) : BaseMvRxViewModel<S>(initialState, debugMode = false), ITiviViewModel {
     override val viewModelJob = Job()
     override val disposables = CompositeDisposable()
 

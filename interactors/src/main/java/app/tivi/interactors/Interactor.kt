@@ -58,6 +58,8 @@ abstract class SubjectInteractor<P : Any, EP, T> : Interactor<EP> {
     private var disposable: Disposable? = null
     private val subject: BehaviorSubject<T> = BehaviorSubject.create()
 
+    val loading = BehaviorSubject.createDefault(false)
+
     private lateinit var params: P
 
     fun setParams(params: P) {
@@ -65,7 +67,15 @@ abstract class SubjectInteractor<P : Any, EP, T> : Interactor<EP> {
         setSource(createObservable(params))
     }
 
-    final override suspend fun invoke(executeParams: EP) = execute(this.params, executeParams)
+    final override suspend fun invoke(executeParams: EP) {
+        try {
+            loading.onNext(true)
+            execute(params, executeParams)
+            loading.onNext(false)
+        } catch (t: Throwable) {
+            loading.onError(t)
+        }
+    }
 
     protected abstract suspend fun execute(params: P, executeParams: EP)
 
