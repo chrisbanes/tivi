@@ -25,10 +25,12 @@ import com.airbnb.mvrx.MvRxState
 import com.airbnb.mvrx.Uninitialized
 
 data class ShowDetailsViewState(
-    val showId: Long = 0,
+    val showId: Long,
     val isFollowed: Boolean = false,
     val show: Async<TiviShow> = Uninitialized,
     val relatedShows: Async<List<RelatedShowEntryWithShow>> = Uninitialized,
     val seasons: Async<List<SeasonWithEpisodesAndWatches>> = Uninitialized,
     val tmdbImageUrlProvider: Async<TmdbImageUrlProvider> = Uninitialized
-) : MvRxState
+) : MvRxState {
+    constructor(args: ShowDetailsFragment.Arguments) : this(args.showId)
+}

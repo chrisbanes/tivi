@@ -16,8 +16,6 @@
 
 package app.tivi.showdetails.details
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
 import android.support.v4.app.FragmentActivity
 import app.tivi.SharedElementHelper
 import app.tivi.TiviActivity
@@ -39,7 +37,6 @@ import app.tivi.util.AppRxSchedulers
 import app.tivi.util.TiviMvRxViewModel
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
-import io.reactivex.rxkotlin.plusAssign
 import javax.inject.Inject
 
 class ShowDetailsFragmentViewModel @Inject constructor(
@@ -56,14 +53,22 @@ class ShowDetailsFragmentViewModel @Inject constructor(
         @JvmStatic
         override fun create(activity: FragmentActivity, state: ShowDetailsViewState): ShowDetailsFragmentViewModel {
             return (activity as TiviActivity).viewModelFactory.create(ShowDetailsFragmentViewModel::class.java)
+                    .apply {
+                        // We can't use assisted DI with Dagger so we manually update the state
+                        setState { state }
+                        refresh()
+                    }
         }
     }
 
-    private val _data = MutableLiveData<ShowDetailsViewState>()
-    val data: LiveData<ShowDetailsViewState>
-        get() = _data
-
     private fun refresh() {
+        withState {
+            updateShowDetails.setParams(UpdateShowDetails.Params(it.showId))
+            updateRelatedShows.setParams(UpdateRelatedShows.Params(it.showId))
+            updateShowSeasons.setParams(UpdateFollowedShowSeasonData.Params(it.showId))
+            changeShowFollowStatus.setParams(ChangeShowFollowStatus.Params(it.showId))
+        }
+
         launchInteractor(updateShowDetails, UpdateShowDetails.ExecuteParams(true))
         launchInteractor(updateRelatedShows, UpdateRelatedShows.ExecuteParams(true))
         launchInteractor(updateShowSeasons, UpdateFollowedShowSeasonData.ExecuteParams(true))
@@ -99,19 +104,6 @@ class ShowDetailsFragmentViewModel @Inject constructor(
                 .toObservable()
                 .observeOn(schedulers.io)
                 .execute { copy(seasons = it) }
-    }
-
-    fun setShowId(id: Long) {
-        setState {
-            copy(showId = id)
-        }
-
-        updateShowDetails.setParams(UpdateShowDetails.Params(id))
-        updateRelatedShows.setParams(UpdateRelatedShows.Params(id))
-        updateShowSeasons.setParams(UpdateFollowedShowSeasonData.Params(id))
-        changeShowFollowStatus.setParams(ChangeShowFollowStatus.Params(id))
-
-        refresh()
     }
 
     override fun onCleared() {

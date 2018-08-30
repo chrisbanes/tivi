@@ -27,6 +27,9 @@ kapt {
     correctErrorTypes = true
 }
 apply plugin: 'kotlin-android-extensions'
+androidExtensions {
+    experimental = true
+}
 
 apply plugin: 'com.getkeepsafe.dexcount'
 dexcount {
@@ -108,7 +111,7 @@ android {
     lintOptions {
         // Disable lintVital. Not needed since lint is run on CI
         checkReleaseBuilds false
-        
+
         disable 'GradleCompatible'
     }
 
