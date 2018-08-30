@@ -18,7 +18,9 @@ package app.tivi.showdetails.details
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.support.v4.app.FragmentActivity
 import app.tivi.SharedElementHelper
+import app.tivi.TiviActivity
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -34,22 +36,28 @@ import app.tivi.interactors.UpdateShowDetails
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppRxSchedulers
-import app.tivi.util.Logger
 import app.tivi.util.TiviMvRxViewModel
+import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
 import io.reactivex.rxkotlin.plusAssign
 import javax.inject.Inject
 
 class ShowDetailsFragmentViewModel @Inject constructor(
-    private val schedulers: AppRxSchedulers,
+    schedulers: AppRxSchedulers,
     private val updateShowDetails: UpdateShowDetails,
     private val updateRelatedShows: UpdateRelatedShows,
     private val updateShowSeasons: UpdateFollowedShowSeasonData,
     private val changeSeasonWatchedStatus: ChangeSeasonWatchedStatus,
-    private val tmdbManager: TmdbManager,
-    private val changeShowFollowStatus: ChangeShowFollowStatus,
-    private val logger: Logger
+    tmdbManager: TmdbManager,
+    private val changeShowFollowStatus: ChangeShowFollowStatus
 ) : TiviMvRxViewModel<ShowDetailsViewState>(ShowDetailsViewState(0)) {
+
+    companion object : MvRxViewModelFactory<ShowDetailsViewState> {
+        @JvmStatic
+        override fun create(activity: FragmentActivity, state: ShowDetailsViewState): ShowDetailsFragmentViewModel {
+            return (activity as TiviActivity).viewModelFactory.create(ShowDetailsFragmentViewModel::class.java)
+        }
+    }
 
     private val _data = MutableLiveData<ShowDetailsViewState>()
     val data: LiveData<ShowDetailsViewState>

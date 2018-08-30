@@ -16,7 +16,6 @@
 
 package app.tivi.home
 
-import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
@@ -31,24 +30,22 @@ import app.tivi.extensions.observeK
 import app.tivi.home.HomeActivityViewModel.NavigationItem.DISCOVER
 import app.tivi.home.HomeActivityViewModel.NavigationItem.LIBRARY
 import app.tivi.home.discover.DiscoverFragment
+import app.tivi.home.followedshows.FollowedShowsFragment
 import app.tivi.home.library.LibraryFragment
 import app.tivi.home.popular.PopularShowsFragment
 import app.tivi.home.trending.TrendingShowsFragment
-import app.tivi.home.followedshows.FollowedShowsFragment
 import app.tivi.home.watched.WatchedShowsFragment
 import app.tivi.trakt.TraktConstants
 import kotlinx.android.synthetic.main.activity_home.*
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
-import javax.inject.Inject
 
 class HomeActivity : TiviActivity() {
     companion object {
         val ROOT_FRAGMENT = "root"
     }
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: HomeActivityViewModel
     private lateinit var navigatorViewModel: HomeNavigatorViewModel
 

@@ -16,7 +16,6 @@
 
 package app.tivi.showdetails
 
-import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
@@ -26,7 +25,6 @@ import app.tivi.TiviActivity
 import app.tivi.extensions.observeNotNull
 import app.tivi.showdetails.details.ShowDetailsFragment
 import app.tivi.showdetails.episodedetails.EpisodeDetailsFragment
-import javax.inject.Inject
 
 class ShowDetailsActivity : TiviActivity() {
 
@@ -40,7 +38,6 @@ class ShowDetailsActivity : TiviActivity() {
         }
     }
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var navigatorViewModel: ShowDetailsNavigatorViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {

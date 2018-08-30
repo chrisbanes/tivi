@@ -25,7 +25,7 @@ import com.airbnb.mvrx.MvRxState
 import com.airbnb.mvrx.Uninitialized
 
 data class ShowDetailsViewState(
-    val showId: Long,
+    val showId: Long = 0,
     val isFollowed: Boolean = false,
     val show: Async<TiviShow> = Uninitialized,
     val relatedShows: Async<List<RelatedShowEntryWithShow>> = Uninitialized,

@@ -36,6 +36,7 @@ import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
 import app.tivi.ui.RoundRectViewOutline
 import app.tivi.util.TiviMvRxFragment
+import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
@@ -52,7 +53,7 @@ class ShowDetailsFragment : TiviMvRxFragment() {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var viewModel: ShowDetailsFragmentViewModel
+    private val viewModel: ShowDetailsFragmentViewModel by fragmentViewModel()
     private lateinit var controller: ShowDetailsEpoxyController
     private lateinit var showDetailsNavigator: ShowDetailsNavigator
 
@@ -60,8 +61,6 @@ class ShowDetailsFragment : TiviMvRxFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(ShowDetailsFragmentViewModel::class.java)
-        viewModel.subscribe(this) { invalidate() }
 
         showDetailsNavigator = ViewModelProviders.of(requireActivity(), viewModelFactory)
                 .get(ShowDetailsNavigatorViewModel::class.java)
