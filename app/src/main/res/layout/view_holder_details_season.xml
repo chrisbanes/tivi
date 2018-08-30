@@ -30,6 +30,10 @@
             type="android.view.View.OnClickListener" />
 
         <variable
+            name="expanded"
+            type="boolean" />
+
+        <variable
             name="popupMenuClickListener"
             type="android.support.v7.widget.PopupMenu.OnMenuItemClickListener" />
 
@@ -38,12 +42,22 @@
             type="app.tivi.ui.widget.PopupMenuButton.PopupMenuListener" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <app.tivi.ui.widget.CheckableConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/details_season_background"
+        android:checked="@{expanded}"
         android:foreground="?android:attr/selectableItemBackground"
         android:onClick="@{clickListener}"
+        android:stateListAnimator="@animator/details_season_state_anim"
         android:transitionGroup="true">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintTop_toTopOf="parent"
+            app:visible="@{expanded}" />
 
         <TextView
             android:id="@+id/season_title"
@@ -65,6 +79,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_micro"
+            android:textAppearance="?attr/textAppearanceCaption"
             app:layout_constraintEnd_toStartOf="@id/season_menu_button"
             app:layout_constraintStart_toStartOf="@+id/season_title"
             app:layout_constraintTop_toBottomOf="@+id/season_title"
@@ -98,5 +113,5 @@
             app:popupMenuClickListener="@{popupMenuClickListener}"
             app:popupMenuListener="@{popupMenuListener}" />
 
-    </android.support.constraint.ConstraintLayout>
+    </app.tivi.ui.widget.CheckableConstraintLayout>
 </layout>

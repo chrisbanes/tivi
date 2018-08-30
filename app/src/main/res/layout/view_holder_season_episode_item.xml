@@ -26,15 +26,22 @@
             type="app.tivi.data.resultentities.EpisodeWithWatches" />
 
         <variable
+            name="expanded"
+            type="boolean" />
+
+        <variable
             name="clickListener"
             type="android.view.View.OnClickListener" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <app.tivi.ui.widget.CheckableConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:onClick="@{clickListener}">
+        android:background="@drawable/details_season_background"
+        android:checked="@{expanded}"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:onClick="@{clickListener}"
+        android:stateListAnimator="@animator/details_season_state_anim">
 
         <TextView
             android:id="@+id/episode_title"
@@ -73,6 +80,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:visible="@{episodeWithWatches.hasWatches()}" />
 
-    </android.support.constraint.ConstraintLayout>
+    </app.tivi.ui.widget.CheckableConstraintLayout>
 
 </layout>

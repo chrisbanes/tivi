@@ -152,10 +152,13 @@ class ShowDetailsEpoxyController(
             }
 
             for (season in viewState.seasons) {
+                val expanded = isSeasonExpanded(season.season!!.id)
+
                 detailsSeason {
                     id("season_${season.season!!.id}")
                     season(season)
                     spanSizeOverride(TotalSpanOverride)
+                    expanded(expanded)
                     clickListener { _ -> toggleSeasonExpanded(season.season!!.id) }
 
                     popupMenuListener(SeasonPopupMenuListener(season))
@@ -188,12 +191,13 @@ class ShowDetailsEpoxyController(
                     }
                 }
 
-                if (isSeasonExpanded(season.season!!.id)) {
+                if (expanded) {
                     season.episodes.forEach { episodeWithWatches ->
                         seasonEpisodeItem {
                             val episode = episodeWithWatches.episode!!
                             id("episode_${episode.id}")
                             episodeWithWatches(episodeWithWatches)
+                            expanded(true)
                             spanSizeOverride(TotalSpanOverride)
                             clickListener { view ->
                                 callbacks.onEpisodeClicked(episode, view)

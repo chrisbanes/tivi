@@ -16,16 +16,20 @@
 
 package app.tivi.extensions
 
-import android.content.res.Resources
+import android.content.Context
 import android.graphics.Color
 import android.support.annotation.AttrRes
 import android.util.TypedValue
 
 private val typedValue = TypedValue()
 
-fun Resources.Theme.resolveColor(@AttrRes resId: Int, defaultColor: Int = Color.MAGENTA): Int {
-    return if (resolveAttribute(resId, typedValue, true)) {
-        typedValue.data
+fun Context.resolveThemeColor(@AttrRes resId: Int, defaultColor: Int = Color.MAGENTA): Int {
+    return if (theme.resolveAttribute(resId, typedValue, true)) {
+        if (typedValue.type == TypedValue.TYPE_STRING) {
+            getColor(typedValue.resourceId)
+        } else {
+            typedValue.data
+        }
     } else {
         defaultColor
     }

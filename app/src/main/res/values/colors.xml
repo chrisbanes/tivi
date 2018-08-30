@@ -44,4 +44,6 @@
 
     <color name="grid_item_background_color">#424242</color>
 
+    <color name="swipe_away_background">#DEDEDE</color>
+
 </resources>

@@ -31,8 +31,10 @@ import app.tivi.databinding.FragmentEpisodeDetailsBinding
 import app.tivi.extensions.marginBottom
 import app.tivi.extensions.marginTop
 import app.tivi.extensions.observeK
+import app.tivi.extensions.resolveThemeColor
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
+import app.tivi.ui.epoxy.SwipeAwayCallbacks
 import app.tivi.util.DaggerBottomSheetFragment
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.epoxy.EpoxyTouchHelper
@@ -58,21 +60,6 @@ class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
     private lateinit var showDetailsNavigator: ShowDetailsNavigator
 
     private lateinit var binding: FragmentEpisodeDetailsBinding
-
-    private val swipeCallback = object : EpoxyTouchHelper.SwipeCallbacks<EpDetailsWatchItemBindingModel_>() {
-        override fun onSwipeCompleted(
-            model: EpDetailsWatchItemBindingModel_,
-            itemView: View,
-            position: Int,
-            direction: Int
-        ) {
-            model.watch().also(viewModel::removeWatchEntry)
-        }
-
-        override fun isSwipeEnabledForModel(model: EpDetailsWatchItemBindingModel_): Boolean {
-            return model.watch() != null
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,8 +94,30 @@ class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
 
         binding.epDetailsRv.setController(controller)
 
+        val context = requireContext()
+
+        val swipeCallback = object : SwipeAwayCallbacks<EpDetailsWatchItemBindingModel_>(
+                context.getDrawable(R.drawable.ic_eye_off_24dp)!!,
+                context.resources.getDimensionPixelSize(R.dimen.spacing_large),
+                context.getColor(R.color.swipe_away_background),
+                context.resolveThemeColor(android.R.attr.colorAccent)
+        ) {
+            override fun onSwipeCompleted(
+                model: EpDetailsWatchItemBindingModel_,
+                itemView: View,
+                position: Int,
+                direction: Int
+            ) {
+                model.watch().also(viewModel::removeWatchEntry)
+            }
+
+            override fun isSwipeEnabledForModel(model: EpDetailsWatchItemBindingModel_): Boolean {
+                return model.watch() != null
+            }
+        }
+
         EpoxyTouchHelper.initSwiping(binding.epDetailsRv)
-                .leftAndRight()
+                .let { if (view.layoutDirection == View.LAYOUT_DIRECTION_RTL) it.right() else it.left() }
                 .withTarget(EpDetailsWatchItemBindingModel_::class.java)
                 .andCallbacks(swipeCallback)
     }
