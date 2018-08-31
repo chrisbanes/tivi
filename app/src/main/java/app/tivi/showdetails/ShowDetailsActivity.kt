@@ -24,7 +24,9 @@ import app.tivi.R
 import app.tivi.TiviActivity
 import app.tivi.extensions.observeNotNull
 import app.tivi.showdetails.details.ShowDetailsFragment
+import app.tivi.showdetails.details.ShowDetailsFragmentViewModelFactory
 import app.tivi.showdetails.episodedetails.EpisodeDetailsFragment
+import javax.inject.Inject
 
 class ShowDetailsActivity : TiviActivity() {
 
@@ -39,6 +41,8 @@ class ShowDetailsActivity : TiviActivity() {
     }
 
     private lateinit var navigatorViewModel: ShowDetailsNavigatorViewModel
+
+    @Inject lateinit var showDetailsFragmentViewModelFactory: ShowDetailsFragmentViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -18,7 +18,6 @@ package app.tivi.showdetails.details
 
 import android.support.v4.app.FragmentActivity
 import app.tivi.SharedElementHelper
-import app.tivi.TiviActivity
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -31,37 +30,36 @@ import app.tivi.interactors.ChangeShowFollowStatus.Action.TOGGLE
 import app.tivi.interactors.UpdateFollowedShowSeasonData
 import app.tivi.interactors.UpdateRelatedShows
 import app.tivi.interactors.UpdateShowDetails
+import app.tivi.showdetails.ShowDetailsActivity
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.TiviMvRxViewModel
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
-import javax.inject.Inject
+import com.google.auto.factory.AutoFactory
+import com.google.auto.factory.Provided
 
-class ShowDetailsFragmentViewModel @Inject constructor(
-    schedulers: AppRxSchedulers,
-    private val updateShowDetails: UpdateShowDetails,
-    private val updateRelatedShows: UpdateRelatedShows,
-    private val updateShowSeasons: UpdateFollowedShowSeasonData,
-    private val changeSeasonWatchedStatus: ChangeSeasonWatchedStatus,
-    tmdbManager: TmdbManager,
-    private val changeShowFollowStatus: ChangeShowFollowStatus
-) : TiviMvRxViewModel<ShowDetailsViewState>(ShowDetailsViewState(0)) {
+@AutoFactory
+class ShowDetailsFragmentViewModel(
+    initialState: ShowDetailsViewState,
+    @Provided schedulers: AppRxSchedulers,
+    @Provided private val updateShowDetails: UpdateShowDetails,
+    @Provided private val updateRelatedShows: UpdateRelatedShows,
+    @Provided private val updateShowSeasons: UpdateFollowedShowSeasonData,
+    @Provided private val changeSeasonWatchedStatus: ChangeSeasonWatchedStatus,
+    @Provided tmdbManager: TmdbManager,
+    @Provided private val changeShowFollowStatus: ChangeShowFollowStatus
+) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
 
     companion object : MvRxViewModelFactory<ShowDetailsViewState> {
         @JvmStatic
         override fun create(activity: FragmentActivity, state: ShowDetailsViewState): ShowDetailsFragmentViewModel {
-            return (activity as TiviActivity).viewModelFactory.create(ShowDetailsFragmentViewModel::class.java)
-                    .apply {
-                        // We can't use assisted DI with Dagger so we manually update the state
-                        setState { state }
-                        refresh()
-                    }
+            return (activity as ShowDetailsActivity).showDetailsFragmentViewModelFactory.create(state)
         }
     }
 
-    private fun refresh() {
+    init {
         withState {
             updateShowDetails.setParams(UpdateShowDetails.Params(it.showId))
             updateRelatedShows.setParams(UpdateRelatedShows.Params(it.showId))
@@ -69,12 +67,6 @@ class ShowDetailsFragmentViewModel @Inject constructor(
             changeShowFollowStatus.setParams(ChangeShowFollowStatus.Params(it.showId))
         }
 
-        launchInteractor(updateShowDetails, UpdateShowDetails.ExecuteParams(true))
-        launchInteractor(updateRelatedShows, UpdateRelatedShows.ExecuteParams(true))
-        launchInteractor(updateShowSeasons, UpdateFollowedShowSeasonData.ExecuteParams(true))
-    }
-
-    init {
         changeShowFollowStatus.observe()
                 .toObservable()
                 .observeOn(schedulers.io)
@@ -104,6 +96,14 @@ class ShowDetailsFragmentViewModel @Inject constructor(
                 .toObservable()
                 .observeOn(schedulers.io)
                 .execute { copy(seasons = it) }
+
+        refresh()
+    }
+
+    private fun refresh() {
+        launchInteractor(updateShowDetails, UpdateShowDetails.ExecuteParams(true))
+        launchInteractor(updateRelatedShows, UpdateRelatedShows.ExecuteParams(true))
+        launchInteractor(updateShowSeasons, UpdateFollowedShowSeasonData.ExecuteParams(true))
     }
 
     override fun onCleared() {

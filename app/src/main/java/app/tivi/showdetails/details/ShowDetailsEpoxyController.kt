@@ -122,13 +122,8 @@ class ShowDetailsEpoxyController(
 
             when (viewState.relatedShows) {
                 is Success -> {
-                    val related = viewState.relatedShows()!!
-                    if (related.isEmpty()) {
-                        emptyState {
-                            id("related_empty")
-                            spanSizeOverride(TotalSpanOverride)
-                        }
-                    } else {
+                    val related = viewState.relatedShows()
+                    if (related != null && related.isNotEmpty()) {
                         carousel {
                             id("related_shows")
                             numViewsToShowOnScreen(5.25f)
@@ -149,14 +144,19 @@ class ShowDetailsEpoxyController(
                                         }
                             }
                         }
+                    } else {
+                        emptyState {
+                            id("related_empty")
+                            spanSizeOverride(TotalSpanOverride)
+                        }
                     }
                 }
             }
 
             when (viewState.relatedShows) {
                 is Success -> {
-                    val seasons = viewState.seasons()!!
-                    if (seasons.isNotEmpty()) {
+                    val seasons = viewState.seasons()
+                    if (seasons != null && seasons.isNotEmpty()) {
                         detailsHeader {
                             id("title_seasons")
                             title(R.string.show_details_seasons)
