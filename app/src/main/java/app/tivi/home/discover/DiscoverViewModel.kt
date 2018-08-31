@@ -69,14 +69,14 @@ class DiscoverViewModel @Inject constructor(
                         Flowables.combineLatest(
                                 searchQuery.toFlowable(),
                                 searchShows.observe(),
-                                tmdbManager.imageProvider,
+                                tmdbManager.imageProviderFlowable,
                                 loadingState.observable.toFlowable(),
                                 ::SearchResultDiscoverViewState)
                     } else {
                         Flowables.combineLatest(
                                 updateTrendingShows.observe(),
                                 updatePopularShows.observe(),
-                                tmdbManager.imageProvider,
+                                tmdbManager.imageProviderFlowable,
                                 loadingState.observable.toFlowable(),
                                 ::EmptyDiscoverViewState)
                     }

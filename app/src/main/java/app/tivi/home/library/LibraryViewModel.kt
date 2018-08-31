@@ -98,7 +98,7 @@ class LibraryViewModel @Inject constructor(
             Flowables.combineLatest(
                     availableFiltersFlowable,
                     Flowable.just(filter),
-                    tmdbManager.imageProvider,
+                    tmdbManager.imageProviderFlowable,
                     loadingState.flowable,
                     isEmptyFlowable,
                     dataSourceToFlowable(updateWatchedShows.dataSourceFactory()),
@@ -108,7 +108,7 @@ class LibraryViewModel @Inject constructor(
             Flowables.combineLatest(
                     availableFiltersFlowable,
                     Flowable.just(filter),
-                    tmdbManager.imageProvider,
+                    tmdbManager.imageProviderFlowable,
                     loadingState.flowable,
                     isEmptyFlowable,
                     dataSourceToFlowable(syncFollowedShows.dataSourceFactory()),

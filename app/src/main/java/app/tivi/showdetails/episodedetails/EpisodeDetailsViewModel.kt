@@ -69,7 +69,7 @@ class EpisodeDetailsViewModel @Inject constructor(
         disposables += Flowables.combineLatest(
                 updateEpisodeDetails.observe(),
                 watches,
-                tmdbManager.imageProvider,
+                tmdbManager.imageProviderFlowable,
                 watches.map {
                     if (it.isEmpty()) { Action.WATCH } else { Action.UNWATCH }
                 },

@@ -69,7 +69,7 @@ class ShowDetailsFragmentViewModel(
 
         changeShowFollowStatus.observe()
                 .toObservable()
-                .observeOn(schedulers.io)
+                .subscribeOn(schedulers.io)
                 .execute {
                     when (it) {
                         is Success -> copy(isFollowed = it.invoke()!!)
@@ -79,22 +79,21 @@ class ShowDetailsFragmentViewModel(
 
         updateShowDetails.observe()
                 .toObservable()
-                .observeOn(schedulers.io)
+                .subscribeOn(schedulers.io)
                 .execute { copy(show = it) }
 
         updateRelatedShows.observe()
                 .toObservable()
-                .observeOn(schedulers.io)
+                .subscribeOn(schedulers.io)
                 .execute { copy(relatedShows = it) }
 
-        tmdbManager.imageProvider
-                .toObservable()
-                .observeOn(schedulers.io)
+        tmdbManager.imageProviderObservable
+                .subscribeOn(schedulers.io)
                 .execute { copy(tmdbImageUrlProvider = it) }
 
         updateShowSeasons.observe()
                 .toObservable()
-                .observeOn(schedulers.io)
+                .subscribeOn(schedulers.io)
                 .execute { copy(seasons = it) }
 
         refresh()
