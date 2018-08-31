@@ -39,6 +39,7 @@ import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
 import com.google.auto.factory.AutoFactory
 import com.google.auto.factory.Provided
+import java.util.concurrent.TimeUnit
 
 @AutoFactory
 class ShowDetailsFragmentViewModel(
@@ -67,8 +68,11 @@ class ShowDetailsFragmentViewModel(
             changeShowFollowStatus.setParams(ChangeShowFollowStatus.Params(it.showId))
         }
 
+        // delay() is used to workaround https://github.com/airbnb/MvRx/issues/76
+
         changeShowFollowStatus.observe()
                 .toObservable()
+                .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
                 .subscribeOn(schedulers.io)
                 .execute {
                     when (it) {
@@ -79,20 +83,24 @@ class ShowDetailsFragmentViewModel(
 
         updateShowDetails.observe()
                 .toObservable()
+                .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
                 .subscribeOn(schedulers.io)
                 .execute { copy(show = it) }
 
         updateRelatedShows.observe()
                 .toObservable()
+                .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
                 .subscribeOn(schedulers.io)
                 .execute { copy(relatedShows = it) }
 
         tmdbManager.imageProviderObservable
                 .subscribeOn(schedulers.io)
+                .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
                 .execute { copy(tmdbImageUrlProvider = it) }
 
         updateShowSeasons.observe()
                 .toObservable()
+                .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
                 .subscribeOn(schedulers.io)
                 .execute { copy(seasons = it) }
 
