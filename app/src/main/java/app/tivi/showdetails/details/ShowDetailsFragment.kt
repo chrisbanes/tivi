@@ -154,6 +154,10 @@ class ShowDetailsFragment : TiviMvRxFragment() {
             override fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
                 viewModel.onMarkSeasonWatched(season, onlyAired, date)
             }
+
+            override fun toggleSeasonExpanded(season: Season) {
+                viewModel.toggleSeasonExpanded(season)
+            }
         })
 
         binding.detailsRv.setController(controller)
@@ -162,7 +166,7 @@ class ShowDetailsFragment : TiviMvRxFragment() {
     override fun invalidate() {
         withState(viewModel) {
             binding.state = it
-            controller.state = it
+            controller.setData(it)
             scheduleStartPostponedTransitions()
         }
     }

@@ -30,6 +30,7 @@ data class ShowDetailsViewState(
     val show: Async<TiviShow> = Uninitialized,
     val relatedShows: Async<List<RelatedShowEntryWithShow>> = Uninitialized,
     val seasons: Async<List<SeasonWithEpisodesAndWatches>> = Uninitialized,
+    val expandedSeasonIds: Set<Long> = emptySet(),
     val tmdbImageUrlProvider: Async<TmdbImageUrlProvider> = Uninitialized
 ) : MvRxState {
     constructor(args: ShowDetailsFragment.Arguments) : this(args.showId)

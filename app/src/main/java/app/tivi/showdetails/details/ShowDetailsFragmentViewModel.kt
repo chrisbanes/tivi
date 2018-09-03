@@ -142,5 +142,16 @@ class ShowDetailsFragmentViewModel(
         launchInteractor(changeSeasonWatchedStatus, Params(season.id, Action.UNWATCH))
     }
 
+    fun toggleSeasonExpanded(season: Season) {
+        setState {
+            val newExpandedSeason = if (expandedSeasonIds.contains(season.id)) {
+                expandedSeasonIds - season.id
+            } else {
+                expandedSeasonIds + season.id
+            }
+            copy(expandedSeasonIds = newExpandedSeason)
+        }
+    }
+
     fun onUpClicked(showDetailsNavigator: ShowDetailsNavigator) = showDetailsNavigator.navigateUp()
 }
