@@ -121,6 +121,11 @@ android {
         exclude '**/*.kotlin_metadata'
         exclude 'META-INF/*.kotlin_module'
         exclude 'META-INF/*.version'
+        exclude 'META-INF/*.properties'
+        exclude 'META-INF/proguard/*'
+        // Exclude the Firebase/Fabric properties files
+        exclude '/*.properties'
+        exclude 'fabric/*.properties'
     }
 
     buildTypes {
