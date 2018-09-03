@@ -16,8 +16,7 @@
 
 package app.tivi.showdetails.details
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import android.support.v4.app.FragmentActivity
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
@@ -31,71 +30,81 @@ import app.tivi.interactors.ChangeShowFollowStatus.Action.TOGGLE
 import app.tivi.interactors.UpdateFollowedShowSeasonData
 import app.tivi.interactors.UpdateRelatedShows
 import app.tivi.interactors.UpdateShowDetails
+import app.tivi.showdetails.ShowDetailsActivity
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppRxSchedulers
-import app.tivi.util.Logger
-import app.tivi.util.TiviViewModel
-import io.reactivex.Flowable
-import io.reactivex.rxkotlin.Flowables
-import io.reactivex.rxkotlin.plusAssign
-import javax.inject.Inject
+import app.tivi.util.TiviMvRxViewModel
+import com.airbnb.mvrx.MvRxViewModelFactory
+import com.airbnb.mvrx.Success
+import com.google.auto.factory.AutoFactory
+import com.google.auto.factory.Provided
+import java.util.concurrent.TimeUnit
 
-class ShowDetailsFragmentViewModel @Inject constructor(
-    private val schedulers: AppRxSchedulers,
-    private val updateShowDetails: UpdateShowDetails,
-    private val updateRelatedShows: UpdateRelatedShows,
-    private val updateShowSeasons: UpdateFollowedShowSeasonData,
-    private val changeSeasonWatchedStatus: ChangeSeasonWatchedStatus,
-    private val tmdbManager: TmdbManager,
-    private val changeShowFollowStatus: ChangeShowFollowStatus,
-    private val logger: Logger
-) : TiviViewModel() {
+@AutoFactory
+class ShowDetailsFragmentViewModel(
+    initialState: ShowDetailsViewState,
+    @Provided schedulers: AppRxSchedulers,
+    @Provided private val updateShowDetails: UpdateShowDetails,
+    @Provided private val updateRelatedShows: UpdateRelatedShows,
+    @Provided private val updateShowSeasons: UpdateFollowedShowSeasonData,
+    @Provided private val changeSeasonWatchedStatus: ChangeSeasonWatchedStatus,
+    @Provided tmdbManager: TmdbManager,
+    @Provided private val changeShowFollowStatus: ChangeShowFollowStatus
+) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
 
-    var showId: Long? = null
-        set(value) {
-            if (field != value) {
-                field = value
-                if (value != null) {
-                    setupLiveData(value)
-                    refresh()
-                } else {
-                    _data.value = null
+    companion object : MvRxViewModelFactory<ShowDetailsViewState> {
+        @JvmStatic
+        override fun create(activity: FragmentActivity, state: ShowDetailsViewState): ShowDetailsFragmentViewModel {
+            return (activity as ShowDetailsActivity).showDetailsFragmentViewModelFactory.create(state)
+        }
+    }
+
+    init {
+        changeShowFollowStatus.observe()
+                .toObservable()
+                .subscribeOn(schedulers.io)
+                .execute {
+                    when (it) {
+                        is Success -> copy(isFollowed = it.invoke()!!)
+                        else -> copy(isFollowed = false)
+                    }
                 }
-            }
+
+        updateShowDetails.observe()
+                .toObservable()
+                .subscribeOn(schedulers.io)
+                .execute { copy(show = it) }
+
+        updateRelatedShows.observe()
+                .toObservable()
+                .subscribeOn(schedulers.io)
+                .execute { copy(relatedShows = it) }
+
+        tmdbManager.imageProviderObservable
+                .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
+                .subscribeOn(schedulers.io)
+                .execute { copy(tmdbImageUrlProvider = it) }
+
+        updateShowSeasons.observe()
+                .toObservable()
+                .subscribeOn(schedulers.io)
+                .execute { copy(seasons = it) }
+
+        withState {
+            updateShowDetails.setParams(UpdateShowDetails.Params(it.showId))
+            updateRelatedShows.setParams(UpdateRelatedShows.Params(it.showId))
+            updateShowSeasons.setParams(UpdateFollowedShowSeasonData.Params(it.showId))
+            changeShowFollowStatus.setParams(ChangeShowFollowStatus.Params(it.showId))
         }
 
-    private val _data = MutableLiveData<ShowDetailsViewState>()
-    val data: LiveData<ShowDetailsViewState>
-        get() = _data
+        refresh()
+    }
 
     private fun refresh() {
         launchInteractor(updateShowDetails, UpdateShowDetails.ExecuteParams(true))
         launchInteractor(updateRelatedShows, UpdateRelatedShows.ExecuteParams(true))
         launchInteractor(updateShowSeasons, UpdateFollowedShowSeasonData.ExecuteParams(true))
-    }
-
-    private fun setupLiveData(showId: Long) {
-        updateShowDetails.setParams(UpdateShowDetails.Params(showId))
-        updateRelatedShows.setParams(UpdateRelatedShows.Params(showId))
-        updateShowSeasons.setParams(UpdateFollowedShowSeasonData.Params(showId))
-        changeShowFollowStatus.setParams(ChangeShowFollowStatus.Params(showId))
-
-        disposables += changeShowFollowStatus.observe()
-                .subscribeOn(schedulers.io)
-                .distinctUntilChanged()
-                .switchMap { isFollowed ->
-                    Flowables.combineLatest(
-                            Flowable.just(isFollowed),
-                            updateShowDetails.observe(),
-                            updateRelatedShows.observe(),
-                            if (isFollowed) updateShowSeasons.observe() else Flowable.just(emptyList()),
-                            tmdbManager.imageProvider,
-                            ::ShowDetailsViewState)
-                }
-                .distinctUntilChanged()
-                .observeOn(schedulers.main)
-                .subscribe(_data::setValue, logger::e)
     }
 
     override fun onCleared() {
@@ -125,6 +134,17 @@ class ShowDetailsFragmentViewModel @Inject constructor(
 
     fun onMarkSeasonUnwatched(season: Season) {
         launchInteractor(changeSeasonWatchedStatus, Params(season.id, Action.UNWATCH))
+    }
+
+    fun toggleSeasonExpanded(season: Season) {
+        setState {
+            val newExpandedSeason = if (expandedSeasonIds.contains(season.id)) {
+                expandedSeasonIds - season.id
+            } else {
+                expandedSeasonIds + season.id
+            }
+            copy(expandedSeasonIds = newExpandedSeason)
+        }
     }
 
     fun onUpClicked(showDetailsNavigator: ShowDetailsNavigator) = showDetailsNavigator.navigateUp()

@@ -21,6 +21,7 @@ import app.tivi.extensions.toFlowable
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.Configuration
+import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
@@ -33,7 +34,9 @@ class TmdbManager @Inject constructor(
     private val tmdbClient: Tmdb
 ) {
     private val imageProviderSubject = BehaviorSubject.createDefault(TmdbImageUrlProvider())
-    val imageProvider = imageProviderSubject.toFlowable()
+    val imageProviderFlowable = imageProviderSubject.toFlowable()
+    val imageProviderObservable: Observable<TmdbImageUrlProvider>
+        get() = imageProviderSubject
 
     init {
         refreshConfiguration()

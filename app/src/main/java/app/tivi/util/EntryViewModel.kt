@@ -57,7 +57,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
     }
 
     val viewState = LiveDataReactiveStreams.fromPublisher(
-            Flowables.combineLatest(messages.toFlowable(), tmdbManager.imageProvider, ::EntryViewState)
+            Flowables.combineLatest(messages.toFlowable(), tmdbManager.imageProviderFlowable, ::EntryViewState)
     )
 
     init {

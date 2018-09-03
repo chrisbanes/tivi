@@ -20,6 +20,7 @@ import android.annotation.SuppressLint
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.os.Parcelable
 import android.support.constraint.motion.MotionLayout
 import android.view.LayoutInflater
 import android.view.View
@@ -27,32 +28,37 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import app.tivi.R
 import app.tivi.SharedElementHelper
-import app.tivi.TiviFragment
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.databinding.FragmentShowDetailsBinding
-import app.tivi.extensions.observeNotNull
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
 import app.tivi.ui.RoundRectViewOutline
+import app.tivi.util.TiviMvRxFragment
+import com.airbnb.mvrx.MvRx
+import com.airbnb.mvrx.fragmentViewModel
+import com.airbnb.mvrx.withState
+import kotlinx.android.parcel.Parcelize
 import javax.inject.Inject
 
-class ShowDetailsFragment : TiviFragment() {
+class ShowDetailsFragment : TiviMvRxFragment() {
     companion object {
-        private const val KEY_SHOW_ID = "show_id"
-
+        @JvmStatic
         fun create(id: Long): ShowDetailsFragment {
             return ShowDetailsFragment().apply {
-                arguments = bundleOf(KEY_SHOW_ID to id)
+                arguments = bundleOf(MvRx.KEY_ARG to Arguments(id))
             }
         }
     }
 
+    @Parcelize
+    data class Arguments(val showId: Long) : Parcelable
+
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var viewModel: ShowDetailsFragmentViewModel
+    private val viewModel: ShowDetailsFragmentViewModel by fragmentViewModel()
     private lateinit var controller: ShowDetailsEpoxyController
     private lateinit var showDetailsNavigator: ShowDetailsNavigator
 
@@ -60,13 +66,8 @@ class ShowDetailsFragment : TiviFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(ShowDetailsFragmentViewModel::class.java)
         showDetailsNavigator = ViewModelProviders.of(requireActivity(), viewModelFactory)
                 .get(ShowDetailsNavigatorViewModel::class.java)
-
-        arguments?.let {
-            viewModel.showId = it.getLong(KEY_SHOW_ID)
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -153,19 +154,20 @@ class ShowDetailsFragment : TiviFragment() {
             override fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
                 viewModel.onMarkSeasonWatched(season, onlyAired, date)
             }
+
+            override fun toggleSeasonExpanded(season: Season) {
+                viewModel.toggleSeasonExpanded(season)
+            }
         })
 
         binding.detailsRv.setController(controller)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel.data.observeNotNull(this, this::update)
-    }
-
-    private fun update(viewState: ShowDetailsViewState) {
-        binding.state = viewState
-        controller.state = viewState
-        scheduleStartPostponedTransitions()
+    override fun invalidate() {
+        withState(viewModel) {
+            binding.state = it
+            controller.setData(it)
+            scheduleStartPostponedTransitions()
+        }
     }
 }

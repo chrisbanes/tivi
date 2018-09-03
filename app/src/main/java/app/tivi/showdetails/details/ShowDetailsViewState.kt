@@ -20,11 +20,18 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.tmdb.TmdbImageUrlProvider
+import com.airbnb.mvrx.Async
+import com.airbnb.mvrx.MvRxState
+import com.airbnb.mvrx.Uninitialized
 
 data class ShowDetailsViewState(
-    val isFollowed: Boolean,
-    val show: TiviShow,
-    val relatedShows: List<RelatedShowEntryWithShow>,
-    val seasons: List<SeasonWithEpisodesAndWatches>,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider
-)
+    val showId: Long,
+    val isFollowed: Boolean = false,
+    val show: Async<TiviShow> = Uninitialized,
+    val relatedShows: Async<List<RelatedShowEntryWithShow>> = Uninitialized,
+    val seasons: Async<List<SeasonWithEpisodesAndWatches>> = Uninitialized,
+    val expandedSeasonIds: Set<Long> = emptySet(),
+    val tmdbImageUrlProvider: Async<TmdbImageUrlProvider> = Uninitialized
+) : MvRxState {
+    constructor(args: ShowDetailsFragment.Arguments) : this(args.showId)
+}

@@ -37,8 +37,8 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
-            app:tmdbBackdropPath="@{state.show.tmdbBackdropPath}"
-            app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider}" />
+            app:tmdbBackdropPath="@{state.show.invoke().tmdbBackdropPath}"
+            app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider.invoke()}" />
 
         <View
             android:id="@+id/details_backdrop_scrim"
@@ -58,8 +58,8 @@
             android:transformPivotX="0px"
             android:transformPivotY="0px"
             android:transitionName="poster"
-            app:tmdbBackdropPath="@{state.show.tmdbPosterPath}"
-            app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider}" />
+            app:tmdbBackdropPath="@{state.show.invoke().tmdbPosterPath}"
+            app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider.invoke()}" />
 
         <!-- Needed to fill a rounding error gap in MotionLayout. See https://issuetracker.google.com/112728689 -->
         <View
@@ -81,7 +81,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:ellipsize="end"
-            android:text="@{state.show.title}"
+            android:text="@{state.show.invoke().title}"
             android:textAppearance="?attr/textAppearanceHeadline6"
             tools:text="@sample/shows.txt" />
 
@@ -94,8 +94,8 @@
             android:ellipsize="end"
             android:textAppearance="?attr/textAppearanceCaption"
             android:textColor="#000000"
-            app:genreContentDescriptionString="@{state.show.genres}"
-            app:genreString="@{state.show.genres}"
+            app:genreContentDescriptionString="@{state.show.invoke().genres}"
+            app:genreString="@{state.show.invoke().genres}"
             tools:text="Drama // Fantasy" />
 
         <app.tivi.ui.widget.TintingToolbar

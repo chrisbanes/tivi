@@ -16,20 +16,11 @@
 
 package app.tivi.showdetails.details
 
-import android.arch.lifecycle.ViewModel
-import app.tivi.inject.ViewModelKey
-import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
-import dagger.multibindings.IntoMap
 
 @Module
 internal abstract class ShowDetailsFragmentBuilder {
     @ContributesAndroidInjector
     internal abstract fun showDetailsFragment(): ShowDetailsFragment
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(ShowDetailsFragmentViewModel::class)
-    abstract fun bindShowDetailsFragmentViewModel(viewModel: ShowDetailsFragmentViewModel): ViewModel
 }

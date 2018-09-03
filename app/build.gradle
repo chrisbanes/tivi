@@ -27,6 +27,9 @@ kapt {
     correctErrorTypes = true
 }
 apply plugin: 'kotlin-android-extensions'
+androidExtensions {
+    experimental = true
+}
 
 apply plugin: 'com.getkeepsafe.dexcount'
 dexcount {
@@ -108,7 +111,7 @@ android {
     lintOptions {
         // Disable lintVital. Not needed since lint is run on CI
         checkReleaseBuilds false
-        
+
         disable 'GradleCompatible'
     }
 
@@ -193,8 +196,14 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
 
+    kapt "com.google.auto.factory:auto-factory:1.0-beta5"
+    compileOnly "com.episode6.hackit.auto.factory:auto-factory-annotations:1.0-beta5"
+    compileOnly "javax.annotation:jsr250-api:1.0"
+
     implementation "com.github.bumptech.glide:glide:${versions.glide}"
     kapt "com.github.bumptech.glide:compiler:${versions.glide}"
+
+    implementation 'com.airbnb.android:mvrx:0.5.0'
 
     implementation "com.airbnb.android:epoxy:${versions.epoxy}"
     implementation "com.airbnb.android:epoxy-paging:${versions.epoxy}"
@@ -217,6 +226,10 @@ dependencies {
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
 
     implementation "org.jetbrains:annotations:16.0.1"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlin}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${versions.coroutines}"
 }
 
 def getGitHash() {
