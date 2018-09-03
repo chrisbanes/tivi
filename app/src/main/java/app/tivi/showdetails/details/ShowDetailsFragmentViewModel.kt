@@ -61,18 +61,8 @@ class ShowDetailsFragmentViewModel(
     }
 
     init {
-        withState {
-            updateShowDetails.setParams(UpdateShowDetails.Params(it.showId))
-            updateRelatedShows.setParams(UpdateRelatedShows.Params(it.showId))
-            updateShowSeasons.setParams(UpdateFollowedShowSeasonData.Params(it.showId))
-            changeShowFollowStatus.setParams(ChangeShowFollowStatus.Params(it.showId))
-        }
-
-        // delay() is used to workaround https://github.com/airbnb/MvRx/issues/76
-
         changeShowFollowStatus.observe()
                 .toObservable()
-                .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
                 .subscribeOn(schedulers.io)
                 .execute {
                     when (it) {
@@ -83,26 +73,30 @@ class ShowDetailsFragmentViewModel(
 
         updateShowDetails.observe()
                 .toObservable()
-                .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
                 .subscribeOn(schedulers.io)
                 .execute { copy(show = it) }
 
         updateRelatedShows.observe()
                 .toObservable()
-                .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
                 .subscribeOn(schedulers.io)
                 .execute { copy(relatedShows = it) }
 
         tmdbManager.imageProviderObservable
-                .subscribeOn(schedulers.io)
                 .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
+                .subscribeOn(schedulers.io)
                 .execute { copy(tmdbImageUrlProvider = it) }
 
         updateShowSeasons.observe()
                 .toObservable()
-                .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
                 .subscribeOn(schedulers.io)
                 .execute { copy(seasons = it) }
+
+        withState {
+            updateShowDetails.setParams(UpdateShowDetails.Params(it.showId))
+            updateRelatedShows.setParams(UpdateRelatedShows.Params(it.showId))
+            updateShowSeasons.setParams(UpdateFollowedShowSeasonData.Params(it.showId))
+            changeShowFollowStatus.setParams(ChangeShowFollowStatus.Params(it.showId))
+        }
 
         refresh()
     }
