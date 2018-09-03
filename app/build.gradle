@@ -196,9 +196,8 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
 
-    kapt "com.google.auto.factory:auto-factory:1.0-beta5"
-    compileOnly "com.episode6.hackit.auto.factory:auto-factory-annotations:1.0-beta5"
-    compileOnly "javax.annotation:jsr250-api:1.0"
+    compileOnly 'com.squareup.inject:assisted-inject-annotations-dagger2:0.2.0'
+    kapt 'com.squareup.inject:assisted-inject-processor-dagger2:0.2.0'
 
     implementation "com.github.bumptech.glide:glide:${versions.glide}"
     kapt "com.github.bumptech.glide:compiler:${versions.glide}"

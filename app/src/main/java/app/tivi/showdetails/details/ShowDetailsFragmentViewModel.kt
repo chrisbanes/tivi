@@ -37,21 +37,24 @@ import app.tivi.util.AppRxSchedulers
 import app.tivi.util.TiviMvRxViewModel
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
-import com.google.auto.factory.AutoFactory
-import com.google.auto.factory.Provided
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 import java.util.concurrent.TimeUnit
 
-@AutoFactory
-class ShowDetailsFragmentViewModel(
-    initialState: ShowDetailsViewState,
-    @Provided schedulers: AppRxSchedulers,
-    @Provided private val updateShowDetails: UpdateShowDetails,
-    @Provided private val updateRelatedShows: UpdateRelatedShows,
-    @Provided private val updateShowSeasons: UpdateFollowedShowSeasonData,
-    @Provided private val changeSeasonWatchedStatus: ChangeSeasonWatchedStatus,
-    @Provided tmdbManager: TmdbManager,
-    @Provided private val changeShowFollowStatus: ChangeShowFollowStatus
+class ShowDetailsFragmentViewModel @AssistedInject constructor(
+    @Assisted initialState: ShowDetailsViewState,
+    schedulers: AppRxSchedulers,
+    private val updateShowDetails: UpdateShowDetails,
+    private val updateRelatedShows: UpdateRelatedShows,
+    private val updateShowSeasons: UpdateFollowedShowSeasonData,
+    private val changeSeasonWatchedStatus: ChangeSeasonWatchedStatus,
+    tmdbManager: TmdbManager,
+    private val changeShowFollowStatus: ChangeShowFollowStatus
 ) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(initialState: ShowDetailsViewState): ShowDetailsFragmentViewModel
+    }
 
     companion object : MvRxViewModelFactory<ShowDetailsViewState> {
         @JvmStatic
