@@ -16,20 +16,11 @@
 
 package app.tivi.showdetails.episodedetails
 
-import android.arch.lifecycle.ViewModel
-import app.tivi.inject.ViewModelKey
-import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
-import dagger.multibindings.IntoMap
 
 @Module
 internal abstract class EpisodeDetailsFragmentBuilder {
     @ContributesAndroidInjector
     internal abstract fun bindEpisodeDetailsFragment(): EpisodeDetailsFragment
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(EpisodeDetailsViewModel::class)
-    abstract fun bindEpisodeDetailsViewModel(viewModel: EpisodeDetailsViewModel): ViewModel
 }

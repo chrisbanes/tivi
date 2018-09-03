@@ -19,13 +19,19 @@ package app.tivi.showdetails.episodedetails
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.tmdb.TmdbImageUrlProvider
+import com.airbnb.mvrx.Async
+import com.airbnb.mvrx.MvRxState
+import com.airbnb.mvrx.Uninitialized
 
 data class EpisodeDetailsViewState(
-    val episode: Episode,
-    val watches: List<EpisodeWatchEntry>,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    val action: Action
-) {
+    val episodeId: Long,
+    val episode: Async<Episode> = Uninitialized,
+    val watches: Async<List<EpisodeWatchEntry>> = Uninitialized,
+    val tmdbImageUrlProvider: Async<TmdbImageUrlProvider> = Uninitialized,
+    val action: Action = Action.WATCH
+) : MvRxState {
+    constructor(args: EpisodeDetailsFragment.Arguments) : this(args.episodeId)
+
     enum class Action {
         WATCH, UNWATCH
     }

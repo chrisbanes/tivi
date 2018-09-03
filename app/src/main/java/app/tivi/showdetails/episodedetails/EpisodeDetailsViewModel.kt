@@ -16,75 +16,78 @@
 
 package app.tivi.showdetails.episodedetails
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import android.support.v4.app.FragmentActivity
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.interactors.AddEpisodeWatch
 import app.tivi.interactors.RemoveEpisodeWatch
 import app.tivi.interactors.RemoveEpisodeWatches
 import app.tivi.interactors.UpdateEpisodeDetails
 import app.tivi.interactors.UpdateEpisodeWatches
+import app.tivi.showdetails.ShowDetailsActivity
 import app.tivi.showdetails.episodedetails.EpisodeDetailsViewState.Action
 import app.tivi.tmdb.TmdbManager
-import app.tivi.util.Logger
-import app.tivi.util.TiviViewModel
-import io.reactivex.rxkotlin.Flowables
-import io.reactivex.rxkotlin.plusAssign
+import app.tivi.util.AppRxSchedulers
+import app.tivi.util.TiviMvRxViewModel
+import com.airbnb.mvrx.MvRxViewModelFactory
+import com.airbnb.mvrx.Success
+import com.google.auto.factory.AutoFactory
+import com.google.auto.factory.Provided
 import org.threeten.bp.OffsetDateTime
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+@AutoFactory
 class EpisodeDetailsViewModel @Inject constructor(
-    private val updateEpisodeDetails: UpdateEpisodeDetails,
-    private val updateEpisodeWatches: UpdateEpisodeWatches,
-    private val addEpisodeWatch: AddEpisodeWatch,
-    private val removeEpisodeWatches: RemoveEpisodeWatches,
-    private val removeEpisodeWatch: RemoveEpisodeWatch,
-    private val tmdbManager: TmdbManager,
-    private val logger: Logger
-) : TiviViewModel() {
+    initialState: EpisodeDetailsViewState,
+    @Provided private val schedulers: AppRxSchedulers,
+    @Provided private val updateEpisodeDetails: UpdateEpisodeDetails,
+    @Provided private val updateEpisodeWatches: UpdateEpisodeWatches,
+    @Provided private val addEpisodeWatch: AddEpisodeWatch,
+    @Provided private val removeEpisodeWatches: RemoveEpisodeWatches,
+    @Provided private val removeEpisodeWatch: RemoveEpisodeWatch,
+    @Provided private val tmdbManager: TmdbManager
+) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
+    companion object : MvRxViewModelFactory<EpisodeDetailsViewState> {
+        @JvmStatic
+        override fun create(activity: FragmentActivity, state: EpisodeDetailsViewState): EpisodeDetailsViewModel {
+            return (activity as ShowDetailsActivity).episodeDetailsViewModelFactory.create(state)
+        }
+    }
 
-    var episodeId: Long? = null
-        set(value) {
-            if (field != value) {
-                field = value
-                if (value != null) {
-                    setup(value)
-                    refresh()
+    init {
+        updateEpisodeDetails.observe()
+                .toObservable()
+                .subscribeOn(schedulers.io)
+                .execute { copy(episode = it) }
+
+        updateEpisodeWatches.observe()
+                .toObservable()
+                .subscribeOn(schedulers.io)
+                .execute {
+                    val action = if (it is Success && it()!!.isNotEmpty()) {
+                        Action.UNWATCH
+                    } else {
+                        Action.WATCH
+                    }
+                    copy(watches = it, action = action)
                 }
-            }
+
+        tmdbManager.imageProviderObservable
+                .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
+                .subscribeOn(schedulers.io)
+                .execute { copy(tmdbImageUrlProvider = it) }
+
+        withState {
+            updateEpisodeDetails.setParams(UpdateEpisodeDetails.Params(it.episodeId))
+            updateEpisodeWatches.setParams(UpdateEpisodeWatches.Params(it.episodeId))
         }
 
-    private val _data = MutableLiveData<EpisodeDetailsViewState>()
-    val data: LiveData<EpisodeDetailsViewState>
-        get() = _data
-
-    fun setup(episodeId: Long) {
-        updateEpisodeDetails.setParams(UpdateEpisodeDetails.Params(episodeId))
-        updateEpisodeWatches.setParams(UpdateEpisodeWatches.Params(episodeId))
-
-        disposables.clear()
-
-        val watches = updateEpisodeWatches.observe().share()
-
-        disposables += Flowables.combineLatest(
-                updateEpisodeDetails.observe(),
-                watches,
-                tmdbManager.imageProviderFlowable,
-                watches.map {
-                    if (it.isEmpty()) { Action.WATCH } else { Action.UNWATCH }
-                },
-                ::EpisodeDetailsViewState
-        ).subscribe(_data::postValue, logger::e)
+        refresh()
     }
 
     private fun refresh() {
-        val epId = episodeId
-        if (epId != null) {
-            launchInteractor(updateEpisodeDetails, UpdateEpisodeDetails.ExecuteParams(true))
-            launchInteractor(updateEpisodeWatches, UpdateEpisodeWatches.ExecuteParams(true))
-        } else {
-            _data.value = null
-        }
+        launchInteractor(updateEpisodeDetails, UpdateEpisodeDetails.ExecuteParams(true))
+        launchInteractor(updateEpisodeWatches, UpdateEpisodeWatches.ExecuteParams(true))
     }
 
     fun removeWatchEntry(entry: EpisodeWatchEntry) {
@@ -92,10 +95,14 @@ class EpisodeDetailsViewModel @Inject constructor(
     }
 
     fun markWatched() {
-        episodeId?.also { launchInteractor(addEpisodeWatch, AddEpisodeWatch.Params(it, OffsetDateTime.now())) }
+        withState {
+            launchInteractor(addEpisodeWatch, AddEpisodeWatch.Params(it.episodeId, OffsetDateTime.now()))
+        }
     }
 
     fun markUnwatched() {
-        episodeId?.also { launchInteractor(removeEpisodeWatches, RemoveEpisodeWatches.Params(it)) }
+        withState {
+            launchInteractor(removeEpisodeWatches, RemoveEpisodeWatches.Params(it.episodeId))
+        }
     }
 }
