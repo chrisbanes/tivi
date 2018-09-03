@@ -19,6 +19,7 @@ package app.tivi.showdetails.episodedetails
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,31 +31,36 @@ import app.tivi.R
 import app.tivi.databinding.FragmentEpisodeDetailsBinding
 import app.tivi.extensions.marginBottom
 import app.tivi.extensions.marginTop
-import app.tivi.extensions.observeK
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
 import app.tivi.ui.epoxy.SwipeAwayCallbacks
-import app.tivi.util.DaggerBottomSheetFragment
 import app.tivi.util.TiviDateFormatter
+import app.tivi.util.TiviMvRxBottomSheetFragment
 import com.airbnb.epoxy.EpoxyTouchHelper
+import com.airbnb.mvrx.MvRx
+import com.airbnb.mvrx.fragmentViewModel
+import com.airbnb.mvrx.withState
+import kotlinx.android.parcel.Parcelize
 import javax.inject.Inject
 
-class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
+class EpisodeDetailsFragment : TiviMvRxBottomSheetFragment() {
     companion object {
-        private const val KEY_EPISODE_ID = "episode_id"
-
+        @JvmStatic
         fun create(id: Long): EpisodeDetailsFragment {
             return EpisodeDetailsFragment().apply {
-                arguments = bundleOf(KEY_EPISODE_ID to id)
+                arguments = bundleOf(MvRx.KEY_ARG to Arguments(id))
             }
         }
     }
 
+    @Parcelize
+    data class Arguments(val episodeId: Long) : Parcelable
+
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var dateFormatter: TiviDateFormatter
 
-    private lateinit var viewModel: EpisodeDetailsViewModel
+    private val viewModel: EpisodeDetailsViewModel by fragmentViewModel()
     private lateinit var controller: EpisodeDetailsEpoxyController
 
     private lateinit var showDetailsNavigator: ShowDetailsNavigator
@@ -63,13 +69,8 @@ class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(EpisodeDetailsViewModel::class.java)
         showDetailsNavigator = ViewModelProviders.of(requireActivity(), viewModelFactory)
                 .get(ShowDetailsNavigatorViewModel::class.java)
-
-        arguments?.let {
-            viewModel.episodeId = it.getLong(KEY_EPISODE_ID)
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -122,28 +123,26 @@ class EpisodeDetailsFragment : DaggerBottomSheetFragment() {
                 .andCallbacks(swipeCallback)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel.data.observeK(this) { it?.let(::update) }
-    }
+    override fun invalidate() {
+        withState(viewModel) { state ->
+            // TODO don't just use the result
+            binding.episode = state.episode()
+            binding.tmdbImageUrlProvider = state.tmdbImageUrlProvider()
 
-    private fun update(viewState: EpisodeDetailsViewState) {
-        binding.episode = viewState.episode
-        binding.tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
-
-        binding.epDetailsFab.apply {
-            when (viewState.action) {
-                EpisodeDetailsViewState.Action.WATCH -> setImageResource(R.drawable.ic_eye_24dp)
-                EpisodeDetailsViewState.Action.UNWATCH -> setImageResource(R.drawable.ic_eye_off_24dp)
-            }
-            setOnClickListener {
-                when (viewState.action) {
-                    EpisodeDetailsViewState.Action.WATCH -> viewModel.markWatched()
-                    EpisodeDetailsViewState.Action.UNWATCH -> viewModel.markUnwatched()
+            binding.epDetailsFab.apply {
+                when (state.action) {
+                    EpisodeDetailsViewState.Action.WATCH -> setImageResource(R.drawable.ic_eye_24dp)
+                    EpisodeDetailsViewState.Action.UNWATCH -> setImageResource(R.drawable.ic_eye_off_24dp)
+                }
+                setOnClickListener {
+                    when (state.action) {
+                        EpisodeDetailsViewState.Action.WATCH -> viewModel.markWatched()
+                        EpisodeDetailsViewState.Action.UNWATCH -> viewModel.markUnwatched()
+                    }
                 }
             }
-        }
 
-        controller.setData(viewState)
+            controller.setData(state)
+        }
     }
 }
