@@ -196,8 +196,8 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
 
-    compileOnly 'com.squareup.inject:assisted-inject-annotations-dagger2:0.2.0'
-    kapt 'com.squareup.inject:assisted-inject-processor-dagger2:0.2.0'
+    compileOnly 'com.squareup.inject:assisted-inject-annotations-dagger2:0.2.1'
+    kapt 'com.squareup.inject:assisted-inject-processor-dagger2:0.2.1'
 
     implementation "com.github.bumptech.glide:glide:${versions.glide}"
     kapt "com.github.bumptech.glide:compiler:${versions.glide}"
