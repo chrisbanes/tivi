@@ -32,7 +32,7 @@ abstract class HomeFragmentViewModel(
     private val traktManager: TraktManager,
     private val updateUserDetails: UpdateUserDetails,
     protected val logger: Logger
-) : TiviViewModel() {
+) : TiviViewModel(), HomeViewModel {
 
     private val _authUiState = MutableLiveData<TraktAuthState>()
     val authUiState: LiveData<TraktAuthState>
@@ -62,11 +62,11 @@ abstract class HomeFragmentViewModel(
         launchInteractor(updateUserDetails, UpdateUserDetails.ExecuteParams(false))
     }
 
-    fun onProfileItemClicked() {
+    override fun onProfileItemClicked() {
         // TODO
     }
 
-    fun onLoginItemClicked(authService: AuthorizationService) {
+    override fun onLoginItemClicked(authService: AuthorizationService) {
         traktManager.startAuth(0, authService)
     }
 }

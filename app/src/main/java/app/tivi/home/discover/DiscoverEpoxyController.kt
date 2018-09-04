@@ -40,16 +40,17 @@ class DiscoverEpoxyController(
     }
 
     override fun buildModels(viewState: DiscoverViewState) {
-        when (viewState) {
-            is EmptyDiscoverViewState -> buildEmptyModels(viewState)
-            is SearchResultDiscoverViewState -> buildSearchResultModels(viewState)
+        if (viewState.isSearchOpen) {
+            buildSearchResultModels(viewState)
+        } else {
+            buildDiscoverModels(viewState)
         }
     }
 
-    private fun buildSearchResultModels(viewState: SearchResultDiscoverViewState) {
+    private fun buildSearchResultModels(viewState: DiscoverViewState) {
         val tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
 
-        viewState.results.forEach { result ->
+        viewState.searchResults.forEach { result ->
             posterGridItem {
                 id(result.id)
                 tmdbImageUrlProvider(tmdbImageUrlProvider)
@@ -61,7 +62,7 @@ class DiscoverEpoxyController(
         }
     }
 
-    private fun buildEmptyModels(viewState: EmptyDiscoverViewState) {
+    private fun buildDiscoverModels(viewState: DiscoverViewState) {
         val trendingShows = viewState.trendingItems
         val popularShows = viewState.popularItems
         val tmdbImageUrlProvider = viewState.tmdbImageUrlProvider

@@ -16,11 +16,11 @@
 
 package app.tivi.home.discover
 
+import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.SearchView
 import android.view.LayoutInflater
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -31,20 +31,30 @@ import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.databinding.FragmentDiscoverBinding
-import app.tivi.extensions.observeNotNull
-import app.tivi.home.HomeFragment
+import app.tivi.home.HomeActivity
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeNavigatorViewModel
+import app.tivi.trakt.TraktAuthState
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
+import app.tivi.ui.glide.GlideApp
+import app.tivi.ui.glide.asGlideTarget
 import app.tivi.util.GridToGridTransitioner
+import app.tivi.util.TiviMvRxFragment
+import com.airbnb.mvrx.fragmentViewModel
+import com.airbnb.mvrx.withState
+import javax.inject.Inject
 
-internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
+internal class DiscoverFragment : TiviMvRxFragment() {
     private lateinit var binding: FragmentDiscoverBinding
     private lateinit var searchView: SearchView
     private lateinit var listItemSharedElementHelper: ListItemSharedElementHelper
 
     private lateinit var homeNavigator: HomeNavigator
+
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    private val viewModel: DiscoverViewModel by fragmentViewModel()
 
     private val controller = DiscoverEpoxyController(object : DiscoverEpoxyController.Callbacks {
         override fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>) {
@@ -70,20 +80,10 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(DiscoverViewModel::class.java)
         homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
 
         GridToGridTransitioner.setupFirstFragment(this,
                 intArrayOf(R.id.summary_appbarlayout, R.id.summary_status_scrim))
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel.data.observeNotNull(this) { model ->
-            binding.state = model
-            controller.setData(model)
-            scheduleStartPostponedTransitions()
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -138,7 +138,36 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
         binding.summarySwipeRefresh.setOnRefreshListener(viewModel::refresh)
     }
 
-    override fun getMenu(): Menu? = binding.summaryToolbar.menu
+    override fun invalidate() {
+        withState(viewModel) {
+            binding.state = it
+            controller.setData(it)
+
+            val userMenuItem = binding.summaryToolbar.menu.findItem(R.id.home_menu_user_avatar)
+            val loginMenuItem = binding.summaryToolbar.menu.findItem(R.id.home_menu_user_login)
+            when (it.authState) {
+                TraktAuthState.LOGGED_IN -> {
+                    userMenuItem.isVisible = true
+                    it.user?.let { user ->
+                        userMenuItem.title = user.name
+                        if (user.avatarUrl != null) {
+                            GlideApp.with(requireContext())
+                                    .load(user.avatarUrl)
+                                    .circleCrop()
+                                    .into(userMenuItem.asGlideTarget())
+                        }
+                    }
+                    loginMenuItem.isVisible = false
+                }
+                TraktAuthState.LOGGED_OUT -> {
+                    userMenuItem.isVisible = false
+                    loginMenuItem.isVisible = true
+                }
+            }
+
+            scheduleStartPostponedTransitions()
+        }
+    }
 
     internal fun scrollToTop() {
         binding.summaryRv.apply {
@@ -146,5 +175,17 @@ internal class DiscoverFragment : HomeFragment<DiscoverViewModel>() {
             smoothScrollToPosition(0)
         }
         binding.summaryAppbarlayout.setExpanded(true)
+    }
+
+    private fun onMenuItemClicked(item: MenuItem) = when (item.itemId) {
+        R.id.home_menu_user_avatar -> {
+            viewModel.onProfileItemClicked()
+            true
+        }
+        R.id.home_menu_user_login -> {
+            viewModel.onLoginItemClicked((requireActivity() as HomeActivity).authService)
+            true
+        }
+        else -> false
     }
 }
