@@ -18,14 +18,27 @@ package app.tivi.appinitializers
 
 import android.app.Application
 import android.content.Context
+import android.os.Handler
+import android.os.HandlerThread
 import android.support.v7.widget.SnapHelper
 import android.view.Gravity
 import com.airbnb.epoxy.Carousel
+import com.airbnb.epoxy.EpoxyController
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import javax.inject.Inject
 
-class SnappingInitializer @Inject constructor() : AppInitializer {
+class EpoxyInitializer @Inject constructor() : AppInitializer {
     override fun init(application: Application) {
+        // Make EpoxyController async
+        val handlerThread = HandlerThread("epoxy")
+        handlerThread.start()
+
+        Handler(handlerThread.looper).also {
+            EpoxyController.defaultDiffingHandler = it
+            EpoxyController.defaultModelBuildingHandler = it
+        }
+
+        // Also setup Carousel to use a more sane snapping behavior
         Carousel.setDefaultGlobalSnapHelperFactory(object : Carousel.SnapHelperFactory() {
             override fun buildSnapHelper(context: Context): SnapHelper {
                 return GravitySnapHelper(Gravity.START)
