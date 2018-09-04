@@ -17,32 +17,22 @@
 package app.tivi.home.library
 
 import android.arch.paging.PagedList
+import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
+import app.tivi.home.HomeViewState
 import app.tivi.tmdb.TmdbImageUrlProvider
+import app.tivi.trakt.TraktAuthState
+import com.airbnb.mvrx.MvRxState
 
-sealed class LibraryViewState(
-    open val allowedFilters: List<LibraryFilter>,
-    open val filter: LibraryFilter,
-    open val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    open val isLoading: Boolean,
-    open val isEmpty: Boolean
-)
-
-data class LibraryFollowedViewState(
-    override val allowedFilters: List<LibraryFilter>,
-    override val filter: LibraryFilter,
-    override val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    override val isLoading: Boolean,
-    override val isEmpty: Boolean,
-    val followedShows: PagedList<FollowedShowEntryWithShow>
-) : LibraryViewState(allowedFilters, filter, tmdbImageUrlProvider, isLoading, isEmpty)
-
-data class LibraryWatchedViewState(
-    override val allowedFilters: List<LibraryFilter>,
-    override val filter: LibraryFilter,
-    override val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    override val isLoading: Boolean,
-    override val isEmpty: Boolean,
-    val watchedShows: PagedList<WatchedShowEntryWithShow>
-) : LibraryViewState(allowedFilters, filter, tmdbImageUrlProvider, isLoading, isEmpty)
+data class LibraryViewState(
+    val allowedFilters: List<LibraryFilter> = emptyList(),
+    val filter: LibraryFilter = LibraryFilter.FOLLOWED,
+    val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider(),
+    val isLoading: Boolean = false,
+    val isEmpty: Boolean = true,
+    val followedShows: PagedList<FollowedShowEntryWithShow>? = null,
+    val watchedShows: PagedList<WatchedShowEntryWithShow>? = null,
+    override val user: TraktUser? = null,
+    override val authState: TraktAuthState = TraktAuthState.LOGGED_OUT
+) : MvRxState, HomeViewState

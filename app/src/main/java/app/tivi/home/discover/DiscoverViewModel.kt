@@ -51,7 +51,7 @@ class DiscoverViewModel @AssistedInject constructor(
     private val searchShows: SearchShows,
     private val traktManager: TraktManager,
     tmdbManager: TmdbManager,
-    updateUserDetails: UpdateUserDetails,
+    private val updateUserDetails: UpdateUserDetails,
     logger: Logger
 ) : TiviMvRxViewModel<DiscoverViewState>(initialState), HomeViewModel {
     @AssistedInject.Factory
@@ -101,17 +101,18 @@ class DiscoverViewModel @AssistedInject constructor(
                 .subscribeOn(schedulers.io)
                 .execute { copy(popularItems = it() ?: emptyList()) }
 
+        updateUserDetails.setParams(UpdateUserDetails.Params("me"))
         updateUserDetails.observe()
                 .toObservable()
                 .execute { copy(user = it()) }
 
         traktManager.state.distinctUntilChanged()
-                .execute {
-                    if (it() == TraktAuthState.LOGGED_IN) {
+                .doOnNext {
+                    if (it == TraktAuthState.LOGGED_IN) {
                         launchInteractor(updateUserDetails, UpdateUserDetails.ExecuteParams(false))
                     }
-                    copy(authState = it() ?: TraktAuthState.LOGGED_OUT)
                 }
+                .execute { copy(authState = it() ?: TraktAuthState.LOGGED_OUT) }
 
         refresh()
     }

@@ -33,6 +33,7 @@ import app.tivi.home.discover.DiscoverFragment
 import app.tivi.home.discover.DiscoverViewModel
 import app.tivi.home.followedshows.FollowedShowsFragment
 import app.tivi.home.library.LibraryFragment
+import app.tivi.home.library.LibraryViewModel
 import app.tivi.home.popular.PopularShowsFragment
 import app.tivi.home.trending.TrendingShowsFragment
 import app.tivi.home.watched.WatchedShowsFragment
@@ -52,6 +53,7 @@ class HomeActivity : TiviActivity() {
     private lateinit var navigatorViewModel: HomeNavigatorViewModel
 
     @Inject lateinit var discoverViewModelFactory: DiscoverViewModel.Factory
+    @Inject lateinit var libraryViewModelFactory: LibraryViewModel.Factory
 
     val authService by lazy(LazyThreadSafetyMode.NONE) {
         AuthorizationService(this)
