@@ -35,8 +35,7 @@ buildscript {
                     'test_rules'       : '1.0.2',
                     'work'             : '1.0.0-alpha08'
             ],
-            // Can't update to 0.25.0 yet due to https://github.com/Kotlin/kotlinx.coroutines/issues/510
-            'coroutines'     : '0.24.0',
+            'coroutines'     : '0.25.3',
             'dagger'         : '2.17',
             'epoxy'          : '2.16.4',
             'espresso'       : '3.0.2',
