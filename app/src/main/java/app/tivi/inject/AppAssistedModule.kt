@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails
+package app.tivi.inject
 
 import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
 
 @AssistedModule
-@Module(includes = [AssistedInject_DetailsViewModelModule::class])
-abstract class DetailsViewModelModule
+@Module(includes = [AssistedInject_AppAssistedModule::class])
+abstract class AppAssistedModule

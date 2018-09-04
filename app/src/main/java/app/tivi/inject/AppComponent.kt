@@ -35,6 +35,7 @@ import javax.inject.Singleton
     AndroidSupportInjectionModule::class,
     AndroidWorkerInjectionModule::class,
     AppModule::class,
+    AppAssistedModule::class,
     JobsCreator::class,
     DatabaseModule::class,
     DataModule::class,

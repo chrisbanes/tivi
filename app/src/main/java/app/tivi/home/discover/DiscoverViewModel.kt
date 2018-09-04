@@ -16,45 +16,58 @@
 
 package app.tivi.home.discover
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import android.support.v4.app.FragmentActivity
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
-import app.tivi.extensions.toFlowable
-import app.tivi.home.HomeFragmentViewModel
+import app.tivi.home.HomeActivity
 import app.tivi.home.HomeNavigator
+import app.tivi.home.HomeViewModel
 import app.tivi.interactors.SearchShows
 import app.tivi.interactors.UpdatePopularShows
 import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.interactors.UpdateUserDetails
+import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.tmdb.TmdbManager
+import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.RxLoadingCounter
-import io.reactivex.rxkotlin.Flowables
+import app.tivi.util.TiviMvRxViewModel
+import com.airbnb.mvrx.MvRxViewModelFactory
+import com.airbnb.mvrx.Success
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
+import net.openid.appauth.AuthorizationService
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-class DiscoverViewModel @Inject constructor(
+class DiscoverViewModel @AssistedInject constructor(
+    @Assisted initialState: DiscoverViewState,
     schedulers: AppRxSchedulers,
     private val updatePopularShows: UpdatePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,
     private val searchShows: SearchShows,
-    traktManager: TraktManager,
+    private val traktManager: TraktManager,
     tmdbManager: TmdbManager,
     updateUserDetails: UpdateUserDetails,
     logger: Logger
-) : HomeFragmentViewModel(traktManager, updateUserDetails, logger) {
-    private val _data = MutableLiveData<DiscoverViewState>()
-    val data: LiveData<DiscoverViewState>
-        get() = _data
+) : TiviMvRxViewModel<DiscoverViewState>(initialState), HomeViewModel {
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(initialState: DiscoverViewState): DiscoverViewModel
+    }
+
+    companion object : MvRxViewModelFactory<DiscoverViewState> {
+        @JvmStatic
+        override fun create(activity: FragmentActivity, state: DiscoverViewState): DiscoverViewModel {
+            return (activity as HomeActivity).discoverViewModelFactory.create(state)
+        }
+    }
 
     private var searchOpened = BehaviorSubject.createDefault(false)
     private var searchQuery = BehaviorSubject.create<String>()
-
     private val loadingState = RxLoadingCounter()
 
     init {
@@ -63,26 +76,42 @@ class DiscoverViewModel @Inject constructor(
                 .distinctUntilChanged()
                 .subscribe(::runSearchQuery, logger::e)
 
-        disposables += searchOpened.toFlowable()
-                .switchMap { searchOpened ->
-                    if (searchOpened) {
-                        Flowables.combineLatest(
-                                searchQuery.toFlowable(),
-                                searchShows.observe(),
-                                tmdbManager.imageProviderFlowable,
-                                loadingState.observable.toFlowable(),
-                                ::SearchResultDiscoverViewState)
-                    } else {
-                        Flowables.combineLatest(
-                                updateTrendingShows.observe(),
-                                updatePopularShows.observe(),
-                                tmdbManager.imageProviderFlowable,
-                                loadingState.observable.toFlowable(),
-                                ::EmptyDiscoverViewState)
+        searchOpened.execute { copy(isSearchOpen = it() ?: false) }
+
+        searchQuery.execute { copy(searchQuery = it() ?: "") }
+
+        searchShows.observe()
+                .toObservable()
+                .execute { if (it is Success) copy(searchResults = it()!!) else this }
+
+        tmdbManager.imageProviderObservable
+                .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
+                .execute { copy(tmdbImageUrlProvider = it() ?: TmdbImageUrlProvider()) }
+
+        loadingState.observable
+                .execute { copy(isLoading = it() ?: false) }
+
+        updateTrendingShows.observe()
+                .toObservable()
+                .subscribeOn(schedulers.io)
+                .execute { copy(trendingItems = it() ?: emptyList()) }
+
+        updatePopularShows.observe()
+                .toObservable()
+                .subscribeOn(schedulers.io)
+                .execute { copy(popularItems = it() ?: emptyList()) }
+
+        updateUserDetails.observe()
+                .toObservable()
+                .execute { copy(user = it()) }
+
+        traktManager.state.distinctUntilChanged()
+                .execute {
+                    if (it() == TraktAuthState.LOGGED_IN) {
+                        launchInteractor(updateUserDetails, UpdateUserDetails.ExecuteParams(false))
                     }
+                    copy(authState = it() ?: TraktAuthState.LOGGED_OUT)
                 }
-                .observeOn(schedulers.main)
-                .subscribe(_data::setValue, logger::e)
 
         refresh()
     }
@@ -120,4 +149,12 @@ class DiscoverViewModel @Inject constructor(
     }
 
     fun onSearchQueryChanged(query: String) = searchQuery.onNext(query)
+
+    override fun onProfileItemClicked() {
+        // TODO
+    }
+
+    override fun onLoginItemClicked(authService: AuthorizationService) {
+        traktManager.startAuth(0, authService)
+    }
 }

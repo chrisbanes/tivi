@@ -17,25 +17,22 @@
 package app.tivi.home.discover
 
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
+import app.tivi.home.HomeViewState
 import app.tivi.tmdb.TmdbImageUrlProvider
+import app.tivi.trakt.TraktAuthState
+import com.airbnb.mvrx.MvRxState
 
-sealed class DiscoverViewState(
-    open val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    open val isLoading: Boolean
-)
-
-data class EmptyDiscoverViewState(
-    val trendingItems: List<TrendingEntryWithShow>,
-    val popularItems: List<PopularEntryWithShow>,
-    override val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    override val isLoading: Boolean
-) : DiscoverViewState(tmdbImageUrlProvider, isLoading)
-
-data class SearchResultDiscoverViewState(
-    val query: String,
-    val results: List<TiviShow>,
-    override val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    override val isLoading: Boolean
-) : DiscoverViewState(tmdbImageUrlProvider, isLoading)
+data class DiscoverViewState(
+    val isSearchOpen: Boolean = false,
+    val searchQuery: String = "",
+    val searchResults: List<TiviShow> = emptyList(),
+    val trendingItems: List<TrendingEntryWithShow> = emptyList(),
+    val popularItems: List<PopularEntryWithShow> = emptyList(),
+    val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider(),
+    val isLoading: Boolean = false,
+    override val user: TraktUser? = null,
+    override val authState: TraktAuthState = TraktAuthState.LOGGED_OUT
+) : HomeViewState, MvRxState
