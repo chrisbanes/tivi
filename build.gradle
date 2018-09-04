@@ -19,26 +19,26 @@ buildscript {
     ext.versions = [
             'android_gradle' : '3.2.0-rc02',
             'androidx'       : [
-                    'appcompat'        : '28.0.0-rc01',
-                    'browser'          : '28.0.0-rc01',
+                    'appcompat'        : '28.0.0-rc02',
+                    'browser'          : '28.0.0-rc02',
                     'core'             : '1.1.1',
                     'constraint_layout': '2.0.0-alpha2',
                     'core_ktx'         : '0.3',
-                    'fragment'         : '28.0.0-rc01',
-                    'emoji'            : '28.0.0-rc01',
+                    'fragment'         : '28.0.0-rc02',
+                    'emoji'            : '28.0.0-rc02',
                     'lifecycle'        : '1.1.1',
                     'paging'           : '1.0.1',
-                    'palette'          : '28.0.0-rc01',
-                    'recyclerview'     : '28.0.0-rc01',
+                    'palette'          : '28.0.0-rc02',
+                    'recyclerview'     : '28.0.0-rc02',
                     'room'             : '1.1.1',
                     'test_runner'      : '1.0.2',
                     'test_rules'       : '1.0.2',
-                    'work'             : '1.0.0-alpha07'
+                    'work'             : '1.0.0-alpha08'
             ],
             // Can't update to 0.25.0 yet due to https://github.com/Kotlin/kotlinx.coroutines/issues/510
             'coroutines'     : '0.24.0',
             'dagger'         : '2.17',
-            'epoxy'          : '2.16.3',
+            'epoxy'          : '2.16.4',
             'espresso'       : '3.0.2',
             'firebase'       : '16.0.3',
             'glide'          : '4.8.0',
@@ -49,6 +49,7 @@ buildscript {
             'rx'             : '2.2.1',
             'rxkotlin'       : '2.3.0',
             'rxlint'         : '1.6.1',
+            'threetenbp'     : '1.3.7',
             'threetenabp'    : '1.1.0',
             'retrofit'       : '2.4.0',
     ]
