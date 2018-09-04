@@ -17,9 +17,12 @@
 package app.tivi.appinitializers
 
 import android.app.Application
+import javax.inject.Inject
 
-class AppInitializers(private vararg val initializers: AppInitializer) : AppInitializer {
-    override fun init(application: Application) {
+class AppInitializers @Inject constructor(
+    private val initializers: Set<@JvmSuppressWildcards AppInitializer>
+) {
+    fun init(application: Application) {
         initializers.forEach {
             it.init(application)
         }
