@@ -16,7 +16,6 @@
 
 package app.tivi.home.discover
 
-import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.SearchView
@@ -43,7 +42,6 @@ import app.tivi.util.GridToGridTransitioner
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
-import javax.inject.Inject
 
 internal class DiscoverFragment : TiviMvRxFragment() {
     private lateinit var binding: FragmentDiscoverBinding
@@ -51,8 +49,6 @@ internal class DiscoverFragment : TiviMvRxFragment() {
     private lateinit var listItemSharedElementHelper: ListItemSharedElementHelper
 
     private lateinit var homeNavigator: HomeNavigator
-
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val viewModel: DiscoverViewModel by fragmentViewModel()
 
@@ -139,16 +135,16 @@ internal class DiscoverFragment : TiviMvRxFragment() {
     }
 
     override fun invalidate() {
-        withState(viewModel) {
-            binding.state = it
-            controller.setData(it)
+        withState(viewModel) { state ->
+            binding.state = state
+            controller.setData(state)
 
             val userMenuItem = binding.summaryToolbar.menu.findItem(R.id.home_menu_user_avatar)
             val loginMenuItem = binding.summaryToolbar.menu.findItem(R.id.home_menu_user_login)
-            when (it.authState) {
+            when (state.authState) {
                 TraktAuthState.LOGGED_IN -> {
                     userMenuItem.isVisible = true
-                    it.user?.let { user ->
+                    state.user?.let { user ->
                         userMenuItem.title = user.name
                         if (user.avatarUrl != null) {
                             GlideApp.with(requireContext())

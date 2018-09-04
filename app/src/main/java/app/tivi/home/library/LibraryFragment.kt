@@ -20,28 +20,36 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
-import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import app.tivi.R
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.databinding.FragmentLibraryBinding
-import app.tivi.extensions.observeNotNull
-import app.tivi.home.HomeFragment
+import app.tivi.home.HomeActivity
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeNavigatorViewModel
+import app.tivi.trakt.TraktAuthState
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.epoxy.EmptyEpoxyController
+import app.tivi.ui.glide.GlideApp
+import app.tivi.ui.glide.asGlideTarget
 import app.tivi.util.GridToGridTransitioner
+import app.tivi.util.TiviMvRxFragment
 import com.airbnb.epoxy.EpoxyController
+import com.airbnb.mvrx.fragmentViewModel
+import com.airbnb.mvrx.withState
 
-class LibraryFragment : HomeFragment<LibraryViewModel>() {
+class LibraryFragment : TiviMvRxFragment() {
+
     private lateinit var homeNavigator: HomeNavigator
     private lateinit var gridLayoutManager: GridLayoutManager
 
     private lateinit var binding: FragmentLibraryBinding
+
+    private val viewModel: LibraryViewModel by fragmentViewModel()
 
     private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
         ListItemSharedElementHelper(binding.libraryRv) { it.findViewById(R.id.show_poster) }
@@ -66,7 +74,6 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(LibraryViewModel::class.java)
         homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
 
         GridToGridTransitioner.setupFirstFragment(this,
@@ -79,38 +86,54 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel.data.observeNotNull(this) { viewState ->
-            update(viewState)
+    override fun invalidate() {
+        withState(viewModel) { state ->
+            binding.state = state
+            filterController.setData(state)
+
+            when (state.filter) {
+                LibraryFilter.WATCHED -> {
+                    val c = (controller as? LibraryWatchedEpoxyController ?: createWatchedController())
+                    c.tmdbImageUrlProvider = state.tmdbImageUrlProvider
+                    c.setList(state.watchedShows)
+                    c.isEmpty = state.isEmpty
+                    controller = c
+                }
+                LibraryFilter.FOLLOWED -> {
+                    val c = controller as? LibraryFollowedEpoxyController ?: createFollowedController()
+                    c.tmdbImageUrlProvider = state.tmdbImageUrlProvider
+                    c.setList(state.followedShows)
+                    c.isEmpty = state.isEmpty
+                    controller = c
+                }
+            }
+
+            val userMenuItem = binding.libraryToolbar.menu.findItem(R.id.home_menu_user_avatar)
+            val loginMenuItem = binding.libraryToolbar.menu.findItem(R.id.home_menu_user_login)
+            when (state.authState) {
+                TraktAuthState.LOGGED_IN -> {
+                    userMenuItem.isVisible = true
+                    state.user?.let { user ->
+                        userMenuItem.title = user.name
+                        if (user.avatarUrl != null) {
+                            GlideApp.with(requireContext())
+                                    .load(user.avatarUrl)
+                                    .circleCrop()
+                                    .into(userMenuItem.asGlideTarget())
+                        }
+                    }
+                    loginMenuItem.isVisible = false
+                }
+                TraktAuthState.LOGGED_OUT -> {
+                    userMenuItem.isVisible = false
+                    loginMenuItem.isVisible = true
+                }
+            }
+
+            // Close the filter pane if needed
+            closeFilterPanel()
             scheduleStartPostponedTransitions()
         }
-    }
-
-    private fun update(viewState: LibraryViewState) {
-        binding.state = viewState
-
-        filterController.setData(viewState)
-
-        when (viewState) {
-            is LibraryWatchedViewState -> {
-                val c = (controller as? LibraryWatchedEpoxyController ?: createWatchedController())
-                c.tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
-                c.setList(viewState.watchedShows)
-                c.isEmpty = viewState.isEmpty
-                controller = c
-            }
-            is LibraryFollowedViewState -> {
-                val c = controller as? LibraryFollowedEpoxyController ?: createFollowedController()
-                c.tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
-                c.setList(viewState.followedShows)
-                c.isEmpty = viewState.isEmpty
-                controller = c
-            }
-        }
-
-        // Close the filter pane if needed
-        closeFilterPanel()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -141,8 +164,6 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
         }
     }
 
-    override fun getMenu(): Menu? = binding.libraryToolbar.menu
-
     internal fun scrollToTop() {
         binding.libraryRv.stopScroll()
         binding.libraryRv.smoothScrollToPosition(0)
@@ -169,4 +190,16 @@ class LibraryFragment : HomeFragment<LibraryViewModel>() {
                     )
                 }
             })
+
+    private fun onMenuItemClicked(item: MenuItem) = when (item.itemId) {
+        R.id.home_menu_user_avatar -> {
+            viewModel.onProfileItemClicked()
+            true
+        }
+        R.id.home_menu_user_login -> {
+            viewModel.onLoginItemClicked((requireActivity() as HomeActivity).authService)
+            true
+        }
+        else -> false
+    }
 }

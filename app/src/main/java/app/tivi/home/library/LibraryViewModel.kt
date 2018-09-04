@@ -16,122 +16,139 @@
 
 package app.tivi.home.library
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
 import android.arch.paging.DataSource
 import android.arch.paging.PagedList
 import android.arch.paging.RxPagedListBuilder
+import android.support.v4.app.FragmentActivity
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.extensions.toFlowable
-import app.tivi.home.HomeFragmentViewModel
+import app.tivi.home.HomeActivity
 import app.tivi.home.HomeNavigator
+import app.tivi.home.HomeViewModel
 import app.tivi.home.library.LibraryFilter.FOLLOWED
 import app.tivi.home.library.LibraryFilter.WATCHED
 import app.tivi.interactors.SyncFollowedShows
 import app.tivi.interactors.UpdateUserDetails
 import app.tivi.interactors.UpdateWatchedShows
+import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.RxLoadingCounter
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Flowable
+import app.tivi.util.TiviMvRxViewModel
+import com.airbnb.mvrx.MvRxViewModelFactory
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
+import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.Flowables
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
-import javax.inject.Inject
+import net.openid.appauth.AuthorizationService
+import java.util.concurrent.TimeUnit
 
-class LibraryViewModel @Inject constructor(
-    schedulers: AppRxSchedulers,
+class LibraryViewModel @AssistedInject constructor(
+    @Assisted initialState: LibraryViewState,
+    private val schedulers: AppRxSchedulers,
     private val updateWatchedShows: UpdateWatchedShows,
     private val syncFollowedShows: SyncFollowedShows,
     private val traktManager: TraktManager,
     private val tmdbManager: TmdbManager,
-    updateUserDetails: UpdateUserDetails,
-    logger: Logger
-) : HomeFragmentViewModel(traktManager, updateUserDetails, logger) {
-    companion object {
-        private val DEFAULT_FILTER = FOLLOWED
+    private val updateUserDetails: UpdateUserDetails,
+    private val logger: Logger
+) : TiviMvRxViewModel<LibraryViewState>(initialState), HomeViewModel {
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(initialState: LibraryViewState): LibraryViewModel
+    }
 
+    companion object : MvRxViewModelFactory<LibraryViewState> {
+        private val DEFAULT_FILTER = FOLLOWED
         private val PAGING_CONFIG = PagedList.Config.Builder()
                 .setPageSize(60)
                 .setPrefetchDistance(20)
                 .setEnablePlaceholders(false)
                 .build()
+
+        @JvmStatic
+        override fun create(activity: FragmentActivity, state: LibraryViewState): LibraryViewModel {
+            return (activity as HomeActivity).libraryViewModelFactory.create(state)
+        }
     }
 
-    private val _data = MutableLiveData<LibraryViewState>()
-    val data: LiveData<LibraryViewState>
-        get() = _data
-
     private val loadingState = RxLoadingCounter()
-
     private val currentFilter = BehaviorSubject.createDefault(DEFAULT_FILTER)
-
     private val currentAvailableFilters = BehaviorSubject.createDefault(LibraryFilter.values().asList())
-    private val availableFiltersFlowable = currentAvailableFilters.toFlowable()
 
     private val isEmpty = BehaviorSubject.createDefault(false)
-    private val isEmptyFlowable = isEmpty.toFlowable()
 
     private var refreshDisposable: Disposable? = null
 
     init {
-        disposables += currentFilter.toFlowable()
-                .switchMap(::createFilterViewStateFlowable)
-                .distinctUntilChanged()
-                .observeOn(schedulers.main)
-                .subscribe(_data::setValue, logger::e)
+        currentFilter.doOnNext { refresh() }
+                .execute { copy(filter = it() ?: FOLLOWED) }
 
-        disposables += currentFilter.distinctUntilChanged()
-                .observeOn(schedulers.main)
-                .subscribe({ refresh() }, logger::e)
+        currentAvailableFilters.execute {
+            copy(allowedFilters = it() ?: emptyList())
+        }
+
+        isEmpty.execute {
+            copy(isEmpty = it() ?: true)
+        }
+
+        loadingState.observable.execute {
+            copy(isLoading = it() ?: false)
+        }
+
+        tmdbManager.imageProviderObservable
+                .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
+                .execute { copy(tmdbImageUrlProvider = it() ?: TmdbImageUrlProvider()) }
+
+        dataSourceToObservable(updateWatchedShows.dataSourceFactory())
+                .execute {
+                    copy(watchedShows = it())
+                }
+
+        dataSourceToObservable(updateWatchedShows.dataSourceFactory())
+                .execute {
+                    copy(watchedShows = it())
+                }
+
+        dataSourceToObservable(syncFollowedShows.dataSourceFactory())
+                .execute {
+                    copy(followedShows = it())
+                }
+
+        updateUserDetails.setParams(UpdateUserDetails.Params("me"))
+        updateUserDetails.observe()
+                .toObservable()
+                .execute { copy(user = it()) }
+
+        traktManager.state.distinctUntilChanged()
+                .doOnNext {
+                    if (it == TraktAuthState.LOGGED_IN) {
+                        launchInteractor(updateUserDetails, UpdateUserDetails.ExecuteParams(false))
+                    }
+                }
+                .execute { copy(authState = it() ?: TraktAuthState.LOGGED_OUT) }
     }
 
-    private fun createFilterViewStateFlowable(filter: LibraryFilter): Flowable<LibraryViewState> = when (filter) {
-        WATCHED -> {
-            Flowables.combineLatest(
-                    availableFiltersFlowable,
-                    Flowable.just(filter),
-                    tmdbManager.imageProviderFlowable,
-                    loadingState.flowable,
-                    isEmptyFlowable,
-                    dataSourceToFlowable(updateWatchedShows.dataSourceFactory()),
-                    ::LibraryWatchedViewState)
-        }
-        FOLLOWED -> {
-            Flowables.combineLatest(
-                    availableFiltersFlowable,
-                    Flowable.just(filter),
-                    tmdbManager.imageProviderFlowable,
-                    loadingState.flowable,
-                    isEmptyFlowable,
-                    dataSourceToFlowable(syncFollowedShows.dataSourceFactory()),
-                    ::LibraryFollowedViewState)
-        }
-    }
+    private fun <T : EntryWithShow<*>> dataSourceToObservable(f: DataSource.Factory<Int, T>): Observable<PagedList<T>> {
+        return RxPagedListBuilder(f, PAGING_CONFIG).setBoundaryCallback(object : PagedList.BoundaryCallback<T>() {
+            override fun onZeroItemsLoaded() {
+                isEmpty.onNext(true)
+            }
 
-    private fun <T : EntryWithShow<*>> dataSourceToFlowable(f: DataSource.Factory<Int, T>): Flowable<PagedList<T>> {
-        return RxPagedListBuilder(f, PAGING_CONFIG)
-                .setBoundaryCallback(object : PagedList.BoundaryCallback<T>() {
-                    override fun onZeroItemsLoaded() {
-                        isEmpty.onNext(true)
-                    }
+            override fun onItemAtEndLoaded(itemAtEnd: T) {
+                isEmpty.onNext(false)
+            }
 
-                    override fun onItemAtEndLoaded(itemAtEnd: T) {
-                        isEmpty.onNext(false)
-                    }
-
-                    override fun onItemAtFrontLoaded(itemAtFront: T) {
-                        isEmpty.onNext(false)
-                    }
-                })
-                .buildFlowable(BackpressureStrategy.LATEST)
+            override fun onItemAtFrontLoaded(itemAtFront: T) {
+                isEmpty.onNext(false)
+            }
+        }).buildObservable()
     }
 
     fun refresh() {
@@ -171,5 +188,13 @@ class LibraryViewModel @Inject constructor(
 
     fun onItemPostedClicked(navigator: HomeNavigator, show: TiviShow, sharedElements: SharedElementHelper? = null) {
         navigator.showShowDetails(show, sharedElements)
+    }
+
+    override fun onProfileItemClicked() {
+        // TODO
+    }
+
+    override fun onLoginItemClicked(authService: AuthorizationService) {
+        traktManager.startAuth(0, authService)
     }
 }
