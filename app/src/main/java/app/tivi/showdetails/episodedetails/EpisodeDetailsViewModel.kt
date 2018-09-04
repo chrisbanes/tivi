@@ -30,23 +30,26 @@ import app.tivi.util.AppRxSchedulers
 import app.tivi.util.TiviMvRxViewModel
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
-import com.google.auto.factory.AutoFactory
-import com.google.auto.factory.Provided
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 import org.threeten.bp.OffsetDateTime
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-@AutoFactory
-class EpisodeDetailsViewModel @Inject constructor(
-    initialState: EpisodeDetailsViewState,
-    @Provided private val schedulers: AppRxSchedulers,
-    @Provided private val updateEpisodeDetails: UpdateEpisodeDetails,
-    @Provided private val updateEpisodeWatches: UpdateEpisodeWatches,
-    @Provided private val addEpisodeWatch: AddEpisodeWatch,
-    @Provided private val removeEpisodeWatches: RemoveEpisodeWatches,
-    @Provided private val removeEpisodeWatch: RemoveEpisodeWatch,
-    @Provided private val tmdbManager: TmdbManager
+class EpisodeDetailsViewModel @AssistedInject constructor(
+    @Assisted initialState: EpisodeDetailsViewState,
+    schedulers: AppRxSchedulers,
+    private val updateEpisodeDetails: UpdateEpisodeDetails,
+    private val updateEpisodeWatches: UpdateEpisodeWatches,
+    private val addEpisodeWatch: AddEpisodeWatch,
+    private val removeEpisodeWatches: RemoveEpisodeWatches,
+    private val removeEpisodeWatch: RemoveEpisodeWatch,
+    tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(initialState: EpisodeDetailsViewState): EpisodeDetailsViewModel
+    }
+
     companion object : MvRxViewModelFactory<EpisodeDetailsViewState> {
         @JvmStatic
         override fun create(activity: FragmentActivity, state: EpisodeDetailsViewState): EpisodeDetailsViewModel {

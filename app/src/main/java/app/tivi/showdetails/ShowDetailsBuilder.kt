@@ -31,6 +31,7 @@ internal abstract class ShowDetailsBuilder {
     @ContributesAndroidInjector(modules = [
         ViewModelBuilder::class,
         ShowDetailsModule::class,
+        DetailsViewModelModule::class,
         ShowDetailsFragmentBuilder::class,
         EpisodeDetailsFragmentBuilder::class
     ])
