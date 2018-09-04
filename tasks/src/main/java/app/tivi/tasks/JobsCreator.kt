@@ -17,10 +17,13 @@
 package app.tivi.tasks
 
 import androidx.work.Worker
+import app.tivi.appinitializers.AppInitializer
+import app.tivi.appinitializers.ShowTasksInitializer
 import dagger.Binds
 import dagger.Module
 import dagger.android.AndroidInjector
 import dagger.multibindings.IntoMap
+import dagger.multibindings.IntoSet
 
 @Module(
         includes = [
@@ -40,4 +43,8 @@ abstract class JobsCreator {
     @IntoMap
     @WorkerKey(SyncShowWatchedProgress::class)
     abstract fun bindSyncShowWatchedProgress(job: SyncShowWatchedProgressSubcomponent.Builder): AndroidInjector.Factory<out Worker>
+
+    @Binds
+    @IntoSet
+    abstract fun provideShowTasksInitializer(bind: ShowTasksInitializer): AppInitializer
 }

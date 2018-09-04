@@ -27,7 +27,6 @@ import javax.inject.Inject
 
 class TiviApplication : DaggerApplication(), HasWorkerInjector {
     @Inject lateinit var initializers: AppInitializers
-
     @Inject lateinit var workerInjector: DispatchingAndroidInjector<Worker>
 
     override fun workerInjector() = workerInjector
