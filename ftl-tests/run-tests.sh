@@ -3,7 +3,7 @@ BUILD_ID=$1
 TEST_DIR=$2
 
 test_apk() {
-	RESULTS_DIR=$1_$BUILD_ID
+	RESULTS_DIR=$1_${BUILD_ID}
 	
     gcloud firebase test android run \
 	    --type instrumentation \
@@ -12,14 +12,18 @@ test_apk() {
 	    --device model=Nexus6P,version=27,locale=en_US,orientation=portrait \
 	    --timeout 30m \
 	    --results-bucket cloud-test-android-devrel-ci \
-	    --results-dir=$RESULTS_DIR \
+	    --results-dir=${RESULTS_DIR} \
 	    --no-record-video \
 	    --no-performance-metrics
+
+	TEST_RESULT=$?
 
     # Make result dir
     mkdir -p "$TEST_DIR/$RESULTS_DIR"
 	# Pull down test results
 	gsutil -m cp -r -U "gs://cloud-test-android-devrel-ci/$RESULTS_DIR/*" "$TEST_DIR/$RESULTS_DIR"
+
+	return ${TEST_RESULT}
 }
 
 test_apk \
