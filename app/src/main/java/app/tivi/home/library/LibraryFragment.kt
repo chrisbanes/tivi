@@ -86,6 +86,37 @@ class LibraryFragment : TiviMvRxFragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        postponeEnterTransition()
+
+        // Setup span and columns
+        gridLayoutManager = binding.libraryRv.layoutManager as GridLayoutManager
+
+        binding.libraryRv.apply {
+            addItemDecoration(SpacingItemDecorator(paddingLeft))
+        }
+
+        binding.libraryFiltersRv.adapter = filterController.adapter
+
+        binding.libraryToolbar.run {
+            inflateMenu(R.menu.home_toolbar)
+            setOnMenuItemClickListener(this@LibraryFragment::onMenuItemClicked)
+        }
+
+        binding.librarySwipeRefresh.setOnRefreshListener(viewModel::refresh)
+
+        binding.libraryToolbarTitle.setOnClickListener {
+            // TODO this should look at direction
+            val motion = binding.libraryMotion
+            if (motion.progress > 0.5f) {
+                motion.transitionToStart()
+            } else {
+                motion.transitionToEnd()
+            }
+        }
+    }
+
     override fun invalidate() {
         withState(viewModel) { state ->
             binding.state = state
@@ -133,34 +164,6 @@ class LibraryFragment : TiviMvRxFragment() {
             // Close the filter pane if needed
             closeFilterPanel()
             scheduleStartPostponedTransitions()
-        }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        postponeEnterTransition()
-
-        // Setup span and columns
-        gridLayoutManager = binding.libraryRv.layoutManager as GridLayoutManager
-
-        binding.libraryRv.apply {
-            addItemDecoration(SpacingItemDecorator(paddingLeft))
-        }
-
-        binding.libraryFiltersRv.adapter = filterController.adapter
-
-        binding.libraryToolbar.setOnMenuItemClickListener(this@LibraryFragment::onMenuItemClicked)
-
-        binding.librarySwipeRefresh.setOnRefreshListener(viewModel::refresh)
-
-        binding.libraryToolbarTitle.setOnClickListener {
-            // TODO this should look at direction
-            val motion = binding.libraryMotion
-            if (motion.progress > 0.5f) {
-                motion.transitionToStart()
-            } else {
-                motion.transitionToEnd()
-            }
         }
     }
 
