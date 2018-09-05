@@ -17,7 +17,6 @@
 package app.tivi.util
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
@@ -39,15 +38,11 @@ import app.tivi.extensions.observeK
 import app.tivi.ui.ProgressTimeLatch
 import app.tivi.ui.SpacingItemDecorator
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
-import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
 abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewModel<LI>>(
     private val vmClass: Class<VM>
 ) : TiviFragment() {
-
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-
     protected lateinit var viewModel: VM
 
     private lateinit var swipeRefreshLatch: ProgressTimeLatch

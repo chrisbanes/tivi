@@ -16,20 +16,11 @@
 
 package app.tivi.home.discover
 
-import android.arch.lifecycle.ViewModel
-import app.tivi.inject.ViewModelKey
-import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
-import dagger.multibindings.IntoMap
 
 @Module
 internal abstract class DiscoverBuilder {
     @ContributesAndroidInjector
     internal abstract fun discoverFragment(): DiscoverFragment
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(DiscoverViewModel::class)
-    abstract fun bindDiscoverViewModel(viewModel: DiscoverViewModel): ViewModel
 }
