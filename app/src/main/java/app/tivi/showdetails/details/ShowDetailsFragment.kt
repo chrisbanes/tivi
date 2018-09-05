@@ -17,7 +17,6 @@
 package app.tivi.showdetails.details
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.os.Parcelable
@@ -41,7 +40,6 @@ import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import kotlinx.android.parcel.Parcelize
-import javax.inject.Inject
 
 class ShowDetailsFragment : TiviMvRxFragment() {
     companion object {
@@ -55,8 +53,6 @@ class ShowDetailsFragment : TiviMvRxFragment() {
 
     @Parcelize
     data class Arguments(val showId: Long) : Parcelable
-
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val viewModel: ShowDetailsFragmentViewModel by fragmentViewModel()
     private lateinit var controller: ShowDetailsEpoxyController

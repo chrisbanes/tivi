@@ -16,20 +16,11 @@
 
 package app.tivi.home.library
 
-import android.arch.lifecycle.ViewModel
-import app.tivi.inject.ViewModelKey
-import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
-import dagger.multibindings.IntoMap
 
 @Module
 internal abstract class LibraryBuilder {
     @ContributesAndroidInjector
     internal abstract fun libraryFragment(): LibraryFragment
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(LibraryViewModel::class)
-    abstract fun bindLibraryViewModel(viewModel: LibraryViewModel): ViewModel
 }
