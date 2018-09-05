@@ -120,15 +120,14 @@ android {
     }
 
     packagingOptions {
-        exclude 'kotlin/**'
-        exclude '**/*.kotlin_metadata'
-        exclude 'META-INF/*.kotlin_module'
+        // Exclude AndroidX version files
         exclude 'META-INF/*.version'
-        exclude 'META-INF/*.properties'
+        // Exclude consumer proguard files
         exclude 'META-INF/proguard/*'
-        // Exclude the Firebase/Fabric properties files
+        // Exclude the Firebase/Fabric/other random properties files
         exclude '/*.properties'
         exclude 'fabric/*.properties'
+        exclude 'META-INF/*.properties'
     }
 
     buildTypes {
