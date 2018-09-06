@@ -5,13 +5,12 @@
 -verbose
 -dontpreverify
 
-# If you want to enable optimization, you should include the
-# following:
--dontoptimize
-#-optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*
-#-optimizationpasses 5
+# Optimize all the things (other than those listed)
+-optimizations !field/*,!method/removal/parameter
+-optimizationpasses 5
 
 -allowaccessmodification
+-repackageclasses ''
 
 # Note that you cannot just include these flags in your own
 # configuration file; if you are including this file, optimization
@@ -36,9 +35,7 @@
 }
 
 -keep public class * extends android.view.View {
-    public <init>(android.content.Context);
     public <init>(android.content.Context, android.util.AttributeSet);
-    public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 
 -keepclasseswithmembers class * {
