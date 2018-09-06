@@ -35,7 +35,6 @@ import app.tivi.util.Logger
 import app.tivi.util.RxLoadingCounter
 import app.tivi.util.TiviMvRxViewModel
 import com.airbnb.mvrx.MvRxViewModelFactory
-import com.airbnb.mvrx.Success
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import io.reactivex.rxkotlin.plusAssign
@@ -66,7 +65,6 @@ class DiscoverViewModel @AssistedInject constructor(
         }
     }
 
-    private var searchOpened = BehaviorSubject.createDefault(false)
     private var searchQuery = BehaviorSubject.create<String>()
     private val loadingState = RxLoadingCounter()
 
@@ -76,13 +74,9 @@ class DiscoverViewModel @AssistedInject constructor(
                 .distinctUntilChanged()
                 .subscribe(::runSearchQuery, logger::e)
 
-        searchOpened.execute { copy(isSearchOpen = it() ?: false) }
-
-        searchQuery.execute { copy(searchQuery = it() ?: "") }
-
         searchShows.observe()
                 .toObservable()
-                .execute { if (it is Success) copy(searchResults = it()!!) else this }
+                .execute { copy(searchResults = it()) }
 
         tmdbManager.imageProviderObservable
                 .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
@@ -143,10 +137,16 @@ class DiscoverViewModel @AssistedInject constructor(
         launchInteractor(searchShows, SearchShows.Params(query))
     }
 
-    fun onSearchOpened() = searchOpened.onNext(true)
+    fun onSearchOpened() {
+        setState {
+            copy(isSearchOpen = true)
+        }
+    }
 
     fun onSearchClosed() {
-        searchOpened.onNext(false)
+        setState {
+            copy(isSearchOpen = false)
+        }
     }
 
     fun onSearchQueryChanged(query: String) = searchQuery.onNext(query)

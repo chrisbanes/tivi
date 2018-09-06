@@ -45,17 +45,16 @@ import com.squareup.inject.assisted.AssistedInject
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.subjects.BehaviorSubject
 import net.openid.appauth.AuthorizationService
 import java.util.concurrent.TimeUnit
 
 class LibraryViewModel @AssistedInject constructor(
     @Assisted initialState: LibraryViewState,
-    private val schedulers: AppRxSchedulers,
+    schedulers: AppRxSchedulers,
     private val updateWatchedShows: UpdateWatchedShows,
     private val syncFollowedShows: SyncFollowedShows,
     private val traktManager: TraktManager,
-    private val tmdbManager: TmdbManager,
+    tmdbManager: TmdbManager,
     private val updateUserDetails: UpdateUserDetails,
     private val logger: Logger
 ) : TiviMvRxViewModel<LibraryViewState>(initialState), HomeViewModel {
@@ -79,23 +78,12 @@ class LibraryViewModel @AssistedInject constructor(
     }
 
     private val loadingState = RxLoadingCounter()
-    private val currentFilter = BehaviorSubject.createDefault(DEFAULT_FILTER)
-    private val currentAvailableFilters = BehaviorSubject.createDefault(LibraryFilter.values().asList())
-
-    private val isEmpty = BehaviorSubject.createDefault(false)
 
     private var refreshDisposable: Disposable? = null
 
     init {
-        currentFilter.doOnNext { refresh() }
-                .execute { copy(filter = it() ?: FOLLOWED) }
-
-        currentAvailableFilters.execute {
-            copy(allowedFilters = it() ?: emptyList())
-        }
-
-        isEmpty.execute {
-            copy(isEmpty = it() ?: true)
+        setState {
+            copy(allowedFilters = LibraryFilter.values().asList(), filter = DEFAULT_FILTER)
         }
 
         loadingState.observable.execute {
@@ -105,11 +93,6 @@ class LibraryViewModel @AssistedInject constructor(
         tmdbManager.imageProviderObservable
                 .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
                 .execute { copy(tmdbImageUrlProvider = it() ?: TmdbImageUrlProvider()) }
-
-        dataSourceToObservable(updateWatchedShows.dataSourceFactory())
-                .execute {
-                    copy(watchedShows = it())
-                }
 
         dataSourceToObservable(updateWatchedShows.dataSourceFactory())
                 .execute {
@@ -138,15 +121,15 @@ class LibraryViewModel @AssistedInject constructor(
     private fun <T : EntryWithShow<*>> dataSourceToObservable(f: DataSource.Factory<Int, T>): Observable<PagedList<T>> {
         return RxPagedListBuilder(f, PAGING_CONFIG).setBoundaryCallback(object : PagedList.BoundaryCallback<T>() {
             override fun onZeroItemsLoaded() {
-                isEmpty.onNext(true)
+                setState { copy(isEmpty = true) }
             }
 
             override fun onItemAtEndLoaded(itemAtEnd: T) {
-                isEmpty.onNext(false)
+                setState { copy(isEmpty = false) }
             }
 
             override fun onItemAtFrontLoaded(itemAtFront: T) {
-                isEmpty.onNext(false)
+                setState { copy(isEmpty = false) }
             }
         }).buildObservable()
     }
@@ -166,24 +149,30 @@ class LibraryViewModel @AssistedInject constructor(
     }
 
     private fun refreshFilter() {
-        when (currentFilter.value) {
-            FOLLOWED -> {
-                loadingState.addLoader()
-                launchInteractor(syncFollowedShows, SyncFollowedShows.ExecuteParams(false)).invokeOnCompletion {
-                    loadingState.removeLoader()
+        withState {
+            when (it.filter) {
+                FOLLOWED -> {
+                    loadingState.addLoader()
+                    launchInteractor(syncFollowedShows, SyncFollowedShows.ExecuteParams(false))
+                            .invokeOnCompletion {
+                                loadingState.removeLoader()
+                            }
                 }
-            }
-            WATCHED -> {
-                loadingState.addLoader()
-                launchInteractor(updateWatchedShows, UpdateWatchedShows.ExecuteParams(false)).invokeOnCompletion {
-                    loadingState.removeLoader()
+                WATCHED -> {
+                    loadingState.addLoader()
+                    launchInteractor(updateWatchedShows, UpdateWatchedShows.ExecuteParams(false))
+                            .invokeOnCompletion {
+                                loadingState.removeLoader()
+                            }
                 }
             }
         }
     }
 
     fun onFilterSelected(filter: LibraryFilter) {
-        currentFilter.onNext(filter)
+        setState {
+            copy(filter = filter)
+        }
     }
 
     fun onItemPostedClicked(navigator: HomeNavigator, show: TiviShow, sharedElements: SharedElementHelper? = null) {
