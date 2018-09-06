@@ -7,7 +7,6 @@
 
 # Optimize all the things (other than those listed)
 -optimizations !field/*,!method/removal/parameter
--optimizationpasses 5
 
 -allowaccessmodification
 -repackageclasses ''
