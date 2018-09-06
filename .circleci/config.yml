@@ -61,6 +61,11 @@ clean_secrets: &clean_secrets
     name: Cleanup secrets
     command: signing/cleanup.sh
 
+workflow_filter_all: &workflow_filter_all
+  filters:
+    tags:
+      only: /.*/
+
 jobs:
   build_debug:
     <<: *config_android
@@ -74,22 +79,31 @@ jobs:
           name: Download Dependencies
           command: ./gradlew dependencies
       - run:
-          name: Check and assemble APKs
-          command: ./gradlew check assembleDebug app:assembleAndroidTest dependencyUpdates -Ptivi.versioncode=$CIRCLE_BUILD_NUM
+          name: Assemble and Test APKs
+          command: ./gradlew assembleDebug app:assembleDebugAndroidTest -Ptivi.versioncode=$CIRCLE_BUILD_NUM
       - <<: *clean_secrets
       - <<: *save_cache
       - store_artifacts:
           path: app/build/outputs/apk
           destination: apks
-      - store_artifacts:
-          path: app/build/reports
-          destination: reports
-      - store_artifacts:
-          path: build/dependencyUpdates
-          destination: dependencyUpdates
-      - store_test_results:
-          path: app/build/test-results
       - <<: *persist_workspace
+
+  check:
+      <<: *config_android
+      steps:
+        - checkout
+        - <<: *attach_workspace
+        - <<: *gen_cache_key
+        - <<: *restore_cache
+        - run:
+            name: Check app and dependencies
+            command: ./gradlew check dependencyUpdates
+        - store_artifacts:
+            path: app/build/reports
+            destination: reports
+        - store_artifacts:
+            path: build/dependencyUpdates
+            destination: dependencyUpdates
 
   build_release:
     <<: *config_android
@@ -150,23 +164,22 @@ workflows:
   build_test_deploy:
     jobs:
       - build_debug:
-          filters:
-            tags:
-              only: /.*/
+          <<: *workflow_filter_all
       - build_release:
           requires:
             - build_debug
-          filters:
-            tags:
-              only: /.*/
+          <<: *workflow_filter_all
       - test_instrumented:
           requires:
             - build_debug
-          filters:
-            tags:
-              only: /.*/
+          <<: *workflow_filter_all
+      - check:
+          requires:
+            - build_debug
+          <<: *workflow_filter_all
       - deploy_to_play:
           requires:
+            - check
             - test_instrumented
             - build_release
           filters:
