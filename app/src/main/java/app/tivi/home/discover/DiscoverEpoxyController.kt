@@ -50,7 +50,7 @@ class DiscoverEpoxyController(
     private fun buildSearchResultModels(viewState: DiscoverViewState) {
         val tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
 
-        viewState.searchResults.forEach { result ->
+        viewState.searchResults?.results?.forEach { result ->
             posterGridItem {
                 id(result.id)
                 tmdbImageUrlProvider(tmdbImageUrlProvider)

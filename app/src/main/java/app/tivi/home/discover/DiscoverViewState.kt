@@ -16,7 +16,7 @@
 
 package app.tivi.home.discover
 
-import app.tivi.data.entities.TiviShow
+import app.tivi.data.entities.SearchResults
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
@@ -27,8 +27,7 @@ import com.airbnb.mvrx.MvRxState
 
 data class DiscoverViewState(
     val isSearchOpen: Boolean = false,
-    val searchQuery: String = "",
-    val searchResults: List<TiviShow> = emptyList(),
+    val searchResults: SearchResults? = null,
     val trendingItems: List<TrendingEntryWithShow> = emptyList(),
     val popularItems: List<PopularEntryWithShow> = emptyList(),
     val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider(),

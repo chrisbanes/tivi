@@ -30,6 +30,7 @@ import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.databinding.FragmentDiscoverBinding
+import app.tivi.extensions.setActionViewExpanded
 import app.tivi.home.HomeActivity
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeNavigatorViewModel
@@ -138,6 +139,9 @@ internal class DiscoverFragment : TiviMvRxFragment() {
         withState(viewModel) { state ->
             binding.state = state
             controller.setData(state)
+
+            val searchMenuItem = binding.summaryToolbar.menu.findItem(R.id.discover_search)
+            searchMenuItem.setActionViewExpanded(state.isSearchOpen)
 
             val userMenuItem = binding.summaryToolbar.menu.findItem(R.id.home_menu_user_avatar)
             val loginMenuItem = binding.summaryToolbar.menu.findItem(R.id.home_menu_user_login)
