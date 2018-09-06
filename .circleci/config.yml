@@ -25,7 +25,7 @@ update_sdk: &update_sdk
     sdkmanager "platform-tools" "platforms;android-28"
 
 jobs:
-  build:
+  build_debug:
     <<: *defaults
     steps:
       - run:
@@ -44,7 +44,7 @@ jobs:
           command: signing/setup.sh $ENCRYPT_KEY
       - run:
           name: Check and assemble APKs
-          command: ./gradlew check assemble app:assembleAndroidTest dependencyUpdates -Ptivi.versioncode=$CIRCLE_BUILD_NUM
+          command: ./gradlew check assembleDebug app:assembleAndroidTest dependencyUpdates -Ptivi.versioncode=$CIRCLE_BUILD_NUM
       - run:
           name: Cleanup secrets
           command: signing/cleanup.sh
@@ -67,8 +67,66 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - build
-            - app/build
+            - ./*/build
+
+  build_release:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/tivi
+      - run:
+          name: Generate cache key
+          command: ./checksum.sh /tmp/checksum.txt
+      - restore_cache:
+          key: gradle-{{ checksum "/tmp/checksum.txt" }}
+      - run:
+          name: Decrypt secrets
+          command: signing/setup.sh $ENCRYPT_KEY
+      - run:
+          name: Check and assemble APKs
+          command: ./gradlew assembleRelease -Ptivi.versioncode=$CIRCLE_BUILD_NUM
+      - run:
+          name: Cleanup secrets
+          command: signing/cleanup.sh
+      - store_artifacts:
+          path: app/build/outputs/apk
+          destination: apks
+      - store_artifacts:
+          path: app/build/outputs/mapping
+          destination: mapping
+      - store_artifacts:
+          path: app/build/reports
+          destination: reports
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./*/build
+
+  test_instrumented:
+    <<: *config_gcloud
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/tivi
+      - run:
+          name: Decrypt secrets
+          command: signing/setup.sh $ENCRYPT_KEY
+      - run:
+          name: Setup Google Cloud auth
+          command: ftl-tests/setup.sh
+      - run:
+          name: Run tests on Firebase Test Lab
+          command: ftl-tests/run-tests.sh $CIRCLE_BUILD_NUM firebase_test_results
+          when: always
+      - run:
+          name: Cleanup secrets
+          command: signing/cleanup.sh
+      - store_artifacts:
+          path: firebase_test_results
+      - store_test_results:
+          path: firebase_test_results
+
   deploy_to_play:
     <<: *defaults
     steps:
@@ -91,41 +149,31 @@ jobs:
       - run:
           name: Cleanup secrets
           command: signing/cleanup.sh
-  test_instrumented:
-    <<: *config_gcloud
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/tivi
-      - run:
-          name: Setup Google Cloud auth
-          command: ftl-tests/setup.sh
-      - run:
-          name: Run tests on Firebase Test Lab
-          command: ftl-tests/run-tests.sh $CIRCLE_BUILD_NUM firebase_test_results
-          when: always
-      - store_artifacts:
-          path: firebase_test_results
-      - store_test_results:
-          path: firebase_test_results
 
 workflows:
   version: 2
   build_test_deploy:
     jobs:
-      - build:
+      - build_debug:
+          filters:
+            tags:
+              only: /.*/
+      - build_release:
+          requires:
+            - build_debug
           filters:
             tags:
               only: /.*/
       - test_instrumented:
           requires:
-            - build
+            - build_debug
           filters:
             tags:
               only: /.*/
       - deploy_to_play:
           requires:
             - test_instrumented
+            - build_release
           filters:
             tags:
               only: /^v.*/
