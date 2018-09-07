@@ -154,6 +154,7 @@ jobs:
       - <<: *gen_cache_key
       - <<: *restore_cache
       - <<: *attach_workspace
+      - <<: *decrypt_secrets
       - run:
           name: Deploy to Alpha channel
           command: ./gradlew publishRelease -Ptivi.versioncode=$CIRCLE_BUILD_NUM
