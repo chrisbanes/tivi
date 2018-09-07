@@ -31,7 +31,6 @@ import app.tivi.home.library.LibraryFilter.WATCHED
 import app.tivi.interactors.SyncFollowedShows
 import app.tivi.interactors.UpdateUserDetails
 import app.tivi.interactors.UpdateWatchedShows
-import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
@@ -92,7 +91,7 @@ class LibraryViewModel @AssistedInject constructor(
 
         tmdbManager.imageProviderObservable
                 .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
-                .execute { copy(tmdbImageUrlProvider = it() ?: TmdbImageUrlProvider()) }
+                .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
 
         dataSourceToObservable(updateWatchedShows.dataSourceFactory())
                 .execute {

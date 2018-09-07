@@ -16,6 +16,7 @@
 
 package app.tivi.util
 
+import app.tivi.BuildConfig
 import com.airbnb.mvrx.BaseMvRxViewModel
 import com.airbnb.mvrx.MvRxState
 import io.reactivex.disposables.CompositeDisposable
@@ -27,7 +28,7 @@ import kotlinx.coroutines.experimental.Job
  */
 open class TiviMvRxViewModel<S : MvRxState>(
     initialState: S
-) : BaseMvRxViewModel<S>(initialState, debugMode = false), ITiviViewModel {
+) : BaseMvRxViewModel<S>(initialState, debugMode = BuildConfig.DEBUG), ITiviViewModel {
     override val viewModelJob = Job()
     override val disposables = CompositeDisposable()
 

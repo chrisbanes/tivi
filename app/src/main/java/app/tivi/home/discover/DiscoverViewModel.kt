@@ -26,7 +26,6 @@ import app.tivi.interactors.SearchShows
 import app.tivi.interactors.UpdatePopularShows
 import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.interactors.UpdateUserDetails
-import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
@@ -80,7 +79,7 @@ class DiscoverViewModel @AssistedInject constructor(
 
         tmdbManager.imageProviderObservable
                 .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
-                .execute { copy(tmdbImageUrlProvider = it() ?: TmdbImageUrlProvider()) }
+                .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
 
         loadingState.observable
                 .execute { copy(isLoading = it() ?: false) }
