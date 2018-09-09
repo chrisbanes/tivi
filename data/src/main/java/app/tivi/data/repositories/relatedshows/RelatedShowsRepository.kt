@@ -44,13 +44,13 @@ class RelatedShowsRepository @Inject constructor(
 
     suspend fun updateRelatedShows(showId: Long) {
         val tmdbResults = tmdbDataSource.getRelatedShows(showId)
-        if (tmdbResults is Success) {
+        if (tmdbResults is Success && tmdbResults.data.isNotEmpty()) {
             process(showId, tmdbResults.data)
             return
         }
 
         val traktResults = traktDataSource.getRelatedShows(showId)
-        if (traktResults is Success) {
+        if (traktResults is Success && traktResults.data.isNotEmpty()) {
             process(showId, traktResults.data)
             return
         }

@@ -59,9 +59,7 @@ class LibraryFragment : TiviMvRxFragment() {
         set(value) {
             if (field != value) {
                 field = value
-                binding.libraryRv.adapter = value.adapter
-                value.spanCount = gridLayoutManager.spanCount
-                gridLayoutManager.spanSizeLookup = controller.spanSizeLookup
+                binding.libraryRv.setController(value)
             }
         }
 
@@ -125,16 +123,22 @@ class LibraryFragment : TiviMvRxFragment() {
             when (state.filter) {
                 LibraryFilter.WATCHED -> {
                     val c = (controller as? LibraryWatchedEpoxyController ?: createWatchedController())
-                    c.tmdbImageUrlProvider = state.tmdbImageUrlProvider
-                    c.setList(state.watchedShows)
-                    c.isEmpty = state.isEmpty
+                    if (state.watchedShows != null) {
+                        // PagingEpoxyController does not like being updated before it has a list
+                        c.tmdbImageUrlProvider = state.tmdbImageUrlProvider
+                        c.isEmpty = state.isEmpty
+                        c.setList(state.watchedShows)
+                    }
                     controller = c
                 }
                 LibraryFilter.FOLLOWED -> {
                     val c = controller as? LibraryFollowedEpoxyController ?: createFollowedController()
-                    c.tmdbImageUrlProvider = state.tmdbImageUrlProvider
-                    c.setList(state.followedShows)
-                    c.isEmpty = state.isEmpty
+                    if (state.followedShows != null) {
+                        // PagingEpoxyController does not like being updated before it has a list
+                        c.tmdbImageUrlProvider = state.tmdbImageUrlProvider
+                        c.isEmpty = state.isEmpty
+                        c.setList(state.followedShows)
+                    }
                     controller = c
                 }
             }

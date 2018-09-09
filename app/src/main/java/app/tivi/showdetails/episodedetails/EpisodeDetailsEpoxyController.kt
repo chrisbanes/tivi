@@ -66,15 +66,15 @@ class EpisodeDetailsEpoxyController(
             }
         }
 
-        when (viewState.watches) {
-            is Success -> {
-                val watches = viewState.watches()!!
+        val asyncWatches = viewState.watches
+        when {
+            asyncWatches is Success && asyncWatches().isNotEmpty() -> {
                 detailsHeader {
                     id("watches_header")
                     title(R.string.episode_watches)
                     spanSizeOverride(TotalSpanOverride)
                 }
-                for (entry in watches) {
+                for (entry in asyncWatches()) {
                     epDetailsWatchItem {
                         id("watch_${entry.id}")
                         dateTimeFormatter(dateFormatter)

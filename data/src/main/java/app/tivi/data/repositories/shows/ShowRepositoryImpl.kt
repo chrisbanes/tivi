@@ -56,11 +56,10 @@ class ShowRepositoryImpl @Inject constructor(
         val traktResult = traktJob.await()
         val tmdbResult = tmdbJob.await()
 
-        localShowStore.saveShow(
-                mergeShow(localShow,
-                        (traktResult as? Success)?.data ?: TiviShow.EMPTY_SHOW,
-                        (tmdbResult as? Success)?.data ?: TiviShow.EMPTY_SHOW)
-        )
+        val merged = mergeShow(localShow,
+                traktResult.get() ?: TiviShow.EMPTY_SHOW,
+                tmdbResult.get() ?: TiviShow.EMPTY_SHOW)
+        localShowStore.saveShow(merged)
 
         if (tmdbResult is Success && traktResult is Success) {
             // If the network requests were successful, update the last request timestamp
