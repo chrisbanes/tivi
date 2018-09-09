@@ -33,7 +33,6 @@ import app.tivi.detailsBadge
 import app.tivi.detailsHeader
 import app.tivi.detailsSeason
 import app.tivi.detailsSummary
-import app.tivi.emptyState
 import app.tivi.seasonEpisodeItem
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.TotalSpanOverride
@@ -60,11 +59,6 @@ class ShowDetailsEpoxyController(
     override fun buildModels(viewState: ShowDetailsViewState) {
         buildShowModels(viewState.show)
 
-        detailsHeader {
-            id("related_header")
-            title(R.string.details_related)
-            spanSizeOverride(TotalSpanOverride)
-        }
         buildRelatedShowsModels(viewState.relatedShows, viewState.tmdbImageUrlProvider)
 
         buildSeasonsModels(viewState.seasons, viewState.expandedSeasonIds)
@@ -126,6 +120,11 @@ class ShowDetailsEpoxyController(
             is Success -> {
                 val related = relatedShows()
                 if (related.isNotEmpty()) {
+                    detailsHeader {
+                        id("related_header")
+                        title(R.string.details_related)
+                        spanSizeOverride(TotalSpanOverride)
+                    }
                     carousel {
                         id("related_shows")
                         numViewsToShowOnScreen(5.25f)
@@ -145,11 +144,6 @@ class ShowDetailsEpoxyController(
                                         callbacks.onRelatedShowClicked(relatedShow, view)
                                     }
                         }
-                    }
-                } else {
-                    emptyState {
-                        id("related_empty")
-                        spanSizeOverride(TotalSpanOverride)
                     }
                 }
             }
