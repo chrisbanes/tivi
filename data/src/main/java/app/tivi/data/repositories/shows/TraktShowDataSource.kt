@@ -23,6 +23,7 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TraktShowToTiviShow
 import app.tivi.extensions.bodyOrThrow
 import app.tivi.extensions.executeWithRetry
+import app.tivi.extensions.toException
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.enums.IdType
 import com.uwetrottmann.trakt5.enums.Type
@@ -41,25 +42,38 @@ class TraktShowDataSource @Inject constructor(
         var traktId = show.traktId
 
         if (traktId == null && show.tmdbId != null) {
-            try {
-                // We need to fetch the search for the trakt id
-                val response = searchService.get().idLookup(IdType.TMDB, show.tmdbId.toString(),
-                        Type.SHOW, Extended.NOSEASONS, 1, 1).executeWithRetry()
-                if (response.isSuccessful) {
-                    val body = response.bodyOrThrow()
-                    if (body.isNotEmpty()) {
-                        traktId = body[0].show.ids.trakt
-                    }
+            // We need to fetch the search for the trakt id
+            val response = searchService.get().idLookup(IdType.TMDB, show.tmdbId.toString(),
+                    Type.SHOW, Extended.NOSEASONS, 1, 1).executeWithRetry()
+            if (response.isSuccessful) {
+                val body = response.bodyOrThrow()
+                if (body.isNotEmpty()) {
+                    traktId = body[0].show.ids.trakt
                 }
-            } catch (e: Exception) {
-                return ErrorResult(e)
+            } else {
+                return ErrorResult(response.toException())
+            }
+        }
+
+        if (traktId == null) {
+            val response = searchService.get().textQueryShow(show.title, null /* years */, null /* genres */,
+                    null /* lang */, show.country /* countries */, null /* runtimes */, null /* ratings */,
+                    null /* certs */, show.network /* networks */, null /* status */,
+                    Extended.NOSEASONS, 1, 1).executeWithRetry()
+            if (response.isSuccessful) {
+                val body = response.bodyOrThrow()
+                if (body.isNotEmpty()) {
+                    traktId = body[0].show.ids.trakt
+                }
+            } else {
+                return ErrorResult(response.toException())
             }
         }
 
         return if (traktId != null) {
             fetchFromTrakt(traktId.toString())
         } else {
-            ErrorResult(IllegalArgumentException("TraktId for show does not exist: [$show]"))
+            ErrorResult(IllegalArgumentException("Trakt ID for show does not exist: [$show]"))
         }
     }
 
