@@ -29,12 +29,12 @@ import kotlinx.coroutines.experimental.Job
 open class TiviMvRxViewModel<S : MvRxState>(
     initialState: S
 ) : BaseMvRxViewModel<S>(initialState, debugMode = BuildConfig.DEBUG), ITiviViewModel {
-    override val viewModelJob = Job()
+    override val job = Job()
     override val disposables = CompositeDisposable()
 
     override fun onCleared() {
         super.onCleared()
         disposables.clear()
-        viewModelJob.cancel()
+        job.cancel()
     }
 }

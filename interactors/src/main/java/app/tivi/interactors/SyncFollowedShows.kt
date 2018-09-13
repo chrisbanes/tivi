@@ -37,7 +37,7 @@ class SyncFollowedShows @Inject constructor(
             followedShowsRepository.syncFollowedShows()
 
             // Finally sync the watches
-            followedShowsRepository.getFollowedShows().parallelForEach(dispatchers.io) {
+            followedShowsRepository.getFollowedShows().parallelForEach {
                 // Download the seasons + episodes
                 if (executeParams.forceLoad || repository.needShowSeasonsUpdate(it.showId)) {
                     repository.updateSeasonsEpisodes(it.showId)

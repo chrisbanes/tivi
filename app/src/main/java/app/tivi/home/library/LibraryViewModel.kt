@@ -31,6 +31,7 @@ import app.tivi.home.library.LibraryFilter.WATCHED
 import app.tivi.interactors.SyncFollowedShows
 import app.tivi.interactors.UpdateUserDetails
 import app.tivi.interactors.UpdateWatchedShows
+import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager

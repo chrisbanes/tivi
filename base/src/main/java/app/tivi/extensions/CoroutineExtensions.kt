@@ -16,20 +16,25 @@
 
 package app.tivi.extensions
 
-import kotlinx.coroutines.experimental.DefaultDispatcher
 import kotlinx.coroutines.experimental.async
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlinx.coroutines.experimental.currentScope
 
 suspend fun <A, B> Collection<A>.parallelMap(
-    context: CoroutineContext = DefaultDispatcher,
     block: suspend (A) -> B
 ) = map {
-    async(context) { block(it) }
+    currentScope {
+        async {
+            block(it)
+        }
+    }
 }.map { it.await() }
 
 suspend fun <A, B> Collection<A>.parallelForEach(
-    context: CoroutineContext = DefaultDispatcher,
     block: suspend (A) -> B
 ) = map {
-    async(context) { block(it) }
+    currentScope {
+        async {
+            block(it)
+        }
+    }
 }.forEach { it.await() }

@@ -66,7 +66,7 @@ class RelatedShowsRepository @Inject constructor(
             // Save the related entries
             localStore.saveRelatedShows(showId, entries)
             // Now update all of the related shows if needed
-            entries.parallelForEach(dispatchers.io) { entry ->
+            entries.parallelForEach { entry ->
                 if (showRepository.needsUpdate(entry.otherShowId)) {
                     showRepository.updateShow(entry.otherShowId)
                 }

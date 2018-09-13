@@ -22,6 +22,7 @@ import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.currentScope
 import org.threeten.bp.Period
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -48,10 +49,14 @@ class ShowRepositoryImpl @Inject constructor(
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
      */
-    override suspend fun updateShow(showId: Long) {
+    override suspend fun updateShow(showId: Long) = currentScope {
         val localShow = localShowStore.getShow(showId) ?: TiviShow.EMPTY_SHOW
-        val traktJob = async(dispatchers.io) { traktShowDataSource.getShow(localShow) }
-        val tmdbJob = async(dispatchers.io) { tmdbShowDataSource.getShow(localShow) }
+        val traktJob = async(dispatchers.io) {
+            traktShowDataSource.getShow(localShow)
+        }
+        val tmdbJob = async(dispatchers.io) {
+            tmdbShowDataSource.getShow(localShow)
+        }
 
         val traktResult = traktJob.await()
         val tmdbResult = tmdbJob.await()
