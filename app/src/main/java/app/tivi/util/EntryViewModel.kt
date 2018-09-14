@@ -66,7 +66,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
     }
 
     fun onListScrolledToEnd() {
-        launch (dispatchers.main) {
+        scope.launch {
             sendMessage(UiResource(Status.LOADING_MORE))
             try {
                 callLoadMore()
@@ -78,7 +78,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
     }
 
     fun refresh() {
-        launch(dispatchers.main) {
+        scope.launch {
             sendMessage(UiResource(Status.REFRESHING))
             try {
                 callRefresh()

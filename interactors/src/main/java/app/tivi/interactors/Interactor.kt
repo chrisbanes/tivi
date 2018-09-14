@@ -97,6 +97,4 @@ fun <P> CoroutineScope.launchInteractor(interactor: Interactor<P>, param: P): Jo
     return launch(context = interactor.dispatcher, block = { interactor(param) })
 }
 
-fun CoroutineScope.launchInteractor(interactor: Interactor<Unit>): Job {
-    return launch(context = interactor.dispatcher, block = { interactor(Unit) })
-}
+fun CoroutineScope.launchInteractor(interactor: Interactor<Unit>) = launchInteractor(interactor, Unit)
