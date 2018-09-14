@@ -21,20 +21,20 @@ import kotlinx.coroutines.experimental.currentScope
 
 suspend fun <A, B> Collection<A>.parallelMap(
     block: suspend (A) -> B
-) = map {
-    currentScope {
-        async {
-            block(it)
-        }
+) = currentScope {
+    map {
+        async { block(it) }
+    }.map {
+        it.await()
     }
-}.map { it.await() }
+}
 
 suspend fun <A, B> Collection<A>.parallelForEach(
     block: suspend (A) -> B
-) = map {
-    currentScope {
-        async {
-            block(it)
-        }
+) = currentScope {
+    map {
+        async { block(it) }
+    }.forEach {
+        it.await()
     }
-}.forEach { it.await() }
+}
