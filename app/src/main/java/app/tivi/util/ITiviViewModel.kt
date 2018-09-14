@@ -18,15 +18,8 @@ package app.tivi.util
 
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.Main
-import kotlin.coroutines.experimental.CoroutineContext
 
-interface ITiviViewModel : CoroutineScope {
-    val job: Job
+interface ITiviViewModel {
     val disposables: CompositeDisposable
-
-    override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
+    val scope: CoroutineScope
 }

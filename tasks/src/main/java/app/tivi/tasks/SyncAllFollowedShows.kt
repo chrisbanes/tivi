@@ -19,6 +19,7 @@ package app.tivi.tasks
 import androidx.work.Worker
 import app.tivi.interactors.SyncFollowedShows
 import app.tivi.interactors.launchInteractor
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.runBlocking
 import javax.inject.Inject
 
@@ -34,7 +35,7 @@ class SyncAllFollowedShows : Worker() {
         AndroidWorkerInjector.inject(this)
 
         runBlocking {
-            launchInteractor(syncFollowedShows, SyncFollowedShows.ExecuteParams(true)).join()
+            GlobalScope.launchInteractor(syncFollowedShows, SyncFollowedShows.ExecuteParams(true)).join()
         }
         return Result.SUCCESS
     }
