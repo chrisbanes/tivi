@@ -26,6 +26,7 @@ import app.tivi.interactors.SearchShows
 import app.tivi.interactors.UpdatePopularShows
 import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.interactors.UpdateUserDetails
+import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
@@ -102,7 +103,7 @@ class DiscoverViewModel @AssistedInject constructor(
         traktManager.state.distinctUntilChanged()
                 .doOnNext {
                     if (it == TraktAuthState.LOGGED_IN) {
-                        launchInteractor(updateUserDetails, UpdateUserDetails.ExecuteParams(false))
+                        scope.launchInteractor(updateUserDetails, UpdateUserDetails.ExecuteParams(false))
                     }
                 }
                 .execute { copy(authState = it() ?: TraktAuthState.LOGGED_OUT) }
@@ -112,11 +113,11 @@ class DiscoverViewModel @AssistedInject constructor(
 
     fun refresh() {
         loadingState.addLoader()
-        launchInteractor(updatePopularShows, UpdatePopularShows.ExecuteParams(UpdatePopularShows.Page.REFRESH))
+        scope.launchInteractor(updatePopularShows, UpdatePopularShows.ExecuteParams(UpdatePopularShows.Page.REFRESH))
                 .invokeOnCompletion { loadingState.removeLoader() }
 
         loadingState.addLoader()
-        launchInteractor(updateTrendingShows, UpdateTrendingShows.ExecuteParams(UpdateTrendingShows.Page.REFRESH))
+        scope.launchInteractor(updateTrendingShows, UpdateTrendingShows.ExecuteParams(UpdateTrendingShows.Page.REFRESH))
                 .invokeOnCompletion { loadingState.removeLoader() }
     }
 
@@ -133,7 +134,7 @@ class DiscoverViewModel @AssistedInject constructor(
     }
 
     private fun runSearchQuery(query: String) {
-        launchInteractor(searchShows, SearchShows.Params(query))
+        scope.launchInteractor(searchShows, SearchShows.Params(query))
     }
 
     fun onSearchOpened() {

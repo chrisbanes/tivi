@@ -20,7 +20,10 @@ import app.tivi.BuildConfig
 import com.airbnb.mvrx.BaseMvRxViewModel
 import com.airbnb.mvrx.MvRxState
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.android.Main
 
 /**
  * Simple ViewModel which exposes a [CompositeDisposable] and [Job] which are automatically cleared/stopped when
@@ -29,12 +32,14 @@ import kotlinx.coroutines.experimental.Job
 open class TiviMvRxViewModel<S : MvRxState>(
     initialState: S
 ) : BaseMvRxViewModel<S>(initialState, debugMode = BuildConfig.DEBUG), ITiviViewModel {
-    override val viewModelJob = Job()
+    private val job = Job()
+
     override val disposables = CompositeDisposable()
+    override val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + job)
 
     override fun onCleared() {
         super.onCleared()
         disposables.clear()
-        viewModelJob.cancel()
+        job.cancel()
     }
 }

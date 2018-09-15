@@ -31,6 +31,7 @@ import app.tivi.home.library.LibraryFilter.WATCHED
 import app.tivi.interactors.SyncFollowedShows
 import app.tivi.interactors.UpdateUserDetails
 import app.tivi.interactors.UpdateWatchedShows
+import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
@@ -111,7 +112,7 @@ class LibraryViewModel @AssistedInject constructor(
         traktManager.state.distinctUntilChanged()
                 .doOnNext {
                     if (it == TraktAuthState.LOGGED_IN) {
-                        launchInteractor(updateUserDetails, UpdateUserDetails.ExecuteParams(false))
+                        scope.launchInteractor(updateUserDetails, UpdateUserDetails.ExecuteParams(false))
                     }
                 }
                 .execute { copy(authState = it() ?: TraktAuthState.LOGGED_OUT) }
@@ -152,14 +153,14 @@ class LibraryViewModel @AssistedInject constructor(
             when (it.filter) {
                 FOLLOWED -> {
                     loadingState.addLoader()
-                    launchInteractor(syncFollowedShows, SyncFollowedShows.ExecuteParams(false))
+                    scope.launchInteractor(syncFollowedShows, SyncFollowedShows.ExecuteParams(false))
                             .invokeOnCompletion {
                                 loadingState.removeLoader()
                             }
                 }
                 WATCHED -> {
                     loadingState.addLoader()
-                    launchInteractor(updateWatchedShows, UpdateWatchedShows.ExecuteParams(false))
+                    scope.launchInteractor(updateWatchedShows, UpdateWatchedShows.ExecuteParams(false))
                             .invokeOnCompletion {
                                 loadingState.removeLoader()
                             }

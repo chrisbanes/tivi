@@ -29,6 +29,7 @@ import app.tivi.extensions.toFlowable
 import app.tivi.tmdb.TmdbManager
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.experimental.launch
 
 abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
     private val schedulers: AppRxSchedulers,
@@ -65,7 +66,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
     }
 
     fun onListScrolledToEnd() {
-        launchWithParent(dispatchers.main) {
+        scope.launch {
             sendMessage(UiResource(Status.LOADING_MORE))
             try {
                 callLoadMore()
@@ -77,7 +78,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
     }
 
     fun refresh() {
-        launchWithParent(dispatchers.main) {
+        scope.launch {
             sendMessage(UiResource(Status.REFRESHING))
             try {
                 callRefresh()

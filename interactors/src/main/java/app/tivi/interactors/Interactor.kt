@@ -22,12 +22,11 @@ import io.reactivex.Flowable
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.experimental.CoroutineDispatcher
-import kotlinx.coroutines.experimental.CoroutineStart
+import kotlinx.coroutines.experimental.CoroutineScope
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.rx2.asObservable
-import kotlin.coroutines.experimental.CoroutineContext
 
 interface Interactor<in P> {
     val dispatcher: CoroutineDispatcher
@@ -94,10 +93,8 @@ abstract class SubjectInteractor<P : Any, EP, T> : Interactor<EP> {
     }
 }
 
-fun <P> launchInteractor(
-    interactor: Interactor<P>,
-    param: P,
-    context: CoroutineContext = interactor.dispatcher,
-    start: CoroutineStart = CoroutineStart.DEFAULT,
-    parent: Job? = null
-) = launch(context = context, start = start, parent = parent, block = { interactor(param) })
+fun <P> CoroutineScope.launchInteractor(interactor: Interactor<P>, param: P): Job {
+    return launch(context = interactor.dispatcher, block = { interactor(param) })
+}
+
+fun CoroutineScope.launchInteractor(interactor: Interactor<Unit>) = launchInteractor(interactor, Unit)

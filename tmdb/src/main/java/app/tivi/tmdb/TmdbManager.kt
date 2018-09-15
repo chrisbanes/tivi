@@ -23,6 +23,7 @@ import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.Configuration
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import javax.inject.Inject
@@ -43,7 +44,7 @@ class TmdbManager @Inject constructor(
     }
 
     private fun refreshConfiguration() {
-        launch(dispatchers.main) {
+        GlobalScope.launch(dispatchers.main) {
             try {
                 val config = withContext(dispatchers.io) {
                     tmdbClient.configurationService().configuration().fetchBodyWithRetry()

@@ -30,6 +30,7 @@ import app.tivi.interactors.ChangeShowFollowStatus.Action.TOGGLE
 import app.tivi.interactors.UpdateFollowedShowSeasonData
 import app.tivi.interactors.UpdateRelatedShows
 import app.tivi.interactors.UpdateShowDetails
+import app.tivi.interactors.launchInteractor
 import app.tivi.showdetails.ShowDetailsActivity
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
@@ -105,9 +106,9 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     private fun refresh() {
-        launchInteractor(updateShowDetails, UpdateShowDetails.ExecuteParams(true))
-        launchInteractor(updateRelatedShows, UpdateRelatedShows.ExecuteParams(true))
-        launchInteractor(updateShowSeasons, UpdateFollowedShowSeasonData.ExecuteParams(true))
+        scope.launchInteractor(updateShowDetails, UpdateShowDetails.ExecuteParams(true))
+        scope.launchInteractor(updateRelatedShows, UpdateRelatedShows.ExecuteParams(true))
+        scope.launchInteractor(updateShowSeasons, UpdateFollowedShowSeasonData.ExecuteParams(true))
     }
 
     override fun onCleared() {
@@ -116,7 +117,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     fun onToggleMyShowsButtonClicked() {
-        launchInteractor(changeShowFollowStatus, ChangeShowFollowStatus.ExecuteParams(TOGGLE))
+        scope.launchInteractor(changeShowFollowStatus, ChangeShowFollowStatus.ExecuteParams(TOGGLE))
     }
 
     fun onRelatedShowClicked(
@@ -131,12 +132,12 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     ) = showDetailsNavigator.showEpisodeDetails(episode)
 
     fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
-        launchInteractor(changeSeasonWatchedStatus,
+        scope.launchInteractor(changeSeasonWatchedStatus,
                 Params(season.id, ChangeSeasonWatchedStatus.Action.WATCHED, onlyAired, date))
     }
 
     fun onMarkSeasonUnwatched(season: Season) {
-        launchInteractor(changeSeasonWatchedStatus, Params(season.id, Action.UNWATCH))
+        scope.launchInteractor(changeSeasonWatchedStatus, Params(season.id, Action.UNWATCH))
     }
 
     fun toggleSeasonExpanded(season: Season) {

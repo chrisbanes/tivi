@@ -23,6 +23,7 @@ import app.tivi.interactors.RemoveEpisodeWatch
 import app.tivi.interactors.RemoveEpisodeWatches
 import app.tivi.interactors.UpdateEpisodeDetails
 import app.tivi.interactors.UpdateEpisodeWatches
+import app.tivi.interactors.launchInteractor
 import app.tivi.showdetails.ShowDetailsActivity
 import app.tivi.showdetails.episodedetails.EpisodeDetailsViewState.Action
 import app.tivi.tmdb.TmdbManager
@@ -89,23 +90,23 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     }
 
     private fun refresh() {
-        launchInteractor(updateEpisodeDetails, UpdateEpisodeDetails.ExecuteParams(true))
-        launchInteractor(updateEpisodeWatches, UpdateEpisodeWatches.ExecuteParams(true))
+        scope.launchInteractor(updateEpisodeDetails, UpdateEpisodeDetails.ExecuteParams(true))
+        scope.launchInteractor(updateEpisodeWatches, UpdateEpisodeWatches.ExecuteParams(true))
     }
 
     fun removeWatchEntry(entry: EpisodeWatchEntry) {
-        launchInteractor(removeEpisodeWatch, RemoveEpisodeWatch.Params(entry.id))
+        scope.launchInteractor(removeEpisodeWatch, RemoveEpisodeWatch.Params(entry.id))
     }
 
     fun markWatched() {
         withState {
-            launchInteractor(addEpisodeWatch, AddEpisodeWatch.Params(it.episodeId, OffsetDateTime.now()))
+            scope.launchInteractor(addEpisodeWatch, AddEpisodeWatch.Params(it.episodeId, OffsetDateTime.now()))
         }
     }
 
     fun markUnwatched() {
         withState {
-            launchInteractor(removeEpisodeWatches, RemoveEpisodeWatches.Params(it.episodeId))
+            scope.launchInteractor(removeEpisodeWatches, RemoveEpisodeWatches.Params(it.episodeId))
         }
     }
 }

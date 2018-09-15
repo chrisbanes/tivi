@@ -52,7 +52,7 @@ class WatchedShowsRepository @Inject constructor(
                     // Save the related entries
                     localStore.saveWatchedShows(entries)
                     // Now update all of the related shows if needed
-                    entries.parallelForEach(dispatchers.io) { entry ->
+                    entries.parallelForEach { entry ->
                         if (showRepository.needsUpdate(entry.showId)) {
                             showRepository.updateShow(entry.showId)
                         }

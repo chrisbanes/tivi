@@ -29,6 +29,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withContext
 import net.openid.appauth.AuthState
@@ -67,7 +68,7 @@ class TraktManager @Inject constructor(
                 .subscribe(::updateAuthState, logger::e)
 
         // Read the auth state from prefs
-        launch(dispatchers.main) {
+        GlobalScope.launch(dispatchers.main) {
             val state = withContext(dispatchers.io) {
                 readAuthState()
             }
@@ -114,7 +115,7 @@ class TraktManager @Inject constructor(
         // Update our local state
         authState.onNext(newState)
         // Persist auth state
-        launch(dispatchers.io) {
+        GlobalScope.launch(dispatchers.io) {
             persistAuthState(newState)
         }
         // Now trigger a sync of all shows
