@@ -70,7 +70,7 @@
             android:layout_width="0dp"
             android:layout_height="300dp"
             android:minHeight="100dp"
-            app:layoutManager="android.support.v7.widget.GridLayoutManager"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ep_details_fanart"

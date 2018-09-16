@@ -20,17 +20,17 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Outline
 import android.graphics.Path
-import android.support.design.shape.CutCornerTreatment
-import android.support.design.shape.MaterialShapeDrawable
-import android.support.design.shape.ShapePathModel
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewOutlineProvider
 import app.tivi.R
 import app.tivi.ui.animations.lerp
+import com.google.android.material.shape.CutCornerTreatment
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapePathModel
 
 class TopLeftCutoutBackgroundView : View {
-    private val shapeDrawable: MaterialShapeDrawable = MaterialShapeDrawable()
+    private val shapeDrawable = MaterialShapeDrawable()
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
