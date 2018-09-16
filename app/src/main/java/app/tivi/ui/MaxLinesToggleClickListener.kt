@@ -16,8 +16,8 @@
 
 package app.tivi.ui
 
-import android.support.v4.view.animation.FastOutSlowInInterpolator
-import android.support.v7.widget.RecyclerView
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.recyclerview.widget.RecyclerView
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.view.View

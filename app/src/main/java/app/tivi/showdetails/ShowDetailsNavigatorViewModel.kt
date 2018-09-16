@@ -16,8 +16,8 @@
 
 package app.tivi.showdetails
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import app.tivi.AppNavigator
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.Episode

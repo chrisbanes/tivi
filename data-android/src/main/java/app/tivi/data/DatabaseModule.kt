@@ -16,7 +16,7 @@
 
 package app.tivi.data
 
-import android.arch.persistence.room.Room
+import androidx.room.Room
 import android.content.Context
 import android.os.Debug
 import dagger.Module

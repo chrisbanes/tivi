@@ -16,10 +16,10 @@
 
 package app.tivi.util
 
-import android.arch.lifecycle.LiveDataReactiveStreams
-import android.arch.paging.DataSource
-import android.arch.paging.LivePagedListBuilder
-import android.arch.paging.PagedList
+import androidx.lifecycle.LiveDataReactiveStreams
+import androidx.paging.DataSource
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import app.tivi.api.Status
 import app.tivi.api.UiResource
 import app.tivi.data.Entry

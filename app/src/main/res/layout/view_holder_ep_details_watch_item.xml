@@ -32,7 +32,7 @@
             type="app.tivi.util.TiviDateFormatter" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="?android:attr/listPreferredItemHeight">
 
@@ -73,6 +73,6 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/ic_eye_24dp" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

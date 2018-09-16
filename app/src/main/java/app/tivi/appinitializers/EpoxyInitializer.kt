@@ -20,7 +20,7 @@ import android.app.Application
 import android.content.Context
 import android.os.Handler
 import android.os.HandlerThread
-import android.support.v7.widget.SnapHelper
+import androidx.recyclerview.widget.SnapHelper
 import android.view.Gravity
 import com.airbnb.epoxy.Carousel
 import com.airbnb.epoxy.EpoxyController

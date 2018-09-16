@@ -71,7 +71,7 @@ android {
         // For now we're sticking to just shipping EN
         resConfigs "en"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         playAccountConfig = playAccountConfigs.defaultAccountConfig
 
@@ -157,26 +157,26 @@ dependencies {
     implementation project(':interactors')
     implementation project(":tasks")
 
-    implementation "android.arch.lifecycle:extensions:${versions.androidx.lifecycle}"
-    implementation "android.arch.lifecycle:reactivestreams:${versions.androidx.lifecycle}"
-    kapt "android.arch.lifecycle:compiler:${versions.androidx.lifecycle}"
+    implementation "androidx.lifecycle:lifecycle-extensions:${versions.androidx.lifecycle}"
+    implementation "androidx.lifecycle:lifecycle-reactivestreams:${versions.androidx.lifecycle}"
+    kapt "androidx.lifecycle:lifecycle-compiler:${versions.androidx.lifecycle}"
 
-    implementation "android.arch.paging:runtime:${versions.androidx.paging}"
-    implementation "android.arch.paging:rxjava2:${versions.androidx.paging}"
+    implementation "androidx.paging:paging-runtime:${versions.androidx.paging}"
+    implementation "androidx.paging:paging-rxjava2:${versions.androidx.paging}"
 
-    implementation "com.android.support:appcompat-v7:${versions.androidx.appcompat}"
-    implementation "com.android.support:design:${versions.material_design}"
-    implementation "com.android.support:customtabs:${versions.androidx.browser}"
-    implementation "com.android.support:palette-v7:${versions.androidx.palette}"
-    implementation "com.android.support:recyclerview-v7:${versions.androidx.recyclerview}"
-    implementation "com.android.support:support-emoji:${versions.androidx.emoji}"
+    implementation "androidx.appcompat:appcompat:${versions.androidx.appcompat}"
+    implementation "com.google.android.material:material:${versions.material_design}"
+    implementation "androidx.browser:browser:${versions.androidx.browser}"
+    implementation "androidx.palette:palette:${versions.androidx.palette}"
+    implementation "androidx.recyclerview:recyclerview:${versions.androidx.recyclerview}"
+    implementation "androidx.emoji:emoji:${versions.androidx.emoji}"
 
     implementation("android.arch.work:work-runtime-ktx:${versions.androidx.work}") {
         // We have to exclude this since it wants 1.1.1-rc1 and we're using 1.1.1
         exclude group: 'android.arch.persistence.room', module: 'runtime'
     }
 
-    implementation "com.android.support.constraint:constraint-layout:${versions.androidx.constraint_layout}"
+    implementation "androidx.constraintlayout:constraintlayout:${versions.androidx.constraint_layout}"
 
     implementation "androidx.core:core-ktx:${versions.androidx.core_ktx}"
 
@@ -212,10 +212,10 @@ dependencies {
 
     testImplementation 'junit:junit:4.12'
 
-    androidTestImplementation "com.android.support.test:runner:${versions.androidx.test_runner}"
-    androidTestImplementation "com.android.support.test:rules:${versions.androidx.test_rules}"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:${versions.espresso}"
-    androidTestImplementation "android.arch.persistence.room:runtime:${versions.androidx.room}"
+    androidTestImplementation "androidx.test:runner:${versions.androidx.test_runner}"
+    androidTestImplementation "androidx.test:rules:${versions.androidx.test_rules}"
+    androidTestImplementation "androidx.test.espresso:espresso-core:${versions.espresso}"
+    androidTestImplementation "androidx.room:room-runtime:${versions.androidx.room}"
     androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito:2.19.1'
 
     debugImplementation "nl.littlerobots.rxlint:rxlint:${versions.rxlint}"

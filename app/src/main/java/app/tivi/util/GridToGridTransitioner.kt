@@ -16,15 +16,15 @@
 
 package app.tivi.util
 
-import android.support.transition.ColumnedChangeBounds
-import android.support.transition.Fade
-import android.support.transition.Transition
-import android.support.transition.TransitionListenerAdapter
-import android.support.transition.TransitionSet
-import android.support.v4.app.Fragment
-import android.support.v4.view.animation.FastOutLinearInInterpolator
-import android.support.v4.view.animation.FastOutSlowInInterpolator
-import android.support.v4.view.animation.LinearOutSlowInInterpolator
+import androidx.transition.ColumnedChangeBounds
+import androidx.transition.Fade
+import androidx.transition.Transition
+import androidx.transition.TransitionListenerAdapter
+import androidx.transition.TransitionSet
+import androidx.fragment.app.Fragment
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import android.view.animation.LinearInterpolator
 import app.tivi.ui.transitions.BabySlide
 

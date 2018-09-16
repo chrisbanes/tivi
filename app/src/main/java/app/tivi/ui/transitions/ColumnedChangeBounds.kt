@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package android.support.transition
+package androidx.transition
 
 import android.animation.Animator
 import android.animation.AnimatorSet
@@ -24,8 +24,8 @@ import android.graphics.Bitmap
 import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.support.v4.view.ViewCompat
-import android.support.v7.widget.RecyclerView
+import androidx.core.view.ViewCompat
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Property
 import android.view.View
 import android.view.ViewGroup

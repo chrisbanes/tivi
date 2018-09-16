@@ -17,9 +17,9 @@
 package app.tivi
 
 import android.app.Activity
-import android.arch.lifecycle.ViewModelProvider
 import android.content.Intent
 import android.os.Bundle
+import androidx.lifecycle.ViewModelProvider
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 

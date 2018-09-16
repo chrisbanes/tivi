@@ -17,8 +17,8 @@
 package app.tivi.util
 
 import android.content.Context
-import android.support.design.widget.BottomSheetDialogFragment
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.AndroidSupportInjection

@@ -50,5 +50,5 @@ dependencies {
     implementation "androidx.core:core-ktx:${versions.androidx.core_ktx}"
 
     api "net.openid:appauth:0.7.1"
-    implementation "com.android.support:customtabs:${versions.androidx.browser}"
+    implementation "androidx.browser:browser:${versions.androidx.browser}"
 }

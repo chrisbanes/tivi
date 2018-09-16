@@ -18,7 +18,7 @@ package app.tivi.ui.widget
 
 import android.content.Context
 import android.widget.Checkable
-import android.support.design.widget.FloatingActionButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import android.util.AttributeSet
 import android.view.View
 

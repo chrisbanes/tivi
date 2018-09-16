@@ -16,7 +16,7 @@
 
 package app.tivi.home.trending
 
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.View
 import app.tivi.PosterGridItemBindingModel_

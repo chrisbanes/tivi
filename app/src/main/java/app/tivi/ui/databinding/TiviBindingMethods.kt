@@ -16,9 +16,9 @@
 
 package app.tivi.ui.databinding
 
-import android.databinding.BindingMethod
-import android.databinding.BindingMethods
-import android.support.v4.widget.SwipeRefreshLayout
+import androidx.databinding.BindingMethod
+import androidx.databinding.BindingMethods
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.view.View
 
 @BindingMethods(

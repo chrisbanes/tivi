@@ -16,7 +16,7 @@
 
 package app.tivi.home.popular
 
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.View
 import app.tivi.R

@@ -16,7 +16,7 @@
 
 package app.tivi.data
 
-import android.arch.persistence.room.TypeConverter
+import androidx.room.TypeConverter
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Request
 import org.threeten.bp.Instant

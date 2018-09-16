@@ -16,7 +16,7 @@
 
 package app.tivi.home
 
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.LiveData
 import app.tivi.trakt.TraktManager
 import app.tivi.util.SingleLiveEvent
 import app.tivi.util.TiviViewModel

@@ -17,13 +17,13 @@
 package app.tivi.ui.widget
 
 import android.content.Context
-import android.databinding.BindingMethod
-import android.databinding.BindingMethods
-import android.support.annotation.AttrRes
-import android.support.annotation.MenuRes
-import android.support.annotation.StyleRes
-import android.support.v7.widget.AppCompatImageButton
-import android.support.v7.widget.PopupMenu
+import androidx.databinding.BindingMethod
+import androidx.databinding.BindingMethods
+import androidx.annotation.AttrRes
+import androidx.annotation.MenuRes
+import androidx.annotation.StyleRes
+import androidx.appcompat.widget.AppCompatImageButton
+import androidx.appcompat.widget.PopupMenu
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent

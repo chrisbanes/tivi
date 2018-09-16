@@ -16,7 +16,7 @@
 
 package app.tivi.showdetails
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import app.tivi.inject.ViewModelBuilder
 import app.tivi.inject.ViewModelKey
 import app.tivi.showdetails.details.ShowDetailsFragmentBuilder

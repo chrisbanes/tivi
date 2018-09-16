@@ -51,7 +51,7 @@
             type="android.view.View.OnClickListener" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/grid_item_background_color"
@@ -98,5 +98,5 @@
             app:visibleIfNotNull="@{annotationLabel}"
             tools:text="100" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

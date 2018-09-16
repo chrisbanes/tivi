@@ -16,8 +16,8 @@
 
 package app.tivi.ui.databinding
 
-import android.databinding.BindingAdapter
-import android.support.text.emoji.EmojiCompat
+import androidx.databinding.BindingAdapter
+import androidx.emoji.text.EmojiCompat
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView

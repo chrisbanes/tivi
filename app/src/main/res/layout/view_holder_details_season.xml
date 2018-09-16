@@ -35,7 +35,7 @@
 
         <variable
             name="popupMenuClickListener"
-            type="android.support.v7.widget.PopupMenu.OnMenuItemClickListener" />
+            type="androidx.appcompat.widget.PopupMenu.OnMenuItemClickListener" />
 
         <variable
             name="popupMenuListener"

@@ -16,13 +16,13 @@
 
 package app.tivi.utils
 
-import android.support.annotation.IdRes
-import android.support.annotation.StringRes
-import android.support.test.espresso.matcher.ViewMatchers
-import android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA
-import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
-import android.support.test.espresso.matcher.ViewMatchers.withText
-import android.support.v7.widget.Toolbar
+import androidx.annotation.IdRes
+import androidx.annotation.StringRes
+import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.appcompat.widget.Toolbar
 import android.view.View
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description

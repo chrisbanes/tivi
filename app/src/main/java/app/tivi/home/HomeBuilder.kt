@@ -16,7 +16,7 @@
 
 package app.tivi.home
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import app.tivi.home.discover.DiscoverBuilder
 import app.tivi.home.library.LibraryBuilder
 import app.tivi.home.popular.PopularBuilder

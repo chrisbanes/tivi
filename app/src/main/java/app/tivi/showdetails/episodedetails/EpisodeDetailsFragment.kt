@@ -16,8 +16,8 @@
 
 package app.tivi.showdetails.episodedetails
 
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater

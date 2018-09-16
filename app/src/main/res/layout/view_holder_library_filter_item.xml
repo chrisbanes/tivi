@@ -31,7 +31,7 @@
             type="android.view.View.OnClickListener" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="44dp"
         android:foreground="?android:attr/selectableItemBackground"
@@ -65,5 +65,5 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Followed" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

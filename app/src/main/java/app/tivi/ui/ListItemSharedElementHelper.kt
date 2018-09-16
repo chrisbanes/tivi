@@ -16,7 +16,7 @@
 
 package app.tivi.ui
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import app.tivi.SharedElementHelper
 import app.tivi.data.Entry

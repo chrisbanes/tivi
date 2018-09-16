@@ -16,7 +16,7 @@
 
 package app.tivi.showdetails.episodedetails
 
-import android.support.v4.app.FragmentActivity
+import androidx.fragment.app.FragmentActivity
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.interactors.AddEpisodeWatch
 import app.tivi.interactors.RemoveEpisodeWatch

@@ -18,7 +18,7 @@ package app.tivi.ui
 
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.support.v7.graphics.Palette
+import androidx.palette.graphics.Palette
 import android.util.LruCache
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException

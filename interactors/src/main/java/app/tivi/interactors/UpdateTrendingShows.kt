@@ -16,7 +16,7 @@
 
 package app.tivi.interactors
 
-import android.arch.paging.DataSource
+import androidx.paging.DataSource
 import app.tivi.data.repositories.trendingshows.TrendingShowsRepository
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.extensions.emptyFlowableList

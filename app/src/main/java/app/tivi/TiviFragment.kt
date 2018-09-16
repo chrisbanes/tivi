@@ -16,9 +16,9 @@
 
 package app.tivi
 
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.support.transition.TransitionInflater
+import androidx.transition.TransitionInflater
 import android.view.ViewGroup
 import androidx.core.view.doOnPreDraw
 import dagger.android.support.DaggerFragment

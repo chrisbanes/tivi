@@ -26,7 +26,7 @@
             type="app.tivi.showdetails.details.ShowDetailsViewState" />
     </data>
 
-    <android.support.constraint.motion.MotionLayout
+    <androidx.constraintlayout.motion.widget.MotionLayout
         android:id="@+id/details_motion"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -136,5 +136,5 @@
             app:layout_constraintEnd_toEndOf="@id/details_appbar_background"
             app:layout_constraintTop_toTopOf="@id/details_appbar_background" />
 
-    </android.support.constraint.motion.MotionLayout>
+    </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>

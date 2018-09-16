@@ -16,9 +16,10 @@
 
 package app.tivi.home.watched
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.RecyclerView
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
@@ -49,7 +50,7 @@ class WatchedShowsFragment : EntryGridFragment<WatchedShowEntryWithShow, Watched
 
     override fun onItemClicked(item: WatchedShowEntryWithShow) {
         val sharedElements = SharedElementHelper()
-        grid_recyclerview.findViewHolderForItemId(item.generateStableId())?.let {
+        (grid_recyclerview as RecyclerView).findViewHolderForItemId(item.generateStableId())?.let {
             sharedElements.addSharedElement(it.itemView, "poster")
         }
         viewModel.onItemClicked(item, homeNavigator, sharedElements)

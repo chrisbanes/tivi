@@ -16,7 +16,7 @@
 
 package app.tivi.data.repositories.trendingshows
 
-import android.arch.paging.DataSource
+import androidx.paging.DataSource
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.entities.TrendingShowEntry

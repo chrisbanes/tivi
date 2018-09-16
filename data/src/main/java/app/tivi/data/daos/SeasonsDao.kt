@@ -16,9 +16,9 @@
 
 package app.tivi.data.daos
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Query
-import android.arch.persistence.room.Transaction
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Transaction
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.Season.Companion.NUMBER_SPECIALS
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches

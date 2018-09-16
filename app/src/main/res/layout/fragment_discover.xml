@@ -27,20 +27,20 @@
             type="app.tivi.home.discover.DiscoverViewState" />
     </data>
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/summary_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:isRefreshing="@{state.isLoading}">
 
-        <android.support.design.widget.CoordinatorLayout
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/summary_coordinator"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:statusBarBackground="@null">
 
-            <android.support.design.widget.AppBarLayout
+            <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/summary_appbarlayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
                 android:theme="?attr/actionBarTheme"
                 android:transitionGroup="true">
 
-                <android.support.v7.widget.Toolbar
+                <androidx.appcompat.widget.Toolbar
                     android:id="@+id/summary_toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
@@ -56,7 +56,7 @@
                     app:popupTheme="?attr/actionBarPopupTheme"
                     app:title="@string/discover_title" />
 
-            </android.support.design.widget.AppBarLayout>
+            </com.google.android.material.appbar.AppBarLayout>
 
             <View
                 android:id="@+id/summary_status_scrim"
@@ -81,7 +81,7 @@
                 app:spanCount="@integer/grid_condensed_span_count"
                 tools:listitem="@layout/view_holder_details_summary" />
 
-        </android.support.design.widget.CoordinatorLayout>
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

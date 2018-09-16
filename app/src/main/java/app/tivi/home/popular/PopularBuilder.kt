@@ -16,7 +16,7 @@
 
 package app.tivi.home.popular
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import app.tivi.inject.ViewModelKey
 import dagger.Binds
 import dagger.Module
