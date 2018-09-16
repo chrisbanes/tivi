@@ -86,8 +86,11 @@
 # Retrofit
 -dontnote retrofit2.Platform
 -dontwarn retrofit2.Platform$Java8
--keepattributes Signature
--keepattributes Exceptions
+-keepattributes Signature, InnerClasses, Exceptions
+# Retain service method parameters when optimizing.
+-keepclassmembers,allowshrinking,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
 
 # Okhttp + Okio
 -dontwarn okhttp3.**
@@ -124,7 +127,7 @@
 -dontwarn org.jetbrains.annotations.**
 -keep class kotlin.Metadata { *; }
 
-# Kotlin Reflect internal impl.
+# Kotlin Reflect internal impl
 -keep public class kotlin.reflect.jvm.internal.impl.builtins.* { public *; }
 
 # BaseMvRxViewModels loads the Companion class via reflection and thus we need to make sure we keep
@@ -147,11 +150,3 @@
 # !! Tweak this once https://issuetracker.google.com/issues/112386012 is fixed !!
 # Need to keep class name due to kotlin-reflect
 -keep class * implements com.airbnb.mvrx.MvRxState { *; }
-
-# Retrofit does reflection on generic parameters and InnerClass is required to use Signature.
--keepattributes Signature, InnerClasses
-
-# Retain service method parameters when optimizing.
--keepclassmembers,allowshrinking,allowobfuscation interface * {
-    @retrofit2.http.* <methods>;
-}
