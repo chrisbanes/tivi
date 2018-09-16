@@ -52,6 +52,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     @Query("DELETE FROM myshows_entries")
     abstract override fun deleteAll()
 
+    @Transaction
     @Query("SELECT * FROM myshows_entries WHERE id = :id")
     abstract fun entryWithId(id: Long): FollowedShowEntryWithShow?
 
