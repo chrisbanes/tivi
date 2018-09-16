@@ -17,14 +17,14 @@
 package app.tivi.showdetails.details
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.os.Parcelable
-import android.support.constraint.motion.MotionLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.os.bundleOf
+import androidx.lifecycle.ViewModelProviders
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.ActionDate

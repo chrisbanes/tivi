@@ -16,7 +16,7 @@
 
 package app.tivi.home.discover
 
-import android.support.v4.app.FragmentActivity
+import androidx.fragment.app.FragmentActivity
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
 import app.tivi.home.HomeActivity

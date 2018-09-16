@@ -16,13 +16,13 @@
 
 package app.tivi.home.discover
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v7.widget.SearchView
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.ViewModelProviders
 import app.tivi.R
 import app.tivi.data.Entry
 import app.tivi.data.entities.TiviShow

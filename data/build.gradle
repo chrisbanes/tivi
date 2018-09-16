@@ -22,8 +22,8 @@ dependencies {
     implementation project(":trakt")
     implementation project(":tmdb")
 
-    compile "android.arch.persistence.room:common:${versions.androidx.room}"
-    compile "android.arch.paging:common:${versions.androidx.paging}"
+    compile "androidx.room:room-common:${versions.androidx.room}"
+    compile "androidx.paging:paging-common:${versions.androidx.paging}"
 
     compile "io.reactivex.rxjava2:rxjava:${versions.rx}"
     compile "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"

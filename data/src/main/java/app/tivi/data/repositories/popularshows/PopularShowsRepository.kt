@@ -16,7 +16,7 @@
 
 package app.tivi.data.repositories.popularshows
 
-import android.arch.paging.DataSource
+import androidx.paging.DataSource
 import app.tivi.data.entities.Success
 import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository

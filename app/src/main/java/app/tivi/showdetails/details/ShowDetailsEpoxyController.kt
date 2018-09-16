@@ -17,9 +17,9 @@
 package app.tivi.showdetails.details
 
 import android.content.Context
-import android.support.v7.widget.PopupMenu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.widget.PopupMenu
 import app.tivi.DetailsRelatedItemBindingModel_
 import app.tivi.R
 import app.tivi.data.entities.ActionDate

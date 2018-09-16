@@ -30,7 +30,7 @@
             type="app.tivi.tmdb.TmdbImageUrlProvider" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ep_details_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -70,13 +70,13 @@
             android:layout_width="0dp"
             android:layout_height="300dp"
             android:minHeight="100dp"
-            app:layoutManager="android.support.v7.widget.GridLayoutManager"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ep_details_fanart"
             app:spanCount="3" />
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/ep_details_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -86,6 +86,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/ep_details_rv" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

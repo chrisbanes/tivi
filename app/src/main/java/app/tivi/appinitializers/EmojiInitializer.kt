@@ -17,9 +17,9 @@
 package app.tivi.appinitializers
 
 import android.app.Application
-import android.support.text.emoji.EmojiCompat
-import android.support.text.emoji.FontRequestEmojiCompatConfig
-import android.support.v4.provider.FontRequest
+import androidx.core.provider.FontRequest
+import androidx.emoji.text.EmojiCompat
+import androidx.emoji.text.FontRequestEmojiCompatConfig
 import app.tivi.R
 import javax.inject.Inject
 

@@ -16,7 +16,7 @@
 
 package app.tivi.interactors
 
-import android.arch.paging.DataSource
+import androidx.paging.DataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.resultentities.FollowedShowEntryWithShow

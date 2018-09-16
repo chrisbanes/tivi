@@ -16,7 +16,7 @@
 
 package app.tivi.data.repositories.popularshows
 
-import android.arch.paging.DataSource
+import androidx.paging.DataSource
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.PopularDao
 import app.tivi.data.entities.PopularShowEntry

@@ -16,7 +16,7 @@
 
 package app.tivi.interactors
 
-import android.arch.paging.DataSource
+import androidx.paging.DataSource
 import app.tivi.extensions.toFlowable
 import io.reactivex.Flowable
 import io.reactivex.disposables.Disposable

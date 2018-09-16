@@ -16,8 +16,8 @@
 
 package app.tivi.data.resultentities
 
-import android.arch.persistence.room.Embedded
-import android.arch.persistence.room.Relation
+import androidx.room.Embedded
+import androidx.room.Relation
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.TiviShow
 import java.util.Objects

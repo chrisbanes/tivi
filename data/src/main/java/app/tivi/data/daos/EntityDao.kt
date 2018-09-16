@@ -16,9 +16,9 @@
 
 package app.tivi.data.daos
 
-import android.arch.persistence.room.Delete
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.Update
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Update
 import app.tivi.data.entities.TiviEntity
 
 interface EntityDao<in E : TiviEntity> {

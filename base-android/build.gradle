@@ -34,9 +34,9 @@ android {
 
 dependencies {
     implementation project(":base")
-    implementation "com.android.support:support-fragment:${versions.androidx.fragment}"
+    implementation "androidx.fragment:fragment:${versions.androidx.fragment}"
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
-    implementation "android.arch.core:runtime:${versions.androidx.core}"
-    implementation "android.arch.core:common:${versions.androidx.core}"
+    implementation "androidx.arch.core:core-runtime:${versions.androidx.core}"
+    implementation "androidx.arch.core:core-common:${versions.androidx.core}"
 }

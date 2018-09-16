@@ -16,7 +16,7 @@
 
 package app.tivi.home.library
 
-import android.arch.paging.PagedList
+import androidx.paging.PagedList
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.resultentities.WatchedShowEntryWithShow

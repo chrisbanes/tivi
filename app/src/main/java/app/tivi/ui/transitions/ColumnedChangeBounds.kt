@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package android.support.transition
+package androidx.transition
 
 import android.animation.Animator
 import android.animation.AnimatorSet
@@ -24,15 +24,15 @@ import android.graphics.Bitmap
 import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.support.v4.view.ViewCompat
-import android.support.v7.widget.RecyclerView
 import android.util.Property
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.animation.doOnEnd
 import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
 import app.tivi.ui.transitions.DrawableAlphaProperty
 import kotlin.math.roundToInt
 

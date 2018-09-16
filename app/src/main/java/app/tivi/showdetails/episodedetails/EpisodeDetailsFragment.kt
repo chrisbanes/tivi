@@ -16,8 +16,6 @@
 
 package app.tivi.showdetails.episodedetails
 
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
@@ -26,6 +24,8 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.doOnLayout
 import androidx.core.view.updatePadding
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import app.tivi.EpDetailsWatchItemBindingModel_
 import app.tivi.R
 import app.tivi.databinding.FragmentEpisodeDetailsBinding

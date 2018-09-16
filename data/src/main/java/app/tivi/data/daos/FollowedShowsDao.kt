@@ -16,10 +16,10 @@
 
 package app.tivi.data.daos
 
-import android.arch.paging.DataSource
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Query
-import android.arch.persistence.room.Transaction
+import androidx.paging.DataSource
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Transaction
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
@@ -52,6 +52,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     @Query("DELETE FROM myshows_entries")
     abstract override fun deleteAll()
 
+    @Transaction
     @Query("SELECT * FROM myshows_entries WHERE id = :id")
     abstract fun entryWithId(id: Long): FollowedShowEntryWithShow?
 

@@ -42,7 +42,7 @@
             type="android.view.View.OnClickListener" />
     </data>
 
-    <android.support.design.card.MaterialCardView
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:foreground="?android:attr/selectableItemBackground"
@@ -72,6 +72,6 @@
             app:tmdbImageUrlProvider="@{tmdbImageUrlProvider}"
             app:tmdbPosterPath="@{tiviShow.tmdbPosterPath}" />
 
-    </android.support.design.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </layout>

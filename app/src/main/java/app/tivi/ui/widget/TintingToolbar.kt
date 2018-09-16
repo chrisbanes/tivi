@@ -17,9 +17,9 @@
 package app.tivi.ui.widget
 
 import android.content.Context
-import android.support.annotation.Keep
-import android.support.v7.widget.Toolbar
 import android.util.AttributeSet
+import androidx.annotation.Keep
+import androidx.appcompat.widget.Toolbar
 import app.tivi.R
 import app.tivi.extensions.resolveThemeColor
 

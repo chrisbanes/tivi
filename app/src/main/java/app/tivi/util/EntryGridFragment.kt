@@ -17,18 +17,17 @@
 package app.tivi.util
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.design.widget.Snackbar
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.doOnLayout
 import androidx.core.view.updatePadding
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import app.tivi.R
 import app.tivi.TiviFragment
 import app.tivi.api.Status
@@ -37,6 +36,7 @@ import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.extensions.observeK
 import app.tivi.ui.ProgressTimeLatch
 import app.tivi.ui.SpacingItemDecorator
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
 
 @SuppressLint("ValidFragment")

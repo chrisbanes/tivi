@@ -19,11 +19,11 @@ package app.tivi.ui.transitions
 import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
-import android.support.transition.TransitionValues
-import android.support.transition.Visibility
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import androidx.transition.TransitionValues
+import androidx.transition.Visibility
 
 class BabySlide(
     private val gravity: Int = Gravity.START,

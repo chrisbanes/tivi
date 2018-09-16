@@ -26,7 +26,7 @@ android {
     defaultConfig {
         minSdkVersion buildConfig.minSdk
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -46,11 +46,11 @@ dependencies {
     implementation project(":base-android")
     implementation project(":data")
 
-    implementation "android.arch.persistence.room:runtime:${versions.androidx.room}"
-    implementation "android.arch.persistence.room:rxjava2:${versions.androidx.room}"
-    kapt "android.arch.persistence.room:compiler:${versions.androidx.room}"
+    implementation "androidx.room:room-runtime:${versions.androidx.room}"
+    implementation "androidx.room:room-rxjava2:${versions.androidx.room}"
+    kapt "androidx.room:room-compiler:${versions.androidx.room}"
 
-    implementation "android.arch.paging:runtime:${versions.androidx.paging}"
+    implementation "androidx.paging:paging-runtime:${versions.androidx.paging}"
 
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
 }

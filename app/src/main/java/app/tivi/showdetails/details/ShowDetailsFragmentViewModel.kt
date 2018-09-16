@@ -16,7 +16,7 @@
 
 package app.tivi.showdetails.details
 
-import android.support.v4.app.FragmentActivity
+import androidx.fragment.app.FragmentActivity
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode

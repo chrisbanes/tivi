@@ -16,7 +16,7 @@
 
 package app.tivi.ui
 
-import android.support.annotation.StringRes
+import androidx.annotation.StringRes
 import app.tivi.R
 import app.tivi.data.entities.Genre
 
