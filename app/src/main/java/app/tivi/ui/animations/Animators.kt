@@ -21,9 +21,9 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.drawable.Drawable
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import android.view.View
 import androidx.core.animation.doOnEnd
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import app.tivi.ui.graphics.ImageLoadingColorMatrix
 import kotlin.math.roundToLong
 

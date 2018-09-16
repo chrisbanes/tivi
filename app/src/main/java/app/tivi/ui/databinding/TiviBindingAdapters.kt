@@ -16,8 +16,6 @@
 
 package app.tivi.ui.databinding
 
-import androidx.databinding.BindingAdapter
-import androidx.emoji.text.EmojiCompat
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
@@ -27,6 +25,8 @@ import androidx.core.text.inSpans
 import androidx.core.text.italic
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
+import androidx.databinding.BindingAdapter
+import androidx.emoji.text.EmojiCompat
 import app.tivi.R
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre

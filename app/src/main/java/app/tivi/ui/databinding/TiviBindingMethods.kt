@@ -16,10 +16,10 @@
 
 package app.tivi.ui.databinding
 
+import android.view.View
 import androidx.databinding.BindingMethod
 import androidx.databinding.BindingMethods
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import android.view.View
 
 @BindingMethods(
         BindingMethod(

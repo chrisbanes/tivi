@@ -16,11 +16,11 @@
 
 package app.tivi
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.transition.TransitionInflater
 import android.view.ViewGroup
 import androidx.core.view.doOnPreDraw
+import androidx.lifecycle.ViewModelProvider
+import androidx.transition.TransitionInflater
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 

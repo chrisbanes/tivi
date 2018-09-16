@@ -18,10 +18,10 @@ package app.tivi
 
 import android.app.Activity
 import android.os.Bundle
-import androidx.core.app.ActivityOptionsCompat
-import androidx.fragment.app.FragmentTransaction
-import androidx.core.util.Pair
 import android.view.View
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
+import androidx.fragment.app.FragmentTransaction
 import java.lang.ref.WeakReference
 
 class SharedElementHelper {

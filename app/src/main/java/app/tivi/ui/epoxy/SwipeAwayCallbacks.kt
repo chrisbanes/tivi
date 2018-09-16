@@ -21,8 +21,8 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
-import androidx.annotation.ColorInt
 import android.view.View
+import androidx.annotation.ColorInt
 import app.tivi.ui.animations.lerp
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.EpoxyTouchHelper

@@ -18,8 +18,8 @@ package app.tivi.extensions
 
 import android.content.Context
 import android.graphics.Color
-import androidx.annotation.AttrRes
 import android.util.TypedValue
+import androidx.annotation.AttrRes
 
 private val typedValue = TypedValue()
 

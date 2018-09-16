@@ -16,10 +16,10 @@
 
 package app.tivi.home.library
 
+import androidx.fragment.app.FragmentActivity
 import androidx.paging.DataSource
 import androidx.paging.PagedList
 import androidx.paging.RxPagedListBuilder
-import androidx.fragment.app.FragmentActivity
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.EntryWithShow

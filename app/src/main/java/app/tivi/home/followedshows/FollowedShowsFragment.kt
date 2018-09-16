@@ -16,9 +16,9 @@
 
 package app.tivi.home.followedshows
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.ViewModelProviders
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.FollowedShowEntryWithShow

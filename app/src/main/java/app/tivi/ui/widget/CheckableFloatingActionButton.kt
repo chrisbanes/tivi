@@ -17,10 +17,10 @@
 package app.tivi.ui.widget
 
 import android.content.Context
-import android.widget.Checkable
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import android.util.AttributeSet
 import android.view.View
+import android.widget.Checkable
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class CheckableFloatingActionButton @JvmOverloads constructor(
     context: Context,

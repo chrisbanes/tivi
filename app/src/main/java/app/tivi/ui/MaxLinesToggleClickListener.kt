@@ -16,13 +16,13 @@
 
 package app.tivi.ui
 
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import androidx.recyclerview.widget.RecyclerView
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.recyclerview.widget.RecyclerView
 
 class MaxLinesToggleClickListener(private val collapsedLines: Int) : View.OnClickListener {
     private val transition = ChangeBounds().apply {
