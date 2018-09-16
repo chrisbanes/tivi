@@ -70,6 +70,8 @@
 -dontwarn android.support.**
 -dontwarn androidx.**
 
+-keep class com.google.android.material.theme.MaterialComponentsViewInflater
+
 -keepattributes SourceFile,LineNumberTable
 -keepattributes *Annotation*
 -renamesourcefileattribute SourceFile
@@ -102,8 +104,6 @@
 -keepclassmembernames class com.uwetrottmann.tmdb2.entities.** { <fields>; }
 -keepclassmembers class com.uwetrottmann.tmdb2.entities.** { <init>(...); }
 
-# Keep stuff for Room
--keep class app.tivi.data.TiviTypeConverters { *; }
 -keep class app.tivi.data.entities.** { *; }
 
 # Glide
@@ -118,6 +118,9 @@
 -keepclassmembernames class kotlinx.** {
     volatile <fields>;
 }
+
+-dontwarn org.jetbrains.annotations.**
+-keep class kotlin.Metadata { *; }
 
 # Kotlin Reflect internal impl.
 # !! NEEDS OPTIMIZING !!
@@ -138,10 +141,11 @@
     public static *** create(...);
 }
 
--keep class * implements com.airbnb.mvrx.MvRxState
+-keep interface com.airbnb.mvrx.MvRxState
+-keep class * implements com.airbnb.mvrx.MvRxState { *; }
 
 # Retrofit does reflection on generic parameters and InnerClass is required to use Signature.
--keepattributes Signature, InnerClasses
+-keepattributes Signature, InnerClasses, EnclosingClass
 
 # Retain service method parameters when optimizing.
 -keepclassmembers,allowshrinking,allowobfuscation interface * {

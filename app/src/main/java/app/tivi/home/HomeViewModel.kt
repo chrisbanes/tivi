@@ -16,16 +16,9 @@
 
 package app.tivi.home
 
-import app.tivi.data.entities.TraktUser
-import app.tivi.trakt.TraktAuthState
 import net.openid.appauth.AuthorizationService
 
 interface HomeViewModel {
     fun onProfileItemClicked()
     fun onLoginItemClicked(authService: AuthorizationService)
-}
-
-interface HomeViewState {
-    val user: TraktUser?
-    val authState: TraktAuthState
 }
