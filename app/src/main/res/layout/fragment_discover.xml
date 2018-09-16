@@ -77,7 +77,7 @@
                 android:paddingRight="2dp"
                 android:paddingTop="6dp"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:spanCount="@integer/grid_condensed_span_count"
                 tools:listitem="@layout/view_holder_details_summary" />
 
