@@ -104,6 +104,10 @@
 -keepclassmembernames class com.uwetrottmann.tmdb2.entities.** { <fields>; }
 -keepclassmembers class com.uwetrottmann.tmdb2.entities.** { <init>(...); }
 
+# !! Remove this once https://issuetracker.google.com/issues/112386012 is fixed !!
+-keep class com.uwetrottmann.trakt5.entities.**
+-keep class com.uwetrottmann.tmdb2.entities.**
+
 -keep class app.tivi.data.entities.** { *; }
 
 # Glide
@@ -123,8 +127,7 @@
 -keep class kotlin.Metadata { *; }
 
 # Kotlin Reflect internal impl.
-# !! NEEDS OPTIMIZING !!
--keep class kotlin.reflect.jvm.internal.impl.** { *; }
+-keep public class kotlin.reflect.jvm.internal.impl.builtins.* { public *; }
 
 # BaseMvRxViewModels loads the Companion class via reflection and thus we need to make sure we keep
 # the name of the Companion object.
@@ -141,11 +144,14 @@
     public static *** create(...);
 }
 
+# Need to keep class name due to kotlin-reflect
 -keep interface com.airbnb.mvrx.MvRxState
+# !! Tweak this once https://issuetracker.google.com/issues/112386012 is fixed !!
+# Need to keep class name due to kotlin-reflect
 -keep class * implements com.airbnb.mvrx.MvRxState { *; }
 
 # Retrofit does reflection on generic parameters and InnerClass is required to use Signature.
--keepattributes Signature, InnerClasses, EnclosingClass
+-keepattributes Signature, InnerClasses
 
 # Retain service method parameters when optimizing.
 -keepclassmembers,allowshrinking,allowobfuscation interface * {
