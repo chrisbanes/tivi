@@ -95,12 +95,12 @@
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
 # Keep Trakt-java Entity names (for GSON)
--keep class com.uwetrottmann.trakt5.enums.** { *; }
--keep class com.uwetrottmann.trakt5.entities.** { *; }
+-keepclassmembernames class com.uwetrottmann.trakt5.entities.** { <fields>; }
+-keepclassmembers class com.uwetrottmann.trakt5.entities.** { <init>(...); }
 
 # Keep TMDb Entity names (for GSON)
--keep class com.uwetrottmann.tmdb2.enumerations.** { *; }
--keep class com.uwetrottmann.tmdb2.entities.** { *; }
+-keepclassmembernames class com.uwetrottmann.tmdb2.entities.** { <fields>; }
+-keepclassmembers class com.uwetrottmann.tmdb2.entities.** { <init>(...); }
 
 # Keep stuff for Room
 -keep class app.tivi.data.TiviTypeConverters { *; }
@@ -120,7 +120,7 @@
 }
 
 # Kotlin Reflect internal impl.
-# NEEDS OPTIMIZING
+# !! NEEDS OPTIMIZING !!
 -keep class kotlin.reflect.jvm.internal.impl.** { *; }
 
 # BaseMvRxViewModels loads the Companion class via reflection and thus we need to make sure we keep
