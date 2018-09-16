@@ -108,8 +108,6 @@
 -keep class com.uwetrottmann.trakt5.entities.**
 -keep class com.uwetrottmann.tmdb2.entities.**
 
--keep class app.tivi.data.entities.** { *; }
-
 # Glide
 -keep public class * implements com.bumptech.glide.module.GlideModule
 -keep public class * extends com.bumptech.glide.module.AppGlideModule
