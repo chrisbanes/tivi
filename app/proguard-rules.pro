@@ -95,12 +95,12 @@
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
 # Keep Trakt-java Entity names (for GSON)
--keepnames class com.uwetrottmann.trakt5.enums.** { *; }
--keepnames class com.uwetrottmann.trakt5.entities.** { *; }
+-keep class com.uwetrottmann.trakt5.enums.** { *; }
+-keep class com.uwetrottmann.trakt5.entities.** { *; }
 
 # Keep TMDb Entity names (for GSON)
--keepnames class com.uwetrottmann.tmdb2.enumerations.** { *; }
--keepnames class com.uwetrottmann.tmdb2.entities.** { *; }
+-keep class com.uwetrottmann.tmdb2.enumerations.** { *; }
+-keep class com.uwetrottmann.tmdb2.entities.** { *; }
 
 # Keep stuff for Room
 -keep class app.tivi.data.TiviTypeConverters { *; }
@@ -119,6 +119,10 @@
     volatile <fields>;
 }
 
+# Kotlin Reflect internal impl.
+# NEEDS OPTIMIZING
+-keep class kotlin.reflect.jvm.internal.impl.** { *; }
+
 # BaseMvRxViewModels loads the Companion class via reflection and thus we need to make sure we keep
 # the name of the Companion object.
 -keepclassmembers class ** extends com.airbnb.mvrx.BaseMvRxViewModel {
@@ -133,6 +137,8 @@
     public <init>(...);
     public static *** create(...);
 }
+
+-keep class * implements com.airbnb.mvrx.MvRxState
 
 # Retrofit does reflection on generic parameters and InnerClass is required to use Signature.
 -keepattributes Signature, InnerClasses
