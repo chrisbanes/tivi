@@ -6,8 +6,7 @@
 -dontpreverify
 
 # Optimize all the things (other than those listed)
--optimizations !field/*,!method/removal/parameter
--optimizationpasses 5
+-optimizations !field/*
 
 -allowaccessmodification
 -repackageclasses ''
@@ -71,6 +70,8 @@
 -dontwarn android.support.**
 -dontwarn androidx.**
 
+-keep class com.google.android.material.theme.MaterialComponentsViewInflater
+
 -keepattributes SourceFile,LineNumberTable
 -keepattributes *Annotation*
 -renamesourcefileattribute SourceFile
@@ -85,8 +86,11 @@
 # Retrofit
 -dontnote retrofit2.Platform
 -dontwarn retrofit2.Platform$Java8
--keepattributes Signature
--keepattributes Exceptions
+-keepattributes Signature, InnerClasses, Exceptions
+# Retain service method parameters when optimizing.
+-keepclassmembers,allowshrinking,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
 
 # Okhttp + Okio
 -dontwarn okhttp3.**
@@ -96,16 +100,16 @@
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
 # Keep Trakt-java Entity names (for GSON)
--keepnames class com.uwetrottmann.trakt5.enums.** { *; }
--keepnames class com.uwetrottmann.trakt5.entities.** { *; }
+-keepclassmembernames class com.uwetrottmann.trakt5.entities.** { <fields>; }
+-keepclassmembers class com.uwetrottmann.trakt5.entities.** { <init>(...); }
 
 # Keep TMDb Entity names (for GSON)
--keepnames class com.uwetrottmann.tmdb2.enumerations.** { *; }
--keepnames class com.uwetrottmann.tmdb2.entities.** { *; }
+-keepclassmembernames class com.uwetrottmann.tmdb2.entities.** { <fields>; }
+-keepclassmembers class com.uwetrottmann.tmdb2.entities.** { <init>(...); }
 
-# Keep stuff for Room
--keep class app.tivi.data.TiviTypeConverters { *; }
--keep class app.tivi.data.entities.** { *; }
+# !! Remove this once https://issuetracker.google.com/issues/112386012 is fixed !!
+-keep class com.uwetrottmann.trakt5.entities.**
+-keep class com.uwetrottmann.tmdb2.entities.**
 
 # Glide
 -keep public class * implements com.bumptech.glide.module.GlideModule
@@ -119,6 +123,12 @@
 -keepclassmembernames class kotlinx.** {
     volatile <fields>;
 }
+
+-dontwarn org.jetbrains.annotations.**
+-keep class kotlin.Metadata { *; }
+
+# Kotlin Reflect internal impl
+-keep public class kotlin.reflect.jvm.internal.impl.builtins.* { public *; }
 
 # BaseMvRxViewModels loads the Companion class via reflection and thus we need to make sure we keep
 # the name of the Companion object.
@@ -134,3 +144,9 @@
     public <init>(...);
     public static *** create(...);
 }
+
+# Need to keep class name due to kotlin-reflect
+-keep interface com.airbnb.mvrx.MvRxState
+# !! Tweak this once https://issuetracker.google.com/issues/112386012 is fixed !!
+# Need to keep class name due to kotlin-reflect
+-keep class * implements com.airbnb.mvrx.MvRxState { *; }

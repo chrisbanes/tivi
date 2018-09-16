@@ -20,7 +20,6 @@ import app.tivi.data.entities.SearchResults
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
-import app.tivi.home.HomeViewState
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.trakt.TraktAuthState
 import com.airbnb.mvrx.MvRxState
@@ -32,6 +31,6 @@ data class DiscoverViewState(
     val popularItems: List<PopularEntryWithShow> = emptyList(),
     val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider(),
     val isLoading: Boolean = false,
-    override val user: TraktUser? = null,
-    override val authState: TraktAuthState = TraktAuthState.LOGGED_OUT
-) : HomeViewState, MvRxState
+    val user: TraktUser? = null,
+    val authState: TraktAuthState = TraktAuthState.LOGGED_OUT
+) : MvRxState

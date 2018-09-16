@@ -112,7 +112,7 @@ android {
         // Disable lintVital. Not needed since lint is run on CI
         checkReleaseBuilds false
 
-        disable 'GradleCompatible'
+        disable 'GradleCompatible', 'FontValidationError'
     }
 
     dataBinding {
