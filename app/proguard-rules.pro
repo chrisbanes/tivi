@@ -6,7 +6,7 @@
 -dontpreverify
 
 # Optimize all the things (other than those listed)
--optimizations !field/*,!method/removal/parameter
+-optimizations !field/*
 
 -allowaccessmodification
 -repackageclasses ''
