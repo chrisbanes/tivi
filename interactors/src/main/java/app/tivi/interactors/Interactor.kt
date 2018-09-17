@@ -67,13 +67,9 @@ abstract class SubjectInteractor<P : Any, EP, T> : Interactor<EP> {
     }
 
     final override suspend fun invoke(executeParams: EP) {
-        try {
-            loading.onNext(true)
-            execute(params, executeParams)
-            loading.onNext(false)
-        } catch (t: Throwable) {
-            loading.onError(t)
-        }
+        loading.onNext(true)
+        execute(params, executeParams)
+        loading.onNext(false)
     }
 
     protected abstract suspend fun execute(params: P, executeParams: EP)
