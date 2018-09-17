@@ -100,9 +100,9 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
             updateRelatedShows.setParams(UpdateRelatedShows.Params(it.showId))
             updateShowSeasons.setParams(UpdateFollowedShowSeasonData.Params(it.showId))
             changeShowFollowStatus.setParams(ChangeShowFollowStatus.Params(it.showId))
-        }
 
-        refresh()
+            refresh()
+        }
     }
 
     private fun refresh() {

@@ -84,9 +84,9 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         withState {
             updateEpisodeDetails.setParams(UpdateEpisodeDetails.Params(it.episodeId))
             updateEpisodeWatches.setParams(UpdateEpisodeWatches.Params(it.episodeId))
-        }
 
-        refresh()
+            refresh()
+        }
     }
 
     private fun refresh() {
