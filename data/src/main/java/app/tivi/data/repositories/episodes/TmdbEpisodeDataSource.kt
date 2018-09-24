@@ -33,7 +33,9 @@ class TmdbEpisodeDataSource @Inject constructor(
 ) : EpisodeDataSource {
     override suspend fun getEpisode(showId: Long, seasonNumber: Int, episodeNumber: Int): Result<Episode> {
         return retrofitRunner.executeForResponse(episodeMapper) {
-            tmdb.tvEpisodesService().episode(tmdbIdMapper.map(showId), seasonNumber, episodeNumber).executeWithRetry()
+            tmdb.tvEpisodesService()
+                    .episode(tmdbIdMapper.map(showId), seasonNumber, episodeNumber, null)
+                    .executeWithRetry()
         }
     }
 }

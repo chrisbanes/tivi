@@ -34,7 +34,7 @@ class TmdbShowDataSource @Inject constructor(
         val tmdbId = show.tmdbId
         return if (tmdbId != null) {
             retrofitRunner.executeForResponse(mapper) {
-                tmdb.tvService().tv(tmdbId).executeWithRetry()
+                tmdb.tvService().tv(tmdbId, null).executeWithRetry()
             }
         } else {
             ErrorResult(IllegalArgumentException("TmdbId for show does not exist [$show]"))
