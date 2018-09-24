@@ -223,7 +223,7 @@ dependencies {
     implementation "com.google.firebase:firebase-core:${versions.firebase}"
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
 
-    implementation "org.jetbrains:annotations:16.0.1"
+    implementation "org.jetbrains:annotations:16.0.3"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlin}"
     implementation "org.jetbrains.kotlin:kotlin-reflect:${versions.kotlin}"
