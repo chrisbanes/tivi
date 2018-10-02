@@ -37,7 +37,7 @@ interface PagingInteractor<T> {
     fun dataSourceFactory(): DataSource.Factory<Int, T>
 }
 
-abstract class ChannelInteractor<P, T> : Interactor<P> {
+abstract class ChannelInteractor<P, T : Any> : Interactor<P> {
     private val channel = Channel<T>()
 
     final override suspend fun invoke(executeParams: P) {

@@ -35,13 +35,13 @@ buildscript {
                     'test_rules'       : '1.1.0-alpha4',
                     'work'             : '1.0.0-alpha09'
             ],
-            'coroutines'     : '0.26.1',
+            'coroutines'     : '0.30.0',
             'dagger'         : '2.16', // Pinning this due to https://issuetracker.google.com/115738511
             'epoxy'          : '3.0.0-rc1',
             'espresso'       : '3.1.0-alpha4',
             'firebase'       : '16.0.3',
             'glide'          : '4.8.0',
-            'kotlin'         : '1.2.61',
+            'kotlin'         : '1.2.71',
             'ktlint'         : '0.28.0',
             'mockito'        : '2.18.3',
             'material_design': '1.0.0',
