@@ -21,12 +21,12 @@ import app.tivi.extensions.toFlowable
 import io.reactivex.Flowable
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
-import kotlinx.coroutines.experimental.CoroutineDispatcher
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.channels.Channel
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.rx2.asObservable
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.rx2.asObservable
 
 interface Interactor<in P> {
     val dispatcher: CoroutineDispatcher

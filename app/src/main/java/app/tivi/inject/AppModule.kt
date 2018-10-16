@@ -28,9 +28,9 @@ import dagger.Provides
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.android.Main
-import kotlinx.coroutines.experimental.rx2.asCoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.android.Main
+import kotlinx.coroutines.rx2.asCoroutineDispatcher
 import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
 import java.io.File

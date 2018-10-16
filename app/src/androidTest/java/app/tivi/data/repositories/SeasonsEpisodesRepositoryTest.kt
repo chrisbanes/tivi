@@ -34,7 +34,7 @@ import app.tivi.utils.insertSeason
 import app.tivi.utils.insertShow
 import app.tivi.utils.showId
 import app.tivi.utils.testCoroutineDispatchers
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Test

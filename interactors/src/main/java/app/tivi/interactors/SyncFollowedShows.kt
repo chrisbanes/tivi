@@ -22,7 +22,7 @@ import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.extensions.parallelForEach
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.experimental.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class SyncFollowedShows @Inject constructor(

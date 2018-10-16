@@ -22,7 +22,7 @@ import app.tivi.interactors.UpdateShowDetails.Params
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class UpdateShowDetails @Inject constructor(

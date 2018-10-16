@@ -19,7 +19,7 @@ package app.tivi.interactors
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.experimental.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class ChangeSeasonWatchedStatus @Inject constructor(

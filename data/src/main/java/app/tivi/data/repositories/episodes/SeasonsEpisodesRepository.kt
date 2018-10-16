@@ -26,8 +26,8 @@ import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.coroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import org.threeten.bp.Duration
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.Period

@@ -20,7 +20,7 @@ import androidx.paging.DataSource
 import app.tivi.data.repositories.watchedshows.WatchedShowsRepository
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.experimental.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class UpdateWatchedShows @Inject constructor(

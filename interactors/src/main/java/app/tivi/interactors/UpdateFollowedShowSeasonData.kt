@@ -24,7 +24,7 @@ import app.tivi.interactors.UpdateFollowedShowSeasonData.ExecuteParams
 import app.tivi.interactors.UpdateFollowedShowSeasonData.Params
 import app.tivi.util.AppCoroutineDispatchers
 import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class UpdateFollowedShowSeasonData @Inject constructor(

@@ -17,7 +17,7 @@
 package app.tivi.util
 
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.experimental.CoroutineScope
+import kotlinx.coroutines.CoroutineScope
 
 interface ITiviViewModel {
     val disposables: CompositeDisposable

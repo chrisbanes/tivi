@@ -24,7 +24,7 @@ import app.tivi.interactors.UpdatePopularShows.ExecuteParams
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class UpdatePopularShows @Inject constructor(

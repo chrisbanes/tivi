@@ -18,10 +18,10 @@ package app.tivi.util
 
 import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.Main
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.android.Main
 
 /**
  * Simple ViewModel which exposes a [CompositeDisposable] and [Job] which are automatically cleared/stopped when

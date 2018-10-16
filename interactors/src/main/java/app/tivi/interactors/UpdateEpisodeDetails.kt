@@ -21,7 +21,7 @@ import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class UpdateEpisodeDetails @Inject constructor(

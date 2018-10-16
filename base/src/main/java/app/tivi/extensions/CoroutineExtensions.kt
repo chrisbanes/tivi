@@ -16,9 +16,8 @@
 
 package app.tivi.extensions
 
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.coroutineScope
-import kotlinx.coroutines.experimental.currentScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 suspend fun <A, B> Collection<A>.parallelMap(
     block: suspend (A) -> B

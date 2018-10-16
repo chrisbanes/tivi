@@ -29,7 +29,7 @@ import app.tivi.extensions.toFlowable
 import app.tivi.tmdb.TmdbManager
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.subjects.BehaviorSubject
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.launch
 
 abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
     private val schedulers: AppRxSchedulers,

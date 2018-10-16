@@ -16,7 +16,7 @@
 
 package app.tivi.extensions
 
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.delay
 import retrofit2.Call
 import retrofit2.HttpException
 import retrofit2.Response

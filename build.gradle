@@ -35,7 +35,7 @@ buildscript {
                     'test_rules'       : '1.1.0-alpha4',
                     'work'             : '1.0.0-alpha09'
             ],
-            'coroutines'     : '0.30.0',
+            'coroutines'     : '0.30.2-eap13',
             'dagger'         : '2.16', // Pinning this due to https://issuetracker.google.com/115738511
             'epoxy'          : '3.0.0-rc1',
             'espresso'       : '3.1.0-alpha4',
