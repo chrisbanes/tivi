@@ -17,7 +17,7 @@
 
 buildscript {
     ext.versions = [
-            'android_gradle' : '3.2.0',
+            'android_gradle' : '3.2.1',
             'androidx'       : [
                     'appcompat'        : '1.0.0',
                     'browser'          : '1.0.0',
