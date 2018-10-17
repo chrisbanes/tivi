@@ -19,7 +19,7 @@ package app.tivi.interactors
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.util.AppCoroutineDispatchers
 import io.reactivex.Flowable
-import kotlinx.coroutines.experimental.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class ChangeShowFollowStatus @Inject constructor(

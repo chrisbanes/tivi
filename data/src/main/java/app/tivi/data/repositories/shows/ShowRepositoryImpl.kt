@@ -21,8 +21,8 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.currentScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import org.threeten.bp.Period
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -49,7 +49,7 @@ class ShowRepositoryImpl @Inject constructor(
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
      */
-    override suspend fun updateShow(showId: Long) = currentScope {
+    override suspend fun updateShow(showId: Long) = coroutineScope {
         val localShow = localShowStore.getShow(showId) ?: TiviShow.EMPTY_SHOW
         val traktJob = async(dispatchers.io) {
             traktShowDataSource.getShow(localShow)

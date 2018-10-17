@@ -16,29 +16,33 @@
 
 package app.tivi.utils
 
+import android.content.Context
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
-import androidx.test.InstrumentationRegistry
-import androidx.test.runner.AndroidJUnit4
+import androidx.test.core.app.ApplicationProvider
 import app.tivi.data.TiviDatabase
-import com.jakewharton.threetenabp.AndroidThreeTen
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import java.io.IOException
 
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
 abstract class BaseDatabaseTest {
+    @Rule
+    @JvmField
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
+
     lateinit var db: TiviDatabase
         private set
 
     @Before
     open fun setup() {
-        val context = InstrumentationRegistry.getTargetContext()
+        val context = ApplicationProvider.getApplicationContext<Context>()
         db = Room.inMemoryDatabaseBuilder(context, TiviDatabase::class.java)
                 .allowMainThreadQueries()
                 .build()
-
-        AndroidThreeTen.init(context)
     }
 
     @After

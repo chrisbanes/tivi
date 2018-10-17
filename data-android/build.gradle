@@ -39,6 +39,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -53,4 +59,13 @@ dependencies {
     implementation "androidx.paging:paging-runtime:${versions.androidx.paging}"
 
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+
+    testImplementation "junit:junit:${versions.junit}"
+    testImplementation "org.robolectric:robolectric:${versions.robolectric}"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
+    testImplementation "androidx.test:core:1.0.0-beta02"
+    testImplementation "androidx.arch.core:core-testing:2.0.0"
+
+    testImplementation "org.threeten:threetenbp:${versions.threetenbp}"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}"
 }

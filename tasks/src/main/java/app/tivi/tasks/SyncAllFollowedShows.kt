@@ -19,8 +19,8 @@ package app.tivi.tasks
 import androidx.work.Worker
 import app.tivi.interactors.SyncFollowedShows
 import app.tivi.interactors.launchInteractor
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class SyncAllFollowedShows : Worker() {

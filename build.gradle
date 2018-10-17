@@ -17,7 +17,7 @@
 
 buildscript {
     ext.versions = [
-            'android_gradle' : '3.2.0',
+            'android_gradle' : '3.2.1',
             'androidx'       : [
                     'appcompat'        : '1.0.0',
                     'browser'          : '1.0.0',
@@ -35,13 +35,13 @@ buildscript {
                     'test_rules'       : '1.1.0-alpha4',
                     'work'             : '1.0.0-alpha09'
             ],
-            'coroutines'     : '0.26.1',
+            'coroutines'     : '0.30.2-eap13',
             'dagger'         : '2.16', // Pinning this due to https://issuetracker.google.com/115738511
             'epoxy'          : '3.0.0-rc1',
             'espresso'       : '3.1.0-alpha4',
             'firebase'       : '16.0.3',
             'glide'          : '4.8.0',
-            'kotlin'         : '1.2.61',
+            'kotlin'         : '1.3.0-rc-146',
             'ktlint'         : '0.28.0',
             'mockito'        : '2.18.3',
             'material_design': '1.0.0',
@@ -51,6 +51,9 @@ buildscript {
             'threetenbp'     : '1.3.7',
             'threetenabp'    : '1.1.0',
             'retrofit'       : '2.4.0',
+            'junit'          : '4.12',
+            'robolectric'    : '4.0-beta-1',
+            'mockito_kotlin' : '2.0.0-RC3'
     ]
 
     ext.buildConfig = [
@@ -63,6 +66,7 @@ buildscript {
         google()
         mavenCentral()
         maven { url 'https://maven.fabric.io/public' }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
 
         jcenter()
     }
@@ -92,6 +96,7 @@ allprojects {
         google()
         mavenCentral()
         jcenter()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
     }
 }
 

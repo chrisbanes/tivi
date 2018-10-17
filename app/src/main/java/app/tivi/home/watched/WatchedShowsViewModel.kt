@@ -25,7 +25,7 @@ import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
-import kotlinx.coroutines.experimental.withContext
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class WatchedShowsViewModel @Inject constructor(

@@ -20,7 +20,7 @@ import androidx.work.Data
 import androidx.work.Worker
 import app.tivi.interactors.UpdateFollowedShowSeasonData
 import app.tivi.util.Logger
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class SyncShowWatchedProgress : Worker() {

@@ -19,8 +19,8 @@ package app.tivi.appinitializers
 import android.app.Application
 import app.tivi.util.AppCoroutineDispatchers
 import com.jakewharton.threetenabp.AndroidThreeTen
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.threeten.bp.zone.ZoneRulesProvider
 import javax.inject.Inject
 

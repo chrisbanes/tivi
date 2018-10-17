@@ -26,8 +26,8 @@ import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.currentScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import org.threeten.bp.Duration
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.Period
@@ -81,7 +81,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         }
     }
 
-    suspend fun updateEpisode(episodeId: Long) = currentScope {
+    suspend fun updateEpisode(episodeId: Long) = coroutineScope {
         val local = localStore.getEpisode(episodeId)!!
         val season = localStore.getSeason(local.seasonId)!!
         val traktResult = async(dispatchers.io) {

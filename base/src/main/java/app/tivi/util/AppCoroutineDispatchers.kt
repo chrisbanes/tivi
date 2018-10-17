@@ -16,7 +16,7 @@
 
 package app.tivi.util
 
-import kotlinx.coroutines.experimental.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 
 data class AppCoroutineDispatchers(
     val io: CoroutineDispatcher,

@@ -17,6 +17,7 @@
 package app.tivi.ui.graphics
 
 import android.graphics.ColorMatrix
+import android.util.Property
 import app.tivi.ui.animations.FloatProp
 import app.tivi.ui.animations.createFloatProperty
 
@@ -71,30 +72,30 @@ class ImageLoadingColorMatrix : ColorMatrix() {
         }
 
     companion object {
-        private val saturationFloatProp = object : FloatProp<ImageLoadingColorMatrix>("saturation") {
+        private val saturationFloatProp: FloatProp<ImageLoadingColorMatrix> = object : FloatProp<ImageLoadingColorMatrix>("saturation") {
             override operator fun get(o: ImageLoadingColorMatrix): Float = o.saturationFraction
             override operator fun set(o: ImageLoadingColorMatrix, value: Float) {
                 o.saturationFraction = value
             }
         }
 
-        private val alphaFloatProp = object : FloatProp<ImageLoadingColorMatrix>("alpha") {
+        private val alphaFloatProp: FloatProp<ImageLoadingColorMatrix> = object : FloatProp<ImageLoadingColorMatrix>("alpha") {
             override operator fun get(o: ImageLoadingColorMatrix): Float = o.alphaFraction
             override operator fun set(o: ImageLoadingColorMatrix, value: Float) {
                 o.alphaFraction = value
             }
         }
 
-        private val darkenFloatProp = object : FloatProp<ImageLoadingColorMatrix>("darken") {
+        private val darkenFloatProp: FloatProp<ImageLoadingColorMatrix> = object : FloatProp<ImageLoadingColorMatrix>("darken") {
             override operator fun get(o: ImageLoadingColorMatrix): Float = o.darkenFraction
             override operator fun set(o: ImageLoadingColorMatrix, value: Float) {
                 o.darkenFraction = value
             }
         }
 
-        val PROP_SATURATION = createFloatProperty(saturationFloatProp)
-        val PROP_ALPHA = createFloatProperty(alphaFloatProp)
-        val PROP_DARKEN = createFloatProperty(darkenFloatProp)
+        val PROP_SATURATION: Property<ImageLoadingColorMatrix, Float> = createFloatProperty(saturationFloatProp)
+        val PROP_ALPHA: Property<ImageLoadingColorMatrix, Float> = createFloatProperty(alphaFloatProp)
+        val PROP_DARKEN: Property<ImageLoadingColorMatrix, Float> = createFloatProperty(darkenFloatProp)
 
         // This means that we darken the image by 20%
         private const val MAX_DARKEN_PERCENTAGE = 0.20f

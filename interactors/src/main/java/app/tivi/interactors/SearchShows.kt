@@ -19,7 +19,7 @@ package app.tivi.interactors
 import app.tivi.data.entities.SearchResults
 import app.tivi.data.repositories.search.SearchRepository
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.experimental.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class SearchShows @Inject constructor(

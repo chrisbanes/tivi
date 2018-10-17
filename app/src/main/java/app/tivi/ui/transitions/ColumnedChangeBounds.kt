@@ -350,12 +350,14 @@ class ColumnedChangeBounds : Transition() {
 
         private val TEMP_ARRAY = IntArray(2)
 
-        private val TOP_LEFT_PROPERTY = object : Property<PointFBounds, PointF>(PointF::class.java, "topLeft") {
+        private val TOP_LEFT_PROPERTY: Property<PointFBounds, PointF> =
+                object : Property<PointFBounds, PointF>(PointF::class.java, "topLeft") {
             override fun set(bounds: PointFBounds, topLeft: PointF) = bounds.setTopLeft(topLeft)
             override fun get(bounds: PointFBounds): PointF? = null
         }
 
-        private val BOTTOM_RIGHT_PROPERTY = object : Property<PointFBounds, PointF>(PointF::class.java, "bottomRight") {
+        private val BOTTOM_RIGHT_PROPERTY: Property<PointFBounds, PointF> =
+                object : Property<PointFBounds, PointF>(PointF::class.java, "bottomRight") {
             override fun set(bounds: PointFBounds, bottomRight: PointF) = bounds.setBottomRight(bottomRight)
             override fun get(bounds: PointFBounds): PointF? = null
         }

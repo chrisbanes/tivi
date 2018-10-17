@@ -16,12 +16,12 @@
 
 package app.tivi.extensions
 
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.currentScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 suspend fun <A, B> Collection<A>.parallelMap(
     block: suspend (A) -> B
-) = currentScope {
+) = coroutineScope {
     map {
         async { block(it) }
     }.map {
@@ -31,7 +31,7 @@ suspend fun <A, B> Collection<A>.parallelMap(
 
 suspend fun <A, B> Collection<A>.parallelForEach(
     block: suspend (A) -> B
-) = currentScope {
+) = coroutineScope {
     map {
         async { block(it) }
     }.forEach {

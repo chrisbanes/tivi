@@ -16,7 +16,7 @@
 
 package app.tivi.extensions
 
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.delay
 import retrofit2.Call
 import retrofit2.HttpException
 import retrofit2.Response
@@ -32,7 +32,7 @@ fun <T> Response<T>.bodyOrThrow(): T {
 fun <T> Response<T>.toException() = HttpException(this)
 
 suspend inline fun <T> Call<T>.executeWithRetry(
-    firstDelay: Int = 100,
+    firstDelay: Long = 100,
     maxAttempts: Int = 3,
     shouldRetry: (Exception) -> Boolean = ::defaultShouldRetry
 ): Response<T> {
@@ -59,7 +59,7 @@ suspend inline fun <T> Call<T>.executeWithRetry(
 }
 
 suspend inline fun <T> Call<T>.fetchBodyWithRetry(
-    firstDelay: Int = 100,
+    firstDelay: Long = 100,
     maxAttempts: Int = 3,
     shouldRetry: (Exception) -> Boolean = ::defaultShouldRetry
 ) = executeWithRetry(firstDelay, maxAttempts, shouldRetry).bodyOrThrow()

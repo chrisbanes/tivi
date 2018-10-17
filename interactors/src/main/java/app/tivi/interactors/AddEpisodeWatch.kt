@@ -18,7 +18,7 @@ package app.tivi.interactors
 
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.experimental.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 
