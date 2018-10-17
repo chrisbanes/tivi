@@ -18,9 +18,9 @@
 apply plugin: 'kotlin'
 
 dependencies {
-    implementation project(":base")
-    implementation project(":trakt")
-    implementation project(":tmdb")
+    compile project(":base")
+    compile project(":trakt")
+    compile project(":tmdb")
 
     compile "androidx.room:room-common:${versions.androidx.room}"
     compile "androidx.paging:paging-common:${versions.androidx.paging}"
