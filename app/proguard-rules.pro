@@ -123,12 +123,16 @@
 -keepclassmembernames class kotlinx.** {
     volatile <fields>;
 }
+# Keep Coroutine class names. See https://github.com/Kotlin/kotlinx.coroutines/issues/657.
+# This should be removed when bug is fixed.
+-keepnames class kotlinx.** { *; }
 
 -dontwarn org.jetbrains.annotations.**
 -keep class kotlin.Metadata { *; }
 
 # Kotlin Reflect internal impl
 -keep public class kotlin.reflect.jvm.internal.impl.builtins.* { public *; }
+-keep public class kotlin.reflect.jvm.internal.impl.serialization.deserialization.builtins.* { public *; }
 
 # BaseMvRxViewModels loads the Companion class via reflection and thus we need to make sure we keep
 # the name of the Companion object.
