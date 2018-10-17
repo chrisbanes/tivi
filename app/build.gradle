@@ -161,6 +161,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-reactivestreams:${versions.androidx.lifecycle}"
     kapt "androidx.lifecycle:lifecycle-compiler:${versions.androidx.lifecycle}"
 
+    implementation "androidx.room:room-runtime:${versions.androidx.room}"
+
     implementation "androidx.paging:paging-runtime:${versions.androidx.paging}"
     implementation "androidx.paging:paging-rxjava2:${versions.androidx.paging}"
 
@@ -171,10 +173,7 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:${versions.androidx.recyclerview}"
     implementation "androidx.emoji:emoji:${versions.androidx.emoji}"
 
-    implementation("android.arch.work:work-runtime-ktx:${versions.androidx.work}") {
-        // We have to exclude this since it wants 1.1.1-rc1 and we're using 1.1.1
-        exclude group: 'android.arch.persistence.room', module: 'runtime'
-    }
+    implementation "android.arch.work:work-runtime-ktx:${versions.androidx.work}"
 
     implementation "androidx.constraintlayout:constraintlayout:${versions.androidx.constraint_layout}"
 
@@ -202,8 +201,8 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
 
-    compileOnly 'com.squareup.inject:assisted-inject-annotations-dagger2:0.2.1'
-    kapt 'com.squareup.inject:assisted-inject-processor-dagger2:0.2.1'
+    compileOnly "com.squareup.inject:assisted-inject-annotations-dagger2:${versions.assistedinject}"
+    kapt "com.squareup.inject:assisted-inject-processor-dagger2:${versions.assistedinject}"
 
     implementation "com.github.bumptech.glide:glide:${versions.glide}"
     kapt "com.github.bumptech.glide:compiler:${versions.glide}"
