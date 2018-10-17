@@ -18,11 +18,52 @@ package app.tivi.ui.glide
 
 import android.graphics.drawable.Drawable
 import android.view.MenuItem
-import com.bumptech.glide.request.target.SimpleTarget
+import androidx.appcompat.widget.Toolbar
+import com.bumptech.glide.request.Request
+import com.bumptech.glide.request.target.SizeReadyCallback
+import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 
-fun MenuItem.asGlideTarget(): SimpleTarget<Drawable> = object : SimpleTarget<Drawable>() {
+fun MenuItem.asGlideTarget(toolbar: Toolbar): Target<Drawable> = object : Target<Drawable> {
+    private var request: Request? = null
+
+    override fun onLoadStarted(placeholder: Drawable?) {
+        icon = placeholder
+    }
+
+    override fun onLoadFailed(errorDrawable: Drawable?) {
+        icon = errorDrawable
+    }
+
+    override fun onLoadCleared(placeholder: Drawable?) {
+        icon = placeholder
+    }
+
     override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
         icon = resource
+    }
+
+    override fun getSize(cb: SizeReadyCallback) {
+        cb.onSizeReady(toolbar.height, toolbar.height)
+    }
+
+    override fun removeCallback(cb: SizeReadyCallback) {
+    }
+
+    override fun getRequest(): Request? {
+        return request
+    }
+
+    override fun setRequest(request: Request?) {
+        this.request = request
+    }
+
+    override fun onStop() {
+    }
+
+    override fun onStart() {
+    }
+
+    override fun onDestroy() {
     }
 }

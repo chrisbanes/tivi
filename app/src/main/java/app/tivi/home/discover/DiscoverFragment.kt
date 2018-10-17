@@ -154,7 +154,7 @@ internal class DiscoverFragment : TiviMvRxFragment() {
                             GlideApp.with(requireContext())
                                     .load(user.avatarUrl)
                                     .circleCrop()
-                                    .into(userMenuItem.asGlideTarget())
+                                    .into(userMenuItem.asGlideTarget(binding.summaryToolbar))
                         }
                     }
                     loginMenuItem.isVisible = false
