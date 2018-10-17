@@ -30,8 +30,7 @@ import java.io.IOException
 
 @RunWith(RobolectricTestRunner::class)
 abstract class BaseDatabaseTest {
-    @Rule
-    @JvmField
+    @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     lateinit var db: TiviDatabase

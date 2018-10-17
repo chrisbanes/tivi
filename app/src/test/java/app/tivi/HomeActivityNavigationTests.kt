@@ -22,27 +22,25 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.filters.LargeTest
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
-import androidx.test.runner.AndroidJUnit4
 import app.tivi.home.HomeActivity
 import app.tivi.utils.bottomNavItemWithTitle
 import app.tivi.utils.rotateLandscape
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
-@LargeTest
 @RunWith(AndroidJUnit4::class)
+@Config(application = TiviApplication::class)
 class HomeActivityNavigationTests {
-
-    @Rule
-    @JvmField
+    @get:Rule
     val activityRule = ActivityTestRule(HomeActivity::class.java)
 
     @Test
     fun testBottomNavigationLibraryClick() {
-        onView(bottomNavItemWithTitle(R.id.home_bottom_nav, R.string.home_nav_library))
+        onView(bottomNavItemWithTitle(R.string.home_nav_library))
                 .perform(click())
 
         onView(withId(R.id.library_rv))
@@ -53,7 +51,7 @@ class HomeActivityNavigationTests {
     fun testBottomNavigationLibraryClickAfterRotation() {
         onView(isRoot()).perform(rotateLandscape())
 
-        onView(bottomNavItemWithTitle(R.id.home_bottom_nav, R.string.home_nav_library))
+        onView(bottomNavItemWithTitle(R.string.home_nav_library))
                 .perform(click())
 
         onView(withId(R.id.library_rv))

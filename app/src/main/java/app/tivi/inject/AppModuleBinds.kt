@@ -16,8 +16,10 @@
 
 package app.tivi.inject
 
+import android.app.Application
 import app.tivi.AppNavigator
 import app.tivi.TiviAppNavigator
+import app.tivi.TiviApplication
 import app.tivi.actions.ShowTasks
 import app.tivi.appinitializers.AppInitializer
 import app.tivi.appinitializers.EmojiInitializer
@@ -39,6 +41,9 @@ abstract class AppModuleBinds {
     @Singleton
     @Binds
     abstract fun provideTiviActions(bind: ShowTasksImpl): ShowTasks
+
+    @Binds
+    abstract fun provideApplication(bind: TiviApplication): Application
 
     @Singleton
     @Named("app")

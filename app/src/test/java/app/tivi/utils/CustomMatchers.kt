@@ -17,32 +17,32 @@
 package app.tivi.utils
 
 import android.view.View
-import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.Toolbar
-import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 
-fun toolbarWithTitle(@StringRes titleRes: Int): Matcher<View> {
-    return object : BaseMatcher<View>() {
-        override fun matches(item: Any?): Boolean {
-            return when (item) {
-                is Toolbar -> item.title == item.context.getString(titleRes)
-                else -> false
-            }
+fun toolbarWithTitle(@StringRes titleRes: Int) = object : BaseMatcher<Toolbar>() {
+    override fun matches(item: Any?): Boolean {
+        return when (item) {
+            is Toolbar -> item.title == item.context.getString(titleRes)
+            else -> false
         }
+    }
 
-        override fun describeTo(description: Description?) {
-        }
+    override fun describeTo(description: Description?) {
     }
 }
 
-fun bottomNavItemWithTitle(@IdRes bottomNavId: Int, @StringRes titleRes: Int): Matcher<View> {
-    return allOf(withText(titleRes), isDescendantOfA(ViewMatchers.withId(bottomNavId)), isDisplayed())
+fun bottomNavItemWithTitle(@StringRes titleRes: Int): Matcher<View> {
+    return allOf(
+            withContentDescription(titleRes),
+            isDescendantOfA(isAssignableFrom(BottomNavigationView::class.java))
+    )
 }
