@@ -31,4 +31,9 @@
         android:visible="false"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/home_privacy_policy"
+        android:title="@string/view_privacy_policy"
+        app:showAsAction="never" />
+
 </menu>

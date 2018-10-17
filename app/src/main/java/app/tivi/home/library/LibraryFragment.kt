@@ -21,6 +21,8 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import app.tivi.R
@@ -205,6 +207,15 @@ class LibraryFragment : TiviMvRxFragment() {
         }
         R.id.home_menu_user_login -> {
             viewModel.onLoginItemClicked((requireActivity() as HomeActivity).authService)
+            true
+        }
+        R.id.home_privacy_policy -> {
+            val builder = CustomTabsIntent.Builder()
+            val customTabsIntent = builder.build()
+            customTabsIntent.launchUrl(
+                    requireContext(),
+                    "https://chrisbanes.github.io/tivi/privacypolicy.html".toUri()
+            )
             true
         }
         else -> false
