@@ -65,7 +65,7 @@ android {
         minSdkVersion buildConfig.minSdk
         targetSdkVersion buildConfig.targetSdk
         versionCode appVersionCode
-        versionName "0.2.15"
+        versionName "0.2.16"
 
         // For now we're sticking to just shipping EN
         resConfigs "en"
