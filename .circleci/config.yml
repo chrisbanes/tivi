@@ -80,7 +80,7 @@ jobs:
           command: ./gradlew dependencies
       - run:
           name: Assemble and Test APKs
-          command: ./gradlew bundleDebug assembleDebug app:assembleDebugAndroidTest -Ptivi.versioncode=$CIRCLE_BUILD_NUM
+          command: ./gradlew bundleDebug assembleDebug -Ptivi.versioncode=$CIRCLE_BUILD_NUM
       - <<: *clean_secrets
       - <<: *save_cache
       - store_artifacts:
@@ -134,24 +134,6 @@ jobs:
           path: app/build/reports
           destination: reports
       - <<: *persist_workspace
-  test_instrumented:
-    <<: *config_gcloud
-    steps:
-      - checkout
-      - <<: *attach_workspace
-      - <<: *decrypt_secrets
-      - run:
-          name: Setup Google Cloud auth
-          command: ftl-tests/setup.sh
-      - run:
-          name: Run tests on Firebase Test Lab
-          command: ftl-tests/run-tests.sh $CIRCLE_BUILD_NUM firebase_test_results
-          when: always
-      - <<: *clean_secrets
-      - store_artifacts:
-          path: firebase_test_results
-      - store_test_results:
-          path: firebase_test_results
 
   deploy_to_play:
     <<: *config_android
@@ -176,10 +158,6 @@ workflows:
           requires:
             - build_debug
           <<: *workflow_filter_all
-      - test_instrumented:
-          requires:
-            - build_debug
-          <<: *workflow_filter_all
       - check:
           requires:
             - build_debug
@@ -187,7 +165,6 @@ workflows:
       - deploy_to_play:
           requires:
             - check
-            - test_instrumented
             - build_release
           filters:
             tags:
