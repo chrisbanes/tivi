@@ -84,8 +84,8 @@ jobs:
       - <<: *clean_secrets
       - <<: *save_cache
       - store_artifacts:
-          path: app/build/outputs/apk
-          destination: apks
+          path: app/build/outputs
+          destination: outputs
       - <<: *persist_workspace
 
   check:
@@ -128,11 +128,8 @@ jobs:
           command: ./gradlew bundleRelease assembleRelease -Ptivi.versioncode=$CIRCLE_BUILD_NUM
       - <<: *clean_secrets
       - store_artifacts:
-          path: app/build/outputs/apk
-          destination: apks
-      - store_artifacts:
-          path: app/build/outputs/mapping
-          destination: mapping
+          path: app/build/outputs
+          destination: outputs
       - store_artifacts:
           path: app/build/reports
           destination: reports
