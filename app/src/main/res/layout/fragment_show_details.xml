@@ -58,7 +58,7 @@
             android:transformPivotX="0px"
             android:transformPivotY="0px"
             android:transitionName="poster"
-            app:tmdbBackdropPath="@{state.show.invoke().tmdbPosterPath}"
+            app:tmdbPosterPath="@{state.show.invoke().tmdbPosterPath}"
             app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider.invoke()}" />
 
         <!-- Needed to fill a rounding error gap in MotionLayout. See https://issuetracker.google.com/112728689 -->
