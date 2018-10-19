@@ -14,27 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.transition
+package app.tivi.ui.transitions
 
 import android.animation.Animator
 import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
-import android.animation.PropertyValuesHolder
-import android.graphics.Bitmap
-import android.graphics.PointF
 import android.graphics.Rect
-import android.graphics.drawable.Drawable
-import android.util.Property
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.animation.doOnEnd
-import androidx.core.graphics.applyCanvas
-import androidx.core.graphics.drawable.toDrawable
-import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import app.tivi.ui.transitions.DrawableAlphaProperty
-import kotlin.math.roundToInt
+import androidx.transition.Transition
+import androidx.transition.TransitionListenerAdapter
+import androidx.transition.TransitionValues
 
 /**
  * This transition captures the layout bounds of target views before and after
@@ -43,28 +35,7 @@ import kotlin.math.roundToInt
  * A ChangeBounds transition can be described in a resource file by using the
  * tag `changeBounds`, along with the other standard attributes of Transition.
  */
-class ColumnedChangeBounds : Transition() {
-
-    override fun getTransitionProperties(): Array<String>? = TRANSITION_PROPS
-
-    private fun captureValues(values: TransitionValues) {
-        val view = values.view
-        if (ViewCompat.isLaidOut(view) || view.width != 0 || view.height != 0) {
-            val loc = TEMP_ARRAY
-            view.getLocationOnScreen(loc)
-
-            values.values[PROPNAME_BOUNDS] = Rect(loc[0], loc[1], loc[0] + view.width, loc[1] + view.height)
-            values.values[PROPNAME_PARENT] = values.view.parent
-        }
-    }
-
-    override fun captureStartValues(transitionValues: TransitionValues) {
-        captureValues(transitionValues)
-    }
-
-    override fun captureEndValues(transitionValues: TransitionValues) {
-        captureValues(transitionValues)
-    }
+class ColumnedChangeBounds : StartViewChangeBounds() {
 
     override fun createAnimator(
         sceneRoot: ViewGroup,
@@ -143,28 +114,29 @@ class ColumnedChangeBounds : Transition() {
 
         if (startView.parent is ViewGroup) {
             val parent = startView.parent as ViewGroup
-            ViewGroupUtils.suppressLayout(parent, true)
+            parent.suppressLayout(true)
+
             addListener(object : TransitionListenerAdapter() {
                 private var canceled = false
 
                 override fun onTransitionCancel(transition: Transition) {
-                    ViewGroupUtils.suppressLayout(parent, false)
+                    parent.suppressLayout(false)
                     canceled = true
                 }
 
                 override fun onTransitionEnd(transition: Transition) {
                     if (!canceled) {
-                        ViewGroupUtils.suppressLayout(parent, false)
+                        parent.suppressLayout(false)
                     }
                     transition.removeListener(this)
                 }
 
                 override fun onTransitionPause(transition: Transition) {
-                    ViewGroupUtils.suppressLayout(parent, false)
+                    parent.suppressLayout(false)
                 }
 
                 override fun onTransitionResume(transition: Transition) {
-                    ViewGroupUtils.suppressLayout(parent, true)
+                    parent.suppressLayout(false)
                 }
             })
         }
@@ -208,13 +180,6 @@ class ColumnedChangeBounds : Transition() {
         return createPointToPointAnimator(sceneRoot, view, startBounds, newEndBounds, 255, 0)
     }
 
-    private fun createDrawableBoundsForView(view: View): DrawableBounds {
-        val d = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-                .applyCanvas(view::draw)
-                .toDrawable(view.resources)
-        return DrawableBounds(d)
-    }
-
     private fun findRecyclerViewParent(view: View): RecyclerView? {
         var parent = view.parent
         while (parent != null && parent !is RecyclerView) {
@@ -224,60 +189,6 @@ class ColumnedChangeBounds : Transition() {
             is RecyclerView -> parent
             else -> null
         }
-    }
-
-    private fun createPointToPointAnimator(
-        sceneRoot: ViewGroup,
-        view: View,
-        startBounds: Rect,
-        endBounds: Rect,
-        startAlpha: Int = 255,
-        endAlpha: Int = 255
-    ): Animator {
-        val drawable = createDrawableBoundsForView(view)
-        ViewUtils.getOverlay(sceneRoot).add(drawable.drawable)
-
-        val moveAnim = createMoveAnimatorForView(drawable, startBounds, endBounds)
-        val anim: Animator
-
-        when {
-            startAlpha != endAlpha -> {
-                val alphaAnim = ObjectAnimator.ofInt(drawable.drawable, DrawableAlphaProperty, startAlpha, endAlpha)
-                anim = AnimatorSet().apply { playTogether(moveAnim, alphaAnim) }
-            }
-            else -> {
-                drawable.drawable.alpha = endAlpha
-                anim = moveAnim
-            }
-        }
-
-        anim.doOnEnd {
-            ViewUtils.getOverlay(sceneRoot).remove(drawable.drawable)
-        }
-
-        return anim
-    }
-
-    private fun createMoveAnimatorForView(
-        drawableBounds: DrawableBounds,
-        startBounds: Rect,
-        endBounds: Rect
-    ): Animator {
-        val outTopLeftPropVal = PropertyValuesHolder.ofObject<PointF>(
-                TOP_LEFT_PROPERTY,
-                null,
-                pathMotion.getPath(
-                        startBounds.left.toFloat(), startBounds.top.toFloat(),
-                        endBounds.left.toFloat(), endBounds.top.toFloat()))
-
-        val outBottomRightPropVal = PropertyValuesHolder.ofObject<PointF>(
-                BOTTOM_RIGHT_PROPERTY,
-                null,
-                pathMotion.getPath(
-                        startBounds.right.toFloat(), startBounds.bottom.toFloat(),
-                        endBounds.right.toFloat(), endBounds.bottom.toFloat()))
-
-        return ObjectAnimator.ofPropertyValuesHolder(drawableBounds, outTopLeftPropVal, outBottomRightPropVal)
     }
 
     private fun findPreviousItemViewWithGreaterRight(
@@ -301,65 +212,5 @@ class ColumnedChangeBounds : Transition() {
             }
         }
         return null
-    }
-
-    private class DrawableBounds(val drawable: Drawable) : PointFBounds() {
-        override fun setLeftTopRightBottom(left: Int, top: Int, right: Int, bottom: Int) =
-                drawable.setBounds(left, top, right, bottom)
-    }
-
-    private abstract class PointFBounds {
-        private var left: Int = 0
-        private var top: Int = 0
-        private var right: Int = 0
-        private var bottom: Int = 0
-        private var topLeftCalls: Int = 0
-        private var bottomRightCalls: Int = 0
-
-        fun setTopLeft(topLeft: PointF) {
-            left = topLeft.x.roundToInt()
-            top = topLeft.y.roundToInt()
-            topLeftCalls++
-            if (topLeftCalls == bottomRightCalls) {
-                setLeftTopRightBottom()
-            }
-        }
-
-        fun setBottomRight(bottomRight: PointF) {
-            right = bottomRight.x.roundToInt()
-            bottom = bottomRight.y.roundToInt()
-            bottomRightCalls++
-            if (topLeftCalls == bottomRightCalls) {
-                setLeftTopRightBottom()
-            }
-        }
-
-        private fun setLeftTopRightBottom() {
-            setLeftTopRightBottom(left, top, right, bottom)
-            topLeftCalls = 0
-            bottomRightCalls = 0
-        }
-
-        abstract fun setLeftTopRightBottom(left: Int, top: Int, right: Int, bottom: Int)
-    }
-
-    companion object {
-        private const val PROPNAME_BOUNDS = "android:columnedChangeBounds:bounds"
-        private const val PROPNAME_PARENT = "android:columnedChangeBounds:parent"
-        private val TRANSITION_PROPS = arrayOf(PROPNAME_BOUNDS, PROPNAME_PARENT)
-
-        private val TEMP_ARRAY = IntArray(2)
-
-        private val TOP_LEFT_PROPERTY: Property<PointFBounds, PointF> =
-                object : Property<PointFBounds, PointF>(PointF::class.java, "topLeft") {
-            override fun set(bounds: PointFBounds, topLeft: PointF) = bounds.setTopLeft(topLeft)
-            override fun get(bounds: PointFBounds): PointF? = null
-        }
-
-        private val BOTTOM_RIGHT_PROPERTY: Property<PointFBounds, PointF> =
-                object : Property<PointFBounds, PointF>(PointF::class.java, "bottomRight") {
-            override fun set(bounds: PointFBounds, bottomRight: PointF) = bounds.setBottomRight(bottomRight)
-            override fun get(bounds: PointFBounds): PointF? = null
-        }
     }
 }
