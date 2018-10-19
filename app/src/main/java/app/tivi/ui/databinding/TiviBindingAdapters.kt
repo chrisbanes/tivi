@@ -40,18 +40,23 @@ import app.tivi.ui.text.textAppearanceSpanForAttribute
 import app.tivi.util.ScrimUtil
 import org.threeten.bp.OffsetDateTime
 
-@BindingAdapter("tmdbPosterPath", "tmdbImageUrlProvider")
-fun loadPoster(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider?) {
+@BindingAdapter("tmdbPosterPath", "tmdbImageUrlProvider", "imageSaturateOnLoad")
+fun loadPoster(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider?, saturateOnLoad: Boolean?) {
     GlideApp.with(view).clear(view)
 
     if (path != null && urlProvider != null) {
         view.doOnLayout {
             GlideApp.with(view)
-                    .saturateOnLoad()
+                    .let { r -> if (saturateOnLoad == true) r.saturateOnLoad() else r.asDrawable() }
                     .load(urlProvider.getPosterUrl(path, it.width))
                     .into(view)
         }
     }
+}
+
+@BindingAdapter("tmdbPosterPath", "tmdbImageUrlProvider")
+fun loadPoster(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider?) {
+    loadPoster(view, path, urlProvider, true)
 }
 
 @BindingAdapter("tmdbBackdropPath", "tmdbImageUrlProvider")
@@ -63,10 +68,7 @@ fun loadBackdrop(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvid
             GlideApp.with(view)
                     .saturateOnLoad()
                     .load(urlProvider.getBackdropUrl(path, it.width))
-                    .thumbnail(
-                            GlideApp.with(view)
-                                    .load(urlProvider.getBackdropUrl(path, 0))
-                    )
+                    .thumbnail(GlideApp.with(view).load(urlProvider.getBackdropUrl(path, 0)))
                     .into(view)
         }
     }

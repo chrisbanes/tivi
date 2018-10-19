@@ -19,6 +19,8 @@ package app.tivi.ui.glide
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
+import android.util.Log
+import app.tivi.BuildConfig
 import com.bumptech.glide.GlideBuilder
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.load.DecodeFormat.PREFER_ARGB_8888
@@ -35,6 +37,9 @@ class TiviGlideModule : AppGlideModule() {
                 .format(if (am.isLowRamDevice) PREFER_RGB_565 else PREFER_ARGB_8888)
 
         builder.setDefaultRequestOptions(options)
+        if (BuildConfig.DEBUG) {
+            builder.setLogLevel(Log.VERBOSE)
+        }
     }
 
     override fun isManifestParsingEnabled() = false

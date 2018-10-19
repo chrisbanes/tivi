@@ -19,9 +19,9 @@ package app.tivi.tmdb
 private val IMAGE_SIZE_PATTERN = "w(\\d+)$".toRegex()
 
 class TmdbImageUrlProvider(
-    private var baseImageUrl: String = TmdbImageSizes.baseImageUrl,
-    private var posterSizes: Array<String> = TmdbImageSizes.posterSizes,
-    private var backdropSizes: Array<String> = TmdbImageSizes.backdropSizes
+    private val baseImageUrl: String = TmdbImageSizes.baseImageUrl,
+    private val posterSizes: Array<String> = TmdbImageSizes.posterSizes,
+    private val backdropSizes: Array<String> = TmdbImageSizes.backdropSizes
 ) {
     fun getPosterUrl(path: String, imageWidth: Int): String {
         return "$baseImageUrl${selectSize(posterSizes, imageWidth)}$path"
@@ -31,7 +31,7 @@ class TmdbImageUrlProvider(
         return "$baseImageUrl${selectSize(backdropSizes, imageWidth)}$path"
     }
 
-    private fun selectSize(sizes: Array<String>, imageWidth: Int, forceLarger: Boolean = false): String {
+    private fun selectSize(sizes: Array<String>, imageWidth: Int): String {
         var previousSize: String? = null
         var previousWidth = 0
 
@@ -40,7 +40,7 @@ class TmdbImageUrlProvider(
             val sizeWidth = extractWidthAsIntFrom(size) ?: continue
 
             if (sizeWidth > imageWidth) {
-                if (forceLarger || (previousSize != null && imageWidth > (previousWidth + sizeWidth) / 2)) {
+                if (previousSize != null && imageWidth > (previousWidth + sizeWidth) / 2) {
                     return size
                 } else if (previousSize != null) {
                     return previousSize

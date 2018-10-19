@@ -49,7 +49,7 @@
             app:layout_constraintStart_toStartOf="@id/details_backdrop"
             app:layout_constraintTop_toTopOf="@id/details_backdrop" />
 
-        <ImageView
+        <app.tivi.ui.widget.ObservableImageView
             android:id="@+id/details_poster"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -59,7 +59,8 @@
             android:transformPivotY="0px"
             android:transitionName="poster"
             app:tmdbPosterPath="@{state.show.invoke().tmdbPosterPath}"
-            app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider.invoke()}" />
+            app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider.invoke()}"
+            app:imageSaturateOnLoad="@{false}"/>
 
         <!-- Needed to fill a rounding error gap in MotionLayout. See https://issuetracker.google.com/112728689 -->
         <View
