@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2018 LLC.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package app.tivi
 
+import androidx.lifecycle.Lifecycle
+import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -23,11 +25,10 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.rule.ActivityTestRule
 import app.tivi.home.HomeActivity
 import app.tivi.utils.bottomNavItemWithTitle
 import app.tivi.utils.rotateLandscape
-import org.junit.Rule
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -35,8 +36,14 @@ import org.robolectric.annotation.Config
 @RunWith(AndroidJUnit4::class)
 @Config(application = TiviApplication::class)
 class HomeActivityNavigationTests {
-    @get:Rule
-    val activityRule = ActivityTestRule(HomeActivity::class.java)
+
+    lateinit var scenario: ActivityScenario<HomeActivity>
+
+    @Before
+    fun setup() {
+        scenario = ActivityScenario.launch(HomeActivity::class.java)
+                .moveToState(Lifecycle.State.RESUMED)
+    }
 
     @Test
     fun testBottomNavigationLibraryClick() {
