@@ -210,7 +210,7 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:${versions.glide}"
     kapt "com.github.bumptech.glide:compiler:${versions.glide}"
 
-    implementation 'com.airbnb.android:mvrx:0.5.0'
+    implementation 'com.airbnb.android:mvrx:0.6.0'
 
     implementation "com.airbnb.android:epoxy:${versions.epoxy}"
     implementation "com.airbnb.android:epoxy-paging:${versions.epoxy}"
