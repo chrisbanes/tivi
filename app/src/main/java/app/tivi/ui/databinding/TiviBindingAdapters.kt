@@ -49,6 +49,7 @@ fun loadPoster(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider
             GlideApp.with(view)
                     .let { r -> if (saturateOnLoad == true) r.saturateOnLoad() else r.asDrawable() }
                     .load(urlProvider.getPosterUrl(path, it.width))
+                    .thumbnail(GlideApp.with(view).load(urlProvider.getPosterUrl(path, 0)))
                     .into(view)
         }
     }
@@ -61,12 +62,17 @@ fun loadPoster(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider
 
 @BindingAdapter("tmdbBackdropPath", "tmdbImageUrlProvider")
 fun loadBackdrop(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider?) {
+    loadBackdrop(view, path, urlProvider, true)
+}
+
+@BindingAdapter("tmdbBackdropPath", "tmdbImageUrlProvider", "imageSaturateOnLoad")
+fun loadBackdrop(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider?, saturateOnLoad: Boolean?) {
     GlideApp.with(view).clear(view)
 
     if (path != null && urlProvider != null) {
         view.doOnLayout {
             GlideApp.with(view)
-                    .saturateOnLoad()
+                    .let { r -> if (saturateOnLoad == true) r.saturateOnLoad() else r.asDrawable() }
                     .load(urlProvider.getBackdropUrl(path, it.width))
                     .thumbnail(GlideApp.with(view).load(urlProvider.getBackdropUrl(path, 0)))
                     .into(view)
