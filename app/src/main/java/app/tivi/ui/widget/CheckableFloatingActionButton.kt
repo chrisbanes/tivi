@@ -25,7 +25,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 class CheckableFloatingActionButton @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyle: Int = 0
+    defStyle: Int = com.google.android.material.R.attr.floatingActionButtonStyle
 ) : FloatingActionButton(context, attrs, defStyle), Checkable {
 
     private var isChecked = false

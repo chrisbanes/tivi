@@ -21,12 +21,12 @@ import androidx.fragment.app.Fragment
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
-import androidx.transition.ColumnedChangeBounds
 import androidx.transition.Fade
 import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
 import androidx.transition.TransitionSet
 import app.tivi.ui.transitions.BabySlide
+import app.tivi.ui.transitions.ColumnedChangeBounds
 
 object GridToGridTransitioner {
 
