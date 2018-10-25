@@ -19,13 +19,13 @@ package app.tivi.ui.widget
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
 
 class ObservableImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0
-) : ImageView(context, attrs, defStyle) {
+) : AppCompatImageView(context, attrs, defStyle) {
     var onDrawableLoaded: ((ObservableImageView) -> Unit)? = null
 
     override fun setImageDrawable(drawable: Drawable?) {
