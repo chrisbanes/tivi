@@ -74,6 +74,7 @@ buildscript {
 
     dependencies {
         classpath "com.android.tools.build:gradle:${versions.android_gradle}"
+        classpath 'com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta02'
 
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:${versions.kotlin}"
