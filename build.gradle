@@ -55,7 +55,7 @@ buildscript {
             'threetenabp'    : '1.1.1',
             'retrofit'       : '2.4.0',
             'junit'          : '4.12',
-            'robolectric'    : '4.0-beta-3',
+            'robolectric'    : '4.0.1',
             'mockito_kotlin' : '2.0.0-RC3'
     ]
 
