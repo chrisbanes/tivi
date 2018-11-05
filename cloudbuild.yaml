@@ -1,0 +1,165 @@
+steps:
+
+#
+# Get a build number
+#
+# Download the config bucket, which stores the build number.
+- name: 'gcr.io/cloud-builders/gsutil'
+  id: copy_config
+  waitFor: ['-']  # The '-' indicates that this step begins immediately.
+  # we use rsync and not cp so that this step doesn't fail the first time it's run
+  args: ['rsync', 'gs://${PROJECT_ID}-config/', '/config']
+  volumes:
+  - name: 'config'
+    path: '/config'
+
+# Runs the setup_env.sh script, which writes build environment
+# variables to build_environment.sh
+- name: 'gcr.io/$PROJECT_ID/tar'
+  id: setup_env
+  entrypoint: 'bash'
+  args: ['-c', 'cloudbuild/setup_env.sh']
+  waitFor: ['copy_config']
+  volumes:
+  - name: 'config'
+    path: '/config'
+
+# Save the updated build number to cloud storage
+- name: 'gcr.io/cloud-builders/gsutil'
+  id: save_env
+  args: ['cp', '/config/version.txt', 'gs://${PROJECT_ID}-config/version.txt']
+  waitFor: ['setup_env']
+  volumes:
+  - name: 'config'
+    path: '/config'
+
+#
+# Extract the cache
+#
+# The gradle build cache is stored as a tarball in Google Cloud Storage to make builds faster.
+#
+- name: 'gcr.io/cloud-builders/gsutil'
+  id: copy_build_cache
+  waitFor: ['-']  # The '-' indicates that this step begins immediately.
+  # we use rsync and not cp so that this step doesn't fail the first time it's run
+  args: ['rsync', 'gs://${PROJECT_ID}-cache/', '/build_cache']
+  volumes:
+  - name: 'build_cache'
+    path: '/build_cache'
+
+- name: 'gcr.io/$PROJECT_ID/tar'
+  id: extract_build_cache
+  waitFor: ['copy_build_cache']
+  # This might fail the first time, but that's okay
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    tar xpzf /build_cache/cache.tgz -C /build_cache || echo "No cache found."
+  volumes:
+  - name: 'build_cache'
+    path: '/build_cache'
+
+#
+# Build the project
+#
+# In order to get the build number that we calculated earlier, we need to source the
+# build_environment.sh file *in each step it's needed* before running our build.
+#
+- name: 'gcr.io/$PROJECT_ID/android'
+  id: build
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      source build_environment.sh
+      ./gradlew --stacktrace bundleDebug assembleDebug app:assembleDebugAndroidTest
+#-Ptivi.versioncode=${BUILD_NUM}
+  <<: &env
+    env:
+    - 'TERM=dumb'
+    - 'JAVA_TOOL_OPTIONS="-Xmx1024m"'
+    - 'GRADLE_USER_HOME=/build_cache/.gradle'
+    - 'GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false"'
+  waitFor:
+#    - decrypt_secrets
+    - extract_build_cache
+  volumes:
+  - name: 'build_cache'
+    path: '/build_cache'
+
+#
+# Save the APKs
+#
+- name: 'gcr.io/cloud-builders/gsutil'
+  args: ['-q', 'cp', '-r', 'app/build/outputs/apk', 'gs://${PROJECT_ID}-artifacts/$BRANCH_NAME-$BUILD_ID/']
+  waitFor: ['build']
+
+#
+# Unit Tests
+#
+# Run the unit tests using the same type of step as the build.
+#
+- name: 'gcr.io/$PROJECT_ID/android'
+  id: unit_tests
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    source build_environment.sh
+    ./gradlew --stacktrace check
+  <<: *env
+  waitFor: ['build']
+  volumes:
+  - name: 'build_cache'
+    path: '/build_cache'
+
+#
+# Store the unit test reports
+#
+- name: 'gcr.io/cloud-builders/gsutil'
+  id: store_unit_test_reports
+  args: ['-q', 'cp', '-r', 'app/build/reports/', 'gs://${PROJECT_ID}-artifacts/$BRANCH_NAME-$BUILD_ID/']
+  waitFor: ['unit_tests']
+
+#
+# Store the unit test results
+#
+- name: 'gcr.io/cloud-builders/gsutil'
+  id: store_unit_test_results
+  args: ['-q', 'cp', '-r', 'app/build/test-results/', 'gs://${PROJECT_ID}-artifacts/$BRANCH_NAME-$BUILD_ID/']
+  waitFor: ['unit_tests']
+
+#
+# Cleanup
+#
+
+# Compress the gradle build cache
+- name: 'gcr.io/$PROJECT_ID/tar'
+  id: compress_cache
+  args: ['cpvzf', '/build_cache/cache.tgz', '-C', '/build_cache', '/build_cache/.gradle']
+  waitFor: ['unit_tests']
+  volumes:
+  - name: 'build_cache'
+    path: '/build_cache'
+
+# Store the build cache
+- name: gcr.io/cloud-builders/gsutil
+  args: ['cp', '/build_cache/cache.tgz', 'gs://${PROJECT_ID}-cache/cache.tgz']
+  waitFor: ['compress_cache']
+  volumes:
+  - name: 'build_cache'
+    path: '/build_cache'
+
+timeout: 1800s
+
+# This build requires more than 3.75 GB of memory, so I have to use a HIGHCPU machine
+# which has 30 GB of memory.  This means I can give Gradle lots of processes to run
+# highly parallelized.
+#
+# A standard machine is $0.003 per build minute, but these high cpu machines are
+# $0.016 per build minute. That means that a 15 minute build will cost $0.045 on
+# a standard machine, but $0.24 on the larger machine.  A machine half that size
+# from CircleCI would cost $0.024 per build minute, so that saves 1/3 the cost.
+#options:
+#  machineType: 'N1_HIGHCPU_8'
