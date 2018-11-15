@@ -34,7 +34,7 @@ androidExtensions {
 apply plugin: 'com.getkeepsafe.dexcount'
 dexcount {
     // Only run the method counter on CI
-    runOnEachPackage = ci
+    enabled = ci
 }
 
 apply plugin: 'com.github.triplet.play'
