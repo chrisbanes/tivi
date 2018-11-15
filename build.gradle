@@ -81,7 +81,7 @@ buildscript {
 
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.4'
 
-        classpath 'com.github.triplet.gradle:play-publisher:2.0.0-beta2'
+        classpath 'com.github.triplet.gradle:play-publisher:2.0.0-rc1'
 
         classpath 'com.google.gms:google-services:4.1.0'
         classpath 'io.fabric.tools:gradle:1.26.1'
