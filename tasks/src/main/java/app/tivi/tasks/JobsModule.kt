@@ -16,6 +16,8 @@
 
 package app.tivi.tasks
 
+import android.app.Application
+import androidx.work.Configuration
 import androidx.work.WorkManager
 import dagger.Module
 import dagger.Provides
@@ -25,5 +27,14 @@ import javax.inject.Singleton
 class JobsModule {
     @Provides
     @Singleton
-    fun provideWorkManager(): WorkManager = WorkManager.getInstance()
+    fun provideWorkManager(application: Application): WorkManager {
+        return try {
+            WorkManager.getInstance()
+        } catch (e: IllegalStateException) {
+            // Yes this is gross. It only really happens from tests so we'll just catch it, initialize and
+            // return the instance
+            WorkManager.initialize(application, Configuration.Builder().build())
+            WorkManager.getInstance()
+        }
+    }
 }

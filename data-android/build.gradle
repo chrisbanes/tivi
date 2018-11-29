@@ -63,7 +63,8 @@ dependencies {
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "org.robolectric:robolectric:${versions.robolectric}"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
-    testImplementation "androidx.test:core:1.0.0"
+
+    testImplementation "androidx.test:core:${versions.androidx.test_core}"
     testImplementation "androidx.arch.core:core-testing:2.0.0"
 
     testImplementation "org.threeten:threetenbp:${versions.threetenbp}"

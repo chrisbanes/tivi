@@ -111,6 +111,12 @@ android {
         enabled = true
     }
 
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+
     packagingOptions {
         // Exclude AndroidX version files
         exclude 'META-INF/*.version'
@@ -218,10 +224,18 @@ dependencies {
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.6'
 
     testImplementation "junit:junit:${versions.junit}"
+    testImplementation "org.robolectric:robolectric:${versions.robolectric}"
 
-    androidTestImplementation "androidx.test:runner:${versions.androidx.test_runner}"
-    androidTestImplementation "androidx.test:rules:${versions.androidx.test_rules}"
-    androidTestImplementation "androidx.test.espresso:espresso-core:${versions.espresso}"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
+
+    testImplementation "androidx.test:core:${versions.androidx.test_core}"
+    testImplementation "androidx.test:runner:${versions.androidx.test_runner}"
+    testImplementation "androidx.test:rules:${versions.androidx.test_rules}"
+    testImplementation "androidx.test.ext:junit:${versions.androidx.test_junit}"
+
+    testImplementation "androidx.test.espresso:espresso-core:${versions.espresso}"
+
+    testImplementation "androidx.arch.core:core-testing:${versions.androidx.arch_core_testing}"
 }
 
 def getGitHash() {

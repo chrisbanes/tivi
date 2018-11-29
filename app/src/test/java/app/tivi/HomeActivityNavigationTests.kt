@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2018 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,33 +16,40 @@
 
 package app.tivi
 
+import androidx.lifecycle.Lifecycle
+import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.filters.LargeTest
-import androidx.test.rule.ActivityTestRule
-import androidx.test.runner.AndroidJUnit4
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.tivi.home.HomeActivity
 import app.tivi.utils.bottomNavItemWithTitle
 import app.tivi.utils.rotateLandscape
-import org.junit.Rule
+import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
-@LargeTest
 @RunWith(AndroidJUnit4::class)
+@Config(application = TiviApplication::class)
 class HomeActivityNavigationTests {
 
-    @Rule
-    @JvmField
-    val activityRule = ActivityTestRule(HomeActivity::class.java)
+    lateinit var scenario: ActivityScenario<HomeActivity>
+
+    @Before
+    fun setup() {
+        scenario = ActivityScenario.launch(HomeActivity::class.java)
+                .moveToState(Lifecycle.State.RESUMED)
+    }
 
     @Test
+    @Ignore // due to https://github.com/robolectric/robolectric/issues/4021
     fun testBottomNavigationLibraryClick() {
-        onView(bottomNavItemWithTitle(R.id.home_bottom_nav, R.string.home_nav_library))
+        onView(bottomNavItemWithTitle(R.string.home_nav_library))
                 .perform(click())
 
         onView(withId(R.id.library_rv))
@@ -50,10 +57,11 @@ class HomeActivityNavigationTests {
     }
 
     @Test
+    @Ignore // due to https://github.com/robolectric/robolectric/issues/4021
     fun testBottomNavigationLibraryClickAfterRotation() {
         onView(isRoot()).perform(rotateLandscape())
 
-        onView(bottomNavItemWithTitle(R.id.home_bottom_nav, R.string.home_nav_library))
+        onView(bottomNavItemWithTitle(R.string.home_nav_library))
                 .perform(click())
 
         onView(withId(R.id.library_rv))
