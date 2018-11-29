@@ -20,6 +20,7 @@ buildscript {
             'android_gradle' : '3.2.1',
             'androidx'       : [
                     'appcompat'        : '1.0.0',
+                    'arch_core_testing': '2.0.0',
                     'browser'          : '1.0.0',
                     'core'             : '2.0.0',
                     'constraint_layout': '2.0.0-alpha2',
@@ -55,7 +56,7 @@ buildscript {
             'threetenabp'    : '1.1.1',
             'retrofit'       : '2.4.0',
             'junit'          : '4.12',
-            'robolectric'    : '4.0.1',
+            'robolectric'    : '4.0.2',
             'mockito_kotlin' : '2.0.0-RC3'
     ]
 

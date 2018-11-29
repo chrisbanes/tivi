@@ -242,7 +242,7 @@ dependencies {
 
     testImplementation "androidx.test.espresso:espresso-core:${versions.espresso}"
 
-    testImplementation "androidx.arch.core:core-testing:2.0.0"
+    testImplementation "androidx.arch.core:core-testing:${versions.androidx.arch_core_testing}"
 }
 
 def getGitHash() {
