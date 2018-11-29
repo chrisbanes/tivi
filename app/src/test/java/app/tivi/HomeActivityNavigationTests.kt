@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 LLC.
+ * Copyright 2018 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import app.tivi.home.HomeActivity
 import app.tivi.utils.bottomNavItemWithTitle
 import app.tivi.utils.rotateLandscape
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -46,6 +47,7 @@ class HomeActivityNavigationTests {
     }
 
     @Test
+    @Ignore // due to https://github.com/robolectric/robolectric/issues/4021
     fun testBottomNavigationLibraryClick() {
         onView(bottomNavItemWithTitle(R.string.home_nav_library))
                 .perform(click())
@@ -55,6 +57,7 @@ class HomeActivityNavigationTests {
     }
 
     @Test
+    @Ignore // due to https://github.com/robolectric/robolectric/issues/4021
     fun testBottomNavigationLibraryClickAfterRotation() {
         onView(isRoot()).perform(rotateLandscape())
 
