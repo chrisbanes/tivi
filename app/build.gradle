@@ -34,13 +34,14 @@ androidExtensions {
 apply plugin: 'com.getkeepsafe.dexcount'
 dexcount {
     // Only run the method counter on CI
-    runOnEachPackage = ci
+    enabled = ci
 }
 
 apply plugin: 'com.github.triplet.play'
 play {
     track = 'internal'
     defaultToAppBundles = true
+    serviceAccountCredentials = rootProject.file('signing/play-account.json')
 }
 
 if (file("google-services.json").exists()) {
@@ -54,12 +55,6 @@ println("APK version code: " + appVersionCode)
 android {
     compileSdkVersion buildConfig.compileSdk
 
-    playAccountConfigs {
-        defaultAccountConfig {
-            serviceAccountCredentials = rootProject.file('signing/play-account.json')
-        }
-    }
-
     defaultConfig {
         applicationId "app.tivi"
         minSdkVersion buildConfig.minSdk
@@ -71,8 +66,6 @@ android {
         resConfigs "en"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        playAccountConfig = playAccountConfigs.defaultAccountConfig
 
         buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + propOrDef("TIVI_TRAKT_CLIENT_ID", "") + "\""
         buildConfigField "String", "TRAKT_CLIENT_SECRET", "\"" + propOrDef("TIVI_TRAKT_CLIENT_SECRET", "") + "\""
@@ -223,12 +216,12 @@ dependencies {
     implementation "com.airbnb.android:epoxy-databinding:${versions.epoxy}"
     kapt "com.airbnb.android:epoxy-processor:${versions.epoxy}"
 
-    implementation 'com.github.rubensousa:gravitysnaphelper:1.5'
+    implementation 'com.github.rubensousa:gravitysnaphelper:2.0'
 
     debugImplementation "nl.littlerobots.rxlint:rxlint:${versions.rxlint}"
 
     implementation "com.google.firebase:firebase-core:${versions.firebase}"
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.6'
 
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "org.robolectric:robolectric:${versions.robolectric}"
