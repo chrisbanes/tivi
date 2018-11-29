@@ -25,5 +25,5 @@ dependencies {
     compile "com.google.dagger:dagger:${versions.dagger}"
 
     compile "com.squareup.retrofit2:retrofit:${versions.retrofit}"
-    compile 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.12.0'
 }
