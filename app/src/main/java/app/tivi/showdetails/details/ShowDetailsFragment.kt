@@ -69,6 +69,7 @@ class ShowDetailsFragment : TiviMvRxFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentShowDetailsBinding.inflate(inflater, container, false)
+        binding.setLifecycleOwner(viewLifecycleOwner)
         return binding.root
     }
 

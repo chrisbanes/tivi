@@ -82,7 +82,7 @@ class LibraryFragment : TiviMvRxFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentLibraryBinding.inflate(inflater, container, false)
-        binding.setLifecycleOwner(this)
+        binding.setLifecycleOwner(viewLifecycleOwner)
         return binding.root
     }
 
