@@ -39,8 +39,6 @@ class TopLeftCutoutBackgroundView : View {
 
         background = shapeDrawable
         syncCutSize()
-
-        //outlineProvider = MaterialShapeDrawableOutlineProvider(shapeDrawable)
     }
 
     var color: Int = Color.MAGENTA
@@ -57,30 +55,17 @@ class TopLeftCutoutBackgroundView : View {
 
     var cutProgress: Float = 1f
         set(value) {
-            if (value != field) {
-                field = value
-                syncCutSize()
-            }
+            field = value
+            syncCutSize()
         }
 
     private fun syncCutSize() {
         val shapeModel = shapeDrawable.shapeAppearanceModel ?: ShapeAppearanceModel()
-        shapeModel.topLeftCorner = CutCornerTreatment(lerp(0f, maxCutSize, cutProgress))
-        shapeDrawable.shapeAppearanceModel = shapeModel
-    }
+        val newCutSize = lerp(0f, maxCutSize, cutProgress)
 
-//    class MaterialShapeDrawableOutlineProvider(
-//        private val shapeDrawable: MaterialShapeDrawable
-//    ) : ViewOutlineProvider() {
-//        private val path = Path()
-//
-//        override fun getOutline(view: View, outline: Outline) {
-//            shapeDrawable.getPathForSize(view.width, view.height, path)
-//            if (path.isConvex) {
-//                outline.setConvexPath(path)
-//            } else {
-//                outline.setRect(0, 0, view.width, view.height)
-//            }
-//        }
-//    }
+        if (newCutSize != shapeModel.topLeftCorner?.cornerSize) {
+            shapeModel.topLeftCorner = CutCornerTreatment(newCutSize)
+            shapeDrawable.shapeAppearanceModel = shapeModel
+        }
+    }
 }
