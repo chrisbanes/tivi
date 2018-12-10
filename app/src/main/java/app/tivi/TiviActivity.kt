@@ -19,8 +19,10 @@ package app.tivi
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.ViewModelProvider
+import app.tivi.settings.TiviPreferences
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
@@ -29,6 +31,12 @@ import javax.inject.Inject
  */
 abstract class TiviActivity : DaggerAppCompatActivity() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var prefs: TiviPreferences
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        updateNightMode()
+    }
 
     private var postponedTransition = false
 
@@ -72,5 +80,13 @@ abstract class TiviActivity : DaggerAppCompatActivity() {
 
     open fun onPopulateResultIntent(intent: Intent): Int {
         return Activity.RESULT_OK
+    }
+
+    private fun updateNightMode() {
+        when (prefs.uiThemePreference) {
+            TiviPreferences.UiTheme.SYSTEM -> delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            TiviPreferences.UiTheme.LIGHT -> delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            TiviPreferences.UiTheme.DARK -> delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        }
     }
 }

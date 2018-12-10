@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2017 Google, Inc.
+  ~ Copyright 2018 Google LLC.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,16 +16,17 @@
   ~
   -->
 
-<resources>
-    <string-array name="prefs_ui_theme_titles">
-        <item>Use device setting (default)</item>
-        <item>Dark</item>
-        <item>Light</item>
-    </string-array>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <string-array name="prefs_ui_theme_values">
-        <item>system</item>
-        <item>dark</item>
-        <item>light</item>
-    </string-array>
-</resources>
+    <PreferenceCategory android:title="@string/prefs_ui_category_title">
+
+        <ListPreference
+            android:key="pref_ui_theme"
+            android:defaultValue="night"
+            android:entries="@array/prefs_ui_theme_titles"
+            android:entryValues="@array/prefs_ui_theme_values"
+            android:title="@string/prefs_ui_theme_title" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

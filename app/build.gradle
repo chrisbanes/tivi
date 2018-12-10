@@ -175,6 +175,8 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:${versions.androidx.recyclerview}"
     implementation "androidx.emoji:emoji:${versions.androidx.emoji}"
 
+    implementation "androidx.preference:preference:${versions.androidx.preference}"
+
     implementation "android.arch.work:work-runtime-ktx:${versions.androidx.work}"
 
     implementation "androidx.constraintlayout:constraintlayout:${versions.androidx.constraint_layout}"

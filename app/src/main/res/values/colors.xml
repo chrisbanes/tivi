@@ -35,7 +35,7 @@
     <color name="status_bar_scrim_translucent">#5F222222</color>
     <color name="content_scrim">#BBBBBB</color>
 
-    <color name="grid_item_background_color">#424242</color>
+    <color name="grid_item_background_color">#CCCCCC</color>
 
     <color name="swipe_away_background">#DEDEDE</color>
 

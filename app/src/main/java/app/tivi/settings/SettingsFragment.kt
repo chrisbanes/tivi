@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2018 Google LLC.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package app.tivi.home
+package app.tivi.settings
 
-import app.tivi.SharedElementHelper
-import app.tivi.data.entities.TiviShow
+import android.os.Bundle
+import androidx.preference.PreferenceFragmentCompat
+import app.tivi.R
 
-interface HomeNavigator {
-    fun showPopular(sharedElements: SharedElementHelper?)
-    fun showTrending(sharedElements: SharedElementHelper?)
-    fun showWatched(sharedElements: SharedElementHelper?)
-    fun showMyShows(sharedElements: SharedElementHelper?)
-    fun showShowDetails(show: TiviShow, sharedElements: SharedElementHelper?)
-    fun onUpClicked()
-    fun showSettings()
+class SettingsFragment : PreferenceFragmentCompat() {
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.preferences, rootKey)
+    }
 }

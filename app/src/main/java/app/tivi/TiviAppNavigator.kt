@@ -20,6 +20,7 @@ import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import app.tivi.settings.SettingsActivity
 import app.tivi.showdetails.ShowDetailsActivity
 import app.tivi.trakt.TraktConstants
 import javax.inject.Inject
@@ -34,6 +35,10 @@ open class TiviAppNavigator @Inject constructor(
 
     override fun startShowDetails(id: Long, sharedElements: SharedElementHelper?) {
         context.startActivity(ShowDetailsActivity.createIntent(context, id))
+    }
+
+    override fun startSettings() {
+        context.startActivity(Intent(context, SettingsActivity::class.java))
     }
 }
 

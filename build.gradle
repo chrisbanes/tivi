@@ -30,6 +30,7 @@ buildscript {
                     'lifecycle'        : '2.0.0',
                     'paging'           : '2.0.0',
                     'palette'          : '1.0.0',
+                    'preference'       : '1.1.0-alpha01',
                     'recyclerview'     : '1.0.0',
                     'room'             : '2.0.0',
                     'test_core'        : '1.0.0',

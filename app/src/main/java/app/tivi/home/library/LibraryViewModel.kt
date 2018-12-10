@@ -186,4 +186,6 @@ class LibraryViewModel @AssistedInject constructor(
     override fun onLoginItemClicked(authService: AuthorizationService) {
         traktManager.startAuth(0, authService)
     }
+
+    fun onSettingsClicked(navigator: HomeNavigator) = navigator.showSettings()
 }

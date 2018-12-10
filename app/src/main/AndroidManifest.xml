@@ -48,6 +48,11 @@
             android:name=".showdetails.ShowDetailsActivity"
             android:parentActivityName=".home.HomeActivity" />
 
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:theme="@style/Theme.Tivi.Settings"
+            android:label="@string/prefs_title" />
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

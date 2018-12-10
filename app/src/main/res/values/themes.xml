@@ -59,6 +59,11 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
+    <style name="Theme.Tivi.Settings">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
+    </style>
+
     <style name="ThemeOverlay.Tivi.ActionBar" parent="ThemeOverlay.MaterialComponents.ActionBar" />
     <style name="ThemeOverlay.Tivi.Popup" parent="ThemeOverlay.MaterialComponents" />
 

@@ -49,6 +49,10 @@ class HomeNavigatorViewModel @Inject constructor(
         appNavigatorProvider.get().startShowDetails(show.id, sharedElements)
     }
 
+    override fun showSettings() {
+        appNavigatorProvider.get().startSettings()
+    }
+
     override fun onUpClicked() {
         _upClickedCall.call()
     }
