@@ -46,8 +46,7 @@
 
         <activity
             android:name=".showdetails.ShowDetailsActivity"
-            android:parentActivityName=".home.HomeActivity"
-            android:theme="@style/Theme.Tivi.Light.Immerse" />
+            android:parentActivityName=".home.HomeActivity" />
 
         <meta-data
             android:name="preloaded_fonts"

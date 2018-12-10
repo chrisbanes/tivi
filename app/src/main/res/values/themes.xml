@@ -18,7 +18,7 @@
 
 <resources>
 
-    <style name="Theme.Tivi" parent="Theme.MaterialComponents.NoActionBar">
+    <style name="Theme.Tivi" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="actionBarTheme">@style/ThemeOverlay.Tivi.ActionBar</item>
         <item name="actionBarPopupTheme">@style/ThemeOverlay.Tivi.Popup</item>
 
@@ -26,12 +26,12 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="statusBarScrim">@color/status_bar_scrim_dark</item>
-        <item name="statusBarScrimTranslucent">@color/status_bar_scrim_translucent_dark</item>
+        <item name="statusBarScrim">@color/status_bar_scrim</item>
+        <item name="statusBarScrimTranslucent">@color/status_bar_scrim_translucent</item>
 
-        <item name="navigationBackgroundColor">@color/app_bar_background_dark</item>
+        <item name="navigationBackgroundColor">@color/app_bar_background</item>
 
-        <item name="android:colorBackground">@color/window_background_dark</item>
+        <item name="android:colorBackground">@color/window_background</item>
 
         <item name="toolbarStyle">@style/Widget.Tivi.Toolbar</item>
 
@@ -55,48 +55,7 @@
         <item name="textAppearancePopupMenuHeader">@style/TextAppearance.Tivi.PopupMenu.Header</item>
     </style>
 
-    <style name="Theme.Tivi.Light" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="actionBarTheme">@style/ThemeOverlay.Tivi.ActionBar</item>
-        <item name="actionBarPopupTheme">@style/ThemeOverlay.Tivi.Popup</item>
-
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-
-        <item name="statusBarScrim">@color/status_bar_scrim_light</item>
-        <item name="statusBarScrimTranslucent">@color/status_bar_scrim_translucent_light</item>
-
-        <item name="navigationBackgroundColor">@color/app_bar_background_light</item>
-
-        <item name="android:colorBackground">@color/window_background_light</item>
-
-        <item name="toolbarStyle">@style/Widget.Tivi.Toolbar</item>
-
-        <!-- Type styles -->
-        <item name="textAppearanceHeadline1">@style/TextAppearance.Tivi.Headline1</item>
-        <item name="textAppearanceHeadline2">@style/TextAppearance.Tivi.Headline2</item>
-        <item name="textAppearanceHeadline3">@style/TextAppearance.Tivi.Headline3</item>
-        <item name="textAppearanceHeadline4">@style/TextAppearance.Tivi.Headline4</item>
-        <item name="textAppearanceHeadline5">@style/TextAppearance.Tivi.Headline5</item>
-        <item name="textAppearanceHeadline6">@style/TextAppearance.Tivi.Headline6</item>
-        <item name="textAppearanceSubtitle1">@style/TextAppearance.Tivi.Subtitle1</item>
-        <item name="textAppearanceSubtitle2">@style/TextAppearance.Tivi.Subtitle2</item>
-        <item name="textAppearanceBody1">@style/TextAppearance.Tivi.Body1</item>
-        <item name="textAppearanceBody2">@style/TextAppearance.Tivi.Body2</item>
-        <item name="textAppearanceCaption">@style/TextAppearance.Tivi.Caption</item>
-        <item name="textAppearanceButton">@style/TextAppearance.Tivi.Button</item>
-        <item name="textAppearanceOverline">@style/TextAppearance.Tivi.Overline</item>
-
-        <item name="textAppearanceLargePopupMenu">?attr/textAppearanceBody1</item>
-        <item name="textAppearanceSmallPopupMenu">?attr/textAppearanceBody1</item>
-        <item name="textAppearancePopupMenuHeader">@style/TextAppearance.Tivi.PopupMenu.Header</item>
-    </style>
-
     <style name="Theme.Tivi.Immerse">
-        <item name="android:statusBarColor">@android:color/transparent</item>
-    </style>
-
-    <style name="Theme.Tivi.Light.Immerse">
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 

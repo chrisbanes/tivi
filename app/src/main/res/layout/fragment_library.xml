@@ -56,7 +56,7 @@
             android:id="@+id/library_filters_rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/content_scrim_dark"
+            android:background="@color/content_scrim"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@id/library_toolbar"
