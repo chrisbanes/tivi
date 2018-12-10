@@ -20,7 +20,6 @@
 
     <style name="Theme.Tivi" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="actionBarTheme">@style/ThemeOverlay.Tivi.ActionBar</item>
-        <item name="actionBarPopupTheme">@style/ThemeOverlay.Tivi.Popup</item>
 
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -65,6 +64,5 @@
     </style>
 
     <style name="ThemeOverlay.Tivi.ActionBar" parent="ThemeOverlay.MaterialComponents.ActionBar" />
-    <style name="ThemeOverlay.Tivi.Popup" parent="ThemeOverlay.MaterialComponents" />
 
 </resources>

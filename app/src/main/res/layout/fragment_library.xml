@@ -37,8 +37,8 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/navigationBackgroundColor"
             android:elevation="4dp"
+            android:theme="?attr/actionBarTheme"
             app:menu="@menu/home_toolbar"
-            app:popupTheme="?attr/actionBarPopupTheme"
             app:showTitle="false">
 
             <TextView

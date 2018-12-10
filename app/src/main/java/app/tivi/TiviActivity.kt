@@ -50,6 +50,11 @@ abstract class TiviActivity : DaggerAppCompatActivity() {
         handleIntent(intent)
     }
 
+    override fun onStart() {
+        super.onStart()
+        updateNightMode()
+    }
+
     override fun postponeEnterTransition() {
         super.postponeEnterTransition()
         postponedTransition = true
