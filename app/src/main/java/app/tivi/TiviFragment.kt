@@ -52,8 +52,8 @@ abstract class TiviFragment : DaggerFragment() {
         super.onStart()
 
         if (postponed && !startedTransition) {
-            // If we're postponed and haven't started a transition yet, we'll delay for a max of 2000ms
-            view?.postDelayed(::scheduleStartPostponedTransitions, 2000)
+            // If we're postponed and haven't started a transition yet, we'll delay for a max of 5 seconds
+            view?.postDelayed(::scheduleStartPostponedTransitions, 5000)
         }
     }
 

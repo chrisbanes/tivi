@@ -17,7 +17,6 @@
 package app.tivi.ui.transitions
 
 import android.animation.Animator
-import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.graphics.Bitmap
@@ -31,10 +30,10 @@ import androidx.core.animation.doOnEnd
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.ViewCompat
 import androidx.core.view.drawToBitmap
-import androidx.core.view.isVisible
 import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
 import androidx.transition.TransitionValues
+import app.tivi.extensions.animatorSetOf
 import kotlin.math.roundToInt
 
 /**
@@ -44,7 +43,7 @@ import kotlin.math.roundToInt
  * A ChangeBounds transition can be described in a resource file by using the
  * tag `changeBounds`, along with the other standard attributes of Transition.
  */
-open class StartViewChangeBounds : Transition() {
+open class ViewChangeBounds : Transition() {
 
     override fun getTransitionProperties(): Array<String>? = TRANSITION_PROPS
 
@@ -76,21 +75,21 @@ open class StartViewChangeBounds : Transition() {
             return null
         }
 
-        val startView = startValues.view
-        val endView = endValues.view
+        val view = endValues.view
 
         val startBounds = startValues.values[PROPNAME_BOUNDS] as Rect
         val endBounds = endValues.values[PROPNAME_BOUNDS] as Rect
 
-        val anim = createPointToPointAnimator(sceneRoot, startView, startBounds, endBounds)
+        val anim = createPointToPointAnimator(sceneRoot, view, startBounds, endBounds)
 
-        endView.visibility = View.INVISIBLE
+        val origAlpha = view.alpha
+        view.alpha = 0f
         anim.doOnEnd {
-            endView.isVisible = true
+            view.alpha = origAlpha
         }
 
-        if (startView.parent is ViewGroup) {
-            val parent = startView.parent as ViewGroup
+        if (view.parent is ViewGroup) {
+            val parent = view.parent as ViewGroup
             parent.suppressLayout(true)
 
             addListener(object : TransitionListenerAdapter() {
@@ -129,32 +128,27 @@ open class StartViewChangeBounds : Transition() {
         startAlpha: Int = 255,
         endAlpha: Int = 255
     ): Animator {
-        val drawable = createDrawableBoundsForView(view)
-        sceneRoot.overlay.add(drawable.drawable)
+        val bounds = createDrawableBoundsForView(view)
+        val moveAnim = createMoveAnimatorForView(bounds, startBounds, endBounds)
+        sceneRoot.overlay.add(bounds.drawable)
 
-        val moveAnim = createMoveAnimatorForView(drawable, startBounds, endBounds)
         val anim: Animator
-
-        when {
-            startAlpha != endAlpha -> {
-                val alphaAnim = ObjectAnimator.ofInt(drawable.drawable, DrawableAlphaProperty, startAlpha, endAlpha)
-                anim = AnimatorSet().apply { playTogether(moveAnim, alphaAnim) }
-            }
-            else -> {
-                drawable.drawable.alpha = endAlpha
-                anim = moveAnim
-            }
+        if (startAlpha != endAlpha) {
+            val alphaAnim = ObjectAnimator.ofInt(bounds.drawable, DrawableAlphaProperty, startAlpha, endAlpha)
+            anim = animatorSetOf(moveAnim, alphaAnim)
+        } else {
+            bounds.drawable.alpha = endAlpha
+            anim = moveAnim
         }
 
-        anim.doOnEnd {
-            sceneRoot.overlay.remove(drawable.drawable)
+        moveAnim.doOnEnd {
+            sceneRoot.overlay.remove(bounds.drawable)
         }
-
         return anim
     }
 
     private fun createMoveAnimatorForView(
-        drawableBounds: DrawableBounds,
+        bounds: PointFBounds,
         startBounds: Rect,
         endBounds: Rect
     ): Animator {
@@ -172,7 +166,7 @@ open class StartViewChangeBounds : Transition() {
                         startBounds.right.toFloat(), startBounds.bottom.toFloat(),
                         endBounds.right.toFloat(), endBounds.bottom.toFloat()))
 
-        return ObjectAnimator.ofPropertyValuesHolder(drawableBounds, outTopLeftPropVal, outBottomRightPropVal)
+        return ObjectAnimator.ofPropertyValuesHolder(bounds, outTopLeftPropVal, outBottomRightPropVal)
     }
 
     private fun createDrawableBoundsForView(view: View): DrawableBounds {
@@ -221,8 +215,8 @@ open class StartViewChangeBounds : Transition() {
     }
 
     companion object {
-        const val PROPNAME_BOUNDS = "android:columnedChangeBounds:bounds"
-        const val PROPNAME_PARENT = "android:columnedChangeBounds:parent"
+        const val PROPNAME_BOUNDS = "tivi:changeBounds:bounds"
+        const val PROPNAME_PARENT = "tivi:changeBounds:parent"
         val TRANSITION_PROPS = arrayOf(PROPNAME_BOUNDS, PROPNAME_PARENT)
 
         val TEMP_ARRAY = IntArray(2)
