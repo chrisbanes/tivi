@@ -61,8 +61,7 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
             }
         }
 
-        GridToGridTransitioner.setupSecondFragment(this,
-                intArrayOf(R.id.grid_toolbar, R.id.grid_status_scrim)) {
+        GridToGridTransitioner.setupSecondFragment(this, R.id.grid_toolbar, R.id.grid_status_scrim) {
             grid_recyclerview?.itemAnimator = DefaultItemAnimator()
         }
     }

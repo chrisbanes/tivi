@@ -76,8 +76,7 @@ class LibraryFragment : TiviMvRxFragment() {
         super.onCreate(savedInstanceState)
         homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
 
-        GridToGridTransitioner.setupFirstFragment(this,
-                intArrayOf(R.id.summary_appbarlayout, R.id.summary_status_scrim))
+        GridToGridTransitioner.setupFirstFragment(this, R.id.summary_appbarlayout, R.id.summary_status_scrim)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
