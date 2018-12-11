@@ -18,15 +18,15 @@ package app.tivi.util
 
 import androidx.lifecycle.LiveDataReactiveStreams
 import androidx.paging.DataSource
-import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import androidx.paging.RxPagedListBuilder
 import app.tivi.api.Status
 import app.tivi.api.UiResource
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.extensions.distinctUntilChanged
 import app.tivi.extensions.toFlowable
 import app.tivi.tmdb.TmdbManager
+import io.reactivex.BackpressureStrategy
 import io.reactivex.rxkotlin.Flowables
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.launch
@@ -41,24 +41,27 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
 ) : TiviViewModel() {
     private val messages = BehaviorSubject.create<UiResource>()
 
-    val liveList by lazy(mode = LazyThreadSafetyMode.NONE) {
-        LivePagedListBuilder<Int, LI>(
-                dataSource,
-                PagedList.Config.Builder().run {
-                    setPageSize(pageSize * 3)
-                    setPrefetchDistance(pageSize)
-                    setEnablePlaceholders(false)
-                    build()
-                }
-        ).setBoundaryCallback(object : PagedList.BoundaryCallback<LI>() {
-            override fun onItemAtEndLoaded(itemAtEnd: LI) {
-                onListScrolledToEnd()
-            }
-        }).build().distinctUntilChanged()
+    private val pageListConfig = PagedList.Config.Builder().run {
+        setPageSize(pageSize * 3)
+        setPrefetchDistance(pageSize)
+        setEnablePlaceholders(false)
+        build()
     }
 
     val viewState = LiveDataReactiveStreams.fromPublisher(
-            Flowables.combineLatest(messages.toFlowable(), tmdbManager.imageProviderFlowable, ::EntryViewState)
+            Flowables.combineLatest(
+                    messages.toFlowable(),
+                    tmdbManager.imageProviderFlowable,
+                    RxPagedListBuilder<Int, LI>(dataSource, pageListConfig)
+                            .setBoundaryCallback(object : PagedList.BoundaryCallback<LI>() {
+                                override fun onItemAtEndLoaded(itemAtEnd: LI) {
+                                    onListScrolledToEnd()
+                                }
+                            })
+                            .buildFlowable(BackpressureStrategy.LATEST)
+                            .distinctUntilChanged(),
+                    ::EntryViewState
+            )
     )
 
     init {

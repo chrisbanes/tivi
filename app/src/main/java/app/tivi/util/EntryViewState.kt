@@ -16,10 +16,12 @@
 
 package app.tivi.util
 
+import androidx.paging.PagedList
 import app.tivi.api.UiResource
 import app.tivi.tmdb.TmdbImageUrlProvider
 
-data class EntryViewState(
+data class EntryViewState<LI>(
     val uiResource: UiResource,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider
+    val tmdbImageUrlProvider: TmdbImageUrlProvider,
+    val liveList: PagedList<LI>
 )

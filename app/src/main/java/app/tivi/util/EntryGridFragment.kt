@@ -33,7 +33,7 @@ import app.tivi.TiviFragment
 import app.tivi.api.Status
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.extensions.observeK
+import app.tivi.extensions.observeNotNull
 import app.tivi.ui.ProgressTimeLatch
 import app.tivi.ui.SpacingItemDecorator
 import com.google.android.material.snackbar.Snackbar
@@ -130,29 +130,25 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
             }
         })
 
-        viewModel.liveList.observeK(this) {
-            controller.setList(it)
-            scheduleStartPostponedTransitions()
-        }
+        viewModel.viewState.observeNotNull(this) {
+            controller.tmdbImageUrlProvider = it.tmdbImageUrlProvider
+            controller.setList(it.liveList)
 
-        viewModel.viewState.observeK(this) {
-            controller.tmdbImageUrlProvider = it?.tmdbImageUrlProvider
-
-            it?.uiResource?.let {
-                when (it.status) {
-                    Status.SUCCESS -> {
-                        swipeRefreshLatch.refreshing = false
-                        controller.isLoading = false
-                    }
-                    Status.ERROR -> {
-                        swipeRefreshLatch.refreshing = false
-                        controller.isLoading = false
-                        Snackbar.make(grid_recyclerview, it.message ?: "EMPTY", Snackbar.LENGTH_SHORT).show()
-                    }
-                    Status.REFRESHING -> swipeRefreshLatch.refreshing = true
-                    Status.LOADING_MORE -> controller.isLoading = true
+            when (it.uiResource.status) {
+                Status.SUCCESS -> {
+                    swipeRefreshLatch.refreshing = false
+                    controller.isLoading = false
                 }
+                Status.ERROR -> {
+                    swipeRefreshLatch.refreshing = false
+                    controller.isLoading = false
+                    Snackbar.make(view, it.uiResource.message ?: "EMPTY", Snackbar.LENGTH_SHORT).show()
+                }
+                Status.REFRESHING -> swipeRefreshLatch.refreshing = true
+                Status.LOADING_MORE -> controller.isLoading = true
             }
+
+            scheduleStartPostponedTransitions()
         }
     }
 
