@@ -20,7 +20,6 @@ import android.animation.Animator
 import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.animation.doOnEnd
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
@@ -73,10 +72,10 @@ class ColumnedChangeBounds : ViewChangeBounds() {
 
             // Animate the current view in from the left
             val startCopy = Rect(endLeft - startWidth, startBottom, endLeft, startBottom + startHeight)
-            anims += createPointToPointAnimator(sceneRoot, view, startCopy, endBounds, 0)
+            anims += createPointToPointAnimator(view, startCopy, endBounds, 0f, 1f)
 
             // Animate a copy of the current view out to the right
-            createAnimatorsForChildCopyOutRight(sceneRoot, view, recyclerViewEndParent, startBounds, endBounds)?.also {
+            createAnimatorsForChildCopyOutRight(view, recyclerViewEndParent, startBounds, endBounds)?.also {
                 anims += it
             }
 
@@ -91,24 +90,18 @@ class ColumnedChangeBounds : ViewChangeBounds() {
             val inStartTop = startTop - startHeight - gap
             val startCopy = Rect(inStartLeft, inStartTop, inStartLeft + startWidth, inStartTop + startHeight)
 
-            anims += createPointToPointAnimator(sceneRoot, view, startCopy, endBounds, 0)
+            anims += createPointToPointAnimator(view, startCopy, endBounds, 0f, 1f)
 
             // Animate a copy of the current view out to the left
-            anims += createAnimatorForChildCopyOutLeft(sceneRoot, view, startBounds, endBounds)
+            anims += createAnimatorForChildCopyOutLeft(view, startBounds, endBounds)
 
             anim = animatorSetOf(anims)
         } else {
-            anim = createPointToPointAnimator(sceneRoot, view, startBounds, endBounds)
+            anim = createPointToPointAnimator(view, startBounds, endBounds)
         }
 
-        val origAlpha = view.alpha
-        view.alpha = 0f
-        anim.doOnEnd {
-            view.alpha = origAlpha
-        }
-
-        if (view.parent is ViewGroup) {
-            val parent = view.parent as ViewGroup
+        val parent = view.parent
+        if (parent is ViewGroup) {
             parent.suppressLayout(true)
 
             addListener(object : TransitionListenerAdapter() {
@@ -140,7 +133,6 @@ class ColumnedChangeBounds : ViewChangeBounds() {
     }
 
     private fun createAnimatorForChildCopyOutLeft(
-        sceneRoot: ViewGroup,
         view: View,
         startBounds: Rect,
         endBounds: Rect
@@ -154,11 +146,10 @@ class ColumnedChangeBounds : ViewChangeBounds() {
                 newEndRight,
                 newEndTop + endBounds.height())
 
-        return createPointToPointAnimator(sceneRoot, view, startBounds, newEndBounds, 255, 0)
+        return createPointToPointAnimator(view, startBounds, newEndBounds, 1f, 0f, true)
     }
 
     private fun createAnimatorsForChildCopyOutRight(
-        sceneRoot: ViewGroup,
         view: View,
         endParent: RecyclerView,
         startBounds: Rect,
@@ -172,7 +163,7 @@ class ColumnedChangeBounds : ViewChangeBounds() {
                 newEndLeft + endBounds.width(),
                 newEndTop + endBounds.height())
 
-        return createPointToPointAnimator(sceneRoot, view, startBounds, newEndBounds, 255, 0)
+        return createPointToPointAnimator(view, startBounds, newEndBounds, 1f, 0f, true)
     }
 
     private fun findRecyclerViewParent(view: View): RecyclerView? {
