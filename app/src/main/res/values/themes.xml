@@ -25,8 +25,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="statusBarScrimTranslucent">@color/status_bar_scrim_translucent</item>
-
         <item name="navigationBackgroundColor">@color/app_bar_background</item>
 
         <item name="android:colorBackground">@color/window_background</item>

@@ -163,7 +163,7 @@
 
             <CustomAttribute
                 app:attributeName="background"
-                app:customColorDrawableValue="@color/status_bar_scrim_translucent" />
+                app:customColorDrawableValue="@color/color_on_background_10" />
 
         </Constraint>
 

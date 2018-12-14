@@ -18,7 +18,6 @@
 <resources>
     <declare-styleable name="TiviTheme">
         <attr name="navigationBackgroundColor" format="color" />
-        <attr name="statusBarScrimTranslucent" format="color" />
     </declare-styleable>
 
     <declare-styleable name="TopLeftCutoutBackgroundView">
