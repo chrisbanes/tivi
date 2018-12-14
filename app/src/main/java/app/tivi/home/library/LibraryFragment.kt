@@ -155,7 +155,6 @@ class LibraryFragment : TiviMvRxFragment() {
                 TraktAuthState.LOGGED_IN -> {
                     userMenuItem.isVisible = true
                     state.user?.let { user ->
-                        userMenuItem.title = user.name
                         if (user.avatarUrl != null) {
                             GlideApp.with(requireContext())
                                     .load(user.avatarUrl)
