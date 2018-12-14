@@ -18,7 +18,6 @@
 <resources>
     <color name="window_background">#303030</color>
     <color name="app_bar_background">#212121</color>
-    <color name="status_bar_scrim">#000000</color>
     <color name="status_bar_scrim_translucent">#8F222222</color>
     <color name="content_scrim">#262626</color>
 

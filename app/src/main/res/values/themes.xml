@@ -25,7 +25,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="statusBarScrim">@color/status_bar_scrim</item>
         <item name="statusBarScrimTranslucent">@color/status_bar_scrim_translucent</item>
 
         <item name="navigationBackgroundColor">@color/app_bar_background</item>
