@@ -34,7 +34,7 @@
 
     <string name="prefs_title">Settings</string>
     <string name="prefs_ui_category_title">User Interface</string>
-    <string name="prefs_ui_theme_title">Theme</string>
+    <string name="prefs_dark_mode_title">Dark Mode</string>
 
     <string name="empty_prompt">Y u no watch some TV?</string>
     <string name="empty_emoji">😏</string>

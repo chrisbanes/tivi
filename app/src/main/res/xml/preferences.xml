@@ -21,11 +21,11 @@
     <PreferenceCategory android:title="@string/prefs_ui_category_title">
 
         <ListPreference
-            android:key="pref_ui_theme"
-            android:defaultValue="night"
-            android:entries="@array/prefs_ui_theme_titles"
-            android:entryValues="@array/prefs_ui_theme_values"
-            android:title="@string/prefs_ui_theme_title" />
+            android:defaultValue="system"
+            android:entries="@array/prefs_dark_mode_titles"
+            android:entryValues="@array/prefs_dark_mode_values"
+            android:key="pref_dark_mode"
+            android:title="@string/prefs_dark_mode_title" />
 
     </PreferenceCategory>
 
