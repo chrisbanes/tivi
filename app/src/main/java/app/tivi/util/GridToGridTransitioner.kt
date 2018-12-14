@@ -50,7 +50,7 @@ object GridToGridTransitioner {
      * @param contentFadeElementIds An array of view ids which will transition at the normal rate. This will
      * typically be your toolbar
      */
-    fun setupFirstFragment(fragment: Fragment, contentFadeElementIds: IntArray) {
+    fun setupFirstFragment(fragment: Fragment, vararg contentFadeElementIds: Int) {
         fragment.exitTransition = TransitionSet().apply {
             addTransition(Fade().apply {
                 contentFadeElementIds.forEach { excludeTarget(it, true) }
@@ -75,7 +75,7 @@ object GridToGridTransitioner {
      * @param fragment The fragment to setup
      * @param fadeElementIds An array of view ids which will fade rather than slide. This will typically be your toolbar
      */
-    fun setupSecondFragment(fragment: Fragment, fadeElementIds: IntArray, onTransitionEnd: () -> Unit) {
+    fun setupSecondFragment(fragment: Fragment, vararg fadeElementIds: Int, onTransitionEnd: () -> Unit) {
         fragment.sharedElementEnterTransition = ColumnedChangeBounds().apply {
             interpolator = FAST_OUT_SLOW_IN_INTERPOLATOR
             duration = GRID_SHARED_ELEMENT_ENTER_DURATION

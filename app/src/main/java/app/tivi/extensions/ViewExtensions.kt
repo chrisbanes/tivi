@@ -16,6 +16,7 @@
 
 package app.tivi.extensions
 
+import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
 
@@ -36,3 +37,7 @@ val View.marginStart: Int
 
 val View.marginEnd: Int
     get() = (layoutParams as? ViewGroup.MarginLayoutParams)?.marginEnd ?: 0
+
+fun View.getBounds(rect: Rect) {
+    rect.set(left, top, right, bottom)
+}

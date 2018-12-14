@@ -17,13 +17,11 @@
 package app.tivi.ui.transitions
 
 import android.animation.Animator
-import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.graphics.Bitmap
 import android.graphics.PointF
 import android.graphics.Rect
-import android.graphics.drawable.Drawable
 import android.util.Property
 import android.view.View
 import android.view.ViewGroup
@@ -31,10 +29,12 @@ import androidx.core.animation.doOnEnd
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.ViewCompat
 import androidx.core.view.drawToBitmap
-import androidx.core.view.isVisible
 import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter
 import androidx.transition.TransitionValues
+import app.tivi.extensions.getBounds
+import app.tivi.ui.animations.FloatProp
+import app.tivi.ui.animations.createFloatProperty
 import kotlin.math.roundToInt
 
 /**
@@ -44,17 +44,14 @@ import kotlin.math.roundToInt
  * A ChangeBounds transition can be described in a resource file by using the
  * tag `changeBounds`, along with the other standard attributes of Transition.
  */
-open class StartViewChangeBounds : Transition() {
+open class ViewChangeBounds : Transition() {
 
     override fun getTransitionProperties(): Array<String>? = TRANSITION_PROPS
 
     private fun captureValues(values: TransitionValues) {
         val view = values.view
         if (ViewCompat.isLaidOut(view) || view.width != 0 || view.height != 0) {
-            val loc = TEMP_ARRAY
-            view.getLocationOnScreen(loc)
-
-            values.values[PROPNAME_BOUNDS] = Rect(loc[0], loc[1], loc[0] + view.width, loc[1] + view.height)
+            values.values[PROPNAME_BOUNDS] = Rect().apply { view.getBounds(this) }
             values.values[PROPNAME_PARENT] = values.view.parent
         }
     }
@@ -76,21 +73,15 @@ open class StartViewChangeBounds : Transition() {
             return null
         }
 
-        val startView = startValues.view
-        val endView = endValues.view
+        val view = endValues.view
 
         val startBounds = startValues.values[PROPNAME_BOUNDS] as Rect
         val endBounds = endValues.values[PROPNAME_BOUNDS] as Rect
 
-        val anim = createPointToPointAnimator(sceneRoot, startView, startBounds, endBounds)
+        val anim = createPointToPointAnimator(view, startBounds, endBounds)
 
-        endView.visibility = View.INVISIBLE
-        anim.doOnEnd {
-            endView.isVisible = true
-        }
-
-        if (startView.parent is ViewGroup) {
-            val parent = startView.parent as ViewGroup
+        val parent = view.parent
+        if (parent is ViewGroup) {
             parent.suppressLayout(true)
 
             addListener(object : TransitionListenerAdapter() {
@@ -122,67 +113,89 @@ open class StartViewChangeBounds : Transition() {
     }
 
     fun createPointToPointAnimator(
-        sceneRoot: ViewGroup,
         view: View,
         startBounds: Rect,
         endBounds: Rect,
-        startAlpha: Int = 255,
-        endAlpha: Int = 255
+        startAlpha: Float = 1f,
+        endAlpha: Float = 1f,
+        useCopy: Boolean = false
     ): Animator {
-        val drawable = createDrawableBoundsForView(view)
-        sceneRoot.overlay.add(drawable.drawable)
+        val bounds = if (useCopy) DrawableBounds(view) else ViewBounds(view)
 
-        val moveAnim = createMoveAnimatorForView(drawable, startBounds, endBounds)
-        val anim: Animator
+        val originalAlpha = bounds.getAlpha()
 
-        when {
-            startAlpha != endAlpha -> {
-                val alphaAnim = ObjectAnimator.ofInt(drawable.drawable, DrawableAlphaProperty, startAlpha, endAlpha)
-                anim = AnimatorSet().apply { playTogether(moveAnim, alphaAnim) }
-            }
-            else -> {
-                drawable.drawable.alpha = endAlpha
-                anim = moveAnim
-            }
-        }
-
-        anim.doOnEnd {
-            sceneRoot.overlay.remove(drawable.drawable)
-        }
-
-        return anim
-    }
-
-    private fun createMoveAnimatorForView(
-        drawableBounds: DrawableBounds,
-        startBounds: Rect,
-        endBounds: Rect
-    ): Animator {
         val outTopLeftPropVal = PropertyValuesHolder.ofObject<PointF>(
                 TOP_LEFT_PROPERTY,
                 null,
                 pathMotion.getPath(
                         startBounds.left.toFloat(), startBounds.top.toFloat(),
-                        endBounds.left.toFloat(), endBounds.top.toFloat()))
+                        endBounds.left.toFloat(), endBounds.top.toFloat())
+        )
 
         val outBottomRightPropVal = PropertyValuesHolder.ofObject<PointF>(
                 BOTTOM_RIGHT_PROPERTY,
                 null,
                 pathMotion.getPath(
                         startBounds.right.toFloat(), startBounds.bottom.toFloat(),
-                        endBounds.right.toFloat(), endBounds.bottom.toFloat()))
+                        endBounds.right.toFloat(), endBounds.bottom.toFloat())
+        )
 
-        return ObjectAnimator.ofPropertyValuesHolder(drawableBounds, outTopLeftPropVal, outBottomRightPropVal)
+        val alphaPropVal = PropertyValuesHolder.ofFloat(ALPHA_PROPERTY, startAlpha, endAlpha)
+
+        bounds.setup()
+
+        bounds.setLeftTopRightBottom(startBounds.left, startBounds.top, startBounds.right, startBounds.bottom)
+
+        return ObjectAnimator.ofPropertyValuesHolder(bounds,
+                outTopLeftPropVal,
+                outBottomRightPropVal,
+                alphaPropVal
+        ).apply {
+            doOnEnd {
+                bounds.setAlpha(originalAlpha)
+                bounds.cleanup()
+            }
+        }
     }
 
-    private fun createDrawableBoundsForView(view: View): DrawableBounds {
-        val d = view.drawToBitmap(Bitmap.Config.ARGB_8888).toDrawable(view.resources)
-        return DrawableBounds(d)
+    class DrawableBounds(view: View) : PointFBounds() {
+        private val drawable = view.drawToBitmap(Bitmap.Config.ARGB_8888).toDrawable(view.resources)
+        private val parent = view.parent as ViewGroup
+
+        override fun setup() {
+            parent.overlay.add(drawable)
+        }
+
+        override fun cleanup() {
+            parent.overlay.remove(drawable)
+        }
+
+        override fun setLeftTopRightBottom(left: Int, top: Int, right: Int, bottom: Int) {
+            drawable.setBounds(left, top, right, bottom)
+        }
+
+        override fun setAlpha(alpha: Float) {
+            drawable.alpha = (alpha * 255).roundToInt().coerceIn(0, 255)
+        }
+
+        override fun getAlpha(): Float {
+            return (drawable.alpha / 255f).coerceIn(0f, 1f)
+        }
     }
 
-    class DrawableBounds(val drawable: Drawable) : PointFBounds() {
-        override fun setLeftTopRightBottom(left: Int, top: Int, right: Int, bottom: Int) =
-                drawable.setBounds(left, top, right, bottom)
+    class ViewBounds(val view: View) : PointFBounds() {
+        override fun setLeftTopRightBottom(left: Int, top: Int, right: Int, bottom: Int) {
+            view.left = left
+            view.top = top
+            view.right = right
+            view.bottom = bottom
+        }
+
+        override fun getAlpha(): Float = view.alpha
+
+        override fun setAlpha(alpha: Float) {
+            view.alpha = alpha
+        }
     }
 
     abstract class PointFBounds {
@@ -193,6 +206,16 @@ open class StartViewChangeBounds : Transition() {
         private var topLeftCalls: Int = 0
         private var bottomRightCalls: Int = 0
 
+        open fun setup() = Unit
+        open fun cleanup() = Unit
+
+        abstract fun getAlpha(): Float
+        abstract fun setAlpha(alpha: Float)
+
+        fun getTopLeft(): PointF {
+            return PointF(left.toFloat(), top.toFloat())
+        }
+
         fun setTopLeft(topLeft: PointF) {
             left = topLeft.x.roundToInt()
             top = topLeft.y.roundToInt()
@@ -200,6 +223,10 @@ open class StartViewChangeBounds : Transition() {
             if (topLeftCalls == bottomRightCalls) {
                 setLeftTopRightBottom()
             }
+        }
+
+        fun getBottomRight(): PointF {
+            return PointF(right.toFloat(), bottom.toFloat())
         }
 
         fun setBottomRight(bottomRight: PointF) {
@@ -221,22 +248,26 @@ open class StartViewChangeBounds : Transition() {
     }
 
     companion object {
-        const val PROPNAME_BOUNDS = "android:columnedChangeBounds:bounds"
-        const val PROPNAME_PARENT = "android:columnedChangeBounds:parent"
+        const val PROPNAME_BOUNDS = "tivi:changeBounds:bounds"
+        const val PROPNAME_PARENT = "tivi:changeBounds:parent"
         val TRANSITION_PROPS = arrayOf(PROPNAME_BOUNDS, PROPNAME_PARENT)
-
-        val TEMP_ARRAY = IntArray(2)
 
         val TOP_LEFT_PROPERTY: Property<PointFBounds, PointF> =
                 object : Property<PointFBounds, PointF>(PointF::class.java, "topLeft") {
                     override fun set(bounds: PointFBounds, topLeft: PointF) = bounds.setTopLeft(topLeft)
-                    override fun get(bounds: PointFBounds): PointF? = null
+                    override fun get(bounds: PointFBounds): PointF? = bounds.getTopLeft()
                 }
 
         val BOTTOM_RIGHT_PROPERTY: Property<PointFBounds, PointF> =
                 object : Property<PointFBounds, PointF>(PointF::class.java, "bottomRight") {
                     override fun set(bounds: PointFBounds, bottomRight: PointF) = bounds.setBottomRight(bottomRight)
-                    override fun get(bounds: PointFBounds): PointF? = null
+                    override fun get(bounds: PointFBounds): PointF? = bounds.getBottomRight()
                 }
+
+        val ALPHA_PROPERTY: Property<PointFBounds, Float> =
+                createFloatProperty(object : FloatProp<PointFBounds>("alpha") {
+                    override fun set(o: PointFBounds, value: Float) = o.setAlpha(value)
+                    override fun get(o: PointFBounds): Float = o.getAlpha()
+                })
     }
 }

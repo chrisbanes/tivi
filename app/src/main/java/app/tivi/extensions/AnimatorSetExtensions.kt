@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2018 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,21 @@
 
 package app.tivi.extensions
 
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
+import android.animation.Animator
+import android.animation.AnimatorSet
 
-inline fun <T> LiveData<T>.observeK(owner: LifecycleOwner, crossinline observer: (T?) -> Unit) {
-    this.observe(owner, Observer { observer(it) })
+fun animatorSetOf(vararg animators: Animator, playTogether: Boolean = true) = AnimatorSet().apply {
+    if (playTogether) {
+        playTogether(*animators)
+    } else {
+        playSequentially(*animators)
+    }
 }
 
-inline fun <T> LiveData<T>.observeNotNull(owner: LifecycleOwner, crossinline observer: (T) -> Unit) {
-    this.observe(owner, Observer { it?.run(observer) })
+fun animatorSetOf(animators: List<Animator>, playTogether: Boolean = true) = AnimatorSet().apply {
+    if (playTogether) {
+        playTogether(animators)
+    } else {
+        playSequentially(animators)
+    }
 }

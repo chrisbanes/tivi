@@ -28,9 +28,7 @@ import javax.inject.Inject
  * Base fragment class which supports LifecycleOwner and Dagger injection.
  */
 abstract class TiviFragment : DaggerFragment() {
-
-    private var startedTransition = false
-    private var postponed = false
+    private var postponedTransition = false
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
@@ -45,30 +43,30 @@ abstract class TiviFragment : DaggerFragment() {
 
     override fun postponeEnterTransition() {
         super.postponeEnterTransition()
-        postponed = true
+        postponedTransition = true
     }
 
     override fun onStart() {
         super.onStart()
 
-        if (postponed && !startedTransition) {
-            // If we're postponed and haven't started a transition yet, we'll delay for a max of 2000ms
-            view?.postDelayed(::scheduleStartPostponedTransitions, 2000)
+        if (postponedTransition) {
+            // If we're postponedTransition and haven't started a transition yet, we'll delay for a max of 5 seconds
+            view?.postDelayed(::scheduleStartPostponedTransitions, 5000)
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        startedTransition = false
+    override fun onDestroyView() {
+        super.onDestroyView()
+        postponedTransition = false
     }
 
     protected fun scheduleStartPostponedTransitions() {
-        if (!startedTransition) {
+        if (postponedTransition) {
             (view?.parent as? ViewGroup)?.doOnPreDraw {
                 startPostponedEnterTransition()
                 activity?.startPostponedEnterTransition()
             }
-            startedTransition = true
         }
+        postponedTransition = false
     }
 }
