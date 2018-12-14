@@ -35,9 +35,6 @@
     <color name="status_bar_scrim_translucent">#5F222222</color>
     <color name="content_scrim">#CCCCCC</color>
 
-    <!-- TODO candidate for using a alpha CL off colorForeground -->
-    <color name="grid_item_background_color">#16000000</color>
-
     <color name="swipe_away_background">#DEDEDE</color>
 
 </resources>

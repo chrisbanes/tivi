@@ -22,7 +22,5 @@
     <color name="status_bar_scrim_translucent">#8F222222</color>
     <color name="content_scrim">#262626</color>
 
-    <color name="grid_item_background_color">#16FFFFFF</color>
-
     <color name="swipe_away_background">#333333</color>
 </resources>
