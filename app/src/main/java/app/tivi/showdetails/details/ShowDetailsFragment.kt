@@ -24,7 +24,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.os.bundleOf
-import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.ViewModelProviders
 import app.tivi.R
 import app.tivi.SharedElementHelper
@@ -119,12 +118,6 @@ class ShowDetailsFragment : TiviMvRxFragment() {
             }
         })
 
-        binding.detailsPoster.onDrawableLoaded = {
-            it.doOnPreDraw {
-                scheduleStartPostponedTransitions()
-            }
-        }
-
         binding.detailsPoster.apply {
             clipToOutline = true
             outlineProvider = RoundRectViewOutline
@@ -169,6 +162,11 @@ class ShowDetailsFragment : TiviMvRxFragment() {
 
     override fun invalidate() {
         withState(viewModel) {
+            if (binding.state == null) {
+                // First time we've had state, start any postponed transitions
+                scheduleStartPostponedTransitions()
+            }
+
             binding.state = it
             controller.setData(it)
         }

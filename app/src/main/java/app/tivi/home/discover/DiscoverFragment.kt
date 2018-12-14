@@ -138,6 +138,11 @@ internal class DiscoverFragment : TiviMvRxFragment() {
 
     override fun invalidate() {
         withState(viewModel) { state ->
+            if (binding.state == null) {
+                // First time we've had state, start any postponed transitions
+                scheduleStartPostponedTransitions()
+            }
+
             binding.state = state
             controller.setData(state)
 
@@ -165,8 +170,6 @@ internal class DiscoverFragment : TiviMvRxFragment() {
                     loginMenuItem.isVisible = true
                 }
             }
-
-            scheduleStartPostponedTransitions()
         }
     }
 

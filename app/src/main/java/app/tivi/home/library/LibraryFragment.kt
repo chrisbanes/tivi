@@ -118,6 +118,11 @@ class LibraryFragment : TiviMvRxFragment() {
 
     override fun invalidate() {
         withState(viewModel) { state ->
+            if (binding.state == null) {
+                // First time we've had state, start any postponed transitions
+                scheduleStartPostponedTransitions()
+            }
+
             binding.state = state
             filterController.setData(state)
 
@@ -168,7 +173,6 @@ class LibraryFragment : TiviMvRxFragment() {
 
             // Close the filter pane if needed
             closeFilterPanel()
-            scheduleStartPostponedTransitions()
         }
     }
 

@@ -131,6 +131,11 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
         })
 
         viewModel.viewState.observeNotNull(this) {
+            if (controller.pagedList == null) {
+                // First time we've had state, start any postponed transitions
+                scheduleStartPostponedTransitions()
+            }
+
             controller.tmdbImageUrlProvider = it.tmdbImageUrlProvider
             controller.setList(it.liveList)
 
@@ -147,8 +152,6 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
                 Status.REFRESHING -> swipeRefreshLatch.refreshing = true
                 Status.LOADING_MORE -> controller.isLoading = true
             }
-
-            scheduleStartPostponedTransitions()
         }
     }
 

@@ -19,6 +19,7 @@ package app.tivi
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.ViewModelProvider
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
@@ -29,6 +30,8 @@ import javax.inject.Inject
 abstract class TiviActivity : DaggerAppCompatActivity() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
+    private var postponedTransition = false
+
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         handleIntent(intent)
@@ -37,6 +40,24 @@ abstract class TiviActivity : DaggerAppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleIntent(intent)
+    }
+
+    override fun postponeEnterTransition() {
+        super.postponeEnterTransition()
+        postponedTransition = true
+    }
+
+    override fun startPostponedEnterTransition() {
+        postponedTransition = false
+        super.startPostponedEnterTransition()
+    }
+
+    fun scheduleStartPostponedTransitions() {
+        if (postponedTransition) {
+            window.decorView.doOnPreDraw {
+                startPostponedEnterTransition()
+            }
+        }
     }
 
     open fun handleIntent(intent: Intent) {}
