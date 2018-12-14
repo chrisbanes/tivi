@@ -89,6 +89,16 @@ class LibraryFragment : TiviMvRxFragment() {
         super.onViewCreated(view, savedInstanceState)
         postponeEnterTransition()
 
+        view.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+
+        view.setOnApplyWindowInsetsListener { _, insets ->
+            val lp = binding.summaryStatusScrim.layoutParams
+            lp.height = insets.systemWindowInsetTop
+            binding.summaryStatusScrim.requestLayout()
+            // Just return insets
+            insets
+        }
+
         // Setup span and columns
         gridLayoutManager = binding.libraryRv.layoutManager as GridLayoutManager
 
