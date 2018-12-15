@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2018 Google, Inc.
+  ~ Copyright 2018 Google LLC.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -13,9 +13,20 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
+  ~
   -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="?attr/colorSurface" android:state_checked="true" />
-    <item android:color="@android:color/transparent" />
-</selector>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/prefs_ui_category_title">
+
+        <ListPreference
+            android:defaultValue="system"
+            android:entries="@array/prefs_dark_mode_titles"
+            android:entryValues="@array/prefs_dark_mode_values"
+            android:key="pref_dark_mode"
+            android:title="@string/prefs_dark_mode_title" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

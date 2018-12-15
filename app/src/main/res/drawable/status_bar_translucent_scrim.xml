@@ -15,7 +15,6 @@
   ~ limitations under the License.
   -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="?attr/colorSurface" android:state_checked="true" />
-    <item android:color="@android:color/transparent" />
-</selector>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#32000000" />
+</shape>

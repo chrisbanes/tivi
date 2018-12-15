@@ -20,6 +20,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
     <color name="tv_test_grey">#c0c0c0</color>
     <color name="tv_test_yellow">#bdc200</color>
     <color name="tv_test_cyan">#00c6c2</color>
@@ -28,21 +29,8 @@
     <color name="tv_test_red">#e10000</color>
     <color name="tv_test_blue">#2400cd</color>
 
-    <color name="window_background_light">#FAFAFA</color>
-    <color name="window_background_dark">#303030</color>
-
-    <color name="app_bar_background_light">#F5F5F5</color>
-    <color name="app_bar_background_dark">#212121</color>
-
-    <color name="status_bar_scrim_light">#E0E0E0</color>
-    <color name="status_bar_scrim_translucent_light">#5F222222</color>
-
-    <color name="status_bar_scrim_dark">#000000</color>
-    <color name="status_bar_scrim_translucent_dark">#8F222222</color>
-
-    <color name="content_scrim_dark">#262626</color>
-
-    <color name="grid_item_background_color">#424242</color>
+    <color name="window_background">#FAFAFA</color>
+    <color name="app_bar_background">#F5F5F5</color>
 
     <color name="swipe_away_background">#DEDEDE</color>
 

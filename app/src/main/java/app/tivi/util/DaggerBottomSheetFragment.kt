@@ -28,7 +28,7 @@ import javax.inject.Inject
 abstract class DaggerBottomSheetFragment : BottomSheetDialogFragment(), HasSupportFragmentInjector {
     @Inject internal lateinit var childFragmentInjector: DispatchingAndroidInjector<Fragment>
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
     }

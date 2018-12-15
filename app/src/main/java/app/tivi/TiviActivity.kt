@@ -17,10 +17,15 @@
 package app.tivi
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.PowerManager
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.doOnPreDraw
 import androidx.lifecycle.ViewModelProvider
+import app.tivi.settings.TiviPreferences
+import app.tivi.settings.TiviPreferences.DarkMode
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
@@ -29,6 +34,12 @@ import javax.inject.Inject
  */
 abstract class TiviActivity : DaggerAppCompatActivity() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject lateinit var prefs: TiviPreferences
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        updateNightMode()
+    }
 
     private var postponedTransition = false
 
@@ -40,6 +51,11 @@ abstract class TiviActivity : DaggerAppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleIntent(intent)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        updateNightMode()
     }
 
     override fun postponeEnterTransition() {
@@ -72,5 +88,32 @@ abstract class TiviActivity : DaggerAppCompatActivity() {
 
     open fun onPopulateResultIntent(intent: Intent): Int {
         return Activity.RESULT_OK
+    }
+
+    private fun updateNightMode() {
+        when (prefs.darkModePreference) {
+            DarkMode.SYSTEM -> delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            DarkMode.ALWAYS -> delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            else -> updateNightModeForBatterySaver()
+        }
+    }
+
+    private fun updateNightModeForBatterySaver() {
+        val darkMode = prefs.darkModePreference
+
+        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+        if (pm.isPowerSaveMode) {
+            // Since we're in battery saver mode,
+            if (darkMode == DarkMode.BATTERY_SAVER_ONLY || darkMode == DarkMode.AUTO) {
+                delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }
+        } else {
+            // If we're not in power saving mode, we can just use the default states
+            if (darkMode == DarkMode.AUTO) {
+                delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_AUTO)
+            } else if (darkMode == DarkMode.BATTERY_SAVER_ONLY) {
+                delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            }
+        }
     }
 }

@@ -155,7 +155,6 @@ internal class DiscoverFragment : TiviMvRxFragment() {
                 TraktAuthState.LOGGED_IN -> {
                     userMenuItem.isVisible = true
                     state.user?.let { user ->
-                        userMenuItem.title = user.name
                         if (user.avatarUrl != null) {
                             GlideApp.with(requireContext())
                                     .load(user.avatarUrl)
@@ -188,6 +187,10 @@ internal class DiscoverFragment : TiviMvRxFragment() {
         }
         R.id.home_menu_user_login -> {
             viewModel.onLoginItemClicked((requireActivity() as HomeActivity).authService)
+            true
+        }
+        R.id.home_settings -> {
+            viewModel.onSettingsClicked(homeNavigator)
             true
         }
         R.id.home_privacy_policy -> {

@@ -89,6 +89,16 @@ class LibraryFragment : TiviMvRxFragment() {
         super.onViewCreated(view, savedInstanceState)
         postponeEnterTransition()
 
+        view.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+
+        view.setOnApplyWindowInsetsListener { _, insets ->
+            val lp = binding.summaryStatusScrim.layoutParams
+            lp.height = insets.systemWindowInsetTop
+            binding.summaryStatusScrim.requestLayout()
+            // Just return insets
+            insets
+        }
+
         // Setup span and columns
         gridLayoutManager = binding.libraryRv.layoutManager as GridLayoutManager
 
@@ -155,7 +165,6 @@ class LibraryFragment : TiviMvRxFragment() {
                 TraktAuthState.LOGGED_IN -> {
                     userMenuItem.isVisible = true
                     state.user?.let { user ->
-                        userMenuItem.title = user.name
                         if (user.avatarUrl != null) {
                             GlideApp.with(requireContext())
                                     .load(user.avatarUrl)
@@ -210,6 +219,10 @@ class LibraryFragment : TiviMvRxFragment() {
         }
         R.id.home_menu_user_login -> {
             viewModel.onLoginItemClicked((requireActivity() as HomeActivity).authService)
+            true
+        }
+        R.id.home_settings -> {
+            viewModel.onSettingsClicked(homeNavigator)
             true
         }
         R.id.home_privacy_policy -> {

@@ -123,7 +123,7 @@
             android:id="@+id/details_status_bar_anchor"
             android:layout_width="match_parent"
             android:layout_height="24dp"
-            android:background="@color/status_bar_scrim_translucent_dark" />
+            android:background="@drawable/status_bar_translucent_scrim" />
 
         <app.tivi.ui.widget.CheckableFloatingActionButton
             android:id="@+id/details_follow_fab"

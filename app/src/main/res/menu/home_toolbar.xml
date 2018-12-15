@@ -32,6 +32,11 @@
         app:showAsAction="always" />
 
     <item
+        android:id="@+id/home_settings"
+        android:title="@string/prefs_title"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/home_privacy_policy"
         android:title="@string/view_privacy_policy"
         app:showAsAction="never" />

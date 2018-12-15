@@ -31,14 +31,22 @@
         android:layout_height="match_parent"
         app:layoutDescription="@xml/scene_library">
 
+        <View
+            android:id="@+id/summary_status_scrim"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:background="?android:attr/colorPrimaryDark"
+            android:elevation="4dp" />
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/library_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/navigationBackgroundColor"
             android:elevation="4dp"
+            android:theme="?attr/actionBarTheme"
+            app:layout_constraintTop_toBottomOf="@id/summary_status_scrim"
             app:menu="@menu/home_toolbar"
-            app:popupTheme="?attr/actionBarPopupTheme"
             app:showTitle="false">
 
             <TextView
@@ -56,7 +64,7 @@
             android:id="@+id/library_filters_rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/content_scrim_dark"
+            android:background="@drawable/shape_coloronbackground_10"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@id/library_toolbar"

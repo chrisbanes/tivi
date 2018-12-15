@@ -18,16 +18,13 @@ package app.tivi.ui.widget
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Outline
-import android.graphics.Path
 import android.util.AttributeSet
 import android.view.View
-import android.view.ViewOutlineProvider
 import app.tivi.R
 import app.tivi.ui.animations.lerp
 import com.google.android.material.shape.CutCornerTreatment
 import com.google.android.material.shape.MaterialShapeDrawable
-import com.google.android.material.shape.ShapePathModel
+import com.google.android.material.shape.ShapeAppearanceModel
 
 class TopLeftCutoutBackgroundView : View {
     private val shapeDrawable = MaterialShapeDrawable()
@@ -42,8 +39,6 @@ class TopLeftCutoutBackgroundView : View {
 
         background = shapeDrawable
         syncCutSize()
-
-        outlineProvider = MaterialShapeDrawableOutlineProvider(shapeDrawable)
     }
 
     var color: Int = Color.MAGENTA
@@ -60,30 +55,17 @@ class TopLeftCutoutBackgroundView : View {
 
     var cutProgress: Float = 1f
         set(value) {
-            if (value != field) {
-                field = value
-                syncCutSize()
-            }
+            field = value
+            syncCutSize()
         }
 
     private fun syncCutSize() {
-        val shapeModel = shapeDrawable.shapedViewModel ?: ShapePathModel()
-        shapeModel.topLeftCorner = CutCornerTreatment(lerp(0f, maxCutSize, cutProgress))
-        shapeDrawable.shapedViewModel = shapeModel
-    }
+        val shapeModel = shapeDrawable.shapeAppearanceModel ?: ShapeAppearanceModel()
+        val newCutSize = lerp(0f, maxCutSize, cutProgress)
 
-    class MaterialShapeDrawableOutlineProvider(
-        private val shapeDrawable: MaterialShapeDrawable
-    ) : ViewOutlineProvider() {
-        private val path = Path()
-
-        override fun getOutline(view: View, outline: Outline) {
-            shapeDrawable.getPathForSize(view.width, view.height, path)
-            if (path.isConvex) {
-                outline.setConvexPath(path)
-            } else {
-                outline.setRect(0, 0, view.width, view.height)
-            }
+        if (newCutSize != shapeModel.topLeftCorner?.cornerSize) {
+            shapeModel.topLeftCorner = CutCornerTreatment(newCutSize)
+            shapeDrawable.shapeAppearanceModel = shapeModel
         }
     }
 }

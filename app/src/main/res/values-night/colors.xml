@@ -15,7 +15,9 @@
   ~ limitations under the License.
   -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="?attr/colorSurface" android:state_checked="true" />
-    <item android:color="@android:color/transparent" />
-</selector>
+<resources>
+    <color name="window_background">#303030</color>
+    <color name="app_bar_background">#212121</color>
+
+    <color name="swipe_away_background">#333333</color>
+</resources>
