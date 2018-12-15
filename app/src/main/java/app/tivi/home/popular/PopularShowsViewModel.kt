@@ -26,7 +26,7 @@ import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
-import kotlinx.coroutines.currentScope
+import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class PopularShowsViewModel @Inject constructor(
@@ -50,11 +50,11 @@ class PopularShowsViewModel @Inject constructor(
         navigator.showShowDetails(item.show, sharedElements)
     }
 
-    override suspend fun callLoadMore() = currentScope {
+    override suspend fun callLoadMore() = coroutineScope {
         launchInteractor(interactor, UpdatePopularShows.ExecuteParams(UpdatePopularShows.Page.NEXT_PAGE)).join()
     }
 
-    override suspend fun callRefresh() = currentScope {
+    override suspend fun callRefresh() = coroutineScope {
         launchInteractor(interactor, UpdatePopularShows.ExecuteParams(UpdatePopularShows.Page.REFRESH)).join()
     }
 }
