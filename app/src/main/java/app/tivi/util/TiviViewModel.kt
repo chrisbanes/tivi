@@ -21,7 +21,6 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.android.Main
 
 /**
  * Simple ViewModel which exposes a [CompositeDisposable] and [Job] which are automatically cleared/stopped when
