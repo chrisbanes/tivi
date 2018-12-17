@@ -21,50 +21,50 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="state"
             type="app.tivi.home.discover.DiscoverViewState" />
     </data>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/summary_swipe_refresh"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/summary_coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:isRefreshing="@{state.isLoading}">
+        android:fitsSystemWindows="true"
+        app:statusBarBackground="@null">
 
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:id="@+id/summary_coordinator"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/summary_appbarlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/navigationBackgroundColor"
+            android:theme="?attr/actionBarTheme"
+            android:transitionGroup="true">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/summary_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+                app:title="@string/discover_title" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <View
+            android:id="@+id/summary_status_scrim"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="?android:attr/colorPrimaryDark"
+            android:elevation="4dp"
+            android:fitsSystemWindows="true"
+            app:layout_behavior="app.tivi.ui.StatusBarHeightBehavior" />
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/summary_swipe_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:statusBarBackground="@null">
-
-            <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/summary_appbarlayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/navigationBackgroundColor"
-                android:theme="?attr/actionBarTheme"
-                android:transitionGroup="true">
-
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/summary_toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    app:layout_scrollFlags="scroll|enterAlways|snap"
-                    app:title="@string/discover_title" />
-
-            </com.google.android.material.appbar.AppBarLayout>
-
-            <View
-                android:id="@+id/summary_status_scrim"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:background="?android:attr/colorPrimaryDark"
-                android:elevation="4dp"
-                android:fitsSystemWindows="true"
-                app:layout_behavior="app.tivi.ui.StatusBarHeightBehavior" />
+            app:isRefreshing="@{state.isLoading}"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <com.airbnb.epoxy.EpoxyRecyclerView
                 android:id="@+id/summary_rv"
@@ -76,11 +76,11 @@
                 android:paddingRight="2dp"
                 android:paddingTop="6dp"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:spanCount="@integer/grid_condensed_span_count"
                 tools:listitem="@layout/view_holder_details_summary" />
 
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </layout>
