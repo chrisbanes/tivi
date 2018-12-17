@@ -42,8 +42,6 @@ import org.threeten.bp.OffsetDateTime
 
 @BindingAdapter("tmdbPosterPath", "tmdbImageUrlProvider", "imageSaturateOnLoad")
 fun loadPoster(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider?, saturateOnLoad: Boolean?) {
-    GlideApp.with(view).clear(view)
-
     if (path != null && urlProvider != null) {
         view.doOnLayout {
             GlideApp.with(view)
@@ -52,6 +50,8 @@ fun loadPoster(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider
                     .thumbnail(GlideApp.with(view).load(urlProvider.getPosterUrl(path, 0)))
                     .into(view)
         }
+    } else {
+        GlideApp.with(view).clear(view)
     }
 }
 
@@ -67,8 +67,6 @@ fun loadBackdrop(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvid
 
 @BindingAdapter("tmdbBackdropPath", "tmdbImageUrlProvider", "imageSaturateOnLoad")
 fun loadBackdrop(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider?, saturateOnLoad: Boolean?) {
-    GlideApp.with(view).clear(view)
-
     if (path != null && urlProvider != null) {
         view.doOnLayout {
             GlideApp.with(view)
@@ -77,6 +75,8 @@ fun loadBackdrop(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvid
                     .thumbnail(GlideApp.with(view).load(urlProvider.getBackdropUrl(path, 0)))
                     .into(view)
         }
+    } else {
+        GlideApp.with(view).clear(view)
     }
 }
 
@@ -114,7 +114,7 @@ fun genreContentDescriptionString(view: TextView, genres: List<Genre>?) {
 
 @BindingAdapter("visibleIfNotNull")
 fun visibleIfNotNull(view: View, target: Any?) {
-    view.visibility = if (target == null) View.GONE else View.VISIBLE
+    view.isVisible = target != null
 }
 
 @BindingAdapter("visible")
