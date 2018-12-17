@@ -24,6 +24,10 @@
         <import type="app.tivi.ui.RoundRectViewOutline" />
 
         <variable
+            name="textPresenter"
+            type="app.tivi.home.library.LibraryTextPresenter" />
+
+        <variable
             name="followedEntry"
             type="app.tivi.data.entities.FollowedShowEntry" />
 
@@ -73,7 +77,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/spacing_normal"
             android:gravity="center_vertical"
-            app:showTitle="@{tiviShow}"
+            android:text="@{textPresenter.showTitle(tiviShow)}"
             android:textAppearance="?attr/textAppearanceHeadline6"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/show_poster"

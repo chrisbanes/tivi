@@ -20,6 +20,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <variable
+            name="textPresenter"
+            type="app.tivi.showdetails.details.ShowDetailsTextPresenter" />
 
         <variable
             name="episodeWithWatches"
@@ -50,12 +53,12 @@
             android:layout_marginEnd="@dimen/spacing_small"
             android:layout_marginStart="@dimen/spacing_normal"
             android:gravity="center_vertical"
+            android:text="@{textPresenter.episodeTitleText(episodeWithWatches.episode)}"
             android:textAppearance="?attr/textAppearanceBody1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/episode_watches_pending"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:seasonTitleText="@{episodeWithWatches.episode}"
             tools:text="A tale of two halves" />
 
         <ImageView

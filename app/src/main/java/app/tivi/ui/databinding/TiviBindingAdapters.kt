@@ -20,25 +20,13 @@ import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.text.buildSpannedString
-import androidx.core.text.inSpans
-import androidx.core.text.italic
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
-import androidx.emoji.text.EmojiCompat
-import app.tivi.R
-import app.tivi.data.entities.Episode
-import app.tivi.data.entities.Genre
-import app.tivi.data.entities.TiviShow
-import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.tmdb.TmdbImageUrlProvider
-import app.tivi.ui.GenreStringer
 import app.tivi.ui.MaxLinesToggleClickListener
 import app.tivi.ui.glide.GlideApp
-import app.tivi.ui.text.textAppearanceSpanForAttribute
 import app.tivi.util.ScrimUtil
-import org.threeten.bp.OffsetDateTime
 
 @BindingAdapter("tmdbPosterPath", "tmdbImageUrlProvider", "imageSaturateOnLoad")
 fun loadPoster(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider?, saturateOnLoad: Boolean?) {
@@ -80,38 +68,6 @@ fun loadBackdrop(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvid
     }
 }
 
-@BindingAdapter("genreString")
-fun genreString(view: TextView, genres: List<Genre>?) {
-    if (genres != null && genres.isNotEmpty()) {
-        val spanned = buildSpannedString {
-            for (i in 0 until genres.size) {
-                val genre = genres[i]
-                inSpans(textAppearanceSpanForAttribute(view.context, R.attr.textAppearanceCaption)) {
-                    append(view.context.getString(GenreStringer.getLabel(genre)))
-                }
-                append("\u00A0") // nbsp
-                append(GenreStringer.getEmoji(genre))
-                if (i < genres.size - 1) append(" \u2022 ")
-            }
-        }
-
-        val emojiCompat = EmojiCompat.get()
-        view.text = if (emojiCompat.loadState == EmojiCompat.LOAD_STATE_SUCCEEDED) {
-            emojiCompat.process(spanned)
-        } else {
-            spanned
-        }
-    }
-}
-
-@BindingAdapter("genreContentDescriptionString")
-fun genreContentDescriptionString(view: TextView, genres: List<Genre>?) {
-    val genreContentDescription = genres?.joinToString(", ") {
-        view.context.getString(GenreStringer.getLabel(it))
-    }
-    view.contentDescription = genreContentDescription
-}
-
 @BindingAdapter("visibleIfNotNull")
 fun visibleIfNotNull(view: View, target: Any?) {
     view.isVisible = target != null
@@ -147,62 +103,4 @@ fun backgroundScrim(view: View, color: Int) {
 @BindingAdapter("foregroundScrim")
 fun foregroundScrim(view: View, color: Int) {
     view.foreground = ScrimUtil.makeCubicGradientScrimDrawable(color, 16, Gravity.BOTTOM)
-}
-
-@BindingAdapter("showTitle")
-fun showTitle(view: TextView, show: TiviShow) {
-    view.text = buildSpannedString {
-        inSpans(textAppearanceSpanForAttribute(view.context, R.attr.textAppearanceHeadline6)) {
-            append(show.title)
-        }
-        show.firstAired?.also { firstAired ->
-            append(" ")
-            inSpans(textAppearanceSpanForAttribute(view.context, R.attr.textAppearanceCaption)) {
-                append("(")
-                append(firstAired.year.toString())
-                append(")")
-            }
-        }
-    }
-}
-
-@BindingAdapter("seasonTitleText")
-fun episodeTitleText(view: TextView, episode: Episode) {
-    val firstAired = episode.firstAired
-    if (firstAired == null || firstAired.isAfter(OffsetDateTime.now())) {
-        view.text = buildSpannedString {
-            episode.title?.also { title ->
-                italic {
-                    append(title)
-                }
-            }
-        }
-    } else {
-        view.text = episode.title
-    }
-}
-
-@BindingAdapter("seasonSummaryText")
-fun seasonSummaryText(view: TextView, season: SeasonWithEpisodesAndWatches) {
-    val toWatch = season.numberAiredToWatch
-    val toAir = season.numberToAir
-    val watched = season.numberWatched
-
-    val text = StringBuilder()
-    if (toWatch > 0) {
-        text.append(view.resources.getString(R.string.season_summary_to_watch, toWatch))
-    }
-    if (toAir > 0) {
-        if (text.isNotEmpty()) {
-            text.append(" \u2022 ")
-        }
-        text.append(view.resources.getString(R.string.season_summary_to_air, toAir))
-    }
-    if (watched > 0) {
-        if (text.isNotEmpty()) {
-            text.append(" \u2022 ")
-        }
-        text.append(view.resources.getString(R.string.season_summary_watched, watched))
-    }
-    view.text = text
 }
