@@ -116,7 +116,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             app:layout_constraintBottom_toTopOf="@id/details_subtitle"
-            app:layout_constraintEnd_toEndOf="@id/details_appbar_background"
+            app:layout_constraintEnd_toStartOf="@id/details_follow_fab"
             app:layout_constraintStart_toEndOf="@id/details_poster"
             app:layout_constraintTop_toBottomOf="@id/details_appbar_background" />
 
