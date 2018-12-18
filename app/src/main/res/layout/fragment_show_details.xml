@@ -20,6 +20,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <variable
+            name="textCreator"
+            type="app.tivi.showdetails.details.ShowDetailsTextCreator" />
 
         <variable
             name="state"
@@ -92,11 +95,11 @@
             android:id="@+id/details_subtitle"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:contentDescription="@{textCreator.genreContentDescription(state.show.invoke().genres)}"
             android:ellipsize="end"
+            android:text="@{textCreator.genreString(state.show.invoke().genres)}"
             android:textAppearance="?attr/textAppearanceCaption"
             android:textColor="#000000"
-            app:genreContentDescriptionString="@{state.show.invoke().genres}"
-            app:genreString="@{state.show.invoke().genres}"
             tools:text="Drama // Fantasy" />
 
         <app.tivi.ui.widget.TintingToolbar

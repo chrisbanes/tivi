@@ -51,6 +51,8 @@ class LibraryFragment : TiviMvRxFragment() {
 
     private lateinit var binding: FragmentLibraryBinding
 
+    private lateinit var textCreator: LibraryTextCreator
+
     private val viewModel: LibraryViewModel by fragmentViewModel()
 
     private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
@@ -88,6 +90,8 @@ class LibraryFragment : TiviMvRxFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         postponeEnterTransition()
+
+        textCreator = LibraryTextCreator(requireContext())
 
         view.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
@@ -210,7 +214,7 @@ class LibraryFragment : TiviMvRxFragment() {
                             listItemSharedElementHelper.createForItem(item, "poster")
                     )
                 }
-            })
+            }, textCreator)
 
     private fun onMenuItemClicked(item: MenuItem) = when (item.itemId) {
         R.id.home_menu_user_avatar -> {

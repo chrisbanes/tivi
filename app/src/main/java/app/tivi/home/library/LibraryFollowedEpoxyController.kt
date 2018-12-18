@@ -26,7 +26,8 @@ import app.tivi.ui.epoxy.TotalSpanOverride
 import com.airbnb.epoxy.paging.PagingEpoxyController
 
 class LibraryFollowedEpoxyController(
-    private val callbacks: Callbacks
+    private val callbacks: Callbacks,
+    private val textCreator: LibraryTextCreator
 ) : PagingEpoxyController<FollowedShowEntryWithShow>() {
     var tmdbImageUrlProvider by EpoxyModelProperty { TmdbImageUrlProvider() }
     var isEmpty by EpoxyModelProperty { false }
@@ -41,6 +42,7 @@ class LibraryFollowedEpoxyController(
             list.forEach { item ->
                 libraryFollowedItem {
                     id(item.generateStableId())
+                    textCreator(textCreator)
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
                     tiviShow(item.show)
                     posterTransitionName("show_${item.show.homepage}")

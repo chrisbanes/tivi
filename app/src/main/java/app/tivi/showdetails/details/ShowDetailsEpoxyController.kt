@@ -32,8 +32,8 @@ import app.tivi.databinding.ViewHolderDetailsSeasonBinding
 import app.tivi.detailsBadge
 import app.tivi.detailsHeader
 import app.tivi.detailsSeason
+import app.tivi.detailsSeasonEpisode
 import app.tivi.detailsSummary
-import app.tivi.seasonEpisodeItem
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.TotalSpanOverride
 import app.tivi.ui.epoxy.carousel
@@ -46,6 +46,7 @@ import com.airbnb.mvrx.Success
 
 class ShowDetailsEpoxyController(
     private val context: Context,
+    private val textCreator: ShowDetailsTextCreator,
     private val callbacks: Callbacks
 ) : TypedEpoxyController<ShowDetailsViewState>() {
     interface Callbacks {
@@ -170,6 +171,7 @@ class ShowDetailsEpoxyController(
                         id("season_${season.season!!.id}")
                         season(season)
                         spanSizeOverride(TotalSpanOverride)
+                        textCreator(textCreator)
                         expanded(expanded)
                         clickListener { _ -> callbacks.toggleSeasonExpanded(season.season!!) }
                         popupMenuListener(SeasonPopupMenuListener(season))
@@ -184,9 +186,10 @@ class ShowDetailsEpoxyController(
 
                     if (expanded) {
                         season.episodes.forEach { episodeWithWatches ->
-                            seasonEpisodeItem {
+                            detailsSeasonEpisode {
                                 val episode = episodeWithWatches.episode!!
                                 id("episode_${episode.id}")
+                                textCreator(textCreator)
                                 episodeWithWatches(episodeWithWatches)
                                 expanded(true)
                                 spanSizeOverride(TotalSpanOverride)
