@@ -29,7 +29,7 @@ import app.tivi.ui.GenreStringer
 import app.tivi.ui.text.textAppearanceSpanForAttribute
 import org.threeten.bp.OffsetDateTime
 
-class ShowDetailsTextPresenter(private val context: Context) {
+class ShowDetailsTextCreator(private val context: Context) {
     fun seasonSummaryText(season: SeasonWithEpisodesAndWatches): CharSequence {
         val toWatch = season.numberAiredToWatch
         val toAir = season.numberToAir

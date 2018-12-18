@@ -21,8 +21,8 @@
 
     <data>
         <variable
-            name="textPresenter"
-            type="app.tivi.showdetails.details.ShowDetailsTextPresenter" />
+            name="textCreator"
+            type="app.tivi.showdetails.details.ShowDetailsTextCreator" />
 
         <variable
             name="season"
@@ -82,7 +82,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_micro"
-            android:text="@{textPresenter.seasonSummaryText(season)}"
+            android:text="@{textCreator.seasonSummaryText(season)}"
             android:textAppearance="?attr/textAppearanceCaption"
             app:layout_constraintEnd_toStartOf="@id/season_menu_button"
             app:layout_constraintStart_toStartOf="@+id/season_title"

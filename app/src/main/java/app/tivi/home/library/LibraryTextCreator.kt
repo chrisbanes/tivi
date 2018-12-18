@@ -23,7 +23,7 @@ import app.tivi.R
 import app.tivi.data.entities.TiviShow
 import app.tivi.ui.text.textAppearanceSpanForAttribute
 
-class LibraryTextPresenter(private val context: Context) {
+class LibraryTextCreator(private val context: Context) {
     fun showTitle(show: TiviShow): CharSequence = buildSpannedString {
         inSpans(textAppearanceSpanForAttribute(context, R.attr.textAppearanceHeadline6)) {
             append(show.title)

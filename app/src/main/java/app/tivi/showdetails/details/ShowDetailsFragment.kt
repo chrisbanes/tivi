@@ -60,7 +60,7 @@ class ShowDetailsFragment : TiviMvRxFragment() {
 
     private lateinit var binding: FragmentShowDetailsBinding
 
-    private lateinit var textPresenter: ShowDetailsTextPresenter
+    private lateinit var textCreator: ShowDetailsTextCreator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,8 +77,8 @@ class ShowDetailsFragment : TiviMvRxFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        textPresenter = ShowDetailsTextPresenter(requireContext())
-        binding.textPresenter = textPresenter
+        textCreator = ShowDetailsTextCreator(requireContext())
+        binding.textCreator = textCreator
 
         binding.detailsMotion.setOnApplyWindowInsetsListener { _, insets ->
             val lp = binding.detailsStatusBarAnchor.layoutParams
@@ -138,7 +138,7 @@ class ShowDetailsFragment : TiviMvRxFragment() {
 
         controller = ShowDetailsEpoxyController(
                 requireContext(),
-                textPresenter,
+                textCreator,
                 object : ShowDetailsEpoxyController.Callbacks {
                     override fun onRelatedShowClicked(show: TiviShow, view: View) {
                         viewModel.onRelatedShowClicked(

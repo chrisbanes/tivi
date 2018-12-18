@@ -46,7 +46,7 @@ import com.airbnb.mvrx.Success
 
 class ShowDetailsEpoxyController(
     private val context: Context,
-    private val textPresenter: ShowDetailsTextPresenter,
+    private val textCreator: ShowDetailsTextCreator,
     private val callbacks: Callbacks
 ) : TypedEpoxyController<ShowDetailsViewState>() {
     interface Callbacks {
@@ -171,7 +171,7 @@ class ShowDetailsEpoxyController(
                         id("season_${season.season!!.id}")
                         season(season)
                         spanSizeOverride(TotalSpanOverride)
-                        textPresenter(textPresenter)
+                        textCreator(textCreator)
                         expanded(expanded)
                         clickListener { _ -> callbacks.toggleSeasonExpanded(season.season!!) }
                         popupMenuListener(SeasonPopupMenuListener(season))
@@ -189,7 +189,7 @@ class ShowDetailsEpoxyController(
                             detailsSeasonEpisode {
                                 val episode = episodeWithWatches.episode!!
                                 id("episode_${episode.id}")
-                                textPresenter(textPresenter)
+                                textCreator(textCreator)
                                 episodeWithWatches(episodeWithWatches)
                                 expanded(true)
                                 spanSizeOverride(TotalSpanOverride)
