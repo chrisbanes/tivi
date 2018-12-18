@@ -223,7 +223,7 @@ dependencies {
     debugImplementation "nl.littlerobots.rxlint:rxlint:${versions.rxlint}"
 
     implementation "com.google.firebase:firebase-core:${versions.firebase}"
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.6'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.7'
 
     testImplementation "junit:junit:${versions.junit}"
     testImplementation "org.robolectric:robolectric:${versions.robolectric}"
