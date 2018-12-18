@@ -17,38 +17,45 @@
 package app.tivi.home.library
 
 import android.view.View
+import app.tivi.PosterGridItemBindingModel_
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.emptyState
-import app.tivi.posterGridItem
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.EpoxyModelProperty
 import app.tivi.ui.epoxy.TotalSpanOverride
-import com.airbnb.epoxy.paging.PagingEpoxyController
+import com.airbnb.epoxy.EpoxyModel
+import com.airbnb.epoxy.paging.PagedListEpoxyController
 
 class LibraryWatchedEpoxyController(
     private val callbacks: Callbacks
-) : PagingEpoxyController<WatchedShowEntryWithShow>() {
+) : PagedListEpoxyController<WatchedShowEntryWithShow>() {
     var tmdbImageUrlProvider by EpoxyModelProperty { TmdbImageUrlProvider() }
     var isEmpty by EpoxyModelProperty { false }
 
-    override fun buildModels(list: List<WatchedShowEntryWithShow>) {
+    override fun addModels(models: List<EpoxyModel<*>>) {
         if (isEmpty) {
             emptyState {
-                id("placeholder")
+                id("empty")
                 spanSizeOverride(TotalSpanOverride)
             }
         } else {
-            list.forEach { item ->
-                posterGridItem {
-                    id(item.generateStableId())
-                    tmdbImageUrlProvider(tmdbImageUrlProvider)
-                    tiviShow(item.show)
-                    transitionName("show_${item.show.homepage}")
-                    clickListener(View.OnClickListener {
-                        callbacks.onItemClicked(item)
-                    })
-                }
+            super.addModels(models)
+        }
+    }
+
+    override fun buildItemModel(currentPosition: Int, item: WatchedShowEntryWithShow?): EpoxyModel<*> {
+        return PosterGridItemBindingModel_().apply {
+            if (item != null) {
+                id(item.generateStableId())
+                tiviShow(item.show)
+                transitionName("show_${item.show.homepage}")
+                clickListener(View.OnClickListener {
+                    callbacks.onItemClicked(item)
+                })
+            } else {
+                id("item_placeholder_$currentPosition")
             }
+            tmdbImageUrlProvider(tmdbImageUrlProvider)
         }
     }
 

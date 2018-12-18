@@ -147,7 +147,7 @@ class LibraryFragment : TiviMvRxFragment() {
                         // PagingEpoxyController does not like being updated before it has a list
                         c.tmdbImageUrlProvider = state.tmdbImageUrlProvider
                         c.isEmpty = state.isEmpty
-                        c.setList(state.watchedShows)
+                        c.submitList(state.watchedShows)
                     }
                     controller = c
                 }

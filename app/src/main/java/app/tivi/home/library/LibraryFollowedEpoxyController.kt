@@ -36,7 +36,7 @@ class LibraryFollowedEpoxyController(
     override fun addModels(models: List<EpoxyModel<*>>) {
         if (isEmpty) {
             emptyState {
-                id("placeholder")
+                id("empty")
                 spanSizeOverride(TotalSpanOverride)
             }
         } else {
