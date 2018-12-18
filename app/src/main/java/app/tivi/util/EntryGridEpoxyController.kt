@@ -24,9 +24,10 @@ import app.tivi.emptyState
 import app.tivi.infiniteLoading
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.TotalSpanOverride
-import com.airbnb.epoxy.paging.PagingEpoxyController
+import com.airbnb.epoxy.EpoxyModel
+import com.airbnb.epoxy.paging.PagedListEpoxyController
 
-open class EntryGridEpoxyController<LI : EntryWithShow<out Entry>> : PagingEpoxyController<LI>() {
+open class EntryGridEpoxyController<LI : EntryWithShow<out Entry>> : PagedListEpoxyController<LI>() {
     internal var callbacks: Callbacks<LI>? = null
 
     var isLoading = false
@@ -49,27 +50,25 @@ open class EntryGridEpoxyController<LI : EntryWithShow<out Entry>> : PagingEpoxy
         fun onItemClicked(item: LI)
     }
 
-    override fun buildModels(items: MutableList<LI?>) {
-        if (!items.isEmpty()) {
-            items.forEachIndexed { index, item ->
-                when {
-                    item != null -> buildItemModel(item)
-                    else -> buildItemPlaceholder(index)
-                }.addTo(this)
-            }
+    override fun addModels(models: List<EpoxyModel<*>>) {
+        if (models.isNotEmpty()) {
+            super.addModels(models)
         } else {
             emptyState {
                 id("item_placeholder")
                 spanSizeOverride(TotalSpanOverride)
             }
         }
-
         if (isLoading) {
             infiniteLoading {
                 id("loading_view")
                 spanSizeOverride(TotalSpanOverride)
             }
         }
+    }
+
+    override fun buildItemModel(currentPosition: Int, item: LI?): EpoxyModel<*> {
+        return if (item != null) buildItemModel(item) else buildItemPlaceholder(currentPosition)
     }
 
     protected open fun buildItemModel(item: LI): PosterGridItemBindingModel_ {
