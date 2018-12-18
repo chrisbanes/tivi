@@ -27,9 +27,7 @@ class ListItemSharedElementHelper(
     private val viewFinder: (View) -> View = { it }
 ) {
     fun createForItem(item: EntryWithShow<out Entry>, transitionName: String): SharedElementHelper {
-        val sharedElementHelper = SharedElementHelper()
-        addSharedElement(sharedElementHelper, item.generateStableId(), transitionName)
-        return sharedElementHelper
+        return createForId(item.generateStableId(), transitionName)
     }
 
     fun createForId(viewHolderId: Long, transitionName: String): SharedElementHelper {
@@ -49,13 +47,9 @@ class ListItemSharedElementHelper(
         return sharedElementHelper
     }
 
-    private fun addSharedElement(
-        sharedElementHelper: SharedElementHelper,
-        viewHolderId: Long,
-        transitionName: String
-    ) {
+    private fun addSharedElement(helper: SharedElementHelper, viewHolderId: Long, transitionName: String) {
         recyclerView.findViewHolderForItemId(viewHolderId)?.also {
-            sharedElementHelper.addSharedElement(viewFinder(it.itemView), transitionName)
+            helper.addSharedElement(viewFinder(it.itemView), transitionName)
         }
     }
 }
