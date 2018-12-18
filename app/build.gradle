@@ -189,8 +189,6 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
     implementation "io.reactivex.rxjava2:rxandroid:2.1.0"
 
-    implementation 'com.cantrowitz:rxbroadcast:2.0.0'
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlin}"
     implementation "org.jetbrains.kotlin:kotlin-reflect:${versions.kotlin}"
 
@@ -233,11 +231,8 @@ dependencies {
     testImplementation "androidx.test:core:${versions.androidx.test_core}"
     testImplementation "androidx.test:runner:${versions.androidx.test_runner}"
     testImplementation "androidx.test:rules:${versions.androidx.test_rules}"
-    testImplementation "androidx.test.ext:junit:${versions.androidx.test_junit}"
 
     testImplementation "androidx.test.espresso:espresso-core:${versions.espresso}"
-
-    testImplementation "androidx.arch.core:core-testing:${versions.androidx.arch_core_testing}"
 }
 
 def getGitHash() {

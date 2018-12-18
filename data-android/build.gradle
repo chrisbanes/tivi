@@ -65,7 +65,7 @@ dependencies {
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
 
     testImplementation "androidx.test:core:${versions.androidx.test_core}"
-    testImplementation "androidx.arch.core:core-testing:2.0.0"
+    testImplementation "androidx.arch.core:core-testing:${versions.androidx.test_arch_core}"
 
     testImplementation "org.threeten:threetenbp:${versions.threetenbp}"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}"
