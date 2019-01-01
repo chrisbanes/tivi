@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,37 +14,37 @@
  * limitations under the License.
  */
 
-package app.tivi.tasks
+package app.tivi.tasks.inject
 
-import androidx.work.Worker
+import app.tivi.actions.ShowTasks
 import app.tivi.appinitializers.AppInitializer
 import app.tivi.appinitializers.ShowTasksInitializer
+import app.tivi.tasks.ShowTasksImpl
+import app.tivi.tasks.SyncAllFollowedShows
+import app.tivi.tasks.SyncShowWatchedProgress
 import dagger.Binds
 import dagger.Module
-import dagger.android.AndroidInjector
 import dagger.multibindings.IntoMap
 import dagger.multibindings.IntoSet
+import javax.inject.Singleton
 
-@Module(
-        includes = [
-            JobsModule::class
-        ],
-        subcomponents = [
-            SyncAllFollowedShowsSubcomponent::class,
-            SyncShowWatchedProgressSubcomponent::class
-        ])
-abstract class JobsCreator {
+@Module
+abstract class TasksModuleBinds {
     @Binds
     @IntoMap
     @WorkerKey(SyncAllFollowedShows::class)
-    abstract fun bindSyncAllFollowedShows(builder: SyncAllFollowedShowsSubcomponent.Builder): AndroidInjector.Factory<out Worker>
+    abstract fun bindSyncAllFollowedShows(factory: SyncAllFollowedShows.Factory): ChildWorkerFactory
 
     @Binds
     @IntoMap
     @WorkerKey(SyncShowWatchedProgress::class)
-    abstract fun bindSyncShowWatchedProgress(job: SyncShowWatchedProgressSubcomponent.Builder): AndroidInjector.Factory<out Worker>
+    abstract fun bindSyncShowWatchedProgress(factory: SyncShowWatchedProgress.Factory): ChildWorkerFactory
 
     @Binds
     @IntoSet
     abstract fun provideShowTasksInitializer(bind: ShowTasksInitializer): AppInitializer
+
+    @Binds
+    @Singleton
+    abstract fun provideTiviActions(bind: ShowTasksImpl): ShowTasks
 }

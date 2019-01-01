@@ -16,20 +16,14 @@
 
 package app.tivi
 
-import androidx.work.Worker
 import app.tivi.appinitializers.AppInitializers
 import app.tivi.inject.DaggerAppComponent
-import app.tivi.tasks.HasWorkerInjector
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
-import dagger.android.DispatchingAndroidInjector
 import javax.inject.Inject
 
-class TiviApplication : DaggerApplication(), HasWorkerInjector {
+class TiviApplication : DaggerApplication() {
     @Inject lateinit var initializers: AppInitializers
-    @Inject lateinit var workerInjector: DispatchingAndroidInjector<Worker>
-
-    override fun workerInjector() = workerInjector
 
     override fun onCreate() {
         super.onCreate()

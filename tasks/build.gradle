@@ -48,4 +48,7 @@ dependencies {
 
     implementation "com.google.dagger:dagger-android:${versions.dagger}"
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+
+    kapt "com.squareup.inject:assisted-inject-processor-dagger2:${versions.assistedinject}"
+    compileOnly "com.squareup.inject:assisted-inject-annotations-dagger2:${versions.assistedinject}"
 }
