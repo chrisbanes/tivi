@@ -16,27 +16,38 @@
 
 package app.tivi.tasks
 
+import android.content.Context
 import androidx.work.Worker
+import androidx.work.WorkerParameters
 import app.tivi.interactors.SyncFollowedShows
 import app.tivi.interactors.launchInteractor
+import app.tivi.tasks.inject.ChildWorkerFactory
+import app.tivi.util.Logger
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.runBlocking
-import javax.inject.Inject
 
-class SyncAllFollowedShows : Worker() {
+class SyncAllFollowedShows @AssistedInject constructor(
+    @Assisted params: WorkerParameters,
+    @Assisted context: Context,
+    private val syncFollowedShows: SyncFollowedShows,
+    private val logger: Logger
+) : Worker(context, params) {
     companion object {
         const val TAG = "sync-all-followed-shows"
         const val NIGHTLY_SYNC_TAG = "night-sync-all-followed-shows"
     }
 
-    @Inject lateinit var syncFollowedShows: SyncFollowedShows
-
     override fun doWork(): Result {
-        AndroidWorkerInjector.inject(this)
+        logger.d("$TAG worker running")
 
         runBlocking {
             GlobalScope.launchInteractor(syncFollowedShows, SyncFollowedShows.ExecuteParams(true)).join()
         }
-        return Result.SUCCESS
+        return Result.success()
     }
+
+    @AssistedInject.Factory
+    interface Factory : ChildWorkerFactory
 }

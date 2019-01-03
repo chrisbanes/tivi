@@ -20,14 +20,12 @@ import android.app.Application
 import app.tivi.AppNavigator
 import app.tivi.TiviAppNavigator
 import app.tivi.TiviApplication
-import app.tivi.actions.ShowTasks
 import app.tivi.appinitializers.AppInitializer
 import app.tivi.appinitializers.EmojiInitializer
 import app.tivi.appinitializers.EpoxyInitializer
 import app.tivi.appinitializers.RxAndroidInitializer
 import app.tivi.appinitializers.ThreeTenBpInitializer
 import app.tivi.appinitializers.TimberInitializer
-import app.tivi.tasks.ShowTasksImpl
 import app.tivi.util.Logger
 import app.tivi.util.TimberLogger
 import dagger.Binds
@@ -38,10 +36,6 @@ import javax.inject.Singleton
 
 @Module
 abstract class AppModuleBinds {
-    @Singleton
-    @Binds
-    abstract fun provideTiviActions(bind: ShowTasksImpl): ShowTasks
-
     @Binds
     abstract fun provideApplication(bind: TiviApplication): Application
 

@@ -21,8 +21,7 @@ import app.tivi.data.DataModule
 import app.tivi.data.DatabaseModule
 import app.tivi.home.HomeBuilder
 import app.tivi.showdetails.ShowDetailsBuilder
-import app.tivi.tasks.AndroidWorkerInjectionModule
-import app.tivi.tasks.JobsCreator
+import app.tivi.tasks.inject.TasksModule
 import app.tivi.tmdb.TmdbModule
 import app.tivi.trakt.TraktAuthModule
 import dagger.Component
@@ -33,10 +32,9 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [
     AndroidSupportInjectionModule::class,
-    AndroidWorkerInjectionModule::class,
     AppModule::class,
+    TasksModule::class,
     AppAssistedModule::class,
-    JobsCreator::class,
     DatabaseModule::class,
     DataModule::class,
     HomeBuilder::class,

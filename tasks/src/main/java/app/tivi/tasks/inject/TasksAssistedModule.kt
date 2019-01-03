@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package app.tivi.tasks
+package app.tivi.tasks.inject
 
-import dagger.Subcomponent
-import dagger.android.AndroidInjector
+import com.squareup.inject.assisted.dagger2.AssistedModule
+import dagger.Module
 
-@Subcomponent
-interface SyncAllFollowedShowsSubcomponent : AndroidInjector<SyncAllFollowedShows> {
-    @Subcomponent.Builder
-    abstract class Builder : AndroidInjector.Builder<SyncAllFollowedShows>()
-}
+@Module(includes = [AssistedInject_TasksAssistedModule::class])
+@AssistedModule
+interface TasksAssistedModule

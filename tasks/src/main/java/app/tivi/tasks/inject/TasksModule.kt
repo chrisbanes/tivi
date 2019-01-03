@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,16 @@
  * limitations under the License.
  */
 
-package app.tivi.tasks
+package app.tivi.tasks.inject
 
-import android.app.Application
-import androidx.work.Configuration
 import androidx.work.WorkManager
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
-@Module
-class JobsModule {
+@Module(includes = [TasksModuleBinds::class, TasksAssistedModule::class])
+class TasksModule {
     @Provides
     @Singleton
-    fun provideWorkManager(application: Application): WorkManager {
-        return try {
-            WorkManager.getInstance()
-        } catch (e: IllegalStateException) {
-            // Yes this is gross. It only really happens from tests so we'll just catch it, initialize and
-            // return the instance
-            WorkManager.initialize(application, Configuration.Builder().build())
-            WorkManager.getInstance()
-        }
-    }
+    fun provideWorkManager(): WorkManager = WorkManager.getInstance()
 }

@@ -37,7 +37,7 @@ buildscript {
                     'test_junit'       : '1.0.0',
                     'test_runner'      : '1.1.0',
                     'test_rules'       : '1.1.0',
-                    'work'             : '1.0.0-alpha09'
+                    'work'             : '1.0.0-beta01'
             ],
             'coroutines'     : '1.0.0',
             'dagger'         : '2.19',

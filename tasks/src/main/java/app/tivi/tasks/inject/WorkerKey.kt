@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.tasks
+package app.tivi.tasks.inject
 
-import dagger.Subcomponent
-import dagger.android.AndroidInjector
+import androidx.work.ListenableWorker
+import dagger.MapKey
+import kotlin.reflect.KClass
 
-@Subcomponent
-interface SyncShowWatchedProgressSubcomponent : AndroidInjector<SyncShowWatchedProgress> {
-    @Subcomponent.Builder
-    abstract class Builder : AndroidInjector.Builder<SyncShowWatchedProgress>()
-}
+@MapKey
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION)
+annotation class WorkerKey(val value: KClass<out ListenableWorker>)
