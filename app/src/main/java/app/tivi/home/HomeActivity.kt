@@ -137,9 +137,8 @@ class HomeActivity : TiviActivity() {
             }
         }
 
-        for (i in 0 until supportFragmentManager.backStackEntryCount) {
-            supportFragmentManager.popBackStack()
-        }
+        supportFragmentManager.popBackStackImmediate(ROOT_FRAGMENT, 0)
+
         supportFragmentManager
                 .beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
