@@ -37,6 +37,6 @@ dependencies {
     implementation "androidx.fragment:fragment:${versions.androidx.fragment}"
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
-    implementation "androidx.arch.core:core-runtime:${versions.androidx.core}"
-    implementation "androidx.arch.core:core-common:${versions.androidx.core}"
+    implementation "androidx.arch.core:core-runtime:${versions.androidx.arch_core}"
+    implementation "androidx.arch.core:core-common:${versions.androidx.arch_core}"
 }

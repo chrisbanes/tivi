@@ -32,9 +32,9 @@ import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.launch
 
 abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
-    private val schedulers: AppRxSchedulers,
+    schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
-    private val dataSource: DataSource.Factory<Int, LI>,
+    dataSource: DataSource.Factory<Int, LI>,
     tmdbManager: TmdbManager,
     private val logger: Logger,
     private val pageSize: Int = 21
@@ -54,10 +54,10 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
                     tmdbManager.imageProviderFlowable,
                     RxPagedListBuilder<Int, LI>(dataSource, pageListConfig)
                             .setBoundaryCallback(object : PagedList.BoundaryCallback<LI>() {
-                                override fun onItemAtEndLoaded(itemAtEnd: LI) {
-                                    onListScrolledToEnd()
-                                }
+                                override fun onItemAtEndLoaded(itemAtEnd: LI) = onListScrolledToEnd()
                             })
+                            .setFetchScheduler(schedulers.io)
+                            .setNotifyScheduler(schedulers.main)
                             .buildFlowable(BackpressureStrategy.LATEST)
                             .distinctUntilChanged(),
                     ::EntryViewState

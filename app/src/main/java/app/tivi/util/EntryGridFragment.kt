@@ -131,13 +131,13 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
         })
 
         viewModel.viewState.observeNotNull(this) {
-            if (controller.pagedList == null) {
+            if (controller.tmdbImageUrlProvider == null) {
                 // First time we've had state, start any postponed transitions
                 scheduleStartPostponedTransitions()
             }
 
             controller.tmdbImageUrlProvider = it.tmdbImageUrlProvider
-            controller.setList(it.liveList)
+            controller.submitList(it.liveList)
 
             when (it.uiResource.status) {
                 Status.SUCCESS -> {
