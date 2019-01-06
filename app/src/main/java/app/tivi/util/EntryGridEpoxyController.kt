@@ -50,9 +50,13 @@ open class EntryGridEpoxyController<LI : EntryWithShow<out Entry>> : PagedListEp
         fun onItemClicked(item: LI)
     }
 
+    @Suppress("UselessCallOnCollection")
     override fun addModels(models: List<EpoxyModel<*>>) {
-        if (models.isNotEmpty()) {
-            super.addModels(models)
+        // Need to do this due to https://github.com/airbnb/epoxy/issues/567
+        val modelsFiltered = models.filterNotNull()
+
+        if (modelsFiltered.isNotEmpty()) {
+            super.addModels(modelsFiltered)
         } else {
             emptyState {
                 id("item_placeholder")

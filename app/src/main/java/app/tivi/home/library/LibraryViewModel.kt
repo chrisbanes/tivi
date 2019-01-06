@@ -50,7 +50,7 @@ import java.util.concurrent.TimeUnit
 
 class LibraryViewModel @AssistedInject constructor(
     @Assisted initialState: LibraryViewState,
-    schedulers: AppRxSchedulers,
+    private val schedulers: AppRxSchedulers,
     private val updateWatchedShows: UpdateWatchedShows,
     private val syncFollowedShows: SyncFollowedShows,
     private val traktManager: TraktManager,
@@ -119,19 +119,15 @@ class LibraryViewModel @AssistedInject constructor(
     }
 
     private fun <T : EntryWithShow<*>> dataSourceToObservable(f: DataSource.Factory<Int, T>): Observable<PagedList<T>> {
-        return RxPagedListBuilder(f, PAGING_CONFIG).setBoundaryCallback(object : PagedList.BoundaryCallback<T>() {
-            override fun onZeroItemsLoaded() {
-                setState { copy(isEmpty = true) }
-            }
-
-            override fun onItemAtEndLoaded(itemAtEnd: T) {
-                setState { copy(isEmpty = false) }
-            }
-
-            override fun onItemAtFrontLoaded(itemAtFront: T) {
-                setState { copy(isEmpty = false) }
-            }
-        }).buildObservable()
+        return RxPagedListBuilder(f, PAGING_CONFIG)
+                .setBoundaryCallback(object : PagedList.BoundaryCallback<T>() {
+                    override fun onZeroItemsLoaded() = setState { copy(isEmpty = true) }
+                    override fun onItemAtEndLoaded(itemAtEnd: T) = setState { copy(isEmpty = false) }
+                    override fun onItemAtFrontLoaded(itemAtFront: T) = setState { copy(isEmpty = false) }
+                })
+                .setFetchScheduler(schedulers.io)
+                .setNotifyScheduler(schedulers.main)
+                .buildObservable()
     }
 
     fun refresh() {
