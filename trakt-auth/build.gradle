@@ -15,6 +15,8 @@
  *
  */
 
+import app.tivi.buildsrc.Libs
+
 apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
@@ -42,13 +44,13 @@ dependencies {
     implementation project(':datasources')
     implementation project(':interactors')
 
-    api "io.reactivex.rxjava2:rxjava:${versions.rx}"
-    implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
+    implementation Libs.RxJava.rxJava
+    implementation Libs.RxJava.rxKotlin
 
-    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+    kapt Libs.Dagger.compiler
 
-    implementation "androidx.core:core-ktx:${versions.androidx.core_ktx}"
+    implementation Libs.AndroidX.browser
+    implementation Libs.AndroidX.coreKtx
 
-    api "net.openid:appauth:0.7.1"
-    implementation "androidx.browser:browser:${versions.androidx.browser}"
+    api Libs.appauth
 }

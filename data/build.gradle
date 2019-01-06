@@ -15,6 +15,8 @@
  *
  */
 
+import app.tivi.buildsrc.Libs
+
 apply plugin: 'kotlin'
 
 dependencies {
@@ -22,11 +24,11 @@ dependencies {
     compile project(":trakt")
     compile project(":tmdb")
 
-    compile "androidx.room:room-common:${versions.androidx.room}"
-    compile "androidx.paging:paging-common:${versions.androidx.paging}"
+    compile Libs.AndroidX.Room.common
+    compile Libs.AndroidX.Paging.common
 
-    compile "io.reactivex.rxjava2:rxjava:${versions.rx}"
-    compile "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
+    compile Libs.RxJava.rxJava
+    compile Libs.RxJava.rxKotlin
 
-    compile "org.threeten:threetenbp:${versions.threetenbp}:no-tzdb"
+    compile Libs.threeTenBpNoTzdb
 }

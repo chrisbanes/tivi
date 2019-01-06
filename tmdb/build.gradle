@@ -15,15 +15,17 @@
  *
  */
 
+import app.tivi.buildsrc.Libs
+
 apply plugin: 'kotlin'
 apply plugin: 'kotlin-kapt'
 
 dependencies {
     implementation project(":base")
 
-    compile "io.reactivex.rxjava2:rxjava:${versions.rx}"
+    compile Libs.RxJava.rxJava
 
-    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+    kapt Libs.Dagger.compiler
 
-    compile "com.uwetrottmann.tmdb2:tmdb-java:1.10.1"
+    compile Libs.tmdbJava
 }
