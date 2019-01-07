@@ -22,7 +22,7 @@ buildscript {
                     'appcompat'        : '1.0.2',
                     'browser'          : '1.0.0',
                     'arch_core'        : '2.0.0',
-                    'constraint_layout': '2.0.0-alpha2',
+                    'constraint_layout': '2.0.0-alpha3',
                     'core_ktx'         : '1.0.1',
                     'fragment'         : '1.0.0',
                     'emoji'            : '1.0.0',

@@ -94,6 +94,9 @@ class ShowDetailsFragment : TiviMvRxFragment() {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 
         binding.detailsMotion.setTransitionListener(object : MotionLayout.TransitionListener {
+            override fun onTransitionStarted(motionLayout: MotionLayout, startId: Int, endId: Int) {
+            }
+
             override fun onTransitionChange(motionLayout: MotionLayout, startId: Int, endId: Int, progress: Float) {
                 if (binding.detailsFollowFab.y < binding.detailsToolbar.y + binding.detailsToolbar.height) {
                     binding.detailsFollowFab.hide()
@@ -104,6 +107,9 @@ class ShowDetailsFragment : TiviMvRxFragment() {
                 binding.detailsAppbarBackground.cutProgress = 1f - progress
 
                 binding.detailsPoster.visibility = View.VISIBLE
+            }
+
+            override fun onTransitionTrigger(motionLayout: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
             }
 
             @SuppressLint("RestrictedApi")
