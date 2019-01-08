@@ -40,6 +40,10 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="@id/details_appbar_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:tmdbBackdropPath="@{state.show.invoke().tmdbBackdropPath}"
             app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider.invoke()}" />
 
@@ -107,6 +111,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor"
             app:navigationIcon="?attr/homeAsUpIndicator" />
 
         <com.airbnb.epoxy.EpoxyRecyclerView
