@@ -98,12 +98,6 @@ class ShowDetailsFragment : TiviMvRxFragment() {
             }
 
             override fun onTransitionChange(motionLayout: MotionLayout, startId: Int, endId: Int, progress: Float) {
-                if (binding.detailsFollowFab.y < binding.detailsToolbar.y + binding.detailsToolbar.height) {
-                    binding.detailsFollowFab.hide()
-                } else {
-                    binding.detailsFollowFab.show()
-                }
-
                 binding.detailsAppbarBackground.cutProgress = 1f - progress
 
                 binding.detailsPoster.visibility = View.VISIBLE
@@ -117,12 +111,10 @@ class ShowDetailsFragment : TiviMvRxFragment() {
                 when (currentId) {
                     R.id.end -> {
                         binding.detailsAppbarBackground.cutProgress = 0f
-                        binding.detailsFollowFab.visibility = View.GONE
                         binding.detailsPoster.visibility = View.GONE
                     }
                     R.id.start -> {
                         binding.detailsAppbarBackground.cutProgress = 1f
-                        binding.detailsFollowFab.visibility = View.VISIBLE
                         binding.detailsPoster.visibility = View.VISIBLE
                     }
                 }
