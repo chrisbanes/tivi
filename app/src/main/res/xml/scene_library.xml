@@ -30,21 +30,23 @@
             app:touchAnchorSide="top" />
 
         <ConstraintSet android:id="@+id/start">
-            <Constraint
-                android:id="@id/library_swipe_refresh"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/library_toolbar" />
+            <Constraint android:id="@id/library_swipe_refresh">
+                <Layout
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/library_toolbar"
+                    app:layout_height="0dp"
+                    app:layout_width="fill_parent" />
+            </Constraint>
         </ConstraintSet>
 
         <ConstraintSet android:id="@+id/end">
-            <Constraint
-                android:id="@id/library_swipe_refresh"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/library_filters_rv" />
+            <Constraint android:id="@id/library_swipe_refresh">
+                <Layout
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/library_filters_rv"
+                    app:layout_height="0dp"
+                    app:layout_width="fill_parent" />
+            </Constraint>
         </ConstraintSet>
 
     </Transition>

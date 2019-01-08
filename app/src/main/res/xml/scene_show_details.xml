@@ -67,21 +67,9 @@
     </Transition>
 
     <ConstraintSet android:id="@+id/start">
-        <Constraint
-            android:id="@id/details_backdrop"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="@id/details_appbar_background"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
-            android:id="@id/details_backdrop_scrim"
-            app:layout_constraintBottom_toBottomOf="@id/details_backdrop"
-            app:layout_constraintEnd_toEndOf="@id/details_backdrop"
-            app:layout_constraintStart_toStartOf="@id/details_backdrop"
-            app:layout_constraintTop_toTopOf="@id/details_backdrop">
+            android:id="@id/details_backdrop_scrim">
 
             <CustomAttribute
                 app:attributeName="background"
@@ -90,11 +78,10 @@
         </Constraint>
 
         <Constraint
-            android:id="@id/details_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:elevation="0dp"
-            app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor">
+            android:id="@id/details_toolbar">
+
+            <Transform
+                app:elevation="0dp" />
 
             <CustomAttribute
                 app:attributeName="iconTint"
@@ -145,21 +132,9 @@
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
-        <Constraint
-            android:id="@id/details_backdrop"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="@id/details_appbar_background"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <Constraint
-            android:id="@id/details_backdrop_scrim"
-            app:layout_constraintBottom_toBottomOf="@id/details_backdrop"
-            app:layout_constraintEnd_toEndOf="@id/details_backdrop"
-            app:layout_constraintStart_toStartOf="@id/details_backdrop"
-            app:layout_constraintTop_toTopOf="@id/details_backdrop">
+            android:id="@id/details_backdrop_scrim">
 
             <CustomAttribute
                 app:attributeName="background"
@@ -168,11 +143,10 @@
         </Constraint>
 
         <Constraint
-            android:id="@id/details_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:elevation="@dimen/details_appbar_elevation"
-            app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor">
+            android:id="@id/details_toolbar">
+
+            <Transform
+                app:elevation="@dimen/details_appbar_elevation" />
 
             <CustomAttribute
                 app:attributeName="iconTint"
