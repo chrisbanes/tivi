@@ -78,17 +78,21 @@ android {
 
     signingConfigs {
         debug {
-            storeFile rootProject.file("signing/app-debug.jks")
-            storePassword "android"
-            keyAlias "androiddebugkey"
-            keyPassword "android"
+            if (rootProject.file("signing/app-debug.jks").exists()) {
+                storeFile rootProject.file("signing/app-debug.jks")
+                storePassword "android"
+                keyAlias "androiddebugkey"
+                keyPassword "android"
+            }
         }
 
         release {
-            storeFile rootProject.file("signing/app-release.jks")
-            storePassword propOrDef('TIVI_RELEASE_KEYSTORE_PWD', "")
-            keyAlias "tivi"
-            keyPassword propOrDef('TIVI_RELEASE_KEY_PWD', "")
+            if (rootProject.file("signing/app-release.jks").exists()) {
+                storeFile rootProject.file("signing/app-release.jks")
+                storePassword propOrDef('TIVI_RELEASE_KEYSTORE_PWD', "")
+                keyAlias "tivi"
+                keyPassword propOrDef('TIVI_RELEASE_KEY_PWD', "")
+            }
         }
     }
 

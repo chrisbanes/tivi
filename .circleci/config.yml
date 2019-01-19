@@ -1,12 +1,5 @@
 version: 2.0
 
-config_gcloud: &config_gcloud
-  docker:
-    - image: google/cloud-sdk:latest
-  working_directory: ~/tivi
-  environment:
-    TERM: dumb
-
 config_android: &config_android
   docker:
     - image: circleci/android:api-28-alpha
