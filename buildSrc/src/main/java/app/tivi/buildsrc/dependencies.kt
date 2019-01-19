@@ -54,7 +54,7 @@ object Libs {
     }
 
     object Kotlin {
-        private const val version = "1.3.20-eap-52"
+        private const val version = "1.3.20-eap-100"
         val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         val reflect = "org.jetbrains.kotlin:kotlin-reflect:$version"
         val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
@@ -127,7 +127,7 @@ object Libs {
     }
 
     object Dagger {
-        private const val version = "2.20"
+        private const val version = "2.21"
         val dagger = "com.google.dagger:dagger:$version"
         val androidSupport = "com.google.dagger:dagger-android-support:$version"
         val compiler = "com.google.dagger:dagger-compiler:$version"
@@ -141,7 +141,7 @@ object Libs {
     }
 
     object Retrofit {
-        private const val version = "2.3.0"
+        private const val version = "2.5.0"
         val retrofit = "com.squareup.retrofit2:retrofit:$version"
         val retrofit_rxjava_adapter = "com.squareup.retrofit2:adapter-rxjava2:$version"
         val gsonConverter = "com.squareup.retrofit2:converter-gson:$version"
