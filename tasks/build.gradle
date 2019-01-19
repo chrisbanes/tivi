@@ -40,7 +40,7 @@ dependencies {
     implementation project(":base-android")
     implementation project(':interactors')
 
-    implementation Libs.AndroidX.Work.runtimeKtx
+    api Libs.AndroidX.Work.runtimeKtx
 
     implementation Libs.Dagger.dagger
     kapt Libs.Dagger.compiler
