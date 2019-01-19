@@ -15,6 +15,8 @@
  *
  */
 
+import app.tivi.buildsrc.Libs
+
 apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
@@ -52,21 +54,23 @@ dependencies {
     implementation project(":base-android")
     implementation project(":data")
 
-    implementation "androidx.room:room-runtime:${versions.androidx.room}"
-    implementation "androidx.room:room-rxjava2:${versions.androidx.room}"
-    kapt "androidx.room:room-compiler:${versions.androidx.room}"
+    implementation Libs.AndroidX.Room.runtime
+    implementation Libs.AndroidX.Room.rxjava2
+    kapt Libs.AndroidX.Room.compiler
 
-    implementation "androidx.paging:paging-runtime:${versions.androidx.paging}"
+    implementation Libs.AndroidX.Paging.runtime
 
-    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+    kapt Libs.Dagger.compiler
 
-    testImplementation "junit:junit:${versions.junit}"
-    testImplementation "org.robolectric:robolectric:${versions.robolectric}"
-    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
+    testImplementation Libs.junit
+    testImplementation Libs.robolectric
+    testImplementation Libs.mockitoKotlin
 
-    testImplementation "androidx.test:core:${versions.androidx.test_core}"
-    testImplementation "androidx.arch.core:core-testing:${versions.androidx.test_arch_core}"
+    testImplementation Libs.AndroidX.archCoreTesting
+    testImplementation Libs.AndroidX.Test.core
 
-    testImplementation "org.threeten:threetenbp:${versions.threetenbp}"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}"
+    // Needed for Tzdb
+    testImplementation Libs.threeTenBp
+    // Needed for Main dispatcher to work
+    testImplementation Libs.Coroutines.android
 }

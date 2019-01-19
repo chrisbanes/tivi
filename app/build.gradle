@@ -15,6 +15,8 @@
  *
  */
 
+import app.tivi.buildsrc.Libs
+
 ext {
     ci = System.getenv("CI") == "true"
 }
@@ -142,10 +144,6 @@ android {
             proguardFiles 'proguard-rules.pro'
         }
     }
-
-    configurations.all {
-        resolutionStrategy.force "com.android.tools.build.jetifier:jetifier-core:1.0.0-beta02"
-    }
 }
 
 dependencies {
@@ -159,80 +157,68 @@ dependencies {
     implementation project(':interactors')
     implementation project(":tasks")
 
-    implementation "androidx.lifecycle:lifecycle-extensions:${versions.androidx.lifecycle}"
-    implementation "androidx.lifecycle:lifecycle-reactivestreams:${versions.androidx.lifecycle}"
-    kapt "androidx.lifecycle:lifecycle-compiler:${versions.androidx.lifecycle}"
+    implementation Libs.AndroidX.Lifecycle.extensions
+    implementation Libs.AndroidX.Lifecycle.reactive
+    kapt Libs.AndroidX.Lifecycle.compiler
 
-    implementation "androidx.room:room-runtime:${versions.androidx.room}"
+    implementation Libs.AndroidX.Paging.runtime
+    implementation Libs.AndroidX.Paging.rxjava2
 
-    implementation "androidx.paging:paging-runtime:${versions.androidx.paging}"
-    implementation "androidx.paging:paging-rxjava2:${versions.androidx.paging}"
+    implementation Libs.AndroidX.appcompat
+    implementation Libs.AndroidX.browser
+    implementation Libs.AndroidX.palette
+    implementation Libs.AndroidX.recyclerview
+    implementation Libs.AndroidX.emoji
+    implementation Libs.AndroidX.preference
+    implementation Libs.AndroidX.constraintlayout
+    implementation Libs.AndroidX.coreKtx
 
-    implementation "androidx.appcompat:appcompat:${versions.androidx.appcompat}"
-    implementation "com.google.android.material:material:${versions.material_design}"
-    implementation "androidx.browser:browser:${versions.androidx.browser}"
-    implementation "androidx.palette:palette:${versions.androidx.palette}"
-    implementation "androidx.recyclerview:recyclerview:${versions.androidx.recyclerview}"
-    implementation "androidx.emoji:emoji:${versions.androidx.emoji}"
+    implementation Libs.Google.material
 
-    implementation "androidx.preference:preference:${versions.androidx.preference}"
+    implementation Libs.threeTenAbp
 
-    implementation "android.arch.work:work-runtime-ktx:${versions.androidx.work}"
+    implementation Libs.RxJava.rxJava
+    implementation Libs.RxJava.rxKotlin
+    implementation Libs.RxJava.rxAndroid
 
-    implementation "androidx.constraintlayout:constraintlayout:${versions.androidx.constraint_layout}"
+    implementation Libs.Kotlin.stdlib
+    implementation Libs.Kotlin.reflect
 
-    implementation "androidx.core:core-ktx:${versions.androidx.core_ktx}"
+    implementation Libs.Coroutines.core
+    implementation Libs.Coroutines.rx2
+    implementation Libs.Coroutines.android
 
-    implementation "com.jakewharton.threetenabp:threetenabp:${versions.threetenabp}"
+    implementation Libs.Dagger.androidSupport
+    kapt Libs.Dagger.compiler
+    kapt Libs.Dagger.androidProcessor
 
-    implementation "io.reactivex.rxjava2:rxjava:${versions.rx}"
-    implementation "io.reactivex.rxjava2:rxkotlin:${versions.rxkotlin}"
-    implementation "io.reactivex.rxjava2:rxandroid:2.1.0"
+    compileOnly Libs.AssistedInject.annotationDagger2
+    kapt Libs.AssistedInject.processorDagger2
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${versions.kotlin}"
-    implementation "org.jetbrains.kotlin:kotlin-reflect:${versions.kotlin}"
+    implementation Libs.Glide.glide
+    kapt Libs.Glide.compiler
 
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${versions.coroutines}"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:${versions.coroutines}"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}"
+    implementation Libs.mvRx
 
-    implementation "org.jetbrains:annotations:16.0.3"
+    implementation Libs.Epoxy.epoxy
+    implementation Libs.Epoxy.paging
+    implementation Libs.Epoxy.dataBinding
+    kapt Libs.Epoxy.processor
 
-    implementation "com.google.dagger:dagger-android:${versions.dagger}"
-    implementation "com.google.dagger:dagger-android-support:${versions.dagger}"
-    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
-    kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
+    implementation Libs.gravitySnapHelper
 
-    compileOnly "com.squareup.inject:assisted-inject-annotations-dagger2:${versions.assistedinject}"
-    kapt "com.squareup.inject:assisted-inject-processor-dagger2:${versions.assistedinject}"
+    debugImplementation Libs.rxLint
 
-    implementation "com.github.bumptech.glide:glide:${versions.glide}"
-    kapt "com.github.bumptech.glide:compiler:${versions.glide}"
+    implementation Libs.Google.firebaseCore
+    implementation Libs.Google.crashlytics
 
-    implementation 'com.airbnb.android:mvrx:0.6.0'
-
-    implementation "com.airbnb.android:epoxy:${versions.epoxy}"
-    implementation "com.airbnb.android:epoxy-paging:${versions.epoxy}"
-    implementation "com.airbnb.android:epoxy-databinding:${versions.epoxy}"
-    kapt "com.airbnb.android:epoxy-processor:${versions.epoxy}"
-
-    implementation 'com.github.rubensousa:gravitysnaphelper:2.0'
-
-    debugImplementation "nl.littlerobots.rxlint:rxlint:${versions.rxlint}"
-
-    implementation "com.google.firebase:firebase-core:${versions.firebase}"
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
-
-    testImplementation "junit:junit:${versions.junit}"
-    testImplementation "org.robolectric:robolectric:${versions.robolectric}"
-
-    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:${versions.mockito_kotlin}"
-
-    testImplementation "androidx.test:core:${versions.androidx.test_core}"
-    testImplementation "androidx.test:runner:${versions.androidx.test_runner}"
-    testImplementation "androidx.test:rules:${versions.androidx.test_rules}"
-
-    testImplementation "androidx.test.espresso:espresso-core:${versions.espresso}"
+    testImplementation Libs.junit
+    testImplementation Libs.robolectric
+    testImplementation Libs.mockitoKotlin
+    testImplementation Libs.AndroidX.Test.core
+    testImplementation Libs.AndroidX.Test.runner
+    testImplementation Libs.AndroidX.Test.rules
+    testImplementation Libs.AndroidX.Test.espressoCore
 }
 
 def getGitHash() {

@@ -15,6 +15,8 @@
  *
  */
 
+import app.tivi.buildsrc.Libs
+
 apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
@@ -25,12 +27,6 @@ android {
 
     defaultConfig {
         minSdkVersion buildConfig.minSdk
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
-            }
-        }
     }
 
     compileOptions {
@@ -44,11 +40,11 @@ dependencies {
     implementation project(":base-android")
     implementation project(':interactors')
 
-    implementation "android.arch.work:work-runtime-ktx:${versions.androidx.work}"
+    api Libs.AndroidX.Work.runtimeKtx
 
-    implementation "com.google.dagger:dagger-android:${versions.dagger}"
-    kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
+    implementation Libs.Dagger.dagger
+    kapt Libs.Dagger.compiler
 
-    kapt "com.squareup.inject:assisted-inject-processor-dagger2:${versions.assistedinject}"
-    compileOnly "com.squareup.inject:assisted-inject-annotations-dagger2:${versions.assistedinject}"
+    compileOnly Libs.AssistedInject.annotationDagger2
+    kapt Libs.AssistedInject.processorDagger2
 }

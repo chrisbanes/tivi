@@ -15,10 +15,13 @@
  *
  */
 
+import app.tivi.buildsrc.Libs
+
 apply plugin: 'kotlin'
 
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
-    implementation "com.squareup.retrofit2:retrofit:${versions.retrofit}"
-    implementation "com.squareup.retrofit2:converter-gson:${versions.retrofit}"
+
+    implementation Libs.Retrofit.retrofit
+    implementation Libs.Retrofit.gsonConverter
 }
