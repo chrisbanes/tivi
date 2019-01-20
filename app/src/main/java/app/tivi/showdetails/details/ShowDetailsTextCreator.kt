@@ -56,7 +56,7 @@ class ShowDetailsTextCreator(private val context: Context) {
 
     fun episodeTitleText(episode: Episode): CharSequence? {
         val firstAired = episode.firstAired
-        val title = episode.title
+        val title = episode.title ?: context.getString(R.string.not_known_title)
 
         if (firstAired == null || firstAired.isAfter(OffsetDateTime.now())) {
             return buildSpannedString {
