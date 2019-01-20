@@ -16,7 +16,6 @@
 
 package app.tivi.showdetails.episodedetails
 
-import androidx.fragment.app.FragmentActivity
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.interactors.AddEpisodeWatch
 import app.tivi.interactors.RemoveEpisodeWatch
@@ -31,6 +30,7 @@ import app.tivi.util.AppRxSchedulers
 import app.tivi.util.TiviMvRxViewModel
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
+import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import org.threeten.bp.OffsetDateTime
@@ -51,10 +51,9 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         fun create(initialState: EpisodeDetailsViewState): EpisodeDetailsViewModel
     }
 
-    companion object : MvRxViewModelFactory<EpisodeDetailsViewState> {
-        @JvmStatic
-        override fun create(activity: FragmentActivity, state: EpisodeDetailsViewState): EpisodeDetailsViewModel {
-            return (activity as ShowDetailsActivity).episodeDetailsViewModelFactory.create(state)
+    companion object : MvRxViewModelFactory<EpisodeDetailsViewModel, EpisodeDetailsViewState> {
+        override fun create(viewModelContext: ViewModelContext, state: EpisodeDetailsViewState): EpisodeDetailsViewModel? {
+            return (viewModelContext.activity as ShowDetailsActivity).episodeDetailsViewModelFactory.create(state)
         }
     }
 

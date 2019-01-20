@@ -16,7 +16,6 @@
 
 package app.tivi.showdetails.details
 
-import androidx.fragment.app.FragmentActivity
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
@@ -38,6 +37,7 @@ import app.tivi.util.AppRxSchedulers
 import app.tivi.util.TiviMvRxViewModel
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
+import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import java.util.concurrent.TimeUnit
@@ -57,10 +57,11 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         fun create(initialState: ShowDetailsViewState): ShowDetailsFragmentViewModel
     }
 
-    companion object : MvRxViewModelFactory<ShowDetailsViewState> {
-        @JvmStatic
-        override fun create(activity: FragmentActivity, state: ShowDetailsViewState): ShowDetailsFragmentViewModel {
-            return (activity as ShowDetailsActivity).showDetailsFragmentViewModelFactory.create(state)
+    companion object : MvRxViewModelFactory<ShowDetailsFragmentViewModel, ShowDetailsViewState> {
+        override fun create(viewModelContext: ViewModelContext, state: ShowDetailsViewState): ShowDetailsFragmentViewModel? {
+            return (viewModelContext.activity as ShowDetailsActivity)
+                    .showDetailsFragmentViewModelFactory
+                    .create(state)
         }
     }
 

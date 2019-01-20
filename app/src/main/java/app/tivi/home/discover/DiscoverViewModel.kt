@@ -16,7 +16,6 @@
 
 package app.tivi.home.discover
 
-import androidx.fragment.app.FragmentActivity
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
 import app.tivi.home.HomeActivity
@@ -35,6 +34,7 @@ import app.tivi.util.Logger
 import app.tivi.util.RxLoadingCounter
 import app.tivi.util.TiviMvRxViewModel
 import com.airbnb.mvrx.MvRxViewModelFactory
+import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import io.reactivex.rxkotlin.plusAssign
@@ -58,10 +58,9 @@ class DiscoverViewModel @AssistedInject constructor(
         fun create(initialState: DiscoverViewState): DiscoverViewModel
     }
 
-    companion object : MvRxViewModelFactory<DiscoverViewState> {
-        @JvmStatic
-        override fun create(activity: FragmentActivity, state: DiscoverViewState): DiscoverViewModel {
-            return (activity as HomeActivity).discoverViewModelFactory.create(state)
+    companion object : MvRxViewModelFactory<DiscoverViewModel, DiscoverViewState> {
+        override fun create(viewModelContext: ViewModelContext, state: DiscoverViewState): DiscoverViewModel? {
+            return (viewModelContext.activity as HomeActivity).discoverViewModelFactory.create(state)
         }
     }
 

@@ -16,7 +16,6 @@
 
 package app.tivi.home.library
 
-import androidx.fragment.app.FragmentActivity
 import androidx.paging.DataSource
 import androidx.paging.PagedList
 import androidx.paging.RxPagedListBuilder
@@ -40,6 +39,7 @@ import app.tivi.util.Logger
 import app.tivi.util.RxLoadingCounter
 import app.tivi.util.TiviMvRxViewModel
 import com.airbnb.mvrx.MvRxViewModelFactory
+import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import io.reactivex.Observable
@@ -63,7 +63,7 @@ class LibraryViewModel @AssistedInject constructor(
         fun create(initialState: LibraryViewState): LibraryViewModel
     }
 
-    companion object : MvRxViewModelFactory<LibraryViewState> {
+    companion object : MvRxViewModelFactory<LibraryViewModel, LibraryViewState> {
         private val DEFAULT_FILTER = FOLLOWED
         private val PAGING_CONFIG = PagedList.Config.Builder()
                 .setPageSize(60)
@@ -71,9 +71,8 @@ class LibraryViewModel @AssistedInject constructor(
                 .setEnablePlaceholders(false)
                 .build()
 
-        @JvmStatic
-        override fun create(activity: FragmentActivity, state: LibraryViewState): LibraryViewModel {
-            return (activity as HomeActivity).libraryViewModelFactory.create(state)
+        override fun create(viewModelContext: ViewModelContext, state: LibraryViewState): LibraryViewModel? {
+            return (viewModelContext.activity as HomeActivity).libraryViewModelFactory.create(state)
         }
     }
 
