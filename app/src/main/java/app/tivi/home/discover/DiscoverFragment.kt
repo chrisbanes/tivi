@@ -45,6 +45,7 @@ import app.tivi.util.GridToGridTransitioner
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
+import javax.inject.Inject
 
 internal class DiscoverFragment : TiviMvRxFragment() {
     private lateinit var binding: FragmentDiscoverBinding
@@ -54,6 +55,7 @@ internal class DiscoverFragment : TiviMvRxFragment() {
     private lateinit var homeNavigator: HomeNavigator
 
     private val viewModel: DiscoverViewModel by fragmentViewModel()
+    @Inject lateinit var discoverViewModelFactory: DiscoverViewModel.Factory
 
     private val controller = DiscoverEpoxyController(object : DiscoverEpoxyController.Callbacks {
         override fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>) {

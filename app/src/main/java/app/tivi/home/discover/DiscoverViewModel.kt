@@ -18,7 +18,6 @@ package app.tivi.home.discover
 
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
-import app.tivi.home.HomeActivity
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeViewModel
 import app.tivi.interactors.SearchShows
@@ -33,6 +32,7 @@ import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.RxLoadingCounter
 import app.tivi.util.TiviMvRxViewModel
+import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
@@ -53,17 +53,6 @@ class DiscoverViewModel @AssistedInject constructor(
     private val updateUserDetails: UpdateUserDetails,
     logger: Logger
 ) : TiviMvRxViewModel<DiscoverViewState>(initialState), HomeViewModel {
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(initialState: DiscoverViewState): DiscoverViewModel
-    }
-
-    companion object : MvRxViewModelFactory<DiscoverViewModel, DiscoverViewState> {
-        override fun create(viewModelContext: ViewModelContext, state: DiscoverViewState): DiscoverViewModel? {
-            return (viewModelContext.activity as HomeActivity).discoverViewModelFactory.create(state)
-        }
-    }
-
     private var searchQuery = BehaviorSubject.create<String>()
     private val loadingState = RxLoadingCounter()
 
@@ -159,4 +148,16 @@ class DiscoverViewModel @AssistedInject constructor(
     }
 
     fun onSettingsClicked(navigator: HomeNavigator) = navigator.showSettings()
+
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(initialState: DiscoverViewState): DiscoverViewModel
+    }
+
+    companion object : MvRxViewModelFactory<DiscoverViewModel, DiscoverViewState> {
+        override fun create(viewModelContext: ViewModelContext, state: DiscoverViewState): DiscoverViewModel? {
+            val fragment: DiscoverFragment = (viewModelContext as FragmentViewModelContext).fragment()
+            return fragment.discoverViewModelFactory.create(state)
+        }
+    }
 }

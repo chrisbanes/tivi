@@ -22,7 +22,6 @@ import androidx.paging.RxPagedListBuilder
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.home.HomeActivity
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeViewModel
 import app.tivi.home.library.LibraryFilter.FOLLOWED
@@ -38,6 +37,7 @@ import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.RxLoadingCounter
 import app.tivi.util.TiviMvRxViewModel
+import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
@@ -58,24 +58,6 @@ class LibraryViewModel @AssistedInject constructor(
     private val updateUserDetails: UpdateUserDetails,
     private val logger: Logger
 ) : TiviMvRxViewModel<LibraryViewState>(initialState), HomeViewModel {
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(initialState: LibraryViewState): LibraryViewModel
-    }
-
-    companion object : MvRxViewModelFactory<LibraryViewModel, LibraryViewState> {
-        private val DEFAULT_FILTER = FOLLOWED
-        private val PAGING_CONFIG = PagedList.Config.Builder()
-                .setPageSize(60)
-                .setPrefetchDistance(20)
-                .setEnablePlaceholders(false)
-                .build()
-
-        override fun create(viewModelContext: ViewModelContext, state: LibraryViewState): LibraryViewModel? {
-            return (viewModelContext.activity as HomeActivity).libraryViewModelFactory.create(state)
-        }
-    }
-
     private val loadingState = RxLoadingCounter()
 
     private var refreshDisposable: Disposable? = null
@@ -183,4 +165,23 @@ class LibraryViewModel @AssistedInject constructor(
     }
 
     fun onSettingsClicked(navigator: HomeNavigator) = navigator.showSettings()
+
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(initialState: LibraryViewState): LibraryViewModel
+    }
+
+    companion object : MvRxViewModelFactory<LibraryViewModel, LibraryViewState> {
+        private val DEFAULT_FILTER = FOLLOWED
+        private val PAGING_CONFIG = PagedList.Config.Builder()
+                .setPageSize(60)
+                .setPrefetchDistance(20)
+                .setEnablePlaceholders(false)
+                .build()
+
+        override fun create(viewModelContext: ViewModelContext, state: LibraryViewState): LibraryViewModel? {
+            val fragment: LibraryFragment = (viewModelContext as FragmentViewModelContext).fragment()
+            return fragment.libraryViewModelFactory.create(state)
+        }
+    }
 }
