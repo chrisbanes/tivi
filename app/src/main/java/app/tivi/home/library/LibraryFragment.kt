@@ -120,16 +120,6 @@ class LibraryFragment : TiviMvRxFragment() {
         }
 
         binding.librarySwipeRefresh.setOnRefreshListener(viewModel::refresh)
-
-        binding.libraryToolbarTitle.setOnClickListener {
-            // TODO this should look at direction
-            val motion = binding.libraryMotion
-            if (motion.progress > 0.5f) {
-                motion.transitionToStart()
-            } else {
-                motion.transitionToEnd()
-            }
-        }
     }
 
     override fun invalidate() {
