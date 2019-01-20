@@ -43,6 +43,7 @@ import app.tivi.util.TiviMvRxFragment
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
+import javax.inject.Inject
 
 class LibraryFragment : TiviMvRxFragment() {
 
@@ -54,6 +55,7 @@ class LibraryFragment : TiviMvRxFragment() {
     private lateinit var textCreator: LibraryTextCreator
 
     private val viewModel: LibraryViewModel by fragmentViewModel()
+    @Inject lateinit var libraryViewModelFactory: LibraryViewModel.Factory
 
     private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
         ListItemSharedElementHelper(binding.libraryRv) { it.findViewById(R.id.show_poster) }

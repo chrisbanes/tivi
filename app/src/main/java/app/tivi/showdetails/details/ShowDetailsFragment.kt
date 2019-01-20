@@ -40,6 +40,7 @@ import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import kotlinx.android.parcel.Parcelize
+import javax.inject.Inject
 
 class ShowDetailsFragment : TiviMvRxFragment() {
     companion object {
@@ -55,6 +56,8 @@ class ShowDetailsFragment : TiviMvRxFragment() {
     data class Arguments(val showId: Long) : Parcelable
 
     private val viewModel: ShowDetailsFragmentViewModel by fragmentViewModel()
+    @Inject lateinit var showDetailsViewModelFactory: ShowDetailsFragmentViewModel.Factory
+
     private lateinit var controller: ShowDetailsEpoxyController
     private lateinit var showDetailsNavigator: ShowDetailsNavigator
 

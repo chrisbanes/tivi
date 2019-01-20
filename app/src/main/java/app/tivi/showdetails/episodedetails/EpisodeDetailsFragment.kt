@@ -61,6 +61,8 @@ class EpisodeDetailsFragment : TiviMvRxBottomSheetFragment() {
     @Inject lateinit var dateFormatter: TiviDateFormatter
 
     private val viewModel: EpisodeDetailsViewModel by fragmentViewModel()
+    @Inject lateinit var episodeDetailsViewModelFactory: EpisodeDetailsViewModel.Factory
+
     private lateinit var controller: EpisodeDetailsEpoxyController
 
     private lateinit var showDetailsNavigator: ShowDetailsNavigator

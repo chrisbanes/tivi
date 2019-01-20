@@ -16,7 +16,6 @@
 
 package app.tivi.showdetails.episodedetails
 
-import androidx.fragment.app.FragmentActivity
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.interactors.AddEpisodeWatch
 import app.tivi.interactors.RemoveEpisodeWatch
@@ -24,13 +23,14 @@ import app.tivi.interactors.RemoveEpisodeWatches
 import app.tivi.interactors.UpdateEpisodeDetails
 import app.tivi.interactors.UpdateEpisodeWatches
 import app.tivi.interactors.launchInteractor
-import app.tivi.showdetails.ShowDetailsActivity
 import app.tivi.showdetails.episodedetails.EpisodeDetailsViewState.Action
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.TiviMvRxViewModel
+import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
+import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import org.threeten.bp.OffsetDateTime
@@ -46,18 +46,6 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     private val removeEpisodeWatch: RemoveEpisodeWatch,
     tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(initialState: EpisodeDetailsViewState): EpisodeDetailsViewModel
-    }
-
-    companion object : MvRxViewModelFactory<EpisodeDetailsViewState> {
-        @JvmStatic
-        override fun create(activity: FragmentActivity, state: EpisodeDetailsViewState): EpisodeDetailsViewModel {
-            return (activity as ShowDetailsActivity).episodeDetailsViewModelFactory.create(state)
-        }
-    }
-
     init {
         updateEpisodeDetails.observe()
                 .toObservable()
@@ -107,6 +95,18 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     fun markUnwatched() {
         withState {
             scope.launchInteractor(removeEpisodeWatches, RemoveEpisodeWatches.Params(it.episodeId))
+        }
+    }
+
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(initialState: EpisodeDetailsViewState): EpisodeDetailsViewModel
+    }
+
+    companion object : MvRxViewModelFactory<EpisodeDetailsViewModel, EpisodeDetailsViewState> {
+        override fun create(viewModelContext: ViewModelContext, state: EpisodeDetailsViewState): EpisodeDetailsViewModel? {
+            val fragment: EpisodeDetailsFragment = (viewModelContext as FragmentViewModelContext).fragment()
+            return fragment.episodeDetailsViewModelFactory.create(state)
         }
     }
 }
