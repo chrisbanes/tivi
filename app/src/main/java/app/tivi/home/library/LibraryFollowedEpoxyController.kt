@@ -40,7 +40,8 @@ class LibraryFollowedEpoxyController(
                 spanSizeOverride(TotalSpanOverride)
             }
         } else {
-            super.addModels(models)
+            // Need to use filterNotNull() due to https://github.com/airbnb/epoxy/issues/567
+            super.addModels(models.filterNotNull())
         }
     }
 
@@ -56,9 +57,9 @@ class LibraryFollowedEpoxyController(
             } else {
                 id("item_placeholder_$currentPosition")
             }
+            followedEntry(item?.entry)
             textCreator(textCreator)
             tmdbImageUrlProvider(tmdbImageUrlProvider)
-            spanSizeOverride(TotalSpanOverride)
         }
     }
 

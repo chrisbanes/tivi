@@ -25,9 +25,8 @@ import app.tivi.ui.text.textAppearanceSpanForAttribute
 
 class LibraryTextCreator(private val context: Context) {
     fun showTitle(show: TiviShow): CharSequence = buildSpannedString {
-        inSpans(textAppearanceSpanForAttribute(context, R.attr.textAppearanceHeadline6)) {
-            append(show.title)
-        }
+        append(show.title)
+
         show.firstAired?.also { firstAired ->
             append(" ")
             inSpans(textAppearanceSpanForAttribute(context, R.attr.textAppearanceCaption)) {

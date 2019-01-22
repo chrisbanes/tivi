@@ -24,7 +24,6 @@ import android.view.ViewGroup
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.GridLayoutManager
 import app.tivi.R
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
@@ -39,6 +38,7 @@ import app.tivi.ui.epoxy.EmptyEpoxyController
 import app.tivi.ui.glide.GlideApp
 import app.tivi.ui.glide.asGlideTarget
 import app.tivi.util.GridToGridTransitioner
+import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.mvrx.fragmentViewModel
@@ -48,7 +48,6 @@ import javax.inject.Inject
 class LibraryFragment : TiviMvRxFragment() {
 
     private lateinit var homeNavigator: HomeNavigator
-    private lateinit var gridLayoutManager: GridLayoutManager
 
     private lateinit var binding: FragmentLibraryBinding
 
@@ -56,6 +55,8 @@ class LibraryFragment : TiviMvRxFragment() {
 
     private val viewModel: LibraryViewModel by fragmentViewModel()
     @Inject lateinit var libraryViewModelFactory: LibraryViewModel.Factory
+
+    @Inject lateinit var dateFormatter: TiviDateFormatter
 
     private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
         ListItemSharedElementHelper(binding.libraryRv) { it.findViewById(R.id.show_poster) }
@@ -105,9 +106,6 @@ class LibraryFragment : TiviMvRxFragment() {
             insets
         }
 
-        // Setup span and columns
-        gridLayoutManager = binding.libraryRv.layoutManager as GridLayoutManager
-
         binding.libraryRv.apply {
             addItemDecoration(SpacingItemDecorator(paddingLeft))
         }
@@ -120,16 +118,6 @@ class LibraryFragment : TiviMvRxFragment() {
         }
 
         binding.librarySwipeRefresh.setOnRefreshListener(viewModel::refresh)
-
-        binding.libraryToolbarTitle.setOnClickListener {
-            // TODO this should look at direction
-            val motion = binding.libraryMotion
-            if (motion.progress > 0.5f) {
-                motion.transitionToStart()
-            } else {
-                motion.transitionToEnd()
-            }
-        }
     }
 
     override fun invalidate() {
@@ -207,7 +195,7 @@ class LibraryFragment : TiviMvRxFragment() {
                             listItemSharedElementHelper.createForItem(item, "poster")
                     )
                 }
-            })
+            }, textCreator, dateFormatter)
 
     private fun createFollowedController() = LibraryFollowedEpoxyController(
             object : LibraryFollowedEpoxyController.Callbacks {

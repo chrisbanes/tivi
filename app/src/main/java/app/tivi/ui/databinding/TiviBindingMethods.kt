@@ -31,6 +31,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                 type = SwipeRefreshLayout::class,
                 attribute = "isRefreshing",
                 method = "setRefreshing"
+        ),
+        BindingMethod(
+                type = View::class,
+                attribute = "clipToOutline",
+                method = "setClipToOutline"
         )
 )
 class TiviBindingMethods

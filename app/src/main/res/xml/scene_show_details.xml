@@ -62,6 +62,15 @@
                 app:framePosition="75"
                 app:target="@id/details_subtitle" />
 
+            <!-- We only want to transition to opaque over the last 40% -->
+            <KeyAttribute
+                app:framePosition="60"
+                app:target="@id/details_status_bar_anchor">
+                <CustomAttribute
+                    app:attributeName="backgroundColor"
+                    app:customColorValue="@color/status_bar_scrim_translucent" />
+            </KeyAttribute>
+
             <!-- This will call FloatingActionButton.show() when we pass 60% and below -->
             <KeyTrigger
                 app:framePosition="60"
@@ -145,6 +154,13 @@
             <PropertySet app:visibility="visible" />
         </Constraint>
 
+        <Constraint
+            android:id="@id/details_status_bar_anchor">
+            <CustomAttribute
+                app:attributeName="backgroundColor"
+                app:customColorValue="@color/status_bar_scrim_translucent" />
+        </Constraint>
+
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
@@ -210,6 +226,13 @@
             app:layout_constraintDimensionRatio="h,1:1.5"
             app:layout_constraintStart_toStartOf="@id/details_title"
             app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor" />
+
+        <Constraint
+            android:id="@id/details_status_bar_anchor">
+            <CustomAttribute
+                app:attributeName="backgroundColor"
+                app:customColorValue="#000000" />
+        </Constraint>
 
         <Constraint android:id="@id/details_follow_fab">
             <PropertySet app:visibility="invisible" />

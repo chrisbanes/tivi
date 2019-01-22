@@ -28,12 +28,13 @@ import io.reactivex.Flowable
 @Dao
 abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryWithShow> {
     companion object {
-        const val ENTRY_QUERY_ORDER_LAST_WATCHED = "SELECT fs.* FROM myshows_entries as fs" +
+        const val ENTRY_QUERY_ORDER_LAST_WATCHED = "SELECT fs.*, MAX(datetime(ew.watched_at)) AS watched_at" +
+                " FROM myshows_entries as fs" +
                 " INNER JOIN seasons AS s ON fs.show_id = s.show_id" +
                 " INNER JOIN episodes AS eps ON eps.season_id = s.id" +
                 " INNER JOIN episode_watch_entries as ew ON ew.episode_id = eps.id" +
                 " GROUP BY fs.id" +
-                " ORDER BY datetime(ew.watched_at) DESC"
+                " ORDER BY watched_at DESC"
 
         const val ENTRY_QUERY_ORDER_ADDED = "SELECT * FROM myshows_entries ORDER BY datetime(followed_at) DESC"
     }
@@ -46,7 +47,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     abstract override fun entriesFlowable(count: Int, offset: Int): Flowable<List<FollowedShowEntryWithShow>>
 
     @Transaction
-    @Query(ENTRY_QUERY_ORDER_ADDED)
+    @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
     abstract override fun entriesDataSource(): DataSource.Factory<Int, FollowedShowEntryWithShow>
 
     @Query("DELETE FROM myshows_entries")

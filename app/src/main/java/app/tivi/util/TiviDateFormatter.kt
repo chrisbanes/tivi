@@ -30,13 +30,17 @@ class TiviDateFormatter @Inject constructor(
     @MediumDate private val mediumDateFormatter: DateTimeFormatter,
     @MediumDateTime private val mediumDateTimeFormatter: DateTimeFormatter
 ) {
-    fun formatShortDate(temporalAmount: TemporalAccessor) = shortDateFormatter.format(temporalAmount)
+    fun formatShortDate(temporalAmount: TemporalAccessor): String = shortDateFormatter.format(temporalAmount)
 
-    fun formatMediumDate(temporalAmount: TemporalAccessor) = mediumDateFormatter.format(temporalAmount)
+    fun formatMediumDate(temporalAmount: TemporalAccessor): String = mediumDateFormatter.format(temporalAmount)
 
-    fun formatMediumDateTime(temporalAmount: TemporalAccessor) = mediumDateTimeFormatter.format(temporalAmount)
+    fun formatMediumDateTime(temporalAmount: TemporalAccessor): String = mediumDateTimeFormatter.format(temporalAmount)
 
-    fun formatShortRelativeTime(dateTime: OffsetDateTime): CharSequence {
+    fun formatShortRelativeTime(dateTime: OffsetDateTime?): CharSequence? {
+        if (dateTime == null) {
+            return null
+        }
+
         val now = OffsetDateTime.now()
 
         return if (dateTime.isBefore(now)) {
