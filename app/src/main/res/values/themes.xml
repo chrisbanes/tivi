@@ -49,6 +49,10 @@
         <item name="textAppearanceLargePopupMenu">?attr/textAppearanceBody1</item>
         <item name="textAppearanceSmallPopupMenu">?attr/textAppearanceBody2</item>
         <item name="textAppearancePopupMenuHeader">@style/TextAppearance.Tivi.PopupMenu.Header</item>
+
+        <!-- Remove this once MDC does this automatically -->
+        <item name="dialogTheme">@style/ThemeOverlay.MaterialComponents.Dialog</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.MaterialComponents.BottomSheetDialog</item>
     </style>
 
     <style name="Theme.Tivi.Immerse">
@@ -61,5 +65,12 @@
     </style>
 
     <style name="ThemeOverlay.Tivi.ActionBar" parent="ThemeOverlay.MaterialComponents.ActionBar" />
+
+    <!-- Remove this once MDC adds this -->
+    <style name="ThemeOverlay.MaterialComponents.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/Animation.MaterialComponents.BottomSheetDialog</item>
+        <item name="bottomSheetStyle">@style/Widget.Design.BottomSheet.Modal</item>
+    </style>
 
 </resources>
