@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2018 Google, Inc.
+  ~ Copyright 2019 Google, Inc.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@
             type="app.tivi.home.library.LibraryTextCreator" />
 
         <variable
-            name="followedEntry"
-            type="app.tivi.data.entities.FollowedShowEntry" />
+            name="watchedEntry"
+            type="app.tivi.data.entities.WatchedShowEntry" />
 
         <variable
             name="tiviShow"

@@ -59,7 +59,6 @@ class LibraryFollowedEpoxyController(
             }
             textCreator(textCreator)
             tmdbImageUrlProvider(tmdbImageUrlProvider)
-            spanSizeOverride(TotalSpanOverride)
         }
     }
 

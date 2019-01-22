@@ -24,7 +24,6 @@ import android.view.ViewGroup
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.GridLayoutManager
 import app.tivi.R
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
@@ -48,7 +47,6 @@ import javax.inject.Inject
 class LibraryFragment : TiviMvRxFragment() {
 
     private lateinit var homeNavigator: HomeNavigator
-    private lateinit var gridLayoutManager: GridLayoutManager
 
     private lateinit var binding: FragmentLibraryBinding
 
@@ -104,9 +102,6 @@ class LibraryFragment : TiviMvRxFragment() {
             // Just return insets
             insets
         }
-
-        // Setup span and columns
-        gridLayoutManager = binding.libraryRv.layoutManager as GridLayoutManager
 
         binding.libraryRv.apply {
             addItemDecoration(SpacingItemDecorator(paddingLeft))
@@ -197,7 +192,7 @@ class LibraryFragment : TiviMvRxFragment() {
                             listItemSharedElementHelper.createForItem(item, "poster")
                     )
                 }
-            })
+            }, textCreator)
 
     private fun createFollowedController() = LibraryFollowedEpoxyController(
             object : LibraryFollowedEpoxyController.Callbacks {

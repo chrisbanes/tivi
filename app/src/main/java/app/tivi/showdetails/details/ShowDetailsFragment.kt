@@ -124,11 +124,6 @@ class ShowDetailsFragment : TiviMvRxFragment() {
             }
         })
 
-        binding.detailsPoster.apply {
-            clipToOutline = true
-            outlineProvider = RoundRectViewOutline
-        }
-
         binding.detailsFollowFab.setOnClickListener {
             viewModel.onToggleMyShowsButtonClicked()
         }

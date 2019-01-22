@@ -17,7 +17,7 @@
 package app.tivi.home.library
 
 import android.view.View
-import app.tivi.PosterGridItemBindingModel_
+import app.tivi.LibraryWatchedItemBindingModel_
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.emptyState
 import app.tivi.tmdb.TmdbImageUrlProvider
@@ -27,7 +27,8 @@ import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
 
 class LibraryWatchedEpoxyController(
-    private val callbacks: Callbacks
+    private val callbacks: Callbacks,
+    private val textCreator: LibraryTextCreator
 ) : PagedListEpoxyController<WatchedShowEntryWithShow>() {
     var tmdbImageUrlProvider by EpoxyModelProperty { TmdbImageUrlProvider() }
     var isEmpty by EpoxyModelProperty { false }
@@ -45,17 +46,18 @@ class LibraryWatchedEpoxyController(
     }
 
     override fun buildItemModel(currentPosition: Int, item: WatchedShowEntryWithShow?): EpoxyModel<*> {
-        return PosterGridItemBindingModel_().apply {
+        return LibraryWatchedItemBindingModel_().apply {
             if (item != null) {
                 id(item.generateStableId())
                 tiviShow(item.show)
-                transitionName("show_${item.show.homepage}")
+                posterTransitionName("show_${item.show.homepage}")
                 clickListener(View.OnClickListener {
                     callbacks.onItemClicked(item)
                 })
             } else {
                 id("item_placeholder_$currentPosition")
             }
+            textCreator(textCreator)
             tmdbImageUrlProvider(tmdbImageUrlProvider)
         }
     }
