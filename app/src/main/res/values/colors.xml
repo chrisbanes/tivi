@@ -34,4 +34,6 @@
 
     <color name="swipe_away_background">#DEDEDE</color>
 
+    <color name="status_bar_scrim_translucent">#26000000</color>
+
 </resources>
