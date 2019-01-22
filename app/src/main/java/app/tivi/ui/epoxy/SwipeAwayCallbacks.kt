@@ -21,6 +21,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.View
 import androidx.annotation.ColorInt
 import app.tivi.ui.animations.lerp
@@ -53,26 +54,25 @@ abstract class SwipeAwayCallbacks<T : EpoxyModel<*>>(
         const val MIN_ICON_SCALE = 0.8f
     }
 
-    override fun onSwipeStarted(
-        model: T,
-        itemView: View?,
-        adapterPosition: Int
-    ) {
-        super.onSwipeStarted(model, itemView, adapterPosition)
-    }
-
     override fun onSwipeProgressChanged(
         model: T,
         itemView: View,
         swipeProgress: Float,
         canvas: Canvas
     ) {
+        Log.d("SwipeAwayCallbacks", "progress: $swipeProgress")
         rect.set(itemView.left.toFloat(), itemView.top.toFloat(), itemView.right.toFloat(), itemView.bottom.toFloat())
         rect.offset(itemView.translationX, itemView.translationY)
+
+        if (rect.left == 0f || rect.right == canvas.width.toFloat()) {
+            return
+        }
 
         var radius = 0f
 
         val save = canvas.save()
+
+
 
         if (rect.left > 0) {
             // Swiping left-to-right
