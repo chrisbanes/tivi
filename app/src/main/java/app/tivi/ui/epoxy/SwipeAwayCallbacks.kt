@@ -72,8 +72,6 @@ abstract class SwipeAwayCallbacks<T : EpoxyModel<*>>(
 
         val save = canvas.save()
 
-
-
         if (rect.left > 0) {
             // Swiping left-to-right
             rect.right = rect.left
