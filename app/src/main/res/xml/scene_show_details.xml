@@ -62,9 +62,9 @@
                 app:framePosition="75"
                 app:target="@id/details_subtitle" />
 
-            <!-- We only want to transition to opaque over the last 20% -->
+            <!-- We only want to transition to opaque over the last 40% -->
             <KeyAttribute
-                app:framePosition="80"
+                app:framePosition="60"
                 app:target="@id/details_status_bar_anchor">
                 <CustomAttribute
                     app:attributeName="backgroundColor"
