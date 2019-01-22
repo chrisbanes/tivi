@@ -86,12 +86,13 @@
             app:backgroundColor="?android:attr/colorBackground"
             app:topLeftCutSize="@dimen/details_corner_cutout" />
 
-        <app.tivi.ui.widget.BaselineGridTextView
+        <TextView
             android:id="@+id/details_title"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:ellipsize="end"
             android:text="@{state.show.invoke().title}"
+            android:lineSpacingMultiplier="0.85"
             android:textAppearance="?attr/textAppearanceHeadline6"
             tools:text="@sample/shows.txt" />
 
