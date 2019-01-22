@@ -34,7 +34,6 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.databinding.FragmentShowDetailsBinding
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
-import app.tivi.ui.RoundRectViewOutline
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
