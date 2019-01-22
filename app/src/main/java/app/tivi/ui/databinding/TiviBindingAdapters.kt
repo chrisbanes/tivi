@@ -88,11 +88,13 @@ fun imageViewSrcRes(view: ImageView, drawableRes: Int) {
 }
 
 @BindingAdapter("maxLinesToggle")
-fun maxLinesClickListener(view: TextView, collapsedMaxLines: Int) {
-    // Default to collapsed
-    view.maxLines = collapsedMaxLines
-    // Now set click listener
-    view.setOnClickListener(MaxLinesToggleClickListener(collapsedMaxLines))
+fun maxLinesClickListener(view: TextView, oldCollapsedMaxLines: Int, newCollapsedMaxLines: Int) {
+    if (oldCollapsedMaxLines != newCollapsedMaxLines) {
+        // Default to collapsed
+        view.maxLines = newCollapsedMaxLines
+        // Now set click listener
+        view.setOnClickListener(MaxLinesToggleClickListener(newCollapsedMaxLines))
+    }
 }
 
 @BindingAdapter("backgroundScrim")
