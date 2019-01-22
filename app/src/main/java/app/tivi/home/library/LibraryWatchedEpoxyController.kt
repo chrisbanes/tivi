@@ -23,12 +23,14 @@ import app.tivi.emptyState
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.EpoxyModelProperty
 import app.tivi.ui.epoxy.TotalSpanOverride
+import app.tivi.util.TiviDateFormatter
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
 
 class LibraryWatchedEpoxyController(
     private val callbacks: Callbacks,
-    private val textCreator: LibraryTextCreator
+    private val textCreator: LibraryTextCreator,
+    private val dateFormatter: TiviDateFormatter
 ) : PagedListEpoxyController<WatchedShowEntryWithShow>() {
     var tmdbImageUrlProvider by EpoxyModelProperty { TmdbImageUrlProvider() }
     var isEmpty by EpoxyModelProperty { false }
@@ -57,6 +59,8 @@ class LibraryWatchedEpoxyController(
             } else {
                 id("item_placeholder_$currentPosition")
             }
+            watchedEntry(item?.entry)
+            dateFormatter(dateFormatter)
             textCreator(textCreator)
             tmdbImageUrlProvider(tmdbImageUrlProvider)
         }

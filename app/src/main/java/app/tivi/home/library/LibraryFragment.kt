@@ -38,6 +38,7 @@ import app.tivi.ui.epoxy.EmptyEpoxyController
 import app.tivi.ui.glide.GlideApp
 import app.tivi.ui.glide.asGlideTarget
 import app.tivi.util.GridToGridTransitioner
+import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.mvrx.fragmentViewModel
@@ -54,6 +55,8 @@ class LibraryFragment : TiviMvRxFragment() {
 
     private val viewModel: LibraryViewModel by fragmentViewModel()
     @Inject lateinit var libraryViewModelFactory: LibraryViewModel.Factory
+
+    @Inject lateinit var dateFormatter: TiviDateFormatter
 
     private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
         ListItemSharedElementHelper(binding.libraryRv) { it.findViewById(R.id.show_poster) }
@@ -192,7 +195,7 @@ class LibraryFragment : TiviMvRxFragment() {
                             listItemSharedElementHelper.createForItem(item, "poster")
                     )
                 }
-            }, textCreator)
+            }, textCreator, dateFormatter)
 
     private fun createFollowedController() = LibraryFollowedEpoxyController(
             object : LibraryFollowedEpoxyController.Callbacks {

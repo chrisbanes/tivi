@@ -45,6 +45,10 @@
         <variable
             name="clickListener"
             type="android.view.View.OnClickListener" />
+
+        <variable
+            name="dateFormatter"
+            type="app.tivi.util.TiviDateFormatter" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -72,7 +76,7 @@
             app:tmdbPosterPath="@{tiviShow.tmdbPosterPath}" />
 
         <TextView
-            android:id="@+id/header_title"
+            android:id="@+id/show_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/spacing_normal"
@@ -89,6 +93,26 @@
             android:layout_height="1dp"
             android:background="?android:attr/listDivider"
             app:layout_constraintBottom_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/show_last_watched"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/library_last_watched"
+            android:textAppearance="?attr/textAppearanceCaption"
+            app:layout_constraintStart_toStartOf="@+id/show_title"
+            app:layout_constraintTop_toBottomOf="@+id/show_title" />
+
+        <TextView
+            android:id="@+id/show_last_watched_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="@{dateFormatter.formatShortRelativeTime(watchedEntry.lastWatched)}"
+            android:textAppearance="?attr/textAppearanceCaption"
+            app:layout_constraintStart_toEndOf="@+id/show_last_watched"
+            app:layout_constraintTop_toTopOf="@+id/show_last_watched" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

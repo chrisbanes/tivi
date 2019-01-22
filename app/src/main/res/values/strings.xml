@@ -86,4 +86,6 @@
 
     <string name="not_known_title">TBD</string>
 
+    <string name="library_last_watched">Last watched:</string>
+
 </resources>

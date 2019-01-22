@@ -57,6 +57,7 @@ class LibraryFollowedEpoxyController(
             } else {
                 id("item_placeholder_$currentPosition")
             }
+            followedEntry(item?.entry)
             textCreator(textCreator)
             tmdbImageUrlProvider(tmdbImageUrlProvider)
         }
