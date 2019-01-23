@@ -139,3 +139,7 @@
 # !! Tweak this once https://issuetracker.google.com/issues/112386012 is fixed !!
 # Need to keep class name due to kotlin-reflect
 -keep class * implements com.airbnb.mvrx.MvRxState { *; }
+
+# Need to keep MvRxViewModelFactory companion classes for MvRx
+# See https://github.com/airbnb/MvRx/issues/185
+-keepnames class * implements com.airbnb.mvrx.MvRxViewModelFactory
