@@ -26,7 +26,8 @@ import org.threeten.bp.OffsetDateTime
 @Entity(
         tableName = "episodes",
         indices = [
-            Index(value = ["season_id", "number"], unique = true)
+            Index(value = ["trakt_id"], unique = true),
+            Index(value = ["season_id"])
         ],
         foreignKeys = [
             ForeignKey(entity = Season::class,

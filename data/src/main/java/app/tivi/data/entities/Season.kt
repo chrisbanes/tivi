@@ -24,7 +24,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "seasons",
         indices = [
-            Index(value = ["show_id", "number"], unique = true)
+            Index(value = ["trakt_id"], unique = true),
+            Index(value = ["show_id"])
         ],
         foreignKeys = [
             ForeignKey(entity = TiviShow::class,
