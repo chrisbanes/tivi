@@ -164,7 +164,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
 
         // Assert that both are in the db
         assertThat(seasonsDao.seasonsForShowId(showId), `is`(listOf(s1)))
-        assertThat(episodesDao.episodesFromSeasonId(s1_id), `is`(s1_episodes))
+        assertThat(episodesDao.episodesWithSeasonId(s1_id), `is`(s1_episodes))
     }
 
     @Test
@@ -179,7 +179,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
 
         // Assert that both are in the db
         assertThat(seasonsDao.seasonsForShowId(showId), `is`(listOf(s1)))
-        assertThat(episodesDao.episodesFromSeasonId(s1_id), `is`(s1_episodes))
+        assertThat(episodesDao.episodesWithSeasonId(s1_id), `is`(s1_episodes))
     }
 
     @Test
@@ -193,7 +193,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
 
         // Assert the database is empty
         assertThat(seasonsDao.seasonsForShowId(showId), `is`(emptyList()))
-        assertThat(episodesDao.episodesFromSeasonId(s1_id), `is`(emptyList()))
+        assertThat(episodesDao.episodesWithSeasonId(s1_id), `is`(emptyList()))
     }
 
     @Test
@@ -209,7 +209,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
 
         // Assert that both are in the db
         assertThat(seasonsDao.seasonsForShowId(showId), `is`(listOf(s1)))
-        assertThat(episodesDao.episodesFromSeasonId(s1_id), `is`(s1_episodes))
+        assertThat(episodesDao.episodesWithSeasonId(s1_id), `is`(s1_episodes))
     }
 
     @Test
@@ -225,7 +225,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
 
         // Assert that both are in the db
         assertThat(seasonsDao.seasonsForShowId(showId), `is`(listOf(s1, s2)))
-        assertThat(episodesDao.episodesFromSeasonId(s1_id), `is`(listOf(s1e1)))
-        assertThat(episodesDao.episodesFromSeasonId(s2_id), `is`(listOf(s2e1)))
+        assertThat(episodesDao.episodesWithSeasonId(s1_id), `is`(listOf(s1e1)))
+        assertThat(episodesDao.episodesWithSeasonId(s2_id), `is`(listOf(s2e1)))
     }
 }
