@@ -60,20 +60,18 @@ class SeasonsEpisodesRepository @Inject constructor(
         val result = traktSeasonsDataSource.getSeasonsEpisodes(showId)
         when (result) {
             is Success -> {
-                result.data.map { (season, episodes) ->
-                    val localSeason = localStore.getSeasonWithTraktId(season.traktId!!) ?: Season(showId = showId)
+                result.data.distinctBy { it.first.number }.associate { (season, episodes) ->
+                    val localSeason = localStore.getSeasonWithTraktId(season.traktId!!)
+                            ?: Season(showId = showId)
                     val mergedSeason = mergeSeason(localSeason, season, Season.EMPTY)
 
-                    val mergedEpisodes = episodes.map {
+                    val mergedEpisodes = episodes.distinctBy(Episode::number).map {
                         val localEpisode = localStore.getEpisodeWithTraktId(it.traktId!!)
-                                ?: Episode(seasonId = mergedSeason.showId)
+                                ?: Episode(seasonId = mergedSeason.id)
                         mergeEpisode(localEpisode, it, Episode.EMPTY)
                     }
-                    (mergedSeason to mergedEpisodes)
-                }.also {
-                    // Save the seasons + episodes
-                    localStore.save(it)
-                }
+                    mergedSeason to mergedEpisodes
+                }.also { localStore.save(showId, it) }
             }
         }
         if (result is Success) {

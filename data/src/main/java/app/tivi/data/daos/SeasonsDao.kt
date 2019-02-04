@@ -34,6 +34,9 @@ abstract class SeasonsDao : EntityDao<Season> {
     abstract fun seasonsForShowId(showId: Long): List<Season>
 
     @Query("DELETE FROM seasons WHERE show_id = :showId")
+    abstract fun deleteWithShowId(showId: Long)
+
+    @Query("DELETE FROM seasons WHERE show_id = :showId")
     abstract fun deleteSeasonsForShowId(showId: Long): Int
 
     @Query("SELECT * FROM seasons WHERE id = :id")
@@ -43,5 +46,8 @@ abstract class SeasonsDao : EntityDao<Season> {
     abstract fun traktIdForId(id: Long): Int?
 
     @Query("SELECT * FROM seasons WHERE trakt_id = :traktId")
-    abstract fun seasonWithSeasonTraktId(traktId: Int): Season?
+    abstract fun seasonWithTraktId(traktId: Int): Season?
+
+    @Query("SELECT * FROM seasons WHERE show_id = :showId AND number = :number")
+    abstract fun seasonWithShowIdAndNumber(showId: Long, number: Int): Season?
 }

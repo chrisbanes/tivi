@@ -21,10 +21,10 @@ import app.tivi.data.daos.SeasonsDao
 import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.deleteShow
 import app.tivi.utils.insertShow
-import app.tivi.utils.seasonOne
-import app.tivi.utils.seasonOneId
-import app.tivi.utils.seasonSpecials
-import app.tivi.utils.seasonTwo
+import app.tivi.utils.s1
+import app.tivi.utils.s1_id
+import app.tivi.utils.s0
+import app.tivi.utils.s2
 import app.tivi.utils.showId
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
@@ -43,47 +43,47 @@ class SeasonsTest : BaseDatabaseTest() {
 
     @Test
     fun insertSeason() {
-        seasonsDao.insert(seasonOne)
+        seasonsDao.insert(s1)
 
-        assertThat(seasonsDao.seasonWithId(seasonOneId), `is`(seasonOne))
+        assertThat(seasonsDao.seasonWithId(s1_id), `is`(s1))
     }
 
     @Test(expected = SQLiteConstraintException::class)
     fun insert_withSameTraktId() {
-        seasonsDao.insert(seasonOne)
+        seasonsDao.insert(s1)
 
         // Make a copy with a 0 id
-        val copy = seasonOne.copy(id = 0)
+        val copy = s1.copy(id = 0)
 
         seasonsDao.insert(copy)
     }
 
     @Test
     fun specialsOrder() {
-        seasonsDao.insert(seasonSpecials)
-        seasonsDao.insert(seasonOne)
-        seasonsDao.insert(seasonTwo)
+        seasonsDao.insert(s0)
+        seasonsDao.insert(s1)
+        seasonsDao.insert(s2)
 
         // Specials should always be last
         assertThat(seasonsDao.seasonsForShowId(showId),
-                `is`(listOf(seasonOne, seasonTwo, seasonSpecials))
+                `is`(listOf(s1, s2, s0))
         )
     }
 
     @Test
     fun deleteSeason() {
-        seasonsDao.insert(seasonOne)
-        seasonsDao.delete(seasonOne)
+        seasonsDao.insert(s1)
+        seasonsDao.delete(s1)
 
-        assertThat(seasonsDao.seasonWithId(seasonOneId), `is`(nullValue()))
+        assertThat(seasonsDao.seasonWithId(s1_id), `is`(nullValue()))
     }
 
     @Test
     fun deleteShow_deletesSeason() {
-        seasonsDao.insert(seasonOne)
+        seasonsDao.insert(s1)
         // Now delete show
         deleteShow(db)
 
-        assertThat(seasonsDao.seasonWithId(seasonOneId), `is`(nullValue()))
+        assertThat(seasonsDao.seasonWithId(s1_id), `is`(nullValue()))
     }
 }

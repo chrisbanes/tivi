@@ -19,10 +19,9 @@ package app.tivi.data.dao
 import android.database.sqlite.SQLiteConstraintException
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.utils.BaseDatabaseTest
-import app.tivi.utils.deleteSeason
-import app.tivi.utils.episodeOne
-import app.tivi.utils.insertSeason
 import app.tivi.utils.insertShow
+import app.tivi.utils.s1
+import app.tivi.utils.s1e1
 import app.tivi.utils.showId
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
@@ -37,41 +36,41 @@ class EpisodesTest : BaseDatabaseTest() {
         episodeDao = db.episodesDao()
         // We'll assume that there's a show and season in the db
         insertShow(db)
-        insertSeason(db)
+        db.seasonsDao().insert(s1)
     }
 
     @Test
     fun insert() {
-        episodeDao.insert(episodeOne)
-        assertThat(episodeDao.episodeWithId(episodeOne.id), `is`(episodeOne))
+        episodeDao.insert(s1e1)
+        assertThat(episodeDao.episodeWithId(s1e1.id), `is`(s1e1))
     }
 
     @Test(expected = SQLiteConstraintException::class)
     fun insert_withSameTraktId() {
-        episodeDao.insert(episodeOne)
+        episodeDao.insert(s1e1)
         // Make a copy with a 0 id
-        val copy = episodeOne.copy(id = 0)
+        val copy = s1e1.copy(id = 0)
         episodeDao.insert(copy)
     }
 
     @Test
     fun delete() {
-        episodeDao.insert(episodeOne)
-        episodeDao.delete(episodeOne)
-        assertThat(episodeDao.episodeWithId(episodeOne.id), `is`(nullValue()))
+        episodeDao.insert(s1e1)
+        episodeDao.delete(s1e1)
+        assertThat(episodeDao.episodeWithId(s1e1.id), `is`(nullValue()))
     }
 
     @Test
     fun deleteSeason_deletesEpisode() {
-        episodeDao.insert(episodeOne)
+        episodeDao.insert(s1e1)
         // Now delete season
-        deleteSeason(db)
-        assertThat(episodeDao.episodeWithId(episodeOne.id), `is`(nullValue()))
+        db.seasonsDao().delete(s1)
+        assertThat(episodeDao.episodeWithId(s1e1.id), `is`(nullValue()))
     }
 
     @Test
     fun showIdForEpisodeId() {
-        episodeDao.insert(episodeOne)
-        assertThat(episodeDao.showIdForEpisodeId(episodeOne.id), `is`(showId))
+        episodeDao.insert(s1e1)
+        assertThat(episodeDao.showIdForEpisodeId(s1e1.id), `is`(showId))
     }
 }

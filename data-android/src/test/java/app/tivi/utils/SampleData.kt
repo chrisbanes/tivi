@@ -35,60 +35,56 @@ fun insertShow(db: TiviDatabase) = db.showDao().insert(show)
 
 fun deleteShow(db: TiviDatabase) = db.showDao().delete(show)
 
-const val seasonSpecialsId = 1L
-val seasonSpecials = Season(
-        id = seasonSpecialsId,
-        showId = showId,
-        title = "Specials",
-        number = Season.NUMBER_SPECIALS,
-        traktId = 7042
-)
-
-const val seasonOneId = 2L
-val seasonOne = Season(
-        id = seasonOneId,
+const val s1_id = 1L
+val s1 = Season(
+        id = s1_id,
         showId = showId,
         title = "Season 1",
         number = 1,
         traktId = 5443
 )
 
-const val seasonTwoId = 3L
-val seasonTwo = Season(
-        id = seasonTwoId,
+const val s2_id = 2L
+val s2 = Season(
+        id = s2_id,
         showId = showId,
         title = "Season 2",
         number = 2,
         traktId = 5434
 )
 
-fun deleteSeason(db: TiviDatabase) = db.seasonsDao().delete(seasonOne)
+const val s0_id = 3L
+val s0 = Season(
+        id = s0_id,
+        showId = showId,
+        title = "Specials",
+        number = Season.NUMBER_SPECIALS,
+        traktId = 7042
+)
 
-fun insertSeason(db: TiviDatabase) = db.seasonsDao().insert(seasonOne)
+val s1e1 = Episode(id = 1, title = "Kangaroo Court", seasonId = s1.id, number = 0, traktId = 59830)
+val s1e2 = Episode(id = 2, title = "Bushtucker", seasonId = s1.id, number = 1, traktId = 33435)
+val s1e3 = Episode(id = 3, title = "Wallaby Bungee", seasonId = s1.id, number = 2, traktId = 44542)
 
-val episodeOne = Episode(id = 1, title = "Kangaroo Court", seasonId = seasonOne.id, number = 0, traktId = 59830)
-val episodeTwo = Episode(id = 2, title = "Bushtucker", seasonId = seasonOne.id, number = 1, traktId = 33435)
-val episodeThree = Episode(id = 3, title = "Wallaby Bungee", seasonId = seasonOne.id, number = 2, traktId = 44542)
+val s2e1 = Episode(id = 4, title = "Noosa Pool", seasonId = s2.id, number = 0, traktId = 5656)
+val s2e2 = Episode(id = 5, title = "Alice Springer", seasonId = s2.id, number = 1, traktId = 8731)
 
-val episodes = listOf(episodeOne, episodeTwo, episodeThree)
+val s1_episodes = listOf(s1e1, s1e2, s1e3)
+val s2_episodes = listOf(s2e1, s2e2)
 
-fun insertEpisodes(db: TiviDatabase) = episodes.forEach { db.episodesDao().insert(it) }
-
-fun deleteEpisodes(db: TiviDatabase) = episodes.forEach { db.episodesDao().delete(it) }
-
-const val episodeWatch1Id = 1L
-val episodeWatch1 = EpisodeWatchEntry(
-        id = episodeWatch1Id,
+const val s1e1w_id = 1L
+val s1e1w = EpisodeWatchEntry(
+        id = s1e1w_id,
         watchedAt = OffsetDateTime.now(),
-        episodeId = episodeOne.id,
+        episodeId = s1e1.id,
         traktId = 435214
 )
 
-const val episodeWatch2Id = 2L
-val episodeWatch2 = episodeWatch1.copy(id = episodeWatch2Id, traktId = 4385783)
+const val s1e1w2_id = 2L
+val s1e1w2 = s1e1w.copy(id = s1e1w2_id, traktId = 4385783)
 
-val episodeWatch2PendingSend = episodeWatch2.copy(pendingAction = PendingAction.UPLOAD)
-val episodeWatch2PendingDelete = episodeWatch2.copy(pendingAction = PendingAction.DELETE)
+val episodeWatch2PendingSend = s1e1w2.copy(pendingAction = PendingAction.UPLOAD)
+val episodeWatch2PendingDelete = s1e1w2.copy(pendingAction = PendingAction.DELETE)
 
 fun insertFollowedShow(db: TiviDatabase) = db.followedShowsDao().insert(followedShow1)
 
