@@ -16,74 +16,40 @@
 
 package app.tivi.home.library
 
-import androidx.paging.DataSource
-import androidx.paging.PagedList
-import androidx.paging.RxPagedListBuilder
-import app.tivi.SharedElementHelper
-import app.tivi.data.entities.TiviShow
-import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeViewModel
 import app.tivi.home.library.LibraryFilter.FOLLOWED
-import app.tivi.home.library.LibraryFilter.WATCHED
-import app.tivi.interactors.SyncFollowedShows
 import app.tivi.interactors.UpdateUserDetails
-import app.tivi.interactors.UpdateWatchedShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.AppRxSchedulers
-import app.tivi.util.Logger
-import app.tivi.util.RxLoadingCounter
 import app.tivi.util.TiviMvRxViewModel
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.plusAssign
 import net.openid.appauth.AuthorizationService
 import java.util.concurrent.TimeUnit
 
 class LibraryViewModel @AssistedInject constructor(
     @Assisted initialState: LibraryViewState,
-    private val schedulers: AppRxSchedulers,
-    private val updateWatchedShows: UpdateWatchedShows,
-    private val syncFollowedShows: SyncFollowedShows,
+    schedulers: AppRxSchedulers,
     private val traktManager: TraktManager,
     tmdbManager: TmdbManager,
-    private val updateUserDetails: UpdateUserDetails,
-    private val logger: Logger
+    private val updateUserDetails: UpdateUserDetails
 ) : TiviMvRxViewModel<LibraryViewState>(initialState), HomeViewModel {
-    private val loadingState = RxLoadingCounter()
-
-    private var refreshDisposable: Disposable? = null
 
     init {
         setState {
             copy(allowedFilters = LibraryFilter.values().asList(), filter = DEFAULT_FILTER)
         }
 
-        loadingState.observable.execute {
-            copy(isLoading = it() ?: false)
-        }
-
         tmdbManager.imageProviderObservable
                 .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
                 .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
-
-        dataSourceToObservable(updateWatchedShows.dataSourceFactory())
-                .execute {
-                    copy(watchedShows = it())
-                }
-
-        dataSourceToObservable(syncFollowedShows.dataSourceFactory())
-                .execute {
-                    copy(followedShows = it())
-                }
 
         updateUserDetails.setParams(UpdateUserDetails.Params("me"))
         updateUserDetails.observe()
@@ -95,65 +61,15 @@ class LibraryViewModel @AssistedInject constructor(
                     if (it == TraktAuthState.LOGGED_IN) {
                         scope.launchInteractor(updateUserDetails, UpdateUserDetails.ExecuteParams(false))
                     }
+                }.execute {
+                    copy(authState = it() ?: TraktAuthState.LOGGED_OUT)
                 }
-                .execute { copy(authState = it() ?: TraktAuthState.LOGGED_OUT) }
-    }
-
-    private fun <T : EntryWithShow<*>> dataSourceToObservable(f: DataSource.Factory<Int, T>): Observable<PagedList<T>> {
-        return RxPagedListBuilder(f, PAGING_CONFIG)
-                .setBoundaryCallback(object : PagedList.BoundaryCallback<T>() {
-                    override fun onZeroItemsLoaded() = setState { copy(isEmpty = true) }
-                    override fun onItemAtEndLoaded(itemAtEnd: T) = setState { copy(isEmpty = false) }
-                    override fun onItemAtFrontLoaded(itemAtFront: T) = setState { copy(isEmpty = false) }
-                })
-                .setFetchScheduler(schedulers.io)
-                .setNotifyScheduler(schedulers.main)
-                .buildObservable()
-    }
-
-    fun refresh() {
-        refreshDisposable?.let {
-            it.dispose()
-            disposables.remove(it)
-        }
-        refreshDisposable = null
-
-        disposables += traktManager.state
-                .filter { it == TraktAuthState.LOGGED_IN }
-                .firstOrError()
-                .subscribe({ refreshFilter() }, logger::e)
-                .also { refreshDisposable = it }
-    }
-
-    private fun refreshFilter() {
-        withState {
-            when (it.filter) {
-                FOLLOWED -> {
-                    loadingState.addLoader()
-                    scope.launchInteractor(syncFollowedShows, SyncFollowedShows.ExecuteParams(false))
-                            .invokeOnCompletion {
-                                loadingState.removeLoader()
-                            }
-                }
-                WATCHED -> {
-                    loadingState.addLoader()
-                    scope.launchInteractor(updateWatchedShows, UpdateWatchedShows.ExecuteParams(false))
-                            .invokeOnCompletion {
-                                loadingState.removeLoader()
-                            }
-                }
-            }
-        }
     }
 
     fun onFilterSelected(filter: LibraryFilter) {
         setState {
             copy(filter = filter)
         }
-    }
-
-    fun onItemPostedClicked(navigator: HomeNavigator, show: TiviShow, sharedElements: SharedElementHelper? = null) {
-        navigator.showShowDetails(show, sharedElements)
     }
 
     override fun onProfileItemClicked() {
@@ -173,11 +89,6 @@ class LibraryViewModel @AssistedInject constructor(
 
     companion object : MvRxViewModelFactory<LibraryViewModel, LibraryViewState> {
         private val DEFAULT_FILTER = FOLLOWED
-        private val PAGING_CONFIG = PagedList.Config.Builder()
-                .setPageSize(60)
-                .setPrefetchDistance(20)
-                .setEnablePlaceholders(false)
-                .build()
 
         override fun create(viewModelContext: ViewModelContext, state: LibraryViewState): LibraryViewModel? {
             val fragment: LibraryFragment = (viewModelContext as FragmentViewModelContext).fragment()

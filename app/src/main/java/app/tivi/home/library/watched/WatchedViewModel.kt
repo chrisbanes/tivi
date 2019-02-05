@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.home.library.followed
+package app.tivi.home.library.watched
 
 import androidx.paging.DataSource
 import androidx.paging.PagedList
@@ -23,7 +23,7 @@ import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.home.HomeNavigator
-import app.tivi.interactors.SyncFollowedShows
+import app.tivi.interactors.UpdateWatchedShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
@@ -42,14 +42,14 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import java.util.concurrent.TimeUnit
 
-class FollowedViewModel @AssistedInject constructor(
-    @Assisted initialState: FollowedViewState,
+class WatchedViewModel @AssistedInject constructor(
+    @Assisted initialState: WatchedViewState,
     private val schedulers: AppRxSchedulers,
-    private val syncFollowedShows: SyncFollowedShows,
+    private val updateWatchedShows: UpdateWatchedShows,
     private val traktManager: TraktManager,
     tmdbManager: TmdbManager,
     private val logger: Logger
-) : TiviMvRxViewModel<FollowedViewState>(initialState) {
+) : TiviMvRxViewModel<WatchedViewState>(initialState) {
     private val loadingState = RxLoadingCounter()
 
     private var refreshDisposable: Disposable? = null
@@ -63,9 +63,9 @@ class FollowedViewModel @AssistedInject constructor(
                 .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
                 .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
 
-        dataSourceToObservable(syncFollowedShows.dataSourceFactory())
+        dataSourceToObservable(updateWatchedShows.dataSourceFactory())
                 .execute {
-                    copy(followedShows = it())
+                    copy(watchedShows = it())
                 }
     }
 
@@ -97,7 +97,7 @@ class FollowedViewModel @AssistedInject constructor(
 
     private fun refreshFilter() {
         loadingState.addLoader()
-        scope.launchInteractor(syncFollowedShows, SyncFollowedShows.ExecuteParams(false))
+        scope.launchInteractor(updateWatchedShows, UpdateWatchedShows.ExecuteParams(false))
                 .invokeOnCompletion {
                     loadingState.removeLoader()
                 }
@@ -109,19 +109,19 @@ class FollowedViewModel @AssistedInject constructor(
 
     @AssistedInject.Factory
     interface Factory {
-        fun create(initialState: FollowedViewState): FollowedViewModel
+        fun create(initialState: WatchedViewState): WatchedViewModel
     }
 
-    companion object : MvRxViewModelFactory<FollowedViewModel, FollowedViewState> {
+    companion object : MvRxViewModelFactory<WatchedViewModel, WatchedViewState> {
         private val PAGING_CONFIG = PagedList.Config.Builder()
                 .setPageSize(60)
                 .setPrefetchDistance(20)
                 .setEnablePlaceholders(false)
                 .build()
 
-        override fun create(viewModelContext: ViewModelContext, state: FollowedViewState): FollowedViewModel? {
-            val fragment: FollowedFragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return fragment.followedViewModelFactory.create(state)
+        override fun create(viewModelContext: ViewModelContext, state: WatchedViewState): WatchedViewModel? {
+            val fragment: WatchedFragment = (viewModelContext as FragmentViewModelContext).fragment()
+            return fragment.watchedViewModelFactory.create(state)
         }
     }
 }

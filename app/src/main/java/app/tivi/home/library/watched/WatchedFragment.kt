@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.home.library.followed
+package app.tivi.home.library.watched
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,8 +22,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProviders
 import app.tivi.R
-import app.tivi.data.resultentities.FollowedShowEntryWithShow
-import app.tivi.databinding.FragmentLibraryFollowedBinding
+import app.tivi.data.resultentities.WatchedShowEntryWithShow
+import app.tivi.databinding.FragmentLibraryWatchedBinding
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.home.library.LibraryTextCreator
@@ -35,30 +35,31 @@ import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
-class FollowedFragment : TiviMvRxFragment() {
+class WatchedFragment : TiviMvRxFragment() {
 
     private lateinit var homeNavigator: HomeNavigator
-    private lateinit var binding: FragmentLibraryFollowedBinding
+    private lateinit var binding: FragmentLibraryWatchedBinding
     private lateinit var textCreator: LibraryTextCreator
 
-    private val viewModel: FollowedViewModel by fragmentViewModel()
-    @Inject lateinit var followedViewModelFactory: FollowedViewModel.Factory
+    private val viewModel: WatchedViewModel by fragmentViewModel()
+    @Inject lateinit var watchedViewModelFactory: WatchedViewModel.Factory
 
     @Inject lateinit var dateFormatter: TiviDateFormatter
 
     private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
-        ListItemSharedElementHelper(binding.followedRv) { it.findViewById(R.id.show_poster) }
+        ListItemSharedElementHelper(binding.watchedRv) { it.findViewById(R.id.show_poster) }
     }
 
-    private lateinit var controller: FollowedEpoxyController
+    private lateinit var controller: WatchedEpoxyController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
+        homeNavigator = ViewModelProviders.of(requireActivity(), viewModelFactory)
+                .get(HomeNavigatorViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentLibraryFollowedBinding.inflate(inflater, container, false)
+        binding = FragmentLibraryWatchedBinding.inflate(inflater, container, false)
         binding.setLifecycleOwner(viewLifecycleOwner)
         return binding.root
     }
@@ -69,19 +70,19 @@ class FollowedFragment : TiviMvRxFragment() {
 
         textCreator = LibraryTextCreator(requireContext())
 
-        binding.followedRv.apply {
+        binding.watchedRv.apply {
             addItemDecoration(SpacingItemDecorator(paddingLeft))
         }
 
-        controller = FollowedEpoxyController(object : FollowedEpoxyController.Callbacks {
-            override fun onItemClicked(item: FollowedShowEntryWithShow) {
+        controller = WatchedEpoxyController(object : WatchedEpoxyController.Callbacks {
+            override fun onItemClicked(item: WatchedShowEntryWithShow) {
                 viewModel.onItemPostedClicked(homeNavigator, item.show,
                         listItemSharedElementHelper.createForItem(item, "poster")
                 )
             }
-        }, textCreator)
+        }, textCreator, dateFormatter)
 
-        binding.followedSwipeRefresh.setOnRefreshListener(viewModel::refresh)
+        binding.watchedSwipeRefresh.setOnRefreshListener(viewModel::refresh)
     }
 
     override fun invalidate() {
@@ -93,17 +94,17 @@ class FollowedFragment : TiviMvRxFragment() {
 
             binding.state = state
 
-            if (state.followedShows != null) {
+            if (state.watchedShows != null) {
                 // PagingEpoxyController does not like being updated before it has a list
                 controller.tmdbImageUrlProvider = state.tmdbImageUrlProvider
                 controller.isEmpty = state.isEmpty
-                controller.submitList(state.followedShows)
+                controller.submitList(state.watchedShows)
             }
         }
     }
 
     internal fun scrollToTop() {
-        binding.followedRv.apply {
+        binding.watchedRv.apply {
             stopScroll()
             smoothScrollToPosition(0)
         }

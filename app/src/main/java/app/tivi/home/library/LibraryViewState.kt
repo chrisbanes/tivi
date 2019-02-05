@@ -16,10 +16,7 @@
 
 package app.tivi.home.library
 
-import androidx.paging.PagedList
 import app.tivi.data.entities.TraktUser
-import app.tivi.data.resultentities.FollowedShowEntryWithShow
-import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.trakt.TraktAuthState
 import com.airbnb.mvrx.MvRxState
@@ -28,10 +25,6 @@ data class LibraryViewState(
     val allowedFilters: List<LibraryFilter> = emptyList(),
     val filter: LibraryFilter = LibraryFilter.FOLLOWED,
     val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider(),
-    val isLoading: Boolean = false,
-    val isEmpty: Boolean = true,
-    val followedShows: PagedList<FollowedShowEntryWithShow>? = null,
-    val watchedShows: PagedList<WatchedShowEntryWithShow>? = null,
     val user: TraktUser? = null,
     val authState: TraktAuthState = TraktAuthState.LOGGED_OUT
 ) : MvRxState

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.home.library
+package app.tivi.home.library.watched
 
-import app.tivi.home.library.followed.FollowedBuilder
-import app.tivi.home.library.watched.WatchedBuilder
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
 @Module
-internal abstract class LibraryBuilder {
-    @ContributesAndroidInjector(modules = [
-        FollowedBuilder::class,
-        WatchedBuilder::class
-    ])
-    internal abstract fun libraryFragment(): LibraryFragment
+internal abstract class WatchedBuilder {
+    @ContributesAndroidInjector
+    internal abstract fun fragment(): WatchedFragment
 }

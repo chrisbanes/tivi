@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.home.library
+package app.tivi.home.library.watched
 
 import android.view.View
 import app.tivi.LibraryWatchedItemBindingModel_
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.emptyState
+import app.tivi.home.library.LibraryTextCreator
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.EpoxyModelProperty
 import app.tivi.ui.epoxy.TotalSpanOverride
@@ -27,7 +28,7 @@ import app.tivi.util.TiviDateFormatter
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
 
-class LibraryWatchedEpoxyController(
+class WatchedEpoxyController(
     private val callbacks: Callbacks,
     private val textCreator: LibraryTextCreator,
     private val dateFormatter: TiviDateFormatter

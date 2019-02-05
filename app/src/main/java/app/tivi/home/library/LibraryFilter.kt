@@ -20,10 +20,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import app.tivi.R
 
-enum class LibraryFilter(
-    @StringRes val labelResource: Int,
-    @DrawableRes val iconResource: Int
-) {
+enum class LibraryFilter(@StringRes val labelResource: Int, @DrawableRes val iconResource: Int) {
     FOLLOWED(R.string.library_followed_shows, R.drawable.ic_heart_24dp),
     WATCHED(R.string.library_watched, R.drawable.ic_clock_24dp)
 }
