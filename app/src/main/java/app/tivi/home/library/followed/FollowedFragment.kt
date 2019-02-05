@@ -81,6 +81,11 @@ class FollowedFragment : TiviMvRxFragment() {
             }
         }, textCreator)
 
+        binding.followedRv.apply {
+            addItemDecoration(SpacingItemDecorator(paddingLeft))
+            setController(controller)
+        }
+
         binding.followedSwipeRefresh.setOnRefreshListener(viewModel::refresh)
     }
 

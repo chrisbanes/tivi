@@ -105,7 +105,7 @@ class LibraryFragment : TiviMvRxFragment() {
                     val fragment = childFragmentManager.findFragmentById(R.id.library_content)
                     if (fragment !is WatchedFragment) {
                         childFragmentManager.commit {
-                            add(WatchedFragment(), null)
+                            replace(R.id.library_content, WatchedFragment())
                         }
                     }
                 }
@@ -113,7 +113,7 @@ class LibraryFragment : TiviMvRxFragment() {
                     val fragment = childFragmentManager.findFragmentById(R.id.library_content)
                     if (fragment !is FollowedFragment) {
                         childFragmentManager.commit {
-                            add(FollowedFragment(), null)
+                            replace(R.id.library_content, FollowedFragment())
                         }
                     }
                 }
@@ -146,6 +146,8 @@ class LibraryFragment : TiviMvRxFragment() {
     }
 
     internal fun scrollToTop() {
+        closeFilterPanel()
+
         when (val f = childFragmentManager.findFragmentById(R.id.library_content)) {
             is WatchedFragment -> f.scrollToTop()
             is FollowedFragment -> f.scrollToTop()

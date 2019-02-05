@@ -70,10 +70,6 @@ class WatchedFragment : TiviMvRxFragment() {
 
         textCreator = LibraryTextCreator(requireContext())
 
-        binding.watchedRv.apply {
-            addItemDecoration(SpacingItemDecorator(paddingLeft))
-        }
-
         controller = WatchedEpoxyController(object : WatchedEpoxyController.Callbacks {
             override fun onItemClicked(item: WatchedShowEntryWithShow) {
                 viewModel.onItemPostedClicked(homeNavigator, item.show,
@@ -81,6 +77,11 @@ class WatchedFragment : TiviMvRxFragment() {
                 )
             }
         }, textCreator, dateFormatter)
+
+        binding.watchedRv.apply {
+            addItemDecoration(SpacingItemDecorator(paddingLeft))
+            setController(controller)
+        }
 
         binding.watchedSwipeRefresh.setOnRefreshListener(viewModel::refresh)
     }

@@ -64,9 +64,9 @@ class FollowedViewModel @AssistedInject constructor(
                 .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
 
         dataSourceToObservable(syncFollowedShows.dataSourceFactory())
-                .execute {
-                    copy(followedShows = it())
-                }
+                .execute { copy(followedShows = it()) }
+
+        refresh()
     }
 
     private fun <T : EntryWithShow<*>> dataSourceToObservable(f: DataSource.Factory<Int, T>): Observable<PagedList<T>> {
