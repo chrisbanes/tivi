@@ -70,24 +70,14 @@
             app:layout_constraintTop_toBottomOf="@id/library_toolbar"
             tools:listitem="@layout/view_holder_library_filter_item" />
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/library_swipe_refresh"
+        <FrameLayout
+            android:id="@+id/library_content"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="?android:attr/colorBackground"
             android:elevation="2dp"
-            app:isRefreshing="@{state.isLoading}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/library_toolbar">
-
-            <com.airbnb.epoxy.EpoxyRecyclerView
-                android:id="@+id/library_rv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/view_holder_library_watched_item" />
-
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            app:layout_constraintTop_toBottomOf="@id/library_toolbar" />
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>

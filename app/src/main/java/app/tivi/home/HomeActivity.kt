@@ -30,11 +30,9 @@ import app.tivi.extensions.observeK
 import app.tivi.home.HomeActivityViewModel.NavigationItem.DISCOVER
 import app.tivi.home.HomeActivityViewModel.NavigationItem.LIBRARY
 import app.tivi.home.discover.DiscoverFragment
-import app.tivi.home.followedshows.FollowedShowsFragment
 import app.tivi.home.library.LibraryFragment
 import app.tivi.home.popular.PopularShowsFragment
 import app.tivi.home.trending.TrendingShowsFragment
-import app.tivi.home.watched.WatchedShowsFragment
 import app.tivi.trakt.TraktConstants
 import kotlinx.android.synthetic.main.activity_home.*
 import net.openid.appauth.AuthorizationException
@@ -107,8 +105,6 @@ class HomeActivity : TiviActivity() {
 
         navigatorViewModel.showPopularCall.observeK(this, this::showPopular)
         navigatorViewModel.showTrendingCall.observeK(this, this::showTrending)
-        navigatorViewModel.showWatchedCall.observeK(this, this::showWatched)
-        navigatorViewModel.showMyShowsCall.observeK(this, this::showMyShows)
         navigatorViewModel.upClickedCall.observeK(this) { this.onUpClicked() }
     }
 
@@ -151,14 +147,6 @@ class HomeActivity : TiviActivity() {
 
     private fun showTrending(sharedElements: SharedElementHelper?) {
         showStackFragment(TrendingShowsFragment(), sharedElements)
-    }
-
-    private fun showWatched(sharedElements: SharedElementHelper?) {
-        showStackFragment(WatchedShowsFragment(), sharedElements)
-    }
-
-    private fun showMyShows(sharedElements: SharedElementHelper?) {
-        showStackFragment(FollowedShowsFragment(), sharedElements)
     }
 
     private fun showStackFragment(fragment: Fragment, sharedElements: SharedElementHelper? = null) {

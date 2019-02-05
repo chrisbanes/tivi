@@ -52,7 +52,7 @@ class HomeActivityNavigationTests {
         onView(bottomNavItemWithTitle(R.string.home_nav_library))
                 .perform(click())
 
-        onView(withId(R.id.library_rv))
+        onView(withId(R.id.library_content))
                 .check(matches(isDisplayed()))
     }
 
@@ -64,7 +64,7 @@ class HomeActivityNavigationTests {
         onView(bottomNavItemWithTitle(R.string.home_nav_library))
                 .perform(click())
 
-        onView(withId(R.id.library_rv))
+        onView(withId(R.id.library_content))
                 .check(matches(isDisplayed()))
     }
 }

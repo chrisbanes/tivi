@@ -22,8 +22,6 @@ import app.tivi.data.entities.TiviShow
 interface HomeNavigator {
     fun showPopular(sharedElements: SharedElementHelper?)
     fun showTrending(sharedElements: SharedElementHelper?)
-    fun showWatched(sharedElements: SharedElementHelper?)
-    fun showMyShows(sharedElements: SharedElementHelper?)
     fun showShowDetails(show: TiviShow, sharedElements: SharedElementHelper?)
     fun onUpClicked()
     fun showSettings()

@@ -18,11 +18,9 @@ package app.tivi.home
 
 import androidx.lifecycle.ViewModel
 import app.tivi.home.discover.DiscoverBuilder
-import app.tivi.home.followedshows.FollowedShowsBuilder
 import app.tivi.home.library.LibraryBuilder
 import app.tivi.home.popular.PopularBuilder
 import app.tivi.home.trending.TrendingBuilder
-import app.tivi.home.watched.WatchedShowsBuilder
 import app.tivi.inject.ViewModelBuilder
 import app.tivi.inject.ViewModelKey
 import dagger.Binds
@@ -38,9 +36,7 @@ internal abstract class HomeBuilder {
         DiscoverBuilder::class,
         TrendingBuilder::class,
         PopularBuilder::class,
-        LibraryBuilder::class,
-        WatchedShowsBuilder::class,
-        FollowedShowsBuilder::class
+        LibraryBuilder::class
     ])
     internal abstract fun homeActivity(): HomeActivity
 

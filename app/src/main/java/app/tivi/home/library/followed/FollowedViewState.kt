@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package app.tivi.home.library
+package app.tivi.home.library.followed
 
-import app.tivi.home.library.followed.FollowedBuilder
-import app.tivi.home.library.watched.WatchedBuilder
-import dagger.Module
-import dagger.android.ContributesAndroidInjector
+import androidx.paging.PagedList
+import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.tmdb.TmdbImageUrlProvider
+import com.airbnb.mvrx.MvRxState
 
-@Module
-internal abstract class LibraryBuilder {
-    @ContributesAndroidInjector(modules = [
-        FollowedBuilder::class,
-        WatchedBuilder::class
-    ])
-    internal abstract fun libraryFragment(): LibraryFragment
-}
+data class FollowedViewState(
+    val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider(),
+    val isLoading: Boolean = false,
+    val isEmpty: Boolean = true,
+    val followedShows: PagedList<FollowedShowEntryWithShow>? = null
+) : MvRxState

@@ -176,6 +176,7 @@ dependencies {
     implementation Libs.AndroidX.preference
     implementation Libs.AndroidX.constraintlayout
     implementation Libs.AndroidX.coreKtx
+    implementation Libs.AndroidX.Fragment.fragmentKtx
 
     implementation Libs.Google.material
 

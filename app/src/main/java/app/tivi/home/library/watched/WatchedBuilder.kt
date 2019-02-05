@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.home.followedshows
+package app.tivi.home.library.watched
 
-import androidx.lifecycle.ViewModel
-import app.tivi.inject.ViewModelKey
-import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
-import dagger.multibindings.IntoMap
 
 @Module
-internal abstract class FollowedShowsBuilder {
+internal abstract class WatchedBuilder {
     @ContributesAndroidInjector
-    internal abstract fun followedShowsFragment(): FollowedShowsFragment
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(FollowedShowsViewModel::class)
-    abstract fun bindFollowedShowsViewModel(viewModel: FollowedShowsViewModel): ViewModel
+    internal abstract fun fragment(): WatchedFragment
 }

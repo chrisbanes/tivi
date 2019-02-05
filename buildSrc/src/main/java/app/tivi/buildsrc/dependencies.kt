@@ -74,7 +74,12 @@ object Libs {
         val palette = "androidx.palette:palette:1.0.0"
         val recyclerview = "androidx.recyclerview:recyclerview:1.0.0"
         val emoji = "androidx.emoji:emoji:1.0.0"
-        val fragment = "androidx.fragment:fragment:1.0.0"
+
+        object Fragment {
+            private const val version = "1.1.0-alpha03"
+            val fragment = "androidx.fragment:fragment:$version"
+            val fragmentKtx = "androidx.fragment:fragment-ktx:$version"
+        }
 
         object Test {
             val core = "androidx.test:core:1.1.0"
