@@ -29,7 +29,6 @@
         android:id="@+id/watched_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?android:attr/colorBackground"
         app:isRefreshing="@{state.isLoading}">
 
         <com.airbnb.epoxy.EpoxyRecyclerView
