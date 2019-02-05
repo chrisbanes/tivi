@@ -80,7 +80,6 @@ object Libs {
             val fragment = "androidx.fragment:fragment:$version"
             val fragmentKtx = "androidx.fragment:fragment-ktx:$version"
         }
-        val fragmentKtx = "androidx.fragment:fragment:1.1.0-alpha03"
 
         object Test {
             val core = "androidx.test:core:1.1.0"
