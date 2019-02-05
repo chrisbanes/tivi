@@ -41,8 +41,7 @@ class FollowedEpoxyController(
                 spanSizeOverride(TotalSpanOverride)
             }
         } else {
-            // Need to use filterNotNull() due to https://github.com/airbnb/epoxy/issues/567
-            super.addModels(models.filterNotNull())
+            super.addModels(models)
         }
     }
 
