@@ -31,6 +31,7 @@ import app.tivi.databinding.FragmentLibraryBinding
 import app.tivi.home.HomeActivity
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeNavigatorViewModel
+import app.tivi.home.library.followed.FollowedEpoxyController
 import app.tivi.trakt.TraktAuthState
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
@@ -142,7 +143,7 @@ class LibraryFragment : TiviMvRxFragment() {
                     controller = c
                 }
                 LibraryFilter.FOLLOWED -> {
-                    val c = controller as? LibraryFollowedEpoxyController ?: createFollowedController()
+                    val c = controller as? FollowedEpoxyController ?: createFollowedController()
                     if (state.followedShows != null) {
                         // PagingEpoxyController does not like being updated before it has a list
                         c.tmdbImageUrlProvider = state.tmdbImageUrlProvider
@@ -197,8 +198,8 @@ class LibraryFragment : TiviMvRxFragment() {
                 }
             }, textCreator, dateFormatter)
 
-    private fun createFollowedController() = LibraryFollowedEpoxyController(
-            object : LibraryFollowedEpoxyController.Callbacks {
+    private fun createFollowedController() = FollowedEpoxyController(
+            object : FollowedEpoxyController.Callbacks {
                 override fun onItemClicked(item: FollowedShowEntryWithShow) {
                     viewModel.onItemPostedClicked(homeNavigator, item.show,
                             listItemSharedElementHelper.createForItem(item, "poster")
