@@ -16,6 +16,8 @@
 
 package app.tivi.home.library.followed
 
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import app.tivi.LibraryFollowedItemBindingModel_
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
@@ -30,7 +32,9 @@ import com.airbnb.epoxy.paging.PagedListEpoxyController
 class FollowedEpoxyController(
     private val callbacks: Callbacks,
     private val textCreator: LibraryTextCreator
-) : PagedListEpoxyController<FollowedShowEntryWithShow>() {
+) : PagedListEpoxyController<FollowedShowEntryWithShow>(
+        modelBuildingHandler = Handler(Looper.getMainLooper())
+) {
     var tmdbImageUrlProvider by EpoxyModelProperty { TmdbImageUrlProvider() }
     var isEmpty by EpoxyModelProperty { false }
 

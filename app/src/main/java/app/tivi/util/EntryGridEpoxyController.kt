@@ -16,6 +16,8 @@
 
 package app.tivi.util
 
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import app.tivi.PosterGridItemBindingModel_
 import app.tivi.data.Entry
@@ -27,7 +29,9 @@ import app.tivi.ui.epoxy.TotalSpanOverride
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
 
-open class EntryGridEpoxyController<LI : EntryWithShow<out Entry>> : PagedListEpoxyController<LI>() {
+open class EntryGridEpoxyController<LI : EntryWithShow<out Entry>> : PagedListEpoxyController<LI>(
+        modelBuildingHandler = Handler(Looper.getMainLooper())
+) {
     internal var callbacks: Callbacks<LI>? = null
 
     var isLoading = false
