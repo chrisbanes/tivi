@@ -57,7 +57,8 @@ class ShowDetailsFragment : TiviMvRxFragment() {
     private val viewModel: ShowDetailsFragmentViewModel by fragmentViewModel()
     @Inject lateinit var showDetailsViewModelFactory: ShowDetailsFragmentViewModel.Factory
 
-    private lateinit var controller: ShowDetailsEpoxyController
+    @Inject lateinit var controller: ShowDetailsEpoxyController
+
     private lateinit var showDetailsNavigator: ShowDetailsNavigator
 
     private lateinit var binding: FragmentShowDetailsBinding
@@ -131,34 +132,31 @@ class ShowDetailsFragment : TiviMvRxFragment() {
             viewModel.onUpClicked(showDetailsNavigator)
         }
 
-        controller = ShowDetailsEpoxyController(
-                requireContext(),
-                textCreator,
-                object : ShowDetailsEpoxyController.Callbacks {
-                    override fun onRelatedShowClicked(show: TiviShow, view: View) {
-                        viewModel.onRelatedShowClicked(
-                                showDetailsNavigator,
-                                show,
-                                SharedElementHelper().apply {
-                                    addSharedElement(view, "poster")
-                                }
-                        )
-                    }
+        controller.callbacks = object : ShowDetailsEpoxyController.Callbacks {
+            override fun onRelatedShowClicked(show: TiviShow, view: View) {
+                viewModel.onRelatedShowClicked(
+                        showDetailsNavigator,
+                        show,
+                        SharedElementHelper().apply {
+                            addSharedElement(view, "poster")
+                        }
+                )
+            }
 
-                    override fun onEpisodeClicked(episode: Episode, view: View) {
-                        viewModel.onRelatedShowClicked(showDetailsNavigator, episode)
-                    }
+            override fun onEpisodeClicked(episode: Episode, view: View) {
+                viewModel.onRelatedShowClicked(showDetailsNavigator, episode)
+            }
 
-                    override fun onMarkSeasonUnwatched(season: Season) = viewModel.onMarkSeasonUnwatched(season)
+            override fun onMarkSeasonUnwatched(season: Season) = viewModel.onMarkSeasonUnwatched(season)
 
-                    override fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
-                        viewModel.onMarkSeasonWatched(season, onlyAired, date)
-                    }
+            override fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
+                viewModel.onMarkSeasonWatched(season, onlyAired, date)
+            }
 
-                    override fun toggleSeasonExpanded(season: Season) {
-                        viewModel.toggleSeasonExpanded(season)
-                    }
-                })
+            override fun toggleSeasonExpanded(season: Season) {
+                viewModel.toggleSeasonExpanded(season)
+            }
+        }
 
         binding.detailsRv.setController(controller)
     }

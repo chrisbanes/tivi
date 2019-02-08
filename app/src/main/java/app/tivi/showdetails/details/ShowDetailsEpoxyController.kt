@@ -34,6 +34,7 @@ import app.tivi.detailsHeader
 import app.tivi.detailsSeason
 import app.tivi.detailsSeasonEpisode
 import app.tivi.detailsSummary
+import app.tivi.inject.PerActivity
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.TotalSpanOverride
 import app.tivi.ui.epoxy.carousel
@@ -43,12 +44,15 @@ import com.airbnb.epoxy.Carousel
 import com.airbnb.epoxy.TypedEpoxyController
 import com.airbnb.mvrx.Async
 import com.airbnb.mvrx.Success
+import javax.inject.Inject
 
-class ShowDetailsEpoxyController(
-    private val context: Context,
-    private val textCreator: ShowDetailsTextCreator,
-    private val callbacks: Callbacks
+class ShowDetailsEpoxyController @Inject constructor(
+    @PerActivity private val context: Context,
+    private val textCreator: ShowDetailsTextCreator
 ) : TypedEpoxyController<ShowDetailsViewState>() {
+
+    var callbacks: Callbacks? = null
+
     interface Callbacks {
         fun onRelatedShowClicked(show: TiviShow, view: View)
         fun onEpisodeClicked(episode: Episode, view: View)
@@ -142,7 +146,7 @@ class ShowDetailsEpoxyController(
                                     .tiviShow(relatedShow)
                                     .tmdbImageUrlProvider(tmdbImageUrlProvider())
                                     .clickListener { view ->
-                                        callbacks.onRelatedShowClicked(relatedShow, view)
+                                        callbacks?.onRelatedShowClicked(relatedShow, view)
                                     }
                         }
                     }
@@ -173,7 +177,7 @@ class ShowDetailsEpoxyController(
                         spanSizeOverride(TotalSpanOverride)
                         textCreator(textCreator)
                         expanded(expanded)
-                        clickListener { _ -> callbacks.toggleSeasonExpanded(season.season!!) }
+                        clickListener { _ -> callbacks?.toggleSeasonExpanded(season.season!!) }
                         popupMenuListener(SeasonPopupMenuListener(season))
                         popupMenuClickListener(SeasonPopupClickListener(season.season!!))
 
@@ -193,7 +197,7 @@ class ShowDetailsEpoxyController(
                                 episodeWithWatches(episodeWithWatches)
                                 expanded(true)
                                 spanSizeOverride(TotalSpanOverride)
-                                clickListener { view -> callbacks.onEpisodeClicked(episode, view) }
+                                clickListener { view -> callbacks?.onEpisodeClicked(episode, view) }
                             }
                         }
                     }
@@ -224,19 +228,19 @@ class ShowDetailsEpoxyController(
         override fun onMenuItemClick(item: MenuItem): Boolean {
             when (item.itemId) {
                 R.id.season_mark_all_watched_now -> {
-                    callbacks.onMarkSeasonWatched(season, false, ActionDate.NOW)
+                    callbacks?.onMarkSeasonWatched(season, false, ActionDate.NOW)
                 }
                 R.id.season_mark_all_watched_air_date -> {
-                    callbacks.onMarkSeasonWatched(season, false, ActionDate.AIR_DATE)
+                    callbacks?.onMarkSeasonWatched(season, false, ActionDate.AIR_DATE)
                 }
                 R.id.season_mark_aired_watched_now -> {
-                    callbacks.onMarkSeasonWatched(season, true, ActionDate.NOW)
+                    callbacks?.onMarkSeasonWatched(season, true, ActionDate.NOW)
                 }
                 R.id.season_mark_aired_watched_air_date -> {
-                    callbacks.onMarkSeasonWatched(season, true, ActionDate.AIR_DATE)
+                    callbacks?.onMarkSeasonWatched(season, true, ActionDate.AIR_DATE)
                 }
                 R.id.season_mark_all_unwatched -> {
-                    callbacks.onMarkSeasonUnwatched(season)
+                    callbacks?.onMarkSeasonUnwatched(season)
                 }
             }
             return true

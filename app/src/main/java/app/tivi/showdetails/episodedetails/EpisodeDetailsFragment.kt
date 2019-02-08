@@ -35,7 +35,6 @@ import app.tivi.extensions.resolveThemeColor
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.ShowDetailsNavigatorViewModel
 import app.tivi.ui.epoxy.SwipeAwayCallbacks
-import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviMvRxBottomSheetFragment
 import com.airbnb.epoxy.EpoxyTouchHelper
 import com.airbnb.mvrx.MvRx
@@ -58,12 +57,11 @@ class EpisodeDetailsFragment : TiviMvRxBottomSheetFragment() {
     data class Arguments(val episodeId: Long) : Parcelable
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    @Inject lateinit var dateFormatter: TiviDateFormatter
 
     private val viewModel: EpisodeDetailsViewModel by fragmentViewModel()
     @Inject lateinit var episodeDetailsViewModelFactory: EpisodeDetailsViewModel.Factory
 
-    private lateinit var controller: EpisodeDetailsEpoxyController
+    @Inject lateinit var controller: EpisodeDetailsEpoxyController
 
     private lateinit var showDetailsNavigator: ShowDetailsNavigator
 
@@ -83,13 +81,6 @@ class EpisodeDetailsFragment : TiviMvRxBottomSheetFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        controller = EpisodeDetailsEpoxyController(
-                requireContext(),
-                dateFormatter,
-                object : EpisodeDetailsEpoxyController.Callbacks {
-                }
-        )
 
         binding.epDetailsFab.doOnLayout { fab ->
             binding.epDetailsRv.updatePadding(bottom = fab.height + fab.marginBottom + fab.marginTop)

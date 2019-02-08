@@ -27,10 +27,10 @@ import app.tivi.header
 import app.tivi.posterGridItem
 import app.tivi.ui.epoxy.TotalSpanOverride
 import com.airbnb.epoxy.TypedEpoxyController
+import javax.inject.Inject
 
-class DiscoverEpoxyController(
-    private val callbacks: Callbacks
-) : TypedEpoxyController<DiscoverViewState>() {
+class DiscoverEpoxyController @Inject constructor() : TypedEpoxyController<DiscoverViewState>() {
+    var callbacks: Callbacks? = null
 
     interface Callbacks {
         fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>)
@@ -56,7 +56,7 @@ class DiscoverEpoxyController(
                 tmdbImageUrlProvider(tmdbImageUrlProvider)
                 tiviShow(result)
                 clickListener { model, _, _, _ ->
-                    callbacks.onSearchItemClicked(model.id(), result)
+                    callbacks?.onSearchItemClicked(model.id(), result)
                 }
             }
         }
@@ -72,7 +72,7 @@ class DiscoverEpoxyController(
             title(R.string.discover_trending)
             spanSizeOverride(TotalSpanOverride)
             buttonClickListener { _ ->
-                callbacks.onTrendingHeaderClicked(trendingShows)
+                callbacks?.onTrendingHeaderClicked(trendingShows)
             }
         }
         if (trendingShows.isNotEmpty()) {
@@ -85,7 +85,7 @@ class DiscoverEpoxyController(
                     annotationIcon(R.drawable.ic_eye_12dp)
                     transitionName("trending_${item.show.homepage}")
                     clickListener { model, _, _, _ ->
-                        callbacks.onItemClicked(model.id(), item)
+                        callbacks?.onItemClicked(model.id(), item)
                     }
                 }
             }
@@ -101,7 +101,7 @@ class DiscoverEpoxyController(
             title(R.string.discover_popular)
             spanSizeOverride(TotalSpanOverride)
             buttonClickListener { _ ->
-                callbacks.onPopularHeaderClicked(popularShows)
+                callbacks?.onPopularHeaderClicked(popularShows)
             }
         }
         if (popularShows.isNotEmpty()) {
@@ -112,7 +112,7 @@ class DiscoverEpoxyController(
                     tiviShow(item.show)
                     transitionName("popular_${item.show.homepage}")
                     clickListener { model, _, _, _ ->
-                        callbacks.onItemClicked(model.id(), item)
+                        callbacks?.onItemClicked(model.id(), item)
                     }
                 }
             }

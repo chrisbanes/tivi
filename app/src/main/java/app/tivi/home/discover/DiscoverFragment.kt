@@ -57,27 +57,7 @@ internal class DiscoverFragment : TiviMvRxFragment() {
     private val viewModel: DiscoverViewModel by fragmentViewModel()
     @Inject lateinit var discoverViewModelFactory: DiscoverViewModel.Factory
 
-    private val controller = DiscoverEpoxyController(object : DiscoverEpoxyController.Callbacks {
-        override fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>) {
-            viewModel.onTrendingHeaderClicked(homeNavigator,
-                    listItemSharedElementHelper.createForItems(items))
-        }
-
-        override fun onPopularHeaderClicked(items: List<PopularEntryWithShow>) {
-            viewModel.onPopularHeaderClicked(homeNavigator,
-                    listItemSharedElementHelper.createForItems(items))
-        }
-
-        override fun onItemClicked(viewHolderId: Long, item: EntryWithShow<out Entry>) {
-            viewModel.onItemPosterClicked(homeNavigator, item.show,
-                    listItemSharedElementHelper.createForId(viewHolderId, "poster"))
-        }
-
-        override fun onSearchItemClicked(viewHolderId: Long, item: TiviShow) {
-            viewModel.onItemPosterClicked(homeNavigator, item,
-                    listItemSharedElementHelper.createForId(viewHolderId, "poster"))
-        }
-    })
+    @Inject lateinit var controller: DiscoverEpoxyController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,6 +79,28 @@ internal class DiscoverFragment : TiviMvRxFragment() {
         binding.summaryRv.apply {
             setController(controller)
             addItemDecoration(SpacingItemDecorator(paddingLeft))
+        }
+
+        controller.callbacks = object : DiscoverEpoxyController.Callbacks {
+            override fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>) {
+                viewModel.onTrendingHeaderClicked(homeNavigator,
+                        listItemSharedElementHelper.createForItems(items))
+            }
+
+            override fun onPopularHeaderClicked(items: List<PopularEntryWithShow>) {
+                viewModel.onPopularHeaderClicked(homeNavigator,
+                        listItemSharedElementHelper.createForItems(items))
+            }
+
+            override fun onItemClicked(viewHolderId: Long, item: EntryWithShow<out Entry>) {
+                viewModel.onItemPosterClicked(homeNavigator, item.show,
+                        listItemSharedElementHelper.createForId(viewHolderId, "poster"))
+            }
+
+            override fun onSearchItemClicked(viewHolderId: Long, item: TiviShow) {
+                viewModel.onItemPosterClicked(homeNavigator, item,
+                        listItemSharedElementHelper.createForId(viewHolderId, "poster"))
+            }
         }
 
         listItemSharedElementHelper = ListItemSharedElementHelper(binding.summaryRv)

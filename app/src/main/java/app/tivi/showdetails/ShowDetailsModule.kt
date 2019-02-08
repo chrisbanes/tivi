@@ -16,13 +16,19 @@
 
 package app.tivi.showdetails
 
+import android.content.Context
 import app.tivi.AppNavigator
 import app.tivi.TiviAppActivityNavigator
+import app.tivi.inject.PerActivity
 import dagger.Module
 import dagger.Provides
 
 @Module
 class ShowDetailsModule {
+    @Provides
+    @PerActivity
+    fun provideActivity(activity: ShowDetailsActivity): Context = activity
+
     @Provides
     fun provideAppNavigator(activity: ShowDetailsActivity): AppNavigator {
         return TiviAppActivityNavigator(activity)
