@@ -72,14 +72,20 @@ class ShowDetailsFragment : TiviMvRxFragment() {
 
         binding.textCreator = textCreator
 
-        binding.detailsMotion.setOnApplyWindowInsetsListener { _, insets ->
-            val lp = binding.detailsStatusBarAnchor.layoutParams
-            lp.height = insets.systemWindowInsetTop
-            binding.detailsStatusBarAnchor.requestLayout()
-
+        binding.detailsMotion.setOnApplyWindowInsetsListener { v, insets ->
+            (v as MotionLayout).run {
+                constraintSetIds.forEach {
+                    getConstraintSet(it).run {
+                        constrainHeight(R.id.details_status_bar_anchor, insets.systemWindowInsetTop)
+                    }
+                }
+                rebuildMotion()
+            }
             // Just return insets
             insets
         }
+        // Finally, request some insets
+        view.requestApplyInsets()
 
         // Make the MotionLayout draw behind the status bar
         binding.detailsMotion.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or

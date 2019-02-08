@@ -22,6 +22,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.net.toUri
 import androidx.fragment.app.commit
 import app.tivi.R
@@ -70,13 +71,20 @@ class LibraryFragment : TiviMvRxFragment() {
 
         view.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
-        view.setOnApplyWindowInsetsListener { _, insets ->
-            val lp = binding.summaryStatusScrim.layoutParams
-            lp.height = insets.systemWindowInsetTop
-            binding.summaryStatusScrim.requestLayout()
+        view.setOnApplyWindowInsetsListener { view, insets ->
+            (view as MotionLayout).run {
+                constraintSetIds.forEach {
+                    getConstraintSet(it).run {
+                        constrainHeight(R.id.summary_status_scrim, insets.systemWindowInsetTop)
+                    }
+                }
+                rebuildMotion()
+            }
             // Just return insets
             insets
         }
+        // Finally, request some insets
+        view.requestApplyInsets()
 
         binding.libraryFiltersRv.adapter = filterController.adapter
 
