@@ -26,10 +26,8 @@ import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.databinding.FragmentLibraryWatchedBinding
 import app.tivi.home.HomeNavigator
 import app.tivi.home.HomeNavigatorViewModel
-import app.tivi.home.library.LibraryTextCreator
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
-import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
@@ -39,18 +37,15 @@ class WatchedFragment : TiviMvRxFragment() {
 
     private lateinit var homeNavigator: HomeNavigator
     private lateinit var binding: FragmentLibraryWatchedBinding
-    private lateinit var textCreator: LibraryTextCreator
 
     private val viewModel: WatchedViewModel by fragmentViewModel()
     @Inject lateinit var watchedViewModelFactory: WatchedViewModel.Factory
 
-    @Inject lateinit var dateFormatter: TiviDateFormatter
+    @Inject lateinit var controller: WatchedEpoxyController
 
     private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
         ListItemSharedElementHelper(binding.watchedRv) { it.findViewById(R.id.show_poster) }
     }
-
-    private lateinit var controller: WatchedEpoxyController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,15 +63,13 @@ class WatchedFragment : TiviMvRxFragment() {
         super.onViewCreated(view, savedInstanceState)
         postponeEnterTransition()
 
-        textCreator = LibraryTextCreator(requireContext())
-
-        controller = WatchedEpoxyController(object : WatchedEpoxyController.Callbacks {
+        controller.callbacks = object : WatchedEpoxyController.Callbacks {
             override fun onItemClicked(item: WatchedShowEntryWithShow) {
                 viewModel.onItemPostedClicked(homeNavigator, item.show,
                         listItemSharedElementHelper.createForItem(item, "poster")
                 )
             }
-        }, textCreator, dateFormatter)
+        }
 
         binding.watchedRv.apply {
             addItemDecoration(SpacingItemDecorator(paddingLeft))
