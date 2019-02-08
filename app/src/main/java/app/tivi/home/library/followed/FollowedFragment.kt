@@ -20,12 +20,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProviders
 import app.tivi.R
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.databinding.FragmentLibraryFollowedBinding
 import app.tivi.home.HomeNavigator
-import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.util.TiviMvRxFragment
@@ -34,8 +32,7 @@ import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
 class FollowedFragment : TiviMvRxFragment() {
-
-    private lateinit var homeNavigator: HomeNavigator
+    @Inject lateinit var homeNavigator: HomeNavigator
     private lateinit var binding: FragmentLibraryFollowedBinding
 
     private val viewModel: FollowedViewModel by fragmentViewModel()
@@ -46,11 +43,6 @@ class FollowedFragment : TiviMvRxFragment() {
     }
 
     @Inject lateinit var controller: FollowedEpoxyController
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentLibraryFollowedBinding.inflate(inflater, container, false)

@@ -20,12 +20,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProviders
 import app.tivi.R
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.databinding.FragmentLibraryWatchedBinding
 import app.tivi.home.HomeNavigator
-import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.util.TiviMvRxFragment
@@ -34,8 +32,7 @@ import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
 class WatchedFragment : TiviMvRxFragment() {
-
-    private lateinit var homeNavigator: HomeNavigator
+    @Inject lateinit var homeNavigator: HomeNavigator
     private lateinit var binding: FragmentLibraryWatchedBinding
 
     private val viewModel: WatchedViewModel by fragmentViewModel()
@@ -45,12 +42,6 @@ class WatchedFragment : TiviMvRxFragment() {
 
     private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
         ListItemSharedElementHelper(binding.watchedRv) { it.findViewById(R.id.show_poster) }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        homeNavigator = ViewModelProviders.of(requireActivity(), viewModelFactory)
-                .get(HomeNavigatorViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

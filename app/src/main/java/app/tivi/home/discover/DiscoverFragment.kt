@@ -24,7 +24,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
-import androidx.lifecycle.ViewModelProviders
 import app.tivi.R
 import app.tivi.data.Entry
 import app.tivi.data.entities.TiviShow
@@ -35,7 +34,6 @@ import app.tivi.databinding.FragmentDiscoverBinding
 import app.tivi.extensions.setActionViewExpanded
 import app.tivi.home.HomeActivity
 import app.tivi.home.HomeNavigator
-import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.trakt.TraktAuthState
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
@@ -52,7 +50,7 @@ internal class DiscoverFragment : TiviMvRxFragment() {
     private lateinit var searchView: SearchView
     private lateinit var listItemSharedElementHelper: ListItemSharedElementHelper
 
-    private lateinit var homeNavigator: HomeNavigator
+    @Inject lateinit var homeNavigator: HomeNavigator
 
     private val viewModel: DiscoverViewModel by fragmentViewModel()
     @Inject lateinit var discoverViewModelFactory: DiscoverViewModel.Factory
@@ -61,7 +59,6 @@ internal class DiscoverFragment : TiviMvRxFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
 
         GridToGridTransitioner.setupFirstFragment(this, R.id.summary_appbarlayout, R.id.summary_status_scrim)
     }

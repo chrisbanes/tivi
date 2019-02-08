@@ -17,6 +17,8 @@
 package app.tivi.showdetails
 
 import android.content.Context
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import app.tivi.AppNavigator
 import app.tivi.TiviAppActivityNavigator
 import app.tivi.inject.PerActivity
@@ -25,6 +27,14 @@ import dagger.Provides
 
 @Module
 class ShowDetailsModule {
+    @Provides
+    fun provideShowDetailsNavigator(
+        activity: ShowDetailsActivity,
+        factory: ViewModelProvider.Factory
+    ): ShowDetailsNavigator {
+        return ViewModelProviders.of(activity, factory).get(ShowDetailsNavigatorViewModel::class.java)
+    }
+
     @Provides
     @PerActivity
     fun provideActivity(activity: ShowDetailsActivity): Context = activity

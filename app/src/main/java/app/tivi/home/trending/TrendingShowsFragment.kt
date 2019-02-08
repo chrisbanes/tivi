@@ -18,25 +18,18 @@ package app.tivi.home.trending
 
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.ViewModelProviders
 import app.tivi.PosterGridItemBindingModel_
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.home.HomeNavigator
-import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.util.EntryGridEpoxyController
 import app.tivi.util.EntryGridFragment
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
+import javax.inject.Inject
 
 class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingShowsViewModel>(TrendingShowsViewModel::class.java) {
-
-    private lateinit var homeNavigator: HomeNavigator
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
-    }
+    @Inject lateinit var homeNavigator: HomeNavigator
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
