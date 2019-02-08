@@ -28,15 +28,16 @@ import app.tivi.ui.epoxy.EpoxyModelProperty
 import app.tivi.ui.epoxy.TotalSpanOverride
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
+import javax.inject.Inject
 
-class FollowedEpoxyController(
-    private val callbacks: Callbacks,
+class FollowedEpoxyController @Inject constructor(
     private val textCreator: LibraryTextCreator
 ) : PagedListEpoxyController<FollowedShowEntryWithShow>(
         modelBuildingHandler = Handler(Looper.getMainLooper())
 ) {
     var tmdbImageUrlProvider by EpoxyModelProperty { TmdbImageUrlProvider() }
     var isEmpty by EpoxyModelProperty { false }
+    var callbacks: Callbacks? = null
 
     override fun addModels(models: List<EpoxyModel<*>>) {
         if (isEmpty) {
@@ -56,7 +57,7 @@ class FollowedEpoxyController(
                 tiviShow(item.show)
                 posterTransitionName("show_${item.show.homepage}")
                 clickListener(View.OnClickListener {
-                    callbacks.onItemClicked(item)
+                    callbacks?.onItemClicked(item)
                 })
             } else {
                 id("item_placeholder_$currentPosition")
