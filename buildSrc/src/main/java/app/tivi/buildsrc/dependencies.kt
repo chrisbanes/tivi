@@ -157,7 +157,7 @@ object Libs {
     }
 
     object Epoxy {
-        private const val version = "3.1.0"
+        private const val version = "3.2.0"
         val epoxy = "com.airbnb.android:epoxy:$version"
         val paging = "com.airbnb.android:epoxy-paging:$version"
         val dataBinding = "com.airbnb.android:epoxy-databinding:$version"

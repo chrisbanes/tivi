@@ -24,8 +24,6 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.doOnLayout
 import androidx.core.view.updatePadding
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import app.tivi.EpDetailsWatchItemBindingModel_
 import app.tivi.R
 import app.tivi.databinding.FragmentEpisodeDetailsBinding
@@ -33,9 +31,7 @@ import app.tivi.extensions.marginBottom
 import app.tivi.extensions.marginTop
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.showdetails.ShowDetailsNavigator
-import app.tivi.showdetails.ShowDetailsNavigatorViewModel
 import app.tivi.ui.epoxy.SwipeAwayCallbacks
-import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviMvRxBottomSheetFragment
 import com.airbnb.epoxy.EpoxyTouchHelper
 import com.airbnb.mvrx.MvRx
@@ -57,23 +53,13 @@ class EpisodeDetailsFragment : TiviMvRxBottomSheetFragment() {
     @Parcelize
     data class Arguments(val episodeId: Long) : Parcelable
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    @Inject lateinit var dateFormatter: TiviDateFormatter
-
     private val viewModel: EpisodeDetailsViewModel by fragmentViewModel()
     @Inject lateinit var episodeDetailsViewModelFactory: EpisodeDetailsViewModel.Factory
 
-    private lateinit var controller: EpisodeDetailsEpoxyController
-
-    private lateinit var showDetailsNavigator: ShowDetailsNavigator
+    @Inject lateinit var controller: EpisodeDetailsEpoxyController
+    @Inject lateinit var showDetailsNavigator: ShowDetailsNavigator
 
     private lateinit var binding: FragmentEpisodeDetailsBinding
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        showDetailsNavigator = ViewModelProviders.of(requireActivity(), viewModelFactory)
-                .get(ShowDetailsNavigatorViewModel::class.java)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentEpisodeDetailsBinding.inflate(layoutInflater, container, false)
@@ -83,13 +69,6 @@ class EpisodeDetailsFragment : TiviMvRxBottomSheetFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        controller = EpisodeDetailsEpoxyController(
-                requireContext(),
-                dateFormatter,
-                object : EpisodeDetailsEpoxyController.Callbacks {
-                }
-        )
 
         binding.epDetailsFab.doOnLayout { fab ->
             binding.epDetailsRv.updatePadding(bottom = fab.height + fab.marginBottom + fab.marginTop)

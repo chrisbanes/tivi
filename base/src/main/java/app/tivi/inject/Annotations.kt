@@ -42,3 +42,13 @@ annotation class MediumDateTime
 @Qualifier
 @MustBeDocumented
 annotation class ShortDate
+
+@Retention(AnnotationRetention.RUNTIME)
+@Qualifier
+@MustBeDocumented
+annotation class PerActivity
+
+@Retention(AnnotationRetention.RUNTIME)
+@Qualifier
+@MustBeDocumented
+annotation class PerApplication

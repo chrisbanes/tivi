@@ -25,11 +25,15 @@ import app.tivi.R
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
+import app.tivi.inject.PerActivity
 import app.tivi.ui.GenreStringer
 import app.tivi.ui.text.textAppearanceSpanForAttribute
 import org.threeten.bp.OffsetDateTime
+import javax.inject.Inject
 
-class ShowDetailsTextCreator(private val context: Context) {
+class ShowDetailsTextCreator @Inject constructor(
+    @PerActivity private val context: Context
+) {
     fun seasonSummaryText(season: SeasonWithEpisodesAndWatches): CharSequence {
         val toWatch = season.numberAiredToWatch
         val toAir = season.numberToAir

@@ -20,18 +20,14 @@ import android.os.Bundle
 import android.view.ViewGroup
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.doOnPreDraw
-import androidx.lifecycle.ViewModelProvider
 import androidx.transition.TransitionInflater
 import dagger.android.support.DaggerFragment
-import javax.inject.Inject
 
 /**
  * Base fragment class which supports LifecycleOwner and Dagger injection.
  */
 abstract class TiviFragment : DaggerFragment() {
     private var postponedTransition = false
-
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -16,13 +16,29 @@
 
 package app.tivi.home
 
+import android.content.Context
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import app.tivi.AppNavigator
 import app.tivi.TiviAppActivityNavigator
+import app.tivi.inject.PerActivity
 import dagger.Module
 import dagger.Provides
 
 @Module
 class HomeModule {
+    @Provides
+    fun provideHomeNavigator(
+        activity: HomeActivity,
+        factory: ViewModelProvider.Factory
+    ): HomeNavigator {
+        return ViewModelProviders.of(activity, factory).get(HomeNavigatorViewModel::class.java)
+    }
+
+    @Provides
+    @PerActivity
+    fun provideActivity(activity: HomeActivity): Context = activity
+
     @Provides
     fun provideAppNavigator(activity: HomeActivity): AppNavigator {
         return TiviAppActivityNavigator(activity)

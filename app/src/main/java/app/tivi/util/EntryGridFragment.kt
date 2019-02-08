@@ -24,6 +24,7 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.doOnLayout
 import androidx.core.view.updatePadding
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
@@ -38,12 +39,15 @@ import app.tivi.ui.ProgressTimeLatch
 import app.tivi.ui.SpacingItemDecorator
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
+import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
 abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewModel<LI>>(
     private val vmClass: Class<VM>
 ) : TiviFragment() {
     protected lateinit var viewModel: VM
+
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var swipeRefreshLatch: ProgressTimeLatch
     private var originalRvTopPadding = 0

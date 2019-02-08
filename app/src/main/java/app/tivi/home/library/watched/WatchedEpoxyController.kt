@@ -16,6 +16,8 @@
 
 package app.tivi.home.library.watched
 
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import app.tivi.LibraryWatchedItemBindingModel_
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
@@ -27,14 +29,18 @@ import app.tivi.ui.epoxy.TotalSpanOverride
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
+import javax.inject.Inject
 
-class WatchedEpoxyController(
-    private val callbacks: Callbacks,
+class WatchedEpoxyController @Inject constructor(
     private val textCreator: LibraryTextCreator,
     private val dateFormatter: TiviDateFormatter
-) : PagedListEpoxyController<WatchedShowEntryWithShow>() {
+) : PagedListEpoxyController<WatchedShowEntryWithShow>(
+        modelBuildingHandler = Handler(Looper.getMainLooper())
+) {
     var tmdbImageUrlProvider by EpoxyModelProperty { TmdbImageUrlProvider() }
     var isEmpty by EpoxyModelProperty { false }
+
+    var callbacks: Callbacks? = null
 
     override fun addModels(models: List<EpoxyModel<*>>) {
         if (isEmpty) {
@@ -43,8 +49,7 @@ class WatchedEpoxyController(
                 spanSizeOverride(TotalSpanOverride)
             }
         } else {
-            // Need to use filterNotNull() due to https://github.com/airbnb/epoxy/issues/567
-            super.addModels(models.filterNotNull())
+            super.addModels(models)
         }
     }
 
@@ -55,7 +60,7 @@ class WatchedEpoxyController(
                 tiviShow(item.show)
                 posterTransitionName("show_${item.show.homepage}")
                 clickListener(View.OnClickListener {
-                    callbacks.onItemClicked(item)
+                    callbacks?.onItemClicked(item)
                 })
             } else {
                 id("item_placeholder_$currentPosition")

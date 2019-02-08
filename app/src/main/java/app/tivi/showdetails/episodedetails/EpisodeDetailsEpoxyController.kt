@@ -22,20 +22,17 @@ import app.tivi.detailsBadge
 import app.tivi.detailsHeader
 import app.tivi.epDetailsSummary
 import app.tivi.epDetailsWatchItem
+import app.tivi.inject.PerActivity
 import app.tivi.ui.epoxy.TotalSpanOverride
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.epoxy.TypedEpoxyController
 import com.airbnb.mvrx.Success
+import javax.inject.Inject
 
-class EpisodeDetailsEpoxyController(
-    private val context: Context,
-    private val dateFormatter: TiviDateFormatter,
-    private val callbacks: Callbacks
+class EpisodeDetailsEpoxyController @Inject constructor(
+    @PerActivity private val context: Context,
+    private val dateFormatter: TiviDateFormatter
 ) : TypedEpoxyController<EpisodeDetailsViewState>() {
-
-    interface Callbacks {
-        // TODO
-    }
 
     override fun buildModels(viewState: EpisodeDetailsViewState) {
         when (viewState.episode) {

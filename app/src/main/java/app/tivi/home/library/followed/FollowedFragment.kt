@@ -20,42 +20,29 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProviders
 import app.tivi.R
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.databinding.FragmentLibraryFollowedBinding
 import app.tivi.home.HomeNavigator
-import app.tivi.home.HomeNavigatorViewModel
-import app.tivi.home.library.LibraryTextCreator
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
-import app.tivi.util.TiviDateFormatter
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
 class FollowedFragment : TiviMvRxFragment() {
-
-    private lateinit var homeNavigator: HomeNavigator
+    @Inject lateinit var homeNavigator: HomeNavigator
     private lateinit var binding: FragmentLibraryFollowedBinding
-    private lateinit var textCreator: LibraryTextCreator
 
     private val viewModel: FollowedViewModel by fragmentViewModel()
     @Inject lateinit var followedViewModelFactory: FollowedViewModel.Factory
-
-    @Inject lateinit var dateFormatter: TiviDateFormatter
 
     private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
         ListItemSharedElementHelper(binding.followedRv) { it.findViewById(R.id.show_poster) }
     }
 
-    private lateinit var controller: FollowedEpoxyController
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
-    }
+    @Inject lateinit var controller: FollowedEpoxyController
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentLibraryFollowedBinding.inflate(inflater, container, false)
@@ -67,19 +54,17 @@ class FollowedFragment : TiviMvRxFragment() {
         super.onViewCreated(view, savedInstanceState)
         postponeEnterTransition()
 
-        textCreator = LibraryTextCreator(requireContext())
-
         binding.followedRv.apply {
             addItemDecoration(SpacingItemDecorator(paddingLeft))
         }
 
-        controller = FollowedEpoxyController(object : FollowedEpoxyController.Callbacks {
+        controller.callbacks = object : FollowedEpoxyController.Callbacks {
             override fun onItemClicked(item: FollowedShowEntryWithShow) {
                 viewModel.onItemPostedClicked(homeNavigator, item.show,
                         listItemSharedElementHelper.createForItem(item, "poster")
                 )
             }
-        }, textCreator)
+        }
 
         binding.followedRv.apply {
             addItemDecoration(SpacingItemDecorator(paddingLeft))

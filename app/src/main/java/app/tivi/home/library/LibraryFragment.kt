@@ -24,12 +24,10 @@ import android.view.ViewGroup
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import androidx.fragment.app.commit
-import androidx.lifecycle.ViewModelProviders
 import app.tivi.R
 import app.tivi.databinding.FragmentLibraryBinding
 import app.tivi.home.HomeActivity
 import app.tivi.home.HomeNavigator
-import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.home.library.followed.FollowedFragment
 import app.tivi.home.library.watched.WatchedFragment
 import app.tivi.trakt.TraktAuthState
@@ -42,7 +40,7 @@ import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
 class LibraryFragment : TiviMvRxFragment() {
-    private lateinit var homeNavigator: HomeNavigator
+    @Inject lateinit var homeNavigator: HomeNavigator
     private lateinit var binding: FragmentLibraryBinding
 
     private val viewModel: LibraryViewModel by fragmentViewModel()
@@ -57,8 +55,6 @@ class LibraryFragment : TiviMvRxFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        homeNavigator = ViewModelProviders.of(activity!!, viewModelFactory).get(HomeNavigatorViewModel::class.java)
-
         GridToGridTransitioner.setupFirstFragment(this, R.id.summary_appbarlayout, R.id.summary_status_scrim)
     }
 

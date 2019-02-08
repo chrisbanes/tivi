@@ -24,7 +24,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.os.bundleOf
-import androidx.lifecycle.ViewModelProviders
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.ActionDate
@@ -33,7 +32,6 @@ import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.databinding.FragmentShowDetailsBinding
 import app.tivi.showdetails.ShowDetailsNavigator
-import app.tivi.showdetails.ShowDetailsNavigatorViewModel
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
@@ -57,18 +55,11 @@ class ShowDetailsFragment : TiviMvRxFragment() {
     private val viewModel: ShowDetailsFragmentViewModel by fragmentViewModel()
     @Inject lateinit var showDetailsViewModelFactory: ShowDetailsFragmentViewModel.Factory
 
-    private lateinit var controller: ShowDetailsEpoxyController
-    private lateinit var showDetailsNavigator: ShowDetailsNavigator
+    @Inject lateinit var controller: ShowDetailsEpoxyController
+    @Inject lateinit var showDetailsNavigator: ShowDetailsNavigator
+    @Inject lateinit var textCreator: ShowDetailsTextCreator
 
     private lateinit var binding: FragmentShowDetailsBinding
-
-    private lateinit var textCreator: ShowDetailsTextCreator
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        showDetailsNavigator = ViewModelProviders.of(requireActivity(), viewModelFactory)
-                .get(ShowDetailsNavigatorViewModel::class.java)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentShowDetailsBinding.inflate(inflater, container, false)
@@ -79,7 +70,6 @@ class ShowDetailsFragment : TiviMvRxFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        textCreator = ShowDetailsTextCreator(requireContext())
         binding.textCreator = textCreator
 
         binding.detailsMotion.setOnApplyWindowInsetsListener { _, insets ->
@@ -131,34 +121,31 @@ class ShowDetailsFragment : TiviMvRxFragment() {
             viewModel.onUpClicked(showDetailsNavigator)
         }
 
-        controller = ShowDetailsEpoxyController(
-                requireContext(),
-                textCreator,
-                object : ShowDetailsEpoxyController.Callbacks {
-                    override fun onRelatedShowClicked(show: TiviShow, view: View) {
-                        viewModel.onRelatedShowClicked(
-                                showDetailsNavigator,
-                                show,
-                                SharedElementHelper().apply {
-                                    addSharedElement(view, "poster")
-                                }
-                        )
-                    }
+        controller.callbacks = object : ShowDetailsEpoxyController.Callbacks {
+            override fun onRelatedShowClicked(show: TiviShow, view: View) {
+                viewModel.onRelatedShowClicked(
+                        showDetailsNavigator,
+                        show,
+                        SharedElementHelper().apply {
+                            addSharedElement(view, "poster")
+                        }
+                )
+            }
 
-                    override fun onEpisodeClicked(episode: Episode, view: View) {
-                        viewModel.onRelatedShowClicked(showDetailsNavigator, episode)
-                    }
+            override fun onEpisodeClicked(episode: Episode, view: View) {
+                viewModel.onRelatedShowClicked(showDetailsNavigator, episode)
+            }
 
-                    override fun onMarkSeasonUnwatched(season: Season) = viewModel.onMarkSeasonUnwatched(season)
+            override fun onMarkSeasonUnwatched(season: Season) = viewModel.onMarkSeasonUnwatched(season)
 
-                    override fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
-                        viewModel.onMarkSeasonWatched(season, onlyAired, date)
-                    }
+            override fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
+                viewModel.onMarkSeasonWatched(season, onlyAired, date)
+            }
 
-                    override fun toggleSeasonExpanded(season: Season) {
-                        viewModel.toggleSeasonExpanded(season)
-                    }
-                })
+            override fun toggleSeasonExpanded(season: Season) {
+                viewModel.toggleSeasonExpanded(season)
+            }
+        }
 
         binding.detailsRv.setController(controller)
     }

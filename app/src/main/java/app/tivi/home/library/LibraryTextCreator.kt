@@ -21,9 +21,13 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
 import app.tivi.R
 import app.tivi.data.entities.TiviShow
+import app.tivi.inject.PerActivity
 import app.tivi.ui.text.textAppearanceSpanForAttribute
+import javax.inject.Inject
 
-class LibraryTextCreator(private val context: Context) {
+class LibraryTextCreator @Inject constructor(
+    @PerActivity private val context: Context
+) {
     fun showTitle(show: TiviShow): CharSequence = buildSpannedString {
         append(show.title)
 
