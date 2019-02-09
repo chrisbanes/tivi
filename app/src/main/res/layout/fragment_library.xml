@@ -31,10 +31,11 @@
         android:layout_height="match_parent"
         app:layoutDescription="@xml/scene_library">
 
+        <!-- The height of this is updated via an OnApplyWindowInsetsListener  -->
         <View
             android:id="@+id/summary_status_scrim"
             android:layout_width="match_parent"
-            android:layout_height="24dp"
+            android:layout_height="0px"
             android:background="?android:attr/colorPrimaryDark"
             android:elevation="4dp" />
 

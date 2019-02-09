@@ -24,6 +24,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.os.bundleOf
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.ActionDate
@@ -31,6 +33,7 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.databinding.FragmentShowDetailsBinding
+import app.tivi.extensions.forEachConstraintSet
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.MvRx
@@ -73,13 +76,15 @@ class ShowDetailsFragment : TiviMvRxFragment() {
         binding.textCreator = textCreator
 
         binding.detailsMotion.setOnApplyWindowInsetsListener { _, insets ->
-            val lp = binding.detailsStatusBarAnchor.layoutParams
-            lp.height = insets.systemWindowInsetTop
-            binding.detailsStatusBarAnchor.requestLayout()
-
+            binding.detailsMotion.forEachConstraintSet {
+                it.constrainHeight(R.id.details_status_bar_anchor, insets.systemWindowInsetTop)
+            }
+            binding.detailsMotion.rebuildMotion()
             // Just return insets
             insets
         }
+        // Finally, request some insets
+        view.requestApplyInsets()
 
         // Make the MotionLayout draw behind the status bar
         binding.detailsMotion.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
@@ -103,11 +108,13 @@ class ShowDetailsFragment : TiviMvRxFragment() {
                 when (currentId) {
                     R.id.end -> {
                         binding.detailsAppbarBackground.cutProgress = 0f
-                        binding.detailsPoster.visibility = View.GONE
+                        binding.detailsPoster.isGone = true
+                        binding.detailsFollowFab.isGone = true
                     }
                     R.id.start -> {
                         binding.detailsAppbarBackground.cutProgress = 1f
-                        binding.detailsPoster.visibility = View.VISIBLE
+                        binding.detailsPoster.isVisible = true
+                        binding.detailsFollowFab.isVisible = true
                     }
                 }
             }

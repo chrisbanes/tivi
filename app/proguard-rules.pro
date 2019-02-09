@@ -143,3 +143,9 @@
 # Need to keep MvRxViewModelFactory companion classes for MvRx
 # See https://github.com/airbnb/MvRx/issues/185
 -keepnames class * implements com.airbnb.mvrx.MvRxViewModelFactory
+
+# Keep FAB show/hide methods for MotionLayout KeyTriggers
+-keep class * extends com.google.android.material.floatingactionbutton.FloatingActionButton {
+    public void show();
+    public void hide();
+}
