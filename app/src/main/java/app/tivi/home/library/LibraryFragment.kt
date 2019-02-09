@@ -22,11 +22,11 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.net.toUri
 import androidx.fragment.app.commit
 import app.tivi.R
 import app.tivi.databinding.FragmentLibraryBinding
+import app.tivi.extensions.forEachConstraintSet
 import app.tivi.home.HomeActivity
 import app.tivi.home.HomeNavigator
 import app.tivi.home.library.followed.FollowedFragment
@@ -71,15 +71,11 @@ class LibraryFragment : TiviMvRxFragment() {
 
         view.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
-        view.setOnApplyWindowInsetsListener { view, insets ->
-            (view as MotionLayout).run {
-                constraintSetIds.forEach {
-                    getConstraintSet(it).run {
-                        constrainHeight(R.id.summary_status_scrim, insets.systemWindowInsetTop)
-                    }
-                }
-                rebuildMotion()
+        view.setOnApplyWindowInsetsListener { _, insets ->
+            binding.libraryMotion.forEachConstraintSet {
+                it.constrainHeight(R.id.summary_status_scrim, insets.systemWindowInsetTop)
             }
+            binding.libraryMotion.rebuildMotion()
             // Just return insets
             insets
         }

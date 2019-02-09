@@ -31,6 +31,7 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.databinding.FragmentShowDetailsBinding
+import app.tivi.extensions.forEachConstraintSet
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.MvRx
@@ -72,15 +73,11 @@ class ShowDetailsFragment : TiviMvRxFragment() {
 
         binding.textCreator = textCreator
 
-        binding.detailsMotion.setOnApplyWindowInsetsListener { v, insets ->
-            (v as MotionLayout).run {
-                constraintSetIds.forEach {
-                    getConstraintSet(it).run {
-                        constrainHeight(R.id.details_status_bar_anchor, insets.systemWindowInsetTop)
-                    }
-                }
-                rebuildMotion()
+        binding.detailsMotion.setOnApplyWindowInsetsListener { _, insets ->
+            binding.detailsMotion.forEachConstraintSet {
+                it.constrainHeight(R.id.details_status_bar_anchor, insets.systemWindowInsetTop)
             }
+            binding.detailsMotion.rebuildMotion()
             // Just return insets
             insets
         }
