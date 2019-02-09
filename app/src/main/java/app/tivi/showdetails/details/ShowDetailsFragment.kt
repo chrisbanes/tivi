@@ -24,6 +24,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.os.bundleOf
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.ActionDate
@@ -106,11 +108,13 @@ class ShowDetailsFragment : TiviMvRxFragment() {
                 when (currentId) {
                     R.id.end -> {
                         binding.detailsAppbarBackground.cutProgress = 0f
-                        binding.detailsPoster.visibility = View.GONE
+                        binding.detailsPoster.isGone = true
+                        binding.detailsFollowFab.isGone = true
                     }
                     R.id.start -> {
                         binding.detailsAppbarBackground.cutProgress = 1f
-                        binding.detailsPoster.visibility = View.VISIBLE
+                        binding.detailsPoster.isVisible = true
+                        binding.detailsFollowFab.isVisible = true
                     }
                 }
             }
