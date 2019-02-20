@@ -1,155 +1,125 @@
 ##
 # Required images
 #
-# * https://github.com/GoogleCloudPlatform/cloud-builders-community/tree/master/android
-# * https://github.com/pixiteapps/android-cloud-build/tree/master/buildnum
-# * https://github.com/GoogleCloudPlatform/cloud-builders-community/tree/master/tar
+# In order for this to run you need to deploy the Pixite Android cloud builders.
+#
+# ```bash
+# git clone git@github.com:pixiteapps/android-cloud-build /tmp/android-cloud-build
+# cd /tmp/android-cloud-build
+# gcloud builds submit .
+# ```
 
 steps:
 
-# First things first, get and save a build number
-# Fail if we can't
-- name: 'gcr.io/cloud-builders/gsutil'
-  id: copy_config
-  waitFor: ['-']  # The '-' indicates that this step begins immediately.
-  # we use rsync and not cp so that this step doesn't fail the first time it's run
-  args: ['rsync', 'gs://${_CONFIG_BUCKET}/', '/config']
-  volumes:
-  - name: 'config'
-    path: '/config'
-
-# Runs the setup_env.sh script to setup the CI environment
-- name: 'gcr.io/$PROJECT_ID/buildnum'
+# Update the build number
+- name: 'gcr.io/$PROJECT_ID/buildnum:1.0'
   id: setup_env
-  args: ['/config/buildnum', '.buildenv']
-  waitFor: ['copy_config']
-  volumes:
-  - name: 'config'
-    path: '/config'
+  waitFor: ['-']
+  args: ['gs://${_CONFIG_BUCKET}/buildnum']
 
-- name: 'gcr.io/cloud-builders/gsutil'
-  id: save_env
-  args: ['cp', '/config/buildnum', 'gs://${_CONFIG_BUCKET}/buildnum']
-  waitFor: ['setup_env']
-  volumes:
-  - name: 'config'
-    path: '/config'
-
-#
-# Build
-#
-- name: 'gcr.io/cloud-builders/gsutil'
-  id: copy_build_cache
-  waitFor: ['-']  # The '-' indicates that this step begins immediately.
-  # we use rsync and not cp so that this step doesn't fail the first time it's run
-  args: ['rsync', 'gs://${_CACHE_BUCKET}/', '/build_cache']
-  volumes:
-  - name: 'build_cache'
-    path: '/build_cache'
-
-- name: 'gcr.io/$PROJECT_ID/tar'
-  id: extract_build_cache
-  waitFor: ['copy_build_cache']
-  # This might fail the first time, but that's okay
-  entrypoint: '/bin/bash'
+- name: gcr.io/cloud-builders/gcloud
+  id: generate_cache_key
+  entrypoint: bash
+  waitFor: ['-']
   args:
-  - '-c'
+  - -c
   - |
-    tar xpzf /build_cache/cache.tgz -C / || echo "No cache found."
-  volumes:
-  - name: 'build_cache'
-    path: '/build_cache'
+    ./checksum.sh checksum.txt
+
+- name: gcr.io/$PROJECT_ID/restore_cache:1.0
+  id: restore_cache
+  waitFor: ['generate_cache_key']
+  args:
+  - '--bucket=gs://${_CACHE_BUCKET}'
+  - --key=gradle-$( checksum checksum.txt )
+
+# - name: gcr.io/$PROJECT_ID/restore_cache:1.0
+#   id: garbage
+#   waitFor: ['restore_cache']
+#   entrypoint: bash
+#   args:
+#   - -c
+#   - |
+#     echo "ls /workspace/.gradle"
+#     ls /workspace/.gradle
+
+#     echo "ls /workspace/.gradle/wrapper/dists"
+#     ls /workspace/.gradle/wrapper/dists
+
+#     exit 1
+
 
   # Build the project
-- name: 'gcr.io/$PROJECT_ID/android:28'
-  id: build
-  args: ['./gradlew', '--stacktrace', '-Dtrace', 'bundleDebug', 'assembleDebug', 'app:assembleDebugAndroidTest']
+- name: gcr.io/$PROJECT_ID/android:28
+  id: download_dependencies
+  args: ['./gradlew', 'dependencies']
   <<: &env
     env:
     - 'TERM=dumb'
-    - 'JAVA_TOOL_OPTIONS="-Xmx4g"'
-    - 'GRADLE_USER_HOME=/build_cache/.gradle'
-    - 'GRADLE_OPTS="-Dorg.gradle.daemon=false -Dkotlin.incremental=false"'
+    - 'GRADLE_USER_HOME=/workspace/.gradle'
+    - 'JAVA_TOOL_OPTIONS="-Xmx1024m"'
+    - 'GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false"'
     - 'BRANCH_NAME=$BRANCH_NAME'
+    - 'ARTIFACT_BUCKET=gs://${_ARTIFACT_BUCKET}'
   waitFor:
-  - extract_build_cache
-  volumes:
-  - name: 'build_cache'
-    path: '/build_cache'
+  - setup_env
+  - restore_cache
 
-- name: 'gcr.io/cloud-builders/gsutil'
-  args: ['-q', 'cp', '-r', 'app/build/outputs/apk', 'gs://${_ARTIFACT_BUCKET}/$BRANCH_NAME-$BUILD_ID/']
-  waitFor: ['build']
-
-#
-# Unit Tests
-#
-
-# Run the unit tests
 - name: 'gcr.io/$PROJECT_ID/android:28'
-  id: unit_tests
-  args: ['./gradlew', '--stacktrace', '-Dtrace', 'check']
+  id: build
+  args: ['./gradlew', 'bundleDebug', 'assembleDebug', '-Ptivi.versioncode=1']
   <<: *env
-  waitFor: ['build']
-  volumes:
-  - name: 'build_cache'
-    path: '/build_cache'
+  waitFor:
+  - download_dependencies
 
-# Store the unit test reports
-- name: 'gcr.io/cloud-builders/gsutil'
-  id: store_unit_test_reports
-  args: ['-q', 'cp', '-r', 'app/build/reports/', 'gs://${_ARTIFACT_BUCKET}/$BRANCH_NAME-$BUILD_ID/']
-  waitFor: ['unit_tests']
-
-# Store the unit test results
-- name: 'gcr.io/cloud-builders/gsutil'
-  id: store_unit_test_results
-  args: ['-q', 'cp', '-r', 'app/build/test-results/', 'gs://${_ARTIFACT_BUCKET}/$BRANCH_NAME-$BUILD_ID/']
-  waitFor: ['unit_tests']
-
-#
-# Deployment
-#
-
-# Deploy to Google Play
-- name: 'gcr.io/$PROJECT_ID/android:28'
-  id: deploy_to_play
-  args: ["for_branch", "master", "./gradlew", "--stacktrace", "-Dtrace", ":app:publishReleaseApk"]
+- name: gcr.io/$PROJECT_ID/deploy_to_gcs:1.0
+  args:
+  - --path=app/build/outputs
+  waitFor: 
+  - build
   <<: *env
-  waitFor: ['unit_tests'] # removed 'ftl_tests'
-  volumes:
-  - name: 'build_cache'
-    path: '/build_cache'
 
-# Deploy to Crashlytics Beta
-- name: 'gcr.io/$PROJECT_ID/android:28'
-  id: deploy_to_beta
-  args: ["for_branch", "develop", "./gradlew", "--stacktrace", "-Dtrace", ":app:crashlyticsUploadDistributionDebug"]
+#
+# Check
+#
+- name: gcr.io/$PROJECT_ID/android:28
+  id: check
+  args: ['./gradlew', 'check', 'dependencyUpdates']
+  waitFor:
+  - build
   <<: *env
-  waitFor: ['unit_tests'] # removed 'ftl_tests'
-  volumes:
-  - name: 'build_cache'
-    path: '/build_cache'
 
-#
-# Cleanup
-#
+- name: gcr.io/$PROJECT_ID/deploy_to_gcs:1.0
+  args:
+  - --path=app/build/reports
+  - --path=build/dependencyUpdates
+  waitFor: ['check']
+  <<: *env
 
-# Compress the gradle build cache
-- name: 'gcr.io/$PROJECT_ID/tar'
-  id: compress_cache
-  args: ['cpzf', '/build_cache/cache.tgz', '/build_cache/.gradle/caches', '/build_cache/.gradle/wrapper']
-  waitFor: ['deploy_to_play', 'deploy_to_beta']
-  volumes:
-  - name: 'build_cache'
-    path: '/build_cache'
+- name: gcr.io/$PROJECT_ID/deploy_to_gcs:1.0
+  id: save_test_results
+  waitFor: ['check']
+  entrypoint: bash
+  <<: *env
+  args:
+  - -c
+  - |
+    mkdir -p junit
+    find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} junit/ \;
 
-# Store the build cache
-- name: 'gcr.io/cloud-builders/gsutil'
-  args: ['cp', '/build_cache/cache.tgz', 'gs://${_CACHE_BUCKET}/cache.tgz']
-  waitFor: ['compress_cache']
-  volumes:
-  - name: 'build_cache'
-    path: '/build_cache'
+    deploy_to_gcs --path=junit
+
+- name: 'gcr.io/$PROJECT_ID/save_cache:1.0'
+  waitFor: ['check']
+  args:
+  - '--bucket=gs://${_CACHE_BUCKET}'
+  - --key=gradle-$( checksum checksum.txt )
+  - '--path=/workspace/.gradle/caches'
+  - '--path=/workspace/.gradle/wrapper'
+
+substitutions:
+  _ARTIFACT_BUCKET: black-circle-221-tivi-build-artifacts
+  _CACHE_BUCKET: black-circle-221-tivi-build-cache
+  _CONFIG_BUCKET: black-circle-221-tivi-build-config
 
 timeout: 1800s
