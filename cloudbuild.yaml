@@ -42,7 +42,7 @@ steps:
     - 'TERM=dumb'
     - 'GRADLE_USER_HOME=/workspace/.gradle'
     - 'GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false"'
-    - 'JAVA_TOOL_OPTIONS="-Xmx2048m"'
+    - 'JAVA_TOOL_OPTIONS="-Xmx1024m"'
     - 'BRANCH_NAME=$BRANCH_NAME'
     - 'ARTIFACT_BUCKET=gs://${_ARTIFACT_BUCKET}'
   waitFor:
