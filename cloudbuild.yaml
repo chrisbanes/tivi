@@ -33,22 +33,6 @@ steps:
   - '--bucket=gs://${_CACHE_BUCKET}'
   - --key=gradle-$( checksum checksum.txt )
 
-# - name: gcr.io/$PROJECT_ID/restore_cache:1.0
-#   id: garbage
-#   waitFor: ['restore_cache']
-#   entrypoint: bash
-#   args:
-#   - -c
-#   - |
-#     echo "ls /workspace/.gradle"
-#     ls /workspace/.gradle
-
-#     echo "ls /workspace/.gradle/wrapper/dists"
-#     ls /workspace/.gradle/wrapper/dists
-
-#     exit 1
-
-
   # Build the project
 - name: gcr.io/$PROJECT_ID/android:28
   id: download_dependencies
@@ -57,8 +41,8 @@ steps:
     env:
     - 'TERM=dumb'
     - 'GRADLE_USER_HOME=/workspace/.gradle'
-    - 'JAVA_TOOL_OPTIONS="-Xmx1024m"'
     - 'GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false"'
+    - 'JAVA_TOOL_OPTIONS="-Xmx2048m"'
     - 'BRANCH_NAME=$BRANCH_NAME'
     - 'ARTIFACT_BUCKET=gs://${_ARTIFACT_BUCKET}'
   waitFor:
