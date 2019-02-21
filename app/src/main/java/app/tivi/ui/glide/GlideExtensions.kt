@@ -23,20 +23,20 @@ import com.bumptech.glide.annotation.GlideExtension
 import com.bumptech.glide.annotation.GlideOption
 import com.bumptech.glide.annotation.GlideType
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.BaseRequestOptions
 
 @SuppressLint("CheckResult")
 @GlideExtension
 object GlideExtensions {
     @GlideOption
     @JvmStatic
-    fun round(options: RequestOptions, size: Int): RequestOptions {
+    fun round(options: BaseRequestOptions<*>, size: Int): BaseRequestOptions<*> {
         return options.circleCrop().override(size)
     }
 
     @JvmStatic
     @GlideType(Drawable::class)
-    fun saturateOnLoad(requestBuilder: RequestBuilder<Drawable>) {
-        requestBuilder.transition(DrawableTransitionOptions.with(SaturationTransitionFactory()))
+    fun saturateOnLoad(requestBuilder: RequestBuilder<Drawable>): RequestBuilder<Drawable> {
+        return requestBuilder.transition(DrawableTransitionOptions.with(SaturationTransitionFactory()))
     }
 }
