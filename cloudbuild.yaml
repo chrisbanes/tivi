@@ -30,7 +30,7 @@ steps:
   id: restore_cache
   waitFor: ['generate_cache_key']
   args:
-  - '--bucket=gs://${_CACHE_BUCKET}'
+  - --bucket=gs://${_CACHE_BUCKET}
   - --key=gradle-$( checksum checksum.txt )
 
   # Build the project
@@ -93,13 +93,13 @@ steps:
 
     deploy_to_gcs --path=junit
 
-- name: 'gcr.io/$PROJECT_ID/save_cache:1.0'
+- name: gcr.io/$PROJECT_ID/save_cache:1.0
   waitFor: ['check']
   args:
-  - '--bucket=gs://${_CACHE_BUCKET}'
+  - --bucket=gs://${_CACHE_BUCKET}
   - --key=gradle-$( checksum checksum.txt )
-  - '--path=/workspace/.gradle/caches'
-  - '--path=/workspace/.gradle/wrapper'
+  - --path=/workspace/.gradle/caches
+  - --path=/workspace/.gradle/wrapper
 
 substitutions:
   _ARTIFACT_BUCKET: black-circle-221-tivi-build-artifacts
