@@ -48,9 +48,9 @@ object Libs {
     object Google {
         val material = "com.google.android.material:material:1.1.0-alpha02"
         val firebaseCore = "com.google.firebase:firebase-core:16.0.4"
-        val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.8"
+        val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.9"
         val gmsGoogleServices = "com.google.gms:google-services:4.2.0"
-        val fabricPlugin = "io.fabric.tools:gradle:1.27.0"
+        val fabricPlugin = "io.fabric.tools:gradle:1.27.1"
     }
 
     object Kotlin {
