@@ -41,8 +41,12 @@ steps:
     env:
     - 'TERM=dumb'
     - 'GRADLE_USER_HOME=/workspace/.gradle'
+    # For standard maching, use these options
     - 'GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false"'
     - 'JAVA_TOOL_OPTIONS="-Xmx1024m"'
+    # For High CPU machine, use these options
+    # - 'GRADLE_OPTS="-Dorg.gradle.daemon=false -Dkotlin.incremental=false"'
+    # - 'JAVA_TOOL_OPTIONS="-Xmx4g"'
     - 'BRANCH_NAME=$BRANCH_NAME'
     - 'ARTIFACT_BUCKET=gs://${_ARTIFACT_BUCKET}'
   waitFor:
@@ -107,3 +111,7 @@ substitutions:
   _CONFIG_BUCKET: black-circle-221-tivi-build-config
 
 timeout: 1800s
+
+# Uncomment this to use the High CPU machine
+# options:
+#   machineType: 'N1_HIGHCPU_8'
