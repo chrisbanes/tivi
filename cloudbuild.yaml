@@ -106,9 +106,9 @@ steps:
   - --path=/workspace/.gradle/wrapper
 
 substitutions:
-  _ARTIFACT_BUCKET: black-circle-221-tivi-build-artifacts
-  _CACHE_BUCKET: black-circle-221-tivi-build-cache
-  _CONFIG_BUCKET: black-circle-221-tivi-build-config
+  _ARTIFACT_BUCKET: tivi-build-artifacts
+  _CACHE_BUCKET: tivi-build-cache
+  _CONFIG_BUCKET: tivi-build-config
 
 timeout: 1800s
 
