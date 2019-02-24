@@ -54,6 +54,8 @@ if (file("google-services.json").exists()) {
 def appVersionCode = propOrDef("tivi.versioncode", 17) as Integer
 println("APK version code: " + appVersionCode)
 
+def useReleaseKeystore = rootProject.file("signing/app-debug.jks").exists()
+
 android {
     compileSdkVersion buildConfig.compileSdk
 
@@ -78,16 +80,14 @@ android {
 
     signingConfigs {
         debug {
-            if (rootProject.file("signing/app-debug.jks").exists()) {
-                storeFile rootProject.file("signing/app-debug.jks")
-                storePassword "android"
-                keyAlias "androiddebugkey"
-                keyPassword "android"
-            }
+            storeFile rootProject.file("signing/app-debug.jks")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
         }
 
         release {
-            if (rootProject.file("signing/app-release.jks").exists()) {
+            if (useReleaseKeystore) {
                 storeFile rootProject.file("signing/app-release.jks")
                 storePassword propOrDef('TIVI_RELEASE_KEYSTORE_PWD', "")
                 keyAlias "tivi"
@@ -142,7 +142,12 @@ android {
         }
 
         release {
-            signingConfig signingConfigs.release
+            if (useReleaseKeystore) {
+                signingConfig signingConfigs.release
+            } else {
+                // Otherwise just use the debug keystore (this is mainly for PR CI builds)
+                signingConfig signingConfigs.debug
+            }
             shrinkResources true
             minifyEnabled true
             proguardFiles 'proguard-rules.pro'
