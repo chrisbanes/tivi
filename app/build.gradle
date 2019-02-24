@@ -137,7 +137,7 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
-            versionNameSuffix "-dev [${getGitHash()}]"
+            versionNameSuffix "-dev"
             applicationIdSuffix ".debug"
         }
 
