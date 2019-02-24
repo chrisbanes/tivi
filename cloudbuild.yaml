@@ -1,0 +1,117 @@
+##
+# Required images
+#
+# In order for this to run you need to deploy the Pixite Android cloud builders.
+#
+# ```bash
+# git clone git@github.com:pixiteapps/android-cloud-build /tmp/android-cloud-build
+# cd /tmp/android-cloud-build
+# gcloud builds submit .
+# ```
+
+steps:
+
+# Update the build number
+- name: 'gcr.io/$PROJECT_ID/buildnum:1.0'
+  id: setup_env
+  waitFor: ['-']
+  args: ['gs://${_CONFIG_BUCKET}/buildnum']
+
+- name: gcr.io/cloud-builders/gcloud
+  id: generate_cache_key
+  entrypoint: bash
+  waitFor: ['-']
+  args:
+  - -c
+  - |
+    ./checksum.sh checksum.txt
+
+- name: gcr.io/$PROJECT_ID/restore_cache:1.0
+  id: restore_cache
+  waitFor: ['generate_cache_key']
+  args:
+  - --bucket=gs://${_CACHE_BUCKET}
+  - --key=gradle-$( checksum checksum.txt )
+
+  # Build the project
+- name: gcr.io/$PROJECT_ID/android:28
+  id: download_dependencies
+  args: ['./gradlew', 'dependencies']
+  <<: &env
+    env:
+    - 'TERM=dumb'
+    - 'GRADLE_USER_HOME=/workspace/.gradle'
+    # For standard maching, use these options
+    - 'GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false"'
+    - 'JAVA_TOOL_OPTIONS="-Xmx1024m"'
+    # For High CPU machine, use these options
+    # - 'GRADLE_OPTS="-Dorg.gradle.daemon=false -Dkotlin.incremental=false"'
+    # - 'JAVA_TOOL_OPTIONS="-Xmx4g"'
+    - 'BRANCH_NAME=$BRANCH_NAME'
+    - 'ARTIFACT_BUCKET=gs://${_ARTIFACT_BUCKET}'
+  waitFor:
+  - setup_env
+  - restore_cache
+
+- name: 'gcr.io/$PROJECT_ID/android:28'
+  id: build
+  args: ['./gradlew', 'bundleDebug', 'assembleDebug', '-Ptivi.versioncode=1']
+  <<: *env
+  waitFor:
+  - download_dependencies
+
+- name: gcr.io/$PROJECT_ID/deploy_to_gcs:1.0
+  args:
+  - --path=app/build/outputs
+  waitFor: 
+  - build
+  <<: *env
+
+#
+# Check
+#
+- name: gcr.io/$PROJECT_ID/android:28
+  id: check
+  args: ['./gradlew', 'check', 'dependencyUpdates']
+  waitFor:
+  - build
+  <<: *env
+
+- name: gcr.io/$PROJECT_ID/deploy_to_gcs:1.0
+  args:
+  - --path=app/build/reports
+  - --path=build/dependencyUpdates
+  waitFor: ['check']
+  <<: *env
+
+- name: gcr.io/$PROJECT_ID/deploy_to_gcs:1.0
+  id: save_test_results
+  waitFor: ['check']
+  entrypoint: bash
+  <<: *env
+  args:
+  - -c
+  - |
+    mkdir -p junit
+    find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} junit/ \;
+
+    deploy_to_gcs --path=junit
+
+- name: gcr.io/$PROJECT_ID/save_cache:1.0
+  waitFor: ['check']
+  args:
+  - --bucket=gs://${_CACHE_BUCKET}
+  - --key=gradle-$( checksum checksum.txt )
+  - --path=/workspace/.gradle/caches
+  - --path=/workspace/.gradle/wrapper
+
+substitutions:
+  _ARTIFACT_BUCKET: tivi-build-artifacts
+  _CACHE_BUCKET: tivi-build-cache
+  _CONFIG_BUCKET: tivi-build-config
+
+timeout: 1800s
+
+# Uncomment this to use the High CPU machine
+# options:
+#   machineType: 'N1_HIGHCPU_8'

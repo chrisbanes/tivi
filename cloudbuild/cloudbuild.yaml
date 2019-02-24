@@ -1,0 +1,10 @@
+steps:
+- name: gcr.io/cloud-builders/docker
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/tar', './tar']
+
+- name: gcr.io/cloud-builders/docker
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/android', './android']
+
+images: 
+- 'gcr.io/$PROJECT_ID/tar'
+- 'gcr.io/$PROJECT_ID/android'
