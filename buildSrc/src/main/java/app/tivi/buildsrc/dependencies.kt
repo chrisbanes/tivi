@@ -21,40 +21,40 @@ object Versions {
 }
 
 object Libs {
-    val androidGradlePlugin = "com.android.tools.build:gradle:3.3.0"
-    val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.5"
-    val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.0.0"
+    val androidGradlePlugin = "com.android.tools.build:gradle:3.4.0-beta05"
+    val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6"
+    val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.1.0"
 
     val mvRx = "com.airbnb.android:mvrx:0.7.2"
 
     val threeTenBp = "org.threeten:threetenbp:1.3.8"
-    val threeTenBpNoTzdb = "org.threeten:threetenbp:1.3.8:no-tzdb"
-    val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.1.1"
+    val threeTenBpNoTzdb = "$threeTenBp:no-tzdb"
+    val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.1.2"
 
     val gravitySnapHelper = "com.github.rubensousa:gravitysnaphelper:2.0"
 
-    val rxLint = "nl.littlerobots.rxlint:rxlint:1.7.2"
+    val rxLint = "nl.littlerobots.rxlint:rxlint:1.7.3"
 
     val timber = "com.jakewharton.timber:timber:4.7.1"
 
-    val tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:1.10.1"
+    val tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.0.1"
 
     val appauth = "net.openid:appauth:0.7.1"
 
     val junit = "junit:junit:4.12"
-    val robolectric = "org.robolectric:robolectric:4.1"
+    val robolectric = "org.robolectric:robolectric:4.2"
     val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0"
 
     object Google {
-        val material = "com.google.android.material:material:1.1.0-alpha02"
-        val firebaseCore = "com.google.firebase:firebase-core:16.0.4"
+        val material = "com.google.android.material:material:1.1.0-alpha03"
+        val firebaseCore = "com.google.firebase:firebase-core:16.0.7"
         val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.9"
         val gmsGoogleServices = "com.google.gms:google-services:4.2.0"
         val fabricPlugin = "io.fabric.tools:gradle:1.27.1"
     }
 
     object Kotlin {
-        private const val version = "1.3.20-eap-100"
+        private const val version = "1.3.21"
         val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         val reflect = "org.jetbrains.kotlin:kotlin-reflect:$version"
         val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
@@ -62,7 +62,7 @@ object Libs {
     }
 
     object Coroutines {
-        private const val version = "1.1.0"
+        private const val version = "1.1.1"
         val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
         val rx2 = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$version"
         val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
@@ -92,7 +92,7 @@ object Libs {
         val archCoreTesting = "androidx.arch.core:core-testing:2.0.0"
 
         object Paging {
-            private const val version = "2.0.0"
+            private const val version = "2.1.0"
             val common = "androidx.paging:paging-common:$version"
             val runtime = "androidx.paging:paging-runtime:$version"
             val rxjava2 = "androidx.paging:paging-rxjava2:$version"
@@ -120,15 +120,15 @@ object Libs {
         }
 
         object Work {
-            private const val version = "1.0.0-beta01"
+            private const val version = "1.0.0-rc01"
             val runtimeKtx = "android.arch.work:work-runtime-ktx:$version"
         }
     }
 
     object RxJava {
-        val rxJava = "io.reactivex.rxjava2:rxjava:2.2.5"
+        val rxJava = "io.reactivex.rxjava2:rxjava:2.2.6"
         val rxKotlin = "io.reactivex.rxjava2:rxkotlin:2.3.0"
-        val rxAndroid = "io.reactivex.rxjava2:rxandroid:2.1.0"
+        val rxAndroid = "io.reactivex.rxjava2:rxandroid:2.1.1"
     }
 
     object Dagger {
@@ -140,7 +140,7 @@ object Libs {
     }
 
     object Glide {
-        private const val version = "4.8.0"
+        private const val version = "4.9.0"
         val glide = "com.github.bumptech.glide:glide:$version"
         val compiler = "com.github.bumptech.glide:compiler:$version"
     }
@@ -153,11 +153,11 @@ object Libs {
     }
 
     object OkHttp {
-        val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:3.12.1"
+        val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:3.13.1"
     }
 
     object Epoxy {
-        private const val version = "3.2.0"
+        private const val version = "3.3.0"
         val epoxy = "com.airbnb.android:epoxy:$version"
         val paging = "com.airbnb.android:epoxy-paging:$version"
         val dataBinding = "com.airbnb.android:epoxy-databinding:$version"
