@@ -29,6 +29,8 @@
         android:id="@+id/library_motion"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
         app:layoutDescription="@xml/scene_library">
 
         <!-- The height of this is updated via an OnApplyWindowInsetsListener  -->
@@ -43,9 +45,7 @@
             android:id="@+id/library_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/navigationBackgroundColor"
-            android:elevation="4dp"
-            android:theme="?attr/actionBarTheme"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
             app:layout_constraintTop_toBottomOf="@id/summary_status_scrim"
             app:menu="@menu/home_toolbar"
             app:showTitle="false">
@@ -65,7 +65,6 @@
             android:id="@+id/library_filters_rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/shape_coloronbackground_10"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@id/library_toolbar"
@@ -75,10 +74,11 @@
             android:id="@+id/library_content"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="?android:attr/colorBackground"
-            android:elevation="2dp"
+            android:backgroundTint="?attr/colorSurface"
+            android:elevation="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/library_toolbar" />
+            app:layout_constraintTop_toBottomOf="@id/library_toolbar"
+            app:materialBackdropBackgroundRadius="@{ @dimen/spacing_normal }" />
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>

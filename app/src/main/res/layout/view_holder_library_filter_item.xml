@@ -40,13 +40,13 @@
 
         <ImageView
             android:id="@+id/filter_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginEnd="@dimen/spacing_normal"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
             android:gravity="center_vertical"
             android:src="@{context.getDrawable(filter.iconResource)}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/ic_clock_24dp" />
 
@@ -60,8 +60,8 @@
             android:text="@{filter.labelResource}"
             android:textAppearance="?attr/textAppearanceBody2"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/filter_icon"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/filter_icon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Followed" />
 
