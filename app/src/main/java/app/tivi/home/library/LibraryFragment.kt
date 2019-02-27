@@ -16,18 +16,18 @@
 
 package app.tivi.home.library
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.net.toUri
-import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import app.tivi.R
 import app.tivi.databinding.FragmentLibraryBinding
-import app.tivi.extensions.forEachConstraintSet
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.home.HomeActivity
 import app.tivi.home.HomeNavigator
@@ -40,6 +40,7 @@ import app.tivi.util.GridToGridTransitioner
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
+import com.bumptech.glide.request.target.Target
 import javax.inject.Inject
 
 class LibraryFragment : TiviMvRxFragment() {
@@ -48,6 +49,8 @@ class LibraryFragment : TiviMvRxFragment() {
 
     private val viewModel: LibraryViewModel by fragmentViewModel()
     @Inject lateinit var libraryViewModelFactory: LibraryViewModel.Factory
+
+    private lateinit var userMenuItemGlideTarget: Target<Drawable>
 
     private val filterController = LibraryFiltersEpoxyController(object : LibraryFiltersEpoxyController.Callbacks {
         override fun onFilterSelected(filter: LibraryFilter) {
@@ -89,6 +92,9 @@ class LibraryFragment : TiviMvRxFragment() {
             inflateMenu(R.menu.home_toolbar)
             setOnMenuItemClickListener(this@LibraryFragment::onMenuItemClicked)
         }
+
+        userMenuItemGlideTarget = binding.libraryToolbar.menu.findItem(R.id.home_menu_user_avatar)
+                .asGlideTarget(binding.libraryToolbar)
     }
 
     override fun invalidate() {
@@ -130,7 +136,7 @@ class LibraryFragment : TiviMvRxFragment() {
                             GlideApp.with(requireContext())
                                     .load(user.avatarUrl)
                                     .circleCrop()
-                                    .into(userMenuItem.asGlideTarget(binding.libraryToolbar))
+                                    .into(userMenuItemGlideTarget)
                         }
                     }
                     loginMenuItem.isVisible = false

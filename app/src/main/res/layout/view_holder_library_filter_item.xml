@@ -20,8 +20,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <import type="android.content.Context" />
+        <import type="app.tivi.R" />
 
         <variable
             name="filter"
@@ -58,11 +58,11 @@
             android:paddingLeft="@dimen/spacing_small"
             android:paddingRight="@dimen/spacing_small"
             android:text="@{filter.labelResource}"
-            android:textAppearance="?attr/textAppearanceBody2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:textAppearanceAttr="@{ isSelected ? R.attr.textAppearanceSubtitle2 : R.attr.textAppearanceBody2 }"
             tools:text="Followed" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

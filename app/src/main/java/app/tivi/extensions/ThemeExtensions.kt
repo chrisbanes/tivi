@@ -34,3 +34,12 @@ fun Context.resolveThemeColor(@AttrRes resId: Int, defaultColor: Int = Color.MAG
         defaultColor
     }
 }
+
+fun Context.resolveThemeReference(@AttrRes resId: Int): Int {
+    if (theme.resolveAttribute(resId, typedValue, true)) {
+        if (typedValue.type == TypedValue.TYPE_REFERENCE) {
+            return typedValue.resourceId
+        }
+    }
+    throw IllegalArgumentException("Attribute can not be resolved")
+}

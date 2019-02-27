@@ -25,6 +25,7 @@ import android.widget.TextView
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
+import app.tivi.extensions.resolveThemeReference
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.MaxLinesToggleClickListener
 import app.tivi.ui.glide.GlideApp
@@ -118,4 +119,9 @@ fun materialBackdropBackground(view: View, radius: Float) {
         shapeAppearanceModel.setTopLeftCorner(CornerFamily.ROUNDED, radius.toInt())
         shapeAppearanceModel.setTopRightCorner(CornerFamily.ROUNDED, radius.toInt())
     }
+}
+
+@BindingAdapter("textAppearanceAttr")
+fun textAppearanceAttr(view: TextView, textAppearanceStyleAttr: Int) {
+    view.setTextAppearance(view.context.resolveThemeReference(textAppearanceStyleAttr))
 }
