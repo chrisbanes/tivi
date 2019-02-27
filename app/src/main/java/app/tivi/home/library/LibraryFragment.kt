@@ -27,6 +27,7 @@ import androidx.fragment.app.commit
 import app.tivi.R
 import app.tivi.databinding.FragmentLibraryBinding
 import app.tivi.extensions.forEachConstraintSet
+import app.tivi.extensions.updateConstraintSets
 import app.tivi.home.HomeActivity
 import app.tivi.home.HomeNavigator
 import app.tivi.home.library.followed.FollowedFragment
@@ -72,10 +73,9 @@ class LibraryFragment : TiviMvRxFragment() {
         view.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
         view.setOnApplyWindowInsetsListener { _, insets ->
-            binding.libraryMotion.forEachConstraintSet {
+            binding.libraryMotion.updateConstraintSets {
                 it.constrainHeight(R.id.summary_status_scrim, insets.systemWindowInsetTop)
             }
-            binding.libraryMotion.rebuildMotion()
             // Just return insets
             insets
         }

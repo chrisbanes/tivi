@@ -19,8 +19,20 @@ package app.tivi.extensions
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.widget.ConstraintSet
 
+/**
+ * Applies the given function over each [ConstraintSet]
+ */
 inline fun MotionLayout.forEachConstraintSet(f: (ConstraintSet) -> Unit) {
     for (id in constraintSetIds) {
         f(getConstraintSet(id))
     }
+}
+
+/**
+ * Applies the given function over each [ConstraintSet] and then calls
+ * [MotionLayout.rebuildMotion]
+ */
+inline fun MotionLayout.updateConstraintSets(f: (ConstraintSet) -> Unit) {
+    forEachConstraintSet(f)
+    rebuildMotion()
 }
