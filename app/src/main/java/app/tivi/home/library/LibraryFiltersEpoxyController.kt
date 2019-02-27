@@ -30,6 +30,7 @@ class LibraryFiltersEpoxyController(private val callbacks: Callbacks) : TypedEpo
             libraryFilterItem {
                 id("filter_${filter.name}")
                 filter(filter)
+                isSelected(filter == viewState.filter)
                 clickListener(View.OnClickListener {
                     callbacks.onFilterSelected(filter)
                 })

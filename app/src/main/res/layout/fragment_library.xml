@@ -78,7 +78,14 @@
             android:elevation="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/library_toolbar"
-            app:materialBackdropBackgroundRadius="@{ @dimen/spacing_normal }" />
+            app:materialBackdropBackgroundRadius="@{ @dimen/spacing_normal }">
+
+            <FrameLayout
+                android:id="@+id/library_content_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>

@@ -20,11 +20,16 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="android.content.Context" />
 
         <variable
             name="filter"
             type="app.tivi.home.library.LibraryFilter" />
+
+        <variable
+            name="isSelected"
+            type="boolean" />
 
         <variable
             name="clickListener"
@@ -36,32 +41,27 @@
         android:layout_height="44dp"
         android:foreground="?android:attr/selectableItemBackground"
         android:onClick="@{clickListener}"
-        android:transitionGroup="true">
-
-        <ImageView
-            android:id="@+id/filter_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="16dp"
-            android:gravity="center_vertical"
-            android:src="@{context.getDrawable(filter.iconResource)}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/ic_clock_24dp" />
+        android:transitionGroup="true"
+        app:activated="@{isSelected}">
 
         <TextView
             android:id="@+id/header_title"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginEnd="@dimen/spacing_small"
-            android:layout_marginStart="@dimen/spacing_normal"
+            android:layout_marginStart="@dimen/spacing_small"
+            android:background="@drawable/sl_activated"
+            android:drawablePadding="16dp"
+            android:drawableStart="@{context.getDrawable(filter.iconResource)}"
+            android:duplicateParentState="true"
             android:gravity="center_vertical"
+            android:paddingLeft="@dimen/spacing_small"
+            android:paddingRight="@dimen/spacing_small"
             android:text="@{filter.labelResource}"
             android:textAppearance="?attr/textAppearanceBody2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/filter_icon"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Followed" />
 

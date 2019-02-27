@@ -23,6 +23,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import app.tivi.R
 import app.tivi.databinding.FragmentLibraryBinding
@@ -102,18 +103,18 @@ class LibraryFragment : TiviMvRxFragment() {
 
             when (state.filter) {
                 LibraryFilter.WATCHED -> {
-                    val fragment = childFragmentManager.findFragmentById(R.id.library_content)
+                    val fragment = childFragmentManager.findFragmentById(R.id.library_content_fragment)
                     if (fragment !is WatchedFragment) {
                         childFragmentManager.commit {
-                            replace(R.id.library_content, WatchedFragment())
+                            replace(R.id.library_content_fragment, WatchedFragment())
                         }
                     }
                 }
                 LibraryFilter.FOLLOWED -> {
-                    val fragment = childFragmentManager.findFragmentById(R.id.library_content)
+                    val fragment = childFragmentManager.findFragmentById(R.id.library_content_fragment)
                     if (fragment !is FollowedFragment) {
                         childFragmentManager.commit {
-                            replace(R.id.library_content, FollowedFragment())
+                            replace(R.id.library_content_fragment, FollowedFragment())
                         }
                     }
                 }
