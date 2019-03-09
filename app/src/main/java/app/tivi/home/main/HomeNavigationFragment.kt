@@ -36,8 +36,8 @@ import app.tivi.extensions.updateConstraintSets
 import app.tivi.home.HomeActivity
 import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.home.discover.DiscoverFragment
-import app.tivi.home.library.followed.FollowedFragment
-import app.tivi.home.library.watched.WatchedFragment
+import app.tivi.home.followed.FollowedFragment
+import app.tivi.home.watched.WatchedFragment
 import app.tivi.home.popular.PopularShowsFragment
 import app.tivi.home.trending.TrendingShowsFragment
 import app.tivi.trakt.TraktAuthState
@@ -50,10 +50,6 @@ import com.bumptech.glide.request.target.Target
 import javax.inject.Inject
 
 class HomeNavigationFragment : TiviMvRxFragment() {
-
-    companion object {
-        const val ROOT_FRAGMENT = "root"
-    }
 
     private val viewModel: HomeNavigationViewModel by fragmentViewModel()
     private lateinit var homeNavigatorViewModel: HomeNavigatorViewModel
@@ -117,10 +113,11 @@ class HomeNavigationFragment : TiviMvRxFragment() {
 
     override fun invalidate() {
         withState(viewModel) { state ->
+            binding.state = state
+
             controller.setData(state)
 
             showNavigationItem(state.currentNavigationItem)
-            binding.homeToolbarTitle.setText(state.currentNavigationItem.labelResId)
 
             val userMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_avatar)
             val loginMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_login)
@@ -202,5 +199,9 @@ class HomeNavigationFragment : TiviMvRxFragment() {
             true
         }
         else -> false
+    }
+
+    companion object {
+        const val ROOT_FRAGMENT = "root"
     }
 }

@@ -24,7 +24,7 @@
 
         <variable
             name="textCreator"
-            type="app.tivi.home.library.LibraryTextCreator" />
+            type="app.tivi.home.HomeTextCreator" />
 
         <variable
             name="watchedEntry"

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.home.library.followed
+package app.tivi.home.followed
 
 import android.os.Handler
 import android.os.Looper
@@ -22,7 +22,7 @@ import android.view.View
 import app.tivi.LibraryFollowedItemBindingModel_
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.emptyState
-import app.tivi.home.library.LibraryTextCreator
+import app.tivi.home.HomeTextCreator
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.EpoxyModelProperty
 import app.tivi.ui.epoxy.TotalSpanOverride
@@ -31,7 +31,7 @@ import com.airbnb.epoxy.paging.PagedListEpoxyController
 import javax.inject.Inject
 
 class FollowedEpoxyController @Inject constructor(
-    private val textCreator: LibraryTextCreator
+    private val textCreator: HomeTextCreator
 ) : PagedListEpoxyController<FollowedShowEntryWithShow>(
         modelBuildingHandler = Handler(Looper.getMainLooper())
 ) {

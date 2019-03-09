@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.home.library.followed
+package app.tivi.home.followed
 
 import android.os.Bundle
 import android.view.LayoutInflater

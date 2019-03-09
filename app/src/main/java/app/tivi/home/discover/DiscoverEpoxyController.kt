@@ -40,29 +40,6 @@ class DiscoverEpoxyController @Inject constructor() : TypedEpoxyController<Disco
     }
 
     override fun buildModels(viewState: DiscoverViewState) {
-        if (viewState.isSearchOpen) {
-            buildSearchResultModels(viewState)
-        } else {
-            buildDiscoverModels(viewState)
-        }
-    }
-
-    private fun buildSearchResultModels(viewState: DiscoverViewState) {
-        val tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
-
-        viewState.searchResults?.results?.forEach { result ->
-            posterGridItem {
-                id(result.id)
-                tmdbImageUrlProvider(tmdbImageUrlProvider)
-                tiviShow(result)
-                clickListener { model, _, _, _ ->
-                    callbacks?.onSearchItemClicked(model.id(), result)
-                }
-            }
-        }
-    }
-
-    private fun buildDiscoverModels(viewState: DiscoverViewState) {
         val trendingShows = viewState.trendingItems
         val popularShows = viewState.popularItems
         val tmdbImageUrlProvider = viewState.tmdbImageUrlProvider

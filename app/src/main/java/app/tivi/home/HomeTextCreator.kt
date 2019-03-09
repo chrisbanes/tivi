@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.home.library
+package app.tivi.home
 
 import android.content.Context
 import androidx.core.text.buildSpannedString
@@ -25,7 +25,7 @@ import app.tivi.inject.PerActivity
 import app.tivi.ui.text.textAppearanceSpanForAttribute
 import javax.inject.Inject
 
-class LibraryTextCreator @Inject constructor(
+class HomeTextCreator @Inject constructor(
     @PerActivity private val context: Context
 ) {
     fun showTitle(show: TiviShow): CharSequence = buildSpannedString {

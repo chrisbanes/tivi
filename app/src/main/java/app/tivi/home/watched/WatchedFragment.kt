@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.home.library.watched
+package app.tivi.home.watched
 
 import android.os.Bundle
 import android.view.LayoutInflater

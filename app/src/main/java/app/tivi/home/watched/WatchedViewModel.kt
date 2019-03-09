@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.home.library.watched
+package app.tivi.home.watched
 
 import androidx.paging.DataSource
 import androidx.paging.PagedList

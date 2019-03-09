@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.home.library.watched
+package app.tivi.home.watched
 
 import android.os.Handler
 import android.os.Looper
@@ -22,7 +22,7 @@ import android.view.View
 import app.tivi.LibraryWatchedItemBindingModel_
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.emptyState
-import app.tivi.home.library.LibraryTextCreator
+import app.tivi.home.HomeTextCreator
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.EpoxyModelProperty
 import app.tivi.ui.epoxy.TotalSpanOverride
@@ -32,7 +32,7 @@ import com.airbnb.epoxy.paging.PagedListEpoxyController
 import javax.inject.Inject
 
 class WatchedEpoxyController @Inject constructor(
-    private val textCreator: LibraryTextCreator,
+    private val textCreator: HomeTextCreator,
     private val dateFormatter: TiviDateFormatter
 ) : PagedListEpoxyController<WatchedShowEntryWithShow>(
         modelBuildingHandler = Handler(Looper.getMainLooper())

@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package app.tivi.home.library.followed
+package app.tivi.home.followed
 
-import dagger.Module
-import dagger.android.ContributesAndroidInjector
+import androidx.paging.PagedList
+import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.tmdb.TmdbImageUrlProvider
+import com.airbnb.mvrx.MvRxState
 
-@Module
-internal abstract class FollowedBuilder {
-    @ContributesAndroidInjector
-    internal abstract fun followedFragment(): FollowedFragment
-}
+data class FollowedViewState(
+    val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider(),
+    val isLoading: Boolean = false,
+    val isEmpty: Boolean = true,
+    val followedShows: PagedList<FollowedShowEntryWithShow>? = null
+) : MvRxState

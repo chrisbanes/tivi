@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.home.library.followed
+package app.tivi.home.watched
 
-import androidx.paging.PagedList
-import app.tivi.data.resultentities.FollowedShowEntryWithShow
-import app.tivi.tmdb.TmdbImageUrlProvider
-import com.airbnb.mvrx.MvRxState
+import dagger.Module
+import dagger.android.ContributesAndroidInjector
 
-data class FollowedViewState(
-    val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider(),
-    val isLoading: Boolean = false,
-    val isEmpty: Boolean = true,
-    val followedShows: PagedList<FollowedShowEntryWithShow>? = null
-) : MvRxState
+@Module
+internal abstract class WatchedBuilder {
+    @ContributesAndroidInjector
+    internal abstract fun fragment(): WatchedFragment
+}

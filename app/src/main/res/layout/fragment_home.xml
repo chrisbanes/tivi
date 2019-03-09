@@ -20,7 +20,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="state"
             type="app.tivi.home.main.HomeNavigationViewState" />
