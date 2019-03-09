@@ -35,7 +35,6 @@ import app.tivi.home.library.watched.WatchedFragment
 import app.tivi.trakt.TraktAuthState
 import app.tivi.ui.glide.GlideApp
 import app.tivi.ui.glide.asGlideTarget
-import app.tivi.util.GridToGridTransitioner
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
@@ -57,11 +56,6 @@ class LibraryFragment : TiviMvRxFragment() {
             viewModel.onFilterSelected(filter)
         }
     })
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        GridToGridTransitioner.setupFirstFragment(this, R.id.summary_appbarlayout, R.id.summary_status_scrim)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentLibraryBinding.inflate(inflater, container, false)
@@ -148,15 +142,6 @@ class LibraryFragment : TiviMvRxFragment() {
 
             // Close the filter pane if needed
             closeFilterPanel()
-        }
-    }
-
-    internal fun scrollToTop() {
-        closeFilterPanel()
-
-        when (val f = childFragmentManager.findFragmentById(R.id.library_content)) {
-            is WatchedFragment -> f.scrollToTop()
-            is FollowedFragment -> f.scrollToTop()
         }
     }
 

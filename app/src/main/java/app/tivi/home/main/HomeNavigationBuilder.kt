@@ -18,6 +18,8 @@ package app.tivi.home.main
 
 import app.tivi.home.discover.DiscoverBuilder
 import app.tivi.home.library.LibraryBuilder
+import app.tivi.home.library.followed.FollowedBuilder
+import app.tivi.home.library.watched.WatchedBuilder
 import app.tivi.home.popular.PopularBuilder
 import app.tivi.home.trending.TrendingBuilder
 import dagger.Module
@@ -29,7 +31,9 @@ internal abstract class HomeNavigationBuilder {
         DiscoverBuilder::class,
         TrendingBuilder::class,
         PopularBuilder::class,
-        LibraryBuilder::class
+        LibraryBuilder::class,
+        WatchedBuilder::class,
+        FollowedBuilder::class
     ])
     internal abstract fun homeNavigationFragment(): HomeNavigationFragment
 }

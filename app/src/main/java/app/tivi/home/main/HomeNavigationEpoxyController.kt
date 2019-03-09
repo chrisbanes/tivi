@@ -24,7 +24,7 @@ internal class HomeNavigationEpoxyController(
     private val callbacks: Callbacks
 ) : TypedEpoxyController<HomeNavigationViewState>() {
     interface Callbacks {
-        fun onNavigationItemSelected(filter: HomeNavigationItem)
+        fun onNavigationItemSelected(item: HomeNavigationItem)
     }
 
     override fun buildModels(viewState: HomeNavigationViewState) {

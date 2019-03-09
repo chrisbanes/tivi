@@ -32,16 +32,14 @@
         android:layout_height="match_parent"
         android:background="?attr/colorPrimary"
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
-        app:layoutDescription="@xml/scene_library"
+        app:layoutDescription="@xml/scene_home_nav"
         tools:context=".home.HomeActivity">
 
         <!-- The height of this is updated via an OnApplyWindowInsetsListener  -->
         <View
             android:id="@+id/status_scrim"
             android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="?android:attr/colorPrimaryDark"
-            android:elevation="4dp" />
+            android:layout_height="1px" />
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/home_toolbar"
