@@ -54,11 +54,6 @@ clean_secrets: &clean_secrets
     name: Cleanup secrets
     command: signing/cleanup.sh
 
-workflow_filter_all: &workflow_filter_all
-  filters:
-    tags:
-      only: /.*/
-
 jobs:
   build_debug:
     <<: *config_android
@@ -145,22 +140,17 @@ workflows:
   version: 2
   build_test_deploy:
     jobs:
-      - build_debug:
-          <<: *workflow_filter_all
+      - build_debug
       - build_release:
           requires:
             - build_debug
-          <<: *workflow_filter_all
       - check:
           requires:
             - build_debug
-          <<: *workflow_filter_all
       - deploy_to_play:
           requires:
             - check
             - build_release
           filters:
-            tags:
-              only: /^v.*/
             branches:
-              ignore: /.*/
+              only: master
