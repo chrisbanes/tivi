@@ -26,6 +26,7 @@ import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.navOptions
 import app.tivi.R
 import app.tivi.TiviActivity
 import app.tivi.databinding.FragmentHomeBinding
@@ -57,8 +58,13 @@ class HomeActivity : TiviActivity(), MvRxView {
     private lateinit var userMenuItemGlideTarget: Target<Drawable>
 
     private val controller = HomeNavigationEpoxyController(object : HomeNavigationEpoxyController.Callbacks {
-        override fun onNavigationItemSelected(item: HomeNavigationItem) = showNavigationItem(item)
+        override fun onNavigationItemSelected(item: HomeNavigationItem) {
+            viewModel.onNavigationItemSelected(item)
+        }
     })
+
+    private val navController: NavController
+        get() = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,7 +95,7 @@ class HomeActivity : TiviActivity(), MvRxView {
 
     override fun onStart() {
         super.onStart()
-        postInvalidate()
+        viewModel.subscribe(this) { postInvalidate() }
     }
 
     override fun invalidate() {
@@ -131,23 +137,18 @@ class HomeActivity : TiviActivity(), MvRxView {
     }
 
     private fun showNavigationItem(item: HomeNavigationItem) {
+        fun navigate(id: Int) {
+            if (navController.currentDestination?.id != id) {
+                navController.navigate(id, null, navOptions { launchSingleTop = true })
+            }
+        }
         when (item) {
-            HomeNavigationItem.DISCOVER -> {
-                getNavController().navigate(R.id.discover)
-            }
-            HomeNavigationItem.FOLLOWED -> {
-                getNavController().navigate(R.id.followed)
-            }
-            HomeNavigationItem.WATCHED -> {
-                getNavController().navigate(R.id.watched)
-            }
+            HomeNavigationItem.DISCOVER -> navigate(R.id.discover)
+            HomeNavigationItem.FOLLOWED -> navigate(R.id.followed)
+            HomeNavigationItem.WATCHED -> navigate(R.id.watched)
         }
         // Close the menu if we've changed fragments
         binding.homeRoot.transitionToStart()
-    }
-
-    private fun getNavController(): NavController {
-        return (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
     }
 
     private fun onMenuItemClicked(item: MenuItem) = when (item.itemId) {
@@ -160,7 +161,7 @@ class HomeActivity : TiviActivity(), MvRxView {
             true
         }
         R.id.home_settings -> {
-            getNavController().navigate(R.id.settings)
+            navController.navigate(R.id.settings)
             true
         }
         R.id.home_privacy_policy -> {
