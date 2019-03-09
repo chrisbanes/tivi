@@ -72,5 +72,5 @@ class HomeModule {
 abstract class HomeModuleBinds {
     @Binds
     @PerActivity
-    abstract fun provideContext(activity: HomeActivity): Context
+    abstract fun bindContext(activity: HomeActivity): Context
 }

@@ -26,14 +26,20 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import app.tivi.R
+import app.tivi.SharedElementHelper
 import app.tivi.databinding.FragmentHomeBinding
+import app.tivi.extensions.observeK
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.home.HomeActivity
-import app.tivi.home.HomeNavigator
+import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.home.discover.DiscoverFragment
 import app.tivi.home.library.followed.FollowedFragment
 import app.tivi.home.library.watched.WatchedFragment
+import app.tivi.home.popular.PopularShowsFragment
+import app.tivi.home.trending.TrendingShowsFragment
 import app.tivi.trakt.TraktAuthState
 import app.tivi.ui.glide.GlideApp
 import app.tivi.ui.glide.asGlideTarget
@@ -50,9 +56,10 @@ class HomeNavigationFragment : TiviMvRxFragment() {
     }
 
     private val viewModel: HomeNavigationViewModel by fragmentViewModel()
+    private lateinit var homeNavigatorViewModel: HomeNavigatorViewModel
 
-    @Inject lateinit var homeNavigator: HomeNavigator
-    @Inject lateinit var viewModelFactory: HomeNavigationViewModel.Factory
+    @Inject lateinit var homeNavigationViewModelFactory: HomeNavigationViewModel.Factory
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var binding: FragmentHomeBinding
     private lateinit var userMenuItemGlideTarget: Target<Drawable>
@@ -62,6 +69,13 @@ class HomeNavigationFragment : TiviMvRxFragment() {
             viewModel.onNavigationItemSelected(item)
         }
     })
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        homeNavigatorViewModel = ViewModelProviders.of(requireActivity(), viewModelFactory)
+                .get(HomeNavigatorViewModel::class.java)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -92,6 +106,13 @@ class HomeNavigationFragment : TiviMvRxFragment() {
 
         userMenuItemGlideTarget = binding.homeToolbar.menu.findItem(R.id.home_menu_user_avatar)
                 .asGlideTarget(binding.homeToolbar)
+
+        homeNavigatorViewModel.showPopularCall.observeK(this) {
+            showStackFragment(PopularShowsFragment(), it)
+        }
+        homeNavigatorViewModel.showTrendingCall.observeK(this) {
+            showStackFragment(TrendingShowsFragment(), it)
+        }
     }
 
     override fun invalidate() {
@@ -99,26 +120,24 @@ class HomeNavigationFragment : TiviMvRxFragment() {
             controller.setData(state)
 
             showNavigationItem(state.currentNavigationItem)
+            binding.homeToolbarTitle.setText(state.currentNavigationItem.labelResId)
 
             val userMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_avatar)
             val loginMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_login)
-            when (state.authState) {
-                TraktAuthState.LOGGED_IN -> {
-                    userMenuItem.isVisible = true
-                    state.user?.let { user ->
-                        if (user.avatarUrl != null) {
-                            GlideApp.with(requireContext())
-                                    .load(user.avatarUrl)
-                                    .circleCrop()
-                                    .into(userMenuItemGlideTarget)
-                        }
+            if (state.authState == TraktAuthState.LOGGED_IN) {
+                userMenuItem.isVisible = true
+                state.user?.let { user ->
+                    if (user.avatarUrl != null) {
+                        GlideApp.with(requireContext())
+                                .load(user.avatarUrl)
+                                .circleCrop()
+                                .into(userMenuItemGlideTarget)
                     }
-                    loginMenuItem.isVisible = false
                 }
-                TraktAuthState.LOGGED_OUT -> {
-                    userMenuItem.isVisible = false
-                    loginMenuItem.isVisible = true
-                }
+                loginMenuItem.isVisible = false
+            } else if (state.authState == TraktAuthState.LOGGED_OUT) {
+                userMenuItem.isVisible = false
+                loginMenuItem.isVisible = true
             }
         }
     }
@@ -145,6 +164,21 @@ class HomeNavigationFragment : TiviMvRxFragment() {
         }
     }
 
+    private fun showStackFragment(fragment: Fragment, sharedElements: SharedElementHelper? = null) {
+        childFragmentManager.beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.home_content, fragment)
+                .addToBackStack(null)
+                .apply {
+                    if (sharedElements != null && !sharedElements.isEmpty()) {
+                        sharedElements.applyToTransaction(this)
+                    } else {
+                        setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    }
+                }
+                .commit()
+    }
+
     private fun onMenuItemClicked(item: MenuItem) = when (item.itemId) {
         R.id.home_menu_user_avatar -> {
             viewModel.onProfileItemClicked()
@@ -155,7 +189,7 @@ class HomeNavigationFragment : TiviMvRxFragment() {
             true
         }
         R.id.home_settings -> {
-            viewModel.onSettingsClicked(homeNavigator)
+            viewModel.onSettingsClicked(homeNavigatorViewModel)
             true
         }
         R.id.home_privacy_policy -> {

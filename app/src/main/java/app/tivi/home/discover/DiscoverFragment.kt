@@ -29,6 +29,7 @@ import app.tivi.databinding.FragmentDiscoverBinding
 import app.tivi.home.HomeNavigator
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
+import app.tivi.util.GridToGridTransitioner
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
@@ -45,6 +46,11 @@ internal class DiscoverFragment : TiviMvRxFragment() {
     @Inject lateinit var discoverViewModelFactory: DiscoverViewModel.Factory
 
     @Inject lateinit var controller: DiscoverEpoxyController
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        GridToGridTransitioner.setupFirstFragment(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentDiscoverBinding.inflate(inflater, container, false)

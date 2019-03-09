@@ -27,7 +27,6 @@ import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
 
 class HomeActivity : TiviActivity() {
-
     private lateinit var viewModel: HomeActivityViewModel
 
     val authService by lazy(LazyThreadSafetyMode.NONE) {

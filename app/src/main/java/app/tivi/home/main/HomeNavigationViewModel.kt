@@ -76,7 +76,7 @@ class HomeNavigationViewModel @AssistedInject constructor(
     companion object : MvRxViewModelFactory<HomeNavigationViewModel, HomeNavigationViewState> {
         override fun create(viewModelContext: ViewModelContext, state: HomeNavigationViewState): HomeNavigationViewModel? {
             val fragment: HomeNavigationFragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return fragment.viewModelFactory.create(state)
+            return fragment.homeNavigationViewModelFactory.create(state)
         }
     }
 }
