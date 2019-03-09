@@ -16,13 +16,41 @@
 
 package app.tivi.home.main
 
+import app.tivi.home.HomeNavigator
+import app.tivi.interactors.UpdateUserDetails
+import app.tivi.interactors.launchInteractor
+import app.tivi.trakt.TraktAuthState
+import app.tivi.trakt.TraktManager
 import app.tivi.util.TiviMvRxViewModel
+import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
+import net.openid.appauth.AuthorizationService
 
-class HomeNavigationViewModel(
-    initialState: HomeNavigationViewState
+class HomeNavigationViewModel @AssistedInject constructor(
+    @Assisted initialState: HomeNavigationViewState,
+    private val traktManager: TraktManager,
+    private val updateUserDetails: UpdateUserDetails
 ) : TiviMvRxViewModel<HomeNavigationViewState>(initialState) {
+
+    init {
+        updateUserDetails.setParams(UpdateUserDetails.Params("me"))
+        updateUserDetails.observe()
+                .toObservable()
+                .execute { copy(user = it()) }
+
+        traktManager.state
+                .distinctUntilChanged()
+                .doOnNext {
+                    if (it == TraktAuthState.LOGGED_IN) {
+                        scope.launchInteractor(updateUserDetails, UpdateUserDetails.ExecuteParams(false))
+                    }
+                }.execute {
+                    copy(authState = it() ?: TraktAuthState.LOGGED_OUT)
+                }
+    }
 
     fun onNavigationItemSelected(item: HomeNavigationItem) {
         setState {
@@ -30,9 +58,25 @@ class HomeNavigationViewModel(
         }
     }
 
+    fun onProfileItemClicked() {
+        // TODO
+    }
+
+    fun onLoginItemClicked(authService: AuthorizationService) {
+        traktManager.startAuth(0, authService)
+    }
+
+    fun onSettingsClicked(navigator: HomeNavigator) = navigator.showSettings()
+
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(initialState: HomeNavigationViewState): HomeNavigationViewModel
+    }
+
     companion object : MvRxViewModelFactory<HomeNavigationViewModel, HomeNavigationViewState> {
         override fun create(viewModelContext: ViewModelContext, state: HomeNavigationViewState): HomeNavigationViewModel? {
-            return HomeNavigationViewModel(state)
+            val fragment: HomeNavigationFragment = (viewModelContext as FragmentViewModelContext).fragment()
+            return fragment.viewModelFactory.create(state)
         }
     }
 }

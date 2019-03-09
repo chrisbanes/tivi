@@ -16,22 +16,32 @@
 
 package app.tivi.home.main
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.SearchView
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import app.tivi.R
 import app.tivi.databinding.FragmentHomeBinding
 import app.tivi.extensions.updateConstraintSets
+import app.tivi.home.HomeActivity
+import app.tivi.home.HomeNavigator
 import app.tivi.home.discover.DiscoverFragment
 import app.tivi.home.library.followed.FollowedFragment
 import app.tivi.home.library.watched.WatchedFragment
+import app.tivi.trakt.TraktAuthState
+import app.tivi.ui.glide.GlideApp
+import app.tivi.ui.glide.asGlideTarget
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
+import com.bumptech.glide.request.target.Target
+import javax.inject.Inject
 
 class HomeNavigationFragment : TiviMvRxFragment() {
 
@@ -41,15 +51,17 @@ class HomeNavigationFragment : TiviMvRxFragment() {
 
     private val viewModel: HomeNavigationViewModel by fragmentViewModel()
 
+    @Inject lateinit var homeNavigator: HomeNavigator
+    @Inject lateinit var viewModelFactory: HomeNavigationViewModel.Factory
+
     private lateinit var binding: FragmentHomeBinding
+    private lateinit var userMenuItemGlideTarget: Target<Drawable>
 
     private val controller = HomeNavigationEpoxyController(object : HomeNavigationEpoxyController.Callbacks {
         override fun onNavigationItemSelected(item: HomeNavigationItem) {
             viewModel.onNavigationItemSelected(item)
         }
     })
-
-    private lateinit var searchView: SearchView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -71,46 +83,43 @@ class HomeNavigationFragment : TiviMvRxFragment() {
         // Finally, request some insets
         view.requestApplyInsets()
 
-        //        binding.summaryToolbar.apply {
-//            inflateMenu(R.menu.discover_toolbar)
-//            setOnMenuItemClickListener(this@DiscoverFragment::onMenuItemClicked)
-//
-//            val searchItem = menu.findItem(R.id.discover_search)
-//            searchItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-//                override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-//                    viewModel.onSearchOpened()
-//                    return true
-//                }
-//
-//                override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-//                    viewModel.onSearchClosed()
-//                    return true
-//                }
-//            })
-//
-//            searchView = menu.findItem(R.id.discover_search).actionView as SearchView
-//        }
-//
-//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String): Boolean {
-//                viewModel.onSearchQueryChanged(query)
-//                return true
-//            }
-//
-//            override fun onQueryTextChange(query: String): Boolean {
-//                viewModel.onSearchQueryChanged(query)
-//                return true
-//            }
-//        })
+        binding.homeToolbar.apply {
+            inflateMenu(R.menu.discover_toolbar)
+            setOnMenuItemClickListener(::onMenuItemClicked)
+        }
 
         binding.homeNavRv.setController(controller)
+
+        userMenuItemGlideTarget = binding.homeToolbar.menu.findItem(R.id.home_menu_user_avatar)
+                .asGlideTarget(binding.homeToolbar)
     }
 
     override fun invalidate() {
-        withState(viewModel) {
-            controller.setData(it)
+        withState(viewModel) { state ->
+            controller.setData(state)
 
-            showNavigationItem(it.currentNavigationItem)
+            showNavigationItem(state.currentNavigationItem)
+
+            val userMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_avatar)
+            val loginMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_login)
+            when (state.authState) {
+                TraktAuthState.LOGGED_IN -> {
+                    userMenuItem.isVisible = true
+                    state.user?.let { user ->
+                        if (user.avatarUrl != null) {
+                            GlideApp.with(requireContext())
+                                    .load(user.avatarUrl)
+                                    .circleCrop()
+                                    .into(userMenuItemGlideTarget)
+                        }
+                    }
+                    loginMenuItem.isVisible = false
+                }
+                TraktAuthState.LOGGED_OUT -> {
+                    userMenuItem.isVisible = false
+                    loginMenuItem.isVisible = true
+                }
+            }
         }
     }
 
@@ -130,6 +139,34 @@ class HomeNavigationFragment : TiviMvRxFragment() {
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .replace(R.id.home_content, newFragment, ROOT_FRAGMENT)
                     .commit()
+
+            // Close the menu if we've changed fragments
+            binding.homeRoot.transitionToStart()
         }
+    }
+
+    private fun onMenuItemClicked(item: MenuItem) = when (item.itemId) {
+        R.id.home_menu_user_avatar -> {
+            viewModel.onProfileItemClicked()
+            true
+        }
+        R.id.home_menu_user_login -> {
+            viewModel.onLoginItemClicked((requireActivity() as HomeActivity).authService)
+            true
+        }
+        R.id.home_settings -> {
+            viewModel.onSettingsClicked(homeNavigator)
+            true
+        }
+        R.id.home_privacy_policy -> {
+            val builder = CustomTabsIntent.Builder()
+            val customTabsIntent = builder.build()
+            customTabsIntent.launchUrl(
+                    requireContext(),
+                    "https://chrisbanes.github.io/tivi/privacypolicy.html".toUri()
+            )
+            true
+        }
+        else -> false
     }
 }
