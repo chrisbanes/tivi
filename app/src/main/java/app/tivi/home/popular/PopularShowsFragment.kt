@@ -16,9 +16,6 @@
 
 package app.tivi.home.popular
 
-import android.os.Bundle
-import android.view.View
-import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.home.HomeNavigator
@@ -27,19 +24,7 @@ import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import javax.inject.Inject
 
 class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShowsViewModel>(PopularShowsViewModel::class.java) {
-
     @Inject lateinit var homeNavigator: HomeNavigator
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        grid_toolbar.apply {
-            title = getString(R.string.discover_popular)
-            setNavigationOnClickListener {
-                viewModel.onUpClicked(homeNavigator)
-            }
-        }
-    }
 
     override fun onItemClicked(item: PopularEntryWithShow) {
         val sharedElements = SharedElementHelper()

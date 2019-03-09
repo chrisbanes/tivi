@@ -16,8 +16,6 @@
 
 package app.tivi.home.trending
 
-import android.os.Bundle
-import android.view.View
 import app.tivi.PosterGridItemBindingModel_
 import app.tivi.R
 import app.tivi.SharedElementHelper
@@ -30,17 +28,6 @@ import javax.inject.Inject
 
 class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingShowsViewModel>(TrendingShowsViewModel::class.java) {
     @Inject lateinit var homeNavigator: HomeNavigator
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        grid_toolbar.apply {
-            title = getString(R.string.discover_trending)
-            setNavigationOnClickListener {
-                viewModel.onUpClicked(homeNavigator)
-            }
-        }
-    }
 
     override fun createController(): EntryGridEpoxyController<TrendingEntryWithShow> {
         return object : EntryGridEpoxyController<TrendingEntryWithShow>() {
