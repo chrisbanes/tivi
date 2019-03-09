@@ -23,7 +23,6 @@ import android.view.ViewGroup
 import app.tivi.R
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.databinding.FragmentLibraryFollowedBinding
-import app.tivi.home.HomeNavigator
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.util.TiviMvRxFragment
@@ -32,7 +31,6 @@ import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
 class FollowedFragment : TiviMvRxFragment() {
-    @Inject lateinit var homeNavigator: HomeNavigator
     private lateinit var binding: FragmentLibraryFollowedBinding
 
     private val viewModel: FollowedViewModel by fragmentViewModel()
@@ -46,7 +44,7 @@ class FollowedFragment : TiviMvRxFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentLibraryFollowedBinding.inflate(inflater, container, false)
-        binding.setLifecycleOwner(viewLifecycleOwner)
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
@@ -60,9 +58,10 @@ class FollowedFragment : TiviMvRxFragment() {
 
         controller.callbacks = object : FollowedEpoxyController.Callbacks {
             override fun onItemClicked(item: FollowedShowEntryWithShow) {
-                viewModel.onItemPostedClicked(homeNavigator, item.show,
-                        listItemSharedElementHelper.createForItem(item, "poster")
-                )
+//                viewModel.onItemPostedClicked(homeNavigator, item.show,
+//                        listItemSharedElementHelper.createForItem(item, "poster")
+//                )
+                // TODO
             }
         }
 
@@ -89,13 +88,6 @@ class FollowedFragment : TiviMvRxFragment() {
                 controller.isEmpty = state.isEmpty
                 controller.submitList(state.followedShows)
             }
-        }
-    }
-
-    internal fun scrollToTop() {
-        binding.followedRv.apply {
-            stopScroll()
-            smoothScrollToPosition(0)
         }
     }
 }

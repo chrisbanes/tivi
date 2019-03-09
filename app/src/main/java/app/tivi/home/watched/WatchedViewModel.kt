@@ -19,10 +19,7 @@ package app.tivi.home.watched
 import androidx.paging.DataSource
 import androidx.paging.PagedList
 import androidx.paging.RxPagedListBuilder
-import app.tivi.SharedElementHelper
-import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.home.HomeNavigator
 import app.tivi.interactors.UpdateWatchedShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
@@ -101,10 +98,6 @@ class WatchedViewModel @AssistedInject constructor(
                 .invokeOnCompletion {
                     loadingState.removeLoader()
                 }
-    }
-
-    fun onItemPostedClicked(navigator: HomeNavigator, show: TiviShow, sharedElements: SharedElementHelper? = null) {
-        navigator.showShowDetails(show, sharedElements)
     }
 
     @AssistedInject.Factory

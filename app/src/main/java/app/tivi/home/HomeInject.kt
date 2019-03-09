@@ -17,51 +17,36 @@
 package app.tivi.home
 
 import android.content.Context
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import app.tivi.AppNavigator
 import app.tivi.TiviAppActivityNavigator
-import app.tivi.home.main.HomeNavigationBuilder
+import app.tivi.home.discover.DiscoverBuilder
+import app.tivi.home.followed.FollowedBuilder
+import app.tivi.home.popular.PopularBuilder
+import app.tivi.home.trending.TrendingBuilder
+import app.tivi.home.watched.WatchedBuilder
 import app.tivi.inject.PerActivity
 import app.tivi.inject.ViewModelBuilder
-import app.tivi.inject.ViewModelKey
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.android.ContributesAndroidInjector
-import dagger.multibindings.IntoMap
 
 @Module
 internal abstract class HomeBuilder {
     @ContributesAndroidInjector(modules = [
         ViewModelBuilder::class,
         HomeModule::class,
-        HomeNavigationBuilder::class
+        DiscoverBuilder::class,
+        TrendingBuilder::class,
+        PopularBuilder::class,
+        WatchedBuilder::class,
+        FollowedBuilder::class
     ])
     internal abstract fun homeActivity(): HomeActivity
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(HomeActivityViewModel::class)
-    abstract fun bindHomeActivityViewModel(viewModel: HomeActivityViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(HomeNavigatorViewModel::class)
-    abstract fun bindHomeNavigatorViewModel(viewModel: HomeNavigatorViewModel): ViewModel
 }
 
 @Module(includes = [HomeModuleBinds::class])
 class HomeModule {
-    @Provides
-    fun provideHomeNavigator(
-        activity: HomeActivity,
-        factory: ViewModelProvider.Factory
-    ): HomeNavigator {
-        return ViewModelProviders.of(activity, factory).get(HomeNavigatorViewModel::class.java)
-    }
-
     @Provides
     fun provideAppNavigator(activity: HomeActivity): AppNavigator {
         return TiviAppActivityNavigator(activity)

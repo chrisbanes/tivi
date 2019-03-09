@@ -16,9 +16,7 @@
 
 package app.tivi.home.trending
 
-import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.TrendingEntryWithShow
-import app.tivi.home.HomeNavigator
 import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
@@ -42,14 +40,6 @@ class TrendingShowsViewModel @Inject constructor(
         tmdbManager,
         logger
 ) {
-    fun onUpClicked(navigator: HomeNavigator) {
-        navigator.onUpClicked()
-    }
-
-    fun onItemClicked(item: TrendingEntryWithShow, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
-        navigator.showShowDetails(item.show, sharedElements)
-    }
-
     override suspend fun callLoadMore() = coroutineScope {
         launchInteractor(interactor, UpdateTrendingShows.ExecuteParams(UpdateTrendingShows.Page.NEXT_PAGE)).join()
     }

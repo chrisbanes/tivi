@@ -23,7 +23,6 @@ import android.view.ViewGroup
 import app.tivi.R
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.databinding.FragmentLibraryWatchedBinding
-import app.tivi.home.HomeNavigator
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.util.TiviMvRxFragment
@@ -32,7 +31,6 @@ import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
 class WatchedFragment : TiviMvRxFragment() {
-    @Inject lateinit var homeNavigator: HomeNavigator
     private lateinit var binding: FragmentLibraryWatchedBinding
 
     private val viewModel: WatchedViewModel by fragmentViewModel()
@@ -56,9 +54,10 @@ class WatchedFragment : TiviMvRxFragment() {
 
         controller.callbacks = object : WatchedEpoxyController.Callbacks {
             override fun onItemClicked(item: WatchedShowEntryWithShow) {
-                viewModel.onItemPostedClicked(homeNavigator, item.show,
-                        listItemSharedElementHelper.createForItem(item, "poster")
-                )
+//                viewModel.onItemPostedClicked(homeNavigator, item.show,
+//                        listItemSharedElementHelper.createForItem(item, "poster")
+//                )
+                // TODO
             }
         }
 
@@ -85,13 +84,6 @@ class WatchedFragment : TiviMvRxFragment() {
                 controller.isEmpty = state.isEmpty
                 controller.submitList(state.watchedShows)
             }
-        }
-    }
-
-    internal fun scrollToTop() {
-        binding.watchedRv.apply {
-            stopScroll()
-            smoothScrollToPosition(0)
         }
     }
 }

@@ -51,6 +51,8 @@ if (file("google-services.json").exists()) {
     apply plugin: 'io.fabric'
 }
 
+apply plugin: "androidx.navigation.safeargs.kotlin"
+
 def appVersionCode = propOrDef("tivi.versioncode", 17) as Integer
 println("APK version code: " + appVersionCode)
 

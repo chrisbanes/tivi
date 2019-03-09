@@ -16,9 +16,7 @@
 
 package app.tivi.home.popular
 
-import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.PopularEntryWithShow
-import app.tivi.home.HomeNavigator
 import app.tivi.interactors.UpdatePopularShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
@@ -42,14 +40,6 @@ class PopularShowsViewModel @Inject constructor(
         tmdbManager,
         logger
 ) {
-    fun onUpClicked(navigator: HomeNavigator) {
-        navigator.onUpClicked()
-    }
-
-    fun onItemClicked(item: PopularEntryWithShow, navigator: HomeNavigator, sharedElements: SharedElementHelper?) {
-        navigator.showShowDetails(item.show, sharedElements)
-    }
-
     override suspend fun callLoadMore() = coroutineScope {
         launchInteractor(interactor, UpdatePopularShows.ExecuteParams(UpdatePopularShows.Page.NEXT_PAGE)).join()
     }

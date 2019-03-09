@@ -45,6 +45,8 @@ buildscript {
 
         classpath Libs.Google.gmsGoogleServices
         classpath Libs.Google.fabricPlugin
+
+        classpath Libs.AndroidX.Navigation.safeArgs
     }
 }
 

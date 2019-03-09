@@ -20,6 +20,7 @@ import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import app.tivi.extensions.toBundle
 import app.tivi.settings.SettingsActivity
 import app.tivi.showdetails.ShowDetailsActivity
 import app.tivi.trakt.TraktConstants
@@ -47,6 +48,6 @@ internal class TiviAppActivityNavigator(private val activity: Activity) : TiviAp
         activity.startActivityForResult(
                 ShowDetailsActivity.createIntent(activity, id),
                 0,
-                sharedElements?.applyToIntent(activity))
+                sharedElements?.toBundle(activity))
     }
 }

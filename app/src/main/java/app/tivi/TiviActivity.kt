@@ -23,20 +23,28 @@ import android.os.Bundle
 import android.os.PowerManager
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.doOnPreDraw
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import app.tivi.settings.TiviPreferences
 import app.tivi.settings.TiviPreferences.DarkMode
-import dagger.android.support.DaggerAppCompatActivity
+import com.airbnb.mvrx.BaseMvRxActivity
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
 import javax.inject.Inject
 
 /**
  * Base Activity class which supports LifecycleOwner and Dagger injection.
  */
-abstract class TiviActivity : DaggerAppCompatActivity() {
+abstract class TiviActivity : BaseMvRxActivity(), HasSupportFragmentInjector {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var prefs: TiviPreferences
 
+    @Inject lateinit var supportFragmentInjector: DispatchingAndroidInjector<Fragment>
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         updateNightMode()
     }
@@ -115,5 +123,9 @@ abstract class TiviActivity : DaggerAppCompatActivity() {
                 delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
             }
         }
+    }
+
+    override fun supportFragmentInjector(): AndroidInjector<Fragment>? {
+        return supportFragmentInjector
     }
 }

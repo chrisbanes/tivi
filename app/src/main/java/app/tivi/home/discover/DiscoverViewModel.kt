@@ -16,9 +16,6 @@
 
 package app.tivi.home.discover
 
-import app.tivi.SharedElementHelper
-import app.tivi.data.entities.TiviShow
-import app.tivi.home.HomeNavigator
 import app.tivi.interactors.UpdatePopularShows
 import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.interactors.launchInteractor
@@ -69,18 +66,6 @@ class DiscoverViewModel @AssistedInject constructor(
         loadingState.addLoader()
         scope.launchInteractor(updateTrendingShows, UpdateTrendingShows.ExecuteParams(UpdateTrendingShows.Page.REFRESH))
                 .invokeOnCompletion { loadingState.removeLoader() }
-    }
-
-    fun onTrendingHeaderClicked(navigator: HomeNavigator, sharedElementHelper: SharedElementHelper? = null) {
-        navigator.showTrending(sharedElementHelper)
-    }
-
-    fun onPopularHeaderClicked(navigator: HomeNavigator, sharedElementHelper: SharedElementHelper? = null) {
-        navigator.showPopular(sharedElementHelper)
-    }
-
-    fun onItemPosterClicked(navigator: HomeNavigator, show: TiviShow, sharedElements: SharedElementHelper?) {
-        navigator.showShowDetails(show, sharedElements)
     }
 
     @AssistedInject.Factory

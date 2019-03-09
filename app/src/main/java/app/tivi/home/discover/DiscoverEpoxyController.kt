@@ -18,7 +18,6 @@ package app.tivi.home.discover
 
 import app.tivi.R
 import app.tivi.data.Entry
-import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
@@ -36,7 +35,6 @@ class DiscoverEpoxyController @Inject constructor() : TypedEpoxyController<Disco
         fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>)
         fun onPopularHeaderClicked(items: List<PopularEntryWithShow>)
         fun onItemClicked(viewHolderId: Long, item: EntryWithShow<out Entry>)
-        fun onSearchItemClicked(viewHolderId: Long, item: TiviShow)
     }
 
     override fun buildModels(viewState: DiscoverViewState) {
