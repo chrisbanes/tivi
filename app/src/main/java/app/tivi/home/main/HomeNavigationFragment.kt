@@ -25,20 +25,19 @@ import android.view.ViewGroup
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.databinding.FragmentHomeBinding
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.home.HomeActivity
 import app.tivi.home.HomeNavigatorViewModel
-import app.tivi.home.discover.DiscoverFragment
-import app.tivi.home.followed.FollowedFragment
 import app.tivi.home.popular.PopularShowsFragment
 import app.tivi.home.trending.TrendingShowsFragment
-import app.tivi.home.watched.WatchedFragment
 import app.tivi.trakt.TraktAuthState
 import app.tivi.ui.glide.GlideApp
 import app.tivi.ui.glide.asGlideTarget
@@ -104,10 +103,10 @@ class HomeNavigationFragment : TiviMvRxFragment() {
                 .asGlideTarget(binding.homeToolbar)
 
         homeNavigatorViewModel.showPopularCall.observeEvent(this) {
-            showStackFragment(PopularShowsFragment(), it)
+            getNavController().navigate(R.id.action_discover_to_popular)
         }
         homeNavigatorViewModel.showTrendingCall.observeEvent(this) {
-            showStackFragment(TrendingShowsFragment(), it)
+            getNavController().navigate(R.id.action_discover_to_popular)
         }
     }
 
@@ -140,40 +139,24 @@ class HomeNavigationFragment : TiviMvRxFragment() {
     }
 
     private fun showNavigationItem(item: HomeNavigationItem) {
-        val newFragment: Fragment = when (item) {
-            HomeNavigationItem.DISCOVER -> DiscoverFragment()
-            HomeNavigationItem.FOLLOWED -> FollowedFragment()
-            HomeNavigationItem.WATCHED -> WatchedFragment()
+        when (item) {
+            HomeNavigationItem.DISCOVER -> {
+                getNavController().navigate(R.id.discover)
+            }
+            HomeNavigationItem.FOLLOWED -> {
+                getNavController().navigate(R.id.followed)
+            }
+            HomeNavigationItem.WATCHED -> {
+                getNavController().navigate(R.id.watched)
+            }
         }
 
-        val currentFragment = childFragmentManager.findFragmentById(R.id.home_content)
-
-        if (currentFragment == null || currentFragment::class != newFragment::class) {
-            childFragmentManager.popBackStackImmediate(ROOT_FRAGMENT, 0)
-
-            childFragmentManager.beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .replace(R.id.home_content, newFragment, ROOT_FRAGMENT)
-                    .commit()
-
-            // Close the menu if we've changed fragments
-            binding.homeRoot.transitionToStart()
-        }
+        // Close the menu if we've changed fragments
+        binding.homeRoot.transitionToStart()
     }
 
-    private fun showStackFragment(fragment: Fragment, sharedElements: SharedElementHelper? = null) {
-        childFragmentManager.beginTransaction()
-                .setReorderingAllowed(true)
-                .replace(R.id.home_content, fragment)
-                .addToBackStack(null)
-                .apply {
-                    if (sharedElements != null && !sharedElements.isEmpty()) {
-                        sharedElements.applyToTransaction(this)
-                    } else {
-                        setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    }
-                }
-                .commit()
+    private fun getNavController(): NavController {
+        return (childFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
     }
 
     private fun onMenuItemClicked(item: MenuItem) = when (item.itemId) {

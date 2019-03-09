@@ -75,6 +75,13 @@ object Libs {
         val recyclerview = "androidx.recyclerview:recyclerview:1.0.0"
         val emoji = "androidx.emoji:emoji:1.0.0"
 
+        object Navigation {
+            private const val version = "2.0.0-rc02"
+            val fragment = "androidx.navigation:navigation-fragment-ktx:$version"
+            val ui = "androidx.navigation:navigation-ui-ktx:$version"
+            val safeArgs = "androidx.navigation:navigation-safe-args-gradle-plugin:$version"
+        }
+
         object Fragment {
             private const val version = "1.1.0-alpha03"
             val fragment = "androidx.fragment:fragment:$version"

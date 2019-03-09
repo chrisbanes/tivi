@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2019 Google, Inc.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/discover">
+
+    <fragment
+        android:id="@+id/watched"
+        android:name="app.tivi.home.watched.WatchedFragment"
+        android:label="WatchedFragment" />
+    <fragment
+        android:id="@+id/discover"
+        android:name="app.tivi.home.discover.DiscoverFragment"
+        android:label="DiscoverFragment" >
+        <action
+            android:id="@+id/action_discover_to_trending"
+            app:destination="@id/trending"
+            app:popUpTo="@+id/discover" />
+        <action
+            android:id="@+id/action_discover_to_popular"
+            app:destination="@id/popular"
+            app:popUpTo="@+id/discover" />
+    </fragment>
+    <fragment
+        android:id="@+id/followed"
+        android:name="app.tivi.home.followed.FollowedFragment"
+        android:label="FollowedFragment" />
+    <fragment
+        android:id="@+id/trending"
+        android:name="app.tivi.home.trending.TrendingShowsFragment"
+        android:label="TrendingShowsFragment" />
+    <fragment
+        android:id="@+id/popular"
+        android:name="app.tivi.home.popular.PopularShowsFragment"
+        android:label="PopularShowsFragment" />
+
+</navigation>
