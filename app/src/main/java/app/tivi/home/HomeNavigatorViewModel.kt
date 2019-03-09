@@ -17,11 +17,12 @@
 package app.tivi.home
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import app.tivi.AppNavigator
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.TiviShow
-import app.tivi.util.SingleLiveEvent
+import app.tivi.util.Event
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -30,11 +31,11 @@ class HomeNavigatorViewModel @Inject constructor(
 ) : ViewModel(), HomeNavigator {
 
     override fun showPopular(sharedElements: SharedElementHelper?) {
-        _showPopularCall.value = sharedElements
+        _showPopularCall.value = Event(sharedElements)
     }
 
     override fun showTrending(sharedElements: SharedElementHelper?) {
-        _showTrendingCall.value = sharedElements
+        _showTrendingCall.value = Event(sharedElements)
     }
 
     override fun showShowDetails(show: TiviShow, sharedElements: SharedElementHelper?) {
@@ -46,18 +47,18 @@ class HomeNavigatorViewModel @Inject constructor(
     }
 
     override fun onUpClicked() {
-        _upClickedCall.call()
+        _upClickedCall.value = Event(Unit)
     }
 
-    private val _showPopularCall = SingleLiveEvent<SharedElementHelper>(errorOnNoObservers = true)
-    val showPopularCall: LiveData<SharedElementHelper>
+    private val _showPopularCall = MutableLiveData<Event<SharedElementHelper?>>()
+    val showPopularCall: LiveData<Event<SharedElementHelper?>>
         get() = _showPopularCall
 
-    private val _showTrendingCall = SingleLiveEvent<SharedElementHelper>(errorOnNoObservers = true)
-    val showTrendingCall: LiveData<SharedElementHelper>
+    private val _showTrendingCall = MutableLiveData<Event<SharedElementHelper?>>()
+    val showTrendingCall: LiveData<Event<SharedElementHelper?>>
         get() = _showTrendingCall
 
-    private val _upClickedCall = SingleLiveEvent<Unit>(errorOnNoObservers = true)
-    val upClickedCall: LiveData<Unit>
+    private val _upClickedCall = MutableLiveData<Event<Unit>>()
+    val upClickedCall: LiveData<Event<Unit>>
         get() = _upClickedCall
 }

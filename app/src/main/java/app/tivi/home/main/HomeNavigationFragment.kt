@@ -31,19 +31,19 @@ import androidx.lifecycle.ViewModelProviders
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.databinding.FragmentHomeBinding
-import app.tivi.extensions.observeK
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.home.HomeActivity
 import app.tivi.home.HomeNavigatorViewModel
 import app.tivi.home.discover.DiscoverFragment
 import app.tivi.home.followed.FollowedFragment
-import app.tivi.home.watched.WatchedFragment
 import app.tivi.home.popular.PopularShowsFragment
 import app.tivi.home.trending.TrendingShowsFragment
+import app.tivi.home.watched.WatchedFragment
 import app.tivi.trakt.TraktAuthState
 import app.tivi.ui.glide.GlideApp
 import app.tivi.ui.glide.asGlideTarget
 import app.tivi.util.TiviMvRxFragment
+import app.tivi.util.observeEvent
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import com.bumptech.glide.request.target.Target
@@ -103,10 +103,10 @@ class HomeNavigationFragment : TiviMvRxFragment() {
         userMenuItemGlideTarget = binding.homeToolbar.menu.findItem(R.id.home_menu_user_avatar)
                 .asGlideTarget(binding.homeToolbar)
 
-        homeNavigatorViewModel.showPopularCall.observeK(this) {
+        homeNavigatorViewModel.showPopularCall.observeEvent(this) {
             showStackFragment(PopularShowsFragment(), it)
         }
-        homeNavigatorViewModel.showTrendingCall.observeK(this) {
+        homeNavigatorViewModel.showTrendingCall.observeEvent(this) {
             showStackFragment(TrendingShowsFragment(), it)
         }
     }

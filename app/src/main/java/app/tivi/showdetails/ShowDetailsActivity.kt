@@ -22,9 +22,9 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProviders
 import app.tivi.R
 import app.tivi.TiviActivity
-import app.tivi.extensions.observeNotNull
 import app.tivi.showdetails.details.ShowDetailsFragment
 import app.tivi.showdetails.episodedetails.EpisodeDetailsFragment
+import app.tivi.util.observeEvent
 
 class ShowDetailsActivity : TiviActivity() {
 
@@ -47,7 +47,7 @@ class ShowDetailsActivity : TiviActivity() {
         navigatorViewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(ShowDetailsNavigatorViewModel::class.java)
 
-        navigatorViewModel.events.observeNotNull(this) {
+        navigatorViewModel.events.observeEvent(this) {
             when (it) {
                 is NavigateUpEvent -> onNavigateUp()
                 is ShowEpisodeDetailsEvent -> showEpisodeDetails(it.episodeId)
