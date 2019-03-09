@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2017 Google, Inc.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="state"
+            type="app.tivi.home.main.HomeNavigationViewState" />
+    </data>
+
+    <androidx.constraintlayout.motion.widget.MotionLayout
+        android:id="@+id/home_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
+        app:layoutDescription="@xml/scene_library"
+        tools:context=".home.HomeActivity">
+
+        <!-- The height of this is updated via an OnApplyWindowInsetsListener  -->
+        <View
+            android:id="@+id/status_scrim"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="?android:attr/colorPrimaryDark"
+            android:elevation="4dp" />
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/home_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+            app:layout_constraintTop_toBottomOf="@id/status_scrim"
+            app:menu="@menu/home_toolbar"
+            app:showTitle="false">
+
+            <TextView
+                android:id="@+id/home_toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:gravity="center_vertical"
+                android:text="@{ state != null ? context.getString(state.currentNavigationItem.labelResId) : @string/app_name }"
+                android:textAppearance="?attr/textAppearanceHeadline6" />
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <com.airbnb.epoxy.EpoxyRecyclerView
+            android:id="@+id/home_nav_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/home_toolbar"
+            tools:listitem="@layout/view_holder_library_filter_item" />
+
+        <FrameLayout
+            android:id="@+id/home_content_background"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:backgroundTint="?attr/colorSurface"
+            android:elevation="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/home_toolbar"
+            app:materialBackdropBackgroundRadius="@{ @dimen/spacing_normal }">
+
+            <FrameLayout
+                android:id="@+id/home_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
+
+    </androidx.constraintlayout.motion.widget.MotionLayout>
+
+</layout>

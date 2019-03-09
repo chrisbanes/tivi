@@ -16,9 +16,7 @@
 
 package app.tivi.home
 
-import androidx.lifecycle.LiveData
 import app.tivi.trakt.TraktManager
-import app.tivi.util.SingleLiveEvent
 import app.tivi.util.TiviViewModel
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
@@ -28,28 +26,6 @@ import javax.inject.Inject
 internal class HomeActivityViewModel @Inject constructor(
     private val traktManager: TraktManager
 ) : TiviViewModel() {
-
-    enum class NavigationItem {
-        DISCOVER, LIBRARY
-    }
-
-    private val mutableNavLiveData = SingleLiveEvent<NavigationItem>()
-
-    /**
-     * Facade so that we don't leak the fact that its mutable
-     */
-    val navigationLiveData: LiveData<NavigationItem>
-        get() = mutableNavLiveData
-
-    init {
-        // Set default value
-        mutableNavLiveData.value = NavigationItem.DISCOVER
-    }
-
-    fun onNavigationItemClicked(item: NavigationItem) {
-        mutableNavLiveData.value = item
-    }
-
     fun onAuthResponse(
         authService: AuthorizationService,
         response: AuthorizationResponse?,
