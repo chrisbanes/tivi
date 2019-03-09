@@ -16,10 +16,12 @@
 
 package app.tivi.home.trending
 
+import androidx.navigation.fragment.findNavController
 import app.tivi.PosterGridItemBindingModel_
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.TrendingEntryWithShow
+import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.util.EntryGridEpoxyController
 import app.tivi.util.EntryGridFragment
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
@@ -40,6 +42,8 @@ class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingS
         grid_recyclerview.findViewHolderForItemId(item.generateStableId())?.let {
             sharedElements.addSharedElement(it.itemView, "poster")
         }
-        // TODO
+
+        val direction = TrendingShowsFragmentDirections.actionTrendingToActivityShowDetails(item.show.id)
+        findNavController().navigate(direction, sharedElements.toActivityNavigatorExtras(requireActivity()))
     }
 }

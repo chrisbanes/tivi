@@ -85,8 +85,6 @@ class HomeActivity : TiviActivity(), MvRxView {
 
         userMenuItemGlideTarget = binding.homeToolbar.menu.findItem(R.id.home_menu_user_avatar)
                 .asGlideTarget(binding.homeToolbar)
-
-        showNavigationItem(HomeNavigationItem.DISCOVER)
     }
 
     override fun onStart() {

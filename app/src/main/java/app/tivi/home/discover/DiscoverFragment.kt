@@ -27,7 +27,8 @@ import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.databinding.FragmentDiscoverBinding
-import app.tivi.extensions.toNavigatorExtras
+import app.tivi.extensions.toActivityNavigatorExtras
+import app.tivi.extensions.toFragmentNavigatorExtras
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.util.GridToGridTransitioner
@@ -69,21 +70,21 @@ internal class DiscoverFragment : TiviMvRxFragment() {
         controller.callbacks = object : DiscoverEpoxyController.Callbacks {
             override fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>) {
                 findNavController().navigate(R.id.action_discover_to_trending, null, null,
-                        listItemSharedElementHelper.createForItems(items).toNavigatorExtras())
+                        listItemSharedElementHelper.createForItems(items).toFragmentNavigatorExtras())
             }
 
             override fun onPopularHeaderClicked(items: List<PopularEntryWithShow>) {
                 findNavController().navigate(R.id.action_discover_to_popular, null, null,
-                        listItemSharedElementHelper.createForItems(items).toNavigatorExtras())
+                        listItemSharedElementHelper.createForItems(items).toFragmentNavigatorExtras())
             }
 
             override fun onItemClicked(viewHolderId: Long, item: EntryWithShow<out Entry>) {
-                // DiscoverFragmentDirections
-
-                findNavController().navigate(R.id.activity_show_details)
-
-//                viewModel.onItemPosterClicked(homeNavigator, item.show,
-//                        listItemSharedElementHelper.createForId(viewHolderId, "poster"))
+                val direction = DiscoverFragmentDirections.actionDiscoverToActivityShowDetails(item.show.id)
+                findNavController().navigate(
+                        direction,
+                        listItemSharedElementHelper.createForId(viewHolderId, "poster")
+                                .toActivityNavigatorExtras(requireActivity())
+                )
             }
         }
 

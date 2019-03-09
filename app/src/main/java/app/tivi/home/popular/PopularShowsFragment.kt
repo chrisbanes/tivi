@@ -16,8 +16,10 @@
 
 package app.tivi.home.popular
 
+import androidx.navigation.fragment.findNavController
 import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.PopularEntryWithShow
+import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.util.EntryGridFragment
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
 
@@ -27,6 +29,8 @@ class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShow
         grid_recyclerview.findViewHolderForItemId(item.generateStableId()).let {
             sharedElements.addSharedElement(it.itemView, "poster")
         }
-        // TODO
+
+        val direction = PopularShowsFragmentDirections.actionPopularToActivityShowDetails(item.show.id)
+        findNavController().navigate(direction, sharedElements.toActivityNavigatorExtras(requireActivity()))
     }
 }

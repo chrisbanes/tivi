@@ -20,9 +20,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import app.tivi.R
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.databinding.FragmentLibraryFollowedBinding
+import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.util.TiviMvRxFragment
@@ -58,10 +60,12 @@ class FollowedFragment : TiviMvRxFragment() {
 
         controller.callbacks = object : FollowedEpoxyController.Callbacks {
             override fun onItemClicked(item: FollowedShowEntryWithShow) {
-//                viewModel.onItemPostedClicked(homeNavigator, item.show,
-//                        listItemSharedElementHelper.createForItem(item, "poster")
-//                )
-                // TODO
+                val direction = FollowedFragmentDirections.actionFollowedToActivityShowDetails(item.show.id)
+                findNavController().navigate(
+                        direction,
+                        listItemSharedElementHelper.createForItem(item, "poster")
+                                .toActivityNavigatorExtras(requireActivity())
+                )
             }
         }
 

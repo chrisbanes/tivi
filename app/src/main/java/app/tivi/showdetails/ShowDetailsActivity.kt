@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.navArgs
 import app.tivi.R
 import app.tivi.TiviActivity
 import app.tivi.showdetails.details.ShowDetailsFragment
@@ -58,14 +59,10 @@ class ShowDetailsActivity : TiviActivity() {
     }
 
     override fun handleIntent(intent: Intent) {
-        val showId = intent.getLongExtra(KEY_SHOW_ID, -1L)
-        if (showId != -1L) {
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.details_content, ShowDetailsFragment.create(showId))
-                    .commit()
-        } else {
-            // TODO finish?
-        }
+        val args: ShowDetailsActivityArgs by navArgs()
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.details_content, ShowDetailsFragment.create(args.showId))
+                .commit()
     }
 
     private fun showEpisodeDetails(episodeId: Long) {
