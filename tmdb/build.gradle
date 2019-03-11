@@ -23,9 +23,9 @@ apply plugin: 'kotlin-kapt'
 dependencies {
     implementation project(":base")
 
-    compile Libs.RxJava.rxJava
+    implementation Libs.RxJava.rxJava
 
     kapt Libs.Dagger.compiler
 
-    compile Libs.tmdbJava
+    implementation Libs.tmdbJava
 }

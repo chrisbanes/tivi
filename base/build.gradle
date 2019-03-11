@@ -20,13 +20,13 @@ import app.tivi.buildsrc.Libs
 apply plugin: 'kotlin'
 
 dependencies {
-    compile Libs.Kotlin.stdlib
+    implementation Libs.Kotlin.stdlib
 
-    compile Libs.Coroutines.core
-    compile Libs.Coroutines.rx2
+    implementation Libs.Coroutines.core
+    implementation Libs.Coroutines.rx2
 
-    compile Libs.Dagger.dagger
+    implementation Libs.Dagger.dagger
 
-    compile Libs.Retrofit.retrofit
-    compile Libs.OkHttp.loggingInterceptor
+    implementation Libs.Retrofit.retrofit
+    implementation Libs.OkHttp.loggingInterceptor
 }
