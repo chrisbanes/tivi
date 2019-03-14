@@ -54,7 +54,7 @@ if (file("google-services.json").exists()) {
 def appVersionCode = propOrDef("tivi.versioncode", 17) as Integer
 println("APK version code: " + appVersionCode)
 
-def useReleaseKeystore = rootProject.file("signing/app-debug.jks").exists()
+def useReleaseKeystore = rootProject.file("signing/app-release.jks").exists()
 
 android {
     compileSdkVersion buildConfig.compileSdk
