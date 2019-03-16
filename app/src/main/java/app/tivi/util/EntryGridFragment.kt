@@ -91,11 +91,6 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
         grid_swipe_refresh.setOnRefreshListener(viewModel::refresh)
 
         viewModel.viewState.observeNotNull(this) {
-            if (controller.tmdbImageUrlProvider == null) {
-                // First time we've had state, start any postponed transitions
-                scheduleStartPostponedTransitions()
-            }
-
             controller.tmdbImageUrlProvider = it.tmdbImageUrlProvider
             controller.submitList(it.liveList)
 
@@ -111,6 +106,11 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
                 }
                 Status.REFRESHING -> swipeRefreshLatch.refreshing = true
                 Status.LOADING_MORE -> controller.isLoading = true
+            }
+
+            if (it.isLoaded) {
+                // First time we've had state, start any postponed transitions
+                scheduleStartPostponedTransitions()
             }
         }
     }

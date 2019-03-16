@@ -40,6 +40,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
     private val pageSize: Int = 21
 ) : TiviViewModel() {
     private val messages = BehaviorSubject.create<UiResource>()
+    private val loaded = BehaviorSubject.createDefault(false)
 
     private val pageListConfig = PagedList.Config.Builder().run {
         setPageSize(pageSize * 3)
@@ -55,11 +56,20 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
                     RxPagedListBuilder<Int, LI>(dataSource, pageListConfig)
                             .setBoundaryCallback(object : PagedList.BoundaryCallback<LI>() {
                                 override fun onItemAtEndLoaded(itemAtEnd: LI) = onListScrolledToEnd()
+
+                                override fun onItemAtFrontLoaded(itemAtFront: LI) {
+                                    loaded.onNext(true)
+                                }
+
+                                override fun onZeroItemsLoaded() {
+                                    loaded.onNext(true)
+                                }
                             })
                             .setFetchScheduler(schedulers.io)
                             .setNotifyScheduler(schedulers.main)
                             .buildFlowable(BackpressureStrategy.LATEST)
                             .distinctUntilChanged(),
+                    loaded.toFlowable(),
                     ::EntryViewState
             )
     )

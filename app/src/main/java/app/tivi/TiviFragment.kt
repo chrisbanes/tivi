@@ -59,11 +59,12 @@ abstract class TiviFragment : DaggerFragment() {
 
     protected fun scheduleStartPostponedTransitions() {
         if (postponedTransition) {
-            view?.doOnNextLayout {
+            requireView().doOnNextLayout {
                 (it.parent as ViewGroup).doOnPreDraw {
                     startPostponedEnterTransition()
                 }
             }
+            postponedTransition = false
         }
 
         val activity = activity
