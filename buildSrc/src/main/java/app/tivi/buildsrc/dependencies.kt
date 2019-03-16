@@ -76,7 +76,7 @@ object Libs {
         val emoji = "androidx.emoji:emoji:1.0.0"
 
         object Navigation {
-            private const val version = "2.0.0-rc02"
+            private const val version = "2.0.0"
             val fragment = "androidx.navigation:navigation-fragment-ktx:$version"
             val ui = "androidx.navigation:navigation-ui-ktx:$version"
             val safeArgs = "androidx.navigation:navigation-safe-args-gradle-plugin:$version"
