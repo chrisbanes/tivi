@@ -140,6 +140,8 @@ class HomeActivity : TiviActivity(), MvRxView {
         fun navigate(id: Int) {
             if (navController.currentDestination?.id != id) {
                 navController.navigate(id, null, navOptions { launchSingleTop = true })
+                // Close the menu if we've changed fragments
+                binding.homeRoot.transitionToStart()
             }
         }
         when (item) {
@@ -147,8 +149,6 @@ class HomeActivity : TiviActivity(), MvRxView {
             HomeNavigationItem.FOLLOWED -> navigate(R.id.followed)
             HomeNavigationItem.WATCHED -> navigate(R.id.watched)
         }
-        // Close the menu if we've changed fragments
-        binding.homeRoot.transitionToStart()
     }
 
     private fun onMenuItemClicked(item: MenuItem) = when (item.itemId) {
