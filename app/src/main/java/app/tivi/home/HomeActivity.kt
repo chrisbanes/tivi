@@ -29,7 +29,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import app.tivi.R
 import app.tivi.TiviActivity
-import app.tivi.databinding.FragmentHomeBinding
+import app.tivi.databinding.ActivityHomeBinding
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.home.main.HomeNavigationEpoxyController
 import app.tivi.home.main.HomeNavigationItem
@@ -54,7 +54,7 @@ class HomeActivity : TiviActivity(), MvRxView {
 
     @Inject lateinit var homeNavigationViewModelFactory: HomeActivityViewModel.Factory
 
-    private lateinit var binding: FragmentHomeBinding
+    private lateinit var binding: ActivityHomeBinding
     private lateinit var userMenuItemGlideTarget: Target<Drawable>
 
     private val controller = HomeNavigationEpoxyController(object : HomeNavigationEpoxyController.Callbacks {
@@ -69,7 +69,7 @@ class HomeActivity : TiviActivity(), MvRxView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.fragment_home)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
 
         binding.root.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         binding.root.setOnApplyWindowInsetsListener { _, insets ->
