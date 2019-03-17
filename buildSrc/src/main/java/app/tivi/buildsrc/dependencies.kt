@@ -69,7 +69,7 @@ object Libs {
     }
 
     object AndroidX {
-        val appcompat = "androidx.appcompat:appcompat:1.0.2"
+        val appcompat = "androidx.appcompat:appcompat:1.1.0-alpha03"
         val browser = "androidx.browser:browser:1.0.0"
         val palette = "androidx.palette:palette:1.0.0"
         val recyclerview = "androidx.recyclerview:recyclerview:1.0.0"
