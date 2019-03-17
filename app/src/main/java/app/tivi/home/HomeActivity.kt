@@ -145,7 +145,10 @@ class HomeActivity : TiviActivity(), MvRxView {
     private fun showNavigationItem(item: HomeNavigationItem) {
         fun navigate(id: Int) {
             if (navController.currentDestination?.id != id) {
-                navController.navigate(id, null, navOptions { launchSingleTop = true })
+                navController.navigate(id, null, navOptions {
+                    popUpTo = navController.graph.startDestination
+                    launchSingleTop = true
+                })
             }
         }
         when (item) {
