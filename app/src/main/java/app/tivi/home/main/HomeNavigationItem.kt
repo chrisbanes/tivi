@@ -19,7 +19,7 @@ package app.tivi.home.main
 import app.tivi.R
 
 enum class HomeNavigationItem(val labelResId: Int, val iconResId: Int) {
-    DISCOVER(R.string.discover_title, R.drawable.ic_eye_24dp),
+    DISCOVER(R.string.discover_title, R.drawable.ic_popular),
     WATCHED(R.string.library_watched, R.drawable.ic_eye_24dp),
-    FOLLOWED(R.string.library_followed_shows, R.drawable.ic_eye_24dp)
+    FOLLOWED(R.string.library_followed_shows, R.drawable.ic_heart_24dp)
 }

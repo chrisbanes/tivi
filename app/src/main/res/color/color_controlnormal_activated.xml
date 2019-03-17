@@ -18,12 +18,8 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:color="?android:textColorPrimary"
-        android:alpha="?android:attr/disabledAlpha"
-        android:state_enabled="false" />
+        android:state_activated="true" />
 
-    <item android:color="?android:textColorPrimary"
-        android:state_checked="true" />
-
-    <item android:color="?android:textColorSecondary" />
+    <item android:color="?android:colorControlNormal" />
 
 </selector>

@@ -53,6 +53,7 @@
             android:background="@drawable/sl_activated"
             android:drawablePadding="16dp"
             android:drawableStart="@{context.getDrawable(navItem.iconResId)}"
+            android:drawableTint="@color/color_controlnormal_activated"
             android:duplicateParentState="true"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/spacing_small"
