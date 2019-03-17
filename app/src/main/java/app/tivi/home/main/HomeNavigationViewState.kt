@@ -22,7 +22,6 @@ import com.airbnb.mvrx.MvRxState
 
 data class HomeNavigationViewState(
     val navigationItems: List<HomeNavigationItem> = HomeNavigationItem.values().asList(),
-    val currentNavigationItem: HomeNavigationItem = HomeNavigationItem.DISCOVER,
     val user: TraktUser? = null,
     val authState: TraktAuthState = TraktAuthState.LOGGED_OUT
 ) : MvRxState

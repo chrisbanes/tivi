@@ -18,21 +18,25 @@ package app.tivi.home.main
 
 import android.view.View
 import app.tivi.homeNavItem
-import com.airbnb.epoxy.TypedEpoxyController
+import app.tivi.ui.epoxy.EpoxyModelProperty
+import com.airbnb.epoxy.EpoxyController
 
 internal class HomeNavigationEpoxyController(
     private val callbacks: Callbacks
-) : TypedEpoxyController<HomeNavigationViewState>() {
+) : EpoxyController() {
+    var items: List<HomeNavigationItem> by EpoxyModelProperty { emptyList<HomeNavigationItem>() }
+    var selectedItem: HomeNavigationItem? by EpoxyModelProperty { null }
+
     interface Callbacks {
         fun onNavigationItemSelected(item: HomeNavigationItem)
     }
 
-    override fun buildModels(viewState: HomeNavigationViewState) {
-        viewState.navigationItems.forEach { item ->
+    override fun buildModels() {
+        items.forEach { item ->
             homeNavItem {
                 id("item_${item.name}")
                 navItem(item)
-                isSelected(item == viewState.currentNavigationItem)
+                isSelected(item == selectedItem)
                 clickListener(View.OnClickListener {
                     callbacks.onNavigationItemSelected(item)
                 })

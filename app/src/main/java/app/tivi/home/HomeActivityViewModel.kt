@@ -16,7 +16,6 @@
 
 package app.tivi.home
 
-import app.tivi.home.main.HomeNavigationItem
 import app.tivi.home.main.HomeNavigationViewState
 import app.tivi.interactors.UpdateUserDetails
 import app.tivi.interactors.launchInteractor
@@ -61,12 +60,6 @@ class HomeActivityViewModel @AssistedInject constructor(
         when {
             response != null -> traktManager.onAuthResponse(authService, response)
             ex != null -> traktManager.onAuthException(ex)
-        }
-    }
-
-    fun onNavigationItemSelected(item: HomeNavigationItem) {
-        setState {
-            copy(currentNavigationItem = item)
         }
     }
 

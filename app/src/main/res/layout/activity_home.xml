@@ -56,7 +56,6 @@
                 android:layout_height="match_parent"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:gravity="center_vertical"
-                android:text="@{ state != null ? context.getString(state.currentNavigationItem.labelResId) : @string/app_name }"
                 android:textAppearance="?attr/textAppearanceHeadline6" />
 
         </androidx.appcompat.widget.Toolbar>

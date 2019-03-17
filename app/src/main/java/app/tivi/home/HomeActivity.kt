@@ -33,6 +33,7 @@ import app.tivi.databinding.ActivityHomeBinding
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.home.main.HomeNavigationEpoxyController
 import app.tivi.home.main.HomeNavigationItem
+import app.tivi.home.main.homeNavigationItemForDestinationId
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktConstants
 import app.tivi.ui.glide.GlideApp
@@ -57,9 +58,11 @@ class HomeActivity : TiviActivity(), MvRxView {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var userMenuItemGlideTarget: Target<Drawable>
 
-    private val controller = HomeNavigationEpoxyController(object : HomeNavigationEpoxyController.Callbacks {
+    private val navigationEpoxyController = HomeNavigationEpoxyController(object : HomeNavigationEpoxyController.Callbacks {
         override fun onNavigationItemSelected(item: HomeNavigationItem) {
-            viewModel.onNavigationItemSelected(item)
+            showNavigationItem(item)
+            // Close the menu if we've changed fragments
+            binding.homeRoot.transitionToStart()
         }
     })
 
@@ -87,7 +90,12 @@ class HomeActivity : TiviActivity(), MvRxView {
             setOnMenuItemClickListener(::onMenuItemClicked)
         }
 
-        binding.homeNavRv.setController(controller)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            binding.homeToolbarTitle.text = destination.label
+            navigationEpoxyController.selectedItem = homeNavigationItemForDestinationId(destination.id)
+        }
+
+        binding.homeNavRv.setController(navigationEpoxyController)
 
         userMenuItemGlideTarget = binding.homeToolbar.menu.findItem(R.id.home_menu_user_avatar)
                 .asGlideTarget(binding.homeToolbar)
@@ -102,9 +110,7 @@ class HomeActivity : TiviActivity(), MvRxView {
         withState(viewModel) { state ->
             binding.state = state
 
-            controller.setData(state)
-
-            showNavigationItem(state.currentNavigationItem)
+            navigationEpoxyController.items = state.navigationItems
 
             val userMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_avatar)
             val loginMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_login)
@@ -140,8 +146,6 @@ class HomeActivity : TiviActivity(), MvRxView {
         fun navigate(id: Int) {
             if (navController.currentDestination?.id != id) {
                 navController.navigate(id, null, navOptions { launchSingleTop = true })
-                // Close the menu if we've changed fragments
-                binding.homeRoot.transitionToStart()
             }
         }
         when (item) {
