@@ -47,6 +47,7 @@
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
             app:layout_constraintTop_toBottomOf="@id/status_scrim"
             app:menu="@menu/home_toolbar"
+            app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
             app:showTitle="false">
 
             <TextView
