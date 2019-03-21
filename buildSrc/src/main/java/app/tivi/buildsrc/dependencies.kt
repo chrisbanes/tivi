@@ -17,11 +17,11 @@
 package app.tivi.buildsrc
 
 object Versions {
-    val ktlint = "0.29.0"
+    val ktlint = "0.31.0"
 }
 
 object Libs {
-    val androidGradlePlugin = "com.android.tools.build:gradle:3.5.0-alpha06"
+    val androidGradlePlugin = "com.android.tools.build:gradle:3.5.0-alpha07"
     val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6"
     val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.1.0"
 
@@ -46,7 +46,7 @@ object Libs {
     val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0"
 
     object Google {
-        val material = "com.google.android.material:material:1.1.0-alpha03"
+        val material = "com.google.android.material:material:1.1.0-alpha04"
         val firebaseCore = "com.google.firebase:firebase-core:16.0.7"
         val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.9"
         val gmsGoogleServices = "com.google.gms:google-services:4.2.0"
@@ -69,11 +69,18 @@ object Libs {
     }
 
     object AndroidX {
-        val appcompat = "androidx.appcompat:appcompat:1.0.2"
+        val appcompat = "androidx.appcompat:appcompat:1.1.0-alpha03"
         val browser = "androidx.browser:browser:1.0.0"
         val palette = "androidx.palette:palette:1.0.0"
         val recyclerview = "androidx.recyclerview:recyclerview:1.0.0"
         val emoji = "androidx.emoji:emoji:1.0.0"
+
+        object Navigation {
+            private const val version = "2.0.0"
+            val fragment = "androidx.navigation:navigation-fragment-ktx:$version"
+            val ui = "androidx.navigation:navigation-ui-ktx:$version"
+            val safeArgs = "androidx.navigation:navigation-safe-args-gradle-plugin:$version"
+        }
 
         object Fragment {
             private const val version = "1.1.0-alpha03"

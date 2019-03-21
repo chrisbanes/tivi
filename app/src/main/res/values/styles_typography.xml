@@ -84,8 +84,8 @@
     </style>
 
     <style name="TextAppearance.Tivi.Subtitle2" parent="TextAppearance.MaterialComponents.Subtitle2">
-        <item name="fontFamily">@font/barlow_400</item>
-        <item name="android:fontFamily">@font/barlow_400</item>
+        <item name="fontFamily">@font/barlow_500</item>
+        <item name="android:fontFamily">@font/barlow_500</item>
         <item name="android:textSize">14.62sp</item>
         <item name="android:letterSpacing">0.001</item>
     </style>

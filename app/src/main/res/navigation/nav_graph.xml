@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2019 Google, Inc.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/discover">
+
+    <fragment
+        android:id="@+id/watched"
+        android:name="app.tivi.home.watched.WatchedFragment"
+        android:label="@string/library_watched">
+        <action
+            android:id="@+id/action_watched_to_activity_show_details"
+            app:destination="@id/activity_show_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/discover"
+        android:name="app.tivi.home.discover.DiscoverFragment"
+        android:label="@string/discover_title">
+        <action
+            android:id="@+id/action_discover_to_trending"
+            app:destination="@id/trending" />
+        <action
+            android:id="@+id/action_discover_to_popular"
+            app:destination="@id/popular" />
+        <action
+            android:id="@+id/action_discover_to_activity_show_details"
+            app:destination="@id/activity_show_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/followed"
+        android:name="app.tivi.home.followed.FollowedFragment"
+        android:label="@string/library_followed_shows">
+        <action
+            android:id="@+id/action_followed_to_activity_show_details"
+            app:destination="@id/activity_show_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/trending"
+        android:name="app.tivi.home.trending.TrendingShowsFragment"
+        android:label="@string/discover_trending">
+        <action
+            android:id="@+id/action_trending_to_activity_show_details"
+            app:destination="@id/activity_show_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/popular"
+        android:name="app.tivi.home.popular.PopularShowsFragment"
+        android:label="@string/discover_popular">
+        <action
+            android:id="@+id/action_popular_to_activity_show_details"
+            app:destination="@id/activity_show_details" />
+    </fragment>
+
+    <activity
+        android:id="@+id/settings"
+        android:name="app.tivi.settings.SettingsActivity"
+        android:label="@string/prefs_title" />
+
+    <activity
+        android:id="@+id/activity_show_details"
+        android:name="app.tivi.showdetails.ShowDetailsActivity"
+        android:label="activity_show_details"
+        tools:layout="@layout/activity_show_details">
+        <argument
+            android:name="show_id"
+            app:argType="long" />
+    </activity>
+
+</navigation>

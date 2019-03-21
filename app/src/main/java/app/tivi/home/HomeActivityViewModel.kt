@@ -16,38 +16,40 @@
 
 package app.tivi.home
 
-import androidx.lifecycle.LiveData
+import app.tivi.home.main.HomeNavigationViewState
+import app.tivi.interactors.UpdateUserDetails
+import app.tivi.interactors.launchInteractor
+import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
-import app.tivi.util.SingleLiveEvent
-import app.tivi.util.TiviViewModel
+import app.tivi.util.TiviMvRxViewModel
+import com.airbnb.mvrx.MvRxViewModelFactory
+import com.airbnb.mvrx.ViewModelContext
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
-import javax.inject.Inject
 
-internal class HomeActivityViewModel @Inject constructor(
-    private val traktManager: TraktManager
-) : TiviViewModel() {
-
-    enum class NavigationItem {
-        DISCOVER, LIBRARY
-    }
-
-    private val mutableNavLiveData = SingleLiveEvent<NavigationItem>()
-
-    /**
-     * Facade so that we don't leak the fact that its mutable
-     */
-    val navigationLiveData: LiveData<NavigationItem>
-        get() = mutableNavLiveData
-
+class HomeActivityViewModel @AssistedInject constructor(
+    @Assisted initialState: HomeNavigationViewState,
+    private val traktManager: TraktManager,
+    private val updateUserDetails: UpdateUserDetails
+) : TiviMvRxViewModel<HomeNavigationViewState>(initialState) {
     init {
-        // Set default value
-        mutableNavLiveData.value = NavigationItem.DISCOVER
-    }
+        updateUserDetails.setParams(UpdateUserDetails.Params("me"))
+        updateUserDetails.observe()
+                .toObservable()
+                .execute { copy(user = it()) }
 
-    fun onNavigationItemClicked(item: NavigationItem) {
-        mutableNavLiveData.value = item
+        traktManager.state
+                .distinctUntilChanged()
+                .doOnNext {
+                    if (it == TraktAuthState.LOGGED_IN) {
+                        scope.launchInteractor(updateUserDetails, UpdateUserDetails.ExecuteParams(false))
+                    }
+                }.execute {
+                    copy(authState = it() ?: TraktAuthState.LOGGED_OUT)
+                }
     }
 
     fun onAuthResponse(
@@ -58,6 +60,26 @@ internal class HomeActivityViewModel @Inject constructor(
         when {
             response != null -> traktManager.onAuthResponse(authService, response)
             ex != null -> traktManager.onAuthException(ex)
+        }
+    }
+
+    fun onProfileItemClicked() {
+        // TODO
+    }
+
+    fun onLoginItemClicked(authService: AuthorizationService) {
+        traktManager.startAuth(0, authService)
+    }
+
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(initialState: HomeNavigationViewState): HomeActivityViewModel
+    }
+
+    companion object : MvRxViewModelFactory<HomeActivityViewModel, HomeNavigationViewState> {
+        override fun create(viewModelContext: ViewModelContext, state: HomeNavigationViewState): HomeActivityViewModel? {
+            val fragment: HomeActivity = viewModelContext.activity()
+            return fragment.homeNavigationViewModelFactory.create(state)
         }
     }
 }

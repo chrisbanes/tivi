@@ -16,32 +16,17 @@
 
 package app.tivi.home.trending
 
-import android.os.Bundle
-import android.view.View
+import androidx.navigation.fragment.findNavController
 import app.tivi.PosterGridItemBindingModel_
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.TrendingEntryWithShow
-import app.tivi.home.HomeNavigator
+import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.util.EntryGridEpoxyController
 import app.tivi.util.EntryGridFragment
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
-import javax.inject.Inject
 
 class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingShowsViewModel>(TrendingShowsViewModel::class.java) {
-    @Inject lateinit var homeNavigator: HomeNavigator
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        grid_toolbar.apply {
-            title = getString(R.string.discover_trending)
-            setNavigationOnClickListener {
-                viewModel.onUpClicked(homeNavigator)
-            }
-        }
-    }
-
     override fun createController(): EntryGridEpoxyController<TrendingEntryWithShow> {
         return object : EntryGridEpoxyController<TrendingEntryWithShow>() {
             override fun buildItemModel(item: TrendingEntryWithShow): PosterGridItemBindingModel_ {
@@ -57,6 +42,8 @@ class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingS
         grid_recyclerview.findViewHolderForItemId(item.generateStableId())?.let {
             sharedElements.addSharedElement(it.itemView, "poster")
         }
-        viewModel.onItemClicked(item, homeNavigator, sharedElements)
+
+        val direction = TrendingShowsFragmentDirections.actionTrendingToActivityShowDetails(item.show.id)
+        findNavController().navigate(direction, sharedElements.toActivityNavigatorExtras(requireActivity()))
     }
 }

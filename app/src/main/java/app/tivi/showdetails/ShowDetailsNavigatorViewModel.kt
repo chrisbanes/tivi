@@ -17,12 +17,13 @@
 package app.tivi.showdetails
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import app.tivi.AppNavigator
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
-import app.tivi.util.SingleLiveEvent
+import app.tivi.util.Event
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -34,15 +35,15 @@ class ShowDetailsNavigatorViewModel @Inject constructor(
     }
 
     override fun showEpisodeDetails(episode: Episode) {
-        _events.value = ShowEpisodeDetailsEvent(episode.id)
+        _events.value = Event(ShowEpisodeDetailsEvent(episode.id))
     }
 
     override fun navigateUp() {
-        _events.value = NavigateUpEvent
+        _events.value = Event(NavigateUpEvent)
     }
 
-    private val _events = SingleLiveEvent<ShowDetailsNavigatorEvent>(errorOnNoObservers = true)
-    val events: LiveData<ShowDetailsNavigatorEvent>
+    private val _events = MutableLiveData<Event<ShowDetailsNavigatorEvent>>()
+    val events: LiveData<Event<ShowDetailsNavigatorEvent>>
         get() = _events
 }
 

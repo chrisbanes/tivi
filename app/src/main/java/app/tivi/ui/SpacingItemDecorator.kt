@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class SpacingItemDecorator(left: Int, top: Int, right: Int, bottom: Int) : RecyclerView.ItemDecoration() {
 
-    constructor(spacing: Int): this(spacing, spacing, spacing, spacing)
+    constructor(spacing: Int) : this(spacing, spacing, spacing, spacing)
 
     private val spacingRect = Rect()
 

@@ -18,27 +18,19 @@ package app.tivi.home.discover
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.SearchView
-import androidx.browser.customtabs.CustomTabsIntent
-import androidx.core.net.toUri
+import androidx.navigation.fragment.findNavController
 import app.tivi.R
 import app.tivi.data.Entry
-import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.databinding.FragmentDiscoverBinding
-import app.tivi.extensions.setActionViewExpanded
-import app.tivi.home.HomeActivity
-import app.tivi.home.HomeNavigator
-import app.tivi.trakt.TraktAuthState
+import app.tivi.extensions.toActivityNavigatorExtras
+import app.tivi.extensions.toFragmentNavigatorExtras
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
-import app.tivi.ui.glide.GlideApp
-import app.tivi.ui.glide.asGlideTarget
 import app.tivi.util.GridToGridTransitioner
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
@@ -47,10 +39,8 @@ import javax.inject.Inject
 
 internal class DiscoverFragment : TiviMvRxFragment() {
     private lateinit var binding: FragmentDiscoverBinding
-    private lateinit var searchView: SearchView
-    private lateinit var listItemSharedElementHelper: ListItemSharedElementHelper
 
-    @Inject lateinit var homeNavigator: HomeNavigator
+    private lateinit var listItemSharedElementHelper: ListItemSharedElementHelper
 
     private val viewModel: DiscoverViewModel by fragmentViewModel()
     @Inject lateinit var discoverViewModelFactory: DiscoverViewModel.Factory
@@ -59,19 +49,20 @@ internal class DiscoverFragment : TiviMvRxFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        GridToGridTransitioner.setupFirstFragment(this, R.id.summary_appbarlayout, R.id.summary_status_scrim)
+        GridToGridTransitioner.setupFirstFragment(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentDiscoverBinding.inflate(inflater, container, false)
-        binding.setLifecycleOwner(viewLifecycleOwner)
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        postponeEnterTransition()
+
+        // Disable transition for now due to https://issuetracker.google.com/129035555
+        // postponeEnterTransition()
 
         binding.summaryRv.apply {
             setController(controller)
@@ -80,59 +71,26 @@ internal class DiscoverFragment : TiviMvRxFragment() {
 
         controller.callbacks = object : DiscoverEpoxyController.Callbacks {
             override fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>) {
-                viewModel.onTrendingHeaderClicked(homeNavigator,
-                        listItemSharedElementHelper.createForItems(items))
+                findNavController().navigate(R.id.action_discover_to_trending, null, null,
+                        listItemSharedElementHelper.createForItems(items).toFragmentNavigatorExtras())
             }
 
             override fun onPopularHeaderClicked(items: List<PopularEntryWithShow>) {
-                viewModel.onPopularHeaderClicked(homeNavigator,
-                        listItemSharedElementHelper.createForItems(items))
+                findNavController().navigate(R.id.action_discover_to_popular, null, null,
+                        listItemSharedElementHelper.createForItems(items).toFragmentNavigatorExtras())
             }
 
             override fun onItemClicked(viewHolderId: Long, item: EntryWithShow<out Entry>) {
-                viewModel.onItemPosterClicked(homeNavigator, item.show,
-                        listItemSharedElementHelper.createForId(viewHolderId, "poster"))
-            }
-
-            override fun onSearchItemClicked(viewHolderId: Long, item: TiviShow) {
-                viewModel.onItemPosterClicked(homeNavigator, item,
-                        listItemSharedElementHelper.createForId(viewHolderId, "poster"))
+                val direction = DiscoverFragmentDirections.actionDiscoverToActivityShowDetails(item.show.id)
+                findNavController().navigate(
+                        direction,
+                        listItemSharedElementHelper.createForId(viewHolderId, "poster")
+                                .toActivityNavigatorExtras(requireActivity())
+                )
             }
         }
 
         listItemSharedElementHelper = ListItemSharedElementHelper(binding.summaryRv)
-
-        binding.summaryToolbar.apply {
-            inflateMenu(R.menu.discover_toolbar)
-            setOnMenuItemClickListener(this@DiscoverFragment::onMenuItemClicked)
-
-            val searchItem = menu.findItem(R.id.discover_search)
-            searchItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-                override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-                    viewModel.onSearchOpened()
-                    return true
-                }
-
-                override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                    viewModel.onSearchClosed()
-                    return true
-                }
-            })
-
-            searchView = menu.findItem(R.id.discover_search).actionView as SearchView
-        }
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                viewModel.onSearchQueryChanged(query)
-                return true
-            }
-
-            override fun onQueryTextChange(query: String): Boolean {
-                viewModel.onSearchQueryChanged(query)
-                return true
-            }
-        })
 
         binding.summarySwipeRefresh.setOnRefreshListener(viewModel::refresh)
     }
@@ -146,63 +104,6 @@ internal class DiscoverFragment : TiviMvRxFragment() {
 
             binding.state = state
             controller.setData(state)
-
-            val searchMenuItem = binding.summaryToolbar.menu.findItem(R.id.discover_search)
-            searchMenuItem.setActionViewExpanded(state.isSearchOpen)
-
-            val userMenuItem = binding.summaryToolbar.menu.findItem(R.id.home_menu_user_avatar)
-            val loginMenuItem = binding.summaryToolbar.menu.findItem(R.id.home_menu_user_login)
-            when (state.authState) {
-                TraktAuthState.LOGGED_IN -> {
-                    userMenuItem.isVisible = true
-                    state.user?.let { user ->
-                        if (user.avatarUrl != null) {
-                            GlideApp.with(requireContext())
-                                    .load(user.avatarUrl)
-                                    .circleCrop()
-                                    .into(userMenuItem.asGlideTarget(binding.summaryToolbar))
-                        }
-                    }
-                    loginMenuItem.isVisible = false
-                }
-                TraktAuthState.LOGGED_OUT -> {
-                    userMenuItem.isVisible = false
-                    loginMenuItem.isVisible = true
-                }
-            }
         }
-    }
-
-    internal fun scrollToTop() {
-        binding.summaryRv.apply {
-            stopScroll()
-            smoothScrollToPosition(0)
-        }
-        binding.summaryAppbarlayout.setExpanded(true)
-    }
-
-    private fun onMenuItemClicked(item: MenuItem) = when (item.itemId) {
-        R.id.home_menu_user_avatar -> {
-            viewModel.onProfileItemClicked()
-            true
-        }
-        R.id.home_menu_user_login -> {
-            viewModel.onLoginItemClicked((requireActivity() as HomeActivity).authService)
-            true
-        }
-        R.id.home_settings -> {
-            viewModel.onSettingsClicked(homeNavigator)
-            true
-        }
-        R.id.home_privacy_policy -> {
-            val builder = CustomTabsIntent.Builder()
-            val customTabsIntent = builder.build()
-            customTabsIntent.launchUrl(
-                    requireContext(),
-                    "https://chrisbanes.github.io/tivi/privacypolicy.html".toUri()
-            )
-            true
-        }
-        else -> false
     }
 }

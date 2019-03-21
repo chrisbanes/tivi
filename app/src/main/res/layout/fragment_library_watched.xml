@@ -22,7 +22,7 @@
     <data>
         <variable
             name="state"
-            type="app.tivi.home.library.watched.WatchedViewState" />
+            type="app.tivi.home.watched.WatchedViewState" />
     </data>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

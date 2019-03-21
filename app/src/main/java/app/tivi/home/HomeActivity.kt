@@ -17,156 +17,133 @@
 package app.tivi.home
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.view.ViewGroup
-import androidx.core.view.forEach
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.ViewModelProviders
+import android.view.MenuItem
+import android.view.View
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
+import androidx.databinding.DataBindingUtil
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.navOptions
 import app.tivi.R
-import app.tivi.SharedElementHelper
 import app.tivi.TiviActivity
-import app.tivi.extensions.observeK
-import app.tivi.home.HomeActivityViewModel.NavigationItem.DISCOVER
-import app.tivi.home.HomeActivityViewModel.NavigationItem.LIBRARY
-import app.tivi.home.discover.DiscoverFragment
-import app.tivi.home.library.LibraryFragment
-import app.tivi.home.popular.PopularShowsFragment
-import app.tivi.home.trending.TrendingShowsFragment
+import app.tivi.databinding.ActivityHomeBinding
+import app.tivi.extensions.updateConstraintSets
+import app.tivi.home.main.HomeNavigationEpoxyController
+import app.tivi.home.main.HomeNavigationItem
+import app.tivi.home.main.homeNavigationItemForDestinationId
+import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktConstants
-import kotlinx.android.synthetic.main.activity_home.*
+import app.tivi.ui.glide.GlideApp
+import app.tivi.ui.glide.asGlideTarget
+import app.tivi.ui.navigation.AppBarConfiguration
+import app.tivi.ui.navigation.NavigationUI
+import app.tivi.ui.navigation.NavigationView
+import com.airbnb.mvrx.MvRxView
+import com.airbnb.mvrx.viewModel
+import com.airbnb.mvrx.withState
+import com.bumptech.glide.request.target.Target
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
+import javax.inject.Inject
 
-class HomeActivity : TiviActivity() {
-    companion object {
-        const val ROOT_FRAGMENT = "root"
+class HomeActivity : TiviActivity(), MvRxView {
+
+    private val authService by lazy(LazyThreadSafetyMode.NONE) { AuthorizationService(this) }
+
+    private val viewModel: HomeActivityViewModel by viewModel()
+
+    private val navigationView = object : NavigationView {
+        override fun open() = binding.homeRoot.transitionToState(R.id.nav_open)
+        override fun close() = binding.homeRoot.transitionToState(R.id.nav_closed)
+        override fun toggle() {
+            binding.homeRoot.run {
+                when (currentState) {
+                    R.id.nav_closed -> open()
+                    else -> close()
+                }
+            }
+        }
     }
 
-    private lateinit var viewModel: HomeActivityViewModel
-    private lateinit var navigatorViewModel: HomeNavigatorViewModel
+    @Inject lateinit var homeNavigationViewModelFactory: HomeActivityViewModel.Factory
 
-    val authService by lazy(LazyThreadSafetyMode.NONE) {
-        AuthorizationService(this)
-    }
+    private lateinit var binding: ActivityHomeBinding
+    private lateinit var userMenuItemGlideTarget: Target<Drawable>
+
+    private val navigationEpoxyController = HomeNavigationEpoxyController(object : HomeNavigationEpoxyController.Callbacks {
+        override fun onNavigationItemSelected(item: HomeNavigationItem) = showNavigationItem(item)
+    })
+
+    private val navController: NavController
+        get() = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
 
-        home_content.setOnApplyWindowInsetsListener { view, insets ->
-            var consumed = false
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
 
-            (view as ViewGroup).forEach { child ->
-                if (child.dispatchApplyWindowInsets(insets).isConsumed) {
-                    consumed = true
-                }
+        binding.root.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        binding.root.setOnApplyWindowInsetsListener { _, insets ->
+            binding.homeRoot.updateConstraintSets {
+                it.constrainHeight(R.id.status_scrim, insets.systemWindowInsetTop)
             }
+            // Just return insets
+            insets
+        }
+        // Finally, request some insets
+        binding.root.requestApplyInsets()
 
-            if (consumed) insets.consumeSystemWindowInsets() else insets
+        binding.homeToolbar.setOnMenuItemClickListener(::onMenuItemClicked)
+
+        NavigationUI.setupWithNavController(binding.homeToolbar, navController,
+                AppBarConfiguration.Builder(setOf(R.id.followed, R.id.watched, R.id.discover))
+                        .setNavigationView(navigationView)
+                        .build()
+        )
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            navigationEpoxyController.selectedItem = homeNavigationItemForDestinationId(destination.id)
         }
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-                .get(HomeActivityViewModel::class.java)
+        binding.homeNavRv.setController(navigationEpoxyController)
 
-        navigatorViewModel = ViewModelProviders.of(this, viewModelFactory)
-                .get(HomeNavigatorViewModel::class.java)
-
-        home_bottom_nav.setOnNavigationItemSelectedListener {
-            when (it.itemId) {
-                home_bottom_nav.selectedItemId -> {
-                    if (supportFragmentManager.backStackEntryCount > 0) {
-                        for (i in 0 until supportFragmentManager.backStackEntryCount) {
-                            supportFragmentManager.popBackStack()
-                        }
-                    } else {
-                        val fragment = supportFragmentManager.findFragmentById(R.id.home_content)
-                        when (fragment) {
-                            is DiscoverFragment -> fragment.scrollToTop()
-                            is LibraryFragment -> fragment.scrollToTop()
-                        }
-                    }
-                    true
-                }
-                R.id.home_nav_collection -> {
-                    viewModel.onNavigationItemClicked(LIBRARY)
-                    true
-                }
-                R.id.home_nav_discover -> {
-                    viewModel.onNavigationItemClicked(DISCOVER)
-                    true
-                }
-                else -> false
-            }
-        }
-
-        viewModel.navigationLiveData.observeK(this, this::showNavigationItem)
-
-        navigatorViewModel.showPopularCall.observeK(this, this::showPopular)
-        navigatorViewModel.showTrendingCall.observeK(this, this::showTrending)
-        navigatorViewModel.upClickedCall.observeK(this) { this.onUpClicked() }
+        userMenuItemGlideTarget = binding.homeToolbar.menu.findItem(R.id.home_menu_user_avatar)
+                .asGlideTarget(binding.homeToolbar)
     }
 
-    private fun showNavigationItem(item: HomeActivityViewModel.NavigationItem?) {
-        if (item == null) {
-            return
-        }
-
-        val newFragment: Fragment
-        val newItemId: Int
-
-        when (item) {
-            DISCOVER -> {
-                newFragment = DiscoverFragment()
-                newItemId = R.id.home_nav_discover
-            }
-            LIBRARY -> {
-                newFragment = LibraryFragment()
-                newItemId = R.id.home_nav_collection
-            }
-        }
-
-        supportFragmentManager.popBackStackImmediate(ROOT_FRAGMENT, 0)
-
-        supportFragmentManager
-                .beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .replace(R.id.home_content, newFragment, ROOT_FRAGMENT)
-                .commit()
-
-        // Now make the bottom nav show the correct item
-        if (home_bottom_nav.selectedItemId != newItemId) {
-            home_bottom_nav.menu.findItem(newItemId)?.isChecked = true
-        }
+    override fun onStart() {
+        super.onStart()
+        viewModel.subscribe(this) { postInvalidate() }
     }
 
-    private fun showPopular(sharedElements: SharedElementHelper?) {
-        showStackFragment(PopularShowsFragment(), sharedElements)
-    }
+    override fun invalidate() {
+        withState(viewModel) { state ->
+            binding.state = state
 
-    private fun showTrending(sharedElements: SharedElementHelper?) {
-        showStackFragment(TrendingShowsFragment(), sharedElements)
-    }
+            navigationEpoxyController.items = state.navigationItems
 
-    private fun showStackFragment(fragment: Fragment, sharedElements: SharedElementHelper? = null) {
-        supportFragmentManager.beginTransaction()
-                .setReorderingAllowed(true)
-                .replace(R.id.home_content, fragment)
-                .addToBackStack(null)
-                .apply {
-                    if (sharedElements != null && !sharedElements.isEmpty()) {
-                        sharedElements.applyToTransaction(this)
-                    } else {
-                        setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            val userMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_avatar)
+            val loginMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_login)
+            if (state.authState == TraktAuthState.LOGGED_IN) {
+                userMenuItem.isVisible = true
+                state.user?.let { user ->
+                    if (user.avatarUrl != null) {
+                        GlideApp.with(this)
+                                .load(user.avatarUrl)
+                                .circleCrop()
+                                .into(userMenuItemGlideTarget)
                     }
                 }
-                .commit()
-    }
-
-    private fun onUpClicked() {
-        // TODO can probably do something better here
-        supportFragmentManager.popBackStack()
+                loginMenuItem.isVisible = false
+            } else if (state.authState == TraktAuthState.LOGGED_OUT) {
+                userMenuItem.isVisible = false
+                loginMenuItem.isVisible = true
+            }
+        }
     }
 
     override fun handleIntent(intent: Intent) {
@@ -177,5 +154,46 @@ class HomeActivity : TiviActivity() {
                 viewModel.onAuthResponse(authService, response, error)
             }
         }
+    }
+
+    private fun showNavigationItem(item: HomeNavigationItem) {
+        fun navigate(id: Int) {
+            if (navController.currentDestination?.id != id) {
+                navController.navigate(id, null, navOptions {
+                    popUpTo = navController.graph.startDestination
+                    launchSingleTop = true
+                })
+            }
+        }
+        when (item) {
+            HomeNavigationItem.DISCOVER -> navigate(R.id.discover)
+            HomeNavigationItem.FOLLOWED -> navigate(R.id.followed)
+            HomeNavigationItem.WATCHED -> navigate(R.id.watched)
+        }
+    }
+
+    private fun onMenuItemClicked(item: MenuItem) = when (item.itemId) {
+        R.id.home_menu_user_avatar -> {
+            viewModel.onProfileItemClicked()
+            true
+        }
+        R.id.home_menu_user_login -> {
+            viewModel.onLoginItemClicked(authService)
+            true
+        }
+        R.id.home_settings -> {
+            navController.navigate(R.id.settings)
+            true
+        }
+        R.id.home_privacy_policy -> {
+            val builder = CustomTabsIntent.Builder()
+            val customTabsIntent = builder.build()
+            customTabsIntent.launchUrl(
+                    this,
+                    "https://chrisbanes.github.io/tivi/privacypolicy.html".toUri()
+            )
+            true
+        }
+        else -> false
     }
 }

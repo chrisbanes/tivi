@@ -16,6 +16,8 @@
 
 package app.tivi.ui.databinding
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
@@ -23,10 +25,13 @@ import android.widget.TextView
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
+import app.tivi.extensions.resolveThemeReference
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.MaxLinesToggleClickListener
 import app.tivi.ui.glide.GlideApp
 import app.tivi.util.ScrimUtil
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.MaterialShapeDrawable
 
 @BindingAdapter("tmdbPosterPath", "tmdbImageUrlProvider", "imageSaturateOnLoad")
 fun loadPoster(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider?, saturateOnLoad: Boolean?) {
@@ -105,4 +110,18 @@ fun backgroundScrim(view: View, color: Int) {
 @BindingAdapter("foregroundScrim")
 fun foregroundScrim(view: View, color: Int) {
     view.foreground = ScrimUtil.makeCubicGradientScrimDrawable(color, 16, Gravity.BOTTOM)
+}
+
+@BindingAdapter("materialBackdropBackgroundRadius")
+fun materialBackdropBackground(view: View, radius: Float) {
+    view.background = MaterialShapeDrawable().apply {
+        fillColor = ColorStateList.valueOf(Color.WHITE)
+        shapeAppearanceModel.setTopLeftCorner(CornerFamily.ROUNDED, radius.toInt())
+        shapeAppearanceModel.setTopRightCorner(CornerFamily.ROUNDED, radius.toInt())
+    }
+}
+
+@BindingAdapter("textAppearanceAttr")
+fun textAppearanceAttr(view: TextView, textAppearanceStyleAttr: Int) {
+    view.setTextAppearance(view.context.resolveThemeReference(textAppearanceStyleAttr))
 }

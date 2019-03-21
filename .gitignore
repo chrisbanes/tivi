@@ -4,6 +4,7 @@
 /.idea/workspace.xml
 /.idea/libraries
 /.idea/caches
+/.idea/navEditor.xml
 .DS_Store
 build/
 captures

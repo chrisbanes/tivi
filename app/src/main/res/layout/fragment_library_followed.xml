@@ -22,7 +22,7 @@
     <data>
         <variable
             name="state"
-            type="app.tivi.home.library.followed.FollowedViewState" />
+            type="app.tivi.home.followed.FollowedViewState" />
     </data>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

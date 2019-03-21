@@ -16,36 +16,21 @@
 
 package app.tivi.home.popular
 
-import android.os.Bundle
-import android.view.View
-import app.tivi.R
+import androidx.navigation.fragment.findNavController
 import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.PopularEntryWithShow
-import app.tivi.home.HomeNavigator
+import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.util.EntryGridFragment
 import kotlinx.android.synthetic.main.fragment_rv_grid.*
-import javax.inject.Inject
 
 class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShowsViewModel>(PopularShowsViewModel::class.java) {
-
-    @Inject lateinit var homeNavigator: HomeNavigator
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        grid_toolbar.apply {
-            title = getString(R.string.discover_popular)
-            setNavigationOnClickListener {
-                viewModel.onUpClicked(homeNavigator)
-            }
-        }
-    }
-
     override fun onItemClicked(item: PopularEntryWithShow) {
         val sharedElements = SharedElementHelper()
         grid_recyclerview.findViewHolderForItemId(item.generateStableId()).let {
             sharedElements.addSharedElement(it.itemView, "poster")
         }
-        viewModel.onItemClicked(item, homeNavigator, sharedElements)
+
+        val direction = PopularShowsFragmentDirections.actionPopularToActivityShowDetails(item.show.id)
+        findNavController().navigate(direction, sharedElements.toActivityNavigatorExtras(requireActivity()))
     }
 }

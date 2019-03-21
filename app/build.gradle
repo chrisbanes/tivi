@@ -51,6 +51,8 @@ if (file("google-services.json").exists()) {
     apply plugin: 'io.fabric'
 }
 
+apply plugin: "androidx.navigation.safeargs.kotlin"
+
 def appVersionCode = propOrDef("tivi.versioncode", 17) as Integer
 println("APK version code: " + appVersionCode)
 
@@ -182,6 +184,8 @@ dependencies {
     implementation Libs.AndroidX.constraintlayout
     implementation Libs.AndroidX.coreKtx
     implementation Libs.AndroidX.Fragment.fragmentKtx
+    implementation Libs.AndroidX.Navigation.fragment
+    implementation Libs.AndroidX.Navigation.ui
 
     implementation Libs.Google.material
 

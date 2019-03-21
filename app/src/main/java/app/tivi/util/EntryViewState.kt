@@ -23,5 +23,6 @@ import app.tivi.tmdb.TmdbImageUrlProvider
 data class EntryViewState<LI>(
     val uiResource: UiResource,
     val tmdbImageUrlProvider: TmdbImageUrlProvider,
-    val liveList: PagedList<LI>
+    val liveList: PagedList<LI>,
+    val isLoaded: Boolean
 )

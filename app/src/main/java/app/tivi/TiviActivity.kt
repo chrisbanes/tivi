@@ -17,26 +17,32 @@
 package app.tivi
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.PowerManager
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.doOnPreDraw
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import app.tivi.settings.TiviPreferences
-import app.tivi.settings.TiviPreferences.DarkMode
-import dagger.android.support.DaggerAppCompatActivity
+import app.tivi.settings.TiviPreferences.Theme
+import com.airbnb.mvrx.BaseMvRxActivity
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
 import javax.inject.Inject
 
 /**
  * Base Activity class which supports LifecycleOwner and Dagger injection.
  */
-abstract class TiviActivity : DaggerAppCompatActivity() {
+abstract class TiviActivity : BaseMvRxActivity(), HasSupportFragmentInjector {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var prefs: TiviPreferences
 
+    @Inject lateinit var supportFragmentInjector: DispatchingAndroidInjector<Fragment>
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         updateNightMode()
     }
@@ -90,30 +96,14 @@ abstract class TiviActivity : DaggerAppCompatActivity() {
         return Activity.RESULT_OK
     }
 
-    private fun updateNightMode() {
-        when (prefs.darkModePreference) {
-            DarkMode.SYSTEM -> delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-            DarkMode.ALWAYS -> delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            else -> updateNightModeForBatterySaver()
-        }
+    private fun updateNightMode() = when (prefs.themePreference) {
+        Theme.DARK -> delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
+        Theme.LIGHT -> delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_NO
+        Theme.SYSTEM -> delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        Theme.BATTERY_SAVER_ONLY -> delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
     }
 
-    private fun updateNightModeForBatterySaver() {
-        val darkMode = prefs.darkModePreference
-
-        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
-        if (pm.isPowerSaveMode) {
-            // Since we're in battery saver mode,
-            if (darkMode == DarkMode.BATTERY_SAVER_ONLY || darkMode == DarkMode.AUTO) {
-                delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            }
-        } else {
-            // If we're not in power saving mode, we can just use the default states
-            if (darkMode == DarkMode.AUTO) {
-                delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_AUTO)
-            } else if (darkMode == DarkMode.BATTERY_SAVER_ONLY) {
-                delegate.setLocalNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-            }
-        }
+    override fun supportFragmentInjector(): AndroidInjector<Fragment>? {
+        return supportFragmentInjector
     }
 }
