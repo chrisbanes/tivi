@@ -17,17 +17,17 @@
   -->
 
 <resources>
-    <string-array name="prefs_dark_mode_titles">
-        <item>Use system setting</item>
-        <item>Always</item>
-        <item>Automatically (at night &amp; battery saver)</item>
-        <item>Battery saver only</item>
+    <string-array name="prefs_theme_titles">
+        <item>Light</item>
+        <item>Dark</item>
+        <item>Set by Battery Saver</item>
+        <item>Use system default</item>
     </string-array>
 
-    <string-array name="prefs_dark_mode_values">
-        <item>system</item>
-        <item>always</item>
-        <item>auto</item>
+    <string-array name="prefs_theme_values">
+        <item>light</item>
+        <item>dark</item>
         <item>battery</item>
+        <item>system</item>
     </string-array>
 </resources>

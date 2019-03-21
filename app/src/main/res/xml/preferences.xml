@@ -22,10 +22,10 @@
 
         <ListPreference
             android:defaultValue="system"
-            android:entries="@array/prefs_dark_mode_titles"
-            android:entryValues="@array/prefs_dark_mode_values"
-            android:key="pref_dark_mode"
-            android:title="@string/prefs_dark_mode_title" />
+            android:entries="@array/prefs_theme_titles"
+            android:entryValues="@array/prefs_theme_values"
+            android:key="pref_theme"
+            android:title="@string/prefs_theme_title" />
 
     </PreferenceCategory>
 

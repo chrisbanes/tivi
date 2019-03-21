@@ -26,20 +26,20 @@ class TiviPreferences @Inject constructor(
     @Named("app") private val sharedPreferences: SharedPreferences
 ) {
     companion object {
-        const val KEY_DARK_MODE = "pref_dark_mode"
+        const val KEY_THEME = "pref_theme"
     }
 
-    enum class DarkMode(val value: String) {
-        SYSTEM("system"),
-        AUTO("auto"),
+    enum class Theme(val value: String) {
+        LIGHT("light"),
+        DARK("dark"),
         BATTERY_SAVER_ONLY("battery"),
-        ALWAYS("always")
+        SYSTEM("system")
     }
 
-    val darkModePreference: DarkMode
-        get() = uiThemeFromPref(sharedPreferences.getString(KEY_DARK_MODE, null))
+    val themePreference: Theme
+        get() = uiThemeFromPref(sharedPreferences.getString(KEY_THEME, null))
 
-    private fun uiThemeFromPref(value: String?): DarkMode {
-        return DarkMode.values().firstOrNull { it.value == value } ?: DarkMode.SYSTEM
+    private fun uiThemeFromPref(value: String?): Theme {
+        return Theme.values().firstOrNull { it.value == value } ?: Theme.SYSTEM
     }
 }
