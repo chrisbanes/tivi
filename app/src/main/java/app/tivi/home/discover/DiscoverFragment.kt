@@ -60,7 +60,9 @@ internal class DiscoverFragment : TiviMvRxFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        postponeEnterTransition()
+
+        // Disable transition for now due to https://issuetracker.google.com/129035555
+        // postponeEnterTransition()
 
         binding.summaryRv.apply {
             setController(controller)
