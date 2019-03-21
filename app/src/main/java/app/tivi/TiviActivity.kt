@@ -24,7 +24,7 @@ import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import app.tivi.settings.TiviPreferences
-import app.tivi.settings.TiviPreferences.Theme.*
+import app.tivi.settings.TiviPreferences.Theme
 import com.airbnb.mvrx.BaseMvRxActivity
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
@@ -97,10 +97,10 @@ abstract class TiviActivity : BaseMvRxActivity(), HasSupportFragmentInjector {
     }
 
     private fun updateNightMode() = when (prefs.themePreference) {
-        DARK -> delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
-        LIGHT -> delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_NO
-        SYSTEM -> delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-        BATTERY_SAVER_ONLY -> delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
+        Theme.DARK -> delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
+        Theme.LIGHT -> delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_NO
+        Theme.SYSTEM -> delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        Theme.BATTERY_SAVER_ONLY -> delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
     }
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment>? {
