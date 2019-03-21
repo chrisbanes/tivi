@@ -19,15 +19,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Transition
-        app:constraintSetEnd="@+id/end"
-        app:constraintSetStart="@+id/start"
+        app:constraintSetEnd="@+id/nav_open"
+        app:constraintSetStart="@+id/nav_closed"
         app:duration="200">
 
-        <OnClick
-            app:clickAction="toggle"
-            app:target="@id/home_toolbar_title" />
-
-        <ConstraintSet android:id="@+id/start">
+        <ConstraintSet android:id="@+id/nav_closed">
             <Constraint android:id="@id/home_content_background">
                 <Layout
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -37,7 +33,7 @@
             </Constraint>
         </ConstraintSet>
 
-        <ConstraintSet android:id="@+id/end">
+        <ConstraintSet android:id="@+id/nav_open">
             <Constraint android:id="@id/home_content_background">
                 <Layout
                     app:layout_constraintBottom_toBottomOf="parent"

@@ -38,6 +38,9 @@ import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktConstants
 import app.tivi.ui.glide.GlideApp
 import app.tivi.ui.glide.asGlideTarget
+import app.tivi.ui.navigation.AppBarConfiguration
+import app.tivi.ui.navigation.NavigationUI
+import app.tivi.ui.navigation.NavigationView
 import com.airbnb.mvrx.MvRxView
 import com.airbnb.mvrx.viewModel
 import com.airbnb.mvrx.withState
@@ -53,17 +56,26 @@ class HomeActivity : TiviActivity(), MvRxView {
 
     private val viewModel: HomeActivityViewModel by viewModel()
 
+    private val navigationView = object : NavigationView {
+        override fun open() = binding.homeRoot.transitionToState(R.id.nav_open)
+        override fun close() = binding.homeRoot.transitionToState(R.id.nav_closed)
+        override fun toggle() {
+            binding.homeRoot.run {
+                when (currentState) {
+                    R.id.nav_closed -> open()
+                    else -> close()
+                }
+            }
+        }
+    }
+
     @Inject lateinit var homeNavigationViewModelFactory: HomeActivityViewModel.Factory
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var userMenuItemGlideTarget: Target<Drawable>
 
     private val navigationEpoxyController = HomeNavigationEpoxyController(object : HomeNavigationEpoxyController.Callbacks {
-        override fun onNavigationItemSelected(item: HomeNavigationItem) {
-            showNavigationItem(item)
-            // Close the menu if we've changed fragments
-            binding.homeRoot.transitionToStart()
-        }
+        override fun onNavigationItemSelected(item: HomeNavigationItem) = showNavigationItem(item)
     })
 
     private val navController: NavController
@@ -85,13 +97,15 @@ class HomeActivity : TiviActivity(), MvRxView {
         // Finally, request some insets
         binding.root.requestApplyInsets()
 
-        binding.homeToolbar.apply {
-            inflateMenu(R.menu.discover_toolbar)
-            setOnMenuItemClickListener(::onMenuItemClicked)
-        }
+        binding.homeToolbar.setOnMenuItemClickListener(::onMenuItemClicked)
+
+        NavigationUI.setupWithNavController(binding.homeToolbar, navController,
+                AppBarConfiguration.Builder(setOf(R.id.followed, R.id.watched, R.id.discover))
+                        .setNavigationView(navigationView)
+                        .build()
+        )
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            binding.homeToolbarTitle.text = destination.label
             navigationEpoxyController.selectedItem = homeNavigationItemForDestinationId(destination.id)
         }
 
