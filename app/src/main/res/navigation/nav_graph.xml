@@ -75,7 +75,7 @@
     <activity
         android:id="@+id/settings"
         android:name="app.tivi.settings.SettingsActivity"
-        android:label="@string/prefs_title" />
+        android:label="@string/settings_title" />
 
     <activity
         android:id="@+id/activity_show_details"

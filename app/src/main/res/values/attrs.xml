@@ -17,7 +17,6 @@
 
 <resources>
     <declare-styleable name="TiviTheme">
-        <attr name="navigationBackgroundColor" format="color" />
     </declare-styleable>
 
     <declare-styleable name="TopLeftCutoutBackgroundView">

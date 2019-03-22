@@ -32,9 +32,9 @@
     <string name="login">Login</string>
     <string name="header_more">More</string>
 
-    <string name="prefs_title">Settings</string>
-    <string name="prefs_ui_category_title">User Interface</string>
-    <string name="prefs_theme_title">Theme</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_ui_category_title">User Interface</string>
+    <string name="settings_theme_title">Theme</string>
 
     <string name="empty_prompt">Y u no watch some TV?</string>
     <string name="empty_emoji">😏</string>

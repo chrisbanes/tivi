@@ -18,17 +18,16 @@
 
 <resources>
 
-    <style name="Theme.Tivi" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Tivi" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="actionBarTheme">@style/ThemeOverlay.Tivi.ActionBar</item>
 
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="navigationBackgroundColor">@color/app_bar_background</item>
-
         <item name="android:colorBackground">@color/window_background</item>
 
+        <!-- Default widget styles -->
         <item name="toolbarStyle">@style/Widget.Tivi.Toolbar</item>
 
         <!-- Type styles -->
@@ -49,28 +48,21 @@
         <item name="textAppearanceLargePopupMenu">?attr/textAppearanceBody1</item>
         <item name="textAppearanceSmallPopupMenu">?attr/textAppearanceBody2</item>
         <item name="textAppearancePopupMenuHeader">@style/TextAppearance.Tivi.PopupMenu.Header</item>
-
-        <!-- Remove this once MDC does this automatically -->
-        <item name="dialogTheme">@style/ThemeOverlay.MaterialComponents.Dialog</item>
-        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.MaterialComponents.BottomSheetDialog</item>
     </style>
 
-    <style name="Theme.Tivi.Immerse">
+    <style name="Theme.Tivi.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Tivi.Immerse" parent="Theme.Tivi.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="Theme.Tivi.Settings">
-        <item name="windowActionBar">true</item>
-        <item name="windowNoTitle">false</item>
-    </style>
+    <style name="Theme.Tivi.Home" parent="Theme.Tivi.NoActionBar" />
+    <style name="Theme.Tivi.ShowDetails" parent="Theme.Tivi.NoActionBar" />
+    <style name="Theme.Tivi.Settings" />
 
-    <style name="ThemeOverlay.Tivi.ActionBar" parent="ThemeOverlay.MaterialComponents.ActionBar" />
-
-    <!-- Remove this once MDC adds this -->
-    <style name="ThemeOverlay.MaterialComponents.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowAnimationStyle">@style/Animation.MaterialComponents.BottomSheetDialog</item>
-        <item name="bottomSheetStyle">@style/Widget.Design.BottomSheet.Modal</item>
-    </style>
+    <style name="ThemeOverlay.Tivi.ActionBar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
 
 </resources>
