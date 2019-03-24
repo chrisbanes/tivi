@@ -27,13 +27,13 @@ class EntityInserter @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val logger: Logger
 ) {
-    fun <E : TiviEntity> insertOrUpdate(dao: EntityDao<E>, entities: List<E>) = transactionRunner {
+    suspend fun <E : TiviEntity> insertOrUpdate(dao: EntityDao<E>, entities: List<E>) = transactionRunner {
         entities.forEach {
             insertOrUpdate(dao, it)
         }
     }
 
-    fun <E : TiviEntity> insertOrUpdate(dao: EntityDao<E>, entity: E): Long {
+    suspend fun <E : TiviEntity> insertOrUpdate(dao: EntityDao<E>, entity: E): Long {
         logger.d("insertOrUpdate. entity: %s", entity)
         return when {
             entity.id == 0L -> dao.insert(entity)

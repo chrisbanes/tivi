@@ -27,7 +27,7 @@ class TraktSeasonToSeasonWithEpisodes @Inject constructor(
     private val seasonMapper: TraktSeasonToSeason,
     private val episoderMapper: TraktEpisodeToEpisode
 ) : Mapper<TraktSeason, Pair<Season, List<Episode>>> {
-    override fun map(from: TraktSeason): Pair<Season, List<Episode>> {
-        return seasonMapper.map(from) to from.episodes.map(episoderMapper::map)
+    override suspend fun map(from: TraktSeason): Pair<Season, List<Episode>> {
+        return seasonMapper.map(from) to from.episodes.map { episoderMapper.map(it) }
     }
 }

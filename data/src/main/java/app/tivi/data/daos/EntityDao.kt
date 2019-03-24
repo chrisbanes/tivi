@@ -23,17 +23,17 @@ import app.tivi.data.entities.TiviEntity
 
 interface EntityDao<in E : TiviEntity> {
     @Insert
-    fun insert(entity: E): Long
+    suspend fun insert(entity: E): Long
 
     @Insert
-    fun insertAll(vararg entity: E)
+    suspend fun insertAll(vararg entity: E)
 
     @Insert
-    fun insertAll(entities: List<E>)
+    suspend fun insertAll(entities: List<E>)
 
     @Update
-    fun update(entity: E)
+    suspend fun update(entity: E)
 
     @Delete
-    fun delete(entity: E): Int
+    suspend fun delete(entity: E): Int
 }

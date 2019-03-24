@@ -36,16 +36,16 @@ class LocalTraktUsersStore @Inject constructor(
         else -> userDao.observeTraktUser(username)
     }
 
-    fun getUser(username: String) = when (username) {
+    suspend fun getUser(username: String) = when (username) {
         "me" -> userDao.getMe()
         else -> userDao.getTraktUser(username)
     }
 
-    fun save(user: TraktUser) = transactionRunner {
+    suspend fun save(user: TraktUser) = transactionRunner {
         entityInserter.insertOrUpdate(userDao, user)
     }
 
-    fun updateLastRequest(username: String) {
+    suspend fun updateLastRequest(username: String) {
         val id = when (username) {
             "me" -> userDao.getIdForMe()
             else -> userDao.getIdForUsername(username)
@@ -55,7 +55,7 @@ class LocalTraktUsersStore @Inject constructor(
         }
     }
 
-    fun isLastRequestBefore(username: String, threshold: TemporalAmount): Boolean {
+    suspend fun isLastRequestBefore(username: String, threshold: TemporalAmount): Boolean {
         val id = when (username) {
             "me" -> userDao.getIdForMe()
             else -> userDao.getIdForUsername(username)

@@ -34,12 +34,12 @@ class LocalTrendingShowsStore @Inject constructor(
 
     fun observeForPaging(): DataSource.Factory<Int, TrendingEntryWithShow> = trendingShowsDao.entriesDataSource()
 
-    fun saveTrendingShowsPage(page: Int, entries: List<TrendingShowEntry>) = transactionRunner {
+    suspend fun saveTrendingShowsPage(page: Int, entries: List<TrendingShowEntry>) = transactionRunner {
         trendingShowsDao.deletePage(page)
         trendingShowsDao.insertAll(entries)
     }
 
-    fun deleteAll() = trendingShowsDao.deleteAll()
+    suspend fun deleteAll() = trendingShowsDao.deleteAll()
 
-    fun getLastPage(): Int? = trendingShowsDao.getLastPage()
+    suspend fun getLastPage(): Int? = trendingShowsDao.getLastPage()
 }

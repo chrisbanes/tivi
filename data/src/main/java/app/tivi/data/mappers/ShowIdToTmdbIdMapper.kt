@@ -24,6 +24,6 @@ import javax.inject.Singleton
 class ShowIdToTmdbIdMapper @Inject constructor(
     private val showDao: TiviShowDao
 ) : Mapper<Long, Int> {
-    override fun map(from: Long) = showDao.getTmdbIdForShowId(from)
+    override suspend fun map(from: Long) = showDao.getTmdbIdForShowId(from)
             ?: throw IllegalArgumentException("Show with id $from does not exist")
 }

@@ -35,11 +35,11 @@ abstract class TrendingDao : PaginatedEntryDao<TrendingShowEntry, TrendingEntryW
     abstract override fun entriesDataSource(): DataSource.Factory<Int, TrendingEntryWithShow>
 
     @Query("DELETE FROM trending_shows WHERE page = :page")
-    abstract override fun deletePage(page: Int)
+    abstract override suspend fun deletePage(page: Int)
 
     @Query("DELETE FROM trending_shows")
-    abstract override fun deleteAll()
+    abstract override suspend fun deleteAll()
 
     @Query("SELECT MAX(page) from trending_shows")
-    abstract override fun getLastPage(): Int?
+    abstract override suspend fun getLastPage(): Int?
 }

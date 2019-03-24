@@ -50,11 +50,11 @@ class SeasonsEpisodesRepository @Inject constructor(
 
     fun observeEpisodeWatches(episodeId: Long) = localStore.observeEpisodeWatches(episodeId)
 
-    fun needShowSeasonsUpdate(showId: Long): Boolean {
+    suspend fun needShowSeasonsUpdate(showId: Long): Boolean {
         return localStore.lastShowSeasonsFetchBefore(showId, Period.ofDays(7))
     }
 
-    fun removeShowSeasonData(showId: Long) = localStore.deleteShowSeasonData(showId)
+    suspend fun removeShowSeasonData(showId: Long) = localStore.deleteShowSeasonData(showId)
 
     suspend fun updateSeasonsEpisodes(showId: Long) {
         val result = traktSeasonsDataSource.getSeasonsEpisodes(showId)
@@ -120,7 +120,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         }
     }
 
-    fun needShowEpisodeWatchesSync(showId: Long): Boolean {
+    suspend fun needShowEpisodeWatchesSync(showId: Long): Boolean {
         return localStore.lastShowEpisodeWatchesSyncBefore(showId, Duration.ofHours(1))
     }
 

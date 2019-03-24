@@ -32,20 +32,20 @@ interface UserDao : EntityDao<TraktUser> {
     fun observeTraktUser(username: String): Flowable<TraktUser>
 
     @Query("SELECT * FROM users WHERE username = :username")
-    fun getTraktUser(username: String): TraktUser?
+    suspend fun getTraktUser(username: String): TraktUser?
 
     @Query("SELECT * FROM users WHERE is_me != 0")
-    fun getMe(): TraktUser?
+    suspend fun getMe(): TraktUser?
 
     @Query("SELECT id FROM users WHERE username = :username")
-    fun getIdForUsername(username: String): Long?
+    suspend fun getIdForUsername(username: String): Long?
 
     @Query("SELECT id FROM users WHERE is_me != 0")
-    fun getIdForMe(): Long?
+    suspend fun getIdForMe(): Long?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    override fun insert(entity: TraktUser): Long
+    override suspend fun insert(entity: TraktUser): Long
 
     @Query("DELETE FROM users")
-    fun deleteAll()
+    suspend fun deleteAll()
 }

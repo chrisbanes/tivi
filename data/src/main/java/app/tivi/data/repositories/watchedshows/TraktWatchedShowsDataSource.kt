@@ -37,7 +37,7 @@ class TraktWatchedShowsDataSource @Inject constructor(
     private val showMapper: TraktBaseShowToTiviShow
 ) : WatchedShowsDataSource {
     private val entryMapper = object : Mapper<BaseShow, WatchedShowEntry> {
-        override fun map(from: BaseShow): WatchedShowEntry {
+        override suspend fun map(from: BaseShow): WatchedShowEntry {
             return WatchedShowEntry(showId = 0, lastWatched = from.last_watched_at)
         }
     }
