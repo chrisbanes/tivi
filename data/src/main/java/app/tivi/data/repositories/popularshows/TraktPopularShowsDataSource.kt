@@ -36,7 +36,7 @@ class TraktPopularShowsDataSource @Inject constructor(
     private val showMapper: TraktShowToTiviShow
 ) : PopularShowsDataSource {
     private val entryMapper = object : IndexedMapper<Show, PopularShowEntry> {
-        override fun map(index: Int, from: Show): PopularShowEntry {
+        override suspend fun map(index: Int, from: Show): PopularShowEntry {
             return PopularShowEntry(showId = 0, pageOrder = index, page = 0)
         }
     }

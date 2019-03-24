@@ -27,5 +27,5 @@ import io.reactivex.Flowable
 interface EntryDao<EC : Entry, LI : EntryWithShow<EC>> : EntityDao<EC> {
     fun entriesFlowable(count: Int, offset: Int): Flowable<List<LI>>
     fun entriesDataSource(): DataSource.Factory<Int, LI>
-    fun deleteAll()
+    suspend fun deleteAll()
 }

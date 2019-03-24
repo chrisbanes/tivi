@@ -37,7 +37,7 @@ class TmdbRelatedShowsDataSource @Inject constructor(
     private val showMapper: TmdbBaseShowToTiviShow
 ) : RelatedShowsDataSource {
     private val entryMapper = object : IndexedMapper<BaseTvShow, RelatedShowEntry> {
-        override fun map(index: Int, from: BaseTvShow): RelatedShowEntry {
+        override suspend fun map(index: Int, from: BaseTvShow): RelatedShowEntry {
             return RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)
         }
     }

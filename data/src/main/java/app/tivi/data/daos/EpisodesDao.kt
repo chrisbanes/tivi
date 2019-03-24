@@ -24,25 +24,25 @@ import io.reactivex.Flowable
 @Dao
 abstract class EpisodesDao : EntityDao<Episode> {
     @Query("SELECT * from episodes WHERE season_id = :seasonId ORDER BY number")
-    abstract fun episodesWithSeasonId(seasonId: Long): List<Episode>
+    abstract suspend fun episodesWithSeasonId(seasonId: Long): List<Episode>
 
     @Query("DELETE FROM episodes WHERE season_id = :seasonId")
-    abstract fun deleteWithSeasonId(seasonId: Long)
+    abstract suspend fun deleteWithSeasonId(seasonId: Long)
 
     @Query("SELECT * from episodes WHERE trakt_id = :traktId")
-    abstract fun episodeWithTraktId(traktId: Int): Episode?
+    abstract suspend fun episodeWithTraktId(traktId: Int): Episode?
 
     @Query("SELECT * from episodes WHERE tmdb_id = :tmdbId")
-    abstract fun episodeWithTmdbId(tmdbId: Int): Episode?
+    abstract suspend fun episodeWithTmdbId(tmdbId: Int): Episode?
 
     @Query("SELECT * from episodes WHERE id = :id")
-    abstract fun episodeWithId(id: Long): Episode?
+    abstract suspend fun episodeWithId(id: Long): Episode?
 
     @Query("SELECT trakt_id from episodes WHERE id = :id")
-    abstract fun episodeTraktIdForId(id: Long): Int?
+    abstract suspend fun episodeTraktIdForId(id: Long): Int?
 
     @Query("SELECT id from episodes WHERE trakt_id = :traktId")
-    abstract fun episodeIdWithTraktId(traktId: Int): Long?
+    abstract suspend fun episodeIdWithTraktId(traktId: Int): Long?
 
     @Query("SELECT * from episodes WHERE id = :id")
     abstract fun episodeWithIdFlowable(id: Long): Flowable<Episode>
@@ -51,5 +51,5 @@ abstract class EpisodesDao : EntityDao<Episode> {
             " INNER JOIN seasons AS s ON s.show_id = shows.id" +
             " INNER JOIN episodes AS eps ON eps.season_id = s.id" +
             " WHERE eps.id = :episodeId")
-    abstract fun showIdForEpisodeId(episodeId: Long): Long
+    abstract suspend fun showIdForEpisodeId(episodeId: Long): Long
 }

@@ -23,7 +23,7 @@ import javax.inject.Singleton
 
 @Singleton
 class TmdbEpisodeToEpisode @Inject constructor() : Mapper<TvEpisode, Episode> {
-    override fun map(from: TvEpisode) = Episode(
+    override suspend fun map(from: TvEpisode) = Episode(
             seasonId = 0,
             tmdbId = from.id,
             title = from.name,

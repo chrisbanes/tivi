@@ -27,11 +27,11 @@ class LocalWatchedShowsStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val watchedShowDao: WatchedShowDao
 ) {
-    fun getWatchedShows() = watchedShowDao.entries()
+    suspend fun getWatchedShows() = watchedShowDao.entries()
 
     fun observePagedList() = watchedShowDao.entriesDataSource()
 
-    fun saveWatchedShows(watchedShows: List<WatchedShowEntry>) = transactionRunner {
+    suspend fun saveWatchedShows(watchedShows: List<WatchedShowEntry>) = transactionRunner {
         watchedShowDao.deleteAll()
         entityInserter.insertOrUpdate(watchedShowDao, watchedShows)
     }

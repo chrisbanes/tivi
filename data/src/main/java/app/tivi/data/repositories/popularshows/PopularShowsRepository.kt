@@ -22,14 +22,12 @@ import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.extensions.parallelForEach
-import app.tivi.util.AppCoroutineDispatchers
 import io.reactivex.Flowable
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class PopularShowsRepository @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
     private val localStore: LocalPopularShowsStore,
     private val showStore: LocalShowStore,
     private val traktDataSource: TraktPopularShowsDataSource,

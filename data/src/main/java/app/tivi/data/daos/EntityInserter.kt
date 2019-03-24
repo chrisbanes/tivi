@@ -25,13 +25,13 @@ import javax.inject.Singleton
 class EntityInserter @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner
 ) {
-    fun <E : TiviEntity> insertOrUpdate(dao: EntityDao<E>, entities: List<E>) = transactionRunner {
+    suspend fun <E : TiviEntity> insertOrUpdate(dao: EntityDao<E>, entities: List<E>) = transactionRunner {
         entities.forEach {
             insertOrUpdate(dao, it)
         }
     }
 
-    fun <E : TiviEntity> insertOrUpdate(dao: EntityDao<E>, entity: E): Long = when {
+    suspend fun <E : TiviEntity> insertOrUpdate(dao: EntityDao<E>, entity: E): Long = when {
         entity.id == 0L -> dao.insert(entity)
         else -> {
             dao.update(entity)

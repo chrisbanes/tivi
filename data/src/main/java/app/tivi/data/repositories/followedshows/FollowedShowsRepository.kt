@@ -24,7 +24,6 @@ import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
-import app.tivi.util.AppCoroutineDispatchers
 import org.threeten.bp.Duration
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
@@ -33,7 +32,6 @@ import javax.inject.Singleton
 
 @Singleton
 class FollowedShowsRepository @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
     private val localStore: LocalFollowedShowsStore,
     private val localShowStore: LocalShowStore,
     @Trakt private val dataSource: FollowedShowsDataSource,
@@ -44,14 +42,14 @@ class FollowedShowsRepository @Inject constructor(
 
     fun observeIsShowFollowed(showId: Long) = localStore.observeIsShowFollowed(showId)
 
-    fun isShowFollowed(showId: Long) = localStore.isShowFollowed(showId)
+    suspend fun isShowFollowed(showId: Long) = localStore.isShowFollowed(showId)
 
     suspend fun getFollowedShows(): List<FollowedShowEntry> {
         syncFollowedShows()
         return localStore.getEntries()
     }
 
-    fun needFollowedShowsSync(): Boolean {
+    suspend fun needFollowedShowsSync(): Boolean {
         return localStore.isLastFollowedShowsSyncBefore(Duration.ofHours(3))
     }
 
@@ -84,7 +82,7 @@ class FollowedShowsRepository @Inject constructor(
         val entry = localStore.getEntryForShowId(showId)
         if (entry != null) {
             // Mark the show as pending deletion
-            entry.copy(pendingAction = PendingAction.DELETE).also(localStore::save)
+            localStore.save(entry.copy(pendingAction = PendingAction.DELETE))
             // Now sync it up
             syncFollowedShows()
         }

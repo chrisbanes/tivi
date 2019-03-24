@@ -28,7 +28,7 @@ import io.reactivex.Flowable
 abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow> {
     @Transaction
     @Query("SELECT * FROM watched_entries ORDER BY datetime(last_watched)")
-    abstract fun entries(): List<WatchedShowEntryWithShow>
+    abstract suspend fun entries(): List<WatchedShowEntryWithShow>
 
     @Transaction
     @Query("SELECT * FROM watched_entries ORDER BY datetime(last_watched) DESC LIMIT :count OFFSET :offset")
@@ -39,5 +39,5 @@ abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithS
     abstract override fun entriesDataSource(): DataSource.Factory<Int, WatchedShowEntryWithShow>
 
     @Query("DELETE FROM watched_entries")
-    abstract override fun deleteAll()
+    abstract override suspend fun deleteAll()
 }

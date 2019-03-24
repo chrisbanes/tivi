@@ -30,7 +30,7 @@ interface ShowRepository {
      */
     suspend fun updateShow(showId: Long)
 
-    fun needsUpdate(showId: Long): Boolean
+    suspend fun needsUpdate(showId: Long): Boolean
 
     fun observeShow(showId: Long): Flowable<TiviShow>
 }

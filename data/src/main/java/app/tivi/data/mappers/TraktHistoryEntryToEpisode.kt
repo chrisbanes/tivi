@@ -25,5 +25,5 @@ import javax.inject.Singleton
 class TraktHistoryEntryToEpisode @Inject constructor(
     private val mapper: TraktEpisodeToEpisode
 ) : Mapper<HistoryEntry, Episode> {
-    override fun map(from: HistoryEntry) = mapper.map(from.episode)
+    override suspend fun map(from: HistoryEntry) = mapper.map(from.episode)
 }

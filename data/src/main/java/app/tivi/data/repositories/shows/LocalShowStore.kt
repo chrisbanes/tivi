@@ -32,25 +32,25 @@ class LocalShowStore @Inject constructor(
     private val lastRequestDao: LastRequestDao,
     private val transactionRunner: DatabaseTransactionRunner
 ) {
-    fun getShow(showId: Long) = showDao.getShowWithId(showId)
+    suspend fun getShow(showId: Long) = showDao.getShowWithId(showId)
 
     fun observeShow(showId: Long): Flowable<TiviShow> = showDao.getShowWithIdFlowable(showId)
 
-    fun getIdForTraktId(traktId: Int) = showDao.getIdForTraktId(traktId)
+    suspend fun getIdForTraktId(traktId: Int) = showDao.getIdForTraktId(traktId)
 
-    fun saveShow(show: TiviShow) = entityInserter.insertOrUpdate(showDao, show)
+    suspend fun saveShow(show: TiviShow) = entityInserter.insertOrUpdate(showDao, show)
 
-    fun lastRequestBefore(showId: Long, threshold: TemporalAmount): Boolean {
+    suspend fun lastRequestBefore(showId: Long, threshold: TemporalAmount): Boolean {
         return lastRequestDao.isRequestBefore(Request.SHOW_DETAILS, showId, threshold)
     }
 
-    fun updateLastRequest(showId: Long) = lastRequestDao.updateLastRequest(Request.SHOW_DETAILS, showId)
+    suspend fun updateLastRequest(showId: Long) = lastRequestDao.updateLastRequest(Request.SHOW_DETAILS, showId)
 
     /**
      * Gets the ID for the show with the given trakt Id. If the trakt Id does not exist in the
      * database, it is inserted and the generated ID is returned.
      */
-    fun getIdOrSavePlaceholder(show: TiviShow): Long = transactionRunner {
+    suspend fun getIdOrSavePlaceholder(show: TiviShow): Long = transactionRunner {
         show.traktId?.let { showDao.getShowWithTraktId(it)?.id }
                 ?: show.tmdbId?.let { showDao.getShowWithTmdbId(it)?.id }
                 ?: showDao.insert(show)

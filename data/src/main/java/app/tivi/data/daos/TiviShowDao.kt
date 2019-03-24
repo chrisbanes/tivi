@@ -20,34 +20,30 @@ import androidx.room.Dao
 import androidx.room.Query
 import app.tivi.data.entities.TiviShow
 import io.reactivex.Flowable
-import io.reactivex.Maybe
 
 @Dao
 abstract class TiviShowDao : EntityDao<TiviShow> {
     @Query("SELECT * FROM shows WHERE trakt_id = :id")
-    abstract fun getShowWithTraktId(id: Int): TiviShow?
+    abstract suspend fun getShowWithTraktId(id: Int): TiviShow?
 
     @Query("SELECT * FROM shows WHERE id IN (:ids)")
     abstract fun getShowsWithIds(ids: List<Long>): Flowable<List<TiviShow>>
 
     @Query("SELECT * FROM shows WHERE tmdb_id = :id")
-    abstract fun getShowWithTmdbId(id: Int): TiviShow?
+    abstract suspend fun getShowWithTmdbId(id: Int): TiviShow?
 
     @Query("SELECT * FROM shows WHERE id = :id")
     abstract fun getShowWithIdFlowable(id: Long): Flowable<TiviShow>
 
     @Query("SELECT * FROM shows WHERE id = :id")
-    abstract fun getShowWithIdMaybe(id: Long): Maybe<TiviShow>
-
-    @Query("SELECT * FROM shows WHERE id = :id")
-    abstract fun getShowWithId(id: Long): TiviShow?
+    abstract suspend fun getShowWithId(id: Long): TiviShow?
 
     @Query("SELECT trakt_id FROM shows WHERE id = :id")
-    abstract fun getTraktIdForShowId(id: Long): Int?
+    abstract suspend fun getTraktIdForShowId(id: Long): Int?
 
     @Query("SELECT tmdb_id FROM shows WHERE id = :id")
-    abstract fun getTmdbIdForShowId(id: Long): Int?
+    abstract suspend fun getTmdbIdForShowId(id: Long): Int?
 
     @Query("SELECT id FROM shows WHERE trakt_id = :traktId")
-    abstract fun getIdForTraktId(traktId: Int): Long?
+    abstract suspend fun getIdForTraktId(traktId: Int): Long?
 }

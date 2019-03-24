@@ -31,23 +31,23 @@ abstract class SeasonsDao : EntityDao<Season> {
     abstract fun seasonsWithEpisodesForShowId(showId: Long): Flowable<List<SeasonWithEpisodesAndWatches>>
 
     @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number=$NUMBER_SPECIALS, number")
-    abstract fun seasonsForShowId(showId: Long): List<Season>
+    abstract suspend fun seasonsForShowId(showId: Long): List<Season>
 
     @Query("DELETE FROM seasons WHERE show_id = :showId")
-    abstract fun deleteWithShowId(showId: Long)
+    abstract suspend fun deleteWithShowId(showId: Long)
 
     @Query("DELETE FROM seasons WHERE show_id = :showId")
-    abstract fun deleteSeasonsForShowId(showId: Long): Int
+    abstract suspend fun deleteSeasonsForShowId(showId: Long): Int
 
     @Query("SELECT * FROM seasons WHERE id = :id")
-    abstract fun seasonWithId(id: Long): Season?
+    abstract suspend fun seasonWithId(id: Long): Season?
 
     @Query("SELECT trakt_id FROM seasons WHERE id = :id")
-    abstract fun traktIdForId(id: Long): Int?
+    abstract suspend fun traktIdForId(id: Long): Int?
 
     @Query("SELECT * FROM seasons WHERE trakt_id = :traktId")
-    abstract fun seasonWithTraktId(traktId: Int): Season?
+    abstract suspend fun seasonWithTraktId(traktId: Int): Season?
 
     @Query("SELECT * FROM seasons WHERE show_id = :showId AND number = :number")
-    abstract fun seasonWithShowIdAndNumber(showId: Long, number: Int): Season?
+    abstract suspend fun seasonWithShowIdAndNumber(showId: Long, number: Int): Season?
 }

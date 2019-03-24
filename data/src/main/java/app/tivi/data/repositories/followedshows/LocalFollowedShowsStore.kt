@@ -48,19 +48,19 @@ class LocalFollowedShowsStore @Inject constructor(
             { entity, id -> entity.copy(id = id ?: 0) }
     )
 
-    fun getEntryForShowId(showId: Long): FollowedShowEntry? = followedShowsDao.entryWithShowId(showId)
+    suspend fun getEntryForShowId(showId: Long): FollowedShowEntry? = followedShowsDao.entryWithShowId(showId)
 
-    fun getEntries(): List<FollowedShowEntry> = followedShowsDao.entries()
+    suspend fun getEntries(): List<FollowedShowEntry> = followedShowsDao.entries()
 
-    fun getEntriesWithAddAction() = followedShowsDao.entriesWithSendPendingActions()
+    suspend fun getEntriesWithAddAction() = followedShowsDao.entriesWithSendPendingActions()
 
-    fun getEntriesWithDeleteAction() = followedShowsDao.entriesWithDeletePendingActions()
+    suspend fun getEntriesWithDeleteAction() = followedShowsDao.entriesWithDeletePendingActions()
 
-    fun updateEntriesWithAction(ids: List<Long>, action: PendingAction): Int {
+    suspend fun updateEntriesWithAction(ids: List<Long>, action: PendingAction): Int {
         return followedShowsDao.updateEntriesToPendingAction(ids, action.value)
     }
 
-    fun deleteEntriesInIds(ids: List<Long>) = followedShowsDao.deleteWithIds(ids)
+    suspend fun deleteEntriesInIds(ids: List<Long>) = followedShowsDao.deleteWithIds(ids)
 
     fun observeForPaging(): DataSource.Factory<Int, FollowedShowEntryWithShow> = followedShowsDao.entriesDataSource()
 
@@ -69,21 +69,21 @@ class LocalFollowedShowsStore @Inject constructor(
                 .map { it > 0 }
     }
 
-    fun isShowFollowed(showId: Long) = followedShowsDao.entryCountWithShowId(showId) > 0
+    suspend fun isShowFollowed(showId: Long) = followedShowsDao.entryCountWithShowId(showId) > 0
 
-    fun sync(entities: List<FollowedShowEntry>) = transactionRunner {
+    suspend fun sync(entities: List<FollowedShowEntry>) = transactionRunner {
         syncer.sync(followedShowsDao.entries(), entities)
     }
 
-    fun updateLastFollowedShowsSync() {
+    suspend fun updateLastFollowedShowsSync() {
         lastRequestDao.updateLastRequest(Request.FOLLOWED_SHOWS, 0)
     }
 
-    fun isLastFollowedShowsSyncBefore(threshold: TemporalAmount): Boolean {
+    suspend fun isLastFollowedShowsSyncBefore(threshold: TemporalAmount): Boolean {
         return lastRequestDao.isRequestBefore(Request.FOLLOWED_SHOWS, 0, threshold)
     }
 
-    fun save(entry: FollowedShowEntry) {
+    suspend fun save(entry: FollowedShowEntry) {
         entityInserter.insertOrUpdate(followedShowsDao, entry)
     }
 }

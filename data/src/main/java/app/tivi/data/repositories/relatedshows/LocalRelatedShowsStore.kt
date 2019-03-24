@@ -27,11 +27,11 @@ class LocalRelatedShowsStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val relatedShowsDao: RelatedShowsDao
 ) {
-    fun getRelatedShows(showId: Long) = relatedShowsDao.entries(showId)
+    suspend fun getRelatedShows(showId: Long) = relatedShowsDao.entries(showId)
 
     fun observeRelatedShows(showId: Long) = relatedShowsDao.entriesFlowable(showId)
 
-    fun saveRelatedShows(showId: Long, relatedShows: List<RelatedShowEntry>) = transactionRunner {
+    suspend fun saveRelatedShows(showId: Long, relatedShows: List<RelatedShowEntry>) = transactionRunner {
         relatedShowsDao.deleteWithShowId(showId)
         entityInserter.insertOrUpdate(relatedShowsDao, relatedShows)
     }

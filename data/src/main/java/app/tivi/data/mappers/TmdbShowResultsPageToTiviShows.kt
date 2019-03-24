@@ -25,5 +25,5 @@ import javax.inject.Singleton
 class TmdbShowResultsPageToTiviShows @Inject constructor(
     private val tmdbShowMapper: TmdbBaseShowToTiviShow
 ) : Mapper<TvShowResultsPage, List<TiviShow>> {
-    override fun map(from: TvShowResultsPage) = from.results.map(tmdbShowMapper::map)
+    override suspend fun map(from: TvShowResultsPage) = from.results.map { tmdbShowMapper.map(it) }
 }

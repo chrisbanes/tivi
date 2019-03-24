@@ -36,12 +36,12 @@ class LocalPopularShowsStore @Inject constructor(
         return popularShowDao.entriesDataSource()
     }
 
-    fun savePopularShowsPage(page: Int, entries: List<PopularShowEntry>) = transactionRunner {
+    suspend fun savePopularShowsPage(page: Int, entries: List<PopularShowEntry>) = transactionRunner {
         popularShowDao.deletePage(page)
         popularShowDao.insertAll(entries)
     }
 
-    fun deleteAll() = popularShowDao.deleteAll()
+    suspend fun deleteAll() = popularShowDao.deleteAll()
 
-    fun getLastPage(): Int? = popularShowDao.getLastPage()
+    suspend fun getLastPage(): Int? = popularShowDao.getLastPage()
 }

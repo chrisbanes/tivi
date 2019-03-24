@@ -36,7 +36,7 @@ class TraktTrendingShowsDataSource @Inject constructor(
     private val showMapper: TraktTrendingShowToTiviShow
 ) : TrendingShowsDataSource {
     private val entryMapper = object : Mapper<TrendingShow, TrendingShowEntry> {
-        override fun map(from: TrendingShow): TrendingShowEntry {
+        override suspend fun map(from: TrendingShow): TrendingShowEntry {
             return TrendingShowEntry(showId = 0, watchers = from.watchers, page = 0)
         }
     }

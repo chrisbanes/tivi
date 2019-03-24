@@ -34,5 +34,5 @@ abstract class RelatedShowsDao : PairEntryDao<RelatedShowEntry, RelatedShowEntry
     abstract override fun entriesFlowable(showId: Long): Flowable<List<RelatedShowEntryWithShow>>
 
     @Query("DELETE FROM related_shows WHERE show_id = :showId")
-    abstract override fun deleteWithShowId(showId: Long)
+    abstract override suspend fun deleteWithShowId(showId: Long)
 }
