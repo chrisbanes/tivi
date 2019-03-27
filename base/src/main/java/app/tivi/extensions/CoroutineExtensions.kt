@@ -17,24 +17,24 @@
 package app.tivi.extensions
 
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.joinAll
 
 suspend fun <A, B> Collection<A>.parallelMap(
     block: suspend (A) -> B
-) = coroutineScope {
+): List<B> = coroutineScope {
     map {
-        async { block(it) }
-    }.map {
-        it.await()
-    }
+        async {
+            block(it)
+        }
+    }.awaitAll()
 }
 
 suspend fun <A, B> Collection<A>.parallelForEach(
     block: suspend (A) -> B
-) = coroutineScope {
+): Unit = coroutineScope {
     map {
         async { block(it) }
-    }.forEach {
-        it.await()
-    }
+    }.joinAll()
 }
