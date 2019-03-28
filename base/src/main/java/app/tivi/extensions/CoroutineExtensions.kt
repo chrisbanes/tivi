@@ -16,25 +16,23 @@
 
 package app.tivi.extensions
 
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.joinAll
-
-suspend fun <A, B> Collection<A>.parallelMap(
-    block: suspend (A) -> B
-): List<B> = coroutineScope {
-    map {
-        async {
-            block(it)
-        }
-    }.awaitAll()
-}
+import kotlinx.coroutines.launch
 
 suspend fun <A, B> Collection<A>.parallelForEach(
+    parallelism: Int = 5,
     block: suspend (A) -> B
 ): Unit = coroutineScope {
-    map {
-        async { block(it) }
-    }.joinAll()
+    val producer = produce {
+        forEach { send(it) }
+        close()
+    }
+    repeat(parallelism) {
+        launch {
+            for (item in producer) {
+                block(item)
+            }
+        }
+    }
 }
