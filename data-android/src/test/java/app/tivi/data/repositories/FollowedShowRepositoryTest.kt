@@ -33,12 +33,11 @@ import app.tivi.utils.followedShow1PendingUpload
 import app.tivi.utils.followedShow2
 import app.tivi.utils.insertFollowedShow
 import app.tivi.utils.insertShow
+import app.tivi.utils.runBlockingTest
 import app.tivi.utils.show
 import app.tivi.utils.show2
 import app.tivi.utils.show2Id
 import app.tivi.utils.showId
-import app.tivi.utils.testCoroutineDispatchers
-import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Test
@@ -59,31 +58,33 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
 
     override fun setup() {
         super.setup()
-        // We'll assume that there's a show in the db
-        insertShow(db)
 
-        followShowsDao = db.followedShowsDao()
+        runBlockingTest {
+            // We'll assume that there's a show in the db
+            insertShow(db)
 
-        showRepository = mock(ShowRepository::class.java)
-        `when`(showRepository.needsUpdate(any(Long::class.java))).thenReturn(true)
+            followShowsDao = db.followedShowsDao()
 
-        traktDataSource = mock(FollowedShowsDataSource::class.java)
+            showRepository = mock(ShowRepository::class.java)
+            `when`(showRepository.needsUpdate(any(Long::class.java))).thenReturn(true)
 
-        val txRunner = RoomTransactionRunner(db)
+            traktDataSource = mock(FollowedShowsDataSource::class.java)
 
-        repository = FollowedShowsRepository(
-                testCoroutineDispatchers,
-                LocalFollowedShowsStore(txRunner, EntityInserter(txRunner),
-                        db.followedShowsDao(), db.showDao(), db.lastRequestDao()),
-                LocalShowStore(EntityInserter(txRunner), db.showDao(), db.lastRequestDao(), txRunner),
-                traktDataSource,
-                showRepository,
-                Provider { TraktAuthState.LOGGED_IN }
-        )
+            val txRunner = RoomTransactionRunner(db)
+
+            repository = FollowedShowsRepository(
+                    LocalFollowedShowsStore(txRunner, EntityInserter(txRunner),
+                            db.followedShowsDao(), db.showDao(), db.lastRequestDao()),
+                    LocalShowStore(EntityInserter(txRunner), db.showDao(), db.lastRequestDao(), txRunner),
+                    traktDataSource,
+                    showRepository,
+                    Provider { TraktAuthState.LOGGED_IN }
+            )
+        }
     }
 
     @Test
-    fun testSync() = runBlocking {
+    fun testSync() = runBlockingTest {
         `when`(traktDataSource.getFollowedListId()).thenReturn(0)
         `when`(traktDataSource.getListShows(0)).thenReturn(Success(listOf(followedShow1 to show)))
 
@@ -94,7 +95,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun testSync_emptyResponse() = runBlocking {
+    fun testSync_emptyResponse() = runBlockingTest {
         insertFollowedShow(db)
 
         `when`(traktDataSource.getFollowedListId()).thenReturn(0)
@@ -104,7 +105,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun testSync_responseDifferentShow() = runBlocking {
+    fun testSync_responseDifferentShow() = runBlockingTest {
         insertFollowedShow(db)
 
         `when`(traktDataSource.getFollowedListId()).thenReturn(0)
@@ -117,7 +118,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun testSync_pendingDelete() = runBlocking {
+    fun testSync_pendingDelete() = runBlockingTest {
         followShowsDao.insert(followedShow1PendingDelete)
 
         // Return null for the list ID so that we disable syncing
@@ -127,7 +128,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun testSync_pendingAdd() = runBlocking {
+    fun testSync_pendingAdd() = runBlockingTest {
         followShowsDao.insert(followedShow1PendingUpload)
 
         // Return null for the list ID so that we disable syncing

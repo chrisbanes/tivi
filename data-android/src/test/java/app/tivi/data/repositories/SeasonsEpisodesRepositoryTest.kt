@@ -29,6 +29,7 @@ import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.trakt.TraktAuthState
 import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.insertShow
+import app.tivi.utils.runBlockingTest
 import app.tivi.utils.s1
 import app.tivi.utils.s1_episodes
 import app.tivi.utils.s1_id
@@ -90,11 +91,13 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         )
 
         // We'll assume that there's a show in the db
-        insertShow(db)
+        runBlocking {
+            insertShow(db)
+        }
     }
 
     @Test
-    fun testSyncEpisodeWatches() = runBlocking {
+    fun testSyncEpisodeWatches() = runBlockingTest {
         db.seasonsDao().insert(s1)
         db.episodesDao().insertAll(s1_episodes)
 
@@ -109,7 +112,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun testEpisodeWatches_sameEntries() = runBlocking {
+    fun testEpisodeWatches_sameEntries() = runBlockingTest {
         db.seasonsDao().insert(s1)
         db.episodesDao().insertAll(s1_episodes)
 
@@ -125,7 +128,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun testEpisodeWatches_deletesMissing() = runBlocking {
+    fun testEpisodeWatches_deletesMissing() = runBlockingTest {
         db.seasonsDao().insert(s1)
         db.episodesDao().insertAll(s1_episodes)
 
@@ -141,7 +144,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun testEpisodeWatches_emptyResponse() = runBlocking {
+    fun testEpisodeWatches_emptyResponse() = runBlockingTest {
         db.seasonsDao().insert(s1)
         db.episodesDao().insertAll(s1_episodes)
 
@@ -156,7 +159,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun testSyncSeasonsEpisodes() = runBlocking {
+    fun testSyncSeasonsEpisodes() = runBlockingTest {
         // Return a response with 2 items
         `when`(traktSeasonsDataSource.getSeasonsEpisodes(showId))
                 .thenReturn(Success(listOf(s1 to s1_episodes)))
@@ -168,7 +171,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun testSyncSeasonsEpisodes_sameEntries() = runBlocking {
+    fun testSyncSeasonsEpisodes_sameEntries() = runBlockingTest {
         db.seasonsDao().insert(s1)
         db.episodesDao().insertAll(s1_episodes)
 
@@ -183,7 +186,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun testSyncSeasonsEpisodes_emptyResponse() = runBlocking {
+    fun testSyncSeasonsEpisodes_emptyResponse() = runBlockingTest {
         db.seasonsDao().insert(s1)
         db.episodesDao().insertAll(s1_episodes)
 
@@ -197,7 +200,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun testSyncSeasonsEpisodes_deletesMissingSeasons() = runBlocking {
+    fun testSyncSeasonsEpisodes_deletesMissingSeasons() = runBlockingTest {
         db.seasonsDao().insertAll(s1, s2)
         db.episodesDao().insertAll(s1_episodes)
         db.episodesDao().insertAll(s2_episodes)
@@ -213,7 +216,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun testSyncSeasonsEpisodes_deletesMissingEpisodes() = runBlocking {
+    fun testSyncSeasonsEpisodes_deletesMissingEpisodes() = runBlockingTest {
         db.seasonsDao().insertAll(s1, s2)
         db.episodesDao().insertAll(s1_episodes)
         db.episodesDao().insertAll(s2_episodes)
