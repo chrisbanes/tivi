@@ -30,9 +30,9 @@ inline fun MotionLayout.forEachConstraintSet(f: (ConstraintSet) -> Unit) {
 
 /**
  * Applies the given function over each [ConstraintSet] and then calls
- * [MotionLayout.rebuildMotion]
+ * [MotionLayout.rebuildScene]
  */
 inline fun MotionLayout.updateConstraintSets(f: (ConstraintSet) -> Unit) {
     forEachConstraintSet(f)
-    rebuildMotion()
+    rebuildScene()
 }
