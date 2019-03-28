@@ -21,7 +21,8 @@
     <Transition
         app:constraintSetEnd="@id/end"
         app:constraintSetStart="@id/start"
-        app:duration="200">
+        app:defaultDuration="200"
+        app:motionInterpolator="easeIn">
 
         <OnSwipe
             app:dragDirection="dragUp"
@@ -34,7 +35,7 @@
                 app:framePosition="20"
                 app:keyPositionType="deltaRelative"
                 app:percentY="0.51"
-                app:target="@id/details_poster" />
+                app:motionTarget="@id/details_poster" />
 
             <!-- This looks weird. We need a quick change from elevated to not-so-elevated at 20% so we set 2 key
                  attributes, one at 20% and other at 25%. -->
@@ -43,29 +44,29 @@
                 android:rotation="45"
                 android:rotationY="15"
                 app:framePosition="20"
-                app:target="@id/details_poster" />
+                app:motionTarget="@id/details_poster" />
 
             <KeyAttribute
                 android:elevation="@dimen/details_poster_not_elevation"
                 app:framePosition="25"
-                app:target="@id/details_poster" />
+                app:motionTarget="@id/details_poster" />
 
             <!-- Only elevate the appbar background over the last 25% -->
             <KeyAttribute
                 android:elevation="0dp"
                 app:framePosition="75"
-                app:target="@id/details_appbar_background" />
+                app:motionTarget="@id/details_appbar_background" />
 
             <!-- We want the subtitle to fade out quickly, within the starting 75% -->
             <KeyAttribute
                 android:alpha="0"
                 app:framePosition="75"
-                app:target="@id/details_subtitle" />
+                app:motionTarget="@id/details_subtitle" />
 
             <!-- We only want to transition to opaque over the last 40% -->
             <KeyAttribute
                 app:framePosition="60"
-                app:target="@id/details_status_bar_anchor">
+                app:motionTarget="@id/details_status_bar_anchor">
                 <CustomAttribute
                     app:attributeName="backgroundColor"
                     app:customColorValue="@color/status_bar_scrim" />
@@ -75,13 +76,13 @@
             <KeyTrigger
                 app:framePosition="60"
                 app:onNegativeCross="show"
-                app:target="@id/details_follow_fab" />
+                app:motionTarget="@id/details_follow_fab" />
 
             <!-- This will call FloatingActionButton.hide() when we pass 70% and above -->
             <KeyTrigger
                 app:framePosition="70"
                 app:onPositiveCross="hide"
-                app:target="@id/details_follow_fab" />
+                app:motionTarget="@id/details_follow_fab" />
 
         </KeyFrameSet>
 
