@@ -72,17 +72,12 @@
                     app:customColorValue="@color/status_bar_scrim" />
             </KeyAttribute>
 
-            <!-- This will call FloatingActionButton.show() when we pass 60% and below -->
             <KeyTrigger
-                app:framePosition="60"
+                app:motionTarget="@id/details_follow_fab"
+                app:motion_postLayoutCollision="true"
+                app:motion_triggerOnCollision="@id/details_toolbar"
                 app:onNegativeCross="show"
-                app:motionTarget="@id/details_follow_fab" />
-
-            <!-- This will call FloatingActionButton.hide() when we pass 70% and above -->
-            <KeyTrigger
-                app:framePosition="70"
-                app:onPositiveCross="hide"
-                app:motionTarget="@id/details_follow_fab" />
+                app:onPositiveCross="hide" />
 
         </KeyFrameSet>
 
