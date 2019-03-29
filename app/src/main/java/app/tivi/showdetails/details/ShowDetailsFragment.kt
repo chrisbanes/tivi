@@ -99,7 +99,8 @@ class ShowDetailsFragment : TiviMvRxFragment() {
                 binding.detailsPoster.visibility = View.VISIBLE
             }
 
-            override fun onTransitionTrigger(motionLayout: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
+            override fun onTransitionTrigger(motionLayout: MotionLayout, triggerId: Int,
+                positive: Boolean, progress: Float) {
             }
 
             @SuppressLint("RestrictedApi")
