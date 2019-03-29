@@ -32,12 +32,9 @@ class RetrofitRunner @Inject constructor() {
         return try {
             val response = request()
             if (response.isSuccessful) {
-                response.raw().use { rawResponse ->
-                    rawResponse.networkResponse().use { networkRawResponse ->
-                        val notModified = networkRawResponse == null || networkRawResponse.code() == 304
-                        Success(data = mapper.map(response.bodyOrThrow()), responseModified = !notModified)
-                    }
-                }
+                val responseCode = response.raw().networkResponse().use { it?.code() ?: Integer.MIN_VALUE }
+                val notModified = responseCode == 304
+                Success(data = mapper.map(response.bodyOrThrow()), responseModified = !notModified)
             } else {
                 ErrorResult(response.toException())
             }
