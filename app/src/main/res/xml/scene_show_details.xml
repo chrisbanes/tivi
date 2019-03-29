@@ -151,10 +151,6 @@
             app:layout_constraintStart_toStartOf="@id/details_rv"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Constraint android:id="@id/details_follow_fab">
-            <PropertySet app:visibility="visible" />
-        </Constraint>
-
         <Constraint
             android:id="@id/details_status_bar_anchor">
             <CustomAttribute
@@ -234,10 +230,6 @@
             <CustomAttribute
                 app:attributeName="backgroundColor"
                 app:customColorValue="?android:attr/colorBackground" />
-        </Constraint>
-
-        <Constraint android:id="@id/details_follow_fab">
-            <PropertySet app:visibility="invisible" />
         </Constraint>
 
     </ConstraintSet>
