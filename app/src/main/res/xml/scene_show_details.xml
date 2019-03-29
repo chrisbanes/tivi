@@ -22,7 +22,7 @@
         app:constraintSetEnd="@id/end"
         app:constraintSetStart="@id/start"
         app:defaultDuration="200"
-        app:motionInterpolator="easeIn">
+        app:motionInterpolator="easeInOut">
 
         <OnSwipe
             app:dragDirection="dragUp"
