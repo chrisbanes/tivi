@@ -22,17 +22,8 @@ import androidx.constraintlayout.widget.ConstraintSet
 /**
  * Applies the given function over each [ConstraintSet]
  */
-inline fun MotionLayout.forEachConstraintSet(f: (ConstraintSet) -> Unit) {
+inline fun MotionLayout.updateConstraintSets(f: (ConstraintSet) -> Unit) {
     for (id in constraintSetIds) {
         f(getConstraintSet(id))
     }
-}
-
-/**
- * Applies the given function over each [ConstraintSet] and then calls
- * [MotionLayout.rebuildScene]
- */
-inline fun MotionLayout.updateConstraintSets(f: (ConstraintSet) -> Unit) {
-    forEachConstraintSet(f)
-    rebuildScene()
 }
