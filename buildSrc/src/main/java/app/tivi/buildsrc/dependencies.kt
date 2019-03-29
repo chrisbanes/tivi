@@ -119,12 +119,13 @@ object Libs {
         }
 
         object Room {
-            private const val version = "2.1.0-alpha05"
+            private const val version = "2.1.0-alpha06"
             val common = "androidx.room:room-common:$version"
             val runtime = "androidx.room:room-runtime:$version"
             val rxjava2 = "androidx.room:room-rxjava2:$version"
             val compiler = "androidx.room:room-compiler:$version"
             val ktx = "androidx.room:room-ktx:$version"
+            val testing = "androidx.room:room-testing:$version"
         }
 
         object Work {
