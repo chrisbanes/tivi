@@ -74,6 +74,7 @@ dependencies {
 
     testImplementation Libs.AndroidX.archCoreTesting
     testImplementation Libs.AndroidX.Test.core
+    testImplementation Libs.AndroidX.Room.testing
 
     // Needed for Tzdb
     testImplementation Libs.threeTenBp
