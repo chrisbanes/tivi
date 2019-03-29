@@ -21,8 +21,8 @@
     <Transition
         app:constraintSetEnd="@+id/nav_open"
         app:constraintSetStart="@+id/nav_closed"
-        app:duration="200"
-        app:motionInterpolator="easeIn">
+        app:defaultDuration="200"
+        app:motionInterpolator="easeInOut">
 
         <ConstraintSet android:id="@+id/nav_closed">
             <Constraint android:id="@id/home_content_background">
