@@ -86,7 +86,8 @@ class HomeActivity : TiviActivity(), MvRxView {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
 
-        binding.root.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        binding.root.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         binding.root.setOnApplyWindowInsetsListener { _, insets ->
             binding.homeRoot.updateConstraintSets {
                 it.constrainHeight(R.id.status_scrim, insets.systemWindowInsetTop)

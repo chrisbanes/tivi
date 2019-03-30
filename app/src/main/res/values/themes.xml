@@ -57,10 +57,11 @@
 
     <style name="Theme.Tivi.Immerse" parent="Theme.Tivi.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="Theme.Tivi.Home" parent="Theme.Tivi.NoActionBar" />
-    <style name="Theme.Tivi.ShowDetails" parent="Theme.Tivi.NoActionBar" />
+    <style name="Theme.Tivi.Home" parent="Theme.Tivi.Immerse" />
+    <style name="Theme.Tivi.ShowDetails" parent="Theme.Tivi.Immerse" />
     <style name="Theme.Tivi.Settings" />
 
     <style name="ThemeOverlay.Tivi.ActionBar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
