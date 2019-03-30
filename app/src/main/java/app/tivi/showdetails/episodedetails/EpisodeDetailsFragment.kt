@@ -23,12 +23,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.doOnLayout
+import androidx.core.view.marginBottom
+import androidx.core.view.marginTop
 import androidx.core.view.updatePadding
 import app.tivi.EpDetailsWatchItemBindingModel_
 import app.tivi.R
 import app.tivi.databinding.FragmentEpisodeDetailsBinding
-import app.tivi.extensions.marginBottom
-import app.tivi.extensions.marginTop
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.ui.epoxy.SwipeAwayCallbacks
