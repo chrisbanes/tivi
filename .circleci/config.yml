@@ -1,9 +1,12 @@
 version: 2.0
 
+workspace: &workspace
+  ~/tivi
+
 config_android: &config_android
   docker:
     - image: circleci/android:api-28-alpha
-  working_directory: ~/tivi
+  working_directory: *workspace
   environment:
     JAVA_TOOL_OPTIONS: "-Xmx1024m"
     GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2 -Dkotlin.incremental=false -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
@@ -36,11 +39,11 @@ save_cache: &save_cache
 
 attach_workspace: &attach_workspace
   attach_workspace:
-    at: ~/tivi
+    at: *workspace
 
 persist_workspace: &persist_workspace
   persist_to_workspace:
-    root: .
+    root: *workspace
     paths:
       - ./*/build
 
