@@ -16,7 +16,7 @@
   ~
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="Theme.Tivi" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="actionBarTheme">@style/ThemeOverlay.Tivi.ActionBar</item>
@@ -57,11 +57,17 @@
 
     <style name="Theme.Tivi.Immerse" parent="Theme.Tivi.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <item name="android:navigationBarColor">@color/nav_bar_scrim</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">@bool/use_light_nav_bar</item>
     </style>
 
     <style name="Theme.Tivi.Home" parent="Theme.Tivi.Immerse" />
-    <style name="Theme.Tivi.ShowDetails" parent="Theme.Tivi.Immerse" />
+
+    <style name="Theme.Tivi.ShowDetails" parent="Theme.Tivi.Immerse">
+        <item name="android:windowLightStatusBar">@bool/use_light_status_bar</item>
+    </style>
+
     <style name="Theme.Tivi.Settings" />
 
     <style name="ThemeOverlay.Tivi.ActionBar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />

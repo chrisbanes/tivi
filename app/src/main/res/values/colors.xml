@@ -34,6 +34,6 @@
 
     <color name="swipe_away_background">#DEDEDE</color>
 
-    <color name="status_bar_scrim_translucent">#26000000</color>
-
+    <color name="system_ui_scrim_light">#B3FFFFFF</color> <!-- 70% white -->
+    <color name="system_ui_scrim_dark">#40000000</color> <!-- 25% black -->
 </resources>
