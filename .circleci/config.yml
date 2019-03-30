@@ -6,7 +6,7 @@ config_android: &config_android
   working_directory: ~/tivi
   environment:
     JAVA_TOOL_OPTIONS: "-Xmx1024m"
-    GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false"
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2 -Dkotlin.incremental=false"
     TERM: dumb
 
 update_sdk: &update_sdk
