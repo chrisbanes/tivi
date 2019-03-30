@@ -69,3 +69,11 @@ fun defaultShouldRetry(exception: Exception) = when (exception) {
     is IOException -> true
     else -> false
 }
+
+fun <T> Response<T>.isFromNetwork(): Boolean {
+    return raw().cacheResponse() == null
+}
+
+fun <T> Response<T>.isFromCache(): Boolean {
+    return raw().cacheResponse() != null
+}

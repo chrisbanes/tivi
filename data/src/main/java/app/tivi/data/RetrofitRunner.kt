@@ -21,6 +21,7 @@ import app.tivi.data.entities.Result
 import app.tivi.data.entities.Success
 import app.tivi.data.mappers.Mapper
 import app.tivi.extensions.bodyOrThrow
+import app.tivi.extensions.isFromNetwork
 import app.tivi.extensions.toException
 import retrofit2.Response
 import javax.inject.Inject
@@ -32,9 +33,7 @@ class RetrofitRunner @Inject constructor() {
         return try {
             val response = request()
             if (response.isSuccessful) {
-                val responseCode = response.raw().networkResponse().use { it?.code() ?: Integer.MIN_VALUE }
-                val notModified = responseCode == 304
-                Success(data = mapper.map(response.bodyOrThrow()), responseModified = !notModified)
+                Success(data = mapper.map(response.bodyOrThrow()), responseModified = response.isFromNetwork())
             } else {
                 ErrorResult(response.toException())
             }
