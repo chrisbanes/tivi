@@ -86,7 +86,7 @@ jobs:
       - <<: *restore_cache
       - run:
           name: Check app and dependencies
-          command: ./gradlew check dependencyUpdates
+          command: ./gradlew app:lintDebug test connectedCheck spotlessCheck dependencyUpdates
       - store_artifacts:
           path: app/build/reports
           destination: reports

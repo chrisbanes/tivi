@@ -111,6 +111,10 @@ android {
     lintOptions {
         // Disable lintVital. Not needed since lint is run on CI
         checkReleaseBuilds false
+        // Allow lint to check dependencies
+        checkDependencies true
+        // Ignore any tests
+        ignoreTestSources true
 
         disable 'GradleCompatible', 'FontValidationError'
     }
