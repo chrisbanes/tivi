@@ -18,11 +18,11 @@ package app.tivi.appinitializers
 
 import android.app.Application
 import app.tivi.BuildConfig
-import app.tivi.util.TimberLogger
+import app.tivi.util.TiviLogger
 import javax.inject.Inject
 
 class TimberInitializer @Inject constructor(
-    private val timberLogger: TimberLogger
+    private val tiviLogger: TiviLogger
 ) : AppInitializer {
-    override fun init(application: Application) = timberLogger.setup(BuildConfig.DEBUG)
+    override fun init(application: Application) = tiviLogger.setup(BuildConfig.DEBUG)
 }

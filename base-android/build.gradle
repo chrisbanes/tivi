@@ -38,5 +38,4 @@ dependencies {
     implementation project(":base")
 
     implementation Libs.AndroidX.Fragment.fragment
-    implementation Libs.timber
 }

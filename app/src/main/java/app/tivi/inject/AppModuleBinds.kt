@@ -27,7 +27,7 @@ import app.tivi.appinitializers.RxAndroidInitializer
 import app.tivi.appinitializers.ThreeTenBpInitializer
 import app.tivi.appinitializers.TimberInitializer
 import app.tivi.util.Logger
-import app.tivi.util.TimberLogger
+import app.tivi.util.TiviLogger
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoSet
@@ -46,7 +46,7 @@ abstract class AppModuleBinds {
 
     @Singleton
     @Binds
-    abstract fun provideLogger(bind: TimberLogger): Logger
+    abstract fun provideLogger(bind: TiviLogger): Logger
 
     @Binds
     @IntoSet

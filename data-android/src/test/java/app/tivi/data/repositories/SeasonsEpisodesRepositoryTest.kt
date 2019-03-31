@@ -27,6 +27,7 @@ import app.tivi.data.repositories.episodes.LocalSeasonsEpisodesStore
 import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.trakt.TraktAuthState
+import app.tivi.util.Logger
 import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.insertShow
 import app.tivi.utils.s1
@@ -75,9 +76,11 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         traktEpisodeDataSource = mock(EpisodeDataSource::class.java)
         tmdbEpisodeDataSource = mock(EpisodeDataSource::class.java)
 
+        val logger = mock(Logger::class.java)
         val txRunner = RoomTransactionRunner(db)
+        val entityInserter = EntityInserter(txRunner, logger)
 
-        localStore = LocalSeasonsEpisodesStore(EntityInserter(txRunner), txRunner,
+        localStore = LocalSeasonsEpisodesStore(entityInserter, txRunner,
                 seasonsDao, episodesDao, episodeWatchDao, db.lastRequestDao())
 
         repository = SeasonsEpisodesRepository(
