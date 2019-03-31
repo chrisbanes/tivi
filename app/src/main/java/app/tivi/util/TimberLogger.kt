@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package app.tivi.util
 
+import com.crashlytics.android.Crashlytics
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -61,4 +62,16 @@ class TimberLogger @Inject constructor() : Logger {
     override fun wtf(t: Throwable, message: String, vararg args: Any) = Timber.wtf(t, message, args)
 
     override fun wtf(t: Throwable) = Timber.wtf(t)
+
+    override fun logForCrash(message: String) {
+        Crashlytics.log(message)
+    }
+
+    override fun logForCrash(message: String, vararg args: Any) {
+        if (args.isNotEmpty()) {
+            Crashlytics.log(message.format(args))
+        } else {
+            logForCrash(message)
+        }
+    }
 }

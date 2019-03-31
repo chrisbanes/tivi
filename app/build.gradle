@@ -195,6 +195,8 @@ dependencies {
 
     implementation Libs.threeTenAbp
 
+    implementation Libs.timber
+
     implementation Libs.RxJava.rxJava
     implementation Libs.RxJava.rxKotlin
     implementation Libs.RxJava.rxAndroid

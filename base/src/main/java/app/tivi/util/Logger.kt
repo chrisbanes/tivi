@@ -70,4 +70,7 @@ interface Logger {
 
     /** Log an assert exception.  */
     fun wtf(t: Throwable)
+
+    fun logForCrash(message: String)
+    fun logForCrash(message: String, vararg args: Any)
 }
