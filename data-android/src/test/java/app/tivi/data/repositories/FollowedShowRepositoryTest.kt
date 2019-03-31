@@ -26,7 +26,6 @@ import app.tivi.data.repositories.followedshows.LocalFollowedShowsStore
 import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.trakt.TraktAuthState
-import app.tivi.util.ExceptionLogger
 import app.tivi.util.Logger
 import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.followedShow1
@@ -71,14 +70,14 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
 
         traktDataSource = mock(FollowedShowsDataSource::class.java)
 
-        val exceptionLogger = ExceptionLogger(mock(Logger::class.java))
+        val logger = mock(Logger::class.java)
         val txRunner = RoomTransactionRunner(db)
-        val entityInserter = EntityInserter(txRunner, exceptionLogger)
+        val entityInserter = EntityInserter(txRunner, logger)
 
         repository = FollowedShowsRepository(
                 testCoroutineDispatchers,
                 LocalFollowedShowsStore(txRunner, entityInserter, db.followedShowsDao(), db.showDao(),
-                        db.lastRequestDao(), exceptionLogger),
+                        db.lastRequestDao(), logger),
                 LocalShowStore(entityInserter, db.showDao(), db.lastRequestDao(), txRunner),
                 traktDataSource,
                 showRepository,

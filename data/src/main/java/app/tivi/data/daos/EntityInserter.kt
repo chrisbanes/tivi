@@ -18,14 +18,14 @@ package app.tivi.data.daos
 
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.entities.TiviEntity
-import app.tivi.util.ExceptionLogger
+import app.tivi.util.Logger
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class EntityInserter @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
-    private val exceptionLogger: ExceptionLogger
+    private val logger: Logger
 ) {
     fun <E : TiviEntity> insertOrUpdate(dao: EntityDao<E>, entities: List<E>) = transactionRunner {
         entities.forEach {
@@ -34,13 +34,12 @@ class EntityInserter @Inject constructor(
     }
 
     fun <E : TiviEntity> insertOrUpdate(dao: EntityDao<E>, entity: E): Long {
-        return exceptionLogger("insertOrUpdate. Entity: %s", entity) {
-            when {
-                entity.id == 0L -> dao.insert(entity)
-                else -> {
-                    dao.update(entity)
-                    entity.id
-                }
+        logger.d("insertOrUpdate. entity: %s", entity)
+        return when {
+            entity.id == 0L -> dao.insert(entity)
+            else -> {
+                dao.update(entity)
+                entity.id
             }
         }
     }

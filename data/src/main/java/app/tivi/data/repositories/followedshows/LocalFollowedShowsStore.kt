@@ -27,7 +27,7 @@ import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Request
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.syncers.syncerForEntity
-import app.tivi.util.ExceptionLogger
+import app.tivi.util.Logger
 import io.reactivex.Flowable
 import org.threeten.bp.temporal.TemporalAmount
 import javax.inject.Inject
@@ -40,16 +40,15 @@ class LocalFollowedShowsStore @Inject constructor(
     private val followedShowsDao: FollowedShowsDao,
     private val showDao: TiviShowDao,
     private val lastRequestDao: LastRequestDao,
-    private val exceptionLogger: ExceptionLogger
+    private val logger: Logger
 ) {
     var traktListId: Int? = null
 
     private val syncer = syncerForEntity(
             followedShowsDao,
             {
-                exceptionLogger("getTraktIdForShowId. Show: %s", it) {
-                    showDao.getTraktIdForShowId(it.showId)!!
-                }
+                logger.d("getTraktIdForShowId. Show: %s", it)
+                showDao.getTraktIdForShowId(it.showId)!!
             },
             { entity, id -> entity.copy(id = id ?: 0) }
     )
