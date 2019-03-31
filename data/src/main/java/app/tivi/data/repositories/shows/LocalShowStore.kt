@@ -36,8 +36,6 @@ class LocalShowStore @Inject constructor(
 
     fun observeShow(showId: Long): Flowable<TiviShow> = showDao.getShowWithIdFlowable(showId)
 
-    fun getIdForTraktId(traktId: Int) = showDao.getIdForTraktId(traktId)
-
     fun saveShow(show: TiviShow) = entityInserter.insertOrUpdate(showDao, show)
 
     fun lastRequestBefore(showId: Long, threshold: TemporalAmount): Boolean {
@@ -51,8 +49,6 @@ class LocalShowStore @Inject constructor(
      * database, it is inserted and the generated ID is returned.
      */
     fun getIdOrSavePlaceholder(show: TiviShow): Long = transactionRunner {
-        show.traktId?.let { showDao.getShowWithTraktId(it)?.id }
-                ?: show.tmdbId?.let { showDao.getShowWithTmdbId(it)?.id }
-                ?: showDao.insert(show)
+        show.traktId?.let(showDao::getIdForTraktId) ?: show.tmdbId?.let(showDao::getIdForTmdbId) ?: showDao.insert(show)
     }
 }

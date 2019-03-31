@@ -50,4 +50,7 @@ abstract class TiviShowDao : EntityDao<TiviShow> {
 
     @Query("SELECT id FROM shows WHERE trakt_id = :traktId")
     abstract fun getIdForTraktId(traktId: Int): Long?
+
+    @Query("SELECT id FROM shows WHERE tmdb_id = :tmdbId")
+    abstract fun getIdForTmdbId(tmdbId: Int): Long?
 }
