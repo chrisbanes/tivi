@@ -20,16 +20,19 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
-suspend fun <A, B> Collection<A>.parallelForEach(
+suspend fun <A> Collection<A>.parallelForEach(
     concurrency: Int = 10,
-    block: suspend (A) -> B
+    block: suspend (A) -> Unit
 ): Unit = coroutineScope {
     val semaphore = Channel<Unit>(concurrency)
     forEach { item ->
         launch {
             semaphore.send(Unit) // Acquire concurrency permit
-            block(item)
-            semaphore.receive() // Release concurrency permit
+            try {
+                block(item)
+            } finally {
+                semaphore.receive() // Release concurrency permit
+            }
         }
     }
 }
