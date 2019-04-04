@@ -16,23 +16,20 @@
 
 package app.tivi.extensions
 
-import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 suspend fun <A, B> Collection<A>.parallelForEach(
-    parallelism: Int = 5,
+    concurrency: Int = 10,
     block: suspend (A) -> B
 ): Unit = coroutineScope {
-    val producer = produce {
-        forEach { send(it) }
-        close()
-    }
-    repeat(parallelism) {
+    val semaphore = Channel<Unit>(concurrency)
+    forEach { item ->
         launch {
-            for (item in producer) {
-                block(item)
-            }
+            semaphore.send(Unit) // Acquire concurrency permit
+            block(item)
+            semaphore.receive() // Release concurrency permit
         }
     }
 }
