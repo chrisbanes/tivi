@@ -25,6 +25,7 @@ import android.widget.TextView
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
+import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.resolveThemeReference
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.MaxLinesToggleClickListener
@@ -124,4 +125,33 @@ fun materialBackdropBackground(view: View, radius: Float) {
 @BindingAdapter("textAppearanceAttr")
 fun textAppearanceAttr(view: TextView, textAppearanceStyleAttr: Int) {
     view.setTextAppearance(view.context.resolveThemeReference(textAppearanceStyleAttr))
+}
+
+@BindingAdapter(
+        "paddingLeftSystemWindowInsets",
+        "paddingTopSystemWindowInsets",
+        "paddingRightSystemWindowInsets",
+        "paddingBottomSystemWindowInsets",
+        requireAll = false
+)
+fun applySystemWindows(
+    view: View,
+    systemWindowLeft: Boolean,
+    systemWindowTop: Boolean,
+    systemWindowRight: Boolean,
+    systemWindowBottom: Boolean
+) {
+    view.doOnApplyWindowInsets { view, insets, paddingState ->
+        val left = if (systemWindowLeft) insets.systemWindowInsetLeft else 0
+        val top = if (systemWindowTop) insets.systemWindowInsetTop else 0
+        val right = if (systemWindowRight) insets.systemWindowInsetRight else 0
+        val bottom = if (systemWindowBottom) insets.systemWindowInsetBottom else 0
+
+        view.setPadding(
+                paddingState.left + left,
+                paddingState.top + top,
+                paddingState.right + right,
+                paddingState.bottom + bottom
+        )
+    }
 }

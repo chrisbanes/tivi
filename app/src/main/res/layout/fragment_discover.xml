@@ -43,6 +43,7 @@
             android:paddingRight="2dp"
             android:paddingTop="6dp"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:paddingBottomSystemWindowInsets="@{ true }"
             app:spanCount="@integer/grid_condensed_span_count"
             tools:listitem="@layout/view_holder_details_summary" />
 
