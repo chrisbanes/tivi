@@ -23,7 +23,7 @@ First off, you require the latest Android Studio 3.0 (or newer) to be able to bu
 
 ### Code style
 
-This project uses [ktlint](https://github.com/shyiko/ktlint), provided via
+This project uses [ktlint](https://github.com/pinterest/ktlint), provided via
 the [spotless](https://github.com/diffplug/spotless) gradle plugin, and the bundled project IntelliJ codestyle.
 
 If you find that one of your pull reviews does not pass the CI server check due to a code style conflict, you can
