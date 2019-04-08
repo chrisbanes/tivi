@@ -24,16 +24,15 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
-import app.tivi.R
 import app.tivi.TiviFragment
 import app.tivi.api.Status
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
+import app.tivi.databinding.FragmentEntryGridBinding
 import app.tivi.extensions.observeNotNull
 import app.tivi.ui.ProgressTimeLatch
 import app.tivi.ui.SpacingItemDecorator
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_rv_grid.*
 import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
@@ -41,13 +40,12 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
     private val vmClass: Class<VM>
 ) : TiviFragment() {
     protected lateinit var viewModel: VM
-
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var swipeRefreshLatch: ProgressTimeLatch
-    private var originalRvTopPadding = 0
 
     private lateinit var controller: EntryGridEpoxyController<LI>
+    protected lateinit var binding: FragmentEntryGridBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,12 +59,13 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
         }
 
         GridToGridTransitioner.setupSecondFragment(this) {
-            grid_recyclerview?.itemAnimator = DefaultItemAnimator()
+            binding.gridRecyclerview.itemAnimator = DefaultItemAnimator()
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_rv_grid, container, false)
+        binding = FragmentEntryGridBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -75,10 +74,10 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
         postponeEnterTransition()
 
         swipeRefreshLatch = ProgressTimeLatch(minShowTime = 1350) {
-            grid_swipe_refresh?.isRefreshing = it
+            binding.gridSwipeRefresh.isRefreshing = it
         }
 
-        grid_recyclerview.apply {
+        binding.gridRecyclerview.apply {
             // We set the item animator to null since it can interfere with the enter/shared element
             // transitions
             itemAnimator = null
@@ -86,9 +85,8 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
             setController(controller)
             addItemDecoration(SpacingItemDecorator(paddingLeft))
         }
-        originalRvTopPadding = grid_recyclerview.paddingTop
 
-        grid_swipe_refresh.setOnRefreshListener(viewModel::refresh)
+        binding.gridSwipeRefresh.setOnRefreshListener(viewModel::refresh)
 
         viewModel.viewState.observeNotNull(this) {
             controller.tmdbImageUrlProvider = it.tmdbImageUrlProvider
