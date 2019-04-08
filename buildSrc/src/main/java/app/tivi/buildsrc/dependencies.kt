@@ -42,7 +42,7 @@ object Libs {
     val appauth = "net.openid:appauth:0.7.1"
 
     val junit = "junit:junit:4.12"
-    val robolectric = "org.robolectric:robolectric:4.3-alpha-2"
+    val robolectric = "org.robolectric:robolectric:4.3-SNAPSHOT"
     val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0"
 
     object Google {
