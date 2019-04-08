@@ -16,6 +16,7 @@
 
 package app.tivi.home.discover
 
+import app.tivi.HeaderBindingModel_
 import app.tivi.R
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
@@ -25,6 +26,7 @@ import app.tivi.emptyState
 import app.tivi.header
 import app.tivi.posterGridItem
 import app.tivi.ui.epoxy.TotalSpanOverride
+import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.TypedEpoxyController
 import javax.inject.Inject
 
@@ -97,5 +99,9 @@ class DiscoverEpoxyController @Inject constructor() : TypedEpoxyController<Disco
                 spanSizeOverride(TotalSpanOverride)
             }
         }
+    }
+
+    fun isHeader(model: EpoxyModel<*>) : Boolean {
+        return model is HeaderBindingModel_
     }
 }

@@ -27,14 +27,19 @@ import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.databinding.FragmentDiscoverBinding
+import app.tivi.extensions.resolveThemeColorStateList
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.extensions.toFragmentNavigatorExtras
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
+import app.tivi.ui.epoxy.StickyHeaderItemDecoration
 import app.tivi.util.GridToGridTransitioner
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
 import javax.inject.Inject
 
 internal class DiscoverFragment : TiviMvRxFragment() {
@@ -67,6 +72,18 @@ internal class DiscoverFragment : TiviMvRxFragment() {
         binding.summaryRv.apply {
             setController(controller)
             addItemDecoration(SpacingItemDecorator(paddingLeft))
+            addItemDecoration(StickyHeaderItemDecoration(
+                    controller,
+                    controller::isHeader,
+                    MaterialShapeDrawable().apply {
+                        fillColor = requireContext().resolveThemeColorStateList(R.attr.colorSurface)
+                        shapeAppearanceModel = ShapeAppearanceModel().apply {
+                            val corner = resources.getDimensionPixelSize(R.dimen.backdrop_corner_radius)
+                            setTopLeftCorner(CornerFamily.ROUNDED, corner)
+                            setTopRightCorner(CornerFamily.ROUNDED, corner)
+                        }
+                    })
+            )
         }
 
         controller.callbacks = object : DiscoverEpoxyController.Callbacks {

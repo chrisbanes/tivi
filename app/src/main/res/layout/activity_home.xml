@@ -68,7 +68,7 @@
             android:elevation="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/home_toolbar"
-            app:materialBackdropBackgroundRadius="@{ @dimen/spacing_normal }">
+            app:materialBackdropBackgroundRadius="@{ @dimen/backdrop_corner_radius }">
 
             <fragment
                 android:id="@+id/nav_host_fragment"

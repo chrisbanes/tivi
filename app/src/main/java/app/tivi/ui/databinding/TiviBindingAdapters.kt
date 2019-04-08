@@ -26,7 +26,7 @@ import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import app.tivi.extensions.doOnApplyWindowInsets
-import app.tivi.extensions.resolveThemeReference
+import app.tivi.extensions.resolveThemeReferenceResId
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.MaxLinesToggleClickListener
 import app.tivi.ui.glide.GlideApp
@@ -124,7 +124,7 @@ fun materialBackdropBackground(view: View, radius: Float) {
 
 @BindingAdapter("textAppearanceAttr")
 fun textAppearanceAttr(view: TextView, textAppearanceStyleAttr: Int) {
-    view.setTextAppearance(view.context.resolveThemeReference(textAppearanceStyleAttr))
+    view.setTextAppearance(view.context.resolveThemeReferenceResId(textAppearanceStyleAttr))
 }
 
 @BindingAdapter(

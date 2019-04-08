@@ -16,30 +16,31 @@
 
 package app.tivi.extensions
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
-import android.util.TypedValue
 import androidx.annotation.AttrRes
+import androidx.core.content.res.getResourceIdOrThrow
+import androidx.core.content.res.use
 
-private val typedValue = TypedValue()
-
+@SuppressLint("Recycle")
 fun Context.resolveThemeColor(@AttrRes resId: Int, defaultColor: Int = Color.MAGENTA): Int {
-    return if (theme.resolveAttribute(resId, typedValue, true)) {
-        if (typedValue.type == TypedValue.TYPE_STRING) {
-            getColor(typedValue.resourceId)
-        } else {
-            typedValue.data
-        }
-    } else {
-        defaultColor
+    return obtainStyledAttributes(intArrayOf(resId)).use {
+        it.getColor(0, defaultColor)
     }
 }
 
-fun Context.resolveThemeReference(@AttrRes resId: Int): Int {
-    if (theme.resolveAttribute(resId, typedValue, true)) {
-        if (typedValue.type == TypedValue.TYPE_REFERENCE) {
-            return typedValue.resourceId
-        }
+@SuppressLint("Recycle")
+fun Context.resolveThemeColorStateList(@AttrRes resId: Int): ColorStateList? {
+    return obtainStyledAttributes(intArrayOf(resId)).use {
+        it.getColorStateList(0)
     }
-    throw IllegalArgumentException("Attribute can not be resolved")
+}
+
+@SuppressLint("Recycle")
+fun Context.resolveThemeReferenceResId(@AttrRes resId: Int): Int {
+    return obtainStyledAttributes(intArrayOf(resId)).use {
+        it.getResourceIdOrThrow(0)
+    }
 }
