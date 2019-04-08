@@ -27,11 +27,12 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Tivi.Immerse">
+        android:theme="@style/Theme.Tivi">
 
         <activity
             android:name=".home.HomeActivity"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.Tivi.Home">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -46,12 +47,13 @@
 
         <activity
             android:name=".showdetails.ShowDetailsActivity"
-            android:parentActivityName=".home.HomeActivity" />
+            android:parentActivityName=".home.HomeActivity"
+            android:theme="@style/Theme.Tivi.ShowDetails" />
 
         <activity
             android:name=".settings.SettingsActivity"
-            android:theme="@style/Theme.Tivi.Settings"
-            android:label="@string/prefs_title" />
+            android:label="@string/settings_title"
+            android:theme="@style/Theme.Tivi.Settings" />
 
         <meta-data
             android:name="preloaded_fonts"

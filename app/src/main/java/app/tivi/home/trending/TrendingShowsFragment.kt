@@ -24,7 +24,6 @@ import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.util.EntryGridEpoxyController
 import app.tivi.util.EntryGridFragment
-import kotlinx.android.synthetic.main.fragment_rv_grid.*
 
 class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingShowsViewModel>(TrendingShowsViewModel::class.java) {
     override fun createController(): EntryGridEpoxyController<TrendingEntryWithShow> {
@@ -39,7 +38,7 @@ class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingS
 
     override fun onItemClicked(item: TrendingEntryWithShow) {
         val sharedElements = SharedElementHelper()
-        grid_recyclerview.findViewHolderForItemId(item.generateStableId())?.let {
+        binding.gridRecyclerview.findViewHolderForItemId(item.generateStableId())?.let {
             sharedElements.addSharedElement(it.itemView, "poster")
         }
 

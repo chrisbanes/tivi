@@ -68,7 +68,7 @@
                 app:target="@id/details_status_bar_anchor">
                 <CustomAttribute
                     app:attributeName="backgroundColor"
-                    app:customColorValue="@color/status_bar_scrim_translucent" />
+                    app:customColorValue="@color/status_bar_scrim" />
             </KeyAttribute>
 
             <!-- This will call FloatingActionButton.show() when we pass 60% and below -->
@@ -158,7 +158,7 @@
             android:id="@id/details_status_bar_anchor">
             <CustomAttribute
                 app:attributeName="backgroundColor"
-                app:customColorValue="@color/status_bar_scrim_translucent" />
+                app:customColorValue="@color/status_bar_scrim" />
         </Constraint>
 
     </ConstraintSet>
@@ -170,7 +170,7 @@
 
             <CustomAttribute
                 app:attributeName="background"
-                app:customColorDrawableValue="@color/color_on_background_10" />
+                app:customColorDrawableValue="@color/status_bar_scrim" />
 
         </Constraint>
 
@@ -228,10 +228,11 @@
             app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor" />
 
         <Constraint
-            android:id="@id/details_status_bar_anchor">
+            android:id="@id/details_status_bar_anchor"
+            android:elevation="@dimen/details_appbar_elevation">
             <CustomAttribute
                 app:attributeName="backgroundColor"
-                app:customColorValue="#000000" />
+                app:customColorValue="?android:attr/colorBackground" />
         </Constraint>
 
         <Constraint android:id="@id/details_follow_fab">

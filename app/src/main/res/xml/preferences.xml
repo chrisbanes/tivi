@@ -18,14 +18,14 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/prefs_ui_category_title">
+    <PreferenceCategory android:title="@string/settings_ui_category_title">
 
         <ListPreference
             android:defaultValue="system"
             android:entries="@array/prefs_theme_titles"
             android:entryValues="@array/prefs_theme_values"
             android:key="pref_theme"
-            android:title="@string/prefs_theme_title" />
+            android:title="@string/settings_theme_title" />
 
     </PreferenceCategory>
 

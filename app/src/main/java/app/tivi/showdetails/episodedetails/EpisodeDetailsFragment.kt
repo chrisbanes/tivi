@@ -21,14 +21,11 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.core.os.bundleOf
-import androidx.core.view.doOnLayout
-import androidx.core.view.updatePadding
 import app.tivi.EpDetailsWatchItemBindingModel_
 import app.tivi.R
 import app.tivi.databinding.FragmentEpisodeDetailsBinding
-import app.tivi.extensions.marginBottom
-import app.tivi.extensions.marginTop
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.ui.epoxy.SwipeAwayCallbacks
@@ -37,6 +34,7 @@ import com.airbnb.epoxy.EpoxyTouchHelper
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.android.parcel.Parcelize
 import javax.inject.Inject
 
@@ -61,23 +59,21 @@ class EpisodeDetailsFragment : TiviMvRxBottomSheetFragment() {
 
     private lateinit var binding: FragmentEpisodeDetailsBinding
 
+    private val bottomSheetDialog: BottomSheetDialog
+        get() = requireDialog() as BottomSheetDialog
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentEpisodeDetailsBinding.inflate(layoutInflater, container, false)
-        binding.setLifecycleOwner(viewLifecycleOwner)
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.epDetailsFab.doOnLayout { fab ->
-            binding.epDetailsRv.updatePadding(bottom = fab.height + fab.marginBottom + fab.marginTop)
-        }
-
         binding.epDetailsRv.setController(controller)
 
         val context = requireContext()
-
         val swipeCallback = object : SwipeAwayCallbacks<EpDetailsWatchItemBindingModel_>(
                 context.getDrawable(R.drawable.ic_eye_off_24dp)!!,
                 context.resources.getDimensionPixelSize(R.dimen.spacing_large),
@@ -102,6 +98,17 @@ class EpisodeDetailsFragment : TiviMvRxBottomSheetFragment() {
                 .let { if (view.layoutDirection == View.LAYOUT_DIRECTION_RTL) it.right() else it.left() }
                 .withTarget(EpDetailsWatchItemBindingModel_::class.java)
                 .andCallbacks(swipeCallback)
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        // Need to remove the fitSystemWindows flag from the MDC Dialog, otherwise it will be padded above the
+        // navigation bar
+        bottomSheetDialog.findViewById<FrameLayout>(com.google.android.material.R.id.container)?.apply {
+            fitsSystemWindows = false
+            setPadding(0, 0, 0, 0)
+        }
     }
 
     override fun invalidate() {

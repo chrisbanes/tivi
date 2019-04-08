@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2018 Google, Inc.
+  ~ Copyright 2019 Google, Inc.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,15 +16,11 @@
   -->
 
 <resources>
-    <declare-styleable name="TiviTheme">
-    </declare-styleable>
+    <!-- When in 'light' mode, we use a light scrim and light status bar -->
+    <color name="status_bar_scrim">@color/system_ui_scrim_light</color>
+    <bool name="use_light_status_bar">true</bool>
 
-    <declare-styleable name="TopLeftCutoutBackgroundView">
-        <attr name="topLeftCutSize" format="dimension" />
-        <attr name="backgroundColor" format="color" />
-    </declare-styleable>
-
-    <declare-styleable name="PopupMenuButton">
-        <attr name="menu" />
-    </declare-styleable>
+    <!-- We use a dark scrim for the nav bar, since light nav bar is API 27+ -->
+    <color name="nav_bar_scrim">@color/system_ui_scrim_dark</color>
+    <bool name="use_light_nav_bar">false</bool>
 </resources>

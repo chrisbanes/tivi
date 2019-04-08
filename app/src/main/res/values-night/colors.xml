@@ -20,4 +20,7 @@
     <color name="app_bar_background">#212121</color>
 
     <color name="swipe_away_background">#333333</color>
+
+    <color name="system_ui_scrim_light">#2EFFFFFF</color> <!-- 18% white -->
+    <color name="system_ui_scrim_dark">#99000000</color> <!-- 60% black -->
 </resources>

@@ -21,12 +21,11 @@ import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.util.EntryGridFragment
-import kotlinx.android.synthetic.main.fragment_rv_grid.*
 
 class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShowsViewModel>(PopularShowsViewModel::class.java) {
     override fun onItemClicked(item: PopularEntryWithShow) {
         val sharedElements = SharedElementHelper()
-        grid_recyclerview.findViewHolderForItemId(item.generateStableId()).let {
+        binding.gridRecyclerview.findViewHolderForItemId(item.generateStableId()).let {
             sharedElements.addSharedElement(it.itemView, "poster")
         }
 

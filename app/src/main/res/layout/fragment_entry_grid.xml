@@ -20,32 +20,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-        <variable
-            name="state"
-            type="app.tivi.home.discover.DiscoverViewState" />
-    </data>
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/summary_swipe_refresh"
+        android:id="@+id/grid_swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:isRefreshing="@{state.isLoading}"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="match_parent">
 
         <com.airbnb.epoxy.EpoxyRecyclerView
-            android:id="@+id/summary_rv"
+            android:id="@+id/grid_recyclerview"
+            tools:listitem="@layout/view_holder_poster_grid_item"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingBottom="6dp"
+            android:paddingBottom="10dp"
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
-            android:paddingTop="6dp"
+            android:paddingTop="2dp"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:paddingBottomSystemWindowInsets="@{ true }"
-            app:spanCount="@integer/grid_condensed_span_count"
-            tools:listitem="@layout/view_holder_details_summary" />
+            app:spanCount="@integer/grid_span_count" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

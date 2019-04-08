@@ -19,6 +19,7 @@ package app.tivi.showdetails
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.navArgs
 import app.tivi.R
@@ -54,6 +55,9 @@ class ShowDetailsActivity : TiviActivity() {
                 is ShowEpisodeDetailsEvent -> showEpisodeDetails(it.episodeId)
             }
         }
+
+        findViewById<View>(R.id.details_root).systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 
         postponeEnterTransition()
     }
