@@ -27,17 +27,15 @@ import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.databinding.FragmentDiscoverBinding
-import app.tivi.extensions.resolveThemeColorStateList
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.extensions.toFragmentNavigatorExtras
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
-import app.tivi.ui.epoxy.StickyHeaderItemDecoration
+import app.tivi.ui.epoxy.StickyHeaderScrollListener
 import app.tivi.util.GridToGridTransitioner
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
-import com.google.android.material.shape.MaterialShapeDrawable
 import javax.inject.Inject
 
 internal class DiscoverFragment : TiviMvRxFragment() {
@@ -70,14 +68,7 @@ internal class DiscoverFragment : TiviMvRxFragment() {
         binding.summaryRv.apply {
             setController(controller)
             addItemDecoration(SpacingItemDecorator(paddingLeft))
-            addItemDecoration(
-                    StickyHeaderItemDecoration(
-                            controller,
-                            controller::isHeader,
-                            MaterialShapeDrawable().apply {
-                                fillColor = requireContext().resolveThemeColorStateList(R.attr.colorSurface)
-                            }
-                    ))
+            addOnScrollListener(StickyHeaderScrollListener(controller, controller::isHeader, binding.headerHolder))
         }
 
         controller.callbacks = object : DiscoverEpoxyController.Callbacks {

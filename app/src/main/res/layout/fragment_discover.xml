@@ -33,19 +33,31 @@
         app:isRefreshing="@{state.isLoading}"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.airbnb.epoxy.EpoxyRecyclerView
-            android:id="@+id/summary_rv"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingBottom="6dp"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp"
-            android:paddingTop="6dp"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:paddingBottomSystemWindowInsets="@{ true }"
-            app:spanCount="@integer/grid_condensed_span_count"
-            tools:listitem="@layout/view_holder_details_summary" />
+            android:layout_height="match_parent">
+
+            <com.airbnb.epoxy.EpoxyRecyclerView
+                android:id="@+id/summary_rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingHorizontal="2dp"
+                android:paddingVertical="6dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:paddingBottomSystemWindowInsets="@{ true }"
+                app:spanCount="@integer/grid_condensed_span_count"
+                tools:listitem="@layout/view_holder_details_summary" />
+
+            <FrameLayout
+                android:id="@+id/header_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorSurface"
+                android:elevation="6dp"
+                android:paddingHorizontal="4dp" />
+
+        </FrameLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
