@@ -72,18 +72,14 @@ internal class DiscoverFragment : TiviMvRxFragment() {
         binding.summaryRv.apply {
             setController(controller)
             addItemDecoration(SpacingItemDecorator(paddingLeft))
-            addItemDecoration(StickyHeaderItemDecoration(
-                    controller,
-                    controller::isHeader,
-                    MaterialShapeDrawable().apply {
-                        fillColor = requireContext().resolveThemeColorStateList(R.attr.colorSurface)
-                        shapeAppearanceModel = ShapeAppearanceModel().apply {
-                            val corner = resources.getDimensionPixelSize(R.dimen.backdrop_corner_radius)
-                            setTopLeftCorner(CornerFamily.ROUNDED, corner)
-                            setTopRightCorner(CornerFamily.ROUNDED, corner)
-                        }
-                    })
-            )
+            addItemDecoration(
+                    StickyHeaderItemDecoration(
+                            controller,
+                            controller::isHeader,
+                            MaterialShapeDrawable().apply {
+                                fillColor = requireContext().resolveThemeColorStateList(R.attr.colorSurface)
+                            }
+                    ))
         }
 
         controller.callbacks = object : DiscoverEpoxyController.Callbacks {

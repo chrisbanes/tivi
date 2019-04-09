@@ -64,11 +64,11 @@
             android:id="@+id/home_content_background"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:backgroundTint="?attr/colorSurface"
+            android:background="?attr/colorSurface"
             android:elevation="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/home_toolbar"
-            app:materialBackdropBackgroundRadius="@{ @dimen/backdrop_corner_radius }">
+            app:topCornerOutlineProvider="@{ @dimen/backdrop_corner_radius }">
 
             <fragment
                 android:id="@+id/nav_host_fragment"

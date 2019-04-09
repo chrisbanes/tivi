@@ -18,8 +18,10 @@ package app.tivi.ui.databinding
 
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.Outline
 import android.view.Gravity
 import android.view.View
+import android.view.ViewOutlineProvider
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.doOnLayout
@@ -33,6 +35,7 @@ import app.tivi.ui.glide.GlideApp
 import app.tivi.util.ScrimUtil
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
+import kotlin.math.roundToInt
 
 @BindingAdapter("tmdbPosterPath", "tmdbImageUrlProvider", "imageSaturateOnLoad")
 fun loadPoster(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider?, saturateOnLoad: Boolean?) {
@@ -119,6 +122,16 @@ fun materialBackdropBackground(view: View, radius: Float) {
         fillColor = ColorStateList.valueOf(Color.WHITE)
         shapeAppearanceModel.setTopLeftCorner(CornerFamily.ROUNDED, radius.toInt())
         shapeAppearanceModel.setTopRightCorner(CornerFamily.ROUNDED, radius.toInt())
+    }
+}
+
+@BindingAdapter("topCornerOutlineProvider")
+fun topCornerOutlineProvider(view: View, radius: Float) {
+    view.clipToOutline = true
+    view.outlineProvider = object : ViewOutlineProvider() {
+        override fun getOutline(view: View, outline: Outline) {
+            outline.setRoundRect(0, 0, view.width, view.height + radius.roundToInt(), radius)
+        }
     }
 }
 
