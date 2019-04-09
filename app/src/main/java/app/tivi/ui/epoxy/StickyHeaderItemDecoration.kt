@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google, Inc.
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,10 +34,9 @@ class StickyHeaderItemDecoration(
     private val isHeader: (EpoxyModel<*>) -> Boolean,
     private val headerBackground: Drawable? = null
 ) : RecyclerView.ItemDecoration() {
-    private var stickyHeaderHeight: Int = 0
-
     private var currentHeaderItemPosition = RecyclerView.NO_POSITION
     private var currentHeader: RecyclerView.ViewHolder? = null
+    private var currentHeaderHeight: Int = 0
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         if (parent !is EpoxyRecyclerView) {
@@ -56,20 +55,21 @@ class StickyHeaderItemDecoration(
             if (headerPos != currentHeaderItemPosition) {
                 currentHeader = createViewHolderForPosition(headerPos, parent).also {
                     layoutViewHolder(parent, it.itemView)
+                    currentHeaderHeight = it.itemView.height
                 }
                 currentHeaderItemPosition = headerPos
             }
 
             val header = currentHeader
             if (header != null) {
-                val childInContact = getChildInContact(parent, header.itemView.height, headerPos)
+                val childInContact = getChildInContact(parent, currentHeaderHeight, headerPos)
 
                 var offset = 0
                 if (childInContact != null && isHeader(parent.getChildAdapterPosition(childInContact))) {
-                    offset = childInContact.top - header.itemView.height
+                    offset = childInContact.top - currentHeaderHeight
                 }
 
-                headerBackground?.setBounds(0, 0, header.itemView.width, header.itemView.height)
+                headerBackground?.setBounds(0, 0, header.itemView.width, currentHeaderHeight)
 
                 c.withTranslation(parent.paddingLeft.toFloat(), offset.toFloat()) {
                     headerBackground?.draw(this)
@@ -97,35 +97,27 @@ class StickyHeaderItemDecoration(
     }
 
     private fun getChildInContact(parent: RecyclerView, contactPoint: Int, currentHeaderPos: Int): View? {
-        var childInContact: View? = null
         for (i in 0 until parent.childCount) {
             var heightTolerance = 0
             val child = parent.getChildAt(i)
 
-            //measure height tolerance with child if child is another header
-            if (currentHeaderPos != i) {
-                val isChildHeader = isHeader(parent.getChildAdapterPosition(child))
-                if (isChildHeader) {
-                    heightTolerance = stickyHeaderHeight - child.height
-                }
+            // measure height tolerance with child if child is another header
+            if (currentHeaderPos != i && isHeader(parent.getChildAdapterPosition(child))) {
+                heightTolerance = currentHeaderHeight - child.height
             }
 
-            //add heightTolerance if child top be in display area
-            val childBottomPosition = if (child.top > 0) {
-                child.bottom + heightTolerance
-            } else {
-                child.bottom
-            }
+            // add heightTolerance if child top be in display area
+            val childBottomPosition = if (child.top > 0) child.bottom + heightTolerance else child.bottom
 
             if (childBottomPosition > contactPoint) {
                 if (child.top <= contactPoint) {
                     // This child overlaps the contactPoint
-                    childInContact = child
-                    break
+                    return child
                 }
+                break
             }
         }
-        return childInContact
+        return null
     }
 
     /**
@@ -135,16 +127,12 @@ class StickyHeaderItemDecoration(
      * @return int. Position of the header item in the adapter.
      */
     private fun getHeaderPositionForItem(itemPosition: Int): Int {
-        var tempPosition = itemPosition
-        var headerPosition = RecyclerView.NO_POSITION
-        do {
-            if (isHeader(tempPosition)) {
-                headerPosition = tempPosition
-                break
+        for (i in itemPosition downTo 0) {
+            if (isHeader(i)) {
+                return i
             }
-            tempPosition -= 1
-        } while (tempPosition >= -1)
-        return headerPosition
+        }
+        return RecyclerView.NO_POSITION
     }
 
     /**

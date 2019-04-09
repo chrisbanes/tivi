@@ -53,7 +53,7 @@ class DiscoverEpoxyController @Inject constructor() : TypedEpoxyController<Disco
             }
         }
         if (trendingShows.isNotEmpty()) {
-            trendingShows.take(spanCount * 2).forEach { item ->
+            trendingShows.take(trendingShows.size - (trendingShows.size % spanCount)).forEach { item ->
                 posterGridItem {
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
@@ -82,7 +82,7 @@ class DiscoverEpoxyController @Inject constructor() : TypedEpoxyController<Disco
             }
         }
         if (popularShows.isNotEmpty()) {
-            popularShows.take(spanCount * 2).forEach { item ->
+            popularShows.take(popularShows.size - (popularShows.size % spanCount)).forEach { item ->
                 posterGridItem {
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
@@ -101,7 +101,7 @@ class DiscoverEpoxyController @Inject constructor() : TypedEpoxyController<Disco
         }
     }
 
-    fun isHeader(model: EpoxyModel<*>) : Boolean {
+    fun isHeader(model: EpoxyModel<*>): Boolean {
         return model is HeaderBindingModel_
     }
 }
