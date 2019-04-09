@@ -16,6 +16,7 @@
 
 package app.tivi.home.followed
 
+import androidx.lifecycle.viewModelScope
 import androidx.paging.DataSource
 import androidx.paging.PagedList
 import androidx.paging.RxPagedListBuilder
@@ -94,10 +95,8 @@ class FollowedViewModel @AssistedInject constructor(
 
     private fun refreshFilter() {
         loadingState.addLoader()
-        scope.launchInteractor(syncFollowedShows, SyncFollowedShows.ExecuteParams(false))
-                .invokeOnCompletion {
-                    loadingState.removeLoader()
-                }
+        viewModelScope.launchInteractor(syncFollowedShows, SyncFollowedShows.ExecuteParams(false))
+                .invokeOnCompletion { loadingState.removeLoader() }
     }
 
     @AssistedInject.Factory

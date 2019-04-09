@@ -16,6 +16,7 @@
 
 package app.tivi.showdetails.episodedetails
 
+import androidx.lifecycle.viewModelScope
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.interactors.AddEpisodeWatch
 import app.tivi.interactors.RemoveEpisodeWatch
@@ -78,23 +79,23 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     }
 
     private fun refresh() {
-        scope.launchInteractor(updateEpisodeDetails, UpdateEpisodeDetails.ExecuteParams(true))
-        scope.launchInteractor(updateEpisodeWatches, UpdateEpisodeWatches.ExecuteParams(true))
+        viewModelScope.launchInteractor(updateEpisodeDetails, UpdateEpisodeDetails.ExecuteParams(true))
+        viewModelScope.launchInteractor(updateEpisodeWatches, UpdateEpisodeWatches.ExecuteParams(true))
     }
 
     fun removeWatchEntry(entry: EpisodeWatchEntry) {
-        scope.launchInteractor(removeEpisodeWatch, RemoveEpisodeWatch.Params(entry.id))
+        viewModelScope.launchInteractor(removeEpisodeWatch, RemoveEpisodeWatch.Params(entry.id))
     }
 
     fun markWatched() {
         withState {
-            scope.launchInteractor(addEpisodeWatch, AddEpisodeWatch.Params(it.episodeId, OffsetDateTime.now()))
+            viewModelScope.launchInteractor(addEpisodeWatch, AddEpisodeWatch.Params(it.episodeId, OffsetDateTime.now()))
         }
     }
 
     fun markUnwatched() {
         withState {
-            scope.launchInteractor(removeEpisodeWatches, RemoveEpisodeWatches.Params(it.episodeId))
+            viewModelScope.launchInteractor(removeEpisodeWatches, RemoveEpisodeWatches.Params(it.episodeId))
         }
     }
 
