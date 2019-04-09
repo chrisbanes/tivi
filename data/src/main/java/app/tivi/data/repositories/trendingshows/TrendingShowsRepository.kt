@@ -34,7 +34,7 @@ class TrendingShowsRepository @Inject constructor(
 ) {
     fun observeForPaging() = localStore.observeForPaging()
 
-    fun observeForFlowable() = localStore.observeForFlowable(10, 0)
+    fun observeForFlowable() = localStore.observeForFlowable(15, 0)
 
     suspend fun loadNextPage() {
         val lastPage = localStore.getLastPage()

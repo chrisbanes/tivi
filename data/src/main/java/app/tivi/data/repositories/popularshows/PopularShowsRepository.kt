@@ -35,7 +35,7 @@ class PopularShowsRepository @Inject constructor(
 ) {
     fun observeForPaging(): DataSource.Factory<Int, PopularEntryWithShow> = localStore.observeForPaging()
 
-    fun observeForFlowable(): Flowable<List<PopularEntryWithShow>> = localStore.observeForFlowable(10, 0)
+    fun observeForFlowable(): Flowable<List<PopularEntryWithShow>> = localStore.observeForFlowable(15, 0)
 
     suspend fun loadNextPage() {
         val lastPage = localStore.getLastPage()
