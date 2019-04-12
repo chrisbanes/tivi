@@ -80,7 +80,8 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
                     LocalShowStore(entityInserter, db.showDao(), db.lastRequestDao(), txRunner),
                     traktDataSource,
                     showRepository,
-                    Provider { TraktAuthState.LOGGED_IN }
+                    Provider { TraktAuthState.LOGGED_IN },
+                    txRunner
             )
         }
     }
