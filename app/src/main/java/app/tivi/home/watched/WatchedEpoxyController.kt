@@ -27,6 +27,7 @@ import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.EpoxyModelProperty
 import app.tivi.ui.epoxy.TotalSpanOverride
 import app.tivi.util.TiviDateFormatter
+import com.airbnb.epoxy.EpoxyAsyncUtil
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
 import javax.inject.Inject
@@ -35,7 +36,8 @@ class WatchedEpoxyController @Inject constructor(
     private val textCreator: HomeTextCreator,
     private val dateFormatter: TiviDateFormatter
 ) : PagedListEpoxyController<WatchedShowEntryWithShow>(
-        modelBuildingHandler = Handler(Looper.getMainLooper())
+        modelBuildingHandler = Handler(Looper.getMainLooper()),
+        diffingHandler = EpoxyAsyncUtil.getAsyncBackgroundHandler()
 ) {
     var tmdbImageUrlProvider by EpoxyModelProperty { TmdbImageUrlProvider() }
     var isEmpty by EpoxyModelProperty { false }
