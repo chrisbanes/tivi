@@ -38,7 +38,7 @@ class TraktRelatedShowsDataSource @Inject constructor(
     private val showMapper: TraktShowToTiviShow
 ) : RelatedShowsDataSource {
     private val entryMapper = object : IndexedMapper<Show, RelatedShowEntry> {
-        override fun map(index: Int, from: Show): RelatedShowEntry {
+        override suspend fun map(index: Int, from: Show): RelatedShowEntry {
             return RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)
         }
     }

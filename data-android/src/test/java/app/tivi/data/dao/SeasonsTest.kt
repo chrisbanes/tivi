@@ -21,9 +21,10 @@ import app.tivi.data.daos.SeasonsDao
 import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.deleteShow
 import app.tivi.utils.insertShow
+import app.tivi.utils.runBlockingTest
+import app.tivi.utils.s0
 import app.tivi.utils.s1
 import app.tivi.utils.s1_id
-import app.tivi.utils.s0
 import app.tivi.utils.s2
 import app.tivi.utils.showId
 import org.hamcrest.CoreMatchers.`is`
@@ -36,20 +37,23 @@ class SeasonsTest : BaseDatabaseTest() {
 
     override fun setup() {
         super.setup()
-        seasonsDao = db.seasonsDao()
-        // We'll assume that there's a show in the db
-        insertShow(db)
+
+        runBlockingTest {
+            seasonsDao = db.seasonsDao()
+            // We'll assume that there's a show in the db
+            insertShow(db)
+        }
     }
 
     @Test
-    fun insertSeason() {
+    fun insertSeason() = runBlockingTest {
         seasonsDao.insert(s1)
 
         assertThat(seasonsDao.seasonWithId(s1_id), `is`(s1))
     }
 
     @Test(expected = SQLiteConstraintException::class)
-    fun insert_withSameTraktId() {
+    fun insert_withSameTraktId() = runBlockingTest {
         seasonsDao.insert(s1)
 
         // Make a copy with a 0 id
@@ -59,7 +63,7 @@ class SeasonsTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun specialsOrder() {
+    fun specialsOrder() = runBlockingTest {
         seasonsDao.insert(s0)
         seasonsDao.insert(s1)
         seasonsDao.insert(s2)
@@ -71,7 +75,7 @@ class SeasonsTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun deleteSeason() {
+    fun deleteSeason() = runBlockingTest {
         seasonsDao.insert(s1)
         seasonsDao.delete(s1)
 
@@ -79,7 +83,7 @@ class SeasonsTest : BaseDatabaseTest() {
     }
 
     @Test
-    fun deleteShow_deletesSeason() {
+    fun deleteShow_deletesSeason() = runBlockingTest {
         seasonsDao.insert(s1)
         // Now delete show
         deleteShow(db)

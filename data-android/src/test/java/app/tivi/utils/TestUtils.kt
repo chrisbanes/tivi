@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package app.tivi.data.daos
+package app.tivi.utils
 
-import androidx.paging.DataSource
-import app.tivi.data.Entry
-import app.tivi.data.resultentities.EntryWithShow
-import io.reactivex.Flowable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 /**
- * This interface represents a DAO which contains entities which are part of a single collective list.
+ * Wrapper around [runBlocking] but does not return a value.
  */
-interface EntryDao<EC : Entry, LI : EntryWithShow<EC>> : EntityDao<EC> {
-    fun entriesFlowable(count: Int, offset: Int): Flowable<List<LI>>
-    fun entriesDataSource(): DataSource.Factory<Int, LI>
-    suspend fun deleteAll()
+fun <T> runBlockingTest(context: CoroutineContext = EmptyCoroutineContext, block: suspend CoroutineScope.() -> T) {
+    runBlocking(context) {
+        block()
+    }
 }

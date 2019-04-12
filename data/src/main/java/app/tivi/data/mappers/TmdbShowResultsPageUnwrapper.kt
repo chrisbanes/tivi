@@ -22,5 +22,5 @@ import com.uwetrottmann.tmdb2.entities.TvShowResultsPage
 class TmdbShowResultsPageUnwrapper<T>(
     private val tmdbShowMapper: Mapper<List<BaseTvShow>, List<T>>
 ) : Mapper<TvShowResultsPage, List<T>> {
-    override fun map(from: TvShowResultsPage): List<T> = tmdbShowMapper.map(from.results)
+    override suspend fun map(from: TvShowResultsPage): List<T> = tmdbShowMapper.map(from.results)
 }

@@ -25,6 +25,7 @@ dependencies {
     compile project(":tmdb")
 
     compile Libs.AndroidX.Room.common
+    compile Libs.AndroidX.Room.ktx
     compile Libs.AndroidX.Paging.common
 
     compile Libs.RxJava.rxJava

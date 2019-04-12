@@ -23,7 +23,7 @@ import javax.inject.Singleton
 
 @Singleton
 class TmdbShowToTiviShow @Inject constructor() : Mapper<TvShow, TiviShow> {
-    override fun map(from: TvShow) = TiviShow(
+    override suspend fun map(from: TvShow) = TiviShow(
             tmdbId = from.id,
             imdbId = from.external_ids?.imdb_id,
             title = from.name,

@@ -23,7 +23,7 @@ import com.uwetrottmann.trakt5.entities.Season as TraktSeason
 
 @Singleton
 class TraktSeasonToSeason @Inject constructor() : Mapper<TraktSeason, Season> {
-    override fun map(from: TraktSeason) = Season(
+    override suspend fun map(from: TraktSeason) = Season(
             showId = 0,
             traktId = from.ids.trakt,
             tmdbId = from.ids.tmdb,

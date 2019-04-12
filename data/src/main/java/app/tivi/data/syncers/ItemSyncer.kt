@@ -26,15 +26,15 @@ import app.tivi.util.Logger
  * @param NID Network ID type
  */
 class ItemSyncer<ET : TiviEntity, NT, NID>(
-    private val entryInsertFunc: (ET) -> Long,
-    private val entryUpdateFunc: (ET) -> Unit,
-    private val entryDeleteFunc: (ET) -> Int,
-    private val localEntityToIdFunc: (ET) -> NID,
-    private val networkEntityToIdFunc: (NT) -> NID,
-    private val networkEntityToLocalEntityMapperFunc: (NT, Long?) -> ET,
+    private val entryInsertFunc: suspend (ET) -> Long,
+    private val entryUpdateFunc: suspend (ET) -> Unit,
+    private val entryDeleteFunc: suspend (ET) -> Int,
+    private val localEntityToIdFunc: suspend (ET) -> NID,
+    private val networkEntityToIdFunc: suspend (NT) -> NID,
+    private val networkEntityToLocalEntityMapperFunc: suspend (NT, Long?) -> ET,
     private val logger: Logger? = null
 ) {
-    fun sync(currentValues: Collection<ET>, networkValues: Collection<NT>): ItemSyncerResult<ET> {
+    suspend fun sync(currentValues: Collection<ET>, networkValues: Collection<NT>): ItemSyncerResult<ET> {
         val currentDbEntities = ArrayList(currentValues)
 
         val removed = ArrayList<ET>()
@@ -84,9 +84,9 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
 
 fun <ET : TiviEntity, NT, NID> syncerForEntity(
     entityDao: EntityDao<ET>,
-    localEntityToIdFunc: (ET) -> NID,
-    networkEntityToIdFunc: (NT) -> NID,
-    networkEntityToLocalEntityMapperFunc: (NT, Long?) -> ET,
+    localEntityToIdFunc: suspend (ET) -> NID,
+    networkEntityToIdFunc: suspend (NT) -> NID,
+    networkEntityToLocalEntityMapperFunc: suspend (NT, Long?) -> ET,
     logger: Logger? = null
 ) = ItemSyncer(
         entityDao::insert,
@@ -100,8 +100,8 @@ fun <ET : TiviEntity, NT, NID> syncerForEntity(
 
 fun <ET : TiviEntity, NID> syncerForEntity(
     entityDao: EntityDao<ET>,
-    localEntityToIdFunc: (ET) -> NID,
-    mapper: (ET, Long?) -> ET,
+    localEntityToIdFunc: suspend (ET) -> NID,
+    mapper: suspend (ET, Long?) -> ET,
     logger: Logger? = null
 ) = ItemSyncer(
         entityDao::insert,

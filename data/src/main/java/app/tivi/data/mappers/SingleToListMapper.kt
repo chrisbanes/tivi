@@ -17,11 +17,11 @@
 package app.tivi.data.mappers
 
 private class MapperToListMapper<F, T>(val singleMapper: Mapper<F, T>) : Mapper<List<F>, List<T>> {
-    override fun map(from: List<F>): List<T> = from.map(singleMapper::map)
+    override suspend fun map(from: List<F>): List<T> = from.map { singleMapper.map(it) }
 }
 
 private class IndexedMapperToListMapper<F, T>(val singleMapper: IndexedMapper<F, T>) : Mapper<List<F>, List<T>> {
-    override fun map(from: List<F>): List<T> = from.mapIndexed(singleMapper::map)
+    override suspend fun map(from: List<F>): List<T> = from.mapIndexed { index, value -> singleMapper.map(index, value) }
 }
 
 fun <F, T> Mapper<F, T>.toListMapper(): Mapper<List<F>, List<T>> = MapperToListMapper(this)
