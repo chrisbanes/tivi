@@ -23,13 +23,13 @@ object Versions {
 object Libs {
     val androidGradlePlugin = "com.android.tools.build:gradle:3.5.0-alpha10"
     val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6"
-    val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.1.0"
+    val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.2.0"
 
-    val mvRx = "com.airbnb.android:mvrx:0.7.2"
+    val mvRx = "com.airbnb.android:mvrx:1.0.0"
 
     val threeTenBp = "org.threeten:threetenbp:1.3.8"
     val threeTenBpNoTzdb = "$threeTenBp:no-tzdb"
-    val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.1.2"
+    val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.2.0"
 
     val gravitySnapHelper = "com.github.rubensousa:gravitysnaphelper:2.0"
 
@@ -37,7 +37,7 @@ object Libs {
 
     val timber = "com.jakewharton.timber:timber:4.7.1"
 
-    val tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.0.1"
+    val tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.0.2"
 
     val appauth = "net.openid:appauth:0.7.1"
 
@@ -47,10 +47,10 @@ object Libs {
 
     object Google {
         val material = "com.google.android.material:material:1.1.0-alpha04"
-        val firebaseCore = "com.google.firebase:firebase-core:16.0.7"
+        val firebaseCore = "com.google.firebase:firebase-core:16.0.8"
         val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.9"
         val gmsGoogleServices = "com.google.gms:google-services:4.2.0"
-        val fabricPlugin = "io.fabric.tools:gradle:1.27.1"
+        val fabricPlugin = "io.fabric.tools:gradle:1.28.1"
     }
 
     object Kotlin {
@@ -69,7 +69,7 @@ object Libs {
     }
 
     object AndroidX {
-        val appcompat = "androidx.appcompat:appcompat:1.1.0-alpha03"
+        val appcompat = "androidx.appcompat:appcompat:1.1.0-alpha04"
         val browser = "androidx.browser:browser:1.0.0"
         val palette = "androidx.palette:palette:1.0.0"
         val recyclerview = "androidx.recyclerview:recyclerview:1.0.0"
@@ -83,7 +83,7 @@ object Libs {
         }
 
         object Fragment {
-            private const val version = "1.1.0-alpha03"
+            private const val version = "1.1.0-alpha06"
             val fragment = "androidx.fragment:fragment:$version"
             val fragmentKtx = "androidx.fragment:fragment-ktx:$version"
         }
@@ -135,13 +135,13 @@ object Libs {
     }
 
     object RxJava {
-        val rxJava = "io.reactivex.rxjava2:rxjava:2.2.6"
+        val rxJava = "io.reactivex.rxjava2:rxjava:2.2.8"
         val rxKotlin = "io.reactivex.rxjava2:rxkotlin:2.3.0"
         val rxAndroid = "io.reactivex.rxjava2:rxandroid:2.1.1"
     }
 
     object Dagger {
-        private const val version = "2.21"
+        private const val version = "2.22.1"
         val dagger = "com.google.dagger:dagger:$version"
         val androidSupport = "com.google.dagger:dagger-android-support:$version"
         val compiler = "com.google.dagger:dagger-compiler:$version"
@@ -162,11 +162,11 @@ object Libs {
     }
 
     object OkHttp {
-        val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:3.13.1"
+        val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:3.14.1"
     }
 
     object Epoxy {
-        private const val version = "3.3.0"
+        private const val version = "3.4.0"
         val epoxy = "com.airbnb.android:epoxy:$version"
         val paging = "com.airbnb.android:epoxy-paging:$version"
         val dataBinding = "com.airbnb.android:epoxy-databinding:$version"
@@ -174,7 +174,7 @@ object Libs {
     }
 
     object AssistedInject {
-        private const val version = "0.3.2"
+        private const val version = "0.4.0"
         val annotationDagger2 = "com.squareup.inject:assisted-inject-annotations-dagger2:$version"
         val processorDagger2 = "com.squareup.inject:assisted-inject-processor-dagger2:$version"
     }
