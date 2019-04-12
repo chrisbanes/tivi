@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.util
+package app.tivi
 
 import android.os.Bundle
 import androidx.lifecycle.LifecycleOwner
@@ -22,7 +22,11 @@ import com.airbnb.mvrx.MvRxView
 import com.airbnb.mvrx.MvRxViewModelStore
 import java.util.UUID
 
-abstract class TiviMvRxBottomSheetFragment : DaggerBottomSheetFragment(), MvRxView {
+/**
+ * Base Activity class which supports LifecycleOwner and Dagger injection.
+ */
+abstract class TiviActivityMvRxView : TiviActivity(), MvRxView {
+
     override val mvrxViewModelStore by lazy { MvRxViewModelStore(viewModelStore) }
 
     final override val mvrxViewId: String by lazy { mvrxPersistedViewId }
@@ -42,7 +46,7 @@ abstract class TiviMvRxBottomSheetFragment : DaggerBottomSheetFragment(), MvRxVi
      * are properly disposed as fragments are moved from/to the backstack.
      */
     override val subscriptionLifecycleOwner: LifecycleOwner
-        get() = this.viewLifecycleOwnerLiveData.value ?: this
+        get() = this
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
