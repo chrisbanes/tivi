@@ -28,7 +28,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import app.tivi.R
-import app.tivi.TiviActivity
+import app.tivi.TiviActivityMvRxView
 import app.tivi.databinding.ActivityHomeBinding
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.home.main.HomeNavigationEpoxyController
@@ -41,7 +41,6 @@ import app.tivi.ui.glide.asGlideTarget
 import app.tivi.ui.navigation.AppBarConfiguration
 import app.tivi.ui.navigation.NavigationUI
 import app.tivi.ui.navigation.NavigationView
-import com.airbnb.mvrx.MvRxView
 import com.airbnb.mvrx.viewModel
 import com.airbnb.mvrx.withState
 import com.bumptech.glide.request.target.Target
@@ -50,7 +49,7 @@ import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
 import javax.inject.Inject
 
-class HomeActivity : TiviActivity(), MvRxView {
+class HomeActivity : TiviActivityMvRxView() {
 
     private val authService by lazy(LazyThreadSafetyMode.NONE) { AuthorizationService(this) }
 
