@@ -28,7 +28,10 @@ import io.reactivex.Flowable
 abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow> {
     @Transaction
     @Query("SELECT * FROM watched_entries ORDER BY datetime(last_watched)")
-    abstract suspend fun entries(): List<WatchedShowEntryWithShow>
+    abstract suspend fun entriesWithShow(): List<WatchedShowEntryWithShow>
+
+    @Query("SELECT * FROM watched_entries")
+    abstract suspend fun entries(): List<WatchedShowEntry>
 
     @Transaction
     @Query("SELECT * FROM watched_entries ORDER BY datetime(last_watched) DESC LIMIT :count OFFSET :offset")

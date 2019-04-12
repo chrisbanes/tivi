@@ -16,23 +16,31 @@
 
 package app.tivi.data.repositories.watchedshows
 
+import androidx.paging.DataSource
 import app.tivi.data.DatabaseTransactionRunner
-import app.tivi.data.daos.EntityInserter
+import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.entities.WatchedShowEntry
+import app.tivi.data.resultentities.WatchedShowEntryWithShow
+import app.tivi.data.syncers.syncerForEntity
 import javax.inject.Inject
 
 class LocalWatchedShowsStore @Inject constructor(
-    private val entityInserter: EntityInserter,
     private val transactionRunner: DatabaseTransactionRunner,
-    private val watchedShowDao: WatchedShowDao
+    private val watchedShowDao: WatchedShowDao,
+    private val showDao: TiviShowDao
 ) {
-    suspend fun getWatchedShows() = watchedShowDao.entries()
+    private val syncer = syncerForEntity(
+            watchedShowDao,
+            { showDao.getTraktIdForShowId(it.showId)!! },
+            { entity, id -> entity.copy(id = id ?: 0) }
+    )
 
-    fun observePagedList() = watchedShowDao.entriesDataSource()
+    suspend fun getWatchedShows(): List<WatchedShowEntryWithShow> = watchedShowDao.entriesWithShow()
 
-    suspend fun saveWatchedShows(watchedShows: List<WatchedShowEntry>) = transactionRunner {
-        watchedShowDao.deleteAll()
-        entityInserter.insertOrUpdate(watchedShowDao, watchedShows)
+    fun observePagedList(): DataSource.Factory<Int, WatchedShowEntryWithShow> = watchedShowDao.entriesDataSource()
+
+    suspend fun sync(watchedShows: List<WatchedShowEntry>) = transactionRunner {
+        syncer.sync(watchedShowDao.entries(), watchedShows)
     }
 }

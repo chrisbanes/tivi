@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories.watchedshows
 
+import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.entities.Success
 import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
@@ -30,7 +31,8 @@ class WatchedShowsRepository @Inject constructor(
     private val localStore: LocalWatchedShowsStore,
     private val localShowStore: LocalShowStore,
     private val traktDataSource: TraktWatchedShowsDataSource,
-    private val showRepository: ShowRepository
+    private val showRepository: ShowRepository,
+    private val transactionRunner: DatabaseTransactionRunner
 ) {
     fun observeWatchedShowsPagedList() = localStore.observePagedList()
 
@@ -43,19 +45,20 @@ class WatchedShowsRepository @Inject constructor(
         val response = traktDataSource.getWatchedShows()
         when (response) {
             is Success -> {
-                response.data.map { (show, entry) ->
-                    // Grab the show id if it exists, or save the show and use it's generated ID
-                    val watchedShowId = localShowStore.getIdOrSavePlaceholder(show)
-                    // Make a copy of the entry with the id
-                    entry.copy(showId = watchedShowId)
-                }.also { entries ->
-                    // Save the related entries
-                    localStore.saveWatchedShows(entries)
+                transactionRunner {
+                    response.data.map { (show, entry) ->
+                        // Grab the show id if it exists, or save the show and use it's generated ID
+                        val watchedShowId = localShowStore.getIdOrSavePlaceholder(show)
+                        // Make a copy of the entry with the id
+                        entry.copy(showId = watchedShowId)
+                    }.let { entries ->
+                        // Save the related entries
+                        localStore.sync(entries)
+                    }
+                }.also { result ->
                     // Now update all of the related shows if needed
-                    entries.parallelForEach { entry ->
-                        if (showRepository.needsUpdate(entry.showId)) {
-                            showRepository.updateShow(entry.showId)
-                        }
+                    result.added.parallelForEach { entry ->
+                        showRepository.updateShow(entry.showId)
                     }
                 }
             }
