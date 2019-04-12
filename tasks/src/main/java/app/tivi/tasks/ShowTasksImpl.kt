@@ -44,6 +44,18 @@ class ShowTasksImpl @Inject constructor(
         workManager.enqueue(request)
     }
 
+    override fun syncFollowedShowsWhenIdle() {
+        val request = OneTimeWorkRequest.Builder(SyncAllFollowedShows::class.java)
+                .addTag(SyncAllFollowedShows.TAG)
+                .setConstraints(
+                        Constraints.Builder()
+                                .setRequiresDeviceIdle(true)
+                                .build()
+                )
+                .build()
+        workManager.enqueue(request)
+    }
+
     override fun setupNightSyncs() {
         val request = PeriodicWorkRequest.Builder(SyncAllFollowedShows::class.java,
                 24, TimeUnit.HOURS, 6, TimeUnit.HOURS)

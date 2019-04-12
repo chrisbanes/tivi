@@ -119,7 +119,7 @@ class TraktManager @Inject constructor(
             persistAuthState(newState)
         }
         // Now trigger a sync of all shows
-        showTasks.syncFollowedShows()
+        showTasks.syncFollowedShowsWhenIdle()
     }
 
     private fun readAuthState(): AuthState {
