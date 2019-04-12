@@ -17,6 +17,7 @@
 package app.tivi.util
 
 import androidx.lifecycle.LiveDataReactiveStreams
+import androidx.lifecycle.viewModelScope
 import androidx.paging.DataSource
 import androidx.paging.PagedList
 import androidx.paging.RxPagedListBuilder
@@ -79,7 +80,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
     }
 
     fun onListScrolledToEnd() {
-        scope.launch {
+        viewModelScope.launch {
             sendMessage(UiResource(Status.LOADING_MORE))
             try {
                 callLoadMore()
@@ -91,7 +92,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
     }
 
     fun refresh() {
-        scope.launch {
+        viewModelScope.launch {
             sendMessage(UiResource(Status.REFRESHING))
             try {
                 callRefresh()

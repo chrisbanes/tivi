@@ -26,11 +26,13 @@ import app.tivi.emptyState
 import app.tivi.infiniteLoading
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.TotalSpanOverride
+import com.airbnb.epoxy.EpoxyAsyncUtil
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
 
 open class EntryGridEpoxyController<LI : EntryWithShow<out Entry>> : PagedListEpoxyController<LI>(
-        modelBuildingHandler = Handler(Looper.getMainLooper())
+        modelBuildingHandler = Handler(Looper.getMainLooper()),
+        diffingHandler = EpoxyAsyncUtil.getAsyncBackgroundHandler()
 ) {
     internal var callbacks: Callbacks<LI>? = null
 

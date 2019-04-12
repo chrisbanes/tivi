@@ -16,6 +16,7 @@
 
 package app.tivi.home.discover
 
+import androidx.lifecycle.viewModelScope
 import app.tivi.interactors.UpdatePopularShows
 import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.interactors.launchInteractor
@@ -60,12 +61,16 @@ class DiscoverViewModel @AssistedInject constructor(
 
     fun refresh() {
         loadingState.addLoader()
-        scope.launchInteractor(updatePopularShows, UpdatePopularShows.ExecuteParams(UpdatePopularShows.Page.REFRESH))
-                .invokeOnCompletion { loadingState.removeLoader() }
+        viewModelScope.launchInteractor(
+                updatePopularShows,
+                UpdatePopularShows.ExecuteParams(UpdatePopularShows.Page.REFRESH)
+        ).invokeOnCompletion { loadingState.removeLoader() }
 
         loadingState.addLoader()
-        scope.launchInteractor(updateTrendingShows, UpdateTrendingShows.ExecuteParams(UpdateTrendingShows.Page.REFRESH))
-                .invokeOnCompletion { loadingState.removeLoader() }
+        viewModelScope.launchInteractor(
+                updateTrendingShows,
+                UpdateTrendingShows.ExecuteParams(UpdateTrendingShows.Page.REFRESH)
+        ).invokeOnCompletion { loadingState.removeLoader() }
     }
 
     @AssistedInject.Factory

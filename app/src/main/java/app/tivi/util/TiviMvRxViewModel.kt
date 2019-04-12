@@ -20,25 +20,18 @@ import app.tivi.BuildConfig
 import com.airbnb.mvrx.BaseMvRxViewModel
 import com.airbnb.mvrx.MvRxState
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 
 /**
- * Simple ViewModel which exposes a [CompositeDisposable] and [Job] which are automatically cleared/stopped when
+ * Simple ViewModel which exposes a [CompositeDisposable] which is automatically cleared/stopped when
  * the ViewModel is cleared.
  */
 open class TiviMvRxViewModel<S : MvRxState>(
     initialState: S
 ) : BaseMvRxViewModel<S>(initialState, debugMode = BuildConfig.DEBUG), ITiviViewModel {
-    private val job = Job()
-
     override val disposables = CompositeDisposable()
-    override val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + job)
 
     override fun onCleared() {
         super.onCleared()
         disposables.clear()
-        job.cancel()
     }
 }

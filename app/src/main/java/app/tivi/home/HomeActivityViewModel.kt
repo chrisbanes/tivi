@@ -16,6 +16,7 @@
 
 package app.tivi.home
 
+import androidx.lifecycle.viewModelScope
 import app.tivi.home.main.HomeNavigationViewState
 import app.tivi.interactors.UpdateUserDetails
 import app.tivi.interactors.launchInteractor
@@ -45,7 +46,7 @@ class HomeActivityViewModel @AssistedInject constructor(
                 .distinctUntilChanged()
                 .doOnNext {
                     if (it == TraktAuthState.LOGGED_IN) {
-                        scope.launchInteractor(updateUserDetails, UpdateUserDetails.ExecuteParams(false))
+                        viewModelScope.launchInteractor(updateUserDetails, UpdateUserDetails.ExecuteParams(false))
                     }
                 }.execute {
                     copy(authState = it() ?: TraktAuthState.LOGGED_OUT)

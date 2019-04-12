@@ -16,6 +16,7 @@
 
 package app.tivi.showdetails.details
 
+import androidx.lifecycle.viewModelScope
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
@@ -94,9 +95,9 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     private fun refresh() {
-        scope.launchInteractor(updateShowDetails, UpdateShowDetails.ExecuteParams(true))
-        scope.launchInteractor(updateRelatedShows, UpdateRelatedShows.ExecuteParams(true))
-        scope.launchInteractor(updateShowSeasons, UpdateFollowedShowSeasonData.ExecuteParams(true))
+        viewModelScope.launchInteractor(updateShowDetails, UpdateShowDetails.ExecuteParams(true))
+        viewModelScope.launchInteractor(updateRelatedShows, UpdateRelatedShows.ExecuteParams(true))
+        viewModelScope.launchInteractor(updateShowSeasons, UpdateFollowedShowSeasonData.ExecuteParams(true))
     }
 
     override fun onCleared() {
@@ -105,7 +106,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     fun onToggleMyShowsButtonClicked() {
-        scope.launchInteractor(changeShowFollowStatus, ChangeShowFollowStatus.ExecuteParams(TOGGLE))
+        viewModelScope.launchInteractor(changeShowFollowStatus, ChangeShowFollowStatus.ExecuteParams(TOGGLE))
     }
 
     fun onRelatedShowClicked(
@@ -120,12 +121,12 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     ) = showDetailsNavigator.showEpisodeDetails(episode)
 
     fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
-        scope.launchInteractor(changeSeasonWatchedStatus,
+        viewModelScope.launchInteractor(changeSeasonWatchedStatus,
                 Params(season.id, ChangeSeasonWatchedStatus.Action.WATCHED, onlyAired, date))
     }
 
     fun onMarkSeasonUnwatched(season: Season) {
-        scope.launchInteractor(changeSeasonWatchedStatus, Params(season.id, Action.UNWATCH))
+        viewModelScope.launchInteractor(changeSeasonWatchedStatus, Params(season.id, Action.UNWATCH))
     }
 
     fun toggleSeasonExpanded(season: Season) {

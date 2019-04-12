@@ -36,6 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:paddingBottomSystemWindowInsets="@{ true }"
             tools:listitem="@layout/view_holder_library_watched_item" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
