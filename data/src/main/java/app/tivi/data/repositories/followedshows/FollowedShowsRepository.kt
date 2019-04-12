@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories.followedshows
 
+import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Success
@@ -36,7 +37,8 @@ class FollowedShowsRepository @Inject constructor(
     private val localShowStore: LocalShowStore,
     @Trakt private val dataSource: FollowedShowsDataSource,
     private val showRepository: ShowRepository,
-    private val traktAuthState: Provider<TraktAuthState>
+    private val traktAuthState: Provider<TraktAuthState>,
+    private val transactionRunner: DatabaseTransactionRunner
 ) {
     fun observeFollowedShows() = localStore.observeForPaging()
 
@@ -105,19 +107,20 @@ class FollowedShowsRepository @Inject constructor(
         val response = dataSource.getListShows(listId)
         when (response) {
             is Success ->
-                response.data.map { (entry, show) ->
-                    // Grab the show id if it exists, or save the show and use it's generated ID
-                    val showId = localShowStore.getIdOrSavePlaceholder(show)
-                    // Create a followed show entry with the show id
-                    entry.copy(showId = showId)
-                }.also { entries ->
-                    // Save the related entries
-                    localStore.sync(entries)
-                    // Now update all of the followed shows if needed
-                    entries.parallelForEach { entry ->
-                        if (showRepository.needsUpdate(entry.showId)) {
-                            showRepository.updateShow(entry.showId)
-                        }
+                transactionRunner {
+                    response.data.map { (entry, show) ->
+                        // Grab the show id if it exists, or save the show and use it's generated ID
+                        val showId = localShowStore.getIdOrSavePlaceholder(show)
+                        // Create a followed show entry with the show id
+                        entry.copy(showId = showId)
+                    }.let { entries ->
+                        // Save the related entries
+                        localStore.sync(entries)
+                    }
+                }.also { result ->
+                    // Now update all of the new followed shows if needed
+                    result.added.parallelForEach { entry ->
+                        showRepository.updateShow(entry.showId)
                     }
                 }
         }
