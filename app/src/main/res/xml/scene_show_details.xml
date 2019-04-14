@@ -87,23 +87,18 @@
 
         <Constraint
             android:id="@id/details_backdrop_scrim">
-
             <CustomAttribute
                 app:attributeName="background"
                 app:customColorDrawableValue="@android:color/transparent" />
-
         </Constraint>
 
         <Constraint
             android:id="@id/details_toolbar">
-
             <Transform
                 app:elevation="0dp" />
-
             <CustomAttribute
                 app:attributeName="iconTint"
                 app:customColorValue="?android:attr/textColorPrimaryInverse" />
-
         </Constraint>
 
         <Constraint
@@ -156,22 +151,17 @@
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
-
         <Constraint
             android:id="@id/details_backdrop_scrim">
-
             <CustomAttribute
                 app:attributeName="background"
                 app:customColorDrawableValue="@color/status_bar_scrim" />
-
         </Constraint>
 
         <Constraint
             android:id="@id/details_toolbar">
-
             <Transform
                 app:elevation="@dimen/details_appbar_elevation" />
-
             <CustomAttribute
                 app:attributeName="iconTint"
                 app:customColorValue="?android:attr/textColorPrimary" />

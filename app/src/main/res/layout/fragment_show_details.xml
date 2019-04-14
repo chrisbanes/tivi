@@ -134,7 +134,7 @@
         <View
             android:id="@+id/details_status_bar_anchor"
             android:layout_width="match_parent"
-            android:layout_height="0px"
+            android:layout_height="wrap_content"
             android:background="@drawable/status_bar_translucent_scrim" />
 
         <app.tivi.ui.widget.CheckableFloatingActionButton

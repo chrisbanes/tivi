@@ -33,6 +33,7 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.databinding.FragmentShowDetailsBinding
+import app.tivi.extensions.requestApplyInsetsWhenAttached
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.util.TiviMvRxFragment
@@ -66,7 +67,7 @@ class ShowDetailsFragment : TiviMvRxFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentShowDetailsBinding.inflate(inflater, container, false)
-        binding.setLifecycleOwner(viewLifecycleOwner)
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
@@ -77,13 +78,13 @@ class ShowDetailsFragment : TiviMvRxFragment() {
 
         binding.detailsMotion.setOnApplyWindowInsetsListener { _, insets ->
             binding.detailsMotion.updateConstraintSets {
-                it.constrainHeight(R.id.details_status_bar_anchor, insets.systemWindowInsetTop)
+                constrainHeight(R.id.details_status_bar_anchor, insets.systemWindowInsetTop)
             }
             // Just return insets
             insets
         }
         // Finally, request some insets
-        view.requestApplyInsets()
+        view.requestApplyInsetsWhenAttached()
 
         // Make the MotionLayout draw behind the status bar
         binding.detailsMotion.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
