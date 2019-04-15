@@ -31,6 +31,7 @@ import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.extensions.toFragmentNavigatorExtras
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
+import app.tivi.ui.epoxy.StickyHeaderScrollListener
 import app.tivi.util.GridToGridTransitioner
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
@@ -67,6 +68,7 @@ internal class DiscoverFragment : TiviMvRxFragment() {
         binding.summaryRv.apply {
             setController(controller)
             addItemDecoration(SpacingItemDecorator(paddingLeft))
+            addOnScrollListener(StickyHeaderScrollListener(controller, controller::isHeader, binding.headerHolder))
         }
 
         controller.callbacks = object : DiscoverEpoxyController.Callbacks {

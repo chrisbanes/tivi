@@ -19,9 +19,12 @@ package app.tivi.home.followed
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import app.tivi.HeaderBindingModel_
 import app.tivi.LibraryFollowedItemBindingModel_
+import app.tivi.R
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.emptyState
+import app.tivi.header
 import app.tivi.home.HomeTextCreator
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.EpoxyModelProperty
@@ -48,6 +51,10 @@ class FollowedEpoxyController @Inject constructor(
                 spanSizeOverride(TotalSpanOverride)
             }
         } else {
+            header {
+                id("header")
+                title(R.string.library_followed_shows)
+            }
             super.addModels(models)
         }
     }
@@ -68,6 +75,10 @@ class FollowedEpoxyController @Inject constructor(
             textCreator(textCreator)
             tmdbImageUrlProvider(tmdbImageUrlProvider)
         }
+    }
+
+    fun isHeader(model: EpoxyModel<*>): Boolean {
+        return model is HeaderBindingModel_
     }
 
     interface Callbacks {

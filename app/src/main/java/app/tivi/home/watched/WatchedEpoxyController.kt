@@ -19,9 +19,12 @@ package app.tivi.home.watched
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import app.tivi.HeaderBindingModel_
 import app.tivi.LibraryWatchedItemBindingModel_
+import app.tivi.R
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.emptyState
+import app.tivi.header
 import app.tivi.home.HomeTextCreator
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.EpoxyModelProperty
@@ -51,6 +54,10 @@ class WatchedEpoxyController @Inject constructor(
                 spanSizeOverride(TotalSpanOverride)
             }
         } else {
+            header {
+                id("header")
+                title(R.string.library_watched)
+            }
             super.addModels(models)
         }
     }
@@ -72,6 +79,10 @@ class WatchedEpoxyController @Inject constructor(
             textCreator(textCreator)
             tmdbImageUrlProvider(tmdbImageUrlProvider)
         }
+    }
+
+    fun isHeader(model: EpoxyModel<*>): Boolean {
+        return model is HeaderBindingModel_
     }
 
     interface Callbacks {

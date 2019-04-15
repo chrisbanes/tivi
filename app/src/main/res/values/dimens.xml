@@ -32,4 +32,7 @@
     <dimen name="details_poster_elevation">4dp</dimen>
 
     <dimen name="details_seasons_expanded_elevation">2dp</dimen>
+
+    <dimen name="backdrop_corner_radius">16dp</dimen>
+    <dimen name="sticky_header_elevation">6dp</dimen>
 </resources>
