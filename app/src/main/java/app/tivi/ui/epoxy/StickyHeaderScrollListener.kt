@@ -62,7 +62,15 @@ class StickyHeaderScrollListener(
             return
         }
 
-        currentHeaderItemPosition = getHeaderPositionForItem(topChildPosition)
+        val headerPositionForChild = getHeaderPositionForItem(topChildPosition)
+        currentHeaderItemPosition = when {
+            headerPositionForChild == 0 && topChildPosition == 0 && topChild.top >= 0 -> {
+                RecyclerView.NO_POSITION
+            }
+            else -> {
+                headerPositionForChild
+            }
+        }
 
         if (currentHeaderItemPosition != RecyclerView.NO_POSITION) {
             val childInContact = getChildInContact(parent, currentHeaderHeight, currentHeaderItemPosition)
