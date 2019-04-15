@@ -27,6 +27,7 @@ import app.tivi.databinding.FragmentLibraryFollowedBinding
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
+import app.tivi.ui.epoxy.StickyHeaderScrollListener
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
@@ -56,6 +57,7 @@ class FollowedFragment : TiviMvRxFragment() {
 
         binding.followedRv.apply {
             addItemDecoration(SpacingItemDecorator(paddingLeft))
+            addOnScrollListener(StickyHeaderScrollListener(controller, controller::isHeader, binding.headerHolder))
         }
 
         controller.callbacks = object : FollowedEpoxyController.Callbacks {

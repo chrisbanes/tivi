@@ -19,26 +19,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-        <variable
-            name="state"
-            type="app.tivi.home.followed.FollowedViewState" />
-    </data>
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/followed_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:isRefreshing="@{state.isLoading}">
 
-        <com.airbnb.epoxy.EpoxyRecyclerView
-            android:id="@+id/followed_rv"
+        <FrameLayout
+            android:id="@+id/followed_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:paddingBottomSystemWindowInsets="@{ true }"
-            tools:listitem="@layout/view_holder_library_watched_item" />
+            android:layout_height="match_parent">
+
+            <com.airbnb.epoxy.EpoxyRecyclerView
+                android:id="@+id/followed_rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:paddingBottomSystemWindowInsets="@{ true }"
+                tools:listitem="@layout/view_holder_library_watched_item" />
+
+            <FrameLayout
+                android:id="@+id/header_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorSurface"
+                android:elevation="@dimen/sticky_header_elevation" />
+
+        </FrameLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <data>
+        <variable
+            name="state"
+            type="app.tivi.home.followed.FollowedViewState" />
+    </data>
 
 </layout>

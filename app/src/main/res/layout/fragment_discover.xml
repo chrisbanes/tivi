@@ -54,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/colorSurface"
-                android:elevation="6dp"
+                android:elevation="@dimen/sticky_header_elevation"
                 android:paddingHorizontal="4dp" />
 
         </FrameLayout>
