@@ -16,6 +16,7 @@
 
 package app.tivi.home.trending
 
+import androidx.lifecycle.viewModelScope
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.interactors.launchInteractor
@@ -24,7 +25,6 @@ import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
 import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
-import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class TrendingShowsViewModel @Inject constructor(
@@ -40,11 +40,13 @@ class TrendingShowsViewModel @Inject constructor(
         tmdbManager,
         logger
 ) {
-    override suspend fun callLoadMore() = coroutineScope {
-        launchInteractor(interactor, UpdateTrendingShows.ExecuteParams(UpdateTrendingShows.Page.NEXT_PAGE)).join()
-    }
+    override suspend fun callLoadMore() = viewModelScope.launchInteractor(
+            interactor,
+            UpdateTrendingShows.ExecuteParams(UpdateTrendingShows.Page.NEXT_PAGE)
+    ).join()
 
-    override suspend fun callRefresh() = coroutineScope {
-        launchInteractor(interactor, UpdateTrendingShows.ExecuteParams(UpdateTrendingShows.Page.REFRESH)).join()
-    }
+    override suspend fun callRefresh() = viewModelScope.launchInteractor(
+            interactor,
+            UpdateTrendingShows.ExecuteParams(UpdateTrendingShows.Page.REFRESH)
+    ).join()
 }
