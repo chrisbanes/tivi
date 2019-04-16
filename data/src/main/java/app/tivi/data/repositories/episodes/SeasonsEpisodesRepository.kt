@@ -54,7 +54,10 @@ class SeasonsEpisodesRepository @Inject constructor(
         return localStore.lastShowSeasonsFetchBefore(showId, Period.ofDays(7))
     }
 
-    suspend fun removeShowSeasonData(showId: Long) = localStore.deleteShowSeasonData(showId)
+    suspend fun removeShowSeasonData(showId: Long) {
+        localStore.deleteShowSeasonData(showId)
+        localStore.updateShowEpisodeWatchesLastRequest(showId)
+    }
 
     suspend fun updateSeasonsEpisodes(showId: Long) {
         val result = traktSeasonsDataSource.getSeasonsEpisodes(showId)

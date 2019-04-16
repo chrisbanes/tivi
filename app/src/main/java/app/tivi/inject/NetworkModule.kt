@@ -29,7 +29,7 @@ class NetworkModule {
     fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
             if (BuildConfig.DEBUG) {
-                level = HttpLoggingInterceptor.Level.BASIC
+                level = HttpLoggingInterceptor.Level.HEADERS
             }
         }
     }

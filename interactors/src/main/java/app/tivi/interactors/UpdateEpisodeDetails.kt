@@ -36,7 +36,7 @@ class UpdateEpisodeDetails @Inject constructor(
                 .subscribeOn(schedulers.io)
     }
 
-    override suspend fun execute(params: Params, executeParams: ExecuteParams) {
+    override suspend fun doWork(params: Params, executeParams: ExecuteParams) {
         seasonsEpisodesRepository.updateEpisode(params.episodeId)
     }
 

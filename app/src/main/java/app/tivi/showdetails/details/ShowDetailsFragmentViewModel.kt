@@ -30,6 +30,7 @@ import app.tivi.interactors.ChangeShowFollowStatus.Action.TOGGLE
 import app.tivi.interactors.UpdateFollowedShowSeasonData
 import app.tivi.interactors.UpdateRelatedShows
 import app.tivi.interactors.UpdateShowDetails
+import app.tivi.interactors.execute
 import app.tivi.interactors.launchInteractor
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
@@ -41,6 +42,7 @@ import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 class ShowDetailsFragmentViewModel @AssistedInject constructor(
@@ -106,7 +108,10 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     fun onToggleMyShowsButtonClicked() {
-        viewModelScope.launchInteractor(changeShowFollowStatus, ChangeShowFollowStatus.ExecuteParams(TOGGLE))
+        viewModelScope.launch {
+            changeShowFollowStatus.execute(ChangeShowFollowStatus.ExecuteParams(TOGGLE))
+            updateShowSeasons.execute(UpdateFollowedShowSeasonData.ExecuteParams(false))
+        }
     }
 
     fun onRelatedShowClicked(

@@ -27,6 +27,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.asObservable
+import kotlinx.coroutines.withContext
 
 interface Interactor<in P> {
     val dispatcher: CoroutineDispatcher
@@ -68,11 +69,11 @@ abstract class SubjectInteractor<P : Any, EP, T> : Interactor<EP> {
 
     final override suspend fun invoke(executeParams: EP) {
         loading.onNext(true)
-        execute(params, executeParams)
+        doWork(params, executeParams)
         loading.onNext(false)
     }
 
-    protected abstract suspend fun execute(params: P, executeParams: EP)
+    protected abstract suspend fun doWork(params: P, executeParams: EP)
 
     protected abstract fun createObservable(params: P): Flowable<T>
 
@@ -91,6 +92,10 @@ abstract class SubjectInteractor<P : Any, EP, T> : Interactor<EP> {
 
 fun <P> CoroutineScope.launchInteractor(interactor: Interactor<P>, param: P): Job {
     return launch(context = interactor.dispatcher, block = { interactor(param) })
+}
+
+suspend fun <P> Interactor<P>.execute(param: P) = withContext(context = dispatcher) {
+    invoke(param)
 }
 
 fun CoroutineScope.launchInteractor(interactor: Interactor<Unit>) = launchInteractor(interactor, Unit)
