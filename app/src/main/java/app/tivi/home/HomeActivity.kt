@@ -22,6 +22,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
@@ -30,6 +31,7 @@ import androidx.navigation.navOptions
 import app.tivi.R
 import app.tivi.TiviActivityMvRxView
 import app.tivi.databinding.ActivityHomeBinding
+import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.home.main.HomeNavigationEpoxyController
 import app.tivi.home.main.HomeNavigationItem
@@ -85,22 +87,20 @@ class HomeActivity : TiviActivityMvRxView() {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
 
-        binding.root.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+        binding.homeRoot.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-        binding.root.setOnApplyWindowInsetsListener { _, insets ->
-            binding.homeRoot.updateConstraintSets {
+        binding.homeRoot.doOnApplyWindowInsets { v, insets, _ ->
+            (v as MotionLayout).updateConstraintSets {
                 it.constrainHeight(R.id.status_scrim, insets.systemWindowInsetTop)
             }
-            // Just return insets
-            insets
         }
-        // Finally, request some insets
-        binding.root.requestApplyInsets()
 
         binding.homeToolbar.setOnMenuItemClickListener(::onMenuItemClicked)
 
-        NavigationUI.setupWithNavController(binding.homeToolbar, navController,
-                AppBarConfiguration.Builder(setOf(R.id.followed, R.id.watched, R.id.discover))
+        NavigationUI.setupWithNavController(
+                binding.homeToolbar,
+                navController,
+                AppBarConfiguration.Builder(R.id.followed, R.id.watched, R.id.discover)
                         .setNavigationView(navigationView)
                         .build()
         )
@@ -160,6 +160,12 @@ class HomeActivity : TiviActivityMvRxView() {
         fun navigate(id: Int) {
             if (navController.currentDestination?.id != id) {
                 navController.navigate(id, null, navOptions {
+                    anim {
+                        enter = R.anim.nav_default_enter_anim
+                        exit = R.anim.nav_default_exit_anim
+                        popEnter = R.anim.nav_default_pop_enter_anim
+                        popExit = R.anim.nav_default_pop_exit_anim
+                    }
                     popUpTo = navController.graph.startDestination
                     launchSingleTop = true
                 })
