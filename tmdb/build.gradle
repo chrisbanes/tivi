@@ -27,5 +27,9 @@ dependencies {
 
     kapt Libs.Dagger.compiler
 
-    compile Libs.tmdbJava
+    compile (Libs.tmdbJava) {
+        exclude group: 'org.threeten', module: 'threetenbp'
+    }
+    compile Libs.OkHttp.okhttp
+    compile Libs.threeTenBpNoTzdb
 }

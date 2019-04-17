@@ -38,6 +38,7 @@ object Libs {
     val timber = "com.jakewharton.timber:timber:4.7.1"
 
     val tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.0.2"
+    val traktJava = "com.uwetrottmann.trakt5:trakt-java:6.1.0"
 
     val appauth = "net.openid:appauth:0.7.1"
 
@@ -162,7 +163,9 @@ object Libs {
     }
 
     object OkHttp {
-        val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:3.14.1"
+        private const val version = "3.14.1"
+        val okhttp = "com.squareup.okhttp3:okhttp:$version"
+        val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$version"
     }
 
     object Epoxy {
