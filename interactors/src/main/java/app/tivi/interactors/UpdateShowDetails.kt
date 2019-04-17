@@ -32,7 +32,7 @@ class UpdateShowDetails @Inject constructor(
 ) : SubjectInteractor<Params, UpdateShowDetails.ExecuteParams, TiviShow>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend fun execute(params: Params, executeParams: ExecuteParams) {
+    override suspend fun doWork(params: Params, executeParams: ExecuteParams) {
         showRepository.updateShow(params.showId)
     }
 

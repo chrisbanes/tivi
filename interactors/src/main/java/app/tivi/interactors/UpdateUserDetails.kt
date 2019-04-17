@@ -33,7 +33,7 @@ class UpdateUserDetails @Inject constructor(
 ) : SubjectInteractor<Params, ExecuteParams, TraktUser>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend fun execute(params: Params, executeParams: ExecuteParams) {
+    override suspend fun doWork(params: Params, executeParams: ExecuteParams) {
         if (executeParams.forceLoad || repository.needUpdate(params.username)) {
             repository.updateUser(params.username)
         }

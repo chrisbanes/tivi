@@ -16,14 +16,34 @@
 
 package app.tivi.extensions
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
+
+suspend fun <A, B> Collection<A>.parallelMap(
+    concurrency: Int = 10,
+    block: suspend (A) -> B
+): List<B> = coroutineScope {
+    val semaphore = Channel<Unit>(concurrency)
+    map { item ->
+        async {
+            semaphore.send(Unit) // Acquire concurrency permit
+            try {
+                block(item)
+            } finally {
+                semaphore.receive() // Release concurrency permit
+            }
+        }
+    }.awaitAll()
+}
 
 suspend fun <A> Collection<A>.parallelForEach(
     concurrency: Int = 10,
     block: suspend (A) -> Unit
-): Unit = coroutineScope {
+): Unit = supervisorScope {
     val semaphore = Channel<Unit>(concurrency)
     forEach { item ->
         launch {

@@ -34,7 +34,7 @@ class UpdateFollowedShowSeasonData @Inject constructor(
 ) : SubjectInteractor<Params, ExecuteParams, List<SeasonWithEpisodesAndWatches>>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend fun execute(params: Params, executeParams: ExecuteParams) {
+    override suspend fun doWork(params: Params, executeParams: ExecuteParams) {
         if (followedShowsRepository.isShowFollowed(params.showId)) {
             // Then update the seasons/episodes
             if (executeParams.forceLoad || seasonsEpisodesRepository.needShowSeasonsUpdate(params.showId)) {
@@ -44,6 +44,8 @@ class UpdateFollowedShowSeasonData @Inject constructor(
             if (executeParams.forceLoad || seasonsEpisodesRepository.needShowEpisodeWatchesSync(params.showId)) {
                 seasonsEpisodesRepository.syncEpisodeWatchesForShow(params.showId)
             }
+        } else {
+            seasonsEpisodesRepository.removeShowSeasonData(params.showId)
         }
     }
 

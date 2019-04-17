@@ -28,7 +28,7 @@ class ChangeShowFollowStatus @Inject constructor(
 ) : SubjectInteractor<ChangeShowFollowStatus.Params, ChangeShowFollowStatus.ExecuteParams, Boolean>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend fun execute(params: Params, executeParams: ExecuteParams) {
+    override suspend fun doWork(params: Params, executeParams: ExecuteParams) {
         when (executeParams.action) {
             Action.TOGGLE -> followedShowsRepository.toggleFollowedShow(params.showId)
             Action.FOLLOW -> followedShowsRepository.addFollowedShow(params.showId)

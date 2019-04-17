@@ -38,7 +38,7 @@ class UpdateEpisodeWatches @Inject constructor(
                 .subscribeOn(schedulers.io)
     }
 
-    override suspend fun execute(params: Params, executeParams: ExecuteParams) {
+    override suspend fun doWork(params: Params, executeParams: ExecuteParams) {
         // TODO add refresh?
         // Don't do anything here
     }

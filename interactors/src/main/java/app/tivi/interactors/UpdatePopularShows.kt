@@ -49,7 +49,7 @@ class UpdatePopularShows @Inject constructor(
                 .subscribeOn(schedulers.io)
     }
 
-    override suspend fun execute(params: Unit, executeParams: ExecuteParams) {
+    override suspend fun doWork(params: Unit, executeParams: ExecuteParams) {
         when (executeParams.page) {
             Page.NEXT_PAGE -> popularShowsRepository.loadNextPage()
             Page.REFRESH -> popularShowsRepository.refresh()
