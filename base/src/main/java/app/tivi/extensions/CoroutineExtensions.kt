@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 
 suspend fun <A, B> Collection<A>.parallelMap(
-    concurrency: Int = 10,
+    concurrency: Int = defaultConcurrency,
     block: suspend (A) -> B
 ): List<B> = coroutineScope {
     val semaphore = Channel<Unit>(concurrency)
@@ -41,7 +41,7 @@ suspend fun <A, B> Collection<A>.parallelMap(
 }
 
 suspend fun <A> Collection<A>.parallelForEach(
-    concurrency: Int = 10,
+    concurrency: Int = defaultConcurrency,
     block: suspend (A) -> Unit
 ): Unit = supervisorScope {
     val semaphore = Channel<Unit>(concurrency)
@@ -55,4 +55,8 @@ suspend fun <A> Collection<A>.parallelForEach(
             }
         }
     }
+}
+
+private val defaultConcurrency by lazy(LazyThreadSafetyMode.NONE) {
+    Runtime.getRuntime().availableProcessors().coerceAtLeast(3)
 }
