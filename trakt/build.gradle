@@ -20,7 +20,11 @@ import app.tivi.buildsrc.Libs
 apply plugin: 'kotlin'
 
 dependencies {
-    compile fileTree(dir: 'libs', include: '*.jar')
+    compile (Libs.traktJava) {
+        exclude group: 'org.threeten', module: 'threetenbp'
+    }
+    compile Libs.threeTenBpNoTzdb
+    compile Libs.OkHttp.okhttp
 
     implementation Libs.Retrofit.retrofit
     implementation Libs.Retrofit.gsonConverter
