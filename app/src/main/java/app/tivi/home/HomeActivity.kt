@@ -22,15 +22,18 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.net.toUri
+import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import app.tivi.R
 import app.tivi.TiviActivityMvRxView
 import app.tivi.databinding.ActivityHomeBinding
-import app.tivi.extensions.updateConstraintSets
+import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.home.main.HomeNavigationEpoxyController
 import app.tivi.home.main.HomeNavigationItem
 import app.tivi.home.main.homeNavigationItemForDestinationId
@@ -48,6 +51,7 @@ import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 class HomeActivity : TiviActivityMvRxView() {
 
@@ -56,14 +60,25 @@ class HomeActivity : TiviActivityMvRxView() {
     private val viewModel: HomeActivityViewModel by viewModel()
 
     private val navigationView = object : NavigationView {
-        override fun open() = binding.homeRoot.transitionToState(R.id.nav_open)
-        override fun close() = binding.homeRoot.transitionToState(R.id.nav_closed)
+        override fun open() {
+            binding.homeContentBackground.animate()
+                    .translationY(binding.homeNavRv.height.toFloat())
+                    .setInterpolator(LinearOutSlowInInterpolator())
+                    .start()
+        }
+
+        override fun close() {
+            binding.homeContentBackground.animate()
+                    .translationY(0f)
+                    .setInterpolator(LinearOutSlowInInterpolator())
+                    .start()
+        }
+
         override fun toggle() {
-            binding.homeRoot.run {
-                when (currentState) {
-                    R.id.nav_closed -> open()
-                    else -> close()
-                }
+            if (binding.homeContentBackground.translationY.roundToInt() != 0) {
+                close()
+            } else {
+                open()
             }
         }
     }
@@ -85,22 +100,22 @@ class HomeActivity : TiviActivityMvRxView() {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
 
-        binding.root.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+        binding.homeRoot.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-        binding.root.setOnApplyWindowInsetsListener { _, insets ->
-            binding.homeRoot.updateConstraintSets {
-                it.constrainHeight(R.id.status_scrim, insets.systemWindowInsetTop)
+        binding.homeRoot.doOnApplyWindowInsets { _, insets, _ ->
+            binding.statusScrim.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                height = insets.systemWindowInsetTop
+                validate()
             }
-            // Just return insets
-            insets
+            binding.statusScrim.requestLayout()
         }
-        // Finally, request some insets
-        binding.root.requestApplyInsets()
 
         binding.homeToolbar.setOnMenuItemClickListener(::onMenuItemClicked)
 
-        NavigationUI.setupWithNavController(binding.homeToolbar, navController,
-                AppBarConfiguration.Builder(setOf(R.id.followed, R.id.watched, R.id.discover))
+        NavigationUI.setupWithNavController(
+                binding.homeToolbar,
+                navController,
+                AppBarConfiguration.Builder(R.id.followed, R.id.watched, R.id.discover)
                         .setNavigationView(navigationView)
                         .build()
         )
@@ -160,6 +175,12 @@ class HomeActivity : TiviActivityMvRxView() {
         fun navigate(id: Int) {
             if (navController.currentDestination?.id != id) {
                 navController.navigate(id, null, navOptions {
+                    anim {
+                        enter = R.anim.nav_default_enter_anim
+                        exit = R.anim.nav_default_exit_anim
+                        popEnter = R.anim.nav_default_pop_enter_anim
+                        popExit = R.anim.nav_default_pop_exit_anim
+                    }
                     popUpTo = navController.graph.startDestination
                     launchSingleTop = true
                 })
