@@ -37,7 +37,7 @@ suspend inline fun <T> Call<T>.executeWithRetry(
     shouldRetry: (Exception) -> Boolean = ::defaultShouldRetry
 ): Response<T> {
     var nextDelay = firstDelay
-    repeat(maxAttempts - 1) { attempt ->
+    repeat(maxAttempts) { attempt ->
         try {
             // Clone a new ready call if needed
             val call = if (isExecuted) clone() else this
