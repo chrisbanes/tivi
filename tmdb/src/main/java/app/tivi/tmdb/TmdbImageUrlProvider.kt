@@ -18,10 +18,10 @@ package app.tivi.tmdb
 
 private val IMAGE_SIZE_PATTERN = "w(\\d+)$".toRegex()
 
-class TmdbImageUrlProvider(
+data class TmdbImageUrlProvider(
     private val baseImageUrl: String = TmdbImageSizes.baseImageUrl,
-    private val posterSizes: Array<String> = TmdbImageSizes.posterSizes,
-    private val backdropSizes: Array<String> = TmdbImageSizes.backdropSizes
+    private val posterSizes: List<String> = TmdbImageSizes.posterSizes,
+    private val backdropSizes: List<String> = TmdbImageSizes.backdropSizes
 ) {
     fun getPosterUrl(path: String, imageWidth: Int): String {
         return "$baseImageUrl${selectSize(posterSizes, imageWidth)}$path"
@@ -31,7 +31,7 @@ class TmdbImageUrlProvider(
         return "$baseImageUrl${selectSize(backdropSizes, imageWidth)}$path"
     }
 
-    private fun selectSize(sizes: Array<String>, imageWidth: Int): String {
+    private fun selectSize(sizes: List<String>, imageWidth: Int): String {
         var previousSize: String? = null
         var previousWidth = 0
 

@@ -27,6 +27,7 @@ import android.widget.TextView
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
+import app.tivi.R
 import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.resolveThemeReferenceResId
 import app.tivi.tmdb.TmdbImageUrlProvider
@@ -35,45 +36,83 @@ import app.tivi.ui.glide.GlideApp
 import app.tivi.util.ScrimUtil
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
+import java.util.Objects
 import kotlin.math.roundToInt
 
-@BindingAdapter("tmdbPosterPath", "tmdbImageUrlProvider", "imageSaturateOnLoad")
-fun loadPoster(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider?, saturateOnLoad: Boolean?) {
+@BindingAdapter(
+        "tmdbPosterPath",
+        "tmdbImageUrlProvider",
+        "imageSaturateOnLoad",
+        requireAll = false
+)
+fun loadPoster(
+    view: ImageView,
+    path: String?,
+    urlProvider: TmdbImageUrlProvider?,
+    saturateOnLoad: Boolean?
+) {
+    loadImage(view, path, urlProvider, saturateOnLoad, "poster", TmdbImageUrlProvider::getPosterUrl)
+}
+
+@BindingAdapter(
+        "tmdbBackdropPath",
+        "tmdbImageUrlProvider",
+        "imageSaturateOnLoad",
+        requireAll = false
+)
+fun loadBackdrop(
+    view: ImageView,
+    path: String?,
+    urlProvider: TmdbImageUrlProvider?,
+    saturateOnLoad: Boolean?
+) = loadImage(view, path, urlProvider, saturateOnLoad, "backdrop", TmdbImageUrlProvider::getBackdropUrl)
+
+private inline fun loadImage(
+    view: ImageView,
+    path: String?,
+    urlProvider: TmdbImageUrlProvider?,
+    saturateOnLoad: Boolean?,
+    type: String,
+    crossinline urlEr: (TmdbImageUrlProvider, String, Int) -> String
+) {
     if (path != null && urlProvider != null) {
+        val requestKey = Objects.hash(path, urlProvider, type)
+        view.setTag(R.id.loading, requestKey)
+
         view.doOnLayout {
-            GlideApp.with(view)
-                    .let { r -> if (saturateOnLoad == true) r.saturateOnLoad() else r.asDrawable() }
-                    .load(urlProvider.getPosterUrl(path, it.width))
-                    .thumbnail(GlideApp.with(view).load(urlProvider.getPosterUrl(path, 0)))
+            if (it.getTag(R.id.loading) != requestKey) {
+                // The request key is different, exit now since there's we've probably be rebound to a different
+                // item
+                return@doOnLayout
+            }
+
+            GlideApp.with(it)
+                    .let { r ->
+                        if (saturateOnLoad == null || saturateOnLoad) {
+                            // If we don't have a value, or we're explicitly set the yes, saturate on load
+                            r.saturateOnLoad()
+                        } else {
+                            r.asDrawable()
+                        }
+                    }
+                    .load(urlEr(urlProvider, path, view.width))
+                    .thumbnail(
+                            GlideApp.with(view)
+                                    .let { tr ->
+                                        if (saturateOnLoad == null || saturateOnLoad) {
+                                            // If we don't have a value, or we're explicitly set the yes, saturate on load
+                                            tr.saturateOnLoad()
+                                        } else {
+                                            tr.asDrawable()
+                                        }
+                                    }
+                                    .load(urlEr(urlProvider, path, 0))
+                    )
                     .into(view)
         }
     } else {
         GlideApp.with(view).clear(view)
-    }
-}
-
-@BindingAdapter("tmdbPosterPath", "tmdbImageUrlProvider")
-fun loadPoster(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider?) {
-    loadPoster(view, path, urlProvider, true)
-}
-
-@BindingAdapter("tmdbBackdropPath", "tmdbImageUrlProvider")
-fun loadBackdrop(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider?) {
-    loadBackdrop(view, path, urlProvider, true)
-}
-
-@BindingAdapter("tmdbBackdropPath", "tmdbImageUrlProvider", "imageSaturateOnLoad")
-fun loadBackdrop(view: ImageView, path: String?, urlProvider: TmdbImageUrlProvider?, saturateOnLoad: Boolean?) {
-    if (path != null && urlProvider != null) {
-        view.doOnLayout {
-            GlideApp.with(view)
-                    .let { r -> if (saturateOnLoad == true) r.saturateOnLoad() else r.asDrawable() }
-                    .load(urlProvider.getBackdropUrl(path, it.width))
-                    .thumbnail(GlideApp.with(view).load(urlProvider.getBackdropUrl(path, 0)))
-                    .into(view)
-        }
-    } else {
-        GlideApp.with(view).clear(view)
+        view.setImageDrawable(null)
     }
 }
 
@@ -154,13 +193,12 @@ fun applySystemWindows(
     systemWindowRight: Boolean,
     systemWindowBottom: Boolean
 ) {
-    view.doOnApplyWindowInsets { view, insets, paddingState ->
+    view.doOnApplyWindowInsets { v, insets, paddingState ->
         val left = if (systemWindowLeft) insets.systemWindowInsetLeft else 0
         val top = if (systemWindowTop) insets.systemWindowInsetTop else 0
         val right = if (systemWindowRight) insets.systemWindowInsetRight else 0
         val bottom = if (systemWindowBottom) insets.systemWindowInsetBottom else 0
-
-        view.setPadding(
+        v.setPadding(
                 paddingState.left + left,
                 paddingState.top + top,
                 paddingState.right + right,
