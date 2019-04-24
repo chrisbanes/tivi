@@ -27,7 +27,7 @@ import app.tivi.util.EntryGridFragment
 
 class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingShowsViewModel>(TrendingShowsViewModel::class.java) {
     override fun createController(): EntryGridEpoxyController<TrendingEntryWithShow> {
-        return object : EntryGridEpoxyController<TrendingEntryWithShow>() {
+        return object : EntryGridEpoxyController<TrendingEntryWithShow>(R.string.discover_trending) {
             override fun buildItemModel(item: TrendingEntryWithShow): PosterGridItemBindingModel_ {
                 return super.buildItemModel(item)
                         .annotationLabel(item.entry?.watchers.toString())

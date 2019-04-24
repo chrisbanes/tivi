@@ -19,10 +19,13 @@ package app.tivi.util
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import androidx.annotation.StringRes
+import app.tivi.HeaderBindingModel_
 import app.tivi.PosterGridItemBindingModel_
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.emptyState
+import app.tivi.header
 import app.tivi.infiniteLoading
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.TotalSpanOverride
@@ -30,7 +33,9 @@ import com.airbnb.epoxy.EpoxyAsyncUtil
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
 
-open class EntryGridEpoxyController<LI : EntryWithShow<out Entry>> : PagedListEpoxyController<LI>(
+open class EntryGridEpoxyController<LI : EntryWithShow<out Entry>>(
+    @StringRes private val titleRes: Int
+) : PagedListEpoxyController<LI>(
         modelBuildingHandler = Handler(Looper.getMainLooper()),
         diffingHandler = EpoxyAsyncUtil.getAsyncBackgroundHandler()
 ) {
@@ -62,6 +67,13 @@ open class EntryGridEpoxyController<LI : EntryWithShow<out Entry>> : PagedListEp
         val modelsFiltered = models.filterNotNull()
 
         if (modelsFiltered.isNotEmpty()) {
+
+            header {
+                id("header")
+                title(titleRes)
+                spanSizeOverride(TotalSpanOverride)
+            }
+
             super.addModels(modelsFiltered)
         } else {
             emptyState {
@@ -93,5 +105,9 @@ open class EntryGridEpoxyController<LI : EntryWithShow<out Entry>> : PagedListEp
     protected open fun buildItemPlaceholder(index: Int): PosterGridItemBindingModel_ {
         return PosterGridItemBindingModel_()
                 .id("placeholder_$index")
+    }
+
+    open fun isHeader(model: EpoxyModel<*>): Boolean {
+        return model is HeaderBindingModel_
     }
 }
