@@ -25,19 +25,32 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.airbnb.epoxy.EpoxyRecyclerView
-            android:id="@+id/grid_recyclerview"
-            tools:listitem="@layout/view_holder_poster_grid_item"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingBottom="10dp"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp"
-            android:paddingTop="2dp"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:paddingBottomSystemWindowInsets="@{ true }"
-            app:spanCount="@integer/grid_span_count" />
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:id="@+id/header_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorSurface"
+                android:elevation="@dimen/sticky_header_elevation" />
+
+            <com.airbnb.epoxy.EpoxyRecyclerView
+                android:id="@+id/grid_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingBottom="10dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:paddingTop="2dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:paddingBottomSystemWindowInsets="@{ true }"
+                app:spanCount="@integer/grid_span_count"
+                tools:listitem="@layout/view_holder_poster_grid_item" />
+
+        </FrameLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

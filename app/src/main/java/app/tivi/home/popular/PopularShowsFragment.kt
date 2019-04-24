@@ -17,9 +17,11 @@
 package app.tivi.home.popular
 
 import androidx.navigation.fragment.findNavController
+import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.extensions.toActivityNavigatorExtras
+import app.tivi.util.EntryGridEpoxyController
 import app.tivi.util.EntryGridFragment
 
 class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShowsViewModel>(PopularShowsViewModel::class.java) {
@@ -31,5 +33,9 @@ class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShow
 
         val direction = PopularShowsFragmentDirections.actionPopularToActivityShowDetails(item.show.id)
         findNavController().navigate(direction, sharedElements.toActivityNavigatorExtras(requireActivity()))
+    }
+
+    override fun createController(): EntryGridEpoxyController<PopularEntryWithShow> {
+        return EntryGridEpoxyController(R.string.discover_popular)
     }
 }

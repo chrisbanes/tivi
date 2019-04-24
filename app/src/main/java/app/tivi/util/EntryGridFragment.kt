@@ -32,6 +32,7 @@ import app.tivi.databinding.FragmentEntryGridBinding
 import app.tivi.extensions.observeNotNull
 import app.tivi.ui.ProgressTimeLatch
 import app.tivi.ui.SpacingItemDecorator
+import app.tivi.ui.epoxy.StickyHeaderScrollListener
 import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
 
@@ -84,6 +85,7 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
 
             setController(controller)
             addItemDecoration(SpacingItemDecorator(paddingLeft))
+            addOnScrollListener(StickyHeaderScrollListener(controller, controller::isHeader, binding.headerHolder))
         }
 
         binding.gridSwipeRefresh.setOnRefreshListener(viewModel::refresh)
@@ -115,7 +117,5 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
 
     abstract fun onItemClicked(item: LI)
 
-    open fun createController(): EntryGridEpoxyController<LI> {
-        return EntryGridEpoxyController()
-    }
+    abstract fun createController(): EntryGridEpoxyController<LI>
 }
