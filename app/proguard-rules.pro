@@ -100,11 +100,11 @@
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
 # Keep Trakt-java Entity names (for GSON)
--keepclassmembernames class com.uwetrottmann.trakt5.entities.** { <fields>; }
+-keepclassmembers class com.uwetrottmann.trakt5.entities.** { <fields>; }
 -keepclassmembers class com.uwetrottmann.trakt5.entities.** { <init>(...); }
 
 # Keep TMDb Entity names (for GSON)
--keepclassmembernames class com.uwetrottmann.tmdb2.entities.** { <fields>; }
+-keepclassmembers class com.uwetrottmann.tmdb2.entities.** { <fields>; }
 -keepclassmembers class com.uwetrottmann.tmdb2.entities.** { <init>(...); }
 
 # Glide
