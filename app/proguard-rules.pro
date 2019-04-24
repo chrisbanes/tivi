@@ -4,10 +4,6 @@
 -dontskipnonpubliclibraryclasses
 -verbose
 -dontpreverify
-
-# Optimize all the things (other than those listed)
--optimizations !field/*
-
 -allowaccessmodification
 -repackageclasses ''
 
@@ -84,13 +80,17 @@
 -dontwarn com.google.errorprone.annotations.*
 
 # Retrofit
--dontnote retrofit2.Platform
--dontwarn retrofit2.Platform$Java8
--keepattributes Signature, InnerClasses, Exceptions
-# Retain service method parameters when optimizing.
+-keepattributes Signature, InnerClasses, EnclosingMethod
+-keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
 -keepclassmembers,allowshrinking,allowobfuscation interface * {
     @retrofit2.http.* <methods>;
 }
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-dontwarn javax.annotation.**
+-dontwarn kotlin.Unit
+-dontwarn retrofit2.KotlinExtensions
+-if interface * { @retrofit2.http.* <methods>; }
+-keep,allowobfuscation interface <1>
 
 # Okhttp + Okio
 -dontwarn okhttp3.**
