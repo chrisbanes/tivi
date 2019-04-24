@@ -46,11 +46,9 @@ class LocalFollowedShowsStore @Inject constructor(
 
     private val syncer = syncerForEntity(
             followedShowsDao,
-            {
-                logger.d("getTraktIdForShowId. Show: %s", it)
-                showDao.getTraktIdForShowId(it.showId)!!
-            },
-            { entity, id -> entity.copy(id = id ?: 0) }
+            { showDao.getTraktIdForShowId(it.showId)!! },
+            { entity, id -> entity.copy(id = id ?: 0) },
+            logger
     )
 
     suspend fun getEntryForShowId(showId: Long): FollowedShowEntry? = followedShowsDao.entryWithShowId(showId)
@@ -88,7 +86,5 @@ class LocalFollowedShowsStore @Inject constructor(
         return lastRequestDao.isRequestBefore(Request.FOLLOWED_SHOWS, 0, threshold)
     }
 
-    suspend fun save(entry: FollowedShowEntry) {
-        entityInserter.insertOrUpdate(followedShowsDao, entry)
-    }
+    suspend fun save(entry: FollowedShowEntry) = entityInserter.insertOrUpdate(followedShowsDao, entry)
 }
