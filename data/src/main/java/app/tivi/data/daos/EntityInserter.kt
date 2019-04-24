@@ -34,7 +34,7 @@ class EntityInserter @Inject constructor(
     }
 
     suspend fun <E : TiviEntity> insertOrUpdate(dao: EntityDao<E>, entity: E): Long {
-        logger.d("insertOrUpdate. entity: %s", entity)
+        logger.d("insertOrUpdate: %s", entity)
         return when {
             entity.id == 0L -> dao.insert(entity)
             else -> {

@@ -29,6 +29,7 @@ import app.tivi.data.entities.Request
 import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.syncers.syncerForEntity
+import app.tivi.util.Logger
 import io.reactivex.Flowable
 import org.threeten.bp.temporal.TemporalAmount
 import javax.inject.Inject
@@ -39,24 +40,28 @@ class LocalSeasonsEpisodesStore @Inject constructor(
     private val seasonsDao: SeasonsDao,
     private val episodesDao: EpisodesDao,
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,
-    private val lastRequestDao: LastRequestDao
+    private val lastRequestDao: LastRequestDao,
+    private val logger: Logger
 ) {
     private val seasonSyncer = syncerForEntity(
             seasonsDao,
             { it.traktId },
-            { entity, id -> entity.copy(id = id ?: 0) }
+            { entity, id -> entity.copy(id = id ?: 0) },
+            logger
     )
 
     private val episodeSyncer = syncerForEntity(
             episodesDao,
             { it.traktId },
-            { entity, id -> entity.copy(id = id ?: 0) }
+            { entity, id -> entity.copy(id = id ?: 0) },
+            logger
     )
 
     private val episodeWatchSyncer = syncerForEntity(
             episodeWatchEntryDao,
             { it.traktId },
-            { entity, id -> entity.copy(id = id ?: 0) }
+            { entity, id -> entity.copy(id = id ?: 0) },
+            logger
     )
 
     fun observeEpisode(episodeId: Long): Flowable<Episode> {

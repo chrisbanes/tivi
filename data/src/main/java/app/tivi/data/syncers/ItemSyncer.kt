@@ -32,7 +32,7 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
     private val localEntityToIdFunc: suspend (ET) -> NID,
     private val networkEntityToIdFunc: suspend (NT) -> NID,
     private val networkEntityToLocalEntityMapperFunc: suspend (NT, Long?) -> ET,
-    private val logger: Logger? = null
+    private val logger: Logger
 ) {
     suspend fun sync(currentValues: Collection<ET>, networkValues: Collection<NT>): ItemSyncerResult<ET> {
         val currentDbEntities = ArrayList(currentValues)
@@ -42,16 +42,21 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
         val updated = ArrayList<ET>()
 
         networkValues.forEach { networkEntity ->
+            logger.d("Syncing item from network: %s", networkEntity)
+
             val remoteId = networkEntityToIdFunc(networkEntity)
+            logger.d("Mapped to remote ID: %s", remoteId)
+
             val dbEntityForId = currentDbEntities.find { localEntityToIdFunc(it) == remoteId }
+            logger.d("Matched database entity for remote ID %s : %s", remoteId, dbEntityForId)
 
             if (dbEntityForId != null) {
-                var entity = networkEntityToLocalEntityMapperFunc(networkEntity, dbEntityForId.id)
+                val entity = networkEntityToLocalEntityMapperFunc(networkEntity, dbEntityForId.id)
+                logger.d("Mapped network entity to local entity: %s", entity)
                 if (dbEntityForId != entity) {
                     // This is currently in the DB, so lets merge it with the saved version and update it
-                    entity = networkEntityToLocalEntityMapperFunc(networkEntity, dbEntityForId.id)
                     entryUpdateFunc(entity)
-                    logger?.d("Updated entry with remote id: $remoteId")
+                    logger.d("Updated entry with remote id: %s", remoteId)
                 }
                 // Remove it from the list so that it is not deleted
                 currentDbEntities.remove(dbEntityForId)
@@ -60,15 +65,15 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
                 // Not currently in the DB, so lets insert
                 val entity = networkEntityToLocalEntityMapperFunc(networkEntity, null)
                 entryInsertFunc(entity)
-                logger?.d("Insert entry with remote id: $remoteId")
+                logger.d("Inserted entry with remote id: %s", remoteId)
                 added += entity
             }
         }
 
         // Anything left in the set needs to be deleted from the database
         currentDbEntities.forEach {
-            logger?.d("Remove entry with remote id: $it")
             entryDeleteFunc(it)
+            logger.d("Deleted entry: ", it)
             removed += it
         }
 
@@ -87,7 +92,7 @@ fun <ET : TiviEntity, NT, NID> syncerForEntity(
     localEntityToIdFunc: suspend (ET) -> NID,
     networkEntityToIdFunc: suspend (NT) -> NID,
     networkEntityToLocalEntityMapperFunc: suspend (NT, Long?) -> ET,
-    logger: Logger? = null
+    logger: Logger
 ) = ItemSyncer(
         entityDao::insert,
         entityDao::update,
@@ -102,7 +107,7 @@ fun <ET : TiviEntity, NID> syncerForEntity(
     entityDao: EntityDao<ET>,
     localEntityToIdFunc: suspend (ET) -> NID,
     mapper: suspend (ET, Long?) -> ET,
-    logger: Logger? = null
+    logger: Logger
 ) = ItemSyncer(
         entityDao::insert,
         entityDao::update,

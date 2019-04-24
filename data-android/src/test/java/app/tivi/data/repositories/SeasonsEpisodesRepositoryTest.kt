@@ -82,7 +82,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         val entityInserter = EntityInserter(txRunner, logger)
 
         localStore = LocalSeasonsEpisodesStore(entityInserter, txRunner,
-                seasonsDao, episodesDao, episodeWatchDao, db.lastRequestDao())
+                seasonsDao, episodesDao, episodeWatchDao, db.lastRequestDao(), logger)
 
         repository = SeasonsEpisodesRepository(
                 testCoroutineDispatchers,

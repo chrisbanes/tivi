@@ -24,6 +24,7 @@ import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
+import app.tivi.util.Logger
 import org.threeten.bp.Duration
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
@@ -36,7 +37,8 @@ class FollowedShowsRepository @Inject constructor(
     private val localShowStore: LocalShowStore,
     @Trakt private val dataSource: FollowedShowsDataSource,
     private val showRepository: ShowRepository,
-    private val traktAuthState: Provider<TraktAuthState>
+    private val traktAuthState: Provider<TraktAuthState>,
+    private val logger: Logger
 ) {
     fun observeFollowedShows() = localStore.observeForPaging()
 
@@ -63,6 +65,9 @@ class FollowedShowsRepository @Inject constructor(
 
     suspend fun addFollowedShow(showId: Long) {
         val entry = localStore.getEntryForShowId(showId)
+
+        logger.d("addFollowedShow. Current entry: %s", entry)
+
         if (entry == null || entry.pendingAction == PendingAction.DELETE) {
             // If we don't have an entry, or it is marked for deletion, lets update it to be uploaded
             val newEntry = FollowedShowEntry(
@@ -71,7 +76,10 @@ class FollowedShowsRepository @Inject constructor(
                     followedAt = entry?.followedAt ?: OffsetDateTime.now(),
                     pendingAction = PendingAction.UPLOAD
             )
-            localStore.save(newEntry)
+            val newEntryId = localStore.save(newEntry)
+
+            logger.d("addFollowedShow. Entry saved with ID: %s - %s", newEntryId, newEntry)
+
             // Now sync it up
             syncFollowedShows()
         }
@@ -103,6 +111,8 @@ class FollowedShowsRepository @Inject constructor(
 
     private suspend fun pullDownTraktFollowedList(listId: Int) {
         val response = dataSource.getListShows(listId)
+        logger.d("pullDownTraktFollowedList. Response: %s", response)
+
         when (response) {
             is Success ->
                 response.data.map { (entry, show) ->
@@ -111,7 +121,7 @@ class FollowedShowsRepository @Inject constructor(
                     // Create a followed show entry with the show id
                     entry.copy(showId = showId)
                 }.also { entries ->
-                    // Save the related entries
+                    // Save the show entries
                     localStore.sync(entries)
                     // Now update all of the followed shows if needed
                     entries.parallelForEach { entry ->
@@ -125,13 +135,19 @@ class FollowedShowsRepository @Inject constructor(
 
     private suspend fun processPendingAdditions(listId: Int?) {
         val pending = localStore.getEntriesWithAddAction()
+        logger.d("processPendingAdditions. listId: %s, Entries: %s", listId, pending)
+
         if (pending.isEmpty()) {
             return
         }
 
         if (listId != null && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
             val shows = pending.mapNotNull { localShowStore.getShow(it.showId) }
+            logger.d("processPendingAdditions. Entries mapped: %s", shows)
+
             val response = dataSource.addShowIdsToList(listId, shows)
+            logger.d("processPendingAdditions. Trakt response: %s", response)
+
             if (response is Success) {
                 // Now update the database
                 localStore.updateEntriesWithAction(pending.map { it.id }, PendingAction.NOTHING)
@@ -144,13 +160,19 @@ class FollowedShowsRepository @Inject constructor(
 
     private suspend fun processPendingDelete(listId: Int?) {
         val pending = localStore.getEntriesWithDeleteAction()
+        logger.d("processPendingDelete. listId: %s, Entries: %s", listId, pending)
+
         if (pending.isEmpty()) {
             return
         }
 
         if (listId != null && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
             val shows = pending.mapNotNull { localShowStore.getShow(it.showId) }
+            logger.d("processPendingDelete. Entries mapped: %s", shows)
+
             val response = dataSource.removeShowIdsFromList(listId, shows)
+            logger.d("processPendingDelete. Trakt response: %s", response)
+
             if (response is Success) {
                 // Now update the database
                 localStore.deleteEntriesInIds(pending.map { it.id })
