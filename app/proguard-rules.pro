@@ -107,10 +107,6 @@
 -keepclassmembernames class com.uwetrottmann.tmdb2.entities.** { <fields>; }
 -keepclassmembers class com.uwetrottmann.tmdb2.entities.** { <init>(...); }
 
-# !! Remove this once https://issuetracker.google.com/issues/112386012 is fixed !!
--keep class com.uwetrottmann.trakt5.entities.**
--keep class com.uwetrottmann.tmdb2.entities.**
-
 # Glide
 -keep public class * implements com.bumptech.glide.module.GlideModule
 -keep public class * extends com.bumptech.glide.module.AppGlideModule
