@@ -29,6 +29,8 @@
     <color name="tv_test_red">#e10000</color>
     <color name="tv_test_blue">#2400cd</color>
 
+    <color name="launcher_icon_background">#333333</color>
+
     <color name="window_background">#FAFAFA</color>
     <color name="app_bar_background">#F5F5F5</color>
 
