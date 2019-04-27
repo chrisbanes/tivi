@@ -16,8 +16,6 @@
 
 package app.tivi.data
 
-import kotlinx.coroutines.CoroutineScope
-
 interface DatabaseTransactionRunner {
-    suspend operator fun <T> invoke(block: suspend CoroutineScope.() -> T): T
+    suspend operator fun <T> invoke(block: suspend () -> T): T
 }

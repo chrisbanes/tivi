@@ -17,10 +17,9 @@
 package app.tivi.data
 
 import androidx.room.withTransaction
-import kotlinx.coroutines.CoroutineScope
 
 class RoomTransactionRunner(private val db: TiviDatabase) : DatabaseTransactionRunner {
-    override suspend operator fun <T> invoke(block: suspend CoroutineScope.() -> T): T {
+    override suspend operator fun <T> invoke(block: suspend () -> T): T {
         return db.withTransaction {
             block()
         }
