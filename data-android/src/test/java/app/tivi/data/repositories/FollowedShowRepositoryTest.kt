@@ -16,7 +16,6 @@
 
 package app.tivi.data.repositories
 
-import app.tivi.data.RoomTransactionRunner
 import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.Success
@@ -28,6 +27,7 @@ import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import app.tivi.utils.BaseDatabaseTest
+import app.tivi.utils.TestTransactionRunner
 import app.tivi.utils.followedShow1
 import app.tivi.utils.followedShow1PendingDelete
 import app.tivi.utils.followedShow1PendingUpload
@@ -70,7 +70,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
             `when`(showRepository.needsUpdate(any(Long::class.java))).thenReturn(true)
 
             val logger = mock(Logger::class.java)
-            val txRunner = RoomTransactionRunner(db)
+            val txRunner = TestTransactionRunner
             val entityInserter = EntityInserter(txRunner, logger)
             traktDataSource = mock(FollowedShowsDataSource::class.java)
 
