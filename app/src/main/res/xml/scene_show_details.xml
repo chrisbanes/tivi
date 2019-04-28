@@ -28,7 +28,8 @@
             app:dragDirection="dragUp"
             app:moveWhenScrollAtTop="true"
             app:touchAnchorId="@id/details_rv"
-            app:touchAnchorSide="top" />
+            app:touchAnchorSide="top"
+            app:touchRegionId="@id/details_rv" />
 
         <KeyFrameSet>
             <KeyPosition
