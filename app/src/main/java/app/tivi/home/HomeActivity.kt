@@ -91,7 +91,7 @@ class HomeActivity : TiviActivityMvRxView() {
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         binding.homeRoot.doOnApplyWindowInsets { v, insets, _ ->
             (v as MotionLayout).updateConstraintSets {
-                it.constrainHeight(R.id.status_scrim, insets.systemWindowInsetTop)
+                constrainHeight(R.id.status_scrim, insets.systemWindowInsetTop)
             }
         }
 

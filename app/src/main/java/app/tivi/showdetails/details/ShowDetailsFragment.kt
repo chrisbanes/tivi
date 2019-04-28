@@ -33,7 +33,7 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.databinding.FragmentShowDetailsBinding
-import app.tivi.extensions.requestApplyInsetsWhenAttached
+import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.util.TiviMvRxFragment
@@ -76,15 +76,11 @@ class ShowDetailsFragment : TiviMvRxFragment() {
 
         binding.textCreator = textCreator
 
-        binding.detailsMotion.setOnApplyWindowInsetsListener { _, insets ->
-            binding.detailsMotion.updateConstraintSets {
+        binding.detailsMotion.doOnApplyWindowInsets { v, insets, _ ->
+            (v as MotionLayout).updateConstraintSets {
                 constrainHeight(R.id.details_status_bar_anchor, insets.systemWindowInsetTop)
             }
-            // Just return insets
-            insets
         }
-        // Finally, request some insets
-        view.requestApplyInsetsWhenAttached()
 
         // Make the MotionLayout draw behind the status bar
         binding.detailsMotion.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
