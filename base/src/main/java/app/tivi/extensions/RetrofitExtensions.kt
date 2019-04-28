@@ -32,12 +32,13 @@ fun <T> Response<T>.bodyOrThrow(): T {
 fun <T> Response<T>.toException() = HttpException(this)
 
 suspend inline fun <T> Call<T>.executeWithRetry(
-    firstDelay: Long = 100,
+    defaultDelay: Long = 100,
     maxAttempts: Int = 3,
     shouldRetry: (Exception) -> Boolean = ::defaultShouldRetry
 ): Response<T> {
-    var nextDelay = firstDelay
     repeat(maxAttempts) { attempt ->
+        var nextDelay = attempt * attempt * defaultDelay
+
         try {
             // Clone a new ready call if needed
             val call = if (isExecuted) clone() else this
@@ -47,11 +48,23 @@ suspend inline fun <T> Call<T>.executeWithRetry(
             if (attempt == (maxAttempts - 1) || !shouldRetry(e)) {
                 throw e
             }
+
+            if (e is HttpException) {
+                // If we have a HttpException, check whether we have a Retry-After
+                // header to decide how long to delay
+                val retryAfterHeader = e.response().headers()["Retry-After"]
+                if (retryAfterHeader != null && retryAfterHeader.isNotEmpty()) {
+                    // Got a Retry-After value, try and parse it to an long
+                    try {
+                        nextDelay = (retryAfterHeader.toLong() + 10).coerceAtLeast(defaultDelay)
+                    } catch (nfe: NumberFormatException) {
+                        // Probably won't happen, ignore the value and use the generated default above
+                    }
+                }
+            }
         }
-        // Delay to implement exp. backoff
+
         delay(nextDelay)
-        // Increase the next delay
-        nextDelay *= 2
     }
 
     // We should never hit here
