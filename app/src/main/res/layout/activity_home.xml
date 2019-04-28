@@ -25,7 +25,7 @@
             type="app.tivi.home.main.HomeNavigationViewState" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.motion.widget.MotionLayout
         android:id="@+id/home_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -38,8 +38,7 @@
         <View
             android:id="@+id/status_scrim"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="1px" />
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/home_toolbar"
@@ -53,7 +52,7 @@
         <com.airbnb.epoxy.EpoxyRecyclerView
             android:id="@+id/home_nav_rv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:orientation="vertical"
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
@@ -81,6 +80,6 @@
 
         </FrameLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.motion.widget.MotionLayout>
 
 </layout>
