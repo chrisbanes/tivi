@@ -21,7 +21,7 @@
     <Transition
         app:constraintSetEnd="@+id/nav_open"
         app:constraintSetStart="@+id/nav_closed"
-        app:defaultDuration="200"
+        app:duration="300"
         app:motionInterpolator="easeInOut">
 
         <ConstraintSet android:id="@+id/nav_closed">

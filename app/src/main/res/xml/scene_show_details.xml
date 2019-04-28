@@ -21,7 +21,7 @@
     <Transition
         app:constraintSetEnd="@id/end"
         app:constraintSetStart="@id/start"
-        app:defaultDuration="200"
+        app:duration="400"
         app:motionInterpolator="easeInOut">
 
         <OnSwipe
