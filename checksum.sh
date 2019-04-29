@@ -13,7 +13,7 @@ checksum_file() {
 FILES=()
 while read -r -d ''; do
 	FILES+=("$REPLY")
-done < <(find . -name 'build.gradle' -type f -print0)
+done < <(find . -name 'build.gradle*' -or -name 'dependencies.kt' -type f -print0)
 
 # Loop through files and append MD5 to result file
 for FILE in ${FILES[@]}; do
