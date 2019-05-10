@@ -20,6 +20,7 @@ import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.Keep
 import app.tivi.R
 import app.tivi.ui.animations.lerp
 import com.google.android.material.shape.CutCornerTreatment
@@ -41,6 +42,7 @@ class TopLeftCutoutBackgroundView : View {
         syncCutSize()
     }
 
+    @set:Keep
     var color: Int = Color.MAGENTA
         set(value) {
             shapeDrawable.setTint(value)
@@ -53,6 +55,7 @@ class TopLeftCutoutBackgroundView : View {
             syncCutSize()
         }
 
+    @set:Keep
     var cutProgress: Float = 1f
         set(value) {
             field = value
