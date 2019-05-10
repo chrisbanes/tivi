@@ -133,9 +133,11 @@
         <!-- The height of this is updated via an OnApplyWindowInsetsListener  -->
         <View
             android:id="@+id/details_status_bar_anchor"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/status_bar_translucent_scrim" />
+            android:layout_width="0dp"
+            android:layout_height="1px"
+            android:background="@drawable/status_bar_translucent_scrim"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
 
         <app.tivi.ui.widget.CheckableFloatingActionButton
             android:id="@+id/details_follow_fab"
