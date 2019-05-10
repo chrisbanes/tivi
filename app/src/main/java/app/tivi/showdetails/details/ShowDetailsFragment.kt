@@ -16,17 +16,13 @@
 
 package app.tivi.showdetails.details
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.constraintlayout.motion.widget.MotionScene
 import androidx.core.os.bundleOf
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.data.entities.ActionDate
@@ -86,45 +82,6 @@ class ShowDetailsFragment : TiviMvRxFragment() {
         // Make the MotionLayout draw behind the status bar
         binding.detailsMotion.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-
-        binding.detailsMotion.setTransitionListener(object : MotionLayout.TransitionListener {
-            override fun onTransitionStarted(motionLayout: MotionLayout, startId: Int, endId: Int) {
-            }
-
-            override fun onTransitionChange(motionLayout: MotionLayout, startId: Int, endId: Int, progress: Float) {
-                binding.detailsAppbarBackground.cutProgress = 1f - progress
-
-                binding.detailsPoster.visibility = View.VISIBLE
-            }
-
-            override fun onTransitionTrigger(
-                motionLayout: MotionLayout,
-                triggerId: Int,
-                positive: Boolean,
-                progress: Float
-            ) {
-            }
-
-            @SuppressLint("RestrictedApi")
-            override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {
-                when (currentId) {
-                    R.id.end -> {
-                        binding.detailsAppbarBackground.cutProgress = 0f
-                        binding.detailsPoster.isGone = true
-                        binding.detailsFollowFab.isGone = true
-                    }
-                    R.id.start -> {
-                        binding.detailsAppbarBackground.cutProgress = 1f
-                        binding.detailsPoster.isVisible = true
-                        binding.detailsFollowFab.isVisible = true
-                    }
-                }
-            }
-
-            override fun allowsTransition(transition: MotionScene.Transition): Boolean {
-                return true
-            }
-        })
 
         binding.detailsFollowFab.setOnClickListener {
             viewModel.onToggleMyShowsButtonClicked()
