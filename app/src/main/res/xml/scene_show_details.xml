@@ -102,7 +102,7 @@
         <Constraint
             android:id="@id/details_toolbar">
             <Transform
-                app:elevation="0dp" />
+                android:elevation="0dp" />
             <CustomAttribute
                 app:attributeName="iconTint"
                 app:customColorValue="?android:attr/textColorPrimaryInverse" />
@@ -178,11 +178,10 @@
         <Constraint
             android:id="@id/details_toolbar">
             <Transform
-                app:elevation="@dimen/details_appbar_elevation" />
+                android:elevation="@dimen/details_appbar_elevation" />
             <CustomAttribute
                 app:attributeName="iconTint"
                 app:customColorValue="?android:attr/textColorPrimary" />
-
         </Constraint>
 
         <Constraint
