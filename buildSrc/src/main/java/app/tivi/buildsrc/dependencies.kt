@@ -108,7 +108,7 @@ object Libs {
 
         val preference = "androidx.preference:preference:1.1.0-alpha02"
 
-        val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.0-alpha5"
+        val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.0-beta1"
 
         val coreKtx = "androidx.core:core-ktx:1.0.1"
 

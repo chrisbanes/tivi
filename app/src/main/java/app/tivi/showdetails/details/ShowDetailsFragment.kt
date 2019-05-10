@@ -23,6 +23,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.constraintlayout.motion.widget.MotionScene
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -118,6 +119,10 @@ class ShowDetailsFragment : TiviMvRxFragment() {
                         binding.detailsFollowFab.isVisible = true
                     }
                 }
+            }
+
+            override fun allowsTransition(transition: MotionScene.Transition): Boolean {
+                return true
             }
         })
 
