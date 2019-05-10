@@ -27,20 +27,20 @@
         <ConstraintSet android:id="@+id/nav_closed">
             <Constraint android:id="@id/home_content_background">
                 <Layout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/home_toolbar"
-                    app:layout_height="0dp"
-                    app:layout_width="match_parent" />
+                    app:layout_constraintTop_toBottomOf="@id/home_toolbar" />
             </Constraint>
         </ConstraintSet>
 
         <ConstraintSet android:id="@+id/nav_open">
             <Constraint android:id="@id/home_content_background">
                 <Layout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/home_nav_rv"
-                    app:layout_height="0dp"
-                    app:layout_width="match_parent" />
+                    app:layout_constraintTop_toBottomOf="@id/home_nav_rv" />
             </Constraint>
         </ConstraintSet>
 
