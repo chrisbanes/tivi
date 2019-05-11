@@ -40,4 +40,8 @@ class HomeTextCreator @Inject constructor(
             }
         }
     }
+
+    fun showHeaderCount(count: Int): CharSequence {
+        return context.resources.getQuantityString(R.plurals.header_show_count, count, count)
+    }
 }

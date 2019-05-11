@@ -21,7 +21,6 @@ import android.os.Looper
 import android.view.View
 import app.tivi.HeaderBindingModel_
 import app.tivi.LibraryFollowedItemBindingModel_
-import app.tivi.R
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.emptyState
 import app.tivi.header
@@ -53,7 +52,7 @@ class FollowedEpoxyController @Inject constructor(
         } else {
             header {
                 id("header")
-                title(R.string.library_followed_shows)
+                titleString(textCreator.showHeaderCount(models.size))
             }
             super.addModels(models)
         }
