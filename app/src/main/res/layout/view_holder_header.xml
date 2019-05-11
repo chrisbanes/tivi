@@ -21,12 +21,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <import type="android.content.Context" />
 
         <variable
             name="title"
             type="int" />
+
+        <variable
+            name="titleString"
+            type="CharSequence" />
 
         <variable
             name="buttonTitle"
@@ -50,7 +53,7 @@
             android:layout_marginEnd="@dimen/header_margin"
             android:layout_marginStart="@dimen/header_margin"
             android:gravity="center_vertical"
-            android:text="@{title}"
+            android:text="@{titleString ?? context.getString(title)}"
             android:textAppearance="?attr/textAppearanceSubtitle1"
             tools:text="Popular" />
 
