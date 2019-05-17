@@ -88,6 +88,8 @@
 
     <string name="library_last_watched">Last watched:</string>
 
+    <string name="next_prefix">Next: %s</string>
+
     <plurals name="header_show_count">
         <item quantity="one">%d show</item>
         <item quantity="other">%d shows</item>

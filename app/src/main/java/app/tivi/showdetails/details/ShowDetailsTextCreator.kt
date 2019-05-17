@@ -28,11 +28,13 @@ import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.inject.PerActivity
 import app.tivi.ui.GenreStringer
 import app.tivi.ui.text.textAppearanceSpanForAttribute
+import app.tivi.util.TiviDateFormatter
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 
 class ShowDetailsTextCreator @Inject constructor(
-    @PerActivity private val context: Context
+    @PerActivity private val context: Context,
+    private val tiviDateFormatter: TiviDateFormatter
 ) {
     fun seasonSummaryText(season: SeasonWithEpisodesAndWatches): CharSequence {
         val toWatch = season.numberAiredToWatch
@@ -40,7 +42,13 @@ class ShowDetailsTextCreator @Inject constructor(
         val watched = season.numberWatched
 
         val text = StringBuilder()
+        if (watched > 0) {
+            text.append(context.getString(R.string.season_summary_watched, watched))
+        }
         if (toWatch > 0) {
+            if (text.isNotEmpty()) {
+                text.append(" \u2022 ")
+            }
             text.append(context.getString(R.string.season_summary_to_watch, toWatch))
         }
         if (toAir > 0) {
@@ -48,12 +56,15 @@ class ShowDetailsTextCreator @Inject constructor(
                 text.append(" \u2022 ")
             }
             text.append(context.getString(R.string.season_summary_to_air, toAir))
-        }
-        if (watched > 0) {
-            if (text.isNotEmpty()) {
-                text.append(" \u2022 ")
+
+            val nextToAir = season.nextToAir
+            if (nextToAir != null) {
+                text.append(". ")
+                text.append(context.getString(
+                        R.string.next_prefix,
+                        tiviDateFormatter.formatShortRelativeTime(nextToAir.firstAired)
+                ))
             }
-            text.append(context.getString(R.string.season_summary_watched, watched))
         }
         return text
     }
