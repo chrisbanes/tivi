@@ -21,7 +21,6 @@ import android.os.Looper
 import android.view.View
 import app.tivi.HeaderBindingModel_
 import app.tivi.LibraryWatchedItemBindingModel_
-import app.tivi.R
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.emptyState
 import app.tivi.header
@@ -56,7 +55,7 @@ class WatchedEpoxyController @Inject constructor(
         } else {
             header {
                 id("header")
-                title(R.string.library_watched)
+                titleString(textCreator.showHeaderCount(models.size))
             }
             super.addModels(models)
         }
