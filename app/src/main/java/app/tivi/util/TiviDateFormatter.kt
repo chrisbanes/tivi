@@ -22,7 +22,7 @@ import app.tivi.inject.MediumDateTime
 import app.tivi.inject.ShortDate
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.format.DateTimeFormatter
-import org.threeten.bp.temporal.TemporalAccessor
+import org.threeten.bp.temporal.Temporal
 import javax.inject.Inject
 
 class TiviDateFormatter @Inject constructor(
@@ -30,11 +30,11 @@ class TiviDateFormatter @Inject constructor(
     @MediumDate private val mediumDateFormatter: DateTimeFormatter,
     @MediumDateTime private val mediumDateTimeFormatter: DateTimeFormatter
 ) {
-    fun formatShortDate(temporalAmount: TemporalAccessor): String = shortDateFormatter.format(temporalAmount)
+    fun formatShortDate(temporalAmount: Temporal): String = shortDateFormatter.format(temporalAmount)
 
-    fun formatMediumDate(temporalAmount: TemporalAccessor): String = mediumDateFormatter.format(temporalAmount)
+    fun formatMediumDate(temporalAmount: Temporal): String = mediumDateFormatter.format(temporalAmount)
 
-    fun formatMediumDateTime(temporalAmount: TemporalAccessor): String = mediumDateTimeFormatter.format(temporalAmount)
+    fun formatMediumDateTime(temporalAmount: Temporal): String = mediumDateTimeFormatter.format(temporalAmount)
 
     fun formatShortRelativeTime(dateTime: OffsetDateTime?): CharSequence? {
         if (dateTime == null) {
@@ -47,8 +47,8 @@ class TiviDateFormatter @Inject constructor(
             if (dateTime.year == now.year || dateTime.isAfter(now.minusDays(7))) {
                 // Within the past week
                 DateUtils.getRelativeTimeSpanString(
-                        dateTime.toEpochSecond() * 1000,
-                        now.toEpochSecond() * 1000,
+                        dateTime.toInstant().toEpochMilli(),
+                        System.currentTimeMillis(),
                         DateUtils.MINUTE_IN_MILLIS,
                         DateUtils.FORMAT_SHOW_DATE)
             } else {
@@ -59,8 +59,8 @@ class TiviDateFormatter @Inject constructor(
             if (dateTime.year == now.year || dateTime.isBefore(now.plusDays(14))) {
                 // In the near future (next 2 weeks)
                 DateUtils.getRelativeTimeSpanString(
-                        dateTime.toEpochSecond() * 1000,
-                        now.toEpochSecond() * 1000,
+                        dateTime.toInstant().toEpochMilli(),
+                        System.currentTimeMillis(),
                         DateUtils.MINUTE_IN_MILLIS,
                         DateUtils.FORMAT_SHOW_DATE)
             } else {

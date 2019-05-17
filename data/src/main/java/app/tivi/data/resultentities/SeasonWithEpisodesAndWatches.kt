@@ -61,5 +61,13 @@ class SeasonWithEpisodesAndWatches {
         episodes.size
     }
 
+    @delegate:Ignore
+    val nextToAir by lazy(LazyThreadSafetyMode.NONE) {
+        episodes.firstOrNull {
+            val ep = it.episode!!
+            !ep.isAired() && ep.firstAired != null
+        }?.let { it.episode }
+    }
+
     override fun hashCode(): Int = Objects.hash(season, episodes)
 }

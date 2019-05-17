@@ -88,4 +88,6 @@
 
     <string name="library_last_watched">Last watched:</string>
 
+    <string name="next_prefix">Next: %s</string>
+
 </resources>

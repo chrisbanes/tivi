@@ -34,11 +34,11 @@ abstract class TiviActivityMvRxView : TiviActivity(), MvRxView {
     private lateinit var mvrxPersistedViewId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
         mvrxViewModelStore.restoreViewModels(this, savedInstanceState)
         mvrxPersistedViewId = savedInstanceState?.getString(PERSISTED_VIEW_ID_KEY)
                 ?: "${this::class.java.simpleName}_${UUID.randomUUID()}"
-
-        super.onCreate(savedInstanceState)
     }
 
     /**
