@@ -27,7 +27,7 @@ object Libs {
 
     val mvRx = "com.airbnb.android:mvrx:1.0.0"
 
-    val threeTenBp = "org.threeten:threetenbp:1.3.8"
+    val threeTenBp = "org.threeten:threetenbp:1.4.0"
     val threeTenBpNoTzdb = "$threeTenBp:no-tzdb"
     val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.2.0"
 
@@ -37,17 +37,17 @@ object Libs {
 
     val timber = "com.jakewharton.timber:timber:4.7.1"
 
-    val tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.0.2"
+    val tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.0.3"
     val traktJava = "com.uwetrottmann.trakt5:trakt-java:6.1.0"
 
     val appauth = "net.openid:appauth:0.7.1"
 
     val junit = "junit:junit:4.12"
-    val robolectric = "org.robolectric:robolectric:4.3-SNAPSHOT"
+    val robolectric = "org.robolectric:robolectric:4.3-beta-1"
     val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0"
 
     object Google {
-        val material = "com.google.android.material:material:1.1.0-alpha04"
+        val material = "com.google.android.material:material:1.1.0-alpha06"
         val firebaseCore = "com.google.firebase:firebase-core:16.0.8"
         val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.9"
         val gmsGoogleServices = "com.google.gms:google-services:4.2.0"
@@ -55,7 +55,7 @@ object Libs {
     }
 
     object Kotlin {
-        private const val version = "1.3.21"
+        private const val version = "1.3.31"
         val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         val reflect = "org.jetbrains.kotlin:kotlin-reflect:$version"
         val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
@@ -63,14 +63,14 @@ object Libs {
     }
 
     object Coroutines {
-        private const val version = "1.1.1"
+        private const val version = "1.2.1"
         val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
         val rx2 = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$version"
         val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
     }
 
     object AndroidX {
-        val appcompat = "androidx.appcompat:appcompat:1.1.0-alpha04"
+        val appcompat = "androidx.appcompat:appcompat:1.1.0-alpha05"
         val browser = "androidx.browser:browser:1.0.0"
         val palette = "androidx.palette:palette:1.0.0"
         val recyclerview = "androidx.recyclerview:recyclerview:1.0.0"
@@ -169,7 +169,7 @@ object Libs {
     }
 
     object Epoxy {
-        private const val version = "3.4.0"
+        private const val version = "3.5.0"
         val epoxy = "com.airbnb.android:epoxy:$version"
         val paging = "com.airbnb.android:epoxy-paging:$version"
         val dataBinding = "com.airbnb.android:epoxy-databinding:$version"
