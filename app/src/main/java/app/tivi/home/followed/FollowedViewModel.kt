@@ -38,6 +38,7 @@ import com.squareup.inject.assisted.AssistedInject
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 
 class FollowedViewModel @AssistedInject constructor(
@@ -52,6 +53,8 @@ class FollowedViewModel @AssistedInject constructor(
 
     private var refreshDisposable: Disposable? = null
 
+    private val filterObservable = BehaviorSubject.create<CharSequence>()
+
     init {
         loadingState.observable.execute {
             copy(isLoading = it() ?: false)
@@ -63,6 +66,10 @@ class FollowedViewModel @AssistedInject constructor(
 
         dataSourceToObservable(syncFollowedShows.dataSourceFactory())
                 .execute { copy(followedShows = it()) }
+
+        filterObservable.distinctUntilChanged()
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .execute { copy(filter = it() ?: "") }
 
         refresh()
     }
@@ -89,11 +96,15 @@ class FollowedViewModel @AssistedInject constructor(
         disposables += traktManager.state
                 .filter { it == TraktAuthState.LOGGED_IN }
                 .firstOrError()
-                .subscribe({ refreshFilter() }, logger::e)
+                .subscribe({ refreshFollowed() }, logger::e)
                 .also { refreshDisposable = it }
     }
 
-    private fun refreshFilter() {
+    fun setFilter(filter: CharSequence) {
+        filterObservable.onNext(filter)
+    }
+
+    private fun refreshFollowed() {
         loadingState.addLoader()
         viewModelScope.launchInteractor(syncFollowedShows, SyncFollowedShows.ExecuteParams(false))
                 .invokeOnCompletion { loadingState.removeLoader() }

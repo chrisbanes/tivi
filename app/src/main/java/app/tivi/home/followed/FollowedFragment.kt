@@ -69,6 +69,10 @@ class FollowedFragment : TiviMvRxFragment() {
                                 .toActivityNavigatorExtras(requireActivity())
                 )
             }
+
+            override fun onFilterChanged(filter: CharSequence) {
+                viewModel.setFilter(filter)
+            }
         }
 
         binding.followedRv.apply {

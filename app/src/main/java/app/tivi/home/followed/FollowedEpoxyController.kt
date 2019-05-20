@@ -18,11 +18,14 @@ package app.tivi.home.followed
 
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import app.tivi.HeaderBindingModel_
 import app.tivi.LibraryFollowedItemBindingModel_
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.emptyState
+import app.tivi.filter
 import app.tivi.header
 import app.tivi.home.HomeTextCreator
 import app.tivi.tmdb.TmdbImageUrlProvider
@@ -41,6 +44,7 @@ class FollowedEpoxyController @Inject constructor(
 ) {
     var tmdbImageUrlProvider by EpoxyModelProperty { TmdbImageUrlProvider() }
     var isEmpty by EpoxyModelProperty { false }
+    var filter by EpoxyModelProperty<CharSequence> { "" }
     var callbacks: Callbacks? = null
 
     override fun addModels(models: List<EpoxyModel<*>>) {
@@ -53,6 +57,19 @@ class FollowedEpoxyController @Inject constructor(
             header {
                 id("header")
                 titleString(textCreator.showHeaderCount(models.size))
+            }
+            filter {
+                id("filters")
+                filter(filter)
+                watcher(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {
+                        callbacks?.onFilterChanged(s ?: "")
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                })
             }
             super.addModels(models)
         }
@@ -82,5 +99,6 @@ class FollowedEpoxyController @Inject constructor(
 
     interface Callbacks {
         fun onItemClicked(item: FollowedShowEntryWithShow)
+        fun onFilterChanged(filter: CharSequence)
     }
 }

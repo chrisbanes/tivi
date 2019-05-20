@@ -25,5 +25,6 @@ data class FollowedViewState(
     val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider(),
     val isLoading: Boolean = false,
     val isEmpty: Boolean = true,
-    val followedShows: PagedList<FollowedShowEntryWithShow>? = null
+    val followedShows: PagedList<FollowedShowEntryWithShow>? = null,
+    val filter: CharSequence = ""
 ) : MvRxState

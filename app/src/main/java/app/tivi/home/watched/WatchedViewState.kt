@@ -25,5 +25,6 @@ data class WatchedViewState(
     val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider(),
     val isLoading: Boolean = false,
     val isEmpty: Boolean = true,
-    val watchedShows: PagedList<WatchedShowEntryWithShow>? = null
+    val watchedShows: PagedList<WatchedShowEntryWithShow>? = null,
+    val filter: CharSequence = ""
 ) : MvRxState
