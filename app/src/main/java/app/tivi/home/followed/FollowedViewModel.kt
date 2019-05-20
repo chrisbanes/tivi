@@ -68,7 +68,7 @@ class FollowedViewModel @AssistedInject constructor(
                 .execute { copy(followedShows = it()) }
 
         filterObservable.distinctUntilChanged()
-                .debounce(500, TimeUnit.MILLISECONDS)
+                .debounce(500, TimeUnit.MILLISECONDS, schedulers.main)
                 .execute { copy(filter = it() ?: "") }
 
         refresh()
