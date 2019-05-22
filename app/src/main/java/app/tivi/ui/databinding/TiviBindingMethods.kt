@@ -17,11 +17,9 @@
 package app.tivi.ui.databinding
 
 import android.view.View
-import android.widget.EditText
 import androidx.databinding.BindingMethod
 import androidx.databinding.BindingMethods
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.google.android.material.textfield.TextInputEditText
 
 @BindingMethods(
         BindingMethod(

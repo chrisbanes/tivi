@@ -17,10 +17,15 @@
 package app.tivi.interactors
 
 import androidx.paging.DataSource
+import androidx.paging.PagedList
 import app.tivi.extensions.toFlowable
 import io.reactivex.Flowable
+import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -36,6 +41,29 @@ interface Interactor<in P> {
 
 interface PagingInteractor<T> {
     fun dataSourceFactory(): DataSource.Factory<Int, T>
+}
+
+abstract class PagingInteractor2<in P : PagingInteractor2.Parameters<T>, T> {
+    private var disposable = CompositeDisposable()
+    private val subject: PublishSubject<PagedList<T>> = PublishSubject.create()
+
+    operator fun invoke(parameters: P) {
+        disposable.clear()
+        disposable += buildPagedObservable(parameters).subscribe(subject::onNext, subject::onError)
+    }
+
+    fun observe(): Observable<PagedList<T>> = subject
+
+    fun clear() {
+        disposable.clear()
+    }
+
+    protected abstract fun buildPagedObservable(parameters: P): Observable<PagedList<T>>
+
+    interface Parameters<T> {
+        val pagingConfig: PagedList.Config
+        val boundaryCallback: PagedList.BoundaryCallback<T>?
+    }
 }
 
 abstract class ChannelInteractor<P, T : Any> : Interactor<P> {

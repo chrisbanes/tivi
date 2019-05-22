@@ -16,10 +16,8 @@
 
 package app.tivi.interactors
 
-import androidx.paging.DataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
-import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.extensions.parallelForEach
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineDispatcher
@@ -29,7 +27,7 @@ class SyncFollowedShows @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val followedShowsRepository: FollowedShowsRepository,
     private val repository: SeasonsEpisodesRepository
-) : PagingInteractor<FollowedShowEntryWithShow>, Interactor<SyncFollowedShows.ExecuteParams> {
+) : Interactor<SyncFollowedShows.ExecuteParams> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend fun invoke(executeParams: ExecuteParams) {
@@ -48,10 +46,6 @@ class SyncFollowedShows @Inject constructor(
                 }
             }
         }
-    }
-
-    override fun dataSourceFactory(): DataSource.Factory<Int, FollowedShowEntryWithShow> {
-        return followedShowsRepository.observeFollowedShows()
     }
 
     data class ExecuteParams(val forceLoad: Boolean)
