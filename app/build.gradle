@@ -46,11 +46,6 @@ play {
     serviceAccountCredentials = rootProject.file('signing/play-account.json')
 }
 
-if (file("google-services.json").exists()) {
-    apply plugin: 'com.google.gms.google-services'
-    apply plugin: 'io.fabric'
-}
-
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
 def appVersionCode = propOrDef("tivi.versioncode", 17) as Integer
@@ -248,4 +243,9 @@ def getGitHash() {
         standardOutput = stdout
     }
     return stdout.toString().trim()
+}
+
+if (file("google-services.json").exists()) {
+    apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'io.fabric'
 }

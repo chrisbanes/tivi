@@ -36,6 +36,16 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
                 " GROUP BY fs.id" +
                 " ORDER BY watched_at DESC"
 
+        const val ENTRY_QUERY_ORDER_LAST_WATCHED_FILTER = "SELECT fs.*, MAX(datetime(ew.watched_at)) AS watched_at" +
+                " FROM myshows_entries as fs" +
+                " INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid" +
+                " INNER JOIN seasons AS s ON fs.show_id = s.show_id" +
+                " INNER JOIN episodes AS eps ON eps.season_id = s.id" +
+                " INNER JOIN episode_watch_entries as ew ON ew.episode_id = eps.id" +
+                " WHERE s_fts.title MATCH :filter OR s_fts.original_title MATCH :filter" +
+                " GROUP BY fs.id" +
+                " ORDER BY watched_at DESC"
+
         const val ENTRY_QUERY_ORDER_ADDED = "SELECT * FROM myshows_entries ORDER BY datetime(followed_at) DESC"
     }
 
@@ -49,6 +59,10 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     @Transaction
     @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
     abstract override fun entriesDataSource(): DataSource.Factory<Int, FollowedShowEntryWithShow>
+
+    @Transaction
+    @Query(ENTRY_QUERY_ORDER_LAST_WATCHED_FILTER)
+    abstract fun entriesDataSourceFiltered(filter: String): DataSource.Factory<Int, FollowedShowEntryWithShow>
 
     @Query("DELETE FROM myshows_entries")
     abstract override suspend fun deleteAll()

@@ -29,7 +29,7 @@ class ObserveFollowedShows @Inject constructor(
     private val followedShowsRepository: FollowedShowsRepository
 ) : PagingInteractor2<ObserveFollowedShows.Parameters, FollowedShowEntryWithShow>() {
     override fun buildPagedObservable(parameters: Parameters): Observable<PagedList<FollowedShowEntryWithShow>> {
-        return RxPagedListBuilder(followedShowsRepository.observeFollowedShows(), parameters.pagingConfig)
+        return RxPagedListBuilder(followedShowsRepository.observeFollowedShows(parameters.filter), parameters.pagingConfig)
                 .setBoundaryCallback(parameters.boundaryCallback)
                 .setFetchScheduler(schedulers.io)
                 .setNotifyScheduler(schedulers.main)
@@ -37,6 +37,7 @@ class ObserveFollowedShows @Inject constructor(
     }
 
     data class Parameters(
+        val filter: String? = null,
         override val pagingConfig: PagedList.Config,
         override val boundaryCallback: PagedList.BoundaryCallback<FollowedShowEntryWithShow>? = null
     ) : PagingInteractor2.Parameters<FollowedShowEntryWithShow>

@@ -65,7 +65,13 @@ class LocalFollowedShowsStore @Inject constructor(
 
     suspend fun deleteEntriesInIds(ids: List<Long>) = followedShowsDao.deleteWithIds(ids)
 
-    fun observeForPaging(): DataSource.Factory<Int, FollowedShowEntryWithShow> = followedShowsDao.entriesDataSource()
+    fun observeForPaging(filter: String?): DataSource.Factory<Int, FollowedShowEntryWithShow> {
+        return if (filter.isNullOrEmpty()) {
+            followedShowsDao.entriesDataSource()
+        } else {
+            followedShowsDao.entriesDataSourceFiltered("*$filter*")
+        }
+    }
 
     fun observeIsShowFollowed(showId: Long): Flowable<Boolean> {
         return followedShowsDao.entryCountWithShowIdNotPendingDeleteFlowable(showId)

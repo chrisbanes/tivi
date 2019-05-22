@@ -70,7 +70,7 @@ class FollowedFragment : TiviMvRxFragment() {
                 )
             }
 
-            override fun onFilterChanged(filter: CharSequence) {
+            override fun onFilterChanged(filter: String) {
                 viewModel.setFilter(filter)
             }
         }

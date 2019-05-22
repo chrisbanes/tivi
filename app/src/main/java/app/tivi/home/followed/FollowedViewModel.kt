@@ -52,11 +52,11 @@ class FollowedViewModel @AssistedInject constructor(
 
     private var refreshDisposable: Disposable? = null
 
-    private val filterObservable = BehaviorSubject.create<CharSequence>()
+    private val filterObservable = BehaviorSubject.create<String>()
 
     private val boundaryCallback = object : PagedList.BoundaryCallback<FollowedShowEntryWithShow>() {
         override fun onZeroItemsLoaded() {
-            setState { copy(isEmpty = true) }
+            setState { copy(isEmpty = filter.isEmpty()) }
         }
 
         override fun onItemAtEndLoaded(itemAtEnd: FollowedShowEntryWithShow) {
@@ -79,10 +79,21 @@ class FollowedViewModel @AssistedInject constructor(
 
         observeFollowedShows.observe()
                 .execute { copy(followedShows = it()) }
-        observeFollowedShows(ObserveFollowedShows.Parameters(PAGING_CONFIG, boundaryCallback))
+
+        observeFollowedShows(ObserveFollowedShows.Parameters(
+                pagingConfig = PAGING_CONFIG,
+                boundaryCallback = boundaryCallback
+        ))
 
         filterObservable.distinctUntilChanged()
-                .debounce(500, TimeUnit.MILLISECONDS, schedulers.main)
+                .debounce(300, TimeUnit.MILLISECONDS, schedulers.main)
+                .doOnNext {
+                    observeFollowedShows(ObserveFollowedShows.Parameters(
+                            filter = it,
+                            pagingConfig = PAGING_CONFIG,
+                            boundaryCallback = boundaryCallback
+                    ))
+                }
                 .execute { copy(filter = it() ?: "") }
 
         refresh()
@@ -102,7 +113,7 @@ class FollowedViewModel @AssistedInject constructor(
                 .also { refreshDisposable = it }
     }
 
-    fun setFilter(filter: CharSequence) {
+    fun setFilter(filter: String) {
         filterObservable.onNext(filter)
     }
 

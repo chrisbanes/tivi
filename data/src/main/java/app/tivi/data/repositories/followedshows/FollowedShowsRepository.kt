@@ -40,7 +40,7 @@ class FollowedShowsRepository @Inject constructor(
     private val traktAuthState: Provider<TraktAuthState>,
     private val logger: Logger
 ) {
-    fun observeFollowedShows() = localStore.observeForPaging()
+    fun observeFollowedShows(filter: String? = null) = localStore.observeForPaging(filter)
 
     fun observeIsShowFollowed(showId: Long) = localStore.observeIsShowFollowed(showId)
 

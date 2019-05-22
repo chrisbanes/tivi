@@ -38,6 +38,7 @@ import app.tivi.data.entities.PopularShowEntry
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.entities.TiviShowFts
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.entities.TrendingShowEntry
 import app.tivi.data.entities.WatchedShowEntry
@@ -45,6 +46,7 @@ import app.tivi.data.entities.WatchedShowEntry
 @Database(
         entities = [
             TiviShow::class,
+            TiviShowFts::class,
             TrendingShowEntry::class,
             PopularShowEntry::class,
             TraktUser::class,
@@ -56,7 +58,7 @@ import app.tivi.data.entities.WatchedShowEntry
             EpisodeWatchEntry::class,
             LastRequest::class
         ],
-        version = 15
+        version = 16
 )
 @TypeConverters(TiviTypeConverters::class)
 abstract class TiviDatabase : RoomDatabase() {

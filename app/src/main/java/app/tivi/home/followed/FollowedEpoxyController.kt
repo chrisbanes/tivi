@@ -63,7 +63,7 @@ class FollowedEpoxyController @Inject constructor(
                 filter(filter)
                 watcher(object : TextWatcher {
                     override fun afterTextChanged(s: Editable?) {
-                        callbacks?.onFilterChanged(s ?: "")
+                        callbacks?.onFilterChanged(s?.toString() ?: "")
                     }
 
                     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -99,6 +99,6 @@ class FollowedEpoxyController @Inject constructor(
 
     interface Callbacks {
         fun onItemClicked(item: FollowedShowEntryWithShow)
-        fun onFilterChanged(filter: CharSequence)
+        fun onFilterChanged(filter: String)
     }
 }
