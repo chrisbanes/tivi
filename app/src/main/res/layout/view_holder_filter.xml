@@ -15,7 +15,8 @@
   ~ limitations under the License.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -26,29 +27,50 @@
         <variable
             name="watcher"
             type="android.text.TextWatcher" />
+
+        <variable
+            name="popupMenuClickListener"
+            type="androidx.appcompat.widget.PopupMenu.OnMenuItemClickListener" />
+
+        <variable
+            name="popupMenuListener"
+            type="app.tivi.ui.widget.PopupMenuButton.PopupMenuListener" />
     </data>
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:paddingHorizontal="@dimen/spacing_normal"
         android:paddingVertical="@dimen/spacing_micro"
         android:transitionGroup="true">
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:hint="@string/filter_shows">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="1"
                 android:addTextChangedListener="@{watcher}"
+                android:maxLines="1"
                 android:text="@{filter}" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-    </FrameLayout>
+        <app.tivi.ui.widget.PopupMenuButton
+            android:id="@+id/season_menu_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/spacing_small"
+            android:src="@drawable/ic_sort_black_24dp"
+            app:menu="@menu/popup_sort"
+            app:popupMenuClickListener="@{popupMenuClickListener}"
+            app:popupMenuListener="@{popupMenuListener}" />
+
+    </LinearLayout>
 </layout>

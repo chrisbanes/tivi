@@ -18,6 +18,7 @@ package app.tivi.interactors
 
 import androidx.paging.PagedList
 import androidx.paging.RxPagedListBuilder
+import app.tivi.data.entities.SortOption
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.util.AppRxSchedulers
@@ -29,7 +30,8 @@ class ObserveFollowedShows @Inject constructor(
     private val followedShowsRepository: FollowedShowsRepository
 ) : PagingInteractor2<ObserveFollowedShows.Parameters, FollowedShowEntryWithShow>() {
     override fun buildPagedObservable(parameters: Parameters): Observable<PagedList<FollowedShowEntryWithShow>> {
-        return RxPagedListBuilder(followedShowsRepository.observeFollowedShows(parameters.filter), parameters.pagingConfig)
+        val source = followedShowsRepository.observeFollowedShows(parameters.sort, parameters.filter)
+        return RxPagedListBuilder(source, parameters.pagingConfig)
                 .setBoundaryCallback(parameters.boundaryCallback)
                 .setFetchScheduler(schedulers.io)
                 .setNotifyScheduler(schedulers.main)
@@ -38,6 +40,7 @@ class ObserveFollowedShows @Inject constructor(
 
     data class Parameters(
         val filter: String? = null,
+        val sort: SortOption,
         override val pagingConfig: PagedList.Config,
         override val boundaryCallback: PagedList.BoundaryCallback<FollowedShowEntryWithShow>? = null
     ) : PagingInteractor2.Parameters<FollowedShowEntryWithShow>

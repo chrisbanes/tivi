@@ -18,6 +18,7 @@ package app.tivi.home.followed
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
+import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.interactors.ObserveFollowedShows
 import app.tivi.interactors.SyncFollowedShows
@@ -36,7 +37,6 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 
 class FollowedViewModel @AssistedInject constructor(
@@ -49,14 +49,11 @@ class FollowedViewModel @AssistedInject constructor(
     private val logger: Logger
 ) : TiviMvRxViewModel<FollowedViewState>(initialState) {
     private val loadingState = RxLoadingCounter()
-
     private var refreshDisposable: Disposable? = null
-
-    private val filterObservable = BehaviorSubject.create<String>()
 
     private val boundaryCallback = object : PagedList.BoundaryCallback<FollowedShowEntryWithShow>() {
         override fun onZeroItemsLoaded() {
-            setState { copy(isEmpty = filter.isEmpty()) }
+            setState { copy(isEmpty = filter.isNullOrEmpty()) }
         }
 
         override fun onItemAtEndLoaded(itemAtEnd: FollowedShowEntryWithShow) {
@@ -80,23 +77,25 @@ class FollowedViewModel @AssistedInject constructor(
         observeFollowedShows.observe()
                 .execute { copy(followedShows = it()) }
 
-        observeFollowedShows(ObserveFollowedShows.Parameters(
-                pagingConfig = PAGING_CONFIG,
-                boundaryCallback = boundaryCallback
-        ))
+        // Set the available sorting options
+        setState {
+            copy(availableSorts = listOf(SortOption.LAST_WATCHED, SortOption.ALPHABETICAL, SortOption.DATE_ADDED))
+        }
 
-        filterObservable.distinctUntilChanged()
-                .debounce(300, TimeUnit.MILLISECONDS, schedulers.main)
-                .doOnNext {
-                    observeFollowedShows(ObserveFollowedShows.Parameters(
-                            filter = it,
-                            pagingConfig = PAGING_CONFIG,
-                            boundaryCallback = boundaryCallback
-                    ))
-                }
-                .execute { copy(filter = it() ?: "") }
+        subscribe(::updateDataSource)
 
         refresh()
+    }
+
+    private fun updateDataSource(state: FollowedViewState) {
+        observeFollowedShows(
+                ObserveFollowedShows.Parameters(
+                        sort = state.sort,
+                        filter = state.filter,
+                        pagingConfig = PAGING_CONFIG,
+                        boundaryCallback = boundaryCallback
+                )
+        )
     }
 
     fun refresh() {
@@ -114,7 +113,11 @@ class FollowedViewModel @AssistedInject constructor(
     }
 
     fun setFilter(filter: String) {
-        filterObservable.onNext(filter)
+        setState { copy(filter = filter) }
+    }
+
+    fun setSort(sort: SortOption) {
+        setState { copy(sort = sort) }
     }
 
     private fun refreshFollowed() {

@@ -28,7 +28,7 @@ import io.reactivex.Flowable
 @Dao
 abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryWithShow> {
     companion object {
-        const val ENTRY_QUERY_ORDER_LAST_WATCHED = "SELECT fs.*, MAX(datetime(ew.watched_at)) AS watched_at" +
+        private const val ENTRY_QUERY_ORDER_LAST_WATCHED = "SELECT fs.*, MAX(datetime(ew.watched_at)) AS watched_at" +
                 " FROM myshows_entries as fs" +
                 " INNER JOIN seasons AS s ON fs.show_id = s.show_id" +
                 " INNER JOIN episodes AS eps ON eps.season_id = s.id" +
@@ -36,7 +36,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
                 " GROUP BY fs.id" +
                 " ORDER BY watched_at DESC"
 
-        const val ENTRY_QUERY_ORDER_LAST_WATCHED_FILTER = "SELECT fs.*, MAX(datetime(ew.watched_at)) AS watched_at" +
+        private const val ENTRY_QUERY_ORDER_LAST_WATCHED_FILTER = "SELECT fs.*, MAX(datetime(ew.watched_at)) AS watched_at" +
                 " FROM myshows_entries as fs" +
                 " INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid" +
                 " INNER JOIN seasons AS s ON fs.show_id = s.show_id" +
@@ -46,23 +46,47 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
                 " GROUP BY fs.id" +
                 " ORDER BY watched_at DESC"
 
-        const val ENTRY_QUERY_ORDER_ADDED = "SELECT * FROM myshows_entries ORDER BY datetime(followed_at) DESC"
+        private const val ENTRY_QUERY_ORDER_ALPHA = "SELECT fs.* FROM myshows_entries as fs" +
+                " INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid" +
+                " ORDER BY title ASC"
+        private const val ENTRY_QUERY_ORDER_ALPHA_FILTER = "SELECT fs.* FROM myshows_entries as fs" +
+                " INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid" +
+                " WHERE s_fts.title MATCH :filter OR s_fts.original_title MATCH :filter" +
+                " ORDER BY title ASC"
+
+        private const val ENTRY_QUERY_ORDER_ADDED = "SELECT * FROM myshows_entries ORDER BY datetime(followed_at) DESC"
+        private const val ENTRY_QUERY_ORDER_ADDED_FILTER = "SELECT fs.* FROM myshows_entries as fs" +
+                " INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid" +
+                " WHERE s_fts.title MATCH :filter OR s_fts.original_title MATCH :filter" +
+                " ORDER BY datetime(followed_at) DESC"
     }
 
     @Query("SELECT * FROM myshows_entries")
     abstract suspend fun entries(): List<FollowedShowEntry>
 
     @Transaction
-    @Query("$ENTRY_QUERY_ORDER_LAST_WATCHED LIMIT :count OFFSET :offset")
-    abstract override fun entriesFlowable(count: Int, offset: Int): Flowable<List<FollowedShowEntryWithShow>>
-
-    @Transaction
     @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
-    abstract override fun entriesDataSource(): DataSource.Factory<Int, FollowedShowEntryWithShow>
+    internal abstract fun pagedListLastWatched(): DataSource.Factory<Int, FollowedShowEntryWithShow>
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_LAST_WATCHED_FILTER)
-    abstract fun entriesDataSourceFiltered(filter: String): DataSource.Factory<Int, FollowedShowEntryWithShow>
+    internal abstract fun pagedListLastWatchedFilter(filter: String): DataSource.Factory<Int, FollowedShowEntryWithShow>
+
+    @Transaction
+    @Query(ENTRY_QUERY_ORDER_ALPHA)
+    internal abstract fun pagedListAlpha(): DataSource.Factory<Int, FollowedShowEntryWithShow>
+
+    @Transaction
+    @Query(ENTRY_QUERY_ORDER_ALPHA_FILTER)
+    internal abstract fun pagedListAlphaFilter(filter: String): DataSource.Factory<Int, FollowedShowEntryWithShow>
+
+    @Transaction
+    @Query(ENTRY_QUERY_ORDER_ADDED)
+    internal abstract fun pagedListAdded(): DataSource.Factory<Int, FollowedShowEntryWithShow>
+
+    @Transaction
+    @Query(ENTRY_QUERY_ORDER_ADDED_FILTER)
+    internal abstract fun pagedListAddedFilter(filter: String): DataSource.Factory<Int, FollowedShowEntryWithShow>
 
     @Query("DELETE FROM myshows_entries")
     abstract override suspend fun deleteAll()

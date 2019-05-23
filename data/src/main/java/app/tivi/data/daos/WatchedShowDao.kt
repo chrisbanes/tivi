@@ -32,11 +32,11 @@ abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithS
 
     @Transaction
     @Query("SELECT * FROM watched_entries ORDER BY datetime(last_watched) DESC LIMIT :count OFFSET :offset")
-    abstract override fun entriesFlowable(count: Int, offset: Int): Flowable<List<WatchedShowEntryWithShow>>
+    abstract fun entriesFlowable(count: Int, offset: Int): Flowable<List<WatchedShowEntryWithShow>>
 
     @Transaction
     @Query("SELECT * FROM watched_entries ORDER BY datetime(last_watched) DESC")
-    abstract override fun entriesDataSource(): DataSource.Factory<Int, WatchedShowEntryWithShow>
+    abstract fun entriesDataSource(): DataSource.Factory<Int, WatchedShowEntryWithShow>
 
     @Query("DELETE FROM watched_entries")
     abstract override suspend fun deleteAll()

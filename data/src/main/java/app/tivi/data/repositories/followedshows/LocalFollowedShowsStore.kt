@@ -25,6 +25,7 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Request
+import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.util.Logger
@@ -65,11 +66,30 @@ class LocalFollowedShowsStore @Inject constructor(
 
     suspend fun deleteEntriesInIds(ids: List<Long>) = followedShowsDao.deleteWithIds(ids)
 
-    fun observeForPaging(filter: String?): DataSource.Factory<Int, FollowedShowEntryWithShow> {
-        return if (filter.isNullOrEmpty()) {
-            followedShowsDao.entriesDataSource()
-        } else {
-            followedShowsDao.entriesDataSourceFiltered("*$filter*")
+    fun observeForPaging(sort: SortOption, filter: String?): DataSource.Factory<Int, FollowedShowEntryWithShow> {
+        val filtered = filter?.isNotEmpty() == true
+        return when (sort) {
+            SortOption.LAST_WATCHED -> {
+                if (filtered) {
+                    followedShowsDao.pagedListLastWatchedFilter("*$filter*")
+                } else {
+                    followedShowsDao.pagedListLastWatched()
+                }
+            }
+            SortOption.ALPHABETICAL -> {
+                if (filtered) {
+                    followedShowsDao.pagedListAlphaFilter("*$filter*")
+                } else {
+                    followedShowsDao.pagedListAlpha()
+                }
+            }
+            SortOption.DATE_ADDED -> {
+                if (filtered) {
+                    followedShowsDao.pagedListAddedFilter("*$filter*")
+                } else {
+                    followedShowsDao.pagedListAdded()
+                }
+            }
         }
     }
 

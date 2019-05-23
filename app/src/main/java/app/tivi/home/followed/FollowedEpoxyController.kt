@@ -21,8 +21,12 @@ import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.forEach
 import app.tivi.HeaderBindingModel_
 import app.tivi.LibraryFollowedItemBindingModel_
+import app.tivi.R
+import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.emptyState
 import app.tivi.filter
@@ -31,6 +35,7 @@ import app.tivi.home.HomeTextCreator
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.EpoxyModelProperty
 import app.tivi.ui.epoxy.TotalSpanOverride
+import app.tivi.ui.widget.PopupMenuButton
 import com.airbnb.epoxy.EpoxyAsyncUtil
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
@@ -46,6 +51,7 @@ class FollowedEpoxyController @Inject constructor(
     var isEmpty by EpoxyModelProperty { false }
     var filter by EpoxyModelProperty<CharSequence> { "" }
     var callbacks: Callbacks? = null
+    var sortOptions by EpoxyModelProperty { emptyList<SortOption>() }
 
     override fun addModels(models: List<EpoxyModel<*>>) {
         if (isEmpty) {
@@ -70,6 +76,34 @@ class FollowedEpoxyController @Inject constructor(
 
                     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 })
+
+                popupMenuListener(object : PopupMenuButton.PopupMenuListener {
+                    override fun onPreparePopupMenu(popupMenu: PopupMenu) {
+                        popupMenu.menu.forEach {
+                            when (it.itemId) {
+                                R.id.popup_sort_last_watched -> {
+                                    it.isVisible = sortOptions.contains(SortOption.LAST_WATCHED)
+                                }
+                                R.id.popup_sort_date_followed -> {
+                                    it.isVisible = sortOptions.contains(SortOption.DATE_ADDED)
+                                }
+                                R.id.popup_sort_alpha -> {
+                                    it.isVisible = sortOptions.contains(SortOption.ALPHABETICAL)
+                                }
+                            }
+                        }
+                    }
+                })
+
+                popupMenuClickListener {
+                    val option = when (it.itemId) {
+                        R.id.popup_sort_date_followed -> SortOption.DATE_ADDED
+                        R.id.popup_sort_alpha -> SortOption.ALPHABETICAL
+                        else -> SortOption.LAST_WATCHED
+                    }
+                    callbacks?.onSortSelected(option)
+                    true
+                }
             }
             super.addModels(models)
         }
@@ -100,5 +134,6 @@ class FollowedEpoxyController @Inject constructor(
     interface Callbacks {
         fun onItemClicked(item: FollowedShowEntryWithShow)
         fun onFilterChanged(filter: String)
+        fun onSortSelected(sort: SortOption)
     }
 }

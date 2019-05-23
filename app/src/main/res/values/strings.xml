@@ -81,6 +81,10 @@
     <string name="popup_season_mark_watched_aired">Watch aired</string>
     <string name="popup_season_mark_all_unwatched">Unwatch all</string>
 
+    <string name="popup_sort_last_watched">Last watched</string>
+    <string name="popup_sort_date_followed">Date followed</string>
+    <string name="popup_sort_alpha">A-Z</string>
+
     <string name="show_details_seasons">Seasons</string>
     <string name="view_privacy_policy">View Privacy Policy</string>
 

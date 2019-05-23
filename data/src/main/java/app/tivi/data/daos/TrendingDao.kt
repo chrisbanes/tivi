@@ -28,11 +28,11 @@ import io.reactivex.Flowable
 abstract class TrendingDao : PaginatedEntryDao<TrendingShowEntry, TrendingEntryWithShow> {
     @Transaction
     @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC, id ASC LIMIT :count OFFSET :offset")
-    abstract override fun entriesFlowable(count: Int, offset: Int): Flowable<List<TrendingEntryWithShow>>
+    abstract fun entriesFlowable(count: Int, offset: Int): Flowable<List<TrendingEntryWithShow>>
 
     @Transaction
     @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC, id ASC")
-    abstract override fun entriesDataSource(): DataSource.Factory<Int, TrendingEntryWithShow>
+    abstract fun entriesDataSource(): DataSource.Factory<Int, TrendingEntryWithShow>
 
     @Query("DELETE FROM trending_shows WHERE page = :page")
     abstract override suspend fun deletePage(page: Int)

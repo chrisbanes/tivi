@@ -22,6 +22,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import app.tivi.R
+import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.databinding.FragmentLibraryFollowedBinding
 import app.tivi.extensions.toActivityNavigatorExtras
@@ -70,9 +71,9 @@ class FollowedFragment : TiviMvRxFragment() {
                 )
             }
 
-            override fun onFilterChanged(filter: String) {
-                viewModel.setFilter(filter)
-            }
+            override fun onFilterChanged(filter: String) = viewModel.setFilter(filter)
+
+            override fun onSortSelected(sort: SortOption) = viewModel.setSort(sort)
         }
 
         binding.followedRv.apply {
@@ -96,6 +97,7 @@ class FollowedFragment : TiviMvRxFragment() {
                 // PagingEpoxyController does not like being updated before it has a list
                 controller.tmdbImageUrlProvider = state.tmdbImageUrlProvider
                 controller.isEmpty = state.isEmpty
+                controller.sortOptions = state.availableSorts
                 controller.submitList(state.followedShows)
             }
         }

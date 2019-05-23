@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-package app.tivi.data.daos
+package app.tivi.data.entities
 
-import app.tivi.data.Entry
-import app.tivi.data.resultentities.EntryWithShow
-
-/**
- * This interface represents a DAO which contains entities which are part of a single collective list.
- */
-interface EntryDao<EC : Entry, LI : EntryWithShow<EC>> : EntityDao<EC> {
-    suspend fun deleteAll()
+enum class SortOption {
+    LAST_WATCHED,
+    ALPHABETICAL,
+    DATE_ADDED
 }
