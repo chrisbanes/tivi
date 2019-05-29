@@ -17,10 +17,9 @@
 package app.tivi.home.watched
 
 import androidx.lifecycle.viewModelScope
-import androidx.paging.DataSource
 import androidx.paging.PagedList
-import androidx.paging.RxPagedListBuilder
-import app.tivi.data.resultentities.EntryWithShow
+import app.tivi.data.resultentities.WatchedShowEntryWithShow
+import app.tivi.interactors.ObserveWatchedShows
 import app.tivi.interactors.UpdateWatchedShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
@@ -35,7 +34,6 @@ import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
@@ -43,8 +41,9 @@ import java.util.concurrent.TimeUnit
 
 class WatchedViewModel @AssistedInject constructor(
     @Assisted initialState: WatchedViewState,
-    private val schedulers: AppRxSchedulers,
+    schedulers: AppRxSchedulers,
     private val updateWatchedShows: UpdateWatchedShows,
+    observeWatchedShows: ObserveWatchedShows,
     private val traktManager: TraktManager,
     tmdbManager: TmdbManager,
     private val logger: Logger
@@ -55,6 +54,12 @@ class WatchedViewModel @AssistedInject constructor(
 
     private val filterObservable = BehaviorSubject.create<CharSequence>()
 
+    private val boundaryCallback = object : PagedList.BoundaryCallback<WatchedShowEntryWithShow>() {
+        override fun onZeroItemsLoaded() = setState { copy(isEmpty = true) }
+        override fun onItemAtEndLoaded(itemAtEnd: WatchedShowEntryWithShow) = setState { copy(isEmpty = false) }
+        override fun onItemAtFrontLoaded(itemAtFront: WatchedShowEntryWithShow) = setState { copy(isEmpty = false) }
+    }
+
     init {
         loadingState.observable.execute {
             copy(isLoading = it() ?: false)
@@ -64,26 +69,15 @@ class WatchedViewModel @AssistedInject constructor(
                 .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
                 .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
 
-        dataSourceToObservable(updateWatchedShows.dataSourceFactory())
+        observeWatchedShows.observe()
                 .execute { copy(watchedShows = it()) }
+        observeWatchedShows(ObserveWatchedShows.Params(PAGING_CONFIG, boundaryCallback))
 
         filterObservable.distinctUntilChanged()
                 .debounce(500, TimeUnit.MILLISECONDS, schedulers.main)
                 .execute { copy(filter = it() ?: "") }
 
         refresh()
-    }
-
-    private fun <T : EntryWithShow<*>> dataSourceToObservable(f: DataSource.Factory<Int, T>): Observable<PagedList<T>> {
-        return RxPagedListBuilder(f, PAGING_CONFIG)
-                .setBoundaryCallback(object : PagedList.BoundaryCallback<T>() {
-                    override fun onZeroItemsLoaded() = setState { copy(isEmpty = true) }
-                    override fun onItemAtEndLoaded(itemAtEnd: T) = setState { copy(isEmpty = false) }
-                    override fun onItemAtFrontLoaded(itemAtFront: T) = setState { copy(isEmpty = false) }
-                })
-                .setFetchScheduler(schedulers.io)
-                .setNotifyScheduler(schedulers.main)
-                .buildObservable()
     }
 
     fun refresh() {
@@ -106,7 +100,7 @@ class WatchedViewModel @AssistedInject constructor(
 
     private fun refreshWatched() {
         loadingState.addLoader()
-        viewModelScope.launchInteractor(updateWatchedShows, UpdateWatchedShows.ExecuteParams(false))
+        viewModelScope.launchInteractor(updateWatchedShows, UpdateWatchedShows.Params(false))
                 .invokeOnCompletion { loadingState.removeLoader() }
     }
 

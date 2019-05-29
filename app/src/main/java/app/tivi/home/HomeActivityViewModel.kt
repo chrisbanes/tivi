@@ -18,6 +18,7 @@ package app.tivi.home
 
 import androidx.lifecycle.viewModelScope
 import app.tivi.home.main.HomeNavigationViewState
+import app.tivi.interactors.ObserveUserDetails
 import app.tivi.interactors.UpdateUserDetails
 import app.tivi.interactors.launchInteractor
 import app.tivi.trakt.TraktAuthState
@@ -34,19 +35,20 @@ import net.openid.appauth.AuthorizationService
 class HomeActivityViewModel @AssistedInject constructor(
     @Assisted initialState: HomeNavigationViewState,
     private val traktManager: TraktManager,
-    private val updateUserDetails: UpdateUserDetails
+    private val updateUserDetails: UpdateUserDetails,
+    observeUserDetails: ObserveUserDetails
 ) : TiviMvRxViewModel<HomeNavigationViewState>(initialState) {
     init {
-        updateUserDetails.setParams(UpdateUserDetails.Params("me"))
-        updateUserDetails.observe()
-                .toObservable()
+        observeUserDetails.observe()
                 .execute { copy(user = it()) }
+        observeUserDetails(ObserveUserDetails.Params("me"))
 
         traktManager.state
                 .distinctUntilChanged()
                 .doOnNext {
                     if (it == TraktAuthState.LOGGED_IN) {
-                        viewModelScope.launchInteractor(updateUserDetails, UpdateUserDetails.ExecuteParams(false))
+                        viewModelScope.launchInteractor(updateUserDetails,
+                                UpdateUserDetails.Params("me", false))
                     }
                 }.execute {
                     copy(authState = it() ?: TraktAuthState.LOGGED_OUT)

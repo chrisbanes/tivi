@@ -37,7 +37,7 @@ import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
-abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewModel<LI>>(
+abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewModel<LI, *>>(
     private val vmClass: Class<VM>
 ) : TiviFragment() {
     protected lateinit var viewModel: VM

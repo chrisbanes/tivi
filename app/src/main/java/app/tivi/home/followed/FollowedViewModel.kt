@@ -21,7 +21,7 @@ import androidx.paging.PagedList
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.interactors.ObserveFollowedShows
-import app.tivi.interactors.SyncFollowedShows
+import app.tivi.interactors.UpdateFollowedShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
@@ -41,8 +41,8 @@ import java.util.concurrent.TimeUnit
 
 class FollowedViewModel @AssistedInject constructor(
     @Assisted initialState: FollowedViewState,
-    private val schedulers: AppRxSchedulers,
-    private val syncFollowedShows: SyncFollowedShows,
+    schedulers: AppRxSchedulers,
+    private val updateFollowedShows: UpdateFollowedShows,
     private val observeFollowedShows: ObserveFollowedShows,
     private val traktManager: TraktManager,
     tmdbManager: TmdbManager,
@@ -122,7 +122,7 @@ class FollowedViewModel @AssistedInject constructor(
 
     private fun refreshFollowed() {
         loadingState.addLoader()
-        viewModelScope.launchInteractor(syncFollowedShows, SyncFollowedShows.ExecuteParams(false))
+        viewModelScope.launchInteractor(updateFollowedShows, UpdateFollowedShows.ExecuteParams(false))
                 .invokeOnCompletion { loadingState.removeLoader() }
     }
 

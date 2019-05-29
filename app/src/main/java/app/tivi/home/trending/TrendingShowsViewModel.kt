@@ -17,31 +17,30 @@
 package app.tivi.home.trending
 
 import app.tivi.data.resultentities.TrendingEntryWithShow
+import app.tivi.interactors.ObservePagedTrendingShows
 import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.interactors.UpdateTrendingShows.Page.NEXT_PAGE
 import app.tivi.interactors.UpdateTrendingShows.Page.REFRESH
 import app.tivi.interactors.execute
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.AppRxSchedulers
 import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
 import javax.inject.Inject
 
 class TrendingShowsViewModel @Inject constructor(
-    schedulers: AppRxSchedulers,
     dispatchers: AppCoroutineDispatchers,
     private val interactor: UpdateTrendingShows,
+    pagingInteractor: ObservePagedTrendingShows,
     tmdbManager: TmdbManager,
     logger: Logger
-) : EntryViewModel<TrendingEntryWithShow>(
-        schedulers,
+) : EntryViewModel<TrendingEntryWithShow, ObservePagedTrendingShows>(
         dispatchers,
-        interactor.dataSourceFactory(),
+        pagingInteractor,
         tmdbManager,
         logger
 ) {
-    override suspend fun callLoadMore() = interactor.execute(UpdateTrendingShows.ExecuteParams(NEXT_PAGE))
+    override suspend fun callLoadMore() = interactor.execute(UpdateTrendingShows.Params(NEXT_PAGE))
 
-    override suspend fun callRefresh() = interactor.execute(UpdateTrendingShows.ExecuteParams(REFRESH))
+    override suspend fun callRefresh() = interactor.execute(UpdateTrendingShows.Params(REFRESH))
 }

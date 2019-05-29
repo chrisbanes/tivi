@@ -19,10 +19,11 @@ package app.tivi.showdetails.episodedetails
 import androidx.lifecycle.viewModelScope
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.interactors.AddEpisodeWatch
+import app.tivi.interactors.ObserveEpisodeDetails
 import app.tivi.interactors.RemoveEpisodeWatch
 import app.tivi.interactors.RemoveEpisodeWatches
 import app.tivi.interactors.UpdateEpisodeDetails
-import app.tivi.interactors.UpdateEpisodeWatches
+import app.tivi.interactors.ObserveEpisodeWatches
 import app.tivi.interactors.launchInteractor
 import app.tivi.showdetails.episodedetails.EpisodeDetailsViewState.Action
 import app.tivi.tmdb.TmdbManager
@@ -41,20 +42,19 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     @Assisted initialState: EpisodeDetailsViewState,
     schedulers: AppRxSchedulers,
     private val updateEpisodeDetails: UpdateEpisodeDetails,
-    private val updateEpisodeWatches: UpdateEpisodeWatches,
+    observeEpisodeDetails: ObserveEpisodeDetails,
+    private val observeEpisodeWatches: ObserveEpisodeWatches,
     private val addEpisodeWatch: AddEpisodeWatch,
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch,
     tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
     init {
-        updateEpisodeDetails.observe()
-                .toObservable()
+        observeEpisodeDetails.observe()
                 .subscribeOn(schedulers.io)
                 .execute { copy(episode = it) }
 
-        updateEpisodeWatches.observe()
-                .toObservable()
+        observeEpisodeWatches.observe()
                 .subscribeOn(schedulers.io)
                 .execute {
                     val action = if (it is Success && it()!!.isNotEmpty()) {
@@ -65,22 +65,21 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
                     copy(watches = it, action = action)
                 }
 
+        withState {
+            observeEpisodeDetails(ObserveEpisodeDetails.Params(it.episodeId))
+            observeEpisodeWatches(ObserveEpisodeWatches.Params(it.episodeId))
+        }
+
         tmdbManager.imageProviderObservable
                 .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
                 .subscribeOn(schedulers.io)
                 .execute { copy(tmdbImageUrlProvider = it) }
 
-        withState {
-            updateEpisodeDetails.setParams(UpdateEpisodeDetails.Params(it.episodeId))
-            updateEpisodeWatches.setParams(UpdateEpisodeWatches.Params(it.episodeId))
-
-            refresh()
-        }
+        refresh()
     }
 
-    private fun refresh() {
-        viewModelScope.launchInteractor(updateEpisodeDetails, UpdateEpisodeDetails.ExecuteParams(true))
-        viewModelScope.launchInteractor(updateEpisodeWatches, UpdateEpisodeWatches.ExecuteParams(true))
+    private fun refresh() = withState {
+        viewModelScope.launchInteractor(updateEpisodeDetails, UpdateEpisodeDetails.Params(it.episodeId, true))
     }
 
     fun removeWatchEntry(entry: EpisodeWatchEntry) {

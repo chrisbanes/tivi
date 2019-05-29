@@ -16,14 +16,11 @@
 
 package app.tivi.interactors
 
-import androidx.paging.DataSource
 import androidx.paging.PagedList
 import app.tivi.extensions.toFlowable
 import io.reactivex.Flowable
 import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -36,30 +33,10 @@ import kotlinx.coroutines.withContext
 
 interface Interactor<in P> {
     val dispatcher: CoroutineDispatcher
-    suspend operator fun invoke(executeParams: P)
+    suspend operator fun invoke(params: P)
 }
 
-interface PagingInteractor<T> {
-    fun dataSourceFactory(): DataSource.Factory<Int, T>
-}
-
-abstract class PagingInteractor2<in P : PagingInteractor2.Parameters<T>, T> {
-    private var disposable = CompositeDisposable()
-    private val subject: PublishSubject<PagedList<T>> = PublishSubject.create()
-
-    operator fun invoke(parameters: P) {
-        disposable.clear()
-        disposable += buildPagedObservable(parameters).subscribe(subject::onNext, subject::onError)
-    }
-
-    fun observe(): Observable<PagedList<T>> = subject
-
-    fun clear() {
-        disposable.clear()
-    }
-
-    protected abstract fun buildPagedObservable(parameters: P): Observable<PagedList<T>>
-
+abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T> : SubjectInteractor<P, PagedList<T>>() {
     interface Parameters<T> {
         val pagingConfig: PagedList.Config
         val boundaryCallback: PagedList.BoundaryCallback<T>?
@@ -69,8 +46,8 @@ abstract class PagingInteractor2<in P : PagingInteractor2.Parameters<T>, T> {
 abstract class ChannelInteractor<P, T : Any> : Interactor<P> {
     private val channel = Channel<T>()
 
-    final override suspend fun invoke(executeParams: P) {
-        channel.offer(execute(executeParams))
+    final override suspend fun invoke(params: P) {
+        channel.offer(execute(params))
     }
 
     fun observe(): Flowable<T> = channel.asObservable(dispatcher).toFlowable()
@@ -82,38 +59,29 @@ abstract class ChannelInteractor<P, T : Any> : Interactor<P> {
     }
 }
 
-abstract class SubjectInteractor<P : Any, EP, T> : Interactor<EP> {
+abstract class SubjectInteractor<P : Any, T> {
     private var disposable: Disposable? = null
-    private val subject: BehaviorSubject<T> = BehaviorSubject.create()
+    private val subject: PublishSubject<T> = PublishSubject.create()
 
     val loading = BehaviorSubject.createDefault(false)
 
-    private lateinit var params: P
-
-    fun setParams(params: P) {
-        this.params = params
-        setSource(createObservable(params))
-    }
-
-    final override suspend fun invoke(executeParams: EP) {
+    operator fun invoke(params: P) {
         loading.onNext(true)
-        doWork(params, executeParams)
+        setSource(createObservable(params))
         loading.onNext(false)
     }
 
-    protected abstract suspend fun doWork(params: P, executeParams: EP)
-
-    protected abstract fun createObservable(params: P): Flowable<T>
+    protected abstract fun createObservable(params: P): Observable<T>
 
     fun clear() {
         disposable?.dispose()
         disposable = null
     }
 
-    fun observe(): Flowable<T> = subject.toFlowable()
+    fun observe(): Observable<T> = subject.doOnDispose(::clear)
 
-    private fun setSource(source: Flowable<T>) {
-        disposable?.dispose()
+    private fun setSource(source: Observable<T>) {
+        clear()
         disposable = source.subscribe(subject::onNext, subject::onError)
     }
 }

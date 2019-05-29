@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,19 @@
 package app.tivi.interactors
 
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
-import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
+import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
+import app.tivi.extensions.emptyObservableList
+import io.reactivex.Observable
 import javax.inject.Inject
 
-class RemoveEpisodeWatch @Inject constructor(
-    dispatchers: AppCoroutineDispatchers,
+class ObserveFollowedShowSeasonData @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository
-) : Interactor<RemoveEpisodeWatch.Params> {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
-
-    override suspend operator fun invoke(params: Params) {
-        seasonsEpisodesRepository.removeEpisodeWatch(params.episodeWatchId)
+) : SubjectInteractor<ObserveFollowedShowSeasonData.Params, List<SeasonWithEpisodesAndWatches>>() {
+    override fun createObservable(params: Params): Observable<List<SeasonWithEpisodesAndWatches>> {
+        return seasonsEpisodesRepository.observeSeasonsForShow(params.showId)
+                .toObservable()
+                .startWith(emptyObservableList())
     }
 
-    data class Params(val episodeWatchId: Long)
+    data class Params(val showId: Long)
 }

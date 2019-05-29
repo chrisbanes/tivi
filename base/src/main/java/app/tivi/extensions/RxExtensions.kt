@@ -23,3 +23,4 @@ import io.reactivex.Observable
 fun <T> Observable<T>.toFlowable() = toFlowable(BackpressureStrategy.LATEST)!!
 
 fun <T> emptyFlowableList() = Flowable.just(emptyList<T>())
+fun <T> emptyObservableList() = Observable.just(emptyList<T>())

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,16 @@
 
 package app.tivi.interactors
 
-import app.tivi.data.repositories.shows.ShowRepository
-import app.tivi.interactors.UpdateShowDetails.Params
-import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
+import app.tivi.data.repositories.followedshows.FollowedShowsRepository
+import io.reactivex.Observable
 import javax.inject.Inject
 
-class UpdateShowDetails @Inject constructor(
-    private val showRepository: ShowRepository,
-    dispatchers: AppCoroutineDispatchers
-) : Interactor<Params> {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
-
-    override suspend fun invoke(params: Params) {
-        showRepository.updateShow(params.showId)
+class ObserveShowFollowStatus @Inject constructor(
+    private val followedShowsRepository: FollowedShowsRepository
+) : SubjectInteractor<ObserveShowFollowStatus.Params, Boolean>() {
+    override fun createObservable(params: Params): Observable<Boolean> {
+        return followedShowsRepository.observeIsShowFollowed(params.showId).toObservable()
     }
 
-    data class Params(val showId: Long, val forceLoad: Boolean)
+    data class Params(val showId: Long)
 }

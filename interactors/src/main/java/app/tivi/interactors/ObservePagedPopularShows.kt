@@ -18,19 +18,18 @@ package app.tivi.interactors
 
 import androidx.paging.PagedList
 import androidx.paging.RxPagedListBuilder
-import app.tivi.data.entities.SortOption
-import app.tivi.data.repositories.followedshows.FollowedShowsRepository
-import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.data.repositories.popularshows.PopularShowsRepository
+import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Observable
 import javax.inject.Inject
 
-class ObserveFollowedShows @Inject constructor(
+class ObservePagedPopularShows @Inject constructor(
     private val schedulers: AppRxSchedulers,
-    private val followedShowsRepository: FollowedShowsRepository
-) : PagingInteractor<ObserveFollowedShows.Parameters, FollowedShowEntryWithShow>() {
-    override fun createObservable(params: Parameters): Observable<PagedList<FollowedShowEntryWithShow>> {
-        val source = followedShowsRepository.observeFollowedShows(params.sort, params.filter)
+    private val popularShowsRepository: PopularShowsRepository
+) : PagingInteractor<ObservePagedPopularShows.Params, PopularEntryWithShow>() {
+    override fun createObservable(params: Params): Observable<PagedList<PopularEntryWithShow>> {
+        val source = popularShowsRepository.observeForPaging()
         return RxPagedListBuilder(source, params.pagingConfig)
                 .setBoundaryCallback(params.boundaryCallback)
                 .setFetchScheduler(schedulers.io)
@@ -38,10 +37,8 @@ class ObserveFollowedShows @Inject constructor(
                 .buildObservable()
     }
 
-    data class Parameters(
-        val filter: String? = null,
-        val sort: SortOption,
+    data class Params(
         override val pagingConfig: PagedList.Config,
-        override val boundaryCallback: PagedList.BoundaryCallback<FollowedShowEntryWithShow>? = null
-    ) : PagingInteractor.Parameters<FollowedShowEntryWithShow>
+        override val boundaryCallback: PagedList.BoundaryCallback<PopularEntryWithShow>?
+    ) : Parameters<PopularEntryWithShow>
 }

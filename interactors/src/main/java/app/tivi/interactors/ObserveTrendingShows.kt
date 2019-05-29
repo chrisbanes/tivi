@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,25 +17,20 @@
 package app.tivi.interactors
 
 import app.tivi.data.repositories.trendingshows.TrendingShowsRepository
-import app.tivi.interactors.UpdateTrendingShows.Params
-import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
+import app.tivi.data.resultentities.TrendingEntryWithShow
+import app.tivi.extensions.emptyFlowableList
+import app.tivi.util.AppRxSchedulers
+import io.reactivex.Observable
 import javax.inject.Inject
 
-class UpdateTrendingShows @Inject constructor(
-    dispatchers: AppCoroutineDispatchers,
+class ObserveTrendingShows @Inject constructor(
+    private val schedulers: AppRxSchedulers,
     private val trendingShowsRepository: TrendingShowsRepository
-) : Interactor<Params> {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
-
-    override suspend fun invoke(params: Params) = when (params.page) {
-        Page.NEXT_PAGE -> trendingShowsRepository.loadNextPage()
-        Page.REFRESH -> trendingShowsRepository.refresh()
-    }
-
-    data class Params(val page: Page)
-
-    enum class Page {
-        NEXT_PAGE, REFRESH
+) : SubjectInteractor<Unit, List<TrendingEntryWithShow>>() {
+    override fun createObservable(params: Unit): Observable<List<TrendingEntryWithShow>> {
+        return trendingShowsRepository.observeForFlowable()
+                .startWith(emptyFlowableList())
+                .subscribeOn(schedulers.io)
+                .toObservable()
     }
 }

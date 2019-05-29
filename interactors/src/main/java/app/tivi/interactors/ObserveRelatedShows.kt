@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,20 @@
 package app.tivi.interactors
 
 import app.tivi.data.repositories.relatedshows.RelatedShowsRepository
-import app.tivi.interactors.UpdateRelatedShows.Params
-import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
+import app.tivi.data.resultentities.RelatedShowEntryWithShow
+import app.tivi.util.AppRxSchedulers
+import io.reactivex.Observable
 import javax.inject.Inject
 
-class UpdateRelatedShows @Inject constructor(
-    dispatchers: AppCoroutineDispatchers,
+class ObserveRelatedShows @Inject constructor(
+    private val schedulers: AppRxSchedulers,
     private val repository: RelatedShowsRepository
-) : Interactor<Params> {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
-
-    override suspend fun invoke(params: Params) {
-        repository.updateRelatedShows(params.showId)
+) : SubjectInteractor<ObserveRelatedShows.Params, List<RelatedShowEntryWithShow>>() {
+    override fun createObservable(params: Params): Observable<List<RelatedShowEntryWithShow>> {
+        return repository.observeRelatedShows(params.showId)
+                .subscribeOn(schedulers.io)
+                .toObservable()
     }
 
-    data class Params(val showId: Long, val forceLoad: Boolean)
+    data class Params(val showId: Long)
 }

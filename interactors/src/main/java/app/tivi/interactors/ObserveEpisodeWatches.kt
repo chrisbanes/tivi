@@ -18,32 +18,21 @@ package app.tivi.interactors
 
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
-import app.tivi.extensions.emptyFlowableList
-import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.extensions.emptyObservableList
 import app.tivi.util.AppRxSchedulers
-import io.reactivex.Flowable
-import kotlinx.coroutines.CoroutineDispatcher
+import io.reactivex.Observable
 import javax.inject.Inject
 
-class UpdateEpisodeWatches @Inject constructor(
+class ObserveEpisodeWatches @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
-    dispatchers: AppCoroutineDispatchers,
     private val schedulers: AppRxSchedulers
-) : SubjectInteractor<UpdateEpisodeWatches.Params, UpdateEpisodeWatches.ExecuteParams, List<EpisodeWatchEntry>>() {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
-
-    override fun createObservable(params: Params): Flowable<List<EpisodeWatchEntry>> {
+) : SubjectInteractor<ObserveEpisodeWatches.Params, List<EpisodeWatchEntry>>() {
+    override fun createObservable(params: Params): Observable<List<EpisodeWatchEntry>> {
         return seasonsEpisodesRepository.observeEpisodeWatches(params.episodeId)
-                .startWith(emptyFlowableList())
+                .toObservable()
+                .startWith(emptyObservableList())
                 .subscribeOn(schedulers.io)
     }
 
-    override suspend fun doWork(params: Params, executeParams: ExecuteParams) {
-        // TODO add refresh?
-        // Don't do anything here
-    }
-
     data class Params(val episodeId: Long)
-
-    data class ExecuteParams(val forceLoad: Boolean)
 }
