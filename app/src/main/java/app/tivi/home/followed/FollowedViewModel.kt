@@ -82,6 +82,7 @@ class FollowedViewModel @AssistedInject constructor(
             copy(availableSorts = listOf(SortOption.LAST_WATCHED, SortOption.ALPHABETICAL, SortOption.DATE_ADDED))
         }
 
+        // Subscribe to state changes, so update the observed data source
         subscribe(::updateDataSource)
 
         refresh()
@@ -113,7 +114,7 @@ class FollowedViewModel @AssistedInject constructor(
     }
 
     fun setFilter(filter: String) {
-        setState { copy(filter = filter) }
+        setState { copy(filter = filter, filterActive = filter.isNotEmpty()) }
     }
 
     fun setSort(sort: SortOption) {

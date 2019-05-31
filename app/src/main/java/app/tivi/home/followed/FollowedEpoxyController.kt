@@ -32,7 +32,6 @@ import app.tivi.emptyState
 import app.tivi.filter
 import app.tivi.header
 import app.tivi.home.HomeTextCreator
-import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.EpoxyModelProperty
 import app.tivi.ui.epoxy.TotalSpanOverride
 import app.tivi.ui.widget.PopupMenuButton
@@ -47,14 +46,11 @@ class FollowedEpoxyController @Inject constructor(
         modelBuildingHandler = Handler(Looper.getMainLooper()),
         diffingHandler = EpoxyAsyncUtil.getAsyncBackgroundHandler()
 ) {
-    var tmdbImageUrlProvider by EpoxyModelProperty { TmdbImageUrlProvider() }
-    var isEmpty by EpoxyModelProperty { false }
-    var filter by EpoxyModelProperty<CharSequence> { "" }
+    var viewState by EpoxyModelProperty { FollowedViewState() }
     var callbacks: Callbacks? = null
-    var sortOptions by EpoxyModelProperty { emptyList<SortOption>() }
 
     override fun addModels(models: List<EpoxyModel<*>>) {
-        if (isEmpty) {
+        if (viewState.isEmpty) {
             emptyState {
                 id("empty")
                 spanSizeOverride(TotalSpanOverride)
@@ -62,11 +58,11 @@ class FollowedEpoxyController @Inject constructor(
         } else {
             header {
                 id("header")
-                titleString(textCreator.showHeaderCount(models.size))
+                titleString(textCreator.showHeaderCount(models.size, viewState.filterActive))
             }
             filter {
                 id("filters")
-                filter(filter)
+                filter(viewState.filter)
                 watcher(object : TextWatcher {
                     override fun afterTextChanged(s: Editable?) {
                         callbacks?.onFilterChanged(s?.toString() ?: "")
@@ -82,13 +78,22 @@ class FollowedEpoxyController @Inject constructor(
                         popupMenu.menu.forEach {
                             when (it.itemId) {
                                 R.id.popup_sort_last_watched -> {
-                                    it.isVisible = sortOptions.contains(SortOption.LAST_WATCHED)
+                                    it.isVisible = viewState.availableSorts.contains(SortOption.LAST_WATCHED)
+                                    if (viewState.sort == SortOption.LAST_WATCHED) {
+                                        it.isChecked = true
+                                    }
                                 }
                                 R.id.popup_sort_date_followed -> {
-                                    it.isVisible = sortOptions.contains(SortOption.DATE_ADDED)
+                                    it.isVisible = viewState.availableSorts.contains(SortOption.DATE_ADDED)
+                                    if (viewState.sort == SortOption.DATE_ADDED) {
+                                        it.isChecked = true
+                                    }
                                 }
                                 R.id.popup_sort_alpha -> {
-                                    it.isVisible = sortOptions.contains(SortOption.ALPHABETICAL)
+                                    it.isVisible = viewState.availableSorts.contains(SortOption.ALPHABETICAL)
+                                    if (viewState.sort == SortOption.ALPHABETICAL) {
+                                        it.isChecked = true
+                                    }
                                 }
                             }
                         }
@@ -123,7 +128,7 @@ class FollowedEpoxyController @Inject constructor(
             }
             followedEntry(item?.entry)
             textCreator(textCreator)
-            tmdbImageUrlProvider(tmdbImageUrlProvider)
+            tmdbImageUrlProvider(viewState.tmdbImageUrlProvider)
         }
     }
 

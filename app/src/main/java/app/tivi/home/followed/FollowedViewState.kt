@@ -27,6 +27,7 @@ data class FollowedViewState(
     val isLoading: Boolean = false,
     val isEmpty: Boolean = true,
     val followedShows: PagedList<FollowedShowEntryWithShow>? = null,
+    val filterActive: Boolean = false,
     val filter: String? = null,
     val availableSorts: List<SortOption> = emptyList(),
     val sort: SortOption = SortOption.LAST_WATCHED

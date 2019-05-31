@@ -95,9 +95,7 @@ class FollowedFragment : TiviMvRxFragment() {
 
             if (state.followedShows != null) {
                 // PagingEpoxyController does not like being updated before it has a list
-                controller.tmdbImageUrlProvider = state.tmdbImageUrlProvider
-                controller.isEmpty = state.isEmpty
-                controller.sortOptions = state.availableSorts
+                controller.viewState = state
                 controller.submitList(state.followedShows)
             }
         }
