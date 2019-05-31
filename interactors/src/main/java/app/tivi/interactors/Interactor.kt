@@ -18,8 +18,6 @@ package app.tivi.interactors
 
 import androidx.paging.PagedList
 import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
-import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -58,30 +56,14 @@ abstract class ChannelInteractor<P, T : Any> : Interactor<P> {
 }
 
 abstract class SubjectInteractor<P : Any, T> {
-    private var disposable: Disposable? = null
-    private val subject: PublishSubject<T> = PublishSubject.create()
+    private val subject: PublishSubject<P> = PublishSubject.create()
+    private val observable = subject.switchMap(::createObservable)
 
-    val loading = BehaviorSubject.createDefault(false)
-
-    operator fun invoke(params: P) {
-        loading.onNext(true)
-        setSource(createObservable(params))
-        loading.onNext(false)
-    }
+    operator fun invoke(params: P) = subject.onNext(params)
 
     protected abstract fun createObservable(params: P): Observable<T>
 
-    fun clear() {
-        disposable?.dispose()
-        disposable = null
-    }
-
-    fun observe(): Observable<T> = subject.doOnDispose(::clear)
-
-    private fun setSource(source: Observable<T>) {
-        clear()
-        disposable = source.subscribe(subject::onNext, subject::onError)
-    }
+    fun observe(): Observable<T> = observable
 }
 
 fun <P> CoroutineScope.launchInteractor(interactor: Interactor<P>, param: P): Job {
