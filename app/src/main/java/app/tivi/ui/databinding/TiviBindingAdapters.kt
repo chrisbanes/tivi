@@ -214,3 +214,10 @@ fun applySystemWindows(
         )
     }
 }
+
+@BindingAdapter("materialShapeElevationBackground")
+fun materialShapeElevationBackground(view: View, oldValue: Boolean, value: Boolean) {
+    if (oldValue != value && value) {
+        view.background = MaterialShapeDrawable.createWithElevationOverlay(view.context, view.elevation)
+    }
+}

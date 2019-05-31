@@ -42,14 +42,15 @@
                 android:id="@+id/header_holder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/colorSurface"
-                android:elevation="@dimen/sticky_header_elevation" />
+                android:elevation="@dimen/sticky_header_elevation"
+                app:materialShapeElevationBackground="@{ true }" />
 
         </FrameLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <data>
+
         <variable
             name="state"
             type="app.tivi.home.watched.WatchedViewState" />
