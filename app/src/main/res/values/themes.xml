@@ -25,8 +25,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="android:colorBackground">@color/window_background</item>
-
         <!-- Default widget styles -->
         <item name="toolbarStyle">@style/Widget.Tivi.Toolbar</item>
 

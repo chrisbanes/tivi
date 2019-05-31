@@ -31,7 +31,6 @@
 
     <color name="launcher_icon_background">#333333</color>
 
-    <color name="window_background">#FAFAFA</color>
     <color name="app_bar_background">#F5F5F5</color>
 
     <color name="swipe_away_background">#DEDEDE</color>

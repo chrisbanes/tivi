@@ -22,9 +22,11 @@ import android.graphics.Outline
 import android.view.Gravity
 import android.view.View
 import android.view.ViewOutlineProvider
+import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.doOnLayout
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import app.tivi.R
@@ -218,6 +220,13 @@ fun applySystemWindows(
 @BindingAdapter("materialShapeElevationBackground")
 fun materialShapeElevationBackground(view: View, oldValue: Boolean, value: Boolean) {
     if (oldValue != value && value) {
-        view.background = MaterialShapeDrawable.createWithElevationOverlay(view.context, view.elevation)
+        val shapeDrawable = MaterialShapeDrawable.createWithElevationOverlay(view.context, view.elevation)
+        view.background = shapeDrawable
+
+        val vto = view.viewTreeObserver
+        vto.addOnPreDrawListener {
+            shapeDrawable.z = view.z
+            true
+        }
     }
 }
