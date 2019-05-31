@@ -17,6 +17,7 @@
 package app.tivi.showdetails.details
 
 import android.content.Context
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
 import androidx.core.text.italic
@@ -27,6 +28,7 @@ import app.tivi.data.entities.Genre
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.inject.PerActivity
 import app.tivi.ui.GenreStringer
+import app.tivi.ui.text.TypefaceSpan
 import app.tivi.ui.text.textAppearanceSpanForAttribute
 import app.tivi.util.TiviDateFormatter
 import org.threeten.bp.OffsetDateTime
@@ -36,6 +38,8 @@ class ShowDetailsTextCreator @Inject constructor(
     @PerActivity private val context: Context,
     private val tiviDateFormatter: TiviDateFormatter
 ) {
+    private val barlowTypefaceSpan = TypefaceSpan(ResourcesCompat.getFont(context, R.font.barlow_400))
+
     fun seasonSummaryText(season: SeasonWithEpisodesAndWatches): CharSequence {
         val toWatch = season.numberAiredToWatch
         val toAir = season.numberToAir
@@ -88,7 +92,7 @@ class ShowDetailsTextCreator @Inject constructor(
             val spanned = buildSpannedString {
                 for (i in 0 until genres.size) {
                     val genre = genres[i]
-                    inSpans(textAppearanceSpanForAttribute(context, R.attr.textAppearanceCaption)) {
+                    inSpans(textAppearanceSpanForAttribute(context, R.attr.textAppearanceCaption), barlowTypefaceSpan) {
                         append(context.getString(GenreStringer.getLabel(genre)))
                     }
                     append("\u00A0") // nbsp

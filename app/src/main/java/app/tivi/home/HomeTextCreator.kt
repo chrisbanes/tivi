@@ -17,23 +17,27 @@
 package app.tivi.home
 
 import android.content.Context
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
 import app.tivi.R
 import app.tivi.data.entities.TiviShow
 import app.tivi.inject.PerActivity
+import app.tivi.ui.text.TypefaceSpan
 import app.tivi.ui.text.textAppearanceSpanForAttribute
 import javax.inject.Inject
 
 class HomeTextCreator @Inject constructor(
     @PerActivity private val context: Context
 ) {
+    private val barlowTypefaceSpan = TypefaceSpan(ResourcesCompat.getFont(context, R.font.barlow_400))
+
     fun showTitle(show: TiviShow): CharSequence = buildSpannedString {
         append(show.title)
 
         show.firstAired?.also { firstAired ->
             append(" ")
-            inSpans(textAppearanceSpanForAttribute(context, R.attr.textAppearanceCaption)) {
+            inSpans(textAppearanceSpanForAttribute(context, R.attr.textAppearanceCaption), barlowTypefaceSpan) {
                 append("(")
                 append(firstAired.year.toString())
                 append(")")
