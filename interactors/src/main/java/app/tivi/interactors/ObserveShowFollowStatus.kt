@@ -17,14 +17,17 @@
 package app.tivi.interactors
 
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
+import app.tivi.util.AppRxSchedulers
 import io.reactivex.Observable
 import javax.inject.Inject
 
 class ObserveShowFollowStatus @Inject constructor(
+    private val schedulers: AppRxSchedulers,
     private val followedShowsRepository: FollowedShowsRepository
 ) : SubjectInteractor<ObserveShowFollowStatus.Params, Boolean>() {
     override fun createObservable(params: Params): Observable<Boolean> {
-        return followedShowsRepository.observeIsShowFollowed(params.showId).toObservable()
+        return followedShowsRepository.observeIsShowFollowed(params.showId)
+                .subscribeOn(schedulers.io)
     }
 
     data class Params(val showId: Long)

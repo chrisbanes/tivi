@@ -19,16 +19,18 @@ package app.tivi.interactors
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.extensions.emptyObservableList
+import app.tivi.util.AppRxSchedulers
 import io.reactivex.Observable
 import javax.inject.Inject
 
 class ObserveFollowedShowSeasonData @Inject constructor(
+    private val schedulers: AppRxSchedulers,
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository
 ) : SubjectInteractor<ObserveFollowedShowSeasonData.Params, List<SeasonWithEpisodesAndWatches>>() {
     override fun createObservable(params: Params): Observable<List<SeasonWithEpisodesAndWatches>> {
         return seasonsEpisodesRepository.observeSeasonsForShow(params.showId)
-                .toObservable()
                 .startWith(emptyObservableList())
+                .subscribeOn(schedulers.io)
     }
 
     data class Params(val showId: Long)

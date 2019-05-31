@@ -16,7 +16,6 @@
 
 package app.tivi.util
 
-import app.tivi.extensions.toFlowable
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 
@@ -26,8 +25,6 @@ class RxLoadingCounter {
 
     val observable: Observable<Boolean>
         get() = loadingState.map { it > 0 }
-
-    val flowable by lazy(LazyThreadSafetyMode.NONE) { observable.toFlowable() }
 
     fun addLoader() {
         loadingState.onNext(++loaders)

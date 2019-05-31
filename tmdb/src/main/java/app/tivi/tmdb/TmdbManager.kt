@@ -17,7 +17,6 @@
 package app.tivi.tmdb
 
 import app.tivi.extensions.fetchBodyWithRetry
-import app.tivi.extensions.toFlowable
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.Configuration
@@ -35,7 +34,6 @@ class TmdbManager @Inject constructor(
     private val tmdbClient: Tmdb
 ) {
     private val imageProviderSubject = BehaviorSubject.createDefault(TmdbImageUrlProvider())
-    val imageProviderFlowable = imageProviderSubject.toFlowable()
     val imageProviderObservable: Observable<TmdbImageUrlProvider>
         get() = imageProviderSubject
 

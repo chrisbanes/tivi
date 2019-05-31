@@ -29,7 +29,6 @@ class ObserveUserDetails @Inject constructor(
     override fun createObservable(params: Params): Observable<TraktUser> {
         return repository.observeUser(params.username)
                 .subscribeOn(schedulers.io)
-                .toObservable()
     }
 
     data class Params(val username: String)

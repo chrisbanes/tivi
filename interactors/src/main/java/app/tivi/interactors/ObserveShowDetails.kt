@@ -29,7 +29,6 @@ class ObserveShowDetails @Inject constructor(
     override fun createObservable(params: Params): Observable<TiviShow> {
         return showRepository.observeShow(params.showId)
                 .subscribeOn(schedulers.io)
-                .toObservable()
     }
 
     data class Params(val showId: Long)

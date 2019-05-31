@@ -51,11 +51,9 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
 ) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
     init {
         observeEpisodeDetails.observe()
-                .subscribeOn(schedulers.io)
                 .execute { copy(episode = it) }
 
         observeEpisodeWatches.observe()
-                .subscribeOn(schedulers.io)
                 .execute {
                     val action = if (it is Success && it()!!.isNotEmpty()) {
                         Action.UNWATCH
@@ -72,7 +70,6 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
 
         tmdbManager.imageProviderObservable
                 .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
-                .subscribeOn(schedulers.io)
                 .execute { copy(tmdbImageUrlProvider = it) }
 
         refresh()

@@ -17,8 +17,6 @@
 package app.tivi.interactors
 
 import androidx.paging.PagedList
-import app.tivi.extensions.toFlowable
-import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.BehaviorSubject
@@ -50,7 +48,7 @@ abstract class ChannelInteractor<P, T : Any> : Interactor<P> {
         channel.offer(execute(params))
     }
 
-    fun observe(): Flowable<T> = channel.asObservable(dispatcher).toFlowable()
+    fun observe(): Observable<T> = channel.asObservable(dispatcher)
 
     protected abstract suspend fun execute(executeParams: P): T
 

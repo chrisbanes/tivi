@@ -16,17 +16,15 @@
 
 package app.tivi.util
 
-import androidx.lifecycle.LiveDataReactiveStreams
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import app.tivi.api.Status
 import app.tivi.api.UiResource
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.extensions.toFlowable
 import app.tivi.interactors.PagingInteractor
 import app.tivi.tmdb.TmdbManager
-import io.reactivex.rxkotlin.Flowables
+import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.launch
 
@@ -53,15 +51,13 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
         override fun onZeroItemsLoaded() = loaded.onNext(true)
     }
 
-    val viewState = LiveDataReactiveStreams.fromPublisher(
-            Flowables.combineLatest(
-                    messages.toFlowable(),
-                    tmdbManager.imageProviderFlowable,
-                    pagingInteractor.observe().toFlowable(),
-                    loaded.toFlowable(),
-                    ::EntryViewState
-            )
-    )
+    val viewState = Observables.combineLatest(
+            messages,
+            tmdbManager.imageProviderObservable,
+            pagingInteractor.observe(),
+            loaded,
+            ::EntryViewState
+    ).toLiveData()
 
     init {
         refresh()

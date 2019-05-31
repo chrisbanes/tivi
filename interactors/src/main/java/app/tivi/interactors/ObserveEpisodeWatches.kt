@@ -29,7 +29,6 @@ class ObserveEpisodeWatches @Inject constructor(
 ) : SubjectInteractor<ObserveEpisodeWatches.Params, List<EpisodeWatchEntry>>() {
     override fun createObservable(params: Params): Observable<List<EpisodeWatchEntry>> {
         return seasonsEpisodesRepository.observeEpisodeWatches(params.episodeId)
-                .toObservable()
                 .startWith(emptyObservableList())
                 .subscribeOn(schedulers.io)
     }

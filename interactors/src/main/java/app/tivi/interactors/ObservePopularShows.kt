@@ -18,7 +18,7 @@ package app.tivi.interactors
 
 import app.tivi.data.repositories.popularshows.PopularShowsRepository
 import app.tivi.data.resultentities.PopularEntryWithShow
-import app.tivi.extensions.emptyFlowableList
+import app.tivi.extensions.emptyObservableList
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Observable
 import javax.inject.Inject
@@ -28,9 +28,8 @@ class ObservePopularShows @Inject constructor(
     private val popularShowsRepository: PopularShowsRepository
 ) : SubjectInteractor<Unit, List<PopularEntryWithShow>>() {
     override fun createObservable(params: Unit): Observable<List<PopularEntryWithShow>> {
-        return popularShowsRepository.observeForFlowable()
-                .startWith(emptyFlowableList())
+        return popularShowsRepository.observeForObservable()
+                .startWith(emptyObservableList())
                 .subscribeOn(schedulers.io)
-                .toObservable()
     }
 }

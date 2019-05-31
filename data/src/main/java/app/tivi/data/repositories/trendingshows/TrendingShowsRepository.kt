@@ -20,13 +20,11 @@ import app.tivi.data.entities.Success
 import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
-import app.tivi.util.AppCoroutineDispatchers
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class TrendingShowsRepository @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
     private val localStore: LocalTrendingShowsStore,
     private val showStore: LocalShowStore,
     private val traktDataSource: TraktTrendingShowsDataSource,
@@ -34,7 +32,7 @@ class TrendingShowsRepository @Inject constructor(
 ) {
     fun observeForPaging() = localStore.observeForPaging()
 
-    fun observeForFlowable() = localStore.observeForFlowable(15, 0)
+    fun observeForObservable() = localStore.observeForObservable(15, 0)
 
     suspend fun loadNextPage() {
         val lastPage = localStore.getLastPage()
@@ -46,8 +44,7 @@ class TrendingShowsRepository @Inject constructor(
     }
 
     private suspend fun updateTrendingShows(page: Int, resetOnSave: Boolean) {
-        val response = traktDataSource.getTrendingShows(page, 20)
-        when (response) {
+        when (val response = traktDataSource.getTrendingShows(page, 20)) {
             is Success -> {
                 response.data.map { (show, entry) ->
                     // Grab the show id if it exists, or save the show and use it's generated ID

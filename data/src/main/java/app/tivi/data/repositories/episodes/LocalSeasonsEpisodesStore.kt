@@ -30,7 +30,7 @@ import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.util.Logger
-import io.reactivex.Flowable
+import io.reactivex.Observable
 import org.threeten.bp.temporal.TemporalAmount
 import javax.inject.Inject
 
@@ -64,15 +64,15 @@ class LocalSeasonsEpisodesStore @Inject constructor(
             logger
     )
 
-    fun observeEpisode(episodeId: Long): Flowable<Episode> {
-        return episodesDao.episodeWithIdFlowable(episodeId)
+    fun observeEpisode(episodeId: Long): Observable<Episode> {
+        return episodesDao.episodeWithIdObservable(episodeId)
     }
 
-    fun observeEpisodeWatches(episodeId: Long): Flowable<List<EpisodeWatchEntry>> {
-        return episodeWatchEntryDao.watchesForEpisodeFlowable(episodeId)
+    fun observeEpisodeWatches(episodeId: Long): Observable<List<EpisodeWatchEntry>> {
+        return episodeWatchEntryDao.watchesForEpisodeObservable(episodeId)
     }
 
-    fun observeShowSeasonsWithEpisodes(showId: Long): Flowable<List<SeasonWithEpisodesAndWatches>> {
+    fun observeShowSeasonsWithEpisodes(showId: Long): Observable<List<SeasonWithEpisodesAndWatches>> {
         return seasonsDao.seasonsWithEpisodesForShowId(showId)
     }
 

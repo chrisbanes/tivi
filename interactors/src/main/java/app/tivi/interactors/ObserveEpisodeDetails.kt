@@ -29,7 +29,6 @@ class ObserveEpisodeDetails @Inject constructor(
     override fun createObservable(params: Params): Observable<Episode> {
         return seasonsEpisodesRepository.observeEpisode(params.episodeId)
                 .subscribeOn(schedulers.io)
-                .toObservable()
     }
 
     data class Params(val episodeId: Long)

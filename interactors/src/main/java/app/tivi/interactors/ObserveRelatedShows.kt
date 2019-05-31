@@ -29,7 +29,6 @@ class ObserveRelatedShows @Inject constructor(
     override fun createObservable(params: Params): Observable<List<RelatedShowEntryWithShow>> {
         return repository.observeRelatedShows(params.showId)
                 .subscribeOn(schedulers.io)
-                .toObservable()
     }
 
     data class Params(val showId: Long)

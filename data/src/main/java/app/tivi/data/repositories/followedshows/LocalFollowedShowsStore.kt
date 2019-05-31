@@ -29,7 +29,7 @@ import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.util.Logger
-import io.reactivex.Flowable
+import io.reactivex.Observable
 import org.threeten.bp.temporal.TemporalAmount
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -67,7 +67,7 @@ class LocalFollowedShowsStore @Inject constructor(
     suspend fun deleteEntriesInIds(ids: List<Long>) = followedShowsDao.deleteWithIds(ids)
 
     fun observeForPaging(sort: SortOption, filter: String?): DataSource.Factory<Int, FollowedShowEntryWithShow> {
-        val filtered = filter?.isNotEmpty() == true
+        val filtered = filter != null && filter.isNotEmpty()
         return when (sort) {
             SortOption.LAST_WATCHED -> {
                 if (filtered) {
@@ -93,8 +93,8 @@ class LocalFollowedShowsStore @Inject constructor(
         }
     }
 
-    fun observeIsShowFollowed(showId: Long): Flowable<Boolean> {
-        return followedShowsDao.entryCountWithShowIdNotPendingDeleteFlowable(showId)
+    fun observeIsShowFollowed(showId: Long): Observable<Boolean> {
+        return followedShowsDao.entryCountWithShowIdNotPendingDeleteObservable(showId)
                 .map { it > 0 }
     }
 

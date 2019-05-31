@@ -51,12 +51,10 @@ class DiscoverViewModel @AssistedInject constructor(
                 .execute { copy(isLoading = it() ?: false) }
 
         observeTrendingShows.observe()
-                .subscribeOn(schedulers.io)
                 .execute { copy(trendingItems = it() ?: emptyList()) }
         observeTrendingShows(Unit)
 
         observePopularShows.observe()
-                .subscribeOn(schedulers.io)
                 .execute { copy(popularItems = it() ?: emptyList()) }
         observePopularShows(Unit)
 

@@ -17,7 +17,7 @@
 package app.tivi.data.repositories.shows
 
 import app.tivi.data.entities.TiviShow
-import io.reactivex.Flowable
+import io.reactivex.Observable
 
 interface ShowRepository {
     /**
@@ -32,5 +32,5 @@ interface ShowRepository {
 
     suspend fun needsUpdate(showId: Long): Boolean
 
-    fun observeShow(showId: Long): Flowable<TiviShow>
+    fun observeShow(showId: Long): Observable<TiviShow>
 }

@@ -22,7 +22,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
-import io.reactivex.Flowable
+import io.reactivex.Observable
 
 @Dao
 abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow> {
@@ -32,7 +32,7 @@ abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithS
 
     @Transaction
     @Query("SELECT * FROM watched_entries ORDER BY datetime(last_watched) DESC LIMIT :count OFFSET :offset")
-    abstract fun entriesFlowable(count: Int, offset: Int): Flowable<List<WatchedShowEntryWithShow>>
+    abstract fun entriesObservable(count: Int, offset: Int): Observable<List<WatchedShowEntryWithShow>>
 
     @Transaction
     @Query("SELECT * FROM watched_entries ORDER BY datetime(last_watched) DESC")

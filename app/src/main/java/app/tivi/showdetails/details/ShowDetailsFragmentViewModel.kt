@@ -65,7 +65,6 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
 ) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
     init {
         observeShowFollowStatus.observe()
-                .subscribeOn(schedulers.io)
                 .execute {
                     when (it) {
                         is Success -> copy(isFollowed = it.invoke()!!)
@@ -74,20 +73,16 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
                 }
 
         observeShowDetails.observe()
-                .subscribeOn(schedulers.io)
                 .execute { copy(show = it) }
 
         observeRelatedShows.observe()
-                .subscribeOn(schedulers.io)
                 .execute { copy(relatedShows = it) }
 
         tmdbManager.imageProviderObservable
                 .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
-                .subscribeOn(schedulers.io)
                 .execute { copy(tmdbImageUrlProvider = it) }
 
         observeShowSeasons.observe()
-                .subscribeOn(schedulers.io)
                 .execute { copy(seasons = it) }
 
         withState {

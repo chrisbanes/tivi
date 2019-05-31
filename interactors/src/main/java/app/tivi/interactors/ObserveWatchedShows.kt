@@ -29,7 +29,7 @@ class ObserveWatchedShows @Inject constructor(
     private val watchedShowsRepository: WatchedShowsRepository
 ) : PagingInteractor<ObserveWatchedShows.Params, WatchedShowEntryWithShow>() {
 
-    override fun createObservable(params: ObserveWatchedShows.Params): Observable<PagedList<WatchedShowEntryWithShow>> {
+    override fun createObservable(params: Params): Observable<PagedList<WatchedShowEntryWithShow>> {
         val source = watchedShowsRepository.observeWatchedShowsPagedList()
         return RxPagedListBuilder(source, params.pagingConfig)
                 .setBoundaryCallback(params.boundaryCallback)
