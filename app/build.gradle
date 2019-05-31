@@ -24,10 +24,13 @@ ext {
 apply plugin: 'com.android.application'
 
 apply plugin: 'kotlin-android'
+
 apply plugin: 'kotlin-kapt'
 kapt {
     correctErrorTypes = true
+    useBuildCache = true
 }
+
 apply plugin: 'kotlin-android-extensions'
 androidExtensions {
     experimental = true
