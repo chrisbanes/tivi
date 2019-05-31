@@ -21,20 +21,18 @@ import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import androidx.appcompat.widget.PopupMenu
-import androidx.core.view.forEach
 import app.tivi.HeaderBindingModel_
 import app.tivi.LibraryFollowedItemBindingModel_
-import app.tivi.R
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.emptyState
 import app.tivi.filter
 import app.tivi.header
 import app.tivi.home.HomeTextCreator
+import app.tivi.ui.SortPopupMenuListener
 import app.tivi.ui.epoxy.EpoxyModelProperty
 import app.tivi.ui.epoxy.TotalSpanOverride
-import app.tivi.ui.widget.PopupMenuButton
+import app.tivi.ui.popupMenuItemIdToSortOption
 import com.airbnb.epoxy.EpoxyAsyncUtil
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
@@ -73,39 +71,10 @@ class FollowedEpoxyController @Inject constructor(
                     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 })
 
-                popupMenuListener(object : PopupMenuButton.PopupMenuListener {
-                    override fun onPreparePopupMenu(popupMenu: PopupMenu) {
-                        popupMenu.menu.forEach {
-                            when (it.itemId) {
-                                R.id.popup_sort_last_watched -> {
-                                    it.isVisible = viewState.availableSorts.contains(SortOption.LAST_WATCHED)
-                                    if (viewState.sort == SortOption.LAST_WATCHED) {
-                                        it.isChecked = true
-                                    }
-                                }
-                                R.id.popup_sort_date_followed -> {
-                                    it.isVisible = viewState.availableSorts.contains(SortOption.DATE_ADDED)
-                                    if (viewState.sort == SortOption.DATE_ADDED) {
-                                        it.isChecked = true
-                                    }
-                                }
-                                R.id.popup_sort_alpha -> {
-                                    it.isVisible = viewState.availableSorts.contains(SortOption.ALPHABETICAL)
-                                    if (viewState.sort == SortOption.ALPHABETICAL) {
-                                        it.isChecked = true
-                                    }
-                                }
-                            }
-                        }
-                    }
-                })
-
+                popupMenuListener(SortPopupMenuListener(viewState.sort, viewState.availableSorts))
                 popupMenuClickListener {
-                    val option = when (it.itemId) {
-                        R.id.popup_sort_date_followed -> SortOption.DATE_ADDED
-                        R.id.popup_sort_alpha -> SortOption.ALPHABETICAL
-                        else -> SortOption.LAST_WATCHED
-                    }
+                    val option = popupMenuItemIdToSortOption(it.itemId)
+                            ?: throw IllegalArgumentException("Selected sort option is null")
                     callbacks?.onSortSelected(option)
                     true
                 }

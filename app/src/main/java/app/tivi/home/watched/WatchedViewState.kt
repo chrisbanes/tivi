@@ -17,6 +17,7 @@
 package app.tivi.home.watched
 
 import androidx.paging.PagedList
+import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.tmdb.TmdbImageUrlProvider
 import com.airbnb.mvrx.MvRxState
@@ -26,5 +27,8 @@ data class WatchedViewState(
     val isLoading: Boolean = false,
     val isEmpty: Boolean = true,
     val watchedShows: PagedList<WatchedShowEntryWithShow>? = null,
-    val filter: CharSequence = ""
+    val filterActive: Boolean = false,
+    val filter: String? = null,
+    val availableSorts: List<SortOption> = emptyList(),
+    val sort: SortOption = SortOption.LAST_WATCHED
 ) : MvRxState

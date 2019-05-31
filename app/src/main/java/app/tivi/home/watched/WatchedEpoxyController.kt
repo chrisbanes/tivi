@@ -23,14 +23,16 @@ import android.text.TextWatcher
 import android.view.View
 import app.tivi.HeaderBindingModel_
 import app.tivi.LibraryWatchedItemBindingModel_
+import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.emptyState
 import app.tivi.filter
 import app.tivi.header
 import app.tivi.home.HomeTextCreator
-import app.tivi.tmdb.TmdbImageUrlProvider
+import app.tivi.ui.SortPopupMenuListener
 import app.tivi.ui.epoxy.EpoxyModelProperty
 import app.tivi.ui.epoxy.TotalSpanOverride
+import app.tivi.ui.popupMenuItemIdToSortOption
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.epoxy.EpoxyAsyncUtil
 import com.airbnb.epoxy.EpoxyModel
@@ -44,14 +46,11 @@ class WatchedEpoxyController @Inject constructor(
         modelBuildingHandler = Handler(Looper.getMainLooper()),
         diffingHandler = EpoxyAsyncUtil.getAsyncBackgroundHandler()
 ) {
-    var tmdbImageUrlProvider by EpoxyModelProperty { TmdbImageUrlProvider() }
-    var isEmpty by EpoxyModelProperty { false }
-    var filter by EpoxyModelProperty<CharSequence> { "" }
-
+    var viewState by EpoxyModelProperty { WatchedViewState() }
     var callbacks: Callbacks? = null
 
     override fun addModels(models: List<EpoxyModel<*>>) {
-        if (isEmpty) {
+        if (viewState.isEmpty) {
             emptyState {
                 id("empty")
                 spanSizeOverride(TotalSpanOverride)
@@ -59,20 +58,28 @@ class WatchedEpoxyController @Inject constructor(
         } else {
             header {
                 id("header")
-                titleString(textCreator.showHeaderCount(models.size))
+                titleString(textCreator.showHeaderCount(models.size, viewState.filterActive))
             }
             filter {
                 id("filters")
-                filter(filter)
+                filter(viewState.filter)
                 watcher(object : TextWatcher {
                     override fun afterTextChanged(s: Editable?) {
-                        callbacks?.onFilterChanged(s ?: "")
+                        callbacks?.onFilterChanged(s?.toString() ?: "")
                     }
 
                     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
                     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 })
+
+                popupMenuListener(SortPopupMenuListener(viewState.sort, viewState.availableSorts))
+                popupMenuClickListener {
+                    val option = popupMenuItemIdToSortOption(it.itemId)
+                            ?: throw IllegalArgumentException("Selected sort option is null")
+                    callbacks?.onSortSelected(option)
+                    true
+                }
             }
             super.addModels(models)
         }
@@ -93,7 +100,7 @@ class WatchedEpoxyController @Inject constructor(
             watchedEntry(item?.entry)
             dateFormatter(dateFormatter)
             textCreator(textCreator)
-            tmdbImageUrlProvider(tmdbImageUrlProvider)
+            tmdbImageUrlProvider(viewState.tmdbImageUrlProvider)
         }
     }
 
@@ -103,6 +110,7 @@ class WatchedEpoxyController @Inject constructor(
 
     interface Callbacks {
         fun onItemClicked(item: WatchedShowEntryWithShow)
-        fun onFilterChanged(filter: CharSequence)
+        fun onFilterChanged(filter: String)
+        fun onSortSelected(sort: SortOption)
     }
 }

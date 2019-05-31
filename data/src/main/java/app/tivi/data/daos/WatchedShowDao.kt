@@ -27,17 +27,48 @@ import io.reactivex.Observable
 @Dao
 abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow> {
     @Transaction
-    @Query("SELECT * FROM watched_entries ORDER BY datetime(last_watched)")
+    @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
     abstract suspend fun entries(): List<WatchedShowEntryWithShow>
 
     @Transaction
-    @Query("SELECT * FROM watched_entries ORDER BY datetime(last_watched) DESC LIMIT :count OFFSET :offset")
+    @Query("$ENTRY_QUERY_ORDER_LAST_WATCHED LIMIT :count OFFSET :offset")
     abstract fun entriesObservable(count: Int, offset: Int): Observable<List<WatchedShowEntryWithShow>>
 
     @Transaction
-    @Query("SELECT * FROM watched_entries ORDER BY datetime(last_watched) DESC")
-    abstract fun entriesDataSource(): DataSource.Factory<Int, WatchedShowEntryWithShow>
+    @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
+    internal abstract fun pagedListLastWatched(): DataSource.Factory<Int, WatchedShowEntryWithShow>
+
+    @Transaction
+    @Query(ENTRY_QUERY_ORDER_LAST_WATCHED_FILTER)
+    internal abstract fun pagedListLastWatchedFilter(filter: String): DataSource.Factory<Int, WatchedShowEntryWithShow>
+
+    @Transaction
+    @Query(ENTRY_QUERY_ORDER_ALPHA)
+    internal abstract fun pagedListAlpha(): DataSource.Factory<Int, WatchedShowEntryWithShow>
+
+    @Transaction
+    @Query(ENTRY_QUERY_ORDER_ALPHA_FILTER)
+    internal abstract fun pagedListAlphaFilter(filter: String): DataSource.Factory<Int, WatchedShowEntryWithShow>
 
     @Query("DELETE FROM watched_entries")
     abstract override suspend fun deleteAll()
+
+    companion object {
+        private const val ENTRY_QUERY_ORDER_LAST_WATCHED = "SELECT we.* FROM watched_entries as we" +
+                " ORDER BY datetime(last_watched) DESC"
+
+        private const val ENTRY_QUERY_ORDER_LAST_WATCHED_FILTER = "SELECT we.* FROM watched_entries as we" +
+                " INNER JOIN shows_fts AS fts ON we.show_id = fts.docid" +
+                " WHERE fts.title MATCH :filter" +
+                " ORDER BY datetime(last_watched) DESC"
+
+        private const val ENTRY_QUERY_ORDER_ALPHA = "SELECT we.* FROM watched_entries as we" +
+                " INNER JOIN shows_fts AS fts ON we.show_id = fts.docid" +
+                " ORDER BY title ASC"
+
+        private const val ENTRY_QUERY_ORDER_ALPHA_FILTER = "SELECT we.* FROM watched_entries as we" +
+                " INNER JOIN shows_fts AS fts ON we.show_id = fts.docid" +
+                " WHERE title MATCH :filter" +
+                " ORDER BY title ASC"
+    }
 }

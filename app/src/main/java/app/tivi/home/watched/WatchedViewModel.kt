@@ -18,6 +18,7 @@ package app.tivi.home.watched
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
+import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.interactors.ObserveWatchedShows
 import app.tivi.interactors.UpdateWatchedShows
@@ -36,28 +37,32 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 
 class WatchedViewModel @AssistedInject constructor(
     @Assisted initialState: WatchedViewState,
     schedulers: AppRxSchedulers,
     private val updateWatchedShows: UpdateWatchedShows,
-    observeWatchedShows: ObserveWatchedShows,
+    private val observeWatchedShows: ObserveWatchedShows,
     private val traktManager: TraktManager,
     tmdbManager: TmdbManager,
     private val logger: Logger
 ) : TiviMvRxViewModel<WatchedViewState>(initialState) {
     private val loadingState = RxLoadingCounter()
-
     private var refreshDisposable: Disposable? = null
 
-    private val filterObservable = BehaviorSubject.create<CharSequence>()
-
     private val boundaryCallback = object : PagedList.BoundaryCallback<WatchedShowEntryWithShow>() {
-        override fun onZeroItemsLoaded() = setState { copy(isEmpty = true) }
-        override fun onItemAtEndLoaded(itemAtEnd: WatchedShowEntryWithShow) = setState { copy(isEmpty = false) }
-        override fun onItemAtFrontLoaded(itemAtFront: WatchedShowEntryWithShow) = setState { copy(isEmpty = false) }
+        override fun onZeroItemsLoaded() {
+            setState { copy(isEmpty = filter.isNullOrEmpty()) }
+        }
+
+        override fun onItemAtEndLoaded(itemAtEnd: WatchedShowEntryWithShow) {
+            setState { copy(isEmpty = false) }
+        }
+
+        override fun onItemAtFrontLoaded(itemAtFront: WatchedShowEntryWithShow) {
+            setState { copy(isEmpty = false) }
+        }
     }
 
     init {
@@ -71,13 +76,27 @@ class WatchedViewModel @AssistedInject constructor(
 
         observeWatchedShows.observe()
                 .execute { copy(watchedShows = it()) }
-        observeWatchedShows(ObserveWatchedShows.Params(PAGING_CONFIG, boundaryCallback))
 
-        filterObservable.distinctUntilChanged()
-                .debounce(500, TimeUnit.MILLISECONDS, schedulers.main)
-                .execute { copy(filter = it() ?: "") }
+        // Set the available sorting options
+        setState {
+            copy(availableSorts = listOf(SortOption.LAST_WATCHED, SortOption.ALPHABETICAL))
+        }
+
+        // Subscribe to state changes, so update the observed data source
+        subscribe(::updateDataSource)
 
         refresh()
+    }
+
+    private fun updateDataSource(state: WatchedViewState) {
+        observeWatchedShows(
+                ObserveWatchedShows.Params(
+                        sort = state.sort,
+                        filter = state.filter,
+                        pagingConfig = PAGING_CONFIG,
+                        boundaryCallback = boundaryCallback
+                )
+        )
     }
 
     fun refresh() {
@@ -94,8 +113,12 @@ class WatchedViewModel @AssistedInject constructor(
                 .also { refreshDisposable = it }
     }
 
-    fun setFilter(filter: CharSequence) {
-        filterObservable.onNext(filter)
+    fun setFilter(filter: String) {
+        setState { copy(filter = filter, filterActive = filter.isNotEmpty()) }
+    }
+
+    fun setSort(sort: SortOption) {
+        setState { copy(sort = sort) }
     }
 
     private fun refreshWatched() {

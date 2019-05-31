@@ -22,6 +22,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import app.tivi.R
+import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.databinding.FragmentLibraryWatchedBinding
 import app.tivi.extensions.toActivityNavigatorExtras
@@ -65,9 +66,9 @@ class WatchedFragment : TiviMvRxFragment() {
                 )
             }
 
-            override fun onFilterChanged(filter: CharSequence) {
-                viewModel.setFilter(filter)
-            }
+            override fun onFilterChanged(filter: String) = viewModel.setFilter(filter)
+
+            override fun onSortSelected(sort: SortOption) = viewModel.setSort(sort)
         }
 
         binding.watchedRv.apply {
@@ -79,21 +80,18 @@ class WatchedFragment : TiviMvRxFragment() {
         binding.watchedSwipeRefresh.setOnRefreshListener(viewModel::refresh)
     }
 
-    override fun invalidate() {
-        withState(viewModel) { state ->
-            if (binding.state == null) {
-                // First time we've had state, start any postponed transitions
-                scheduleStartPostponedTransitions()
-            }
+    override fun invalidate() = withState(viewModel) { state ->
+        if (binding.state == null) {
+            // First time we've had state, start any postponed transitions
+            scheduleStartPostponedTransitions()
+        }
 
-            binding.state = state
+        binding.state = state
 
-            if (state.watchedShows != null) {
-                // PagingEpoxyController does not like being updated before it has a list
-                controller.tmdbImageUrlProvider = state.tmdbImageUrlProvider
-                controller.isEmpty = state.isEmpty
-                controller.submitList(state.watchedShows)
-            }
+        if (state.watchedShows != null) {
+            // PagingEpoxyController does not like being updated before it has a list
+            controller.viewState = state
+            controller.submitList(state.watchedShows)
         }
     }
 }
