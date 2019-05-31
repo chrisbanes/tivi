@@ -22,11 +22,9 @@ import android.graphics.Outline
 import android.view.Gravity
 import android.view.View
 import android.view.ViewOutlineProvider
-import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.doOnLayout
-import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import app.tivi.R
