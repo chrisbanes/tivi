@@ -22,7 +22,7 @@ import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.Request
 import app.tivi.data.entities.TiviShow
-import io.reactivex.Flowable
+import io.reactivex.Observable
 import org.threeten.bp.temporal.TemporalAmount
 import javax.inject.Inject
 
@@ -34,7 +34,7 @@ class LocalShowStore @Inject constructor(
 ) {
     suspend fun getShow(showId: Long) = showDao.getShowWithId(showId)
 
-    fun observeShow(showId: Long): Flowable<TiviShow> = showDao.getShowWithIdFlowable(showId)
+    fun observeShow(showId: Long): Observable<TiviShow> = showDao.getShowWithIdObservable(showId)
 
     suspend fun saveShow(show: TiviShow) = entityInserter.insertOrUpdate(showDao, show)
 

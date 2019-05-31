@@ -16,34 +16,23 @@
 
 package app.tivi.interactors
 
-import app.tivi.data.entities.TraktUser
 import app.tivi.data.repositories.traktusers.TraktUsersRepository
-import app.tivi.interactors.UpdateUserDetails.ExecuteParams
 import app.tivi.interactors.UpdateUserDetails.Params
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.AppRxSchedulers
-import io.reactivex.Flowable
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class UpdateUserDetails @Inject constructor(
-    private val schedulers: AppRxSchedulers,
-    private val dispatchers: AppCoroutineDispatchers,
+    dispatchers: AppCoroutineDispatchers,
     private val repository: TraktUsersRepository
-) : SubjectInteractor<Params, ExecuteParams, TraktUser>() {
+) : Interactor<Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend fun doWork(params: Params, executeParams: ExecuteParams) {
-        if (executeParams.forceLoad || repository.needUpdate(params.username)) {
+    override suspend fun invoke(params: Params) {
+        if (params.forceLoad || repository.needUpdate(params.username)) {
             repository.updateUser(params.username)
         }
     }
 
-    override fun createObservable(params: Params): Flowable<TraktUser> {
-        return repository.observeUser(params.username)
-                .subscribeOn(schedulers.io)
-    }
-
-    data class Params(val username: String)
-    data class ExecuteParams(val forceLoad: Boolean)
+    data class Params(val username: String, val forceLoad: Boolean)
 }

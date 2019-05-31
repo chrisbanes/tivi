@@ -27,6 +27,10 @@ import app.tivi.interactors.ChangeSeasonWatchedStatus.Action
 import app.tivi.interactors.ChangeSeasonWatchedStatus.Params
 import app.tivi.interactors.ChangeShowFollowStatus
 import app.tivi.interactors.ChangeShowFollowStatus.Action.TOGGLE
+import app.tivi.interactors.ObserveFollowedShowSeasonData
+import app.tivi.interactors.ObserveRelatedShows
+import app.tivi.interactors.ObserveShowDetails
+import app.tivi.interactors.ObserveShowFollowStatus
 import app.tivi.interactors.UpdateFollowedShowSeasonData
 import app.tivi.interactors.UpdateRelatedShows
 import app.tivi.interactors.UpdateShowDetails
@@ -49,16 +53,18 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     @Assisted initialState: ShowDetailsViewState,
     schedulers: AppRxSchedulers,
     private val updateShowDetails: UpdateShowDetails,
+    observeShowDetails: ObserveShowDetails,
     private val updateRelatedShows: UpdateRelatedShows,
+    observeRelatedShows: ObserveRelatedShows,
     private val updateShowSeasons: UpdateFollowedShowSeasonData,
+    observeShowSeasons: ObserveFollowedShowSeasonData,
     private val changeSeasonWatchedStatus: ChangeSeasonWatchedStatus,
+    observeShowFollowStatus: ObserveShowFollowStatus,
     tmdbManager: TmdbManager,
     private val changeShowFollowStatus: ChangeShowFollowStatus
 ) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
     init {
-        changeShowFollowStatus.observe()
-                .toObservable()
-                .subscribeOn(schedulers.io)
+        observeShowFollowStatus.observe()
                 .execute {
                     when (it) {
                         is Success -> copy(isFollowed = it.invoke()!!)
@@ -66,51 +72,39 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
                     }
                 }
 
-        updateShowDetails.observe()
-                .toObservable()
-                .subscribeOn(schedulers.io)
+        observeShowDetails.observe()
                 .execute { copy(show = it) }
 
-        updateRelatedShows.observe()
-                .toObservable()
-                .subscribeOn(schedulers.io)
+        observeRelatedShows.observe()
                 .execute { copy(relatedShows = it) }
 
         tmdbManager.imageProviderObservable
                 .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
-                .subscribeOn(schedulers.io)
                 .execute { copy(tmdbImageUrlProvider = it) }
 
-        updateShowSeasons.observe()
-                .toObservable()
-                .subscribeOn(schedulers.io)
+        observeShowSeasons.observe()
                 .execute { copy(seasons = it) }
 
         withState {
-            updateShowDetails.setParams(UpdateShowDetails.Params(it.showId))
-            updateRelatedShows.setParams(UpdateRelatedShows.Params(it.showId))
-            updateShowSeasons.setParams(UpdateFollowedShowSeasonData.Params(it.showId))
-            changeShowFollowStatus.setParams(ChangeShowFollowStatus.Params(it.showId))
-
-            refresh()
+            observeShowFollowStatus(ObserveShowFollowStatus.Params(it.showId))
+            observeShowDetails(ObserveShowDetails.Params(it.showId))
+            observeRelatedShows(ObserveRelatedShows.Params(it.showId))
+            observeShowSeasons(ObserveFollowedShowSeasonData.Params(it.showId))
         }
+
+        refresh()
     }
 
-    private fun refresh() {
-        viewModelScope.launchInteractor(updateShowDetails, UpdateShowDetails.ExecuteParams(true))
-        viewModelScope.launchInteractor(updateRelatedShows, UpdateRelatedShows.ExecuteParams(true))
-        viewModelScope.launchInteractor(updateShowSeasons, UpdateFollowedShowSeasonData.ExecuteParams(true))
+    private fun refresh() = withState {
+        viewModelScope.launchInteractor(updateShowDetails, UpdateShowDetails.Params(it.showId, true))
+        viewModelScope.launchInteractor(updateRelatedShows, UpdateRelatedShows.Params(it.showId, true))
+        viewModelScope.launchInteractor(updateShowSeasons, UpdateFollowedShowSeasonData.Params(it.showId, true))
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        updateShowDetails.clear()
-    }
-
-    fun onToggleMyShowsButtonClicked() {
+    fun onToggleMyShowsButtonClicked() = withState {
         viewModelScope.launch {
-            changeShowFollowStatus.execute(ChangeShowFollowStatus.ExecuteParams(TOGGLE))
-            updateShowSeasons.execute(UpdateFollowedShowSeasonData.ExecuteParams(false))
+            changeShowFollowStatus.execute(ChangeShowFollowStatus.Params(it.showId, TOGGLE))
+            updateShowSeasons.execute(UpdateFollowedShowSeasonData.Params(it.showId, false))
         }
     }
 
@@ -126,8 +120,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     ) = showDetailsNavigator.showEpisodeDetails(episode)
 
     fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
-        viewModelScope.launchInteractor(changeSeasonWatchedStatus,
-                Params(season.id, ChangeSeasonWatchedStatus.Action.WATCHED, onlyAired, date))
+        viewModelScope.launchInteractor(changeSeasonWatchedStatus, Params(season.id, Action.WATCHED, onlyAired, date))
     }
 
     fun onMarkSeasonUnwatched(season: Season) {

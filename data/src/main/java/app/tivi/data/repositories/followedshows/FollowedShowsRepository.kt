@@ -18,6 +18,7 @@ package app.tivi.data.repositories.followedshows
 
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
+import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.Success
 import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
@@ -40,7 +41,7 @@ class FollowedShowsRepository @Inject constructor(
     private val traktAuthState: Provider<TraktAuthState>,
     private val logger: Logger
 ) {
-    fun observeFollowedShows() = localStore.observeForPaging()
+    fun observeFollowedShows(sort: SortOption, filter: String? = null) = localStore.observeForPaging(sort, filter)
 
     fun observeIsShowFollowed(showId: Long) = localStore.observeIsShowFollowed(showId)
 

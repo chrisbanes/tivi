@@ -18,12 +18,8 @@ package app.tivi.interactors
 
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
-import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
-import app.tivi.extensions.emptyFlowableList
-import app.tivi.interactors.UpdateFollowedShowSeasonData.ExecuteParams
 import app.tivi.interactors.UpdateFollowedShowSeasonData.Params
 import app.tivi.util.AppCoroutineDispatchers
-import io.reactivex.Flowable
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
@@ -31,17 +27,17 @@ class UpdateFollowedShowSeasonData @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     private val followedShowsRepository: FollowedShowsRepository
-) : SubjectInteractor<Params, ExecuteParams, List<SeasonWithEpisodesAndWatches>>() {
+) : Interactor<Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend fun doWork(params: Params, executeParams: ExecuteParams) {
+    override suspend fun invoke(params: Params) {
         if (followedShowsRepository.isShowFollowed(params.showId)) {
             // Then update the seasons/episodes
-            if (executeParams.forceLoad || seasonsEpisodesRepository.needShowSeasonsUpdate(params.showId)) {
+            if (params.forceLoad || seasonsEpisodesRepository.needShowSeasonsUpdate(params.showId)) {
                 seasonsEpisodesRepository.updateSeasonsEpisodes(params.showId)
             }
             // Finally update any watched progress
-            if (executeParams.forceLoad || seasonsEpisodesRepository.needShowEpisodeWatchesSync(params.showId)) {
+            if (params.forceLoad || seasonsEpisodesRepository.needShowEpisodeWatchesSync(params.showId)) {
                 seasonsEpisodesRepository.syncEpisodeWatchesForShow(params.showId)
             }
         } else {
@@ -49,11 +45,5 @@ class UpdateFollowedShowSeasonData @Inject constructor(
         }
     }
 
-    override fun createObservable(params: Params): Flowable<List<SeasonWithEpisodesAndWatches>> {
-        return seasonsEpisodesRepository.observeSeasonsForShow(params.showId)
-                .startWith(emptyFlowableList())
-    }
-
-    data class Params(val showId: Long)
-    data class ExecuteParams(val forceLoad: Boolean)
+    data class Params(val showId: Long, val forceLoad: Boolean)
 }

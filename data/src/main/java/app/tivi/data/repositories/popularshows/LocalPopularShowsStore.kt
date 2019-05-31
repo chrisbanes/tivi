@@ -21,15 +21,15 @@ import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.PopularDao
 import app.tivi.data.entities.PopularShowEntry
 import app.tivi.data.resultentities.PopularEntryWithShow
-import io.reactivex.Flowable
+import io.reactivex.Observable
 import javax.inject.Inject
 
 class LocalPopularShowsStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val popularShowDao: PopularDao
 ) {
-    fun observeForFlowable(count: Int, offset: Int): Flowable<List<PopularEntryWithShow>> {
-        return popularShowDao.entriesFlowable(count, offset)
+    fun observeForObservable(count: Int, offset: Int): Observable<List<PopularEntryWithShow>> {
+        return popularShowDao.entriesObservable(count, offset)
     }
 
     fun observeForPaging(): DataSource.Factory<Int, PopularEntryWithShow> {

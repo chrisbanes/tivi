@@ -29,7 +29,7 @@ class LocalRelatedShowsStore @Inject constructor(
 ) {
     suspend fun getRelatedShows(showId: Long) = relatedShowsDao.entries(showId)
 
-    fun observeRelatedShows(showId: Long) = relatedShowsDao.entriesFlowable(showId)
+    fun observeRelatedShows(showId: Long) = relatedShowsDao.entriesObservable(showId)
 
     suspend fun saveRelatedShows(showId: Long, relatedShows: List<RelatedShowEntry>) = transactionRunner {
         relatedShowsDao.deleteWithShowId(showId)

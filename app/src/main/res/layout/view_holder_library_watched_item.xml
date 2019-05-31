@@ -20,6 +20,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="android.content.Context" />
 
         <variable
@@ -57,48 +58,55 @@
         android:foreground="?android:attr/selectableItemBackground"
         android:onClick="@{clickListener}">
 
+        <View
+            android:id="@+id/background"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:background="@drawable/shape_rect"
+            android:backgroundTint="@color/color_on_background_5"
+            app:layout_constraintBottom_toBottomOf="@id/show_poster"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/show_poster" />
+
         <ImageView
             android:id="@+id/show_poster"
             android:layout_width="72dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="@dimen/spacing_normal"
+            android:layout_marginBottom="@dimen/spacing_small"
             android:layout_marginStart="@dimen/spacing_normal"
-            android:layout_marginTop="@dimen/spacing_normal"
+            android:layout_marginTop="@dimen/spacing_small"
             android:scaleType="centerCrop"
             android:transitionName="@{posterTransitionName}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="w,1.5:1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:outlineProviderInstance="@{app.tivi.ui.RoundRectViewOutline.INSTANCE}"
-            app:clipToOutline="@{true}"
             app:tmdbImageUrlProvider="@{tmdbImageUrlProvider}"
-            app:tmdbPosterPath="@{tiviShow.tmdbPosterPath}" />
+            app:tmdbPosterPath="@{tiviShow.tmdbPosterPath}"
+            app:topCornerOutlineProvider="@{ @dimen/image_round_rect_radius }" />
 
         <TextView
             android:id="@+id/show_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/spacing_normal"
+            android:layout_marginStart="@dimen/spacing_normal"
+            android:layout_marginTop="@dimen/spacing_normal"
+            android:layout_marginEnd="@dimen/spacing_normal"
             android:gravity="center_vertical"
             android:text="@{textCreator.showTitle(tiviShow)}"
-            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/show_poster"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/show_poster"
+            app:layout_constraintTop_toTopOf="@id/background"
             tools:text="@sample/shows.txt" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider"
-            app:layout_constraintBottom_toBottomOf="parent" />
 
         <TextView
             android:id="@+id/show_last_watched"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/spacing_micro"
             android:text="@string/library_last_watched"
             android:textAppearance="?attr/textAppearanceCaption"
             app:layout_constraintStart_toStartOf="@+id/show_title"
@@ -108,7 +116,7 @@
             android:id="@+id/show_last_watched_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="@dimen/spacing_micro"
             android:text="@{dateFormatter.formatShortRelativeTime(watchedEntry.lastWatched)}"
             android:textAppearance="?attr/textAppearanceCaption"
             app:layout_constraintStart_toEndOf="@+id/show_last_watched"

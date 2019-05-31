@@ -25,7 +25,7 @@ object Libs {
     val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6"
     val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.2.0"
 
-    val mvRx = "com.airbnb.android:mvrx:1.0.0"
+    val mvRx = "com.airbnb.android:mvrx:1.0.1"
 
     val threeTenBp = "org.threeten:threetenbp:1.4.0"
     val threeTenBpNoTzdb = "$threeTenBp:no-tzdb"
@@ -113,10 +113,11 @@ object Libs {
         val coreKtx = "androidx.core:core-ktx:1.0.1"
 
         object Lifecycle {
-            private const val version = "2.0.0"
+            private const val version = "2.1.0-beta01"
             val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
-            val reactive = "androidx.lifecycle:lifecycle-reactivestreams:$version"
+            val reactive = "androidx.lifecycle:lifecycle-reactivestreams-ktx:$version"
             val compiler = "androidx.lifecycle:lifecycle-compiler:$version"
+            val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
         }
 
         object Room {

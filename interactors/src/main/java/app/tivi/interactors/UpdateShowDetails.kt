@@ -16,31 +16,21 @@
 
 package app.tivi.interactors
 
-import app.tivi.data.entities.TiviShow
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.interactors.UpdateShowDetails.Params
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.AppRxSchedulers
-import io.reactivex.Flowable
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class UpdateShowDetails @Inject constructor(
     private val showRepository: ShowRepository,
-    dispatchers: AppCoroutineDispatchers,
-    private val schedulers: AppRxSchedulers
-) : SubjectInteractor<Params, UpdateShowDetails.ExecuteParams, TiviShow>() {
+    dispatchers: AppCoroutineDispatchers
+) : Interactor<Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend fun doWork(params: Params, executeParams: ExecuteParams) {
+    override suspend fun invoke(params: Params) {
         showRepository.updateShow(params.showId)
     }
 
-    override fun createObservable(params: Params): Flowable<TiviShow> {
-        return showRepository.observeShow(params.showId)
-                .subscribeOn(schedulers.io)
-    }
-
-    data class Params(val showId: Long)
-    data class ExecuteParams(val forceLoad: Boolean)
+    data class Params(val showId: Long, val forceLoad: Boolean)
 }

@@ -19,7 +19,7 @@ package app.tivi.tasks
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import app.tivi.interactors.SyncFollowedShows
+import app.tivi.interactors.UpdateFollowedShows
 import app.tivi.tasks.inject.ChildWorkerFactory
 import app.tivi.util.Logger
 import com.squareup.inject.assisted.Assisted
@@ -29,7 +29,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 class SyncAllFollowedShows @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     @Assisted context: Context,
-    private val syncFollowedShows: SyncFollowedShows,
+    private val updateFollowedShows: UpdateFollowedShows,
     private val logger: Logger
 ) : CoroutineWorker(context, params) {
     companion object {
@@ -38,11 +38,11 @@ class SyncAllFollowedShows @AssistedInject constructor(
     }
 
     override val coroutineContext: CoroutineDispatcher
-        get() = syncFollowedShows.dispatcher
+        get() = updateFollowedShows.dispatcher
 
     override suspend fun doWork(): Result {
         logger.d("$TAG worker running")
-        syncFollowedShows(SyncFollowedShows.ExecuteParams(true))
+        updateFollowedShows(UpdateFollowedShows.ExecuteParams(true))
         return Result.success()
     }
 

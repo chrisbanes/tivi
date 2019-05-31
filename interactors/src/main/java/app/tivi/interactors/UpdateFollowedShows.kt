@@ -16,42 +16,36 @@
 
 package app.tivi.interactors
 
-import androidx.paging.DataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
-import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.extensions.parallelForEach
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
-class SyncFollowedShows @Inject constructor(
+class UpdateFollowedShows @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val followedShowsRepository: FollowedShowsRepository,
     private val repository: SeasonsEpisodesRepository
-) : PagingInteractor<FollowedShowEntryWithShow>, Interactor<SyncFollowedShows.ExecuteParams> {
+) : Interactor<UpdateFollowedShows.ExecuteParams> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend fun invoke(executeParams: ExecuteParams) {
-        if (executeParams.forceLoad || followedShowsRepository.needFollowedShowsSync()) {
+    override suspend fun invoke(params: ExecuteParams) {
+        if (params.forceLoad || followedShowsRepository.needFollowedShowsSync()) {
             followedShowsRepository.syncFollowedShows()
 
             // Finally sync the watches
             followedShowsRepository.getFollowedShows().parallelForEach {
                 // Download the seasons + episodes
-                if (executeParams.forceLoad || repository.needShowSeasonsUpdate(it.showId)) {
+                if (params.forceLoad || repository.needShowSeasonsUpdate(it.showId)) {
                     repository.updateSeasonsEpisodes(it.showId)
                 }
                 // And sync the episode watches
-                if (executeParams.forceLoad || repository.needShowEpisodeWatchesSync(it.showId)) {
+                if (params.forceLoad || repository.needShowEpisodeWatchesSync(it.showId)) {
                     repository.syncEpisodeWatchesForShow(it.showId)
                 }
             }
         }
-    }
-
-    override fun dataSourceFactory(): DataSource.Factory<Int, FollowedShowEntryWithShow> {
-        return followedShowsRepository.observeFollowedShows()
     }
 
     data class ExecuteParams(val forceLoad: Boolean)

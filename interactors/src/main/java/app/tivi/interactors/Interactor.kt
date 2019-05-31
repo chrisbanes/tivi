@@ -16,11 +16,9 @@
 
 package app.tivi.interactors
 
-import androidx.paging.DataSource
-import app.tivi.extensions.toFlowable
-import io.reactivex.Flowable
-import io.reactivex.disposables.Disposable
-import io.reactivex.subjects.BehaviorSubject
+import androidx.paging.PagedList
+import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -31,21 +29,24 @@ import kotlinx.coroutines.withContext
 
 interface Interactor<in P> {
     val dispatcher: CoroutineDispatcher
-    suspend operator fun invoke(executeParams: P)
+    suspend operator fun invoke(params: P)
 }
 
-interface PagingInteractor<T> {
-    fun dataSourceFactory(): DataSource.Factory<Int, T>
+abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T> : SubjectInteractor<P, PagedList<T>>() {
+    interface Parameters<T> {
+        val pagingConfig: PagedList.Config
+        val boundaryCallback: PagedList.BoundaryCallback<T>?
+    }
 }
 
 abstract class ChannelInteractor<P, T : Any> : Interactor<P> {
     private val channel = Channel<T>()
 
-    final override suspend fun invoke(executeParams: P) {
-        channel.offer(execute(executeParams))
+    final override suspend fun invoke(params: P) {
+        channel.offer(execute(params))
     }
 
-    fun observe(): Flowable<T> = channel.asObservable(dispatcher).toFlowable()
+    fun observe(): Observable<T> = channel.asObservable(dispatcher)
 
     protected abstract suspend fun execute(executeParams: P): T
 
@@ -54,40 +55,15 @@ abstract class ChannelInteractor<P, T : Any> : Interactor<P> {
     }
 }
 
-abstract class SubjectInteractor<P : Any, EP, T> : Interactor<EP> {
-    private var disposable: Disposable? = null
-    private val subject: BehaviorSubject<T> = BehaviorSubject.create()
+abstract class SubjectInteractor<P : Any, T> {
+    private val subject: PublishSubject<P> = PublishSubject.create()
+    private val observable = subject.switchMap(::createObservable)
 
-    val loading = BehaviorSubject.createDefault(false)
+    operator fun invoke(params: P) = subject.onNext(params)
 
-    private lateinit var params: P
+    protected abstract fun createObservable(params: P): Observable<T>
 
-    fun setParams(params: P) {
-        this.params = params
-        setSource(createObservable(params))
-    }
-
-    final override suspend fun invoke(executeParams: EP) {
-        loading.onNext(true)
-        doWork(params, executeParams)
-        loading.onNext(false)
-    }
-
-    protected abstract suspend fun doWork(params: P, executeParams: EP)
-
-    protected abstract fun createObservable(params: P): Flowable<T>
-
-    fun clear() {
-        disposable?.dispose()
-        disposable = null
-    }
-
-    fun observe(): Flowable<T> = subject.toFlowable()
-
-    private fun setSource(source: Flowable<T>) {
-        disposable?.dispose()
-        disposable = source.subscribe(subject::onNext, subject::onError)
-    }
+    fun observe(): Observable<T> = observable
 }
 
 fun <P> CoroutineScope.launchInteractor(interactor: Interactor<P>, param: P): Job {

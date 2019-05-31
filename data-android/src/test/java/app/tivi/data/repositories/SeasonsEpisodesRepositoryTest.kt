@@ -46,11 +46,13 @@ import app.tivi.utils.testCoroutineDispatchers
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThat
+import org.junit.Ignore
 import org.junit.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import javax.inject.Provider
 
+@Ignore("https://github.com/robolectric/robolectric/issues/3556")
 class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
     private lateinit var episodeWatchDao: EpisodeWatchEntryDao
     private lateinit var seasonsDao: SeasonsDao

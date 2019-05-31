@@ -22,17 +22,17 @@ import androidx.room.Query
 import androidx.room.Transaction
 import app.tivi.data.entities.PopularShowEntry
 import app.tivi.data.resultentities.PopularEntryWithShow
-import io.reactivex.Flowable
+import io.reactivex.Observable
 
 @Dao
 abstract class PopularDao : PaginatedEntryDao<PopularShowEntry, PopularEntryWithShow> {
     @Transaction
     @Query("SELECT * FROM popular_shows ORDER BY page, page_order LIMIT :count OFFSET :offset")
-    abstract override fun entriesFlowable(count: Int, offset: Int): Flowable<List<PopularEntryWithShow>>
+    abstract fun entriesObservable(count: Int, offset: Int): Observable<List<PopularEntryWithShow>>
 
     @Transaction
     @Query("SELECT * FROM popular_shows ORDER BY page, page_order")
-    abstract override fun entriesDataSource(): DataSource.Factory<Int, PopularEntryWithShow>
+    abstract fun entriesDataSource(): DataSource.Factory<Int, PopularEntryWithShow>
 
     @Query("DELETE FROM popular_shows WHERE page = :page")
     abstract override suspend fun deletePage(page: Int)

@@ -25,10 +25,11 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Request
+import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.util.Logger
-import io.reactivex.Flowable
+import io.reactivex.Observable
 import org.threeten.bp.temporal.TemporalAmount
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -65,10 +66,35 @@ class LocalFollowedShowsStore @Inject constructor(
 
     suspend fun deleteEntriesInIds(ids: List<Long>) = followedShowsDao.deleteWithIds(ids)
 
-    fun observeForPaging(): DataSource.Factory<Int, FollowedShowEntryWithShow> = followedShowsDao.entriesDataSource()
+    fun observeForPaging(sort: SortOption, filter: String?): DataSource.Factory<Int, FollowedShowEntryWithShow> {
+        val filtered = filter != null && filter.isNotEmpty()
+        return when (sort) {
+            SortOption.LAST_WATCHED -> {
+                if (filtered) {
+                    followedShowsDao.pagedListLastWatchedFilter("*$filter*")
+                } else {
+                    followedShowsDao.pagedListLastWatched()
+                }
+            }
+            SortOption.ALPHABETICAL -> {
+                if (filtered) {
+                    followedShowsDao.pagedListAlphaFilter("*$filter*")
+                } else {
+                    followedShowsDao.pagedListAlpha()
+                }
+            }
+            SortOption.DATE_ADDED -> {
+                if (filtered) {
+                    followedShowsDao.pagedListAddedFilter("*$filter*")
+                } else {
+                    followedShowsDao.pagedListAdded()
+                }
+            }
+        }
+    }
 
-    fun observeIsShowFollowed(showId: Long): Flowable<Boolean> {
-        return followedShowsDao.entryCountWithShowIdNotPendingDeleteFlowable(showId)
+    fun observeIsShowFollowed(showId: Long): Observable<Boolean> {
+        return followedShowsDao.entryCountWithShowIdNotPendingDeleteObservable(showId)
                 .map { it > 0 }
     }
 

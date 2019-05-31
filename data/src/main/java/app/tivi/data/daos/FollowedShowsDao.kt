@@ -23,32 +23,36 @@ import androidx.room.Transaction
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
-import io.reactivex.Flowable
+import io.reactivex.Observable
 
 @Dao
 abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryWithShow> {
-    companion object {
-        const val ENTRY_QUERY_ORDER_LAST_WATCHED = "SELECT fs.*, MAX(datetime(ew.watched_at)) AS watched_at" +
-                " FROM myshows_entries as fs" +
-                " INNER JOIN seasons AS s ON fs.show_id = s.show_id" +
-                " INNER JOIN episodes AS eps ON eps.season_id = s.id" +
-                " INNER JOIN episode_watch_entries as ew ON ew.episode_id = eps.id" +
-                " GROUP BY fs.id" +
-                " ORDER BY watched_at DESC"
-
-        const val ENTRY_QUERY_ORDER_ADDED = "SELECT * FROM myshows_entries ORDER BY datetime(followed_at) DESC"
-    }
-
     @Query("SELECT * FROM myshows_entries")
     abstract suspend fun entries(): List<FollowedShowEntry>
 
     @Transaction
-    @Query("$ENTRY_QUERY_ORDER_LAST_WATCHED LIMIT :count OFFSET :offset")
-    abstract override fun entriesFlowable(count: Int, offset: Int): Flowable<List<FollowedShowEntryWithShow>>
+    @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
+    internal abstract fun pagedListLastWatched(): DataSource.Factory<Int, FollowedShowEntryWithShow>
 
     @Transaction
-    @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
-    abstract override fun entriesDataSource(): DataSource.Factory<Int, FollowedShowEntryWithShow>
+    @Query(ENTRY_QUERY_ORDER_LAST_WATCHED_FILTER)
+    internal abstract fun pagedListLastWatchedFilter(filter: String): DataSource.Factory<Int, FollowedShowEntryWithShow>
+
+    @Transaction
+    @Query(ENTRY_QUERY_ORDER_ALPHA)
+    internal abstract fun pagedListAlpha(): DataSource.Factory<Int, FollowedShowEntryWithShow>
+
+    @Transaction
+    @Query(ENTRY_QUERY_ORDER_ALPHA_FILTER)
+    internal abstract fun pagedListAlphaFilter(filter: String): DataSource.Factory<Int, FollowedShowEntryWithShow>
+
+    @Transaction
+    @Query(ENTRY_QUERY_ORDER_ADDED)
+    internal abstract fun pagedListAdded(): DataSource.Factory<Int, FollowedShowEntryWithShow>
+
+    @Transaction
+    @Query(ENTRY_QUERY_ORDER_ADDED_FILTER)
+    internal abstract fun pagedListAddedFilter(filter: String): DataSource.Factory<Int, FollowedShowEntryWithShow>
 
     @Query("DELETE FROM myshows_entries")
     abstract override suspend fun deleteAll()
@@ -61,7 +65,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     abstract suspend fun entryWithShowId(showId: Long): FollowedShowEntry?
 
     @Query("SELECT COUNT(*) FROM myshows_entries WHERE show_id = :showId AND pending_action != 'delete'")
-    abstract fun entryCountWithShowIdNotPendingDeleteFlowable(showId: Long): Flowable<Int>
+    abstract fun entryCountWithShowIdNotPendingDeleteObservable(showId: Long): Observable<Int>
 
     @Query("SELECT COUNT(*) FROM myshows_entries WHERE show_id = :showId")
     abstract suspend fun entryCountWithShowId(showId: Long): Int
@@ -80,4 +84,37 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
 
     @Query("DELETE FROM myshows_entries WHERE id IN (:ids)")
     abstract suspend fun deleteWithIds(ids: List<Long>): Int
+
+    companion object {
+        private const val ENTRY_QUERY_ORDER_LAST_WATCHED = "SELECT fs.*, MAX(datetime(ew.watched_at)) AS watched_at" +
+                " FROM myshows_entries as fs" +
+                " INNER JOIN seasons AS s ON fs.show_id = s.show_id" +
+                " INNER JOIN episodes AS eps ON eps.season_id = s.id" +
+                " INNER JOIN episode_watch_entries as ew ON ew.episode_id = eps.id" +
+                " GROUP BY fs.id" +
+                " ORDER BY watched_at DESC"
+        private const val ENTRY_QUERY_ORDER_LAST_WATCHED_FILTER = "SELECT fs.*, MAX(datetime(ew.watched_at)) AS watched_at" +
+                " FROM myshows_entries as fs" +
+                " INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid" +
+                " INNER JOIN seasons AS s ON fs.show_id = s.show_id" +
+                " INNER JOIN episodes AS eps ON eps.season_id = s.id" +
+                " INNER JOIN episode_watch_entries as ew ON ew.episode_id = eps.id" +
+                " WHERE s_fts.title MATCH :filter" +
+                " GROUP BY fs.id" +
+                " ORDER BY watched_at DESC"
+
+        private const val ENTRY_QUERY_ORDER_ALPHA = "SELECT fs.* FROM myshows_entries as fs" +
+                " INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid" +
+                " ORDER BY title ASC"
+        private const val ENTRY_QUERY_ORDER_ALPHA_FILTER = "SELECT fs.* FROM myshows_entries as fs" +
+                " INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid" +
+                " WHERE s_fts.title MATCH :filter" +
+                " ORDER BY title ASC"
+
+        private const val ENTRY_QUERY_ORDER_ADDED = "SELECT * FROM myshows_entries ORDER BY datetime(followed_at) DESC"
+        private const val ENTRY_QUERY_ORDER_ADDED_FILTER = "SELECT fs.* FROM myshows_entries as fs" +
+                " INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid" +
+                " WHERE s_fts.title MATCH :filter" +
+                " ORDER BY datetime(followed_at) DESC"
+    }
 }

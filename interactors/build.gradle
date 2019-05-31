@@ -15,9 +15,28 @@
  *
  */
 
-apply plugin: 'kotlin'
+import app.tivi.buildsrc.Libs
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion buildConfig.compileSdk
+
+    defaultConfig {
+        minSdkVersion buildConfig.minSdk
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
 
 dependencies {
     implementation project(":base")
     implementation project(":data")
+
+    api Libs.AndroidX.Paging.common
+    implementation Libs.AndroidX.Paging.rxjava2
 }

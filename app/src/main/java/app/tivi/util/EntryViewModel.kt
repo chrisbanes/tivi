@@ -16,26 +16,21 @@
 
 package app.tivi.util
 
-import androidx.lifecycle.LiveDataReactiveStreams
 import androidx.lifecycle.viewModelScope
-import androidx.paging.DataSource
 import androidx.paging.PagedList
-import androidx.paging.RxPagedListBuilder
 import app.tivi.api.Status
 import app.tivi.api.UiResource
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.extensions.toFlowable
+import app.tivi.interactors.PagingInteractor
 import app.tivi.tmdb.TmdbManager
-import io.reactivex.BackpressureStrategy
-import io.reactivex.rxkotlin.Flowables
+import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.launch
 
-abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
-    schedulers: AppRxSchedulers,
+abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteractor<*, LI>>(
     private val dispatchers: AppCoroutineDispatchers,
-    dataSource: DataSource.Factory<Int, LI>,
+    pagingInteractor: PI,
     tmdbManager: TmdbManager,
     private val logger: Logger,
     private val pageSize: Int = 21
@@ -43,37 +38,26 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>>(
     private val messages = BehaviorSubject.create<UiResource>()
     private val loaded = BehaviorSubject.createDefault(false)
 
-    private val pageListConfig = PagedList.Config.Builder().run {
+    protected val pageListConfig = PagedList.Config.Builder().run {
         setPageSize(pageSize * 3)
         setPrefetchDistance(pageSize)
         setEnablePlaceholders(false)
         build()
     }
 
-    val viewState = LiveDataReactiveStreams.fromPublisher(
-            Flowables.combineLatest(
-                    messages.toFlowable(),
-                    tmdbManager.imageProviderFlowable,
-                    RxPagedListBuilder<Int, LI>(dataSource, pageListConfig)
-                            .setBoundaryCallback(object : PagedList.BoundaryCallback<LI>() {
-                                override fun onItemAtEndLoaded(itemAtEnd: LI) = onListScrolledToEnd()
+    val boundaryCallback = object : PagedList.BoundaryCallback<LI>() {
+        override fun onItemAtEndLoaded(itemAtEnd: LI) = onListScrolledToEnd()
+        override fun onItemAtFrontLoaded(itemAtFront: LI) = loaded.onNext(true)
+        override fun onZeroItemsLoaded() = loaded.onNext(true)
+    }
 
-                                override fun onItemAtFrontLoaded(itemAtFront: LI) {
-                                    loaded.onNext(true)
-                                }
-
-                                override fun onZeroItemsLoaded() {
-                                    loaded.onNext(true)
-                                }
-                            })
-                            .setFetchScheduler(schedulers.io)
-                            .setNotifyScheduler(schedulers.main)
-                            .buildFlowable(BackpressureStrategy.LATEST)
-                            .distinctUntilChanged(),
-                    loaded.toFlowable(),
-                    ::EntryViewState
-            )
-    )
+    val viewState = Observables.combineLatest(
+            messages,
+            tmdbManager.imageProviderObservable,
+            pagingInteractor.observe(),
+            loaded,
+            ::EntryViewState
+    ).toLiveData()
 
     init {
         refresh()

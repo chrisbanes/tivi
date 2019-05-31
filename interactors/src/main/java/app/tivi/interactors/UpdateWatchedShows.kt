@@ -16,27 +16,20 @@
 
 package app.tivi.interactors
 
-import androidx.paging.DataSource
 import app.tivi.data.repositories.watchedshows.WatchedShowsRepository
-import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class UpdateWatchedShows @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
+    dispatchers: AppCoroutineDispatchers,
     private val watchedShowsRepository: WatchedShowsRepository
-) : PagingInteractor<WatchedShowEntryWithShow>, Interactor<UpdateWatchedShows.ExecuteParams> {
-    override val dispatcher: CoroutineDispatcher
-        get() = dispatchers.io
+) : Interactor<UpdateWatchedShows.Params> {
+    override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend fun invoke(executeParams: ExecuteParams) {
+    override suspend fun invoke(params: Params) {
         watchedShowsRepository.updateWatchedShows()
     }
 
-    override fun dataSourceFactory(): DataSource.Factory<Int, WatchedShowEntryWithShow> {
-        return watchedShowsRepository.observeWatchedShowsPagedList()
-    }
-
-    data class ExecuteParams(val forceLoad: Boolean)
+    data class Params(val forceLoad: Boolean)
 }

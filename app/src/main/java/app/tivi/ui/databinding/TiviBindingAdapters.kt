@@ -50,9 +50,7 @@ fun loadPoster(
     path: String?,
     urlProvider: TmdbImageUrlProvider?,
     saturateOnLoad: Boolean?
-) {
-    loadImage(view, path, urlProvider, saturateOnLoad, "poster", TmdbImageUrlProvider::getPosterUrl)
-}
+) = loadImage(view, path, urlProvider, saturateOnLoad, "poster", TmdbImageUrlProvider::getPosterUrl)
 
 @BindingAdapter(
         "tmdbBackdropPath",
@@ -146,37 +144,47 @@ fun maxLinesClickListener(view: TextView, oldCollapsedMaxLines: Int, newCollapse
 }
 
 @BindingAdapter("backgroundScrim")
-fun backgroundScrim(view: View, color: Int) {
-    view.background = ScrimUtil.makeCubicGradientScrimDrawable(color, 16, Gravity.BOTTOM)
+fun backgroundScrim(view: View, oldColor: Int, color: Int) {
+    if (oldColor != color) {
+        view.background = ScrimUtil.makeCubicGradientScrimDrawable(color, 16, Gravity.BOTTOM)
+    }
 }
 
 @BindingAdapter("foregroundScrim")
-fun foregroundScrim(view: View, color: Int) {
-    view.foreground = ScrimUtil.makeCubicGradientScrimDrawable(color, 16, Gravity.BOTTOM)
+fun foregroundScrim(view: View, oldColor: Int, color: Int) {
+    if (oldColor != color) {
+        view.foreground = ScrimUtil.makeCubicGradientScrimDrawable(color, 16, Gravity.BOTTOM)
+    }
 }
 
 @BindingAdapter("materialBackdropBackgroundRadius")
-fun materialBackdropBackground(view: View, radius: Float) {
-    view.background = MaterialShapeDrawable().apply {
-        fillColor = ColorStateList.valueOf(Color.WHITE)
-        shapeAppearanceModel.setTopLeftCorner(CornerFamily.ROUNDED, radius.toInt())
-        shapeAppearanceModel.setTopRightCorner(CornerFamily.ROUNDED, radius.toInt())
+fun materialBackdropBackground(view: View, oldRadius: Float, radius: Float) {
+    if (oldRadius != radius) {
+        view.background = MaterialShapeDrawable().apply {
+            fillColor = ColorStateList.valueOf(Color.WHITE)
+            shapeAppearanceModel.setTopLeftCorner(CornerFamily.ROUNDED, radius.toInt())
+            shapeAppearanceModel.setTopRightCorner(CornerFamily.ROUNDED, radius.toInt())
+        }
     }
 }
 
 @BindingAdapter("topCornerOutlineProvider")
-fun topCornerOutlineProvider(view: View, radius: Float) {
+fun topCornerOutlineProvider(view: View, oldRadius: Float, radius: Float) {
     view.clipToOutline = true
-    view.outlineProvider = object : ViewOutlineProvider() {
-        override fun getOutline(view: View, outline: Outline) {
-            outline.setRoundRect(0, 0, view.width, view.height + radius.roundToInt(), radius)
+    if (oldRadius != radius) {
+        view.outlineProvider = object : ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: Outline) {
+                outline.setRoundRect(0, 0, view.width, view.height + radius.roundToInt(), radius)
+            }
         }
     }
 }
 
 @BindingAdapter("textAppearanceAttr")
-fun textAppearanceAttr(view: TextView, textAppearanceStyleAttr: Int) {
-    view.setTextAppearance(view.context.resolveThemeReferenceResId(textAppearanceStyleAttr))
+fun textAppearanceAttr(view: TextView, oldTextAppearanceStyleAttr: Int, textAppearanceStyleAttr: Int) {
+    if (oldTextAppearanceStyleAttr != textAppearanceStyleAttr) {
+        view.setTextAppearance(view.context.resolveThemeReferenceResId(textAppearanceStyleAttr))
+    }
 }
 
 @BindingAdapter(
@@ -204,5 +212,19 @@ fun applySystemWindows(
                 paddingState.right + right,
                 paddingState.bottom + bottom
         )
+    }
+}
+
+@BindingAdapter("materialShapeElevationBackground")
+fun materialShapeElevationBackground(view: View, oldValue: Boolean, value: Boolean) {
+    if (oldValue != value && value) {
+        val shapeDrawable = MaterialShapeDrawable.createWithElevationOverlay(view.context, view.elevation)
+        view.background = shapeDrawable
+
+        val vto = view.viewTreeObserver
+        vto.addOnPreDrawListener {
+            shapeDrawable.z = view.z
+            true
+        }
     }
 }

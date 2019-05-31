@@ -51,7 +51,7 @@ class PopupMenuButton : AppCompatImageButton {
 
     fun inflateMenu(@MenuRes menuRes: Int) = popupMenu.inflate(menuRes)
 
-    fun setMenuItemClickListener(listener: PopupMenu.OnMenuItemClickListener) {
+    fun setMenuItemClickListener(listener: PopupMenu.OnMenuItemClickListener?) {
         popupMenu.setOnMenuItemClickListener(listener)
     }
 

@@ -49,8 +49,7 @@ class SyncShowWatchedProgress @AssistedInject constructor(
         val showId = inputData.getLong(PARAM_SHOW_ID, -1)
         logger.d("$TAG worker running for show id: $showId")
 
-        updateShowSeasonsAndWatchedProgress.setParams(UpdateFollowedShowSeasonData.Params(showId))
-        updateShowSeasonsAndWatchedProgress(UpdateFollowedShowSeasonData.ExecuteParams(true))
+        updateShowSeasonsAndWatchedProgress(UpdateFollowedShowSeasonData.Params(showId, true))
 
         return Result.success()
     }

@@ -17,10 +17,10 @@
 package app.tivi.home.watched
 
 import androidx.lifecycle.viewModelScope
-import androidx.paging.DataSource
 import androidx.paging.PagedList
-import androidx.paging.RxPagedListBuilder
-import app.tivi.data.resultentities.EntryWithShow
+import app.tivi.data.entities.SortOption
+import app.tivi.data.resultentities.WatchedShowEntryWithShow
+import app.tivi.interactors.ObserveWatchedShows
 import app.tivi.interactors.UpdateWatchedShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
@@ -35,22 +35,35 @@ import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import java.util.concurrent.TimeUnit
 
 class WatchedViewModel @AssistedInject constructor(
     @Assisted initialState: WatchedViewState,
-    private val schedulers: AppRxSchedulers,
+    schedulers: AppRxSchedulers,
     private val updateWatchedShows: UpdateWatchedShows,
+    private val observeWatchedShows: ObserveWatchedShows,
     private val traktManager: TraktManager,
     tmdbManager: TmdbManager,
     private val logger: Logger
 ) : TiviMvRxViewModel<WatchedViewState>(initialState) {
     private val loadingState = RxLoadingCounter()
-
     private var refreshDisposable: Disposable? = null
+
+    private val boundaryCallback = object : PagedList.BoundaryCallback<WatchedShowEntryWithShow>() {
+        override fun onZeroItemsLoaded() {
+            setState { copy(isEmpty = filter.isNullOrEmpty()) }
+        }
+
+        override fun onItemAtEndLoaded(itemAtEnd: WatchedShowEntryWithShow) {
+            setState { copy(isEmpty = false) }
+        }
+
+        override fun onItemAtFrontLoaded(itemAtFront: WatchedShowEntryWithShow) {
+            setState { copy(isEmpty = false) }
+        }
+    }
 
     init {
         loadingState.observable.execute {
@@ -61,22 +74,29 @@ class WatchedViewModel @AssistedInject constructor(
                 .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
                 .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
 
-        dataSourceToObservable(updateWatchedShows.dataSourceFactory())
+        observeWatchedShows.observe()
                 .execute { copy(watchedShows = it()) }
+
+        // Set the available sorting options
+        setState {
+            copy(availableSorts = listOf(SortOption.LAST_WATCHED, SortOption.ALPHABETICAL))
+        }
+
+        // Subscribe to state changes, so update the observed data source
+        subscribe(::updateDataSource)
 
         refresh()
     }
 
-    private fun <T : EntryWithShow<*>> dataSourceToObservable(f: DataSource.Factory<Int, T>): Observable<PagedList<T>> {
-        return RxPagedListBuilder(f, PAGING_CONFIG)
-                .setBoundaryCallback(object : PagedList.BoundaryCallback<T>() {
-                    override fun onZeroItemsLoaded() = setState { copy(isEmpty = true) }
-                    override fun onItemAtEndLoaded(itemAtEnd: T) = setState { copy(isEmpty = false) }
-                    override fun onItemAtFrontLoaded(itemAtFront: T) = setState { copy(isEmpty = false) }
-                })
-                .setFetchScheduler(schedulers.io)
-                .setNotifyScheduler(schedulers.main)
-                .buildObservable()
+    private fun updateDataSource(state: WatchedViewState) {
+        observeWatchedShows(
+                ObserveWatchedShows.Params(
+                        sort = state.sort,
+                        filter = state.filter,
+                        pagingConfig = PAGING_CONFIG,
+                        boundaryCallback = boundaryCallback
+                )
+        )
     }
 
     fun refresh() {
@@ -89,13 +109,21 @@ class WatchedViewModel @AssistedInject constructor(
         disposables += traktManager.state
                 .filter { it == TraktAuthState.LOGGED_IN }
                 .firstOrError()
-                .subscribe({ refreshFilter() }, logger::e)
+                .subscribe({ refreshWatched() }, logger::e)
                 .also { refreshDisposable = it }
     }
 
-    private fun refreshFilter() {
+    fun setFilter(filter: String) {
+        setState { copy(filter = filter, filterActive = filter.isNotEmpty()) }
+    }
+
+    fun setSort(sort: SortOption) {
+        setState { copy(sort = sort) }
+    }
+
+    private fun refreshWatched() {
         loadingState.addLoader()
-        viewModelScope.launchInteractor(updateWatchedShows, UpdateWatchedShows.ExecuteParams(false))
+        viewModelScope.launchInteractor(updateWatchedShows, UpdateWatchedShows.Params(false))
                 .invokeOnCompletion { loadingState.removeLoader() }
     }
 

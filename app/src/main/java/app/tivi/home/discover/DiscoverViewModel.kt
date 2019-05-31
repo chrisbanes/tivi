@@ -17,6 +17,8 @@
 package app.tivi.home.discover
 
 import androidx.lifecycle.viewModelScope
+import app.tivi.interactors.ObservePopularShows
+import app.tivi.interactors.ObserveTrendingShows
 import app.tivi.interactors.UpdatePopularShows
 import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.interactors.launchInteractor
@@ -34,7 +36,9 @@ class DiscoverViewModel @AssistedInject constructor(
     @Assisted initialState: DiscoverViewState,
     schedulers: AppRxSchedulers,
     private val updatePopularShows: UpdatePopularShows,
+    observePopularShows: ObservePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,
+    observeTrendingShows: ObserveTrendingShows,
     tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<DiscoverViewState>(initialState) {
     private val loadingState = RxLoadingCounter()
@@ -46,15 +50,13 @@ class DiscoverViewModel @AssistedInject constructor(
         loadingState.observable
                 .execute { copy(isLoading = it() ?: false) }
 
-        updateTrendingShows.observe()
-                .toObservable()
-                .subscribeOn(schedulers.io)
+        observeTrendingShows.observe()
                 .execute { copy(trendingItems = it() ?: emptyList()) }
+        observeTrendingShows(Unit)
 
-        updatePopularShows.observe()
-                .toObservable()
-                .subscribeOn(schedulers.io)
+        observePopularShows.observe()
                 .execute { copy(popularItems = it() ?: emptyList()) }
+        observePopularShows(Unit)
 
         refresh()
     }
@@ -63,13 +65,13 @@ class DiscoverViewModel @AssistedInject constructor(
         loadingState.addLoader()
         viewModelScope.launchInteractor(
                 updatePopularShows,
-                UpdatePopularShows.ExecuteParams(UpdatePopularShows.Page.REFRESH)
+                UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH)
         ).invokeOnCompletion { loadingState.removeLoader() }
 
         loadingState.addLoader()
         viewModelScope.launchInteractor(
                 updateTrendingShows,
-                UpdateTrendingShows.ExecuteParams(UpdateTrendingShows.Page.REFRESH)
+                UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH)
         ).invokeOnCompletion { loadingState.removeLoader() }
     }
 

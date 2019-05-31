@@ -27,8 +27,8 @@ class RemoveEpisodeWatch @Inject constructor(
 ) : Interactor<RemoveEpisodeWatch.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend operator fun invoke(executeParams: Params) {
-        seasonsEpisodesRepository.removeEpisodeWatch(executeParams.episodeWatchId)
+    override suspend operator fun invoke(params: Params) {
+        seasonsEpisodesRepository.removeEpisodeWatch(params.episodeWatchId)
     }
 
     data class Params(val episodeWatchId: Long)

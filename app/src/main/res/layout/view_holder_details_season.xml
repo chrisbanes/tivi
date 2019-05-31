@@ -48,12 +48,12 @@
     <app.tivi.ui.widget.CheckableConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/details_season_background"
         android:checked="@{expanded}"
         android:foreground="?android:attr/selectableItemBackground"
         android:onClick="@{clickListener}"
         android:stateListAnimator="@animator/details_season_state_anim"
-        android:transitionGroup="true">
+        android:transitionGroup="true"
+        app:materialShapeElevationBackground="@{ true }">
 
         <View
             android:layout_width="match_parent"

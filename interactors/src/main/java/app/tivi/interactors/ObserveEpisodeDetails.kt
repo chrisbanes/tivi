@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,34 +16,20 @@
 
 package app.tivi.interactors
 
-import app.tivi.data.entities.EpisodeWatchEntry
+import app.tivi.data.entities.Episode
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
-import app.tivi.extensions.emptyFlowableList
-import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.AppRxSchedulers
-import io.reactivex.Flowable
-import kotlinx.coroutines.CoroutineDispatcher
+import io.reactivex.Observable
 import javax.inject.Inject
 
-class UpdateEpisodeWatches @Inject constructor(
+class ObserveEpisodeDetails @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
-    dispatchers: AppCoroutineDispatchers,
     private val schedulers: AppRxSchedulers
-) : SubjectInteractor<UpdateEpisodeWatches.Params, UpdateEpisodeWatches.ExecuteParams, List<EpisodeWatchEntry>>() {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
-
-    override fun createObservable(params: Params): Flowable<List<EpisodeWatchEntry>> {
-        return seasonsEpisodesRepository.observeEpisodeWatches(params.episodeId)
-                .startWith(emptyFlowableList())
+) : SubjectInteractor<ObserveEpisodeDetails.Params, Episode>() {
+    override fun createObservable(params: Params): Observable<Episode> {
+        return seasonsEpisodesRepository.observeEpisode(params.episodeId)
                 .subscribeOn(schedulers.io)
     }
 
-    override suspend fun doWork(params: Params, executeParams: ExecuteParams) {
-        // TODO add refresh?
-        // Don't do anything here
-    }
-
     data class Params(val episodeId: Long)
-
-    data class ExecuteParams(val forceLoad: Boolean)
 }

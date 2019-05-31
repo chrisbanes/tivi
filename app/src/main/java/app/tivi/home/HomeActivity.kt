@@ -32,6 +32,7 @@ import app.tivi.R
 import app.tivi.TiviActivityMvRxView
 import app.tivi.databinding.ActivityHomeBinding
 import app.tivi.extensions.doOnApplyWindowInsets
+import app.tivi.extensions.hideSoftInput
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.home.main.HomeNavigationEpoxyController
 import app.tivi.home.main.HomeNavigationItem
@@ -58,8 +59,18 @@ class HomeActivity : TiviActivityMvRxView() {
     private val viewModel: HomeActivityViewModel by viewModel()
 
     private val navigationView = object : NavigationView {
-        override fun open() = binding.homeRoot.transitionToState(R.id.nav_open)
-        override fun close() = binding.homeRoot.transitionToState(R.id.nav_closed)
+        override fun open() {
+            binding.homeRoot.transitionToState(R.id.nav_open)
+            // Make sure the keyboard is dismissed when we open the navigation menu
+            hideSoftInput()
+        }
+
+        override fun close() {
+            binding.homeRoot.transitionToState(R.id.nav_closed)
+            // Make sure the keyboard is dismissed when we close the navigation menu
+            hideSoftInput()
+        }
+
         override fun toggle() {
             binding.homeRoot.run {
                 when (currentState) {
@@ -106,6 +117,10 @@ class HomeActivity : TiviActivityMvRxView() {
         )
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
+            // Ensure that the keyboard is dismissed when we navigate between fragments
+            hideSoftInput()
+
+            // Update our recycler view menu
             navigationEpoxyController.selectedItem = homeNavigationItemForDestinationId(destination.id)
         }
 

@@ -16,47 +16,24 @@
 
 package app.tivi.interactors
 
-import androidx.paging.DataSource
 import app.tivi.data.repositories.trendingshows.TrendingShowsRepository
-import app.tivi.data.resultentities.TrendingEntryWithShow
-import app.tivi.extensions.emptyFlowableList
-import app.tivi.interactors.UpdateTrendingShows.ExecuteParams
+import app.tivi.interactors.UpdateTrendingShows.Params
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.AppRxSchedulers
-import io.reactivex.Flowable
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class UpdateTrendingShows @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
-    private val schedulers: AppRxSchedulers,
     private val trendingShowsRepository: TrendingShowsRepository
-) : PagingInteractor<TrendingEntryWithShow>, SubjectInteractor<Unit, ExecuteParams, List<TrendingEntryWithShow>>() {
+) : Interactor<Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    init {
-        // We don't have params, so lets set Unit to kick off the observable
-        setParams(Unit)
+    override suspend fun invoke(params: Params) = when (params.page) {
+        Page.NEXT_PAGE -> trendingShowsRepository.loadNextPage()
+        Page.REFRESH -> trendingShowsRepository.refresh()
     }
 
-    override fun dataSourceFactory(): DataSource.Factory<Int, TrendingEntryWithShow> {
-        return trendingShowsRepository.observeForPaging()
-    }
-
-    override fun createObservable(params: Unit): Flowable<List<TrendingEntryWithShow>> {
-        return trendingShowsRepository.observeForFlowable()
-                .startWith(emptyFlowableList())
-                .subscribeOn(schedulers.io)
-    }
-
-    override suspend fun doWork(params: Unit, executeParams: ExecuteParams) {
-        when (executeParams.page) {
-            Page.NEXT_PAGE -> trendingShowsRepository.loadNextPage()
-            Page.REFRESH -> trendingShowsRepository.refresh()
-        }
-    }
-
-    data class ExecuteParams(val page: Page)
+    data class Params(val page: Page)
 
     enum class Page {
         NEXT_PAGE, REFRESH

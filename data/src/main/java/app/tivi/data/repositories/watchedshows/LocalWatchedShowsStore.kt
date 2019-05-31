@@ -16,10 +16,13 @@
 
 package app.tivi.data.repositories.watchedshows
 
+import androidx.paging.DataSource
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.WatchedShowDao
+import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.WatchedShowEntry
+import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import javax.inject.Inject
 
 class LocalWatchedShowsStore @Inject constructor(
@@ -29,7 +32,26 @@ class LocalWatchedShowsStore @Inject constructor(
 ) {
     suspend fun getWatchedShows() = watchedShowDao.entries()
 
-    fun observePagedList() = watchedShowDao.entriesDataSource()
+    fun observePagedList(filter: String?, sort: SortOption): DataSource.Factory<Int, WatchedShowEntryWithShow> {
+        val filtered = filter != null && filter.isNotEmpty()
+        return when (sort) {
+            SortOption.LAST_WATCHED -> {
+                if (filtered) {
+                    watchedShowDao.pagedListLastWatchedFilter("*$filter*")
+                } else {
+                    watchedShowDao.pagedListLastWatched()
+                }
+            }
+            SortOption.ALPHABETICAL -> {
+                if (filtered) {
+                    watchedShowDao.pagedListAlphaFilter("*$filter*")
+                } else {
+                    watchedShowDao.pagedListAlpha()
+                }
+            }
+            else -> throw IllegalArgumentException("$sort option is not supported")
+        }
+    }
 
     suspend fun saveWatchedShows(watchedShows: List<WatchedShowEntry>) = transactionRunner {
         watchedShowDao.deleteAll()

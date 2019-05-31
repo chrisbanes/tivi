@@ -19,7 +19,6 @@ package app.tivi.interactors
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
-import io.reactivex.Flowable
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
@@ -27,25 +26,19 @@ class ChangeShowFollowStatus @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
     private val followedShowsRepository: FollowedShowsRepository,
     private val logger: Logger
-) : SubjectInteractor<ChangeShowFollowStatus.Params, ChangeShowFollowStatus.ExecuteParams, Boolean>() {
+) : Interactor<ChangeShowFollowStatus.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend fun doWork(params: Params, executeParams: ExecuteParams) {
-        logger.d("ChangeShowFollowStatus started: %s - %s", params, executeParams)
-        when (executeParams.action) {
+    override suspend fun invoke(params: Params) {
+        logger.d("ChangeShowFollowStatus started: %s", params)
+        when (params.action) {
             Action.TOGGLE -> followedShowsRepository.toggleFollowedShow(params.showId)
             Action.FOLLOW -> followedShowsRepository.addFollowedShow(params.showId)
             Action.UNFOLLOW -> followedShowsRepository.removeFollowedShow(params.showId)
         }
     }
 
-    override fun createObservable(params: Params): Flowable<Boolean> {
-        return followedShowsRepository.observeIsShowFollowed(params.showId)
-    }
-
-    data class Params(val showId: Long)
-
-    data class ExecuteParams(val action: Action)
+    data class Params(val showId: Long, val action: Action)
 
     enum class Action { FOLLOW, UNFOLLOW, TOGGLE }
 }
