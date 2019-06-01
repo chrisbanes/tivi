@@ -31,15 +31,19 @@ import javax.inject.Inject
 class TrendingShowsViewModel @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
     private val interactor: UpdateTrendingShows,
-    pagingInteractor: ObservePagedTrendingShows,
+    observePagedTrendingShows: ObservePagedTrendingShows,
     tmdbManager: TmdbManager,
     logger: Logger
 ) : EntryViewModel<TrendingEntryWithShow, ObservePagedTrendingShows>(
         dispatchers,
-        pagingInteractor,
+        observePagedTrendingShows,
         tmdbManager,
         logger
 ) {
+    init {
+        observePagedTrendingShows(ObservePagedTrendingShows.Params(pageListConfig, boundaryCallback))
+    }
+
     override suspend fun callLoadMore() = interactor.execute(UpdateTrendingShows.Params(NEXT_PAGE))
 
     override suspend fun callRefresh() = interactor.execute(UpdateTrendingShows.Params(REFRESH))

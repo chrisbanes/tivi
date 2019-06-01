@@ -18,7 +18,8 @@ package app.tivi.interactors
 
 import androidx.paging.PagedList
 import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.Subject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -56,7 +57,7 @@ abstract class ChannelInteractor<P, T : Any> : Interactor<P> {
 }
 
 abstract class SubjectInteractor<P : Any, T> {
-    private val subject: PublishSubject<P> = PublishSubject.create()
+    private val subject: Subject<P> = BehaviorSubject.create()
     private val observable = subject.switchMap(::createObservable)
 
     operator fun invoke(params: P) = subject.onNext(params)

@@ -31,17 +31,17 @@ import javax.inject.Inject
 class PopularShowsViewModel @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
     private val interactor: UpdatePopularShows,
-    pagingInteractor: ObservePagedPopularShows,
+    observePagedPopularShows: ObservePagedPopularShows,
     tmdbManager: TmdbManager,
     logger: Logger
 ) : EntryViewModel<PopularEntryWithShow, ObservePagedPopularShows>(
         dispatchers,
-        pagingInteractor,
+        observePagedPopularShows,
         tmdbManager,
         logger
 ) {
     init {
-        pagingInteractor(ObservePagedPopularShows.Params(pageListConfig, boundaryCallback))
+        observePagedPopularShows(ObservePagedPopularShows.Params(pageListConfig, boundaryCallback))
     }
 
     override suspend fun callLoadMore() = interactor.execute(UpdatePopularShows.Params(NEXT_PAGE))
