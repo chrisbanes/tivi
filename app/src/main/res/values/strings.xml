@@ -99,6 +99,8 @@
         <item quantity="other">%d shows</item>
     </plurals>
 
+    <string name="episode_number">#%d</string>
+
     <plurals name="header_show_count_filtered">
         <item quantity="one">%d show (filtered)</item>
         <item quantity="other">%d shows (filtered)</item>
