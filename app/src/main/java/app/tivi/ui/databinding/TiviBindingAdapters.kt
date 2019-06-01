@@ -22,6 +22,7 @@ import android.graphics.Outline
 import android.view.Gravity
 import android.view.View
 import android.view.ViewOutlineProvider
+import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.doOnLayout
@@ -222,9 +223,18 @@ fun materialShapeElevationBackground(view: View, oldValue: Boolean, value: Boole
         view.background = shapeDrawable
 
         val vto = view.viewTreeObserver
-        vto.addOnPreDrawListener {
-            shapeDrawable.z = view.z
-            true
-        }
+        vto.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                shapeDrawable.z = view.z
+                if (!view.isAttachedToWindow) {
+                    if (vto.isAlive) {
+                        vto.removeOnPreDrawListener(this)
+                    } else {
+                        view.viewTreeObserver.removeOnPreDrawListener(this)
+                    }
+                }
+                return true
+            }
+        })
     }
 }
