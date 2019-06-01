@@ -87,6 +87,10 @@ class ShowDetailsTextCreator @Inject constructor(
         return title
     }
 
+    fun episodeNumberText(episode: Episode): CharSequence? {
+        return context.getString(R.string.episode_number, episode.number)
+    }
+
     fun genreString(genres: List<Genre>?): CharSequence? {
         if (genres != null && genres.isNotEmpty()) {
             val spanned = buildSpannedString {
