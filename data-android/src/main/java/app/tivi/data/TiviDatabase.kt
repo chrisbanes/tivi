@@ -42,6 +42,7 @@ import app.tivi.data.entities.TiviShowFts
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.entities.TrendingShowEntry
 import app.tivi.data.entities.WatchedShowEntry
+import app.tivi.data.views.FollowedShowsWatchStats
 
 @Database(
         entities = [
@@ -58,7 +59,10 @@ import app.tivi.data.entities.WatchedShowEntry
             EpisodeWatchEntry::class,
             LastRequest::class
         ],
-        version = 17
+        views = [
+            FollowedShowsWatchStats::class
+        ],
+        version = 18
 )
 @TypeConverters(TiviTypeConverters::class)
 abstract class TiviDatabase : RoomDatabase() {

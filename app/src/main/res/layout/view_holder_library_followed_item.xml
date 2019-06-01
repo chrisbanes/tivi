@@ -32,6 +32,10 @@
             type="app.tivi.data.entities.FollowedShowEntry" />
 
         <variable
+            name="stats"
+            type="app.tivi.data.views.FollowedShowsWatchStats" />
+
+        <variable
             name="tiviShow"
             type="app.tivi.data.entities.TiviShow" />
 
@@ -95,6 +99,30 @@
             app:layout_constraintStart_toEndOf="@id/show_poster"
             app:layout_constraintTop_toTopOf="@id/background"
             tools:text="@sample/shows.txt" />
+
+        <ProgressBar
+            android:id="@+id/season_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_micro"
+            android:max="@{stats.episodeCount}"
+            android:progress="@{stats.watchedEpisodeCount}"
+            app:layout_constraintEnd_toEndOf="@id/show_title"
+            app:layout_constraintStart_toStartOf="@id/show_title"
+            app:layout_constraintBottom_toTopOf="@id/show_watch_stats"
+            tools:progress="50" />
+
+        <TextView
+            android:id="@+id/show_watch_stats"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:text="@{textCreator.followedShowEpisodeWatchStatus(stats)}"
+            android:textAppearance="?attr/textAppearanceCaption"
+            app:layout_constraintStart_toStartOf="@id/season_progress"
+            app:layout_constraintBottom_toBottomOf="@id/background"
+            tools:text="7 to watch" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
