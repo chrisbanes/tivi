@@ -22,10 +22,9 @@
     <string name="home_nav_library">Library</string>
 
     <string name="discover_title">Discover</string>
-    <string name="discover_trending">Trending</string>
+    <string name="discover_trending">Watching now</string>
     <string name="discover_popular">Popular</string>
 
-    <string name="library_title">Library</string>
     <string name="library_followed_shows">Followed</string>
     <string name="library_watched">Watched</string>
 
