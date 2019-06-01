@@ -96,6 +96,7 @@ class FollowedEpoxyController @Inject constructor(
                 id("item_placeholder_$currentPosition")
             }
             followedEntry(item?.entry)
+            stats(item?.stats)
             textCreator(textCreator)
             tmdbImageUrlProvider(viewState.tmdbImageUrlProvider)
         }

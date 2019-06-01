@@ -20,8 +20,10 @@ import android.content.Context
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
+import androidx.core.text.parseAsHtml
 import app.tivi.R
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.inject.PerActivity
 import app.tivi.ui.text.TypefaceSpan
 import app.tivi.ui.text.textAppearanceSpanForAttribute
@@ -45,8 +47,18 @@ class HomeTextCreator @Inject constructor(
         }
     }
 
-    fun showHeaderCount(count: Int, filtered: Boolean = false): String = when {
+    fun showHeaderCount(count: Int, filtered: Boolean = false): CharSequence = when {
         filtered -> context.resources.getQuantityString(R.plurals.header_show_count_filtered, count, count)
         else -> context.resources.getQuantityString(R.plurals.header_show_count, count, count)
+    }.parseAsHtml()
+
+    fun followedShowEpisodeWatchStatus(stats: FollowedShowsWatchStats): CharSequence = when {
+        stats.watchedEpisodeCount < stats.episodeCount -> {
+            context.getString(R.string.followed_watch_stats_to_watch,
+                    stats.episodeCount - stats.watchedEpisodeCount).parseAsHtml()
+        }
+        else -> {
+            context.getString(R.string.followed_watch_stats_complete)
+        }
     }
 }

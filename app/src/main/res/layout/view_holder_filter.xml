@@ -50,7 +50,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="@string/filter_shows">
+            android:hint="@string/filter_shows"
+            app:endIconMode="clear_text">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
