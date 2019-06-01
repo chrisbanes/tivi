@@ -38,6 +38,7 @@
 
             <com.airbnb.epoxy.EpoxyRecyclerView
                 android:id="@+id/grid_recyclerview"
+                style="@style/Widget.Tivi.RecyclerView.FastScroll"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clipToPadding="false"

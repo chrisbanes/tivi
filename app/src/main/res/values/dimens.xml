@@ -35,4 +35,6 @@
 
     <dimen name="backdrop_corner_radius">16dp</dimen>
     <dimen name="sticky_header_elevation">6dp</dimen>
+    <dimen name="fast_scroller_radius">6dp</dimen>
+
 </resources>

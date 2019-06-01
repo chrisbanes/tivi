@@ -34,4 +34,12 @@
         <item name="android:textAppearance">@style/TextAppearance.Tivi.PosterAnnotation</item>
     </style>
 
+    <style name="Widget.Tivi.RecyclerView.FastScroll" parent="android:Widget">
+        <item name="fastScrollEnabled">true</item>
+        <item name="fastScrollHorizontalThumbDrawable">@drawable/recyclerview_scroll_thumb</item>
+        <item name="fastScrollHorizontalTrackDrawable">@drawable/recyclerview_scroll_track</item>
+        <item name="fastScrollVerticalThumbDrawable">@drawable/recyclerview_scroll_thumb</item>
+        <item name="fastScrollVerticalTrackDrawable">@drawable/recyclerview_scroll_track</item>
+    </style>
+
 </resources>
