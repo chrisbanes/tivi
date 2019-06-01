@@ -28,6 +28,7 @@ import app.tivi.emptyState
 import app.tivi.header
 import app.tivi.infiniteLoading
 import app.tivi.tmdb.TmdbImageUrlProvider
+import app.tivi.ui.epoxy.EpoxyModelProperty
 import app.tivi.ui.epoxy.TotalSpanOverride
 import com.airbnb.epoxy.EpoxyAsyncUtil
 import com.airbnb.epoxy.EpoxyModel
@@ -41,21 +42,8 @@ open class EntryGridEpoxyController<LI : EntryWithShow<out Entry>>(
 ) {
     internal var callbacks: Callbacks<LI>? = null
 
-    var isLoading = false
-        set(value) {
-            if (value != field) {
-                field = value
-                requestModelBuild()
-            }
-        }
-
-    var tmdbImageUrlProvider: TmdbImageUrlProvider? = null
-        set(value) {
-            if (value != field) {
-                field = value
-                requestModelBuild()
-            }
-        }
+    var isLoading by EpoxyModelProperty { false }
+    var tmdbImageUrlProvider by EpoxyModelProperty<TmdbImageUrlProvider?> { null }
 
     interface Callbacks<in LI> {
         fun onItemClicked(item: LI)
