@@ -91,7 +91,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             FROM myshows_entries as fs
             INNER JOIN seasons AS s ON fs.show_id = s.show_id
             INNER JOIN episodes AS eps ON eps.season_id = s.id
-            INNER JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
+            LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
             GROUP BY fs.id
             ORDER BY watched_at DESC
         """
@@ -102,7 +102,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid
             INNER JOIN seasons AS s ON fs.show_id = s.show_id
             INNER JOIN episodes AS eps ON eps.season_id = s.id
-            INNER JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
+            LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
             WHERE s_fts.title MATCH :filter
             GROUP BY fs.id
             ORDER BY watched_at DESC
@@ -121,7 +121,11 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             ORDER BY title ASC
         """
 
-        private const val ENTRY_QUERY_ORDER_ADDED = "SELECT * FROM myshows_entries ORDER BY datetime(followed_at) DESC"
+        private const val ENTRY_QUERY_ORDER_ADDED = """
+            SELECT * FROM myshows_entries
+            ORDER BY datetime(followed_at) DESC
+        """
+
         private const val ENTRY_QUERY_ORDER_ADDED_FILTER = """
             SELECT fs.* FROM myshows_entries as fs
             INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid
