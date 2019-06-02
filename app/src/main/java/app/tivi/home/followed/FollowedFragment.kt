@@ -79,7 +79,7 @@ class FollowedFragment : TiviMvRxFragment() {
             setController(controller)
         }
 
-        binding.followedSwipeRefresh.setOnRefreshListener(viewModel::refresh)
+        binding.followedSwipeRefresh.setOnRefreshListener { viewModel.refresh(true) }
     }
 
     override fun invalidate() {

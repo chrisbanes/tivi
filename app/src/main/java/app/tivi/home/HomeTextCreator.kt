@@ -52,13 +52,14 @@ class HomeTextCreator @Inject constructor(
         else -> context.resources.getQuantityString(R.plurals.header_show_count, count, count)
     }.parseAsHtml()
 
-    fun followedShowEpisodeWatchStatus(stats: FollowedShowsWatchStats): CharSequence = when {
-        stats.watchedEpisodeCount < stats.episodeCount -> {
+    fun followedShowEpisodeWatchStatus(stats: FollowedShowsWatchStats?): CharSequence {
+        return if (stats != null && stats.watchedEpisodeCount < stats.episodeCount) {
             context.getString(R.string.followed_watch_stats_to_watch,
                     stats.episodeCount - stats.watchedEpisodeCount).parseAsHtml()
-        }
-        else -> {
+        } else if (stats != null && stats.watchedEpisodeCount > 0) {
             context.getString(R.string.followed_watch_stats_complete)
+        } else {
+            return ""
         }
     }
 }
