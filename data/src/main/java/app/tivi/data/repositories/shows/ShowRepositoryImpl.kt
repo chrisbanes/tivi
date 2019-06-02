@@ -23,6 +23,7 @@ import app.tivi.inject.Trakt
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import org.threeten.bp.Instant
 import org.threeten.bp.Period
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -73,7 +74,11 @@ class ShowRepositoryImpl @Inject constructor(
     }
 
     override suspend fun needsUpdate(showId: Long): Boolean {
-        return localShowStore.lastRequestBefore(showId, Period.ofDays(7))
+        return localShowStore.lastRequestExpired(showId, Period.ofDays(7))
+    }
+
+    override suspend fun needsInitialUpdate(showId: Long): Boolean {
+        return localShowStore.lastRequestBefore(showId, Instant.EPOCH)
     }
 
     private fun mergeShow(local: TiviShow, trakt: TiviShow, tmdb: TiviShow) = local.copy(

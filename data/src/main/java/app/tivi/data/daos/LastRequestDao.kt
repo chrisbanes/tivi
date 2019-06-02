@@ -41,8 +41,12 @@ abstract class LastRequestDao : EntityDao<LastRequest> {
     suspend fun hasNotBeenRequested(request: Request, entityId: Long) = requestCount(request, entityId) <= 0
 
     suspend fun isRequestBefore(request: Request, entityId: Long, threshold: TemporalAmount): Boolean {
+        return isRequestBefore(request, entityId, Instant.now().minus(threshold))
+    }
+
+    suspend fun isRequestBefore(request: Request, entityId: Long, instant: Instant): Boolean {
         val lastRequest = lastRequest(request, entityId)
-        return lastRequest?.timestamp?.isBefore(Instant.now().minus(threshold)) ?: true
+        return lastRequest?.timestamp?.isBefore(instant) ?: true
     }
 
     suspend fun updateLastRequest(request: Request, entityId: Long, timestamp: Instant = Instant.now()) {

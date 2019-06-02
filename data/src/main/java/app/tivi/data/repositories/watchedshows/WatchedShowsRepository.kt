@@ -51,7 +51,7 @@ class WatchedShowsRepository @Inject constructor(
                     localStore.saveWatchedShows(entries)
                     // Now update all of the related shows if needed
                     entries.parallelForEach { entry ->
-                        if (showRepository.needsUpdate(entry.showId)) {
+                        if (showRepository.needsInitialUpdate(entry.showId)) {
                             showRepository.updateShow(entry.showId)
                         }
                     }

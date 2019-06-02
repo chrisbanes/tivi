@@ -23,6 +23,7 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.Request
 import app.tivi.data.entities.TiviShow
 import io.reactivex.Observable
+import org.threeten.bp.Instant
 import org.threeten.bp.temporal.TemporalAmount
 import javax.inject.Inject
 
@@ -38,8 +39,12 @@ class LocalShowStore @Inject constructor(
 
     suspend fun saveShow(show: TiviShow) = entityInserter.insertOrUpdate(showDao, show)
 
-    suspend fun lastRequestBefore(showId: Long, threshold: TemporalAmount): Boolean {
+    suspend fun lastRequestExpired(showId: Long, threshold: TemporalAmount): Boolean {
         return lastRequestDao.isRequestBefore(Request.SHOW_DETAILS, showId, threshold)
+    }
+
+    suspend fun lastRequestBefore(showId: Long, instant: Instant): Boolean {
+        return lastRequestDao.isRequestBefore(Request.SHOW_DETAILS, showId, instant)
     }
 
     suspend fun updateLastRequest(showId: Long) = lastRequestDao.updateLastRequest(Request.SHOW_DETAILS, showId)
