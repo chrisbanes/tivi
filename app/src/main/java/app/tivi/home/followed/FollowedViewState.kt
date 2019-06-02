@@ -30,5 +30,5 @@ data class FollowedViewState(
     val filterActive: Boolean = false,
     val filter: String? = null,
     val availableSorts: List<SortOption> = emptyList(),
-    val sort: SortOption = SortOption.LAST_WATCHED
+    val sort: SortOption = SortOption.SUPER_SORT
 ) : MvRxState

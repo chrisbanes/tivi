@@ -69,6 +69,13 @@ class LocalFollowedShowsStore @Inject constructor(
     fun observeForPaging(sort: SortOption, filter: String?): DataSource.Factory<Int, FollowedShowEntryWithShow> {
         val filtered = filter != null && filter.isNotEmpty()
         return when (sort) {
+            SortOption.SUPER_SORT -> {
+                if (filtered) {
+                    followedShowsDao.pagedListSuperSortFilter("*$filter*")
+                } else {
+                    followedShowsDao.pagedListSuperSort()
+                }
+            }
             SortOption.LAST_WATCHED -> {
                 if (filtered) {
                     followedShowsDao.pagedListLastWatchedFilter("*$filter*")

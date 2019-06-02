@@ -41,6 +41,7 @@ class SortPopupMenuListener(
 }
 
 fun popupMenuItemIdToSortOption(itemId: Int) = when (itemId) {
+    R.id.popup_sort_super -> SortOption.SUPER_SORT
     R.id.popup_sort_date_followed -> SortOption.DATE_ADDED
     R.id.popup_sort_alpha -> SortOption.ALPHABETICAL
     R.id.popup_sort_last_watched -> SortOption.LAST_WATCHED

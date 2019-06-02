@@ -79,7 +79,12 @@ class FollowedViewModel @AssistedInject constructor(
 
         // Set the available sorting options
         setState {
-            copy(availableSorts = listOf(SortOption.LAST_WATCHED, SortOption.ALPHABETICAL, SortOption.DATE_ADDED))
+            copy(availableSorts = listOf(
+                    SortOption.SUPER_SORT,
+                    SortOption.LAST_WATCHED,
+                    SortOption.ALPHABETICAL,
+                    SortOption.DATE_ADDED
+            ))
         }
 
         // Subscribe to state changes, so update the observed data source
@@ -99,7 +104,7 @@ class FollowedViewModel @AssistedInject constructor(
         )
     }
 
-    fun refresh() {
+    fun refresh(force: Boolean = false) {
         refreshDisposable?.let {
             it.dispose()
             disposables.remove(it)
@@ -109,7 +114,7 @@ class FollowedViewModel @AssistedInject constructor(
         disposables += traktManager.state
                 .filter { it == TraktAuthState.LOGGED_IN }
                 .firstOrError()
-                .subscribe({ refreshFollowed() }, logger::e)
+                .subscribe({ refreshFollowed(force) }, logger::e)
                 .also { refreshDisposable = it }
     }
 
@@ -117,13 +122,14 @@ class FollowedViewModel @AssistedInject constructor(
         setState { copy(filter = filter, filterActive = filter.isNotEmpty()) }
     }
 
-    fun setSort(sort: SortOption) {
-        setState { copy(sort = sort) }
+    fun setSort(sort: SortOption) = setState {
+        require(availableSorts.contains(sort))
+        copy(sort = sort)
     }
 
-    private fun refreshFollowed() {
+    private fun refreshFollowed(force: Boolean) {
         loadingState.addLoader()
-        viewModelScope.launchInteractor(updateFollowedShows, UpdateFollowedShows.ExecuteParams(false))
+        viewModelScope.launchInteractor(updateFollowedShows, UpdateFollowedShows.ExecuteParams(force))
                 .invokeOnCompletion { loadingState.removeLoader() }
     }
 

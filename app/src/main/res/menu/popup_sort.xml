@@ -18,6 +18,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/popup_sort_super"
+            android:title="@string/popup_sort_super" />
+        <item
             android:id="@+id/popup_sort_last_watched"
             android:title="@string/popup_sort_last_watched" />
         <item
