@@ -99,13 +99,16 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             INNER JOIN seasons AS s ON fs.show_id = s.show_id
             INNER JOIN episodes AS eps ON eps.season_id = s.id
             LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
-			WHERE s.number != 0
+            WHERE s.number != 0
             GROUP BY fs.id
             ORDER BY
                 /* shows with aired episodes to watch first */
                 SUM(CASE WHEN datetime(first_aired) < datetime('now') THEN 1 ELSE 0 END) = COUNT(watched_at) ASC,
                 /* latest event */
-                MAX(MAX(datetime(coalesce(watched_at, 0))), MAX(datetime(coalesce(followed_at, 0)))) DESC
+                MAX(
+				    MAX(datetime(coalesce(watched_at, 0))), /* last watch */
+					MAX(datetime(coalesce(followed_at, 0))) /* when followed */
+                ) DESC
         """
 
         private const val ENTRY_QUERY_SUPER_SORT_FILTER = """
@@ -120,7 +123,10 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
                 /* shows with aired episodes to watch first */
                 SUM(CASE WHEN datetime(first_aired) < datetime('now') THEN 1 ELSE 0 END) = COUNT(watched_at) ASC,
                 /* latest event */
-                MAX(MAX(datetime(coalesce(watched_at, 0))), MAX(datetime(coalesce(followed_at, 0)))) DESC
+                MAX(
+                    MAX(datetime(coalesce(watched_at, 0))), /* last watch */
+                    MAX(datetime(coalesce(followed_at, 0))) /* when followed */
+                ) DESC
         """
 
         private const val ENTRY_QUERY_ORDER_LAST_WATCHED = """
