@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,10 @@ package app.tivi.data.repositories.episodes
 
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
-import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.entities.Episode
-import app.tivi.data.entities.EpisodeWatchEntry
-import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Request
 import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
@@ -39,7 +36,6 @@ class LocalSeasonsEpisodesStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val seasonsDao: SeasonsDao,
     private val episodesDao: EpisodesDao,
-    private val episodeWatchEntryDao: EpisodeWatchEntryDao,
     private val lastRequestDao: LastRequestDao,
     private val logger: Logger
 ) {
@@ -57,32 +53,12 @@ class LocalSeasonsEpisodesStore @Inject constructor(
             logger
     )
 
-    private val episodeWatchSyncer = syncerForEntity(
-            episodeWatchEntryDao,
-            { it.traktId },
-            { entity, id -> entity.copy(id = id ?: 0) },
-            logger
-    )
-
     fun observeEpisode(episodeId: Long): Observable<Episode> {
         return episodesDao.episodeWithIdObservable(episodeId)
     }
 
-    fun observeEpisodeWatches(episodeId: Long): Observable<List<EpisodeWatchEntry>> {
-        return episodeWatchEntryDao.watchesForEpisodeObservable(episodeId)
-    }
-
     fun observeShowSeasonsWithEpisodes(showId: Long): Observable<List<SeasonWithEpisodesAndWatches>> {
         return seasonsDao.seasonsWithEpisodesForShowId(showId)
-    }
-
-    /**
-     * Gets the ID for the season with the given trakt Id. If the trakt Id does not exist in the
-     * database, it is inserted and the generated ID is returned.
-     */
-    suspend fun getEpisodeIdOrSavePlaceholder(episode: Episode): Long = transactionRunner {
-        val episodeWithTraktId = episode.traktId?.let { episodesDao.episodeIdWithTraktId(it) }
-        episodeWithTraktId ?: episodesDao.insert(episode)
     }
 
     /**
@@ -105,10 +81,6 @@ class LocalSeasonsEpisodesStore @Inject constructor(
 
     suspend fun save(episode: Episode) = entityInserter.insertOrUpdate(episodesDao, episode)
 
-    suspend fun save(watch: EpisodeWatchEntry) = entityInserter.insertOrUpdate(episodeWatchEntryDao, watch)
-
-    suspend fun saveWatches(watches: List<EpisodeWatchEntry>) = entityInserter.insertOrUpdate(episodeWatchEntryDao, watches)
-
     suspend fun save(showId: Long, data: Map<Season, List<Episode>>) = transactionRunner {
         seasonSyncer.sync(seasonsDao.seasonsForShowId(showId), data.keys)
         data.forEach { (season, episodes) ->
@@ -126,44 +98,16 @@ class LocalSeasonsEpisodesStore @Inject constructor(
         lastRequestDao.updateLastRequest(Request.SHOW_SEASONS, showId, instant)
     }
 
-    suspend fun lastShowEpisodeWatchesSyncBefore(showId: Long, instant: Instant): Boolean {
-        return lastRequestDao.getRequestInstant(Request.SHOW_EPISODE_WATCHES, showId)?.isBefore(instant) ?: true
+    suspend fun getShowEpisodeWatchesLastRequest(showId: Long): Instant? {
+        return lastRequestDao.getRequestInstant(Request.SHOW_EPISODE_WATCHES, showId)
     }
 
     suspend fun updateShowEpisodeWatchesLastRequest(showId: Long, instant: Instant) {
         lastRequestDao.updateLastRequest(Request.SHOW_EPISODE_WATCHES, showId, instant)
     }
 
-    suspend fun getEpisodeWatchesForShow(showId: Long) = episodeWatchEntryDao.entriesForShowId(showId)
-
-    suspend fun getWatchesForEpisode(episodeId: Long) = episodeWatchEntryDao.watchesForEpisode(episodeId)
-
-    suspend fun getEpisodeWatch(watchId: Long) = episodeWatchEntryDao.entryWithId(watchId)
-
-    suspend fun hasEpisodeBeenWatched(episodeId: Long) = episodeWatchEntryDao.watchCountForEpisode(episodeId) > 0
-
-    suspend fun getEntriesWithAddAction(showId: Long) = episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId)
-
-    suspend fun getEntriesWithDeleteAction(showId: Long) = episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId)
-
-    suspend fun deleteWatchEntriesWithIds(ids: List<Long>) = episodeWatchEntryDao.deleteWithIds(ids)
-
     suspend fun deleteShowSeasonData(showId: Long) {
         // Due to foreign keys, this will also delete the episodes and watches
         seasonsDao.deleteSeasonsForShowId(showId)
-    }
-
-    suspend fun updateWatchEntriesWithAction(ids: List<Long>, action: PendingAction): Int {
-        return episodeWatchEntryDao.updateEntriesToPendingAction(ids, action.value)
-    }
-
-    suspend fun syncShowWatchEntries(showId: Long, watches: List<EpisodeWatchEntry>) = transactionRunner {
-        val currentWatches = episodeWatchEntryDao.entriesForShowIdWithNoPendingAction(showId)
-        episodeWatchSyncer.sync(currentWatches, watches)
-    }
-
-    suspend fun syncEpisodeWatchEntries(episodeId: Long, watches: List<EpisodeWatchEntry>) = transactionRunner {
-        val currentWatches = episodeWatchEntryDao.watchesForEpisode(episodeId)
-        episodeWatchSyncer.sync(currentWatches, watches)
     }
 }

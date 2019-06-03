@@ -42,7 +42,7 @@ class UpdateFollowedShows @Inject constructor(
             }
             // And sync the episode watches
             if (params.forceLoad || seasonEpisodeRepository.needShowEpisodeWatchesSync(it.showId)) {
-                seasonEpisodeRepository.syncEpisodeWatchesForShow(it.showId)
+                seasonEpisodeRepository.updateShowEpisodeWatches(it.showId)
             }
         }
     }
