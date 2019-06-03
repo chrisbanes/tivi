@@ -55,7 +55,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
 
         observeEpisodeWatches.observe()
                 .execute {
-                    val action = if (it is Success && it()!!.isNotEmpty()) {
+                    val action = if (it is Success && it().isNotEmpty()) {
                         Action.UNWATCH
                     } else {
                         Action.WATCH
