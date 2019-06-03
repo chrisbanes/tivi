@@ -24,26 +24,25 @@ import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class UpdateFollowedShows @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
+    dispatchers: AppCoroutineDispatchers,
     private val followedShowsRepository: FollowedShowsRepository,
-    private val repository: SeasonsEpisodesRepository
+    private val seasonEpisodeRepository: SeasonsEpisodesRepository
 ) : Interactor<UpdateFollowedShows.ExecuteParams> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend fun invoke(params: ExecuteParams) {
         if (params.forceLoad || followedShowsRepository.needFollowedShowsSync()) {
             followedShowsRepository.syncFollowedShows()
-
-            // Finally sync the watches
-            followedShowsRepository.getFollowedShows().parallelForEach {
-                // Download the seasons + episodes
-                if (params.forceLoad || repository.needShowSeasonsUpdate(it.showId)) {
-                    repository.updateSeasonsEpisodes(it.showId)
-                }
-                // And sync the episode watches
-                if (params.forceLoad || repository.needShowEpisodeWatchesSync(it.showId)) {
-                    repository.syncEpisodeWatchesForShow(it.showId)
-                }
+        }
+        // Finally sync the watches
+        followedShowsRepository.getFollowedShows().parallelForEach {
+            // Download the seasons + episodes
+            if (seasonEpisodeRepository.needShowSeasonsUpdate(it.showId)) {
+                seasonEpisodeRepository.updateSeasonsEpisodes(it.showId)
+            }
+            // And sync the episode watches
+            if (params.forceLoad || seasonEpisodeRepository.needShowEpisodeWatchesSync(it.showId)) {
+                seasonEpisodeRepository.syncEpisodeWatchesForShow(it.showId)
             }
         }
     }

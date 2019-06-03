@@ -20,13 +20,14 @@ import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.Success
+import app.tivi.data.instantInPast
 import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
-import org.threeten.bp.Duration
+import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Provider
@@ -52,8 +53,8 @@ class FollowedShowsRepository @Inject constructor(
         return localStore.getEntries()
     }
 
-    suspend fun needFollowedShowsSync(): Boolean {
-        return localStore.isLastFollowedShowsSyncBefore(Duration.ofHours(3))
+    suspend fun needFollowedShowsSync(expiry: Instant = instantInPast(hours = 1)): Boolean {
+        return localStore.isLastFollowedShowsSyncBefore(expiry)
     }
 
     suspend fun toggleFollowedShow(showId: Long) {
@@ -107,7 +108,7 @@ class FollowedShowsRepository @Inject constructor(
             pullDownTraktFollowedList(listId)
         }
 
-        localStore.updateLastFollowedShowsSync()
+        localStore.updateLastFollowedShowsSync(Instant.now())
     }
 
     private suspend fun pullDownTraktFollowedList(listId: Int) {

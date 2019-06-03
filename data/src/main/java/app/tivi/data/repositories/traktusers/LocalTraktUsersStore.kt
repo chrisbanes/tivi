@@ -22,6 +22,7 @@ import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.UserDao
 import app.tivi.data.entities.Request
 import app.tivi.data.entities.TraktUser
+import org.threeten.bp.Instant
 import org.threeten.bp.temporal.TemporalAmount
 import javax.inject.Inject
 
@@ -45,13 +46,13 @@ class LocalTraktUsersStore @Inject constructor(
         entityInserter.insertOrUpdate(userDao, user)
     }
 
-    suspend fun updateLastRequest(username: String) {
+    suspend fun updateLastRequest(username: String, instant: Instant) {
         val id = when (username) {
             "me" -> userDao.getIdForMe()
             else -> userDao.getIdForUsername(username)
         }
         if (id != null) {
-            lastRequestDao.updateLastRequest(Request.USER_PROFILE, id)
+            lastRequestDao.updateLastRequest(Request.USER_PROFILE, id, instant)
         }
     }
 
@@ -61,7 +62,7 @@ class LocalTraktUsersStore @Inject constructor(
             else -> userDao.getIdForUsername(username)
         }
         return when {
-            id != null -> lastRequestDao.isRequestBefore(Request.USER_PROFILE, id, threshold)
+            id != null -> lastRequestDao.isRequestExpired(Request.USER_PROFILE, id, threshold)
             else -> true
         }
     }

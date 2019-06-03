@@ -40,7 +40,11 @@ abstract class LastRequestDao : EntityDao<LastRequest> {
 
     suspend fun hasNotBeenRequested(request: Request, entityId: Long) = requestCount(request, entityId) <= 0
 
-    suspend fun isRequestBefore(request: Request, entityId: Long, threshold: TemporalAmount): Boolean {
+    suspend fun getRequestInstant(request: Request, entityId: Long): Instant? {
+        return lastRequest(request, entityId)?.timestamp
+    }
+
+    suspend fun isRequestExpired(request: Request, entityId: Long, threshold: TemporalAmount): Boolean {
         return isRequestBefore(request, entityId, Instant.now().minus(threshold))
     }
 
@@ -49,7 +53,7 @@ abstract class LastRequestDao : EntityDao<LastRequest> {
         return lastRequest?.timestamp?.isBefore(instant) ?: true
     }
 
-    suspend fun updateLastRequest(request: Request, entityId: Long, timestamp: Instant = Instant.now()) {
+    suspend fun updateLastRequest(request: Request, entityId: Long, timestamp: Instant) {
         // We just use insert here since we have a unique index and onConflict = REPLACE above
         val r = LastRequest(request = request, entityId = entityId, timestamp = timestamp)
         insert(r)

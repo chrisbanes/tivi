@@ -17,6 +17,7 @@
 package app.tivi.data.repositories.traktusers
 
 import app.tivi.data.entities.Success
+import org.threeten.bp.Instant
 import org.threeten.bp.Period
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -43,7 +44,7 @@ class TraktUsersRepository @Inject constructor(
                     user = user.copy(id = localUser.id)
                 }
                 localStore.save(user)
-                localStore.updateLastRequest(username)
+                localStore.updateLastRequest(username, Instant.now())
             }
         }
     }

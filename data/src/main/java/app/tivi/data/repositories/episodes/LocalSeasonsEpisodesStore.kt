@@ -31,7 +31,7 @@ import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.util.Logger
 import io.reactivex.Observable
-import org.threeten.bp.temporal.TemporalAmount
+import org.threeten.bp.Instant
 import javax.inject.Inject
 
 class LocalSeasonsEpisodesStore @Inject constructor(
@@ -118,20 +118,20 @@ class LocalSeasonsEpisodesStore @Inject constructor(
         }
     }
 
-    suspend fun lastShowSeasonsFetchBefore(showId: Long, threshold: TemporalAmount): Boolean {
-        return lastRequestDao.isRequestBefore(Request.SHOW_SEASONS, showId, threshold)
+    suspend fun lastShowSeasonsFetchBefore(showId: Long, instant: Instant): Boolean {
+        return lastRequestDao.getRequestInstant(Request.SHOW_SEASONS, showId)?.isBefore(instant) ?: true
     }
 
-    suspend fun updateShowSeasonsFetchLastRequest(showId: Long) {
-        lastRequestDao.updateLastRequest(Request.SHOW_SEASONS, showId)
+    suspend fun updateShowSeasonsFetchLastRequest(showId: Long, instant: Instant) {
+        lastRequestDao.updateLastRequest(Request.SHOW_SEASONS, showId, instant)
     }
 
-    suspend fun lastShowEpisodeWatchesSyncBefore(showId: Long, threshold: TemporalAmount): Boolean {
-        return lastRequestDao.isRequestBefore(Request.SHOW_EPISODE_WATCHES, showId, threshold)
+    suspend fun lastShowEpisodeWatchesSyncBefore(showId: Long, instant: Instant): Boolean {
+        return lastRequestDao.getRequestInstant(Request.SHOW_EPISODE_WATCHES, showId)?.isBefore(instant) ?: true
     }
 
-    suspend fun updateShowEpisodeWatchesLastRequest(showId: Long) {
-        lastRequestDao.updateLastRequest(Request.SHOW_EPISODE_WATCHES, showId)
+    suspend fun updateShowEpisodeWatchesLastRequest(showId: Long, instant: Instant) {
+        lastRequestDao.updateLastRequest(Request.SHOW_EPISODE_WATCHES, showId, instant)
     }
 
     suspend fun getEpisodeWatchesForShow(showId: Long) = episodeWatchEntryDao.entriesForShowId(showId)

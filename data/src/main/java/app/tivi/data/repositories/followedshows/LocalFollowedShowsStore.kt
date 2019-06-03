@@ -30,7 +30,7 @@ import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.util.Logger
 import io.reactivex.Observable
-import org.threeten.bp.temporal.TemporalAmount
+import org.threeten.bp.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -111,12 +111,12 @@ class LocalFollowedShowsStore @Inject constructor(
         syncer.sync(followedShowsDao.entries(), entities)
     }
 
-    suspend fun updateLastFollowedShowsSync() {
-        lastRequestDao.updateLastRequest(Request.FOLLOWED_SHOWS, 0)
+    suspend fun updateLastFollowedShowsSync(instant: Instant) {
+        lastRequestDao.updateLastRequest(Request.FOLLOWED_SHOWS, 0, instant)
     }
 
-    suspend fun isLastFollowedShowsSyncBefore(threshold: TemporalAmount): Boolean {
-        return lastRequestDao.isRequestBefore(Request.FOLLOWED_SHOWS, 0, threshold)
+    suspend fun isLastFollowedShowsSyncBefore(expiry: Instant): Boolean {
+        return lastRequestDao.isRequestBefore(Request.FOLLOWED_SHOWS, 0, expiry)
     }
 
     suspend fun save(entry: FollowedShowEntry) = entityInserter.insertOrUpdate(followedShowsDao, entry)

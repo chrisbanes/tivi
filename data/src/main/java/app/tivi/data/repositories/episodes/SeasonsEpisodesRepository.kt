@@ -22,15 +22,15 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.Success
+import app.tivi.data.instantInPast
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import org.threeten.bp.Duration
+import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
-import org.threeten.bp.Period
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -50,13 +50,13 @@ class SeasonsEpisodesRepository @Inject constructor(
 
     fun observeEpisodeWatches(episodeId: Long) = localStore.observeEpisodeWatches(episodeId)
 
-    suspend fun needShowSeasonsUpdate(showId: Long): Boolean {
-        return localStore.lastShowSeasonsFetchBefore(showId, Period.ofDays(7))
+    suspend fun needShowSeasonsUpdate(showId: Long, expiry: Instant = instantInPast(days = 7)): Boolean {
+        return localStore.lastShowSeasonsFetchBefore(showId, expiry)
     }
 
     suspend fun removeShowSeasonData(showId: Long) {
         localStore.deleteShowSeasonData(showId)
-        localStore.updateShowEpisodeWatchesLastRequest(showId)
+        localStore.updateShowEpisodeWatchesLastRequest(showId, Instant.now())
     }
 
     suspend fun updateSeasonsEpisodes(showId: Long) {
@@ -78,7 +78,7 @@ class SeasonsEpisodesRepository @Inject constructor(
             }
         }
         if (result is Success) {
-            localStore.updateShowSeasonsFetchLastRequest(showId)
+            localStore.updateShowSeasonsFetchLastRequest(showId, Instant.now())
         }
     }
 
@@ -119,12 +119,12 @@ class SeasonsEpisodesRepository @Inject constructor(
 
         if (traktAuthState.get() == TraktAuthState.LOGGED_IN) {
             refreshShowWatchesFromRemote(showId)
-            localStore.updateShowEpisodeWatchesLastRequest(showId)
+            localStore.updateShowEpisodeWatchesLastRequest(showId, Instant.now())
         }
     }
 
-    suspend fun needShowEpisodeWatchesSync(showId: Long): Boolean {
-        return localStore.lastShowEpisodeWatchesSyncBefore(showId, Duration.ofHours(1))
+    suspend fun needShowEpisodeWatchesSync(showId: Long, expiry: Instant = instantInPast(hours = 1)): Boolean {
+        return localStore.lastShowSeasonsFetchBefore(showId, expiry)
     }
 
     suspend fun markSeasonWatched(seasonId: Long, onlyAired: Boolean, date: ActionDate) {

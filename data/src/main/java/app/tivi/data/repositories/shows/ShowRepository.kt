@@ -17,7 +17,9 @@
 package app.tivi.data.repositories.shows
 
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.instantInPast
 import io.reactivex.Observable
+import org.threeten.bp.Instant
 
 interface ShowRepository {
     /**
@@ -32,7 +34,9 @@ interface ShowRepository {
 
     suspend fun needsInitialUpdate(showId: Long): Boolean
 
-    suspend fun needsUpdate(showId: Long): Boolean
+    suspend fun getLastRequestInstant(showId: Long): Instant?
+
+    suspend fun needsUpdate(showId: Long, expiry: Instant = instantInPast(days = 7)): Boolean
 
     fun observeShow(showId: Long): Observable<TiviShow>
 }

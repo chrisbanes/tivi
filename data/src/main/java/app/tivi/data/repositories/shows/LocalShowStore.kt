@@ -24,7 +24,6 @@ import app.tivi.data.entities.Request
 import app.tivi.data.entities.TiviShow
 import io.reactivex.Observable
 import org.threeten.bp.Instant
-import org.threeten.bp.temporal.TemporalAmount
 import javax.inject.Inject
 
 class LocalShowStore @Inject constructor(
@@ -39,15 +38,13 @@ class LocalShowStore @Inject constructor(
 
     suspend fun saveShow(show: TiviShow) = entityInserter.insertOrUpdate(showDao, show)
 
-    suspend fun lastRequestExpired(showId: Long, threshold: TemporalAmount): Boolean {
-        return lastRequestDao.isRequestBefore(Request.SHOW_DETAILS, showId, threshold)
+    suspend fun updateLastRequest(showId: Long, instant: Instant) {
+        lastRequestDao.updateLastRequest(Request.SHOW_DETAILS, showId, instant)
     }
 
-    suspend fun lastRequestBefore(showId: Long, instant: Instant): Boolean {
-        return lastRequestDao.isRequestBefore(Request.SHOW_DETAILS, showId, instant)
+    suspend fun getLastRequestInstant(showId: Long): Instant? {
+        return lastRequestDao.getRequestInstant(Request.SHOW_DETAILS, showId)
     }
-
-    suspend fun updateLastRequest(showId: Long) = lastRequestDao.updateLastRequest(Request.SHOW_DETAILS, showId)
 
     /**
      * Gets the ID for the show with the given trakt Id. If the trakt Id does not exist in the

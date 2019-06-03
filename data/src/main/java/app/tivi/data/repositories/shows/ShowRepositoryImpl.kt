@@ -24,7 +24,6 @@ import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.threeten.bp.Instant
-import org.threeten.bp.Period
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,9 +40,6 @@ class ShowRepositoryImpl @Inject constructor(
      * Updates the show with the given id from all network sources, saves the result to the database
      */
     override suspend fun getShow(showId: Long): TiviShow {
-        if (needsUpdate(showId)) {
-            updateShow(showId)
-        }
         return localShowStore.getShow(showId)!!
     }
 
@@ -69,16 +65,20 @@ class ShowRepositoryImpl @Inject constructor(
 
         if (tmdbResult is Success && traktResult is Success) {
             // If the network requests were successful, update the last request timestamp
-            localShowStore.updateLastRequest(showId)
+            localShowStore.updateLastRequest(showId, Instant.now())
         }
     }
 
-    override suspend fun needsUpdate(showId: Long): Boolean {
-        return localShowStore.lastRequestExpired(showId, Period.ofDays(7))
+    override suspend fun needsUpdate(showId: Long, expiry: Instant): Boolean {
+        return localShowStore.getLastRequestInstant(showId)?.isBefore(expiry) ?: true
     }
 
     override suspend fun needsInitialUpdate(showId: Long): Boolean {
-        return localShowStore.lastRequestBefore(showId, Instant.EPOCH)
+        return localShowStore.getLastRequestInstant(showId) == null
+    }
+
+    override suspend fun getLastRequestInstant(showId: Long): Instant? {
+        return localShowStore.getLastRequestInstant(showId)
     }
 
     private fun mergeShow(local: TiviShow, trakt: TiviShow, tmdb: TiviShow) = local.copy(
