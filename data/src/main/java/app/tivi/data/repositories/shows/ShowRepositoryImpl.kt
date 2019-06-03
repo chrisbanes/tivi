@@ -95,6 +95,7 @@ class ShowRepositoryImpl @Inject constructor(
             // Trakt specific stuff
             traktId = trakt.traktId ?: local.traktId,
             traktRating = trakt.traktRating ?: local.traktRating,
+            traktDataUpdate = trakt.traktDataUpdate ?: local.traktDataUpdate,
 
             // TMDb specific stuff
             tmdbId = tmdb.tmdbId ?: trakt.tmdbId ?: local.tmdbId,

@@ -36,6 +36,7 @@ class TraktShowToTiviShow @Inject constructor() : Mapper<Show, TiviShow> {
             network = from.network,
             country = from.country,
             firstAired = from.first_aired,
-            _genres = from.genres?.joinToString(",")
+            _genres = from.genres?.joinToString(","),
+            traktDataUpdate = from.updated_at
     )
 }
