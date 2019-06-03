@@ -24,9 +24,9 @@ import org.threeten.bp.OffsetDateTime
 
 interface SeasonsEpisodesDataSource {
     suspend fun getSeasonsEpisodes(showId: Long): Result<List<Pair<Season, List<Episode>>>>
-    suspend fun getShowEpisodeWatches(showId: Long, since: OffsetDateTime?): Result<List<Pair<Episode, EpisodeWatchEntry>>>
-    suspend fun getEpisodeWatches(episodeId: Long, since: OffsetDateTime?): Result<List<EpisodeWatchEntry>>
-    suspend fun getSeasonWatches(seasonId: Long, since: OffsetDateTime?): Result<List<Pair<Episode, EpisodeWatchEntry>>>
+    suspend fun getShowEpisodeWatches(showId: Long, since: OffsetDateTime? = null): Result<List<Pair<Episode, EpisodeWatchEntry>>>
+    suspend fun getEpisodeWatches(episodeId: Long, since: OffsetDateTime? = null): Result<List<EpisodeWatchEntry>>
+    suspend fun getSeasonWatches(seasonId: Long, since: OffsetDateTime? = null): Result<List<Pair<Episode, EpisodeWatchEntry>>>
     suspend fun addEpisodeWatches(watches: List<EpisodeWatchEntry>): Result<Unit>
     suspend fun removeEpisodeWatches(watches: List<EpisodeWatchEntry>): Result<Unit>
 }

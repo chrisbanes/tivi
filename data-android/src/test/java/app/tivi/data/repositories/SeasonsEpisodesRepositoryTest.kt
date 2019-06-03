@@ -23,7 +23,6 @@ import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.entities.Success
 import app.tivi.data.repositories.episodes.EpisodeDataSource
 import app.tivi.data.repositories.episodes.LocalEpisodeWatchStore
-import app.tivi.data.repositories.episodes.LocalEpisodesStore
 import app.tivi.data.repositories.episodes.LocalSeasonsEpisodesStore
 import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
@@ -47,13 +46,11 @@ import app.tivi.utils.showId
 import app.tivi.utils.testCoroutineDispatchers
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.any
 import org.junit.Assert.assertThat
 import org.junit.Ignore
 import org.junit.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
-import org.threeten.bp.OffsetDateTime
 import javax.inject.Provider
 
 @Ignore("https://github.com/robolectric/robolectric/issues/3556")
@@ -115,7 +112,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         db.episodesDao().insertAll(s1_episodes)
 
         // Return a response with 2 items
-        `when`(traktSeasonsDataSource.getShowEpisodeWatches(eq(showId), ).thenReturn(
+        `when`(traktSeasonsDataSource.getShowEpisodeWatches(showId)).thenReturn(
                 Success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
         )
         // Sync

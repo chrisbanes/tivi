@@ -27,7 +27,6 @@ import app.tivi.data.syncers.syncerForEntity
 import app.tivi.util.Logger
 import io.reactivex.Observable
 import org.threeten.bp.Instant
-import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 
 class LocalEpisodeWatchStore @Inject constructor(
@@ -56,6 +55,10 @@ class LocalEpisodeWatchStore @Inject constructor(
         lastRequestDao.updateLastRequest(Request.SHOW_EPISODE_WATCHES, showId, instant)
     }
 
+    suspend fun getShowEpisodeWatchesLastRequest(showId: Long): Instant? {
+        return lastRequestDao.getRequestInstant(Request.SHOW_EPISODE_WATCHES, showId)
+    }
+
     suspend fun getEpisodeWatchesForShow(showId: Long) = episodeWatchEntryDao.entriesForShowId(showId)
 
     suspend fun getWatchesForEpisode(episodeId: Long) = episodeWatchEntryDao.watchesForEpisode(episodeId)
@@ -82,9 +85,5 @@ class LocalEpisodeWatchStore @Inject constructor(
     suspend fun syncEpisodeWatchEntries(episodeId: Long, watches: List<EpisodeWatchEntry>) = transactionRunner {
         val currentWatches = episodeWatchEntryDao.watchesForEpisode(episodeId)
         episodeWatchSyncer.sync(currentWatches, watches)
-    }
-
-    suspend fun getLatestEntryWatchDateTimeForShow(showId: Long): OffsetDateTime? {
-        return episodeWatchEntryDao.mostRecentTraktEpisodeWatchDateTime(showId)
     }
 }

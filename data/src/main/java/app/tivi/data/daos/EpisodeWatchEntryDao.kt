@@ -21,7 +21,6 @@ import androidx.room.Query
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import io.reactivex.Observable
-import org.threeten.bp.OffsetDateTime
 
 @Dao
 abstract class EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry> {
@@ -39,15 +38,6 @@ abstract class EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry> {
 
     @Query("SELECT * FROM episode_watch_entries WHERE trakt_id = :traktId")
     abstract suspend fun entryWithTraktId(traktId: Long): EpisodeWatchEntry?
-
-    @Query("""
-        SELECT MAX(datetime(watched_at)) FROM episode_watch_entries AS ew
-        INNER JOIN episodes AS eps ON ew.episode_id = eps.id
-        INNER JOIN seasons AS s ON eps.season_id = s.id
-        INNER JOIN shows ON s.show_id = shows.id
-        WHERE shows.id = :showId AND ew.trakt_id IS NOT NULL
-    """)
-    abstract suspend fun mostRecentTraktEpisodeWatchDateTime(showId: Long): OffsetDateTime?
 
     suspend fun entriesForShowIdWithNoPendingAction(showId: Long): List<EpisodeWatchEntry> {
         return entriesForShowIdWithPendingAction(showId, PendingAction.NOTHING.value)

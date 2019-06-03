@@ -31,6 +31,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.ZoneOffset
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -105,9 +106,9 @@ class SeasonsEpisodesRepository @Inject constructor(
 
     suspend fun updateShowEpisodeWatches(showId: Long) {
         if (traktAuthState.get() == TraktAuthState.LOGGED_IN) {
-            val latestEntry = localEpisodeWatchStore.getLatestEntryWatchDateTimeForShow(showId)
-            if (latestEntry != null) {
-                fetchNewShowWatchesFromRemote(showId, latestEntry)
+            val lastRequest = localEpisodeWatchStore.getShowEpisodeWatchesLastRequest(showId)
+            if (lastRequest != null) {
+                fetchNewShowWatchesFromRemote(showId, lastRequest.atOffset(ZoneOffset.UTC))
             } else {
                 fetchShowWatchesFromRemote(showId)
             }
