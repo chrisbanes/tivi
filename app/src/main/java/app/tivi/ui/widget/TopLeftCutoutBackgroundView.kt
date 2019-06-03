@@ -25,7 +25,6 @@ import app.tivi.R
 import app.tivi.ui.animations.lerp
 import com.google.android.material.shape.CutCornerTreatment
 import com.google.android.material.shape.MaterialShapeDrawable
-import com.google.android.material.shape.ShapeAppearanceModel
 
 class TopLeftCutoutBackgroundView : View {
     private val shapeDrawable = MaterialShapeDrawable()
@@ -63,7 +62,7 @@ class TopLeftCutoutBackgroundView : View {
         }
 
     private fun syncCutSize() {
-        val shapeModel = shapeDrawable.shapeAppearanceModel ?: ShapeAppearanceModel()
+        val shapeModel = shapeDrawable.shapeAppearanceModel
         val newCutSize = lerp(0f, maxCutSize, cutProgress)
 
         if (newCutSize != shapeModel.topLeftCorner?.cornerSize) {

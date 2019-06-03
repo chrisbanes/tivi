@@ -24,6 +24,7 @@ import app.tivi.showdetails.ShowDetailsBuilder
 import app.tivi.tasks.inject.TasksModule
 import app.tivi.tmdb.TmdbModule
 import app.tivi.trakt.TraktAuthModule
+import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
@@ -44,6 +45,8 @@ import javax.inject.Singleton
     NetworkModule::class
 ])
 interface AppComponent : AndroidInjector<TiviApplication> {
-    @Component.Builder
-    abstract class Builder : AndroidInjector.Builder<TiviApplication>()
+    @Component.Factory
+    interface Factory {
+        fun create(@BindsInstance application: TiviApplication): AppComponent
+    }
 }

@@ -77,6 +77,11 @@ subprojects {
             licenseHeaderFile project.rootProject.file('spotless/copyright.kt')
         }
     }
+
+    // Treat all Kotlin warnings as errors
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+        kotlinOptions.allWarningsAsErrors = true
+    }
 }
 
 Object propOrDef(String propertyName, Object defaultValue) {

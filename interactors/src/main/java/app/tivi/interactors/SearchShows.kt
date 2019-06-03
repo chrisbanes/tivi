@@ -25,11 +25,11 @@ import javax.inject.Inject
 class SearchShows @Inject constructor(
     private val searchRepository: SearchRepository,
     dispatchers: AppCoroutineDispatchers
-) : ChannelInteractor<SearchShows.Params, SearchResults>() {
+) : SuspendingWorkInteractor<SearchShows.Params, SearchResults>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override suspend fun execute(executeParams: Params): SearchResults {
-        return searchRepository.search(executeParams.query)
+    override suspend fun doWork(params: Params): SearchResults {
+        return searchRepository.search(params.query)
     }
 
     data class Params(val query: String)

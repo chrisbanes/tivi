@@ -23,7 +23,6 @@ import app.tivi.interactors.UpdatePopularShows
 import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
-import app.tivi.util.AppRxSchedulers
 import app.tivi.util.RxLoadingCounter
 import app.tivi.util.TiviMvRxViewModel
 import com.airbnb.mvrx.FragmentViewModelContext
@@ -34,7 +33,6 @@ import com.squareup.inject.assisted.AssistedInject
 
 class DiscoverViewModel @AssistedInject constructor(
     @Assisted initialState: DiscoverViewState,
-    schedulers: AppRxSchedulers,
     private val updatePopularShows: UpdatePopularShows,
     observePopularShows: ObservePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,

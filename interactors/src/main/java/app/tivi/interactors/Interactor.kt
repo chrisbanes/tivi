@@ -23,9 +23,7 @@ import io.reactivex.subjects.Subject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.rx2.asObservable
 import kotlinx.coroutines.withContext
 
 interface Interactor<in P> {
@@ -40,20 +38,14 @@ abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T> : Subject
     }
 }
 
-abstract class ChannelInteractor<P, T : Any> : Interactor<P> {
-    private val channel = Channel<T>()
+abstract class SuspendingWorkInteractor<P : Any, T> : Interactor<P> {
+    private val subject: Subject<T> = BehaviorSubject.create()
 
-    final override suspend fun invoke(params: P) {
-        channel.offer(execute(params))
-    }
+    override suspend operator fun invoke(params: P) = subject.onNext(doWork(params))
 
-    fun observe(): Observable<T> = channel.asObservable(dispatcher)
+    abstract suspend fun doWork(params: P): T
 
-    protected abstract suspend fun execute(executeParams: P): T
-
-    fun clear() {
-        channel.close()
-    }
+    fun observe(): Observable<T> = subject
 }
 
 abstract class SubjectInteractor<P : Any, T> {

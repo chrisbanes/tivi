@@ -67,7 +67,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         observeShowFollowStatus.observe()
                 .execute {
                     when (it) {
-                        is Success -> copy(isFollowed = it.invoke()!!)
+                        is Success -> copy(isFollowed = it.invoke())
                         else -> copy(isFollowed = false)
                     }
                 }
