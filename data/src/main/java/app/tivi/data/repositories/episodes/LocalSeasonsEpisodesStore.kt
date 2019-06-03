@@ -98,14 +98,6 @@ class LocalSeasonsEpisodesStore @Inject constructor(
         lastRequestDao.updateLastRequest(Request.SHOW_SEASONS, showId, instant)
     }
 
-    suspend fun getShowEpisodeWatchesLastRequest(showId: Long): Instant? {
-        return lastRequestDao.getRequestInstant(Request.SHOW_EPISODE_WATCHES, showId)
-    }
-
-    suspend fun updateShowEpisodeWatchesLastRequest(showId: Long, instant: Instant) {
-        lastRequestDao.updateLastRequest(Request.SHOW_EPISODE_WATCHES, showId, instant)
-    }
-
     suspend fun deleteShowSeasonData(showId: Long) {
         // Due to foreign keys, this will also delete the episodes and watches
         seasonsDao.deleteSeasonsForShowId(showId)

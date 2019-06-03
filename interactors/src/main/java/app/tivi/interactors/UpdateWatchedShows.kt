@@ -28,7 +28,9 @@ class UpdateWatchedShows @Inject constructor(
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend fun invoke(params: Params) {
-        watchedShowsRepository.updateWatchedShows()
+        if (params.forceLoad || watchedShowsRepository.needUpdate()) {
+            watchedShowsRepository.updateWatchedShows()
+        }
     }
 
     data class Params(val forceLoad: Boolean)

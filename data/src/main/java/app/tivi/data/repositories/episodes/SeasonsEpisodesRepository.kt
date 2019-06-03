@@ -31,7 +31,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
-import org.threeten.bp.ZoneOffset
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -58,7 +57,6 @@ class SeasonsEpisodesRepository @Inject constructor(
 
     suspend fun removeShowSeasonData(showId: Long) {
         localSeasonsEpisodesStore.deleteShowSeasonData(showId)
-        localSeasonsEpisodesStore.updateShowEpisodeWatchesLastRequest(showId, Instant.now())
     }
 
     suspend fun updateSeasonsEpisodes(showId: Long) {
@@ -104,11 +102,10 @@ class SeasonsEpisodesRepository @Inject constructor(
         localSeasonsEpisodesStore.save(mergeEpisode(local, trakt, tmdb))
     }
 
-    suspend fun updateShowEpisodeWatches(showId: Long) {
+    suspend fun updateShowEpisodeWatches(showId: Long, since: OffsetDateTime? = null) {
         if (traktAuthState.get() == TraktAuthState.LOGGED_IN) {
-            val lastRequest = localEpisodeWatchStore.getShowEpisodeWatchesLastRequest(showId)
-            if (lastRequest != null) {
-                fetchNewShowWatchesFromRemote(showId, lastRequest.atOffset(ZoneOffset.UTC))
+            if (since != null) {
+                fetchNewShowWatchesFromRemote(showId, since)
             } else {
                 fetchShowWatchesFromRemote(showId)
             }
@@ -128,12 +125,11 @@ class SeasonsEpisodesRepository @Inject constructor(
 
         if (traktAuthState.get() == TraktAuthState.LOGGED_IN) {
             fetchShowWatchesFromRemote(showId)
-            localEpisodeWatchStore.updateShowEpisodeWatchesLastRequest(showId, Instant.now())
         }
     }
 
     suspend fun needShowEpisodeWatchesSync(showId: Long, expiry: Instant = instantInPast(hours = 1)): Boolean {
-        return localSeasonsEpisodesStore.lastShowSeasonsFetchBefore(showId, expiry)
+        return localEpisodeWatchStore.getShowEpisodeWatchesLastRequest(showId)?.isBefore(expiry) ?: true
     }
 
     suspend fun markSeasonWatched(seasonId: Long, onlyAired: Boolean, date: ActionDate) {
@@ -238,6 +234,7 @@ class SeasonsEpisodesRepository @Inject constructor(
                     }
                 }
                 localEpisodeWatchStore.save(watches)
+                localEpisodeWatchStore.updateShowEpisodeWatchesLastRequest(showId, Instant.now())
             }
         }
     }
@@ -252,6 +249,7 @@ class SeasonsEpisodesRepository @Inject constructor(
                     }
                 }
                 localEpisodeWatchStore.syncShowWatchEntries(showId, watches)
+                localEpisodeWatchStore.updateShowEpisodeWatchesLastRequest(showId, Instant.now())
             }
         }
     }

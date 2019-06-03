@@ -18,9 +18,11 @@ package app.tivi.data.repositories.watchedshows
 
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.Success
+import app.tivi.data.instantInPast
 import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
+import org.threeten.bp.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,10 +35,13 @@ class WatchedShowsRepository @Inject constructor(
 ) {
     fun observeWatchedShowsPagedList(filter: String?, sort: SortOption) = localStore.observePagedList(filter, sort)
 
-    suspend fun getWatchedShows() {
-        updateWatchedShows()
-        localStore.getWatchedShows()
+    suspend fun needUpdate(expiry: Instant = instantInPast(hours = 12)): Boolean {
+        return localStore.getLastWatchedShowsRequest()?.isBefore(expiry) ?: true
     }
+
+    suspend fun getWatchedShow(showId: Long) = localStore.getWatchedShow(showId)
+
+    suspend fun getWatchedShows() = localStore.getWatchedShows()
 
     suspend fun updateWatchedShows() {
         when (val response = traktDataSource.getWatchedShows()) {
@@ -47,6 +52,7 @@ class WatchedShowsRepository @Inject constructor(
                     // Make a copy of the entry with the id
                     entry.copy(showId = watchedShowId)
                 }.also { entries ->
+                    localStore.updateLastWatchedShowsRequest(Instant.now())
                     // Save the related entries
                     localStore.saveWatchedShows(entries)
                     // Now update all of the related shows if needed
