@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2017 Google, Inc.
+  ~ Copyright 2019 Google, Inc.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -13,21 +13,18 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  ~
   -->
 
 <resources>
     <string-array name="prefs_theme_titles">
-        <item>Light</item>
-        <item>Dark</item>
-        <item>Set by Battery Saver</item>
-        <item>Use system default</item>
+        <item>@string/pref_theme_light</item>
+        <item>@string/pref_theme_dark</item>
+        <item>@string/pref_theme_system</item>
     </string-array>
 
     <string-array name="prefs_theme_values">
-        <item>light</item>
-        <item>dark</item>
-        <item>battery</item>
-        <item>system</item>
+        <item>@string/pref_theme_light_key</item>
+        <item>@string/pref_theme_dark_key</item>
+        <item>@string/pref_theme_system_key</item>
     </string-array>
 </resources>

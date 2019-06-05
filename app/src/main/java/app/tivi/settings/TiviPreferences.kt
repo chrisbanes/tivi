@@ -17,6 +17,7 @@
 package app.tivi.settings
 
 import android.content.SharedPreferences
+import androidx.appcompat.app.AppCompatDelegate
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -27,6 +28,15 @@ class TiviPreferences @Inject constructor(
 ) {
     companion object {
         const val KEY_THEME = "pref_theme"
+    }
+
+    fun setup() {
+        sharedPreferences.registerOnSharedPreferenceChangeListener { _, key ->
+            when (key) {
+                KEY_THEME -> onThemePreferenceChanged()
+            }
+        }
+        onThemePreferenceChanged()
     }
 
     enum class Theme(val value: String) {
@@ -41,5 +51,12 @@ class TiviPreferences @Inject constructor(
 
     private fun uiThemeFromPref(value: String?): Theme {
         return Theme.values().firstOrNull { it.value == value } ?: Theme.SYSTEM
+    }
+
+    private fun onThemePreferenceChanged() = when (themePreference) {
+        Theme.DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        Theme.LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        Theme.SYSTEM -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        Theme.BATTERY_SAVER_ONLY -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
     }
 }
