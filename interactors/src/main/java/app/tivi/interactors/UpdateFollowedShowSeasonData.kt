@@ -33,11 +33,11 @@ class UpdateFollowedShowSeasonData @Inject constructor(
     override suspend fun invoke(params: Params) {
         if (followedShowsRepository.isShowFollowed(params.showId)) {
             // Then update the seasons/episodes
-            if (params.forceLoad || seasonsEpisodesRepository.needShowSeasonsUpdate(params.showId)) {
+            if (params.forceRefresh || seasonsEpisodesRepository.needShowSeasonsUpdate(params.showId)) {
                 seasonsEpisodesRepository.updateSeasonsEpisodes(params.showId)
             }
             // Finally update any watched progress
-            if (params.forceLoad || seasonsEpisodesRepository.needShowEpisodeWatchesSync(params.showId)) {
+            if (params.forceRefresh || seasonsEpisodesRepository.needShowEpisodeWatchesSync(params.showId)) {
                 seasonsEpisodesRepository.syncEpisodeWatchesForShow(params.showId)
             }
         } else {
@@ -45,5 +45,5 @@ class UpdateFollowedShowSeasonData @Inject constructor(
         }
     }
 
-    data class Params(val showId: Long, val forceLoad: Boolean)
+    data class Params(val showId: Long, val forceRefresh: Boolean)
 }

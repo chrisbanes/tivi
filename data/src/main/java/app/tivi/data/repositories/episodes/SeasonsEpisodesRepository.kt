@@ -20,6 +20,7 @@ import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
+import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.Success
 import app.tivi.data.instantInPast
@@ -101,6 +102,34 @@ class SeasonsEpisodesRepository @Inject constructor(
         }
 
         seasonsEpisodesStore.save(mergeEpisode(local, trakt, tmdb))
+    }
+
+    suspend fun updateShowEpisodeWatchesIfNeeded(
+        showId: Long,
+        refreshType: RefreshType,
+        forceRefresh: Boolean,
+        lastUpdated: OffsetDateTime? = null
+    ) {
+        if (refreshType == RefreshType.QUICK) {
+            // If we have a lastUpdated time and we've already fetched the watched episodes, we can try
+            // and do a delta fetch
+            if (lastUpdated != null && episodeWatchLastLastRequestStore.hasBeenRequested(showId)) {
+                if (forceRefresh || needShowEpisodeWatchesSync(showId, lastUpdated.toInstant())) {
+                    updateShowEpisodeWatches(showId, lastUpdated.plusSeconds(1))
+                }
+            } else {
+                // We don't have a trakt date/time to use as a delta, so we'll do a full refresh.
+                // If the user hasn't watched the show, this should be empty anyway
+                if (forceRefresh || needShowEpisodeWatchesSync(showId)) {
+                    updateShowEpisodeWatches(showId)
+                }
+            }
+        } else if (refreshType == RefreshType.FULL) {
+            // A full refresh is requested, so we pull down all history
+            if (forceRefresh || needShowEpisodeWatchesSync(showId)) {
+                updateShowEpisodeWatches(showId)
+            }
+        }
     }
 
     suspend fun updateShowEpisodeWatches(showId: Long, since: OffsetDateTime? = null) {

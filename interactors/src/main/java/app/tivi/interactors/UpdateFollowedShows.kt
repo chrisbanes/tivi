@@ -16,6 +16,7 @@
 
 package app.tivi.interactors
 
+import app.tivi.data.entities.RefreshType
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
@@ -58,36 +59,16 @@ class UpdateFollowedShows @Inject constructor(
                 seasonEpisodeRepository.updateSeasonsEpisodes(it.showId)
             }
 
-            // And sync the episode watches
-            if (params.type == RefreshType.QUICK) {
-                val showWatchedEntry = watchedShowsRepository.getWatchedShow(it.showId)
-                if (showWatchedEntry != null) {
-                    // TODO: We should really use last_updated_at. Waiting on trakt-java support in
+            seasonEpisodeRepository.updateShowEpisodeWatchesIfNeeded(
+                    it.showId,
+                    params.type,
+                    params.forceRefresh,
+                    // TODO: We should use last_updated_at. Waiting on trakt-java support in
                     // https://github.com/UweTrottmann/trakt-java/pull/106
-                    val lastWatchUpdate = showWatchedEntry.lastWatched
-
-                    if (params.forceRefresh || seasonEpisodeRepository.needShowEpisodeWatchesSync(
-                                    it.showId, lastWatchUpdate.toInstant())) {
-                        seasonEpisodeRepository.updateShowEpisodeWatches(it.showId,
-                                lastWatchUpdate.plusSeconds(1))
-                    }
-                } else {
-                    // We don't have a trakt date/time to use as a delta, so we'll do a full refresh.
-                    // If the user hasn't watched the show, this should be empty anyway
-                    if (params.forceRefresh || seasonEpisodeRepository.needShowEpisodeWatchesSync(it.showId)) {
-                        seasonEpisodeRepository.updateShowEpisodeWatches(it.showId)
-                    }
-                }
-            } else if (params.type == RefreshType.FULL) {
-                // A full refresh is requested, so we pull down all history
-                if (params.forceRefresh || seasonEpisodeRepository.needShowEpisodeWatchesSync(it.showId)) {
-                    seasonEpisodeRepository.updateShowEpisodeWatches(it.showId)
-                }
-            }
+                    watchedShowsRepository.getWatchedShow(it.showId)?.lastWatched
+            )
         }
     }
 
     data class Params(val forceRefresh: Boolean, val type: RefreshType)
-
-    enum class RefreshType { QUICK, FULL }
 }
