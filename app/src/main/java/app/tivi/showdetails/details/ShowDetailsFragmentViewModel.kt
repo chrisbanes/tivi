@@ -38,7 +38,6 @@ import app.tivi.interactors.execute
 import app.tivi.interactors.launchInteractor
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
-import app.tivi.util.AppRxSchedulers
 import app.tivi.util.TiviMvRxViewModel
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
@@ -47,11 +46,9 @@ import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 class ShowDetailsFragmentViewModel @AssistedInject constructor(
     @Assisted initialState: ShowDetailsViewState,
-    schedulers: AppRxSchedulers,
     private val updateShowDetails: UpdateShowDetails,
     observeShowDetails: ObserveShowDetails,
     private val updateRelatedShows: UpdateRelatedShows,
@@ -79,7 +76,6 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
                 .execute { copy(relatedShows = it) }
 
         tmdbManager.imageProviderObservable
-                .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
                 .execute { copy(tmdbImageUrlProvider = it) }
 
         observeShowSeasons.observe()
