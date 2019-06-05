@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2018 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.episodes
+package app.tivi.data.repositories.search
 
-import app.tivi.data.daos.LastRequestDao
-import app.tivi.data.entities.Request
-import app.tivi.data.repositories.lastrequests.EntityLastRequestStore
 import javax.inject.Inject
 
-class LocalSeasonsRequestStore @Inject constructor(
-    dao: LastRequestDao
-) : EntityLastRequestStore(Request.SHOW_SEASONS, dao)
+class SearchStore @Inject constructor() {
+    private val cache = HashMap<String, LongArray>()
+
+    fun getResults(query: String) = cache[query]
+
+    fun setResults(query: String, results: LongArray) {
+        cache[query] = results
+    }
+}

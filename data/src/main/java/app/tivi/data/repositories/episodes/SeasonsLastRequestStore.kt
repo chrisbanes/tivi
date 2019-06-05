@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.shows
+package app.tivi.data.repositories.episodes
 
 import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.entities.Request
 import app.tivi.data.repositories.lastrequests.EntityLastRequestStore
 import javax.inject.Inject
 
-class LocalShowLastRequestStore @Inject constructor(
+class SeasonsLastRequestStore @Inject constructor(
     dao: LastRequestDao
-) : EntityLastRequestStore(Request.SHOW_DETAILS, dao)
+) : EntityLastRequestStore(Request.SHOW_SEASONS, dao)

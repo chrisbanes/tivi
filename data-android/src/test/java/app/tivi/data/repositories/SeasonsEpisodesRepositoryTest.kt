@@ -22,10 +22,10 @@ import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.entities.Success
 import app.tivi.data.repositories.episodes.EpisodeDataSource
-import app.tivi.data.repositories.episodes.LocalEpisodeWatchRequestStore
-import app.tivi.data.repositories.episodes.LocalEpisodeWatchStore
-import app.tivi.data.repositories.episodes.LocalSeasonsEpisodesStore
-import app.tivi.data.repositories.episodes.LocalSeasonsRequestStore
+import app.tivi.data.repositories.episodes.EpisodeWatchLastRequestStore
+import app.tivi.data.repositories.episodes.EpisodeWatchStore
+import app.tivi.data.repositories.episodes.SeasonsEpisodesStore
+import app.tivi.data.repositories.episodes.SeasonsLastRequestStore
 import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.trakt.TraktAuthState
@@ -65,8 +65,8 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
     private lateinit var traktEpisodeDataSource: EpisodeDataSource
     private lateinit var tmdbEpisodeDataSource: EpisodeDataSource
 
-    private lateinit var seasonEpisodeStore: LocalSeasonsEpisodesStore
-    private lateinit var watchStore: LocalEpisodeWatchStore
+    private lateinit var seasonEpisodeStore: SeasonsEpisodesStore
+    private lateinit var watchStore: EpisodeWatchStore
 
     private lateinit var repository: SeasonsEpisodesRepository
 
@@ -87,16 +87,16 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         val txRunner = TestTransactionRunner
         val entityInserter = EntityInserter(txRunner, logger)
 
-        watchStore = LocalEpisodeWatchStore(entityInserter, txRunner, episodeWatchDao, logger)
+        watchStore = EpisodeWatchStore(entityInserter, txRunner, episodeWatchDao, logger)
 
-        seasonEpisodeStore = LocalSeasonsEpisodesStore(entityInserter, txRunner, seasonsDao, episodesDao, logger)
+        seasonEpisodeStore = SeasonsEpisodesStore(entityInserter, txRunner, seasonsDao, episodesDao, logger)
 
         repository = SeasonsEpisodesRepository(
                 testCoroutineDispatchers,
                 watchStore,
-                LocalEpisodeWatchRequestStore(db.lastRequestDao()),
+                EpisodeWatchLastRequestStore(db.lastRequestDao()),
                 seasonEpisodeStore,
-                LocalSeasonsRequestStore(db.lastRequestDao()),
+                SeasonsLastRequestStore(db.lastRequestDao()),
                 traktSeasonsDataSource,
                 traktEpisodeDataSource,
                 tmdbEpisodeDataSource,

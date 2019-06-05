@@ -17,7 +17,7 @@
 package app.tivi.data.repositories.trendingshows
 
 import app.tivi.data.entities.Success
-import app.tivi.data.repositories.shows.LocalShowStore
+import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
 import javax.inject.Inject
@@ -25,17 +25,17 @@ import javax.inject.Singleton
 
 @Singleton
 class TrendingShowsRepository @Inject constructor(
-    private val localStore: LocalTrendingShowsStore,
-    private val showStore: LocalShowStore,
+    private val trendingShowsStore: TrendingShowsStore,
+    private val showStore: ShowStore,
     private val traktDataSource: TraktTrendingShowsDataSource,
     private val showRepository: ShowRepository
 ) {
-    fun observeForPaging() = localStore.observeForPaging()
+    fun observeForPaging() = trendingShowsStore.observeForPaging()
 
-    fun observeForObservable() = localStore.observeForObservable(15, 0)
+    fun observeForObservable() = trendingShowsStore.observeForObservable(15, 0)
 
     suspend fun loadNextPage() {
-        val lastPage = localStore.getLastPage()
+        val lastPage = trendingShowsStore.getLastPage()
         if (lastPage != null) updateTrendingShows(lastPage + 1, false) else refresh()
     }
 
@@ -54,10 +54,10 @@ class TrendingShowsRepository @Inject constructor(
                     entry.copy(showId = showId, page = page)
                 }.also { entries ->
                     if (resetOnSave) {
-                        localStore.deleteAll()
+                        trendingShowsStore.deleteAll()
                     }
                     // Save the related entries
-                    localStore.saveTrendingShowsPage(page, entries)
+                    trendingShowsStore.saveTrendingShowsPage(page, entries)
                     // Now update all of the related shows if needed
                     entries.parallelForEach { entry ->
                         if (showRepository.needsInitialUpdate(entry.showId))

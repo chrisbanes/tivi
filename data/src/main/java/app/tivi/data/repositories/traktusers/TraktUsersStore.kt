@@ -22,7 +22,7 @@ import app.tivi.data.daos.UserDao
 import app.tivi.data.entities.TraktUser
 import javax.inject.Inject
 
-class LocalTraktUsersStore @Inject constructor(
+class TraktUsersStore @Inject constructor(
     private val entityInserter: EntityInserter,
     private val transactionRunner: DatabaseTransactionRunner,
     private val userDao: UserDao

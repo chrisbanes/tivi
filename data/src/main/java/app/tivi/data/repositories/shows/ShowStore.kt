@@ -23,7 +23,7 @@ import app.tivi.data.entities.TiviShow
 import io.reactivex.Observable
 import javax.inject.Inject
 
-class LocalShowStore @Inject constructor(
+class ShowStore @Inject constructor(
     private val entityInserter: EntityInserter,
     private val showDao: TiviShowDao,
     private val transactionRunner: DatabaseTransactionRunner

@@ -30,25 +30,25 @@ import javax.inject.Singleton
 @Singleton
 class ShowRepositoryImpl @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
-    private val localShowStore: LocalShowStore,
-    private val localShowLastRequestStore: LocalShowLastRequestStore,
+    private val showStore: ShowStore,
+    private val showLastRequestStore: ShowLastRequestStore,
     @Tmdb private val tmdbShowDataSource: ShowDataSource,
     @Trakt private val traktShowDataSource: ShowDataSource
 ) : ShowRepository {
-    override fun observeShow(showId: Long) = localShowStore.observeShow(showId)
+    override fun observeShow(showId: Long) = showStore.observeShow(showId)
 
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
      */
     override suspend fun getShow(showId: Long): TiviShow {
-        return localShowStore.getShow(showId)!!
+        return showStore.getShow(showId)!!
     }
 
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
      */
     override suspend fun updateShow(showId: Long) = coroutineScope {
-        val localShow = localShowStore.getShow(showId) ?: TiviShow.EMPTY_SHOW
+        val localShow = showStore.getShow(showId) ?: TiviShow.EMPTY_SHOW
         val traktJob = async(dispatchers.io) {
             traktShowDataSource.getShow(localShow)
         }
@@ -62,24 +62,24 @@ class ShowRepositoryImpl @Inject constructor(
         val merged = mergeShow(localShow,
                 traktResult.get() ?: TiviShow.EMPTY_SHOW,
                 tmdbResult.get() ?: TiviShow.EMPTY_SHOW)
-        localShowStore.saveShow(merged)
+        showStore.saveShow(merged)
 
         if (tmdbResult is Success && traktResult is Success) {
             // If the network requests were successful, update the last request timestamp
-            localShowLastRequestStore.updateLastRequest(showId)
+            showLastRequestStore.updateLastRequest(showId)
         }
     }
 
     override suspend fun needsUpdate(showId: Long, expiry: Instant): Boolean {
-        return localShowLastRequestStore.isRequestBefore(showId, expiry)
+        return showLastRequestStore.isRequestBefore(showId, expiry)
     }
 
     override suspend fun needsInitialUpdate(showId: Long): Boolean {
-        return !localShowLastRequestStore.hasBeenRequested(showId)
+        return !showLastRequestStore.hasBeenRequested(showId)
     }
 
     override suspend fun getLastRequestInstant(showId: Long): Instant? {
-        return localShowLastRequestStore.getRequestInstant(showId)
+        return showLastRequestStore.getRequestInstant(showId)
     }
 
     private fun mergeShow(local: TiviShow, trakt: TiviShow, tmdb: TiviShow) = local.copy(

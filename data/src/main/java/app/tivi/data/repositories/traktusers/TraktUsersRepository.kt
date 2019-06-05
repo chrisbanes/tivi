@@ -24,11 +24,11 @@ import javax.inject.Singleton
 
 @Singleton
 class TraktUsersRepository @Inject constructor(
-    private val localStore: LocalTraktUsersStore,
-    private val lastRequestStore: LocalTraktUsersLastRequestStore,
+    private val traktUsersStore: TraktUsersStore,
+    private val lastRequestStore: TraktUsersLastRequestStore,
     private val traktDataSource: TraktUsersDataSource
 ) {
-    fun observeUser(username: String) = localStore.observeUser(username)
+    fun observeUser(username: String) = traktUsersStore.observeUser(username)
 
     suspend fun updateUser(username: String) {
         val response = traktDataSource.getUser(username)
@@ -40,18 +40,18 @@ class TraktUsersRepository @Inject constructor(
                     user = user.copy(isMe = true)
                 }
                 // Make sure we use the current DB id (if present)
-                val localUser = localStore.getUser(user.username)
+                val localUser = traktUsersStore.getUser(user.username)
                 if (localUser != null) {
                     user = user.copy(id = localUser.id)
                 }
-                val id = localStore.save(user)
+                val id = traktUsersStore.save(user)
                 lastRequestStore.updateLastRequest(id, Instant.now())
             }
         }
     }
 
     suspend fun needUpdate(username: String): Boolean {
-        return localStore.getIdForUsername(username)?.let {
+        return traktUsersStore.getIdForUsername(username)?.let {
             lastRequestStore.isRequestExpired(it, Period.ofDays(7))
         } ?: true
     }

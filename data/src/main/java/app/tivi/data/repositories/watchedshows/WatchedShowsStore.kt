@@ -25,7 +25,7 @@ import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import javax.inject.Inject
 
-class LocalWatchedShowsStore @Inject constructor(
+class WatchedShowsStore @Inject constructor(
     private val entityInserter: EntityInserter,
     private val transactionRunner: DatabaseTransactionRunner,
     private val watchedShowDao: WatchedShowDao

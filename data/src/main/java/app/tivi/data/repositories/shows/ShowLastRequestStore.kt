@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.watchedshows
+package app.tivi.data.repositories.shows
 
 import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.entities.Request
-import app.tivi.data.repositories.lastrequests.GroupLastRequestStore
+import app.tivi.data.repositories.lastrequests.EntityLastRequestStore
 import javax.inject.Inject
 
-class LocalWatchedShowsLastRequestStore @Inject constructor(
+class ShowLastRequestStore @Inject constructor(
     dao: LastRequestDao
-) : GroupLastRequestStore(Request.WATCHED_SHOWS, dao)
+) : EntityLastRequestStore(Request.SHOW_DETAILS, dao)

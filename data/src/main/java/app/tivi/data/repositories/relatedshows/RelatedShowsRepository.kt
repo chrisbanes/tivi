@@ -20,7 +20,7 @@ import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.instantInPast
-import app.tivi.data.repositories.shows.LocalShowStore
+import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
 import org.threeten.bp.Instant
@@ -29,17 +29,17 @@ import javax.inject.Singleton
 
 @Singleton
 class RelatedShowsRepository @Inject constructor(
-    private val localStore: LocalRelatedShowsStore,
-    private val lastRequestStore: LocalRelatedShowLastRequestStore,
-    private val localShowStore: LocalShowStore,
+    private val relatedShowsStore: RelatedShowsStore,
+    private val lastRequestStore: RelatedShowsLastRequestStore,
+    private val showStore: ShowStore,
     private val traktDataSource: TraktRelatedShowsDataSource,
     private val tmdbDataSource: TmdbRelatedShowsDataSource,
     private val showRepository: ShowRepository
 ) {
-    fun observeRelatedShows(showId: Long) = localStore.observeRelatedShows(showId)
+    fun observeRelatedShows(showId: Long) = relatedShowsStore.observeRelatedShows(showId)
 
     suspend fun getRelatedShows(showId: Long) {
-        localStore.getRelatedShows(showId)
+        relatedShowsStore.getRelatedShows(showId)
     }
 
     suspend fun needUpdate(showId: Long, expiry: Instant = instantInPast(days = 28)): Boolean {
@@ -65,12 +65,12 @@ class RelatedShowsRepository @Inject constructor(
     private suspend fun process(showId: Long, list: List<Pair<TiviShow, RelatedShowEntry>>) {
         list.map { (show, entry) ->
             // Grab the show id if it exists, or save the show and use it's generated ID
-            val relatedShowId = localShowStore.getIdOrSavePlaceholder(show)
+            val relatedShowId = showStore.getIdOrSavePlaceholder(show)
             // Make a copy of the entry with the id
             entry.copy(showId = showId, otherShowId = relatedShowId)
         }.also { entries ->
             // Save the related entries
-            localStore.saveRelatedShows(showId, entries)
+            relatedShowsStore.saveRelatedShows(showId, entries)
             // Now update all of the related shows if needed
             entries.parallelForEach { entry ->
                 if (showRepository.needsUpdate(entry.otherShowId)) {

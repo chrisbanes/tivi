@@ -21,6 +21,6 @@ import app.tivi.data.entities.Request
 import app.tivi.data.repositories.lastrequests.GroupLastRequestStore
 import javax.inject.Inject
 
-class LocalFollowedShowsLastRequestStore @Inject constructor(
+class FollowedShowsLastRequestStore @Inject constructor(
     dao: LastRequestDao
 ) : GroupLastRequestStore(Request.FOLLOWED_SHOWS, dao)

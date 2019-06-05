@@ -21,6 +21,6 @@ import app.tivi.data.entities.Request
 import app.tivi.data.repositories.lastrequests.EntityLastRequestStore
 import javax.inject.Inject
 
-class LocalRelatedShowLastRequestStore @Inject constructor(
+class RelatedShowsLastRequestStore @Inject constructor(
     dao: LastRequestDao
 ) : EntityLastRequestStore(Request.RELATED_SHOWS, dao)

@@ -32,7 +32,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LocalFollowedShowsStore @Inject constructor(
+class FollowedShowsStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val entityInserter: EntityInserter,
     private val followedShowsDao: FollowedShowsDao,

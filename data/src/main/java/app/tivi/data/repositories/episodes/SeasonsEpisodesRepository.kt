@@ -38,27 +38,27 @@ import javax.inject.Singleton
 @Singleton
 class SeasonsEpisodesRepository @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
-    private val localEpisodeWatchStore: LocalEpisodeWatchStore,
-    private val localEpisodeWatchLastRequestStore: LocalEpisodeWatchRequestStore,
-    private val localSeasonsEpisodesStore: LocalSeasonsEpisodesStore,
-    private val localSeasonsRequestStore: LocalSeasonsRequestStore,
+    private val episodeWatchStore: EpisodeWatchStore,
+    private val episodeWatchLastLastRequestStore: EpisodeWatchLastRequestStore,
+    private val seasonsEpisodesStore: SeasonsEpisodesStore,
+    private val seasonsLastRequestStore: SeasonsLastRequestStore,
     @Trakt private val traktSeasonsDataSource: SeasonsEpisodesDataSource,
     @Trakt private val traktEpisodeDataSource: EpisodeDataSource,
     @Tmdb private val tmdbEpisodeDataSource: EpisodeDataSource,
     private val traktAuthState: Provider<TraktAuthState>
 ) {
-    fun observeSeasonsForShow(showId: Long) = localSeasonsEpisodesStore.observeShowSeasonsWithEpisodes(showId)
+    fun observeSeasonsForShow(showId: Long) = seasonsEpisodesStore.observeShowSeasonsWithEpisodes(showId)
 
-    fun observeEpisode(episodeId: Long) = localSeasonsEpisodesStore.observeEpisode(episodeId)
+    fun observeEpisode(episodeId: Long) = seasonsEpisodesStore.observeEpisode(episodeId)
 
-    fun observeEpisodeWatches(episodeId: Long) = localEpisodeWatchStore.observeEpisodeWatches(episodeId)
+    fun observeEpisodeWatches(episodeId: Long) = episodeWatchStore.observeEpisodeWatches(episodeId)
 
     suspend fun needShowSeasonsUpdate(showId: Long, expiry: Instant = instantInPast(days = 7)): Boolean {
-        return localSeasonsRequestStore.isRequestBefore(showId, expiry)
+        return seasonsLastRequestStore.isRequestBefore(showId, expiry)
     }
 
     suspend fun removeShowSeasonData(showId: Long) {
-        localSeasonsEpisodesStore.deleteShowSeasonData(showId)
+        seasonsEpisodesStore.deleteShowSeasonData(showId)
     }
 
     suspend fun updateSeasonsEpisodes(showId: Long) {
@@ -66,26 +66,26 @@ class SeasonsEpisodesRepository @Inject constructor(
         when {
             result is Success && result.responseModified -> {
                 result.data.distinctBy { it.first.number }.associate { (season, episodes) ->
-                    val localSeason = localSeasonsEpisodesStore.getSeasonWithTraktId(season.traktId!!)
+                    val localSeason = seasonsEpisodesStore.getSeasonWithTraktId(season.traktId!!)
                             ?: Season(showId = showId)
                     val mergedSeason = mergeSeason(localSeason, season, Season.EMPTY)
 
                     val mergedEpisodes = episodes.distinctBy(Episode::number).map {
-                        val localEpisode = localSeasonsEpisodesStore.getEpisodeWithTraktId(it.traktId!!)
+                        val localEpisode = seasonsEpisodesStore.getEpisodeWithTraktId(it.traktId!!)
                                 ?: Episode(seasonId = mergedSeason.id)
                         mergeEpisode(localEpisode, it, Episode.EMPTY)
                     }
                     mergedSeason to mergedEpisodes
-                }.also { localSeasonsEpisodesStore.save(showId, it) }
+                }.also { seasonsEpisodesStore.save(showId, it) }
 
-                localSeasonsRequestStore.updateLastRequest(showId)
+                seasonsLastRequestStore.updateLastRequest(showId)
             }
         }
     }
 
     suspend fun updateEpisode(episodeId: Long) = coroutineScope {
-        val local = localSeasonsEpisodesStore.getEpisode(episodeId)!!
-        val season = localSeasonsEpisodesStore.getSeason(local.seasonId)!!
+        val local = seasonsEpisodesStore.getEpisode(episodeId)!!
+        val season = seasonsEpisodesStore.getSeason(local.seasonId)!!
         val traktResult = async(dispatchers.io) {
             traktEpisodeDataSource.getEpisode(season.showId, season.number!!, local.number!!)
         }
@@ -100,7 +100,7 @@ class SeasonsEpisodesRepository @Inject constructor(
             if (it is Success) it.data else Episode.EMPTY
         }
 
-        localSeasonsEpisodesStore.save(mergeEpisode(local, trakt, tmdb))
+        seasonsEpisodesStore.save(mergeEpisode(local, trakt, tmdb))
     }
 
     suspend fun updateShowEpisodeWatches(showId: Long, since: OffsetDateTime? = null) {
@@ -115,12 +115,12 @@ class SeasonsEpisodesRepository @Inject constructor(
 
     suspend fun syncEpisodeWatchesForShow(showId: Long) {
         // Process any pending deletes
-        localEpisodeWatchStore.getEntriesWithDeleteAction(showId).also {
+        episodeWatchStore.getEntriesWithDeleteAction(showId).also {
             it.isNotEmpty() && processPendingDeletes(it)
         }
 
         // Process any pending adds
-        localEpisodeWatchStore.getEntriesWithAddAction(showId).also {
+        episodeWatchStore.getEntriesWithAddAction(showId).also {
             it.isNotEmpty() && processPendingAdditions(it)
         }
 
@@ -130,13 +130,13 @@ class SeasonsEpisodesRepository @Inject constructor(
     }
 
     suspend fun needShowEpisodeWatchesSync(showId: Long, expiry: Instant = instantInPast(hours = 1)): Boolean {
-        return localEpisodeWatchLastRequestStore.isRequestBefore(showId, expiry)
+        return episodeWatchLastLastRequestStore.isRequestBefore(showId, expiry)
     }
 
     suspend fun markSeasonWatched(seasonId: Long, onlyAired: Boolean, date: ActionDate) {
-        val watchesToSave = localSeasonsEpisodesStore.getEpisodesInSeason(seasonId).mapNotNull { episode ->
+        val watchesToSave = seasonsEpisodesStore.getEpisodesInSeason(seasonId).mapNotNull { episode ->
             if (!onlyAired || episode.firstAired?.isBefore(OffsetDateTime.now()) == true) {
-                if (!localEpisodeWatchStore.hasEpisodeBeenWatched(episode.id)) {
+                if (!episodeWatchStore.hasEpisodeBeenWatched(episode.id)) {
                     val timestamp = when (date) {
                         ActionDate.NOW -> OffsetDateTime.now()
                         ActionDate.AIR_DATE -> episode.firstAired?.plusHours(1) ?: OffsetDateTime.now()
@@ -152,23 +152,23 @@ class SeasonsEpisodesRepository @Inject constructor(
         }
 
         if (watchesToSave.isNotEmpty()) {
-            localEpisodeWatchStore.save(watchesToSave)
+            episodeWatchStore.save(watchesToSave)
         }
 
         // Should probably make this more granular
-        val season = localSeasonsEpisodesStore.getSeason(seasonId)!!
+        val season = seasonsEpisodesStore.getSeason(seasonId)!!
         syncEpisodeWatchesForShow(season.showId)
     }
 
     suspend fun markSeasonUnwatched(seasonId: Long) {
-        val season = localSeasonsEpisodesStore.getSeason(seasonId)!!
+        val season = seasonsEpisodesStore.getSeason(seasonId)!!
 
         val watches = ArrayList<EpisodeWatchEntry>()
-        localSeasonsEpisodesStore.getEpisodesInSeason(seasonId).forEach { episode ->
-            watches += localEpisodeWatchStore.getWatchesForEpisode(episode.id)
+        seasonsEpisodesStore.getEpisodesInSeason(seasonId).forEach { episode ->
+            watches += episodeWatchStore.getWatchesForEpisode(episode.id)
         }
         if (watches.isNotEmpty()) {
-            localEpisodeWatchStore.updateWatchEntriesWithAction(watches.map { it.id }, PendingAction.DELETE)
+            episodeWatchStore.updateWatchEntriesWithAction(watches.map { it.id }, PendingAction.DELETE)
         }
 
         // Should probably make this more granular
@@ -181,31 +181,31 @@ class SeasonsEpisodesRepository @Inject constructor(
                 watchedAt = timestamp,
                 pendingAction = PendingAction.UPLOAD
         )
-        localEpisodeWatchStore.save(entry)
+        episodeWatchStore.save(entry)
 
         syncEpisodeWatches(episodeId)
     }
 
     suspend fun markEpisodeUnwatched(episodeId: Long) {
-        val watchesForEpisode = localEpisodeWatchStore.getWatchesForEpisode(episodeId)
+        val watchesForEpisode = episodeWatchStore.getWatchesForEpisode(episodeId)
         if (watchesForEpisode.isNotEmpty()) {
             val ids = watchesForEpisode.map { it.id }
             // First mark them as pending deletion
-            localEpisodeWatchStore.updateWatchEntriesWithAction(ids, PendingAction.DELETE)
+            episodeWatchStore.updateWatchEntriesWithAction(ids, PendingAction.DELETE)
         }
         syncEpisodeWatches(episodeId)
     }
 
     suspend fun removeEpisodeWatch(episodeWatchId: Long) {
-        val episodeWatch = localEpisodeWatchStore.getEpisodeWatch(episodeWatchId)
+        val episodeWatch = episodeWatchStore.getEpisodeWatch(episodeWatchId)
         if (episodeWatch != null && episodeWatch.pendingAction != PendingAction.DELETE) {
-            localEpisodeWatchStore.save(episodeWatch.copy(pendingAction = PendingAction.DELETE))
+            episodeWatchStore.save(episodeWatch.copy(pendingAction = PendingAction.DELETE))
             syncEpisodeWatches(episodeWatch.episodeId)
         }
     }
 
     private suspend fun syncEpisodeWatches(episodeId: Long) {
-        val watches = localEpisodeWatchStore.getWatchesForEpisode(episodeId)
+        val watches = episodeWatchStore.getWatchesForEpisode(episodeId)
         var needUpdate = false
 
         // Process any deletes first
@@ -230,12 +230,12 @@ class SeasonsEpisodesRepository @Inject constructor(
             is Success -> {
                 val watches = response.data.mapNotNull { (episode, watchEntry) ->
                     // Grab the episode id if it exists
-                    localSeasonsEpisodesStore.getEpisodeIdForTraktId(episode.traktId!!)?.let {
+                    seasonsEpisodesStore.getEpisodeIdForTraktId(episode.traktId!!)?.let {
                         watchEntry.copy(episodeId = it)
                     }
                 }
-                localEpisodeWatchStore.save(watches)
-                localEpisodeWatchLastRequestStore.updateLastRequest(showId, Instant.now())
+                episodeWatchStore.save(watches)
+                episodeWatchLastLastRequestStore.updateLastRequest(showId, Instant.now())
             }
         }
     }
@@ -245,12 +245,12 @@ class SeasonsEpisodesRepository @Inject constructor(
             is Success -> {
                 val watches = response.data.mapNotNull { (episode, watchEntry) ->
                     // Grab the episode id if it exists
-                    localSeasonsEpisodesStore.getEpisodeIdForTraktId(episode.traktId!!)?.let {
+                    seasonsEpisodesStore.getEpisodeIdForTraktId(episode.traktId!!)?.let {
                         watchEntry.copy(episodeId = it)
                     }
                 }
-                localEpisodeWatchStore.syncShowWatchEntries(showId, watches)
-                localEpisodeWatchLastRequestStore.updateLastRequest(showId, Instant.now())
+                episodeWatchStore.syncShowWatchEntries(showId, watches)
+                episodeWatchLastLastRequestStore.updateLastRequest(showId, Instant.now())
             }
         }
     }
@@ -259,7 +259,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         when (val response = traktSeasonsDataSource.getEpisodeWatches(episodeId, null)) {
             is Success -> {
                 val watches = response.data.map { it.copy(episodeId = episodeId) }
-                localEpisodeWatchStore.syncEpisodeWatchEntries(episodeId, watches)
+                episodeWatchStore.syncEpisodeWatchEntries(episodeId, watches)
             }
         }
     }
@@ -274,12 +274,12 @@ class SeasonsEpisodesRepository @Inject constructor(
             val response = traktSeasonsDataSource.removeEpisodeWatches(entries)
             if (response is Success) {
                 // Now update the database
-                localEpisodeWatchStore.deleteWatchEntriesWithIds(entries.map { it.id })
+                episodeWatchStore.deleteWatchEntriesWithIds(entries.map { it.id })
                 return true
             }
         } else {
             // We're not logged in so just update the database
-            localEpisodeWatchStore.deleteWatchEntriesWithIds(entries.map { it.id })
+            episodeWatchStore.deleteWatchEntriesWithIds(entries.map { it.id })
         }
         return false
     }
@@ -294,12 +294,12 @@ class SeasonsEpisodesRepository @Inject constructor(
             val response = traktSeasonsDataSource.addEpisodeWatches(entries)
             if (response is Success) {
                 // Now update the database
-                localEpisodeWatchStore.updateWatchEntriesWithAction(entries.map { it.id }, PendingAction.NOTHING)
+                episodeWatchStore.updateWatchEntriesWithAction(entries.map { it.id }, PendingAction.NOTHING)
                 return true
             }
         } else {
             // We're not logged in so just update the database
-            localEpisodeWatchStore.updateWatchEntriesWithAction(entries.map { it.id }, PendingAction.NOTHING)
+            episodeWatchStore.updateWatchEntriesWithAction(entries.map { it.id }, PendingAction.NOTHING)
         }
         return false
     }

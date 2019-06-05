@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.episodes
+package app.tivi.data.repositories.traktusers
 
 import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.entities.Request
 import app.tivi.data.repositories.lastrequests.EntityLastRequestStore
 import javax.inject.Inject
 
-class LocalEpisodeWatchRequestStore @Inject constructor(
+class TraktUsersLastRequestStore @Inject constructor(
     dao: LastRequestDao
-) : EntityLastRequestStore(Request.SHOW_EPISODE_WATCHES, dao)
+) : EntityLastRequestStore(Request.USER_PROFILE, dao)

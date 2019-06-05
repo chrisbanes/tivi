@@ -26,7 +26,7 @@ import app.tivi.util.Logger
 import io.reactivex.Observable
 import javax.inject.Inject
 
-class LocalEpisodeWatchStore @Inject constructor(
+class EpisodeWatchStore @Inject constructor(
     private val entityInserter: EntityInserter,
     private val transactionRunner: DatabaseTransactionRunner,
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,

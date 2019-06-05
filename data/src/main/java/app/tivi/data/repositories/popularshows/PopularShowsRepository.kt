@@ -18,7 +18,7 @@ package app.tivi.data.repositories.popularshows
 
 import androidx.paging.DataSource
 import app.tivi.data.entities.Success
-import app.tivi.data.repositories.shows.LocalShowStore
+import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.extensions.parallelForEach
@@ -28,17 +28,17 @@ import javax.inject.Singleton
 
 @Singleton
 class PopularShowsRepository @Inject constructor(
-    private val localStore: LocalPopularShowsStore,
-    private val showStore: LocalShowStore,
+    private val popularShowsStore: PopularShowsStore,
+    private val showStore: ShowStore,
     private val traktDataSource: TraktPopularShowsDataSource,
     private val showRepository: ShowRepository
 ) {
-    fun observeForPaging(): DataSource.Factory<Int, PopularEntryWithShow> = localStore.observeForPaging()
+    fun observeForPaging(): DataSource.Factory<Int, PopularEntryWithShow> = popularShowsStore.observeForPaging()
 
-    fun observeForObservable(): Observable<List<PopularEntryWithShow>> = localStore.observeForObservable(15, 0)
+    fun observeForObservable(): Observable<List<PopularEntryWithShow>> = popularShowsStore.observeForObservable(15, 0)
 
     suspend fun loadNextPage() {
-        val lastPage = localStore.getLastPage()
+        val lastPage = popularShowsStore.getLastPage()
         if (lastPage != null) updatePopularShows(lastPage + 1, false) else refresh()
     }
 
@@ -57,10 +57,10 @@ class PopularShowsRepository @Inject constructor(
                     entry.copy(showId = showId, page = page)
                 }.also { entries ->
                     if (resetOnSave) {
-                        localStore.deleteAll()
+                        popularShowsStore.deleteAll()
                     }
                     // Save the popular entries
-                    localStore.savePopularShowsPage(page, entries)
+                    popularShowsStore.savePopularShowsPage(page, entries)
                     // Now update all of the related shows if needed
                     entries.parallelForEach { entry ->
                         if (showRepository.needsUpdate(entry.showId)) {

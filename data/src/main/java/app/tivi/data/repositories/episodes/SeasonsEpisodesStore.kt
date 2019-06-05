@@ -28,7 +28,7 @@ import app.tivi.util.Logger
 import io.reactivex.Observable
 import javax.inject.Inject
 
-class LocalSeasonsEpisodesStore @Inject constructor(
+class SeasonsEpisodesStore @Inject constructor(
     private val entityInserter: EntityInserter,
     private val transactionRunner: DatabaseTransactionRunner,
     private val seasonsDao: SeasonsDao,
