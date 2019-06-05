@@ -20,13 +20,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
+import app.tivi.extensions.debounceLoading
 import app.tivi.interactors.ObserveWatchedShows
 import app.tivi.interactors.UpdateWatchedShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
-import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import app.tivi.util.RxLoadingCounter
 import app.tivi.util.TiviMvRxViewModel
@@ -37,11 +37,9 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
-import java.util.concurrent.TimeUnit
 
 class WatchedViewModel @AssistedInject constructor(
     @Assisted initialState: WatchedViewState,
-    schedulers: AppRxSchedulers,
     private val updateWatchedShows: UpdateWatchedShows,
     private val observeWatchedShows: ObserveWatchedShows,
     private val traktManager: TraktManager,
@@ -66,12 +64,13 @@ class WatchedViewModel @AssistedInject constructor(
     }
 
     init {
-        loadingState.observable.execute {
+        loadingState.observable
+                .debounceLoading()
+                .execute {
             copy(isLoading = it() ?: false)
         }
 
         tmdbManager.imageProviderObservable
-                .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
                 .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
 
         observeWatchedShows.observe()

@@ -27,7 +27,6 @@ import app.tivi.interactors.ObserveEpisodeWatches
 import app.tivi.interactors.launchInteractor
 import app.tivi.showdetails.episodedetails.EpisodeDetailsViewState.Action
 import app.tivi.tmdb.TmdbManager
-import app.tivi.util.AppRxSchedulers
 import app.tivi.util.TiviMvRxViewModel
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
@@ -36,11 +35,9 @@ import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import org.threeten.bp.OffsetDateTime
-import java.util.concurrent.TimeUnit
 
 class EpisodeDetailsViewModel @AssistedInject constructor(
     @Assisted initialState: EpisodeDetailsViewState,
-    schedulers: AppRxSchedulers,
     private val updateEpisodeDetails: UpdateEpisodeDetails,
     observeEpisodeDetails: ObserveEpisodeDetails,
     private val observeEpisodeWatches: ObserveEpisodeWatches,
@@ -55,11 +52,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
 
         observeEpisodeWatches.observe()
                 .execute {
-                    val action = if (it is Success && it().isNotEmpty()) {
-                        Action.UNWATCH
-                    } else {
-                        Action.WATCH
-                    }
+                    val action = if (it is Success && it().isNotEmpty()) Action.UNWATCH else Action.WATCH
                     copy(watches = it, action = action)
                 }
 
@@ -69,7 +62,6 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         }
 
         tmdbManager.imageProviderObservable
-                .delay(50, TimeUnit.MILLISECONDS, schedulers.io)
                 .execute { copy(tmdbImageUrlProvider = it) }
 
         refresh()

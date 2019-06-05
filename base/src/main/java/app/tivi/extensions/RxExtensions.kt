@@ -17,5 +17,12 @@
 package app.tivi.extensions
 
 import io.reactivex.Observable
+import java.util.concurrent.TimeUnit
 
 fun <T> emptyObservableList() = Observable.just(emptyList<T>())
+
+fun Observable<Boolean>.debounceLoading(timeout: Long = 2, unit: TimeUnit = TimeUnit.SECONDS): Observable<Boolean> {
+    return distinctUntilChanged().debounce {
+        loading -> if (loading) Observable.timer(timeout, unit) else Observable.empty()
+    }
+}
