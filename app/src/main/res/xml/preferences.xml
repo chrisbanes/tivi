@@ -29,4 +29,19 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="about_category"
+        android:title="@string/settings_about_category_title">
+
+        <Preference
+            android:key="privacy_policy"
+            android:title="@string/view_privacy_policy" />
+
+        <Preference
+            android:enabled="false"
+            android:key="version"
+            android:title="@string/settings_app_version" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

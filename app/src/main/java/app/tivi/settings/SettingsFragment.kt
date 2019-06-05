@@ -17,11 +17,28 @@
 package app.tivi.settings
 
 import android.os.Bundle
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import app.tivi.BuildConfig
 import app.tivi.R
 
 class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
+
+        findPreference<Preference>("privacy_policy").setOnPreferenceClickListener {
+            CustomTabsIntent.Builder()
+                    .setToolbarColor(requireContext().getColor(R.color.colorPrimaryDark))
+                    .build()
+                    .launchUrl(requireContext(), getString(R.string.privacy_policy_url).toUri())
+            true
+        }
+
+        findPreference<Preference>("version").apply {
+            summary = getString(R.string.settings_app_version_summary,
+                    BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
+        }
     }
 }
