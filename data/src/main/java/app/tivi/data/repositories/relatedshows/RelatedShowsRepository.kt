@@ -19,15 +19,18 @@ package app.tivi.data.repositories.relatedshows
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.instantInPast
 import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
+import org.threeten.bp.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class RelatedShowsRepository @Inject constructor(
     private val localStore: LocalRelatedShowsStore,
+    private val lastRequestStore: LocalRelatedShowLastRequestStore,
     private val localShowStore: LocalShowStore,
     private val traktDataSource: TraktRelatedShowsDataSource,
     private val tmdbDataSource: TmdbRelatedShowsDataSource,
@@ -36,20 +39,25 @@ class RelatedShowsRepository @Inject constructor(
     fun observeRelatedShows(showId: Long) = localStore.observeRelatedShows(showId)
 
     suspend fun getRelatedShows(showId: Long) {
-        updateRelatedShows(showId)
         localStore.getRelatedShows(showId)
+    }
+
+    suspend fun needUpdate(showId: Long, expiry: Instant = instantInPast(days = 28)): Boolean {
+        return lastRequestStore.isRequestBefore(showId, expiry)
     }
 
     suspend fun updateRelatedShows(showId: Long) {
         val tmdbResults = tmdbDataSource.getRelatedShows(showId)
         if (tmdbResults is Success && tmdbResults.responseModified && tmdbResults.data.isNotEmpty()) {
             process(showId, tmdbResults.data)
+            lastRequestStore.updateLastRequest(showId)
             return
         }
 
         val traktResults = traktDataSource.getRelatedShows(showId)
         if (traktResults is Success && traktResults.responseModified && traktResults.data.isNotEmpty()) {
             process(showId, traktResults.data)
+            lastRequestStore.updateLastRequest(showId)
             return
         }
     }
