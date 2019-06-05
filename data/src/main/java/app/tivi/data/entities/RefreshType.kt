@@ -1,5 +1,5 @@
 /*
- * Copyright 201 Google, Inc.
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,31 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-import app.tivi.buildsrc.Libs
+package app.tivi.data.entities
 
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-
-android {
-    compileSdkVersion buildConfig.compileSdk
-
-    defaultConfig {
-        minSdkVersion buildConfig.minSdk
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-}
-
-dependencies {
-    implementation project(":base")
-    api project(":data")
-
-    api Libs.AndroidX.Paging.common
-    implementation Libs.AndroidX.Paging.rxjava2
-}
+enum class RefreshType { QUICK, FULL }

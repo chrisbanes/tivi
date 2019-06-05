@@ -18,6 +18,7 @@ package app.tivi.home.followed
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
+import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.extensions.debounceLoading
@@ -127,7 +128,7 @@ class FollowedViewModel @AssistedInject constructor(
     private fun refreshFollowed(fromUserInteraction: Boolean) {
         loadingState.addLoader()
         viewModelScope.launchInteractor(updateFollowedShows,
-                UpdateFollowedShows.Params(fromUserInteraction, UpdateFollowedShows.RefreshType.QUICK))
+                UpdateFollowedShows.Params(fromUserInteraction, RefreshType.QUICK))
                 .invokeOnCompletion { loadingState.removeLoader() }
     }
 

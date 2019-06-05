@@ -19,6 +19,7 @@ package app.tivi.tasks
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import app.tivi.data.entities.RefreshType
 import app.tivi.interactors.UpdateFollowedShows
 import app.tivi.tasks.inject.ChildWorkerFactory
 import app.tivi.util.Logger
@@ -42,7 +43,7 @@ class SyncAllFollowedShows @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         logger.d("$TAG worker running")
-        updateFollowedShows(UpdateFollowedShows.Params(true, UpdateFollowedShows.RefreshType.FULL))
+        updateFollowedShows(UpdateFollowedShows.Params(true, RefreshType.FULL))
         return Result.success()
     }
 
