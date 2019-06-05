@@ -110,4 +110,6 @@
     <string name="followed_watch_stats_to_watch">&lt;b>%d&lt;/b> to watch</string>
     <string name="followed_watch_stats_complete">Watched all</string>
 
+    <string name="menu_refresh">Refresh</string>
+
 </resources>
