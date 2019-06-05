@@ -65,9 +65,13 @@ class UpdateFollowedShows @Inject constructor(
                         val showWatchedEntry = watchedShowsRepository.getWatchedShow(it.showId)
                         // TODO: We should really use last_updated_at. Waiting on trakt-java support in
                         // https://github.com/UweTrottmann/trakt-java/pull/106
-                        seasonEpisodeRepository.updateShowEpisodeWatches(it.showId, showWatchedEntry?.lastWatched)
+                        seasonEpisodeRepository.updateShowEpisodeWatches(it.showId,
+                                showWatchedEntry?.lastWatched?.plusSeconds(1))
                     }
-                    RefreshType.FULL -> seasonEpisodeRepository.updateShowEpisodeWatches(it.showId)
+                    RefreshType.FULL -> {
+                        // A full refresh is requested, so we pull down all history
+                        seasonEpisodeRepository.updateShowEpisodeWatches(it.showId)
+                    }
                 }
             }
         }
