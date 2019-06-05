@@ -22,8 +22,10 @@ import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.entities.Success
 import app.tivi.data.repositories.episodes.EpisodeDataSource
+import app.tivi.data.repositories.episodes.LocalEpisodeWatchRequestStore
 import app.tivi.data.repositories.episodes.LocalEpisodeWatchStore
 import app.tivi.data.repositories.episodes.LocalSeasonsEpisodesStore
+import app.tivi.data.repositories.episodes.LocalSeasonsRequestStore
 import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.trakt.TraktAuthState
@@ -85,15 +87,16 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         val txRunner = TestTransactionRunner
         val entityInserter = EntityInserter(txRunner, logger)
 
-        watchStore = LocalEpisodeWatchStore(entityInserter, txRunner, episodeWatchDao, db.lastRequestDao(), logger)
+        watchStore = LocalEpisodeWatchStore(entityInserter, txRunner, episodeWatchDao, logger)
 
-        seasonEpisodeStore = LocalSeasonsEpisodesStore(entityInserter, txRunner, seasonsDao, episodesDao,
-                db.lastRequestDao(), logger)
+        seasonEpisodeStore = LocalSeasonsEpisodesStore(entityInserter, txRunner, seasonsDao, episodesDao, logger)
 
         repository = SeasonsEpisodesRepository(
                 testCoroutineDispatchers,
                 watchStore,
+                LocalEpisodeWatchRequestStore(db.lastRequestDao()),
                 seasonEpisodeStore,
+                LocalSeasonsRequestStore(db.lastRequestDao()),
                 traktSeasonsDataSource,
                 traktEpisodeDataSource,
                 tmdbEpisodeDataSource,

@@ -21,6 +21,7 @@ import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.Success
 import app.tivi.data.repositories.followedshows.FollowedShowsDataSource
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
+import app.tivi.data.repositories.followedshows.LocalFollowedShowsLastRequestStore
 import app.tivi.data.repositories.followedshows.LocalFollowedShowsStore
 import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
@@ -77,9 +78,9 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
             traktDataSource = mock(FollowedShowsDataSource::class.java)
 
             repository = FollowedShowsRepository(
-                    LocalFollowedShowsStore(txRunner, entityInserter, db.followedShowsDao(), db.showDao(),
-                            db.lastRequestDao(), logger),
-                    LocalShowStore(entityInserter, db.showDao(), db.lastRequestDao(), txRunner),
+                    LocalFollowedShowsStore(txRunner, entityInserter, db.followedShowsDao(), db.showDao(), logger),
+                    LocalFollowedShowsLastRequestStore(db.lastRequestDao()),
+                    LocalShowStore(entityInserter, db.showDao(), txRunner),
                     traktDataSource,
                     showRepository,
                     Provider { TraktAuthState.LOGGED_IN },
