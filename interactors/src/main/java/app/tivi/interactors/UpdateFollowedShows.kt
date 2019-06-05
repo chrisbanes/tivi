@@ -54,24 +54,34 @@ class UpdateFollowedShows @Inject constructor(
         // Finally sync the seasons/episodes and watches
         followedShowsRepository.getFollowedShows().parallelForEach {
             // Download the seasons + episodes
-            if (seasonEpisodeRepository.needShowSeasonsUpdate(it.showId)) {
+            if (params.forceRefresh || seasonEpisodeRepository.needShowSeasonsUpdate(it.showId)) {
                 seasonEpisodeRepository.updateSeasonsEpisodes(it.showId)
             }
 
             // And sync the episode watches
-            if (params.forceRefresh || seasonEpisodeRepository.needShowEpisodeWatchesSync(it.showId)) {
-                when (params.type) {
-                    RefreshType.QUICK -> {
-                        val showWatchedEntry = watchedShowsRepository.getWatchedShow(it.showId)
-                        // TODO: We should really use last_updated_at. Waiting on trakt-java support in
-                        // https://github.com/UweTrottmann/trakt-java/pull/106
+            if (params.type == RefreshType.QUICK) {
+                val showWatchedEntry = watchedShowsRepository.getWatchedShow(it.showId)
+                if (showWatchedEntry != null) {
+                    // TODO: We should really use last_updated_at. Waiting on trakt-java support in
+                    // https://github.com/UweTrottmann/trakt-java/pull/106
+                    val lastWatchUpdate = showWatchedEntry.lastWatched
+
+                    if (params.forceRefresh || seasonEpisodeRepository.needShowEpisodeWatchesSync(
+                                    it.showId, lastWatchUpdate.toInstant())) {
                         seasonEpisodeRepository.updateShowEpisodeWatches(it.showId,
-                                showWatchedEntry?.lastWatched?.plusSeconds(1))
+                                lastWatchUpdate.plusSeconds(1))
                     }
-                    RefreshType.FULL -> {
-                        // A full refresh is requested, so we pull down all history
+                } else {
+                    // We don't have a trakt date/time to use as a delta, so we'll do a full refresh.
+                    // If the user hasn't watched the show, this should be empty anyway
+                    if (params.forceRefresh || seasonEpisodeRepository.needShowEpisodeWatchesSync(it.showId)) {
                         seasonEpisodeRepository.updateShowEpisodeWatches(it.showId)
                     }
+                }
+            } else if (params.type == RefreshType.FULL) {
+                // A full refresh is requested, so we pull down all history
+                if (params.forceRefresh || seasonEpisodeRepository.needShowEpisodeWatchesSync(it.showId)) {
+                    seasonEpisodeRepository.updateShowEpisodeWatches(it.showId)
                 }
             }
         }
