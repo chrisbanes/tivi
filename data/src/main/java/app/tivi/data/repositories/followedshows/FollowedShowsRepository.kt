@@ -115,9 +115,8 @@ class FollowedShowsRepository @Inject constructor(
     private suspend fun pullDownTraktFollowedList(listId: Int) {
         val response = dataSource.getListShows(listId)
         logger.d("pullDownTraktFollowedList. Response: %s", response)
-
-        when (response) {
-            is Success ->
+        when {
+            response is Success && response.responseModified -> {
                 response.data.map { (entry, show) ->
                     // Grab the show id if it exists, or save the show and use it's generated ID
                     val showId = localShowStore.getIdOrSavePlaceholder(show)
@@ -133,6 +132,7 @@ class FollowedShowsRepository @Inject constructor(
                         }
                     }
                 }
+            }
         }
     }
 

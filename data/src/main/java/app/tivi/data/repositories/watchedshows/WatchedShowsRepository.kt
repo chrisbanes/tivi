@@ -45,15 +45,15 @@ class WatchedShowsRepository @Inject constructor(
     suspend fun getWatchedShows() = localStore.getWatchedShows()
 
     suspend fun updateWatchedShows() {
-        when (val response = traktDataSource.getWatchedShows()) {
-            is Success -> {
+        val response = traktDataSource.getWatchedShows()
+        when {
+            response is Success && response.responseModified -> {
                 response.data.map { (show, entry) ->
                     // Grab the show id if it exists, or save the show and use it's generated ID
                     val watchedShowId = localShowStore.getIdOrSavePlaceholder(show)
                     // Make a copy of the entry with the id
                     entry.copy(showId = watchedShowId)
                 }.also { entries ->
-                    lastRequestStore.updateLastRequest()
                     // Save the related entries
                     localStore.saveWatchedShows(entries)
                     // Now update all of the related shows if needed
@@ -63,6 +63,7 @@ class WatchedShowsRepository @Inject constructor(
                         }
                     }
                 }
+                lastRequestStore.updateLastRequest()
             }
         }
     }

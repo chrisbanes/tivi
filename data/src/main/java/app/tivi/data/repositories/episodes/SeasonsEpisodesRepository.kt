@@ -63,8 +63,8 @@ class SeasonsEpisodesRepository @Inject constructor(
 
     suspend fun updateSeasonsEpisodes(showId: Long) {
         val result = traktSeasonsDataSource.getSeasonsEpisodes(showId)
-        when (result) {
-            is Success -> {
+        when {
+            result is Success && result.responseModified -> {
                 result.data.distinctBy { it.first.number }.associate { (season, episodes) ->
                     val localSeason = localSeasonsEpisodesStore.getSeasonWithTraktId(season.traktId!!)
                             ?: Season(showId = showId)
@@ -77,10 +77,9 @@ class SeasonsEpisodesRepository @Inject constructor(
                     }
                     mergedSeason to mergedEpisodes
                 }.also { localSeasonsEpisodesStore.save(showId, it) }
+
+                localSeasonsRequestStore.updateLastRequest(showId)
             }
-        }
-        if (result is Success) {
-            localSeasonsRequestStore.updateLastRequest(showId)
         }
     }
 

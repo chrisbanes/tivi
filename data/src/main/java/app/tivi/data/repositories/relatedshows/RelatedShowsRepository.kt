@@ -22,13 +22,11 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.repositories.shows.LocalShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
-import app.tivi.util.AppCoroutineDispatchers
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class RelatedShowsRepository @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
     private val localStore: LocalRelatedShowsStore,
     private val localShowStore: LocalShowStore,
     private val traktDataSource: TraktRelatedShowsDataSource,
@@ -44,13 +42,13 @@ class RelatedShowsRepository @Inject constructor(
 
     suspend fun updateRelatedShows(showId: Long) {
         val tmdbResults = tmdbDataSource.getRelatedShows(showId)
-        if (tmdbResults is Success && tmdbResults.data.isNotEmpty()) {
+        if (tmdbResults is Success && tmdbResults.responseModified && tmdbResults.data.isNotEmpty()) {
             process(showId, tmdbResults.data)
             return
         }
 
         val traktResults = traktDataSource.getRelatedShows(showId)
-        if (traktResults is Success && traktResults.data.isNotEmpty()) {
+        if (traktResults is Success && traktResults.responseModified && traktResults.data.isNotEmpty()) {
             process(showId, traktResults.data)
             return
         }
