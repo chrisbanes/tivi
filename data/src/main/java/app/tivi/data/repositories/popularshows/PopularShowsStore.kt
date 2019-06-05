@@ -24,7 +24,7 @@ import app.tivi.data.resultentities.PopularEntryWithShow
 import io.reactivex.Observable
 import javax.inject.Inject
 
-class LocalPopularShowsStore @Inject constructor(
+class PopularShowsStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val popularShowDao: PopularDao
 ) {

@@ -92,13 +92,13 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
             observeShowSeasons(ObserveFollowedShowSeasonData.Params(it.showId))
         }
 
-        refresh()
+        refresh(false)
     }
 
-    private fun refresh() = withState {
-        viewModelScope.launchInteractor(updateShowDetails, UpdateShowDetails.Params(it.showId, true))
-        viewModelScope.launchInteractor(updateRelatedShows, UpdateRelatedShows.Params(it.showId, true))
-        viewModelScope.launchInteractor(updateShowSeasons, UpdateFollowedShowSeasonData.Params(it.showId, true))
+    fun refresh(fromUserInteraction: Boolean) = withState {
+        viewModelScope.launchInteractor(updateShowDetails, UpdateShowDetails.Params(it.showId, fromUserInteraction))
+        viewModelScope.launchInteractor(updateRelatedShows, UpdateRelatedShows.Params(it.showId, fromUserInteraction))
+        viewModelScope.launchInteractor(updateShowSeasons, UpdateFollowedShowSeasonData.Params(it.showId, fromUserInteraction))
     }
 
     fun onToggleMyShowsButtonClicked() = withState {

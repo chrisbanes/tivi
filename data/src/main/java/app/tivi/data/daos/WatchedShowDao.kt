@@ -27,6 +27,10 @@ import io.reactivex.Observable
 @Dao
 abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow> {
     @Transaction
+    @Query("SELECT * FROM watched_entries WHERE show_id = :showId")
+    abstract suspend fun entryWithShowId(showId: Long): WatchedShowEntry?
+
+    @Transaction
     @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
     abstract suspend fun entries(): List<WatchedShowEntryWithShow>
 

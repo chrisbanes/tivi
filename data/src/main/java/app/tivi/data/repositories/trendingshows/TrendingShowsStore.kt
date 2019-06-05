@@ -24,7 +24,7 @@ import app.tivi.data.resultentities.TrendingEntryWithShow
 import io.reactivex.Observable
 import javax.inject.Inject
 
-class LocalTrendingShowsStore @Inject constructor(
+class TrendingShowsStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val trendingShowsDao: TrendingDao
 ) {

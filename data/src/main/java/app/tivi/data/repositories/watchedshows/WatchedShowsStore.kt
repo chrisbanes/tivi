@@ -25,12 +25,14 @@ import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import javax.inject.Inject
 
-class LocalWatchedShowsStore @Inject constructor(
+class WatchedShowsStore @Inject constructor(
     private val entityInserter: EntityInserter,
     private val transactionRunner: DatabaseTransactionRunner,
     private val watchedShowDao: WatchedShowDao
 ) {
     suspend fun getWatchedShows() = watchedShowDao.entries()
+
+    suspend fun getWatchedShow(showId: Long) = watchedShowDao.entryWithShowId(showId)
 
     fun observePagedList(filter: String?, sort: SortOption): DataSource.Factory<Int, WatchedShowEntryWithShow> {
         val filtered = filter != null && filter.isNotEmpty()

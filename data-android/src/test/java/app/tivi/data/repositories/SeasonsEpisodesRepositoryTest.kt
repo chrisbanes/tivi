@@ -22,7 +22,10 @@ import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.entities.Success
 import app.tivi.data.repositories.episodes.EpisodeDataSource
-import app.tivi.data.repositories.episodes.LocalSeasonsEpisodesStore
+import app.tivi.data.repositories.episodes.EpisodeWatchLastRequestStore
+import app.tivi.data.repositories.episodes.EpisodeWatchStore
+import app.tivi.data.repositories.episodes.SeasonsEpisodesStore
+import app.tivi.data.repositories.episodes.SeasonsLastRequestStore
 import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.trakt.TraktAuthState
@@ -62,7 +65,8 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
     private lateinit var traktEpisodeDataSource: EpisodeDataSource
     private lateinit var tmdbEpisodeDataSource: EpisodeDataSource
 
-    private lateinit var localStore: LocalSeasonsEpisodesStore
+    private lateinit var seasonEpisodeStore: SeasonsEpisodesStore
+    private lateinit var watchStore: EpisodeWatchStore
 
     private lateinit var repository: SeasonsEpisodesRepository
 
@@ -83,12 +87,16 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         val txRunner = TestTransactionRunner
         val entityInserter = EntityInserter(txRunner, logger)
 
-        localStore = LocalSeasonsEpisodesStore(entityInserter, txRunner,
-                seasonsDao, episodesDao, episodeWatchDao, db.lastRequestDao(), logger)
+        watchStore = EpisodeWatchStore(entityInserter, txRunner, episodeWatchDao, logger)
+
+        seasonEpisodeStore = SeasonsEpisodesStore(entityInserter, txRunner, seasonsDao, episodesDao, logger)
 
         repository = SeasonsEpisodesRepository(
                 testCoroutineDispatchers,
-                localStore,
+                watchStore,
+                EpisodeWatchLastRequestStore(db.lastRequestDao()),
+                seasonEpisodeStore,
+                SeasonsLastRequestStore(db.lastRequestDao()),
                 traktSeasonsDataSource,
                 traktEpisodeDataSource,
                 tmdbEpisodeDataSource,
@@ -113,7 +121,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         // Sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that both are in the db
-        assertThat(localStore.getEpisodeWatchesForShow(showId), `is`(listOf(s1e1w, s1e1w2)))
+        assertThat(watchStore.getEpisodeWatchesForShow(showId), `is`(listOf(s1e1w, s1e1w2)))
     }
 
     @Test
@@ -129,7 +137,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         // Now re-sync with the same response
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that both are in the db
-        assertThat(localStore.getEpisodeWatchesForShow(showId), `is`(listOf(s1e1w, s1e1w2)))
+        assertThat(watchStore.getEpisodeWatchesForShow(showId), `is`(listOf(s1e1w, s1e1w2)))
     }
 
     @Test
@@ -145,7 +153,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that only the second is in the db
-        assertThat(localStore.getEpisodeWatchesForShow(showId), `is`(listOf(s1e1w2)))
+        assertThat(watchStore.getEpisodeWatchesForShow(showId), `is`(listOf(s1e1w2)))
     }
 
     @Test
@@ -160,7 +168,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that the database is empty
-        assertThat(localStore.getEpisodeWatchesForShow(showId), `is`(emptyList()))
+        assertThat(watchStore.getEpisodeWatchesForShow(showId), `is`(emptyList()))
     }
 
     @Test

@@ -42,7 +42,7 @@ class SyncAllFollowedShows @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         logger.d("$TAG worker running")
-        updateFollowedShows(UpdateFollowedShows.ExecuteParams(true))
+        updateFollowedShows(UpdateFollowedShows.Params(true, UpdateFollowedShows.RefreshType.FULL))
         return Result.success()
     }
 

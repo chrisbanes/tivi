@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.repositories.watchedshows
 
-enum class Request(val tag: String) {
-    SHOW_DETAILS("show_details"),
-    SHOW_SEASONS("show_seasons"),
-    EPISODE_DETAILS("episode_details"),
-    SHOW_EPISODE_WATCHES("show_episode_watches"),
-    FOLLOWED_SHOWS("followed_shows"),
-    WATCHED_SHOWS("watched_shows"),
-    USER_PROFILE("user_profile"),
-    RELATED_SHOWS("related_shows"),
-}
+import app.tivi.data.daos.LastRequestDao
+import app.tivi.data.entities.Request
+import app.tivi.data.repositories.lastrequests.GroupLastRequestStore
+import javax.inject.Inject
+
+class WatchedShowsLastRequestStore @Inject constructor(
+    dao: LastRequestDao
+) : GroupLastRequestStore(Request.WATCHED_SHOWS, dao)

@@ -22,7 +22,7 @@ import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.entities.RelatedShowEntry
 import javax.inject.Inject
 
-class LocalRelatedShowsStore @Inject constructor(
+class RelatedShowsStore @Inject constructor(
     private val entityInserter: EntityInserter,
     private val transactionRunner: DatabaseTransactionRunner,
     private val relatedShowsDao: RelatedShowsDao

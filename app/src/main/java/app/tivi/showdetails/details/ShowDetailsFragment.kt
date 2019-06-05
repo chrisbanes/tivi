@@ -91,6 +91,16 @@ class ShowDetailsFragment : TiviMvRxFragment() {
             viewModel.onUpClicked(showDetailsNavigator)
         }
 
+        binding.detailsToolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.menu_refresh -> {
+                    viewModel.refresh(true)
+                    true
+                }
+                else -> false
+            }
+        }
+
         controller.callbacks = object : ShowDetailsEpoxyController.Callbacks {
             override fun onRelatedShowClicked(show: TiviShow, view: View) {
                 viewModel.onRelatedShowClicked(

@@ -39,6 +39,7 @@ import com.uwetrottmann.trakt5.enums.HistoryType
 import com.uwetrottmann.trakt5.services.Seasons
 import com.uwetrottmann.trakt5.services.Sync
 import com.uwetrottmann.trakt5.services.Users
+import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -61,26 +62,26 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
         }
     }
 
-    override suspend fun getShowEpisodeWatches(showId: Long): Result<List<Pair<Episode, EpisodeWatchEntry>>> {
+    override suspend fun getShowEpisodeWatches(showId: Long, since: OffsetDateTime?): Result<List<Pair<Episode, EpisodeWatchEntry>>> {
         return retrofitRunner.executeForResponse(pairMapperOf(episodeMapper, historyItemMapper)) {
             usersService.get().history(UserSlug.ME, HistoryType.SHOWS, showIdToTraktIdMapper.map(showId),
-                    0, 10000, Extended.NOSEASONS, null, null)
+                    0, 10000, Extended.NOSEASONS, since, null)
                     .executeWithRetry()
         }
     }
 
-    override suspend fun getSeasonWatches(seasonId: Long): Result<List<Pair<Episode, EpisodeWatchEntry>>> {
+    override suspend fun getSeasonWatches(seasonId: Long, since: OffsetDateTime?): Result<List<Pair<Episode, EpisodeWatchEntry>>> {
         return retrofitRunner.executeForResponse(pairMapperOf(episodeMapper, historyItemMapper)) {
             usersService.get().history(UserSlug.ME, HistoryType.SEASONS, seasonIdToTraktIdMapper.map(seasonId),
-                    0, 10000, Extended.NOSEASONS, null, null)
+                    0, 10000, Extended.NOSEASONS, since, null)
                     .executeWithRetry()
         }
     }
 
-    override suspend fun getEpisodeWatches(episodeId: Long): Result<List<EpisodeWatchEntry>> {
+    override suspend fun getEpisodeWatches(episodeId: Long, since: OffsetDateTime?): Result<List<EpisodeWatchEntry>> {
         return retrofitRunner.executeForResponse(historyItemMapper.toListMapper()) {
             usersService.get().history(UserSlug.ME, HistoryType.EPISODES, episodeIdToTraktIdMapper.map(episodeId),
-                    0, 10000, Extended.NOSEASONS, null, null)
+                    0, 10000, Extended.NOSEASONS, since, null)
                     .executeWithRetry()
         }
     }

@@ -127,9 +127,10 @@ class FollowedViewModel @AssistedInject constructor(
         copy(sort = sort)
     }
 
-    private fun refreshFollowed(force: Boolean) {
+    private fun refreshFollowed(fromUserInteraction: Boolean) {
         loadingState.addLoader()
-        viewModelScope.launchInteractor(updateFollowedShows, UpdateFollowedShows.ExecuteParams(force))
+        viewModelScope.launchInteractor(updateFollowedShows,
+                UpdateFollowedShows.Params(fromUserInteraction, UpdateFollowedShows.RefreshType.QUICK))
                 .invokeOnCompletion { loadingState.removeLoader() }
     }
 
