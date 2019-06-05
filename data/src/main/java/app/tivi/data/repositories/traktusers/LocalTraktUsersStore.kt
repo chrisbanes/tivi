@@ -18,19 +18,14 @@ package app.tivi.data.repositories.traktusers
 
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
-import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.UserDao
-import app.tivi.data.entities.Request
 import app.tivi.data.entities.TraktUser
-import org.threeten.bp.Instant
-import org.threeten.bp.temporal.TemporalAmount
 import javax.inject.Inject
 
 class LocalTraktUsersStore @Inject constructor(
     private val entityInserter: EntityInserter,
     private val transactionRunner: DatabaseTransactionRunner,
-    private val userDao: UserDao,
-    private val lastRequestDao: LastRequestDao
+    private val userDao: UserDao
 ) {
     fun observeUser(username: String) = when (username) {
         "me" -> userDao.observeMe()
@@ -42,28 +37,12 @@ class LocalTraktUsersStore @Inject constructor(
         else -> userDao.getTraktUser(username)
     }
 
+    suspend fun getIdForUsername(username: String) = when (username) {
+        "me" -> userDao.getIdForMe()
+        else -> userDao.getIdForUsername(username)
+    }
+
     suspend fun save(user: TraktUser) = transactionRunner {
         entityInserter.insertOrUpdate(userDao, user)
-    }
-
-    suspend fun updateLastRequest(username: String, instant: Instant) {
-        val id = when (username) {
-            "me" -> userDao.getIdForMe()
-            else -> userDao.getIdForUsername(username)
-        }
-        if (id != null) {
-            lastRequestDao.updateLastRequest(Request.USER_PROFILE, id, instant)
-        }
-    }
-
-    suspend fun isLastRequestBefore(username: String, threshold: TemporalAmount): Boolean {
-        val id = when (username) {
-            "me" -> userDao.getIdForMe()
-            else -> userDao.getIdForUsername(username)
-        }
-        return when {
-            id != null -> lastRequestDao.isRequestExpired(Request.USER_PROFILE, id, threshold)
-            else -> true
-        }
     }
 }

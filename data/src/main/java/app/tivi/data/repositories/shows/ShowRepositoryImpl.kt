@@ -31,6 +31,7 @@ import javax.inject.Singleton
 class ShowRepositoryImpl @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val localShowStore: LocalShowStore,
+    private val localShowLastRequestStore: LocalShowLastRequestStore,
     @Tmdb private val tmdbShowDataSource: ShowDataSource,
     @Trakt private val traktShowDataSource: ShowDataSource
 ) : ShowRepository {
@@ -65,20 +66,20 @@ class ShowRepositoryImpl @Inject constructor(
 
         if (tmdbResult is Success && traktResult is Success) {
             // If the network requests were successful, update the last request timestamp
-            localShowStore.updateLastRequest(showId, Instant.now())
+            localShowLastRequestStore.updateLastRequest(showId)
         }
     }
 
     override suspend fun needsUpdate(showId: Long, expiry: Instant): Boolean {
-        return localShowStore.getLastRequestInstant(showId)?.isBefore(expiry) ?: true
+        return localShowLastRequestStore.isRequestBefore(showId, expiry)
     }
 
     override suspend fun needsInitialUpdate(showId: Long): Boolean {
-        return localShowStore.getLastRequestInstant(showId) == null
+        return !localShowLastRequestStore.hasBeenRequested(showId)
     }
 
     override suspend fun getLastRequestInstant(showId: Long): Instant? {
-        return localShowStore.getLastRequestInstant(showId)
+        return localShowLastRequestStore.getRequestInstant(showId)
     }
 
     private fun mergeShow(local: TiviShow, trakt: TiviShow, tmdb: TiviShow) = local.copy(

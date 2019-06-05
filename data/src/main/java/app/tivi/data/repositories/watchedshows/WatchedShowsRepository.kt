@@ -30,13 +30,14 @@ import javax.inject.Singleton
 class WatchedShowsRepository @Inject constructor(
     private val localStore: LocalWatchedShowsStore,
     private val localShowStore: LocalShowStore,
+    private val lastRequestStore: LocalWatchedShowsLastRequestStore,
     private val traktDataSource: TraktWatchedShowsDataSource,
     private val showRepository: ShowRepository
 ) {
     fun observeWatchedShowsPagedList(filter: String?, sort: SortOption) = localStore.observePagedList(filter, sort)
 
     suspend fun needUpdate(expiry: Instant = instantInPast(hours = 12)): Boolean {
-        return localStore.getLastWatchedShowsRequest()?.isBefore(expiry) ?: true
+        return lastRequestStore.isRequestBefore(expiry)
     }
 
     suspend fun getWatchedShow(showId: Long) = localStore.getWatchedShow(showId)
@@ -52,7 +53,7 @@ class WatchedShowsRepository @Inject constructor(
                     // Make a copy of the entry with the id
                     entry.copy(showId = watchedShowId)
                 }.also { entries ->
-                    localStore.updateLastWatchedShowsRequest(Instant.now())
+                    lastRequestStore.updateLastRequest()
                     // Save the related entries
                     localStore.saveWatchedShows(entries)
                     // Now update all of the related shows if needed

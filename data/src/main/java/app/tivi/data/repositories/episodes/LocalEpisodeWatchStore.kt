@@ -19,21 +19,17 @@ package app.tivi.data.repositories.episodes
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.EpisodeWatchEntryDao
-import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
-import app.tivi.data.entities.Request
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.util.Logger
 import io.reactivex.Observable
-import org.threeten.bp.Instant
 import javax.inject.Inject
 
 class LocalEpisodeWatchStore @Inject constructor(
     private val entityInserter: EntityInserter,
     private val transactionRunner: DatabaseTransactionRunner,
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,
-    private val lastRequestDao: LastRequestDao,
     private val logger: Logger
 ) {
     private val episodeWatchSyncer = syncerForEntity(
@@ -50,14 +46,6 @@ class LocalEpisodeWatchStore @Inject constructor(
     suspend fun save(watch: EpisodeWatchEntry) = entityInserter.insertOrUpdate(episodeWatchEntryDao, watch)
 
     suspend fun save(watches: List<EpisodeWatchEntry>) = entityInserter.insertOrUpdate(episodeWatchEntryDao, watches)
-
-    suspend fun updateShowEpisodeWatchesLastRequest(showId: Long, instant: Instant) {
-        lastRequestDao.updateLastRequest(Request.SHOW_EPISODE_WATCHES, showId, instant)
-    }
-
-    suspend fun getShowEpisodeWatchesLastRequest(showId: Long): Instant? {
-        return lastRequestDao.getRequestInstant(Request.SHOW_EPISODE_WATCHES, showId)
-    }
 
     suspend fun getEpisodeWatchesForShow(showId: Long) = episodeWatchEntryDao.entriesForShowId(showId)
 

@@ -20,42 +20,19 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import app.tivi.data.entities.LastRequest
 import app.tivi.data.entities.Request
-import org.threeten.bp.Instant
-import org.threeten.bp.temporal.TemporalAmount
 
 @Dao
 abstract class LastRequestDao : EntityDao<LastRequest> {
     @Query("SELECT * FROM last_requests WHERE request = :request AND entity_id = :entityId")
-    protected abstract suspend fun lastRequest(request: Request, entityId: Long): LastRequest?
+    abstract suspend fun lastRequest(request: Request, entityId: Long): LastRequest?
 
     @Query("SELECT COUNT(*) FROM last_requests WHERE request = :request AND entity_id = :entityId")
-    protected abstract suspend fun requestCount(request: Request, entityId: Long): Int
+    abstract suspend fun requestCount(request: Request, entityId: Long): Int
 
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract override suspend fun insert(entity: LastRequest): Long
-
-    suspend fun hasBeenRequested(request: Request, entityId: Long) = requestCount(request, entityId) > 0
-
-    suspend fun hasNotBeenRequested(request: Request, entityId: Long) = requestCount(request, entityId) <= 0
-
-    suspend fun getRequestInstant(request: Request, entityId: Long): Instant? {
-        return lastRequest(request, entityId)?.timestamp
-    }
-
-    suspend fun isRequestExpired(request: Request, entityId: Long, threshold: TemporalAmount): Boolean {
-        return isRequestBefore(request, entityId, Instant.now().minus(threshold))
-    }
-
-    suspend fun isRequestBefore(request: Request, entityId: Long, instant: Instant): Boolean {
-        val lastRequest = lastRequest(request, entityId)
-        return lastRequest?.timestamp?.isBefore(instant) ?: true
-    }
-
-    suspend fun updateLastRequest(request: Request, entityId: Long, timestamp: Instant) {
-        // We just use insert here since we have a unique index and onConflict = REPLACE above
-        val r = LastRequest(request = request, entityId = entityId, timestamp = timestamp)
-        insert(r)
-    }
 }

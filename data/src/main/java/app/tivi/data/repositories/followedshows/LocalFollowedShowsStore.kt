@@ -20,17 +20,14 @@ import androidx.paging.DataSource
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
-import app.tivi.data.entities.Request
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.util.Logger
 import io.reactivex.Observable
-import org.threeten.bp.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -40,7 +37,6 @@ class LocalFollowedShowsStore @Inject constructor(
     private val entityInserter: EntityInserter,
     private val followedShowsDao: FollowedShowsDao,
     private val showDao: TiviShowDao,
-    private val lastRequestDao: LastRequestDao,
     private val logger: Logger
 ) {
     var traktListId: Int? = null
@@ -109,14 +105,6 @@ class LocalFollowedShowsStore @Inject constructor(
 
     suspend fun sync(entities: List<FollowedShowEntry>) = transactionRunner {
         syncer.sync(followedShowsDao.entries(), entities)
-    }
-
-    suspend fun updateLastFollowedShowsSync(instant: Instant) {
-        lastRequestDao.updateLastRequest(Request.FOLLOWED_SHOWS, 0, instant)
-    }
-
-    suspend fun isLastFollowedShowsSyncBefore(expiry: Instant): Boolean {
-        return lastRequestDao.isRequestBefore(Request.FOLLOWED_SHOWS, 0, expiry)
     }
 
     suspend fun save(entry: FollowedShowEntry) = entityInserter.insertOrUpdate(followedShowsDao, entry)

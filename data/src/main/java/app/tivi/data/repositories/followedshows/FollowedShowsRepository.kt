@@ -36,6 +36,7 @@ import javax.inject.Singleton
 @Singleton
 class FollowedShowsRepository @Inject constructor(
     private val localStore: LocalFollowedShowsStore,
+    private val localFollowedShowsLastRequestStore: LocalFollowedShowsLastRequestStore,
     private val localShowStore: LocalShowStore,
     @Trakt private val dataSource: FollowedShowsDataSource,
     private val showRepository: ShowRepository,
@@ -54,7 +55,7 @@ class FollowedShowsRepository @Inject constructor(
     }
 
     suspend fun needFollowedShowsSync(expiry: Instant = instantInPast(hours = 1)): Boolean {
-        return localStore.isLastFollowedShowsSyncBefore(expiry)
+        return localFollowedShowsLastRequestStore.isRequestBefore(expiry)
     }
 
     suspend fun toggleFollowedShow(showId: Long) {
@@ -108,7 +109,7 @@ class FollowedShowsRepository @Inject constructor(
             pullDownTraktFollowedList(listId)
         }
 
-        localStore.updateLastFollowedShowsSync(Instant.now())
+        localFollowedShowsLastRequestStore.updateLastRequest()
     }
 
     private suspend fun pullDownTraktFollowedList(listId: Int) {

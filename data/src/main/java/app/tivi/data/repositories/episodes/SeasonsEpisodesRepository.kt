@@ -39,7 +39,9 @@ import javax.inject.Singleton
 class SeasonsEpisodesRepository @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val localEpisodeWatchStore: LocalEpisodeWatchStore,
+    private val localEpisodeWatchLastRequestStore: LocalEpisodeWatchRequestStore,
     private val localSeasonsEpisodesStore: LocalSeasonsEpisodesStore,
+    private val localSeasonsRequestStore: LocalSeasonsRequestStore,
     @Trakt private val traktSeasonsDataSource: SeasonsEpisodesDataSource,
     @Trakt private val traktEpisodeDataSource: EpisodeDataSource,
     @Tmdb private val tmdbEpisodeDataSource: EpisodeDataSource,
@@ -52,7 +54,7 @@ class SeasonsEpisodesRepository @Inject constructor(
     fun observeEpisodeWatches(episodeId: Long) = localEpisodeWatchStore.observeEpisodeWatches(episodeId)
 
     suspend fun needShowSeasonsUpdate(showId: Long, expiry: Instant = instantInPast(days = 7)): Boolean {
-        return localSeasonsEpisodesStore.lastShowSeasonsFetchBefore(showId, expiry)
+        return localSeasonsRequestStore.isRequestBefore(showId, expiry)
     }
 
     suspend fun removeShowSeasonData(showId: Long) {
@@ -78,7 +80,7 @@ class SeasonsEpisodesRepository @Inject constructor(
             }
         }
         if (result is Success) {
-            localSeasonsEpisodesStore.updateShowSeasonsFetchLastRequest(showId, Instant.now())
+            localSeasonsRequestStore.updateLastRequest(showId)
         }
     }
 
@@ -129,7 +131,7 @@ class SeasonsEpisodesRepository @Inject constructor(
     }
 
     suspend fun needShowEpisodeWatchesSync(showId: Long, expiry: Instant = instantInPast(hours = 1)): Boolean {
-        return localEpisodeWatchStore.getShowEpisodeWatchesLastRequest(showId)?.isBefore(expiry) ?: true
+        return localEpisodeWatchLastRequestStore.isRequestBefore(showId, expiry)
     }
 
     suspend fun markSeasonWatched(seasonId: Long, onlyAired: Boolean, date: ActionDate) {
@@ -234,7 +236,7 @@ class SeasonsEpisodesRepository @Inject constructor(
                     }
                 }
                 localEpisodeWatchStore.save(watches)
-                localEpisodeWatchStore.updateShowEpisodeWatchesLastRequest(showId, Instant.now())
+                localEpisodeWatchLastRequestStore.updateLastRequest(showId, Instant.now())
             }
         }
     }
@@ -249,7 +251,7 @@ class SeasonsEpisodesRepository @Inject constructor(
                     }
                 }
                 localEpisodeWatchStore.syncShowWatchEntries(showId, watches)
-                localEpisodeWatchStore.updateShowEpisodeWatchesLastRequest(showId, Instant.now())
+                localEpisodeWatchLastRequestStore.updateLastRequest(showId, Instant.now())
             }
         }
     }

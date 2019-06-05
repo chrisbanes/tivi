@@ -19,20 +19,16 @@ package app.tivi.data.repositories.watchedshows
 import androidx.paging.DataSource
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
-import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.WatchedShowDao
-import app.tivi.data.entities.Request
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
-import org.threeten.bp.Instant
 import javax.inject.Inject
 
 class LocalWatchedShowsStore @Inject constructor(
     private val entityInserter: EntityInserter,
     private val transactionRunner: DatabaseTransactionRunner,
-    private val watchedShowDao: WatchedShowDao,
-    private val lastRequestDao: LastRequestDao
+    private val watchedShowDao: WatchedShowDao
 ) {
     suspend fun getWatchedShows() = watchedShowDao.entries()
 
@@ -62,13 +58,5 @@ class LocalWatchedShowsStore @Inject constructor(
     suspend fun saveWatchedShows(watchedShows: List<WatchedShowEntry>) = transactionRunner {
         watchedShowDao.deleteAll()
         entityInserter.insertOrUpdate(watchedShowDao, watchedShows)
-    }
-
-    suspend fun updateLastWatchedShowsRequest(instant: Instant) {
-        lastRequestDao.updateLastRequest(Request.WATCHED_SHOWS, 0, instant)
-    }
-
-    suspend fun getLastWatchedShowsRequest(): Instant? {
-        return lastRequestDao.getRequestInstant(Request.WATCHED_SHOWS, 0)
     }
 }

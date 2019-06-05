@@ -19,16 +19,13 @@ package app.tivi.data.repositories.episodes
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.EpisodesDao
-import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.entities.Episode
-import app.tivi.data.entities.Request
 import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.util.Logger
 import io.reactivex.Observable
-import org.threeten.bp.Instant
 import javax.inject.Inject
 
 class LocalSeasonsEpisodesStore @Inject constructor(
@@ -36,7 +33,6 @@ class LocalSeasonsEpisodesStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val seasonsDao: SeasonsDao,
     private val episodesDao: EpisodesDao,
-    private val lastRequestDao: LastRequestDao,
     private val logger: Logger
 ) {
     private val seasonSyncer = syncerForEntity(
@@ -88,14 +84,6 @@ class LocalSeasonsEpisodesStore @Inject constructor(
             val updatedEpisodes = episodes.map { if (it.seasonId != seasonId) it.copy(seasonId = seasonId) else it }
             episodeSyncer.sync(episodesDao.episodesWithSeasonId(seasonId), updatedEpisodes)
         }
-    }
-
-    suspend fun lastShowSeasonsFetchBefore(showId: Long, instant: Instant): Boolean {
-        return lastRequestDao.getRequestInstant(Request.SHOW_SEASONS, showId)?.isBefore(instant) ?: true
-    }
-
-    suspend fun updateShowSeasonsFetchLastRequest(showId: Long, instant: Instant) {
-        lastRequestDao.updateLastRequest(Request.SHOW_SEASONS, showId, instant)
     }
 
     suspend fun deleteShowSeasonData(showId: Long) {

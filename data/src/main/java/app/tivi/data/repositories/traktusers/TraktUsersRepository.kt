@@ -25,6 +25,7 @@ import javax.inject.Singleton
 @Singleton
 class TraktUsersRepository @Inject constructor(
     private val localStore: LocalTraktUsersStore,
+    private val lastRequestStore: LocalTraktUsersLastRequestStore,
     private val traktDataSource: TraktUsersDataSource
 ) {
     fun observeUser(username: String) = localStore.observeUser(username)
@@ -43,11 +44,15 @@ class TraktUsersRepository @Inject constructor(
                 if (localUser != null) {
                     user = user.copy(id = localUser.id)
                 }
-                localStore.save(user)
-                localStore.updateLastRequest(username, Instant.now())
+                val id = localStore.save(user)
+                lastRequestStore.updateLastRequest(id, Instant.now())
             }
         }
     }
 
-    suspend fun needUpdate(username: String): Boolean = localStore.isLastRequestBefore(username, Period.ofDays(7))
+    suspend fun needUpdate(username: String): Boolean {
+        return localStore.getIdForUsername(username)?.let {
+            lastRequestStore.isRequestExpired(it, Period.ofDays(7))
+        } ?: true
+    }
 }
