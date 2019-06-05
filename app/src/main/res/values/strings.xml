@@ -35,6 +35,8 @@
     <string name="settings_ui_category_title">User Interface</string>
     <string name="settings_theme_title">Theme</string>
 
+    <string name="settings_about_category_title">About Tivi</string>
+
     <string name="empty_prompt">Y u no watch some TV?</string>
     <string name="empty_emoji">😏</string>
 
@@ -111,5 +113,9 @@
     <string name="followed_watch_stats_complete">Watched all</string>
 
     <string name="menu_refresh">Refresh</string>
+
+    <string name="privacy_policy_url">https://chrisbanes.github.io/tivi/privacypolicy.html</string>
+    <string name="settings_app_version">Version</string>
+    <string name="settings_app_version_summary">v%s (%d)</string>
 
 </resources>

@@ -21,9 +21,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -190,6 +188,10 @@ class HomeActivity : TiviActivityMvRxView() {
             HomeNavigationItem.DISCOVER -> navigate(R.id.discover)
             HomeNavigationItem.FOLLOWED -> navigate(R.id.followed)
             HomeNavigationItem.WATCHED -> navigate(R.id.watched)
+            HomeNavigationItem.SETTINGS -> {
+                navController.navigate(R.id.settings)
+                navigationView.close()
+            }
         }
     }
 
@@ -200,19 +202,6 @@ class HomeActivity : TiviActivityMvRxView() {
         }
         R.id.home_menu_user_login -> {
             viewModel.onLoginItemClicked(authService)
-            true
-        }
-        R.id.home_settings -> {
-            navController.navigate(R.id.settings)
-            true
-        }
-        R.id.home_privacy_policy -> {
-            val builder = CustomTabsIntent.Builder()
-            val customTabsIntent = builder.build()
-            customTabsIntent.launchUrl(
-                    this,
-                    "https://chrisbanes.github.io/tivi/privacypolicy.html".toUri()
-            )
             true
         }
         else -> false

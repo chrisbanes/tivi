@@ -31,14 +31,4 @@
         android:visible="false"
         app:showAsAction="always" />
 
-    <item
-        android:id="@+id/home_settings"
-        android:title="@string/settings_title"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/home_privacy_policy"
-        android:title="@string/view_privacy_policy"
-        app:showAsAction="never" />
-
 </menu>
