@@ -39,4 +39,6 @@ interface ShowRepository {
     suspend fun needsUpdate(showId: Long, expiry: Instant = instantInPast(days = 7)): Boolean
 
     fun observeShow(showId: Long): Observable<TiviShow>
+
+    suspend fun searchShows(query: String): List<TiviShow>
 }

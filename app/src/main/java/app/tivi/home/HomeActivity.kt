@@ -19,6 +19,8 @@ package app.tivi.home
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
@@ -28,6 +30,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import app.tivi.R
 import app.tivi.TiviActivityMvRxView
+import app.tivi.data.entities.TiviShow
 import app.tivi.databinding.ActivityHomeBinding
 import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.hideSoftInput
@@ -79,7 +82,8 @@ class HomeActivity : TiviActivityMvRxView() {
         }
     }
 
-    @Inject lateinit var homeNavigationViewModelFactory: HomeActivityViewModel.Factory
+    @Inject
+    lateinit var homeNavigationViewModelFactory: HomeActivityViewModel.Factory
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var userMenuItemGlideTarget: Target<Drawable>
@@ -87,6 +91,9 @@ class HomeActivity : TiviActivityMvRxView() {
     private val navigationEpoxyController = HomeNavigationEpoxyController(object : HomeNavigationEpoxyController.Callbacks {
         override fun onNavigationItemSelected(item: HomeNavigationItem) = showNavigationItem(item)
     })
+
+    @Inject
+    lateinit var searchEpoxyController: HomeSearchEpoxyController
 
     private val navController: NavController
         get() = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
@@ -114,12 +121,40 @@ class HomeActivity : TiviActivityMvRxView() {
                         .build()
         )
 
+        binding.homeSearchInput.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {
+                if (binding.homeRoot.currentState != R.id.nav_closed) {
+                    viewModel.setSearchQuery(s.toString())
+
+                    if (s.isEmpty()) {
+                        binding.homeRoot.transitionToState(R.id.nav_open)
+                    } else {
+                        binding.homeRoot.transitionToState(R.id.home_constraints_search_results)
+                    }
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+            }
+        })
+
+        binding.homeSearchResults.setController(searchEpoxyController)
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // Ensure that the keyboard is dismissed when we navigate between fragments
             hideSoftInput()
 
             // Update our recycler view menu
             navigationEpoxyController.selectedItem = homeNavigationItemForDestinationId(destination.id)
+        }
+
+        searchEpoxyController.callbacks = object : HomeSearchEpoxyController.Callbacks {
+            override fun onSearchItemClicked(items: TiviShow) {
+                // TODO
+            }
         }
 
         binding.homeNavRv.setController(navigationEpoxyController)
@@ -138,6 +173,7 @@ class HomeActivity : TiviActivityMvRxView() {
             binding.state = state
 
             navigationEpoxyController.items = state.navigationItems
+            searchEpoxyController.viewState = state
 
             val userMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_avatar)
             val loginMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_login)

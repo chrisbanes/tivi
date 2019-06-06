@@ -17,31 +17,61 @@
 package app.tivi.home
 
 import androidx.lifecycle.viewModelScope
-import app.tivi.home.main.HomeNavigationViewState
+import app.tivi.home.main.HomeActivityViewState
 import app.tivi.interactors.ObserveUserDetails
+import app.tivi.interactors.SearchShows
 import app.tivi.interactors.UpdateUserDetails
 import app.tivi.interactors.launchInteractor
+import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.TiviMvRxViewModel
 import com.airbnb.mvrx.MvRxViewModelFactory
+import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import io.reactivex.rxkotlin.plusAssign
+import io.reactivex.subjects.BehaviorSubject
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
+import java.util.concurrent.TimeUnit
 
 class HomeActivityViewModel @AssistedInject constructor(
-    @Assisted initialState: HomeNavigationViewState,
+    @Assisted initialState: HomeActivityViewState,
     private val traktManager: TraktManager,
     private val updateUserDetails: UpdateUserDetails,
-    observeUserDetails: ObserveUserDetails
-) : TiviMvRxViewModel<HomeNavigationViewState>(initialState) {
+    private val searchShows: SearchShows,
+    observeUserDetails: ObserveUserDetails,
+    tmdbManager: TmdbManager
+) : TiviMvRxViewModel<HomeActivityViewState>(initialState) {
+
+    private val searchQuery = BehaviorSubject.create<String>()
+
     init {
+        disposables += searchQuery.debounce(300, TimeUnit.MILLISECONDS)
+                .subscribe({
+                    viewModelScope.launchInteractor(searchShows, SearchShows.Params(it))
+                }, {
+                    // TODO: onError
+                })
+
         observeUserDetails.observe()
                 .execute { copy(user = it()) }
         observeUserDetails(ObserveUserDetails.Params("me"))
+
+        tmdbManager.imageProviderObservable.execute {
+            if (it is Success) {
+                copy(tmdbImageUrlProvider = it())
+            } else {
+                this
+            }
+        }
+
+        searchShows.observe().execute {
+            copy(searchResults = it())
+        }
 
         traktManager.state
                 .distinctUntilChanged()
@@ -74,13 +104,17 @@ class HomeActivityViewModel @AssistedInject constructor(
         traktManager.startAuth(0, authService)
     }
 
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(initialState: HomeNavigationViewState): HomeActivityViewModel
+    fun setSearchQuery(query: String) {
+        searchQuery.onNext(query)
     }
 
-    companion object : MvRxViewModelFactory<HomeActivityViewModel, HomeNavigationViewState> {
-        override fun create(viewModelContext: ViewModelContext, state: HomeNavigationViewState): HomeActivityViewModel? {
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(initialState: HomeActivityViewState): HomeActivityViewModel
+    }
+
+    companion object : MvRxViewModelFactory<HomeActivityViewModel, HomeActivityViewState> {
+        override fun create(viewModelContext: ViewModelContext, state: HomeActivityViewState): HomeActivityViewModel? {
             val fragment: HomeActivity = viewModelContext.activity()
             return fragment.homeNavigationViewModelFactory.create(state)
         }

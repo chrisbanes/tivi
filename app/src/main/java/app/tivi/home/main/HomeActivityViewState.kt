@@ -16,12 +16,16 @@
 
 package app.tivi.home.main
 
+import app.tivi.data.entities.SearchResults
 import app.tivi.data.entities.TraktUser
+import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.trakt.TraktAuthState
 import com.airbnb.mvrx.MvRxState
 
-data class HomeNavigationViewState(
+data class HomeActivityViewState(
     val navigationItems: List<HomeNavigationItem> = HomeNavigationItem.values().asList(),
     val user: TraktUser? = null,
-    val authState: TraktAuthState = TraktAuthState.LOGGED_OUT
+    val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider(),
+    val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
+    val searchResults: SearchResults? = null
 ) : MvRxState

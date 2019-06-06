@@ -16,8 +16,8 @@
 
 package app.tivi.data.repositories.search
 
-import app.tivi.data.entities.SearchResults
 import app.tivi.data.entities.Success
+import app.tivi.data.entities.TiviShow
 import app.tivi.data.repositories.shows.ShowStore
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -28,29 +28,30 @@ class SearchRepository @Inject constructor(
     private val showStore: ShowStore,
     private val tmdbDataSource: TmdbSearchDataSource
 ) {
-    suspend fun search(query: String): SearchResults {
-        if (query.isEmpty()) {
-            return SearchResults(query, emptyList())
+    suspend fun search(query: String): List<TiviShow> {
+        if (query.isBlank()) {
+            return emptyList()
         }
 
         val cacheValues = searchStore.getResults(query)
         if (cacheValues != null) {
-            return SearchResults(query, cacheValues.map { showStore.getShow(it)!! })
+            return cacheValues.map { showStore.getShow(it)!! }
         }
 
         // We need to hit TMDb instead
-        val tmdbResult = tmdbDataSource.search(query)
-
-        val results = when (tmdbResult) {
-            is Success -> tmdbResult.data.map {
-                val id = showStore.getIdOrSavePlaceholder(it)
-                showStore.getShow(id)!!
-            }.also { results ->
-                // We need to save the search results
-                searchStore.setResults(query, results.map { it.id }.toLongArray())
+        return when (val tmdbResult = tmdbDataSource.search(query)) {
+            is Success -> {
+                tmdbResult.data.map {
+                    showStore.getIdOrSavePlaceholder(it)
+                }.also { results ->
+                    // We need to save the search results
+                    searchStore.setResults(query, results.toLongArray())
+                }.mapNotNull {
+                    // Finally map back to a TiviShow instance
+                    showStore.getShow(it)
+                }
             }
             else -> emptyList()
         }
-        return SearchResults(query, results)
     }
 }

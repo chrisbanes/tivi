@@ -45,7 +45,7 @@ class FollowedEpoxyController @Inject constructor(
         diffingHandler = EpoxyAsyncUtil.getAsyncBackgroundHandler()
 ) {
     var viewState by EpoxyModelProperty { FollowedViewState() }
-    var callbacks: Callbacks? = null
+    var callbacks by EpoxyModelProperty<Callbacks?> { null }
 
     override fun addModels(models: List<EpoxyModel<*>>) {
         if (viewState.isEmpty) {
