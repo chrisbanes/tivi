@@ -20,6 +20,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import app.tivi.AppNavigator
+import app.tivi.R
 import app.tivi.data.entities.TiviShow
 import app.tivi.databinding.FragmentSearchBinding
 import app.tivi.ui.ListItemSharedElementHelper
@@ -27,17 +29,18 @@ import app.tivi.util.GridToGridTransitioner
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
+import kotlinx.android.synthetic.main.view_holder_empty_state.view.*
 import javax.inject.Inject
 
 internal class SearchFragment : TiviMvRxFragment() {
     private lateinit var binding: FragmentSearchBinding
-
     private lateinit var listItemSharedElementHelper: ListItemSharedElementHelper
 
     private val viewModel: SearchViewModel by fragmentViewModel()
-    @Inject lateinit var searchViewModelFactory: SearchViewModel.Factory
 
+    @Inject lateinit var searchViewModelFactory: SearchViewModel.Factory
     @Inject lateinit var controller: SearchEpoxyController
+    @Inject lateinit var appNavigator: AppNavigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +56,9 @@ internal class SearchFragment : TiviMvRxFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        listItemSharedElementHelper = ListItemSharedElementHelper(binding.recyclerview)
+        listItemSharedElementHelper = ListItemSharedElementHelper(binding.recyclerview) {
+            it.findViewById(R.id.show_poster)
+        }
 
         binding.recyclerview.apply {
             setController(controller)
@@ -61,19 +66,14 @@ internal class SearchFragment : TiviMvRxFragment() {
 
         controller.callbacks = object : SearchEpoxyController.Callbacks {
             override fun onSearchItemClicked(show: TiviShow) {
-//                val direction = DiscoverFragmentDirections.actionDiscoverToActivityShowDetails(show.id)
-//                findNavController().navigate(
-//                        direction,
-//                        listItemSharedElementHelper.createForId(viewHolderId, "poster")
-//                                .toActivityNavigatorExtras(requireActivity())
-//                )
+                // We should really use AndroidX navigation here, but this fragment isn't in the tree
+                appNavigator.startShowDetails(show.id,
+                        listItemSharedElementHelper.createForId(show.id, "poster"))
             }
         }
     }
 
-    override fun invalidate() {
-        withState(viewModel) { state ->
-            controller.viewState = state
-        }
+    override fun invalidate() = withState(viewModel) { state ->
+        controller.viewState = state
     }
 }
