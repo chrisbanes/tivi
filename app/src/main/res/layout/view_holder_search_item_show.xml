@@ -64,7 +64,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:tmdbImageUrlProvider="@{tmdbImageUrlProvider}"
             app:tmdbPosterPath="@{tiviShow.tmdbPosterPath}"
-            app:topCornerOutlineProvider="@{ @dimen/image_round_rect_radius }" />
+            app:roundedCornerOutlineProvider="@{ @dimen/image_round_rect_radius }" />
 
         <TextView
             android:id="@+id/show_title"

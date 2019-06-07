@@ -56,8 +56,10 @@
                 <PropertySet android:alpha="0" />
             </Constraint>
 
-            <Constraint android:id="@id/home_search_results">
-                <PropertySet android:alpha="1" />
+            <Constraint android:id="@id/home_search_results_holder">
+                <PropertySet
+                    android:alpha="1"
+                    android:visibility="visible" />
             </Constraint>
         </ConstraintSet>
 

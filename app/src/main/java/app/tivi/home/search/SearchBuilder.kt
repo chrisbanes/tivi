@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.home.main
+package app.tivi.home.search
 
-import app.tivi.data.entities.TraktUser
-import app.tivi.trakt.TraktAuthState
-import com.airbnb.mvrx.MvRxState
+import dagger.Module
+import dagger.android.ContributesAndroidInjector
 
-data class HomeActivityViewState(
-    val navigationItems: List<HomeNavigationItem> = HomeNavigationItem.values().asList(),
-    val user: TraktUser? = null,
-    val authState: TraktAuthState = TraktAuthState.LOGGED_OUT
-) : MvRxState
+@Module
+internal abstract class SearchBuilder {
+    @ContributesAndroidInjector
+    internal abstract fun searchFragment(): SearchFragment
+}

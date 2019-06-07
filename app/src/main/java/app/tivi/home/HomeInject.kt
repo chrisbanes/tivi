@@ -22,6 +22,7 @@ import app.tivi.TiviAppActivityNavigator
 import app.tivi.home.discover.DiscoverBuilder
 import app.tivi.home.followed.FollowedBuilder
 import app.tivi.home.popular.PopularBuilder
+import app.tivi.home.search.SearchBuilder
 import app.tivi.home.trending.TrendingBuilder
 import app.tivi.home.watched.WatchedBuilder
 import app.tivi.inject.PerActivity
@@ -36,6 +37,7 @@ internal abstract class HomeBuilder {
     @ContributesAndroidInjector(modules = [
         ViewModelBuilder::class,
         HomeModule::class,
+        SearchBuilder::class,
         DiscoverBuilder::class,
         TrendingBuilder::class,
         PopularBuilder::class,

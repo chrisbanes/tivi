@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package app.tivi.home.main
+package app.tivi.extensions
 
-import app.tivi.data.entities.TraktUser
-import app.tivi.trakt.TraktAuthState
-import com.airbnb.mvrx.MvRxState
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 
-data class HomeActivityViewState(
-    val navigationItems: List<HomeNavigationItem> = HomeNavigationItem.values().asList(),
-    val user: TraktUser? = null,
-    val authState: TraktAuthState = TraktAuthState.LOGGED_OUT
-) : MvRxState
+@Suppress("UNCHECKED_CAST")
+fun <T : Fragment> FragmentManager.find(id: Int): T = findFragmentById(id) as? T?
+        ?: throw IllegalArgumentException("Fragment not found")

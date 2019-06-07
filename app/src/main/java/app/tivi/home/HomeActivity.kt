@@ -30,14 +30,16 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navOptions
 import app.tivi.R
 import app.tivi.TiviActivityMvRxView
-import app.tivi.data.entities.TiviShow
 import app.tivi.databinding.ActivityHomeBinding
 import app.tivi.extensions.doOnApplyWindowInsets
+import app.tivi.extensions.find
 import app.tivi.extensions.hideSoftInput
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.home.main.HomeNavigationEpoxyController
 import app.tivi.home.main.HomeNavigationItem
 import app.tivi.home.main.homeNavigationItemForDestinationId
+import app.tivi.home.search.SearchFragment
+import app.tivi.home.search.SearchViewModel
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktConstants
 import app.tivi.ui.glide.GlideApp
@@ -45,6 +47,7 @@ import app.tivi.ui.glide.asGlideTarget
 import app.tivi.ui.navigation.AppBarConfiguration
 import app.tivi.ui.navigation.NavigationUI
 import app.tivi.ui.navigation.NavigationView
+import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.viewModel
 import com.airbnb.mvrx.withState
 import com.bumptech.glide.request.target.Target
@@ -54,7 +57,6 @@ import net.openid.appauth.AuthorizationService
 import javax.inject.Inject
 
 class HomeActivity : TiviActivityMvRxView() {
-
     private val authService by lazy(LazyThreadSafetyMode.NONE) { AuthorizationService(this) }
 
     private val viewModel: HomeActivityViewModel by viewModel()
@@ -88,12 +90,10 @@ class HomeActivity : TiviActivityMvRxView() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var userMenuItemGlideTarget: Target<Drawable>
 
-    private val navigationEpoxyController = HomeNavigationEpoxyController(object : HomeNavigationEpoxyController.Callbacks {
-        override fun onNavigationItemSelected(item: HomeNavigationItem) = showNavigationItem(item)
-    })
-
-    @Inject
-    lateinit var searchEpoxyController: HomeSearchEpoxyController
+    private val navigationEpoxyController = HomeNavigationEpoxyController(
+            object : HomeNavigationEpoxyController.Callbacks {
+                override fun onNavigationItemSelected(item: HomeNavigationItem) = showNavigationItem(item)
+            })
 
     private val navController: NavController
         get() = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
@@ -122,9 +122,12 @@ class HomeActivity : TiviActivityMvRxView() {
         )
 
         binding.homeSearchInput.addTextChangedListener(object : TextWatcher {
+            val searchFragment: SearchFragment = supportFragmentManager.find(R.id.home_search_results)
+            val searchViewModel: SearchViewModel by searchFragment.fragmentViewModel()
+
             override fun afterTextChanged(s: Editable) {
                 if (binding.homeRoot.currentState != R.id.nav_closed) {
-                    viewModel.setSearchQuery(s.toString())
+                    searchViewModel.setSearchQuery(s.toString())
 
                     if (s.isEmpty()) {
                         binding.homeRoot.transitionToState(R.id.nav_open)
@@ -141,20 +144,12 @@ class HomeActivity : TiviActivityMvRxView() {
             }
         })
 
-        binding.homeSearchResults.setController(searchEpoxyController)
-
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // Ensure that the keyboard is dismissed when we navigate between fragments
             hideSoftInput()
 
             // Update our recycler view menu
             navigationEpoxyController.selectedItem = homeNavigationItemForDestinationId(destination.id)
-        }
-
-        searchEpoxyController.callbacks = object : HomeSearchEpoxyController.Callbacks {
-            override fun onSearchItemClicked(items: TiviShow) {
-                // TODO
-            }
         }
 
         binding.homeNavRv.setController(navigationEpoxyController)
@@ -173,7 +168,6 @@ class HomeActivity : TiviActivityMvRxView() {
             binding.state = state
 
             navigationEpoxyController.items = state.navigationItems
-            searchEpoxyController.viewState = state
 
             val userMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_avatar)
             val loginMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_login)

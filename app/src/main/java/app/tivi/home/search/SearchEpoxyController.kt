@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package app.tivi.home
+package app.tivi.home.search
 
 import app.tivi.data.entities.TiviShow
-import app.tivi.home.main.HomeActivityViewState
+import app.tivi.home.HomeTextCreator
 import app.tivi.searchItemShow
 import app.tivi.ui.epoxy.EpoxyModelProperty
 import com.airbnb.epoxy.EpoxyController
 import javax.inject.Inject
 
-class HomeSearchEpoxyController @Inject constructor(
+class SearchEpoxyController @Inject constructor(
     private val textCreator: HomeTextCreator
 ) : EpoxyController() {
     var callbacks by EpoxyModelProperty<Callbacks?> { null }
-    var viewState by EpoxyModelProperty { HomeActivityViewState() }
+    var viewState by EpoxyModelProperty { SearchViewState() }
 
     interface Callbacks {
-        fun onSearchItemClicked(items: TiviShow)
+        fun onSearchItemClicked(show: TiviShow)
     }
 
     override fun buildModels() {
