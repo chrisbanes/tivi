@@ -76,18 +76,17 @@
             android:paddingBottom="@dimen/spacing_small"
             android:paddingTop="@dimen/spacing_small"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintTop_toBottomOf="@id/home_search_layout"
+            app:layout_constraintTop_toBottomOf="@id/home_toolbar"
             tools:listitem="@layout/view_holder_home_nav_item" />
 
         <FrameLayout
             android:id="@+id/home_search_results_holder"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/spacing_normal"
             android:alpha="0"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/home_search_layout">
+            app:layout_constraintTop_toBottomOf="@id/home_toolbar">
 
             <fragment
                 android:id="@+id/home_search_results"
@@ -96,22 +95,6 @@
                 android:layout_height="match_parent" />
 
         </FrameLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/home_search_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/spacing_normal"
-            app:endIconMode="clear_text"
-            app:layout_constraintTop_toBottomOf="@id/home_toolbar">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/home_search_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </com.google.android.material.textfield.TextInputLayout>
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 

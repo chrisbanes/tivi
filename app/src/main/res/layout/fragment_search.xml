@@ -27,6 +27,7 @@
         android:clipToPadding="false"
         android:paddingBottom="@dimen/spacing_small"
         android:paddingTop="@dimen/spacing_small"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:paddingBottomSystemWindowInsets="@{ true }"
         tools:listitem="@layout/view_holder_search_item_show" />

@@ -19,10 +19,9 @@ package app.tivi.home
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.TransitionAdapter
 import androidx.databinding.DataBindingUtil
@@ -64,11 +63,18 @@ class HomeActivity : TiviActivityMvRxView() {
 
     private val viewModel: HomeActivityViewModel by viewModel()
 
+    private lateinit var searchView: SearchView
+
     private val navigationView = object : NavigationView {
         override fun open() {
             binding.homeRoot.transitionToState(R.id.nav_open)
             // Make sure the keyboard is dismissed when we open the navigation menu
             hideSoftInput()
+
+            binding.homeToolbar.menu.findItem(R.id.home_menu_search).apply {
+                isVisible = true
+                expandActionView()
+            }
         }
 
         override fun close() {
@@ -118,12 +124,45 @@ class HomeActivity : TiviActivityMvRxView() {
             override fun onTransitionCompleted(motionLayout: MotionLayout, transitionId: Int) {
                 if (transitionId == R.id.nav_closed) {
                     // Clear the search results when the nav is closed
-                    binding.homeSearchInput.text = null
+                    // binding.homeSearchInput.text = null
                 }
             }
         })
 
         binding.homeToolbar.setOnMenuItemClickListener(::onMenuItemClicked)
+
+        val searchMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_search)
+        searchMenuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+                binding.homeRoot.transitionToState(R.id.home_constraints_search_results)
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+                binding.homeRoot.transitionToState(R.id.nav_open)
+                return true
+            }
+        })
+
+        searchView = searchMenuItem.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            val searchFragment: SearchFragment = supportFragmentManager.find(R.id.home_search_results)
+            val searchViewModel: SearchViewModel by searchFragment.fragmentViewModel()
+
+            override fun onQueryTextSubmit(query: String): Boolean {
+                if (binding.homeRoot.currentState != R.id.nav_closed) {
+                    searchViewModel.setSearchQuery(query)
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                if (binding.homeRoot.currentState != R.id.nav_closed) {
+                    searchViewModel.setSearchQuery(newText)
+                }
+                return true
+            }
+        })
 
         NavigationUI.setupWithNavController(
                 binding.homeToolbar,
@@ -132,29 +171,6 @@ class HomeActivity : TiviActivityMvRxView() {
                         .setNavigationView(navigationView)
                         .build()
         )
-
-        binding.homeSearchInput.addTextChangedListener(object : TextWatcher {
-            val searchFragment: SearchFragment = supportFragmentManager.find(R.id.home_search_results)
-            val searchViewModel: SearchViewModel by searchFragment.fragmentViewModel()
-
-            override fun afterTextChanged(s: Editable) {
-                if (binding.homeRoot.currentState != R.id.nav_closed) {
-                    searchViewModel.setSearchQuery(s.toString())
-
-                    if (s.isEmpty()) {
-                        binding.homeRoot.transitionToState(R.id.nav_open)
-                    } else {
-                        binding.homeRoot.transitionToState(R.id.home_constraints_search_results)
-                    }
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-            }
-        })
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // Ensure that the keyboard is dismissed when we navigate between fragments
