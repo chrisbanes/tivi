@@ -110,7 +110,7 @@ object Libs {
 
         val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.0-beta1"
 
-        val coreKtx = "androidx.core:core-ktx:1.0.1"
+        val coreKtx = "androidx.core:core-ktx:1.2.0-alpha01"
 
         object Lifecycle {
             private const val version = "2.1.0-beta01"
