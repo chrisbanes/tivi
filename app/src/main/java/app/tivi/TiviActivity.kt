@@ -19,12 +19,9 @@ package app.tivi
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import app.tivi.settings.TiviPreferences
-import app.tivi.settings.TiviPreferences.Theme
 import com.airbnb.mvrx.BaseMvRxActivity
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
@@ -37,14 +34,12 @@ import javax.inject.Inject
  */
 abstract class TiviActivity : BaseMvRxActivity(), HasSupportFragmentInjector {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    @Inject lateinit var prefs: TiviPreferences
 
     @Inject lateinit var supportFragmentInjector: DispatchingAndroidInjector<Fragment>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-        updateNightMode()
     }
 
     private var postponedTransition = false
@@ -57,11 +52,6 @@ abstract class TiviActivity : BaseMvRxActivity(), HasSupportFragmentInjector {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleIntent(intent)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        updateNightMode()
     }
 
     override fun postponeEnterTransition() {
@@ -94,13 +84,6 @@ abstract class TiviActivity : BaseMvRxActivity(), HasSupportFragmentInjector {
 
     open fun onPopulateResultIntent(intent: Intent): Int {
         return Activity.RESULT_OK
-    }
-
-    private fun updateNightMode() = when (prefs.themePreference) {
-        Theme.DARK -> delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
-        Theme.LIGHT -> delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_NO
-        Theme.SYSTEM -> delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-        Theme.BATTERY_SAVER_ONLY -> delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
     }
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment>? {
