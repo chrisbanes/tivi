@@ -18,7 +18,7 @@ package app.tivi.inject
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import app.tivi.BuildConfig
 import app.tivi.TiviApplication
 import app.tivi.util.AppCoroutineDispatchers

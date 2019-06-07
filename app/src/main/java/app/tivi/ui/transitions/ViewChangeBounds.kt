@@ -82,29 +82,29 @@ open class ViewChangeBounds : Transition() {
 
         val parent = view.parent
         if (parent is ViewGroup) {
-            parent.suppressLayout(true)
+            parent.suppressLayoutInternal(true)
 
             addListener(object : TransitionListenerAdapter() {
                 private var canceled = false
 
                 override fun onTransitionCancel(transition: Transition) {
-                    parent.suppressLayout(false)
+                    parent.suppressLayoutInternal(false)
                     canceled = true
                 }
 
                 override fun onTransitionEnd(transition: Transition) {
                     if (!canceled) {
-                        parent.suppressLayout(false)
+                        parent.suppressLayoutInternal(false)
                     }
                     transition.removeListener(this)
                 }
 
                 override fun onTransitionPause(transition: Transition) {
-                    parent.suppressLayout(false)
+                    parent.suppressLayoutInternal(false)
                 }
 
                 override fun onTransitionResume(transition: Transition) {
-                    parent.suppressLayout(false)
+                    parent.suppressLayoutInternal(false)
                 }
             })
         }

@@ -20,7 +20,7 @@ import app.tivi.buildsrc.Versions
 
 buildscript {
     ext.buildConfig = [
-            'compileSdk': 28,
+            'compileSdk': 29,
             'minSdk'    : 23,
             'targetSdk' : 28,
     ]
@@ -60,10 +60,6 @@ allprojects {
         google()
         mavenCentral()
         jcenter()
-        // Required for Room 2.1.0-alpha05 due to https://youtrack.jetbrains.com/issue/KT-27991
-        maven { url "https://kotlin.bintray.com/kotlinx/" }
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         mavenLocal()
     }
 }

@@ -28,7 +28,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
 
-        findPreference<Preference>("privacy_policy").setOnPreferenceClickListener {
+        findPreference<Preference>("privacy_policy")?.setOnPreferenceClickListener {
             CustomTabsIntent.Builder()
                     .setToolbarColor(requireContext().getColor(R.color.colorPrimaryDark))
                     .build()
@@ -36,7 +36,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
-        findPreference<Preference>("version").apply {
+        findPreference<Preference>("version")?.apply {
             summary = getString(R.string.settings_app_version_summary,
                     BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
         }
