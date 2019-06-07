@@ -18,16 +18,17 @@ package app.tivi.extensions
 
 import android.graphics.Rect
 import android.view.View
-import android.view.WindowInsets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 
 fun View.getBounds(rect: Rect) {
     rect.set(left, top, right, bottom)
 }
 
-fun View.doOnApplyWindowInsets(f: (View, WindowInsets, ViewPaddingState) -> Unit) {
+fun View.doOnApplyWindowInsets(f: (View, WindowInsetsCompat, ViewPaddingState) -> Unit) {
     // Create a snapshot of the view's padding state
     val paddingState = createStateForView(this)
-    setOnApplyWindowInsetsListener { v, insets ->
+    ViewCompat.setOnApplyWindowInsetsListener(this) { v, insets ->
         f(v, insets, paddingState)
         insets
     }
