@@ -24,6 +24,7 @@ import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.constraintlayout.motion.widget.TransitionAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -110,6 +111,15 @@ class HomeActivity : TiviActivityMvRxView() {
                 constrainHeight(R.id.status_scrim, insets.systemWindowInsetTop)
             }
         }
+
+        binding.homeRoot.setTransitionListener(object : TransitionAdapter() {
+            override fun onTransitionCompleted(motionLayout: MotionLayout, transitionId: Int) {
+                if (transitionId == R.id.nav_closed) {
+                    // Clear the search results when the nav is closed
+                    binding.homeSearchInput.text = null
+                }
+            }
+        })
 
         binding.homeToolbar.setOnMenuItemClickListener(::onMenuItemClicked)
 
