@@ -82,6 +82,14 @@ class ShowRepositoryImpl @Inject constructor(
         return showLastRequestStore.getRequestInstant(showId)
     }
 
+    override suspend fun searchShows(query: String): List<TiviShow> {
+        return if (query.isNotBlank()) {
+            showStore.searchShows(query)
+        } else {
+            emptyList()
+        }
+    }
+
     private fun mergeShow(local: TiviShow, trakt: TiviShow, tmdb: TiviShow) = local.copy(
             title = trakt.title ?: local.title,
             summary = trakt.summary ?: local.summary,

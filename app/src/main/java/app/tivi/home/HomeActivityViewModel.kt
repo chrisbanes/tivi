@@ -17,7 +17,7 @@
 package app.tivi.home
 
 import androidx.lifecycle.viewModelScope
-import app.tivi.home.main.HomeNavigationViewState
+import app.tivi.home.main.HomeActivityViewState
 import app.tivi.interactors.ObserveUserDetails
 import app.tivi.interactors.UpdateUserDetails
 import app.tivi.interactors.launchInteractor
@@ -28,16 +28,17 @@ import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import io.reactivex.rxkotlin.plusAssign
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
 
 class HomeActivityViewModel @AssistedInject constructor(
-    @Assisted initialState: HomeNavigationViewState,
+    @Assisted initialState: HomeActivityViewState,
     private val traktManager: TraktManager,
     private val updateUserDetails: UpdateUserDetails,
     observeUserDetails: ObserveUserDetails
-) : TiviMvRxViewModel<HomeNavigationViewState>(initialState) {
+) : TiviMvRxViewModel<HomeActivityViewState>(initialState) {
     init {
         observeUserDetails.observe()
                 .execute { copy(user = it()) }
@@ -76,11 +77,11 @@ class HomeActivityViewModel @AssistedInject constructor(
 
     @AssistedInject.Factory
     interface Factory {
-        fun create(initialState: HomeNavigationViewState): HomeActivityViewModel
+        fun create(initialState: HomeActivityViewState): HomeActivityViewModel
     }
 
-    companion object : MvRxViewModelFactory<HomeActivityViewModel, HomeNavigationViewState> {
-        override fun create(viewModelContext: ViewModelContext, state: HomeNavigationViewState): HomeActivityViewModel? {
+    companion object : MvRxViewModelFactory<HomeActivityViewModel, HomeActivityViewState> {
+        override fun create(viewModelContext: ViewModelContext, state: HomeActivityViewState): HomeActivityViewModel? {
             val fragment: HomeActivity = viewModelContext.activity()
             return fragment.homeNavigationViewModelFactory.create(state)
         }

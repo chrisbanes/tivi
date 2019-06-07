@@ -181,6 +181,18 @@ fun topCornerOutlineProvider(view: View, oldRadius: Float, radius: Float) {
     }
 }
 
+@BindingAdapter("roundedCornerOutlineProvider")
+fun roundedCornerOutlineProvider(view: View, oldRadius: Float, radius: Float) {
+    view.clipToOutline = true
+    if (oldRadius != radius) {
+        view.outlineProvider = object : ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: Outline) {
+                outline.setRoundRect(0, 0, view.width, view.height, radius)
+            }
+        }
+    }
+}
+
 @BindingAdapter("textAppearanceAttr")
 fun textAppearanceAttr(view: TextView, oldTextAppearanceStyleAttr: Int, textAppearanceStyleAttr: Int) {
     if (oldTextAppearanceStyleAttr != textAppearanceStyleAttr) {

@@ -19,6 +19,33 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:onClick="@{clickListener}"
+        android:paddingHorizontal="@dimen/spacing_normal"
+        android:transitionGroup="true"
+        app:activated="@{isSelected}">
+
+        <TextView
+            android:id="@+id/header_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/sl_activated"
+            android:drawablePadding="16dp"
+            android:drawableStart="@{context.getDrawable(navItem.iconResId)}"
+            android:drawableTint="@color/color_controlnormal_activated"
+            android:duplicateParentState="true"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/spacing_normal"
+            android:paddingVertical="@dimen/spacing_small"
+            android:text="@{navItem.labelResId}"
+            app:textAppearanceAttr="@{ isSelected ? R.attr.textAppearanceSubtitle2 : R.attr.textAppearanceBody2 }"
+            tools:text="Followed" />
+
+    </FrameLayout>
+
     <data>
         <import type="android.content.Context" />
         <import type="app.tivi.R" />
@@ -35,36 +62,4 @@
             name="clickListener"
             type="android.view.View.OnClickListener" />
     </data>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="44dp"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:onClick="@{clickListener}"
-        android:transitionGroup="true"
-        app:activated="@{isSelected}">
-
-        <TextView
-            android:id="@+id/header_title"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="@dimen/spacing_small"
-            android:layout_marginStart="@dimen/spacing_small"
-            android:background="@drawable/sl_activated"
-            android:drawablePadding="16dp"
-            android:drawableStart="@{context.getDrawable(navItem.iconResId)}"
-            android:drawableTint="@color/color_controlnormal_activated"
-            android:duplicateParentState="true"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/spacing_small"
-            android:paddingRight="@dimen/spacing_small"
-            android:text="@{navItem.labelResId}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:textAppearanceAttr="@{ isSelected ? R.attr.textAppearanceSubtitle2 : R.attr.textAppearanceBody2 }"
-            tools:text="Followed" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

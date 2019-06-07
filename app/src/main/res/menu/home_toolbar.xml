@@ -20,6 +20,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/home_menu_search"
+        android:icon="@drawable/ic_search_24dp"
+        android:title="@string/search_menu_title"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
+
+    <item
         android:id="@+id/home_menu_user_login"
         android:icon="@drawable/ic_person_outline"
         android:title="@string/login"

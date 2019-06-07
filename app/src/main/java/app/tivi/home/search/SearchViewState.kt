@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.home.main
+package app.tivi.home.search
 
-import app.tivi.data.entities.TraktUser
-import app.tivi.trakt.TraktAuthState
+import app.tivi.data.entities.SearchResults
+import app.tivi.tmdb.TmdbImageUrlProvider
 import com.airbnb.mvrx.MvRxState
 
-data class HomeNavigationViewState(
-    val navigationItems: List<HomeNavigationItem> = HomeNavigationItem.values().asList(),
-    val user: TraktUser? = null,
-    val authState: TraktAuthState = TraktAuthState.LOGGED_OUT
+data class SearchViewState(
+    val searchResults: SearchResults? = null,
+    val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider()
 ) : MvRxState

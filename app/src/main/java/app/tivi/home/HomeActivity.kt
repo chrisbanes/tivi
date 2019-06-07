@@ -21,7 +21,10 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.constraintlayout.motion.widget.TransitionAdapter
+import androidx.core.view.postDelayed
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -30,18 +33,24 @@ import app.tivi.R
 import app.tivi.TiviActivityMvRxView
 import app.tivi.databinding.ActivityHomeBinding
 import app.tivi.extensions.doOnApplyWindowInsets
+import app.tivi.extensions.find
 import app.tivi.extensions.hideSoftInput
+import app.tivi.extensions.toDp
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.home.main.HomeNavigationEpoxyController
 import app.tivi.home.main.HomeNavigationItem
 import app.tivi.home.main.homeNavigationItemForDestinationId
+import app.tivi.home.search.SearchFragment
+import app.tivi.home.search.SearchViewModel
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktConstants
+import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.glide.GlideApp
 import app.tivi.ui.glide.asGlideTarget
 import app.tivi.ui.navigation.AppBarConfiguration
 import app.tivi.ui.navigation.NavigationUI
 import app.tivi.ui.navigation.NavigationView
+import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.viewModel
 import com.airbnb.mvrx.withState
 import com.bumptech.glide.request.target.Target
@@ -51,10 +60,11 @@ import net.openid.appauth.AuthorizationService
 import javax.inject.Inject
 
 class HomeActivity : TiviActivityMvRxView() {
-
     private val authService by lazy(LazyThreadSafetyMode.NONE) { AuthorizationService(this) }
 
     private val viewModel: HomeActivityViewModel by viewModel()
+
+    private lateinit var searchView: SearchView
 
     private val navigationView = object : NavigationView {
         override fun open() {
@@ -79,14 +89,16 @@ class HomeActivity : TiviActivityMvRxView() {
         }
     }
 
-    @Inject lateinit var homeNavigationViewModelFactory: HomeActivityViewModel.Factory
+    @Inject
+    lateinit var homeNavigationViewModelFactory: HomeActivityViewModel.Factory
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var userMenuItemGlideTarget: Target<Drawable>
 
-    private val navigationEpoxyController = HomeNavigationEpoxyController(object : HomeNavigationEpoxyController.Callbacks {
-        override fun onNavigationItemSelected(item: HomeNavigationItem) = showNavigationItem(item)
-    })
+    private val navigationEpoxyController = HomeNavigationEpoxyController(
+            object : HomeNavigationEpoxyController.Callbacks {
+                override fun onNavigationItemSelected(item: HomeNavigationItem) = showNavigationItem(item)
+            })
 
     private val navController: NavController
         get() = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
@@ -104,7 +116,51 @@ class HomeActivity : TiviActivityMvRxView() {
             }
         }
 
+        binding.homeRoot.setTransitionListener(object : TransitionAdapter() {
+            override fun onTransitionCompleted(motionLayout: MotionLayout, transitionId: Int) {
+                if (transitionId == R.id.nav_closed) {
+                    // Clear the search results when the nav is closed
+                    // binding.homeSearchInput.text = null
+                }
+            }
+        })
+
         binding.homeToolbar.setOnMenuItemClickListener(::onMenuItemClicked)
+
+        val searchMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_search)
+        searchMenuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+                binding.homeRoot.postDelayed(300) {
+                    binding.homeRoot.transitionToState(R.id.home_constraints_search_results)
+                }
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+                binding.homeRoot.transitionToState(R.id.nav_open)
+                return true
+            }
+        })
+
+        searchView = searchMenuItem.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            val searchFragment: SearchFragment = supportFragmentManager.find(R.id.home_search_results)
+            val searchViewModel: SearchViewModel by searchFragment.fragmentViewModel()
+
+            override fun onQueryTextSubmit(query: String): Boolean {
+                if (binding.homeRoot.currentState == R.id.home_constraints_search_results) {
+                    searchViewModel.setSearchQuery(query)
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                if (binding.homeRoot.currentState == R.id.home_constraints_search_results) {
+                    searchViewModel.setSearchQuery(newText)
+                }
+                return true
+            }
+        })
 
         NavigationUI.setupWithNavController(
                 binding.homeToolbar,
@@ -122,7 +178,10 @@ class HomeActivity : TiviActivityMvRxView() {
             navigationEpoxyController.selectedItem = homeNavigationItemForDestinationId(destination.id)
         }
 
-        binding.homeNavRv.setController(navigationEpoxyController)
+        binding.homeNavRv.apply {
+            setController(navigationEpoxyController)
+            addItemDecoration(SpacingItemDecorator(bottom = toDp(2)))
+        }
 
         userMenuItemGlideTarget = binding.homeToolbar.menu.findItem(R.id.home_menu_user_avatar)
                 .asGlideTarget(binding.homeToolbar)

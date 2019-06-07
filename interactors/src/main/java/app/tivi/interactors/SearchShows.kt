@@ -18,18 +18,24 @@ package app.tivi.interactors
 
 import app.tivi.data.entities.SearchResults
 import app.tivi.data.repositories.search.SearchRepository
+import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class SearchShows @Inject constructor(
     private val searchRepository: SearchRepository,
+    private val showRepository: ShowRepository,
     dispatchers: AppCoroutineDispatchers
 ) : SuspendingWorkInteractor<SearchShows.Params, SearchResults>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend fun doWork(params: Params): SearchResults {
-        return searchRepository.search(params.query)
+        val remoteResults = searchRepository.search(params.query)
+        return when {
+            remoteResults.isNotEmpty() -> SearchResults(params.query, remoteResults)
+            else -> SearchResults(params.query, showRepository.searchShows(params.query))
+        }
     }
 
     data class Params(val query: String)

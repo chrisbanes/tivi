@@ -43,4 +43,6 @@ class ShowStore @Inject constructor(
                 ?: show.tmdbId?.let { showDao.getShowWithTmdbId(it)?.id }
                 ?: showDao.insert(show)
     }
+
+    suspend fun searchShows(query: String) = showDao.search("*$query*")
 }
