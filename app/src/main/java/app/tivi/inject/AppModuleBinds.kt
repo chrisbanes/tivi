@@ -27,6 +27,8 @@ import app.tivi.appinitializers.PreferencesInitializer
 import app.tivi.appinitializers.RxAndroidInitializer
 import app.tivi.appinitializers.ThreeTenBpInitializer
 import app.tivi.appinitializers.TimberInitializer
+import app.tivi.settings.TiviPreferences
+import app.tivi.settings.TiviPreferencesImpl
 import app.tivi.util.Logger
 import app.tivi.util.TiviLogger
 import dagger.Binds
@@ -48,6 +50,10 @@ abstract class AppModuleBinds {
     @Singleton
     @Binds
     abstract fun provideLogger(bind: TiviLogger): Logger
+
+    @Singleton
+    @Binds
+    abstract fun providePreferences(bind: TiviPreferencesImpl): TiviPreferences
 
     @Binds
     @IntoSet

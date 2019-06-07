@@ -22,10 +22,13 @@
     <string name="pref_theme_battery">Set by Battery Saver</string>
     <string name="pref_theme_system">Use system default</string>
 
-    <string name="pref_theme_light_key" translatable="false">light</string>
-    <string name="pref_theme_dark_key" translatable="false">dark</string>
-    <string name="pref_theme_battery_key" translatable="false">battery</string>
-    <string name="pref_theme_system_key" translatable="false">system</string>
+    <string name="pref_theme_light_value" translatable="false">light</string>
+    <string name="pref_theme_dark_value" translatable="false">dark</string>
+    <string name="pref_theme_battery_value" translatable="false">battery</string>
+    <string name="pref_theme_system_value" translatable="false">system</string>
+
+    <!-- Pre-Q we default to using Battery Saver -->
+    <string name="pref_theme_default_value" translatable="false">@string/pref_theme_battery_value</string>
 
     <string-array name="prefs_theme_titles">
         <item>@string/pref_theme_light</item>
@@ -34,8 +37,8 @@
     </string-array>
 
     <string-array name="prefs_theme_values">
-        <item>@string/pref_theme_light_key</item>
-        <item>@string/pref_theme_dark_key</item>
-        <item>@string/pref_theme_battery_key</item>
+        <item>@string/pref_theme_light_value</item>
+        <item>@string/pref_theme_dark_value</item>
+        <item>@string/pref_theme_battery_value</item>
     </string-array>
 </resources>

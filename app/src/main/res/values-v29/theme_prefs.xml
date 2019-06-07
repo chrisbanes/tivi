@@ -16,6 +16,9 @@
   -->
 
 <resources>
+    <!-- On Q+ we default using the system default -->
+    <string name="pref_theme_default_value" translatable="false">@string/pref_theme_system_value</string>
+
     <string-array name="prefs_theme_titles">
         <item>@string/pref_theme_light</item>
         <item>@string/pref_theme_dark</item>
@@ -23,8 +26,8 @@
     </string-array>
 
     <string-array name="prefs_theme_values">
-        <item>@string/pref_theme_light_key</item>
-        <item>@string/pref_theme_dark_key</item>
-        <item>@string/pref_theme_system_key</item>
+        <item>@string/pref_theme_light_value</item>
+        <item>@string/pref_theme_dark_value</item>
+        <item>@string/pref_theme_system_value</item>
     </string-array>
 </resources>

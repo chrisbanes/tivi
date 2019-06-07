@@ -16,7 +16,8 @@
   ~
   -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory android:title="@string/settings_ui_category_title">
 
@@ -25,7 +26,8 @@
             android:entries="@array/prefs_theme_titles"
             android:entryValues="@array/prefs_theme_values"
             android:key="pref_theme"
-            android:title="@string/settings_theme_title" />
+            android:title="@string/settings_theme_title"
+            app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 
@@ -38,7 +40,6 @@
             android:title="@string/view_privacy_policy" />
 
         <Preference
-            android:enabled="false"
             android:key="version"
             android:title="@string/settings_app_version" />
 
