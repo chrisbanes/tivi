@@ -21,7 +21,7 @@
 
     <item
         android:id="@+id/home_menu_search"
-        android:visible="false"
+        android:icon="@drawable/ic_search_24dp"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always|collapseActionView" />
 

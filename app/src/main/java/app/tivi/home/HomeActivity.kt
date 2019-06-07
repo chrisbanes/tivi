@@ -24,6 +24,7 @@ import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.TransitionAdapter
+import androidx.core.view.postDelayed
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -70,11 +71,6 @@ class HomeActivity : TiviActivityMvRxView() {
             binding.homeRoot.transitionToState(R.id.nav_open)
             // Make sure the keyboard is dismissed when we open the navigation menu
             hideSoftInput()
-
-            binding.homeToolbar.menu.findItem(R.id.home_menu_search).apply {
-                isVisible = true
-                expandActionView()
-            }
         }
 
         override fun close() {
@@ -134,7 +130,9 @@ class HomeActivity : TiviActivityMvRxView() {
         val searchMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_search)
         searchMenuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-                binding.homeRoot.transitionToState(R.id.home_constraints_search_results)
+                binding.homeRoot.postDelayed(300) {
+                    binding.homeRoot.transitionToState(R.id.home_constraints_search_results)
+                }
                 return true
             }
 
@@ -150,14 +148,14 @@ class HomeActivity : TiviActivityMvRxView() {
             val searchViewModel: SearchViewModel by searchFragment.fragmentViewModel()
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                if (binding.homeRoot.currentState != R.id.nav_closed) {
+                if (binding.homeRoot.currentState == R.id.home_constraints_search_results) {
                     searchViewModel.setSearchQuery(query)
                 }
                 return true
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                if (binding.homeRoot.currentState != R.id.nav_closed) {
+                if (binding.homeRoot.currentState == R.id.home_constraints_search_results) {
                     searchViewModel.setSearchQuery(newText)
                 }
                 return true
