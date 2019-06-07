@@ -31,6 +31,8 @@
     <string name="login">Login</string>
     <string name="header_more">More</string>
 
+    <string name="search_menu_title">Search</string>
+
     <string name="settings_title">Settings</string>
     <string name="settings_ui_category_title">User Interface</string>
     <string name="settings_theme_title">Theme</string>
