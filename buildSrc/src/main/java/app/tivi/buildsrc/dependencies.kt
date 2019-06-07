@@ -47,7 +47,7 @@ object Libs {
     val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0"
 
     object Google {
-        val material = "com.google.android.material:material:1.1.0-alpha06"
+        val material = "com.google.android.material:material:1.1.0-alpha07"
         val firebaseCore = "com.google.firebase:firebase-core:16.0.8"
         val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.9.9"
         val gmsGoogleServices = "com.google.gms:google-services:4.2.0"
@@ -70,7 +70,7 @@ object Libs {
     }
 
     object AndroidX {
-        val appcompat = "androidx.appcompat:appcompat:1.1.0-alpha05"
+        val appcompat = "androidx.appcompat:appcompat:1.1.0-beta01"
         val browser = "androidx.browser:browser:1.0.0"
         val palette = "androidx.palette:palette:1.0.0"
         val recyclerview = "androidx.recyclerview:recyclerview:1.0.0"
@@ -84,7 +84,7 @@ object Libs {
         }
 
         object Fragment {
-            private const val version = "1.1.0-alpha06"
+            private const val version = "1.1.0-beta01"
             val fragment = "androidx.fragment:fragment:$version"
             val fragmentKtx = "androidx.fragment:fragment-ktx:$version"
         }
@@ -106,7 +106,7 @@ object Libs {
             val rxjava2 = "androidx.paging:paging-rxjava2:$version"
         }
 
-        val preference = "androidx.preference:preference:1.1.0-alpha02"
+        val preference = "androidx.preference:preference:1.1.0-beta01"
 
         val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.0-beta1"
 
@@ -121,7 +121,7 @@ object Libs {
         }
 
         object Room {
-            private const val version = "2.1.0-alpha07"
+            private const val version = "2.1.0-rc01"
             val common = "androidx.room:room-common:$version"
             val runtime = "androidx.room:room-runtime:$version"
             val rxjava2 = "androidx.room:room-rxjava2:$version"

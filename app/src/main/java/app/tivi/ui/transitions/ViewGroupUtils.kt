@@ -16,22 +16,22 @@
 
 package app.tivi.ui.transitions
 
-import android.util.Log
 import android.view.ViewGroup
+import timber.log.Timber
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
 private var sSuppressLayoutMethod: Method? = null
 private var sSuppressLayoutMethodFetched: Boolean = false
 
-fun ViewGroup.suppressLayout(suppress: Boolean) {
+fun ViewGroup.suppressLayoutInternal(suppress: Boolean) {
     if (!sSuppressLayoutMethodFetched) {
         try {
             sSuppressLayoutMethod = ViewGroup::class.java.getDeclaredMethod("suppressLayout",
                     Boolean::class.javaPrimitiveType)
             sSuppressLayoutMethod!!.isAccessible = true
         } catch (e: NoSuchMethodException) {
-            Log.i("suppressLayout", "Failed to retrieve suppressLayout method", e)
+            Timber.i(e, "Failed to retrieve suppressLayout method")
         }
         sSuppressLayoutMethodFetched = true
     }
@@ -39,9 +39,9 @@ fun ViewGroup.suppressLayout(suppress: Boolean) {
         try {
             sSuppressLayoutMethod!!.invoke(this, suppress)
         } catch (e: IllegalAccessException) {
-            Log.i("suppressLayout", "Failed to invoke suppressLayout method", e)
+            Timber.i(e, "Failed to invoke suppressLayout method")
         } catch (e: InvocationTargetException) {
-            Log.i("suppressLayout", "Error invoking suppressLayout method", e)
+            Timber.i(e, "Error invoking suppressLayout method")
         }
     }
 }
