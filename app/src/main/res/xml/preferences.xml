@@ -22,7 +22,7 @@
     <PreferenceCategory android:title="@string/settings_ui_category_title">
 
         <ListPreference
-            android:defaultValue="system"
+            android:defaultValue="@string/pref_theme_default_value"
             android:entries="@array/prefs_theme_titles"
             android:entryValues="@array/prefs_theme_values"
             android:key="pref_theme"
