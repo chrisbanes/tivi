@@ -80,6 +80,7 @@ jobs:
   check:
     <<: *config_android
     steps:
+      - <<: *update_sdk
       - checkout
       - <<: *attach_workspace
       - <<: *gen_cache_key
@@ -107,6 +108,7 @@ jobs:
   build_release:
     <<: *config_android
     steps:
+      - <<: *update_sdk
       - checkout
       - <<: *attach_workspace
       - <<: *gen_cache_key
@@ -127,6 +129,7 @@ jobs:
   deploy_to_play:
     <<: *config_android
     steps:
+      - <<: *update_sdk
       - checkout
       - <<: *gen_cache_key
       - <<: *restore_cache
