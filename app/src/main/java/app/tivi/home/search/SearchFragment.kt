@@ -29,7 +29,6 @@ import app.tivi.util.GridToGridTransitioner
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
-import kotlinx.android.synthetic.main.view_holder_empty_state.view.*
 import javax.inject.Inject
 
 internal class SearchFragment : TiviMvRxFragment() {

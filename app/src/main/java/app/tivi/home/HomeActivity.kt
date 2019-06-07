@@ -35,6 +35,7 @@ import app.tivi.databinding.ActivityHomeBinding
 import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.find
 import app.tivi.extensions.hideSoftInput
+import app.tivi.extensions.toDp
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.home.main.HomeNavigationEpoxyController
 import app.tivi.home.main.HomeNavigationItem
@@ -43,6 +44,7 @@ import app.tivi.home.search.SearchFragment
 import app.tivi.home.search.SearchViewModel
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktConstants
+import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.glide.GlideApp
 import app.tivi.ui.glide.asGlideTarget
 import app.tivi.ui.navigation.AppBarConfiguration
@@ -162,7 +164,10 @@ class HomeActivity : TiviActivityMvRxView() {
             navigationEpoxyController.selectedItem = homeNavigationItemForDestinationId(destination.id)
         }
 
-        binding.homeNavRv.setController(navigationEpoxyController)
+        binding.homeNavRv.apply {
+            setController(navigationEpoxyController)
+            addItemDecoration(SpacingItemDecorator(bottom = toDp(2)))
+        }
 
         userMenuItemGlideTarget = binding.homeToolbar.menu.findItem(R.id.home_menu_user_avatar)
                 .asGlideTarget(binding.homeToolbar)

@@ -20,7 +20,12 @@ import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
-class SpacingItemDecorator(left: Int, top: Int, right: Int, bottom: Int) : RecyclerView.ItemDecoration() {
+class SpacingItemDecorator(
+    left: Int = 0,
+    top: Int = 0,
+    right: Int = 0,
+    bottom: Int = 0
+) : RecyclerView.ItemDecoration() {
 
     constructor(spacing: Int) : this(spacing, spacing, spacing, spacing)
 

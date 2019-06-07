@@ -19,8 +19,11 @@ package app.tivi.extensions
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.res.Resources
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.getSystemService
+import androidx.fragment.app.Fragment
+import kotlin.math.roundToInt
 
 inline fun <reified T : Context> Context.findBaseContext(): T? {
     var ctx: Context? = this
@@ -44,3 +47,7 @@ fun Activity.hideSoftInput() {
         imm.hideSoftInputFromWindow(currentFocus.windowToken, 0)
     }
 }
+
+fun Fragment.toDp(px: Int) = resources.toDp(px)
+fun Activity.toDp(px: Int) = resources.toDp(px)
+fun Resources.toDp(px: Int) = (displayMetrics.density * px).roundToInt()
