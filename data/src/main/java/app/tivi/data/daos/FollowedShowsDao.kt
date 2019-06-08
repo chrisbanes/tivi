@@ -99,6 +99,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             INNER JOIN seasons AS s ON fs.show_id = s.show_id
             INNER JOIN episodes AS eps ON eps.season_id = s.id
             LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
+            LEFT JOIN followed_next_to_watch as nw ON nw.id = fs.id
             WHERE s.number != 0
             GROUP BY fs.id
             ORDER BY
@@ -106,8 +107,9 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
                 SUM(CASE WHEN datetime(first_aired) < datetime('now') THEN 1 ELSE 0 END) = COUNT(watched_at) ASC,
                 /* latest event */
                 MAX(
-				    MAX(datetime(coalesce(watched_at, 0))), /* last watch */
-					MAX(datetime(coalesce(followed_at, 0))) /* when followed */
+                    MAX(datetime(coalesce(next_ep_to_watch_air_date, 0))), /* next episode to watch */
+                    MAX(datetime(coalesce(watched_at, 0))), /* last watch */
+                    MAX(datetime(coalesce(followed_at, 0))) /* when followed */
                 ) DESC
         """
 
@@ -117,6 +119,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             INNER JOIN seasons AS s ON fs.show_id = s.show_id
             INNER JOIN episodes AS eps ON eps.season_id = s.id
             LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
+            LEFT JOIN followed_next_to_watch as nw ON nw.id = fs.id
             WHERE s.number != 0 AND s_fts.title MATCH :filter
             GROUP BY fs.id
             ORDER BY
@@ -124,6 +127,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
                 SUM(CASE WHEN datetime(first_aired) < datetime('now') THEN 1 ELSE 0 END) = COUNT(watched_at) ASC,
                 /* latest event */
                 MAX(
+                    MAX(datetime(coalesce(next_ep_to_watch_air_date, 0))), /* next episode to watch */
                     MAX(datetime(coalesce(watched_at, 0))), /* last watch */
                     MAX(datetime(coalesce(followed_at, 0))) /* when followed */
                 ) DESC
