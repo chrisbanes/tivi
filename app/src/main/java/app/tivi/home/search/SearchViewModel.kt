@@ -57,6 +57,10 @@ class SearchViewModel @AssistedInject constructor(
         searchQuery.onNext(query)
     }
 
+    fun clearQuery() {
+        searchQuery.onNext("")
+    }
+
     @AssistedInject.Factory
     interface Factory {
         fun create(initialState: SearchViewState): SearchViewModel

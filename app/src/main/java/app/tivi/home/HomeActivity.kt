@@ -24,7 +24,6 @@ import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.TransitionAdapter
-import androidx.core.view.postDelayed
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -32,6 +31,7 @@ import androidx.navigation.navOptions
 import app.tivi.R
 import app.tivi.TiviActivityMvRxView
 import app.tivi.databinding.ActivityHomeBinding
+import app.tivi.extensions.beingDelayedTransition
 import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.find
 import app.tivi.extensions.hideSoftInput
@@ -128,39 +128,7 @@ class HomeActivity : TiviActivityMvRxView() {
         binding.homeToolbar.setOnMenuItemClickListener(::onMenuItemClicked)
 
         val searchMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_search)
-        searchMenuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-                binding.homeRoot.postDelayed(300) {
-                    binding.homeRoot.transitionToState(R.id.home_constraints_search_results)
-                }
-                return true
-            }
-
-            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                binding.homeRoot.transitionToState(R.id.nav_open)
-                return true
-            }
-        })
-
-        searchView = searchMenuItem.actionView as SearchView
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            val searchFragment: SearchFragment = supportFragmentManager.find(R.id.home_search_results)
-            val searchViewModel: SearchViewModel by searchFragment.fragmentViewModel()
-
-            override fun onQueryTextSubmit(query: String): Boolean {
-                if (binding.homeRoot.currentState == R.id.home_constraints_search_results) {
-                    searchViewModel.setSearchQuery(query)
-                }
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                if (binding.homeRoot.currentState == R.id.home_constraints_search_results) {
-                    searchViewModel.setSearchQuery(newText)
-                }
-                return true
-            }
-        })
+        searchMenuItem.setOnActionExpandListener(SearchViewListeners())
 
         NavigationUI.setupWithNavController(
                 binding.homeToolbar,
@@ -264,5 +232,57 @@ class HomeActivity : TiviActivityMvRxView() {
             true
         }
         else -> false
+    }
+
+    private inner class SearchViewListeners : View.OnFocusChangeListener,
+            SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
+        private val searchFragment: SearchFragment = supportFragmentManager.find(R.id.home_search_results)
+        private val searchViewModel: SearchViewModel by searchFragment.fragmentViewModel()
+
+        private var expandedMenuItem: MenuItem? = null
+
+        override fun onQueryTextSubmit(query: String): Boolean {
+            if (binding.homeRoot.currentState == R.id.home_constraints_search_results) {
+                searchViewModel.setSearchQuery(query)
+                hideSoftInput()
+            }
+            return true
+        }
+
+        override fun onQueryTextChange(newText: String): Boolean {
+            if (binding.homeRoot.currentState == R.id.home_constraints_search_results) {
+                searchViewModel.setSearchQuery(newText)
+            }
+            return true
+        }
+
+        override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+            expandedMenuItem = item
+
+            val searchView = item.actionView as SearchView
+            searchView.setOnQueryTextListener(this)
+            searchView.setOnQueryTextFocusChangeListener(this)
+
+            binding.homeToolbar.beingDelayedTransition(100)
+            return true
+        }
+
+        override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+            expandedMenuItem = null
+
+            searchViewModel.clearQuery()
+
+            binding.homeToolbar.beingDelayedTransition(100)
+            binding.homeRoot.transitionToState(R.id.nav_open)
+            return true
+        }
+
+        override fun onFocusChange(view: View, hasFocus: Boolean) {
+            if (hasFocus) {
+                binding.homeRoot.transitionToState(R.id.home_constraints_search_results)
+            } else {
+                expandedMenuItem?.collapseActionView()
+            }
+        }
     }
 }
