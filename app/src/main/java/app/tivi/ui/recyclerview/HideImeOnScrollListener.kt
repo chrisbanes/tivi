@@ -26,7 +26,7 @@ class HideImeOnScrollListener : RecyclerView.OnScrollListener() {
     private lateinit var imm: InputMethodManager
 
     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-        if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+        if (newState == RecyclerView.SCROLL_STATE_DRAGGING && recyclerView.childCount > 0) {
             if (!::imm.isInitialized) {
                 imm = recyclerView.context.getSystemService()!!
             }

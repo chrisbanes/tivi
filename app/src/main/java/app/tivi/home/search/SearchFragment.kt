@@ -25,6 +25,7 @@ import app.tivi.R
 import app.tivi.data.entities.TiviShow
 import app.tivi.databinding.FragmentSearchBinding
 import app.tivi.ui.ListItemSharedElementHelper
+import app.tivi.ui.recyclerview.HideImeOnScrollListener
 import app.tivi.util.GridToGridTransitioner
 import app.tivi.util.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
@@ -61,6 +62,7 @@ internal class SearchFragment : TiviMvRxFragment() {
 
         binding.recyclerview.apply {
             setController(controller)
+            addOnScrollListener(HideImeOnScrollListener())
         }
 
         controller.callbacks = object : SearchEpoxyController.Callbacks {

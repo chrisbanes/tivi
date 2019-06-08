@@ -18,8 +18,15 @@ package app.tivi.extensions
 
 import android.graphics.Rect
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.transition.AutoTransition
+import androidx.transition.TransitionManager
+
+fun ViewGroup.beingDelayedTransition(duration: Long = 200) {
+    TransitionManager.beginDelayedTransition(this, AutoTransition().apply { setDuration(duration) })
+}
 
 fun View.getBounds(rect: Rect) {
     rect.set(left, top, right, bottom)

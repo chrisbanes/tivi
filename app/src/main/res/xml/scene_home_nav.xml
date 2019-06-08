@@ -60,25 +60,25 @@
     <Transition
         app:constraintSetEnd="@+id/nav_open"
         app:constraintSetStart="@+id/nav_closed"
-        app:duration="300"
+        app:duration="250"
         app:motionInterpolator="easeInOut" />
 
     <Transition
         app:constraintSetEnd="@+id/nav_closed"
         app:constraintSetStart="@+id/nav_open"
-        app:duration="300"
+        app:duration="250"
         app:motionInterpolator="easeInOut" />
 
     <Transition
         app:constraintSetEnd="@+id/nav_open"
         app:constraintSetStart="@+id/home_constraints_search_results"
-        app:duration="400"
+        app:duration="320"
         app:motionInterpolator="easeInOut" />
 
     <Transition
         app:constraintSetEnd="@+id/nav_closed"
         app:constraintSetStart="@+id/home_constraints_search_results"
-        app:duration="500"
+        app:duration="400"
         app:motionInterpolator="easeInOut" />
 
 </MotionScene>
