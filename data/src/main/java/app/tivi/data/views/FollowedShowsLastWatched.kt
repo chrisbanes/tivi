@@ -17,6 +17,7 @@
 package app.tivi.data.views
 
 import androidx.room.DatabaseView
+import app.tivi.data.entities.Season
 import org.threeten.bp.OffsetDateTime
 
 @DatabaseView(value = """
@@ -27,10 +28,9 @@ FROM
   myshows_entries as fs
   INNER JOIN seasons AS s ON fs.show_id = s.show_id
   INNER JOIN episodes AS eps ON eps.season_id = s.id
-  LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
+  INNER JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
 WHERE
-  s.number != 0
-  AND ew.watched_at IS NOT NULL
+  s.number != ${Season.NUMBER_SPECIALS}
 GROUP BY
   fs.id
 """, viewName = "followed_last_watched_airdate")

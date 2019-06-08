@@ -22,6 +22,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
+import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import io.reactivex.Observable
 
@@ -100,7 +101,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             INNER JOIN episodes AS eps ON eps.season_id = s.id
             LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
             LEFT JOIN followed_next_to_watch as nw ON nw.id = fs.id
-            WHERE s.number != 0
+            WHERE s.number != ${Season.NUMBER_SPECIALS}
             GROUP BY fs.id
             ORDER BY
                 /* shows with aired episodes to watch first */
@@ -120,7 +121,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             INNER JOIN episodes AS eps ON eps.season_id = s.id
             LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
             LEFT JOIN followed_next_to_watch as nw ON nw.id = fs.id
-            WHERE s.number != 0 AND s_fts.title MATCH :filter
+            WHERE s.number != ${Season.NUMBER_SPECIALS} AND s_fts.title MATCH :filter
             GROUP BY fs.id
             ORDER BY
                 /* shows with aired episodes to watch first */
