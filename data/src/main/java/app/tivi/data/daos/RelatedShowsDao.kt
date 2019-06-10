@@ -27,11 +27,15 @@ import io.reactivex.Observable
 abstract class RelatedShowsDao : PairEntryDao<RelatedShowEntry, RelatedShowEntryWithShow> {
     @Transaction
     @Query("SELECT * FROM related_shows WHERE show_id = :showId ORDER BY order_index")
-    abstract override fun entries(showId: Long): List<RelatedShowEntryWithShow>
+    abstract override fun entries(showId: Long): List<RelatedShowEntry>
 
     @Transaction
     @Query("SELECT * FROM related_shows WHERE show_id = :showId ORDER BY order_index")
-    abstract override fun entriesObservable(showId: Long): Observable<List<RelatedShowEntryWithShow>>
+    abstract override fun entriesWithShows(showId: Long): List<RelatedShowEntryWithShow>
+
+    @Transaction
+    @Query("SELECT * FROM related_shows WHERE show_id = :showId ORDER BY order_index")
+    abstract override fun entriesWithShowsObservable(showId: Long): Observable<List<RelatedShowEntryWithShow>>
 
     @Query("DELETE FROM related_shows WHERE show_id = :showId")
     abstract override suspend fun deleteWithShowId(showId: Long)

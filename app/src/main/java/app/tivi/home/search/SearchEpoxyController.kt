@@ -36,14 +36,14 @@ class SearchEpoxyController @Inject constructor(
     override fun buildModels() {
         val searchResult = viewState.searchResults
 
-        searchResult?.results?.forEach { show ->
+        searchResult?.results?.forEach { showDetailed ->
             searchItemShow {
-                id(show.id)
-                tiviShow(show)
+                id(showDetailed.show.id)
+                tiviShow(showDetailed.show)
                 textCreator(textCreator)
                 tmdbImageUrlProvider(viewState.tmdbImageUrlProvider)
                 clickListener { _ ->
-                    callbacks?.onSearchItemClicked(show)
+                    callbacks?.onSearchItemClicked(showDetailed.show)
                 }
             }
         }

@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 20,
-    "identityHash": "e124c3acfe6c43a127dbc41914ae0c54",
+    "version": 21,
+    "identityHash": "364dc66dca74ffa97cd348917bcb983a",
     "entities": [
       {
         "tableName": "shows",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `imdb_id` TEXT, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `overview` TEXT, `homepage` TEXT, `trakt_rating` REAL, `certification` TEXT, `first_aired` TEXT, `country` TEXT, `network` TEXT, `runtime` INTEGER, `genres` TEXT, `last_trakt_data_update` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `imdb_id` TEXT, `overview` TEXT, `homepage` TEXT, `trakt_rating` REAL, `certification` TEXT, `first_aired` TEXT, `country` TEXT, `network` TEXT, `runtime` INTEGER, `genres` TEXT, `last_trakt_data_update` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -41,18 +41,6 @@
           {
             "fieldPath": "imdbId",
             "columnName": "imdb_id",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "tmdbPosterPath",
-            "columnName": "tmdb_poster_path",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "tmdbBackdropPath",
-            "columnName": "tmdb_backdrop_path",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -928,7 +916,7 @@
       },
       {
         "tableName": "show_images",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `show_id` INTEGER NOT NULL, `path` TEXT NOT NULL, `type` TEXT NOT NULL, `lang` TEXT, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `show_id` INTEGER NOT NULL, `path` TEXT NOT NULL, `type` TEXT NOT NULL, `lang` TEXT, `rating` REAL NOT NULL, `is_primary` INTEGER NOT NULL, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -959,6 +947,18 @@
             "columnName": "lang",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "rating",
+            "columnName": "rating",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPrimary",
+            "columnName": "is_primary",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -970,11 +970,11 @@
         "indices": [
           {
             "name": "index_show_images_show_id",
-            "unique": true,
+            "unique": false,
             "columnNames": [
               "show_id"
             ],
-            "createSql": "CREATE UNIQUE INDEX `index_show_images_show_id` ON `${TABLE_NAME}` (`show_id`)"
+            "createSql": "CREATE  INDEX `index_show_images_show_id` ON `${TABLE_NAME}` (`show_id`)"
           }
         ],
         "foreignKeys": [
@@ -1008,7 +1008,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e124c3acfe6c43a127dbc41914ae0c54')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '364dc66dca74ffa97cd348917bcb983a')"
     ]
   }
 }

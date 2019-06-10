@@ -62,23 +62,34 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
 ) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
     init {
         observeShowFollowStatus.observe()
+                .distinctUntilChanged()
                 .execute {
                     when (it) {
-                        is Success -> copy(isFollowed = it.invoke())
+                        is Success -> copy(isFollowed = it.invoke()!!)
                         else -> copy(isFollowed = false)
                     }
                 }
 
         observeShowDetails.observe()
-                .execute { copy(show = it) }
+                .distinctUntilChanged()
+                .execute {
+                    if (it is Success) {
+                        val value = it()!!
+                        copy(show = value.show, posterImage = value.poster, backdropImage = value.backdrop)
+                    } else {
+                        this
+                    }
+                }
 
         observeRelatedShows.observe()
+                .distinctUntilChanged()
                 .execute { copy(relatedShows = it) }
 
         tmdbManager.imageProviderObservable
                 .execute { copy(tmdbImageUrlProvider = it) }
 
         observeShowSeasons.observe()
+                .distinctUntilChanged()
                 .execute { copy(seasons = it) }
 
         withState {

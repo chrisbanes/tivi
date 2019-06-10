@@ -30,6 +30,10 @@
             type="app.tivi.data.entities.TiviShow" />
 
         <variable
+            name="posterImage"
+            type="app.tivi.data.entities.TmdbImageEntity" />
+
+        <variable
             name="transitionName"
             type="String" />
 
@@ -70,7 +74,7 @@
             android:layout_height="wrap_content"
             android:scaleType="centerCrop"
             app:tmdbImageUrlProvider="@{tmdbImageUrlProvider}"
-            app:tmdbPosterPath="@{tiviShow.tmdbPosterPath}" />
+            app:image="@{posterImage}" />
 
     </com.google.android.material.card.MaterialCardView>
 

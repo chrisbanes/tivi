@@ -17,12 +17,14 @@
 package app.tivi.data.resultentities
 
 import app.tivi.data.Entry
+import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import java.util.Objects
 
 interface EntryWithShow<ET : Entry> {
-    var entry: ET?
+    var entry: ET
     var relations: List<TiviShow>
+    var images: List<ShowTmdbImage>
 
     val show: TiviShow
         get() {
@@ -31,6 +33,6 @@ interface EntryWithShow<ET : Entry> {
         }
 
     fun generateStableId(): Long {
-        return Objects.hash(entry!!::class.java.name, show.id).toLong()
+        return Objects.hash(entry::class.java.name, entry.showId).toLong()
     }
 }

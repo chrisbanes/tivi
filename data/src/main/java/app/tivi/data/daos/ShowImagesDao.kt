@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package app.tivi.data.mappers
+package app.tivi.data.daos
 
-import app.tivi.data.entities.TiviShow
-import com.uwetrottmann.tmdb2.entities.BaseTvShow
-import javax.inject.Inject
-import javax.inject.Singleton
+import androidx.room.Dao
+import androidx.room.Query
+import app.tivi.data.entities.ShowTmdbImage
 
-@Singleton
-class TmdbBaseShowToTiviShow @Inject constructor() : Mapper<BaseTvShow, TiviShow> {
-    override suspend fun map(from: BaseTvShow) = TiviShow(
-            tmdbId = from.id,
-            title = from.name,
-            summary = from.overview
-    )
+@Dao
+abstract class ShowImagesDao : EntityDao<ShowTmdbImage> {
+    @Query("DELETE FROM show_images WHERE show_id = :showId")
+    abstract suspend fun deleteForShowId(showId: Long)
 }

@@ -123,12 +123,15 @@ class FollowedShowsRepository @Inject constructor(
                     // Create a followed show entry with the show id
                     entry.copy(showId = showId)
                 }.also { entries ->
-                    // Save the show entries
+                    // Save the show entriesWithShows
                     followedShowsStore.sync(entries)
                     // Now update all of the followed shows if needed
                     entries.parallelForEach { entry ->
                         if (showRepository.needsInitialUpdate(entry.showId)) {
                             showRepository.updateShow(entry.showId)
+                        }
+                        if (showRepository.needsImagesUpdate(entry.showId)) {
+                            showRepository.updateShowImages(entry.showId)
                         }
                     }
                 }

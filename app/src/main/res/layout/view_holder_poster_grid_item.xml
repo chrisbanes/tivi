@@ -31,6 +31,10 @@
             type="app.tivi.data.entities.TiviShow" />
 
         <variable
+            name="posterImage"
+            type="app.tivi.data.entities.TmdbImageEntity" />
+
+        <variable
             name="annotationLabel"
             type="String" />
 
@@ -84,7 +88,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tmdbImageUrlProvider="@{tmdbImageUrlProvider}"
-            app:tmdbPosterPath="@{tiviShow.tmdbPosterPath}" />
+            app:image="@{posterImage}" />
 
         <TextView
             android:id="@+id/show_annotation"

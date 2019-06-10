@@ -18,19 +18,25 @@ package app.tivi.data.repositories.shows
 
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
+import app.tivi.data.daos.ShowImagesDao
 import app.tivi.data.daos.TiviShowDao
+import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.resultentities.ShowDetailed
 import io.reactivex.Observable
 import javax.inject.Inject
 
 class ShowStore @Inject constructor(
     private val entityInserter: EntityInserter,
     private val showDao: TiviShowDao,
+    private val showImagesDao: ShowImagesDao,
     private val transactionRunner: DatabaseTransactionRunner
 ) {
     suspend fun getShow(showId: Long) = showDao.getShowWithId(showId)
 
-    fun observeShow(showId: Long): Observable<TiviShow> = showDao.getShowWithIdObservable(showId)
+    suspend fun getShowDetailed(showId: Long) = showDao.getShowWithIdDetailed(showId)
+
+    fun observeShowDetailed(showId: Long): Observable<ShowDetailed> = showDao.getShowWithIdObservable(showId)
 
     suspend fun saveShow(show: TiviShow) = entityInserter.insertOrUpdate(showDao, show)
 
@@ -45,4 +51,9 @@ class ShowStore @Inject constructor(
     }
 
     suspend fun searchShows(query: String) = showDao.search("*$query*")
+
+    suspend fun saveImages(showId: Long, images: List<ShowTmdbImage>) = transactionRunner {
+        showImagesDao.deleteForShowId(showId)
+        entityInserter.insertOrUpdate(showImagesDao, images)
+    }
 }

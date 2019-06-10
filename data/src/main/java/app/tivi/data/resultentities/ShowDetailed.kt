@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,29 +17,32 @@
 package app.tivi.data.resultentities
 
 import androidx.room.Embedded
+import androidx.room.Ignore
 import androidx.room.Relation
-import app.tivi.data.entities.PopularShowEntry
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.entities.findHighestRatedBackdrop
+import app.tivi.data.entities.findHighestRatedPoster
 import java.util.Objects
 
-class PopularEntryWithShow : EntryWithShow<PopularShowEntry> {
+class ShowDetailed {
     @Embedded
-    override lateinit var entry: PopularShowEntry
+    var show: TiviShow = TiviShow.EMPTY_SHOW
 
-    @Relation(parentColumn = "show_id", entityColumn = "id")
-    override var relations: List<TiviShow> = emptyList()
+    @Relation(parentColumn = "id", entityColumn = "show_id")
+    var images: List<ShowTmdbImage> = emptyList()
 
-    @Relation(parentColumn = "show_id", entityColumn = "show_id")
-    override var images: List<ShowTmdbImage> = emptyList()
+    @delegate:Ignore
+    val backdrop: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) { images.findHighestRatedBackdrop() }
+
+    @delegate:Ignore
+    val poster: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) { images.findHighestRatedPoster() }
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
-        other is PopularEntryWithShow -> {
-            entry == other.entry && relations == other.relations && images == other.images
-        }
+        other is ShowDetailed -> show == other.show && images == other.images
         else -> false
     }
 
-    override fun hashCode(): Int = Objects.hash(entry, relations, images)
+    override fun hashCode(): Int = Objects.hash(show, images)
 }

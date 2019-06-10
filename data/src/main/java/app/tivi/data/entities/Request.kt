@@ -18,6 +18,7 @@ package app.tivi.data.entities
 
 enum class Request(val tag: String) {
     SHOW_DETAILS("show_details"),
+    SHOW_IMAGES("show_images"),
     SHOW_SEASONS("show_seasons"),
     EPISODE_DETAILS("episode_details"),
     SHOW_EPISODE_WATCHES("show_episode_watches"),

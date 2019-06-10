@@ -40,6 +40,10 @@
             type="app.tivi.data.entities.TiviShow" />
 
         <variable
+            name="posterImage"
+            type="app.tivi.data.entities.TmdbImageEntity" />
+
+        <variable
             name="posterTransitionName"
             type="String" />
 
@@ -84,7 +88,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tmdbImageUrlProvider="@{tmdbImageUrlProvider}"
-            app:tmdbPosterPath="@{tiviShow.tmdbPosterPath}"
+            app:image="@{posterImage}"
             app:topCornerOutlineProvider="@{ @dimen/image_round_rect_radius }" />
 
         <TextView

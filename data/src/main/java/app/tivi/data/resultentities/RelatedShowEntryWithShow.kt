@@ -19,18 +19,27 @@ package app.tivi.data.resultentities
 import androidx.room.Embedded
 import androidx.room.Relation
 import app.tivi.data.entities.RelatedShowEntry
+import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import java.util.Objects
 
 class RelatedShowEntryWithShow : EntryWithShow<RelatedShowEntry> {
-    @Embedded override var entry: RelatedShowEntry? = null
-    @Relation(parentColumn = "other_show_id", entityColumn = "id") override var relations: List<TiviShow> = emptyList()
+    @Embedded
+    override lateinit var entry: RelatedShowEntry
+
+    @Relation(parentColumn = "other_show_id", entityColumn = "id")
+    override var relations: List<TiviShow> = emptyList()
+
+    @Relation(parentColumn = "other_show_id", entityColumn = "show_id")
+    override var images: List<ShowTmdbImage> = emptyList()
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
-        other is RelatedShowEntryWithShow -> entry == other.entry && relations == other.relations
+        other is RelatedShowEntryWithShow -> {
+            entry == other.entry && relations == other.relations && images == other.images
+        }
         else -> false
     }
 
-    override fun hashCode(): Int = Objects.hash(entry, relations)
+    override fun hashCode(): Int = Objects.hash(entry, relations, images)
 }

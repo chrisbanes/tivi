@@ -59,12 +59,15 @@ class PopularShowsRepository @Inject constructor(
                     if (resetOnSave) {
                         popularShowsStore.deleteAll()
                     }
-                    // Save the popular entries
+                    // Save the popular entriesWithShows
                     popularShowsStore.savePopularShowsPage(page, entries)
                     // Now update all of the related shows if needed
                     entries.parallelForEach { entry ->
                         if (showRepository.needsUpdate(entry.showId)) {
                             showRepository.updateShow(entry.showId)
+                        }
+                        if (showRepository.needsImagesUpdate(entry.showId)) {
+                            showRepository.updateShowImages(entry.showId)
                         }
                     }
                 }

@@ -26,6 +26,7 @@ import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.databinding.ViewHolderDetailsSeasonBinding
@@ -69,51 +70,48 @@ class ShowDetailsEpoxyController @Inject constructor(
         buildSeasonsModels(viewState.seasons, viewState.expandedSeasonIds)
     }
 
-    private fun buildShowModels(asyncShow: Async<TiviShow>) {
-        if (asyncShow is Success) {
-            val show = asyncShow()
-            show.traktRating?.let { rating ->
-                detailsBadge {
-                    val ratingOutOfOneHundred = Math.round(rating * 10)
-                    id("rating")
-                    label(context.getString(R.string.percentage_format, ratingOutOfOneHundred))
-                    icon(R.drawable.ic_details_rating)
-                    contentDescription(context.getString(R.string.rating_content_description_format,
-                            ratingOutOfOneHundred))
-                }
+    private fun buildShowModels(show: TiviShow) {
+        show.traktRating?.let { rating ->
+            detailsBadge {
+                val ratingOutOfOneHundred = Math.round(rating * 10)
+                id("rating")
+                label(context.getString(R.string.percentage_format, ratingOutOfOneHundred))
+                icon(R.drawable.ic_details_rating)
+                contentDescription(context.getString(R.string.rating_content_description_format,
+                        ratingOutOfOneHundred))
             }
-            show.network?.let { network ->
-                detailsBadge {
-                    id("network")
-                    label(network)
-                    icon(R.drawable.ic_details_network)
-                    contentDescription(context.getString(R.string.network_content_description_format, network))
-                }
+        }
+        show.network?.let { network ->
+            detailsBadge {
+                id("network")
+                label(network)
+                icon(R.drawable.ic_details_network)
+                contentDescription(context.getString(R.string.network_content_description_format, network))
             }
-            show.certification?.let { certificate ->
-                detailsBadge {
-                    id("cert")
-                    label(certificate)
-                    icon(R.drawable.ic_details_certificate)
-                    contentDescription(context.getString(R.string.certificate_content_description_format, certificate))
-                }
+        }
+        show.certification?.let { certificate ->
+            detailsBadge {
+                id("cert")
+                label(certificate)
+                icon(R.drawable.ic_details_certificate)
+                contentDescription(context.getString(R.string.certificate_content_description_format, certificate))
             }
-            show.runtime?.let { runtime ->
-                detailsBadge {
-                    val runtimeMinutes = context.getString(R.string.minutes_format, runtime)
-                    id("runtime")
-                    label(runtimeMinutes)
-                    icon(R.drawable.ic_details_runtime)
-                    contentDescription(context.resources?.getQuantityString(
-                            R.plurals.runtime_content_description_format, runtime, runtime))
-                }
+        }
+        show.runtime?.let { runtime ->
+            detailsBadge {
+                val runtimeMinutes = context.getString(R.string.minutes_format, runtime)
+                id("runtime")
+                label(runtimeMinutes)
+                icon(R.drawable.ic_details_runtime)
+                contentDescription(context.resources?.getQuantityString(
+                        R.plurals.runtime_content_description_format, runtime, runtime))
             }
+        }
 
-            detailsSummary {
-                id("summary")
-                entity(show)
-                spanSizeOverride(TotalSpanOverride)
-            }
+        detailsSummary {
+            id("summary")
+            entity(show)
+            spanSizeOverride(TotalSpanOverride)
         }
     }
 
@@ -121,34 +119,31 @@ class ShowDetailsEpoxyController @Inject constructor(
         relatedShows: Async<List<RelatedShowEntryWithShow>>,
         tmdbImageUrlProvider: Async<TmdbImageUrlProvider>
     ) {
-        when (relatedShows) {
-            is Success -> {
-                val related = relatedShows()
-                if (related.isNotEmpty()) {
-                    detailsHeader {
-                        id("related_header")
-                        title(R.string.details_related)
-                        spanSizeOverride(TotalSpanOverride)
-                    }
-                    carousel {
-                        id("related_shows")
-                        numViewsToShowOnScreen(5.25f)
-                        hasFixedSize(true)
+        if (relatedShows is Success) {
+            val related = relatedShows()
+            if (related.isNotEmpty()) {
+                detailsHeader {
+                    id("related_header")
+                    title(R.string.details_related)
+                    spanSizeOverride(TotalSpanOverride)
+                }
+                carousel {
+                    id("related_shows")
+                    numViewsToShowOnScreen(5.25f)
+                    hasFixedSize(true)
 
-                        val small = context.resources.getDimensionPixelSize(R.dimen.spacing_small)
-                        val micro = context.resources.getDimensionPixelSize(R.dimen.spacing_micro)
-                        padding(Carousel.Padding(micro, micro, small, small, micro))
+                    val small = context.resources.getDimensionPixelSize(R.dimen.spacing_small)
+                    val micro = context.resources.getDimensionPixelSize(R.dimen.spacing_micro)
+                    padding(Carousel.Padding(micro, micro, small, small, micro))
 
-                        withModelsFrom(related) { relatedEntry ->
-                            val relatedShow = relatedEntry.show
-                            DetailsRelatedItemBindingModel_()
-                                    .id("related_${relatedShow.id}")
-                                    .tiviShow(relatedShow)
-                                    .tmdbImageUrlProvider(tmdbImageUrlProvider())
-                                    .clickListener { view ->
-                                        callbacks?.onRelatedShowClicked(relatedShow, view)
-                                    }
-                        }
+                    withModelsFrom(related) { relatedEntry ->
+                        val relatedShow = relatedEntry.show
+                        DetailsRelatedItemBindingModel_()
+                                .id("related_${relatedShow.id}")
+                                .tiviShow(relatedShow)
+                                .posterImage(relatedEntry.images.findHighestRatedPoster())
+                                .tmdbImageUrlProvider(tmdbImageUrlProvider())
+                                .clickListener { view -> callbacks?.onRelatedShowClicked(relatedShow, view) }
                     }
                 }
             }

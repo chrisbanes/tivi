@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.data.mappers
+package app.tivi.extensions
 
-import app.tivi.data.entities.TiviShow
-import com.uwetrottmann.tmdb2.entities.BaseTvShow
-import javax.inject.Inject
-import javax.inject.Singleton
+import android.graphics.drawable.Drawable
+import app.tivi.ui.glide.GlideRequest
+import app.tivi.ui.glide.GlideRequests
 
-@Singleton
-class TmdbBaseShowToTiviShow @Inject constructor() : Mapper<BaseTvShow, TiviShow> {
-    override suspend fun map(from: BaseTvShow) = TiviShow(
-            tmdbId = from.id,
-            title = from.name,
-            summary = from.overview
-    )
+fun GlideRequests.optSaturateOnLoad(saturateOnLoad: Boolean): GlideRequest<Drawable> = when {
+    saturateOnLoad -> saturateOnLoad()
+    else -> asDrawable()
 }

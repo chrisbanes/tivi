@@ -44,7 +44,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tmdbBackdropPath="@{state.show.invoke().tmdbBackdropPath}"
+            app:image="@{state.backdropImage}"
             app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider.invoke()}" />
 
         <View
@@ -69,7 +69,7 @@
             app:imageSaturateOnLoad="@{false}"
             app:outlineProviderInstance="@{app.tivi.ui.RoundRectViewOutline.INSTANCE}"
             app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider.invoke()}"
-            app:tmdbPosterPath="@{state.show.invoke().tmdbPosterPath}" />
+            app:image="@{state.posterImage}" />
 
         <!-- Needed to fill a rounding error gap in MotionLayout. See https://issuetracker.google.com/112728689 -->
         <View
@@ -91,7 +91,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:ellipsize="end"
-            android:text="@{state.show.invoke().title}"
+            android:text="@{state.show.title}"
             android:lineSpacingMultiplier="0.85"
             android:textAppearance="?attr/textAppearanceHeadline6"
             tools:text="@sample/shows.txt" />
@@ -102,9 +102,9 @@
             android:id="@+id/details_subtitle"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:contentDescription="@{textCreator.genreContentDescription(state.show.invoke().genres)}"
+            android:contentDescription="@{textCreator.genreContentDescription(state.show.genres)}"
             android:ellipsize="end"
-            android:text="@{textCreator.genreString(state.show.invoke().genres)}"
+            android:text="@{textCreator.genreString(state.show.genres)}"
             android:textAppearance="?attr/textAppearanceCaption"
             android:textColor="#000000"
             tools:text="Drama // Fantasy" />

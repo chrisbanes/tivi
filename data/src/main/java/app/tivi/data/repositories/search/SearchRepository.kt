@@ -17,8 +17,8 @@
 package app.tivi.data.repositories.search
 
 import app.tivi.data.entities.Success
-import app.tivi.data.entities.TiviShow
 import app.tivi.data.repositories.shows.ShowStore
+import app.tivi.data.resultentities.ShowDetailed
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,14 +28,14 @@ class SearchRepository @Inject constructor(
     private val showStore: ShowStore,
     private val tmdbDataSource: TmdbSearchDataSource
 ) {
-    suspend fun search(query: String): List<TiviShow> {
+    suspend fun search(query: String): List<ShowDetailed> {
         if (query.isBlank()) {
             return emptyList()
         }
 
         val cacheValues = searchStore.getResults(query)
         if (cacheValues != null) {
-            return cacheValues.map { showStore.getShow(it)!! }
+            return cacheValues.map { showStore.getShowDetailed(it)!! }
         }
 
         // We need to hit TMDb instead
@@ -48,7 +48,7 @@ class SearchRepository @Inject constructor(
                     searchStore.setResults(query, results.toLongArray())
                 }.mapNotNull {
                     // Finally map back to a TiviShow instance
-                    showStore.getShow(it)
+                    showStore.getShowDetailed(it)
                 }
             }
             else -> emptyList()

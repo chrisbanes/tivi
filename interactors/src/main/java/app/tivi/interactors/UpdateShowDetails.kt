@@ -29,7 +29,12 @@ class UpdateShowDetails @Inject constructor(
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend fun invoke(params: Params) {
-        showRepository.updateShow(params.showId)
+        if (params.forceLoad || showRepository.needsUpdate(params.showId)) {
+            showRepository.updateShow(params.showId)
+        }
+        if (params.forceLoad || showRepository.needsImagesUpdate(params.showId)) {
+            showRepository.updateShowImages(params.showId)
+        }
     }
 
     data class Params(val showId: Long, val forceLoad: Boolean)

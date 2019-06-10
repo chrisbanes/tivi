@@ -19,6 +19,7 @@ package app.tivi.home.discover
 import app.tivi.HeaderBindingModel_
 import app.tivi.R
 import app.tivi.data.Entry
+import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
@@ -58,7 +59,8 @@ class DiscoverEpoxyController @Inject constructor() : TypedEpoxyController<Disco
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
                     tiviShow(item.show)
-                    annotationLabel(item.entry?.watchers.toString())
+                    posterImage(item.images.findHighestRatedPoster())
+                    annotationLabel(item.entry.watchers.toString())
                     annotationIcon(R.drawable.ic_eye_12dp)
                     transitionName("trending_${item.show.homepage}")
                     clickListener { model, _, _, _ ->
@@ -86,6 +88,7 @@ class DiscoverEpoxyController @Inject constructor() : TypedEpoxyController<Disco
                 posterGridItem {
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
+                    posterImage(item.images.findHighestRatedPoster())
                     tiviShow(item.show)
                     transitionName("popular_${item.show.homepage}")
                     clickListener { model, _, _, _ ->

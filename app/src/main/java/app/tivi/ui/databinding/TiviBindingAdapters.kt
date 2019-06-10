@@ -29,7 +29,11 @@ import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import app.tivi.R
+import app.tivi.data.entities.ImageType
+import app.tivi.data.entities.ShowTmdbImage
+import app.tivi.data.entities.TmdbImageEntity
 import app.tivi.extensions.doOnApplyWindowInsets
+import app.tivi.extensions.optSaturateOnLoad
 import app.tivi.extensions.resolveThemeReferenceResId
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.MaxLinesToggleClickListener
@@ -39,19 +43,6 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import java.util.Objects
 import kotlin.math.roundToInt
-
-@BindingAdapter(
-        "tmdbPosterPath",
-        "tmdbImageUrlProvider",
-        "imageSaturateOnLoad",
-        requireAll = false
-)
-fun loadPoster(
-    view: ImageView,
-    path: String?,
-    urlProvider: TmdbImageUrlProvider?,
-    saturateOnLoad: Boolean?
-) = loadImage(view, path, urlProvider, saturateOnLoad, "poster", TmdbImageUrlProvider::getPosterUrl)
 
 @BindingAdapter(
         "tmdbBackdropPath",
@@ -64,19 +55,36 @@ fun loadBackdrop(
     path: String?,
     urlProvider: TmdbImageUrlProvider?,
     saturateOnLoad: Boolean?
-) = loadImage(view, path, urlProvider, saturateOnLoad, "backdrop", TmdbImageUrlProvider::getBackdropUrl)
-
-private inline fun loadImage(
-    view: ImageView,
-    path: String?,
-    urlProvider: TmdbImageUrlProvider?,
-    saturateOnLoad: Boolean?,
-    type: String,
-    crossinline urlEr: (TmdbImageUrlProvider, String, Int) -> String
 ) {
-    if (path != null && urlProvider != null) {
-        val requestKey = Objects.hash(path, urlProvider, type)
-        view.setTag(R.id.loading, requestKey)
+    val image = if (path != null) ShowTmdbImage(path = path, type = ImageType.BACKDROP, showId = 0) else null
+    loadImage(view, null, urlProvider, saturateOnLoad, image, urlProvider, saturateOnLoad)
+}
+
+@Suppress("UNUSED_PARAMETER")
+@BindingAdapter(
+        "image",
+        "tmdbImageUrlProvider",
+        "imageSaturateOnLoad",
+        requireAll = false
+)
+fun loadImage(
+    view: ImageView,
+    previousImage: TmdbImageEntity?,
+    previousUrlProvider: TmdbImageUrlProvider?,
+    previousSaturateOnLoad: Boolean?,
+    image: TmdbImageEntity?,
+    urlProvider: TmdbImageUrlProvider?,
+    saturateOnLoad: Boolean?
+) {
+    val requestKey = Objects.hash(image, urlProvider)
+    view.setTag(R.id.loading, requestKey)
+
+    if (urlProvider != null && image != null) {
+        if (previousUrlProvider == urlProvider && previousImage == image) {
+            return
+        }
+
+        view.setImageDrawable(null)
 
         view.doOnLayout {
             if (it.getTag(R.id.loading) != requestKey) {
@@ -85,28 +93,17 @@ private inline fun loadImage(
                 return@doOnLayout
             }
 
+            fun toUrl(image: TmdbImageEntity, width: Int) = when (image.type) {
+                ImageType.BACKDROP -> urlProvider.getBackdropUrl(image.path, width)
+                ImageType.POSTER -> urlProvider.getPosterUrl(image.path, width)
+            }
+
             GlideApp.with(it)
-                    .let { r ->
-                        if (saturateOnLoad == null || saturateOnLoad) {
-                            // If we don't have a value, or we're explicitly set the yes, saturate on load
-                            r.saturateOnLoad()
-                        } else {
-                            r.asDrawable()
-                        }
-                    }
-                    .load(urlEr(urlProvider, path, view.width))
-                    .thumbnail(
-                            GlideApp.with(view)
-                                    .let { tr ->
-                                        if (saturateOnLoad == null || saturateOnLoad) {
-                                            // If we don't have a value, or we're explicitly set the yes, saturate on load
-                                            tr.saturateOnLoad()
-                                        } else {
-                                            tr.asDrawable()
-                                        }
-                                    }
-                                    .load(urlEr(urlProvider, path, 0))
-                    )
+                    .optSaturateOnLoad(saturateOnLoad == null || saturateOnLoad)
+                    .load(toUrl(image, view.width))
+                    .thumbnail(GlideApp.with(view)
+                            .optSaturateOnLoad(saturateOnLoad == null || saturateOnLoad)
+                            .load(toUrl(image, 0)))
                     .into(view)
         }
     } else {

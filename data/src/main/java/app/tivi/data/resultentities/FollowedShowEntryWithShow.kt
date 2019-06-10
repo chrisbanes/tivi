@@ -19,14 +19,23 @@ package app.tivi.data.resultentities
 import androidx.room.Embedded
 import androidx.room.Relation
 import app.tivi.data.entities.FollowedShowEntry
+import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.views.FollowedShowsWatchStats
 import java.util.Objects
 
 class FollowedShowEntryWithShow : EntryWithShow<FollowedShowEntry> {
-    @Embedded override var entry: FollowedShowEntry? = null
-    @Relation(parentColumn = "show_id", entityColumn = "id") override var relations: List<TiviShow> = emptyList()
-    @Relation(parentColumn = "id", entityColumn = "id") var _stats: List<FollowedShowsWatchStats> = emptyList()
+    @Embedded
+    override lateinit var entry: FollowedShowEntry
+
+    @Relation(parentColumn = "show_id", entityColumn = "id")
+    override var relations: List<TiviShow> = emptyList()
+
+    @Relation(parentColumn = "show_id", entityColumn = "show_id")
+    override var images: List<ShowTmdbImage> = emptyList()
+
+    @Relation(parentColumn = "id", entityColumn = "id")
+    var _stats: List<FollowedShowsWatchStats> = emptyList()
 
     val stats: FollowedShowsWatchStats?
         get() = _stats.getOrNull(0)
@@ -34,10 +43,10 @@ class FollowedShowEntryWithShow : EntryWithShow<FollowedShowEntry> {
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
         other is FollowedShowEntryWithShow -> {
-            entry == other.entry && relations == other.relations && stats == other.stats
+            entry == other.entry && relations == other.relations && stats == other.stats && images == other.images
         }
         else -> false
     }
 
-    override fun hashCode(): Int = Objects.hash(entry, relations, stats)
+    override fun hashCode(): Int = Objects.hash(entry, relations, stats, images)
 }
