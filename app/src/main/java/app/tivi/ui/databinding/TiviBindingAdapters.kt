@@ -45,19 +45,6 @@ import java.util.Objects
 import kotlin.math.roundToInt
 
 @BindingAdapter(
-        "tmdbPosterPath",
-        "tmdbImageUrlProvider",
-        "imageSaturateOnLoad",
-        requireAll = false
-)
-fun loadPoster(
-    view: ImageView,
-    path: String,
-    urlProvider: TmdbImageUrlProvider,
-    saturateOnLoad: Boolean?
-) = loadImage(view, ShowTmdbImage(path = path, type = ImageType.POSTER, showId = 0), urlProvider, saturateOnLoad)
-
-@BindingAdapter(
         "tmdbBackdropPath",
         "tmdbImageUrlProvider",
         "imageSaturateOnLoad",
@@ -65,10 +52,13 @@ fun loadPoster(
 )
 fun loadBackdrop(
     view: ImageView,
-    path: String,
-    urlProvider: TmdbImageUrlProvider,
+    path: String?,
+    urlProvider: TmdbImageUrlProvider?,
     saturateOnLoad: Boolean?
-) = loadImage(view, ShowTmdbImage(path = path, type = ImageType.BACKDROP, showId = 0), urlProvider, saturateOnLoad)
+) {
+    val image = if (path != null) ShowTmdbImage(path = path, type = ImageType.BACKDROP, showId = 0) else null
+    loadImage(view, image, urlProvider, saturateOnLoad)
+}
 
 @BindingAdapter(
         "image",
