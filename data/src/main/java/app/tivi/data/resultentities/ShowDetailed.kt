@@ -33,10 +33,10 @@ class ShowDetailed {
     var images: List<ShowTmdbImage> = emptyList()
 
     @delegate:Ignore
-    val backdrop: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) { images.findHighestRatedPoster() }
+    val backdrop: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) { images.findHighestRatedBackdrop() }
 
     @delegate:Ignore
-    val poster: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) { images.findHighestRatedBackdrop() }
+    val poster: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) { images.findHighestRatedPoster() }
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true

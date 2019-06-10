@@ -82,9 +82,15 @@ fun loadImage(
     urlProvider: TmdbImageUrlProvider?,
     saturateOnLoad: Boolean?
 ) {
-    if (image != null && urlProvider != null) {
-        val requestKey = Objects.hash(image, urlProvider)
-        view.setTag(R.id.loading, requestKey)
+    val requestKey = Objects.hash(image, urlProvider)
+    if (view.getTag(R.id.loading) == requestKey) {
+        // We're already loading this image, ignore the call
+        return
+    }
+    view.setTag(R.id.loading, requestKey)
+
+    if (urlProvider != null && image != null) {
+        view.setImageDrawable(null)
 
         view.doOnLayout {
             if (it.getTag(R.id.loading) != requestKey) {
@@ -93,11 +99,9 @@ fun loadImage(
                 return@doOnLayout
             }
 
-            fun toUrl(image: TmdbImageEntity, width: Int): String {
-                return when (image.type) {
-                    ImageType.BACKDROP -> urlProvider.getBackdropUrl(image.path, width)
-                    ImageType.POSTER -> urlProvider.getPosterUrl(image.path, width)
-                }
+            fun toUrl(image: TmdbImageEntity, width: Int) = when (image.type) {
+                ImageType.BACKDROP -> urlProvider.getBackdropUrl(image.path, width)
+                ImageType.POSTER -> urlProvider.getPosterUrl(image.path, width)
             }
 
             GlideApp.with(it)
