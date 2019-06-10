@@ -16,8 +16,8 @@
 
 package app.tivi.interactors
 
-import app.tivi.data.entities.TiviShow
 import app.tivi.data.repositories.shows.ShowRepository
+import app.tivi.data.resultentities.ShowDetailed
 import app.tivi.util.AppRxSchedulers
 import io.reactivex.Observable
 import javax.inject.Inject
@@ -25,8 +25,8 @@ import javax.inject.Inject
 class ObserveShowDetails @Inject constructor(
     private val showRepository: ShowRepository,
     private val schedulers: AppRxSchedulers
-) : SubjectInteractor<ObserveShowDetails.Params, TiviShow>() {
-    override fun createObservable(params: Params): Observable<TiviShow> {
+) : SubjectInteractor<ObserveShowDetails.Params, ShowDetailed>() {
+    override fun createObservable(params: Params): Observable<ShowDetailed> {
         return showRepository.observeShow(params.showId)
                 .subscribeOn(schedulers.io)
     }

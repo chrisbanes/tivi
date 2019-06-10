@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,14 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.daos
 
-interface TiviEntity {
-    val id: Long
-}
+import androidx.room.Dao
+import androidx.room.Query
+import app.tivi.data.entities.ShowTmdbImage
 
-interface TraktIdEntity {
-    val traktId: Int?
-}
-
-interface TmdbIdEntity {
-    val tmdbId: Int?
-}
-
-interface TmdbImageEntity : TiviEntity {
-    val path: String
-    val type: ImageType
-    val language: String?
-    val rating: Float
-}
-
-enum class ImageType(val storageKey: String) {
-    BACKDROP("backdrop"),
-    POSTER("poster")
+@Dao
+abstract class ShowImagesDao : EntityDao<ShowTmdbImage> {
+    @Query("DELETE FROM show_images WHERE show_id = :showId")
+    abstract suspend fun deleteForShowId(showId: Long)
 }

@@ -76,6 +76,9 @@ class RelatedShowsRepository @Inject constructor(
                 if (showRepository.needsUpdate(entry.otherShowId)) {
                     showRepository.updateShow(entry.otherShowId)
                 }
+                if (showRepository.needsImagesUpdate(entry.showId)) {
+                    showRepository.updateShowImages(entry.showId)
+                }
             }
         }
     }

@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 20,
-    "identityHash": "e124c3acfe6c43a127dbc41914ae0c54",
+    "version": 21,
+    "identityHash": "49db4c20ca0bf8751370d513b1b04857",
     "entities": [
       {
         "tableName": "shows",
@@ -928,7 +928,7 @@
       },
       {
         "tableName": "show_images",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `show_id` INTEGER NOT NULL, `path` TEXT NOT NULL, `type` TEXT NOT NULL, `lang` TEXT, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `show_id` INTEGER NOT NULL, `path` TEXT NOT NULL, `type` TEXT NOT NULL, `lang` TEXT, `rating` REAL NOT NULL, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -959,6 +959,12 @@
             "columnName": "lang",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "rating",
+            "columnName": "rating",
+            "affinity": "REAL",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -970,11 +976,11 @@
         "indices": [
           {
             "name": "index_show_images_show_id",
-            "unique": true,
+            "unique": false,
             "columnNames": [
               "show_id"
             ],
-            "createSql": "CREATE UNIQUE INDEX `index_show_images_show_id` ON `${TABLE_NAME}` (`show_id`)"
+            "createSql": "CREATE  INDEX `index_show_images_show_id` ON `${TABLE_NAME}` (`show_id`)"
           }
         ],
         "foreignKeys": [
@@ -1008,7 +1014,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e124c3acfe6c43a127dbc41914ae0c54')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '49db4c20ca0bf8751370d513b1b04857')"
     ]
   }
 }

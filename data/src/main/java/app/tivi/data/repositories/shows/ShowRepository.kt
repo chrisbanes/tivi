@@ -16,16 +16,20 @@
 
 package app.tivi.data.repositories.shows
 
-import app.tivi.data.entities.TiviShow
 import app.tivi.data.instantInPast
+import app.tivi.data.resultentities.ShowDetailed
 import io.reactivex.Observable
 import org.threeten.bp.Instant
 
 interface ShowRepository {
+    fun observeShow(showId: Long): Observable<ShowDetailed>
+
+    suspend fun searchShows(query: String): List<ShowDetailed>
+
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
      */
-    suspend fun getShow(showId: Long): TiviShow
+    suspend fun getShow(showId: Long): ShowDetailed
 
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
@@ -34,11 +38,9 @@ interface ShowRepository {
 
     suspend fun needsInitialUpdate(showId: Long): Boolean
 
-    suspend fun getLastRequestInstant(showId: Long): Instant?
-
     suspend fun needsUpdate(showId: Long, expiry: Instant = instantInPast(days = 7)): Boolean
 
-    fun observeShow(showId: Long): Observable<TiviShow>
+    suspend fun updateShowImages(showId: Long)
 
-    suspend fun searchShows(query: String): List<TiviShow>
+    suspend fun needsImagesUpdate(showId: Long, expiry: Instant = instantInPast(days = 30)): Boolean
 }

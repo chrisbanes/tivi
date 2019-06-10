@@ -70,7 +70,14 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
                 }
 
         observeShowDetails.observe()
-                .execute { copy(show = it) }
+                .execute {
+                    if (it is Success) {
+                        val value = it()
+                        copy(show = value.show, images = value.images)
+                    } else {
+                        this
+                    }
+                }
 
         observeRelatedShows.observe()
                 .execute { copy(relatedShows = it) }

@@ -60,8 +60,12 @@ class TrendingShowsRepository @Inject constructor(
                     trendingShowsStore.saveTrendingShowsPage(page, entries)
                     // Now update all of the related shows if needed
                     entries.parallelForEach { entry ->
-                        if (showRepository.needsInitialUpdate(entry.showId))
+                        if (showRepository.needsInitialUpdate(entry.showId)) {
                             showRepository.updateShow(entry.showId)
+                        }
+                        if (showRepository.needsImagesUpdate(entry.showId)) {
+                            showRepository.updateShowImages(entry.showId)
+                        }
                     }
                 }
             }

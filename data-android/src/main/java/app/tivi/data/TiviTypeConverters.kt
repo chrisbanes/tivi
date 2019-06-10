@@ -17,6 +17,7 @@
 package app.tivi.data
 
 import androidx.room.TypeConverter
+import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Request
 import org.threeten.bp.Instant
@@ -25,6 +26,10 @@ import org.threeten.bp.format.DateTimeFormatter
 
 object TiviTypeConverters {
     private val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+
+    private val requestValues by lazy(LazyThreadSafetyMode.NONE) { Request.values() }
+    private val imageTypeValues by lazy(LazyThreadSafetyMode.NONE) { ImageType.values() }
+    private val pendingActionValues by lazy(LazyThreadSafetyMode.NONE) { PendingAction.values() }
 
     @TypeConverter
     @JvmStatic
@@ -48,7 +53,7 @@ object TiviTypeConverters {
 
     @TypeConverter
     @JvmStatic
-    fun toPendingAction(action: String): PendingAction = PendingAction.values().first { it.value == action }
+    fun toPendingAction(action: String): PendingAction = pendingActionValues.first { it.value == action }
 
     @TypeConverter
     @JvmStatic
@@ -56,5 +61,13 @@ object TiviTypeConverters {
 
     @TypeConverter
     @JvmStatic
-    fun toRequest(value: String) = Request.values().first { it.tag == value }
+    fun toRequest(value: String) = requestValues.first { it.tag == value }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromImageType(value: ImageType) = value.storageKey
+
+    @TypeConverter
+    @JvmStatic
+    fun toImageType(value: String) = imageTypeValues.first { it.storageKey == value }
 }

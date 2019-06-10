@@ -61,6 +61,9 @@ class WatchedShowsRepository @Inject constructor(
                         if (showRepository.needsInitialUpdate(entry.showId)) {
                             showRepository.updateShow(entry.showId)
                         }
+                        if (showRepository.needsImagesUpdate(entry.showId)) {
+                            showRepository.updateShowImages(entry.showId)
+                        }
                     }
                 }
                 lastRequestStore.updateLastRequest()

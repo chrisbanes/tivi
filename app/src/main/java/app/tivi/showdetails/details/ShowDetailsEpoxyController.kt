@@ -69,51 +69,48 @@ class ShowDetailsEpoxyController @Inject constructor(
         buildSeasonsModels(viewState.seasons, viewState.expandedSeasonIds)
     }
 
-    private fun buildShowModels(asyncShow: Async<TiviShow>) {
-        if (asyncShow is Success) {
-            val show = asyncShow()
-            show.traktRating?.let { rating ->
-                detailsBadge {
-                    val ratingOutOfOneHundred = Math.round(rating * 10)
-                    id("rating")
-                    label(context.getString(R.string.percentage_format, ratingOutOfOneHundred))
-                    icon(R.drawable.ic_details_rating)
-                    contentDescription(context.getString(R.string.rating_content_description_format,
-                            ratingOutOfOneHundred))
-                }
+    private fun buildShowModels(show: TiviShow) {
+        show.traktRating?.let { rating ->
+            detailsBadge {
+                val ratingOutOfOneHundred = Math.round(rating * 10)
+                id("rating")
+                label(context.getString(R.string.percentage_format, ratingOutOfOneHundred))
+                icon(R.drawable.ic_details_rating)
+                contentDescription(context.getString(R.string.rating_content_description_format,
+                        ratingOutOfOneHundred))
             }
-            show.network?.let { network ->
-                detailsBadge {
-                    id("network")
-                    label(network)
-                    icon(R.drawable.ic_details_network)
-                    contentDescription(context.getString(R.string.network_content_description_format, network))
-                }
+        }
+        show.network?.let { network ->
+            detailsBadge {
+                id("network")
+                label(network)
+                icon(R.drawable.ic_details_network)
+                contentDescription(context.getString(R.string.network_content_description_format, network))
             }
-            show.certification?.let { certificate ->
-                detailsBadge {
-                    id("cert")
-                    label(certificate)
-                    icon(R.drawable.ic_details_certificate)
-                    contentDescription(context.getString(R.string.certificate_content_description_format, certificate))
-                }
+        }
+        show.certification?.let { certificate ->
+            detailsBadge {
+                id("cert")
+                label(certificate)
+                icon(R.drawable.ic_details_certificate)
+                contentDescription(context.getString(R.string.certificate_content_description_format, certificate))
             }
-            show.runtime?.let { runtime ->
-                detailsBadge {
-                    val runtimeMinutes = context.getString(R.string.minutes_format, runtime)
-                    id("runtime")
-                    label(runtimeMinutes)
-                    icon(R.drawable.ic_details_runtime)
-                    contentDescription(context.resources?.getQuantityString(
-                            R.plurals.runtime_content_description_format, runtime, runtime))
-                }
+        }
+        show.runtime?.let { runtime ->
+            detailsBadge {
+                val runtimeMinutes = context.getString(R.string.minutes_format, runtime)
+                id("runtime")
+                label(runtimeMinutes)
+                icon(R.drawable.ic_details_runtime)
+                contentDescription(context.resources?.getQuantityString(
+                        R.plurals.runtime_content_description_format, runtime, runtime))
             }
+        }
 
-            detailsSummary {
-                id("summary")
-                entity(show)
-                spanSizeOverride(TotalSpanOverride)
-            }
+        detailsSummary {
+            id("summary")
+            entity(show)
+            spanSizeOverride(TotalSpanOverride)
         }
     }
 

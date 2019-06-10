@@ -16,4 +16,6 @@
 
 package app.tivi.data.entities
 
-data class SearchResults(val query: String, val results: List<TiviShow>)
+import app.tivi.data.resultentities.ShowDetailed
+
+data class SearchResults(val query: String, val results: List<ShowDetailed>)

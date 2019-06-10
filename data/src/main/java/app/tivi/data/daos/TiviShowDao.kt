@@ -19,6 +19,7 @@ package app.tivi.data.daos
 import androidx.room.Dao
 import androidx.room.Query
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.resultentities.ShowDetailed
 import io.reactivex.Observable
 
 @Dao
@@ -33,10 +34,13 @@ abstract class TiviShowDao : EntityDao<TiviShow> {
     abstract suspend fun getShowWithTmdbId(id: Int): TiviShow?
 
     @Query("SELECT * FROM shows WHERE id = :id")
-    abstract fun getShowWithIdObservable(id: Long): Observable<TiviShow>
+    abstract fun getShowWithIdObservable(id: Long): Observable<ShowDetailed>
 
     @Query("SELECT * FROM shows WHERE id = :id")
     abstract suspend fun getShowWithId(id: Long): TiviShow?
+
+    @Query("SELECT * FROM shows WHERE id = :id")
+    abstract suspend fun getShowWithIdDetailed(id: Long): ShowDetailed?
 
     @Query("SELECT trakt_id FROM shows WHERE id = :id")
     abstract suspend fun getTraktIdForShowId(id: Long): Int?
@@ -53,5 +57,5 @@ abstract class TiviShowDao : EntityDao<TiviShow> {
         WHERE fts.title MATCH :filter
         """
     )
-    abstract suspend fun search(filter: String): List<TiviShow>
+    abstract suspend fun search(filter: String): List<ShowDetailed>
 }

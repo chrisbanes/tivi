@@ -66,6 +66,9 @@ class PopularShowsRepository @Inject constructor(
                         if (showRepository.needsUpdate(entry.showId)) {
                             showRepository.updateShow(entry.showId)
                         }
+                        if (showRepository.needsImagesUpdate(entry.showId)) {
+                            showRepository.updateShowImages(entry.showId)
+                        }
                     }
                 }
             }

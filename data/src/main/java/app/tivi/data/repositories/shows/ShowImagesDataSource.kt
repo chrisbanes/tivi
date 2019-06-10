@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,12 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.repositories.shows
 
-interface TiviEntity {
-    val id: Long
-}
+import app.tivi.data.entities.Result
+import app.tivi.data.entities.ShowTmdbImage
+import app.tivi.data.entities.TiviShow
 
-interface TraktIdEntity {
-    val traktId: Int?
-}
-
-interface TmdbIdEntity {
-    val tmdbId: Int?
-}
-
-interface TmdbImageEntity : TiviEntity {
-    val path: String
-    val type: ImageType
-    val language: String?
-    val rating: Float
-}
-
-enum class ImageType(val storageKey: String) {
-    BACKDROP("backdrop"),
-    POSTER("poster")
+interface ShowImagesDataSource {
+    suspend fun getShowImages(show: TiviShow): Result<List<ShowTmdbImage>>
 }
