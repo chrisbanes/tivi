@@ -57,9 +57,10 @@ fun loadBackdrop(
     saturateOnLoad: Boolean?
 ) {
     val image = if (path != null) ShowTmdbImage(path = path, type = ImageType.BACKDROP, showId = 0) else null
-    loadImage(view, image, urlProvider, saturateOnLoad)
+    loadImage(view, null, urlProvider, saturateOnLoad, image, urlProvider, saturateOnLoad)
 }
 
+@Suppress("UNUSED_PARAMETER")
 @BindingAdapter(
         "image",
         "tmdbImageUrlProvider",
@@ -68,18 +69,21 @@ fun loadBackdrop(
 )
 fun loadImage(
     view: ImageView,
+    previousImage: TmdbImageEntity?,
+    previousUrlProvider: TmdbImageUrlProvider?,
+    previousSaturateOnLoad: Boolean?,
     image: TmdbImageEntity?,
     urlProvider: TmdbImageUrlProvider?,
     saturateOnLoad: Boolean?
 ) {
     val requestKey = Objects.hash(image, urlProvider)
-    if (view.getTag(R.id.loading) == requestKey) {
-        // We're already loading this image, ignore the call
-        return
-    }
     view.setTag(R.id.loading, requestKey)
 
     if (urlProvider != null && image != null) {
+        if (previousUrlProvider == urlProvider && previousImage == image) {
+            return
+        }
+
         view.setImageDrawable(null)
 
         view.doOnLayout {

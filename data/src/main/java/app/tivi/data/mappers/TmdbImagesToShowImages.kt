@@ -19,26 +19,30 @@ package app.tivi.data.mappers
 import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.ShowTmdbImage
 import com.uwetrottmann.tmdb2.entities.Image
-import com.uwetrottmann.tmdb2.entities.Images
+import com.uwetrottmann.tmdb2.entities.TvShow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TmdbImagesToShowImages @Inject constructor() : Mapper<Images, List<ShowTmdbImage>> {
-    override suspend fun map(from: Images): List<ShowTmdbImage> {
+class TmdbImagesToShowImages @Inject constructor() : Mapper<TvShow, List<ShowTmdbImage>> {
+    override suspend fun map(from: TvShow): List<ShowTmdbImage> {
         fun mapImage(image: Image, type: ImageType): ShowTmdbImage {
             return ShowTmdbImage(
                     showId = 0,
                     path = image.file_path!!,
                     type = type,
                     language = image.iso_639_1,
-                    rating = image.vote_average?.toFloat() ?: 0f
+                    rating = image.vote_average?.toFloat() ?: 0f,
+                    isPrimary = image.file_path!! == when (type) {
+                        ImageType.BACKDROP -> from.backdrop_path
+                        ImageType.POSTER -> from.poster_path
+                    }
             )
         }
 
         val result = mutableListOf<ShowTmdbImage>()
-        from.posters?.mapTo(result) { mapImage(it, ImageType.POSTER) }
-        from.backdrops?.mapTo(result) { mapImage(it, ImageType.BACKDROP) }
+        from.images?.posters?.mapTo(result) { mapImage(it, ImageType.POSTER) }
+        from.images?.backdrops?.mapTo(result) { mapImage(it, ImageType.BACKDROP) }
         return result
     }
 }

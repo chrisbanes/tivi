@@ -33,6 +33,7 @@ interface TmdbImageEntity : TiviEntity {
     val type: ImageType
     val language: String?
     val rating: Float
+    val isPrimary: Boolean
 }
 
 enum class ImageType(val storageKey: String) {
@@ -40,5 +41,11 @@ enum class ImageType(val storageKey: String) {
     POSTER("poster")
 }
 
-fun <T : TmdbImageEntity> Collection<T>.findHighestRatedPoster() = filter { it.type == ImageType.POSTER }.maxBy { it.rating }
-fun <T : TmdbImageEntity> Collection<T>.findHighestRatedBackdrop() = filter { it.type == ImageType.BACKDROP }.maxBy { it.rating }
+fun <T : TmdbImageEntity> Collection<T>.findHighestRatedPoster(): T? {
+    return filter { it.type == ImageType.POSTER }
+            .maxBy { it.rating + (if (it.isPrimary) 10f else 0f) }
+}
+fun <T : TmdbImageEntity> Collection<T>.findHighestRatedBackdrop(): T? {
+    return filter { it.type == ImageType.BACKDROP }
+            .maxBy { it.rating + (if (it.isPrimary) 10f else 0f) }
+}

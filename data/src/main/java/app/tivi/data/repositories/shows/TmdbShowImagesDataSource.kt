@@ -24,6 +24,8 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TmdbImagesToShowImages
 import app.tivi.extensions.executeWithRetry
 import com.uwetrottmann.tmdb2.Tmdb
+import com.uwetrottmann.tmdb2.entities.AppendToResponse
+import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem
 import javax.inject.Inject
 
 class TmdbShowImagesDataSource @Inject constructor(
@@ -35,8 +37,8 @@ class TmdbShowImagesDataSource @Inject constructor(
         val tmdbId = show.tmdbId
         return if (tmdbId != null) {
             retrofitRunner.executeForResponse(mapper) {
-                // TODO Need to use devices locale!!
-                tmdb.tvService().images(tmdbId, "en,null").executeWithRetry()
+                tmdb.tvService().tv(tmdbId, null, AppendToResponse(AppendToResponseItem.IMAGES))
+                        .executeWithRetry()
             }
         } else {
             ErrorResult(IllegalArgumentException("TmdbId for show does not exist [$show]"))
