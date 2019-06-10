@@ -29,7 +29,7 @@ class RelatedShowsStore @Inject constructor(
 ) {
     suspend fun getRelatedShows(showId: Long) = relatedShowsDao.entries(showId)
 
-    fun observeRelatedShows(showId: Long) = relatedShowsDao.entriesObservable(showId)
+    fun observeRelatedShows(showId: Long) = relatedShowsDao.entriesWithShowsObservable(showId)
 
     suspend fun saveRelatedShows(showId: Long, relatedShows: List<RelatedShowEntry>) = transactionRunner {
         relatedShowsDao.deleteWithShowId(showId)

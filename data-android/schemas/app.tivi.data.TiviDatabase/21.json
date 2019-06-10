@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 21,
-    "identityHash": "49db4c20ca0bf8751370d513b1b04857",
+    "identityHash": "7432faa9533ec59c4c9d20967824dfa1",
     "entities": [
       {
         "tableName": "shows",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `imdb_id` TEXT, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `overview` TEXT, `homepage` TEXT, `trakt_rating` REAL, `certification` TEXT, `first_aired` TEXT, `country` TEXT, `network` TEXT, `runtime` INTEGER, `genres` TEXT, `last_trakt_data_update` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `imdb_id` TEXT, `overview` TEXT, `homepage` TEXT, `trakt_rating` REAL, `certification` TEXT, `first_aired` TEXT, `country` TEXT, `network` TEXT, `runtime` INTEGER, `genres` TEXT, `last_trakt_data_update` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -41,18 +41,6 @@
           {
             "fieldPath": "imdbId",
             "columnName": "imdb_id",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "tmdbPosterPath",
-            "columnName": "tmdb_poster_path",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "tmdbBackdropPath",
-            "columnName": "tmdb_backdrop_path",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -1014,7 +1002,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '49db4c20ca0bf8751370d513b1b04857')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7432faa9533ec59c4c9d20967824dfa1')"
     ]
   }
 }

@@ -17,10 +17,12 @@
 package app.tivi.data.resultentities
 
 import androidx.room.Embedded
+import androidx.room.Ignore
 import androidx.room.Relation
-import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.entities.findHighestRatedBackdrop
+import app.tivi.data.entities.findHighestRatedPoster
 import java.util.Objects
 
 class ShowDetailed {
@@ -30,11 +32,11 @@ class ShowDetailed {
     @Relation(parentColumn = "id", entityColumn = "show_id")
     var images: List<ShowTmdbImage> = emptyList()
 
-    val backdrop: ShowTmdbImage?
-        get() = images.first { it.type == ImageType.BACKDROP }
+    @delegate:Ignore
+    val backdrop: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) { images.findHighestRatedPoster() }
 
-    val poster: ShowTmdbImage?
-        get() = images.first { it.type == ImageType.POSTER }
+    @delegate:Ignore
+    val poster: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) { images.findHighestRatedBackdrop() }
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true

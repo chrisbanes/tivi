@@ -39,3 +39,6 @@ enum class ImageType(val storageKey: String) {
     BACKDROP("backdrop"),
     POSTER("poster")
 }
+
+fun <T : TmdbImageEntity> Collection<T>.findHighestRatedPoster() = filter { it.type == ImageType.POSTER }.maxBy { it.rating }
+fun <T : TmdbImageEntity> Collection<T>.findHighestRatedBackdrop() = filter { it.type == ImageType.BACKDROP }.maxBy { it.rating }

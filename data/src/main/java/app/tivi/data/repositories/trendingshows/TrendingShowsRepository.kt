@@ -56,7 +56,7 @@ class TrendingShowsRepository @Inject constructor(
                     if (resetOnSave) {
                         trendingShowsStore.deleteAll()
                     }
-                    // Save the related entries
+                    // Save the related entriesWithShows
                     trendingShowsStore.saveTrendingShowsPage(page, entries)
                     // Now update all of the related shows if needed
                     entries.parallelForEach { entry ->

@@ -38,9 +38,7 @@ class RelatedShowsRepository @Inject constructor(
 ) {
     fun observeRelatedShows(showId: Long) = relatedShowsStore.observeRelatedShows(showId)
 
-    suspend fun getRelatedShows(showId: Long) {
-        relatedShowsStore.getRelatedShows(showId)
-    }
+    suspend fun getRelatedShows(showId: Long) = relatedShowsStore.getRelatedShows(showId)
 
     suspend fun needUpdate(showId: Long, expiry: Instant = instantInPast(days = 28)): Boolean {
         return lastRequestStore.isRequestBefore(showId, expiry)
@@ -69,7 +67,7 @@ class RelatedShowsRepository @Inject constructor(
             // Make a copy of the entry with the id
             entry.copy(showId = showId, otherShowId = relatedShowId)
         }.also { entries ->
-            // Save the related entries
+            // Save the related entriesWithShows
             relatedShowsStore.saveRelatedShows(showId, entries)
             // Now update all of the related shows if needed
             entries.parallelForEach { entry ->

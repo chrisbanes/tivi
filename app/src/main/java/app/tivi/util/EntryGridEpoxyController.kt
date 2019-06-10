@@ -23,6 +23,7 @@ import androidx.annotation.StringRes
 import app.tivi.HeaderBindingModel_
 import app.tivi.PosterGridItemBindingModel_
 import app.tivi.data.Entry
+import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.emptyState
 import app.tivi.header
@@ -85,6 +86,7 @@ open class EntryGridEpoxyController<LI : EntryWithShow<out Entry>>(
         return PosterGridItemBindingModel_()
                 .id(item.generateStableId())
                 .tmdbImageUrlProvider(tmdbImageUrlProvider)
+                .posterImage(item.images.findHighestRatedPoster())
                 .tiviShow(item.show)
                 .transitionName(item.show.homepage)
                 .clickListener(View.OnClickListener { callbacks?.onItemClicked(item) })

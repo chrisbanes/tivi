@@ -24,6 +24,7 @@ import android.view.View
 import app.tivi.HeaderBindingModel_
 import app.tivi.LibraryFollowedItemBindingModel_
 import app.tivi.data.entities.SortOption
+import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.emptyState
 import app.tivi.filter
@@ -88,6 +89,7 @@ class FollowedEpoxyController @Inject constructor(
             if (item != null) {
                 id(item.generateStableId())
                 tiviShow(item.show)
+                posterImage(item.images.findHighestRatedPoster())
                 posterTransitionName("show_${item.show.homepage}")
                 clickListener(View.OnClickListener {
                     callbacks?.onItemClicked(item)

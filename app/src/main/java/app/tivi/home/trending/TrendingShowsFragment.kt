@@ -30,7 +30,7 @@ class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingS
         return object : EntryGridEpoxyController<TrendingEntryWithShow>(R.string.discover_trending) {
             override fun buildItemModel(item: TrendingEntryWithShow): PosterGridItemBindingModel_ {
                 return super.buildItemModel(item)
-                        .annotationLabel(item.entry?.watchers.toString())
+                        .annotationLabel(item.entry.watchers.toString())
                         .annotationIcon(R.drawable.ic_eye_12dp)
             }
         }

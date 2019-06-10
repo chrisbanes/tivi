@@ -36,8 +36,6 @@ data class TiviShow(
     @ColumnInfo(name = "trakt_id") override val traktId: Int? = null,
     @ColumnInfo(name = "tmdb_id") override val tmdbId: Int? = null,
     @ColumnInfo(name = "imdb_id") val imdbId: String? = null,
-    @ColumnInfo(name = "tmdb_poster_path") val tmdbPosterPath: String? = null,
-    @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null,
     @ColumnInfo(name = "overview") val summary: String? = null,
     @ColumnInfo(name = "homepage") val homepage: String? = null,
     @ColumnInfo(name = "trakt_rating") val traktRating: Float? = null,

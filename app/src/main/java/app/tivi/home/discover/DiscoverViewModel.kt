@@ -49,10 +49,12 @@ class DiscoverViewModel @AssistedInject constructor(
                 .execute { copy(isLoading = it() ?: false) }
 
         observeTrendingShows.observe()
+                .distinctUntilChanged()
                 .execute { copy(trendingItems = it() ?: emptyList()) }
         observeTrendingShows(Unit)
 
         observePopularShows.observe()
+                .distinctUntilChanged()
                 .execute { copy(popularItems = it() ?: emptyList()) }
         observePopularShows(Unit)
 

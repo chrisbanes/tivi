@@ -111,8 +111,6 @@ class ShowRepositoryImpl @Inject constructor(
             traktDataUpdate = trakt.traktDataUpdate ?: local.traktDataUpdate,
 
             // TMDb specific stuff
-            tmdbId = tmdb.tmdbId ?: trakt.tmdbId ?: local.tmdbId,
-            tmdbPosterPath = tmdb.tmdbPosterPath ?: local.tmdbPosterPath,
-            tmdbBackdropPath = tmdb.tmdbBackdropPath ?: local.tmdbBackdropPath
+            tmdbId = tmdb.tmdbId ?: trakt.tmdbId ?: local.tmdbId
     )
 }

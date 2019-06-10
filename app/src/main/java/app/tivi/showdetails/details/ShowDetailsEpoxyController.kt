@@ -26,6 +26,7 @@ import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.databinding.ViewHolderDetailsSeasonBinding
@@ -118,34 +119,31 @@ class ShowDetailsEpoxyController @Inject constructor(
         relatedShows: Async<List<RelatedShowEntryWithShow>>,
         tmdbImageUrlProvider: Async<TmdbImageUrlProvider>
     ) {
-        when (relatedShows) {
-            is Success -> {
-                val related = relatedShows()
-                if (related.isNotEmpty()) {
-                    detailsHeader {
-                        id("related_header")
-                        title(R.string.details_related)
-                        spanSizeOverride(TotalSpanOverride)
-                    }
-                    carousel {
-                        id("related_shows")
-                        numViewsToShowOnScreen(5.25f)
-                        hasFixedSize(true)
+        if (relatedShows is Success) {
+            val related = relatedShows()
+            if (related.isNotEmpty()) {
+                detailsHeader {
+                    id("related_header")
+                    title(R.string.details_related)
+                    spanSizeOverride(TotalSpanOverride)
+                }
+                carousel {
+                    id("related_shows")
+                    numViewsToShowOnScreen(5.25f)
+                    hasFixedSize(true)
 
-                        val small = context.resources.getDimensionPixelSize(R.dimen.spacing_small)
-                        val micro = context.resources.getDimensionPixelSize(R.dimen.spacing_micro)
-                        padding(Carousel.Padding(micro, micro, small, small, micro))
+                    val small = context.resources.getDimensionPixelSize(R.dimen.spacing_small)
+                    val micro = context.resources.getDimensionPixelSize(R.dimen.spacing_micro)
+                    padding(Carousel.Padding(micro, micro, small, small, micro))
 
-                        withModelsFrom(related) { relatedEntry ->
-                            val relatedShow = relatedEntry.show
-                            DetailsRelatedItemBindingModel_()
-                                    .id("related_${relatedShow.id}")
-                                    .tiviShow(relatedShow)
-                                    .tmdbImageUrlProvider(tmdbImageUrlProvider())
-                                    .clickListener { view ->
-                                        callbacks?.onRelatedShowClicked(relatedShow, view)
-                                    }
-                        }
+                    withModelsFrom(related) { relatedEntry ->
+                        val relatedShow = relatedEntry.show
+                        DetailsRelatedItemBindingModel_()
+                                .id("related_${relatedShow.id}")
+                                .tiviShow(relatedShow)
+                                .posterImage(relatedEntry.images.findHighestRatedPoster())
+                                .tmdbImageUrlProvider(tmdbImageUrlProvider())
+                                .clickListener { view -> callbacks?.onRelatedShowClicked(relatedShow, view) }
                     }
                 }
             }
