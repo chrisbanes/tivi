@@ -24,7 +24,6 @@ import androidx.constraintlayout.widget.ConstraintSet
  */
 inline fun MotionLayout.updateConstraintSets(f: ConstraintSet.() -> Unit) {
     for (id in constraintSetIds) {
-        getConstraintSet(id).f()
+        updateState(id, getConstraintSet(id).apply { f() })
     }
-    rebuildScene()
 }
