@@ -17,9 +17,9 @@
 package app.tivi.showdetails.details
 
 import android.content.Context
-import androidx.core.content.res.ResourcesCompat
+import android.graphics.Color
 import androidx.core.text.buildSpannedString
-import androidx.core.text.inSpans
+import androidx.core.text.color
 import androidx.core.text.italic
 import androidx.emoji.text.EmojiCompat
 import app.tivi.R
@@ -28,8 +28,6 @@ import app.tivi.data.entities.Genre
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.inject.PerActivity
 import app.tivi.ui.GenreStringer
-import app.tivi.ui.text.TypefaceSpan
-import app.tivi.ui.text.textAppearanceSpanForAttribute
 import app.tivi.util.TiviDateFormatter
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
@@ -38,8 +36,6 @@ class ShowDetailsTextCreator @Inject constructor(
     @PerActivity private val context: Context,
     private val tiviDateFormatter: TiviDateFormatter
 ) {
-    private val barlowTypefaceSpan = TypefaceSpan(ResourcesCompat.getFont(context, R.font.barlow_400))
-
     fun seasonSummaryText(season: SeasonWithEpisodesAndWatches): CharSequence {
         val toWatch = season.numberAiredToWatch
         val toAir = season.numberToAir
@@ -96,11 +92,11 @@ class ShowDetailsTextCreator @Inject constructor(
             val spanned = buildSpannedString {
                 for (i in 0 until genres.size) {
                     val genre = genres[i]
-                    inSpans(textAppearanceSpanForAttribute(context, R.attr.textAppearanceCaption), barlowTypefaceSpan) {
-                        append(context.getString(GenreStringer.getLabel(genre)))
-                    }
+                    append(context.getString(GenreStringer.getLabel(genre)))
                     append("\u00A0") // nbsp
-                    append(GenreStringer.getEmoji(genre))
+                    color(Color.BLACK) {
+                        append(GenreStringer.getEmoji(genre))
+                    }
                     if (i < genres.size - 1) append(" \u2022 ")
                 }
             }
