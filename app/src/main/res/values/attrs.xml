@@ -17,6 +17,8 @@
 
 <resources>
     <declare-styleable name="TiviTheme">
+        <attr name="colorPrimarySurface" format="dimension" />
+        <attr name="colorOnPrimarySurface" format="dimension" />
     </declare-styleable>
 
     <declare-styleable name="TopLeftCutoutBackgroundView">

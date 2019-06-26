@@ -16,11 +16,9 @@
   -->
 
 <resources>
-
-    <style name="Base.Theme.Tivi" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Platform.Theme.Tivi" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="android:navigationBarColor">?android:colorBackground</item>
         <item name="android:windowLightNavigationBar">@bool/is_light_theme</item>
         <item name="android:navigationBarDividerColor">@color/color_on_background_10</item>
     </style>
-
 </resources>
