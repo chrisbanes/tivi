@@ -20,6 +20,7 @@ import app.tivi.data.entities.RefreshType
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
+import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.data.repositories.watchedshows.WatchedShowsRepository
 import app.tivi.extensions.parallelForEach
 import app.tivi.util.AppCoroutineDispatchers
@@ -30,6 +31,7 @@ import javax.inject.Inject
 
 class UpdateFollowedShows @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
+    private val showRepository: ShowRepository,
     private val followedShowsRepository: FollowedShowsRepository,
     private val watchedShowsRepository: WatchedShowsRepository,
     private val seasonEpisodeRepository: SeasonsEpisodesRepository
@@ -63,9 +65,7 @@ class UpdateFollowedShows @Inject constructor(
                     it.showId,
                     params.type,
                     params.forceRefresh,
-                    // TODO: We should use last_updated_at. Waiting on trakt-java support in
-                    // https://github.com/UweTrottmann/trakt-java/pull/106
-                    watchedShowsRepository.getWatchedShow(it.showId)?.lastWatched
+                    showRepository.getShow(it.showId)?.traktDataUpdate
             )
         }
     }

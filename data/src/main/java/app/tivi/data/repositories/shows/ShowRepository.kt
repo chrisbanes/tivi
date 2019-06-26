@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories.shows
 
+import app.tivi.data.entities.TiviShow
 import app.tivi.data.instantInPast
 import app.tivi.data.resultentities.ShowDetailed
 import io.reactivex.Observable
@@ -29,7 +30,7 @@ interface ShowRepository {
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
      */
-    suspend fun getShow(showId: Long): ShowDetailed
+    suspend fun getShow(showId: Long): TiviShow?
 
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
