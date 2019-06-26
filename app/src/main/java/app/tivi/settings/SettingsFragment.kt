@@ -23,6 +23,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import app.tivi.BuildConfig
 import app.tivi.R
+import app.tivi.extensions.resolveThemeColor
 
 class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -30,7 +31,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         findPreference<Preference>("privacy_policy")?.setOnPreferenceClickListener {
             CustomTabsIntent.Builder()
-                    .setToolbarColor(requireContext().getColor(R.color.colorPrimaryDark))
+                    .setToolbarColor(requireContext().resolveThemeColor(R.attr.colorPrimaryVariant))
                     .build()
                     .launchUrl(requireContext(), getString(R.string.privacy_policy_url).toUri())
             true

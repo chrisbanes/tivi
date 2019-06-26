@@ -78,7 +78,7 @@ class EpisodeDetailsFragment : TiviMvRxBottomSheetFragment() {
                 context.getDrawable(R.drawable.ic_eye_off_24dp)!!,
                 context.resources.getDimensionPixelSize(R.dimen.spacing_large),
                 context.getColor(R.color.swipe_away_background),
-                context.resolveThemeColor(android.R.attr.colorAccent)
+                context.resolveThemeColor(R.attr.colorSecondary)
         ) {
             override fun onSwipeCompleted(
                 model: EpDetailsWatchItemBindingModel_,

@@ -111,7 +111,7 @@
             android:id="@+id/details_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
             app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor"
             app:menu="@menu/details_toolbar"
             app:navigationIcon="?attr/homeAsUpIndicator" />

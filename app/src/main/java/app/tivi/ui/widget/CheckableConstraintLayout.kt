@@ -22,7 +22,7 @@ import android.view.View
 import android.widget.Checkable
 import androidx.constraintlayout.widget.ConstraintLayout
 
-class CheckableConstraintLayout @JvmOverloads constructor(
+open class CheckableConstraintLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyle: Int = 0

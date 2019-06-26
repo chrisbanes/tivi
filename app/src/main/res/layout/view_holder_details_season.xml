@@ -45,7 +45,7 @@
             type="app.tivi.ui.widget.PopupMenuButton.PopupMenuListener" />
     </data>
 
-    <app.tivi.ui.widget.CheckableConstraintLayout
+    <app.tivi.ui.widget.MaterialShapeConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:checked="@{expanded}"
@@ -53,7 +53,7 @@
         android:onClick="@{clickListener}"
         android:stateListAnimator="@animator/details_season_state_anim"
         android:transitionGroup="true"
-        app:materialShapeElevationBackground="@{ true }">
+        app:materialBackgroundColor="?attr/colorSurface">
 
         <View
             android:layout_width="match_parent"
@@ -116,5 +116,5 @@
             app:popupMenuClickListener="@{popupMenuClickListener}"
             app:popupMenuListener="@{popupMenuListener}" />
 
-    </app.tivi.ui.widget.CheckableConstraintLayout>
+    </app.tivi.ui.widget.MaterialShapeConstraintLayout>
 </layout>

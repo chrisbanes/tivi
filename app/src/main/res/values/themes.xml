@@ -24,11 +24,6 @@
     <style name="Base.Theme.Tivi" parent="Platform.Theme.Tivi">
         <item name="actionBarTheme">@style/ThemeOverlay.Tivi.ActionBar</item>
 
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-
         <!-- Default widget styles -->
         <item name="toolbarStyle">@style/Widget.Tivi.Toolbar</item>
 
@@ -53,8 +48,18 @@
     </style>
 
     <style name="Theme.Tivi" parent="Base.Theme.Tivi">
-        <item name="colorPrimarySurface">?attr/colorPrimary</item>
-        <item name="colorOnPrimarySurface">?attr/colorOnPrimary</item>
+        <item name="colorPrimary">@color/tivi_slate_700</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+
+        <item name="colorPrimaryVariant">@color/tivi_slate_600</item>
+        <item name="colorPrimaryDark">@color/tivi_slate_800</item>
+
+        <item name="colorSecondary">@color/tivi_mtrl_orange_700</item>
+        <item name="colorSecondaryVariant">@color/tivi_mtrl_orange_500</item>
+        <item name="colorOnSecondary">#000000</item>
+
+        <item name="colorThemedSurface">?attr/colorPrimary</item>
+        <item name="colorOnThemedSurface">?attr/colorOnPrimary</item>
     </style>
 
     <style name="Theme.Tivi.NoActionBar">
@@ -78,5 +83,13 @@
     <style name="Theme.Tivi.Settings" />
 
     <style name="ThemeOverlay.Tivi.ActionBar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
+
+    <style name="ThemeOverlay.Tivi.Primary" parent="ThemeOverlay.AppCompat.DayNight.ActionBar">
+        <item name="android:textColorPrimary">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="ThemeOverlay.Tivi.ThemedSurface" parent="ThemeOverlay.AppCompat.DayNight.ActionBar">
+        <item name="android:textColorPrimary">?attr/colorOnThemedSurface</item>
+    </style>
 
 </resources>
