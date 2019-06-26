@@ -58,8 +58,8 @@
         <item name="colorSecondaryVariant">@color/tivi_mtrl_orange_500</item>
         <item name="colorOnSecondary">#000000</item>
 
-        <item name="colorThemedSurface">?attr/colorPrimary</item>
-        <item name="colorOnThemedSurface">?attr/colorOnPrimary</item>
+        <item name="colorPrimarySurface">?attr/colorPrimary</item>
+        <item name="colorOnPrimarySurface">?attr/colorOnPrimary</item>
     </style>
 
     <style name="Theme.Tivi.NoActionBar">
@@ -89,7 +89,7 @@
     </style>
 
     <style name="ThemeOverlay.Tivi.ThemedSurface" parent="ThemeOverlay.AppCompat.DayNight.ActionBar">
-        <item name="android:textColorPrimary">?attr/colorOnThemedSurface</item>
+        <item name="android:textColorPrimary">?attr/colorOnPrimarySurface</item>
     </style>
 
 </resources>
