@@ -33,7 +33,8 @@
         android:id="@+id/details_motion"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutDescription="@xml/scene_show_details">
+        app:layoutDescription="@xml/scene_show_details"
+        app:layout_optimizationLevel="standard">
 
         <ImageView
             android:id="@+id/details_backdrop"

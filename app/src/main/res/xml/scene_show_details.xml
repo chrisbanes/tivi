@@ -127,20 +127,20 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
+            app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintBottom_toTopOf="@id/details_subtitle"
             app:layout_constraintEnd_toStartOf="@id/details_follow_fab"
             app:layout_constraintStart_toEndOf="@id/details_poster"
-            app:layout_constraintTop_toBottomOf="@id/details_appbar_background" />
+            app:layout_constraintTop_toTopOf="@id/details_appbar_background" />
 
         <Constraint
             android:id="@id/details_subtitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
             android:layout_marginTop="@dimen/spacing_micro"
-            app:layout_constraintBottom_toTopOf="@id/details_appbar_background"
+            app:layout_constraintBottom_toBottomOf="@id/details_appbar_background"
             app:layout_constraintEnd_toEndOf="@id/details_appbar_background"
-            app:layout_constraintStart_toEndOf="@id/details_poster"
+            app:layout_constraintStart_toStartOf="@id/details_title"
             app:layout_constraintTop_toBottomOf="@id/details_title" />
 
         <Constraint
