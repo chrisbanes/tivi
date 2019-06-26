@@ -51,7 +51,7 @@ object Libs {
         val firebaseCore = "com.google.firebase:firebase-core:17.0.0"
         val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.10.1"
         val gmsGoogleServices = "com.google.gms:google-services:4.2.0"
-        val fabricPlugin = "io.fabric.tools:gradle:1.28.1"
+        val fabricPlugin = "io.fabric.tools:gradle:1.29.0"
     }
 
     object Kotlin {
@@ -165,7 +165,7 @@ object Libs {
     }
 
     object OkHttp {
-        private const val version = "4.0.0-RC2"
+        private const val version = "4.0.0-RC3"
         val okhttp = "com.squareup.okhttp3:okhttp:$version"
         val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$version"
     }
