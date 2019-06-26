@@ -39,12 +39,13 @@
                 app:paddingBottomSystemWindowInsets="@{ true }"
                 tools:listitem="@layout/view_holder_library_watched_item" />
 
-            <FrameLayout
+            <app.tivi.ui.widget.MaterialShapeConstraintLayout
                 android:id="@+id/header_holder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="?attr/colorSurface"
                 android:elevation="@dimen/sticky_header_elevation"
-                app:materialShapeElevationBackground="@{ true }" />
+                app:materialBackgroundColor="?attr/colorSurface" />
 
         </FrameLayout>
 

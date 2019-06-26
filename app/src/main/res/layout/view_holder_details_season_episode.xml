@@ -38,14 +38,14 @@
             type="android.view.View.OnClickListener" />
     </data>
 
-    <app.tivi.ui.widget.CheckableConstraintLayout
+    <app.tivi.ui.widget.MaterialShapeConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:checked="@{expanded}"
         android:foreground="?android:attr/selectableItemBackground"
         android:onClick="@{clickListener}"
         android:stateListAnimator="@animator/details_season_state_anim"
-        app:materialShapeElevationBackground="@{ true }">
+        app:materialBackgroundColor="?attr/colorSurface">
 
         <androidx.constraintlayout.helper.widget.Flow
             android:id="@+id/flow"
@@ -96,6 +96,6 @@
             android:src="@{episodeWithWatches.onlyPendingDeletes() ? @drawable/ic_eye_off_24dp : @drawable/ic_eye_24dp}"
             app:visible="@{episodeWithWatches.hasWatches()}" />
 
-    </app.tivi.ui.widget.CheckableConstraintLayout>
+    </app.tivi.ui.widget.MaterialShapeConstraintLayout>
 
 </layout>

@@ -20,7 +20,6 @@ import android.graphics.Outline
 import android.view.Gravity
 import android.view.View
 import android.view.ViewOutlineProvider
-import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.doOnLayout
@@ -38,7 +37,6 @@ import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.MaxLinesToggleClickListener
 import app.tivi.ui.glide.GlideApp
 import app.tivi.util.ScrimUtil
-import com.google.android.material.shape.MaterialShapeDrawable
 import java.util.Objects
 import kotlin.math.roundToInt
 
@@ -246,28 +244,5 @@ fun applySystemWindows(
                 paddingState.right + right,
                 paddingState.bottom + bottom
         )
-    }
-}
-
-@BindingAdapter("materialShapeElevationBackground")
-fun materialShapeElevationBackground(view: View, oldValue: Boolean, value: Boolean) {
-    if (oldValue != value && value) {
-        val shapeDrawable = MaterialShapeDrawable.createWithElevationOverlay(view.context, view.elevation)
-        view.background = shapeDrawable
-
-        val vto = view.viewTreeObserver
-        vto.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
-            override fun onPreDraw(): Boolean {
-                shapeDrawable.z = view.z
-                if (!view.isAttachedToWindow) {
-                    if (vto.isAlive) {
-                        vto.removeOnPreDrawListener(this)
-                    } else {
-                        view.viewTreeObserver.removeOnPreDrawListener(this)
-                    }
-                }
-                return true
-            }
-        })
     }
 }
