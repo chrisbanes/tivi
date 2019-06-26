@@ -17,8 +17,10 @@
 package app.tivi.ui.widget
 
 import android.content.Context
+import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.View
 import androidx.core.content.res.use
 import app.tivi.R
 import com.google.android.material.shape.CornerFamily
@@ -49,6 +51,11 @@ class MaterialShapeConstraintLayout @JvmOverloads constructor(
         }
     }
 
+    override fun draw(canvas: Canvas?) {
+        updateElevationRelativeToParentSurface()
+        super.draw(canvas)
+    }
+
     override fun setBackground(background: Drawable?) {
         super.setBackground(background)
 
@@ -73,6 +80,30 @@ class MaterialShapeConstraintLayout @JvmOverloads constructor(
         val bg = background
         if (bg is MaterialShapeDrawable) {
             bg.translationZ = translationZ
+        }
+    }
+
+    private fun updateElevationRelativeToParentSurface() {
+        val bg = background
+        if (bg is MaterialShapeDrawable) {
+
+            var v = parent
+            var cumulativeElevation = elevation
+
+            // Iterate through our parents, until we find a view with a MaterialShapeDrawable
+            // background (the 'parent surface'). We then update our background, based on the
+            // 'parent surface's elevation
+            while (v is View) {
+                val vBg = v.background
+                if (vBg is MaterialShapeDrawable) {
+                    bg.elevation = vBg.elevation.coerceAtLeast(v.elevation) + cumulativeElevation
+                    break
+                } else {
+                    cumulativeElevation += v.elevation
+                }
+
+                v = v.getParent()
+            }
         }
     }
 }
