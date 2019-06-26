@@ -87,7 +87,7 @@
             app:backgroundColor="?android:attr/colorBackground"
             app:topLeftCutSize="@dimen/details_corner_cutout" />
 
-        <TextView
+        <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/details_title"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -97,16 +97,14 @@
             android:textAppearance="?attr/textAppearanceHeadline6"
             tools:text="@sample/shows.txt" />
 
-        <!-- The text color is set to an opaque color for Emoji.
-             The caption text appearance is set via spans. -->
         <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/details_subtitle"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:contentDescription="@{textCreator.genreContentDescription(state.show.genres)}"
             android:ellipsize="end"
-            android:text="@{textCreator.genreString(state.show.genres)}"
             android:textAppearance="?attr/textAppearanceCaption"
+            app:textOrGoneIfEmpty="@{textCreator.genreString(state.show.genres)}"
             tools:text="Drama // Fantasy" />
 
         <app.tivi.ui.widget.TintingToolbar
