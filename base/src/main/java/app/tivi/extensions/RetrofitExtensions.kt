@@ -52,7 +52,7 @@ suspend inline fun <T> Call<T>.executeWithRetry(
             if (e is HttpException) {
                 // If we have a HttpException, check whether we have a Retry-After
                 // header to decide how long to delay
-                val retryAfterHeader = e.response().headers()["Retry-After"]
+                val retryAfterHeader = e.response()?.headers()?.get("Retry-After")
                 if (retryAfterHeader != null && retryAfterHeader.isNotEmpty()) {
                     // Got a Retry-After value, try and parse it to an long
                     try {
@@ -84,9 +84,9 @@ fun defaultShouldRetry(exception: Exception) = when (exception) {
 }
 
 fun <T> Response<T>.isFromNetwork(): Boolean {
-    return raw().cacheResponse() == null
+    return raw().cacheResponse == null
 }
 
 fun <T> Response<T>.isFromCache(): Boolean {
-    return raw().cacheResponse() != null
+    return raw().cacheResponse != null
 }

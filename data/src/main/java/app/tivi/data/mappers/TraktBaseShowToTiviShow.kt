@@ -25,5 +25,10 @@ import javax.inject.Singleton
 class TraktBaseShowToTiviShow @Inject constructor(
     private val showMapper: TraktShowToTiviShow
 ) : Mapper<BaseShow, TiviShow> {
-    override suspend fun map(from: BaseShow) = showMapper.map(from.show)
+    override suspend fun map(from: BaseShow): TiviShow {
+        val mapped = showMapper.map(from.show)
+        return mapped.copy(
+                traktDataUpdate = from.last_updated_at ?: mapped.traktDataUpdate
+        )
+    }
 }

@@ -35,11 +35,8 @@ class ShowRepositoryImpl @Inject constructor(
 ) : ShowRepository {
     override fun observeShow(showId: Long) = showStore.observeShowDetailed(showId)
 
-    /**
-     * Updates the show with the given id from all network sources, saves the result to the database
-     */
-    override suspend fun getShow(showId: Long): ShowDetailed {
-        return showStore.getShowDetailed(showId)!!
+    override suspend fun getShow(showId: Long): TiviShow? {
+        return showStore.getShow(showId)
     }
 
     /**

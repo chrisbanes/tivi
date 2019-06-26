@@ -26,6 +26,7 @@ import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.doOnLayout
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import app.tivi.R
@@ -120,6 +121,12 @@ fun visibleIfNotNull(view: View, target: Any?) {
 @BindingAdapter("visible")
 fun visible(view: View, value: Boolean) {
     view.isVisible = value
+}
+
+@BindingAdapter("textOrGoneIfEmpty")
+fun textOrGoneIfEmpty(view: TextView, s: CharSequence?) {
+    view.text = s
+    view.isGone = s.isNullOrEmpty()
 }
 
 @BindingAdapter("srcRes")
