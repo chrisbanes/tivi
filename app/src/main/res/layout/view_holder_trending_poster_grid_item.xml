@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2017 Google, Inc.
+  ~ Copyright 2019 Google, Inc.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  ~
   -->
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -21,12 +20,18 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="android.content.Context" />
+
         <import type="android.view.View" />
 
         <variable
             name="tiviShow"
             type="app.tivi.data.entities.TiviShow" />
+
+        <variable
+            name="trendingShow"
+            type="app.tivi.data.entities.TrendingShowEntry" />
 
         <variable
             name="posterImage"
@@ -78,6 +83,31 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tmdbImageUrlProvider="@{tmdbImageUrlProvider}" />
+
+        <View
+            android:id="@+id/show_annotation_background"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:background="?attr/colorPrimarySurface"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/show_poster"/>
+
+        <TextView
+            android:id="@+id/show_annotation"
+            style="@style/Widget.Tivi.GridItem.Annotation"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:drawableStart="@drawable/ic_eye_12dp"
+            android:drawableTint="?attr/colorOnPrimarySurface"
+            android:text="@{Integer.toString(trendingShow.watchers)}"
+            android:textColor="?attr/colorOnPrimarySurface"
+            app:layout_constraintBottom_toBottomOf="@id/show_annotation_background"
+            app:layout_constraintEnd_toEndOf="@id/show_annotation_background"
+            app:layout_constraintTop_toTopOf="@id/show_annotation_background"
+            app:visibleIfNotNull="@{trendingShow.watchers}"
+            tools:text="100" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -23,10 +23,8 @@
     </style>
 
     <style name="Widget.Tivi.GridItem.Annotation" parent="android:Widget.TextView">
-        <item name="android:background">@drawable/annotation_bg</item>
         <item name="android:drawablePadding">4dp</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:drawableTint">?android:attr/textColorPrimary</item>
         <item name="android:paddingBottom">4dp</item>
         <item name="android:paddingLeft">6dp</item>
         <item name="android:paddingRight">6dp</item>
