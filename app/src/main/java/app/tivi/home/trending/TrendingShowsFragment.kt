@@ -16,22 +16,30 @@
 
 package app.tivi.home.trending
 
+import android.view.View
 import androidx.navigation.fragment.findNavController
-import app.tivi.PosterGridItemBindingModel_
 import app.tivi.R
 import app.tivi.SharedElementHelper
+import app.tivi.TrendingPosterGridItemBindingModel_
+import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.util.EntryGridEpoxyController
 import app.tivi.util.EntryGridFragment
+import com.airbnb.epoxy.EpoxyModel
 
 class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingShowsViewModel>(TrendingShowsViewModel::class.java) {
     override fun createController(): EntryGridEpoxyController<TrendingEntryWithShow> {
         return object : EntryGridEpoxyController<TrendingEntryWithShow>(R.string.discover_trending) {
-            override fun buildItemModel(item: TrendingEntryWithShow): PosterGridItemBindingModel_ {
-                return super.buildItemModel(item)
-                        .annotationLabel(item.entry.watchers.toString())
-                        .annotationIcon(R.drawable.ic_eye_12dp)
+            override fun buildItemModel(item: TrendingEntryWithShow): EpoxyModel<*> {
+                return TrendingPosterGridItemBindingModel_()
+                        .id(item.generateStableId())
+                        .tmdbImageUrlProvider(tmdbImageUrlProvider)
+                        .posterImage(item.images.findHighestRatedPoster())
+                        .tiviShow(item.show)
+                        .trendingShow(item.entry)
+                        .transitionName(item.show.homepage)
+                        .clickListener(View.OnClickListener { callbacks?.onItemClicked(item) })
             }
         }
     }

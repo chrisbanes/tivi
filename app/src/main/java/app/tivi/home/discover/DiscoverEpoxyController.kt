@@ -26,6 +26,7 @@ import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.emptyState
 import app.tivi.header
 import app.tivi.posterGridItem
+import app.tivi.trendingPosterGridItem
 import app.tivi.ui.epoxy.TotalSpanOverride
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.TypedEpoxyController
@@ -55,13 +56,12 @@ class DiscoverEpoxyController @Inject constructor() : TypedEpoxyController<Disco
         }
         if (trendingShows.isNotEmpty()) {
             trendingShows.take(trendingShows.size - (trendingShows.size % spanCount)).forEach { item ->
-                posterGridItem {
+                trendingPosterGridItem {
                     id(item.generateStableId())
                     tmdbImageUrlProvider(tmdbImageUrlProvider)
                     tiviShow(item.show)
                     posterImage(item.images.findHighestRatedPoster())
-                    annotationLabel(item.entry.watchers.toString())
-                    annotationIcon(R.drawable.ic_eye_12dp)
+                    trendingShow(item.entry)
                     transitionName("trending_${item.show.homepage}")
                     clickListener { model, _, _, _ ->
                         callbacks?.onItemClicked(model.id(), item)

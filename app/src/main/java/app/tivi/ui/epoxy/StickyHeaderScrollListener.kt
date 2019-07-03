@@ -18,8 +18,9 @@ package app.tivi.ui.epoxy
 
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import app.tivi.extensions.createAndBind
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.epoxy.EpoxyModel
 
@@ -29,15 +30,19 @@ import com.airbnb.epoxy.EpoxyModel
 class StickyHeaderScrollListener(
     private val epoxyController: EpoxyController,
     private val isHeader: (EpoxyModel<*>) -> Boolean,
-    private val headerHolder: FrameLayout
+    private val headerHolder: ViewGroup
 ) : RecyclerView.OnScrollListener() {
+
+    init {
+        syncToHeaderHolder(null)
+    }
 
     private var currentHeaderItemPosition = RecyclerView.NO_POSITION
         set(position) {
             if (field != position) {
                 currentHeaderHolder = null
                 if (position != RecyclerView.NO_POSITION) {
-                    currentHeaderHolder = createViewHolderForPosition(position, headerHolder)
+                    currentHeaderHolder = epoxyController.adapter.createAndBind(headerHolder, position)
                 }
                 field = position
             }
@@ -64,12 +69,8 @@ class StickyHeaderScrollListener(
 
         val headerPositionForChild = getHeaderPositionForItem(topChildPosition)
         currentHeaderItemPosition = when {
-            headerPositionForChild == 0 && topChildPosition == 0 && topChild.top >= 0 -> {
-                RecyclerView.NO_POSITION
-            }
-            else -> {
-                headerPositionForChild
-            }
+            headerPositionForChild == 0 && topChildPosition == 0 && topChild.top >= 0 -> RecyclerView.NO_POSITION
+            else -> headerPositionForChild
         }
 
         if (currentHeaderItemPosition != RecyclerView.NO_POSITION) {
@@ -83,12 +84,6 @@ class StickyHeaderScrollListener(
                 }
             }
         }
-    }
-
-    private fun createViewHolderForPosition(position: Int, parent: ViewGroup): RecyclerView.ViewHolder {
-        val vh = epoxyController.adapter.onCreateViewHolder(parent, epoxyController.adapter.getItemViewType(position))
-        epoxyController.adapter.onBindViewHolder(vh, position)
-        return vh
     }
 
     private fun isHeader(itemPosition: Int): Boolean {
@@ -138,10 +133,12 @@ class StickyHeaderScrollListener(
             if (headerHolder.indexOfChild(header.itemView) < 0) {
                 headerHolder.addView(header.itemView)
             }
+            headerHolder.isVisible = true
         } else {
             if (headerHolder.childCount > 0) {
                 headerHolder.removeAllViews()
             }
+            headerHolder.isVisible = false
         }
     }
 }

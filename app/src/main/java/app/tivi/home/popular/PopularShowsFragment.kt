@@ -16,13 +16,17 @@
 
 package app.tivi.home.popular
 
+import android.view.View
 import androidx.navigation.fragment.findNavController
+import app.tivi.PosterGridItemBindingModel_
 import app.tivi.R
 import app.tivi.SharedElementHelper
+import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.util.EntryGridEpoxyController
 import app.tivi.util.EntryGridFragment
+import com.airbnb.epoxy.EpoxyModel
 
 class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShowsViewModel>(PopularShowsViewModel::class.java) {
     override fun onItemClicked(item: PopularEntryWithShow) {
@@ -36,6 +40,16 @@ class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShow
     }
 
     override fun createController(): EntryGridEpoxyController<PopularEntryWithShow> {
-        return EntryGridEpoxyController(R.string.discover_popular)
+        return object : EntryGridEpoxyController<PopularEntryWithShow>(R.string.discover_popular) {
+            override fun buildItemModel(item: PopularEntryWithShow): EpoxyModel<*> {
+                return PosterGridItemBindingModel_()
+                        .id(item.generateStableId())
+                        .tmdbImageUrlProvider(tmdbImageUrlProvider)
+                        .posterImage(item.images.findHighestRatedPoster())
+                        .tiviShow(item.show)
+                        .transitionName(item.show.homepage)
+                        .clickListener(View.OnClickListener { callbacks?.onItemClicked(item) })
+            }
+        }
     }
 }

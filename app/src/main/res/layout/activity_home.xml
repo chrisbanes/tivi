@@ -23,21 +23,21 @@
         android:id="@+id/home_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/colorPrimaryVariant"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
+        android:background="?attr/colorPrimarySurface"
+        android:theme="@style/ThemeOverlay.Tivi.ThemedSurface"
         app:layoutDescription="@xml/scene_home_nav"
         tools:context=".home.HomeActivity">
 
         <!-- The height of this is updated via an OnApplyWindowInsetsListener  -->
-        <FrameLayout
+        <app.tivi.ui.widget.MaterialShapeConstraintLayout
             android:id="@+id/home_content_background"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="?attr/colorSurface"
             android:elevation="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/home_toolbar"
-            app:topCornerOutlineProvider="@{ @dimen/backdrop_corner_radius }">
+            app:materialBackgroundColor="?attr/colorSurface"
+            app:topCornerOutlineProvider="@{@dimen/backdrop_corner_radius}">
 
             <fragment
                 android:id="@+id/nav_host_fragment"
@@ -47,12 +47,13 @@
                 app:defaultNavHost="true"
                 app:navGraph="@navigation/nav_graph" />
 
-        </FrameLayout>
+        </app.tivi.ui.widget.MaterialShapeConstraintLayout>
 
         <View
             android:id="@+id/status_scrim"
             android:layout_width="match_parent"
-            android:layout_height="1px" />
+            android:layout_height="1px"
+            android:background="?attr/colorPrimaryDark" />
 
         <View
             android:layout_width="wrap_content"

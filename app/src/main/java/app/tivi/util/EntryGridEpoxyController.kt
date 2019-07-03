@@ -18,12 +18,10 @@ package app.tivi.util
 
 import android.os.Handler
 import android.os.Looper
-import android.view.View
 import androidx.annotation.StringRes
 import app.tivi.HeaderBindingModel_
 import app.tivi.PosterGridItemBindingModel_
 import app.tivi.data.Entry
-import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.emptyState
 import app.tivi.header
@@ -35,7 +33,7 @@ import com.airbnb.epoxy.EpoxyAsyncUtil
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
 
-open class EntryGridEpoxyController<LI : EntryWithShow<out Entry>>(
+abstract class EntryGridEpoxyController<LI : EntryWithShow<out Entry>>(
     @StringRes private val titleRes: Int
 ) : PagedListEpoxyController<LI>(
         modelBuildingHandler = Handler(Looper.getMainLooper()),
@@ -82,15 +80,7 @@ open class EntryGridEpoxyController<LI : EntryWithShow<out Entry>>(
         return if (item != null) buildItemModel(item) else buildItemPlaceholder(currentPosition)
     }
 
-    protected open fun buildItemModel(item: LI): PosterGridItemBindingModel_ {
-        return PosterGridItemBindingModel_()
-                .id(item.generateStableId())
-                .tmdbImageUrlProvider(tmdbImageUrlProvider)
-                .posterImage(item.images.findHighestRatedPoster())
-                .tiviShow(item.show)
-                .transitionName(item.show.homepage)
-                .clickListener(View.OnClickListener { callbacks?.onItemClicked(item) })
-    }
+    protected abstract fun buildItemModel(item: LI): EpoxyModel<*>
 
     protected open fun buildItemPlaceholder(index: Int): PosterGridItemBindingModel_ {
         return PosterGridItemBindingModel_()
