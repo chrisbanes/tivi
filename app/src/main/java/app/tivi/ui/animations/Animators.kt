@@ -38,13 +38,15 @@ fun saturateDrawableAnimator(current: Drawable, view: View): Animator {
     val satAnim = ObjectAnimator.ofFloat(cm, ImageLoadingColorMatrix.PROP_SATURATION, 0f, 1f)
     satAnim.duration = duration
     satAnim.interpolator = fastOutSlowInInterpolator
-    satAnim.addUpdateListener { current.colorFilter = ColorMatrixColorFilter(cm) }
+    satAnim.addUpdateListener {
+        current.colorFilter = ColorMatrixColorFilter(cm)
+    }
 
     val alphaAnim = ObjectAnimator.ofFloat(cm, ImageLoadingColorMatrix.PROP_ALPHA, 0f, 1f)
     alphaAnim.duration = duration / 2
     alphaAnim.interpolator = fastOutSlowInInterpolator
 
-    val darkenAnim = ObjectAnimator.ofFloat(cm, ImageLoadingColorMatrix.PROP_DARKEN, 0f, 1f)
+    val darkenAnim = ObjectAnimator.ofFloat(cm, ImageLoadingColorMatrix.PROP_BRIGHTNESS, 0.8f, 1f)
     darkenAnim.duration = (duration * 0.75f).roundToLong()
     darkenAnim.interpolator = fastOutSlowInInterpolator
 

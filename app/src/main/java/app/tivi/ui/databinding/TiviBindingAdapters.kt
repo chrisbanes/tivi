@@ -94,6 +94,8 @@ fun loadImage(
                 ImageType.POSTER -> urlProvider.getPosterUrl(image.path, width)
             }
 
+            GlideApp.with(view).clear(view)
+
             GlideApp.with(it)
                     .optSaturateOnLoad(saturateOnLoad == null || saturateOnLoad)
                     .load(toUrl(image, view.width))

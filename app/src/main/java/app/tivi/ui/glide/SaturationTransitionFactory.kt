@@ -30,16 +30,14 @@ class SaturationTransitionFactory : TransitionFactory<Drawable> {
             // checking if the image is from the memory cache
             SaturationTransition()
         } else {
-            NoTransition<Drawable>()
+            NoTransition()
         }
     }
 }
 
 internal class SaturationTransition : Transition<Drawable> {
     override fun transition(current: Drawable, adapter: Transition.ViewAdapter): Boolean {
-        saturateDrawableAnimator(current, adapter.view).also {
-            it.start()
-        }
+        saturateDrawableAnimator(current, adapter.view).start()
         // We want Glide to still set the drawable
         return false
     }
