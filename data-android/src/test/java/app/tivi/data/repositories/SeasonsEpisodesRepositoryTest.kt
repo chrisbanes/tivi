@@ -130,7 +130,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         episodeWatchDao.insertAll(s1e1w, s1e1w2)
         // Return a response with the same items
         coEvery { traktSeasonsDataSource.getShowEpisodeWatches(showId) } returns
-                Success (listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
+                Success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
         // Now re-sync with the same response
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that both are in the db

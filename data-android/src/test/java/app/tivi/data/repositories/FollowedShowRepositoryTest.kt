@@ -38,10 +38,7 @@ import app.tivi.utils.insertShow
 import app.tivi.utils.runBlockingTest
 import app.tivi.utils.show
 import app.tivi.utils.show2
-import app.tivi.utils.show2Id
-import app.tivi.utils.showId
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThat
@@ -107,7 +104,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
     fun testSync_responseDifferentShow() = runBlockingTest {
         insertFollowedShow(db)
 
-        coEvery { traktDataSource.getFollowedListId()} returns 0
+        coEvery { traktDataSource.getFollowedListId() } returns 0
         coEvery { traktDataSource.getListShows(0) } returns Success(listOf(followedShow2 to show2))
 
         assertThat(repository.getFollowedShows(), `is`(listOf(followedShow2)))
@@ -118,7 +115,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
         followShowsDao.insert(followedShow1PendingDelete)
 
         // Return null for the list ID so that we disable syncing
-        coEvery { traktDataSource.getFollowedListId()} returns null
+        coEvery { traktDataSource.getFollowedListId() } returns null
 
         assertThat(repository.getFollowedShows(), `is`(emptyList()))
     }
@@ -128,7 +125,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
         followShowsDao.insert(followedShow1PendingUpload)
 
         // Return null for the list ID so that we disable syncing
-        coEvery { traktDataSource.getFollowedListId()} returns null
+        coEvery { traktDataSource.getFollowedListId() } returns null
 
         assertThat(repository.getFollowedShows(), `is`(listOf(followedShow1)))
     }

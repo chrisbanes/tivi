@@ -28,7 +28,6 @@ import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Assert.assertThat
-import org.junit.Ignore
 import org.junit.Test
 
 class EpisodesTest : BaseDatabaseTest() {
