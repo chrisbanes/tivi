@@ -50,12 +50,12 @@ object Libs {
         val material = "com.google.android.material:material:1.1.0-alpha07"
         val firebaseCore = "com.google.firebase:firebase-core:17.0.0"
         val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.10.1"
-        val gmsGoogleServices = "com.google.gms:google-services:4.2.0"
+        val gmsGoogleServices = "com.google.gms:google-services:4.3.0"
         val fabricPlugin = "io.fabric.tools:gradle:1.29.0"
     }
 
     object Kotlin {
-        private const val version = "1.3.40"
+        private const val version = "1.3.41"
         val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         val reflect = "org.jetbrains.kotlin:kotlin-reflect:$version"
         val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
@@ -165,13 +165,13 @@ object Libs {
     }
 
     object OkHttp {
-        private const val version = "4.0.0-RC3"
+        private const val version = "4.0.0"
         val okhttp = "com.squareup.okhttp3:okhttp:$version"
         val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$version"
     }
 
     object Epoxy {
-        private const val version = "3.6.0"
+        private const val version = "3.7.0"
         val epoxy = "com.airbnb.android:epoxy:$version"
         val paging = "com.airbnb.android:epoxy-paging:$version"
         val dataBinding = "com.airbnb.android:epoxy-databinding:$version"
