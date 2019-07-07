@@ -240,6 +240,18 @@ dependencies {
     testImplementation Libs.AndroidX.Test.espressoCore
 }
 
+android.applicationVariants.all { variant ->
+    task "open${variant.name.capitalize()}" {
+        dependsOn "install${variant.name.capitalize()}"
+
+        doLast {
+            exec {
+                commandLine "adb shell monkey -p ${variant.applicationId} -c android.intent.category.LAUNCHER 1".split(" ")
+            }
+        }
+    }
+}
+
 def getGitHash() {
     def stdout = new ByteArrayOutputStream()
     exec {
