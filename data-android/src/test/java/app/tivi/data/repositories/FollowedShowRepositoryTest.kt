@@ -20,11 +20,11 @@ import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.Success
 import app.tivi.data.repositories.followedshows.FollowedShowsDataSource
-import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsLastRequestStore
+import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsStore
-import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.shows.ShowRepository
+import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import app.tivi.utils.BaseDatabaseTest
@@ -38,20 +38,13 @@ import app.tivi.utils.insertShow
 import app.tivi.utils.runBlockingTest
 import app.tivi.utils.show
 import app.tivi.utils.show2
-import app.tivi.utils.show2Id
-import app.tivi.utils.showId
+import io.mockk.coEvery
+import io.mockk.mockk
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThat
-import org.junit.Ignore
 import org.junit.Test
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
 import javax.inject.Provider
 
-@Ignore("https://github.com/robolectric/robolectric/issues/3556")
 class FollowedShowRepositoryTest : BaseDatabaseTest() {
     private lateinit var followShowsDao: FollowedShowsDao
 
@@ -69,18 +62,18 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
 
             followShowsDao = db.followedShowsDao()
 
-            showRepository = mock(ShowRepository::class.java)
-            `when`(showRepository.needsUpdate(any(Long::class.java))).thenReturn(true)
+            showRepository = mockk()
+            coEvery { showRepository.needsUpdate(any()) } returns true
 
-            val logger = mock(Logger::class.java)
+            val logger = mockk<Logger>(relaxUnitFun = true)
             val txRunner = TestTransactionRunner
             val entityInserter = EntityInserter(txRunner, logger)
-            traktDataSource = mock(FollowedShowsDataSource::class.java)
+            traktDataSource = mockk()
 
             repository = FollowedShowsRepository(
                     FollowedShowsStore(txRunner, entityInserter, db.followedShowsDao(), db.showDao(), logger),
                     FollowedShowsLastRequestStore(db.lastRequestDao()),
-                    ShowStore(entityInserter, db.showDao(), db.showImagesDao(), txRunner),
+                    ShowStore(entityInserter, db.showDao(), db.showFtsDao(), db.showImagesDao(), txRunner),
                     traktDataSource,
                     showRepository,
                     Provider { TraktAuthState.LOGGED_IN },
@@ -91,21 +84,18 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun testSync() = runBlockingTest {
-        `when`(traktDataSource.getFollowedListId()).thenReturn(0)
-        `when`(traktDataSource.getListShows(0)).thenReturn(Success(listOf(followedShow1 to show)))
+        coEvery { traktDataSource.getFollowedListId() } returns 0
+        coEvery { traktDataSource.getListShows(0) } returns Success(listOf(followedShow1 to show))
 
         assertThat(repository.getFollowedShows(), `is`(listOf(followedShow1)))
-
-        // Verify that a show update was triggered
-        verify(showRepository, times(1)).updateShow(showId)
     }
 
     @Test
     fun testSync_emptyResponse() = runBlockingTest {
         insertFollowedShow(db)
 
-        `when`(traktDataSource.getFollowedListId()).thenReturn(0)
-        `when`(traktDataSource.getListShows(0)).thenReturn(Success(emptyList()))
+        coEvery { traktDataSource.getFollowedListId() } returns 0
+        coEvery { traktDataSource.getListShows(0) } returns Success(emptyList())
 
         assertThat(repository.getFollowedShows(), `is`(emptyList()))
     }
@@ -114,13 +104,10 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
     fun testSync_responseDifferentShow() = runBlockingTest {
         insertFollowedShow(db)
 
-        `when`(traktDataSource.getFollowedListId()).thenReturn(0)
-        `when`(traktDataSource.getListShows(0)).thenReturn(Success(listOf(followedShow2 to show2)))
+        coEvery { traktDataSource.getFollowedListId() } returns 0
+        coEvery { traktDataSource.getListShows(0) } returns Success(listOf(followedShow2 to show2))
 
         assertThat(repository.getFollowedShows(), `is`(listOf(followedShow2)))
-
-        // Verify that a show update was triggered
-        verify(showRepository, times(1)).updateShow(show2Id)
     }
 
     @Test
@@ -128,7 +115,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
         followShowsDao.insert(followedShow1PendingDelete)
 
         // Return null for the list ID so that we disable syncing
-        `when`(traktDataSource.getFollowedListId()).thenReturn(null)
+        coEvery { traktDataSource.getFollowedListId() } returns null
 
         assertThat(repository.getFollowedShows(), `is`(emptyList()))
     }
@@ -138,7 +125,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
         followShowsDao.insert(followedShow1PendingUpload)
 
         // Return null for the list ID so that we disable syncing
-        `when`(traktDataSource.getFollowedListId()).thenReturn(null)
+        coEvery { traktDataSource.getFollowedListId() } returns null
 
         assertThat(repository.getFollowedShows(), `is`(listOf(followedShow1)))
     }

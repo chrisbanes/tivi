@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package app.tivi.data
+package app.tivi.data.daos
 
-import androidx.room.withTransaction
-import javax.inject.Inject
+import androidx.room.Dao
+import androidx.room.Query
+import app.tivi.data.resultentities.ShowDetailed
 
-class RoomTransactionRunner @Inject constructor(
-    private val db: TiviRoomDatabase
-) : DatabaseTransactionRunner {
-    override suspend operator fun <T> invoke(block: suspend () -> T): T {
-        return db.withTransaction {
-            block()
-        }
-    }
+@Dao
+abstract class ShowFtsDao {
+    @Query("""
+        SELECT s.* FROM shows as s
+        INNER JOIN shows_fts AS fts ON s.id = fts.docid
+        WHERE fts.title MATCH :filter
+        """
+    )
+    abstract suspend fun search(filter: String): List<ShowDetailed>
 }

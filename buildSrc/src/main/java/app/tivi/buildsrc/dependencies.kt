@@ -44,7 +44,7 @@ object Libs {
 
     const val junit = "junit:junit:4.12"
     const val robolectric = "org.robolectric:robolectric:4.3"
-    const val mockitoKotlin = "com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0"
+    const val mockK = "io.mockk:mockk:1.9.3"
 
     object Google {
         const val material = "com.google.android.material:material:1.1.0-alpha07"

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,16 @@
 
 package app.tivi.data
 
-import androidx.room.withTransaction
-import javax.inject.Inject
+import dagger.Binds
+import dagger.Module
+import javax.inject.Singleton
 
-class RoomTransactionRunner @Inject constructor(
-    private val db: TiviRoomDatabase
-) : DatabaseTransactionRunner {
-    override suspend operator fun <T> invoke(block: suspend () -> T): T {
-        return db.withTransaction {
-            block()
-        }
-    }
+@Module
+abstract class DatabaseModuleBinds {
+    @Binds
+    abstract fun bindTiviDatabase(context: TiviRoomDatabase): TiviDatabase
+
+    @Singleton
+    @Binds
+    abstract fun provideDatabaseTransactionRunner(runner: RoomTransactionRunner): DatabaseTransactionRunner
 }

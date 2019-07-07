@@ -51,11 +51,6 @@ abstract class TiviShowDao : EntityDao<TiviShow> {
     @Query("SELECT id FROM shows WHERE trakt_id = :traktId")
     abstract suspend fun getIdForTraktId(traktId: Int): Long?
 
-    @Query("""
-        SELECT s.* FROM shows as s
-        INNER JOIN shows_fts AS fts ON s.id = fts.docid
-        WHERE fts.title MATCH :filter
-        """
-    )
-    abstract suspend fun search(filter: String): List<ShowDetailed>
+    @Query("SELECT id FROM shows WHERE tmdb_id = :tmdbId")
+    abstract suspend fun getIdForTmdbId(tmdbId: Int): Long?
 }

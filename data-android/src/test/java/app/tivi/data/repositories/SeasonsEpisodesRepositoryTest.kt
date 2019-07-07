@@ -24,10 +24,10 @@ import app.tivi.data.entities.Success
 import app.tivi.data.repositories.episodes.EpisodeDataSource
 import app.tivi.data.repositories.episodes.EpisodeWatchLastRequestStore
 import app.tivi.data.repositories.episodes.EpisodeWatchStore
-import app.tivi.data.repositories.episodes.SeasonsEpisodesStore
-import app.tivi.data.repositories.episodes.SeasonsLastRequestStore
 import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
+import app.tivi.data.repositories.episodes.SeasonsEpisodesStore
+import app.tivi.data.repositories.episodes.SeasonsLastRequestStore
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import app.tivi.utils.BaseDatabaseTest
@@ -46,16 +46,14 @@ import app.tivi.utils.s2_id
 import app.tivi.utils.s2e1
 import app.tivi.utils.showId
 import app.tivi.utils.testCoroutineDispatchers
+import io.mockk.coEvery
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThat
-import org.junit.Ignore
 import org.junit.Test
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
 import javax.inject.Provider
 
-@Ignore("https://github.com/robolectric/robolectric/issues/3556")
 class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
     private lateinit var episodeWatchDao: EpisodeWatchEntryDao
     private lateinit var seasonsDao: SeasonsDao
@@ -79,11 +77,11 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         episodesDao = db.episodesDao()
         seasonsDao = db.seasonsDao()
 
-        traktSeasonsDataSource = mock(SeasonsEpisodesDataSource::class.java)
-        traktEpisodeDataSource = mock(EpisodeDataSource::class.java)
-        tmdbEpisodeDataSource = mock(EpisodeDataSource::class.java)
+        traktSeasonsDataSource = mockk()
+        traktEpisodeDataSource = mockk()
+        tmdbEpisodeDataSource = mockk()
 
-        val logger = mock(Logger::class.java)
+        val logger = mockk<Logger>(relaxUnitFun = true)
         val txRunner = TestTransactionRunner
         val entityInserter = EntityInserter(txRunner, logger)
 
@@ -115,9 +113,8 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         db.episodesDao().insertAll(s1_episodes)
 
         // Return a response with 2 items
-        `when`(traktSeasonsDataSource.getShowEpisodeWatches(showId)).thenReturn(
+        coEvery { traktSeasonsDataSource.getShowEpisodeWatches(showId) } returns
                 Success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
-        )
         // Sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that both are in the db
@@ -132,8 +129,8 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         // Insert both the watches
         episodeWatchDao.insertAll(s1e1w, s1e1w2)
         // Return a response with the same items
-        `when`(traktSeasonsDataSource.getShowEpisodeWatches(showId))
-                .thenReturn(Success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2)))
+        coEvery { traktSeasonsDataSource.getShowEpisodeWatches(showId) } returns
+                Success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
         // Now re-sync with the same response
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that both are in the db
@@ -148,8 +145,8 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         // Insert both the watches
         episodeWatchDao.insertAll(s1e1w, s1e1w2)
         // Return a response with just the second item
-        `when`(traktSeasonsDataSource.getShowEpisodeWatches(showId))
-                .thenReturn(Success(listOf(s1e1 to s1e1w2)))
+        coEvery { traktSeasonsDataSource.getShowEpisodeWatches(showId) } returns
+                Success(listOf(s1e1 to s1e1w2))
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that only the second is in the db
@@ -164,7 +161,8 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         // Insert both the watches
         episodeWatchDao.insertAll(s1e1w, s1e1w2)
         // Return a empty response
-        `when`(traktSeasonsDataSource.getShowEpisodeWatches(showId)).thenReturn(Success(emptyList()))
+        coEvery { traktSeasonsDataSource.getShowEpisodeWatches(showId) } returns
+                Success(emptyList())
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that the database is empty
@@ -174,8 +172,8 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
     @Test
     fun testSyncSeasonsEpisodes() = runBlockingTest {
         // Return a response with 2 items
-        `when`(traktSeasonsDataSource.getSeasonsEpisodes(showId))
-                .thenReturn(Success(listOf(s1 to s1_episodes)))
+        coEvery { traktSeasonsDataSource.getSeasonsEpisodes(showId) } returns
+                Success(listOf(s1 to s1_episodes))
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
@@ -189,8 +187,8 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         db.episodesDao().insertAll(s1_episodes)
 
         // Return a response with the same items
-        `when`(traktSeasonsDataSource.getSeasonsEpisodes(showId))
-                .thenReturn(Success(listOf(s1 to s1_episodes)))
+        coEvery { traktSeasonsDataSource.getSeasonsEpisodes(showId) } returns
+                Success(listOf(s1 to s1_episodes))
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
@@ -204,7 +202,8 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         db.episodesDao().insertAll(s1_episodes)
 
         // Return an empty response
-        `when`(traktSeasonsDataSource.getSeasonsEpisodes(showId)).thenReturn(Success(emptyList()))
+        coEvery { traktSeasonsDataSource.getSeasonsEpisodes(showId) } returns
+                Success(emptyList())
         repository.updateSeasonsEpisodes(showId)
 
         // Assert the database is empty
@@ -219,8 +218,8 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         db.episodesDao().insertAll(s2_episodes)
 
         // Return a response with just the first season
-        `when`(traktSeasonsDataSource.getSeasonsEpisodes(showId))
-                .thenReturn(Success(listOf(s1 to s1_episodes)))
+        coEvery { traktSeasonsDataSource.getSeasonsEpisodes(showId) } returns
+                Success(listOf(s1 to s1_episodes))
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
@@ -235,8 +234,8 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         db.episodesDao().insertAll(s2_episodes)
 
         // Return a response with both seasons, but just a single episodes in each
-        `when`(traktSeasonsDataSource.getSeasonsEpisodes(showId))
-                .thenReturn(Success(listOf(s1 to listOf(s1e1), s2 to listOf(s2e1))))
+        coEvery { traktSeasonsDataSource.getSeasonsEpisodes(showId) } returns
+                Success(listOf(s1 to listOf(s1e1), s2 to listOf(s2e1)))
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
