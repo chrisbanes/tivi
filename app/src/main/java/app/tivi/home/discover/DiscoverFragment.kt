@@ -73,21 +73,35 @@ internal class DiscoverFragment : TiviMvRxFragment() {
 
         controller.callbacks = object : DiscoverEpoxyController.Callbacks {
             override fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>) {
-                findNavController().navigate(R.id.action_discover_to_trending, null, null,
-                        listItemSharedElementHelper.createForItems(items).toFragmentNavigatorExtras())
+                val extras = listItemSharedElementHelper.createForItems(items)
+
+                findNavController().navigate(
+                        R.id.action_discover_to_trending,
+                        null,
+                        null,
+                        extras.toFragmentNavigatorExtras())
             }
 
             override fun onPopularHeaderClicked(items: List<PopularEntryWithShow>) {
-                findNavController().navigate(R.id.action_discover_to_popular, null, null,
-                        listItemSharedElementHelper.createForItems(items).toFragmentNavigatorExtras())
+                val extras = listItemSharedElementHelper.createForItems(items)
+
+                findNavController().navigate(
+                        R.id.action_discover_to_popular,
+                        null,
+                        null,
+                        extras.toFragmentNavigatorExtras())
             }
 
             override fun onItemClicked(viewHolderId: Long, item: EntryWithShow<out Entry>) {
                 val direction = DiscoverFragmentDirections.actionDiscoverToActivityShowDetails(item.show.id)
+
+                val elements = listItemSharedElementHelper.createForId(viewHolderId, "poster") {
+                    it.findViewById(R.id.show_poster)
+                }
+
                 findNavController().navigate(
                         direction,
-                        listItemSharedElementHelper.createForId(viewHolderId, "poster")
-                                .toActivityNavigatorExtras(requireActivity())
+                        elements.toActivityNavigatorExtras(requireActivity())
                 )
             }
         }

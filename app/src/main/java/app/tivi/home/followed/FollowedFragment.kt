@@ -42,7 +42,7 @@ class FollowedFragment : TiviMvRxFragment() {
     @Inject lateinit var followedViewModelFactory: FollowedViewModel.Factory
 
     private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
-        ListItemSharedElementHelper(binding.followedRv) { it.findViewById(R.id.show_poster) }
+        ListItemSharedElementHelper(binding.followedRv)
     }
 
     @Inject lateinit var controller: FollowedEpoxyController
@@ -60,10 +60,13 @@ class FollowedFragment : TiviMvRxFragment() {
         controller.callbacks = object : FollowedEpoxyController.Callbacks {
             override fun onItemClicked(item: FollowedShowEntryWithShow) {
                 val direction = FollowedFragmentDirections.actionFollowedToActivityShowDetails(item.show.id)
+
+                val extras = listItemSharedElementHelper.createForItem(item, "poster") {
+                    it.findViewById(R.id.show_poster)
+                }
+
                 findNavController().navigate(
-                        direction,
-                        listItemSharedElementHelper.createForItem(item, "poster")
-                                .toActivityNavigatorExtras(requireActivity())
+                        direction, extras.toActivityNavigatorExtras(requireActivity())
                 )
             }
 
