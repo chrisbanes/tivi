@@ -18,6 +18,7 @@ package app.tivi.data.repositories.shows
 
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
+import app.tivi.data.daos.ShowFtsDao
 import app.tivi.data.daos.ShowImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.ShowTmdbImage
@@ -29,6 +30,7 @@ import javax.inject.Inject
 class ShowStore @Inject constructor(
     private val entityInserter: EntityInserter,
     private val showDao: TiviShowDao,
+    private val showFtsDao: ShowFtsDao,
     private val showImagesDao: ShowImagesDao,
     private val transactionRunner: DatabaseTransactionRunner
 ) {
@@ -70,7 +72,7 @@ class ShowStore @Inject constructor(
         showDao.insert(show)
     }
 
-    suspend fun searchShows(query: String) = showDao.search("*$query*")
+    suspend fun searchShows(query: String) = showFtsDao.search("*$query*")
 
     suspend fun saveImages(showId: Long, images: List<ShowTmdbImage>) = transactionRunner {
         showImagesDao.deleteForShowId(showId)

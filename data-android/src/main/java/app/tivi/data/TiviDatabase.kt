@@ -26,6 +26,7 @@ import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.PopularDao
 import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.SeasonsDao
+import app.tivi.data.daos.ShowFtsDao
 import app.tivi.data.daos.ShowImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.TrendingDao
@@ -74,6 +75,7 @@ import app.tivi.data.views.FollowedShowsWatchStats
 @TypeConverters(TiviTypeConverters::class)
 abstract class TiviDatabase : RoomDatabase() {
     abstract fun showDao(): TiviShowDao
+    abstract fun showFtsDao(): ShowFtsDao
     abstract fun showImagesDao(): ShowImagesDao
     abstract fun trendingDao(): TrendingDao
     abstract fun popularDao(): PopularDao

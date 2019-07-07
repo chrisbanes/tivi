@@ -72,6 +72,9 @@ class DatabaseModule {
     @Provides
     fun provideShowImagesDao(db: TiviDatabase) = db.showImagesDao()
 
+    @Provides
+    fun provideShowFtsDao(db: TiviDatabase) = db.showFtsDao()
+
     @Singleton
     @Provides
     fun provideDatabaseTransactionRunner(db: TiviDatabase): DatabaseTransactionRunner = RoomTransactionRunner(db)

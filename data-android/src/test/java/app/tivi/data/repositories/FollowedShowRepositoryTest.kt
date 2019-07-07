@@ -80,7 +80,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
             repository = FollowedShowsRepository(
                     FollowedShowsStore(txRunner, entityInserter, db.followedShowsDao(), db.showDao(), logger),
                     FollowedShowsLastRequestStore(db.lastRequestDao()),
-                    ShowStore(entityInserter, db.showDao(), db.showImagesDao(), txRunner),
+                    ShowStore(entityInserter, db.showDao(), db.showFtsDao(), db.showImagesDao(), txRunner),
                     traktDataSource,
                     showRepository,
                     Provider { TraktAuthState.LOGGED_IN },
