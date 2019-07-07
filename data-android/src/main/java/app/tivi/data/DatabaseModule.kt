@@ -23,12 +23,12 @@ import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
-@Module
+@Module(includes = [DatabaseModuleBinds::class])
 class DatabaseModule {
     @Singleton
     @Provides
-    fun provideDatabase(context: Context): TiviDatabase {
-        val builder = Room.databaseBuilder(context, TiviDatabase::class.java, "shows.db")
+    fun provideDatabase(context: Context): TiviRoomDatabase {
+        val builder = Room.databaseBuilder(context, TiviRoomDatabase::class.java, "shows.db")
                 .fallbackToDestructiveMigration()
         if (Debug.isDebuggerConnected()) {
             builder.allowMainThreadQueries()
@@ -74,8 +74,4 @@ class DatabaseModule {
 
     @Provides
     fun provideShowFtsDao(db: TiviDatabase) = db.showFtsDao()
-
-    @Singleton
-    @Provides
-    fun provideDatabaseTransactionRunner(db: TiviDatabase): DatabaseTransactionRunner = RoomTransactionRunner(db)
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package app.tivi.data
+package app.tivi.utils
 
-import androidx.room.withTransaction
-import javax.inject.Inject
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-class RoomTransactionRunner @Inject constructor(
-    private val db: TiviRoomDatabase
-) : DatabaseTransactionRunner {
-    override suspend operator fun <T> invoke(block: suspend () -> T): T {
-        return db.withTransaction {
-            block()
-        }
-    }
-}
+@Entity(tableName = "shows_fts")
+data class FakeTiviShowFts(
+    @PrimaryKey @ColumnInfo(name = "id") val id: Long? = null,
+    @ColumnInfo(name = "title") val title: String? = null,
+    @ColumnInfo(name = "original_title") val originalTitle: String? = null,
+    @ColumnInfo(name = "docid") val docId: Long? = null
+)

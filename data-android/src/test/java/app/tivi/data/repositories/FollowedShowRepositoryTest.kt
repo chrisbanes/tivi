@@ -42,7 +42,6 @@ import app.tivi.utils.show2Id
 import app.tivi.utils.showId
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThat
-import org.junit.Ignore
 import org.junit.Test
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.`when`
@@ -51,7 +50,6 @@ import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import javax.inject.Provider
 
-@Ignore("https://github.com/robolectric/robolectric/issues/3556")
 class FollowedShowRepositoryTest : BaseDatabaseTest() {
     private lateinit var followShowsDao: FollowedShowsDao
 

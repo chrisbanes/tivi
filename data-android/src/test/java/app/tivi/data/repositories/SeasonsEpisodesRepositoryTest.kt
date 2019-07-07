@@ -24,10 +24,10 @@ import app.tivi.data.entities.Success
 import app.tivi.data.repositories.episodes.EpisodeDataSource
 import app.tivi.data.repositories.episodes.EpisodeWatchLastRequestStore
 import app.tivi.data.repositories.episodes.EpisodeWatchStore
-import app.tivi.data.repositories.episodes.SeasonsEpisodesStore
-import app.tivi.data.repositories.episodes.SeasonsLastRequestStore
 import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
+import app.tivi.data.repositories.episodes.SeasonsEpisodesStore
+import app.tivi.data.repositories.episodes.SeasonsLastRequestStore
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import app.tivi.utils.BaseDatabaseTest
@@ -49,13 +49,11 @@ import app.tivi.utils.testCoroutineDispatchers
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThat
-import org.junit.Ignore
 import org.junit.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import javax.inject.Provider
 
-@Ignore("https://github.com/robolectric/robolectric/issues/3556")
 class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
     private lateinit var episodeWatchDao: EpisodeWatchEntryDao
     private lateinit var seasonsDao: SeasonsDao
