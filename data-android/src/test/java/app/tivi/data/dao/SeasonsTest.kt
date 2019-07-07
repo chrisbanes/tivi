@@ -33,7 +33,6 @@ import org.junit.Assert.assertThat
 import org.junit.Ignore
 import org.junit.Test
 
-@Ignore("https://github.com/robolectric/robolectric/issues/3556")
 class SeasonsTest : BaseDatabaseTest() {
     private lateinit var seasonsDao: SeasonsDao
 

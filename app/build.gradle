@@ -233,7 +233,6 @@ dependencies {
 
     testImplementation Libs.junit
     testImplementation Libs.robolectric
-    testImplementation Libs.mockitoKotlin
     testImplementation Libs.AndroidX.Test.core
     testImplementation Libs.AndroidX.Test.runner
     testImplementation Libs.AndroidX.Test.rules
