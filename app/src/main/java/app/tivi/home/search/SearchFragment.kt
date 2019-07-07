@@ -56,9 +56,7 @@ internal class SearchFragment : TiviMvRxFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        listItemSharedElementHelper = ListItemSharedElementHelper(binding.recyclerview) {
-            it.findViewById(R.id.show_poster)
-        }
+        listItemSharedElementHelper = ListItemSharedElementHelper(binding.recyclerview)
 
         binding.recyclerview.apply {
             setController(controller)
@@ -68,8 +66,10 @@ internal class SearchFragment : TiviMvRxFragment() {
         controller.callbacks = object : SearchEpoxyController.Callbacks {
             override fun onSearchItemClicked(show: TiviShow) {
                 // We should really use AndroidX navigation here, but this fragment isn't in the tree
-                appNavigator.startShowDetails(show.id,
-                        listItemSharedElementHelper.createForId(show.id, "poster"))
+                val extras = listItemSharedElementHelper.createForId(show.id, "poster") {
+                    it.findViewById(R.id.show_poster)
+                }
+                appNavigator.startShowDetails(show.id, extras)
             }
         }
     }
