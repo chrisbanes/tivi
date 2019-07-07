@@ -25,7 +25,7 @@ object Libs {
     val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6"
     val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.2.1"
 
-    val mvRx = "com.airbnb.android:mvrx:1.0.2"
+    val mvRx = "com.airbnb.android:mvrx:1.0.1"
 
     val threeTenBp = "org.threeten:threetenbp:1.4.0"
     val threeTenBpNoTzdb = "$threeTenBp:no-tzdb"
