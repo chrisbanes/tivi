@@ -44,10 +44,30 @@ class ShowStore @Inject constructor(
      * Gets the ID for the show with the given trakt Id. If the trakt Id does not exist in the
      * database, it is inserted and the generated ID is returned.
      */
+    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
     suspend fun getIdOrSavePlaceholder(show: TiviShow): Long = transactionRunner {
-        show.traktId?.let { showDao.getShowWithTraktId(it)?.id }
-                ?: show.tmdbId?.let { showDao.getShowWithTmdbId(it)?.id }
-                ?: showDao.insert(show)
+        if (show.traktId != null && show.tmdbId != null) {
+            // TODO There's a chance that the show is already in the DB twice (one with each ID)
+            // We should merge them and combine
+        }
+
+        if (show.traktId != null) {
+            val id = showDao.getIdForTraktId(show.traktId)
+            if (id != null) {
+                return@transactionRunner id!!
+            }
+        }
+
+        if (show.tmdbId != null) {
+            val id = showDao.getIdForTmdbId(show.tmdbId)
+            if (id != null) {
+                return@transactionRunner id!!
+            }
+        }
+
+        // TODO add fuzzy search on name or slug
+
+        showDao.insert(show)
     }
 
     suspend fun searchShows(query: String) = showDao.search("*$query*")
