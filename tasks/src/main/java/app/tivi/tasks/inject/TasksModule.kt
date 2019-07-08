@@ -16,6 +16,7 @@
 
 package app.tivi.tasks.inject
 
+import android.content.Context
 import androidx.work.WorkManager
 import dagger.Module
 import dagger.Provides
@@ -25,5 +26,5 @@ import javax.inject.Singleton
 class TasksModule {
     @Provides
     @Singleton
-    fun provideWorkManager(): WorkManager = WorkManager.getInstance()
+    fun provideWorkManager(context: Context): WorkManager = WorkManager.getInstance(context)
 }
