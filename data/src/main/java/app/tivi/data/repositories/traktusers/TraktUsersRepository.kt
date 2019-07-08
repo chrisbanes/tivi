@@ -31,9 +31,8 @@ class TraktUsersRepository @Inject constructor(
     fun observeUser(username: String) = traktUsersStore.observeUser(username)
 
     suspend fun updateUser(username: String) {
-        val response = traktDataSource.getUser(username)
-        when {
-            response is Success && response.responseModified -> {
+        when (val response = traktDataSource.getUser(username)) {
+            is Success -> {
                 var user = response.data
                 // Tag the user as 'me' if that's what we're requesting
                 if (username == "me") {
