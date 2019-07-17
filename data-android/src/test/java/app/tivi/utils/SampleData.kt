@@ -86,12 +86,14 @@ val s1e1w2 = s1e1w.copy(id = s1e1w2_id, traktId = 4385783)
 val episodeWatch2PendingSend = s1e1w2.copy(pendingAction = PendingAction.UPLOAD)
 val episodeWatch2PendingDelete = s1e1w2.copy(pendingAction = PendingAction.DELETE)
 
-internal suspend fun insertFollowedShow(db: TiviDatabase) = db.followedShowsDao().insert(followedShow1)
+internal suspend fun insertFollowedShow(db: TiviDatabase) = db.followedShowsDao().insert(followedShow1Local)
 
 const val followedShowId = 1L
-val followedShow1 = FollowedShowEntry(followedShowId, showId)
-val followedShow1PendingDelete = followedShow1.copy(pendingAction = PendingAction.DELETE)
-val followedShow1PendingUpload = followedShow1.copy(pendingAction = PendingAction.UPLOAD)
+val followedShow1Network = FollowedShowEntry(0, showId, traktId = 100)
+val followedShow1Local = followedShow1Network.copy(id = followedShowId)
+val followedShow1PendingDelete = followedShow1Local.copy(pendingAction = PendingAction.DELETE)
+val followedShow1PendingUpload = followedShow1Local.copy(pendingAction = PendingAction.UPLOAD)
 
 const val followedShow2Id = 2L
-val followedShow2 = FollowedShowEntry(followedShow2Id, show2Id)
+val followedShow2Network = FollowedShowEntry(0, show2Id, traktId = 101)
+val followedShow2Local = followedShow2Network.copy(id = followedShow2Id)

@@ -17,6 +17,8 @@
 package app.tivi.home
 
 import android.content.Context
+import android.content.res.Resources
+import android.graphics.Typeface
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
@@ -32,14 +34,26 @@ import javax.inject.Inject
 class HomeTextCreator @Inject constructor(
     @PerActivity private val context: Context
 ) {
-    private val barlowTypefaceSpan = TypefaceSpan(ResourcesCompat.getFont(context, R.font.barlow_400))
+    private var barlowTypeface: Typeface = Typeface.DEFAULT
+        get() {
+            if (field == Typeface.DEFAULT) {
+                try {
+                    ResourcesCompat.getFont(context, R.font.barlow_400)?.also { field = it }
+                } catch (nfe: Resources.NotFoundException) {
+                    // getFont will throw a NFE if the device if offline or doesn't have
+                    // Play Services. Lets not crash
+                }
+            }
+            return field
+        }
 
     fun showTitle(show: TiviShow): CharSequence = buildSpannedString {
         append(show.title)
 
         show.firstAired?.also { firstAired ->
             append(" ")
-            inSpans(textAppearanceSpanForAttribute(context, R.attr.textAppearanceCaption), barlowTypefaceSpan) {
+            inSpans(textAppearanceSpanForAttribute(context, R.attr.textAppearanceCaption),
+                    TypefaceSpan(barlowTypeface)) {
                 append("(")
                 append(firstAired.year.toString())
                 append(")")

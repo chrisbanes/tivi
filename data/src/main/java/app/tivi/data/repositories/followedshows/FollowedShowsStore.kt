@@ -20,7 +20,6 @@ import androidx.paging.DataSource
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.SortOption
@@ -36,14 +35,13 @@ class FollowedShowsStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val entityInserter: EntityInserter,
     private val followedShowsDao: FollowedShowsDao,
-    private val showDao: TiviShowDao,
-    private val logger: Logger
+    logger: Logger
 ) {
     var traktListId: Int? = null
 
     private val syncer = syncerForEntity(
             followedShowsDao,
-            { showDao.getTraktIdForShowId(it.showId)!! },
+            { it.traktId },
             { entity, id -> entity.copy(id = id ?: 0) },
             logger
     )

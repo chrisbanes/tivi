@@ -18,19 +18,16 @@ package app.tivi.interactors
 
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.Logger
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 class ChangeShowFollowStatus @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
-    private val followedShowsRepository: FollowedShowsRepository,
-    private val logger: Logger
+    private val followedShowsRepository: FollowedShowsRepository
 ) : Interactor<ChangeShowFollowStatus.Params> {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend fun invoke(params: Params) {
-        logger.d("ChangeShowFollowStatus started: %s", params)
         when (params.action) {
             Action.TOGGLE -> followedShowsRepository.toggleFollowedShow(params.showId)
             Action.FOLLOW -> followedShowsRepository.addFollowedShow(params.showId)

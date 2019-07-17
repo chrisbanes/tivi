@@ -16,7 +16,9 @@
 
 package app.tivi.ui.databinding
 
+import android.content.res.Resources
 import android.graphics.Outline
+import android.graphics.Typeface
 import android.view.Gravity
 import android.view.View
 import android.view.ViewOutlineProvider
@@ -194,7 +196,11 @@ fun textAppearanceAttr(view: TextView, oldTextAppearanceStyleAttr: Int, textAppe
 @BindingAdapter("fontFamily")
 fun fontFamily(view: TextView, oldFontFamily: Int, fontFamily: Int) {
     if (oldFontFamily != fontFamily) {
-        view.typeface = ResourcesCompat.getFont(view.context, fontFamily)
+        view.typeface = try {
+            ResourcesCompat.getFont(view.context, fontFamily)
+        } catch (nfe: Resources.NotFoundException) {
+            null
+        } ?: Typeface.DEFAULT
     }
 }
 
