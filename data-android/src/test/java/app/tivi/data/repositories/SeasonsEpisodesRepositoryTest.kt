@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories
 
+import app.tivi.data.TiviEntityInserter
 import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.daos.EpisodesDao
@@ -83,7 +84,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
 
         val logger = mockk<Logger>(relaxUnitFun = true)
         val txRunner = TestTransactionRunner
-        val entityInserter = EntityInserter(txRunner, logger)
+        val entityInserter = TiviEntityInserter(txRunner, logger)
 
         watchStore = EpisodeWatchStore(entityInserter, txRunner, episodeWatchDao, logger)
 

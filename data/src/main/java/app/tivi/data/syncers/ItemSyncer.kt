@@ -42,21 +42,21 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
         val updated = ArrayList<ET>()
 
         networkValues.forEach { networkEntity ->
-            logger.d("Syncing item from network: %s", networkEntity)
+            logger.v("Syncing item from network: %s", networkEntity)
 
             val remoteId = networkEntityToIdFunc(networkEntity)
-            logger.d("Mapped to remote ID: %s", remoteId)
+            logger.v("Mapped to remote ID: %s", remoteId)
 
             val dbEntityForId = currentDbEntities.find { localEntityToIdFunc(it) == remoteId }
-            logger.d("Matched database entity for remote ID %s : %s", remoteId, dbEntityForId)
+            logger.v("Matched database entity for remote ID %s : %s", remoteId, dbEntityForId)
 
             if (dbEntityForId != null) {
                 val entity = networkEntityToLocalEntityMapperFunc(networkEntity, dbEntityForId.id)
-                logger.d("Mapped network entity to local entity: %s", entity)
+                logger.v("Mapped network entity to local entity: %s", entity)
                 if (dbEntityForId != entity) {
                     // This is currently in the DB, so lets merge it with the saved version and update it
                     entryUpdateFunc(entity)
-                    logger.d("Updated entry with remote id: %s", remoteId)
+                    logger.v("Updated entry with remote id: %s", remoteId)
                 }
                 // Remove it from the list so that it is not deleted
                 currentDbEntities.remove(dbEntityForId)
@@ -65,7 +65,7 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
                 // Not currently in the DB, so lets insert
                 val entity = networkEntityToLocalEntityMapperFunc(networkEntity, null)
                 entryInsertFunc(entity)
-                logger.d("Inserted entry with remote id: %s", remoteId)
+                logger.v("Inserted entry with remote id: %s", remoteId)
                 added += entity
             }
         }
@@ -73,7 +73,7 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
         // Anything left in the set needs to be deleted from the database
         currentDbEntities.forEach {
             entryDeleteFunc(it)
-            logger.d("Deleted entry: ", it)
+            logger.v("Deleted entry: ", it)
             removed += it
         }
 

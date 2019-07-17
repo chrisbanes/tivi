@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories
 
+import app.tivi.data.TiviEntityInserter
 import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.Success
@@ -67,7 +68,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
 
             val logger = mockk<Logger>(relaxUnitFun = true)
             val txRunner = TestTransactionRunner
-            val entityInserter = EntityInserter(txRunner, logger)
+            val entityInserter = TiviEntityInserter(txRunner, logger)
             traktDataSource = mockk()
 
             repository = FollowedShowsRepository(
