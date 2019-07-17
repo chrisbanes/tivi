@@ -17,7 +17,6 @@
 package app.tivi.data.repositories
 
 import app.tivi.data.TiviEntityInserter
-import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.Success
 import app.tivi.data.repositories.followedshows.FollowedShowsDataSource
@@ -30,10 +29,12 @@ import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.TestTransactionRunner
-import app.tivi.utils.followedShow1
+import app.tivi.utils.followedShow1Local
+import app.tivi.utils.followedShow1Network
 import app.tivi.utils.followedShow1PendingDelete
 import app.tivi.utils.followedShow1PendingUpload
-import app.tivi.utils.followedShow2
+import app.tivi.utils.followedShow2Local
+import app.tivi.utils.followedShow2Network
 import app.tivi.utils.insertFollowedShow
 import app.tivi.utils.insertShow
 import app.tivi.utils.runBlockingTest
@@ -63,8 +64,10 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
 
             followShowsDao = db.followedShowsDao()
 
-            showRepository = mockk()
+            showRepository = mockk(relaxUnitFun = true)
             coEvery { showRepository.needsUpdate(any()) } returns true
+            coEvery { showRepository.needsInitialUpdate(any()) } returns true
+            coEvery { showRepository.needsImagesUpdate(any(), any()) } returns true
 
             val logger = mockk<Logger>(relaxUnitFun = true)
             val txRunner = TestTransactionRunner
@@ -72,7 +75,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
             traktDataSource = mockk()
 
             repository = FollowedShowsRepository(
-                    FollowedShowsStore(txRunner, entityInserter, db.followedShowsDao(), db.showDao(), logger),
+                    FollowedShowsStore(txRunner, entityInserter, db.followedShowsDao(), logger),
                     FollowedShowsLastRequestStore(db.lastRequestDao()),
                     ShowStore(entityInserter, db.showDao(), db.showFtsDao(), db.showImagesDao(), txRunner),
                     traktDataSource,
@@ -86,9 +89,11 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
     @Test
     fun testSync() = runBlockingTest {
         coEvery { traktDataSource.getFollowedListId() } returns 0
-        coEvery { traktDataSource.getListShows(0) } returns Success(listOf(followedShow1 to show))
+        coEvery { traktDataSource.getListShows(0) } returns Success(listOf(followedShow1Network to show))
 
-        assertThat(repository.getFollowedShows(), `is`(listOf(followedShow1)))
+        repository.syncFollowedShows()
+
+        assertThat(repository.getFollowedShows(), `is`(listOf(followedShow1Local)))
     }
 
     @Test
@@ -98,6 +103,8 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
         coEvery { traktDataSource.getFollowedListId() } returns 0
         coEvery { traktDataSource.getListShows(0) } returns Success(emptyList())
 
+        repository.syncFollowedShows()
+
         assertThat(repository.getFollowedShows(), `is`(emptyList()))
     }
 
@@ -106,9 +113,11 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
         insertFollowedShow(db)
 
         coEvery { traktDataSource.getFollowedListId() } returns 0
-        coEvery { traktDataSource.getListShows(0) } returns Success(listOf(followedShow2 to show2))
+        coEvery { traktDataSource.getListShows(0) } returns Success(listOf(followedShow2Network to show2))
 
-        assertThat(repository.getFollowedShows(), `is`(listOf(followedShow2)))
+        repository.syncFollowedShows()
+
+        assertThat(repository.getFollowedShows(), `is`(listOf(followedShow2Local)))
     }
 
     @Test
@@ -117,6 +126,8 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
 
         // Return null for the list ID so that we disable syncing
         coEvery { traktDataSource.getFollowedListId() } returns null
+
+        repository.syncFollowedShows()
 
         assertThat(repository.getFollowedShows(), `is`(emptyList()))
     }
@@ -128,6 +139,8 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
         // Return null for the list ID so that we disable syncing
         coEvery { traktDataSource.getFollowedListId() } returns null
 
-        assertThat(repository.getFollowedShows(), `is`(listOf(followedShow1)))
+        repository.syncFollowedShows()
+
+        assertThat(repository.getFollowedShows(), `is`(listOf(followedShow1Local)))
     }
 }

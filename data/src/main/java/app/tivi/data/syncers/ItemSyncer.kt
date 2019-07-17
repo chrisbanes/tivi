@@ -29,7 +29,7 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
     private val entryInsertFunc: suspend (ET) -> Long,
     private val entryUpdateFunc: suspend (ET) -> Unit,
     private val entryDeleteFunc: suspend (ET) -> Int,
-    private val localEntityToIdFunc: suspend (ET) -> NID,
+    private val localEntityToIdFunc: suspend (ET) -> NID?,
     private val networkEntityToIdFunc: suspend (NT) -> NID,
     private val networkEntityToLocalEntityMapperFunc: suspend (NT, Long?) -> ET,
     private val logger: Logger
@@ -41,11 +41,14 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
         val added = ArrayList<ET>()
         val updated = ArrayList<ET>()
 
-        networkValues.forEach { networkEntity ->
+        for (networkEntity in networkValues) {
             logger.v("Syncing item from network: %s", networkEntity)
 
             val remoteId = networkEntityToIdFunc(networkEntity)
             logger.v("Mapped to remote ID: %s", remoteId)
+            if (remoteId == null) {
+                break
+            }
 
             val dbEntityForId = currentDbEntities.find { localEntityToIdFunc(it) == remoteId }
             logger.v("Matched database entity for remote ID %s : %s", remoteId, dbEntityForId)
@@ -63,10 +66,7 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
                 updated += entity
             } else {
                 // Not currently in the DB, so lets insert
-                val entity = networkEntityToLocalEntityMapperFunc(networkEntity, null)
-                entryInsertFunc(entity)
-                logger.v("Inserted entry with remote id: %s", remoteId)
-                added += entity
+                added += networkEntityToLocalEntityMapperFunc(networkEntity, null)
             }
         }
 
@@ -75,6 +75,11 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
             entryDeleteFunc(it)
             logger.v("Deleted entry: ", it)
             removed += it
+        }
+
+        // Finally we can insert all of the new entities
+        added.forEach {
+            entryInsertFunc(it)
         }
 
         return ItemSyncerResult(added, removed, updated)
@@ -89,7 +94,7 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
 
 fun <ET : TiviEntity, NT, NID> syncerForEntity(
     entityDao: EntityDao<ET>,
-    localEntityToIdFunc: suspend (ET) -> NID,
+    localEntityToIdFunc: suspend (ET) -> NID?,
     networkEntityToIdFunc: suspend (NT) -> NID,
     networkEntityToLocalEntityMapperFunc: suspend (NT, Long?) -> ET,
     logger: Logger
@@ -105,15 +110,15 @@ fun <ET : TiviEntity, NT, NID> syncerForEntity(
 
 fun <ET : TiviEntity, NID> syncerForEntity(
     entityDao: EntityDao<ET>,
-    localEntityToIdFunc: suspend (ET) -> NID,
+    entityToIdFunc: suspend (ET) -> NID?,
     mapper: suspend (ET, Long?) -> ET,
     logger: Logger
 ) = ItemSyncer(
         entityDao::insert,
         entityDao::update,
         entityDao::delete,
-        localEntityToIdFunc,
-        localEntityToIdFunc,
+        entityToIdFunc,
+        entityToIdFunc,
         mapper,
         logger
 )

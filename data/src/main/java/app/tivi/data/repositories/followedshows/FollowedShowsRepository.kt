@@ -50,7 +50,6 @@ class FollowedShowsRepository @Inject constructor(
     suspend fun isShowFollowed(showId: Long) = followedShowsStore.isShowFollowed(showId)
 
     suspend fun getFollowedShows(): List<FollowedShowEntry> {
-        syncFollowedShows()
         return followedShowsStore.getEntries()
     }
 
