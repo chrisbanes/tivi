@@ -16,6 +16,7 @@
 
 package app.tivi.data
 
+import app.tivi.data.daos.EntityInserter
 import dagger.Binds
 import dagger.Module
 import javax.inject.Singleton
@@ -28,4 +29,8 @@ abstract class DatabaseModuleBinds {
     @Singleton
     @Binds
     abstract fun provideDatabaseTransactionRunner(runner: RoomTransactionRunner): DatabaseTransactionRunner
+
+    @Singleton
+    @Binds
+    abstract fun provideEntityInserter(inserter: TiviEntityInserter): EntityInserter
 }
