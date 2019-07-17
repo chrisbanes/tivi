@@ -87,18 +87,13 @@ class TraktFollowedShowsDataSource @Inject constructor(
     }
 
     override suspend fun getFollowedListId(): Int {
-        val list = usersService.get().lists(UserSlug.ME).fetchBodyWithRetry()
-                .first { it.name == LIST_NAME }
-
-        return if (list != null) {
-            list.ids.trakt
-        } else {
-            usersService.get().createList(
-                    UserSlug.ME,
-                    TraktList().name(LIST_NAME).privacy(ListPrivacy.PRIVATE)
-            ).fetchBodyWithRetry().let {
-                it.ids.trakt
-            }
-        }
+        return usersService.get().lists(UserSlug.ME)
+                .fetchBodyWithRetry()
+                .firstOrNull { it.name == LIST_NAME }
+                ?.let { it.ids?.trakt }
+                ?: usersService.get().createList(UserSlug.ME, TraktList().name(LIST_NAME)
+                                .privacy(ListPrivacy.PRIVATE))
+                        .fetchBodyWithRetry()
+                        .let { it.ids!!.trakt!! }
     }
 }
