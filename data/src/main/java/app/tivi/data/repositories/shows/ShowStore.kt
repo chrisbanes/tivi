@@ -36,11 +36,22 @@ class ShowStore @Inject constructor(
 ) {
     suspend fun getShow(showId: Long) = showDao.getShowWithId(showId)
 
+    suspend fun getShowOrEmpty(showId: Long) = showDao.getShowWithId(showId) ?: TiviShow.EMPTY_SHOW
+
     suspend fun getShowDetailed(showId: Long) = showDao.getShowWithIdDetailed(showId)
 
     fun observeShowDetailed(showId: Long): Observable<ShowDetailed> = showDao.getShowWithIdObservable(showId)
 
     suspend fun saveShow(show: TiviShow) = entityInserter.insertOrUpdate(showDao, show)
+
+    suspend fun updateShowFromSources(showId: Long, trakt: TiviShow) = transactionRunner {
+        val localShow = getShowOrEmpty(showId)
+        val merged = mergeShows(localShow, trakt)
+
+        if (localShow != merged) {
+            saveShow(merged)
+        }
+    }
 
     /**
      * Gets the ID for the show with the given trakt Id. If the trakt Id does not exist in the
@@ -48,23 +59,30 @@ class ShowStore @Inject constructor(
      */
     @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
     suspend fun getIdOrSavePlaceholder(show: TiviShow): Long = transactionRunner {
-        if (show.traktId != null && show.tmdbId != null) {
-            // TODO There's a chance that the show is already in the DB twice (one with each ID)
-            // We should merge them and combine
-        }
+        val idForTraktId: Long? = if (show.traktId != null) showDao.getIdForTraktId(show.traktId) else null
+        val idForTmdbId: Long? = if (show.tmdbId != null) showDao.getIdForTmdbId(show.tmdbId) else null
 
-        if (show.traktId != null) {
-            val id = showDao.getIdForTraktId(show.traktId)
-            if (id != null) {
-                return@transactionRunner id!!
+        if (idForTraktId != null && idForTmdbId != null) {
+            if (idForTmdbId == idForTraktId) {
+                // Great, the entities are matching
+                return@transactionRunner idForTraktId!!
+            } else {
+                val showForTmdbId = showDao.getShowWithId(idForTmdbId)!!
+                val showForTraktId = showDao.getShowWithId(idForTraktId)!!
+
+                showDao.delete(showForTmdbId)
+                return@transactionRunner saveShow(
+                        mergeShows(showForTraktId, showForTraktId, showForTmdbId)
+                )
             }
         }
-
-        if (show.tmdbId != null) {
-            val id = showDao.getIdForTmdbId(show.tmdbId)
-            if (id != null) {
-                return@transactionRunner id!!
-            }
+        if (idForTraktId != null) {
+            // If we get here, we only have a entity with the trakt id
+            return@transactionRunner idForTraktId!!
+        }
+        if (idForTmdbId != null) {
+            // If we get here, we only have a entity with the tmdb id
+            return@transactionRunner idForTmdbId!!
         }
 
         // TODO add fuzzy search on name or slug
@@ -78,4 +96,28 @@ class ShowStore @Inject constructor(
         showImagesDao.deleteForShowId(showId)
         entityInserter.insertOrUpdate(showImagesDao, images)
     }
+
+    private fun mergeShows(
+        local: TiviShow,
+        trakt: TiviShow = TiviShow.EMPTY_SHOW,
+        tmdb: TiviShow = TiviShow.EMPTY_SHOW
+    ) = local.copy(
+            title = trakt.title ?: local.title,
+            summary = trakt.summary ?: local.summary,
+            homepage = trakt.homepage ?: local.homepage,
+            network = trakt.network ?: local.network,
+            certification = trakt.certification ?: local.certification,
+            runtime = trakt.runtime ?: local.runtime,
+            country = trakt.country ?: local.country,
+            firstAired = trakt.firstAired ?: local.firstAired,
+            _genres = trakt._genres ?: local._genres,
+
+            // Trakt specific stuff
+            traktId = trakt.traktId ?: local.traktId,
+            traktRating = trakt.traktRating ?: local.traktRating,
+            traktDataUpdate = trakt.traktDataUpdate ?: local.traktDataUpdate,
+
+            // TMDb specific stuff
+            tmdbId = tmdb.tmdbId ?: trakt.tmdbId ?: local.tmdbId
+    )
 }

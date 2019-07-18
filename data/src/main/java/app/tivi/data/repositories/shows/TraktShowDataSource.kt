@@ -48,7 +48,7 @@ class TraktShowDataSource @Inject constructor(
             if (response.isSuccessful) {
                 val body = response.bodyOrThrow()
                 if (body.isNotEmpty()) {
-                    traktId = body[0].show.ids.trakt
+                    traktId = body[0].show?.ids?.trakt
                 }
             } else {
                 return ErrorResult(response.toException())
@@ -57,13 +57,13 @@ class TraktShowDataSource @Inject constructor(
 
         if (traktId == null) {
             val response = searchService.get().textQueryShow(show.title, null /* years */, null /* genres */,
-                    null /* lang */, show.country /* countries */, null /* runtimes */, null /* ratings */,
+                    null /* lang */, show.country /* countries */, null /* runtime */, null /* ratings */,
                     null /* certs */, show.network /* networks */, null /* status */,
                     Extended.NOSEASONS, 1, 1).executeWithRetry()
             if (response.isSuccessful) {
                 val body = response.bodyOrThrow()
                 if (body.isNotEmpty()) {
-                    traktId = body[0].show.ids.trakt
+                    traktId = body[0].show?.ids?.trakt
                 }
             } else {
                 return ErrorResult(response.toException())
