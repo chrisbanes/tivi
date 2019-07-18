@@ -25,7 +25,7 @@ import app.tivi.tasks.inject.ChildWorkerFactory
 import app.tivi.util.Logger
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 
 class SyncAllFollowedShows @AssistedInject constructor(
     @Assisted params: WorkerParameters,
@@ -38,12 +38,11 @@ class SyncAllFollowedShows @AssistedInject constructor(
         const val NIGHTLY_SYNC_TAG = "night-sync-all-followed-shows"
     }
 
-    override val coroutineContext: CoroutineDispatcher
-        get() = updateFollowedShows.dispatcher
-
     override suspend fun doWork(): Result {
-        logger.d("$TAG worker running")
-        updateFollowedShows(UpdateFollowedShows.Params(true, RefreshType.FULL))
+        withContext(updateFollowedShows.dispatcher) {
+            logger.d("$TAG worker running")
+            updateFollowedShows(UpdateFollowedShows.Params(true, RefreshType.FULL))
+        }
         return Result.success()
     }
 
