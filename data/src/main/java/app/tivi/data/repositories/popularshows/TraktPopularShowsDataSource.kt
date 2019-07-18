@@ -16,7 +16,6 @@
 
 package app.tivi.data.repositories.popularshows
 
-import app.tivi.data.RetrofitRunner
 import app.tivi.data.entities.PopularShowEntry
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
@@ -24,6 +23,7 @@ import app.tivi.data.mappers.IndexedMapper
 import app.tivi.data.mappers.TraktShowToTiviShow
 import app.tivi.data.mappers.pairMapperOf
 import app.tivi.extensions.executeWithRetry
+import app.tivi.extensions.toResult
 import com.uwetrottmann.trakt5.entities.Show
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Shows
@@ -32,7 +32,6 @@ import javax.inject.Provider
 
 class TraktPopularShowsDataSource @Inject constructor(
     private val showService: Provider<Shows>,
-    private val retrofitRunner: RetrofitRunner,
     private val showMapper: TraktShowToTiviShow
 ) : PopularShowsDataSource {
     private val entryMapper = object : IndexedMapper<Show, PopularShowEntry> {
@@ -44,9 +43,8 @@ class TraktPopularShowsDataSource @Inject constructor(
     private val resultsMapper = pairMapperOf(showMapper, entryMapper)
 
     override suspend fun getPopularShows(page: Int, pageSize: Int): Result<List<Pair<TiviShow, PopularShowEntry>>> {
-        return retrofitRunner.executeForResponse(resultsMapper) {
-            // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
-            showService.get().popular(page + 1, pageSize, Extended.NOSEASONS).executeWithRetry()
-        }
+        return showService.get().popular(page + 1, pageSize, Extended.NOSEASONS)
+                .executeWithRetry()
+                .toResult(resultsMapper)
     }
 }

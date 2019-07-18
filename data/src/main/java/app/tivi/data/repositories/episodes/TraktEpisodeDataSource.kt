@@ -16,12 +16,14 @@
 
 package app.tivi.data.repositories.episodes
 
-import app.tivi.data.RetrofitRunner
 import app.tivi.data.entities.Episode
+import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.Result
 import app.tivi.data.mappers.ShowIdToTraktIdMapper
 import app.tivi.data.mappers.TraktEpisodeToEpisode
+import app.tivi.data.mappers.toLambda
 import app.tivi.extensions.executeWithRetry
+import app.tivi.extensions.toResult
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Episodes
 import javax.inject.Inject
@@ -30,13 +32,14 @@ import javax.inject.Provider
 class TraktEpisodeDataSource @Inject constructor(
     private val traktIdMapper: ShowIdToTraktIdMapper,
     private val service: Provider<Episodes>,
-    private val retrofitRunner: RetrofitRunner,
     private val episodeMapper: TraktEpisodeToEpisode
 ) : EpisodeDataSource {
     override suspend fun getEpisode(showId: Long, seasonNumber: Int, episodeNumber: Int): Result<Episode> {
-        return retrofitRunner.executeForResponse(episodeMapper) {
-            service.get().summary(traktIdMapper.map(showId).toString(), seasonNumber, episodeNumber, Extended.FULL)
-                    .executeWithRetry()
-        }
+        val traktId = traktIdMapper.map(showId)
+                ?: return ErrorResult(message = "No Trakt ID for show with ID: $showId")
+
+        return service.get().summary(traktId.toString(), seasonNumber, episodeNumber, Extended.FULL)
+                .executeWithRetry()
+                .toResult(episodeMapper.toLambda())
     }
 }

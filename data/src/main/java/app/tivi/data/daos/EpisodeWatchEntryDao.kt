@@ -39,6 +39,9 @@ abstract class EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry> {
     @Query("SELECT * FROM episode_watch_entries WHERE trakt_id = :traktId")
     abstract suspend fun entryWithTraktId(traktId: Long): EpisodeWatchEntry?
 
+    @Query("SELECT id FROM episode_watch_entries WHERE trakt_id = :traktId")
+    abstract suspend fun entryIdWithTraktId(traktId: Long): Long?
+
     suspend fun entriesForShowIdWithNoPendingAction(showId: Long): List<EpisodeWatchEntry> {
         return entriesForShowIdWithPendingAction(showId, PendingAction.NOTHING.value)
     }

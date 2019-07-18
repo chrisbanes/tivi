@@ -20,7 +20,6 @@ import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.ShowDetailed
 import app.tivi.inject.Trakt
-import kotlinx.coroutines.coroutineScope
 import org.threeten.bp.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -42,15 +41,11 @@ class ShowRepositoryImpl @Inject constructor(
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
      */
-    override suspend fun updateShow(showId: Long) = coroutineScope {
-        val localShow = showStore.getShow(showId) ?: TiviShow.EMPTY_SHOW
-
-        val traktResult = traktShowDataSource.getShow(localShow)
-
-        val merged = mergeShow(localShow, traktResult.get() ?: TiviShow.EMPTY_SHOW)
-        showStore.saveShow(merged)
-
+    override suspend fun updateShow(showId: Long) {
+        val traktResult = traktShowDataSource.getShow(showStore.getShowOrEmpty(showId))
         if (traktResult is Success) {
+            showStore.updateShowFromSources(showId, traktResult.get())
+
             // If the network requests were successful, update the last request timestamp
             showLastRequestStore.updateLastRequest(showId)
         }
@@ -86,28 +81,4 @@ class ShowRepositoryImpl @Inject constructor(
             emptyList()
         }
     }
-
-    private fun mergeShow(
-        local: TiviShow,
-        trakt: TiviShow = TiviShow.EMPTY_SHOW,
-        tmdb: TiviShow = TiviShow.EMPTY_SHOW
-    ) = local.copy(
-            title = trakt.title ?: local.title,
-            summary = trakt.summary ?: local.summary,
-            homepage = trakt.homepage ?: local.homepage,
-            network = trakt.network ?: local.network,
-            certification = trakt.certification ?: local.certification,
-            runtime = trakt.runtime ?: local.runtime,
-            country = trakt.country ?: local.country,
-            firstAired = trakt.firstAired ?: local.firstAired,
-            _genres = trakt._genres ?: local._genres,
-
-            // Trakt specific stuff
-            traktId = trakt.traktId ?: local.traktId,
-            traktRating = trakt.traktRating ?: local.traktRating,
-            traktDataUpdate = trakt.traktDataUpdate ?: local.traktDataUpdate,
-
-            // TMDb specific stuff
-            tmdbId = tmdb.tmdbId ?: trakt.tmdbId ?: local.tmdbId
-    )
 }

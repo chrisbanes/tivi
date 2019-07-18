@@ -16,7 +16,6 @@
 
 package app.tivi.data.repositories.followedshows
 
-import app.tivi.data.RetrofitRunner
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
@@ -24,7 +23,8 @@ import app.tivi.data.mappers.TraktListEntryToFollowedShowEntry
 import app.tivi.data.mappers.TraktListEntryToTiviShow
 import app.tivi.data.mappers.pairMapperOf
 import app.tivi.extensions.executeWithRetry
-import app.tivi.extensions.fetchBodyWithRetry
+import app.tivi.extensions.toResult
+import app.tivi.extensions.toResultUnit
 import com.uwetrottmann.trakt5.entities.ShowIds
 import com.uwetrottmann.trakt5.entities.SyncItems
 import com.uwetrottmann.trakt5.entities.SyncShow
@@ -38,13 +38,13 @@ import javax.inject.Provider
 
 class TraktFollowedShowsDataSource @Inject constructor(
     private val usersService: Provider<Users>,
-    private val retrofitRunner: RetrofitRunner,
-    private val listEntryToShowMapper: TraktListEntryToTiviShow,
-    private val listEntryToFollowedEntry: TraktListEntryToFollowedShowEntry
+    listEntryToShowMapper: TraktListEntryToTiviShow,
+    listEntryToFollowedEntry: TraktListEntryToFollowedShowEntry
 ) : FollowedShowsDataSource {
     companion object {
         private val LIST_NAME = "Following"
     }
+
     private val listShowsMapper = pairMapperOf(listEntryToFollowedEntry, listEntryToShowMapper)
 
     override suspend fun addShowIdsToList(listId: Int, shows: List<TiviShow>): Result<Unit> {
@@ -58,9 +58,9 @@ class TraktFollowedShowsDataSource @Inject constructor(
                 }
             }
         }
-        return retrofitRunner.executeForResponse {
-            usersService.get().addListItems(UserSlug.ME, listId.toString(), syncItems).executeWithRetry()
-        }
+        return usersService.get().addListItems(UserSlug.ME, listId.toString(), syncItems)
+                .executeWithRetry()
+                .toResultUnit()
     }
 
     override suspend fun removeShowIdsFromList(listId: Int, shows: List<TiviShow>): Result<Unit> {
@@ -74,26 +74,32 @@ class TraktFollowedShowsDataSource @Inject constructor(
                 }
             }
         }
-        return retrofitRunner.executeForResponse {
-            usersService.get().deleteListItems(UserSlug.ME, listId.toString(), syncItems).executeWithRetry()
-        }
+        return usersService.get().deleteListItems(UserSlug.ME, listId.toString(), syncItems)
+                .executeWithRetry()
+                .toResultUnit()
     }
 
     override suspend fun getListShows(listId: Int): Result<List<Pair<FollowedShowEntry, TiviShow>>> {
-        return retrofitRunner.executeForResponse(listShowsMapper) {
-            usersService.get().listItems(UserSlug.ME, listId.toString(), Extended.NOSEASONS)
-                    .executeWithRetry()
-        }
+        return usersService.get().listItems(UserSlug.ME, listId.toString(), Extended.NOSEASONS)
+                .executeWithRetry()
+                .toResult(listShowsMapper)
     }
 
-    override suspend fun getFollowedListId(): Int {
-        return usersService.get().lists(UserSlug.ME)
-                .fetchBodyWithRetry()
-                .firstOrNull { it.name == LIST_NAME }
+    override suspend fun getFollowedListId(): Int? {
+        val id = usersService.get().lists(UserSlug.ME)
+                .executeWithRetry()
+                .toResult()
+                .get()
+                ?.firstOrNull { it.name == LIST_NAME }
                 ?.let { it.ids?.trakt }
-                ?: usersService.get().createList(UserSlug.ME, TraktList().name(LIST_NAME)
-                                .privacy(ListPrivacy.PRIVATE))
-                        .fetchBodyWithRetry()
-                        .let { it.ids!!.trakt!! }
+        if (id != null) {
+            return id
+        }
+
+        return usersService.get().createList(UserSlug.ME,
+                TraktList().name(LIST_NAME)!!.privacy(ListPrivacy.PRIVATE))
+                .executeWithRetry()
+                .toResult()
+                .let { it.get()?.ids?.trakt }
     }
 }

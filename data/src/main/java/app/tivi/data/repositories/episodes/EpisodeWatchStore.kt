@@ -65,6 +65,11 @@ class EpisodeWatchStore @Inject constructor(
         return episodeWatchEntryDao.updateEntriesToPendingAction(ids, action.value)
     }
 
+    suspend fun addNewShowWatchEntries(showId: Long, watches: List<EpisodeWatchEntry>) = transactionRunner {
+        val currentWatches = episodeWatchEntryDao.entriesForShowIdWithNoPendingAction(showId)
+        episodeWatchSyncer.sync(currentWatches, watches, removeNotMatched = false)
+    }
+
     suspend fun syncShowWatchEntries(showId: Long, watches: List<EpisodeWatchEntry>) = transactionRunner {
         val currentWatches = episodeWatchEntryDao.entriesForShowIdWithNoPendingAction(showId)
         episodeWatchSyncer.sync(currentWatches, watches)

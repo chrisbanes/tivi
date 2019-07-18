@@ -16,13 +16,14 @@
 
 package app.tivi.data.repositories.shows
 
-import app.tivi.data.RetrofitRunner
 import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TmdbImagesToShowImages
+import app.tivi.data.mappers.toLambda
 import app.tivi.extensions.executeWithRetry
+import app.tivi.extensions.toResult
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.AppendToResponse
 import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem
@@ -30,16 +31,14 @@ import javax.inject.Inject
 
 class TmdbShowImagesDataSource @Inject constructor(
     private val tmdb: Tmdb,
-    private val mapper: TmdbImagesToShowImages,
-    private val retrofitRunner: RetrofitRunner
+    private val mapper: TmdbImagesToShowImages
 ) : ShowImagesDataSource {
     override suspend fun getShowImages(show: TiviShow): Result<List<ShowTmdbImage>> {
         val tmdbId = show.tmdbId
         return if (tmdbId != null) {
-            retrofitRunner.executeForResponse(mapper) {
-                tmdb.tvService().tv(tmdbId, null, AppendToResponse(AppendToResponseItem.IMAGES))
-                        .executeWithRetry()
-            }
+            tmdb.tvService().tv(tmdbId, null, AppendToResponse(AppendToResponseItem.IMAGES))
+                    .executeWithRetry()
+                    .toResult(mapper.toLambda())
         } else {
             ErrorResult(IllegalArgumentException("TmdbId for show does not exist [$show]"))
         }

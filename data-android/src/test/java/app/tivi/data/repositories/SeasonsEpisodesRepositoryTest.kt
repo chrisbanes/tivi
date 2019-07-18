@@ -98,7 +98,8 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
                 traktSeasonsDataSource,
                 traktEpisodeDataSource,
                 tmdbEpisodeDataSource,
-                Provider { loggedInState }
+                Provider { loggedInState },
+                txRunner
         )
 
         // We'll assume that there's a show in the db

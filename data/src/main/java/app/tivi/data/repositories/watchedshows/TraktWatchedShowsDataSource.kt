@@ -16,7 +16,6 @@
 
 package app.tivi.data.repositories.watchedshows
 
-import app.tivi.data.RetrofitRunner
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.WatchedShowEntry
@@ -24,6 +23,7 @@ import app.tivi.data.mappers.Mapper
 import app.tivi.data.mappers.TraktBaseShowToTiviShow
 import app.tivi.data.mappers.pairMapperOf
 import app.tivi.extensions.executeWithRetry
+import app.tivi.extensions.toResult
 import com.uwetrottmann.trakt5.entities.BaseShow
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Sync
@@ -32,19 +32,18 @@ import javax.inject.Provider
 
 class TraktWatchedShowsDataSource @Inject constructor(
     private val syncService: Provider<Sync>,
-    private val retrofitRunner: RetrofitRunner,
     showMapper: TraktBaseShowToTiviShow
 ) : WatchedShowsDataSource {
     private val entryMapper = object : Mapper<BaseShow, WatchedShowEntry> {
         override suspend fun map(from: BaseShow): WatchedShowEntry {
-            return WatchedShowEntry(showId = 0, lastWatched = from.last_watched_at)
+            return WatchedShowEntry(showId = 0, lastWatched = from.last_watched_at!!)
         }
     }
     private val responseMapper = pairMapperOf(showMapper, entryMapper)
 
     override suspend fun getWatchedShows(): Result<List<Pair<TiviShow, WatchedShowEntry>>> {
-        return retrofitRunner.executeForResponse(responseMapper) {
-            syncService.get().watchedShows(Extended.NOSEASONS).executeWithRetry()
-        }
+        return syncService.get().watchedShows(Extended.NOSEASONS)
+                .executeWithRetry()
+                .toResult(responseMapper)
     }
 }

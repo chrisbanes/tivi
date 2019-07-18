@@ -16,26 +16,25 @@
 
 package app.tivi.data.repositories.episodes
 
-import app.tivi.data.RetrofitRunner
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Result
 import app.tivi.data.mappers.ShowIdToTmdbIdMapper
 import app.tivi.data.mappers.TmdbEpisodeToEpisode
+import app.tivi.data.mappers.toLambda
 import app.tivi.extensions.executeWithRetry
+import app.tivi.extensions.toResult
 import com.uwetrottmann.tmdb2.Tmdb
 import javax.inject.Inject
 
 class TmdbEpisodeDataSource @Inject constructor(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
     private val tmdb: Tmdb,
-    private val retrofitRunner: RetrofitRunner,
     private val episodeMapper: TmdbEpisodeToEpisode
 ) : EpisodeDataSource {
     override suspend fun getEpisode(showId: Long, seasonNumber: Int, episodeNumber: Int): Result<Episode> {
-        return retrofitRunner.executeForResponse(episodeMapper) {
-            tmdb.tvEpisodesService()
-                    .episode(tmdbIdMapper.map(showId), seasonNumber, episodeNumber, null)
-                    .executeWithRetry()
-        }
+        return tmdb.tvEpisodesService()
+                .episode(tmdbIdMapper.map(showId), seasonNumber, episodeNumber, null)
+                .executeWithRetry()
+                .toResult(episodeMapper.toLambda())
     }
 }

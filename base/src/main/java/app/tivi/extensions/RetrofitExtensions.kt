@@ -16,13 +16,14 @@
 
 package app.tivi.extensions
 
+import app.tivi.data.entities.ErrorResult
 import kotlinx.coroutines.delay
 import retrofit2.Call
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
-
-fun <T> Call<T>.fetchBody(): T = execute().bodyOrThrow()
+import app.tivi.data.entities.Result
+import app.tivi.data.entities.Success
 
 fun <T> Response<T>.bodyOrThrow(): T {
     if (!isSuccessful) throw HttpException(this)
@@ -89,4 +90,23 @@ fun <T> Response<T>.isFromNetwork(): Boolean {
 
 fun <T> Response<T>.isFromCache(): Boolean {
     return raw().cacheResponse != null
+}
+
+@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
+suspend fun <T> Response<T>.toResultUnit(): Result<Unit> = toResult { Unit }
+
+@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
+suspend fun <T> Response<T>.toResult(): Result<T> = toResult { it }
+
+@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
+suspend fun <T, E> Response<T>.toResult(mapper: suspend (T) -> E): Result<E> {
+    return try {
+        if (isSuccessful) {
+            Success(data = mapper(bodyOrThrow()), responseModified = isFromNetwork())
+        } else {
+            ErrorResult(toException())
+        }
+    } catch (e: Exception) {
+        ErrorResult(e)
+    }
 }

@@ -16,12 +16,12 @@
 
 package app.tivi.data.repositories.search
 
-import app.tivi.data.RetrofitRunner
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TraktSearchResultToTiviShow
 import app.tivi.data.mappers.toListMapper
 import app.tivi.extensions.executeWithRetry
+import app.tivi.extensions.toResult
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.services.Search
@@ -31,16 +31,14 @@ import javax.inject.Provider
 class TraktSearchDataSource @Inject constructor(
     private val tmdb: Tmdb,
     private val searchService: Provider<Search>,
-    private val mapper: TraktSearchResultToTiviShow,
-    private val retrofitRunner: RetrofitRunner
+    private val mapper: TraktSearchResultToTiviShow
 ) : SearchDataSource {
     override suspend fun search(query: String): Result<List<TiviShow>> {
-        return retrofitRunner.executeForResponse(mapper.toListMapper()) {
-            searchService.get().textQueryShow(query,
-                    /* years */ null, /* genres */ null, /* langs */ null, /* country */ null, /* runtime */ null,
-                    /* ratings */ null, /* certs */ null, /* networks */ null, /* status */ null,
-                    Extended.NOSEASONS, 1, 25)
-                    .executeWithRetry()
-        }
+        return searchService.get().textQueryShow(query,
+                /* years */ null, /* genres */ null, /* langs */ null, /* country */ null, /* runtime */ null,
+                /* ratings */ null, /* certs */ null, /* networks */ null, /* status */ null,
+                Extended.NOSEASONS, 1, 25)
+                .executeWithRetry()
+                .toResult(mapper.toListMapper())
     }
 }
