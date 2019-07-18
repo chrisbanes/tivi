@@ -17,6 +17,7 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="app.tivi">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -37,18 +38,23 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <intent-filter>
-                <action android:name="app.tivi.HANDLE_AUTHORIZATION_RESPONSE" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="app.tivi" />
-            </intent-filter>
         </activity>
 
         <activity
             android:name=".showdetails.ShowDetailsActivity"
             android:parentActivityName=".home.HomeActivity"
             android:theme="@style/Theme.Tivi.ShowDetails" />
+
+        <activity
+            android:name="net.openid.appauth.RedirectUriReceiverActivity"
+            tools:node="replace">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="${applicationId}" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".settings.SettingsActivity"

@@ -52,3 +52,8 @@ annotation class PerActivity
 @Qualifier
 @MustBeDocumented
 annotation class PerApplication
+
+@Retention(AnnotationRetention.RUNTIME)
+@Qualifier
+@MustBeDocumented
+annotation class ApplicationId

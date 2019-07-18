@@ -74,8 +74,6 @@ android {
         buildConfigField "String", "TRAKT_CLIENT_ID", "\"" + propOrDef("TIVI_TRAKT_CLIENT_ID", "") + "\""
         buildConfigField "String", "TRAKT_CLIENT_SECRET", "\"" + propOrDef("TIVI_TRAKT_CLIENT_SECRET", "") + "\""
         buildConfigField "String", "TMDB_API_KEY", "\"" + propOrDef("TIVI_TMDB_API_KEY", "") + "\""
-
-        manifestPlaceholders += ['appAuthRedirectScheme': 'app.tivi']
     }
 
     signingConfigs {
