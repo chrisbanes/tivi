@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories.episodes
 
+import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
@@ -46,7 +47,8 @@ class SeasonsEpisodesRepository @Inject constructor(
     @Trakt private val traktSeasonsDataSource: SeasonsEpisodesDataSource,
     @Trakt private val traktEpisodeDataSource: EpisodeDataSource,
     @Tmdb private val tmdbEpisodeDataSource: EpisodeDataSource,
-    private val traktAuthState: Provider<TraktAuthState>
+    private val traktAuthState: Provider<TraktAuthState>,
+    private val transactionRunner: DatabaseTransactionRunner
 ) {
     fun observeSeasonsForShow(showId: Long) = seasonsEpisodesStore.observeShowSeasonsWithEpisodes(showId)
 
@@ -131,13 +133,9 @@ class SeasonsEpisodesRepository @Inject constructor(
         }
     }
 
-    suspend fun updateShowEpisodeWatches(showId: Long, since: OffsetDateTime? = null) {
+    private suspend fun updateShowEpisodeWatches(showId: Long, since: OffsetDateTime? = null) {
         if (traktAuthState.get() == TraktAuthState.LOGGED_IN) {
-            if (since != null) {
-                fetchNewShowWatchesFromRemote(showId, since)
-            } else {
-                fetchShowWatchesFromRemote(showId)
-            }
+            fetchShowWatchesFromRemote(showId, since)
         }
     }
 
@@ -253,32 +251,23 @@ class SeasonsEpisodesRepository @Inject constructor(
         }
     }
 
-    private suspend fun fetchNewShowWatchesFromRemote(showId: Long, since: OffsetDateTime) {
+    private suspend fun fetchShowWatchesFromRemote(showId: Long, since: OffsetDateTime? = null) {
         when (val response = traktSeasonsDataSource.getShowEpisodeWatches(showId, since)) {
-            is Success -> {
+            is Success -> transactionRunner {
                 val watches = response.data.mapNotNull { (episode, watchEntry) ->
-                    // Grab the episode id if it exists
-                    seasonsEpisodesStore.getEpisodeIdForTraktId(episode.traktId!!)?.let {
-                        watchEntry.copy(episodeId = it)
-                    }
+                    val epId = seasonsEpisodesStore.getEpisodeIdForTraktId(episode.traktId!!)
+                            ?: return@mapNotNull null // We don't have the episode, skip
+                    watchEntry.copy(episodeId = epId)
                 }
-                episodeWatchStore.save(watches)
-                episodeWatchLastLastRequestStore.updateLastRequest(showId, Instant.now())
-            }
-        }
-    }
-
-    private suspend fun fetchShowWatchesFromRemote(showId: Long) {
-        when (val response = traktSeasonsDataSource.getShowEpisodeWatches(showId, null)) {
-            is Success -> {
-                val watches = response.data.mapNotNull { (episode, watchEntry) ->
-                    // Grab the episode id if it exists
-                    seasonsEpisodesStore.getEpisodeIdForTraktId(episode.traktId!!)?.let {
-                        watchEntry.copy(episodeId = it)
+                if (since != null) {
+                    // We did a delta fetch, so just append/update the new watches
+                    if (watches.isNotEmpty()) {
+                        episodeWatchStore.addNewShowWatchEntries(showId, watches)
                     }
+                } else {
+                    episodeWatchStore.syncShowWatchEntries(showId, watches)
                 }
-                episodeWatchStore.syncShowWatchEntries(showId, watches)
-                episodeWatchLastLastRequestStore.updateLastRequest(showId, Instant.now())
+                episodeWatchLastLastRequestStore.updateLastRequest(showId)
             }
         }
     }

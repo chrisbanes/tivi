@@ -34,7 +34,11 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
     private val networkEntityToLocalEntityMapperFunc: suspend (NT, Long?) -> ET,
     private val logger: Logger
 ) {
-    suspend fun sync(currentValues: Collection<ET>, networkValues: Collection<NT>): ItemSyncerResult<ET> {
+    suspend fun sync(
+        currentValues: Collection<ET>,
+        networkValues: Collection<NT>,
+        removeNotMatched: Boolean = true
+    ): ItemSyncerResult<ET> {
         val currentDbEntities = ArrayList(currentValues)
 
         val removed = ArrayList<ET>()
@@ -70,11 +74,13 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
             }
         }
 
-        // Anything left in the set needs to be deleted from the database
-        currentDbEntities.forEach {
-            entryDeleteFunc(it)
-            logger.v("Deleted entry: ", it)
-            removed += it
+        if (removeNotMatched) {
+            // Anything left in the set needs to be deleted from the database
+            currentDbEntities.forEach {
+                entryDeleteFunc(it)
+                logger.v("Deleted entry: ", it)
+                removed += it
+            }
         }
 
         // Finally we can insert all of the new entities
