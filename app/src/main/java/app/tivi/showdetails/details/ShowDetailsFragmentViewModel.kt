@@ -22,6 +22,7 @@ import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
+import app.tivi.interactors.ChangeSeasonFollowStatus
 import app.tivi.interactors.ChangeSeasonWatchedStatus
 import app.tivi.interactors.ChangeSeasonWatchedStatus.Action
 import app.tivi.interactors.ChangeSeasonWatchedStatus.Params
@@ -58,7 +59,8 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     private val changeSeasonWatchedStatus: ChangeSeasonWatchedStatus,
     observeShowFollowStatus: ObserveShowFollowStatus,
     tmdbManager: TmdbManager,
-    private val changeShowFollowStatus: ChangeShowFollowStatus
+    private val changeShowFollowStatus: ChangeShowFollowStatus,
+    private val changeSeasonFollowStatus: ChangeSeasonFollowStatus
 ) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
     init {
         observeShowFollowStatus.observe()
@@ -143,6 +145,22 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
             }
             copy(expandedSeasonIds = newExpandedSeason)
         }
+    }
+
+    fun onMarkSeasonFollowed(season: Season) {
+        viewModelScope.launchInteractor(changeSeasonFollowStatus,
+                ChangeSeasonFollowStatus.Params(season.id, ChangeSeasonFollowStatus.Action.FOLLOW))
+    }
+
+    fun onMarkSeasonIgnored(season: Season) {
+        viewModelScope.launchInteractor(changeSeasonFollowStatus,
+                ChangeSeasonFollowStatus.Params(season.id, ChangeSeasonFollowStatus.Action.IGNORE))
+    }
+
+    fun onMarkPreviousSeasonsIgnored(season: Season) {
+        viewModelScope.launchInteractor(changeSeasonFollowStatus,
+                ChangeSeasonFollowStatus.Params(season.id,
+                        ChangeSeasonFollowStatus.Action.IGNORE_PREVIOUS))
     }
 
     fun onUpClicked(showDetailsNavigator: ShowDetailsNavigator) = showDetailsNavigator.navigateUp()

@@ -84,6 +84,10 @@
     <string name="popup_season_mark_watched_aired">Watch aired</string>
     <string name="popup_season_mark_all_unwatched">Unwatch all</string>
 
+    <string name="popup_season_follow">Follow season</string>
+    <string name="popup_season_ignore">Ignore season</string>
+    <string name="popup_season_ignore_previous">Ignore previous seasons</string>
+
     <string name="popup_sort_super">Supersort</string>
     <string name="popup_sort_last_watched">Last watched</string>
     <string name="popup_sort_date_followed">Date followed</string>

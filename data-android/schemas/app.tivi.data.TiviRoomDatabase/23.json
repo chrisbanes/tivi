@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 23,
-    "identityHash": "ecec0862230371e06bd316893ec9f781",
+    "identityHash": "f50e6aef2edf25041bd8dd14bd7decbc",
     "entities": [
       {
         "tableName": "shows",
@@ -487,7 +487,7 @@
       },
       {
         "tableName": "seasons",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `show_id` INTEGER NOT NULL, `trakt_id` INTEGER, `tmdb_id` INTEGER, `title` TEXT, `overview` TEXT, `number` INTEGER, `network` TEXT, `ep_count` INTEGER, `ep_aired` INTEGER, `trakt_rating` REAL, `trakt_votes` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `show_id` INTEGER NOT NULL, `trakt_id` INTEGER, `tmdb_id` INTEGER, `title` TEXT, `overview` TEXT, `number` INTEGER, `network` TEXT, `ep_count` INTEGER, `ep_aired` INTEGER, `trakt_rating` REAL, `trakt_votes` INTEGER, `tmdb_poster_path` TEXT, `tmdb_backdrop_path` TEXT, `ignored` INTEGER NOT NULL, FOREIGN KEY(`show_id`) REFERENCES `shows`(`id`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -572,6 +572,12 @@
             "columnName": "tmdb_backdrop_path",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "ignored",
+            "columnName": "ignored",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -1005,16 +1011,16 @@
       },
       {
         "viewName": "followed_last_watched_airdate",
-        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT\n  fs.id,\n  MAX(datetime(eps.first_aired)) as last_watched_air_date\nFROM\n  myshows_entries as fs\n  INNER JOIN seasons AS s ON fs.show_id = s.show_id\n  INNER JOIN episodes AS eps ON eps.season_id = s.id\n  INNER JOIN episode_watch_entries as ew ON ew.episode_id = eps.id\nWHERE\n  s.number != 0\nGROUP BY\n  fs.id"
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT\n  fs.id,\n  MAX(datetime(eps.first_aired)) as last_watched_air_date\nFROM\n  myshows_entries as fs\n  INNER JOIN seasons AS s ON fs.show_id = s.show_id\n  INNER JOIN episodes AS eps ON eps.season_id = s.id\n  INNER JOIN episode_watch_entries as ew ON ew.episode_id = eps.id\nWHERE\n  s.ignored == 0\nGROUP BY\n  fs.id"
       },
       {
         "viewName": "followed_next_to_watch",
-        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT\n  fs.id,\n  MIN(datetime(eps.first_aired)) AS next_ep_to_watch_air_date\nFROM\n  myshows_entries as fs\n  INNER JOIN seasons AS s ON fs.show_id = s.show_id\n  INNER JOIN episodes AS eps ON eps.season_id = s.id\n  LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id\n  INNER JOIN followed_last_watched_airdate AS lw ON lw.id = fs.id\nWHERE\n  s.number != 0\n  AND watched_at IS NULL\n  AND datetime(first_aired) < datetime('now')\n  AND datetime(first_aired) > datetime(last_watched_air_date)\nGROUP BY\n  fs.id"
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT\n  fs.id,\n  MIN(datetime(eps.first_aired)) AS next_ep_to_watch_air_date\nFROM\n  myshows_entries as fs\n  INNER JOIN seasons AS s ON fs.show_id = s.show_id\n  INNER JOIN episodes AS eps ON eps.season_id = s.id\n  LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id\n  INNER JOIN followed_last_watched_airdate AS lw ON lw.id = fs.id\nWHERE\n  s.ignored == 0\n  AND watched_at IS NULL\n  AND datetime(first_aired) < datetime('now')\n  AND datetime(first_aired) > datetime(last_watched_air_date)\nGROUP BY\n  fs.id"
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ecec0862230371e06bd316893ec9f781')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f50e6aef2edf25041bd8dd14bd7decbc')"
     ]
   }
 }

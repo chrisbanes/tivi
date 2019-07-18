@@ -32,6 +32,7 @@ FROM
   INNER JOIN followed_last_watched_airdate AS lw ON lw.id = fs.id
 WHERE
   s.number != ${Season.NUMBER_SPECIALS}
+  AND s.ignored = 0
   AND watched_at IS NULL
   AND datetime(first_aired) < datetime('now')
   AND datetime(first_aired) > datetime(last_watched_air_date)

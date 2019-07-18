@@ -20,6 +20,7 @@ import android.content.Context
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.forEach
 import app.tivi.DetailsRelatedItemBindingModel_
 import app.tivi.R
 import app.tivi.data.entities.ActionDate
@@ -46,6 +47,7 @@ import com.airbnb.epoxy.TypedEpoxyController
 import com.airbnb.mvrx.Async
 import com.airbnb.mvrx.Success
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 class ShowDetailsEpoxyController @Inject constructor(
     @PerActivity private val context: Context,
@@ -60,6 +62,9 @@ class ShowDetailsEpoxyController @Inject constructor(
         fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate)
         fun onMarkSeasonUnwatched(season: Season)
         fun toggleSeasonExpanded(season: Season)
+        fun onMarkSeasonFollowed(season: Season)
+        fun onMarkSeasonIgnored(season: Season)
+        fun onMarkPreviousSeasonsIgnored(season: Season)
     }
 
     override fun buildModels(viewState: ShowDetailsViewState) {
@@ -73,7 +78,7 @@ class ShowDetailsEpoxyController @Inject constructor(
     private fun buildShowModels(show: TiviShow) {
         show.traktRating?.let { rating ->
             detailsBadge {
-                val ratingOutOfOneHundred = Math.round(rating * 10)
+                val ratingOutOfOneHundred = (rating * 10).roundToInt()
                 id("rating")
                 label(context.getString(R.string.percentage_format, ratingOutOfOneHundred))
                 icon(R.drawable.ic_details_rating)
@@ -164,17 +169,17 @@ class ShowDetailsEpoxyController @Inject constructor(
                 }
 
                 for (season in seasons) {
-                    val expanded = expandedSeasonIds.contains(season.season!!.id)
+                    val expanded = expandedSeasonIds.contains(season.season.id)
 
                     detailsSeason {
-                        id("season_${season.season!!.id}")
+                        id("season_${season.season.id}")
                         season(season)
                         spanSizeOverride(TotalSpanOverride)
                         textCreator(textCreator)
                         expanded(expanded)
-                        clickListener { _ -> callbacks?.toggleSeasonExpanded(season.season!!) }
+                        clickListener { _ -> callbacks?.toggleSeasonExpanded(season.season) }
                         popupMenuListener(SeasonPopupMenuListener(season))
-                        popupMenuClickListener(SeasonPopupClickListener(season.season!!))
+                        popupMenuClickListener(SeasonPopupClickListener(season.season))
 
                         onBind { _, view, _ ->
                             val binding = view.dataBinding as ViewHolderDetailsSeasonBinding
@@ -205,14 +210,28 @@ class ShowDetailsEpoxyController @Inject constructor(
         var season: SeasonWithEpisodesAndWatches
     ) : PopupMenuButton.PopupMenuListener {
         override fun onPreparePopupMenu(popupMenu: PopupMenu) {
-            popupMenu.menu.findItem(R.id.season_mark_all_unwatched).also {
-                it.isVisible = season.numberWatched > 0
-            }
-            popupMenu.menu.findItem(R.id.season_mark_watched_all).also {
-                it.isVisible = season.numberWatched < season.numberEpisodes
-            }
-            popupMenu.menu.findItem(R.id.season_mark_watched_aired).also {
-                it.isVisible = season.numberWatched < season.numberAired && season.numberAired < season.numberEpisodes
+            popupMenu.menu.forEach { item ->
+                when (item.itemId) {
+                    R.id.season_stats_ignore -> {
+                        item.isVisible = !season.season.ignored
+                    }
+                    R.id.season_stats_ignore_previous -> {
+                        item.isVisible = (season.season.number ?: -1) >= 2
+                    }
+                    R.id.season_stats_include -> {
+                        item.isVisible = season.season.ignored
+                    }
+                    R.id.season_mark_all_unwatched -> {
+                        item.isVisible = season.numberWatched > 0
+                    }
+                    R.id.season_mark_watched_all -> {
+                        item.isVisible = season.numberWatched < season.numberEpisodes
+                    }
+                    R.id.season_mark_watched_aired -> {
+                        item.isVisible = season.numberWatched < season.numberAired &&
+                                season.numberAired < season.numberEpisodes
+                    }
+                }
             }
         }
     }
@@ -236,6 +255,15 @@ class ShowDetailsEpoxyController @Inject constructor(
                 }
                 R.id.season_mark_all_unwatched -> {
                     callbacks?.onMarkSeasonUnwatched(season)
+                }
+                R.id.season_stats_ignore -> {
+                    callbacks?.onMarkSeasonIgnored(season)
+                }
+                R.id.season_stats_include -> {
+                    callbacks?.onMarkSeasonFollowed(season)
+                }
+                R.id.season_stats_ignore_previous -> {
+                    callbacks?.onMarkPreviousSeasonsIgnored(season)
                 }
             }
             return true
