@@ -16,22 +16,22 @@
 
 package app.tivi.data.repositories.search
 
-import app.tivi.data.RetrofitRunner
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TmdbShowResultsPageToTiviShows
+import app.tivi.data.mappers.toLambda
 import app.tivi.extensions.executeWithRetry
+import app.tivi.extensions.toResult
 import com.uwetrottmann.tmdb2.Tmdb
 import javax.inject.Inject
 
 class TmdbSearchDataSource @Inject constructor(
     private val tmdb: Tmdb,
-    private val mapper: TmdbShowResultsPageToTiviShows,
-    private val retrofitRunner: RetrofitRunner
+    private val mapper: TmdbShowResultsPageToTiviShows
 ) : SearchDataSource {
     override suspend fun search(query: String): Result<List<TiviShow>> {
-        return retrofitRunner.executeForResponse(mapper) {
-            tmdb.searchService().tv(query, 1, null, null, null).executeWithRetry()
-        }
+        return tmdb.searchService().tv(query, 1, null, null, null)
+                .executeWithRetry()
+                .toResult(mapper.toLambda())
     }
 }

@@ -16,14 +16,13 @@
 
 package app.tivi.data.repositories.shows
 
-import app.tivi.data.RetrofitRunner
 import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.Result
+import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TraktShowToTiviShow
-import app.tivi.extensions.bodyOrThrow
-import app.tivi.extensions.executeWithRetry
-import app.tivi.extensions.toException
+import app.tivi.data.mappers.toLambda
+import app.tivi.extensions.toResult
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.enums.IdType
 import com.uwetrottmann.trakt5.enums.Type
@@ -35,8 +34,7 @@ import javax.inject.Provider
 class TraktShowDataSource @Inject constructor(
     private val showService: Provider<Shows>,
     private val searchService: Provider<Search>,
-    private val mapper: TraktShowToTiviShow,
-    private val retrofitRunner: RetrofitRunner
+    private val mapper: TraktShowToTiviShow
 ) : ShowDataSource {
     override suspend fun getShow(show: TiviShow): Result<TiviShow> {
         var traktId = show.traktId
@@ -44,14 +42,13 @@ class TraktShowDataSource @Inject constructor(
         if (traktId == null && show.tmdbId != null) {
             // We need to fetch the search for the trakt id
             val response = searchService.get().idLookup(IdType.TMDB, show.tmdbId.toString(),
-                    Type.SHOW, Extended.NOSEASONS, 1, 1).executeWithRetry()
-            if (response.isSuccessful) {
-                val body = response.bodyOrThrow()
-                if (body.isNotEmpty()) {
-                    traktId = body[0].show?.ids?.trakt
-                }
-            } else {
-                return ErrorResult(response.toException())
+                    Type.SHOW, Extended.NOSEASONS, 1, 1)
+                    .execute()
+                    .toResult { it[0].show?.ids?.trakt }
+            if (response is Success) {
+                traktId = response.get()
+            } else if (response is ErrorResult) {
+                return ErrorResult(response.exception)
             }
         }
 
@@ -59,25 +56,22 @@ class TraktShowDataSource @Inject constructor(
             val response = searchService.get().textQueryShow(show.title, null /* years */, null /* genres */,
                     null /* lang */, show.country /* countries */, null /* runtime */, null /* ratings */,
                     null /* certs */, show.network /* networks */, null /* status */,
-                    Extended.NOSEASONS, 1, 1).executeWithRetry()
-            if (response.isSuccessful) {
-                val body = response.bodyOrThrow()
-                if (body.isNotEmpty()) {
-                    traktId = body[0].show?.ids?.trakt
-                }
-            } else {
-                return ErrorResult(response.toException())
+                    Extended.NOSEASONS, 1, 1)
+                    .execute()
+                    .toResult { it[0].show?.ids?.trakt }
+            if (response is Success) {
+                traktId = response.get()
+            } else if (response is ErrorResult) {
+                return ErrorResult(response.exception)
             }
         }
 
         return if (traktId != null) {
-            fetchFromTrakt(traktId.toString())
+            showService.get().summary(traktId.toString(), Extended.FULL)
+                    .execute()
+                    .toResult(mapper.toLambda())
         } else {
             ErrorResult(IllegalArgumentException("Trakt ID for show does not exist: [$show]"))
         }
-    }
-
-    private suspend fun fetchFromTrakt(traktId: String) = retrofitRunner.executeForResponse(mapper) {
-        showService.get().summary(traktId, Extended.FULL).executeWithRetry()
     }
 }

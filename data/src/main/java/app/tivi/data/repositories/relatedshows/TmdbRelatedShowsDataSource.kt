@@ -16,23 +16,22 @@
 
 package app.tivi.data.repositories.relatedshows
 
-import app.tivi.data.RetrofitRunner
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.IndexedMapper
 import app.tivi.data.mappers.ShowIdToTmdbIdMapper
 import app.tivi.data.mappers.TmdbBaseShowToTiviShow
-import app.tivi.data.mappers.TmdbShowResultsPageUnwrapper
 import app.tivi.data.mappers.pairMapperOf
+import app.tivi.data.mappers.unwrapTmdbShowResults
 import app.tivi.extensions.executeWithRetry
+import app.tivi.extensions.toResult
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.BaseTvShow
 import javax.inject.Inject
 
 class TmdbRelatedShowsDataSource @Inject constructor(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
-    private val retrofitRunner: RetrofitRunner,
     private val tmdb: Tmdb,
     private val showMapper: TmdbBaseShowToTiviShow
 ) : RelatedShowsDataSource {
@@ -42,11 +41,11 @@ class TmdbRelatedShowsDataSource @Inject constructor(
         }
     }
 
-    private val resultMapper = TmdbShowResultsPageUnwrapper(pairMapperOf(showMapper, entryMapper))
+    private val resultMapper = unwrapTmdbShowResults(pairMapperOf(showMapper, entryMapper))
 
     override suspend fun getRelatedShows(showId: Long): Result<List<Pair<TiviShow, RelatedShowEntry>>> {
-        return retrofitRunner.executeForResponse(resultMapper) {
-            tmdb.tvService().similar(tmdbIdMapper.map(showId), 1, null).executeWithRetry()
-        }
+        return tmdb.tvService().similar(tmdbIdMapper.map(showId), 1, null)
+                .executeWithRetry()
+                .toResult(resultMapper)
     }
 }

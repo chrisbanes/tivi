@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,4 +24,4 @@ data class Success<T>(val data: T, val responseModified: Boolean = true) : Resul
     override fun get(): T = data
 }
 
-data class ErrorResult<T>(val exception: Exception) : Result<T>()
+data class ErrorResult<T>(val exception: Exception? = null, val message: String? = null) : Result<T>()
