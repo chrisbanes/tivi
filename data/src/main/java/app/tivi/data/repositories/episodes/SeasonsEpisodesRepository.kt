@@ -201,6 +201,18 @@ class SeasonsEpisodesRepository @Inject constructor(
         syncEpisodeWatchesForShow(season.showId)
     }
 
+    suspend fun markSeasonFollowed(seasonId: Long) {
+        seasonsEpisodesStore.updateSeasonFollowed(seasonId, true)
+    }
+
+    suspend fun markSeasonIgnored(seasonId: Long) {
+        seasonsEpisodesStore.updateSeasonFollowed(seasonId, false)
+    }
+
+    suspend fun markPreviousSeasonsIgnored(seasonId: Long) {
+        seasonsEpisodesStore.updatePreviousSeasonFollowed(seasonId, false)
+    }
+
     suspend fun markEpisodeWatched(episodeId: Long, timestamp: OffsetDateTime) {
         val entry = EpisodeWatchEntry(
                 episodeId = episodeId,

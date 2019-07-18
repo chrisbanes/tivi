@@ -116,7 +116,9 @@ class ShowDetailsFragment : TiviMvRxFragment() {
                 viewModel.onRelatedShowClicked(showDetailsNavigator, episode)
             }
 
-            override fun onMarkSeasonUnwatched(season: Season) = viewModel.onMarkSeasonUnwatched(season)
+            override fun onMarkSeasonUnwatched(season: Season) {
+                viewModel.onMarkSeasonUnwatched(season)
+            }
 
             override fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
                 viewModel.onMarkSeasonWatched(season, onlyAired, date)
@@ -124,6 +126,18 @@ class ShowDetailsFragment : TiviMvRxFragment() {
 
             override fun toggleSeasonExpanded(season: Season) {
                 viewModel.toggleSeasonExpanded(season)
+            }
+
+            override fun onMarkSeasonFollowed(season: Season) {
+                viewModel.onMarkSeasonFollowed(season)
+            }
+
+            override fun onMarkSeasonIgnored(season: Season) {
+                viewModel.onMarkSeasonIgnored(season)
+            }
+
+            override fun onMarkPreviousSeasonsIgnored(season: Season) {
+                viewModel.onMarkPreviousSeasonsIgnored(season)
             }
         }
 

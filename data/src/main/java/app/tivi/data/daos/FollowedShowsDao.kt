@@ -102,6 +102,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
             LEFT JOIN followed_next_to_watch as nw ON nw.id = fs.id
             WHERE s.number != ${Season.NUMBER_SPECIALS}
+                AND s.ignored = 0
             GROUP BY fs.id
             ORDER BY
                 /* shows with aired episodes to watch first */
@@ -121,7 +122,9 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             INNER JOIN episodes AS eps ON eps.season_id = s.id
             LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
             LEFT JOIN followed_next_to_watch as nw ON nw.id = fs.id
-            WHERE s.number != ${Season.NUMBER_SPECIALS} AND s_fts.title MATCH :filter
+            WHERE s.number != ${Season.NUMBER_SPECIALS}
+                AND s.ignored = 0
+                AND s_fts.title MATCH :filter
             GROUP BY fs.id
             ORDER BY
                 /* shows with aired episodes to watch first */

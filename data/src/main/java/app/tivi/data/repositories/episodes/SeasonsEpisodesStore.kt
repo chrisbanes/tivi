@@ -75,6 +75,16 @@ class SeasonsEpisodesStore @Inject constructor(
 
     suspend fun getEpisodeWithTraktId(traktId: Int) = episodesDao.episodeWithTraktId(traktId)
 
+    suspend fun updateSeasonFollowed(seasonId: Long, followed: Boolean) {
+        seasonsDao.updateSeasonIgnoreFlag(seasonId, !followed)
+    }
+
+    suspend fun updatePreviousSeasonFollowed(seasonId: Long, followed: Boolean) = transactionRunner {
+        for (id in seasonsDao.showPreviousSeasonIds(seasonId)) {
+            seasonsDao.updateSeasonIgnoreFlag(id, !followed)
+        }
+    }
+
     suspend fun save(episode: Episode) = entityInserter.insertOrUpdate(episodesDao, episode)
 
     suspend fun save(showId: Long, data: Map<Season, List<Episode>>) = transactionRunner {

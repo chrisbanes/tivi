@@ -45,4 +45,17 @@
     <item
         android:id="@+id/season_mark_all_unwatched"
         android:title="@string/popup_season_mark_all_unwatched" />
+
+    <item
+        android:id="@+id/season_stats_ignore"
+        android:title="@string/popup_season_ignore" />
+
+    <item
+        android:id="@+id/season_stats_ignore_previous"
+        android:title="@string/popup_season_ignore_previous" />
+
+    <item
+        android:id="@+id/season_stats_include"
+        android:title="@string/popup_season_follow" />
+
 </menu>

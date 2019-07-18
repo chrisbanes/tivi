@@ -48,7 +48,8 @@ data class Season(
     @ColumnInfo(name = "trakt_rating") val traktRating: Float? = null,
     @ColumnInfo(name = "trakt_votes") val traktRatingVotes: Int? = null,
     @ColumnInfo(name = "tmdb_poster_path") val tmdbPosterPath: String? = null,
-    @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null
+    @ColumnInfo(name = "tmdb_backdrop_path") val tmdbBackdropPath: String? = null,
+    @ColumnInfo(name = "ignored") val ignored: Boolean = false
 ) : TiviEntity, TmdbIdEntity, TraktIdEntity {
     companion object {
         const val NUMBER_SPECIALS = 0

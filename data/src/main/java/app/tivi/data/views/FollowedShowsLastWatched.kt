@@ -31,6 +31,7 @@ FROM
   INNER JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
 WHERE
   s.number != ${Season.NUMBER_SPECIALS}
+  AND s.ignored = 0
 GROUP BY
   fs.id
 """, viewName = "followed_last_watched_airdate")

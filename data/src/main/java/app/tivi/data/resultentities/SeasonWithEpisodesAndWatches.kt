@@ -25,7 +25,7 @@ import java.util.Objects
 
 class SeasonWithEpisodesAndWatches {
     @Embedded
-    var season: Season? = null
+    lateinit var season: Season
 
     @Relation(parentColumn = "id", entityColumn = "season_id", entity = Episode::class)
     var episodes: List<EpisodeWithWatches> = emptyList()
