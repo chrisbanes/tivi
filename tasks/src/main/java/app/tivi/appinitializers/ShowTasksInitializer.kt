@@ -17,23 +17,14 @@
 package app.tivi.appinitializers
 
 import android.app.Application
-import androidx.work.Configuration
-import androidx.work.WorkManager
 import app.tivi.actions.ShowTasks
-import app.tivi.tasks.inject.TiviWorkerFactory
+import dagger.Lazy
 import javax.inject.Inject
-import javax.inject.Provider
 
 class ShowTasksInitializer @Inject constructor(
-    private val showTasks: Provider<ShowTasks>,
-    private val workerFactory: TiviWorkerFactory
+    private val showTasks: Lazy<ShowTasks>
 ) : AppInitializer {
     override fun init(application: Application) {
-        val wmConfig = Configuration.Builder().setWorkerFactory(workerFactory).build()
-        WorkManager.initialize(application, wmConfig)
-
-        // This needs to be a Provider so that the initialize above is called
-        // before WorkManager.getInstance()
         showTasks.get().setupNightSyncs()
     }
 }

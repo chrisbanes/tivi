@@ -17,6 +17,7 @@
 package app.tivi.tasks.inject
 
 import android.content.Context
+import androidx.work.Configuration
 import androidx.work.WorkManager
 import dagger.Module
 import dagger.Provides
@@ -27,4 +28,11 @@ class TasksModule {
     @Provides
     @Singleton
     fun provideWorkManager(context: Context): WorkManager = WorkManager.getInstance(context)
+
+    @Provides
+    fun provideWorkConfiguration(workerFactory: TiviWorkerFactory): Configuration {
+        return Configuration.Builder()
+                .setWorkerFactory(workerFactory)
+                .build()
+    }
 }
