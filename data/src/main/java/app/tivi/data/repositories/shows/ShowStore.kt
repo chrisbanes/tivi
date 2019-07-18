@@ -18,6 +18,7 @@ package app.tivi.data.repositories.shows
 
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
+import app.tivi.data.daos.ShowFtsDao
 import app.tivi.data.daos.ShowImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.ShowTmdbImage
@@ -29,6 +30,7 @@ import javax.inject.Inject
 class ShowStore @Inject constructor(
     private val entityInserter: EntityInserter,
     private val showDao: TiviShowDao,
+    private val showFtsDao: ShowFtsDao,
     private val showImagesDao: ShowImagesDao,
     private val transactionRunner: DatabaseTransactionRunner
 ) {
@@ -44,13 +46,33 @@ class ShowStore @Inject constructor(
      * Gets the ID for the show with the given trakt Id. If the trakt Id does not exist in the
      * database, it is inserted and the generated ID is returned.
      */
+    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
     suspend fun getIdOrSavePlaceholder(show: TiviShow): Long = transactionRunner {
-        show.traktId?.let { showDao.getShowWithTraktId(it)?.id }
-                ?: show.tmdbId?.let { showDao.getShowWithTmdbId(it)?.id }
-                ?: showDao.insert(show)
+        if (show.traktId != null && show.tmdbId != null) {
+            // TODO There's a chance that the show is already in the DB twice (one with each ID)
+            // We should merge them and combine
+        }
+
+        if (show.traktId != null) {
+            val id = showDao.getIdForTraktId(show.traktId)
+            if (id != null) {
+                return@transactionRunner id!!
+            }
+        }
+
+        if (show.tmdbId != null) {
+            val id = showDao.getIdForTmdbId(show.tmdbId)
+            if (id != null) {
+                return@transactionRunner id!!
+            }
+        }
+
+        // TODO add fuzzy search on name or slug
+
+        showDao.insert(show)
     }
 
-    suspend fun searchShows(query: String) = showDao.search("*$query*")
+    suspend fun searchShows(query: String) = showFtsDao.search("*$query*")
 
     suspend fun saveImages(showId: Long, images: List<ShowTmdbImage>) = transactionRunner {
         showImagesDao.deleteForShowId(showId)

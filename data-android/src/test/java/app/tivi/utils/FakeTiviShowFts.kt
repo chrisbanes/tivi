@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package app.tivi.data.mappers
+package app.tivi.utils
 
-import app.tivi.data.entities.FollowedShowEntry
-import com.uwetrottmann.trakt5.entities.ListEntry
-import javax.inject.Inject
-import javax.inject.Singleton
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-@Singleton
-class TraktListEntryToFollowedShowEntry @Inject constructor() : Mapper<ListEntry, FollowedShowEntry> {
-    override suspend fun map(from: ListEntry) = FollowedShowEntry(
-            showId = 0,
-            followedAt = from.listed_at,
-            traktId = from.id
-    )
-}
+@Entity(tableName = "shows_fts")
+data class FakeTiviShowFts(
+    @PrimaryKey @ColumnInfo(name = "id") val id: Long? = null,
+    @ColumnInfo(name = "title") val title: String? = null,
+    @ColumnInfo(name = "original_title") val originalTitle: String? = null,
+    @ColumnInfo(name = "docid") val docId: Long? = null
+)

@@ -35,13 +35,15 @@
             android:background="@drawable/sl_activated"
             android:drawablePadding="16dp"
             android:drawableStart="@{context.getDrawable(navItem.iconResId)}"
-            android:drawableTint="@color/color_controlnormal_activated"
+            android:drawableTint="@color/home_nav_item_text_color"
             android:duplicateParentState="true"
             android:gravity="center_vertical"
             android:paddingHorizontal="@dimen/spacing_normal"
             android:paddingVertical="@dimen/spacing_small"
             android:text="@{navItem.labelResId}"
-            app:textAppearanceAttr="@{ isSelected ? R.attr.textAppearanceSubtitle2 : R.attr.textAppearanceBody2 }"
+            android:textAppearance="?attr/textAppearanceBody2"
+            android:textColor="@color/home_nav_item_text_color"
+            app:fontFamily="@{isSelected ? R.font.barlow_500 : R.font.barlow_400}"
             tools:text="Followed" />
 
     </FrameLayout>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package app.tivi.data.mappers
+package app.tivi.data.daos
 
-import app.tivi.data.entities.FollowedShowEntry
-import com.uwetrottmann.trakt5.entities.ListEntry
-import javax.inject.Inject
-import javax.inject.Singleton
+import androidx.room.Dao
+import androidx.room.Query
+import app.tivi.data.resultentities.ShowDetailed
 
-@Singleton
-class TraktListEntryToFollowedShowEntry @Inject constructor() : Mapper<ListEntry, FollowedShowEntry> {
-    override suspend fun map(from: ListEntry) = FollowedShowEntry(
-            showId = 0,
-            followedAt = from.listed_at,
-            traktId = from.id
+@Dao
+abstract class ShowFtsDao {
+    @Query("""
+        SELECT s.* FROM shows as s
+        INNER JOIN shows_fts AS fts ON s.id = fts.docid
+        WHERE fts.title MATCH :filter
+        """
     )
+    abstract suspend fun search(filter: String): List<ShowDetailed>
 }

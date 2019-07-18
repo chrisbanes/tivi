@@ -23,33 +23,52 @@ import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 
 class ListItemSharedElementHelper(
-    private val recyclerView: RecyclerView,
-    private val viewFinder: (View) -> View = { it }
+    private val recyclerView: RecyclerView
 ) {
-    fun createForItem(item: EntryWithShow<out Entry>, transitionName: String): SharedElementHelper {
-        return createForId(item.generateStableId(), transitionName)
+    fun createForItem(
+        item: EntryWithShow<out Entry>,
+        transitionName: String,
+        viewFinder: (View) -> View = defaultViewFinder
+    ): SharedElementHelper {
+        return createForId(item.generateStableId(), transitionName, viewFinder)
     }
 
-    fun createForId(viewHolderId: Long, transitionName: String): SharedElementHelper {
+    fun createForId(
+        viewHolderId: Long,
+        transitionName: String,
+        viewFinder: (View) -> View = defaultViewFinder
+    ): SharedElementHelper {
         val sharedElementHelper = SharedElementHelper()
-        addSharedElement(sharedElementHelper, viewHolderId, transitionName)
+        addSharedElement(sharedElementHelper, viewHolderId, transitionName, viewFinder)
         return sharedElementHelper
     }
 
-    fun createForItems(items: List<EntryWithShow<out Entry>>?): SharedElementHelper {
+    fun createForItems(
+        items: List<EntryWithShow<out Entry>>?,
+        viewFinder: (View) -> View = defaultViewFinder
+    ): SharedElementHelper {
         val sharedElementHelper = SharedElementHelper()
         items?.forEach {
             val homepage = it.show.homepage
             if (homepage != null) {
-                addSharedElement(sharedElementHelper, it.generateStableId(), homepage)
+                addSharedElement(sharedElementHelper, it.generateStableId(), homepage, viewFinder)
             }
         }
         return sharedElementHelper
     }
 
-    private fun addSharedElement(helper: SharedElementHelper, viewHolderId: Long, transitionName: String) {
+    private fun addSharedElement(
+        helper: SharedElementHelper,
+        viewHolderId: Long,
+        transitionName: String,
+        viewFinder: (View) -> View
+    ) {
         recyclerView.findViewHolderForItemId(viewHolderId)?.also {
             helper.addSharedElement(viewFinder(it.itemView), transitionName)
         }
+    }
+
+    companion object {
+        private val defaultViewFinder: (View) -> View = { it }
     }
 }

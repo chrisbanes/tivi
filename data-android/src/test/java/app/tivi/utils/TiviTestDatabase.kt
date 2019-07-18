@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-package app.tivi.data
+package app.tivi.utils
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import app.tivi.data.daos.EpisodeWatchEntryDao
-import app.tivi.data.daos.EpisodesDao
-import app.tivi.data.daos.FollowedShowsDao
-import app.tivi.data.daos.LastRequestDao
-import app.tivi.data.daos.PopularDao
-import app.tivi.data.daos.RelatedShowsDao
-import app.tivi.data.daos.SeasonsDao
-import app.tivi.data.daos.ShowImagesDao
-import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.daos.TrendingDao
-import app.tivi.data.daos.UserDao
-import app.tivi.data.daos.WatchedShowDao
+import app.tivi.data.TiviDatabase
+import app.tivi.data.TiviTypeConverters
+import app.tivi.data.daos.ShowFtsDao
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.FollowedShowEntry
@@ -40,10 +31,10 @@ import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.entities.TiviShowFts
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.entities.TrendingShowEntry
 import app.tivi.data.entities.WatchedShowEntry
+import app.tivi.data.resultentities.ShowDetailed
 import app.tivi.data.views.FollowedShowsLastWatched
 import app.tivi.data.views.FollowedShowsNextToWatch
 import app.tivi.data.views.FollowedShowsWatchStats
@@ -51,7 +42,6 @@ import app.tivi.data.views.FollowedShowsWatchStats
 @Database(
         entities = [
             TiviShow::class,
-            TiviShowFts::class,
             TrendingShowEntry::class,
             PopularShowEntry::class,
             TraktUser::class,
@@ -62,27 +52,22 @@ import app.tivi.data.views.FollowedShowsWatchStats
             RelatedShowEntry::class,
             EpisodeWatchEntry::class,
             LastRequest::class,
-            ShowTmdbImage::class
+            ShowTmdbImage::class,
+            FakeTiviShowFts::class
         ],
         views = [
             FollowedShowsWatchStats::class,
             FollowedShowsLastWatched::class,
             FollowedShowsNextToWatch::class
         ],
-        version = 21
+        version = 1,
+        exportSchema = false
 )
 @TypeConverters(TiviTypeConverters::class)
-abstract class TiviDatabase : RoomDatabase() {
-    abstract fun showDao(): TiviShowDao
-    abstract fun showImagesDao(): ShowImagesDao
-    abstract fun trendingDao(): TrendingDao
-    abstract fun popularDao(): PopularDao
-    abstract fun userDao(): UserDao
-    abstract fun watchedShowsDao(): WatchedShowDao
-    abstract fun followedShowsDao(): FollowedShowsDao
-    abstract fun seasonsDao(): SeasonsDao
-    abstract fun episodesDao(): EpisodesDao
-    abstract fun relatedShowsDao(): RelatedShowsDao
-    abstract fun episodeWatchesDao(): EpisodeWatchEntryDao
-    abstract fun lastRequestDao(): LastRequestDao
+abstract class TiviTestDatabase : RoomDatabase(), TiviDatabase {
+    override fun showFtsDao(): ShowFtsDao = object : ShowFtsDao() {
+        override suspend fun search(filter: String): List<ShowDetailed> {
+            return emptyList()
+        }
+    }
 }

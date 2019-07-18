@@ -26,7 +26,7 @@ import org.threeten.bp.OffsetDateTime
 @Entity(tableName = "shows",
         indices = [
             Index(value = ["trakt_id"], unique = true),
-            Index(value = ["tmdb_id"], unique = true)
+            Index(value = ["tmdb_id"])
         ]
 )
 data class TiviShow(

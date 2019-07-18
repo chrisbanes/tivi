@@ -32,10 +32,8 @@ import app.tivi.utils.showId
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Assert.assertThat
-import org.junit.Ignore
 import org.junit.Test
 
-@Ignore("https://github.com/robolectric/robolectric/issues/3556")
 class EpisodeWatchEntryTest : BaseDatabaseTest() {
     private lateinit var episodeWatchEntryDao: EpisodeWatchEntryDao
 

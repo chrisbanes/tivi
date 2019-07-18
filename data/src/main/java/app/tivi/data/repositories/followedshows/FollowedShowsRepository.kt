@@ -50,7 +50,6 @@ class FollowedShowsRepository @Inject constructor(
     suspend fun isShowFollowed(showId: Long) = followedShowsStore.isShowFollowed(showId)
 
     suspend fun getFollowedShows(): List<FollowedShowEntry> {
-        syncFollowedShows()
         return followedShowsStore.getEntries()
     }
 
@@ -81,7 +80,7 @@ class FollowedShowsRepository @Inject constructor(
             )
             val newEntryId = followedShowsStore.save(newEntry)
 
-            logger.d("addFollowedShow. Entry saved with ID: %s - %s", newEntryId, newEntry)
+            logger.v("addFollowedShow. Entry saved with ID: %s - %s", newEntryId, newEntry)
 
             // Now sync it up
             syncFollowedShows()
@@ -115,8 +114,8 @@ class FollowedShowsRepository @Inject constructor(
     private suspend fun pullDownTraktFollowedList(listId: Int) {
         val response = dataSource.getListShows(listId)
         logger.d("pullDownTraktFollowedList. Response: %s", response)
-        when {
-            response is Success && response.responseModified -> {
+        when (response) {
+            is Success -> {
                 response.data.map { (entry, show) ->
                     // Grab the show id if it exists, or save the show and use it's generated ID
                     val showId = showStore.getIdOrSavePlaceholder(show)
@@ -149,10 +148,10 @@ class FollowedShowsRepository @Inject constructor(
 
         if (listId != null && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
             val shows = pending.mapNotNull { showStore.getShow(it.showId) }
-            logger.d("processPendingAdditions. Entries mapped: %s", shows)
+            logger.v("processPendingAdditions. Entries mapped: %s", shows)
 
             val response = dataSource.addShowIdsToList(listId, shows)
-            logger.d("processPendingAdditions. Trakt response: %s", response)
+            logger.v("processPendingAdditions. Trakt response: %s", response)
 
             if (response is Success) {
                 // Now update the database
@@ -174,10 +173,10 @@ class FollowedShowsRepository @Inject constructor(
 
         if (listId != null && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
             val shows = pending.mapNotNull { showStore.getShow(it.showId) }
-            logger.d("processPendingDelete. Entries mapped: %s", shows)
+            logger.v("processPendingDelete. Entries mapped: %s", shows)
 
             val response = dataSource.removeShowIdsFromList(listId, shows)
-            logger.d("processPendingDelete. Trakt response: %s", response)
+            logger.v("processPendingDelete. Trakt response: %s", response)
 
             if (response is Success) {
                 // Now update the database

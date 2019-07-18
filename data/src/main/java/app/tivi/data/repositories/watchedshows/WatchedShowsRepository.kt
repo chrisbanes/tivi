@@ -45,9 +45,8 @@ class WatchedShowsRepository @Inject constructor(
     suspend fun getWatchedShows() = watchedShowsStore.getWatchedShows()
 
     suspend fun updateWatchedShows() {
-        val response = traktDataSource.getWatchedShows()
-        when {
-            response is Success && response.responseModified -> {
+        when (val response = traktDataSource.getWatchedShows()) {
+            is Success -> {
                 response.data.map { (show, entry) ->
                     // Grab the show id if it exists, or save the show and use it's generated ID
                     val watchedShowId = showStore.getIdOrSavePlaceholder(show)

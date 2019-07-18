@@ -44,7 +44,7 @@ class WatchedFragment : TiviMvRxFragment() {
     @Inject lateinit var controller: WatchedEpoxyController
 
     private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
-        ListItemSharedElementHelper(binding.watchedRv) { it.findViewById(R.id.show_poster) }
+        ListItemSharedElementHelper(binding.watchedRv)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -60,10 +60,14 @@ class WatchedFragment : TiviMvRxFragment() {
         controller.callbacks = object : WatchedEpoxyController.Callbacks {
             override fun onItemClicked(item: WatchedShowEntryWithShow) {
                 val direction = WatchedFragmentDirections.actionWatchedToActivityShowDetails(item.show.id)
+
+                val extras = listItemSharedElementHelper.createForItem(item, "poster") {
+                    it.findViewById(R.id.show_poster)
+                }
+
                 findNavController().navigate(
                         direction,
-                        listItemSharedElementHelper.createForItem(item, "poster")
-                                .toActivityNavigatorExtras(requireActivity())
+                        extras.toActivityNavigatorExtras(requireActivity())
                 )
             }
 

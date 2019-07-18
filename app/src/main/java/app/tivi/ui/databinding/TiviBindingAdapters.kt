@@ -16,12 +16,15 @@
 
 package app.tivi.ui.databinding
 
+import android.content.res.Resources
 import android.graphics.Outline
+import android.graphics.Typeface
 import android.view.Gravity
 import android.view.View
 import android.view.ViewOutlineProvider
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.doOnLayout
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -187,6 +190,17 @@ fun roundedCornerOutlineProvider(view: View, oldRadius: Float, radius: Float) {
 fun textAppearanceAttr(view: TextView, oldTextAppearanceStyleAttr: Int, textAppearanceStyleAttr: Int) {
     if (oldTextAppearanceStyleAttr != textAppearanceStyleAttr) {
         view.setTextAppearance(view.context.resolveThemeReferenceResId(textAppearanceStyleAttr))
+    }
+}
+
+@BindingAdapter("fontFamily")
+fun fontFamily(view: TextView, oldFontFamily: Int, fontFamily: Int) {
+    if (oldFontFamily != fontFamily) {
+        view.typeface = try {
+            ResourcesCompat.getFont(view.context, fontFamily)
+        } catch (nfe: Resources.NotFoundException) {
+            null
+        } ?: Typeface.DEFAULT
     }
 }
 

@@ -44,9 +44,8 @@ class TrendingShowsRepository @Inject constructor(
     }
 
     private suspend fun updateTrendingShows(page: Int, resetOnSave: Boolean) {
-        val response = traktDataSource.getTrendingShows(page, 20)
-        when {
-            response is Success && response.responseModified -> {
+        when (val response = traktDataSource.getTrendingShows(page, 20)) {
+            is Success -> {
                 response.data.map { (show, entry) ->
                     // Grab the show id if it exists, or save the show and use it's generated ID
                     val showId = showStore.getIdOrSavePlaceholder(show)

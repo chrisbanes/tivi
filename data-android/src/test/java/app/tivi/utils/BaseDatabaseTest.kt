@@ -33,13 +33,15 @@ abstract class BaseDatabaseTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    lateinit var db: TiviDatabase
-        private set
+    private lateinit var _db: TiviTestDatabase
+
+    val db: TiviDatabase
+        get() = _db
 
     @Before
     open fun setup() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder(context, TiviDatabase::class.java)
+        _db = Room.inMemoryDatabaseBuilder(context, TiviTestDatabase::class.java)
                 .allowMainThreadQueries()
                 .build()
     }
@@ -47,6 +49,6 @@ abstract class BaseDatabaseTest {
     @After
     @Throws(IOException::class)
     open fun closeDb() {
-        db.close()
+        _db.close()
     }
 }

@@ -55,6 +55,7 @@ class UpdateFollowedShows @Inject constructor(
         syncWatched.join()
 
         // Finally sync the seasons/episodes and watches
+        followedShowsRepository.syncFollowedShows()
         followedShowsRepository.getFollowedShows().parallelForEach {
             // Download the seasons + episodes
             if (params.forceRefresh || seasonEpisodeRepository.needShowSeasonsUpdate(it.showId)) {
