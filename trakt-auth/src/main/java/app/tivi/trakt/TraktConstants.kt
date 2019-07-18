@@ -18,5 +18,5 @@ package app.tivi.trakt
 
 object TraktConstants {
     const val INTENT_ACTION_HANDLE_AUTH_RESPONSE = "app.tivi.HANDLE_AUTHORIZATION_RESPONSE"
-    const val URI_AUTH_CALLBACK = "app.tivi://auth/oauth2callback"
+    const val URI_AUTH_CALLBACK_PATH = "auth/oauth2callback"
 }

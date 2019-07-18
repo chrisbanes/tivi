@@ -19,6 +19,7 @@ package app.tivi.trakt
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
+import app.tivi.inject.ApplicationId
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Module
 import dagger.Provides
@@ -89,13 +90,15 @@ class TraktAuthModule {
     @Provides
     fun provideAuthRequest(
         serviceConfig: AuthorizationServiceConfiguration,
-        @Named("trakt-client-id") clientId: String
+        @Named("trakt-client-id") clientId: String,
+        @ApplicationId applicationId: String
     ): AuthorizationRequest {
         return AuthorizationRequest.Builder(
                 serviceConfig,
                 clientId,
                 ResponseTypeValues.CODE,
-                Uri.parse(TraktConstants.URI_AUTH_CALLBACK)).build()
+                Uri.parse("$applicationId://${TraktConstants.URI_AUTH_CALLBACK_PATH}")
+        ).build()
     }
 
     @Singleton

@@ -44,6 +44,10 @@ class AppModule {
     @Provides
     fun provideContext(application: TiviApplication): Context = application.applicationContext
 
+    @ApplicationId
+    @Provides
+    fun provideApplicationId(application: TiviApplication): String = application.packageName
+
     @Singleton
     @Provides
     fun provideRxSchedulers(): AppRxSchedulers = AppRxSchedulers(
