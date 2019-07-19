@@ -23,6 +23,7 @@ import app.tivi.data.entities.Success
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.shows.ShowRepository
+import app.tivi.extensions.doSingleLaunch
 import app.tivi.extensions.parallelForEach
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
@@ -113,7 +114,7 @@ class FollowedShowsRepository @Inject constructor(
         followedShowsLastRequestStore.updateLastRequest()
     }
 
-    private suspend fun pullDownTraktFollowedList(listId: Int) {
+    private suspend fun pullDownTraktFollowedList(listId: Int) = doSingleLaunch("pull_followed_list_$listId") {
         val response = dataSource.getListShows(listId)
         logger.d("pullDownTraktFollowedList. Response: %s", response)
         when (response) {
