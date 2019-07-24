@@ -63,7 +63,7 @@ object Libs {
     }
 
     object Coroutines {
-        private const val version = "1.2.1"
+        private const val version = "1.3.0-RC"
         const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
         const val rx2 = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$version"
         const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
