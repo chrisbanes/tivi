@@ -23,7 +23,6 @@ import app.tivi.interactors.UpdatePopularShows
 import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
-import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.RxLoadingCounter
 import app.tivi.TiviMvRxViewModel
 import com.airbnb.mvrx.FragmentViewModelContext
@@ -40,8 +39,7 @@ class DiscoverViewModel @AssistedInject constructor(
     observePopularShows: ObservePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,
     observeTrendingShows: ObserveTrendingShows,
-    tmdbManager: TmdbManager,
-    dispatchers: AppCoroutineDispatchers
+    tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<DiscoverViewState>(initialState) {
     private val loadingState = RxLoadingCounter()
 
@@ -52,7 +50,7 @@ class DiscoverViewModel @AssistedInject constructor(
         loadingState.observable
                 .execute { copy(isLoading = it() ?: false) }
 
-        viewModelScope.launch(dispatchers.io) {
+        viewModelScope.launch {
             observeTrendingShows.observe()
                     .distinctUntilChanged()
                     .execute { copy(trendingItems = it() ?: emptyList()) }
@@ -61,7 +59,7 @@ class DiscoverViewModel @AssistedInject constructor(
             observeTrendingShows(Unit)
         }
 
-        viewModelScope.launch(dispatchers.io) {
+        viewModelScope.launch {
             observePopularShows.observe()
                     .distinctUntilChanged()
                     .execute { copy(popularItems = it() ?: emptyList()) }

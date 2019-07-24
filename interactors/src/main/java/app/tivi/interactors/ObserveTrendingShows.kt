@@ -18,13 +18,17 @@ package app.tivi.interactors
 
 import app.tivi.data.repositories.trendingshows.TrendingShowsRepository
 import app.tivi.data.resultentities.TrendingEntryWithShow
+import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class ObserveTrendingShows @Inject constructor(
+    private val dispatchers: AppCoroutineDispatchers,
     private val trendingShowsRepository: TrendingShowsRepository
 ) : FlowSubjectInteractor<Unit, List<TrendingEntryWithShow>>() {
     override fun createObservable(params: Unit): Flow<List<TrendingEntryWithShow>> {
         return trendingShowsRepository.observeForObservable()
+                .flowOn(dispatchers.io)
     }
 }

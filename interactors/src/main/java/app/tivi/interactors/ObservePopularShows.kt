@@ -18,15 +18,17 @@ package app.tivi.interactors
 
 import app.tivi.data.repositories.popularshows.PopularShowsRepository
 import app.tivi.data.resultentities.PopularEntryWithShow
+import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class ObservePopularShows @Inject constructor(
+    private val dispatchers: AppCoroutineDispatchers,
     private val popularShowsRepository: PopularShowsRepository
 ) : FlowSubjectInteractor<Unit, List<PopularEntryWithShow>>() {
     override fun createObservable(params: Unit): Flow<List<PopularEntryWithShow>> {
         return popularShowsRepository.observeForObservable()
-                .onStart { emit(emptyList()) }
+                .flowOn(dispatchers.io)
     }
 }
