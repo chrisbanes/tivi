@@ -18,18 +18,15 @@ package app.tivi.interactors
 
 import app.tivi.data.repositories.popularshows.PopularShowsRepository
 import app.tivi.data.resultentities.PopularEntryWithShow
-import app.tivi.extensions.emptyObservableList
-import app.tivi.util.AppRxSchedulers
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 class ObservePopularShows @Inject constructor(
-    private val schedulers: AppRxSchedulers,
     private val popularShowsRepository: PopularShowsRepository
-) : SubjectInteractor<Unit, List<PopularEntryWithShow>>() {
-    override fun createObservable(params: Unit): Observable<List<PopularEntryWithShow>> {
+) : FlowSubjectInteractor<Unit, List<PopularEntryWithShow>>() {
+    override fun createObservable(params: Unit): Flow<List<PopularEntryWithShow>> {
         return popularShowsRepository.observeForObservable()
-                .startWith(emptyObservableList())
-                .subscribeOn(schedulers.io)
+                .onStart { emit(emptyList()) }
     }
 }

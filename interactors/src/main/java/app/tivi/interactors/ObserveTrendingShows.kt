@@ -18,18 +18,13 @@ package app.tivi.interactors
 
 import app.tivi.data.repositories.trendingshows.TrendingShowsRepository
 import app.tivi.data.resultentities.TrendingEntryWithShow
-import app.tivi.extensions.emptyObservableList
-import app.tivi.util.AppRxSchedulers
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ObserveTrendingShows @Inject constructor(
-    private val schedulers: AppRxSchedulers,
     private val trendingShowsRepository: TrendingShowsRepository
-) : SubjectInteractor<Unit, List<TrendingEntryWithShow>>() {
-    override fun createObservable(params: Unit): Observable<List<TrendingEntryWithShow>> {
+) : FlowSubjectInteractor<Unit, List<TrendingEntryWithShow>>() {
+    override fun createObservable(params: Unit): Flow<List<TrendingEntryWithShow>> {
         return trendingShowsRepository.observeForObservable()
-                .startWith(emptyObservableList())
-                .subscribeOn(schedulers.io)
     }
 }

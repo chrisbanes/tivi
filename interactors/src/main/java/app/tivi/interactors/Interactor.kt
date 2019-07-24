@@ -23,6 +23,10 @@ import io.reactivex.subjects.Subject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.switchMap
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -57,6 +61,17 @@ abstract class SubjectInteractor<P : Any, T> {
     protected abstract fun createObservable(params: P): Observable<T>
 
     fun observe(): Observable<T> = observable
+}
+
+abstract class FlowSubjectInteractor<P : Any, T> {
+    private val channel = ConflatedBroadcastChannel<P>()
+    private val flow = channel.asFlow().switchMap { createObservable(it) }
+
+    suspend operator fun invoke(params: P) = channel.send(params)
+
+    protected abstract fun createObservable(params: P): Flow<T>
+
+    fun observe(): Flow<T> = flow
 }
 
 fun <P> CoroutineScope.launchInteractor(interactor: Interactor<P>, param: P): Job {
