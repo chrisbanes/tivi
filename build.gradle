@@ -78,6 +78,15 @@ subprojects {
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         kotlinOptions.allWarningsAsErrors = true
     }
+
+    afterEvaluate {
+        extensions.findByName('kapt')?.arguments {
+            // Turn off formatting of Dagger generated files
+            arg("dagger.formatGeneratedSource", "disabled")
+            // Turn on incremental apt for Dagger
+            arg("dagger.gradle.incremental", "enabled")
+        }
+    }
 }
 
 Object propOrDef(String propertyName, Object defaultValue) {
