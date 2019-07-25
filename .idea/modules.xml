@@ -8,6 +8,8 @@
       <module fileurl="file://$PROJECT_DIR$/buildSrc/buildSrc.iml" filepath="$PROJECT_DIR$/buildSrc/buildSrc.iml" />
       <module fileurl="file://$PROJECT_DIR$/data/data.iml" filepath="$PROJECT_DIR$/data/data.iml" />
       <module fileurl="file://$PROJECT_DIR$/data-android/data-android.iml" filepath="$PROJECT_DIR$/data-android/data-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/discover/discover.iml" filepath="$PROJECT_DIR$/discover/discover.iml" />
+      <module fileurl="file://$PROJECT_DIR$/epoxy-utils/epoxy-utils.iml" filepath="$PROJECT_DIR$/epoxy-utils/epoxy-utils.iml" />
       <module fileurl="file://$PROJECT_DIR$/interactors/interactors.iml" filepath="$PROJECT_DIR$/interactors/interactors.iml" />
       <module fileurl="file://$PROJECT_DIR$/tasks/tasks.iml" filepath="$PROJECT_DIR$/tasks/tasks.iml" />
       <module fileurl="file://$PROJECT_DIR$/tivi.iml" filepath="$PROJECT_DIR$/tivi.iml" />

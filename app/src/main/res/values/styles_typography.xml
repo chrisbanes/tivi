@@ -16,10 +16,6 @@
   -->
 
 <resources>
-    <style name="TextAppearance.Tivi.PosterAnnotation" parent="TextAppearance.Tivi.Body2">
-        <item name="android:textSize">10sp</item>
-    </style>
-
     <style name="TextAppearance.Tivi.Headline1" parent="TextAppearance.MaterialComponents.Headline1">
         <item name="fontFamily">@font/barlow_300</item>
         <item name="android:fontFamily">@font/barlow_300</item>

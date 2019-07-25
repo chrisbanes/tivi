@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2018 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,11 +46,14 @@ android {
 
 dependencies {
     implementation project(":base")
-    implementation project(":data")
+    implementation project(":base-android")
+    implementation project(':interactors')
+    implementation project(":epoxy-utils")
 
     implementation Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.reactive
     implementation Libs.AndroidX.Lifecycle.viewmodel
+    kapt Libs.AndroidX.Lifecycle.compiler
 
     implementation Libs.AndroidX.Paging.runtime
     implementation Libs.AndroidX.Paging.rxjava2
@@ -70,10 +73,6 @@ dependencies {
 
     implementation Libs.Google.material
 
-    implementation Libs.threeTenAbp
-
-    implementation Libs.timber
-
     implementation Libs.RxJava.rxJava
     implementation Libs.RxJava.rxKotlin
     implementation Libs.RxJava.rxAndroid
@@ -86,11 +85,14 @@ dependencies {
     implementation Libs.Coroutines.android
 
     implementation Libs.Dagger.androidSupport
+    kapt Libs.Dagger.compiler
+    kapt Libs.Dagger.androidProcessor
+
+    compileOnly Libs.AssistedInject.annotationDagger2
+    kapt Libs.AssistedInject.processorDagger2
 
     implementation Libs.Glide.glide
     kapt Libs.Glide.compiler
-    // TODO work out why this is needed
-    kapt 'androidx.annotation:annotation:1.1.0'
 
     implementation Libs.mvRx
 
@@ -102,7 +104,4 @@ dependencies {
     implementation Libs.gravitySnapHelper
 
     debugImplementation Libs.rxLint
-
-    implementation Libs.Google.firebaseCore
-    implementation Libs.Google.crashlytics
 }

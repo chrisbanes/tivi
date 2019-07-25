@@ -167,6 +167,8 @@ dependencies {
     implementation project(":tmdb")
     implementation project(':interactors')
     implementation project(":tasks")
+    implementation project(":discover")
+    implementation project(":epoxy-utils")
 
     implementation Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.reactive

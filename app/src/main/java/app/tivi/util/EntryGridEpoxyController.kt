@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ package app.tivi.util
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.StringRes
-import app.tivi.HeaderBindingModel_
-import app.tivi.PosterGridItemBindingModel_
+import app.tivi.base.HeaderBindingModel_
+import app.tivi.base.PosterGridItemBindingModel_
+import app.tivi.base.emptyState
+import app.tivi.base.header
+import app.tivi.base.infiniteLoading
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.emptyState
-import app.tivi.header
-import app.tivi.infiniteLoading
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.epoxy.EpoxyModelProperty
 import app.tivi.ui.epoxy.TotalSpanOverride
@@ -54,7 +54,6 @@ abstract class EntryGridEpoxyController<LI : EntryWithShow<out Entry>>(
         val modelsFiltered = models.filterNotNull()
 
         if (modelsFiltered.isNotEmpty()) {
-
             header {
                 id("header")
                 title(titleRes)

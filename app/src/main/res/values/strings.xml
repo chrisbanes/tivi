@@ -39,9 +39,6 @@
 
     <string name="settings_about_category_title">About Tivi</string>
 
-    <string name="empty_prompt">Y u no watch some TV?</string>
-    <string name="empty_emoji">😏</string>
-
     <string name="details_related">Related shows</string>
 
     <string name="percentage_format">%1$d%%</string>

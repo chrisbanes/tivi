@@ -22,16 +22,6 @@
         <item name="subtitleTextAppearance">?attr/textAppearanceSubtitle2</item>
     </style>
 
-    <style name="Widget.Tivi.GridItem.Annotation" parent="android:Widget.TextView">
-        <item name="android:drawablePadding">4dp</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingBottom">4dp</item>
-        <item name="android:paddingLeft">6dp</item>
-        <item name="android:paddingRight">6dp</item>
-        <item name="android:paddingTop">4dp</item>
-        <item name="android:textAppearance">@style/TextAppearance.Tivi.PosterAnnotation</item>
-    </style>
-
     <style name="Widget.Tivi.RecyclerView.FastScroll" parent="android:Widget">
         <item name="fastScrollEnabled">true</item>
         <item name="fastScrollHorizontalThumbDrawable">@drawable/recyclerview_scroll_thumb</item>
