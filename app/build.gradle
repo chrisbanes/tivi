@@ -173,6 +173,7 @@ dependencies {
     implementation project(':interactors')
     implementation project(":tasks")
     implementation project(":ui-discover")
+    implementation project(":ui-showdetails")
 
     implementation Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.reactive

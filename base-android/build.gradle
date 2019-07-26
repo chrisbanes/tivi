@@ -36,6 +36,7 @@ android {
 
 dependencies {
     api project(":base")
+    implementation project(":data")
 
     implementation Libs.AndroidX.Fragment.fragment
     implementation Libs.AndroidX.coreKtx

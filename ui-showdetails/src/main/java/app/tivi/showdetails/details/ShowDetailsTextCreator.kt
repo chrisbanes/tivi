@@ -22,7 +22,6 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.text.italic
 import androidx.emoji.text.EmojiCompat
-import app.tivi.R
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches

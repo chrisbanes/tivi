@@ -18,9 +18,9 @@ package app.tivi.home.popular
 
 import android.view.View
 import androidx.navigation.fragment.findNavController
-import app.tivi.PosterGridItemBindingModel_
 import app.tivi.R
 import app.tivi.SharedElementHelper
+import app.tivi.common.layouts.PosterGridItemBindingModel_
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.extensions.toActivityNavigatorExtras

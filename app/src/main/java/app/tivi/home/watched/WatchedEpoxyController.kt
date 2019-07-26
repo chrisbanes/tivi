@@ -21,14 +21,14 @@ import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import app.tivi.HeaderBindingModel_
+import app.tivi.common.layouts.HeaderBindingModel_
 import app.tivi.LibraryWatchedItemBindingModel_
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
-import app.tivi.emptyState
+import app.tivi.common.layouts.emptyState
 import app.tivi.filter
-import app.tivi.header
+import app.tivi.common.layouts.header
 import app.tivi.home.HomeTextCreator
 import app.tivi.ui.SortPopupMenuListener
 import app.tivi.common.epoxy.EpoxyModelProperty

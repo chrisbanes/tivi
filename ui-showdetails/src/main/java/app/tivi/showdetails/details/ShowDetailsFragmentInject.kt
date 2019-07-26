@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2018 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package app.tivi.home.discover
+package app.tivi.showdetails.details
 
 import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
-@Module(includes = [DiscoverAssistedModule::class])
-abstract class DiscoverBuilder {
-    @ContributesAndroidInjector
-    internal abstract fun discoverFragment(): DiscoverFragment
+@Module
+abstract class ShowDetailsFragmentBuilder {
+    @ContributesAndroidInjector(modules = [
+        ShowDetailsAssistedModule::class
+    ])
+    abstract fun showDetailsFragment(): ShowDetailsFragment
 }
 
-@Module(includes = [AssistedInject_DiscoverAssistedModule::class])
+@Module(includes = [AssistedInject_ShowDetailsAssistedModule::class])
 @AssistedModule
-interface DiscoverAssistedModule
+interface ShowDetailsAssistedModule

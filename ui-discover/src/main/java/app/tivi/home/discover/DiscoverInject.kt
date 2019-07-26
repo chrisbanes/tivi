@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2017 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails
+package app.tivi.home.discover
 
-import app.tivi.SharedElementHelper
-import app.tivi.data.entities.Episode
-import app.tivi.data.entities.TiviShow
+import com.squareup.inject.assisted.dagger2.AssistedModule
+import dagger.Module
+import dagger.android.ContributesAndroidInjector
 
-interface ShowDetailsNavigator {
-    fun showShowDetails(show: TiviShow, sharedElements: SharedElementHelper?)
-    fun showEpisodeDetails(episode: Episode)
-    fun navigateUp()
+@Module
+abstract class DiscoverBuilder {
+    @ContributesAndroidInjector(modules = [DiscoverAssistedModule::class])
+    abstract fun discoverFragment(): DiscoverFragment
 }
+
+@Module(includes = [AssistedInject_DiscoverAssistedModule::class])
+@AssistedModule
+interface DiscoverAssistedModule

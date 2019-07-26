@@ -20,7 +20,7 @@ import android.view.View
 import androidx.navigation.fragment.findNavController
 import app.tivi.R
 import app.tivi.SharedElementHelper
-import app.tivi.TrendingPosterGridItemBindingModel_
+import app.tivi.common.layouts.TrendingPosterGridItemBindingModel_
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.extensions.toActivityNavigatorExtras

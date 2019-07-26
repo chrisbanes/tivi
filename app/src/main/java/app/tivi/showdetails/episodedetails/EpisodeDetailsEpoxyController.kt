@@ -18,8 +18,8 @@ package app.tivi.showdetails.episodedetails
 
 import android.content.Context
 import app.tivi.R
-import app.tivi.detailsBadge
-import app.tivi.detailsHeader
+import app.tivi.common.layouts.detailsBadge
+import app.tivi.common.layouts.detailsHeader
 import app.tivi.epDetailsSummary
 import app.tivi.epDetailsWatchItem
 import app.tivi.inject.PerActivity

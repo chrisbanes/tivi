@@ -34,7 +34,7 @@ import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
-internal class DiscoverFragment : TiviMvRxFragment() {
+class DiscoverFragment : TiviMvRxFragment() {
     private lateinit var binding: FragmentDiscoverBinding
 
     private lateinit var listItemSharedElementHelper: ListItemSharedElementHelper

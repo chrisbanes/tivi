@@ -17,10 +17,12 @@
       <module fileurl="file://$PROJECT_DIR$/tasks/tasks.iml" filepath="$PROJECT_DIR$/tasks/tasks.iml" />
       <module fileurl="file://$PROJECT_DIR$/tivi.iml" filepath="$PROJECT_DIR$/tivi.iml" />
       <module fileurl="file://$PROJECT_DIR$/discover/tivi-discover.iml" filepath="$PROJECT_DIR$/discover/tivi-discover.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui-discover/tivi-ui-discover.iml" filepath="$PROJECT_DIR$/ui-discover/tivi-ui-discover.iml" />
       <module fileurl="file://$PROJECT_DIR$/tmdb/tmdb.iml" filepath="$PROJECT_DIR$/tmdb/tmdb.iml" />
       <module fileurl="file://$PROJECT_DIR$/trakt/trakt.iml" filepath="$PROJECT_DIR$/trakt/trakt.iml" />
       <module fileurl="file://$PROJECT_DIR$/trakt-auth/trakt-auth.iml" filepath="$PROJECT_DIR$/trakt-auth/trakt-auth.iml" />
       <module fileurl="file://$PROJECT_DIR$/ui-discover/ui-discover.iml" filepath="$PROJECT_DIR$/ui-discover/ui-discover.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui-showdetails/ui-showdetails.iml" filepath="$PROJECT_DIR$/ui-showdetails/ui-showdetails.iml" />
     </modules>
   </component>
 </project>
