@@ -23,7 +23,7 @@ import app.tivi.detailsHeader
 import app.tivi.epDetailsSummary
 import app.tivi.epDetailsWatchItem
 import app.tivi.inject.PerActivity
-import app.tivi.ui.epoxy.TotalSpanOverride
+import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.epoxy.TypedEpoxyController
 import com.airbnb.mvrx.Success

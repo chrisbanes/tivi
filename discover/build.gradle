@@ -48,7 +48,10 @@ dependencies {
     implementation project(":base")
     implementation project(":base-android")
     implementation project(':interactors')
-    implementation project(":epoxy-utils")
+    implementation project(":common-ui")
+    implementation project(":common-epoxy")
+    implementation project(":common-layouts")
+    implementation project(":common-glide")
 
     implementation Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.reactive

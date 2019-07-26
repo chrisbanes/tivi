@@ -18,6 +18,7 @@ package app.tivi.util
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
+import app.tivi.TiviViewModel
 import app.tivi.api.Status
 import app.tivi.api.UiResource
 import app.tivi.data.Entry

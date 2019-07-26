@@ -28,8 +28,8 @@ import app.tivi.R
 import app.tivi.databinding.FragmentEpisodeDetailsBinding
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.showdetails.ShowDetailsNavigator
-import app.tivi.ui.epoxy.SwipeAwayCallbacks
-import app.tivi.util.TiviMvRxBottomSheetFragment
+import app.tivi.common.epoxy.SwipeAwayCallbacks
+import app.tivi.TiviMvRxBottomSheetFragment
 import com.airbnb.epoxy.EpoxyTouchHelper
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel

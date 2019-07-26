@@ -33,8 +33,8 @@ import app.tivi.databinding.FragmentShowDetailsBinding
 import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.showdetails.ShowDetailsNavigator
-import app.tivi.util.TransitionListenerAdapter
-import app.tivi.util.TiviMvRxFragment
+import app.tivi.ui.TransitionListenerAdapter
+import app.tivi.TiviMvRxFragment
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState

@@ -38,9 +38,9 @@ import app.tivi.detailsSeasonEpisode
 import app.tivi.detailsSummary
 import app.tivi.inject.PerActivity
 import app.tivi.tmdb.TmdbImageUrlProvider
-import app.tivi.ui.epoxy.TotalSpanOverride
-import app.tivi.ui.epoxy.carousel
-import app.tivi.ui.epoxy.withModelsFrom
+import app.tivi.common.epoxy.TotalSpanOverride
+import app.tivi.common.epoxy.carousel
+import app.tivi.common.epoxy.withModelsFrom
 import app.tivi.ui.widget.PopupMenuButton
 import com.airbnb.epoxy.Carousel
 import com.airbnb.epoxy.TypedEpoxyController

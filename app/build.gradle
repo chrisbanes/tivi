@@ -160,6 +160,10 @@ android {
 dependencies {
     implementation project(":base")
     implementation project(":base-android")
+    implementation project(":common-ui")
+    implementation project(":common-epoxy")
+    implementation project(":common-layouts")
+    implementation project(":common-glide")
     implementation project(":data")
     implementation project(":data-android")
     implementation project(":trakt")
@@ -168,7 +172,6 @@ dependencies {
     implementation project(':interactors')
     implementation project(":tasks")
     implementation project(":discover")
-    implementation project(":epoxy-utils")
 
     implementation Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.reactive
@@ -214,9 +217,6 @@ dependencies {
 
     compileOnly Libs.AssistedInject.annotationDagger2
     kapt Libs.AssistedInject.processorDagger2
-
-    implementation Libs.Glide.glide
-    kapt Libs.Glide.compiler
 
     implementation Libs.mvRx
 

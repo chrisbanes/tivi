@@ -32,7 +32,8 @@ import app.tivi.databinding.FragmentEntryGridBinding
 import app.tivi.extensions.observeNotNull
 import app.tivi.ui.ProgressTimeLatch
 import app.tivi.ui.SpacingItemDecorator
-import app.tivi.ui.epoxy.StickyHeaderScrollListener
+import app.tivi.common.epoxy.StickyHeaderScrollListener
+import app.tivi.ui.transitions.GridToGridTransitioner
 import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
 

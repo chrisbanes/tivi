@@ -16,17 +16,17 @@
 
 package app.tivi.home.discover
 
-import app.tivi.base.HeaderBindingModel_
-import app.tivi.base.emptyState
-import app.tivi.base.header
-import app.tivi.base.posterGridItem
-import app.tivi.base.trendingPosterGridItem
+import app.tivi.common.layouts.HeaderBindingModel_
+import app.tivi.common.layouts.emptyState
+import app.tivi.common.layouts.header
+import app.tivi.common.layouts.posterGridItem
+import app.tivi.common.layouts.trendingPosterGridItem
 import app.tivi.data.Entry
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
-import app.tivi.ui.epoxy.TotalSpanOverride
+import app.tivi.common.epoxy.TotalSpanOverride
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.TypedEpoxyController
 import javax.inject.Inject

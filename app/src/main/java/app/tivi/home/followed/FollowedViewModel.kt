@@ -30,7 +30,7 @@ import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.Logger
 import app.tivi.util.RxLoadingCounter
-import app.tivi.util.TiviMvRxViewModel
+import app.tivi.TiviMvRxViewModel
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext

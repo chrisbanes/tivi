@@ -21,12 +21,6 @@ apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
 
-apply plugin: 'kotlin-kapt'
-kapt {
-    correctErrorTypes = true
-    useBuildCache = true
-}
-
 android {
     compileSdkVersion buildConfig.compileSdk
 
@@ -38,70 +32,16 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    dataBinding {
-        enabled = true
-    }
 }
 
 dependencies {
-    implementation project(":base")
-    implementation project(":data")
+    api project(":base")
 
-    implementation Libs.AndroidX.Lifecycle.extensions
-    implementation Libs.AndroidX.Lifecycle.reactive
-    implementation Libs.AndroidX.Lifecycle.viewmodel
-
-    implementation Libs.AndroidX.Paging.runtime
-    implementation Libs.AndroidX.Paging.rxjava2
-
-    implementation Libs.AndroidX.appcompat
-    implementation Libs.AndroidX.browser
-    implementation Libs.AndroidX.palette
-    implementation Libs.AndroidX.recyclerview
-    implementation Libs.AndroidX.emoji
-    implementation Libs.AndroidX.preference
-    implementation Libs.AndroidX.constraintlayout
-    implementation Libs.AndroidX.coreKtx
     implementation Libs.AndroidX.Fragment.fragment
-    implementation Libs.AndroidX.Fragment.fragmentKtx
-    implementation Libs.AndroidX.Navigation.fragment
-    implementation Libs.AndroidX.Navigation.ui
-
-    implementation Libs.Google.material
-
-    implementation Libs.threeTenAbp
+    implementation Libs.AndroidX.coreKtx
 
     implementation Libs.timber
-
-    implementation Libs.RxJava.rxJava
-    implementation Libs.RxJava.rxKotlin
-    implementation Libs.RxJava.rxAndroid
-
-    implementation Libs.Kotlin.stdlib
-    implementation Libs.Kotlin.reflect
-
-    implementation Libs.Coroutines.core
-    implementation Libs.Coroutines.rx2
-    implementation Libs.Coroutines.android
-
-    implementation Libs.Dagger.androidSupport
-
-    implementation Libs.Glide.glide
-    kapt Libs.Glide.compiler
-    // TODO work out why this is needed
-    kapt 'androidx.annotation:annotation:1.1.0'
-
-    implementation Libs.mvRx
-
-    implementation Libs.Epoxy.epoxy
-    implementation Libs.Epoxy.paging
-    implementation Libs.Epoxy.dataBinding
-    kapt Libs.Epoxy.processor
-
-    implementation Libs.gravitySnapHelper
-
-    debugImplementation Libs.rxLint
+    implementation Libs.threeTenAbp
 
     implementation Libs.Google.firebaseCore
     implementation Libs.Google.crashlytics

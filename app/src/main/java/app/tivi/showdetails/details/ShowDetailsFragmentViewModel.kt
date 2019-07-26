@@ -39,7 +39,7 @@ import app.tivi.interactors.execute
 import app.tivi.interactors.launchInteractor
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
-import app.tivi.util.TiviMvRxViewModel
+import app.tivi.TiviMvRxViewModel
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success

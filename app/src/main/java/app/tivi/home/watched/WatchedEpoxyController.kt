@@ -31,8 +31,8 @@ import app.tivi.filter
 import app.tivi.header
 import app.tivi.home.HomeTextCreator
 import app.tivi.ui.SortPopupMenuListener
-import app.tivi.ui.epoxy.EpoxyModelProperty
-import app.tivi.ui.epoxy.TotalSpanOverride
+import app.tivi.common.epoxy.EpoxyModelProperty
+import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.ui.popupMenuItemIdToSortOption
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.epoxy.EpoxyAsyncUtil
