@@ -20,7 +20,7 @@ import androidx.lifecycle.ViewModel
 import app.tivi.inject.ViewModelBuilder
 import app.tivi.inject.ViewModelKey
 import app.tivi.showdetails.details.ShowDetailsFragmentBuilder
-import app.tivi.showdetails.episodedetails.EpisodeDetailsFragmentBuilder
+import app.tivi.episodedetails.EpisodeDetailsFragmentBuilder
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector

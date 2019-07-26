@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails.episodedetails
+package app.tivi.episodedetails
 
 import android.os.Bundle
 import android.os.Parcelable
@@ -23,13 +23,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.os.bundleOf
-import app.tivi.EpDetailsWatchItemBindingModel_
-import app.tivi.R
-import app.tivi.databinding.FragmentEpisodeDetailsBinding
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.common.epoxy.SwipeAwayCallbacks
 import app.tivi.TiviMvRxBottomSheetFragment
+import app.tivi.episodedetails.databinding.FragmentEpisodeDetailsBinding
 import com.airbnb.epoxy.EpoxyTouchHelper
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel

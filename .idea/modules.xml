@@ -22,6 +22,7 @@
       <module fileurl="file://$PROJECT_DIR$/trakt/trakt.iml" filepath="$PROJECT_DIR$/trakt/trakt.iml" />
       <module fileurl="file://$PROJECT_DIR$/trakt-auth/trakt-auth.iml" filepath="$PROJECT_DIR$/trakt-auth/trakt-auth.iml" />
       <module fileurl="file://$PROJECT_DIR$/ui-discover/ui-discover.iml" filepath="$PROJECT_DIR$/ui-discover/ui-discover.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui-episodedetails/ui-episodedetails.iml" filepath="$PROJECT_DIR$/ui-episodedetails/ui-episodedetails.iml" />
       <module fileurl="file://$PROJECT_DIR$/ui-showdetails/ui-showdetails.iml" filepath="$PROJECT_DIR$/ui-showdetails/ui-showdetails.iml" />
     </modules>
   </component>

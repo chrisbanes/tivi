@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails.episodedetails
+package app.tivi.episodedetails
 
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry

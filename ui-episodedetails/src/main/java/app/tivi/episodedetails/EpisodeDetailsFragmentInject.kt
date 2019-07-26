@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails.episodedetails
+package app.tivi.episodedetails
 
+import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
 @Module
-internal abstract class EpisodeDetailsFragmentBuilder {
-    @ContributesAndroidInjector
-    internal abstract fun bindEpisodeDetailsFragment(): EpisodeDetailsFragment
+abstract class EpisodeDetailsFragmentBuilder {
+    @ContributesAndroidInjector(modules = [
+        EpisodeDetailsAssistedModule::class
+    ])
+    abstract fun episodeDetailsFragment(): EpisodeDetailsFragment
 }
+
+@Module(includes = [AssistedInject_EpisodeDetailsAssistedModule::class])
+@AssistedModule
+interface EpisodeDetailsAssistedModule

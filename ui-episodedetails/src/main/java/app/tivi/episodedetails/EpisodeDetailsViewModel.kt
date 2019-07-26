@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails.episodedetails
+package app.tivi.episodedetails
 
 import androidx.lifecycle.viewModelScope
 import app.tivi.data.entities.EpisodeWatchEntry
@@ -25,7 +25,7 @@ import app.tivi.interactors.RemoveEpisodeWatches
 import app.tivi.interactors.UpdateEpisodeDetails
 import app.tivi.interactors.ObserveEpisodeWatches
 import app.tivi.interactors.launchInteractor
-import app.tivi.showdetails.episodedetails.EpisodeDetailsViewState.Action
+import app.tivi.episodedetails.EpisodeDetailsViewState.Action
 import app.tivi.tmdb.TmdbManager
 import app.tivi.TiviMvRxViewModel
 import com.airbnb.mvrx.FragmentViewModelContext

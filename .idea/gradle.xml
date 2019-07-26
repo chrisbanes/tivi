@@ -26,6 +26,7 @@
             <option value="$PROJECT_DIR$/trakt" />
             <option value="$PROJECT_DIR$/trakt-auth" />
             <option value="$PROJECT_DIR$/ui-discover" />
+            <option value="$PROJECT_DIR$/ui-episodedetails" />
             <option value="$PROJECT_DIR$/ui-showdetails" />
           </set>
         </option>

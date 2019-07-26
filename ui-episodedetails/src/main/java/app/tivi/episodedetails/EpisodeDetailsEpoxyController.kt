@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails.episodedetails
+package app.tivi.episodedetails
 
 import android.content.Context
-import app.tivi.R
 import app.tivi.common.layouts.detailsBadge
 import app.tivi.common.layouts.detailsHeader
-import app.tivi.epDetailsSummary
-import app.tivi.epDetailsWatchItem
 import app.tivi.inject.PerActivity
 import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.epoxy.TypedEpoxyController
 import com.airbnb.mvrx.Success
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 class EpisodeDetailsEpoxyController @Inject constructor(
     @PerActivity private val context: Context,
@@ -40,7 +38,7 @@ class EpisodeDetailsEpoxyController @Inject constructor(
                 val episode = viewState.episode()!!
                 episode.traktRating?.also { rating ->
                     detailsBadge {
-                        val ratingOutOfOneHundred = Math.round(rating * 10)
+                        val ratingOutOfOneHundred = (rating * 10).roundToInt()
                         id("rating")
                         label(context.getString(R.string.percentage_format, ratingOutOfOneHundred))
                         icon(R.drawable.ic_details_rating)
