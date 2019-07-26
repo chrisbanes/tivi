@@ -23,7 +23,9 @@
       <module fileurl="file://$PROJECT_DIR$/trakt-auth/trakt-auth.iml" filepath="$PROJECT_DIR$/trakt-auth/trakt-auth.iml" />
       <module fileurl="file://$PROJECT_DIR$/ui-discover/ui-discover.iml" filepath="$PROJECT_DIR$/ui-discover/ui-discover.iml" />
       <module fileurl="file://$PROJECT_DIR$/ui-episodedetails/ui-episodedetails.iml" filepath="$PROJECT_DIR$/ui-episodedetails/ui-episodedetails.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui-followed/ui-followed.iml" filepath="$PROJECT_DIR$/ui-followed/ui-followed.iml" />
       <module fileurl="file://$PROJECT_DIR$/ui-showdetails/ui-showdetails.iml" filepath="$PROJECT_DIR$/ui-showdetails/ui-showdetails.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui-watched/ui-watched.iml" filepath="$PROJECT_DIR$/ui-watched/ui-watched.iml" />
     </modules>
   </component>
 </project>

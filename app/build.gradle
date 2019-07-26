@@ -175,6 +175,8 @@ dependencies {
     implementation project(":ui-discover")
     implementation project(":ui-showdetails")
     implementation project(":ui-episodedetails")
+    implementation project(":ui-followed")
+    implementation project(":ui-watched")
 
     implementation Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.reactive

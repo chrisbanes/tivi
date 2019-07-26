@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.home.followed
+@EpoxyDataBindingPattern(rClass = R.class, layoutPrefix = "view_holder")
+package app.tivi.home.followed;
 
-import dagger.Module
-import dagger.android.ContributesAndroidInjector
-
-@Module
-internal abstract class FollowedBuilder {
-    @ContributesAndroidInjector
-    internal abstract fun followedFragment(): FollowedFragment
-}
+import com.airbnb.epoxy.EpoxyDataBindingPattern;

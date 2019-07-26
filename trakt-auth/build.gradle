@@ -45,7 +45,7 @@ dependencies {
     implementation project(":base")
     implementation project(":base-android")
     implementation project(":data")
-    implementation project(":trakt")
+    api project(":trakt")
     implementation project(':interactors')
 
     implementation Libs.RxJava.rxJava

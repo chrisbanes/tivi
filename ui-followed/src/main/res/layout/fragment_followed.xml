@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2019 Google, Inc.
+  ~ Copyright 2019 Google LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@
                 android:layout_height="match_parent"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:paddingBottomSystemWindowInsets="@{ true }"
-                tools:listitem="@layout/view_holder_library_watched_item" />
+                tools:listitem="@layout/view_holder_library_followed_item" />
 
             <app.tivi.ui.widget.MaterialShapeConstraintLayout
                 android:id="@+id/header_holder"
@@ -52,7 +52,6 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <data>
-
         <variable
             name="state"
             type="app.tivi.home.followed.FollowedViewState" />

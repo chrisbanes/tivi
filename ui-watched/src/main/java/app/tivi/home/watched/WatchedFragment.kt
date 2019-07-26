@@ -20,23 +20,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
-import app.tivi.R
+import app.tivi.TiviMvRxFragment
+import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
-import app.tivi.databinding.FragmentLibraryWatchedBinding
-import app.tivi.extensions.toActivityNavigatorExtras
+import app.tivi.home.watched.databinding.FragmentWatchedBinding
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
-import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
-import app.tivi.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
 class WatchedFragment : TiviMvRxFragment() {
-    private lateinit var binding: FragmentLibraryWatchedBinding
+    private lateinit var binding: FragmentWatchedBinding
 
     private val viewModel: WatchedViewModel by fragmentViewModel()
     @Inject lateinit var watchedViewModelFactory: WatchedViewModel.Factory
@@ -48,7 +45,7 @@ class WatchedFragment : TiviMvRxFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentLibraryWatchedBinding.inflate(inflater, container, false)
+        binding = FragmentWatchedBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
@@ -59,16 +56,16 @@ class WatchedFragment : TiviMvRxFragment() {
 
         controller.callbacks = object : WatchedEpoxyController.Callbacks {
             override fun onItemClicked(item: WatchedShowEntryWithShow) {
-                val direction = WatchedFragmentDirections.actionWatchedToActivityShowDetails(item.show.id)
-
-                val extras = listItemSharedElementHelper.createForItem(item, "poster") {
-                    it.findViewById(R.id.show_poster)
-                }
-
-                findNavController().navigate(
-                        direction,
-                        extras.toActivityNavigatorExtras(requireActivity())
-                )
+//                val direction = WatchedFragmentDirections.actionWatchedToActivityShowDetails(item.show.id)
+//
+//                val extras = listItemSharedElementHelper.createForItem(item, "poster") {
+//                    it.findViewById(R.id.show_poster)
+//                }
+//
+//                findNavController().navigate(
+//                        direction,
+//                        extras.toActivityNavigatorExtras(requireActivity())
+//                )
             }
 
             override fun onFilterChanged(filter: String) = viewModel.setFilter(filter)

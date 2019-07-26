@@ -27,7 +27,9 @@
             <option value="$PROJECT_DIR$/trakt-auth" />
             <option value="$PROJECT_DIR$/ui-discover" />
             <option value="$PROJECT_DIR$/ui-episodedetails" />
+            <option value="$PROJECT_DIR$/ui-followed" />
             <option value="$PROJECT_DIR$/ui-showdetails" />
+            <option value="$PROJECT_DIR$/ui-watched" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

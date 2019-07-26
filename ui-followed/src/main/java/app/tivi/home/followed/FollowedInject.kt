@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package app.tivi.home.watched
+package app.tivi.home.followed
 
+import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
 @Module
-internal abstract class WatchedBuilder {
-    @ContributesAndroidInjector
-    internal abstract fun fragment(): WatchedFragment
+abstract class FollowedBuilder {
+    @ContributesAndroidInjector(modules = [
+        FollowedAssistedModule::class
+    ])
+    abstract fun followedFragment(): FollowedFragment
 }
+
+@Module(includes = [AssistedInject_FollowedAssistedModule::class])
+@AssistedModule
+interface FollowedAssistedModule
