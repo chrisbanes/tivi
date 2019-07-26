@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/base" />
             <option value="$PROJECT_DIR$/base-android" />
             <option value="$PROJECT_DIR$/buildSrc" />
+            <option value="$PROJECT_DIR$/common-databinding" />
             <option value="$PROJECT_DIR$/common-epoxy" />
             <option value="$PROJECT_DIR$/common-glide" />
             <option value="$PROJECT_DIR$/common-layouts" />

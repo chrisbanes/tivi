@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.ui.databinding
+package app.tivi.databinding
 
 import android.content.res.Resources
 import android.graphics.Outline

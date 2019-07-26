@@ -15,8 +15,6 @@
  */
 
 @EpoxyDataBindingPattern(rClass = R.class, layoutPrefix = "view_holder")
-package app.tivi;
+package app.tivi.common.layouts;
 
 import com.airbnb.epoxy.EpoxyDataBindingPattern;
-
-import app.tivi.common.layouts.R;

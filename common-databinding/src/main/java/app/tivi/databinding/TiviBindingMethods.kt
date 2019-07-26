@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,33 +14,20 @@
  * limitations under the License.
  */
 
-package app.tivi.ui.databinding
+package app.tivi.databinding
 
 import android.view.View
 import androidx.databinding.BindingMethod
 import androidx.databinding.BindingMethods
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import app.tivi.ui.widget.PopupMenuButton
 
 @BindingMethods(
-        BindingMethod(
-                type = View::class,
-                attribute = "outlineProviderInstance",
-                method = "setOutlineProvider"
-        ),
-        BindingMethod(
-                type = SwipeRefreshLayout::class,
-                attribute = "isRefreshing",
-                method = "setRefreshing"
-        ),
-        BindingMethod(
-                type = View::class,
-                attribute = "clipToOutline",
-                method = "setClipToOutline"
-        ),
-        BindingMethod(
-                type = View::class,
-                attribute = "activated",
-                method = "setActivated"
-        )
+        BindingMethod(type = View::class, attribute = "outlineProviderInstance", method = "setOutlineProvider"),
+        BindingMethod(type = SwipeRefreshLayout::class, attribute = "isRefreshing", method = "setRefreshing"),
+        BindingMethod(type = View::class, attribute = "clipToOutline", method = "setClipToOutline"),
+        BindingMethod(type = View::class, attribute = "activated", method = "setActivated"),
+        BindingMethod(type = PopupMenuButton::class, attribute = "popupMenuClickListener", method = "setMenuItemClickListener"),
+        BindingMethod(type = PopupMenuButton::class, attribute = "popupMenuListener", method = "setPopupMenuListener")
 )
 class TiviBindingMethods

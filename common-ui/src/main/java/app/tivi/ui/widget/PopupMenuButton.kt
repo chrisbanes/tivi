@@ -26,14 +26,8 @@ import androidx.annotation.MenuRes
 import androidx.annotation.StyleRes
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.PopupMenu
-import androidx.databinding.BindingMethod
-import androidx.databinding.BindingMethods
 import app.tivi.common.ui.R
 
-@BindingMethods(
-        BindingMethod(type = PopupMenuButton::class, attribute = "popupMenuClickListener", method = "setMenuItemClickListener"),
-        BindingMethod(type = PopupMenuButton::class, attribute = "popupMenuListener", method = "setPopupMenuListener")
-)
 class PopupMenuButton : AppCompatImageButton {
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, android.R.attr.actionOverflowButtonStyle)
