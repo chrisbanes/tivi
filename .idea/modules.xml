@@ -13,7 +13,6 @@
       <module fileurl="file://$PROJECT_DIR$/common-ui/common-ui.iml" filepath="$PROJECT_DIR$/common-ui/common-ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/data/data.iml" filepath="$PROJECT_DIR$/data/data.iml" />
       <module fileurl="file://$PROJECT_DIR$/data-android/data-android.iml" filepath="$PROJECT_DIR$/data-android/data-android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/discover/discover.iml" filepath="$PROJECT_DIR$/discover/discover.iml" />
       <module fileurl="file://$PROJECT_DIR$/interactors/interactors.iml" filepath="$PROJECT_DIR$/interactors/interactors.iml" />
       <module fileurl="file://$PROJECT_DIR$/tasks/tasks.iml" filepath="$PROJECT_DIR$/tasks/tasks.iml" />
       <module fileurl="file://$PROJECT_DIR$/tivi.iml" filepath="$PROJECT_DIR$/tivi.iml" />
@@ -21,6 +20,7 @@
       <module fileurl="file://$PROJECT_DIR$/tmdb/tmdb.iml" filepath="$PROJECT_DIR$/tmdb/tmdb.iml" />
       <module fileurl="file://$PROJECT_DIR$/trakt/trakt.iml" filepath="$PROJECT_DIR$/trakt/trakt.iml" />
       <module fileurl="file://$PROJECT_DIR$/trakt-auth/trakt-auth.iml" filepath="$PROJECT_DIR$/trakt-auth/trakt-auth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui-discover/ui-discover.iml" filepath="$PROJECT_DIR$/ui-discover/ui-discover.iml" />
     </modules>
   </component>
 </project>

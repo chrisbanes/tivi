@@ -20,12 +20,12 @@
             <option value="$PROJECT_DIR$/common-ui" />
             <option value="$PROJECT_DIR$/data" />
             <option value="$PROJECT_DIR$/data-android" />
-            <option value="$PROJECT_DIR$/discover" />
             <option value="$PROJECT_DIR$/interactors" />
             <option value="$PROJECT_DIR$/tasks" />
             <option value="$PROJECT_DIR$/tmdb" />
             <option value="$PROJECT_DIR$/trakt" />
             <option value="$PROJECT_DIR$/trakt-auth" />
+            <option value="$PROJECT_DIR$/ui-discover" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
