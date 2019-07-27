@@ -27,11 +27,4 @@ import io.reactivex.disposables.CompositeDisposable
  */
 open class TiviMvRxViewModel<S : MvRxState>(
     initialState: S
-) : BaseMvRxViewModel<S>(initialState, debugMode = BuildConfig.DEBUG) {
-    val disposables = CompositeDisposable()
-
-    override fun onCleared() {
-        super.onCleared()
-        disposables.clear()
-    }
-}
+) : BaseMvRxViewModel<S>(initialState, debugMode = BuildConfig.DEBUG)

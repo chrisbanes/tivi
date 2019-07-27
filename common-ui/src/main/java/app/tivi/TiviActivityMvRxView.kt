@@ -29,7 +29,8 @@ abstract class TiviActivityMvRxView : TiviActivity(), MvRxView {
 
     override val mvrxViewModelStore by lazy { MvRxViewModelStore(viewModelStore) }
 
-    final override val mvrxViewId: String by lazy { mvrxPersistedViewId }
+    final override val mvrxViewId
+        get() = mvrxPersistedViewId
 
     private lateinit var mvrxPersistedViewId: String
 

@@ -16,9 +16,9 @@
 
 package app.tivi.util
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
-import app.tivi.TiviViewModel
 import app.tivi.api.Status
 import app.tivi.api.UiResource
 import app.tivi.data.Entry
@@ -35,7 +35,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
     tmdbManager: TmdbManager,
     private val logger: Logger,
     private val pageSize: Int = 21
-) : TiviViewModel() {
+) : ViewModel() {
     private val messages = BehaviorSubject.create<UiResource>()
     private val loaded = BehaviorSubject.createDefault(false)
 

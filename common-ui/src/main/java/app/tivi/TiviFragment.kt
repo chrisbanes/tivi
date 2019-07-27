@@ -16,6 +16,7 @@
 
 package app.tivi
 
+import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
 import androidx.core.view.doOnNextLayout
@@ -23,11 +24,20 @@ import androidx.core.view.doOnPreDraw
 import androidx.transition.TransitionInflater
 import app.tivi.common.ui.R
 import dagger.android.support.DaggerFragment
+import javax.inject.Inject
 
 /**
  * Base fragment class which supports LifecycleOwner and Dagger injection.
  */
 abstract class TiviFragment : DaggerFragment() {
+    /**
+     * This is to force Dagger to create an injector in this module. Otherwise all of the
+     * dependent modules create one, which leads to duplicate classes, which breaks R8.
+     */
+    @Suppress("unused")
+    @Inject
+    lateinit var _dummyTiviFragment: Context
+
     private var postponedTransition = false
 
     override fun onCreate(savedInstanceState: Bundle?) {

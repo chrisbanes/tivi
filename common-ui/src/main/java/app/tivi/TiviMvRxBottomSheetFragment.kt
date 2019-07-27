@@ -25,7 +25,8 @@ import java.util.UUID
 abstract class TiviMvRxBottomSheetFragment : DaggerBottomSheetFragment(), MvRxView {
     override val mvrxViewModelStore by lazy { MvRxViewModelStore(viewModelStore) }
 
-    final override val mvrxViewId: String by lazy { mvrxPersistedViewId }
+    final override val mvrxViewId
+        get() = mvrxPersistedViewId
 
     private lateinit var mvrxPersistedViewId: String
 
@@ -42,7 +43,7 @@ abstract class TiviMvRxBottomSheetFragment : DaggerBottomSheetFragment(), MvRxVi
      * are properly disposed as fragments are moved from/to the backstack.
      */
     override val subscriptionLifecycleOwner: LifecycleOwner
-        get() = this.viewLifecycleOwnerLiveData.value ?: this
+        get() = viewLifecycleOwnerLiveData.value ?: this
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)

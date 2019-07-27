@@ -99,17 +99,15 @@ class WatchedViewModel @AssistedInject constructor(
     }
 
     fun refresh() {
-        refreshDisposable?.let {
-            it.dispose()
-            disposables.remove(it)
-        }
+        refreshDisposable?.dispose()
         refreshDisposable = null
 
-        disposables += traktManager.state
+        traktManager.state
                 .filter { it == TraktAuthState.LOGGED_IN }
                 .firstOrError()
                 .subscribe({ refreshWatched() }, logger::e)
                 .also { refreshDisposable = it }
+                .disposeOnClear()
     }
 
     fun setFilter(filter: String) {

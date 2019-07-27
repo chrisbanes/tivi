@@ -103,17 +103,15 @@ class FollowedViewModel @AssistedInject constructor(
     }
 
     fun refresh(force: Boolean = false) {
-        refreshDisposable?.let {
-            it.dispose()
-            disposables.remove(it)
-        }
+        refreshDisposable?.dispose()
         refreshDisposable = null
 
-        disposables += traktManager.state
+        traktManager.state
                 .filter { it == TraktAuthState.LOGGED_IN }
                 .firstOrError()
                 .subscribe({ refreshFollowed(force) }, logger::e)
                 .also { refreshDisposable = it }
+                .disposeOnClear()
     }
 
     fun setFilter(filter: String) {

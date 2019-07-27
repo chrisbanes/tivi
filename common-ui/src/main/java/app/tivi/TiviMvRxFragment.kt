@@ -16,16 +16,27 @@
 
 package app.tivi
 
+import android.content.Context
 import android.os.Bundle
 import androidx.lifecycle.LifecycleOwner
 import com.airbnb.mvrx.MvRxView
 import com.airbnb.mvrx.MvRxViewModelStore
 import java.util.UUID
+import javax.inject.Inject
 
 abstract class TiviMvRxFragment : TiviFragment(), MvRxView {
+    /**
+     * This is to force Dagger to create an injector in this module. Otherwise all of the
+     * dependent modules create one, which leads to duplicate classes, which breaks R8.
+     */
+    @Suppress("unused")
+    @Inject
+    lateinit var _dummyTiviMvRxFragment: Context
+
     override val mvrxViewModelStore by lazy { MvRxViewModelStore(viewModelStore) }
 
-    final override val mvrxViewId: String by lazy { mvrxPersistedViewId }
+    final override val mvrxViewId
+        get() = mvrxPersistedViewId
 
     private lateinit var mvrxPersistedViewId: String
 
@@ -42,7 +53,7 @@ abstract class TiviMvRxFragment : TiviFragment(), MvRxView {
      * are properly disposed as fragments are moved from/to the backstack.
      */
     override val subscriptionLifecycleOwner: LifecycleOwner
-        get() = this.viewLifecycleOwnerLiveData.value ?: this
+        get() = viewLifecycleOwnerLiveData.value ?: this
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)

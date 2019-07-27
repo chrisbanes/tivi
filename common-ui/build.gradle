@@ -77,6 +77,8 @@ dependencies {
     implementation Libs.Coroutines.android
 
     implementation Libs.Dagger.androidSupport
+    kapt Libs.Dagger.compiler
+    kapt Libs.Dagger.androidProcessor
 
     implementation Libs.mvRx
 

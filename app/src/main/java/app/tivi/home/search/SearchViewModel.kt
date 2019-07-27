@@ -17,16 +17,15 @@
 package app.tivi.home.search
 
 import androidx.lifecycle.viewModelScope
+import app.tivi.TiviMvRxViewModel
 import app.tivi.interactors.SearchShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
-import app.tivi.TiviMvRxViewModel
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.subjects.BehaviorSubject
 import java.util.concurrent.TimeUnit
 
@@ -38,12 +37,12 @@ class SearchViewModel @AssistedInject constructor(
     private val searchQuery = BehaviorSubject.create<String>()
 
     init {
-        disposables += searchQuery.debounce(300, TimeUnit.MILLISECONDS)
+        searchQuery.debounce(300, TimeUnit.MILLISECONDS)
                 .subscribe({
                     viewModelScope.launchInteractor(searchShows, SearchShows.Params(it))
                 }, {
                     // TODO: onError
-                })
+                }).disposeOnClear()
 
         tmdbManager.imageProviderObservable
                 .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
