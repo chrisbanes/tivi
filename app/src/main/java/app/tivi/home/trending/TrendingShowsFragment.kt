@@ -17,6 +17,7 @@
 package app.tivi.home.trending
 
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import app.tivi.R
 import app.tivi.SharedElementHelper
@@ -50,7 +51,11 @@ class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingS
             sharedElements.addSharedElement(it.itemView, "poster")
         }
 
-        val direction = TrendingShowsFragmentDirections.actionTrendingToActivityShowDetails(item.show.id)
-        findNavController().navigate(direction, sharedElements.toActivityNavigatorExtras(requireActivity()))
+        findNavController().navigate(
+                app.tivi.home.followed.R.id.activity_show_details,
+                bundleOf("show_id" to item.show.id),
+                null,
+                sharedElements.toActivityNavigatorExtras(requireActivity())
+        )
     }
 }

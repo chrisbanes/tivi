@@ -20,16 +20,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.findNavController
+import app.tivi.TiviMvRxFragment
+import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
+import app.tivi.extensions.toActivityNavigatorExtras
+import app.tivi.extensions.toFragmentNavigatorExtras
 import app.tivi.home.discover.databinding.FragmentDiscoverBinding
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
-import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.ui.transitions.GridToGridTransitioner
-import app.tivi.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import javax.inject.Inject
@@ -69,36 +73,36 @@ class DiscoverFragment : TiviMvRxFragment() {
 
         controller.callbacks = object : DiscoverEpoxyController.Callbacks {
             override fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>) {
-//                val extras = listItemSharedElementHelper.createForItems(items)
-//
-//                findNavController().navigate(
-//                        R.id.action_discover_to_trending,
-//                        null,
-//                        null,
-//                        extras.toFragmentNavigatorExtras())
+                val extras = listItemSharedElementHelper.createForItems(items)
+
+                findNavController().navigate(
+                        R.id.navigation_trending,
+                        null,
+                        null,
+                        extras.toFragmentNavigatorExtras())
             }
 
             override fun onPopularHeaderClicked(items: List<PopularEntryWithShow>) {
-//                val extras = listItemSharedElementHelper.createForItems(items)
-//
-//                findNavController().navigate(
-//                        R.id.action_discover_to_popular,
-//                        null,
-//                        null,
-//                        extras.toFragmentNavigatorExtras())
+                val extras = listItemSharedElementHelper.createForItems(items)
+
+                findNavController().navigate(
+                        R.id.navigation_popular,
+                        null,
+                        null,
+                        extras.toFragmentNavigatorExtras())
             }
 
             override fun onItemClicked(viewHolderId: Long, item: EntryWithShow<out Entry>) {
-//                val direction = DiscoverFragmentDirections.actionDiscoverToActivityShowDetails(item.show.id)
-//
-//                val elements = listItemSharedElementHelper.createForId(viewHolderId, "poster") {
-//                    it.findViewById(R.id.show_poster)
-//                }
-//
-//                findNavController().navigate(
-//                        direction,
-//                        elements.toActivityNavigatorExtras(requireActivity())
-//                )
+                val elements = listItemSharedElementHelper.createForId(viewHolderId, "poster") {
+                    it.findViewById(R.id.show_poster)
+                }
+
+                findNavController().navigate(
+                        R.id.activity_show_details,
+                        bundleOf("show_id" to item.show.id),
+                        null,
+                        elements.toActivityNavigatorExtras(requireActivity())
+                )
             }
         }
 

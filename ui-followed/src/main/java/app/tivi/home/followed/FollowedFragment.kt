@@ -20,10 +20,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.findNavController
 import app.tivi.TiviMvRxFragment
 import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.home.followed.databinding.FragmentFollowedBinding
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
@@ -56,15 +59,16 @@ class FollowedFragment : TiviMvRxFragment() {
 
         controller.callbacks = object : FollowedEpoxyController.Callbacks {
             override fun onItemClicked(item: FollowedShowEntryWithShow) {
-//                val direction = FollowedFragmentDirections.actionFollowedToActivityShowDetails(item.show.id)
-//
-//                val extras = listItemSharedElementHelper.createForItem(item, "poster") {
-//                    it.findViewById(R.id.show_poster)
-//                }
-//
-//                findNavController().navigate(
-//                        direction, extras.toActivityNavigatorExtras(requireActivity())
-//                )
+                val extras = listItemSharedElementHelper.createForItem(item, "poster") {
+                    it.findViewById(R.id.show_poster)
+                }
+
+                findNavController().navigate(
+                        R.id.activity_show_details,
+                        bundleOf("show_id" to item.show.id),
+                        null,
+                        extras.toActivityNavigatorExtras(requireActivity())
+                )
             }
 
             override fun onFilterChanged(filter: String) = viewModel.setFilter(filter)
