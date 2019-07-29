@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2019 Google, Inc.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,58 +18,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/discover">
-
-    <fragment
-        android:id="@+id/watched"
-        android:name="app.tivi.home.watched.WatchedFragment"
-        android:label="@string/library_watched">
-        <action
-            android:id="@+id/action_watched_to_activity_show_details"
-            app:destination="@id/activity_show_details" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/discover"
-        android:name="app.tivi.home.discover.DiscoverFragment"
-        android:label="@string/discover_title">
-        <action
-            android:id="@+id/action_discover_to_trending"
-            app:destination="@id/trending" />
-        <action
-            android:id="@+id/action_discover_to_popular"
-            app:destination="@id/popular" />
-        <action
-            android:id="@+id/action_discover_to_activity_show_details"
-            app:destination="@id/activity_show_details" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/followed"
-        android:name="app.tivi.home.followed.FollowedFragment"
-        android:label="@string/library_followed_shows">
-        <action
-            android:id="@+id/action_followed_to_activity_show_details"
-            app:destination="@id/activity_show_details" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/trending"
-        android:name="app.tivi.home.trending.TrendingShowsFragment"
-        android:label="@string/discover_trending">
-        <action
-            android:id="@+id/action_trending_to_activity_show_details"
-            app:destination="@id/activity_show_details" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/popular"
-        android:name="app.tivi.home.popular.PopularShowsFragment"
-        android:label="@string/discover_popular">
-        <action
-            android:id="@+id/action_popular_to_activity_show_details"
-            app:destination="@id/activity_show_details" />
-    </fragment>
+    app:startDestination="@id/navigation_discover">
 
     <activity
         android:id="@+id/settings"
@@ -78,7 +26,7 @@
         android:label="@string/settings_title" />
 
     <activity
-        android:id="@+id/activity_show_details"
+        android:id="@id/activity_show_details"
         android:name="app.tivi.showdetails.ShowDetailsActivity"
         android:label="activity_show_details"
         tools:layout="@layout/activity_show_details">
@@ -86,5 +34,30 @@
             android:name="show_id"
             app:argType="long" />
     </activity>
+
+    <fragment
+        android:id="@id/navigation_trending"
+        android:name="app.tivi.home.trending.TrendingShowsFragment"
+        android:label="@string/discover_trending" />
+
+    <fragment
+        android:id="@id/navigation_popular"
+        android:name="app.tivi.home.popular.PopularShowsFragment"
+        android:label="@string/discover_popular" />
+
+    <fragment
+        android:id="@id/navigation_watched"
+        android:name="app.tivi.home.watched.WatchedFragment"
+        android:label="@string/library_watched" />
+
+    <fragment
+        android:id="@id/navigation_discover"
+        android:name="app.tivi.home.discover.DiscoverFragment"
+        android:label="@string/discover_title" />
+
+    <fragment
+        android:id="@id/navigation_followed"
+        android:name="app.tivi.home.followed.FollowedFragment"
+        android:label="@string/library_followed_shows" />
 
 </navigation>

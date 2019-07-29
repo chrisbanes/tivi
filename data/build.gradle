@@ -19,17 +19,25 @@ import app.tivi.buildsrc.Libs
 
 apply plugin: 'kotlin'
 
+apply plugin: 'kotlin-kapt'
+kapt {
+    correctErrorTypes = true
+    useBuildCache = true
+}
+
 dependencies {
-    compile project(":base")
-    compile project(":trakt")
-    compile project(":tmdb")
+    api project(":base")
+    api project(":trakt")
+    api project(":tmdb")
 
-    compile Libs.AndroidX.Room.common
-    compile Libs.AndroidX.Room.ktx
-    compile Libs.AndroidX.Paging.common
+    api Libs.AndroidX.Room.common
+    api Libs.AndroidX.Room.ktx
+    api Libs.AndroidX.Paging.common
 
-    compile Libs.RxJava.rxJava
-    compile Libs.RxJava.rxKotlin
+    api Libs.RxJava.rxJava
+    api Libs.RxJava.rxKotlin
 
-    compile Libs.threeTenBpNoTzdb
+    api Libs.threeTenBpNoTzdb
+
+    kapt Libs.Dagger.compiler
 }

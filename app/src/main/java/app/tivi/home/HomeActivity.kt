@@ -133,7 +133,8 @@ class HomeActivity : TiviActivityMvRxView() {
         NavigationUI.setupWithNavController(
                 binding.homeToolbar,
                 navController,
-                AppBarConfiguration.Builder(R.id.followed, R.id.watched, R.id.discover)
+                AppBarConfiguration.Builder(R.id.navigation_followed, R.id.navigation_watched,
+                        R.id.navigation_discover)
                         .setNavigationView(navigationView)
                         .build()
         )
@@ -211,14 +212,11 @@ class HomeActivity : TiviActivityMvRxView() {
                 })
             }
         }
-        when (item) {
-            HomeNavigationItem.DISCOVER -> navigate(R.id.discover)
-            HomeNavigationItem.FOLLOWED -> navigate(R.id.followed)
-            HomeNavigationItem.WATCHED -> navigate(R.id.watched)
-            HomeNavigationItem.SETTINGS -> {
-                navController.navigate(R.id.settings)
-                navigationView.close()
-            }
+        if (item == HomeNavigationItem.SETTINGS) {
+            navController.navigate(R.id.settings)
+            navigationView.close()
+        } else {
+            navigate(item.destinationId)
         }
     }
 

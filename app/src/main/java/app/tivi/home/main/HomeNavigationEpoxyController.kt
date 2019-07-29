@@ -18,7 +18,7 @@ package app.tivi.home.main
 
 import android.view.View
 import app.tivi.homeNavItem
-import app.tivi.ui.epoxy.EpoxyModelProperty
+import app.tivi.common.epoxy.EpoxyModelProperty
 import com.airbnb.epoxy.EpoxyController
 
 internal class HomeNavigationEpoxyController(

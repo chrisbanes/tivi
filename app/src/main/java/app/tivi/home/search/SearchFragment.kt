@@ -26,8 +26,8 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.databinding.FragmentSearchBinding
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
-import app.tivi.util.GridToGridTransitioner
-import app.tivi.util.TiviMvRxFragment
+import app.tivi.ui.transitions.GridToGridTransitioner
+import app.tivi.TiviMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import javax.inject.Inject

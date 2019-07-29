@@ -160,6 +160,12 @@ android {
 dependencies {
     implementation project(":base")
     implementation project(":base-android")
+    implementation project(":common-ui")
+    implementation project(":common-epoxy")
+    implementation project(":common-layouts")
+    implementation project(":common-glide")
+    implementation project(":common-databinding")
+    implementation project(":common-entrygrid")
     implementation project(":data")
     implementation project(":data-android")
     implementation project(":trakt")
@@ -167,6 +173,13 @@ dependencies {
     implementation project(":tmdb")
     implementation project(':interactors')
     implementation project(":tasks")
+    implementation project(":ui-discover")
+    implementation project(":ui-showdetails")
+    implementation project(":ui-episodedetails")
+    implementation project(":ui-followed")
+    implementation project(":ui-watched")
+    implementation project(":ui-popular")
+    implementation project(":ui-trending")
 
     implementation Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.reactive
@@ -184,6 +197,7 @@ dependencies {
     implementation Libs.AndroidX.preference
     implementation Libs.AndroidX.constraintlayout
     implementation Libs.AndroidX.coreKtx
+    implementation Libs.AndroidX.Fragment.fragment
     implementation Libs.AndroidX.Fragment.fragmentKtx
     implementation Libs.AndroidX.Navigation.fragment
     implementation Libs.AndroidX.Navigation.ui
@@ -211,9 +225,6 @@ dependencies {
 
     compileOnly Libs.AssistedInject.annotationDagger2
     kapt Libs.AssistedInject.processorDagger2
-
-    implementation Libs.Glide.glide
-    kapt Libs.Glide.compiler
 
     implementation Libs.mvRx
 

@@ -75,6 +75,7 @@ object Libs {
         const val palette = "androidx.palette:palette:1.0.0"
         const val recyclerview = "androidx.recyclerview:recyclerview:1.1.0-alpha06"
         const val emoji = "androidx.emoji:emoji:1.0.0"
+        const val swiperefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02"
 
         object Navigation {
             private const val version = "2.1.0-alpha05"
@@ -84,7 +85,7 @@ object Libs {
         }
 
         object Fragment {
-            private const val version = "1.1.0-beta01"
+            private const val version = "1.2.0-alpha01"
             const val fragment = "androidx.fragment:fragment:$version"
             const val fragmentKtx = "androidx.fragment:fragment-ktx:$version"
         }
@@ -114,7 +115,7 @@ object Libs {
         const val coreKtx = "androidx.core:core-ktx:1.2.0-alpha02"
 
         object Lifecycle {
-            private const val version = "2.1.0-beta01"
+            private const val version = "2.2.0-alpha02"
             const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
             const val reactive = "androidx.lifecycle:lifecycle-reactivestreams-ktx:$version"
             const val compiler = "androidx.lifecycle:lifecycle-compiler:$version"
@@ -122,7 +123,7 @@ object Libs {
         }
 
         object Room {
-            private const val version = "2.1.0"
+            private const val version = "2.2.0-alpha01"
             const val common = "androidx.room:room-common:$version"
             const val runtime = "androidx.room:room-runtime:$version"
             const val rxjava2 = "androidx.room:room-rxjava2:$version"

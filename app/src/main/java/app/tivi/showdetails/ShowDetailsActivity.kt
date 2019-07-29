@@ -25,7 +25,7 @@ import androidx.navigation.navArgs
 import app.tivi.R
 import app.tivi.TiviActivity
 import app.tivi.showdetails.details.ShowDetailsFragment
-import app.tivi.showdetails.episodedetails.EpisodeDetailsFragment
+import app.tivi.episodedetails.EpisodeDetailsFragment
 import app.tivi.util.observeEvent
 
 class ShowDetailsActivity : TiviActivity() {

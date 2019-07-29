@@ -20,6 +20,12 @@ import app.tivi.buildsrc.Libs
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
+apply plugin: 'kotlin-kapt'
+kapt {
+    correctErrorTypes = true
+    useBuildCache = true
+}
+
 android {
     compileSdkVersion buildConfig.compileSdk
 
@@ -36,6 +42,8 @@ android {
 dependencies {
     implementation project(":base")
     api project(":data")
+
+    kapt Libs.Dagger.compiler
 
     api Libs.AndroidX.Paging.common
     implementation Libs.AndroidX.Paging.rxjava2

@@ -23,12 +23,11 @@ import app.tivi.interactors.UpdateUserDetails
 import app.tivi.interactors.launchInteractor
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
-import app.tivi.util.TiviMvRxViewModel
+import app.tivi.TiviMvRxViewModel
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import io.reactivex.rxkotlin.plusAssign
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService

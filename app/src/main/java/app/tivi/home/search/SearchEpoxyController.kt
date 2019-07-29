@@ -19,7 +19,7 @@ package app.tivi.home.search
 import app.tivi.data.entities.TiviShow
 import app.tivi.home.HomeTextCreator
 import app.tivi.searchItemShow
-import app.tivi.ui.epoxy.EpoxyModelProperty
+import app.tivi.common.epoxy.EpoxyModelProperty
 import com.airbnb.epoxy.EpoxyController
 import javax.inject.Inject
 

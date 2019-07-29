@@ -1,0 +1,111 @@
+/*
+ * Copyright 2018 Google, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+import app.tivi.buildsrc.Libs
+
+apply plugin: 'com.android.library'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-kapt'
+kapt {
+    correctErrorTypes = true
+    useBuildCache = true
+}
+
+android {
+    compileSdkVersion buildConfig.compileSdk
+
+    defaultConfig {
+        minSdkVersion buildConfig.minSdk
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    dataBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    implementation project(":base")
+    implementation project(":base-android")
+    implementation project(':interactors')
+    implementation project(":common-ui")
+    implementation project(":common-epoxy")
+    implementation project(":common-layouts")
+    implementation project(":common-glide")
+    implementation project(":common-databinding")
+
+    implementation Libs.AndroidX.Lifecycle.extensions
+    implementation Libs.AndroidX.Lifecycle.reactive
+    implementation Libs.AndroidX.Lifecycle.viewmodel
+    kapt Libs.AndroidX.Lifecycle.compiler
+
+    implementation Libs.AndroidX.Paging.runtime
+    implementation Libs.AndroidX.Paging.rxjava2
+
+    implementation Libs.AndroidX.appcompat
+    implementation Libs.AndroidX.browser
+    implementation Libs.AndroidX.palette
+    implementation Libs.AndroidX.recyclerview
+    implementation Libs.AndroidX.emoji
+    implementation Libs.AndroidX.preference
+    implementation Libs.AndroidX.constraintlayout
+    implementation Libs.AndroidX.coreKtx
+    implementation Libs.AndroidX.Fragment.fragment
+    implementation Libs.AndroidX.Fragment.fragmentKtx
+    implementation Libs.AndroidX.Navigation.fragment
+    implementation Libs.AndroidX.Navigation.ui
+
+    implementation Libs.Google.material
+
+    implementation Libs.RxJava.rxJava
+    implementation Libs.RxJava.rxKotlin
+    implementation Libs.RxJava.rxAndroid
+
+    implementation Libs.Kotlin.stdlib
+    implementation Libs.Kotlin.reflect
+
+    implementation Libs.Coroutines.core
+    implementation Libs.Coroutines.rx2
+    implementation Libs.Coroutines.android
+
+    implementation Libs.Dagger.androidSupport
+    kapt Libs.Dagger.compiler
+    kapt Libs.Dagger.androidProcessor
+
+    compileOnly Libs.AssistedInject.annotationDagger2
+    kapt Libs.AssistedInject.processorDagger2
+
+    implementation Libs.Glide.glide
+    kapt Libs.Glide.compiler
+
+    implementation Libs.mvRx
+
+    implementation Libs.Epoxy.epoxy
+    implementation Libs.Epoxy.paging
+    implementation Libs.Epoxy.dataBinding
+    kapt Libs.Epoxy.processor
+
+    implementation Libs.gravitySnapHelper
+
+    debugImplementation Libs.rxLint
+}
