@@ -19,7 +19,6 @@ package app.tivi.home.trending
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
-import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.common.layouts.TrendingPosterGridItemBindingModel_
 import app.tivi.data.entities.findHighestRatedPoster

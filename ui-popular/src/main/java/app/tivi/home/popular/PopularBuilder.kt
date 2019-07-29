@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.home.trending
+package app.tivi.home.popular
 
 import androidx.lifecycle.ViewModel
 import app.tivi.inject.ViewModelKey
@@ -24,12 +24,12 @@ import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
 
 @Module
-internal abstract class TrendingBuilder {
+abstract class PopularBuilder {
     @ContributesAndroidInjector
-    internal abstract fun trendingShowsFragment(): TrendingShowsFragment
+    internal abstract fun popularShowsFragment(): PopularShowsFragment
 
     @Binds
     @IntoMap
-    @ViewModelKey(TrendingShowsViewModel::class)
-    abstract fun bindTrendingShowsViewModel(viewModel: TrendingShowsViewModel): ViewModel
+    @ViewModelKey(PopularShowsViewModel::class)
+    abstract fun bindPopularShowsViewModel(viewModel: PopularShowsViewModel): ViewModel
 }

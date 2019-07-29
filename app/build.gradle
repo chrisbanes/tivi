@@ -178,6 +178,8 @@ dependencies {
     implementation project(":ui-episodedetails")
     implementation project(":ui-followed")
     implementation project(":ui-watched")
+    implementation project(":ui-popular")
+    implementation project(":ui-trending")
 
     implementation Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.reactive

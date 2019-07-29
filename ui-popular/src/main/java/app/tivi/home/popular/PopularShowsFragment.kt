@@ -19,7 +19,6 @@ package app.tivi.home.popular
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
-import app.tivi.R
 import app.tivi.SharedElementHelper
 import app.tivi.common.layouts.PosterGridItemBindingModel_
 import app.tivi.data.entities.findHighestRatedPoster
@@ -37,7 +36,7 @@ class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShow
         }
 
         findNavController().navigate(
-                app.tivi.home.followed.R.id.activity_show_details,
+                R.id.activity_show_details,
                 bundleOf("show_id" to item.show.id),
                 null,
                 sharedElements.toActivityNavigatorExtras(requireActivity())
