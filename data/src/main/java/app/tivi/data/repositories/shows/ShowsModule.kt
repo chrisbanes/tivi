@@ -24,13 +24,13 @@ import dagger.Module
 @Module
 abstract class ShowsModule {
     @Binds
-    abstract fun bind(source: ShowRepositoryImpl): ShowRepository
+    abstract fun bindShowRepository(source: ShowRepositoryImpl): ShowRepository
 
     @Binds
     @Trakt
-    abstract fun bind(source: TraktShowDataSource): ShowDataSource
+    abstract fun bindTraktShowDataSource(source: TraktShowDataSource): ShowDataSource
 
     @Binds
     @Tmdb
-    abstract fun bind(source: TmdbShowDataSource): ShowDataSource
+    abstract fun bindTmdbShowDataSource(source: TmdbShowDataSource): ShowDataSource
 }

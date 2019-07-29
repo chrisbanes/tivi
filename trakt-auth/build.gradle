@@ -32,7 +32,7 @@ android {
 
     defaultConfig {
         minSdkVersion buildConfig.minSdk
-        manifestPlaceholders += ['appAuthRedirectScheme': 'app.tivi']
+        manifestPlaceholders += ['appAuthRedirectScheme': 'empty']
     }
 
     compileOptions {

@@ -49,7 +49,6 @@ dependencies {
     implementation project(":base")
     implementation project(":base-android")
     implementation project(':interactors')
-    implementation project(":trakt-auth")
     implementation project(":common-ui")
     implementation project(":common-epoxy")
     implementation project(":common-layouts")
@@ -94,9 +93,6 @@ dependencies {
     implementation Libs.Dagger.androidSupport
     kapt Libs.Dagger.compiler
     kapt Libs.Dagger.androidProcessor
-
-    compileOnly Libs.AssistedInject.annotationDagger2
-    kapt Libs.AssistedInject.processorDagger2
 
     implementation Libs.mvRx
 
