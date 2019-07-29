@@ -40,19 +40,19 @@ class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingS
                         .tiviShow(item.show)
                         .trendingShow(item.entry)
                         .transitionName(item.show.homepage)
-                        .clickListener(View.OnClickListener { callbacks?.onItemClicked(item) })
+                        .clickListener(View.OnClickListener { onItemClicked(item) })
             }
         }
     }
 
-    override fun onItemClicked(item: TrendingEntryWithShow) {
+    internal fun onItemClicked(item: TrendingEntryWithShow) {
         val sharedElements = SharedElementHelper()
         binding.gridRecyclerview.findViewHolderForItemId(item.generateStableId())?.let {
             sharedElements.addSharedElement(it.itemView, "poster")
         }
 
         findNavController().navigate(
-                app.tivi.home.followed.R.id.activity_show_details,
+                R.id.activity_show_details,
                 bundleOf("show_id" to item.show.id),
                 null,
                 sharedElements.toActivityNavigatorExtras(requireActivity())

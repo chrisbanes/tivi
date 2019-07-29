@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/base-android/base-android.iml" filepath="$PROJECT_DIR$/base-android/base-android.iml" />
       <module fileurl="file://$PROJECT_DIR$/buildSrc/buildSrc.iml" filepath="$PROJECT_DIR$/buildSrc/buildSrc.iml" />
       <module fileurl="file://$PROJECT_DIR$/common-databinding/common-databinding.iml" filepath="$PROJECT_DIR$/common-databinding/common-databinding.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common-entrygrid/common-entrygrid.iml" filepath="$PROJECT_DIR$/common-entrygrid/common-entrygrid.iml" />
       <module fileurl="file://$PROJECT_DIR$/common-epoxy/common-epoxy.iml" filepath="$PROJECT_DIR$/common-epoxy/common-epoxy.iml" />
       <module fileurl="file://$PROJECT_DIR$/common-glide/common-glide.iml" filepath="$PROJECT_DIR$/common-glide/common-glide.iml" />
       <module fileurl="file://$PROJECT_DIR$/common-layouts/common-layouts.iml" filepath="$PROJECT_DIR$/common-layouts/common-layouts.iml" />

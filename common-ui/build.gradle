@@ -45,17 +45,10 @@ dependencies {
     implementation project(":base-android")
 
     implementation Libs.AndroidX.Lifecycle.extensions
-    implementation Libs.AndroidX.Lifecycle.reactive
     implementation Libs.AndroidX.Lifecycle.viewmodel
 
-    implementation Libs.AndroidX.Paging.runtime
-    implementation Libs.AndroidX.Paging.rxjava2
-
-    implementation Libs.AndroidX.appcompat
-    implementation Libs.AndroidX.browser
+    api Libs.AndroidX.appcompat
     implementation Libs.AndroidX.recyclerview
-    implementation Libs.AndroidX.emoji
-    implementation Libs.AndroidX.preference
     implementation Libs.AndroidX.constraintlayout
     implementation Libs.AndroidX.coreKtx
     implementation Libs.AndroidX.Fragment.fragment
@@ -63,26 +56,15 @@ dependencies {
     implementation Libs.AndroidX.Navigation.fragment
     implementation Libs.AndroidX.Navigation.ui
 
-    implementation Libs.Google.material
+    api Libs.Google.material
 
-    implementation Libs.RxJava.rxJava
-    implementation Libs.RxJava.rxKotlin
-    implementation Libs.RxJava.rxAndroid
-
-    implementation Libs.Kotlin.stdlib
     implementation Libs.Kotlin.reflect
-
-    implementation Libs.Coroutines.core
-    implementation Libs.Coroutines.rx2
-    implementation Libs.Coroutines.android
 
     implementation Libs.Dagger.androidSupport
     kapt Libs.Dagger.compiler
     kapt Libs.Dagger.androidProcessor
 
-    implementation Libs.mvRx
-
-    implementation Libs.gravitySnapHelper
+    api Libs.mvRx
 
     debugImplementation Libs.rxLint
 }

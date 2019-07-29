@@ -165,6 +165,7 @@ dependencies {
     implementation project(":common-layouts")
     implementation project(":common-glide")
     implementation project(":common-databinding")
+    implementation project(":common-entrygrid")
     implementation project(":data")
     implementation project(":data-android")
     implementation project(":trakt")

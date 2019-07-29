@@ -30,7 +30,7 @@ import app.tivi.util.EntryGridFragment
 import com.airbnb.epoxy.EpoxyModel
 
 class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShowsViewModel>(PopularShowsViewModel::class.java) {
-    override fun onItemClicked(item: PopularEntryWithShow) {
+    internal fun onItemClicked(item: PopularEntryWithShow) {
         val sharedElements = SharedElementHelper()
         binding.gridRecyclerview.findViewHolderForItemId(item.generateStableId()).let {
             sharedElements.addSharedElement(it.itemView, "poster")
@@ -53,7 +53,7 @@ class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShow
                         .posterImage(item.images.findHighestRatedPoster())
                         .tiviShow(item.show)
                         .transitionName(item.show.homepage)
-                        .clickListener(View.OnClickListener { callbacks?.onItemClicked(item) })
+                        .clickListener(View.OnClickListener { onItemClicked(item) })
             }
         }
     }

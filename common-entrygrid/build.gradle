@@ -21,6 +21,12 @@ apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
 
+apply plugin: 'kotlin-kapt'
+kapt {
+    correctErrorTypes = true
+    useBuildCache = true
+}
+
 android {
     compileSdkVersion buildConfig.compileSdk
 
@@ -32,16 +38,39 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
-    implementation project(":base")
     implementation project(":base-android")
+    implementation project(":interactors")
     implementation project(":common-ui")
+    implementation project(":common-epoxy")
+    implementation project(":common-layouts")
+    implementation project(":common-databinding")
 
+    implementation Libs.AndroidX.Lifecycle.extensions
+    implementation Libs.AndroidX.Lifecycle.reactive
+    implementation Libs.AndroidX.Lifecycle.viewmodel
+    kapt Libs.AndroidX.Lifecycle.compiler
+
+    implementation Libs.AndroidX.Paging.runtime
+
+    implementation Libs.AndroidX.constraintlayout
+    implementation Libs.AndroidX.recyclerview
     implementation Libs.AndroidX.coreKtx
+    implementation Libs.AndroidX.Fragment.fragmentKtx
 
-    api Libs.Epoxy.epoxy
-    api Libs.Epoxy.dataBinding
-    api Libs.Epoxy.paging
+    implementation Libs.RxJava.rxJava
+    implementation Libs.RxJava.rxKotlin
+    implementation Libs.RxJava.rxAndroid
+
+    implementation Libs.Dagger.androidSupport
+    kapt Libs.Dagger.compiler
+    kapt Libs.Dagger.androidProcessor
+
+    debugImplementation Libs.rxLint
 }

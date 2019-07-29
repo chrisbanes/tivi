@@ -26,9 +26,9 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DefaultItemAnimator
 import app.tivi.TiviFragment
 import app.tivi.api.Status
+import app.tivi.common.entrygrid.databinding.FragmentEntryGridBinding
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.databinding.FragmentEntryGridBinding
 import app.tivi.extensions.observeNotNull
 import app.tivi.ui.ProgressTimeLatch
 import app.tivi.ui.SpacingItemDecorator
@@ -41,7 +41,7 @@ import javax.inject.Inject
 abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewModel<LI, *>>(
     private val vmClass: Class<VM>
 ) : TiviFragment() {
-    protected lateinit var viewModel: VM
+    private lateinit var viewModel: VM
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var swipeRefreshLatch: ProgressTimeLatch
@@ -54,11 +54,6 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(vmClass)
 
         controller = createController()
-        controller.callbacks = object : EntryGridEpoxyController.Callbacks<LI> {
-            override fun onItemClicked(item: LI) {
-                this@EntryGridFragment.onItemClicked(item)
-            }
-        }
 
         GridToGridTransitioner.setupSecondFragment(this) {
             binding.gridRecyclerview.itemAnimator = DefaultItemAnimator()
@@ -115,8 +110,6 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
             }
         }
     }
-
-    abstract fun onItemClicked(item: LI)
 
     abstract fun createController(): EntryGridEpoxyController<LI>
 }
