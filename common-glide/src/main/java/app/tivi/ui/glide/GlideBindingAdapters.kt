@@ -17,15 +17,13 @@
 package app.tivi.ui.glide
 
 import android.widget.ImageView
-import androidx.core.view.doOnLayout
 import androidx.databinding.BindingAdapter
-import app.tivi.common.ui.R
 import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TmdbImageEntity
-import app.tivi.extensions.optSaturateOnLoad
+import app.tivi.extensions.clearRequest
+import app.tivi.extensions.loadTmdbImage
 import app.tivi.tmdb.TmdbImageUrlProvider
-import java.util.Objects
 
 @BindingAdapter(
         "tmdbBackdropPath",
@@ -40,10 +38,9 @@ fun loadBackdrop(
     saturateOnLoad: Boolean?
 ) {
     val image = if (path != null) ShowTmdbImage(path = path, type = ImageType.BACKDROP, showId = 0) else null
-    loadImage(view, null, urlProvider, saturateOnLoad, image, urlProvider, saturateOnLoad)
+    loadImage(view, image, urlProvider, saturateOnLoad)
 }
 
-@Suppress("UNUSED_PARAMETER")
 @BindingAdapter(
         "image",
         "tmdbImageUrlProvider",
@@ -52,47 +49,14 @@ fun loadBackdrop(
 )
 fun loadImage(
     view: ImageView,
-    previousImage: TmdbImageEntity?,
-    previousUrlProvider: TmdbImageUrlProvider?,
-    previousSaturateOnLoad: Boolean?,
     image: TmdbImageEntity?,
     urlProvider: TmdbImageUrlProvider?,
     saturateOnLoad: Boolean?
 ) {
-    val requestKey = Objects.hash(image, urlProvider)
-    view.setTag(R.id.image_key, requestKey)
-
     if (urlProvider != null && image != null) {
-        if (previousUrlProvider == urlProvider && previousImage == image) {
-            return
-        }
-
-        view.setImageDrawable(null)
-
-        view.doOnLayout {
-            if (it.getTag(R.id.image_key) != requestKey) {
-                // The request key is different, exit now since there's we've probably be rebound to a different
-                // item
-                return@doOnLayout
-            }
-
-            fun toUrl(image: TmdbImageEntity, width: Int) = when (image.type) {
-                ImageType.BACKDROP -> urlProvider.getBackdropUrl(image.path, width)
-                ImageType.POSTER -> urlProvider.getPosterUrl(image.path, width)
-            }
-
-            GlideApp.with(view).clear(view)
-
-            GlideApp.with(it)
-                    .optSaturateOnLoad(saturateOnLoad == null || saturateOnLoad)
-                    .load(toUrl(image, view.width))
-                    .thumbnail(GlideApp.with(view)
-                            .optSaturateOnLoad(saturateOnLoad == null || saturateOnLoad)
-                            .load(toUrl(image, 0)))
-                    .into(view)
-        }
+        view.loadTmdbImage(image, urlProvider, saturateOnLoad == null || saturateOnLoad)
     } else {
-        GlideApp.with(view).clear(view)
+        view.clearRequest()
         view.setImageDrawable(null)
     }
 }
