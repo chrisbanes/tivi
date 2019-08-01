@@ -44,8 +44,10 @@ class DiscoverViewModel @AssistedInject constructor(
     private val loadingState = RxLoadingCounter()
 
     init {
-        tmdbManager.imageProviderObservable
-                .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
+        viewModelScope.launch {
+            tmdbManager.imageProviderFlow
+                    .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
+        }
 
         loadingState.observable
                 .execute { copy(isLoading = it() ?: false) }

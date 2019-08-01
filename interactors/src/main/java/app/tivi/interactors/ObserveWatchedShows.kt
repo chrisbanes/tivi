@@ -22,7 +22,9 @@ import app.tivi.data.entities.SortOption
 import app.tivi.data.repositories.watchedshows.WatchedShowsRepository
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.util.AppRxSchedulers
-import io.reactivex.Observable
+import io.reactivex.BackpressureStrategy
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.reactive.flow.asFlow
 import javax.inject.Inject
 
 class ObserveWatchedShows @Inject constructor(
@@ -30,13 +32,14 @@ class ObserveWatchedShows @Inject constructor(
     private val watchedShowsRepository: WatchedShowsRepository
 ) : PagingInteractor<ObserveWatchedShows.Params, WatchedShowEntryWithShow>() {
 
-    override fun createObservable(params: Params): Observable<PagedList<WatchedShowEntryWithShow>> {
+    override fun createObservable(params: Params): Flow<PagedList<WatchedShowEntryWithShow>> {
         val source = watchedShowsRepository.observeWatchedShowsPagedList(params.filter, params.sort)
         return RxPagedListBuilder(source, params.pagingConfig)
                 .setBoundaryCallback(params.boundaryCallback)
                 .setFetchScheduler(schedulers.io)
                 .setNotifyScheduler(schedulers.main)
-                .buildObservable()
+                .buildFlowable(BackpressureStrategy.LATEST)
+                .asFlow()
     }
 
     data class Params(

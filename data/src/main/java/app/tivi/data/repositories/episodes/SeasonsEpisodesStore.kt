@@ -25,7 +25,8 @@ import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.util.Logger
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.reactive.flow.asFlow
 import javax.inject.Inject
 
 class SeasonsEpisodesStore @Inject constructor(
@@ -49,12 +50,12 @@ class SeasonsEpisodesStore @Inject constructor(
             logger
     )
 
-    fun observeEpisode(episodeId: Long): Observable<Episode> {
-        return episodesDao.episodeWithIdObservable(episodeId)
+    fun observeEpisode(episodeId: Long): Flow<Episode> {
+        return episodesDao.episodeWithIdObservable(episodeId).asFlow()
     }
 
-    fun observeShowSeasonsWithEpisodes(showId: Long): Observable<List<SeasonWithEpisodesAndWatches>> {
-        return seasonsDao.seasonsWithEpisodesForShowId(showId)
+    fun observeShowSeasonsWithEpisodes(showId: Long): Flow<List<SeasonWithEpisodesAndWatches>> {
+        return seasonsDao.seasonsWithEpisodesForShowId(showId).asFlow()
     }
 
     /**

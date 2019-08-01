@@ -260,14 +260,6 @@ android.applicationVariants.all { variant ->
     }
 }
 
-// Enable experimental coroutines APIs, including Flow
-project.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-    kotlinOptions {
-        freeCompilerArgs += "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"
-        freeCompilerArgs += "-Xuse-experimental=kotlinx.coroutines.FlowPreview"
-    }
-}
-
 def getGitHash() {
     def stdout = new ByteArrayOutputStream()
     exec {

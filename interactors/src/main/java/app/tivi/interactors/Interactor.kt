@@ -53,17 +53,6 @@ abstract class SuspendingWorkInteractor<P : Any, T> : Interactor<P> {
 }
 
 abstract class SubjectInteractor<P : Any, T> {
-    private val subject: Subject<P> = BehaviorSubject.create()
-    private val observable = subject.switchMap(::createObservable)
-
-    operator fun invoke(params: P) = subject.onNext(params)
-
-    protected abstract fun createObservable(params: P): Observable<T>
-
-    fun observe(): Observable<T> = observable
-}
-
-abstract class FlowSubjectInteractor<P : Any, T> {
     private val channel = ConflatedBroadcastChannel<P>()
     private val flow = channel.asFlow().switchMap { createObservable(it) }
 

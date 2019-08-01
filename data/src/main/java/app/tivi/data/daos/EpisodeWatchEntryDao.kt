@@ -20,7 +20,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
-import io.reactivex.Observable
+import io.reactivex.Flowable
 
 @Dao
 abstract class EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry> {
@@ -31,7 +31,7 @@ abstract class EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry> {
     abstract suspend fun watchCountForEpisode(episodeId: Long): Int
 
     @Query("SELECT * FROM episode_watch_entries WHERE episode_id = :episodeId")
-    abstract fun watchesForEpisodeObservable(episodeId: Long): Observable<List<EpisodeWatchEntry>>
+    abstract fun watchesForEpisodeObservable(episodeId: Long): Flowable<List<EpisodeWatchEntry>>
 
     @Query("SELECT * FROM episode_watch_entries WHERE id = :id")
     abstract suspend fun entryWithId(id: Long): EpisodeWatchEntry?

@@ -37,19 +37,19 @@ open class TiviMvRxViewModel<S : MvRxState>(
     initialState: S
 ) : BaseMvRxViewModel<S>(initialState, debugMode = BuildConfig.DEBUG) {
 
-    suspend fun <T> Flow<T>.execute(stateReducer: S.(Async<T>) -> S) {
-        execute({ it }, stateReducer)
-    }
+    protected suspend inline fun <T> Flow<T>.execute(
+        crossinline stateReducer: S.(Async<T>) -> S
+    ) = execute({ it }, stateReducer)
 
-    suspend fun <T, V> Flow<T>.execute(
-        mapper: (T) -> V,
-        stateReducer: S.(Async<V>) -> S
+    protected suspend inline fun <T, V> Flow<T>.execute(
+        crossinline mapper: (T) -> V,
+        crossinline stateReducer: S.(Async<V>) -> S
     ) {
         setState { stateReducer(Loading()) }
 
         @Suppress("USELESS_CAST")
-        return map { value -> Success(mapper(value)) as Async<V> }
+        return map { Success(mapper(it)) as Async<V> }
                 .catch { emit(Fail(it)) }
-                .collect { async -> setState { stateReducer(async) } }
+                .collect { setState { stateReducer(it) } }
     }
 }

@@ -28,6 +28,7 @@ import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.launch
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
@@ -39,9 +40,13 @@ class HomeActivityViewModel @AssistedInject constructor(
     observeUserDetails: ObserveUserDetails
 ) : TiviMvRxViewModel<HomeActivityViewState>(initialState) {
     init {
-        observeUserDetails.observe()
-                .execute { copy(user = it()) }
-        observeUserDetails(ObserveUserDetails.Params("me"))
+        viewModelScope.launch {
+            observeUserDetails.observe()
+                    .execute { copy(user = it()) }
+        }
+        viewModelScope.launch {
+            observeUserDetails(ObserveUserDetails.Params("me"))
+        }
 
         traktManager.state
                 .distinctUntilChanged()

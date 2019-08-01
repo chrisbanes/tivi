@@ -24,6 +24,7 @@ dependencies {
 
     api Libs.Coroutines.core
     api Libs.Coroutines.rx2
+    api Libs.kotlinFlowExtensions
 
     api Libs.Dagger.dagger
 

@@ -21,20 +21,23 @@ import androidx.paging.RxPagedListBuilder
 import app.tivi.data.repositories.trendingshows.TrendingShowsRepository
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.util.AppRxSchedulers
-import io.reactivex.Observable
+import io.reactivex.BackpressureStrategy
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.reactive.flow.asFlow
 import javax.inject.Inject
 
 class ObservePagedTrendingShows @Inject constructor(
     private val schedulers: AppRxSchedulers,
     private val trendingShowsRepository: TrendingShowsRepository
 ) : PagingInteractor<ObservePagedTrendingShows.Params, TrendingEntryWithShow>() {
-    override fun createObservable(params: Params): Observable<PagedList<TrendingEntryWithShow>> {
+    override fun createObservable(params: Params): Flow<PagedList<TrendingEntryWithShow>> {
         val source = trendingShowsRepository.observeForPaging()
         return RxPagedListBuilder(source, params.pagingConfig)
                 .setBoundaryCallback(params.boundaryCallback)
                 .setFetchScheduler(schedulers.io)
                 .setNotifyScheduler(schedulers.main)
-                .buildObservable()
+                .buildFlowable(BackpressureStrategy.LATEST)
+                .asFlow()
     }
 
     data class Params(

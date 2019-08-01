@@ -26,7 +26,9 @@ import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.util.Logger
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.reactive.flow.asFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -94,8 +96,9 @@ class FollowedShowsStore @Inject constructor(
         }
     }
 
-    fun observeIsShowFollowed(showId: Long): Observable<Boolean> {
+    fun observeIsShowFollowed(showId: Long): Flow<Boolean> {
         return followedShowsDao.entryCountWithShowIdNotPendingDeleteObservable(showId)
+                .asFlow()
                 .map { it > 0 }
     }
 

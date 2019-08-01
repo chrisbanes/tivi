@@ -74,9 +74,15 @@ subprojects {
         }
     }
 
-    // Treat all Kotlin warnings as errors
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-        kotlinOptions.allWarningsAsErrors = true
+        kotlinOptions {
+            // Treat all Kotlin warnings as errors
+            allWarningsAsErrors = true
+
+            // Enable experimental coroutines APIs, including Flow
+            freeCompilerArgs += "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"
+            freeCompilerArgs += "-Xuse-experimental=kotlinx.coroutines.FlowPreview"
+        }
     }
 
     afterEvaluate {

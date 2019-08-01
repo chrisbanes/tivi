@@ -26,7 +26,7 @@ import javax.inject.Inject
 class ObservePopularShows @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val popularShowsRepository: PopularShowsRepository
-) : FlowSubjectInteractor<Unit, List<PopularEntryWithShow>>() {
+) : SubjectInteractor<Unit, List<PopularEntryWithShow>>() {
     override fun createObservable(params: Unit): Flow<List<PopularEntryWithShow>> {
         return popularShowsRepository.observeForObservable()
                 .flowOn(dispatchers.io)

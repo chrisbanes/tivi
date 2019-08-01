@@ -19,11 +19,11 @@ package app.tivi.data.repositories.shows
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.instantInPast
 import app.tivi.data.resultentities.ShowDetailed
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
 import org.threeten.bp.Instant
 
 interface ShowRepository {
-    fun observeShow(showId: Long): Observable<ShowDetailed>
+    fun observeShow(showId: Long): Flow<ShowDetailed>
 
     suspend fun searchShows(query: String): List<ShowDetailed>
 

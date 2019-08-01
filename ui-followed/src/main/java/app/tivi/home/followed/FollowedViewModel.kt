@@ -37,7 +37,7 @@ import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.plusAssign
+import kotlinx.coroutines.launch
 
 class FollowedViewModel @AssistedInject constructor(
     @Assisted initialState: FollowedViewState,
@@ -69,11 +69,15 @@ class FollowedViewModel @AssistedInject constructor(
                 .debounceLoading()
                 .execute { copy(isLoading = it() ?: false) }
 
-        tmdbManager.imageProviderObservable
-                .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
+        viewModelScope.launch {
+            tmdbManager.imageProviderFlow
+                    .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
+        }
 
-        observeFollowedShows.observe()
-                .execute { copy(followedShows = it()) }
+        viewModelScope.launch {
+            observeFollowedShows.observe()
+                    .execute { copy(followedShows = it()) }
+        }
 
         // Set the available sorting options
         setState {
@@ -92,14 +96,16 @@ class FollowedViewModel @AssistedInject constructor(
     }
 
     private fun updateDataSource(state: FollowedViewState) {
-        observeFollowedShows(
-                ObserveFollowedShows.Parameters(
-                        sort = state.sort,
-                        filter = state.filter,
-                        pagingConfig = PAGING_CONFIG,
-                        boundaryCallback = boundaryCallback
-                )
-        )
+        viewModelScope.launch {
+            observeFollowedShows(
+                    ObserveFollowedShows.Parameters(
+                            sort = state.sort,
+                            filter = state.filter,
+                            pagingConfig = PAGING_CONFIG,
+                            boundaryCallback = boundaryCallback
+                    )
+            )
+        }
     }
 
     fun refresh(force: Boolean = false) {

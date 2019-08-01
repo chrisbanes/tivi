@@ -23,7 +23,8 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.util.Logger
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.reactive.flow.asFlow
 import javax.inject.Inject
 
 class EpisodeWatchStore @Inject constructor(
@@ -39,8 +40,8 @@ class EpisodeWatchStore @Inject constructor(
             logger
     )
 
-    fun observeEpisodeWatches(episodeId: Long): Observable<List<EpisodeWatchEntry>> {
-        return episodeWatchEntryDao.watchesForEpisodeObservable(episodeId)
+    fun observeEpisodeWatches(episodeId: Long): Flow<List<EpisodeWatchEntry>> {
+        return episodeWatchEntryDao.watchesForEpisodeObservable(episodeId).asFlow()
     }
 
     suspend fun save(watch: EpisodeWatchEntry) = entityInserter.insertOrUpdate(episodeWatchEntryDao, watch)

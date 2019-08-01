@@ -27,6 +27,7 @@ import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import io.reactivex.subjects.BehaviorSubject
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 class SearchViewModel @AssistedInject constructor(
@@ -44,8 +45,10 @@ class SearchViewModel @AssistedInject constructor(
                     // TODO: onError
                 }).disposeOnClear()
 
-        tmdbManager.imageProviderObservable
-                .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
+        viewModelScope.launch {
+            tmdbManager.imageProviderFlow
+                    .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
+        }
 
         searchShows.observe().execute {
             copy(searchResults = it())

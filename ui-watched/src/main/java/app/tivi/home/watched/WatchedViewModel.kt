@@ -36,7 +36,7 @@ import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.plusAssign
+import kotlinx.coroutines.launch
 
 class WatchedViewModel @AssistedInject constructor(
     @Assisted initialState: WatchedViewState,
@@ -70,11 +70,15 @@ class WatchedViewModel @AssistedInject constructor(
             copy(isLoading = it() ?: false)
         }
 
-        tmdbManager.imageProviderObservable
-                .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
+        viewModelScope.launch {
+            tmdbManager.imageProviderFlow
+                    .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
+        }
 
-        observeWatchedShows.observe()
-                .execute { copy(watchedShows = it()) }
+        viewModelScope.launch {
+            observeWatchedShows.observe()
+                    .execute { copy(watchedShows = it()) }
+        }
 
         // Set the available sorting options
         setState {
@@ -88,14 +92,16 @@ class WatchedViewModel @AssistedInject constructor(
     }
 
     private fun updateDataSource(state: WatchedViewState) {
-        observeWatchedShows(
-                ObserveWatchedShows.Params(
-                        sort = state.sort,
-                        filter = state.filter,
-                        pagingConfig = PAGING_CONFIG,
-                        boundaryCallback = boundaryCallback
-                )
-        )
+        viewModelScope.launch {
+            observeWatchedShows(
+                    ObserveWatchedShows.Params(
+                            sort = state.sort,
+                            filter = state.filter,
+                            pagingConfig = PAGING_CONFIG,
+                            boundaryCallback = boundaryCallback
+                    )
+            )
+        }
     }
 
     fun refresh() {

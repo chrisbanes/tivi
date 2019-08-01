@@ -46,6 +46,7 @@ import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class ShowDetailsFragmentViewModel @AssistedInject constructor(
@@ -63,42 +64,54 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     private val changeSeasonFollowStatus: ChangeSeasonFollowStatus
 ) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
     init {
-        observeShowFollowStatus.observe()
-                .distinctUntilChanged()
-                .execute {
-                    when (it) {
-                        is Success -> copy(isFollowed = it.invoke()!!)
-                        else -> copy(isFollowed = false)
+        viewModelScope.launch {
+            observeShowFollowStatus.observe()
+                    .distinctUntilChanged()
+                    .execute {
+                        when (it) {
+                            is Success -> copy(isFollowed = it.invoke())
+                            else -> copy(isFollowed = false)
+                        }
                     }
-                }
+        }
 
-        observeShowDetails.observe()
-                .distinctUntilChanged()
-                .execute {
-                    if (it is Success) {
-                        val value = it()!!
-                        copy(show = value.show, posterImage = value.poster, backdropImage = value.backdrop)
-                    } else {
-                        this
+        viewModelScope.launch {
+            observeShowDetails.observe()
+                    .distinctUntilChanged()
+                    .execute {
+                        if (it is Success) {
+                            val value = it()
+                            copy(show = value.show, posterImage = value.poster, backdropImage = value.backdrop)
+                        } else {
+                            this
+                        }
                     }
-                }
+        }
 
-        observeRelatedShows.observe()
-                .distinctUntilChanged()
-                .execute { copy(relatedShows = it) }
+        viewModelScope.launch {
+            observeRelatedShows.observe()
+                    .distinctUntilChanged()
+                    .execute { copy(relatedShows = it) }
+        }
 
-        tmdbManager.imageProviderObservable
-                .execute { copy(tmdbImageUrlProvider = it) }
+        viewModelScope.launch {
+            tmdbManager.imageProviderFlow
+                    .execute { copy(tmdbImageUrlProvider = it) }
+        }
 
-        observeShowSeasons.observe()
-                .distinctUntilChanged()
-                .execute { copy(seasons = it) }
+        viewModelScope.launch {
+            observeShowSeasons.observe()
+                    .distinctUntilChanged()
+                    .execute { copy(seasons = it) }
+        }
 
         withState {
-            observeShowFollowStatus(ObserveShowFollowStatus.Params(it.showId))
-            observeShowDetails(ObserveShowDetails.Params(it.showId))
-            observeRelatedShows(ObserveRelatedShows.Params(it.showId))
-            observeShowSeasons(ObserveFollowedShowSeasonData.Params(it.showId))
+            viewModelScope.launch {
+                observeShowFollowStatus(ObserveShowFollowStatus.Params(it.showId))
+                observeShowDetails(ObserveShowDetails.Params(it.showId))
+                observeRelatedShows(ObserveRelatedShows.Params(it.showId))
+                observeShowSeasons(ObserveFollowedShowSeasonData.Params(it.showId))
+            }
         }
 
         refresh(false)

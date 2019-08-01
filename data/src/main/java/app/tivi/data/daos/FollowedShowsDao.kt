@@ -24,7 +24,7 @@ import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
-import io.reactivex.Observable
+import io.reactivex.Flowable
 
 @Dao
 abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryWithShow> {
@@ -74,7 +74,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     abstract suspend fun entryWithShowId(showId: Long): FollowedShowEntry?
 
     @Query("SELECT COUNT(*) FROM myshows_entries WHERE show_id = :showId AND pending_action != 'delete'")
-    abstract fun entryCountWithShowIdNotPendingDeleteObservable(showId: Long): Observable<Int>
+    abstract fun entryCountWithShowIdNotPendingDeleteObservable(showId: Long): Flowable<Int>
 
     @Query("SELECT COUNT(*) FROM myshows_entries WHERE show_id = :showId")
     abstract suspend fun entryCountWithShowId(showId: Long): Int

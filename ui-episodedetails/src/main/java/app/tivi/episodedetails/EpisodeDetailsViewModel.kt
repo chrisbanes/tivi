@@ -34,6 +34,8 @@ import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
 class EpisodeDetailsViewModel @AssistedInject constructor(
@@ -47,22 +49,31 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
     init {
-        observeEpisodeDetails.observe()
-                .execute { copy(episode = it) }
-
-        observeEpisodeWatches.observe()
-                .execute {
-                    val action = if (it is Success && it().isNotEmpty()) Action.UNWATCH else Action.WATCH
-                    copy(watches = it, action = action)
-                }
-
-        withState {
-            observeEpisodeDetails(ObserveEpisodeDetails.Params(it.episodeId))
-            observeEpisodeWatches(ObserveEpisodeWatches.Params(it.episodeId))
+        viewModelScope.launch {
+            observeEpisodeDetails.observe()
+                    .execute { copy(episode = it) }
         }
 
-        tmdbManager.imageProviderObservable
-                .execute { copy(tmdbImageUrlProvider = it) }
+        viewModelScope.launch {
+            observeEpisodeWatches.observe()
+                    .onStart { emit(emptyList()) }
+                    .execute {
+                        val action = if (it is Success && it().isNotEmpty()) Action.UNWATCH else Action.WATCH
+                        copy(watches = it, action = action)
+                    }
+        }
+
+        withState {
+            viewModelScope.launch {
+                observeEpisodeDetails(ObserveEpisodeDetails.Params(it.episodeId))
+                observeEpisodeWatches(ObserveEpisodeWatches.Params(it.episodeId))
+            }
+        }
+
+        viewModelScope.launch {
+            tmdbManager.imageProviderFlow
+                    .execute { copy(tmdbImageUrlProvider = it) }
+        }
 
         refresh()
     }

@@ -25,6 +25,8 @@ dependencies {
     }
     api Libs.threeTenBpNoTzdb
 
+    implementation project(":base")
+
     implementation Libs.OkHttp.okhttp
     implementation Libs.Retrofit.retrofit
     implementation Libs.Retrofit.gsonConverter

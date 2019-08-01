@@ -26,7 +26,7 @@ import javax.inject.Inject
 class ObserveTrendingShows @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val trendingShowsRepository: TrendingShowsRepository
-) : FlowSubjectInteractor<Unit, List<TrendingEntryWithShow>>() {
+) : SubjectInteractor<Unit, List<TrendingEntryWithShow>>() {
     override fun createObservable(params: Unit): Flow<List<TrendingEntryWithShow>> {
         return trendingShowsRepository.observeForObservable()
                 .flowOn(dispatchers.io)

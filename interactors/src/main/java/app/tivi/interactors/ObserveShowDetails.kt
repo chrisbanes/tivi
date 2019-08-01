@@ -18,17 +18,18 @@ package app.tivi.interactors
 
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.data.resultentities.ShowDetailed
-import app.tivi.util.AppRxSchedulers
-import io.reactivex.Observable
+import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class ObserveShowDetails @Inject constructor(
     private val showRepository: ShowRepository,
-    private val schedulers: AppRxSchedulers
+    private val dispatchers: AppCoroutineDispatchers
 ) : SubjectInteractor<ObserveShowDetails.Params, ShowDetailed>() {
-    override fun createObservable(params: Params): Observable<ShowDetailed> {
+    override fun createObservable(params: Params): Flow<ShowDetailed> {
         return showRepository.observeShow(params.showId)
-                .subscribeOn(schedulers.io)
+                .flowOn(dispatchers.io)
     }
 
     data class Params(val showId: Long)
