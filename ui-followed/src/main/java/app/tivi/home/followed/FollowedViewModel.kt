@@ -21,35 +21,35 @@ import androidx.paging.PagedList
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
-import app.tivi.extensions.debounceLoading
-import app.tivi.interactors.ObserveFollowedShows
+import app.tivi.interactors.ObservePagedFollowedShows
 import app.tivi.interactors.UpdateFollowedShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.Logger
-import app.tivi.util.RxLoadingCounter
+import app.tivi.util.ObservableLoadingCounter
 import app.tivi.TiviMvRxViewModel
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class FollowedViewModel @AssistedInject constructor(
     @Assisted initialState: FollowedViewState,
     private val updateFollowedShows: UpdateFollowedShows,
-    private val observeFollowedShows: ObserveFollowedShows,
+    private val observePagedFollowedShows: ObservePagedFollowedShows,
     private val traktManager: TraktManager,
     tmdbManager: TmdbManager,
-    private val logger: Logger
+    private val logger: Logger,
+    private val loadingState: ObservableLoadingCounter
 ) : TiviMvRxViewModel<FollowedViewState>(initialState) {
-    private val loadingState = RxLoadingCounter()
-    private var refreshDisposable: Disposable? = null
-
     private val boundaryCallback = object : PagedList.BoundaryCallback<FollowedShowEntryWithShow>() {
         override fun onZeroItemsLoaded() {
             setState { copy(isEmpty = filter.isNullOrEmpty()) }
@@ -65,9 +65,12 @@ class FollowedViewModel @AssistedInject constructor(
     }
 
     init {
-        loadingState.observable
-                .debounceLoading()
-                .execute { copy(isLoading = it() ?: false) }
+        viewModelScope.launch {
+            loadingState.observable
+                    .distinctUntilChanged()
+                    .debounce(2000)
+                    .execute { copy(isLoading = it() ?: false) }
+        }
 
         viewModelScope.launch {
             tmdbManager.imageProviderFlow
@@ -75,7 +78,7 @@ class FollowedViewModel @AssistedInject constructor(
         }
 
         viewModelScope.launch {
-            observeFollowedShows.observe()
+            observePagedFollowedShows.observe()
                     .execute { copy(followedShows = it()) }
         }
 
@@ -97,8 +100,8 @@ class FollowedViewModel @AssistedInject constructor(
 
     private fun updateDataSource(state: FollowedViewState) {
         viewModelScope.launch {
-            observeFollowedShows(
-                    ObserveFollowedShows.Parameters(
+            observePagedFollowedShows(
+                    ObservePagedFollowedShows.Parameters(
                             sort = state.sort,
                             filter = state.filter,
                             pagingConfig = PAGING_CONFIG,
@@ -109,15 +112,12 @@ class FollowedViewModel @AssistedInject constructor(
     }
 
     fun refresh(force: Boolean = false) {
-        refreshDisposable?.dispose()
-        refreshDisposable = null
-
-        traktManager.state
-                .filter { it == TraktAuthState.LOGGED_IN }
-                .firstOrError()
-                .subscribe({ refreshFollowed(force) }, logger::e)
-                .also { refreshDisposable = it }
-                .disposeOnClear()
+        viewModelScope.launch {
+            traktManager.state.first { it == TraktAuthState.LOGGED_IN }
+                    .run {
+                        refreshFollowed(force)
+                    }
+        }
     }
 
     fun setFilter(filter: String) {

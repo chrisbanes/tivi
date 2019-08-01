@@ -28,6 +28,8 @@ import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
@@ -48,16 +50,19 @@ class HomeActivityViewModel @AssistedInject constructor(
             observeUserDetails(ObserveUserDetails.Params("me"))
         }
 
-        traktManager.state
-                .distinctUntilChanged()
-                .doOnNext {
-                    if (it == TraktAuthState.LOGGED_IN) {
-                        viewModelScope.launchInteractor(updateUserDetails,
-                                UpdateUserDetails.Params("me", false))
+        viewModelScope.launch {
+            traktManager.state
+                    .distinctUntilChanged()
+                    .onEach {
+                        if (it == TraktAuthState.LOGGED_IN) {
+                            viewModelScope.launchInteractor(updateUserDetails,
+                                    UpdateUserDetails.Params("me", false))
+                        }
                     }
-                }.execute {
-                    copy(authState = it() ?: TraktAuthState.LOGGED_OUT)
-                }
+                    .execute {
+                        copy(authState = it() ?: TraktAuthState.LOGGED_OUT)
+                    }
+        }
     }
 
     fun onAuthResponse(

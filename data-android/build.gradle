@@ -69,7 +69,6 @@ dependencies {
 
     implementation Libs.AndroidX.Room.runtime
     implementation Libs.AndroidX.Room.rxjava2
-    implementation Libs.AndroidX.Room.ktx
     kapt Libs.AndroidX.Room.compiler
 
     implementation Libs.AndroidX.Paging.runtime

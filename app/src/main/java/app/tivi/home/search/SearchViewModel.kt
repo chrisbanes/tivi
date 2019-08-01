@@ -26,42 +26,45 @@ import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import io.reactivex.subjects.BehaviorSubject
+import hu.akarnokd.kotlin.flow.PublishSubject
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 class SearchViewModel @AssistedInject constructor(
     @Assisted initialState: SearchViewState,
     private val searchShows: SearchShows,
     tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<SearchViewState>(initialState) {
-    private val searchQuery = BehaviorSubject.create<String>()
+    private val searchQuery = PublishSubject<String>()
 
     init {
-        searchQuery.debounce(300, TimeUnit.MILLISECONDS)
-                .subscribe({
-                    viewModelScope.launchInteractor(searchShows, SearchShows.Params(it))
-                }, {
-                    // TODO: onError
-                }).disposeOnClear()
+        viewModelScope.launch {
+            searchQuery.debounce(300)
+                    .collect {
+                        viewModelScope.launchInteractor(searchShows, SearchShows.Params(it))
+                    }
+        }
 
         viewModelScope.launch {
             tmdbManager.imageProviderFlow
                     .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
         }
 
-        searchShows.observe().execute {
-            copy(searchResults = it())
+        viewModelScope.launch {
+            searchShows.observe().execute {
+                copy(searchResults = it())
+            }
         }
     }
 
     fun setSearchQuery(query: String) {
-        searchQuery.onNext(query)
+        viewModelScope.launch {
+            searchQuery.emit(query)
+        }
     }
 
-    fun clearQuery() {
-        searchQuery.onNext("")
-    }
+    fun clearQuery() = setSearchQuery("")
 
     @AssistedInject.Factory
     interface Factory {

@@ -41,18 +41,12 @@ android {
 
 dependencies {
     implementation project(":base")
+    implementation project(":base-android")
     api project(":data")
 
     kapt Libs.Dagger.compiler
 
     api Libs.AndroidX.Paging.common
-    implementation Libs.AndroidX.Paging.rxjava2
+    implementation Libs.AndroidX.Paging.runtime
 }
 
-// Enable experimental coroutines APIs, including Flow
-project.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-    kotlinOptions {
-        freeCompilerArgs += "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"
-        freeCompilerArgs += "-Xuse-experimental=kotlinx.coroutines.FlowPreview"
-    }
-}

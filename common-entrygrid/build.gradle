@@ -53,7 +53,6 @@ dependencies {
     implementation project(":common-databinding")
 
     implementation Libs.AndroidX.Lifecycle.extensions
-    implementation Libs.AndroidX.Lifecycle.reactive
     implementation Libs.AndroidX.Lifecycle.viewmodel
     kapt Libs.AndroidX.Lifecycle.compiler
 
@@ -64,13 +63,7 @@ dependencies {
     implementation Libs.AndroidX.coreKtx
     implementation Libs.AndroidX.Fragment.fragmentKtx
 
-    implementation Libs.RxJava.rxJava
-    implementation Libs.RxJava.rxKotlin
-    implementation Libs.RxJava.rxAndroid
-
     implementation Libs.Dagger.androidSupport
     kapt Libs.Dagger.compiler
     kapt Libs.Dagger.androidProcessor
-
-    debugImplementation Libs.rxLint
 }

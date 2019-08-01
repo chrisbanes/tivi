@@ -23,13 +23,14 @@ import app.tivi.interactors.UpdatePopularShows
 import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
-import app.tivi.util.RxLoadingCounter
+import app.tivi.util.ObservableLoadingCounter
 import app.tivi.TiviMvRxViewModel
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -39,9 +40,9 @@ class DiscoverViewModel @AssistedInject constructor(
     observePopularShows: ObservePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,
     observeTrendingShows: ObserveTrendingShows,
-    tmdbManager: TmdbManager
+    tmdbManager: TmdbManager,
+    private val loadingState: ObservableLoadingCounter
 ) : TiviMvRxViewModel<DiscoverViewState>(initialState) {
-    private val loadingState = RxLoadingCounter()
 
     init {
         viewModelScope.launch {
@@ -49,8 +50,12 @@ class DiscoverViewModel @AssistedInject constructor(
                     .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
         }
 
-        loadingState.observable
-                .execute { copy(isLoading = it() ?: false) }
+        viewModelScope.launch {
+            loadingState.observable
+                    .distinctUntilChanged()
+                    .debounce(2000)
+                    .execute { copy(isLoading = it() ?: false) }
+        }
 
         viewModelScope.launch {
             observeTrendingShows.observe()

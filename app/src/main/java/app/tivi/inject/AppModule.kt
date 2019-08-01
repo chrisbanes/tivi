@@ -22,14 +22,10 @@ import androidx.preference.PreferenceManager
 import app.tivi.BuildConfig
 import app.tivi.TiviApplication
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.AppRxSchedulers
 import dagger.Module
 import dagger.Provides
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.rx2.asCoroutineDispatcher
 import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
 import java.io.File
@@ -50,17 +46,9 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideRxSchedulers(): AppRxSchedulers = AppRxSchedulers(
-            io = Schedulers.io(),
-            computation = Schedulers.computation(),
-            main = AndroidSchedulers.mainThread()
-    )
-
-    @Singleton
-    @Provides
-    fun provideCoroutineDispatchers(schedulers: AppRxSchedulers) = AppCoroutineDispatchers(
-            io = schedulers.io.asCoroutineDispatcher(),
-            computation = schedulers.computation.asCoroutineDispatcher(),
+    fun provideCoroutineDispatchers() = AppCoroutineDispatchers(
+            io = Dispatchers.IO,
+            computation = Dispatchers.Default,
             main = Dispatchers.Main
     )
 

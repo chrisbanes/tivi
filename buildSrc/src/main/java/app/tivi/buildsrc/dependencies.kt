@@ -33,8 +33,6 @@ object Libs {
 
     const val gravitySnapHelper = "com.github.rubensousa:gravitysnaphelper:2.0"
 
-    const val rxLint = "nl.littlerobots.rxlint:rxlint:1.7.4"
-
     const val timber = "com.jakewharton.timber:timber:4.7.1"
 
     const val tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.0.3"
@@ -105,9 +103,8 @@ object Libs {
 
         object Paging {
             private const val version = "2.1.0"
-            const val common = "androidx.paging:paging-common:$version"
-            const val runtime = "androidx.paging:paging-runtime:$version"
-            const val rxjava2 = "androidx.paging:paging-rxjava2:$version"
+            const val common = "androidx.paging:paging-common-ktx:$version"
+            const val runtime = "androidx.paging:paging-runtime-ktx:$version"
         }
 
         const val preference = "androidx.preference:preference:1.1.0-beta01"
@@ -119,7 +116,6 @@ object Libs {
         object Lifecycle {
             private const val version = "2.2.0-alpha02"
             const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
-            const val reactive = "androidx.lifecycle:lifecycle-reactivestreams-ktx:$version"
             const val compiler = "androidx.lifecycle:lifecycle-compiler:$version"
             const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
         }
@@ -142,7 +138,6 @@ object Libs {
 
     object RxJava {
         const val rxJava = "io.reactivex.rxjava2:rxjava:2.2.10"
-        const val rxKotlin = "io.reactivex.rxjava2:rxkotlin:2.3.0"
         const val rxAndroid = "io.reactivex.rxjava2:rxandroid:2.1.1"
     }
 

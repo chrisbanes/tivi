@@ -16,21 +16,31 @@
 
 package app.tivi.util
 
-import io.reactivex.Observable
-import io.reactivex.subjects.BehaviorSubject
+import hu.akarnokd.kotlin.flow.BehaviorSubject
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class RxLoadingCounter {
+class ObservableLoadingCounter @Inject constructor(
+    val dispatchers: AppCoroutineDispatchers
+) {
     private var loaders = 0
-    private val loadingState = BehaviorSubject.createDefault(loaders)
+    private val loadingState = BehaviorSubject(loaders)
 
-    val observable: Observable<Boolean>
+    val observable: Flow<Boolean>
         get() = loadingState.map { it > 0 }
 
     fun addLoader() {
-        loadingState.onNext(++loaders)
+        GlobalScope.launch(dispatchers.main) {
+            loadingState.emit(++loaders)
+        }
     }
 
     fun removeLoader() {
-        loadingState.onNext(--loaders)
+        GlobalScope.launch(dispatchers.main) {
+            loadingState.emit(--loaders)
+        }
     }
 }

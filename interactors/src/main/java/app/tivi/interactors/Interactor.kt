@@ -17,9 +17,7 @@
 package app.tivi.interactors
 
 import androidx.paging.PagedList
-import io.reactivex.Observable
-import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.Subject
+import hu.akarnokd.kotlin.flow.BehaviorSubject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -43,13 +41,13 @@ abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T> : Subject
 }
 
 abstract class SuspendingWorkInteractor<P : Any, T> : Interactor<P> {
-    private val subject: Subject<T> = BehaviorSubject.create()
+    private val subject = BehaviorSubject<T>()
 
-    override suspend operator fun invoke(params: P) = subject.onNext(doWork(params))
+    override suspend operator fun invoke(params: P) = subject.emit(doWork(params))
 
     abstract suspend fun doWork(params: P): T
 
-    fun observe(): Observable<T> = subject
+    fun observe(): Flow<T> = subject
 }
 
 abstract class SubjectInteractor<P : Any, T> {
