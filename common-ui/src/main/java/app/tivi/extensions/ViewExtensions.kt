@@ -47,13 +47,17 @@ fun View.doOnApplyWindowInsets(f: (View, WindowInsetsCompat, ViewPaddingState) -
  * If not it sets an [View.OnAttachStateChangeListener] and waits to be attached before calling
  * [View.requestApplyInsets].
  */
-fun View.requestApplyInsetsWhenAttached() {
+fun View.requestApplyInsetsWhenAttached() = doOnAttach {
+    it.requestApplyInsets()
+}
+
+fun View.doOnAttach(f: (View) -> Unit) {
     if (isAttachedToWindow) {
-        requestApplyInsets()
+        f(this)
     } else {
         addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
             override fun onViewAttachedToWindow(v: View) {
-                v.requestApplyInsets()
+                f(v)
             }
 
             override fun onViewDetachedFromWindow(v: View) = Unit
