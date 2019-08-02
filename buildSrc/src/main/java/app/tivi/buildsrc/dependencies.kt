@@ -115,7 +115,7 @@ object Libs {
         const val coreKtx = "androidx.core:core-ktx:1.2.0-alpha02"
 
         object Lifecycle {
-            private const val version = "2.1.0"
+            private const val version = "2.2.0-alpha02"
             const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
             const val reactive = "androidx.lifecycle:lifecycle-reactivestreams-ktx:$version"
             const val compiler = "androidx.lifecycle:lifecycle-compiler:$version"
@@ -123,7 +123,7 @@ object Libs {
         }
 
         object Room {
-            private const val version = "2.2.0-alpha01"
+            private const val version = "2.1.0"
             const val common = "androidx.room:room-common:$version"
             const val runtime = "androidx.room:room-runtime:$version"
             const val rxjava2 = "androidx.room:room-rxjava2:$version"
