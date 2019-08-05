@@ -19,17 +19,18 @@ package app.tivi.interactors
 import app.tivi.data.entities.Episode
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class ObserveEpisodeDetails @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     private val dispatchers: AppCoroutineDispatchers
 ) : SubjectInteractor<ObserveEpisodeDetails.Params, Episode>() {
+    override val dispatcher: CoroutineDispatcher = dispatchers.io
+
     override fun createObservable(params: Params): Flow<Episode> {
         return seasonsEpisodesRepository.observeEpisode(params.episodeId)
-                .flowOn(dispatchers.io)
     }
 
     data class Params(val episodeId: Long)

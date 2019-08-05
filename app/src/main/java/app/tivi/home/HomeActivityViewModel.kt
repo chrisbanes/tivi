@@ -24,6 +24,7 @@ import app.tivi.interactors.launchInteractor
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.TiviMvRxViewModel
+import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
@@ -42,13 +43,12 @@ class HomeActivityViewModel @AssistedInject constructor(
     observeUserDetails: ObserveUserDetails
 ) : TiviMvRxViewModel<HomeActivityViewState>(initialState) {
     init {
-        viewModelScope.launch {
-            observeUserDetails.observe()
-                    .execute { copy(user = it()) }
+        viewModelScope.launchObserve(observeUserDetails) {
+            it.execute { copy(user = it()) }
         }
-        viewModelScope.launch {
-            observeUserDetails(ObserveUserDetails.Params("me"))
-        }
+
+        viewModelScope.launchInteractor(observeUserDetails,
+                ObserveUserDetails.Params("me"))
 
         viewModelScope.launch {
             traktManager.state

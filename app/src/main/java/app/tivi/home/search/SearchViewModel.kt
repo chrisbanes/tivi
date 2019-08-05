@@ -20,6 +20,7 @@ import androidx.lifecycle.viewModelScope
 import app.tivi.TiviMvRxViewModel
 import app.tivi.interactors.SearchShows
 import app.tivi.interactors.launchInteractor
+import app.tivi.interactors.launchObserve
 import app.tivi.tmdb.TmdbManager
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
@@ -51,10 +52,8 @@ class SearchViewModel @AssistedInject constructor(
                     .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
         }
 
-        viewModelScope.launch {
-            searchShows.observe().execute {
-                copy(searchResults = it())
-            }
+        viewModelScope.launchObserve(searchShows) {
+            it.execute { copy(searchResults = it()) }
         }
     }
 

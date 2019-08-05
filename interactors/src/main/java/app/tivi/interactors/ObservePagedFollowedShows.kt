@@ -22,12 +22,17 @@ import app.tivi.data.entities.SortOption
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.extensions.asFlow
+import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ObservePagedFollowedShows @Inject constructor(
+    dispatchers: AppCoroutineDispatchers,
     private val followedShowsRepository: FollowedShowsRepository
 ) : PagingInteractor<ObservePagedFollowedShows.Parameters, FollowedShowEntryWithShow>() {
+    override val dispatcher: CoroutineDispatcher = dispatchers.io
+
     override fun createObservable(params: Parameters): Flow<PagedList<FollowedShowEntryWithShow>> {
         val source = followedShowsRepository.observeFollowedShows(params.sort, params.filter)
         return LivePagedListBuilder(source, params.pagingConfig)

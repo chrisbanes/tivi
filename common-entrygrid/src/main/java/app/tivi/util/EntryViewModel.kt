@@ -27,6 +27,7 @@ import app.tivi.interactors.PagingInteractor
 import app.tivi.tmdb.TmdbManager
 import hu.akarnokd.kotlin.flow.BehaviorSubject
 import kotlinx.coroutines.flow.combineLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteractor<*, LI>>(
@@ -64,7 +65,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
 
     val viewState = messages.combineLatest(
             tmdbManager.imageProviderFlow,
-            pagingInteractor.observe(),
+            pagingInteractor.observe().flowOn(pagingInteractor.dispatcher),
             loaded
     ) { message, imageProvider, pagedList, loaded ->
         EntryViewState(message, imageProvider, pagedList, loaded)

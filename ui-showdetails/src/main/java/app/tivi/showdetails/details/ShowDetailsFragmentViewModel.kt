@@ -40,6 +40,7 @@ import app.tivi.interactors.launchInteractor
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
 import app.tivi.TiviMvRxViewModel
+import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
@@ -64,34 +65,30 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     private val changeSeasonFollowStatus: ChangeSeasonFollowStatus
 ) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
     init {
-        viewModelScope.launch {
-            observeShowFollowStatus.observe()
-                    .distinctUntilChanged()
-                    .execute {
-                        when (it) {
-                            is Success -> copy(isFollowed = it.invoke())
-                            else -> copy(isFollowed = false)
-                        }
-                    }
+        viewModelScope.launchObserve(observeShowFollowStatus) {
+            it.distinctUntilChanged().execute { result ->
+                when (result) {
+                    is Success -> copy(isFollowed = result())
+                    else -> copy(isFollowed = false)
+                }
+            }
         }
 
-        viewModelScope.launch {
-            observeShowDetails.observe()
-                    .distinctUntilChanged()
-                    .execute {
-                        if (it is Success) {
-                            val value = it()
-                            copy(show = value.show, posterImage = value.poster, backdropImage = value.backdrop)
-                        } else {
-                            this
-                        }
-                    }
+        viewModelScope.launchObserve(observeShowDetails) {
+            it.distinctUntilChanged().execute { result ->
+                if (result is Success) {
+                    val value = result()
+                    copy(show = value.show, posterImage = value.poster, backdropImage = value.backdrop)
+                } else {
+                    this
+                }
+            }
         }
 
-        viewModelScope.launch {
-            observeRelatedShows.observe()
-                    .distinctUntilChanged()
-                    .execute { copy(relatedShows = it) }
+        viewModelScope.launchObserve(observeRelatedShows) {
+            it.distinctUntilChanged().execute { result ->
+                copy(relatedShows = result)
+            }
         }
 
         viewModelScope.launch {
@@ -99,19 +96,21 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
                     .execute { copy(tmdbImageUrlProvider = it) }
         }
 
-        viewModelScope.launch {
-            observeShowSeasons.observe()
-                    .distinctUntilChanged()
-                    .execute { copy(seasons = it) }
+        viewModelScope.launchObserve(observeShowSeasons) {
+            it.distinctUntilChanged().execute { result ->
+                copy(seasons = result)
+            }
         }
 
         withState {
-            viewModelScope.launch {
-                observeShowFollowStatus(ObserveShowFollowStatus.Params(it.showId))
-                observeShowDetails(ObserveShowDetails.Params(it.showId))
-                observeRelatedShows(ObserveRelatedShows.Params(it.showId))
-                observeShowSeasons(ObserveFollowedShowSeasonData.Params(it.showId))
-            }
+            viewModelScope.launchInteractor(observeShowFollowStatus,
+                    ObserveShowFollowStatus.Params(it.showId))
+            viewModelScope.launchInteractor(
+                    observeShowDetails, ObserveShowDetails.Params(it.showId))
+            viewModelScope.launchInteractor(observeRelatedShows,
+                    ObserveRelatedShows.Params(it.showId))
+            viewModelScope.launchInteractor(observeShowSeasons,
+                    ObserveFollowedShowSeasonData.Params(it.showId))
         }
 
         refresh(false)

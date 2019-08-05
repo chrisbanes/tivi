@@ -25,6 +25,7 @@ import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.TiviMvRxViewModel
+import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
@@ -46,8 +47,9 @@ class DiscoverViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch {
-            tmdbManager.imageProviderFlow
-                    .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
+            tmdbManager.imageProviderFlow.execute {
+                copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider)
+            }
         }
 
         viewModelScope.launch {
@@ -57,23 +59,19 @@ class DiscoverViewModel @AssistedInject constructor(
                     .execute { copy(isLoading = it() ?: false) }
         }
 
-        viewModelScope.launch {
-            observeTrendingShows.observe()
-                    .distinctUntilChanged()
-                    .execute { copy(trendingItems = it() ?: emptyList()) }
+        viewModelScope.launchObserve(observeTrendingShows) {
+            it.distinctUntilChanged().execute {
+                copy(trendingItems = it() ?: emptyList())
+            }
         }
-        viewModelScope.launch {
-            observeTrendingShows(Unit)
-        }
+        viewModelScope.launchInteractor(observeTrendingShows)
 
-        viewModelScope.launch {
-            observePopularShows.observe()
-                    .distinctUntilChanged()
-                    .execute { copy(popularItems = it() ?: emptyList()) }
+        viewModelScope.launchObserve(observePopularShows) {
+            it.distinctUntilChanged().execute {
+                copy(popularItems = it() ?: emptyList())
+            }
         }
-        viewModelScope.launch {
-            observePopularShows(Unit)
-        }
+        viewModelScope.launchInteractor(observePopularShows)
 
         refresh()
     }

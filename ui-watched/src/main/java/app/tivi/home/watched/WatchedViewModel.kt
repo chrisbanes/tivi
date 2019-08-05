@@ -29,6 +29,7 @@ import app.tivi.trakt.TraktManager
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.TiviMvRxViewModel
+import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
@@ -64,10 +65,10 @@ class WatchedViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch {
-        loadingState.observable
-                .distinctUntilChanged()
-                .debounce(2000)
-                .execute { copy(isLoading = it() ?: false) }
+            loadingState.observable
+                    .distinctUntilChanged()
+                    .debounce(2000)
+                    .execute { copy(isLoading = it() ?: false) }
         }
 
         viewModelScope.launch {
@@ -75,9 +76,8 @@ class WatchedViewModel @AssistedInject constructor(
                     .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
         }
 
-        viewModelScope.launch {
-            observeWatchedShows.observe()
-                    .execute { copy(watchedShows = it()) }
+        viewModelScope.launchObserve(observeWatchedShows) {
+            it.execute { copy(watchedShows = it()) }
         }
 
         // Set the available sorting options
@@ -92,16 +92,14 @@ class WatchedViewModel @AssistedInject constructor(
     }
 
     private fun updateDataSource(state: WatchedViewState) {
-        viewModelScope.launch {
-            observeWatchedShows(
-                    ObserveWatchedShows.Params(
-                            sort = state.sort,
-                            filter = state.filter,
-                            pagingConfig = PAGING_CONFIG,
-                            boundaryCallback = boundaryCallback
-                    )
-            )
-        }
+        viewModelScope.launchInteractor(observeWatchedShows,
+                ObserveWatchedShows.Params(
+                        sort = state.sort,
+                        filter = state.filter,
+                        pagingConfig = PAGING_CONFIG,
+                        boundaryCallback = boundaryCallback
+                )
+        )
     }
 
     fun refresh() {

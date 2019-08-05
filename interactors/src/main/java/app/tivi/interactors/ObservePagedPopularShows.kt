@@ -21,12 +21,17 @@ import androidx.paging.PagedList
 import app.tivi.data.repositories.popularshows.PopularShowsRepository
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.extensions.asFlow
+import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ObservePagedPopularShows @Inject constructor(
+    dispatchers: AppCoroutineDispatchers,
     private val popularShowsRepository: PopularShowsRepository
 ) : PagingInteractor<ObservePagedPopularShows.Params, PopularEntryWithShow>() {
+    override val dispatcher: CoroutineDispatcher = dispatchers.io
+
     override fun createObservable(params: Params): Flow<PagedList<PopularEntryWithShow>> {
         val source = popularShowsRepository.observeForPaging()
         return LivePagedListBuilder(source, params.pagingConfig)

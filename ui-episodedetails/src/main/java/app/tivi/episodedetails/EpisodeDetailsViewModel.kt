@@ -28,6 +28,7 @@ import app.tivi.interactors.launchInteractor
 import app.tivi.episodedetails.EpisodeDetailsViewState.Action
 import app.tivi.tmdb.TmdbManager
 import app.tivi.TiviMvRxViewModel
+import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
@@ -49,25 +50,24 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
     init {
-        viewModelScope.launch {
-            observeEpisodeDetails.observe()
-                    .execute { copy(episode = it) }
+        viewModelScope.launchObserve(observeEpisodeDetails) {
+            it.execute { result -> copy(episode = result) }
         }
 
-        viewModelScope.launch {
-            observeEpisodeWatches.observe()
-                    .onStart { emit(emptyList()) }
-                    .execute {
-                        val action = if (it is Success && it().isNotEmpty()) Action.UNWATCH else Action.WATCH
-                        copy(watches = it, action = action)
-                    }
+        viewModelScope.launchObserve(observeEpisodeWatches) {
+            it.onStart {
+                emit(emptyList())
+            }.execute { result ->
+                val action = if (result is Success && result().isNotEmpty()) Action.UNWATCH else Action.WATCH
+                copy(watches = result, action = action)
+            }
         }
 
         withState {
-            viewModelScope.launch {
-                observeEpisodeDetails(ObserveEpisodeDetails.Params(it.episodeId))
-                observeEpisodeWatches(ObserveEpisodeWatches.Params(it.episodeId))
-            }
+            viewModelScope.launchInteractor(observeEpisodeDetails,
+                    ObserveEpisodeDetails.Params(it.episodeId))
+            viewModelScope.launchInteractor(observeEpisodeWatches,
+                    ObserveEpisodeWatches.Params(it.episodeId))
         }
 
         viewModelScope.launch {

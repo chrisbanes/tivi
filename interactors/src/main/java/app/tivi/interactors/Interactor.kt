@@ -33,6 +33,10 @@ interface Interactor<in P> {
     suspend operator fun invoke(params: P)
 }
 
+interface ObservableInteractor<in P, T> : Interactor<P> {
+    fun observe(): Flow<T>
+}
+
 abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T> : SubjectInteractor<P, PagedList<T>>() {
     interface Parameters<T> {
         val pagingConfig: PagedList.Config
@@ -40,25 +44,25 @@ abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T> : Subject
     }
 }
 
-abstract class SuspendingWorkInteractor<P : Any, T> : Interactor<P> {
+abstract class SuspendingWorkInteractor<P : Any, T> : ObservableInteractor<P, T> {
     private val subject = BehaviorSubject<T>()
 
     override suspend operator fun invoke(params: P) = subject.emit(doWork(params))
 
     abstract suspend fun doWork(params: P): T
 
-    fun observe(): Flow<T> = subject
+    override fun observe(): Flow<T> = subject
 }
 
-abstract class SubjectInteractor<P : Any, T> {
+abstract class SubjectInteractor<P : Any, T> : ObservableInteractor<P, T> {
     private val channel = ConflatedBroadcastChannel<P>()
     private val flow = channel.asFlow().switchMap { createObservable(it) }
 
-    suspend operator fun invoke(params: P) = channel.send(params)
+    override suspend operator fun invoke(params: P) = channel.send(params)
 
     protected abstract fun createObservable(params: P): Flow<T>
 
-    fun observe(): Flow<T> = flow
+    override fun observe(): Flow<T> = flow
 }
 
 fun <P> CoroutineScope.launchInteractor(interactor: Interactor<P>, param: P): Job {
@@ -70,3 +74,12 @@ suspend fun <P> Interactor<P>.execute(param: P) = withContext(context = dispatch
 }
 
 fun CoroutineScope.launchInteractor(interactor: Interactor<Unit>) = launchInteractor(interactor, Unit)
+
+fun <I : ObservableInteractor<*, T>, T> CoroutineScope.launchObserve(
+    interactor: I,
+    f: suspend (Flow<T>) -> Unit
+) {
+    launch(interactor.dispatcher) {
+        f(interactor.observe())
+    }
+}
