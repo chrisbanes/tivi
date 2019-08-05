@@ -57,12 +57,10 @@ dependencies {
     implementation project(":common-entrygrid")
 
     implementation Libs.AndroidX.Lifecycle.extensions
-    implementation Libs.AndroidX.Lifecycle.reactive
     implementation Libs.AndroidX.Lifecycle.viewmodel
     kapt Libs.AndroidX.Lifecycle.compiler
 
     implementation Libs.AndroidX.Paging.runtime
-    implementation Libs.AndroidX.Paging.rxjava2
 
     implementation Libs.AndroidX.appcompat
     implementation Libs.AndroidX.browser
@@ -79,16 +77,8 @@ dependencies {
 
     implementation Libs.Google.material
 
-    implementation Libs.RxJava.rxJava
-    implementation Libs.RxJava.rxKotlin
-    implementation Libs.RxJava.rxAndroid
-
     implementation Libs.Kotlin.stdlib
     implementation Libs.Kotlin.reflect
-
-    implementation Libs.Coroutines.core
-    implementation Libs.Coroutines.rx2
-    implementation Libs.Coroutines.android
 
     implementation Libs.Dagger.androidSupport
     kapt Libs.Dagger.compiler
@@ -102,6 +92,4 @@ dependencies {
     kapt Libs.Epoxy.processor
 
     implementation Libs.gravitySnapHelper
-
-    debugImplementation Libs.rxLint
 }

@@ -21,7 +21,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
-import io.reactivex.Observable
+import io.reactivex.Flowable
 
 @Dao
 abstract class RelatedShowsDao : PairEntryDao<RelatedShowEntry, RelatedShowEntryWithShow> {
@@ -35,7 +35,7 @@ abstract class RelatedShowsDao : PairEntryDao<RelatedShowEntry, RelatedShowEntry
 
     @Transaction
     @Query("SELECT * FROM related_shows WHERE show_id = :showId ORDER BY order_index")
-    abstract override fun entriesWithShowsObservable(showId: Long): Observable<List<RelatedShowEntryWithShow>>
+    abstract override fun entriesWithShowsObservable(showId: Long): Flowable<List<RelatedShowEntryWithShow>>
 
     @Query("DELETE FROM related_shows WHERE show_id = :showId")
     abstract override suspend fun deleteWithShowId(showId: Long)

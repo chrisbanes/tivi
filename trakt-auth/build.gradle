@@ -48,9 +48,6 @@ dependencies {
     api project(":trakt")
     implementation project(':interactors')
 
-    implementation Libs.RxJava.rxJava
-    implementation Libs.RxJava.rxKotlin
-
     kapt Libs.Dagger.compiler
 
     implementation Libs.AndroidX.browser

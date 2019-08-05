@@ -16,27 +16,29 @@
 
 package app.tivi.interactors
 
+import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import androidx.paging.RxPagedListBuilder
 import app.tivi.data.entities.SortOption
 import app.tivi.data.repositories.watchedshows.WatchedShowsRepository
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
-import app.tivi.util.AppRxSchedulers
-import io.reactivex.Observable
+import app.tivi.extensions.asFlow
+import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ObserveWatchedShows @Inject constructor(
-    private val schedulers: AppRxSchedulers,
+    dispatchers: AppCoroutineDispatchers,
     private val watchedShowsRepository: WatchedShowsRepository
 ) : PagingInteractor<ObserveWatchedShows.Params, WatchedShowEntryWithShow>() {
+    override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override fun createObservable(params: Params): Observable<PagedList<WatchedShowEntryWithShow>> {
+    override fun createObservable(params: Params): Flow<PagedList<WatchedShowEntryWithShow>> {
         val source = watchedShowsRepository.observeWatchedShowsPagedList(params.filter, params.sort)
-        return RxPagedListBuilder(source, params.pagingConfig)
+        return LivePagedListBuilder(source, params.pagingConfig)
                 .setBoundaryCallback(params.boundaryCallback)
-                .setFetchScheduler(schedulers.io)
-                .setNotifyScheduler(schedulers.main)
-                .buildObservable()
+                .build()
+                .asFlow()
     }
 
     data class Params(

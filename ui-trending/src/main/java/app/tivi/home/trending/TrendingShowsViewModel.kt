@@ -16,6 +16,7 @@
 
 package app.tivi.home.trending
 
+import androidx.lifecycle.viewModelScope
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.interactors.ObservePagedTrendingShows
 import app.tivi.interactors.UpdateTrendingShows
@@ -26,6 +27,7 @@ import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class TrendingShowsViewModel @Inject constructor(
@@ -41,7 +43,10 @@ class TrendingShowsViewModel @Inject constructor(
         logger
 ) {
     init {
-        observePagedTrendingShows(ObservePagedTrendingShows.Params(pageListConfig, boundaryCallback))
+        viewModelScope.launch {
+            observePagedTrendingShows(
+                    ObservePagedTrendingShows.Params(pageListConfig, boundaryCallback))
+        }
     }
 
     override suspend fun callLoadMore() = interactor.execute(UpdateTrendingShows.Params(NEXT_PAGE))

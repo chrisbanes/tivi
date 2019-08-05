@@ -25,8 +25,9 @@ import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.interactors.PagingInteractor
 import app.tivi.tmdb.TmdbManager
-import io.reactivex.rxkotlin.Observables
-import io.reactivex.subjects.BehaviorSubject
+import hu.akarnokd.kotlin.flow.BehaviorSubject
+import kotlinx.coroutines.flow.combineLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteractor<*, LI>>(
@@ -36,8 +37,8 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
     private val logger: Logger,
     private val pageSize: Int = 21
 ) : ViewModel() {
-    private val messages = BehaviorSubject.create<UiResource>()
-    private val loaded = BehaviorSubject.createDefault(false)
+    private val messages = BehaviorSubject<UiResource>()
+    private val loaded = BehaviorSubject(false)
 
     protected val pageListConfig = PagedList.Config.Builder().run {
         setPageSize(pageSize * 3)
@@ -48,17 +49,27 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
 
     val boundaryCallback = object : PagedList.BoundaryCallback<LI>() {
         override fun onItemAtEndLoaded(itemAtEnd: LI) = onListScrolledToEnd()
-        override fun onItemAtFrontLoaded(itemAtFront: LI) = loaded.onNext(true)
-        override fun onZeroItemsLoaded() = loaded.onNext(true)
+
+        override fun onItemAtFrontLoaded(itemAtFront: LI) {
+            viewModelScope.launch {
+                loaded.emit(true)
+            }
+        }
+
+        override fun onZeroItemsLoaded() {
+            viewModelScope.launch {
+                loaded.emit(true)
+            }
+        }
     }
 
-    val viewState = Observables.combineLatest(
-            messages,
-            tmdbManager.imageProviderObservable,
-            pagingInteractor.observe(),
-            loaded,
-            ::EntryViewState
-    ).toLiveData()
+    val viewState = messages.combineLatest(
+            tmdbManager.imageProviderFlow,
+            pagingInteractor.observe().flowOn(pagingInteractor.dispatcher),
+            loaded
+    ) { message, imageProvider, pagedList, loaded ->
+        EntryViewState(message, imageProvider, pagedList, loaded)
+    }
 
     init {
         refresh()
@@ -94,14 +105,16 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
 
     private fun onError(t: Throwable) {
         logger.e(t)
-        sendMessage(UiResource(Status.ERROR, t.localizedMessage))
+        viewModelScope.launch {
+            sendMessage(UiResource(Status.ERROR, t.localizedMessage))
+        }
     }
 
     private fun onSuccess() {
-        sendMessage(UiResource(Status.SUCCESS))
+        viewModelScope.launch {
+            sendMessage(UiResource(Status.SUCCESS))
+        }
     }
 
-    private fun sendMessage(uiResource: UiResource) {
-        messages.onNext(uiResource)
-    }
+    private suspend fun sendMessage(uiResource: UiResource) = messages.emit(uiResource)
 }

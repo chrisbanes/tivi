@@ -20,9 +20,9 @@ import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.Configuration
-import io.reactivex.Observable
-import io.reactivex.subjects.BehaviorSubject
+import hu.akarnokd.kotlin.flow.BehaviorSubject
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -33,8 +33,8 @@ class TmdbManager @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val tmdbClient: Tmdb
 ) {
-    private val imageProviderSubject = BehaviorSubject.createDefault(TmdbImageUrlProvider())
-    val imageProviderObservable: Observable<TmdbImageUrlProvider>
+    private val imageProviderSubject = BehaviorSubject(TmdbImageUrlProvider())
+    val imageProviderFlow: Flow<TmdbImageUrlProvider>
         get() = imageProviderSubject
 
     init {
@@ -42,7 +42,7 @@ class TmdbManager @Inject constructor(
     }
 
     private fun refreshConfiguration() {
-        GlobalScope.launch(dispatchers.main) {
+        GlobalScope.launch {
             try {
                 val config = withContext(dispatchers.io) {
                     tmdbClient.configurationService().configuration().fetchBodyWithRetry()
@@ -55,12 +55,14 @@ class TmdbManager @Inject constructor(
     }
 
     private fun onConfigurationLoaded(configuration: Configuration) {
-        configuration.images?.let {
-            val newProvider = TmdbImageUrlProvider(
-                    it.secure_base_url!!,
-                    it.poster_sizes ?: emptyList(),
-                    it.backdrop_sizes ?: emptyList())
-            imageProviderSubject.onNext(newProvider)
+        configuration.images?.let { images ->
+            GlobalScope.launch {
+                val newProvider = TmdbImageUrlProvider(
+                        images.secure_base_url!!,
+                        images.poster_sizes ?: emptyList(),
+                        images.backdrop_sizes ?: emptyList())
+                imageProviderSubject.emit(newProvider)
+            }
         }
     }
 }

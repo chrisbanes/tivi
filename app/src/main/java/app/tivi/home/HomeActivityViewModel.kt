@@ -24,10 +24,14 @@ import app.tivi.interactors.launchInteractor
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.TiviMvRxViewModel
+import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
@@ -39,20 +43,26 @@ class HomeActivityViewModel @AssistedInject constructor(
     observeUserDetails: ObserveUserDetails
 ) : TiviMvRxViewModel<HomeActivityViewState>(initialState) {
     init {
-        observeUserDetails.observe()
-                .execute { copy(user = it()) }
-        observeUserDetails(ObserveUserDetails.Params("me"))
+        viewModelScope.launchObserve(observeUserDetails) {
+            it.execute { copy(user = it()) }
+        }
 
-        traktManager.state
-                .distinctUntilChanged()
-                .doOnNext {
-                    if (it == TraktAuthState.LOGGED_IN) {
-                        viewModelScope.launchInteractor(updateUserDetails,
-                                UpdateUserDetails.Params("me", false))
+        viewModelScope.launchInteractor(observeUserDetails,
+                ObserveUserDetails.Params("me"))
+
+        viewModelScope.launch {
+            traktManager.state
+                    .distinctUntilChanged()
+                    .onEach {
+                        if (it == TraktAuthState.LOGGED_IN) {
+                            viewModelScope.launchInteractor(updateUserDetails,
+                                    UpdateUserDetails.Params("me", false))
+                        }
                     }
-                }.execute {
-                    copy(authState = it() ?: TraktAuthState.LOGGED_OUT)
-                }
+                    .execute {
+                        copy(authState = it() ?: TraktAuthState.LOGGED_OUT)
+                    }
+        }
     }
 
     fun onAuthResponse(

@@ -32,10 +32,12 @@ dependencies {
 
     api Libs.AndroidX.Room.common
     api Libs.AndroidX.Room.ktx
+
     api Libs.AndroidX.Paging.common
 
-    api Libs.RxJava.rxJava
-    api Libs.RxJava.rxKotlin
+    implementation Libs.Coroutines.rx2
+
+    implementation Libs.RxJava.rxJava
 
     api Libs.threeTenBpNoTzdb
 

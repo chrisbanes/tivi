@@ -24,7 +24,6 @@ import app.tivi.appinitializers.AppInitializer
 import app.tivi.appinitializers.EmojiInitializer
 import app.tivi.appinitializers.EpoxyInitializer
 import app.tivi.appinitializers.PreferencesInitializer
-import app.tivi.appinitializers.RxAndroidInitializer
 import app.tivi.appinitializers.ThreeTenBpInitializer
 import app.tivi.appinitializers.TimberInitializer
 import app.tivi.settings.TiviPreferences
@@ -62,10 +61,6 @@ abstract class AppModuleBinds {
     @Binds
     @IntoSet
     abstract fun provideEpoxyInitializer(bind: EpoxyInitializer): AppInitializer
-
-    @Binds
-    @IntoSet
-    abstract fun provideRxAndroidInitializer(bind: RxAndroidInitializer): AppInitializer
 
     @Binds
     @IntoSet

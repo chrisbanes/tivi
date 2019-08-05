@@ -16,26 +16,29 @@
 
 package app.tivi.interactors
 
+import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import androidx.paging.RxPagedListBuilder
 import app.tivi.data.entities.SortOption
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
-import app.tivi.util.AppRxSchedulers
-import io.reactivex.Observable
+import app.tivi.extensions.asFlow
+import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class ObserveFollowedShows @Inject constructor(
-    private val schedulers: AppRxSchedulers,
+class ObservePagedFollowedShows @Inject constructor(
+    dispatchers: AppCoroutineDispatchers,
     private val followedShowsRepository: FollowedShowsRepository
-) : PagingInteractor<ObserveFollowedShows.Parameters, FollowedShowEntryWithShow>() {
-    override fun createObservable(params: Parameters): Observable<PagedList<FollowedShowEntryWithShow>> {
+) : PagingInteractor<ObservePagedFollowedShows.Parameters, FollowedShowEntryWithShow>() {
+    override val dispatcher: CoroutineDispatcher = dispatchers.io
+
+    override fun createObservable(params: Parameters): Flow<PagedList<FollowedShowEntryWithShow>> {
         val source = followedShowsRepository.observeFollowedShows(params.sort, params.filter)
-        return RxPagedListBuilder(source, params.pagingConfig)
+        return LivePagedListBuilder(source, params.pagingConfig)
                 .setBoundaryCallback(params.boundaryCallback)
-                .setFetchScheduler(schedulers.io)
-                .setNotifyScheduler(schedulers.main)
-                .buildObservable()
+                .build()
+                .asFlow()
     }
 
     data class Parameters(

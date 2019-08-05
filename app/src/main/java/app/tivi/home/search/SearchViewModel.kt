@@ -20,45 +20,50 @@ import androidx.lifecycle.viewModelScope
 import app.tivi.TiviMvRxViewModel
 import app.tivi.interactors.SearchShows
 import app.tivi.interactors.launchInteractor
+import app.tivi.interactors.launchObserve
 import app.tivi.tmdb.TmdbManager
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import io.reactivex.subjects.BehaviorSubject
-import java.util.concurrent.TimeUnit
+import hu.akarnokd.kotlin.flow.PublishSubject
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.launch
 
 class SearchViewModel @AssistedInject constructor(
     @Assisted initialState: SearchViewState,
     private val searchShows: SearchShows,
     tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<SearchViewState>(initialState) {
-    private val searchQuery = BehaviorSubject.create<String>()
+    private val searchQuery = PublishSubject<String>()
 
     init {
-        searchQuery.debounce(300, TimeUnit.MILLISECONDS)
-                .subscribe({
-                    viewModelScope.launchInteractor(searchShows, SearchShows.Params(it))
-                }, {
-                    // TODO: onError
-                }).disposeOnClear()
+        viewModelScope.launch {
+            searchQuery.debounce(300)
+                    .collect {
+                        viewModelScope.launchInteractor(searchShows, SearchShows.Params(it))
+                    }
+        }
 
-        tmdbManager.imageProviderObservable
-                .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
+        viewModelScope.launch {
+            tmdbManager.imageProviderFlow
+                    .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
+        }
 
-        searchShows.observe().execute {
-            copy(searchResults = it())
+        viewModelScope.launchObserve(searchShows) {
+            it.execute { copy(searchResults = it()) }
         }
     }
 
     fun setSearchQuery(query: String) {
-        searchQuery.onNext(query)
+        viewModelScope.launch {
+            searchQuery.emit(query)
+        }
     }
 
-    fun clearQuery() {
-        searchQuery.onNext("")
-    }
+    fun clearQuery() = setSearchQuery("")
 
     @AssistedInject.Factory
     interface Factory {

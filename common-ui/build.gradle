@@ -65,6 +65,4 @@ dependencies {
     kapt Libs.Dagger.androidProcessor
 
     api Libs.mvRx
-
-    debugImplementation Libs.rxLint
 }

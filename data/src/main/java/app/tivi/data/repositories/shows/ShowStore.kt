@@ -23,8 +23,7 @@ import app.tivi.data.daos.ShowImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.resultentities.ShowDetailed
-import io.reactivex.Observable
+import kotlinx.coroutines.reactive.flow.asFlow
 import javax.inject.Inject
 
 class ShowStore @Inject constructor(
@@ -40,7 +39,7 @@ class ShowStore @Inject constructor(
 
     suspend fun getShowDetailed(showId: Long) = showDao.getShowWithIdDetailed(showId)
 
-    fun observeShowDetailed(showId: Long): Observable<ShowDetailed> = showDao.getShowWithIdObservable(showId)
+    fun observeShowDetailed(showId: Long) = showDao.getShowWithIdFlowable(showId).asFlow()
 
     suspend fun saveShow(show: TiviShow) = entityInserter.insertOrUpdate(showDao, show)
 

@@ -40,12 +40,14 @@ import app.tivi.interactors.launchInteractor
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
 import app.tivi.TiviMvRxViewModel
+import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class ShowDetailsFragmentViewModel @AssistedInject constructor(
@@ -63,51 +65,64 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     private val changeSeasonFollowStatus: ChangeSeasonFollowStatus
 ) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
     init {
-        observeShowFollowStatus.observe()
-                .distinctUntilChanged()
-                .execute {
-                    when (it) {
-                        is Success -> copy(isFollowed = it.invoke()!!)
-                        else -> copy(isFollowed = false)
-                    }
+        viewModelScope.launchObserve(observeShowFollowStatus) {
+            it.distinctUntilChanged().execute { result ->
+                when (result) {
+                    is Success -> copy(isFollowed = result())
+                    else -> copy(isFollowed = false)
                 }
+            }
+        }
 
-        observeShowDetails.observe()
-                .distinctUntilChanged()
-                .execute {
-                    if (it is Success) {
-                        val value = it()!!
-                        copy(show = value.show, posterImage = value.poster, backdropImage = value.backdrop)
-                    } else {
-                        this
-                    }
+        viewModelScope.launchObserve(observeShowDetails) {
+            it.distinctUntilChanged().execute { result ->
+                if (result is Success) {
+                    val value = result()
+                    copy(show = value.show, posterImage = value.poster, backdropImage = value.backdrop)
+                } else {
+                    this
                 }
+            }
+        }
 
-        observeRelatedShows.observe()
-                .distinctUntilChanged()
-                .execute { copy(relatedShows = it) }
+        viewModelScope.launchObserve(observeRelatedShows) {
+            it.distinctUntilChanged().execute { result ->
+                copy(relatedShows = result)
+            }
+        }
 
-        tmdbManager.imageProviderObservable
-                .execute { copy(tmdbImageUrlProvider = it) }
+        viewModelScope.launch {
+            tmdbManager.imageProviderFlow
+                    .execute { copy(tmdbImageUrlProvider = it) }
+        }
 
-        observeShowSeasons.observe()
-                .distinctUntilChanged()
-                .execute { copy(seasons = it) }
+        viewModelScope.launchObserve(observeShowSeasons) {
+            it.distinctUntilChanged().execute { result ->
+                copy(seasons = result)
+            }
+        }
 
         withState {
-            observeShowFollowStatus(ObserveShowFollowStatus.Params(it.showId))
-            observeShowDetails(ObserveShowDetails.Params(it.showId))
-            observeRelatedShows(ObserveRelatedShows.Params(it.showId))
-            observeShowSeasons(ObserveFollowedShowSeasonData.Params(it.showId))
+            viewModelScope.launchInteractor(observeShowFollowStatus,
+                    ObserveShowFollowStatus.Params(it.showId))
+            viewModelScope.launchInteractor(
+                    observeShowDetails, ObserveShowDetails.Params(it.showId))
+            viewModelScope.launchInteractor(observeRelatedShows,
+                    ObserveRelatedShows.Params(it.showId))
+            viewModelScope.launchInteractor(observeShowSeasons,
+                    ObserveFollowedShowSeasonData.Params(it.showId))
         }
 
         refresh(false)
     }
 
     fun refresh(fromUserInteraction: Boolean) = withState {
-        viewModelScope.launchInteractor(updateShowDetails, UpdateShowDetails.Params(it.showId, fromUserInteraction))
-        viewModelScope.launchInteractor(updateRelatedShows, UpdateRelatedShows.Params(it.showId, fromUserInteraction))
-        viewModelScope.launchInteractor(updateShowSeasons, UpdateFollowedShowSeasonData.Params(it.showId, fromUserInteraction))
+        viewModelScope.launchInteractor(updateShowDetails,
+                UpdateShowDetails.Params(it.showId, fromUserInteraction))
+        viewModelScope.launchInteractor(updateRelatedShows,
+                UpdateRelatedShows.Params(it.showId, fromUserInteraction))
+        viewModelScope.launchInteractor(updateShowSeasons,
+                UpdateFollowedShowSeasonData.Params(it.showId, fromUserInteraction))
     }
 
     fun onToggleMyShowsButtonClicked() = withState {
@@ -129,11 +144,13 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     ) = showDetailsNavigator.showEpisodeDetails(episode)
 
     fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
-        viewModelScope.launchInteractor(changeSeasonWatchedStatus, Params(season.id, Action.WATCHED, onlyAired, date))
+        viewModelScope.launchInteractor(changeSeasonWatchedStatus,
+                Params(season.id, Action.WATCHED, onlyAired, date))
     }
 
     fun onMarkSeasonUnwatched(season: Season) {
-        viewModelScope.launchInteractor(changeSeasonWatchedStatus, Params(season.id, Action.UNWATCH))
+        viewModelScope.launchInteractor(changeSeasonWatchedStatus,
+                Params(season.id, Action.UNWATCH))
     }
 
     fun toggleSeasonExpanded(season: Season) {

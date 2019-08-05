@@ -28,12 +28,15 @@ import app.tivi.interactors.launchInteractor
 import app.tivi.episodedetails.EpisodeDetailsViewState.Action
 import app.tivi.tmdb.TmdbManager
 import app.tivi.TiviMvRxViewModel
+import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
 class EpisodeDetailsViewModel @AssistedInject constructor(
@@ -47,22 +50,30 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
     init {
-        observeEpisodeDetails.observe()
-                .execute { copy(episode = it) }
-
-        observeEpisodeWatches.observe()
-                .execute {
-                    val action = if (it is Success && it().isNotEmpty()) Action.UNWATCH else Action.WATCH
-                    copy(watches = it, action = action)
-                }
-
-        withState {
-            observeEpisodeDetails(ObserveEpisodeDetails.Params(it.episodeId))
-            observeEpisodeWatches(ObserveEpisodeWatches.Params(it.episodeId))
+        viewModelScope.launchObserve(observeEpisodeDetails) {
+            it.execute { result -> copy(episode = result) }
         }
 
-        tmdbManager.imageProviderObservable
-                .execute { copy(tmdbImageUrlProvider = it) }
+        viewModelScope.launchObserve(observeEpisodeWatches) {
+            it.onStart {
+                emit(emptyList())
+            }.execute { result ->
+                val action = if (result is Success && result().isNotEmpty()) Action.UNWATCH else Action.WATCH
+                copy(watches = result, action = action)
+            }
+        }
+
+        withState {
+            viewModelScope.launchInteractor(observeEpisodeDetails,
+                    ObserveEpisodeDetails.Params(it.episodeId))
+            viewModelScope.launchInteractor(observeEpisodeWatches,
+                    ObserveEpisodeWatches.Params(it.episodeId))
+        }
+
+        viewModelScope.launch {
+            tmdbManager.imageProviderFlow
+                    .execute { copy(tmdbImageUrlProvider = it) }
+        }
 
         refresh()
     }

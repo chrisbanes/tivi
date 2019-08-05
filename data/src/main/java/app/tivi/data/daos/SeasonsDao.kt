@@ -22,13 +22,13 @@ import androidx.room.Transaction
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.Season.Companion.NUMBER_SPECIALS
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
-import io.reactivex.Observable
+import io.reactivex.Flowable
 
 @Dao
 abstract class SeasonsDao : EntityDao<Season> {
     @Transaction
     @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number=$NUMBER_SPECIALS, number")
-    abstract fun seasonsWithEpisodesForShowId(showId: Long): Observable<List<SeasonWithEpisodesAndWatches>>
+    abstract fun seasonsWithEpisodesForShowId(showId: Long): Flowable<List<SeasonWithEpisodesAndWatches>>
 
     @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number=$NUMBER_SPECIALS, number")
     abstract suspend fun seasonsForShowId(showId: Long): List<Season>

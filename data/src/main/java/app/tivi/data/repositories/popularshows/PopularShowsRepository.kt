@@ -22,7 +22,8 @@ import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.extensions.parallelForEach
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.reactive.flow.asFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -35,7 +36,9 @@ class PopularShowsRepository @Inject constructor(
 ) {
     fun observeForPaging(): DataSource.Factory<Int, PopularEntryWithShow> = popularShowsStore.observeForPaging()
 
-    fun observeForObservable(): Observable<List<PopularEntryWithShow>> = popularShowsStore.observeForObservable(15, 0)
+    fun observeForObservable(): Flow<List<PopularEntryWithShow>> {
+        return popularShowsStore.observeForObservable(15, 0).asFlow()
+    }
 
     suspend fun loadNextPage() {
         val lastPage = popularShowsStore.getLastPage()

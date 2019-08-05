@@ -23,6 +23,8 @@ import app.tivi.inject.ApplicationId
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationServiceConfiguration
 import net.openid.appauth.ClientAuthentication
@@ -38,11 +40,11 @@ import javax.inject.Singleton
 @Module
 class TraktAuthModule {
     @Provides
+    @Singleton
     fun provideTrakt(
         @Named("cache") cacheDir: File,
         interceptor: HttpLoggingInterceptor,
-        @Named("trakt-client-id") clientId: String,
-        traktManager: TraktManager
+        @Named("trakt-client-id") clientId: String
     ): TraktV2 {
         return object : TraktV2(clientId) {
             override fun setOkHttpClientDefaults(builder: OkHttpClient.Builder) {
@@ -52,8 +54,6 @@ class TraktAuthModule {
                     cache(Cache(File(cacheDir, "trakt_cache"), 10 * 1024 * 1024))
                 }
             }
-        }.apply {
-            traktManager.applyToTraktClient(this)
         }
     }
 
@@ -85,7 +85,9 @@ class TraktAuthModule {
     }
 
     @Provides
-    fun provideAuthState(traktManager: TraktManager) = traktManager.state.blockingFirst()
+    fun provideAuthState(traktManager: TraktManager) = runBlocking {
+        traktManager.state.first()
+    }
 
     @Provides
     fun provideAuthRequest(

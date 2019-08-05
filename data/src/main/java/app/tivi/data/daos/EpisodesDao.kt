@@ -19,7 +19,7 @@ package app.tivi.data.daos
 import androidx.room.Dao
 import androidx.room.Query
 import app.tivi.data.entities.Episode
-import io.reactivex.Observable
+import io.reactivex.Flowable
 
 @Dao
 abstract class EpisodesDao : EntityDao<Episode> {
@@ -45,7 +45,7 @@ abstract class EpisodesDao : EntityDao<Episode> {
     abstract suspend fun episodeIdWithTraktId(traktId: Int): Long?
 
     @Query("SELECT * from episodes WHERE id = :id")
-    abstract fun episodeWithIdObservable(id: Long): Observable<Episode>
+    abstract fun episodeWithIdObservable(id: Long): Flowable<Episode>
 
     @Query("SELECT shows.id FROM shows" +
             " INNER JOIN seasons AS s ON s.show_id = shows.id" +

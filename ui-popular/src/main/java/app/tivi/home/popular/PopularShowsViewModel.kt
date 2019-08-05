@@ -16,6 +16,7 @@
 
 package app.tivi.home.popular
 
+import androidx.lifecycle.viewModelScope
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.interactors.ObservePagedPopularShows
 import app.tivi.interactors.UpdatePopularShows
@@ -26,6 +27,7 @@ import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class PopularShowsViewModel @Inject constructor(
@@ -41,7 +43,9 @@ class PopularShowsViewModel @Inject constructor(
         logger
 ) {
     init {
-        observePagedPopularShows(ObservePagedPopularShows.Params(pageListConfig, boundaryCallback))
+        viewModelScope.launch {
+            observePagedPopularShows(ObservePagedPopularShows.Params(pageListConfig, boundaryCallback))
+        }
     }
 
     override suspend fun callLoadMore() = interactor.execute(UpdatePopularShows.Params(NEXT_PAGE))

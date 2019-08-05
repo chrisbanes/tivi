@@ -28,8 +28,6 @@ kapt {
 dependencies {
     implementation project(":base")
 
-    api Libs.RxJava.rxJava
-
     kapt Libs.Dagger.compiler
 
     api (Libs.tmdbJava) {

@@ -21,15 +21,16 @@ import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.entities.TrendingShowEntry
 import app.tivi.data.resultentities.TrendingEntryWithShow
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.reactive.flow.asFlow
 import javax.inject.Inject
 
 class TrendingShowsStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val trendingShowsDao: TrendingDao
 ) {
-    fun observeForObservable(count: Int, offset: Int): Observable<List<TrendingEntryWithShow>> {
-        return trendingShowsDao.entriesObservable(count, offset)
+    fun observeForObservable(count: Int, offset: Int): Flow<List<TrendingEntryWithShow>> {
+        return trendingShowsDao.entriesObservable(count, offset).asFlow()
     }
 
     fun observeForPaging(): DataSource.Factory<Int, TrendingEntryWithShow> = trendingShowsDao.entriesDataSource()

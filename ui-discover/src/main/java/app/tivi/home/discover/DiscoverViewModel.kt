@@ -23,13 +23,17 @@ import app.tivi.interactors.UpdatePopularShows
 import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
-import app.tivi.util.RxLoadingCounter
+import app.tivi.util.ObservableLoadingCounter
 import app.tivi.TiviMvRxViewModel
+import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 
 class DiscoverViewModel @AssistedInject constructor(
     @Assisted initialState: DiscoverViewState,
@@ -37,26 +41,37 @@ class DiscoverViewModel @AssistedInject constructor(
     observePopularShows: ObservePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,
     observeTrendingShows: ObserveTrendingShows,
-    tmdbManager: TmdbManager
+    tmdbManager: TmdbManager,
+    private val loadingState: ObservableLoadingCounter
 ) : TiviMvRxViewModel<DiscoverViewState>(initialState) {
-    private val loadingState = RxLoadingCounter()
 
     init {
-        tmdbManager.imageProviderObservable
-                .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
+        viewModelScope.launch {
+            tmdbManager.imageProviderFlow.execute {
+                copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider)
+            }
+        }
 
-        loadingState.observable
-                .execute { copy(isLoading = it() ?: false) }
+        viewModelScope.launch {
+            loadingState.observable
+                    .distinctUntilChanged()
+                    .debounce(2000)
+                    .execute { copy(isLoading = it() ?: false) }
+        }
 
-        observeTrendingShows.observe()
-                .distinctUntilChanged()
-                .execute { copy(trendingItems = it() ?: emptyList()) }
-        observeTrendingShows(Unit)
+        viewModelScope.launchObserve(observeTrendingShows) {
+            it.distinctUntilChanged().execute {
+                copy(trendingItems = it() ?: emptyList())
+            }
+        }
+        viewModelScope.launchInteractor(observeTrendingShows)
 
-        observePopularShows.observe()
-                .distinctUntilChanged()
-                .execute { copy(popularItems = it() ?: emptyList()) }
-        observePopularShows(Unit)
+        viewModelScope.launchObserve(observePopularShows) {
+            it.distinctUntilChanged().execute {
+                copy(popularItems = it() ?: emptyList())
+            }
+        }
+        viewModelScope.launchInteractor(observePopularShows)
 
         refresh()
     }

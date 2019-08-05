@@ -20,7 +20,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
-import app.tivi.extensions.debounceLoading
 import app.tivi.interactors.ObserveWatchedShows
 import app.tivi.interactors.UpdateWatchedShows
 import app.tivi.interactors.launchInteractor
@@ -28,15 +27,18 @@ import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.Logger
-import app.tivi.util.RxLoadingCounter
+import app.tivi.util.ObservableLoadingCounter
 import app.tivi.TiviMvRxViewModel
+import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.plusAssign
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 class WatchedViewModel @AssistedInject constructor(
     @Assisted initialState: WatchedViewState,
@@ -44,11 +46,9 @@ class WatchedViewModel @AssistedInject constructor(
     private val observeWatchedShows: ObserveWatchedShows,
     private val traktManager: TraktManager,
     tmdbManager: TmdbManager,
-    private val logger: Logger
+    private val logger: Logger,
+    private val loadingState: ObservableLoadingCounter
 ) : TiviMvRxViewModel<WatchedViewState>(initialState) {
-    private val loadingState = RxLoadingCounter()
-    private var refreshDisposable: Disposable? = null
-
     private val boundaryCallback = object : PagedList.BoundaryCallback<WatchedShowEntryWithShow>() {
         override fun onZeroItemsLoaded() {
             setState { copy(isEmpty = filter.isNullOrEmpty()) }
@@ -64,17 +64,21 @@ class WatchedViewModel @AssistedInject constructor(
     }
 
     init {
-        loadingState.observable
-                .debounceLoading()
-                .execute {
-            copy(isLoading = it() ?: false)
+        viewModelScope.launch {
+            loadingState.observable
+                    .distinctUntilChanged()
+                    .debounce(2000)
+                    .execute { copy(isLoading = it() ?: false) }
         }
 
-        tmdbManager.imageProviderObservable
-                .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
+        viewModelScope.launch {
+            tmdbManager.imageProviderFlow
+                    .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
+        }
 
-        observeWatchedShows.observe()
-                .execute { copy(watchedShows = it()) }
+        viewModelScope.launchObserve(observeWatchedShows) {
+            it.execute { copy(watchedShows = it()) }
+        }
 
         // Set the available sorting options
         setState {
@@ -88,7 +92,7 @@ class WatchedViewModel @AssistedInject constructor(
     }
 
     private fun updateDataSource(state: WatchedViewState) {
-        observeWatchedShows(
+        viewModelScope.launchInteractor(observeWatchedShows,
                 ObserveWatchedShows.Params(
                         sort = state.sort,
                         filter = state.filter,
@@ -99,15 +103,12 @@ class WatchedViewModel @AssistedInject constructor(
     }
 
     fun refresh() {
-        refreshDisposable?.dispose()
-        refreshDisposable = null
-
-        traktManager.state
-                .filter { it == TraktAuthState.LOGGED_IN }
-                .firstOrError()
-                .subscribe({ refreshWatched() }, logger::e)
-                .also { refreshDisposable = it }
-                .disposeOnClear()
+        viewModelScope.launch {
+            traktManager.state.first { it == TraktAuthState.LOGGED_IN }
+                    .run {
+                        refreshWatched()
+                    }
+        }
     }
 
     fun setFilter(filter: String) {

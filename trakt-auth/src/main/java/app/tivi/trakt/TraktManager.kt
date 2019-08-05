@@ -21,15 +21,13 @@ import androidx.core.content.edit
 import app.tivi.AppNavigator
 import app.tivi.actions.ShowTasks
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.AppRxSchedulers
 import app.tivi.util.Logger
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
-import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.subjects.BehaviorSubject
+import hu.akarnokd.kotlin.flow.BehaviorSubject
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.openid.appauth.AuthState
@@ -46,48 +44,48 @@ import javax.inject.Singleton
 
 @Singleton
 class TraktManager @Inject constructor(
-    schedulers: AppRxSchedulers,
     private val dispatchers: AppCoroutineDispatchers,
-    private val disposables: CompositeDisposable,
     @Named("app") private val appNavigator: AppNavigator,
     private val requestProvider: Provider<AuthorizationRequest>,
     private val clientAuth: Lazy<ClientAuthentication>,
     @Named("auth") private val authPrefs: SharedPreferences,
     private val showTasks: ShowTasks,
-    private val logger: Logger
+    private val logger: Logger,
+    private val traktClient: Lazy<TraktV2>
 ) {
-    private val authState = BehaviorSubject.create<AuthState>()
+    private val authState = BehaviorSubject<AuthState>()
 
-    private val _state = BehaviorSubject.createDefault(TraktAuthState.LOGGED_OUT)
-    val state: Observable<TraktAuthState>
+    private val _state = BehaviorSubject(TraktAuthState.LOGGED_OUT)
+    val state: Flow<TraktAuthState>
         get() = _state
 
     init {
         // Observer which updates local state
-        disposables += authState.observeOn(schedulers.main)
-                .subscribe(::updateAuthState, logger::e)
+        GlobalScope.launch(dispatchers.main) {
+            authState.collect { authState ->
+                updateAuthState(authState)
+
+                traktClient.get().apply {
+                    accessToken(authState.accessToken)
+                    refreshToken(authState.refreshToken)
+                }
+            }
+        }
 
         // Read the auth state from prefs
         GlobalScope.launch(dispatchers.main) {
             val state = withContext(dispatchers.io) {
                 readAuthState()
             }
-            authState.onNext(state)
+            authState.emit(state)
         }
     }
 
-    internal fun applyToTraktClient(traktClient: TraktV2) {
-        authState.value?.also {
-            traktClient.accessToken(it.accessToken)
-            traktClient.refreshToken(it.refreshToken)
-        }
-    }
-
-    private fun updateAuthState(authState: AuthState) {
+    private suspend fun updateAuthState(authState: AuthState) {
         if (authState.isAuthorized) {
-            _state.onNext(TraktAuthState.LOGGED_IN)
+            _state.emit(TraktAuthState.LOGGED_IN)
         } else {
-            _state.onNext(TraktAuthState.LOGGED_OUT)
+            _state.emit(TraktAuthState.LOGGED_OUT)
         }
     }
 
@@ -112,10 +110,12 @@ class TraktManager @Inject constructor(
 
     private fun onTokenExchangeResponse(response: TokenResponse?, ex: AuthorizationException?) {
         val newState = AuthState().apply { update(response, ex) }
-        // Update our local state
-        authState.onNext(newState)
-        // Persist auth state
+        GlobalScope.launch(dispatchers.main) {
+            // Update our local state
+            authState.emit(newState)
+        }
         GlobalScope.launch(dispatchers.io) {
+            // Persist auth state
             persistAuthState(newState)
         }
         // Now trigger a sync of all shows
