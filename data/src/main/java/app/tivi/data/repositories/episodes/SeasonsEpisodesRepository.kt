@@ -56,6 +56,8 @@ class SeasonsEpisodesRepository @Inject constructor(
 
     fun observeEpisodeWatches(episodeId: Long) = episodeWatchStore.observeEpisodeWatches(episodeId)
 
+    fun observeNextEpisodeToWatch(showId: Long) = seasonsEpisodesStore.observeShowNextEpisodeToWatch(showId)
+
     suspend fun needShowSeasonsUpdate(showId: Long, expiry: Instant = instantInPast(days = 7)): Boolean {
         return seasonsLastRequestStore.isRequestBefore(showId, expiry)
     }

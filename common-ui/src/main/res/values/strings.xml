@@ -69,6 +69,8 @@
         <item quantity="other">Runtime: %1$d minutes</item>
     </plurals>
 
+    <string name="details_next_episode_to_watch">Next episode to watch</string>
+
     <string name="follow_show_add">Follow show</string>
     <string name="follow_show_remove">Un-follow show</string>
 

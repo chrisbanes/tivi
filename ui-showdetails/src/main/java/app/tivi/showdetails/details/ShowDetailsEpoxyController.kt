@@ -65,6 +65,23 @@ class ShowDetailsEpoxyController @Inject constructor(
     override fun buildModels(viewState: ShowDetailsViewState) {
         buildShowModels(viewState.show)
 
+        val episodeWithSeason = viewState.nextEpisodeToWatch()
+        if (episodeWithSeason != null) {
+            detailsHeader {
+                id("next_episode_header")
+                title(R.string.details_next_episode_to_watch)
+                spanSizeOverride(TotalSpanOverride)
+            }
+            detailsNextEpisodeToWatch {
+                id("next_episode_header_${episodeWithSeason.hashCode()}")
+                spanSizeOverride(TotalSpanOverride)
+                season(episodeWithSeason.season)
+                episode(episodeWithSeason.episode)
+                textCreator(textCreator)
+                clickListener { view -> callbacks?.onEpisodeClicked(episodeWithSeason.episode!!, view) }
+            }
+        }
+
         buildRelatedShowsModels(viewState.relatedShows, viewState.tmdbImageUrlProvider)
 
         buildSeasonsModels(viewState.seasons, viewState.expandedSeasonIds)

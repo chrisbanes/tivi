@@ -20,6 +20,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import app.tivi.data.entities.Episode
 import io.reactivex.Flowable
+import app.tivi.data.resultentities.EpisodeWithSeason
 
 @Dao
 abstract class EpisodesDao : EntityDao<Episode> {
@@ -52,4 +53,28 @@ abstract class EpisodesDao : EntityDao<Episode> {
             " INNER JOIN episodes AS eps ON eps.season_id = s.id" +
             " WHERE eps.id = :episodeId")
     abstract suspend fun showIdForEpisodeId(episodeId: Long): Long
+
+    @Query("""
+        SELECT eps.*, MAX((100 * s.number) + eps.number) AS computed_abs_number
+        FROM shows
+        INNER JOIN seasons AS s ON shows.id = s.show_id
+        INNER JOIN episodes AS eps ON eps.season_id = s.id
+        INNER JOIN episode_watch_entries AS ew ON ew.episode_id = eps.id
+        WHERE s.number != 0
+            AND s.ignored = 0
+            AND shows.id = :showId
+    """)
+    abstract fun latestWatchedEpisodeForShowId(showId: Long): Flowable<EpisodeWithSeason>
+
+    @Query("""
+        SELECT eps.*, MIN((1000 * s.number) + eps.number) AS computed_abs_number
+        FROM shows
+        INNER JOIN seasons AS s ON shows.id = s.show_id
+        INNER JOIN episodes AS eps ON eps.season_id = s.id
+        WHERE s.number != 0
+            AND s.ignored = 0
+            AND shows.id = :showId
+            AND ((1000 * s.number) + eps.number) > ((1000 * :seasonNumber) + :episodeNumber)
+    """)
+    abstract fun nextEpisodeForShowAfter(showId: Long, seasonNumber: Int, episodeNumber: Int): Flowable<EpisodeWithSeason>
 }

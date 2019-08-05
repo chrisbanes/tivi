@@ -18,12 +18,12 @@ package app.tivi.interactors
 
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
-import app.tivi.interactors.UpdateFollowedShowSeasonData.Params
+import app.tivi.interactors.UpdateShowSeasonData.Params
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
-class UpdateFollowedShowSeasonData @Inject constructor(
+class UpdateShowSeasonData @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     private val followedShowsRepository: FollowedShowsRepository
