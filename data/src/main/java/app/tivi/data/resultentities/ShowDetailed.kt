@@ -32,11 +32,13 @@ class ShowDetailed {
     @Relation(parentColumn = "id", entityColumn = "show_id")
     var images: List<ShowTmdbImage> = emptyList()
 
-    @delegate:Ignore
-    val backdrop: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) { images.findHighestRatedBackdrop() }
+    @get:Ignore
+    val backdrop: ShowTmdbImage?
+        get() = images.findHighestRatedBackdrop()
 
-    @delegate:Ignore
-    val poster: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) { images.findHighestRatedPoster() }
+    @get:Ignore
+    val poster: ShowTmdbImage?
+        get() = images.findHighestRatedPoster()
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true

@@ -117,9 +117,12 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     fun refresh(fromUserInteraction: Boolean) = withState {
-        viewModelScope.launchInteractor(updateShowDetails, UpdateShowDetails.Params(it.showId, fromUserInteraction))
-        viewModelScope.launchInteractor(updateRelatedShows, UpdateRelatedShows.Params(it.showId, fromUserInteraction))
-        viewModelScope.launchInteractor(updateShowSeasons, UpdateFollowedShowSeasonData.Params(it.showId, fromUserInteraction))
+        viewModelScope.launchInteractor(updateShowDetails,
+                UpdateShowDetails.Params(it.showId, fromUserInteraction))
+        viewModelScope.launchInteractor(updateRelatedShows,
+                UpdateRelatedShows.Params(it.showId, fromUserInteraction))
+        viewModelScope.launchInteractor(updateShowSeasons,
+                UpdateFollowedShowSeasonData.Params(it.showId, fromUserInteraction))
     }
 
     fun onToggleMyShowsButtonClicked() = withState {
@@ -141,11 +144,13 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     ) = showDetailsNavigator.showEpisodeDetails(episode)
 
     fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
-        viewModelScope.launchInteractor(changeSeasonWatchedStatus, Params(season.id, Action.WATCHED, onlyAired, date))
+        viewModelScope.launchInteractor(changeSeasonWatchedStatus,
+                Params(season.id, Action.WATCHED, onlyAired, date))
     }
 
     fun onMarkSeasonUnwatched(season: Season) {
-        viewModelScope.launchInteractor(changeSeasonWatchedStatus, Params(season.id, Action.UNWATCH))
+        viewModelScope.launchInteractor(changeSeasonWatchedStatus,
+                Params(season.id, Action.UNWATCH))
     }
 
     fun toggleSeasonExpanded(season: Season) {

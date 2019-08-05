@@ -42,7 +42,7 @@ class TmdbManager @Inject constructor(
     }
 
     private fun refreshConfiguration() {
-        GlobalScope.launch(dispatchers.main) {
+        GlobalScope.launch {
             try {
                 val config = withContext(dispatchers.io) {
                     tmdbClient.configurationService().configuration().fetchBodyWithRetry()
@@ -56,7 +56,7 @@ class TmdbManager @Inject constructor(
 
     private fun onConfigurationLoaded(configuration: Configuration) {
         configuration.images?.let { images ->
-            GlobalScope.launch(dispatchers.main) {
+            GlobalScope.launch {
                 val newProvider = TmdbImageUrlProvider(
                         images.secure_base_url!!,
                         images.poster_sizes ?: emptyList(),
