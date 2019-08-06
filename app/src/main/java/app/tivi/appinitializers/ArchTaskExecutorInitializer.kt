@@ -19,7 +19,6 @@ package app.tivi.appinitializers
 import android.app.Application
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.arch.core.executor.TaskExecutor
 import java.util.concurrent.Executor
@@ -34,8 +33,6 @@ class ArchTaskExecutorInitializer @Inject constructor(
             private val lock = Any()
 
             override fun executeOnDiskIO(runnable: Runnable) {
-                Log.d("ArchTaskExecutor", "executeOnDiskIO: $backgroundExecutor")
-
                 backgroundExecutor.execute(runnable)
             }
 
