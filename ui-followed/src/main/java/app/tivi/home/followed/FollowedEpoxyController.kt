@@ -16,34 +16,28 @@
 
 package app.tivi.home.followed
 
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import app.tivi.common.epoxy.EpoxyModelProperty
+import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.common.layouts.HeaderBindingModel_
-import app.tivi.data.entities.SortOption
-import app.tivi.data.entities.findHighestRatedPoster
-import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.common.layouts.emptyState
 import app.tivi.common.layouts.filter
 import app.tivi.common.layouts.header
+import app.tivi.data.entities.SortOption
+import app.tivi.data.entities.findHighestRatedPoster
+import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.home.HomeTextCreator
 import app.tivi.ui.SortPopupMenuListener
-import app.tivi.common.epoxy.EpoxyModelProperty
-import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.ui.popupMenuItemIdToSortOption
-import com.airbnb.epoxy.EpoxyAsyncUtil
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
 import javax.inject.Inject
 
 class FollowedEpoxyController @Inject constructor(
     private val textCreator: HomeTextCreator
-) : PagedListEpoxyController<FollowedShowEntryWithShow>(
-        modelBuildingHandler = Handler(Looper.getMainLooper()),
-        diffingHandler = EpoxyAsyncUtil.getAsyncBackgroundHandler()
-) {
+) : PagedListEpoxyController<FollowedShowEntryWithShow>() {
     var viewState by EpoxyModelProperty { FollowedViewState() }
     var callbacks by EpoxyModelProperty<Callbacks?> { null }
 
