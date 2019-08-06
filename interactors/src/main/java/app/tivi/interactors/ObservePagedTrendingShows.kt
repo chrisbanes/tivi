@@ -16,14 +16,15 @@
 
 package app.tivi.interactors
 
-import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import androidx.paging.RxPagedListBuilder
 import app.tivi.data.repositories.trendingshows.TrendingShowsRepository
 import app.tivi.data.resultentities.TrendingEntryWithShow
-import app.tivi.extensions.asFlow
 import app.tivi.util.AppCoroutineDispatchers
+import io.reactivex.BackpressureStrategy
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.reactive.flow.asFlow
 import javax.inject.Inject
 
 class ObservePagedTrendingShows @Inject constructor(
@@ -34,9 +35,9 @@ class ObservePagedTrendingShows @Inject constructor(
 
     override fun createObservable(params: Params): Flow<PagedList<TrendingEntryWithShow>> {
         val source = trendingShowsRepository.observeForPaging()
-        return LivePagedListBuilder(source, params.pagingConfig)
+        return RxPagedListBuilder(source, params.pagingConfig)
                 .setBoundaryCallback(params.boundaryCallback)
-                .build()
+                .buildFlowable(BackpressureStrategy.LATEST)
                 .asFlow()
     }
 
