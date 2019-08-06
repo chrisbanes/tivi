@@ -37,7 +37,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="44dp"
+        android:layout_height="wrap_content"
         android:foreground="?android:attr/selectableItemBackground"
         android:transitionGroup="true">
 
@@ -47,9 +47,11 @@
             android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/spacing_micro"
             android:layout_marginStart="@dimen/spacing_normal"
+            android:layout_marginTop="@dimen/spacing_small"
+            android:layout_marginBottom="@dimen/spacing_small"
             android:gravity="center_vertical"
             android:text="@{title}"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:textAppearance="?attr/textAppearanceHeadline6"
             tools:text="Popular" />
 
         <TextView
