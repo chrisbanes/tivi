@@ -16,8 +16,6 @@
 
 package app.tivi.util
 
-import android.os.Handler
-import android.os.Looper
 import androidx.annotation.StringRes
 import app.tivi.common.epoxy.EpoxyModelProperty
 import app.tivi.common.epoxy.TotalSpanOverride
@@ -29,16 +27,12 @@ import app.tivi.common.layouts.infiniteLoading
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.tmdb.TmdbImageUrlProvider
-import com.airbnb.epoxy.EpoxyAsyncUtil
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
 
 abstract class EntryGridEpoxyController<LI : EntryWithShow<out Entry>>(
     @StringRes private val titleRes: Int
-) : PagedListEpoxyController<LI>(
-        modelBuildingHandler = Handler(Looper.getMainLooper()),
-        diffingHandler = EpoxyAsyncUtil.getAsyncBackgroundHandler()
-) {
+) : PagedListEpoxyController<LI>() {
     var isLoading by EpoxyModelProperty { false }
     var tmdbImageUrlProvider by EpoxyModelProperty<TmdbImageUrlProvider?> { null }
 

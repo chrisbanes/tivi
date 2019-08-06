@@ -16,8 +16,6 @@
 
 package app.tivi.home.watched
 
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -34,7 +32,6 @@ import app.tivi.common.epoxy.EpoxyModelProperty
 import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.ui.popupMenuItemIdToSortOption
 import app.tivi.util.TiviDateFormatter
-import com.airbnb.epoxy.EpoxyAsyncUtil
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
 import javax.inject.Inject
@@ -42,10 +39,7 @@ import javax.inject.Inject
 class WatchedEpoxyController @Inject constructor(
     private val textCreator: HomeTextCreator,
     private val dateFormatter: TiviDateFormatter
-) : PagedListEpoxyController<WatchedShowEntryWithShow>(
-        modelBuildingHandler = Handler(Looper.getMainLooper()),
-        diffingHandler = EpoxyAsyncUtil.getAsyncBackgroundHandler()
-) {
+) : PagedListEpoxyController<WatchedShowEntryWithShow>() {
     var viewState by EpoxyModelProperty { WatchedViewState() }
     var callbacks: Callbacks? = null
 

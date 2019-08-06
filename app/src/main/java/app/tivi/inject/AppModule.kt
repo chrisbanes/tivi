@@ -18,6 +18,7 @@ package app.tivi.inject
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
 import androidx.preference.PreferenceManager
 import app.tivi.BuildConfig
 import app.tivi.TiviApplication
@@ -31,6 +32,8 @@ import org.threeten.bp.format.DateTimeFormatter
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 import javax.inject.Named
 import javax.inject.Singleton
 import android.text.format.DateFormat as AndroidDateFormat
@@ -51,6 +54,17 @@ class AppModule {
             computation = Dispatchers.Default,
             main = Dispatchers.Main
     )
+
+    @Singleton
+    @Provides
+    fun provideBackgroundExecutor(): Executor {
+        val parallelism = (Runtime.getRuntime().availableProcessors() + 2).coerceAtLeast(4)
+        return if (Build.VERSION.SDK_INT < 24) {
+            Executors.newFixedThreadPool(parallelism)
+        } else {
+            Executors.newWorkStealingPool(parallelism)
+        }
+    }
 
     @Named("app")
     @Provides
