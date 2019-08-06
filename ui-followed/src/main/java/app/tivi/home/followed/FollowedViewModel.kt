@@ -69,16 +69,21 @@ class FollowedViewModel @AssistedInject constructor(
             loadingState.observable
                     .distinctUntilChanged()
                     .debounce(2000)
-                    .execute { copy(isLoading = it() ?: false) }
+                    .execute {
+                        copy(isLoading = it() ?: false)
+                    }
         }
 
         viewModelScope.launch {
-            tmdbManager.imageProviderFlow
-                    .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
+            tmdbManager.imageProviderFlow.execute {
+                copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider)
+            }
         }
 
         viewModelScope.launchObserve(observePagedFollowedShows) {
-            it.execute { copy(followedShows = it()) }
+            it.execute {
+                copy(followedShows = it())
+            }
         }
 
         // Set the available sorting options
