@@ -66,7 +66,7 @@ class ShowDetailsEpoxyController @Inject constructor(
         buildShowModels(viewState.show)
 
         val episodeWithSeason = viewState.nextEpisodeToWatch()
-        if (episodeWithSeason != null) {
+        if (episodeWithSeason?.episode != null) {
             detailsHeader {
                 id("next_episode_header")
                 title(R.string.details_next_episode_to_watch)
