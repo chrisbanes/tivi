@@ -21,9 +21,8 @@ import hu.akarnokd.kotlin.flow.BehaviorSubject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.switchMap
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -55,10 +54,10 @@ abstract class SuspendingWorkInteractor<P : Any, T> : ObservableInteractor<P, T>
 }
 
 abstract class SubjectInteractor<P : Any, T> : ObservableInteractor<P, T> {
-    private val channel = ConflatedBroadcastChannel<P>()
-    private val flow = channel.asFlow().switchMap { createObservable(it) }
+    private val subject = BehaviorSubject<P>()
+    private val flow = subject.distinctUntilChanged().switchMap { createObservable(it) }
 
-    override suspend operator fun invoke(params: P) = channel.send(params)
+    override suspend operator fun invoke(params: P) = subject.emit(params)
 
     protected abstract fun createObservable(params: P): Flow<T>
 
