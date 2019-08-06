@@ -19,7 +19,7 @@ package app.tivi
 import android.content.Context
 import android.os.Bundle
 import android.view.ViewGroup
-import androidx.core.view.doOnNextLayout
+import androidx.core.view.doOnLayout
 import androidx.core.view.doOnPreDraw
 import androidx.transition.TransitionInflater
 import app.tivi.common.ui.R
@@ -63,6 +63,11 @@ abstract class TiviFragment : DaggerFragment() {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        postponedTransition = false
+    }
+
     override fun startPostponedEnterTransition() {
         postponedTransition = false
         super.startPostponedEnterTransition()
@@ -70,8 +75,8 @@ abstract class TiviFragment : DaggerFragment() {
 
     protected fun scheduleStartPostponedTransitions() {
         if (postponedTransition) {
-            requireView().doOnNextLayout {
-                (it.parent as ViewGroup).doOnPreDraw {
+            view?.doOnLayout {
+                (it.parent as? ViewGroup)?.doOnPreDraw {
                     startPostponedEnterTransition()
                 }
             }
