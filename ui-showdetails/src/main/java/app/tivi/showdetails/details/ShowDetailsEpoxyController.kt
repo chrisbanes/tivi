@@ -149,9 +149,10 @@ class ShowDetailsEpoxyController @Inject constructor(
                     numViewsToShowOnScreen(5.25f)
                     hasFixedSize(true)
 
-                    val small = context.resources.getDimensionPixelSize(R.dimen.spacing_small)
-                    val micro = context.resources.getDimensionPixelSize(R.dimen.spacing_micro)
-                    padding(Carousel.Padding(micro, micro, small, small, micro))
+                    val vert = context.resources.getDimensionPixelSize(R.dimen.spacing_small)
+                    val horiz = context.resources.getDimensionPixelSize(R.dimen.spacing_normal)
+                    val itemSpacing = context.resources.getDimensionPixelSize(R.dimen.spacing_micro)
+                    padding(Carousel.Padding(horiz, vert, horiz, vert, itemSpacing))
 
                     withModelsFrom(related) { relatedEntry ->
                         val relatedShow = relatedEntry.show
