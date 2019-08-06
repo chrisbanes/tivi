@@ -24,9 +24,10 @@ import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
-import hu.akarnokd.kotlin.flow.BehaviorSubject
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -53,16 +54,15 @@ class TraktManager @Inject constructor(
     private val logger: Logger,
     private val traktClient: Lazy<TraktV2>
 ) {
-    private val authState = BehaviorSubject<AuthState>()
+    private val authState = ConflatedBroadcastChannel<AuthState>()
 
-    private val _state = BehaviorSubject(TraktAuthState.LOGGED_OUT)
-    val state: Flow<TraktAuthState>
-        get() = _state
+    private val _state = ConflatedBroadcastChannel(TraktAuthState.LOGGED_OUT)
+    val state: Flow<TraktAuthState> = _state.asFlow()
 
     init {
         // Observer which updates local state
         GlobalScope.launch(dispatchers.main) {
-            authState.collect { authState ->
+            authState.asFlow().collect { authState ->
                 updateAuthState(authState)
 
                 traktClient.get().apply {
@@ -77,15 +77,15 @@ class TraktManager @Inject constructor(
             val state = withContext(dispatchers.io) {
                 readAuthState()
             }
-            authState.emit(state)
+            authState.send(state)
         }
     }
 
     private suspend fun updateAuthState(authState: AuthState) {
         if (authState.isAuthorized) {
-            _state.emit(TraktAuthState.LOGGED_IN)
+            _state.send(TraktAuthState.LOGGED_IN)
         } else {
-            _state.emit(TraktAuthState.LOGGED_OUT)
+            _state.send(TraktAuthState.LOGGED_OUT)
         }
     }
 
@@ -112,7 +112,7 @@ class TraktManager @Inject constructor(
         val newState = AuthState().apply { update(response, ex) }
         GlobalScope.launch(dispatchers.main) {
             // Update our local state
-            authState.emit(newState)
+            authState.send(newState)
         }
         GlobalScope.launch(dispatchers.io) {
             // Persist auth state
