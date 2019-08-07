@@ -17,15 +17,16 @@
 package app.tivi.interactors
 
 import androidx.paging.PagedList
+import io.reactivex.BackpressureStrategy
+import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.switchMap
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.reactive.flow.asFlow
 import kotlinx.coroutines.withContext
 
 interface Interactor<in P> {
@@ -44,11 +45,11 @@ abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T> : Subject
     }
 }
 
-abstract class SuspendingWorkInteractor<P : Any, T> : ObservableInteractor<P, T> {
-    private val subject = ConflatedBroadcastChannel<T>()
-    private val flow = subject.asFlow()
+abstract class SuspendingWorkInteractor<P : Any, T : Any> : ObservableInteractor<P, T> {
+    private val subject = BehaviorSubject.create<T>()
+    private val flow = subject.toFlowable(BackpressureStrategy.LATEST).asFlow()
 
-    override suspend operator fun invoke(params: P) = subject.send(doWork(params))
+    override suspend operator fun invoke(params: P) = subject.onNext(doWork(params))
 
     abstract suspend fun doWork(params: P): T
 
@@ -56,12 +57,13 @@ abstract class SuspendingWorkInteractor<P : Any, T> : ObservableInteractor<P, T>
 }
 
 abstract class SubjectInteractor<P : Any, T> : ObservableInteractor<P, T> {
-    private val subject = ConflatedBroadcastChannel<P>()
-    private val flow = subject.asFlow()
+    private val subject = BehaviorSubject.create<P>()
+    private val flow = subject.toFlowable(BackpressureStrategy.LATEST)
+            .asFlow()
             .distinctUntilChanged()
             .switchMap { createObservable(it) }
 
-    override suspend operator fun invoke(params: P) = subject.send(params)
+    override suspend operator fun invoke(params: P) = subject.onNext(params)
 
     protected abstract fun createObservable(params: P): Flow<T>
 
