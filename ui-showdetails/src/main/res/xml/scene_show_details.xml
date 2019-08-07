@@ -34,18 +34,18 @@
 
         <KeyFrameSet>
             <KeyPosition
-                app:framePosition="20"
+                app:framePosition="18"
                 app:keyPositionType="deltaRelative"
-                app:percentY="0.51"
+                app:percentY="0.5"
                 app:motionTarget="@id/details_poster" />
 
-            <!-- This looks weird. We need a quick change from elevated to not-so-elevated at 20% so we set 2 key
-                 attributes, one at 20% and other at 25%. -->
+            <!-- This looks weird. We need a quick change from elevated to not-so-elevated at 18%
+                 so we set 2 key attributes, one at 18% and other at 25%. -->
             <KeyAttribute
                 android:elevation="@dimen/details_poster_elevation"
                 android:rotation="45"
                 android:rotationY="15"
-                app:framePosition="20"
+                app:framePosition="18"
                 app:motionTarget="@id/details_poster" />
 
             <KeyAttribute
