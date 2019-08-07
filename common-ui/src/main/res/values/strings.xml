@@ -110,6 +110,8 @@
 
     <string name="episode_number">#%d</string>
 
+    <string name="season_episode_number">Season %d - Episode %d</string>
+
     <plurals name="header_show_count_filtered">
         <item quantity="one">%d show &lt;small>(filtered)&lt;/small></item>
         <item quantity="other">%d shows &lt;small>(filtered)&lt;/small></item>

@@ -19,7 +19,42 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:onClick="@{clickListener}">
+
+        <TextView
+            android:id="@+id/season_episode_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_normal"
+            android:text="@{textCreator.seasonEpisodeTitleText(season, episode)}"
+            android:textAppearance="?attr/textAppearanceCaption"
+            app:layout_constraintBottom_toTopOf="@id/episode_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="Season 3 - Episode 5" />
+
+        <TextView
+            android:id="@+id/episode_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_micro"
+            android:text="@{textCreator.episodeTitleText(episode)}"
+            android:textAppearance="?attr/textAppearanceBody1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/season_episode_number"
+            app:layout_constraintTop_toBottomOf="@id/season_episode_number"
+            tools:text="A tale of two halves" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <data>
+
         <variable
             name="textCreator"
             type="app.tivi.showdetails.details.ShowDetailsTextCreator" />
@@ -36,49 +71,5 @@
             name="clickListener"
             type="android.view.View.OnClickListener" />
     </data>
-
-    <app.tivi.ui.widget.MaterialShapeConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:onClick="@{clickListener}"
-        app:materialBackgroundColor="?attr/colorSurface">
-
-        <androidx.constraintlayout.helper.widget.Flow
-            android:id="@+id/flow"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/spacing_normal"
-            app:constraint_referenced_ids="episode_title,episode_number,space"
-            app:flow_horizontalGap="@dimen/spacing_small"
-            app:flow_verticalAlign="baseline"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/episode_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{textCreator.episodeTitleText(episode)}"
-            android:textAppearance="?attr/textAppearanceBody1"
-            tools:text="A tale of two halves" />
-
-        <TextView
-            android:id="@+id/episode_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{textCreator.episodeNumberText(episode)}"
-            android:textAppearance="?attr/textAppearanceCaption"
-            app:visibleIfNotNull="@{episode.number}"
-            tools:text="#1" />
-
-        <Space
-            android:id="@+id/space"
-            android:layout_width="0dp"
-            android:layout_height="0px" />
-
-    </app.tivi.ui.widget.MaterialShapeConstraintLayout>
 
 </layout>

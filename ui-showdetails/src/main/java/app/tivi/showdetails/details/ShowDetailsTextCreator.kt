@@ -24,6 +24,7 @@ import androidx.core.text.italic
 import androidx.emoji.text.EmojiCompat
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
+import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.inject.PerActivity
 import app.tivi.ui.GenreStringer
@@ -80,6 +81,10 @@ class ShowDetailsTextCreator @Inject constructor(
             }
         }
         return title
+    }
+
+    fun seasonEpisodeTitleText(season: Season, episode: Episode): String {
+        return context.getString(R.string.season_episode_number, season.number, episode.number)
     }
 
     fun episodeNumberText(episode: Episode): CharSequence? {
