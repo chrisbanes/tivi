@@ -67,8 +67,6 @@ object Libs {
         const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
     }
 
-    const val kotlinFlowExtensions = "com.github.akarnokd:kotlin-flow-extensions:0.0.2"
-
     object AndroidX {
         const val appcompat = "androidx.appcompat:appcompat:1.1.0-beta01"
         const val browser = "androidx.browser:browser:1.0.0"

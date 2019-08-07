@@ -25,7 +25,8 @@ import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.interactors.PagingInteractor
 import app.tivi.tmdb.TmdbManager
-import hu.akarnokd.kotlin.flow.BehaviorSubject
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.combineLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
@@ -37,8 +38,8 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
     private val logger: Logger,
     private val pageSize: Int = 21
 ) : ViewModel() {
-    private val messages = BehaviorSubject<UiResource>()
-    private val loaded = BehaviorSubject(false)
+    private val messages = ConflatedBroadcastChannel<UiResource>()
+    private val loaded = ConflatedBroadcastChannel(false)
 
     protected val pageListConfig = PagedList.Config.Builder().run {
         setPageSize(pageSize * 3)
@@ -52,21 +53,21 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
 
         override fun onItemAtFrontLoaded(itemAtFront: LI) {
             viewModelScope.launch {
-                loaded.emit(true)
+                loaded.offer(true)
             }
         }
 
         override fun onZeroItemsLoaded() {
             viewModelScope.launch {
-                loaded.emit(true)
+                loaded.offer(true)
             }
         }
     }
 
-    val viewState = messages.combineLatest(
+    val viewState = messages.asFlow().combineLatest(
             tmdbManager.imageProviderFlow,
             pagingInteractor.observe().flowOn(pagingInteractor.dispatcher),
-            loaded
+            loaded.asFlow()
     ) { message, imageProvider, pagedList, loaded ->
         EntryViewState(message, imageProvider, pagedList, loaded)
     }
@@ -116,5 +117,5 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
         }
     }
 
-    private suspend fun sendMessage(uiResource: UiResource) = messages.emit(uiResource)
+    private suspend fun sendMessage(uiResource: UiResource) = messages.offer(uiResource)
 }

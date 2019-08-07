@@ -27,7 +27,8 @@ import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import hu.akarnokd.kotlin.flow.PublishSubject
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
@@ -37,11 +38,12 @@ class SearchViewModel @AssistedInject constructor(
     private val searchShows: SearchShows,
     tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<SearchViewState>(initialState) {
-    private val searchQuery = PublishSubject<String>()
+    private val searchQuery = ConflatedBroadcastChannel<String>()
 
     init {
         viewModelScope.launch {
-            searchQuery.debounce(300)
+            searchQuery.asFlow()
+                    .debounce(300)
                     .collect {
                         viewModelScope.launchInteractor(searchShows, SearchShows.Params(it))
                     }
@@ -59,7 +61,7 @@ class SearchViewModel @AssistedInject constructor(
 
     fun setSearchQuery(query: String) {
         viewModelScope.launch {
-            searchQuery.emit(query)
+            searchQuery.send(query)
         }
     }
 

@@ -17,11 +17,12 @@
 package app.tivi.interactors
 
 import androidx.paging.PagedList
-import hu.akarnokd.kotlin.flow.BehaviorSubject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.switchMap
 import kotlinx.coroutines.launch
@@ -44,20 +45,23 @@ abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T> : Subject
 }
 
 abstract class SuspendingWorkInteractor<P : Any, T> : ObservableInteractor<P, T> {
-    private val subject = BehaviorSubject<T>()
+    private val subject = ConflatedBroadcastChannel<T>()
+    private val flow = subject.asFlow()
 
-    override suspend operator fun invoke(params: P) = subject.emit(doWork(params))
+    override suspend operator fun invoke(params: P) = subject.send(doWork(params))
 
     abstract suspend fun doWork(params: P): T
 
-    override fun observe(): Flow<T> = subject
+    override fun observe(): Flow<T> = flow
 }
 
 abstract class SubjectInteractor<P : Any, T> : ObservableInteractor<P, T> {
-    private val subject = BehaviorSubject<P>()
-    private val flow = subject.distinctUntilChanged().switchMap { createObservable(it) }
+    private val subject = ConflatedBroadcastChannel<P>()
+    private val flow = subject.asFlow()
+            .distinctUntilChanged()
+            .switchMap { createObservable(it) }
 
-    override suspend operator fun invoke(params: P) = subject.emit(params)
+    override suspend operator fun invoke(params: P) = subject.send(params)
 
     protected abstract fun createObservable(params: P): Flow<T>
 

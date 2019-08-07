@@ -16,9 +16,10 @@
 
 package app.tivi.util
 
-import hu.akarnokd.kotlin.flow.BehaviorSubject
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,20 +28,20 @@ class ObservableLoadingCounter @Inject constructor(
     val dispatchers: AppCoroutineDispatchers
 ) {
     private var loaders = 0
-    private val loadingState = BehaviorSubject(loaders)
+    private val loadingState = ConflatedBroadcastChannel(loaders)
 
     val observable: Flow<Boolean>
-        get() = loadingState.map { it > 0 }
+        get() = loadingState.asFlow().map { it > 0 }
 
     fun addLoader() {
         GlobalScope.launch(dispatchers.main) {
-            loadingState.emit(++loaders)
+            loadingState.send(++loaders)
         }
     }
 
     fun removeLoader() {
         GlobalScope.launch(dispatchers.main) {
-            loadingState.emit(--loaders)
+            loadingState.send(--loaders)
         }
     }
 }

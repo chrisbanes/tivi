@@ -23,7 +23,6 @@ dependencies {
     api Libs.Kotlin.stdlib
 
     api Libs.Coroutines.core
-    api Libs.kotlinFlowExtensions
 
     api Libs.Dagger.dagger
 
