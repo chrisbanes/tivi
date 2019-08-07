@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.mappers
 
-enum class Genre(val traktValue: String) {
-    DRAMA("drama"),
-    FANTASY("fantasy"),
-    SCIENCE_FICTION("science-fiction"),
-    ACTION("action"),
-    ADVENTURE("adventure"),
-    CRIME("crime"),
-    THRILLER("thriller"),
-    COMEDY("comedy"),
-    HORROR("horror"),
-    MYSTERY("mystery");
+import app.tivi.data.entities.ShowStatus
+import com.uwetrottmann.trakt5.enums.Status
+import javax.inject.Inject
+import javax.inject.Singleton
 
-    companion object {
-        private val values by lazy { values() }
-        fun fromTraktValue(value: String) = values.firstOrNull { it.traktValue == value }
+@Singleton
+class TraktStatusToShowStatus @Inject constructor() : Mapper<Status, ShowStatus> {
+    override suspend fun map(from: Status) = when (from) {
+        Status.ENDED -> ShowStatus.ENDED
+        Status.RETURNING -> ShowStatus.RETURNING
+        Status.CANCELED -> ShowStatus.CANCELED
+        Status.IN_PRODUCTION -> ShowStatus.IN_PRODUCTION
     }
 }

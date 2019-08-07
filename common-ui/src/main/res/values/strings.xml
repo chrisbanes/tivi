@@ -57,6 +57,7 @@
     <string name="settings_about_category_title">About Tivi</string>
 
     <string name="details_related">Related shows</string>
+    <string name="details_about">About show</string>
 
     <string name="percentage_format">%1$d%%</string>
     <string name="minutes_format">%1$dm</string>

@@ -20,6 +20,7 @@ import androidx.room.TypeConverter
 import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Request
+import app.tivi.data.entities.ShowStatus
 import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.format.DateTimeFormatter
@@ -30,6 +31,7 @@ object TiviTypeConverters {
     private val requestValues by lazy(LazyThreadSafetyMode.NONE) { Request.values() }
     private val imageTypeValues by lazy(LazyThreadSafetyMode.NONE) { ImageType.values() }
     private val pendingActionValues by lazy(LazyThreadSafetyMode.NONE) { PendingAction.values() }
+    private val showStatusValues by lazy(LazyThreadSafetyMode.NONE) { ShowStatus.values() }
 
     @TypeConverter
     @JvmStatic
@@ -53,7 +55,7 @@ object TiviTypeConverters {
 
     @TypeConverter
     @JvmStatic
-    fun toPendingAction(action: String): PendingAction = pendingActionValues.first { it.value == action }
+    fun toPendingAction(action: String?) = pendingActionValues.firstOrNull { it.value == action }
 
     @TypeConverter
     @JvmStatic
@@ -61,7 +63,7 @@ object TiviTypeConverters {
 
     @TypeConverter
     @JvmStatic
-    fun toRequest(value: String) = requestValues.first { it.tag == value }
+    fun toRequest(value: String) = requestValues.firstOrNull { it.tag == value }
 
     @TypeConverter
     @JvmStatic
@@ -69,5 +71,13 @@ object TiviTypeConverters {
 
     @TypeConverter
     @JvmStatic
-    fun toImageType(value: String) = imageTypeValues.first { it.storageKey == value }
+    fun toImageType(value: String?) = imageTypeValues.firstOrNull { it.storageKey == value }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromShowStatus(value: ShowStatus?) = value?.storageKey
+
+    @TypeConverter
+    @JvmStatic
+    fun toShowStatus(value: String?) = showStatusValues.firstOrNull { it.storageKey == value }
 }

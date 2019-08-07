@@ -41,6 +41,7 @@
     <app.tivi.ui.widget.MaterialShapeConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:minHeight="?android:attr/listPreferredItemHeightSmall"
         android:checked="@{expanded}"
         android:foreground="?android:attr/selectableItemBackground"
         android:onClick="@{clickListener}"
@@ -51,7 +52,8 @@
             android:id="@+id/flow"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/spacing_normal"
+            android:layout_marginHorizontal="@dimen/list_horizontal_padding"
+            android:layout_marginVertical="@dimen/list_vertical_padding"
             app:constraint_referenced_ids="episode_title,episode_number,space,episode_watches_pending,episode_watched"
             app:flow_horizontalGap="@dimen/spacing_small"
             app:flow_verticalAlign="baseline"
@@ -80,7 +82,7 @@
         <Space
             android:id="@+id/space"
             android:layout_width="0dp"
-            android:layout_height="0px" />
+            android:layout_height="0dp" />
 
         <ImageView
             android:id="@+id/episode_watches_pending"

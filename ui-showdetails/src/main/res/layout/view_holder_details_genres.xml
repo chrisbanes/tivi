@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Copyright 2017 Google, Inc.
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2019 Google LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -13,38 +12,37 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  ~
   -->
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
-    <data>
-        <variable
-            name="entity"
-            type="app.tivi.data.entities.TiviShow" />
-    </data>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:addStatesFromChildren="true"
-        android:background="?android:colorBackground"
-        android:foreground="?android:attr/selectableItemBackground"
         android:paddingHorizontal="@dimen/list_horizontal_padding"
         android:paddingVertical="@dimen/list_vertical_padding"
         android:transitionGroup="true">
 
         <app.tivi.ui.widget.BaselineGridTextView
-            android:id="@+id/details_summary"
+            android:id="@+id/details_genres"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:text="@{entity.summary}"
+            android:contentDescription="@{textCreator.genreContentDescription(tiviShow.genres)}"
+            android:text="@{textCreator.genreString(tiviShow.genres)}"
             android:textAppearance="?attr/textAppearanceBody2"
-            app:maxLinesToggle="@{@integer/details_summary_collapsed_lines}"
-            tools:text="@sample/shows.txt" />
+            tools:text="Drama // Fantasy" />
 
     </FrameLayout>
+
+    <data>
+        <variable
+            name="textCreator"
+            type="app.tivi.showdetails.details.ShowDetailsTextCreator" />
+
+        <variable
+            name="tiviShow"
+            type="app.tivi.data.entities.TiviShow" />
+    </data>
 </layout>
