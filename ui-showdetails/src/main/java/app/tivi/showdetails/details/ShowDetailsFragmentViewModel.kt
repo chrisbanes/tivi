@@ -18,6 +18,7 @@ package app.tivi.showdetails.details
 
 import androidx.lifecycle.viewModelScope
 import app.tivi.SharedElementHelper
+import app.tivi.TiviMvRxViewModel
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -28,19 +29,19 @@ import app.tivi.interactors.ChangeSeasonWatchedStatus.Action
 import app.tivi.interactors.ChangeSeasonWatchedStatus.Params
 import app.tivi.interactors.ChangeShowFollowStatus
 import app.tivi.interactors.ChangeShowFollowStatus.Action.TOGGLE
-import app.tivi.interactors.ObserveFollowedShowSeasonData
 import app.tivi.interactors.ObserveRelatedShows
 import app.tivi.interactors.ObserveShowDetails
 import app.tivi.interactors.ObserveShowFollowStatus
-import app.tivi.interactors.UpdateFollowedShowSeasonData
+import app.tivi.interactors.ObserveShowNextEpisodeToWatch
+import app.tivi.interactors.ObserveShowSeasonData
 import app.tivi.interactors.UpdateRelatedShows
 import app.tivi.interactors.UpdateShowDetails
+import app.tivi.interactors.UpdateShowSeasonData
 import app.tivi.interactors.execute
 import app.tivi.interactors.launchInteractor
+import app.tivi.interactors.launchObserve
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
-import app.tivi.TiviMvRxViewModel
-import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
@@ -56,10 +57,11 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     observeShowDetails: ObserveShowDetails,
     private val updateRelatedShows: UpdateRelatedShows,
     observeRelatedShows: ObserveRelatedShows,
-    private val updateShowSeasons: UpdateFollowedShowSeasonData,
-    observeShowSeasons: ObserveFollowedShowSeasonData,
+    private val updateShowSeasons: UpdateShowSeasonData,
+    observeShowSeasons: ObserveShowSeasonData,
     private val changeSeasonWatchedStatus: ChangeSeasonWatchedStatus,
     observeShowFollowStatus: ObserveShowFollowStatus,
+    observeNextEpisodeToWatch: ObserveShowNextEpisodeToWatch,
     tmdbManager: TmdbManager,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val changeSeasonFollowStatus: ChangeSeasonFollowStatus
@@ -91,6 +93,11 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
             }
         }
 
+        viewModelScope.launchObserve(observeNextEpisodeToWatch) {
+            it.distinctUntilChanged()
+                    .execute { copy(nextEpisodeToWatch = it) }
+        }
+
         viewModelScope.launch {
             tmdbManager.imageProviderFlow
                     .execute { copy(tmdbImageUrlProvider = it) }
@@ -110,7 +117,9 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
             viewModelScope.launchInteractor(observeRelatedShows,
                     ObserveRelatedShows.Params(it.showId))
             viewModelScope.launchInteractor(observeShowSeasons,
-                    ObserveFollowedShowSeasonData.Params(it.showId))
+                    ObserveShowSeasonData.Params(it.showId))
+            viewModelScope.launchInteractor(observeNextEpisodeToWatch,
+                    ObserveShowNextEpisodeToWatch.Params(it.showId))
         }
 
         refresh(false)
@@ -122,13 +131,13 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         viewModelScope.launchInteractor(updateRelatedShows,
                 UpdateRelatedShows.Params(it.showId, fromUserInteraction))
         viewModelScope.launchInteractor(updateShowSeasons,
-                UpdateFollowedShowSeasonData.Params(it.showId, fromUserInteraction))
+                UpdateShowSeasonData.Params(it.showId, fromUserInteraction))
     }
 
     fun onToggleMyShowsButtonClicked() = withState {
         viewModelScope.launch {
             changeShowFollowStatus.execute(ChangeShowFollowStatus.Params(it.showId, TOGGLE))
-            updateShowSeasons.execute(UpdateFollowedShowSeasonData.Params(it.showId, false))
+            updateShowSeasons.execute(UpdateShowSeasonData.Params(it.showId, false))
         }
     }
 

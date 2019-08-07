@@ -22,6 +22,7 @@ import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
+import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.util.Logger
@@ -56,6 +57,12 @@ class SeasonsEpisodesStore @Inject constructor(
 
     fun observeShowSeasonsWithEpisodes(showId: Long): Flow<List<SeasonWithEpisodesAndWatches>> {
         return seasonsDao.seasonsWithEpisodesForShowId(showId).asFlow()
+    }
+
+    fun observeShowNextEpisodeToWatch(showId: Long): Flow<EpisodeWithSeason> {
+        return episodesDao.latestWatchedEpisodeForShowId(showId).flatMap {
+            episodesDao.nextEpisodeForShowAfter(showId, it.season!!.number!!, it.episode!!.number!!)
+        }.asFlow()
     }
 
     /**

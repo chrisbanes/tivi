@@ -55,8 +55,9 @@
 
         <TextView
             android:id="@+id/show_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:ellipsize="end"
             android:gravity="center"
             android:padding="@dimen/spacing_small"
             android:text="@{tiviShow.title}"

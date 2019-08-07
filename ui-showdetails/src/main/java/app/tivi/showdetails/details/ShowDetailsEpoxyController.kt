@@ -65,6 +65,23 @@ class ShowDetailsEpoxyController @Inject constructor(
     override fun buildModels(viewState: ShowDetailsViewState) {
         buildShowModels(viewState.show)
 
+        val episodeWithSeason = viewState.nextEpisodeToWatch()
+        if (episodeWithSeason?.episode != null) {
+            detailsHeader {
+                id("next_episode_header")
+                title(R.string.details_next_episode_to_watch)
+                spanSizeOverride(TotalSpanOverride)
+            }
+            detailsNextEpisodeToWatch {
+                id("next_episode_header_${episodeWithSeason.hashCode()}")
+                spanSizeOverride(TotalSpanOverride)
+                season(episodeWithSeason.season)
+                episode(episodeWithSeason.episode)
+                textCreator(textCreator)
+                clickListener { view -> callbacks?.onEpisodeClicked(episodeWithSeason.episode!!, view) }
+            }
+        }
+
         buildRelatedShowsModels(viewState.relatedShows, viewState.tmdbImageUrlProvider)
 
         buildSeasonsModels(viewState.seasons, viewState.expandedSeasonIds)
@@ -132,9 +149,10 @@ class ShowDetailsEpoxyController @Inject constructor(
                     numViewsToShowOnScreen(5.25f)
                     hasFixedSize(true)
 
-                    val small = context.resources.getDimensionPixelSize(R.dimen.spacing_small)
-                    val micro = context.resources.getDimensionPixelSize(R.dimen.spacing_micro)
-                    padding(Carousel.Padding(micro, micro, small, small, micro))
+                    val vert = context.resources.getDimensionPixelSize(R.dimen.spacing_small)
+                    val horiz = context.resources.getDimensionPixelSize(R.dimen.spacing_normal)
+                    val itemSpacing = context.resources.getDimensionPixelSize(R.dimen.spacing_micro)
+                    padding(Carousel.Padding(horiz, vert, horiz, vert, itemSpacing))
 
                     withModelsFrom(related) { relatedEntry ->
                         val relatedShow = relatedEntry.show

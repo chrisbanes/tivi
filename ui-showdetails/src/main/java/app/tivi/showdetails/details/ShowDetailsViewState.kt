@@ -18,6 +18,7 @@ package app.tivi.showdetails.details
 
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.tmdb.TmdbImageUrlProvider
@@ -32,6 +33,7 @@ data class ShowDetailsViewState(
     val posterImage: ShowTmdbImage? = null,
     val backdropImage: ShowTmdbImage? = null,
     val relatedShows: Async<List<RelatedShowEntryWithShow>> = Uninitialized,
+    val nextEpisodeToWatch: Async<EpisodeWithSeason> = Uninitialized,
     val seasons: Async<List<SeasonWithEpisodesAndWatches>> = Uninitialized,
     val expandedSeasonIds: Set<Long> = emptySet(),
     val tmdbImageUrlProvider: Async<TmdbImageUrlProvider> = Uninitialized

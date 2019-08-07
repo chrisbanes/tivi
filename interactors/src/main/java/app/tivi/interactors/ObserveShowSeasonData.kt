@@ -23,10 +23,10 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class ObserveFollowedShowSeasonData @Inject constructor(
+class ObserveShowSeasonData @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository
-) : SubjectInteractor<ObserveFollowedShowSeasonData.Params, List<SeasonWithEpisodesAndWatches>>() {
+) : SubjectInteractor<ObserveShowSeasonData.Params, List<SeasonWithEpisodesAndWatches>>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override fun createObservable(params: Params): Flow<List<SeasonWithEpisodesAndWatches>> {
