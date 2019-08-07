@@ -101,7 +101,6 @@
             android:id="@+id/details_subtitle"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:contentDescription="@{textCreator.genreContentDescription(state.show.genres)}"
             android:ellipsize="end"
             android:textAppearance="?attr/textAppearanceCaption"
             app:textOrGoneIfEmpty="@{textCreator.genreString(state.show.genres)}"

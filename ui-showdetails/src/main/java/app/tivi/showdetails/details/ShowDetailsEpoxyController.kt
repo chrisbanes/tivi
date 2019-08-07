@@ -125,9 +125,20 @@ class ShowDetailsEpoxyController @Inject constructor(
             }
         }
 
+        detailsHeader {
+            id("about_show_header")
+            title(R.string.details_about)
+            spanSizeOverride(TotalSpanOverride)
+        }
         detailsSummary {
             id("summary")
             entity(show)
+            spanSizeOverride(TotalSpanOverride)
+        }
+        detailsGenres {
+            id("genres")
+            tiviShow(show)
+            textCreator(textCreator)
             spanSizeOverride(TotalSpanOverride)
         }
     }
