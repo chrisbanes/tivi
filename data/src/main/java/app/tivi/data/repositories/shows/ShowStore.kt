@@ -110,6 +110,7 @@ class ShowStore @Inject constructor(
             country = trakt.country ?: local.country,
             firstAired = trakt.firstAired ?: local.firstAired,
             _genres = trakt._genres ?: local._genres,
+            status = trakt.status ?: local.status,
 
             // Trakt specific stuff
             traktId = trakt.traktId ?: local.traktId,

@@ -45,7 +45,8 @@ data class TiviShow(
     @ColumnInfo(name = "network") val network: String? = null,
     @ColumnInfo(name = "runtime") val runtime: Int? = null,
     @ColumnInfo(name = "genres") val _genres: String? = null,
-    @ColumnInfo(name = "last_trakt_data_update") val traktDataUpdate: OffsetDateTime? = null
+    @ColumnInfo(name = "last_trakt_data_update") val traktDataUpdate: OffsetDateTime? = null,
+    @ColumnInfo(name = "status") val status: ShowStatus? = null
 ) : TiviEntity, TraktIdEntity, TmdbIdEntity {
     @Ignore constructor() : this(0)
 

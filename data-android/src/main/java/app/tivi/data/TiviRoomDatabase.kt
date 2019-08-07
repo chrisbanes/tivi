@@ -57,7 +57,7 @@ import app.tivi.data.views.FollowedShowsWatchStats
             FollowedShowsLastWatched::class,
             FollowedShowsNextToWatch::class
         ],
-        version = 23
+        version = 24
 )
 @TypeConverters(TiviTypeConverters::class)
 abstract class TiviRoomDatabase : RoomDatabase(), TiviDatabase

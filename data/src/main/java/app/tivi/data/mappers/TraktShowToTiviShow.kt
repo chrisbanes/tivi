@@ -22,11 +22,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TraktShowToTiviShow @Inject constructor() : Mapper<Show, TiviShow> {
+class TraktShowToTiviShow @Inject constructor(
+    private val statusMapper: TraktStatusToShowStatus
+) : Mapper<Show, TiviShow> {
     override suspend fun map(from: Show) = TiviShow(
-            traktId = from.ids.trakt,
-            tmdbId = from.ids.tmdb,
-            imdbId = from.ids.imdb,
+            traktId = from.ids?.trakt,
+            tmdbId = from.ids?.tmdb,
+            imdbId = from.ids?.imdb,
             title = from.title,
             summary = from.overview,
             homepage = from.homepage,
@@ -37,6 +39,7 @@ class TraktShowToTiviShow @Inject constructor() : Mapper<Show, TiviShow> {
             country = from.country,
             firstAired = from.first_aired,
             _genres = from.genres?.joinToString(","),
-            traktDataUpdate = from.updated_at
+            traktDataUpdate = from.updated_at,
+            status = from.status?.let { statusMapper.map(it) }
     )
 }
