@@ -135,11 +135,13 @@ class ShowDetailsEpoxyController @Inject constructor(
             entity(show)
             spanSizeOverride(TotalSpanOverride)
         }
-        detailsGenres {
-            id("genres")
-            tiviShow(show)
-            textCreator(textCreator)
-            spanSizeOverride(TotalSpanOverride)
+        if (show.genres.isNotEmpty()) {
+            detailsGenres {
+                id("genres")
+                tiviShow(show)
+                textCreator(textCreator)
+                spanSizeOverride(TotalSpanOverride)
+            }
         }
     }
 
