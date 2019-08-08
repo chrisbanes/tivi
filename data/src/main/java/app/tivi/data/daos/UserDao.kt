@@ -21,15 +21,15 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import app.tivi.data.entities.TraktUser
-import io.reactivex.Flowable
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDao : EntityDao<TraktUser> {
     @Query("SELECT * FROM users WHERE is_me != 0")
-    fun observeMe(): Flowable<TraktUser>
+    fun observeMe(): Flow<TraktUser>
 
     @Query("SELECT * FROM users WHERE username = :username")
-    fun observeTraktUser(username: String): Flowable<TraktUser>
+    fun observeTraktUser(username: String): Flow<TraktUser>
 
     @Query("SELECT * FROM users WHERE username = :username")
     suspend fun getTraktUser(username: String): TraktUser?

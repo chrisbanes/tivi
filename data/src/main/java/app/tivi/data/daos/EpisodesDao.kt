@@ -19,8 +19,8 @@ package app.tivi.data.daos
 import androidx.room.Dao
 import androidx.room.Query
 import app.tivi.data.entities.Episode
-import io.reactivex.Flowable
 import app.tivi.data.resultentities.EpisodeWithSeason
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 abstract class EpisodesDao : EntityDao<Episode> {
@@ -46,7 +46,7 @@ abstract class EpisodesDao : EntityDao<Episode> {
     abstract suspend fun episodeIdWithTraktId(traktId: Int): Long?
 
     @Query("SELECT * from episodes WHERE id = :id")
-    abstract fun episodeWithIdObservable(id: Long): Flowable<Episode>
+    abstract fun episodeWithIdObservable(id: Long): Flow<Episode>
 
     @Query("SELECT shows.id FROM shows" +
             " INNER JOIN seasons AS s ON s.show_id = shows.id" +
@@ -55,13 +55,13 @@ abstract class EpisodesDao : EntityDao<Episode> {
     abstract suspend fun showIdForEpisodeId(episodeId: Long): Long
 
     @Query(latestWatchedEpisodeForShowId)
-    abstract fun latestWatchedEpisodeForShowId(showId: Long): Flowable<EpisodeWithSeason?>
+    abstract fun latestWatchedEpisodeForShowId(showId: Long): Flow<EpisodeWithSeason>
 
     @Query(nextEpisodeForShowIdAfter)
-    abstract fun nextEpisodeForShowAfter(showId: Long, seasonNumber: Int, episodeNumber: Int): Flowable<EpisodeWithSeason>
+    abstract fun nextEpisodeForShowAfter(showId: Long, seasonNumber: Int, episodeNumber: Int): Flow<EpisodeWithSeason>
 
     @Query(nextAiredEpisodeForShowIdAfter)
-    abstract fun nextAiredEpisodeForShowAfter(showId: Long, seasonNumber: Int, episodeNumber: Int): Flowable<EpisodeWithSeason>
+    abstract fun nextAiredEpisodeForShowAfter(showId: Long, seasonNumber: Int, episodeNumber: Int): Flow<EpisodeWithSeason>
 
     companion object {
         const val latestWatchedEpisodeForShowId = """
