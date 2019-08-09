@@ -60,7 +60,7 @@ dependencies {
 
     implementation Libs.Kotlin.reflect
 
-    implementation Libs.Dagger.androidSupport
+    api Libs.Dagger.androidSupport
     kapt Libs.Dagger.compiler
     kapt Libs.Dagger.androidProcessor
 

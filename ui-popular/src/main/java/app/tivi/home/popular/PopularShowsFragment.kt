@@ -18,6 +18,8 @@ package app.tivi.home.popular
 
 import android.view.View
 import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import app.tivi.SharedElementHelper
 import app.tivi.common.layouts.PosterGridItemBindingModel_
@@ -27,8 +29,12 @@ import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.util.EntryGridEpoxyController
 import app.tivi.util.EntryGridFragment
 import com.airbnb.epoxy.EpoxyModel
+import javax.inject.Inject
 
-class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShowsViewModel>(PopularShowsViewModel::class.java) {
+class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShowsViewModel>() {
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    override val viewModel: PopularShowsViewModel by viewModels(factoryProducer = { viewModelFactory })
+
     internal fun onItemClicked(item: PopularEntryWithShow) {
         val sharedElements = SharedElementHelper()
         binding.gridRecyclerview.findViewHolderForItemId(item.generateStableId()).let {

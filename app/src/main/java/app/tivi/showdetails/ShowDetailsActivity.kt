@@ -20,12 +20,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.ViewModelProviders
+import androidx.activity.viewModels
 import androidx.navigation.navArgs
 import app.tivi.R
 import app.tivi.TiviActivity
-import app.tivi.showdetails.details.ShowDetailsFragment
 import app.tivi.episodedetails.EpisodeDetailsFragment
+import app.tivi.showdetails.details.ShowDetailsFragment
 import app.tivi.util.observeEvent
 
 class ShowDetailsActivity : TiviActivity() {
@@ -40,14 +40,13 @@ class ShowDetailsActivity : TiviActivity() {
         }
     }
 
-    private lateinit var navigatorViewModel: ShowDetailsNavigatorViewModel
+    val navigatorViewModel: ShowDetailsNavigatorViewModel by viewModels(factoryProducer = {
+        viewModelFactory
+    })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_details)
-
-        navigatorViewModel = ViewModelProviders.of(this, viewModelFactory)
-                .get(ShowDetailsNavigatorViewModel::class.java)
 
         navigatorViewModel.events.observeEvent(this) {
             when (it) {
