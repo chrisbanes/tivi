@@ -35,7 +35,7 @@ object Libs {
 
     const val timber = "com.jakewharton.timber:timber:4.7.1"
 
-    const val tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.0.3"
+    const val tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.1.1"
     const val traktJava = "com.uwetrottmann.trakt5:trakt-java:6.2.0"
 
     const val appauth = "net.openid:appauth:0.7.1"
@@ -45,11 +45,11 @@ object Libs {
     const val mockK = "io.mockk:mockk:1.9.3"
 
     object Google {
-        const val material = "com.google.android.material:material:1.1.0-alpha07"
-        const val firebaseCore = "com.google.firebase:firebase-core:17.0.0"
+        const val material = "com.google.android.material:material:1.1.0-alpha09"
+        const val firebaseCore = "com.google.firebase:firebase-core:17.0.1"
         const val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.10.1"
         const val gmsGoogleServices = "com.google.gms:google-services:4.3.0"
-        const val fabricPlugin = "io.fabric.tools:gradle:1.29.0"
+        const val fabricPlugin = "io.fabric.tools:gradle:1.31.0"
     }
 
     object Kotlin {
@@ -68,7 +68,7 @@ object Libs {
     }
 
     object AndroidX {
-        const val appcompat = "androidx.appcompat:appcompat:1.1.0-beta01"
+        const val appcompat = "androidx.appcompat:appcompat:1.1.0-rc01"
         const val browser = "androidx.browser:browser:1.0.0"
         const val palette = "androidx.palette:palette:1.0.0"
         const val recyclerview = "androidx.recyclerview:recyclerview:1.1.0-alpha06"
@@ -76,14 +76,14 @@ object Libs {
         const val swiperefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02"
 
         object Navigation {
-            private const val version = "2.1.0-alpha05"
+            private const val version = "2.2.0-alpha01"
             const val fragment = "androidx.navigation:navigation-fragment-ktx:$version"
             const val ui = "androidx.navigation:navigation-ui-ktx:$version"
             const val safeArgs = "androidx.navigation:navigation-safe-args-gradle-plugin:$version"
         }
 
         object Fragment {
-            private const val version = "1.2.0-alpha01"
+            private const val version = "1.2.0-alpha02"
             const val fragment = "androidx.fragment:fragment:$version"
             const val fragmentKtx = "androidx.fragment:fragment-ktx:$version"
         }
@@ -106,14 +106,14 @@ object Libs {
             const val runtime = "androidx.paging:paging-runtime-ktx:$version"
         }
 
-        const val preference = "androidx.preference:preference:1.1.0-beta01"
+        const val preference = "androidx.preference:preference:1.1.0-rc01"
 
         const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.0-beta2"
 
         const val coreKtx = "androidx.core:core-ktx:1.2.0-alpha02"
 
         object Lifecycle {
-            private const val version = "2.2.0-alpha02"
+            private const val version = "2.2.0-alpha03"
             const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
             const val compiler = "androidx.lifecycle:lifecycle-compiler:$version"
             const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
@@ -136,12 +136,12 @@ object Libs {
     }
 
     object RxJava {
-        const val rxJava = "io.reactivex.rxjava2:rxjava:2.2.10"
+        const val rxJava = "io.reactivex.rxjava2:rxjava:2.2.11"
         const val rxAndroid = "io.reactivex.rxjava2:rxandroid:2.1.1"
     }
 
     object Dagger {
-        private const val version = "2.23.2"
+        private const val version = "2.24"
         const val dagger = "com.google.dagger:dagger:$version"
         const val androidSupport = "com.google.dagger:dagger-android-support:$version"
         const val compiler = "com.google.dagger:dagger-compiler:$version"
@@ -155,14 +155,14 @@ object Libs {
     }
 
     object Retrofit {
-        private const val version = "2.6.0"
+        private const val version = "2.6.1"
         const val retrofit = "com.squareup.retrofit2:retrofit:$version"
         const val retrofit_rxjava_adapter = "com.squareup.retrofit2:adapter-rxjava2:$version"
         const val gsonConverter = "com.squareup.retrofit2:converter-gson:$version"
     }
 
     object OkHttp {
-        private const val version = "4.0.0"
+        private const val version = "4.0.1"
         const val okhttp = "com.squareup.okhttp3:okhttp:$version"
         const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$version"
     }
