@@ -17,12 +17,11 @@
 package app.tivi.util
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import app.tivi.TiviFragment
@@ -39,11 +38,10 @@ import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
-abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewModel<LI, *>>(
-    private val vmClass: Class<VM>
-) : TiviFragment() {
-    private lateinit var viewModel: VM
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewModel<LI, *>> : TiviFragment() {
+    protected abstract val viewModel: VM
+
+    @Inject internal lateinit var _fakeInjection: Context
 
     private lateinit var swipeRefreshLatch: ProgressTimeLatch
 
@@ -52,7 +50,6 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(vmClass)
 
         controller = createController()
 

@@ -20,22 +20,21 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.core.view.doOnPreDraw
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.airbnb.mvrx.BaseMvRxActivity
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
-import dagger.android.support.HasSupportFragmentInjector
+import dagger.android.HasAndroidInjector
 import javax.inject.Inject
 
 /**
  * Base Activity class which supports LifecycleOwner and Dagger injection.
  */
-abstract class TiviActivity : BaseMvRxActivity(), HasSupportFragmentInjector {
+abstract class TiviActivity : BaseMvRxActivity(), HasAndroidInjector {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    @Inject lateinit var supportFragmentInjector: DispatchingAndroidInjector<Fragment>
+    @Inject lateinit var fragmentInjector: DispatchingAndroidInjector<Any>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -86,7 +85,5 @@ abstract class TiviActivity : BaseMvRxActivity(), HasSupportFragmentInjector {
         return Activity.RESULT_OK
     }
 
-    override fun supportFragmentInjector(): AndroidInjector<Fragment>? {
-        return supportFragmentInjector
-    }
+    override fun androidInjector(): AndroidInjector<Any> = fragmentInjector
 }

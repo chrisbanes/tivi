@@ -18,6 +18,8 @@ package app.tivi.home.trending
 
 import android.view.View
 import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import app.tivi.SharedElementHelper
 import app.tivi.common.layouts.TrendingPosterGridItemBindingModel_
@@ -27,8 +29,12 @@ import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.util.EntryGridEpoxyController
 import app.tivi.util.EntryGridFragment
 import com.airbnb.epoxy.EpoxyModel
+import javax.inject.Inject
 
-class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingShowsViewModel>(TrendingShowsViewModel::class.java) {
+class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingShowsViewModel>() {
+    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    override val viewModel: TrendingShowsViewModel by viewModels(factoryProducer = { viewModelFactory })
+
     override fun createController(): EntryGridEpoxyController<TrendingEntryWithShow> {
         return object : EntryGridEpoxyController<TrendingEntryWithShow>(R.string.discover_trending) {
             override fun buildItemModel(item: TrendingEntryWithShow): EpoxyModel<*> {

@@ -82,15 +82,9 @@ subprojects {
             // Enable experimental coroutines APIs, including Flow
             freeCompilerArgs += "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"
             freeCompilerArgs += "-Xuse-experimental=kotlinx.coroutines.FlowPreview"
-        }
-    }
 
-    afterEvaluate {
-        extensions.findByName('kapt')?.arguments {
-            // Turn off formatting of Dagger generated files
-            arg("dagger.formatGeneratedSource", "disabled")
-            // Turn on incremental apt for Dagger
-            arg("dagger.gradle.incremental", "enabled")
+            // Set JVM target to 1.8
+            jvmTarget = "1.8"
         }
     }
 }
