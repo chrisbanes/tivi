@@ -18,16 +18,15 @@ package app.tivi.interactors
 
 import androidx.paging.PagedList
 import app.tivi.util.ObservableLoadingCounter
-import io.reactivex.BackpressureStrategy
-import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.withContext
 import java.lang.ref.WeakReference
 
@@ -48,28 +47,25 @@ abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T> : Subject
 }
 
 abstract class SuspendingWorkInteractor<P : Any, T : Any> : ObservableInteractor<P, T> {
-    private val subject = BehaviorSubject.create<T>()
-    private val flow = subject.toFlowable(BackpressureStrategy.LATEST).asFlow()
+    private val channel = ConflatedBroadcastChannel<T>()
 
-    override suspend operator fun invoke(params: P) = subject.onNext(doWork(params))
+    override suspend operator fun invoke(params: P) = channel.send(doWork(params))
 
     abstract suspend fun doWork(params: P): T
 
-    override fun observe(): Flow<T> = flow
+    override fun observe(): Flow<T> = channel.asFlow().distinctUntilChanged()
 }
 
 abstract class SubjectInteractor<P : Any, T> : ObservableInteractor<P, T> {
-    private val subject = BehaviorSubject.create<P>()
-    private val flow = subject.toFlowable(BackpressureStrategy.LATEST)
-            .asFlow()
-            .distinctUntilChanged()
-            .flatMapLatest { createObservable(it) }
+    private val channel = ConflatedBroadcastChannel<P>()
 
-    override suspend operator fun invoke(params: P) = subject.onNext(params)
+    override suspend operator fun invoke(params: P) = channel.send(params)
 
     protected abstract fun createObservable(params: P): Flow<T>
 
-    override fun observe(): Flow<T> = flow
+    override fun observe(): Flow<T> = channel.asFlow()
+            .distinctUntilChanged()
+            .flatMapLatest { createObservable(it) }
 }
 
 fun <P> CoroutineScope.launchInteractor(

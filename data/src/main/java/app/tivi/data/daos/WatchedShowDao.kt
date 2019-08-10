@@ -22,7 +22,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow> {
@@ -36,7 +36,7 @@ abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithS
 
     @Transaction
     @Query("$ENTRY_QUERY_ORDER_LAST_WATCHED LIMIT :count OFFSET :offset")
-    abstract fun entriesObservable(count: Int, offset: Int): Observable<List<WatchedShowEntryWithShow>>
+    abstract fun entriesObservable(count: Int, offset: Int): Flow<List<WatchedShowEntryWithShow>>
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
