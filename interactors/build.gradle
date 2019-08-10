@@ -43,6 +43,7 @@ dependencies {
     implementation project(":base")
     implementation project(":base-android")
     api project(":data")
+    implementation project(":data-android")
 
     kapt Libs.Dagger.compiler
 
