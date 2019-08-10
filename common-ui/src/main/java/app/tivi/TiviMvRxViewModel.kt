@@ -16,7 +16,8 @@
 
 package app.tivi
 
-import app.tivi.base.BuildConfig
+import android.util.Log
+import app.tivi.common.ui.BuildConfig
 import com.airbnb.mvrx.Async
 import com.airbnb.mvrx.BaseMvRxViewModel
 import com.airbnb.mvrx.Fail
@@ -49,7 +50,13 @@ open class TiviMvRxViewModel<S : MvRxState>(
 
         @Suppress("USELESS_CAST")
         return map { Success(mapper(it)) as Async<V> }
-                .catch { emit(Fail(it)) }
+                .catch {
+                    if (BuildConfig.DEBUG) {
+                        Log.e(this@TiviMvRxViewModel::class.java.simpleName,
+                                "Exception during observe", it)
+                    }
+                    emit(Fail(it))
+                }
                 .collect { setState { stateReducer(it) } }
     }
 }
