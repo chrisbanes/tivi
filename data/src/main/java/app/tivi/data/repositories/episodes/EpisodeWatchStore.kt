@@ -24,7 +24,7 @@ import app.tivi.data.entities.PendingAction
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.util.Logger
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.reactive.flow.asFlow
+import kotlinx.coroutines.reactive.asFlow
 import javax.inject.Inject
 
 class EpisodeWatchStore @Inject constructor(

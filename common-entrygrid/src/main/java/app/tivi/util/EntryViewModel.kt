@@ -27,7 +27,7 @@ import app.tivi.interactors.PagingInteractor
 import app.tivi.tmdb.TmdbManager
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.combineLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
@@ -64,7 +64,8 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
         }
     }
 
-    val viewState = messages.asFlow().combineLatest(
+    val viewState = combine(
+            messages.asFlow(),
             tmdbManager.imageProviderFlow,
             pagingInteractor.observe().flowOn(pagingInteractor.dispatcher),
             loaded.asFlow()

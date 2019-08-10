@@ -24,9 +24,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.switchMap
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.reactive.flow.asFlow
+import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.withContext
 
 interface Interactor<in P> {
@@ -61,7 +61,7 @@ abstract class SubjectInteractor<P : Any, T> : ObservableInteractor<P, T> {
     private val flow = subject.toFlowable(BackpressureStrategy.LATEST)
             .asFlow()
             .distinctUntilChanged()
-            .switchMap { createObservable(it) }
+            .flatMapLatest { createObservable(it) }
 
     override suspend operator fun invoke(params: P) = subject.onNext(params)
 
