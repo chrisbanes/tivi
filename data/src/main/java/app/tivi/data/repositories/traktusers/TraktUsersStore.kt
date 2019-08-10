@@ -20,7 +20,7 @@ import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.UserDao
 import app.tivi.data.entities.TraktUser
-import kotlinx.coroutines.reactive.flow.asFlow
+import kotlinx.coroutines.reactive.asFlow
 import javax.inject.Inject
 
 class TraktUsersStore @Inject constructor(

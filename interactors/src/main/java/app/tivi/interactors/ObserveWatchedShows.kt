@@ -25,7 +25,7 @@ import app.tivi.util.AppCoroutineDispatchers
 import io.reactivex.BackpressureStrategy
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.reactive.flow.asFlow
+import kotlinx.coroutines.reactive.asFlow
 import javax.inject.Inject
 
 class ObserveWatchedShows @Inject constructor(
