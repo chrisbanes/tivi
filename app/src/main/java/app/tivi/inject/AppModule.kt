@@ -58,7 +58,8 @@ class AppModule {
     @Singleton
     @Provides
     fun provideBackgroundExecutor(): Executor {
-        val parallelism = (Runtime.getRuntime().availableProcessors() + 2).coerceAtLeast(4)
+        val parallelism = (Runtime.getRuntime().availableProcessors() * 2)
+                .coerceIn(4, 32)
         return if (Build.VERSION.SDK_INT < 24) {
             Executors.newFixedThreadPool(parallelism)
         } else {
