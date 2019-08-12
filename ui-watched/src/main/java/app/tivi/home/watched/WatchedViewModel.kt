@@ -20,7 +20,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
-import app.tivi.interactors.ObserveWatchedShows
+import app.tivi.interactors.ObservePagedWatchedShows
 import app.tivi.interactors.UpdateWatchedShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 class WatchedViewModel @AssistedInject constructor(
     @Assisted initialState: WatchedViewState,
     private val updateWatchedShows: UpdateWatchedShows,
-    private val observeWatchedShows: ObserveWatchedShows,
+    private val observePagedWatchedShows: ObservePagedWatchedShows,
     private val traktManager: TraktManager,
     tmdbManager: TmdbManager,
     private val logger: Logger,
@@ -76,7 +76,7 @@ class WatchedViewModel @AssistedInject constructor(
                     .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
         }
 
-        viewModelScope.launchObserve(observeWatchedShows) {
+        viewModelScope.launchObserve(observePagedWatchedShows) {
             it.execute { copy(watchedShows = it()) }
         }
 
@@ -92,8 +92,8 @@ class WatchedViewModel @AssistedInject constructor(
     }
 
     private fun updateDataSource(state: WatchedViewState) {
-        viewModelScope.launchInteractor(observeWatchedShows,
-                ObserveWatchedShows.Params(
+        viewModelScope.launchInteractor(observePagedWatchedShows,
+                ObservePagedWatchedShows.Params(
                         sort = state.sort,
                         filter = state.filter,
                         pagingConfig = PAGING_CONFIG,

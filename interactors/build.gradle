@@ -43,11 +43,11 @@ dependencies {
     implementation project(":base")
     implementation project(":base-android")
     api project(":data")
+    implementation project(":data-android")
 
     kapt Libs.Dagger.compiler
 
     api Libs.AndroidX.Paging.common
-    implementation Libs.AndroidX.Paging.rxjava2
     implementation Libs.AndroidX.Paging.runtime
 
     implementation Libs.RxJava.rxJava

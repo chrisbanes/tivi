@@ -17,15 +17,13 @@
 package app.tivi.interactors
 
 import androidx.paging.PagedList
-import androidx.paging.RxPagedListBuilder
+import app.tivi.data.FlowPagedListBuilder
 import app.tivi.data.entities.SortOption
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.util.AppCoroutineDispatchers
-import io.reactivex.BackpressureStrategy
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.reactive.asFlow
 import javax.inject.Inject
 
 class ObservePagedFollowedShows @Inject constructor(
@@ -35,11 +33,11 @@ class ObservePagedFollowedShows @Inject constructor(
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override fun createObservable(params: Parameters): Flow<PagedList<FollowedShowEntryWithShow>> {
-        val source = followedShowsRepository.observeFollowedShows(params.sort, params.filter)
-        return RxPagedListBuilder(source, params.pagingConfig)
-                .setBoundaryCallback(params.boundaryCallback)
-                .buildFlowable(BackpressureStrategy.LATEST)
-                .asFlow()
+        return FlowPagedListBuilder(
+                followedShowsRepository.observeFollowedShows(params.sort, params.filter),
+                params.pagingConfig,
+                boundaryCallback = params.boundaryCallback
+        ).buildFlow()
     }
 
     data class Parameters(
