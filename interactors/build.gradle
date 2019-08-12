@@ -48,7 +48,6 @@ dependencies {
     kapt Libs.Dagger.compiler
 
     api Libs.AndroidX.Paging.common
-    implementation Libs.AndroidX.Paging.rxjava2
     implementation Libs.AndroidX.Paging.runtime
 
     implementation Libs.RxJava.rxJava
