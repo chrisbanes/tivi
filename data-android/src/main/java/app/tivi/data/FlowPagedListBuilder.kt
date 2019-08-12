@@ -34,14 +34,14 @@ import java.util.concurrent.Executor
  * optionally enable extra features (such as initial load key, or BoundaryCallback).
  *
  * The returned Flow will already be subscribed on the
- * [.setFetchScheduler], and will perform all loading on that scheduler. It will
- * already be observed on [.setNotifyScheduler], and will dispatch new PagedLists,
+ * [fetchExecutor], and will perform all loading on that scheduler. It will
+ * already be observed on [notifyExecutor], and will dispatch new PagedLists,
  * as well as their updates to that scheduler.
  *
  * @param <K> Type of input valued used to load data from the DataSource. Must be integer if
  * you're using PositionalDataSource.
  * @param <V> Item type being presented.
-</Value></Key> */
+ */
 class FlowPagedListBuilder<K, V>(
     private val dataSourceFactory: DataSource.Factory<K, V>,
     private val config: PagedList.Config,
