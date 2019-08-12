@@ -5,7 +5,7 @@ workspace: &workspace
 
 config_android: &config_android
   docker:
-    - image: circleci/android:api-28-alpha
+    - image: circleci/android:api-29
   working_directory: *workspace
   environment:
     JAVA_TOOL_OPTIONS: "-Xmx1024m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
