@@ -17,6 +17,7 @@
 package app.tivi.ui
 
 import android.view.View
+import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
 import app.tivi.SharedElementHelper
 import app.tivi.data.Entry
@@ -62,10 +63,26 @@ class ListItemSharedElementHelper(
         viewHolderId: Long,
         transitionName: String,
         viewFinder: (View) -> View
-    ) {
-        recyclerView.findViewHolderForItemId(viewHolderId)?.also {
-            helper.addSharedElement(viewFinder(it.itemView), transitionName)
+    ): Boolean {
+        val itemFromParentRv = recyclerView.findViewHolderForItemId(viewHolderId)
+        if (itemFromParentRv != null) {
+            helper.addSharedElement(viewFinder(itemFromParentRv.itemView), transitionName)
+            return true
         }
+
+        // We also check any child RecyclerViews. This is mainly for things like Carousels
+        for (i in 0 until recyclerView.childCount) {
+            val child = recyclerView[i]
+            if (child is RecyclerView) {
+                val itemFromChildRv = child.findViewHolderForItemId(viewHolderId)
+                if (itemFromChildRv != null) {
+                    helper.addSharedElement(viewFinder(itemFromChildRv.itemView), transitionName)
+                    return true
+                }
+            }
+        }
+
+        return false
     }
 
     companion object {

@@ -19,10 +19,11 @@ package app.tivi.util
 import androidx.annotation.StringRes
 import app.tivi.common.epoxy.EpoxyModelProperty
 import app.tivi.common.epoxy.TotalSpanOverride
+import app.tivi.common.layouts.GridHeaderBindingModel_
 import app.tivi.common.layouts.HeaderBindingModel_
 import app.tivi.common.layouts.PosterGridItemBindingModel_
 import app.tivi.common.layouts.emptyState
-import app.tivi.common.layouts.header
+import app.tivi.common.layouts.gridHeader
 import app.tivi.common.layouts.infiniteLoading
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
@@ -42,7 +43,7 @@ abstract class EntryGridEpoxyController<LI : EntryWithShow<out Entry>>(
         val modelsFiltered = models.filterNotNull()
 
         if (modelsFiltered.isNotEmpty()) {
-            header {
+            gridHeader {
                 id("header")
                 title(titleRes)
                 spanSizeOverride(TotalSpanOverride)
@@ -75,6 +76,6 @@ abstract class EntryGridEpoxyController<LI : EntryWithShow<out Entry>>(
     }
 
     open fun isHeader(model: EpoxyModel<*>): Boolean {
-        return model is HeaderBindingModel_
+        return model is GridHeaderBindingModel_ || model is HeaderBindingModel_
     }
 }
