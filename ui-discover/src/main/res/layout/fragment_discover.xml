@@ -43,11 +43,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
-                android:paddingHorizontal="2dp"
-                android:paddingVertical="6dp"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                android:paddingVertical="8dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:paddingBottomSystemWindowInsets="@{ true }"
-                app:spanCount="@integer/grid_condensed_span_count"
                 tools:listitem="@layout/view_holder_poster_grid_item" />
 
             <app.tivi.ui.widget.MaterialShapeConstraintLayout

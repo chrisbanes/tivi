@@ -42,7 +42,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="44dp"
         android:foreground="?android:attr/selectableItemBackground"
         android:transitionGroup="true">
 
@@ -50,10 +50,8 @@
             android:id="@+id/header_title"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:layout_marginBottom="@dimen/spacing_small"
-            android:layout_marginEnd="@dimen/spacing_normal"
-            android:layout_marginStart="@dimen/spacing_normal"
+            android:layout_marginEnd="@dimen/header_margin"
+            android:layout_marginStart="@dimen/header_margin"
             android:gravity="center_vertical"
             android:text="@{titleString ?? context.getString(title)}"
             android:textAppearance="?attr/textAppearanceSubtitle1"
@@ -64,10 +62,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            android:layout_marginEnd="@dimen/spacing_normal"
-            android:layout_marginStart="@dimen/spacing_normal"
-            android:layout_marginTop="@dimen/spacing_small"
-            android:layout_marginBottom="@dimen/spacing_small"
+            android:layout_marginEnd="@dimen/header_margin"
+            android:layout_marginStart="@dimen/header_margin"
             android:gravity="center_vertical"
             android:onClick="@{buttonClickListener}"
             android:text="@{buttonTitle != 0 ? context.getString(buttonTitle) : @string/header_more}"

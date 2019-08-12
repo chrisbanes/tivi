@@ -16,22 +16,27 @@
 
 package app.tivi.home.discover
 
+import android.content.Context
+import app.tivi.common.epoxy.TotalSpanOverride
+import app.tivi.common.epoxy.carousel
+import app.tivi.common.epoxy.withModelsFrom
 import app.tivi.common.layouts.HeaderBindingModel_
+import app.tivi.common.layouts.PosterCardItemBindingModel_
 import app.tivi.common.layouts.emptyState
 import app.tivi.common.layouts.header
-import app.tivi.common.layouts.posterGridItem
-import app.tivi.common.layouts.trendingPosterGridItem
 import app.tivi.data.Entry
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
-import app.tivi.common.epoxy.TotalSpanOverride
+import com.airbnb.epoxy.Carousel
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.TypedEpoxyController
 import javax.inject.Inject
 
-class DiscoverEpoxyController @Inject constructor() : TypedEpoxyController<DiscoverViewState>() {
+class DiscoverEpoxyController @Inject constructor(
+    private val context: Context
+) : TypedEpoxyController<DiscoverViewState>() {
     var callbacks: Callbacks? = null
 
     interface Callbacks {
@@ -54,16 +59,26 @@ class DiscoverEpoxyController @Inject constructor() : TypedEpoxyController<Disco
             }
         }
         if (trendingShows.isNotEmpty()) {
-            trendingShows.take(trendingShows.size - (trendingShows.size % spanCount)).forEach { item ->
-                trendingPosterGridItem {
-                    id(item.generateStableId())
-                    tmdbImageUrlProvider(tmdbImageUrlProvider)
-                    tiviShow(item.show)
-                    posterImage(item.images.findHighestRatedPoster())
-                    trendingShow(item.entry)
-                    transitionName("trending_${item.show.homepage}")
-                    clickListener { model, _, _, _ ->
-                        callbacks?.onItemClicked(model.id(), item)
+            carousel {
+                id("trending_carousel")
+                numViewsToShowOnScreen(3.25f)
+                hasFixedSize(true)
+
+                val vert = context.resources.getDimensionPixelSize(R.dimen.spacing_small)
+                val horiz = context.resources.getDimensionPixelSize(R.dimen.spacing_normal)
+                val itemSpacing = context.resources.getDimensionPixelSize(R.dimen.spacing_micro)
+                padding(Carousel.Padding(horiz, vert, horiz, vert, itemSpacing))
+
+                withModelsFrom(trendingShows) { item ->
+                    PosterCardItemBindingModel_().apply {
+                        id(item.generateStableId())
+                        tmdbImageUrlProvider(tmdbImageUrlProvider)
+                        tiviShow(item.show)
+                        posterImage(item.images.findHighestRatedPoster())
+                        transitionName("trending_${item.show.homepage}")
+                        clickListener { model, _, _, _ ->
+                            callbacks?.onItemClicked(model.id(), item)
+                        }
                     }
                 }
             }
@@ -83,15 +98,26 @@ class DiscoverEpoxyController @Inject constructor() : TypedEpoxyController<Disco
             }
         }
         if (popularShows.isNotEmpty()) {
-            popularShows.take(popularShows.size - (popularShows.size % spanCount)).forEach { item ->
-                posterGridItem {
-                    id(item.generateStableId())
-                    tmdbImageUrlProvider(tmdbImageUrlProvider)
-                    posterImage(item.images.findHighestRatedPoster())
-                    tiviShow(item.show)
-                    transitionName("popular_${item.show.homepage}")
-                    clickListener { model, _, _, _ ->
-                        callbacks?.onItemClicked(model.id(), item)
+            carousel {
+                id("popular_carousel")
+                numViewsToShowOnScreen(3.25f)
+                hasFixedSize(true)
+
+                val vert = context.resources.getDimensionPixelSize(R.dimen.spacing_small)
+                val horiz = context.resources.getDimensionPixelSize(R.dimen.spacing_normal)
+                val itemSpacing = context.resources.getDimensionPixelSize(R.dimen.spacing_micro)
+                padding(Carousel.Padding(horiz, vert, horiz, vert, itemSpacing))
+
+                withModelsFrom(popularShows) { item ->
+                    PosterCardItemBindingModel_().apply {
+                        id(item.generateStableId())
+                        tmdbImageUrlProvider(tmdbImageUrlProvider)
+                        posterImage(item.images.findHighestRatedPoster())
+                        tiviShow(item.show)
+                        transitionName("popular_${item.show.homepage}")
+                        clickListener { model, _, _, _ ->
+                            callbacks?.onItemClicked(model.id(), item)
+                        }
                     }
                 }
             }

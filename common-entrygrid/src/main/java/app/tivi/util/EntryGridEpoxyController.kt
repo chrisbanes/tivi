@@ -22,7 +22,7 @@ import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.common.layouts.HeaderBindingModel_
 import app.tivi.common.layouts.PosterGridItemBindingModel_
 import app.tivi.common.layouts.emptyState
-import app.tivi.common.layouts.header
+import app.tivi.common.layouts.gridHeader
 import app.tivi.common.layouts.infiniteLoading
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
@@ -42,7 +42,7 @@ abstract class EntryGridEpoxyController<LI : EntryWithShow<out Entry>>(
         val modelsFiltered = models.filterNotNull()
 
         if (modelsFiltered.isNotEmpty()) {
-            header {
+            gridHeader {
                 id("header")
                 title(titleRes)
                 spanSizeOverride(TotalSpanOverride)
