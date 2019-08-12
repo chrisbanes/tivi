@@ -127,7 +127,6 @@ class FlowPagedListBuilder<K, V>(
                             .setInitialKey(prevList?.lastKey as? K ?: initialLoadKey)
                             .build()
                             .also { prevList = it }
-
                 } while (list.isDetached)
 
                 return prevList!!
@@ -142,7 +141,7 @@ class FlowPagedListBuilder<K, V>(
         }
     }
 
-    private interface ClearableInvalidatedCallback: DataSource.InvalidatedCallback {
+    private interface ClearableInvalidatedCallback : DataSource.InvalidatedCallback {
         fun clear()
     }
 }
