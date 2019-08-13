@@ -17,6 +17,7 @@
 package app.tivi.interactors
 
 import androidx.paging.PagedList
+import app.tivi.util.ObservableLoadingCounter
 import io.reactivex.BackpressureStrategy
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -72,18 +73,28 @@ abstract class SubjectInteractor<P : Any, T> : ObservableInteractor<P, T> {
 fun <P> CoroutineScope.launchInteractor(
     interactor: Interactor<P>,
     param: P,
-    f: (Boolean) -> Unit = {}
+    loadingCounter: ObservableLoadingCounter? = null
 ) = launch(context = interactor.dispatcher) {
-    f(false)
+    loadingCounter?.addLoader()
     interactor(param)
-    f(true)
+    loadingCounter?.removeLoader()
 }
 
-suspend fun <P> Interactor<P>.execute(param: P) = withContext(context = dispatcher) {
-    invoke(param)
+suspend fun <P> Interactor<P>.execute(
+    param: P,
+    loadingCounter: ObservableLoadingCounter? = null
+) {
+    withContext(context = dispatcher) {
+        loadingCounter?.addLoader()
+        invoke(param)
+        loadingCounter?.removeLoader()
+    }
 }
 
-fun CoroutineScope.launchInteractor(interactor: Interactor<Unit>) = launchInteractor(interactor, Unit)
+fun CoroutineScope.launchInteractor(
+    interactor: Interactor<Unit>,
+    loadingCounter: ObservableLoadingCounter? = null
+) = launchInteractor(interactor, Unit, loadingCounter)
 
 fun <I : ObservableInteractor<*, T>, T> CoroutineScope.launchObserve(
     interactor: I,

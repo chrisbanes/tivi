@@ -18,19 +18,18 @@ package app.tivi.home.followed
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
+import app.tivi.TiviMvRxViewModel
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.interactors.ObservePagedFollowedShows
 import app.tivi.interactors.UpdateFollowedShows
 import app.tivi.interactors.launchInteractor
+import app.tivi.interactors.launchObserve
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
-import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
-import app.tivi.TiviMvRxViewModel
-import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
@@ -46,9 +45,7 @@ class FollowedViewModel @AssistedInject constructor(
     private val updateFollowedShows: UpdateFollowedShows,
     private val observePagedFollowedShows: ObservePagedFollowedShows,
     private val traktManager: TraktManager,
-    tmdbManager: TmdbManager,
-    private val logger: Logger,
-    private val loadingState: ObservableLoadingCounter
+    tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<FollowedViewState>(initialState) {
     private val boundaryCallback = object : PagedList.BoundaryCallback<FollowedShowEntryWithShow>() {
         override fun onZeroItemsLoaded() {
@@ -63,6 +60,8 @@ class FollowedViewModel @AssistedInject constructor(
             setState { copy(isEmpty = false) }
         }
     }
+
+    private val loadingState = ObservableLoadingCounter()
 
     init {
         viewModelScope.launch {
