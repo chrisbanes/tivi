@@ -108,7 +108,12 @@ class DiscoverFragment : TiviMvRxFragment() {
 
         listItemSharedElementHelper = ListItemSharedElementHelper(binding.summaryRv)
 
-        binding.summarySwipeRefresh.setOnRefreshListener(viewModel::refresh)
+        binding.summarySwipeRefresh.setOnRefreshListener {
+            viewModel.refresh()
+            binding.summarySwipeRefresh.postOnAnimation {
+                binding.summarySwipeRefresh.isRefreshing = false
+            }
+        }
     }
 
     override fun invalidate() {

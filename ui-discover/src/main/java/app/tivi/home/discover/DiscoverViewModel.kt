@@ -23,7 +23,6 @@ import app.tivi.interactors.UpdatePopularShows
 import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
-import app.tivi.util.ObservableLoadingCounter
 import app.tivi.TiviMvRxViewModel
 import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.FragmentViewModelContext
@@ -31,7 +30,6 @@ import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -41,8 +39,7 @@ class DiscoverViewModel @AssistedInject constructor(
     observePopularShows: ObservePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,
     observeTrendingShows: ObserveTrendingShows,
-    tmdbManager: TmdbManager,
-    private val loadingState: ObservableLoadingCounter
+    tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<DiscoverViewState>(initialState) {
 
     init {
@@ -50,13 +47,6 @@ class DiscoverViewModel @AssistedInject constructor(
             tmdbManager.imageProviderFlow.execute {
                 copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider)
             }
-        }
-
-        viewModelScope.launch {
-            loadingState.observable
-                    .distinctUntilChanged()
-                    .debounce(2000)
-                    .execute { copy(isLoading = it() ?: false) }
         }
 
         viewModelScope.launchObserve(observeTrendingShows) {
@@ -77,17 +67,13 @@ class DiscoverViewModel @AssistedInject constructor(
     }
 
     fun refresh() {
-        loadingState.addLoader()
-        viewModelScope.launchInteractor(
-                updatePopularShows,
+        viewModelScope.launchInteractor(updatePopularShows,
                 UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH)
-        ).invokeOnCompletion { loadingState.removeLoader() }
+        ) { setState { copy(popularRefreshing = !it) } }
 
-        loadingState.addLoader()
-        viewModelScope.launchInteractor(
-                updateTrendingShows,
+        viewModelScope.launchInteractor(updateTrendingShows,
                 UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH)
-        ).invokeOnCompletion { loadingState.removeLoader() }
+        ) { setState { copy(trendingRefreshing = !it) } }
     }
 
     @AssistedInject.Factory

@@ -21,7 +21,6 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
@@ -70,8 +69,14 @@ abstract class SubjectInteractor<P : Any, T> : ObservableInteractor<P, T> {
     override fun observe(): Flow<T> = flow
 }
 
-fun <P> CoroutineScope.launchInteractor(interactor: Interactor<P>, param: P): Job {
-    return launch(context = interactor.dispatcher, block = { interactor(param) })
+fun <P> CoroutineScope.launchInteractor(
+    interactor: Interactor<P>,
+    param: P,
+    f: (Boolean) -> Unit = {}
+) = launch(context = interactor.dispatcher) {
+    f(false)
+    interactor(param)
+    f(true)
 }
 
 suspend fun <P> Interactor<P>.execute(param: P) = withContext(context = dispatcher) {

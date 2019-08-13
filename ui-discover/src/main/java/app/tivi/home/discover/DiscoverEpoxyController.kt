@@ -53,6 +53,7 @@ class DiscoverEpoxyController @Inject constructor(
         header {
             id("trending_header")
             title(R.string.discover_trending)
+            showProgress(viewState.trendingRefreshing)
             spanSizeOverride(TotalSpanOverride)
             buttonClickListener { _ ->
                 callbacks?.onTrendingHeaderClicked(trendingShows)
@@ -92,6 +93,7 @@ class DiscoverEpoxyController @Inject constructor(
         header {
             id("popular_header")
             title(R.string.discover_popular)
+            showProgress(viewState.popularRefreshing)
             spanSizeOverride(TotalSpanOverride)
             buttonClickListener { _ ->
                 callbacks?.onPopularHeaderClicked(popularShows)
