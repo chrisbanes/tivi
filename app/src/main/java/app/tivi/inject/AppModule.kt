@@ -19,6 +19,8 @@ package app.tivi.inject
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
+import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.coroutineScope
 import androidx.preference.PreferenceManager
 import app.tivi.BuildConfig
 import app.tivi.TiviApplication
@@ -26,6 +28,7 @@ import app.tivi.util.AppCoroutineDispatchers
 import dagger.Module
 import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
@@ -123,5 +126,11 @@ class AppModule {
         return DateTimeFormatter.ofPattern(dateF.toPattern())
                 .withLocale(Locale.getDefault())
                 .withZone(ZoneId.systemDefault())
+    }
+
+    @Provides
+    @ProcessLifetime
+    fun provideLongLifetimeScope(): CoroutineScope {
+        return ProcessLifecycleOwner.get().lifecycle.coroutineScope
     }
 }

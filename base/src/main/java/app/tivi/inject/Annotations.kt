@@ -57,3 +57,8 @@ annotation class PerApplication
 @Qualifier
 @MustBeDocumented
 annotation class ApplicationId
+
+@Retention(AnnotationRetention.RUNTIME)
+@Qualifier
+@MustBeDocumented
+annotation class ProcessLifetime

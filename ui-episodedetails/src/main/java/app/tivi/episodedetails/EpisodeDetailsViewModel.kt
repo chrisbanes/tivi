@@ -28,6 +28,7 @@ import app.tivi.interactors.launchInteractor
 import app.tivi.episodedetails.EpisodeDetailsViewState.Action
 import app.tivi.tmdb.TmdbManager
 import app.tivi.TiviMvRxViewModel
+import app.tivi.inject.ProcessLifetime
 import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
@@ -35,6 +36,7 @@ import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
@@ -47,7 +49,8 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     private val addEpisodeWatch: AddEpisodeWatch,
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch,
-    tmdbManager: TmdbManager
+    tmdbManager: TmdbManager,
+    @ProcessLifetime private val dataOperationScope: CoroutineScope
 ) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
     init {
         viewModelScope.launchObserve(observeEpisodeDetails) {
@@ -79,23 +82,31 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     }
 
     private fun refresh() = withState {
-        viewModelScope.launchInteractor(updateEpisodeDetails, UpdateEpisodeDetails.Params(it.episodeId, true))
+        dataOperationScope.launchInteractor(
+                updateEpisodeDetails,
+                UpdateEpisodeDetails.Params(it.episodeId, true)
+        )
     }
 
     fun removeWatchEntry(entry: EpisodeWatchEntry) {
-        viewModelScope.launchInteractor(removeEpisodeWatch, RemoveEpisodeWatch.Params(entry.id))
+        dataOperationScope.launchInteractor(
+                removeEpisodeWatch,
+                RemoveEpisodeWatch.Params(entry.id)
+        )
     }
 
-    fun markWatched() {
-        withState {
-            viewModelScope.launchInteractor(addEpisodeWatch, AddEpisodeWatch.Params(it.episodeId, OffsetDateTime.now()))
-        }
+    fun markWatched() = withState {
+        dataOperationScope.launchInteractor(
+                addEpisodeWatch,
+                AddEpisodeWatch.Params(it.episodeId, OffsetDateTime.now())
+        )
     }
 
-    fun markUnwatched() {
-        withState {
-            viewModelScope.launchInteractor(removeEpisodeWatches, RemoveEpisodeWatches.Params(it.episodeId))
-        }
+    fun markUnwatched() = withState {
+        dataOperationScope.launchInteractor(
+                removeEpisodeWatches,
+                RemoveEpisodeWatches.Params(it.episodeId)
+        )
     }
 
     @AssistedInject.Factory

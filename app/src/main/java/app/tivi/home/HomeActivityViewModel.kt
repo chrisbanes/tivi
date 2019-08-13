@@ -24,11 +24,13 @@ import app.tivi.interactors.launchInteractor
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.TiviMvRxViewModel
+import app.tivi.inject.ProcessLifetime
 import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -40,7 +42,8 @@ class HomeActivityViewModel @AssistedInject constructor(
     @Assisted initialState: HomeActivityViewState,
     private val traktManager: TraktManager,
     private val updateUserDetails: UpdateUserDetails,
-    observeUserDetails: ObserveUserDetails
+    observeUserDetails: ObserveUserDetails,
+    @ProcessLifetime private val dataOperationScope: CoroutineScope
 ) : TiviMvRxViewModel<HomeActivityViewState>(initialState) {
     init {
         viewModelScope.launchObserve(observeUserDetails) {
@@ -55,7 +58,7 @@ class HomeActivityViewModel @AssistedInject constructor(
                     .distinctUntilChanged()
                     .onEach {
                         if (it == TraktAuthState.LOGGED_IN) {
-                            viewModelScope.launchInteractor(updateUserDetails,
+                            dataOperationScope.launchInteractor(updateUserDetails,
                                     UpdateUserDetails.Params("me", false))
                         }
                     }
