@@ -19,6 +19,8 @@ package app.tivi.ui
 import androidx.constraintlayout.motion.widget.MotionLayout
 
 open class TransitionListenerAdapter : MotionLayout.TransitionListener {
+    private var lastProgress = 0f
+
     override fun onTransitionTrigger(
         parent: MotionLayout,
         triggerId: Int,
@@ -30,17 +32,30 @@ open class TransitionListenerAdapter : MotionLayout.TransitionListener {
         parent: MotionLayout,
         startId: Int,
         endId: Int
-    ) {}
+    ) {
+        lastProgress = 0f
+    }
 
-    override fun onTransitionChange(
+    final override fun onTransitionChange(
         parent: MotionLayout,
         startId: Int,
         endId: Int,
         progress: Float
-    ) {}
+    ) {
+        onTransitionChange(parent, startId, endId, progress, progress > lastProgress)
+        lastProgress = progress
+    }
+
+    open fun onTransitionChange(
+        parent: MotionLayout,
+        startId: Int,
+        endId: Int,
+        progress: Float,
+        positive: Boolean
+    ) = Unit
 
     override fun onTransitionCompleted(
         parent: MotionLayout,
         currentId: Int
-    ) {}
+    ) = Unit
 }

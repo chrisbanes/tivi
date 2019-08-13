@@ -19,8 +19,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Transition
-        app:constraintSetEnd="@id/end"
-        app:constraintSetStart="@id/start"
+        app:constraintSetEnd="@id/show_details_closed"
+        app:constraintSetStart="@id/show_details_open"
         app:duration="400"
         app:motionInterpolator="easeInOut">
 
@@ -68,19 +68,11 @@
                     app:customColorValue="@color/status_bar_scrim" />
             </KeyAttribute>
 
-            <!-- This will toggle the FAB visibility via the TransitionListener -->
-            <KeyTrigger
-                app:motionTarget="@id/details_appbar_background"
-                app:motion_postLayoutCollision="true"
-                app:motion_triggerOnCollision="@id/details_toolbar"
-                app:triggerId="@+id/trigger_toggle_fab"
-                app:triggerSlack="0.05" />
-
         </KeyFrameSet>
 
     </Transition>
 
-    <ConstraintSet android:id="@+id/start">
+    <ConstraintSet android:id="@+id/show_details_open">
 
         <Constraint
             android:id="@id/details_backdrop_scrim">
@@ -146,7 +138,7 @@
 
     </ConstraintSet>
 
-    <ConstraintSet android:id="@+id/end">
+    <ConstraintSet android:id="@+id/show_details_closed">
         <Constraint
             android:id="@id/details_backdrop_scrim">
             <CustomAttribute
