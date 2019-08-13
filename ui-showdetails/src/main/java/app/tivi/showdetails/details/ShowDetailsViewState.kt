@@ -36,7 +36,8 @@ data class ShowDetailsViewState(
     val nextEpisodeToWatch: Async<EpisodeWithSeason> = Uninitialized,
     val seasons: Async<List<SeasonWithEpisodesAndWatches>> = Uninitialized,
     val expandedSeasonIds: Set<Long> = emptySet(),
-    val tmdbImageUrlProvider: Async<TmdbImageUrlProvider> = Uninitialized
+    val tmdbImageUrlProvider: Async<TmdbImageUrlProvider> = Uninitialized,
+    val refreshing: Boolean = false
 ) : MvRxState {
     constructor(args: ShowDetailsFragment.Arguments) : this(args.showId)
 }

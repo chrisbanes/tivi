@@ -104,7 +104,16 @@
             android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
             app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor"
             app:menu="@menu/details_toolbar"
-            app:navigationIcon="?attr/homeAsUpIndicator" />
+            app:navigationIcon="?attr/homeAsUpIndicator">
+
+            <ProgressBar
+                android:id="@+id/details_toolbar_progress"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="end"
+                app:visible="@{state.refreshing}" />
+
+        </app.tivi.ui.widget.TintingToolbar>
 
         <com.airbnb.epoxy.EpoxyRecyclerView
             android:id="@+id/details_rv"

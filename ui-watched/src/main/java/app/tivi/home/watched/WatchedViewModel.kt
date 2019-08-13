@@ -26,7 +26,6 @@ import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
-import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.TiviMvRxViewModel
 import app.tivi.interactors.launchObserve
@@ -45,9 +44,7 @@ class WatchedViewModel @AssistedInject constructor(
     private val updateWatchedShows: UpdateWatchedShows,
     private val observePagedWatchedShows: ObservePagedWatchedShows,
     private val traktManager: TraktManager,
-    tmdbManager: TmdbManager,
-    private val logger: Logger,
-    private val loadingState: ObservableLoadingCounter
+    tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<WatchedViewState>(initialState) {
     private val boundaryCallback = object : PagedList.BoundaryCallback<WatchedShowEntryWithShow>() {
         override fun onZeroItemsLoaded() {
@@ -62,6 +59,8 @@ class WatchedViewModel @AssistedInject constructor(
             setState { copy(isEmpty = false) }
         }
     }
+
+    private val loadingState = ObservableLoadingCounter()
 
     init {
         viewModelScope.launch {

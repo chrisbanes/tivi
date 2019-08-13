@@ -23,15 +23,15 @@ import app.tivi.interactors.UpdatePopularShows
 import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
-import app.tivi.util.ObservableLoadingCounter
 import app.tivi.TiviMvRxViewModel
 import app.tivi.interactors.launchObserve
+import app.tivi.util.ObservableLoadingCounter
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -41,9 +41,11 @@ class DiscoverViewModel @AssistedInject constructor(
     observePopularShows: ObservePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,
     observeTrendingShows: ObserveTrendingShows,
-    tmdbManager: TmdbManager,
-    private val loadingState: ObservableLoadingCounter
+    tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<DiscoverViewState>(initialState) {
+
+    private val trendingLoadingState = ObservableLoadingCounter()
+    private val popularLoadingState = ObservableLoadingCounter()
 
     init {
         viewModelScope.launch {
@@ -53,10 +55,15 @@ class DiscoverViewModel @AssistedInject constructor(
         }
 
         viewModelScope.launch {
-            loadingState.observable
-                    .distinctUntilChanged()
-                    .debounce(2000)
-                    .execute { copy(isLoading = it() ?: false) }
+            trendingLoadingState.observable.collect { active ->
+                setState { copy(trendingRefreshing = active) }
+            }
+        }
+
+        viewModelScope.launch {
+            popularLoadingState.observable.collect { active ->
+                setState { copy(popularRefreshing = active) }
+            }
         }
 
         viewModelScope.launchObserve(observeTrendingShows) {
@@ -77,17 +84,16 @@ class DiscoverViewModel @AssistedInject constructor(
     }
 
     fun refresh() {
-        loadingState.addLoader()
         viewModelScope.launchInteractor(
                 updatePopularShows,
-                UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH)
-        ).invokeOnCompletion { loadingState.removeLoader() }
-
-        loadingState.addLoader()
+                UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH),
+                popularLoadingState
+        )
         viewModelScope.launchInteractor(
                 updateTrendingShows,
-                UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH)
-        ).invokeOnCompletion { loadingState.removeLoader() }
+                UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH),
+                trendingLoadingState
+        )
     }
 
     @AssistedInject.Factory

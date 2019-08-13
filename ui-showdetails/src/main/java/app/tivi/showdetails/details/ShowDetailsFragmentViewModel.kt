@@ -42,12 +42,14 @@ import app.tivi.interactors.launchInteractor
 import app.tivi.interactors.launchObserve
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
+import app.tivi.util.ObservableLoadingCounter
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -66,6 +68,9 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val changeSeasonFollowStatus: ChangeSeasonFollowStatus
 ) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
+
+    private val loadingState = ObservableLoadingCounter()
+
     init {
         viewModelScope.launchObserve(observeShowFollowStatus) {
             it.distinctUntilChanged().execute { result ->
@@ -85,6 +90,10 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
                     this
                 }
             }
+        }
+
+        viewModelScope.launch {
+            loadingState.observable.collect { setState { copy(refreshing = it) } }
         }
 
         viewModelScope.launchObserve(observeRelatedShows) {
@@ -126,18 +135,33 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     fun refresh(fromUserInteraction: Boolean) = withState {
-        viewModelScope.launchInteractor(updateShowDetails,
-                UpdateShowDetails.Params(it.showId, fromUserInteraction))
-        viewModelScope.launchInteractor(updateRelatedShows,
-                UpdateRelatedShows.Params(it.showId, fromUserInteraction))
-        viewModelScope.launchInteractor(updateShowSeasons,
-                UpdateShowSeasonData.Params(it.showId, fromUserInteraction))
+        viewModelScope.launchInteractor(
+                updateShowDetails,
+                UpdateShowDetails.Params(it.showId, fromUserInteraction),
+                loadingState
+        )
+        viewModelScope.launchInteractor(
+                updateRelatedShows,
+                UpdateRelatedShows.Params(it.showId, fromUserInteraction),
+                loadingState
+        )
+        viewModelScope.launchInteractor(
+                updateShowSeasons,
+                UpdateShowSeasonData.Params(it.showId, fromUserInteraction),
+                loadingState
+        )
     }
 
     fun onToggleMyShowsButtonClicked() = withState {
         viewModelScope.launch {
-            changeShowFollowStatus.execute(ChangeShowFollowStatus.Params(it.showId, TOGGLE))
-            updateShowSeasons.execute(UpdateShowSeasonData.Params(it.showId, false))
+            changeShowFollowStatus.execute(
+                    ChangeShowFollowStatus.Params(it.showId, TOGGLE),
+                    loadingState
+            )
+            updateShowSeasons.execute(
+                    UpdateShowSeasonData.Params(it.showId, false),
+                    loadingState
+            )
         }
     }
 

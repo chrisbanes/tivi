@@ -31,7 +31,6 @@
         android:id="@+id/summary_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:isRefreshing="@{state.isLoading}"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <FrameLayout

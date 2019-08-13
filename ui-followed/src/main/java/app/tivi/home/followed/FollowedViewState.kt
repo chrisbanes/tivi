@@ -25,7 +25,7 @@ import com.airbnb.mvrx.MvRxState
 data class FollowedViewState(
     val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider(),
     val isLoading: Boolean = false,
-    val isEmpty: Boolean = true,
+    val isEmpty: Boolean = false,
     val followedShows: PagedList<FollowedShowEntryWithShow>? = null,
     val filterActive: Boolean = false,
     val filter: String? = null,

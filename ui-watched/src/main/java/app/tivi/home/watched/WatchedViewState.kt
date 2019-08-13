@@ -25,7 +25,7 @@ import com.airbnb.mvrx.MvRxState
 data class WatchedViewState(
     val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider(),
     val isLoading: Boolean = false,
-    val isEmpty: Boolean = true,
+    val isEmpty: Boolean = false,
     val watchedShows: PagedList<WatchedShowEntryWithShow>? = null,
     val filterActive: Boolean = false,
     val filter: String? = null,

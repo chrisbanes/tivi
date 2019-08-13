@@ -17,11 +17,11 @@
 package app.tivi.interactors
 
 import androidx.paging.PagedList
+import app.tivi.util.ObservableLoadingCounter
 import io.reactivex.BackpressureStrategy
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
@@ -70,15 +70,31 @@ abstract class SubjectInteractor<P : Any, T> : ObservableInteractor<P, T> {
     override fun observe(): Flow<T> = flow
 }
 
-fun <P> CoroutineScope.launchInteractor(interactor: Interactor<P>, param: P): Job {
-    return launch(context = interactor.dispatcher, block = { interactor(param) })
+fun <P> CoroutineScope.launchInteractor(
+    interactor: Interactor<P>,
+    param: P,
+    loadingCounter: ObservableLoadingCounter? = null
+) = launch(context = interactor.dispatcher) {
+    loadingCounter?.addLoader()
+    interactor(param)
+    loadingCounter?.removeLoader()
 }
 
-suspend fun <P> Interactor<P>.execute(param: P) = withContext(context = dispatcher) {
-    invoke(param)
+suspend fun <P> Interactor<P>.execute(
+    param: P,
+    loadingCounter: ObservableLoadingCounter? = null
+) {
+    withContext(context = dispatcher) {
+        loadingCounter?.addLoader()
+        invoke(param)
+        loadingCounter?.removeLoader()
+    }
 }
 
-fun CoroutineScope.launchInteractor(interactor: Interactor<Unit>) = launchInteractor(interactor, Unit)
+fun CoroutineScope.launchInteractor(
+    interactor: Interactor<Unit>,
+    loadingCounter: ObservableLoadingCounter? = null
+) = launchInteractor(interactor, Unit, loadingCounter)
 
 fun <I : ObservableInteractor<*, T>, T> CoroutineScope.launchObserve(
     interactor: I,

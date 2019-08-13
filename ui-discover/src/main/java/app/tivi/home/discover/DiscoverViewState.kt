@@ -23,7 +23,8 @@ import com.airbnb.mvrx.MvRxState
 
 data class DiscoverViewState(
     val trendingItems: List<TrendingEntryWithShow> = emptyList(),
+    val trendingRefreshing: Boolean = false,
     val popularItems: List<PopularEntryWithShow> = emptyList(),
-    val isLoading: Boolean = false,
+    val popularRefreshing: Boolean = false,
     val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider()
 ) : MvRxState
