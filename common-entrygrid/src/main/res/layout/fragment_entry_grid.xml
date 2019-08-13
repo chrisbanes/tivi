@@ -34,6 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/colorSurface"
+                android:paddingHorizontal="4dp"
                 android:elevation="@dimen/sticky_header_elevation"
                 app:materialBackgroundColor="?attr/colorSurface" />
 
