@@ -40,6 +40,11 @@
             android:title="@string/view_privacy_policy" />
 
         <Preference
+            android:key="open_source"
+            android:title="@string/settings_open_source"
+            android:summary="@string/settings_open_source_summary"/>
+
+        <Preference
             android:key="version"
             android:title="@string/settings_app_version" />
 

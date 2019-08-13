@@ -16,6 +16,7 @@
 
 package app.tivi.settings
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
@@ -24,6 +25,7 @@ import androidx.preference.PreferenceFragmentCompat
 import app.tivi.BuildConfig
 import app.tivi.R
 import app.tivi.extensions.resolveThemeColor
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 
 class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -34,6 +36,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     .setToolbarColor(requireContext().resolveThemeColor(R.attr.colorPrimaryVariant))
                     .build()
                     .launchUrl(requireContext(), getString(R.string.privacy_policy_url).toUri())
+            true
+        }
+
+        findPreference<Preference>("open_source")?.setOnPreferenceClickListener {
+            startActivity(Intent(requireContext(), OssLicensesMenuActivity::class.java))
             true
         }
 

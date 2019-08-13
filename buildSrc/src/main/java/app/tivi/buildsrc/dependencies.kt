@@ -50,6 +50,9 @@ object Libs {
         const val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.10.1"
         const val gmsGoogleServices = "com.google.gms:google-services:4.3.0"
         const val fabricPlugin = "io.fabric.tools:gradle:1.31.0"
+
+        const val openSourceLicensesPlugin = "com.google.android.gms:oss-licenses-plugin:0.9.5"
+        const val openSourceLicensesLibrary = "com.google.android.gms:play-services-oss-licenses:17.0.0"
     }
 
     object Kotlin {
