@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2019 Google, Inc.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,17 +18,38 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <com.airbnb.epoxy.EpoxyRecyclerView
-        android:id="@+id/recyclerview"
-        style="@style/Widget.Tivi.RecyclerView.FastScroll"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="@dimen/spacing_small"
-        android:paddingTop="@dimen/spacing_small"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:paddingBottomSystemWindowInsets="@{ true }"
-        tools:listitem="@layout/view_holder_search_item_show" />
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/search_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:indeterminate="true"
+            app:visible="@{state.refreshing}" />
+
+        <com.airbnb.epoxy.EpoxyRecyclerView
+            android:id="@+id/search_recyclerview"
+            style="@style/Widget.Tivi.RecyclerView.FastScroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/spacing_small"
+            android:paddingTop="@dimen/spacing_small"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:paddingBottomSystemWindowInsets="@{ true }"
+            tools:listitem="@layout/view_holder_search_item_show" />
+
+    </FrameLayout>
+
+    <data>
+        <variable
+            name="state"
+            type="app.tivi.home.search.SearchViewState" />
+    </data>
 
 </layout>

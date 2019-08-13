@@ -22,6 +22,7 @@ import app.tivi.interactors.SearchShows
 import app.tivi.interactors.launchInteractor
 import app.tivi.interactors.launchObserve
 import app.tivi.tmdb.TmdbManager
+import app.tivi.util.ObservableLoadingCounter
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
@@ -39,14 +40,21 @@ class SearchViewModel @AssistedInject constructor(
     tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<SearchViewState>(initialState) {
     private val searchQuery = ConflatedBroadcastChannel<String>()
+    private val loadingState = ObservableLoadingCounter()
 
     init {
         viewModelScope.launch {
-            searchQuery.asFlow()
-                    .debounce(300)
-                    .collect {
-                        viewModelScope.launchInteractor(searchShows, SearchShows.Params(it))
-                    }
+            searchQuery.asFlow().debounce(300).collect {
+                viewModelScope.launchInteractor(
+                        searchShows,
+                        SearchShows.Params(it),
+                        loadingState
+                )
+            }
+        }
+
+        viewModelScope.launch {
+            loadingState.observable.collect { setState { copy(refreshing = it) } }
         }
 
         viewModelScope.launch {

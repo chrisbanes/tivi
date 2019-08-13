@@ -22,5 +22,6 @@ import com.airbnb.mvrx.MvRxState
 
 data class SearchViewState(
     val searchResults: SearchResults? = null,
+    val refreshing: Boolean = false,
     val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider()
 ) : MvRxState

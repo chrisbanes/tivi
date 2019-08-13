@@ -56,9 +56,9 @@ internal class SearchFragment : TiviMvRxFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        listItemSharedElementHelper = ListItemSharedElementHelper(binding.recyclerview)
+        listItemSharedElementHelper = ListItemSharedElementHelper(binding.searchRecyclerview)
 
-        binding.recyclerview.apply {
+        binding.searchRecyclerview.apply {
             setController(controller)
             addOnScrollListener(HideImeOnScrollListener())
         }
@@ -75,6 +75,7 @@ internal class SearchFragment : TiviMvRxFragment() {
     }
 
     override fun invalidate() = withState(viewModel) { state ->
+        binding.state = state
         controller.viewState = state
     }
 }
