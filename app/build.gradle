@@ -49,6 +49,8 @@ play {
     serviceAccountCredentials = rootProject.file('signing/play-account.json')
 }
 
+apply plugin: 'com.google.android.gms.oss-licenses-plugin'
+
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
 def appVersionCode = propOrDef("tivi.versioncode", 17) as Integer
@@ -228,6 +230,7 @@ dependencies {
 
     implementation Libs.Google.firebaseCore
     implementation Libs.Google.crashlytics
+    implementation Libs.Google.openSourceLicensesLibrary
 
     testImplementation Libs.junit
     testImplementation Libs.robolectric
