@@ -84,16 +84,36 @@ class ShowDetailsFragment : TiviMvRxFragment() {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 
         binding.detailsMotion.setTransitionListener(object : TransitionListenerAdapter() {
-            override fun onTransitionTrigger(
+            override fun onTransitionCompleted(parent: MotionLayout, currentId: Int) {
+                super.onTransitionCompleted(parent, currentId)
+
+                when (currentId) {
+                    R.id.show_details_open -> {
+                        if (!binding.detailsFollowFab.isOrWillBeShown) {
+                            binding.detailsFollowFab.show()
+                        }
+                    }
+                    R.id.show_details_closed -> {
+                        if (!binding.detailsFollowFab.isOrWillBeHidden) {
+                            binding.detailsFollowFab.hide()
+                        }
+                    }
+                }
+            }
+
+            override fun onTransitionChange(
                 parent: MotionLayout,
-                triggerId: Int,
-                positive: Boolean,
-                progress: Float
+                startId: Int,
+                endId: Int,
+                progress: Float,
+                positive: Boolean
             ) {
-                if (triggerId == R.id.trigger_toggle_fab) {
-                    if (positive) {
+                if (startId == R.id.show_details_open && endId == R.id.show_details_closed) {
+                    if (progress >= 0.53 && positive &&
+                            !binding.detailsFollowFab.isOrWillBeHidden) {
                         binding.detailsFollowFab.hide()
-                    } else {
+                    } else if (progress <= 0.47 && !positive &&
+                            !binding.detailsFollowFab.isOrWillBeShown) {
                         binding.detailsFollowFab.show()
                     }
                 }
