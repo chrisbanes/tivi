@@ -22,6 +22,7 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.shows.ShowRepository
+import app.tivi.extensions.launchOrJoin
 import app.tivi.extensions.parallelForEach
 import org.threeten.bp.Instant
 import javax.inject.Inject
@@ -44,19 +45,19 @@ class RelatedShowsRepository @Inject constructor(
         return lastRequestStore.isRequestBefore(showId, expiry)
     }
 
-    suspend fun updateRelatedShows(showId: Long) {
+    suspend fun updateRelatedShows(showId: Long) = launchOrJoin("update_related_shows_$showId") {
         val tmdbResults = tmdbDataSource.getRelatedShows(showId)
         if (tmdbResults is Success && tmdbResults.data.isNotEmpty()) {
             process(showId, tmdbResults.data)
             lastRequestStore.updateLastRequest(showId)
-            return
+            return@launchOrJoin
         }
 
         val traktResults = traktDataSource.getRelatedShows(showId)
         if (traktResults is Success && traktResults.data.isNotEmpty()) {
             process(showId, traktResults.data)
             lastRequestStore.updateLastRequest(showId)
-            return
+            return@launchOrJoin
         }
     }
 

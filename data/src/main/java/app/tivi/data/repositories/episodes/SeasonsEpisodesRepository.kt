@@ -25,12 +25,12 @@ import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.Success
 import app.tivi.data.instantInPast
+import app.tivi.extensions.launchOrJoin
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
@@ -66,7 +66,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         seasonsEpisodesStore.deleteShowSeasonData(showId)
     }
 
-    suspend fun updateSeasonsEpisodes(showId: Long) {
+    suspend fun updateSeasonsEpisodes(showId: Long) = launchOrJoin("update_show_seasons_$showId") {
         when (val result = traktSeasonsDataSource.getSeasonsEpisodes(showId)) {
             is Success -> {
                 result.data.distinctBy { it.first.number }.associate { (season, episodes) ->
@@ -87,7 +87,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         }
     }
 
-    suspend fun updateEpisode(episodeId: Long) = coroutineScope {
+    suspend fun updateEpisode(episodeId: Long) = launchOrJoin("update_episode_$episodeId") {
         val local = seasonsEpisodesStore.getEpisode(episodeId)!!
         val season = seasonsEpisodesStore.getSeason(local.seasonId)!!
         val traktResult = async(dispatchers.io) {
@@ -141,7 +141,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         }
     }
 
-    suspend fun syncEpisodeWatchesForShow(showId: Long) {
+    suspend fun syncEpisodeWatchesForShow(showId: Long) = launchOrJoin("sync_show_watches_$showId") {
         // Process any pending deletes
         episodeWatchStore.getEntriesWithDeleteAction(showId).also {
             it.isNotEmpty() && processPendingDeletes(it)

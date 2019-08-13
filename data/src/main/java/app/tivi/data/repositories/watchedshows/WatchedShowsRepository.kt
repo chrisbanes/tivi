@@ -21,6 +21,7 @@ import app.tivi.data.entities.Success
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.shows.ShowRepository
+import app.tivi.extensions.launchOrJoin
 import app.tivi.extensions.parallelForEach
 import org.threeten.bp.Instant
 import javax.inject.Inject
@@ -44,7 +45,7 @@ class WatchedShowsRepository @Inject constructor(
 
     suspend fun getWatchedShows() = watchedShowsStore.getWatchedShows()
 
-    suspend fun updateWatchedShows() {
+    suspend fun updateWatchedShows() = launchOrJoin("update_watched_shows") {
         when (val response = traktDataSource.getWatchedShows()) {
             is Success -> {
                 response.data.map { (show, entry) ->

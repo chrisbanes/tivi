@@ -16,6 +16,7 @@
 
 package app.tivi.extensions
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -25,6 +26,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 suspend fun <A, B> Collection<A>.parallelMap(
     concurrency: Int = defaultConcurrency,
@@ -67,48 +69,24 @@ private val defaultConcurrency by lazy(LazyThreadSafetyMode.NONE) {
 private val inFlightDeferreds = mutableMapOf<Any, Deferred<*>>()
 private val inFlightDeferredsLock = Mutex()
 
+suspend fun <T> asyncOrAwait(key: Any, action: suspend CoroutineScope.() -> T): T = coroutineScope {
+    val deferred = inFlightDeferredsLock.withLock {
+        inFlightDeferreds[key]?.takeIf { it.isActive }
+                ?: async { action() }.also { inFlightDeferreds[key] = it }
+    }
+    @Suppress("UNCHECKED_CAST")
+    deferred.await() as T
+}
+
 private val inFlightJobs = mutableMapOf<Any, Job>()
 private val inFlightJobsLock = Mutex()
 
-private var newCalls = 0
-private var cachedCalls = 0
+val list = mutableListOf<String>()
 
-@Suppress("UNCHECKED_CAST")
-suspend fun <T> singleAsync(key: Any, action: suspend () -> T) = coroutineScope {
-    inFlightDeferredsLock.lock()
-    try {
-        val inflight = inFlightDeferreds[key]
-                ?.takeIf { it.isActive }
-                .also { cachedCalls++ }
-                ?: async {
-                    action()
-                }.also {
-                    newCalls++
-                    inFlightDeferreds[key] = it
-                }
-        return@coroutineScope inflight as Deferred<T>
-    } finally {
-        inFlightDeferredsLock.unlock()
+suspend fun launchOrJoin(key: Any, action: suspend CoroutineScope.() -> Unit) = coroutineScope {
+    val job = inFlightJobsLock.withLock {
+        inFlightJobs[key]?.takeIf { it.isActive }
+                ?: launch { action() }.also { inFlightJobs[key] = it }
     }
+    job.join()
 }
-
-suspend fun <T> doSingleAsync(key: Any, action: suspend () -> T) = singleAsync(key, action).await()
-
-suspend fun singleLaunch(key: Any, action: suspend () -> Unit) = coroutineScope {
-    inFlightJobsLock.lock()
-    try {
-        return@coroutineScope inFlightJobs[key]
-                ?.takeIf { it.isActive }
-                .also { cachedCalls++ }
-                ?: launch {
-                    action()
-                }.also {
-                    newCalls++
-                    inFlightJobs[key] = it
-                }
-    } finally {
-        inFlightJobsLock.unlock()
-    }
-}
-
-suspend fun doSingleLaunch(key: Any, action: suspend () -> Unit) = singleLaunch(key, action).join()

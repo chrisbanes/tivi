@@ -22,6 +22,7 @@ import app.tivi.data.instantInPast
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.data.resultentities.PopularEntryWithShow
+import app.tivi.extensions.launchOrJoin
 import app.tivi.extensions.parallelForEach
 import kotlinx.coroutines.flow.Flow
 import org.threeten.bp.Instant
@@ -57,26 +58,28 @@ class PopularShowsRepository @Inject constructor(
     }
 
     private suspend fun updatePopularShows(page: Int, resetOnSave: Boolean) {
-        when (val response = traktDataSource.getPopularShows(page, 20)) {
-            is Success -> {
-                response.data.map { (show, entry) ->
-                    // Grab the show id if it exists, or save the show and use it's generated ID
-                    val showId = showStore.getIdOrSavePlaceholder(show)
-                    // Make a copy of the entry with the id
-                    entry.copy(showId = showId, page = page)
-                }.also { entries ->
-                    if (resetOnSave) {
-                        popularShowsStore.deleteAll()
-                    }
-                    // Save the popular entriesWithShows
-                    popularShowsStore.savePopularShowsPage(page, entries)
-                    // Now update all of the related shows if needed
-                    entries.parallelForEach { entry ->
-                        if (showRepository.needsUpdate(entry.showId)) {
-                            showRepository.updateShow(entry.showId)
+        launchOrJoin("update_popular_page$page") {
+            when (val response = traktDataSource.getPopularShows(page, 20)) {
+                is Success -> {
+                    response.data.map { (show, entry) ->
+                        // Grab the show id if it exists, or save the show and use it's generated ID
+                        val showId = showStore.getIdOrSavePlaceholder(show)
+                        // Make a copy of the entry with the id
+                        entry.copy(showId = showId, page = page)
+                    }.also { entries ->
+                        if (resetOnSave) {
+                            popularShowsStore.deleteAll()
                         }
-                        if (showRepository.needsImagesUpdate(entry.showId)) {
-                            showRepository.updateShowImages(entry.showId)
+                        // Save the popular entriesWithShows
+                        popularShowsStore.savePopularShowsPage(page, entries)
+                        // Now update all of the related shows if needed
+                        entries.parallelForEach { entry ->
+                            if (showRepository.needsUpdate(entry.showId)) {
+                                showRepository.updateShow(entry.showId)
+                            }
+                            if (showRepository.needsImagesUpdate(entry.showId)) {
+                                showRepository.updateShowImages(entry.showId)
+                            }
                         }
                     }
                 }
