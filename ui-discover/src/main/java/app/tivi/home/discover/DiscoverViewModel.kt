@@ -17,20 +17,22 @@
 package app.tivi.home.discover
 
 import androidx.lifecycle.viewModelScope
+import app.tivi.TiviMvRxViewModel
+import app.tivi.inject.ProcessLifetime
 import app.tivi.interactors.ObservePopularShows
 import app.tivi.interactors.ObserveTrendingShows
 import app.tivi.interactors.UpdatePopularShows
 import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.interactors.launchInteractor
-import app.tivi.tmdb.TmdbManager
-import app.tivi.TiviMvRxViewModel
 import app.tivi.interactors.launchObserve
+import app.tivi.tmdb.TmdbManager
 import app.tivi.util.ObservableLoadingCounter
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -41,9 +43,9 @@ class DiscoverViewModel @AssistedInject constructor(
     observePopularShows: ObservePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,
     observeTrendingShows: ObserveTrendingShows,
-    tmdbManager: TmdbManager
+    tmdbManager: TmdbManager,
+    @ProcessLifetime private val dataOperationScope: CoroutineScope
 ) : TiviMvRxViewModel<DiscoverViewState>(initialState) {
-
     private val trendingLoadingState = ObservableLoadingCounter()
     private val popularLoadingState = ObservableLoadingCounter()
 
@@ -84,12 +86,12 @@ class DiscoverViewModel @AssistedInject constructor(
     }
 
     fun refresh() {
-        viewModelScope.launchInteractor(
+        dataOperationScope.launchInteractor(
                 updatePopularShows,
                 UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH),
                 popularLoadingState
         )
-        viewModelScope.launchInteractor(
+        dataOperationScope.launchInteractor(
                 updateTrendingShows,
                 UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH),
                 trendingLoadingState

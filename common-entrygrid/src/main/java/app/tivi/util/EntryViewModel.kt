@@ -25,6 +25,7 @@ import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.interactors.PagingInteractor
 import app.tivi.tmdb.TmdbManager
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.combine
@@ -81,7 +82,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
         viewModelScope.launch {
             sendMessage(UiResource(Status.LOADING_MORE))
             try {
-                callLoadMore()
+                callLoadMore().join()
                 onSuccess()
             } catch (e: Exception) {
                 onError(e)
@@ -93,7 +94,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
         viewModelScope.launch {
             sendMessage(UiResource(Status.REFRESHING))
             try {
-                callRefresh()
+                callRefresh().join()
                 onSuccess()
             } catch (e: Exception) {
                 onError(e)
@@ -101,9 +102,9 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
         }
     }
 
-    protected open suspend fun callRefresh() = Unit
+    protected abstract suspend fun callRefresh(): Job
 
-    protected open suspend fun callLoadMore() = Unit
+    protected abstract suspend fun callLoadMore(): Job
 
     private fun onError(t: Throwable) {
         logger.e(t)

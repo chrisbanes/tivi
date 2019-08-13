@@ -28,12 +28,14 @@ import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.TiviMvRxViewModel
+import app.tivi.inject.ProcessLifetime
 import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -44,7 +46,8 @@ class WatchedViewModel @AssistedInject constructor(
     private val updateWatchedShows: UpdateWatchedShows,
     private val observePagedWatchedShows: ObservePagedWatchedShows,
     private val traktManager: TraktManager,
-    tmdbManager: TmdbManager
+    tmdbManager: TmdbManager,
+    @ProcessLifetime private val dataOperationScope: CoroutineScope
 ) : TiviMvRxViewModel<WatchedViewState>(initialState) {
     private val boundaryCallback = object : PagedList.BoundaryCallback<WatchedShowEntryWithShow>() {
         override fun onZeroItemsLoaded() {
@@ -103,10 +106,9 @@ class WatchedViewModel @AssistedInject constructor(
 
     fun refresh() {
         viewModelScope.launch {
-            traktManager.state.first { it == TraktAuthState.LOGGED_IN }
-                    .run {
-                        refreshWatched()
-                    }
+            traktManager.state.first { it == TraktAuthState.LOGGED_IN }.run {
+                refreshWatched()
+            }
         }
     }
 
@@ -119,9 +121,11 @@ class WatchedViewModel @AssistedInject constructor(
     }
 
     private fun refreshWatched() {
-        loadingState.addLoader()
-        viewModelScope.launchInteractor(updateWatchedShows, UpdateWatchedShows.Params(false))
-                .invokeOnCompletion { loadingState.removeLoader() }
+        dataOperationScope.launchInteractor(
+                updateWatchedShows,
+                UpdateWatchedShows.Params(false),
+                loadingState
+        )
     }
 
     @AssistedInject.Factory

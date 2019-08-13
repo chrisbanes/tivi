@@ -18,15 +18,17 @@ package app.tivi.home.trending
 
 import androidx.lifecycle.viewModelScope
 import app.tivi.data.resultentities.TrendingEntryWithShow
+import app.tivi.inject.ProcessLifetime
 import app.tivi.interactors.ObservePagedTrendingShows
 import app.tivi.interactors.UpdateTrendingShows
 import app.tivi.interactors.UpdateTrendingShows.Page.NEXT_PAGE
 import app.tivi.interactors.UpdateTrendingShows.Page.REFRESH
-import app.tivi.interactors.execute
+import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,7 +37,8 @@ class TrendingShowsViewModel @Inject constructor(
     private val interactor: UpdateTrendingShows,
     observePagedTrendingShows: ObservePagedTrendingShows,
     tmdbManager: TmdbManager,
-    logger: Logger
+    logger: Logger,
+    @ProcessLifetime private val dataOperationScope: CoroutineScope
 ) : EntryViewModel<TrendingEntryWithShow, ObservePagedTrendingShows>(
         dispatchers,
         observePagedTrendingShows,
@@ -49,7 +52,13 @@ class TrendingShowsViewModel @Inject constructor(
         }
     }
 
-    override suspend fun callLoadMore() = interactor.execute(UpdateTrendingShows.Params(NEXT_PAGE))
+    override suspend fun callLoadMore() = dataOperationScope.launchInteractor(
+            interactor,
+            UpdateTrendingShows.Params(NEXT_PAGE)
+    )
 
-    override suspend fun callRefresh() = interactor.execute(UpdateTrendingShows.Params(REFRESH))
+    override suspend fun callRefresh() = dataOperationScope.launchInteractor(
+            interactor,
+            UpdateTrendingShows.Params(REFRESH)
+    )
 }

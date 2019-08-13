@@ -22,6 +22,7 @@ import app.tivi.TiviMvRxViewModel
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.inject.ProcessLifetime
 import app.tivi.interactors.ObservePagedFollowedShows
 import app.tivi.interactors.UpdateFollowedShows
 import app.tivi.interactors.launchInteractor
@@ -35,6 +36,7 @@ import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -45,7 +47,8 @@ class FollowedViewModel @AssistedInject constructor(
     private val updateFollowedShows: UpdateFollowedShows,
     private val observePagedFollowedShows: ObservePagedFollowedShows,
     private val traktManager: TraktManager,
-    tmdbManager: TmdbManager
+    tmdbManager: TmdbManager,
+    @ProcessLifetime private val dataOperationScope: CoroutineScope
 ) : TiviMvRxViewModel<FollowedViewState>(initialState) {
     private val boundaryCallback = object : PagedList.BoundaryCallback<FollowedShowEntryWithShow>() {
         override fun onZeroItemsLoaded() {
@@ -131,10 +134,11 @@ class FollowedViewModel @AssistedInject constructor(
     }
 
     private fun refreshFollowed(fromUserInteraction: Boolean) {
-        loadingState.addLoader()
-        viewModelScope.launchInteractor(updateFollowedShows,
-                UpdateFollowedShows.Params(fromUserInteraction, RefreshType.QUICK))
-                .invokeOnCompletion { loadingState.removeLoader() }
+        dataOperationScope.launchInteractor(
+                updateFollowedShows,
+                UpdateFollowedShows.Params(fromUserInteraction, RefreshType.QUICK),
+                loadingState
+        )
     }
 
     @AssistedInject.Factory
