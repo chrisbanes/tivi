@@ -22,12 +22,14 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.withContext
+import java.lang.ref.WeakReference
 
 interface Interactor<in P> {
     val dispatcher: CoroutineDispatcher
@@ -74,20 +76,24 @@ fun <P> CoroutineScope.launchInteractor(
     interactor: Interactor<P>,
     param: P,
     loadingCounter: ObservableLoadingCounter? = null
-) = launch(context = interactor.dispatcher) {
-    loadingCounter?.addLoader()
-    interactor(param)
-    loadingCounter?.removeLoader()
+): Job {
+    val loadingCounterWeakRef = loadingCounter?.let { WeakReference(it) }
+    return launch(context = interactor.dispatcher) {
+        loadingCounterWeakRef?.get()?.addLoader()
+        interactor(param)
+        loadingCounterWeakRef?.get()?.removeLoader()
+    }
 }
 
 suspend fun <P> Interactor<P>.execute(
     param: P,
     loadingCounter: ObservableLoadingCounter? = null
 ) {
+    val loadingCounterWeakRef = loadingCounter?.let { WeakReference(it) }
     withContext(context = dispatcher) {
-        loadingCounter?.addLoader()
+        loadingCounterWeakRef?.get()?.addLoader()
         invoke(param)
-        loadingCounter?.removeLoader()
+        loadingCounterWeakRef?.get()?.removeLoader()
     }
 }
 
