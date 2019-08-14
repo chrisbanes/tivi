@@ -101,6 +101,7 @@
             android:id="@+id/details_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
             android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
             app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor"
             app:menu="@menu/details_toolbar"
@@ -108,9 +109,9 @@
 
             <ProgressBar
                 android:id="@+id/details_toolbar_progress"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_gravity="end"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="end|center_vertical"
                 app:visible="@{state.refreshing}" />
 
         </app.tivi.ui.widget.TintingToolbar>
