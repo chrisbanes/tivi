@@ -24,9 +24,6 @@ import dagger.Module
 @Module
 abstract class ShowsModule {
     @Binds
-    abstract fun bindShowRepository(source: ShowRepositoryImpl): ShowRepository
-
-    @Binds
     @Trakt
     abstract fun bindTraktShowDataSource(source: TraktShowDataSource): ShowDataSource
 
