@@ -68,7 +68,6 @@ dependencies {
     implementation project(":data")
 
     implementation Libs.AndroidX.Room.runtime
-    implementation Libs.AndroidX.Room.rxjava2
     kapt Libs.AndroidX.Room.compiler
 
     implementation Libs.AndroidX.Paging.runtime
