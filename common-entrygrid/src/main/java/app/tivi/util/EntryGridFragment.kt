@@ -101,6 +101,10 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
                     }
                     UiStatus.REFRESHING -> swipeRefreshLatch.refreshing = true
                     UiStatus.LOADING_MORE -> controller.isLoading = true
+                    else -> {
+                        swipeRefreshLatch.refreshing = false
+                        controller.isLoading = false
+                    }
                 }
 
                 if (it.isLoaded) {

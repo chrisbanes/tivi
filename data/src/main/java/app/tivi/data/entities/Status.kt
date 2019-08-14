@@ -19,5 +19,6 @@ package app.tivi.data.entities
 enum class Status {
     IDLE,
     STARTED,
-    FINISHED
+    FINISHED,
+    TIMEOUT
 }

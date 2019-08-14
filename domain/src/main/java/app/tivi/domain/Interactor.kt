@@ -20,6 +20,7 @@ import androidx.paging.PagedList
 import app.tivi.data.entities.Status
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.Flow
@@ -27,16 +28,24 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
+import java.util.concurrent.TimeUnit
 
 abstract class Interactor<in P> {
     protected abstract val scope: CoroutineScope
 
-    operator fun invoke(params: P): Flow<Status> {
+    operator fun invoke(params: P, timeoutMs: Long = defaultTimeoutMs): Flow<Status> {
         val channel = ConflatedBroadcastChannel(Status.IDLE)
         scope.launch {
-            channel.send(Status.STARTED)
-            doWork(params)
-            channel.send(Status.FINISHED)
+            try {
+                withTimeout(timeoutMs) {
+                    channel.send(Status.STARTED)
+                    doWork(params)
+                    channel.send(Status.FINISHED)
+                }
+            } catch (t: TimeoutCancellationException) {
+                channel.send(Status.TIMEOUT)
+            }
         }
         return channel.asFlow()
     }
@@ -46,6 +55,10 @@ abstract class Interactor<in P> {
     }
 
     protected abstract suspend fun doWork(params: P)
+
+    companion object {
+        private val defaultTimeoutMs = TimeUnit.MINUTES.toMillis(5)
+    }
 }
 
 interface ObservableInteractor<T> {

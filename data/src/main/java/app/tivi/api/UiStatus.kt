@@ -24,6 +24,7 @@ package app.tivi.api
  * `LiveData<Resource<T>>` to pass back the latest data to the UI with its fetch status.
  */
 enum class UiStatus {
+    IDLE,
     SUCCESS,
     ERROR,
     REFRESHING,

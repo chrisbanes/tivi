@@ -83,11 +83,13 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
                 it.catch { sendMessage(UiResource(UiStatus.ERROR, it.localizedMessage)) }
                         .map {
                             when (it) {
-                                Status.FINISHED -> UiStatus.SUCCESS
-                                else -> UiStatus.LOADING_MORE
+                                Status.FINISHED -> UiResource(UiStatus.SUCCESS)
+                                Status.STARTED -> UiResource(UiStatus.LOADING_MORE)
+                                Status.TIMEOUT -> UiResource(UiStatus.ERROR)
+                                else -> UiResource(UiStatus.IDLE)
                             }
                         }
-                        .collect { sendMessage(UiResource(it)) }
+                        .collect { sendMessage(it) }
             }
         }
     }
@@ -98,11 +100,13 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
                 it.catch { sendMessage(UiResource(UiStatus.ERROR, it.localizedMessage)) }
                         .map {
                             when (it) {
-                                Status.FINISHED -> UiStatus.SUCCESS
-                                else -> UiStatus.REFRESHING
+                                Status.FINISHED -> UiResource(UiStatus.SUCCESS)
+                                Status.STARTED -> UiResource(UiStatus.REFRESHING)
+                                Status.TIMEOUT -> UiResource(UiStatus.ERROR)
+                                else -> UiResource(UiStatus.IDLE)
                             }
                         }
-                        .collect { sendMessage(UiResource(it)) }
+                        .collect { sendMessage(it) }
             }
         }
     }
