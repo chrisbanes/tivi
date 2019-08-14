@@ -27,7 +27,7 @@ import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.util.Logger
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.flow.flatMapConcat
 import javax.inject.Inject
 
 class SeasonsEpisodesStore @Inject constructor(
@@ -52,21 +52,20 @@ class SeasonsEpisodesStore @Inject constructor(
     )
 
     fun observeEpisode(episodeId: Long): Flow<Episode> {
-        return episodesDao.episodeWithIdObservable(episodeId).asFlow()
+        return episodesDao.episodeWithIdObservable(episodeId)
     }
 
     fun observeShowSeasonsWithEpisodes(showId: Long): Flow<List<SeasonWithEpisodesAndWatches>> {
-        return seasonsDao.seasonsWithEpisodesForShowId(showId).asFlow()
+        return seasonsDao.seasonsWithEpisodesForShowId(showId)
     }
 
     fun observeShowNextEpisodeToWatch(showId: Long): Flow<EpisodeWithSeason> {
-        return episodesDao.latestWatchedEpisodeForShowId(showId)
-                .flatMap {
-                    episodesDao.nextAiredEpisodeForShowAfter(showId,
-                            it.season!!.number!!,
-                            it.episode!!.number!!
-                    )
-                }.asFlow()
+        return episodesDao.latestWatchedEpisodeForShowId(showId).flatMapConcat {
+            episodesDao.nextAiredEpisodeForShowAfter(showId,
+                    it.season!!.number!!,
+                    it.episode!!.number!!
+            )
+        }
     }
 
     /**

@@ -22,7 +22,6 @@ import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.reactive.asFlow
 import javax.inject.Inject
 
 class RelatedShowsStore @Inject constructor(
@@ -33,7 +32,7 @@ class RelatedShowsStore @Inject constructor(
     suspend fun getRelatedShows(showId: Long) = relatedShowsDao.entries(showId)
 
     fun observeRelatedShows(showId: Long): Flow<List<RelatedShowEntryWithShow>> {
-        return relatedShowsDao.entriesWithShowsObservable(showId).asFlow()
+        return relatedShowsDao.entriesWithShowsObservable(showId)
     }
 
     suspend fun saveRelatedShows(showId: Long, relatedShows: List<RelatedShowEntry>) = transactionRunner {

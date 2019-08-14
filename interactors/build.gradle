@@ -49,9 +49,5 @@ dependencies {
 
     api Libs.AndroidX.Paging.common
     implementation Libs.AndroidX.Paging.runtime
-
-    implementation Libs.RxJava.rxJava
-
-    implementation Libs.Coroutines.rx2
 }
 

@@ -18,7 +18,7 @@ package app.tivi.data.daos
 
 import app.tivi.data.MultipleEntry
 import app.tivi.data.resultentities.EntryWithShow
-import io.reactivex.Flowable
+import kotlinx.coroutines.flow.Flow
 
 /**
  * This interface represents a DAO which contains entities which are part of a collective list for a given show.
@@ -26,6 +26,6 @@ import io.reactivex.Flowable
 interface PairEntryDao<EC : MultipleEntry, LI : EntryWithShow<EC>> : EntityDao<EC> {
     fun entries(showId: Long): List<EC>
     fun entriesWithShows(showId: Long): List<LI>
-    fun entriesWithShowsObservable(showId: Long): Flowable<List<LI>>
+    fun entriesWithShowsObservable(showId: Long): Flow<List<LI>>
     suspend fun deleteWithShowId(showId: Long)
 }

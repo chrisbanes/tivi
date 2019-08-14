@@ -20,7 +20,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.ShowDetailed
-import io.reactivex.Flowable
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 abstract class TiviShowDao : EntityDao<TiviShow> {
@@ -28,13 +28,13 @@ abstract class TiviShowDao : EntityDao<TiviShow> {
     abstract suspend fun getShowWithTraktId(id: Int): TiviShow?
 
     @Query("SELECT * FROM shows WHERE id IN (:ids)")
-    abstract fun getShowsWithIds(ids: List<Long>): Flowable<List<TiviShow>>
+    abstract fun getShowsWithIds(ids: List<Long>): Flow<List<TiviShow>>
 
     @Query("SELECT * FROM shows WHERE tmdb_id = :id")
     abstract suspend fun getShowWithTmdbId(id: Int): TiviShow?
 
     @Query("SELECT * FROM shows WHERE id = :id")
-    abstract fun getShowWithIdFlowable(id: Long): Flowable<ShowDetailed>
+    abstract fun getShowWithIdFlow(id: Long): Flow<ShowDetailed>
 
     @Query("SELECT * FROM shows WHERE id = :id")
     abstract suspend fun getShowWithId(id: Long): TiviShow?

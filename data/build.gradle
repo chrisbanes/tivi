@@ -35,10 +35,6 @@ dependencies {
 
     api Libs.AndroidX.Paging.common
 
-    implementation Libs.Coroutines.rx2
-
-    implementation Libs.RxJava.rxJava
-
     api Libs.threeTenBpNoTzdb
 
     kapt Libs.Dagger.compiler
