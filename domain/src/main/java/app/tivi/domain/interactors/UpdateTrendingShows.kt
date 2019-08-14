@@ -19,17 +19,20 @@ package app.tivi.domain.interactors
 import app.tivi.data.repositories.trendingshows.TrendingShowsRepository
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateTrendingShows.Params
+import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 class UpdateTrendingShows @Inject constructor(
+    private val trendingShowsRepository: TrendingShowsRepository,
     dispatchers: AppCoroutineDispatchers,
-    private val trendingShowsRepository: TrendingShowsRepository
-) : Interactor<Params> {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
+    @ProcessLifetime val processScope: CoroutineScope
+) : Interactor<Params>() {
+    override val scope: CoroutineScope = processScope + dispatchers.io
 
-    override suspend fun invoke(params: Params) = when (params.page) {
+    override suspend fun doWork(params: Params) = when (params.page) {
         Page.NEXT_PAGE -> trendingShowsRepository.loadNextPage()
         Page.REFRESH -> trendingShowsRepository.refresh()
     }

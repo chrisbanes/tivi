@@ -23,12 +23,10 @@ import app.tivi.domain.interactors.AddEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatches
 import app.tivi.domain.interactors.UpdateEpisodeDetails
-import app.tivi.domain.launchInteractor
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeWatches
 import app.tivi.episodedetails.EpisodeDetailsViewState.Action
-import app.tivi.inject.ProcessLifetime
 import app.tivi.tmdb.TmdbManager
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
@@ -36,7 +34,6 @@ import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
@@ -49,8 +46,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     private val addEpisodeWatch: AddEpisodeWatch,
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch,
-    tmdbManager: TmdbManager,
-    @ProcessLifetime private val dataOperationScope: CoroutineScope
+    tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
     init {
         viewModelScope.launchObserve(observeEpisodeDetails) {
@@ -67,46 +63,31 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         }
 
         withState {
-            viewModelScope.launchInteractor(observeEpisodeDetails,
-                    ObserveEpisodeDetails.Params(it.episodeId))
-            viewModelScope.launchInteractor(observeEpisodeWatches,
-                    ObserveEpisodeWatches.Params(it.episodeId))
+            observeEpisodeDetails(ObserveEpisodeDetails.Params(it.episodeId))
+            observeEpisodeWatches(ObserveEpisodeWatches.Params(it.episodeId))
         }
 
         viewModelScope.launch {
-            tmdbManager.imageProviderFlow
-                    .execute { copy(tmdbImageUrlProvider = it) }
+            tmdbManager.imageProviderFlow.execute { copy(tmdbImageUrlProvider = it) }
         }
 
         refresh()
     }
 
     private fun refresh() = withState {
-        dataOperationScope.launchInteractor(
-                updateEpisodeDetails,
-                UpdateEpisodeDetails.Params(it.episodeId, true)
-        )
+        updateEpisodeDetails(UpdateEpisodeDetails.Params(it.episodeId, true))
     }
 
     fun removeWatchEntry(entry: EpisodeWatchEntry) {
-        dataOperationScope.launchInteractor(
-                removeEpisodeWatch,
-                RemoveEpisodeWatch.Params(entry.id)
-        )
+        removeEpisodeWatch(RemoveEpisodeWatch.Params(entry.id))
     }
 
     fun markWatched() = withState {
-        dataOperationScope.launchInteractor(
-                addEpisodeWatch,
-                AddEpisodeWatch.Params(it.episodeId, OffsetDateTime.now())
-        )
+        addEpisodeWatch(AddEpisodeWatch.Params(it.episodeId, OffsetDateTime.now()))
     }
 
     fun markUnwatched() = withState {
-        dataOperationScope.launchInteractor(
-                removeEpisodeWatches,
-                RemoveEpisodeWatches.Params(it.episodeId)
-        )
+        removeEpisodeWatches(RemoveEpisodeWatches.Params(it.episodeId))
     }
 
     @AssistedInject.Factory

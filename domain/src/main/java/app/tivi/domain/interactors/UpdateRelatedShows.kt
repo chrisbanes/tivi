@@ -21,18 +21,21 @@ import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateRelatedShows.Params
 import app.tivi.extensions.parallelForEach
+import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 class UpdateRelatedShows @Inject constructor(
-    dispatchers: AppCoroutineDispatchers,
     private val relatedShowsRepository: RelatedShowsRepository,
-    private val showRepository: ShowRepository
-) : Interactor<Params> {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
+    private val showRepository: ShowRepository,
+    dispatchers: AppCoroutineDispatchers,
+    @ProcessLifetime val processScope: CoroutineScope
+) : Interactor<Params>() {
+    override val scope: CoroutineScope = processScope + dispatchers.io
 
-    override suspend fun invoke(params: Params) {
+    override suspend fun doWork(params: Params) {
         if (params.forceLoad || relatedShowsRepository.needUpdate(params.showId)) {
             relatedShowsRepository.updateRelatedShows(params.showId)
         }

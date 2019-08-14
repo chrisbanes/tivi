@@ -19,17 +19,20 @@ package app.tivi.domain.interactors
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.domain.Interactor
+import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 class ChangeSeasonWatchedStatus @Inject constructor(
+    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     dispatchers: AppCoroutineDispatchers,
-    private val seasonsEpisodesRepository: SeasonsEpisodesRepository
-) : Interactor<ChangeSeasonWatchedStatus.Params> {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
+    @ProcessLifetime val processScope: CoroutineScope
+) : Interactor<ChangeSeasonWatchedStatus.Params>() {
+    override val scope: CoroutineScope = processScope + dispatchers.io
 
-    override suspend operator fun invoke(params: Params) = when (params.action) {
+    override suspend fun doWork(params: Params) = when (params.action) {
         Action.WATCHED -> {
             seasonsEpisodesRepository.markSeasonWatched(
                     params.seasonId,

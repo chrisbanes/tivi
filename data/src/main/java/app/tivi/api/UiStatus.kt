@@ -17,7 +17,15 @@
 package app.tivi.api
 
 /**
- * A generic class that holds a value with its loading status.
- * @param <T>
+ * UiStatus of a resource that is provided to the UI.
+ *
+ *
+ * These are usually created by the Repository classes where they return
+ * `LiveData<Resource<T>>` to pass back the latest data to the UI with its fetch status.
  */
-data class UiResource(val status: UiStatus, val message: String? = null)
+enum class UiStatus {
+    SUCCESS,
+    ERROR,
+    REFRESHING,
+    LOADING_MORE
+}

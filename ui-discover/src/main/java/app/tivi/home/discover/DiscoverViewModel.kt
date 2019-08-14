@@ -20,19 +20,18 @@ import androidx.lifecycle.viewModelScope
 import app.tivi.TiviMvRxViewModel
 import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.interactors.UpdateTrendingShows
-import app.tivi.domain.launchInteractor
+import app.tivi.domain.invoke
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObservePopularShows
 import app.tivi.domain.observers.ObserveTrendingShows
-import app.tivi.inject.ProcessLifetime
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.ObservableLoadingCounter
+import app.tivi.util.collectFrom
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -43,8 +42,7 @@ class DiscoverViewModel @AssistedInject constructor(
     observePopularShows: ObservePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,
     observeTrendingShows: ObserveTrendingShows,
-    tmdbManager: TmdbManager,
-    @ProcessLifetime private val dataOperationScope: CoroutineScope
+    tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<DiscoverViewState>(initialState) {
     private val trendingLoadingState = ObservableLoadingCounter()
     private val popularLoadingState = ObservableLoadingCounter()
@@ -73,29 +71,29 @@ class DiscoverViewModel @AssistedInject constructor(
                 copy(trendingItems = it() ?: emptyList())
             }
         }
-        viewModelScope.launchInteractor(observeTrendingShows)
+        observeTrendingShows()
 
         viewModelScope.launchObserve(observePopularShows) {
             it.distinctUntilChanged().execute {
                 copy(popularItems = it() ?: emptyList())
             }
         }
-        viewModelScope.launchInteractor(observePopularShows)
+        observePopularShows()
 
         refresh()
     }
 
     fun refresh() {
-        dataOperationScope.launchInteractor(
-                updatePopularShows,
-                UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH),
-                popularLoadingState
-        )
-        dataOperationScope.launchInteractor(
-                updateTrendingShows,
-                UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH),
-                trendingLoadingState
-        )
+        updatePopularShows(UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH)).also {
+            viewModelScope.launch {
+                popularLoadingState.collectFrom(it)
+            }
+        }
+        updateTrendingShows(UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH)).also {
+            viewModelScope.launch {
+                trendingLoadingState.collectFrom(it)
+            }
+        }
     }
 
     @AssistedInject.Factory

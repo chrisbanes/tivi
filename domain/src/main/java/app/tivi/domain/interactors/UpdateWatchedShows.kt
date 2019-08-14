@@ -18,17 +18,20 @@ package app.tivi.domain.interactors
 
 import app.tivi.data.repositories.watchedshows.WatchedShowsRepository
 import app.tivi.domain.Interactor
+import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 class UpdateWatchedShows @Inject constructor(
+    private val watchedShowsRepository: WatchedShowsRepository,
     dispatchers: AppCoroutineDispatchers,
-    private val watchedShowsRepository: WatchedShowsRepository
-) : Interactor<UpdateWatchedShows.Params> {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
+    @ProcessLifetime val processScope: CoroutineScope
+) : Interactor<UpdateWatchedShows.Params>() {
+    override val scope: CoroutineScope = processScope + dispatchers.io
 
-    override suspend fun invoke(params: Params) {
+    override suspend fun doWork(params: Params) {
         if (params.forceLoad || watchedShowsRepository.needUpdate()) {
             watchedShowsRepository.updateWatchedShows()
         }

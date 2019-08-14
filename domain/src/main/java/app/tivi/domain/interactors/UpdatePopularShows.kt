@@ -19,17 +19,20 @@ package app.tivi.domain.interactors
 import app.tivi.data.repositories.popularshows.PopularShowsRepository
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdatePopularShows.Params
+import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 class UpdatePopularShows @Inject constructor(
+    private val popularShowsRepository: PopularShowsRepository,
     dispatchers: AppCoroutineDispatchers,
-    private val popularShowsRepository: PopularShowsRepository
-) : Interactor<Params> {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
+    @ProcessLifetime val processScope: CoroutineScope
+) : Interactor<Params>() {
+    override val scope: CoroutineScope = processScope + dispatchers.io
 
-    override suspend fun invoke(params: Params) = when (params.page) {
+    override suspend fun doWork(params: Params) = when (params.page) {
         Page.NEXT_PAGE -> popularShowsRepository.loadNextPage()
         Page.REFRESH -> popularShowsRepository.refresh()
     }

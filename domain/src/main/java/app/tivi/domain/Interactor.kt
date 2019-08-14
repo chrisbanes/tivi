@@ -17,25 +17,39 @@
 package app.tivi.domain
 
 import androidx.paging.PagedList
-import app.tivi.util.ObservableLoadingCounter
+import app.tivi.data.entities.Status
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.lang.ref.WeakReference
 
-interface Interactor<in P> {
-    val dispatcher: CoroutineDispatcher
-    suspend operator fun invoke(params: P)
+abstract class Interactor<in P> {
+    protected abstract val scope: CoroutineScope
+
+    operator fun invoke(params: P): Flow<Status> {
+        val channel = ConflatedBroadcastChannel(Status.IDLE)
+        scope.launch {
+            channel.send(Status.STARTED)
+            doWork(params)
+            channel.send(Status.FINISHED)
+        }
+        return channel.asFlow()
+    }
+
+    suspend fun executeSync(params: P) {
+        scope.launch { doWork(params) }.join()
+    }
+
+    protected abstract suspend fun doWork(params: P)
 }
 
-interface ObservableInteractor<in P, T> : Interactor<P> {
+interface ObservableInteractor<T> {
+    val dispatcher: CoroutineDispatcher
     fun observe(): Flow<T>
 }
 
@@ -46,20 +60,20 @@ abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T> : Subject
     }
 }
 
-abstract class SuspendingWorkInteractor<P : Any, T : Any> : ObservableInteractor<P, T> {
+abstract class SuspendingWorkInteractor<P : Any, T : Any> : ObservableInteractor<T> {
     private val channel = ConflatedBroadcastChannel<T>()
 
-    override suspend operator fun invoke(params: P) = channel.send(doWork(params))
+    suspend operator fun invoke(params: P) = channel.send(doWork(params))
 
     abstract suspend fun doWork(params: P): T
 
     override fun observe(): Flow<T> = channel.asFlow().distinctUntilChanged()
 }
 
-abstract class SubjectInteractor<P : Any, T> : ObservableInteractor<P, T> {
+abstract class SubjectInteractor<P : Any, T> : ObservableInteractor<T> {
     private val channel = ConflatedBroadcastChannel<P>()
 
-    override suspend operator fun invoke(params: P) = channel.send(params)
+    operator fun invoke(params: P) = channel.sendBlocking(params)
 
     protected abstract fun createObservable(params: P): Flow<T>
 
@@ -68,37 +82,10 @@ abstract class SubjectInteractor<P : Any, T> : ObservableInteractor<P, T> {
             .flatMapLatest { createObservable(it) }
 }
 
-fun <P> CoroutineScope.launchInteractor(
-    interactor: Interactor<P>,
-    param: P,
-    loadingCounter: ObservableLoadingCounter? = null
-): Job {
-    val loadingCounterWeakRef = loadingCounter?.let { WeakReference(it) }
-    return launch(context = interactor.dispatcher) {
-        loadingCounterWeakRef?.get()?.addLoader()
-        interactor(param)
-        loadingCounterWeakRef?.get()?.removeLoader()
-    }
-}
+operator fun Interactor<Unit>.invoke() = invoke(Unit)
+operator fun <T> SubjectInteractor<Unit, T>.invoke() = invoke(Unit)
 
-suspend fun <P> Interactor<P>.execute(
-    param: P,
-    loadingCounter: ObservableLoadingCounter? = null
-) {
-    val loadingCounterWeakRef = loadingCounter?.let { WeakReference(it) }
-    withContext(context = dispatcher) {
-        loadingCounterWeakRef?.get()?.addLoader()
-        invoke(param)
-        loadingCounterWeakRef?.get()?.removeLoader()
-    }
-}
-
-fun CoroutineScope.launchInteractor(
-    interactor: Interactor<Unit>,
-    loadingCounter: ObservableLoadingCounter? = null
-) = launchInteractor(interactor, Unit, loadingCounter)
-
-fun <I : ObservableInteractor<*, T>, T> CoroutineScope.launchObserve(
+fun <I : ObservableInteractor<T>, T> CoroutineScope.launchObserve(
     interactor: I,
     f: suspend (Flow<T>) -> Unit
 ) {

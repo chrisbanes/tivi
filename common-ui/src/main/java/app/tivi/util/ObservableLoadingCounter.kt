@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,13 @@
 
 package app.tivi.util
 
+import app.tivi.data.entities.Status
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -39,6 +41,16 @@ class ObservableLoadingCounter {
     fun removeLoader() {
         GlobalScope.launch(Dispatchers.Main) {
             loadingState.send(loadingState.value - 1)
+        }
+    }
+}
+
+suspend fun ObservableLoadingCounter.collectFrom(statuses: Flow<Status>) {
+    statuses.collect {
+        if (it == Status.STARTED) {
+            addLoader()
+        } else if (it == Status.FINISHED) {
+            removeLoader()
         }
     }
 }

@@ -23,7 +23,6 @@ import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
-import app.tivi.domain.execute
 import app.tivi.domain.interactors.ChangeSeasonFollowStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Action
@@ -33,24 +32,22 @@ import app.tivi.domain.interactors.ChangeShowFollowStatus.Action.TOGGLE
 import app.tivi.domain.interactors.UpdateRelatedShows
 import app.tivi.domain.interactors.UpdateShowDetails
 import app.tivi.domain.interactors.UpdateShowSeasonData
-import app.tivi.domain.launchInteractor
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObserveRelatedShows
 import app.tivi.domain.observers.ObserveShowDetails
 import app.tivi.domain.observers.ObserveShowFollowStatus
 import app.tivi.domain.observers.ObserveShowNextEpisodeToWatch
 import app.tivi.domain.observers.ObserveShowSeasonData
-import app.tivi.inject.ProcessLifetime
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.ObservableLoadingCounter
+import app.tivi.util.collectFrom
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -68,8 +65,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     observeNextEpisodeToWatch: ObserveShowNextEpisodeToWatch,
     tmdbManager: TmdbManager,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
-    private val changeSeasonFollowStatus: ChangeSeasonFollowStatus,
-    @ProcessLifetime private val dataOperationScope: CoroutineScope
+    private val changeSeasonFollowStatus: ChangeSeasonFollowStatus
 ) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
 
     private val loadingState = ObservableLoadingCounter()
@@ -122,49 +118,39 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         }
 
         withState {
-            viewModelScope.launchInteractor(observeShowFollowStatus,
-                    ObserveShowFollowStatus.Params(it.showId))
-            viewModelScope.launchInteractor(
-                    observeShowDetails, ObserveShowDetails.Params(it.showId))
-            viewModelScope.launchInteractor(observeRelatedShows,
-                    ObserveRelatedShows.Params(it.showId))
-            viewModelScope.launchInteractor(observeShowSeasons,
-                    ObserveShowSeasonData.Params(it.showId))
-            viewModelScope.launchInteractor(observeNextEpisodeToWatch,
-                    ObserveShowNextEpisodeToWatch.Params(it.showId))
+            observeShowFollowStatus(ObserveShowFollowStatus.Params(it.showId))
+            observeShowDetails(ObserveShowDetails.Params(it.showId))
+            observeRelatedShows(ObserveRelatedShows.Params(it.showId))
+            observeShowSeasons(ObserveShowSeasonData.Params(it.showId))
+            observeNextEpisodeToWatch(ObserveShowNextEpisodeToWatch.Params(it.showId))
         }
 
         refresh(false)
     }
 
     fun refresh(fromUserInteraction: Boolean) = withState {
-        dataOperationScope.launchInteractor(
-                updateShowDetails,
-                UpdateShowDetails.Params(it.showId, fromUserInteraction),
-                loadingState
-        )
-        dataOperationScope.launchInteractor(
-                updateRelatedShows,
-                UpdateRelatedShows.Params(it.showId, fromUserInteraction),
-                loadingState
-        )
-        dataOperationScope.launchInteractor(
-                updateShowSeasons,
-                UpdateShowSeasonData.Params(it.showId, fromUserInteraction),
-                loadingState
-        )
+        updateShowDetails(UpdateShowDetails.Params(it.showId, fromUserInteraction)).also {
+            viewModelScope.launch {
+                loadingState.collectFrom(it)
+            }
+        }
+        updateRelatedShows(UpdateRelatedShows.Params(it.showId, fromUserInteraction)).also {
+            viewModelScope.launch {
+                loadingState.collectFrom(it)
+            }
+        }
+        updateShowSeasons(UpdateShowSeasonData.Params(it.showId, fromUserInteraction)).also {
+            viewModelScope.launch {
+                loadingState.collectFrom(it)
+            }
+        }
     }
 
     fun onToggleMyShowsButtonClicked() = withState {
-        dataOperationScope.launch {
-            changeShowFollowStatus.execute(
-                    ChangeShowFollowStatus.Params(it.showId, TOGGLE),
-                    loadingState
-            )
-            updateShowSeasons.execute(
-                    UpdateShowSeasonData.Params(it.showId, false),
-                    loadingState
-            )
+        changeShowFollowStatus(ChangeShowFollowStatus.Params(it.showId, TOGGLE)).also {
+            viewModelScope.launch {
+                loadingState.collectFrom(it)
+            }
         }
     }
 
@@ -172,21 +158,23 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         showDetailsNavigator: ShowDetailsNavigator,
         show: TiviShow,
         sharedElementHelper: SharedElementHelper? = null
-    ) = showDetailsNavigator.showShowDetails(show, sharedElementHelper)
+    ) {
+        showDetailsNavigator.showShowDetails(show, sharedElementHelper)
+    }
 
     fun onRelatedShowClicked(
         showDetailsNavigator: ShowDetailsNavigator,
         episode: Episode
-    ) = showDetailsNavigator.showEpisodeDetails(episode)
+    ) {
+        showDetailsNavigator.showEpisodeDetails(episode)
+    }
 
     fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
-        dataOperationScope.launchInteractor(changeSeasonWatchedStatus,
-                Params(season.id, Action.WATCHED, onlyAired, date))
+        changeSeasonWatchedStatus(Params(season.id, Action.WATCHED, onlyAired, date))
     }
 
     fun onMarkSeasonUnwatched(season: Season) {
-        dataOperationScope.launchInteractor(changeSeasonWatchedStatus,
-                Params(season.id, Action.UNWATCH))
+        changeSeasonWatchedStatus(Params(season.id, Action.UNWATCH))
     }
 
     fun toggleSeasonExpanded(season: Season) = setState {
@@ -199,19 +187,22 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     fun onMarkSeasonFollowed(season: Season) {
-        dataOperationScope.launchInteractor(changeSeasonFollowStatus,
-                ChangeSeasonFollowStatus.Params(season.id, ChangeSeasonFollowStatus.Action.FOLLOW))
+        changeSeasonFollowStatus(
+                ChangeSeasonFollowStatus.Params(season.id, ChangeSeasonFollowStatus.Action.FOLLOW)
+        )
     }
 
     fun onMarkSeasonIgnored(season: Season) {
-        dataOperationScope.launchInteractor(changeSeasonFollowStatus,
-                ChangeSeasonFollowStatus.Params(season.id, ChangeSeasonFollowStatus.Action.IGNORE))
+        changeSeasonFollowStatus(
+                ChangeSeasonFollowStatus.Params(season.id, ChangeSeasonFollowStatus.Action.IGNORE)
+        )
     }
 
     fun onMarkPreviousSeasonsIgnored(season: Season) {
-        dataOperationScope.launchInteractor(changeSeasonFollowStatus,
+        changeSeasonFollowStatus(
                 ChangeSeasonFollowStatus.Params(season.id,
-                        ChangeSeasonFollowStatus.Action.IGNORE_PREVIOUS))
+                        ChangeSeasonFollowStatus.Action.IGNORE_PREVIOUS)
+        )
     }
 
     fun onUpClicked(showDetailsNavigator: ShowDetailsNavigator) = showDetailsNavigator.navigateUp()

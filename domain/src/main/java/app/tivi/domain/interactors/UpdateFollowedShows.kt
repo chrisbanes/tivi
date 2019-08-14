@@ -24,22 +24,25 @@ import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.data.repositories.watchedshows.WatchedShowsRepository
 import app.tivi.domain.Interactor
 import app.tivi.extensions.parallelForEach
+import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 class UpdateFollowedShows @Inject constructor(
-    dispatchers: AppCoroutineDispatchers,
     private val showRepository: ShowRepository,
     private val followedShowsRepository: FollowedShowsRepository,
     private val watchedShowsRepository: WatchedShowsRepository,
-    private val seasonEpisodeRepository: SeasonsEpisodesRepository
-) : Interactor<UpdateFollowedShows.Params> {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
+    private val seasonEpisodeRepository: SeasonsEpisodesRepository,
+    dispatchers: AppCoroutineDispatchers,
+    @ProcessLifetime val processScope: CoroutineScope
+) : Interactor<UpdateFollowedShows.Params>() {
+    override val scope: CoroutineScope = processScope + dispatchers.io
 
-    override suspend fun invoke(params: Params) = coroutineScope {
+    override suspend fun doWork(params: Params) = coroutineScope {
         val syncFollowed = launch {
             if (params.forceRefresh || followedShowsRepository.needFollowedShowsSync()) {
                 followedShowsRepository.syncFollowedShows()

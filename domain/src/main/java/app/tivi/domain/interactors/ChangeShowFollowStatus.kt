@@ -16,23 +16,50 @@
 
 package app.tivi.domain.interactors
 
+import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.domain.Interactor
+import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 class ChangeShowFollowStatus @Inject constructor(
+    private val followedShowsRepository: FollowedShowsRepository,
+    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     dispatchers: AppCoroutineDispatchers,
-    private val followedShowsRepository: FollowedShowsRepository
-) : Interactor<ChangeShowFollowStatus.Params> {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
+    @ProcessLifetime val processScope: CoroutineScope
+) : Interactor<ChangeShowFollowStatus.Params>() {
+    override val scope: CoroutineScope = processScope + dispatchers.io
 
-    override suspend fun invoke(params: Params) {
+    override suspend fun doWork(params: Params) {
+        suspend fun unfollow(showId: Long) {
+            followedShowsRepository.removeFollowedShow(showId)
+            // Remove seasons, episodes and watches
+            seasonsEpisodesRepository.removeShowSeasonData(showId)
+        }
+
+        suspend fun follow(showId: Long) {
+            followedShowsRepository.addFollowedShow(showId)
+
+            // Update seasons, episodes and watches
+            if (seasonsEpisodesRepository.needShowSeasonsUpdate(showId)) {
+                seasonsEpisodesRepository.updateSeasonsEpisodes(showId)
+            }
+            seasonsEpisodesRepository.updateShowEpisodeWatchesIfNeeded(showId)
+        }
+
         when (params.action) {
-            Action.TOGGLE -> followedShowsRepository.toggleFollowedShow(params.showId)
-            Action.FOLLOW -> followedShowsRepository.addFollowedShow(params.showId)
-            Action.UNFOLLOW -> followedShowsRepository.removeFollowedShow(params.showId)
+            Action.TOGGLE -> {
+                if (followedShowsRepository.isShowFollowed(params.showId)) {
+                    unfollow(params.showId)
+                } else {
+                    follow(params.showId)
+                }
+            }
+            Action.FOLLOW -> follow(params.showId)
+            Action.UNFOLLOW -> unfollow(params.showId)
         }
     }
 

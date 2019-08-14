@@ -19,17 +19,20 @@ package app.tivi.domain.interactors
 import app.tivi.data.repositories.traktusers.TraktUsersRepository
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateUserDetails.Params
+import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 class UpdateUserDetails @Inject constructor(
+    private val repository: TraktUsersRepository,
     dispatchers: AppCoroutineDispatchers,
-    private val repository: TraktUsersRepository
-) : Interactor<Params> {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
+    @ProcessLifetime val processScope: CoroutineScope
+) : Interactor<Params>() {
+    override val scope: CoroutineScope = processScope + dispatchers.io
 
-    override suspend fun invoke(params: Params) {
+    override suspend fun doWork(params: Params) {
         if (params.forceLoad || repository.needUpdate(params.username)) {
             repository.updateUser(params.username)
         }

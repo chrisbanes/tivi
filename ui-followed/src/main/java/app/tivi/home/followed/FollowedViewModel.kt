@@ -23,20 +23,18 @@ import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.domain.interactors.UpdateFollowedShows
-import app.tivi.domain.launchInteractor
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObservePagedFollowedShows
-import app.tivi.inject.ProcessLifetime
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.ObservableLoadingCounter
+import app.tivi.util.collectFrom
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -47,8 +45,7 @@ class FollowedViewModel @AssistedInject constructor(
     private val updateFollowedShows: UpdateFollowedShows,
     private val observePagedFollowedShows: ObservePagedFollowedShows,
     private val traktManager: TraktManager,
-    tmdbManager: TmdbManager,
-    @ProcessLifetime private val dataOperationScope: CoroutineScope
+    tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<FollowedViewState>(initialState) {
     private val boundaryCallback = object : PagedList.BoundaryCallback<FollowedShowEntryWithShow>() {
         override fun onZeroItemsLoaded() {
@@ -105,7 +102,7 @@ class FollowedViewModel @AssistedInject constructor(
     }
 
     private fun updateDataSource(state: FollowedViewState) {
-        viewModelScope.launchInteractor(observePagedFollowedShows,
+        observePagedFollowedShows(
                 ObservePagedFollowedShows.Parameters(
                         sort = state.sort,
                         filter = state.filter,
@@ -118,9 +115,7 @@ class FollowedViewModel @AssistedInject constructor(
     fun refresh(force: Boolean = false) {
         viewModelScope.launch {
             traktManager.state.first { it == TraktAuthState.LOGGED_IN }
-                    .run {
-                        refreshFollowed(force)
-                    }
+                    .run { refreshFollowed(force) }
         }
     }
 
@@ -133,12 +128,12 @@ class FollowedViewModel @AssistedInject constructor(
         copy(sort = sort)
     }
 
-    private fun refreshFollowed(fromUserInteraction: Boolean) {
-        dataOperationScope.launchInteractor(
-                updateFollowedShows,
-                UpdateFollowedShows.Params(fromUserInteraction, RefreshType.QUICK),
-                loadingState
-        )
+    private fun refreshFollowed(fromInteraction: Boolean) {
+        updateFollowedShows(UpdateFollowedShows.Params(fromInteraction, RefreshType.QUICK)).also {
+            viewModelScope.launch {
+                loadingState.collectFrom(it)
+            }
+        }
     }
 
     @AssistedInject.Factory

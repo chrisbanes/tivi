@@ -18,17 +18,20 @@ package app.tivi.domain.interactors
 
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.domain.Interactor
+import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 class RemoveEpisodeWatch @Inject constructor(
+    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     dispatchers: AppCoroutineDispatchers,
-    private val seasonsEpisodesRepository: SeasonsEpisodesRepository
-) : Interactor<RemoveEpisodeWatch.Params> {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
+    @ProcessLifetime val processScope: CoroutineScope
+) : Interactor<RemoveEpisodeWatch.Params>() {
+    override val scope: CoroutineScope = processScope + dispatchers.io
 
-    override suspend operator fun invoke(params: Params) {
+    override suspend fun doWork(params: Params) {
         seasonsEpisodesRepository.removeEpisodeWatch(params.episodeWatchId)
     }
 
