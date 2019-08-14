@@ -16,32 +16,70 @@
 
 package app.tivi.data.repositories.shows
 
+import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.instantInPast
 import app.tivi.data.resultentities.ShowDetailed
-import kotlinx.coroutines.flow.Flow
+import app.tivi.inject.Trakt
 import org.threeten.bp.Instant
+import javax.inject.Inject
+import javax.inject.Singleton
 
-interface ShowRepository {
-    fun observeShow(showId: Long): Flow<ShowDetailed>
+@Singleton
+class ShowRepository @Inject constructor(
+    private val showStore: ShowStore,
+    private val showLastRequestStore: ShowLastRequestStore,
+    private val showImagesLastRequestStore: ShowImagesLastRequestStore,
+    private val tmdbShowImagesDataSource: TmdbShowImagesDataSource,
+    @Trakt private val traktShowDataSource: ShowDataSource
+) {
+    fun observeShow(showId: Long) = showStore.observeShowDetailed(showId)
 
-    suspend fun searchShows(query: String): List<ShowDetailed>
+    suspend fun getShow(showId: Long): TiviShow? {
+        return showStore.getShow(showId)
+    }
 
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
      */
-    suspend fun getShow(showId: Long): TiviShow?
+    suspend fun updateShow(showId: Long) {
+        val traktResult = traktShowDataSource.getShow(showStore.getShowOrEmpty(showId))
+        if (traktResult is Success) {
+            showStore.updateShowFromSources(showId, traktResult.get())
 
-    /**
-     * Updates the show with the given id from all network sources, saves the result to the database
-     */
-    suspend fun updateShow(showId: Long)
+            // If the network requests were successful, update the last request timestamp
+            showLastRequestStore.updateLastRequest(showId)
+        }
+    }
 
-    suspend fun needsInitialUpdate(showId: Long): Boolean
+    suspend fun updateShowImages(showId: Long) {
+        val show = showStore.getShow(showId)
+                ?: throw IllegalArgumentException("Show with ID $showId does not exist")
+        when (val result = tmdbShowImagesDataSource.getShowImages(show)) {
+            is Success -> {
+                showStore.saveImages(showId, result.get().map { it.copy(showId = showId) })
+                showImagesLastRequestStore.updateLastRequest(showId)
+            }
+        }
+    }
 
-    suspend fun needsUpdate(showId: Long, expiry: Instant = instantInPast(days = 7)): Boolean
+    suspend fun needsImagesUpdate(showId: Long, expiry: Instant = instantInPast(days = 30)): Boolean {
+        return showImagesLastRequestStore.isRequestBefore(showId, expiry)
+    }
 
-    suspend fun updateShowImages(showId: Long)
+    suspend fun needsUpdate(showId: Long, expiry: Instant = instantInPast(days = 7)): Boolean {
+        return showLastRequestStore.isRequestBefore(showId, expiry)
+    }
 
-    suspend fun needsImagesUpdate(showId: Long, expiry: Instant = instantInPast(days = 30)): Boolean
+    suspend fun needsInitialUpdate(showId: Long): Boolean {
+        return !showLastRequestStore.hasBeenRequested(showId)
+    }
+
+    suspend fun searchShows(query: String): List<ShowDetailed> {
+        return if (query.isNotBlank()) {
+            showStore.searchShows(query)
+        } else {
+            emptyList()
+        }
+    }
 }
