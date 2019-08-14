@@ -18,18 +18,18 @@ package app.tivi.home.watched
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
+import app.tivi.TiviMvRxViewModel
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
-import app.tivi.interactors.ObservePagedWatchedShows
-import app.tivi.interactors.UpdateWatchedShows
-import app.tivi.interactors.launchInteractor
+import app.tivi.domain.interactors.UpdateWatchedShows
+import app.tivi.domain.launchInteractor
+import app.tivi.domain.launchObserve
+import app.tivi.domain.observers.ObservePagedWatchedShows
+import app.tivi.inject.ProcessLifetime
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.ObservableLoadingCounter
-import app.tivi.TiviMvRxViewModel
-import app.tivi.inject.ProcessLifetime
-import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext

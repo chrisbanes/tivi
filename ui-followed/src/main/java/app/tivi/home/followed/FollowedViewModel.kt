@@ -22,11 +22,11 @@ import app.tivi.TiviMvRxViewModel
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.domain.interactors.UpdateFollowedShows
+import app.tivi.domain.launchInteractor
+import app.tivi.domain.launchObserve
+import app.tivi.domain.observers.ObservePagedFollowedShows
 import app.tivi.inject.ProcessLifetime
-import app.tivi.interactors.ObservePagedFollowedShows
-import app.tivi.interactors.UpdateFollowedShows
-import app.tivi.interactors.launchInteractor
-import app.tivi.interactors.launchObserve
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager

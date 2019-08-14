@@ -18,12 +18,12 @@ package app.tivi.home.trending
 
 import androidx.lifecycle.viewModelScope
 import app.tivi.data.resultentities.TrendingEntryWithShow
+import app.tivi.domain.interactors.UpdateTrendingShows
+import app.tivi.domain.interactors.UpdateTrendingShows.Page.NEXT_PAGE
+import app.tivi.domain.interactors.UpdateTrendingShows.Page.REFRESH
+import app.tivi.domain.launchInteractor
+import app.tivi.domain.observers.ObservePagedTrendingShows
 import app.tivi.inject.ProcessLifetime
-import app.tivi.interactors.ObservePagedTrendingShows
-import app.tivi.interactors.UpdateTrendingShows
-import app.tivi.interactors.UpdateTrendingShows.Page.NEXT_PAGE
-import app.tivi.interactors.UpdateTrendingShows.Page.REFRESH
-import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.EntryViewModel

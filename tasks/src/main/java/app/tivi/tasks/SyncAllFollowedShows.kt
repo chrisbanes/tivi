@@ -20,7 +20,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import app.tivi.data.entities.RefreshType
-import app.tivi.interactors.UpdateFollowedShows
+import app.tivi.domain.interactors.UpdateFollowedShows
 import app.tivi.tasks.inject.ChildWorkerFactory
 import app.tivi.util.Logger
 import com.squareup.inject.assisted.Assisted

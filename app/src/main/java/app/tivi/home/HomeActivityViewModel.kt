@@ -17,15 +17,15 @@
 package app.tivi.home
 
 import androidx.lifecycle.viewModelScope
+import app.tivi.TiviMvRxViewModel
+import app.tivi.domain.interactors.UpdateUserDetails
+import app.tivi.domain.launchInteractor
+import app.tivi.domain.launchObserve
+import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.home.main.HomeActivityViewState
-import app.tivi.interactors.ObserveUserDetails
-import app.tivi.interactors.UpdateUserDetails
-import app.tivi.interactors.launchInteractor
+import app.tivi.inject.ProcessLifetime
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
-import app.tivi.TiviMvRxViewModel
-import app.tivi.inject.ProcessLifetime
-import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted

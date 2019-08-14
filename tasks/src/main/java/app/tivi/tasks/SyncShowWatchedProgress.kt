@@ -20,7 +20,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
-import app.tivi.interactors.UpdateShowSeasonData
+import app.tivi.domain.interactors.UpdateShowSeasonData
 import app.tivi.tasks.inject.ChildWorkerFactory
 import app.tivi.util.Logger
 import com.squareup.inject.assisted.Assisted

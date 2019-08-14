@@ -18,9 +18,9 @@ package app.tivi.home.search
 
 import androidx.lifecycle.viewModelScope
 import app.tivi.TiviMvRxViewModel
-import app.tivi.interactors.SearchShows
-import app.tivi.interactors.launchInteractor
-import app.tivi.interactors.launchObserve
+import app.tivi.domain.interactors.SearchShows
+import app.tivi.domain.launchInteractor
+import app.tivi.domain.launchObserve
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.ObservableLoadingCounter
 import com.airbnb.mvrx.FragmentViewModelContext

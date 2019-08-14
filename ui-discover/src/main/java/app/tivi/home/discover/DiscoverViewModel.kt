@@ -18,13 +18,13 @@ package app.tivi.home.discover
 
 import androidx.lifecycle.viewModelScope
 import app.tivi.TiviMvRxViewModel
+import app.tivi.domain.interactors.UpdatePopularShows
+import app.tivi.domain.interactors.UpdateTrendingShows
+import app.tivi.domain.launchInteractor
+import app.tivi.domain.launchObserve
+import app.tivi.domain.observers.ObservePopularShows
+import app.tivi.domain.observers.ObserveTrendingShows
 import app.tivi.inject.ProcessLifetime
-import app.tivi.interactors.ObservePopularShows
-import app.tivi.interactors.ObserveTrendingShows
-import app.tivi.interactors.UpdatePopularShows
-import app.tivi.interactors.UpdateTrendingShows
-import app.tivi.interactors.launchInteractor
-import app.tivi.interactors.launchObserve
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.ObservableLoadingCounter
 import com.airbnb.mvrx.FragmentViewModelContext

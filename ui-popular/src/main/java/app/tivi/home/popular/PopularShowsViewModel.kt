@@ -18,10 +18,10 @@ package app.tivi.home.popular
 
 import androidx.lifecycle.viewModelScope
 import app.tivi.data.resultentities.PopularEntryWithShow
+import app.tivi.domain.interactors.UpdatePopularShows
+import app.tivi.domain.launchInteractor
+import app.tivi.domain.observers.ObservePagedPopularShows
 import app.tivi.inject.ProcessLifetime
-import app.tivi.interactors.ObservePagedPopularShows
-import app.tivi.interactors.UpdatePopularShows
-import app.tivi.interactors.launchInteractor
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.EntryViewModel

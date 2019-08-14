@@ -23,7 +23,7 @@ import app.tivi.api.Status
 import app.tivi.api.UiResource
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.interactors.PagingInteractor
+import app.tivi.domain.PagingInteractor
 import app.tivi.tmdb.TmdbManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
