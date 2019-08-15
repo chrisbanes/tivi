@@ -25,7 +25,8 @@ import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import app.tivi.TiviFragment
-import app.tivi.api.UiStatus
+import app.tivi.api.UiError
+import app.tivi.api.UiLoading
 import app.tivi.common.entrygrid.databinding.FragmentEntryGridBinding
 import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.data.Entry
@@ -89,18 +90,18 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
                 controller.tmdbImageUrlProvider = it.tmdbImageUrlProvider
                 controller.submitList(it.liveList)
 
-                when (it.uiResource.status) {
-                    UiStatus.SUCCESS -> {
+                when (val status = it.status) {
+                    is UiError -> {
                         swipeRefreshLatch.refreshing = false
                         controller.isLoading = false
+                        Snackbar.make(view,
+                                status.exception?.localizedMessage ?: "EMPTY",
+                                Snackbar.LENGTH_SHORT).show()
                     }
-                    UiStatus.ERROR -> {
-                        swipeRefreshLatch.refreshing = false
-                        controller.isLoading = false
-                        Snackbar.make(view, it.uiResource.message ?: "EMPTY", Snackbar.LENGTH_SHORT).show()
+                    is UiLoading -> {
+                        swipeRefreshLatch.refreshing = status.fullRefresh
+                        controller.isLoading = !status.fullRefresh
                     }
-                    UiStatus.REFRESHING -> swipeRefreshLatch.refreshing = true
-                    UiStatus.LOADING_MORE -> controller.isLoading = true
                     else -> {
                         swipeRefreshLatch.refreshing = false
                         controller.isLoading = false

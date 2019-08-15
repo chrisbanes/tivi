@@ -19,8 +19,11 @@ package app.tivi.util
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
+import app.tivi.api.UiError
+import app.tivi.api.UiIdle
+import app.tivi.api.UiLoading
+import app.tivi.api.UiSuccess
 import app.tivi.api.UiStatus
-import app.tivi.api.UiResource
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.domain.PagingInteractor
@@ -44,7 +47,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
     protected abstract val tmdbManager: TmdbManager
     protected abstract val logger: Logger
 
-    private val messages = ConflatedBroadcastChannel<UiResource>()
+    private val messages = ConflatedBroadcastChannel<UiStatus>(UiIdle)
     private val loaded = ConflatedBroadcastChannel(false)
 
     protected val pageListConfig = PagedList.Config.Builder().run {
@@ -80,16 +83,18 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
     fun onListScrolledToEnd() {
         callLoadMore().also {
             viewModelScope.launch {
-                it.catch { sendMessage(UiResource(UiStatus.ERROR, it.localizedMessage)) }
-                        .map {
-                            when (it) {
-                                Status.FINISHED -> UiResource(UiStatus.SUCCESS)
-                                Status.STARTED -> UiResource(UiStatus.LOADING_MORE)
-                                Status.TIMEOUT -> UiResource(UiStatus.ERROR)
-                                else -> UiResource(UiStatus.IDLE)
-                            }
-                        }
-                        .collect { sendMessage(it) }
+                it.catch {
+                    messages.send(UiError(it))
+                }.map {
+                    when (it) {
+                        Status.FINISHED -> UiSuccess
+                        Status.STARTED -> UiLoading(false)
+                        Status.TIMEOUT -> UiError()
+                        else -> UiIdle
+                    }
+                }.collect {
+                    messages.send(it)
+                }
             }
         }
     }
@@ -97,16 +102,18 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
     fun refresh() {
         callRefresh().also {
             viewModelScope.launch {
-                it.catch { sendMessage(UiResource(UiStatus.ERROR, it.localizedMessage)) }
-                        .map {
-                            when (it) {
-                                Status.FINISHED -> UiResource(UiStatus.SUCCESS)
-                                Status.STARTED -> UiResource(UiStatus.REFRESHING)
-                                Status.TIMEOUT -> UiResource(UiStatus.ERROR)
-                                else -> UiResource(UiStatus.IDLE)
-                            }
-                        }
-                        .collect { sendMessage(it) }
+                it.catch {
+                    messages.send(UiError(it))
+                }.map {
+                    when (it) {
+                        Status.FINISHED -> UiSuccess
+                        Status.STARTED -> UiLoading(true)
+                        Status.TIMEOUT -> UiError()
+                        else -> UiIdle
+                    }
+                }.collect {
+                    messages.send(it)
+                }
             }
         }
     }
@@ -114,6 +121,4 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
     protected abstract fun callRefresh(): Flow<Status>
 
     protected abstract fun callLoadMore(): Flow<Status>
-
-    private fun sendMessage(uiResource: UiResource) = messages.offer(uiResource)
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,12 @@
 
 package app.tivi.api
 
-/**
- * UiStatus of a resource that is provided to the UI.
- *
- *
- * These are usually created by the Repository classes where they return
- * `LiveData<Resource<T>>` to pass back the latest data to the UI with its fetch status.
- */
-enum class UiStatus {
-    IDLE,
-    SUCCESS,
-    ERROR,
-    REFRESHING,
-    LOADING_MORE
-}
+sealed class UiStatus
+
+object UiIdle : UiStatus()
+
+data class UiError(val exception: Throwable? = null) : UiStatus()
+
+data class UiLoading(val fullRefresh: Boolean = true) : UiStatus()
+
+object UiSuccess : UiStatus()
