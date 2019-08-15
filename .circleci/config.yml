@@ -48,12 +48,12 @@ persist_workspace: &persist_workspace
 decrypt_secrets: &decrypt_secrets
   run:
     name: Decrypt secrets
-    command: signing/setup.sh $ENCRYPT_KEY
+    command: release/signing-setup.sh $ENCRYPT_KEY
 
 clean_secrets: &clean_secrets
   run:
     name: Cleanup secrets
-    command: signing/cleanup.sh
+    command: release/signing-cleanup.sh
 
 jobs:
   build_debug:
@@ -140,17 +140,40 @@ jobs:
           command: ./gradlew publishRelease -Ptivi.versioncode=$CIRCLE_BUILD_NUM
       - <<: *clean_secrets
 
+  deploy_to_github_release:
+    docker:
+      - image: circleci/golang:1.12
+    working_directory: *workspace
+    steps:
+      - checkout
+      - <<: *attach_workspace
+      - run:
+          name: "Install ghr"
+          command: go get github.com/tcnksm/ghr
+      - run:
+          name: "Publish Release on GitHub"
+          command: release/tag-github-release.sh
+
 workflows:
   version: 2
   build_test_deploy:
     jobs:
-      - build_debug
+      - build_debug:
+          filters:
+            tags:
+              only: /.*/
       - build_release:
           requires:
             - build_debug
+          filters:
+            tags:
+              only: /.*/
       - check:
           requires:
             - build_debug
+          filters:
+            tags:
+              only: /.*/
       - deploy_to_play:
           requires:
             - check
@@ -158,3 +181,14 @@ workflows:
           filters:
             branches:
               only: master
+            tags:
+              only: /.*/
+      - deploy_to_github_release:
+          requires:
+            - check
+            - build_release
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
