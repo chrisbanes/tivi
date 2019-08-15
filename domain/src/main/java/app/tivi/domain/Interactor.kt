@@ -17,7 +17,11 @@
 package app.tivi.domain
 
 import androidx.paging.PagedList
-import app.tivi.data.entities.Status
+import app.tivi.base.InvokeFinished
+import app.tivi.base.InvokeIdle
+import app.tivi.base.InvokeStarted
+import app.tivi.base.InvokeStatus
+import app.tivi.base.InvokeTimeout
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.TimeoutCancellationException
@@ -34,17 +38,17 @@ import java.util.concurrent.TimeUnit
 abstract class Interactor<in P> {
     protected abstract val scope: CoroutineScope
 
-    operator fun invoke(params: P, timeoutMs: Long = defaultTimeoutMs): Flow<Status> {
-        val channel = ConflatedBroadcastChannel(Status.IDLE)
+    operator fun invoke(params: P, timeoutMs: Long = defaultTimeoutMs): Flow<InvokeStatus> {
+        val channel = ConflatedBroadcastChannel<InvokeStatus>(InvokeIdle)
         scope.launch {
             try {
                 withTimeout(timeoutMs) {
-                    channel.send(Status.STARTED)
+                    channel.send(InvokeStarted)
                     doWork(params)
-                    channel.send(Status.FINISHED)
+                    channel.send(InvokeFinished)
                 }
             } catch (t: TimeoutCancellationException) {
-                channel.send(Status.TIMEOUT)
+                channel.send(InvokeTimeout)
             }
         }
         return channel.asFlow()

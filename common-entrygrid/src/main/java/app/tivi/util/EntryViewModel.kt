@@ -24,10 +24,13 @@ import app.tivi.api.UiIdle
 import app.tivi.api.UiLoading
 import app.tivi.api.UiSuccess
 import app.tivi.api.UiStatus
+import app.tivi.base.InvokeFinished
+import app.tivi.base.InvokeStarted
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.domain.PagingInteractor
-import app.tivi.data.entities.Status
+import app.tivi.base.InvokeStatus
+import app.tivi.base.InvokeTimeout
 import app.tivi.tmdb.TmdbManager
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
@@ -87,9 +90,9 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
                     messages.send(UiError(it))
                 }.map {
                     when (it) {
-                        Status.FINISHED -> UiSuccess
-                        Status.STARTED -> UiLoading(false)
-                        Status.TIMEOUT -> UiError()
+                        InvokeFinished -> UiSuccess
+                        InvokeStarted -> UiLoading(false)
+                        InvokeTimeout -> UiError()
                         else -> UiIdle
                     }
                 }.collect {
@@ -106,9 +109,9 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
                     messages.send(UiError(it))
                 }.map {
                     when (it) {
-                        Status.FINISHED -> UiSuccess
-                        Status.STARTED -> UiLoading(true)
-                        Status.TIMEOUT -> UiError()
+                        InvokeFinished -> UiSuccess
+                        InvokeStarted -> UiLoading(true)
+                        InvokeTimeout -> UiError()
                         else -> UiIdle
                     }
                 }.collect {
@@ -118,7 +121,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
         }
     }
 
-    protected abstract fun callRefresh(): Flow<Status>
+    protected abstract fun callRefresh(): Flow<InvokeStatus>
 
-    protected abstract fun callLoadMore(): Flow<Status>
+    protected abstract fun callLoadMore(): Flow<InvokeStatus>
 }

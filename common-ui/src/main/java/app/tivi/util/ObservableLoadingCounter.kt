@@ -16,7 +16,10 @@
 
 package app.tivi.util
 
-import app.tivi.data.entities.Status
+import app.tivi.base.InvokeFinished
+import app.tivi.base.InvokeStarted
+import app.tivi.base.InvokeStatus
+import app.tivi.base.InvokeTimeout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -45,11 +48,11 @@ class ObservableLoadingCounter {
     }
 }
 
-suspend fun ObservableLoadingCounter.collectFrom(statuses: Flow<Status>) {
+suspend fun ObservableLoadingCounter.collectFrom(statuses: Flow<InvokeStatus>) {
     statuses.collect {
-        if (it == Status.STARTED) {
+        if (it == InvokeStarted) {
             addLoader()
-        } else if (it == Status.FINISHED) {
+        } else if (it == InvokeFinished || it == InvokeTimeout) {
             removeLoader()
         }
     }

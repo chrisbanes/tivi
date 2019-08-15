@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.base
 
-enum class Status {
-    IDLE,
-    STARTED,
-    FINISHED,
-    TIMEOUT
-}
+sealed class InvokeStatus
+object InvokeIdle : InvokeStatus()
+object InvokeStarted : InvokeStatus()
+object InvokeFinished : InvokeStatus()
+object InvokeTimeout : InvokeStatus()

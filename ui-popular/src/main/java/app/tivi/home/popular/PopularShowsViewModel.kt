@@ -17,7 +17,7 @@
 package app.tivi.home.popular
 
 import app.tivi.data.resultentities.PopularEntryWithShow
-import app.tivi.data.entities.Status
+import app.tivi.base.InvokeStatus
 import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.observers.ObservePagedPopularShows
 import app.tivi.tmdb.TmdbManager
@@ -40,11 +40,11 @@ class PopularShowsViewModel @Inject constructor(
         refresh()
     }
 
-    override fun callLoadMore(): Flow<Status> {
+    override fun callLoadMore(): Flow<InvokeStatus> {
         return interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.NEXT_PAGE))
     }
 
-    override fun callRefresh(): Flow<Status> {
+    override fun callRefresh(): Flow<InvokeStatus> {
         return interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH))
     }
 }
