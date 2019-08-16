@@ -16,49 +16,31 @@
 
 package app.tivi.home.trending
 
-import androidx.lifecycle.viewModelScope
 import app.tivi.data.resultentities.TrendingEntryWithShow
-import app.tivi.inject.ProcessLifetime
-import app.tivi.interactors.ObservePagedTrendingShows
-import app.tivi.interactors.UpdateTrendingShows
-import app.tivi.interactors.UpdateTrendingShows.Page.NEXT_PAGE
-import app.tivi.interactors.UpdateTrendingShows.Page.REFRESH
-import app.tivi.interactors.launchInteractor
+import app.tivi.domain.interactors.UpdateTrendingShows
+import app.tivi.domain.interactors.UpdateTrendingShows.Page.NEXT_PAGE
+import app.tivi.domain.interactors.UpdateTrendingShows.Page.REFRESH
+import app.tivi.domain.observers.ObservePagedTrendingShows
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class TrendingShowsViewModel @Inject constructor(
-    dispatchers: AppCoroutineDispatchers,
+    override val dispatchers: AppCoroutineDispatchers,
+    override val pagingInteractor: ObservePagedTrendingShows,
     private val interactor: UpdateTrendingShows,
-    observePagedTrendingShows: ObservePagedTrendingShows,
-    tmdbManager: TmdbManager,
-    logger: Logger,
-    @ProcessLifetime private val dataOperationScope: CoroutineScope
-) : EntryViewModel<TrendingEntryWithShow, ObservePagedTrendingShows>(
-        dispatchers,
-        observePagedTrendingShows,
-        tmdbManager,
-        logger
-) {
+    override val tmdbManager: TmdbManager,
+    override val logger: Logger
+) : EntryViewModel<TrendingEntryWithShow, ObservePagedTrendingShows>() {
     init {
-        viewModelScope.launch {
-            observePagedTrendingShows(
-                    ObservePagedTrendingShows.Params(pageListConfig, boundaryCallback))
-        }
+        pagingInteractor(ObservePagedTrendingShows.Params(pageListConfig, boundaryCallback))
+
+        refresh()
     }
 
-    override suspend fun callLoadMore() = dataOperationScope.launchInteractor(
-            interactor,
-            UpdateTrendingShows.Params(NEXT_PAGE)
-    )
+    override fun callLoadMore() = interactor(UpdateTrendingShows.Params(NEXT_PAGE))
 
-    override suspend fun callRefresh() = dataOperationScope.launchInteractor(
-            interactor,
-            UpdateTrendingShows.Params(REFRESH)
-    )
+    override fun callRefresh() = interactor(UpdateTrendingShows.Params(REFRESH))
 }

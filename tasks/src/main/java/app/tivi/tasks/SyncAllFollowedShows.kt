@@ -20,12 +20,11 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import app.tivi.data.entities.RefreshType
-import app.tivi.interactors.UpdateFollowedShows
+import app.tivi.domain.interactors.UpdateFollowedShows
 import app.tivi.tasks.inject.ChildWorkerFactory
 import app.tivi.util.Logger
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.withContext
 
 class SyncAllFollowedShows @AssistedInject constructor(
     @Assisted params: WorkerParameters,
@@ -39,10 +38,8 @@ class SyncAllFollowedShows @AssistedInject constructor(
     }
 
     override suspend fun doWork(): Result {
-        withContext(updateFollowedShows.dispatcher) {
-            logger.d("$TAG worker running")
-            updateFollowedShows(UpdateFollowedShows.Params(true, RefreshType.FULL))
-        }
+        logger.d("$TAG worker running")
+        updateFollowedShows.executeSync(UpdateFollowedShows.Params(true, RefreshType.FULL))
         return Result.success()
     }
 

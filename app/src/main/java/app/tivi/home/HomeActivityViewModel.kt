@@ -17,20 +17,17 @@
 package app.tivi.home
 
 import androidx.lifecycle.viewModelScope
+import app.tivi.TiviMvRxViewModel
+import app.tivi.domain.interactors.UpdateUserDetails
+import app.tivi.domain.launchObserve
+import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.home.main.HomeActivityViewState
-import app.tivi.interactors.ObserveUserDetails
-import app.tivi.interactors.UpdateUserDetails
-import app.tivi.interactors.launchInteractor
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
-import app.tivi.TiviMvRxViewModel
-import app.tivi.inject.ProcessLifetime
-import app.tivi.interactors.launchObserve
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -42,24 +39,21 @@ class HomeActivityViewModel @AssistedInject constructor(
     @Assisted initialState: HomeActivityViewState,
     private val traktManager: TraktManager,
     private val updateUserDetails: UpdateUserDetails,
-    observeUserDetails: ObserveUserDetails,
-    @ProcessLifetime private val dataOperationScope: CoroutineScope
+    observeUserDetails: ObserveUserDetails
 ) : TiviMvRxViewModel<HomeActivityViewState>(initialState) {
     init {
         viewModelScope.launchObserve(observeUserDetails) {
             it.execute { copy(user = it()) }
         }
 
-        viewModelScope.launchInteractor(observeUserDetails,
-                ObserveUserDetails.Params("me"))
+        observeUserDetails(ObserveUserDetails.Params("me"))
 
         viewModelScope.launch {
             traktManager.state
                     .distinctUntilChanged()
                     .onEach {
                         if (it == TraktAuthState.LOGGED_IN) {
-                            dataOperationScope.launchInteractor(updateUserDetails,
-                                    UpdateUserDetails.Params("me", false))
+                            updateUserDetails(UpdateUserDetails.Params("me", false))
                         }
                     }
                     .execute {

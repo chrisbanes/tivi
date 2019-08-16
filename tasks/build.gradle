@@ -43,7 +43,7 @@ android {
 dependencies {
     implementation project(":base")
     implementation project(":base-android")
-    implementation project(':interactors')
+    implementation project(':domain')
 
     api Libs.AndroidX.Work.runtimeKtx
 

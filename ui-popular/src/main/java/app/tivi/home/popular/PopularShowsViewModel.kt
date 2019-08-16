@@ -16,46 +16,35 @@
 
 package app.tivi.home.popular
 
-import androidx.lifecycle.viewModelScope
 import app.tivi.data.resultentities.PopularEntryWithShow
-import app.tivi.inject.ProcessLifetime
-import app.tivi.interactors.ObservePagedPopularShows
-import app.tivi.interactors.UpdatePopularShows
-import app.tivi.interactors.launchInteractor
+import app.tivi.base.InvokeStatus
+import app.tivi.domain.interactors.UpdatePopularShows
+import app.tivi.domain.observers.ObservePagedPopularShows
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class PopularShowsViewModel @Inject constructor(
-    dispatchers: AppCoroutineDispatchers,
+    override val dispatchers: AppCoroutineDispatchers,
+    override val pagingInteractor: ObservePagedPopularShows,
     private val interactor: UpdatePopularShows,
-    observePagedPopularShows: ObservePagedPopularShows,
-    tmdbManager: TmdbManager,
-    logger: Logger,
-    @ProcessLifetime private val dataOperationScope: CoroutineScope
-) : EntryViewModel<PopularEntryWithShow, ObservePagedPopularShows>(
-        dispatchers,
-        observePagedPopularShows,
-        tmdbManager,
-        logger
-) {
+    override val tmdbManager: TmdbManager,
+    override val logger: Logger
+) : EntryViewModel<PopularEntryWithShow, ObservePagedPopularShows>() {
     init {
-        viewModelScope.launch {
-            observePagedPopularShows(ObservePagedPopularShows.Params(pageListConfig, boundaryCallback))
-        }
+        pagingInteractor(ObservePagedPopularShows.Params(pageListConfig, boundaryCallback))
+
+        refresh()
     }
 
-    override suspend fun callLoadMore() = dataOperationScope.launchInteractor(
-            interactor,
-            UpdatePopularShows.Params(UpdatePopularShows.Page.NEXT_PAGE)
-    )
+    override fun callLoadMore(): Flow<InvokeStatus> {
+        return interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.NEXT_PAGE))
+    }
 
-    override suspend fun callRefresh() = dataOperationScope.launchInteractor(
-            interactor,
-            UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH)
-    )
+    override fun callRefresh(): Flow<InvokeStatus> {
+        return interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH))
+    }
 }

@@ -18,9 +18,8 @@ package app.tivi.home.search
 
 import androidx.lifecycle.viewModelScope
 import app.tivi.TiviMvRxViewModel
-import app.tivi.interactors.SearchShows
-import app.tivi.interactors.launchInteractor
-import app.tivi.interactors.launchObserve
+import app.tivi.domain.interactors.SearchShows
+import app.tivi.domain.launchObserve
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.ObservableLoadingCounter
 import com.airbnb.mvrx.FragmentViewModelContext
@@ -33,6 +32,7 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SearchViewModel @AssistedInject constructor(
     @Assisted initialState: SearchViewState,
@@ -44,13 +44,15 @@ class SearchViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch {
-            searchQuery.asFlow().debounce(300).collect {
-                viewModelScope.launchInteractor(
-                        searchShows,
-                        SearchShows.Params(it),
-                        loadingState
-                )
-            }
+            searchQuery.asFlow()
+                    .debounce(300)
+                    .collect {
+                        loadingState.addLoader()
+                        withContext(searchShows.dispatcher) {
+                            searchShows(SearchShows.Params(it))
+                        }
+                        loadingState.removeLoader()
+                    }
         }
 
         viewModelScope.launch {

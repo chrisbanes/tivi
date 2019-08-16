@@ -25,7 +25,9 @@ import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import app.tivi.TiviFragment
-import app.tivi.api.Status
+import app.tivi.api.UiError
+import app.tivi.api.UiLoading
+import app.tivi.common.entrygrid.R
 import app.tivi.common.entrygrid.databinding.FragmentEntryGridBinding
 import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.data.Entry
@@ -35,6 +37,7 @@ import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.transitions.GridToGridTransitioner
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
@@ -84,23 +87,29 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
 
         binding.gridSwipeRefresh.setOnRefreshListener(viewModel::refresh)
 
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.viewState.collect {
                 controller.tmdbImageUrlProvider = it.tmdbImageUrlProvider
                 controller.submitList(it.liveList)
 
-                when (it.uiResource.status) {
-                    Status.SUCCESS -> {
+                when (val status = it.status) {
+                    is UiError -> {
+                        swipeRefreshLatch.refreshing = false
+                        controller.isLoading = false
+                        Snackbar.make(view,
+                                status.exception?.localizedMessage
+                                        ?: getString(R.string.error_generic),
+                                Snackbar.LENGTH_SHORT
+                        ).show()
+                    }
+                    is UiLoading -> {
+                        swipeRefreshLatch.refreshing = status.fullRefresh
+                        controller.isLoading = !status.fullRefresh
+                    }
+                    else -> {
                         swipeRefreshLatch.refreshing = false
                         controller.isLoading = false
                     }
-                    Status.ERROR -> {
-                        swipeRefreshLatch.refreshing = false
-                        controller.isLoading = false
-                        Snackbar.make(view, it.uiResource.message ?: "EMPTY", Snackbar.LENGTH_SHORT).show()
-                    }
-                    Status.REFRESHING -> swipeRefreshLatch.refreshing = true
-                    Status.LOADING_MORE -> controller.isLoading = true
                 }
 
                 if (it.isLoaded) {

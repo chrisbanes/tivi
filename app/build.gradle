@@ -173,7 +173,7 @@ dependencies {
     implementation project(":trakt")
     implementation project(":trakt-auth")
     implementation project(":tmdb")
-    implementation project(':interactors')
+    implementation project(':domain')
     implementation project(":tasks")
     implementation project(":ui-discover")
     implementation project(":ui-showdetails")

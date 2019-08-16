@@ -20,12 +20,11 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
-import app.tivi.interactors.UpdateShowSeasonData
+import app.tivi.domain.interactors.UpdateShowSeasonData
 import app.tivi.tasks.inject.ChildWorkerFactory
 import app.tivi.util.Logger
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.withContext
 
 class SyncShowWatchedProgress @AssistedInject constructor(
     @Assisted params: WorkerParameters,
@@ -43,12 +42,10 @@ class SyncShowWatchedProgress @AssistedInject constructor(
     }
 
     override suspend fun doWork(): Result {
-        withContext(updateShowSeasonData.dispatcher) {
-            val showId = inputData.getLong(PARAM_SHOW_ID, -1)
-            logger.d("$TAG worker running for show id: $showId")
+        val showId = inputData.getLong(PARAM_SHOW_ID, -1)
+        logger.d("$TAG worker running for show id: $showId")
 
-            updateShowSeasonData(UpdateShowSeasonData.Params(showId, true))
-        }
+        updateShowSeasonData.executeSync(UpdateShowSeasonData.Params(showId, true))
 
         return Result.success()
     }

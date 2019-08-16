@@ -109,8 +109,8 @@ class SeasonsEpisodesRepository @Inject constructor(
 
     suspend fun updateShowEpisodeWatchesIfNeeded(
         showId: Long,
-        refreshType: RefreshType,
-        forceRefresh: Boolean,
+        refreshType: RefreshType = RefreshType.QUICK,
+        forceRefresh: Boolean = false,
         lastUpdated: OffsetDateTime? = null
     ) {
         if (refreshType == RefreshType.QUICK) {
