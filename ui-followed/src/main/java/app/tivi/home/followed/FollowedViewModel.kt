@@ -25,9 +25,9 @@ import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.domain.interactors.UpdateFollowedShows
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObservePagedFollowedShows
+import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
-import app.tivi.trakt.TraktManager
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectFrom
 import com.airbnb.mvrx.FragmentViewModelContext
@@ -35,6 +35,7 @@ import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -44,7 +45,7 @@ class FollowedViewModel @AssistedInject constructor(
     @Assisted initialState: FollowedViewState,
     private val updateFollowedShows: UpdateFollowedShows,
     private val observePagedFollowedShows: ObservePagedFollowedShows,
-    private val traktManager: TraktManager,
+    private val observeTraktAuthState: ObserveTraktAuthState,
     tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<FollowedViewState>(initialState) {
     private val boundaryCallback = object : PagedList.BoundaryCallback<FollowedShowEntryWithShow>() {
@@ -85,6 +86,14 @@ class FollowedViewModel @AssistedInject constructor(
             }
         }
 
+        viewModelScope.launchObserve(observeTraktAuthState) { flow ->
+            flow.distinctUntilChanged().collect {
+                if (it == TraktAuthState.LOGGED_IN) {
+                    refreshFollowed(false)
+                }
+            }
+        }
+
         // Set the available sorting options
         setState {
             copy(availableSorts = listOf(
@@ -98,7 +107,7 @@ class FollowedViewModel @AssistedInject constructor(
         // Subscribe to state changes, so update the observed data source
         subscribe(::updateDataSource)
 
-        refresh()
+        refresh(false)
     }
 
     private fun updateDataSource(state: FollowedViewState) {
@@ -112,10 +121,13 @@ class FollowedViewModel @AssistedInject constructor(
         )
     }
 
-    fun refresh(force: Boolean = false) {
+    fun refresh() = refresh(true)
+
+    private fun refresh(fromUser: Boolean) {
         viewModelScope.launch {
-            traktManager.state.first { it == TraktAuthState.LOGGED_IN }
-                    .run { refreshFollowed(force) }
+            observeTraktAuthState.observe()
+                    .first { it == TraktAuthState.LOGGED_IN }
+                    .also { refreshFollowed(fromUser) }
         }
     }
 

@@ -19,7 +19,9 @@ package app.tivi.home
 import androidx.lifecycle.viewModelScope
 import app.tivi.TiviMvRxViewModel
 import app.tivi.domain.interactors.UpdateUserDetails
+import app.tivi.domain.invoke
 import app.tivi.domain.launchObserve
+import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.home.main.HomeActivityViewState
 import app.tivi.trakt.TraktAuthState
@@ -30,13 +32,13 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
 
 class HomeActivityViewModel @AssistedInject constructor(
     @Assisted initialState: HomeActivityViewState,
+    observeTraktAuthState: ObserveTraktAuthState,
     private val traktManager: TraktManager,
     private val updateUserDetails: UpdateUserDetails,
     observeUserDetails: ObserveUserDetails
@@ -48,18 +50,14 @@ class HomeActivityViewModel @AssistedInject constructor(
 
         observeUserDetails(ObserveUserDetails.Params("me"))
 
-        viewModelScope.launch {
-            traktManager.state
-                    .distinctUntilChanged()
-                    .onEach {
-                        if (it == TraktAuthState.LOGGED_IN) {
-                            updateUserDetails(UpdateUserDetails.Params("me", false))
-                        }
-                    }
-                    .execute {
-                        copy(authState = it() ?: TraktAuthState.LOGGED_OUT)
-                    }
+        viewModelScope.launchObserve(observeTraktAuthState) { flow ->
+            flow.distinctUntilChanged().onEach {
+                if (it == TraktAuthState.LOGGED_IN) {
+                    updateUserDetails(UpdateUserDetails.Params("me", false))
+                }
+            }.execute { copy(authState = it() ?: TraktAuthState.LOGGED_OUT) }
         }
+        observeTraktAuthState()
     }
 
     fun onAuthResponse(

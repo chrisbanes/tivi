@@ -20,14 +20,12 @@ import app.tivi.base.InvokeFinished
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
 import app.tivi.base.InvokeTimeout
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 
 class ObservableLoadingCounter {
     private val loadingState = ConflatedBroadcastChannel(0)
@@ -36,15 +34,11 @@ class ObservableLoadingCounter {
         get() = loadingState.asFlow().map { it > 0 }
 
     fun addLoader() {
-        GlobalScope.launch(Dispatchers.Main) {
-            loadingState.send(loadingState.value + 1)
-        }
+        loadingState.sendBlocking(loadingState.value + 1)
     }
 
     fun removeLoader() {
-        GlobalScope.launch(Dispatchers.Main) {
-            loadingState.send(loadingState.value - 1)
-        }
+        loadingState.sendBlocking(loadingState.value - 1)
     }
 }
 
