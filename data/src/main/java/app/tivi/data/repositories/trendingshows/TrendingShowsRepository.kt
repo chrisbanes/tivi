@@ -17,15 +17,18 @@
 package app.tivi.data.repositories.trendingshows
 
 import app.tivi.data.entities.Success
+import app.tivi.data.instantInPast
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.extensions.parallelForEach
+import org.threeten.bp.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class TrendingShowsRepository @Inject constructor(
     private val trendingShowsStore: TrendingShowsStore,
+    private val lastRequestStore: TrendingShowsLastRequestStore,
     private val showStore: ShowStore,
     private val traktDataSource: TraktTrendingShowsDataSource,
     private val showRepository: ShowRepository
@@ -36,11 +39,16 @@ class TrendingShowsRepository @Inject constructor(
 
     suspend fun loadNextPage() {
         val lastPage = trendingShowsStore.getLastPage()
-        if (lastPage != null) updateTrendingShows(lastPage + 1, false) else refresh()
+        if (lastPage != null) updateTrendingShows(lastPage + 1, false) else update()
     }
 
-    suspend fun refresh() {
+    suspend fun needUpdate(expiry: Instant = instantInPast(hours = 3)): Boolean {
+        return lastRequestStore.isRequestBefore(expiry)
+    }
+
+    suspend fun update() {
         updateTrendingShows(0, true)
+        lastRequestStore.updateLastRequest()
     }
 
     private suspend fun updateTrendingShows(page: Int, resetOnSave: Boolean) {

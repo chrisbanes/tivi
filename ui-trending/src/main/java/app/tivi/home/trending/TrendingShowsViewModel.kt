@@ -37,10 +37,10 @@ class TrendingShowsViewModel @Inject constructor(
     init {
         pagingInteractor(ObservePagedTrendingShows.Params(pageListConfig, boundaryCallback))
 
-        refresh()
+        refresh(false)
     }
 
-    override fun callLoadMore() = interactor(UpdateTrendingShows.Params(NEXT_PAGE))
+    override fun callLoadMore() = interactor(UpdateTrendingShows.Params(NEXT_PAGE, true))
 
-    override fun callRefresh() = interactor(UpdateTrendingShows.Params(REFRESH))
+    override fun callRefresh(fromUser: Boolean) = interactor(UpdateTrendingShows.Params(REFRESH, fromUser))
 }

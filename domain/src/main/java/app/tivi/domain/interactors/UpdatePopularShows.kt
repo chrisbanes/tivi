@@ -32,12 +32,20 @@ class UpdatePopularShows @Inject constructor(
 ) : Interactor<Params>() {
     override val scope: CoroutineScope = processScope + dispatchers.io
 
-    override suspend fun doWork(params: Params) = when (params.page) {
-        Page.NEXT_PAGE -> popularShowsRepository.loadNextPage()
-        Page.REFRESH -> popularShowsRepository.refresh()
+    override suspend fun doWork(params: Params) {
+        when (params.page) {
+            Page.NEXT_PAGE -> {
+                popularShowsRepository.loadNextPage()
+            }
+            Page.REFRESH -> {
+                if (params.forceRefresh || popularShowsRepository.needUpdate()) {
+                    popularShowsRepository.update()
+                }
+            }
+        }
     }
 
-    data class Params(val page: Page)
+    data class Params(val page: Page, val forceRefresh: Boolean)
 
     enum class Page {
         NEXT_PAGE, REFRESH
