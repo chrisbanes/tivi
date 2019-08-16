@@ -17,10 +17,11 @@
 package app.tivi.tmdb
 
 import app.tivi.extensions.fetchBodyWithRetry
+import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.Configuration
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
@@ -32,7 +33,8 @@ import javax.inject.Singleton
 @Singleton
 class TmdbManager @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
-    private val tmdbClient: Tmdb
+    private val tmdbClient: Tmdb,
+    @ProcessLifetime val processScope: CoroutineScope
 ) {
     private val imageProviderSubject = ConflatedBroadcastChannel(TmdbImageUrlProvider())
     val imageProviderFlow: Flow<TmdbImageUrlProvider> = imageProviderSubject.asFlow()
@@ -42,7 +44,7 @@ class TmdbManager @Inject constructor(
     }
 
     private fun refreshConfiguration() {
-        GlobalScope.launch {
+        processScope.launch {
             try {
                 val config = withContext(dispatchers.io) {
                     tmdbClient.configurationService().configuration().fetchBodyWithRetry()
@@ -56,7 +58,7 @@ class TmdbManager @Inject constructor(
 
     private fun onConfigurationLoaded(configuration: Configuration) {
         configuration.images?.let { images ->
-            GlobalScope.launch {
+            processScope.launch {
                 val newProvider = TmdbImageUrlProvider(
                         images.secure_base_url!!,
                         images.poster_sizes ?: emptyList(),

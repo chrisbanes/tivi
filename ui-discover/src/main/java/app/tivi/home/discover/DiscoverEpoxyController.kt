@@ -126,11 +126,6 @@ class DiscoverEpoxyController @Inject constructor(
                     }
                 }
             }
-        } else {
-            emptyState {
-                id("recommended_placeholder")
-                spanSizeOverride(TotalSpanOverride)
-            }
         }
 
         header {

@@ -19,19 +19,27 @@ package app.tivi.domain.interactors
 import app.tivi.data.repositories.recommendedshows.RecommendedShowsRepository
 import app.tivi.domain.Interactor
 import app.tivi.inject.ProcessLifetime
+import app.tivi.trakt.TraktAuthState
+import app.tivi.trakt.TraktManager
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 class UpdateRecommendedShows @Inject constructor(
     private val recommendedShowsRepository: RecommendedShowsRepository,
     dispatchers: AppCoroutineDispatchers,
+    private val traktManager: TraktManager,
     @ProcessLifetime val processScope: CoroutineScope
 ) : Interactor<UpdateRecommendedShows.Params>() {
     override val scope: CoroutineScope = processScope + dispatchers.io
 
     override suspend fun doWork(params: Params) {
+        if (traktManager.state.first() != TraktAuthState.LOGGED_IN) {
+            // If we're not logged in, we can't load the recommended shows
+            return
+        }
         when (params.page) {
             Page.NEXT_PAGE -> {
                 recommendedShowsRepository.loadNextPage()

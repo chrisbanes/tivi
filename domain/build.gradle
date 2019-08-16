@@ -44,6 +44,7 @@ dependencies {
     implementation project(":base-android")
     api project(":data")
     implementation project(":data-android")
+    implementation project(":trakt-auth")
 
     kapt Libs.Dagger.compiler
 

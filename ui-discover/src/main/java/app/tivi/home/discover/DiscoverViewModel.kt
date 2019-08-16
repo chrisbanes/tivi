@@ -25,8 +25,10 @@ import app.tivi.domain.invoke
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObservePopularShows
 import app.tivi.domain.observers.ObserveRecommendedShows
+import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveTrendingShows
 import app.tivi.tmdb.TmdbManager
+import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectFrom
 import com.airbnb.mvrx.FragmentViewModelContext
@@ -46,6 +48,7 @@ class DiscoverViewModel @AssistedInject constructor(
     observeTrendingShows: ObserveTrendingShows,
     private val updateRecommendedShows: UpdateRecommendedShows,
     observeRecommendedShows: ObserveRecommendedShows,
+    observeTraktAuthState: ObserveTraktAuthState,
     tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<DiscoverViewState>(initialState) {
     private val trendingLoadingState = ObservableLoadingCounter()
@@ -97,6 +100,15 @@ class DiscoverViewModel @AssistedInject constructor(
             }
         }
         observeRecommendedShows()
+
+        viewModelScope.launchObserve(observeTraktAuthState) { flow ->
+            flow.distinctUntilChanged().collect {
+                if (it == TraktAuthState.LOGGED_IN) {
+                    refresh(false)
+                }
+            }
+        }
+        observeTraktAuthState()
 
         refresh(false)
     }
