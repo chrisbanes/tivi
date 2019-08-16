@@ -40,8 +40,9 @@
     <string name="home_nav_library">Library</string>
 
     <string name="discover_title">Discover</string>
-    <string name="discover_trending">Watching now</string>
-    <string name="discover_popular">Popular</string>
+    <string name="discover_trending">Being watched now</string>
+    <string name="discover_recommended">Recommended for you</string>
+    <string name="discover_popular">Forever popular</string>
 
     <string name="library_followed_shows">Followed</string>
     <string name="library_watched">Watched</string>

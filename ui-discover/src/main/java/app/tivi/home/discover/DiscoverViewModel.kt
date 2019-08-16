@@ -19,12 +19,16 @@ package app.tivi.home.discover
 import androidx.lifecycle.viewModelScope
 import app.tivi.TiviMvRxViewModel
 import app.tivi.domain.interactors.UpdatePopularShows
+import app.tivi.domain.interactors.UpdateRecommendedShows
 import app.tivi.domain.interactors.UpdateTrendingShows
 import app.tivi.domain.invoke
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObservePopularShows
+import app.tivi.domain.observers.ObserveRecommendedShows
+import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveTrendingShows
 import app.tivi.tmdb.TmdbManager
+import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectFrom
 import com.airbnb.mvrx.FragmentViewModelContext
@@ -42,10 +46,14 @@ class DiscoverViewModel @AssistedInject constructor(
     observePopularShows: ObservePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,
     observeTrendingShows: ObserveTrendingShows,
+    private val updateRecommendedShows: UpdateRecommendedShows,
+    observeRecommendedShows: ObserveRecommendedShows,
+    observeTraktAuthState: ObserveTraktAuthState,
     tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<DiscoverViewState>(initialState) {
     private val trendingLoadingState = ObservableLoadingCounter()
     private val popularLoadingState = ObservableLoadingCounter()
+    private val recommendedLoadingState = ObservableLoadingCounter()
 
     init {
         viewModelScope.launch {
@@ -66,6 +74,12 @@ class DiscoverViewModel @AssistedInject constructor(
             }
         }
 
+        viewModelScope.launch {
+            recommendedLoadingState.observable.collect { active ->
+                setState { copy(recommendedRefreshing = active) }
+            }
+        }
+
         viewModelScope.launchObserve(observeTrendingShows) {
             it.distinctUntilChanged().execute {
                 copy(trendingItems = it() ?: emptyList())
@@ -79,6 +93,22 @@ class DiscoverViewModel @AssistedInject constructor(
             }
         }
         observePopularShows()
+
+        viewModelScope.launchObserve(observeRecommendedShows) {
+            it.distinctUntilChanged().execute {
+                copy(recommendedItems = it() ?: emptyList())
+            }
+        }
+        observeRecommendedShows()
+
+        viewModelScope.launchObserve(observeTraktAuthState) { flow ->
+            flow.distinctUntilChanged().collect {
+                if (it == TraktAuthState.LOGGED_IN) {
+                    refresh(false)
+                }
+            }
+        }
+        observeTraktAuthState()
 
         refresh(false)
     }
@@ -94,6 +124,11 @@ class DiscoverViewModel @AssistedInject constructor(
         updateTrendingShows(UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH, fromUser)).also {
             viewModelScope.launch {
                 trendingLoadingState.collectFrom(it)
+            }
+        }
+        updateRecommendedShows(UpdateRecommendedShows.Params(UpdateRecommendedShows.Page.REFRESH, fromUser)).also {
+            viewModelScope.launch {
+                recommendedLoadingState.collectFrom(it)
             }
         }
     }

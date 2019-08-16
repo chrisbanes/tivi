@@ -22,6 +22,7 @@ import app.tivi.TiviAppActivityNavigator
 import app.tivi.home.discover.DiscoverBuilder
 import app.tivi.home.followed.FollowedBuilder
 import app.tivi.home.popular.PopularBuilder
+import app.tivi.home.recommended.RecommendedBuilder
 import app.tivi.home.search.SearchBuilder
 import app.tivi.home.trending.TrendingBuilder
 import app.tivi.home.watched.WatchedBuilder
@@ -42,7 +43,8 @@ internal abstract class HomeBuilder {
         TrendingBuilder::class,
         PopularBuilder::class,
         WatchedBuilder::class,
-        FollowedBuilder::class
+        FollowedBuilder::class,
+        RecommendedBuilder::class
     ])
     internal abstract fun homeActivity(): HomeActivity
 }

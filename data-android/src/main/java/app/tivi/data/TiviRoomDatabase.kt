@@ -24,6 +24,7 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.LastRequest
 import app.tivi.data.entities.PopularShowEntry
+import app.tivi.data.entities.RecommendedShowEntry
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.ShowTmdbImage
@@ -50,14 +51,15 @@ import app.tivi.data.views.FollowedShowsWatchStats
             RelatedShowEntry::class,
             EpisodeWatchEntry::class,
             LastRequest::class,
-            ShowTmdbImage::class
+            ShowTmdbImage::class,
+            RecommendedShowEntry::class
         ],
         views = [
             FollowedShowsWatchStats::class,
             FollowedShowsLastWatched::class,
             FollowedShowsNextToWatch::class
         ],
-        version = 24
+        version = 25
 )
 @TypeConverters(TiviTypeConverters::class)
 abstract class TiviRoomDatabase : RoomDatabase(), TiviDatabase

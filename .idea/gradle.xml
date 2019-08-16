@@ -30,6 +30,7 @@
             <option value="$PROJECT_DIR$/ui-episodedetails" />
             <option value="$PROJECT_DIR$/ui-followed" />
             <option value="$PROJECT_DIR$/ui-popular" />
+            <option value="$PROJECT_DIR$/ui-recommended" />
             <option value="$PROJECT_DIR$/ui-showdetails" />
             <option value="$PROJECT_DIR$/ui-trending" />
             <option value="$PROJECT_DIR$/ui-watched" />

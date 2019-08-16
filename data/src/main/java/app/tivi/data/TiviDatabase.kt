@@ -21,6 +21,7 @@ import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.daos.PopularDao
+import app.tivi.data.daos.RecommendedDao
 import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.daos.ShowFtsDao
@@ -44,4 +45,5 @@ interface TiviDatabase {
     fun relatedShowsDao(): RelatedShowsDao
     fun episodeWatchesDao(): EpisodeWatchEntryDao
     fun lastRequestDao(): LastRequestDao
+    fun recommendedShowsDao(): RecommendedDao
 }

@@ -23,6 +23,7 @@
     <id name="navigation_popular" />
     <id name="navigation_followed" />
     <id name="navigation_watched" />
+    <id name="navigation_recommended" />
 
     <id name="activity_show_details" />
 

@@ -20,11 +20,12 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import app.tivi.AppNavigator
 import app.tivi.actions.ShowTasks
+import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
@@ -52,16 +53,18 @@ class TraktManager @Inject constructor(
     @Named("auth") private val authPrefs: SharedPreferences,
     private val showTasks: ShowTasks,
     private val logger: Logger,
-    private val traktClient: Lazy<TraktV2>
+    private val traktClient: Lazy<TraktV2>,
+    @ProcessLifetime val processScope: CoroutineScope
 ) {
     private val authState = ConflatedBroadcastChannel<AuthState>()
 
     private val _state = ConflatedBroadcastChannel(TraktAuthState.LOGGED_OUT)
-    val state: Flow<TraktAuthState> = _state.asFlow()
+    val state: Flow<TraktAuthState>
+        get() = _state.asFlow()
 
     init {
         // Observer which updates local state
-        GlobalScope.launch(dispatchers.main) {
+        processScope.launch {
             authState.asFlow().collect { authState ->
                 updateAuthState(authState)
 
@@ -73,7 +76,7 @@ class TraktManager @Inject constructor(
         }
 
         // Read the auth state from prefs
-        GlobalScope.launch(dispatchers.main) {
+        processScope.launch {
             val state = withContext(dispatchers.io) {
                 readAuthState()
             }
@@ -110,11 +113,11 @@ class TraktManager @Inject constructor(
 
     private fun onTokenExchangeResponse(response: TokenResponse?, ex: AuthorizationException?) {
         val newState = AuthState().apply { update(response, ex) }
-        GlobalScope.launch(dispatchers.main) {
+        processScope.launch(dispatchers.main) {
             // Update our local state
             authState.send(newState)
         }
-        GlobalScope.launch(dispatchers.io) {
+        processScope.launch(dispatchers.io) {
             // Persist auth state
             persistAuthState(newState)
         }

@@ -27,6 +27,7 @@ import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
+import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.extensions.toFragmentNavigatorExtras
@@ -87,6 +88,16 @@ class DiscoverFragment : TiviMvRxFragment() {
 
                 findNavController().navigate(
                         R.id.navigation_popular,
+                        null,
+                        null,
+                        extras.toFragmentNavigatorExtras())
+            }
+
+            override fun onRecommendedHeaderClicked(items: List<RecommendedEntryWithShow>) {
+                val extras = listItemSharedElementHelper.createForItems(items)
+
+                findNavController().navigate(
+                        R.id.navigation_recommended,
                         null,
                         null,
                         extras.toFragmentNavigatorExtras())

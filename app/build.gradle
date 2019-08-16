@@ -182,6 +182,7 @@ dependencies {
     implementation project(":ui-watched")
     implementation project(":ui-popular")
     implementation project(":ui-trending")
+    implementation project(":ui-recommended")
 
     implementation Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.viewmodel
