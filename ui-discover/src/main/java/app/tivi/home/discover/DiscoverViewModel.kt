@@ -80,16 +80,18 @@ class DiscoverViewModel @AssistedInject constructor(
         }
         observePopularShows()
 
-        refresh()
+        refresh(false)
     }
 
-    fun refresh() {
-        updatePopularShows(UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH)).also {
+    fun refresh() = refresh(true)
+
+    private fun refresh(fromUser: Boolean) {
+        updatePopularShows(UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH, fromUser)).also {
             viewModelScope.launch {
                 popularLoadingState.collectFrom(it)
             }
         }
-        updateTrendingShows(UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH)).also {
+        updateTrendingShows(UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH, fromUser)).also {
             viewModelScope.launch {
                 trendingLoadingState.collectFrom(it)
             }

@@ -102,8 +102,10 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
         }
     }
 
-    fun refresh() {
-        callRefresh().also {
+    fun refresh() = refresh(true)
+
+    protected fun refresh(fromUser: Boolean) {
+        callRefresh(fromUser).also {
             viewModelScope.launch {
                 it.catch {
                     messages.send(UiError(it))
@@ -121,7 +123,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
         }
     }
 
-    protected abstract fun callRefresh(): Flow<InvokeStatus>
+    protected abstract fun callRefresh(fromUser: Boolean): Flow<InvokeStatus>
 
     protected abstract fun callLoadMore(): Flow<InvokeStatus>
 }

@@ -37,14 +37,14 @@ class PopularShowsViewModel @Inject constructor(
     init {
         pagingInteractor(ObservePagedPopularShows.Params(pageListConfig, boundaryCallback))
 
-        refresh()
+        refresh(false)
     }
 
     override fun callLoadMore(): Flow<InvokeStatus> {
-        return interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.NEXT_PAGE))
+        return interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.NEXT_PAGE, true))
     }
 
-    override fun callRefresh(): Flow<InvokeStatus> {
-        return interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH))
+    override fun callRefresh(fromUser: Boolean): Flow<InvokeStatus> {
+        return interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH, fromUser))
     }
 }

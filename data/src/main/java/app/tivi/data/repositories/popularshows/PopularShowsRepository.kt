@@ -18,17 +18,20 @@ package app.tivi.data.repositories.popularshows
 
 import androidx.paging.DataSource
 import app.tivi.data.entities.Success
+import app.tivi.data.instantInPast
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.extensions.parallelForEach
 import kotlinx.coroutines.flow.Flow
+import org.threeten.bp.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class PopularShowsRepository @Inject constructor(
     private val popularShowsStore: PopularShowsStore,
+    private val lastRequestStore: PopularShowsLastRequestStore,
     private val showStore: ShowStore,
     private val traktDataSource: TraktPopularShowsDataSource,
     private val showRepository: ShowRepository
@@ -41,11 +44,16 @@ class PopularShowsRepository @Inject constructor(
 
     suspend fun loadNextPage() {
         val lastPage = popularShowsStore.getLastPage()
-        if (lastPage != null) updatePopularShows(lastPage + 1, false) else refresh()
+        if (lastPage != null) updatePopularShows(lastPage + 1, false) else update()
     }
 
-    suspend fun refresh() {
+    suspend fun needUpdate(expiry: Instant = instantInPast(days = 7)): Boolean {
+        return lastRequestStore.isRequestBefore(expiry)
+    }
+
+    suspend fun update() {
         updatePopularShows(0, true)
+        lastRequestStore.updateLastRequest()
     }
 
     private suspend fun updatePopularShows(page: Int, resetOnSave: Boolean) {
