@@ -26,19 +26,21 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
+import java.util.concurrent.atomic.AtomicInteger
 
 class ObservableLoadingCounter {
-    private val loadingState = ConflatedBroadcastChannel(0)
+    private val count = AtomicInteger()
+    private val loadingState = ConflatedBroadcastChannel(count.get())
 
     val observable: Flow<Boolean>
         get() = loadingState.asFlow().map { it > 0 }
 
     fun addLoader() {
-        loadingState.sendBlocking(loadingState.value + 1)
+        loadingState.sendBlocking(count.incrementAndGet())
     }
 
     fun removeLoader() {
-        loadingState.sendBlocking(loadingState.value - 1)
+        loadingState.sendBlocking(count.decrementAndGet())
     }
 }
 
