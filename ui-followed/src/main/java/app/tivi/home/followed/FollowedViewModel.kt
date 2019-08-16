@@ -23,6 +23,7 @@ import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.domain.interactors.UpdateFollowedShows
+import app.tivi.domain.invoke
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObservePagedFollowedShows
 import app.tivi.domain.observers.ObserveTraktAuthState
@@ -93,6 +94,7 @@ class FollowedViewModel @AssistedInject constructor(
                 }
             }
         }
+        observeTraktAuthState()
 
         // Set the available sorting options
         setState {

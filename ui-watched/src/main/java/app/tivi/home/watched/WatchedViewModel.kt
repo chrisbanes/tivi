@@ -22,6 +22,7 @@ import app.tivi.TiviMvRxViewModel
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.domain.interactors.UpdateWatchedShows
+import app.tivi.domain.invoke
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObservePagedWatchedShows
 import app.tivi.domain.observers.ObserveTraktAuthState
@@ -87,6 +88,7 @@ class WatchedViewModel @AssistedInject constructor(
                 }
             }
         }
+        observeTraktAuthState()
 
         // Set the available sorting options
         setState {
