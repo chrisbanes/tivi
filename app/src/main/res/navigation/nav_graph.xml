@@ -46,6 +46,11 @@
         android:label="@string/discover_popular" />
 
     <fragment
+        android:id="@id/navigation_recommended"
+        android:name="app.tivi.home.recommended.RecommendedShowsFragment"
+        android:label="@string/discover_recommended" />
+
+    <fragment
         android:id="@id/navigation_watched"
         android:name="app.tivi.home.watched.WatchedFragment"
         android:label="@string/library_watched" />

@@ -94,7 +94,13 @@ class DiscoverFragment : TiviMvRxFragment() {
             }
 
             override fun onRecommendedHeaderClicked(items: List<RecommendedEntryWithShow>) {
-                // TODO
+                val extras = listItemSharedElementHelper.createForItems(items)
+
+                findNavController().navigate(
+                        R.id.navigation_recommended,
+                        null,
+                        null,
+                        extras.toFragmentNavigatorExtras())
             }
 
             override fun onItemClicked(viewHolderId: Long, item: EntryWithShow<out Entry>) {
