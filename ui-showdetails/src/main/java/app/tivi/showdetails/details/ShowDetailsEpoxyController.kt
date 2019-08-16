@@ -21,6 +21,11 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.forEach
+import app.tivi.common.epoxy.TotalSpanOverride
+import app.tivi.common.epoxy.carousel
+import app.tivi.common.epoxy.withModelsFrom
+import app.tivi.common.layouts.detailsBadge
+import app.tivi.common.layouts.detailsHeader
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -28,17 +33,13 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
+import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.inject.PerActivity
+import app.tivi.showdetails.details.databinding.ViewHolderDetailsSeasonBinding
 import app.tivi.tmdb.TmdbImageUrlProvider
-import app.tivi.common.epoxy.TotalSpanOverride
-import app.tivi.common.epoxy.carousel
-import app.tivi.common.layouts.detailsBadge
-import app.tivi.common.layouts.detailsHeader
-import app.tivi.common.epoxy.withModelsFrom
 import app.tivi.ui.widget.PopupMenuButton
 import com.airbnb.epoxy.Carousel
 import com.airbnb.epoxy.TypedEpoxyController
-import app.tivi.showdetails.details.databinding.ViewHolderDetailsSeasonBinding
 import com.airbnb.mvrx.Async
 import com.airbnb.mvrx.Success
 import javax.inject.Inject
@@ -84,7 +85,7 @@ class ShowDetailsEpoxyController @Inject constructor(
 
         buildRelatedShowsModels(viewState.relatedShows, viewState.tmdbImageUrlProvider)
 
-        buildSeasonsModels(viewState.seasons, viewState.expandedSeasonIds)
+        buildSeasonsModels(viewState.viewStats, viewState.seasons, viewState.expandedSeasonIds)
     }
 
     private fun buildShowModels(show: TiviShow) {
@@ -182,9 +183,25 @@ class ShowDetailsEpoxyController @Inject constructor(
     }
 
     private fun buildSeasonsModels(
+        asyncStats: Async<FollowedShowsWatchStats>,
         asyncSeasons: Async<List<SeasonWithEpisodesAndWatches>>,
         expandedSeasonIds: Set<Long>
     ) {
+        val stats = asyncStats()
+        if (stats != null) {
+            detailsHeader {
+                id("view_stats_header")
+                title(R.string.details_view_stats)
+                spanSizeOverride(TotalSpanOverride)
+            }
+            detailsStats {
+                id("view_stats")
+                stats(stats)
+                textCreator(textCreator)
+                spanSizeOverride(TotalSpanOverride)
+            }
+        }
+
         if (asyncSeasons is Success) {
             val seasons = asyncSeasons()
             if (seasons.isNotEmpty()) {

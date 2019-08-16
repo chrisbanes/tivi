@@ -24,6 +24,7 @@ import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.data.views.FollowedShowsWatchStats
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -78,6 +79,13 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
 
     @Query("SELECT COUNT(*) FROM myshows_entries WHERE show_id = :showId")
     abstract suspend fun entryCountWithShowId(showId: Long): Int
+
+    @Query("""
+        SELECT stats.* FROM FollowedShowsWatchStats as stats
+        INNER JOIN myshows_entries ON stats.id = myshows_entries.id
+        WHERE show_id = :showId
+    """)
+    abstract fun entryShowViewStats(showId: Long): Flow<FollowedShowsWatchStats>
 
     suspend fun entriesWithNoPendingAction() = entriesWithPendingAction(PendingAction.NOTHING.value)
 
