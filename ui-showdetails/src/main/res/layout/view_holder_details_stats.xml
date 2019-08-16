@@ -44,18 +44,21 @@
             android:progress="@{stats.watchedEpisodeCount}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:progress="50" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:progress="66" />
 
         <TextView
             android:id="@+id/show_watch_stats"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/list_horizontal_padding"
+            android:layout_marginTop="@dimen/spacing_micro"
             android:layout_marginBottom="@dimen/list_vertical_padding"
+            android:layout_marginHorizontal="@dimen/list_horizontal_padding"
             android:text="@{textCreator.followedShowEpisodeWatchStatus(stats)}"
             android:textAppearance="?attr/textAppearanceBody1"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/season_progress"
             tools:text="7 to watch" />
 
