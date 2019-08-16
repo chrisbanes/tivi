@@ -43,7 +43,7 @@ class RecommendedShowsRepository @Inject constructor(
         if (lastPage != null) updateFromDataSource(lastPage + 1, false) else update()
     }
 
-    suspend fun needUpdate(expiry: Instant = instantInPast(hours = 3)): Boolean {
+    suspend fun needUpdate(expiry: Instant = instantInPast(days = 3)): Boolean {
         return lastRequestStore.isRequestBefore(expiry)
     }
 

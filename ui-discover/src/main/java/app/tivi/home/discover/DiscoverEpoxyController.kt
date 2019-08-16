@@ -28,6 +28,7 @@ import app.tivi.data.Entry
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
+import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import com.airbnb.epoxy.Carousel
 import com.airbnb.epoxy.EpoxyModel
@@ -42,12 +43,14 @@ class DiscoverEpoxyController @Inject constructor(
     interface Callbacks {
         fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>)
         fun onPopularHeaderClicked(items: List<PopularEntryWithShow>)
+        fun onRecommendedHeaderClicked(items: List<RecommendedEntryWithShow>)
         fun onItemClicked(viewHolderId: Long, item: EntryWithShow<out Entry>)
     }
 
     override fun buildModels(viewState: DiscoverViewState) {
         val trendingShows = viewState.trendingItems
         val popularShows = viewState.popularItems
+        val recommendedShows = viewState.recommendedItems
         val tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
 
         header {
@@ -86,6 +89,46 @@ class DiscoverEpoxyController @Inject constructor(
         } else {
             emptyState {
                 id("trending_placeholder")
+                spanSizeOverride(TotalSpanOverride)
+            }
+        }
+
+        if (recommendedShows.isNotEmpty()) {
+            header {
+                id("recommended_header")
+                title(R.string.discover_recommended)
+                showProgress(viewState.recommendedRefreshing)
+                spanSizeOverride(TotalSpanOverride)
+                buttonClickListener { _ ->
+                    callbacks?.onRecommendedHeaderClicked(recommendedShows)
+                }
+            }
+            carousel {
+                id("recommended_carousel")
+                numViewsToShowOnScreen(3.25f)
+                hasFixedSize(true)
+
+                val vert = context.resources.getDimensionPixelSize(R.dimen.spacing_small)
+                val horiz = context.resources.getDimensionPixelSize(R.dimen.spacing_normal)
+                val itemSpacing = context.resources.getDimensionPixelSize(R.dimen.spacing_micro)
+                padding(Carousel.Padding(horiz, vert, horiz, vert, itemSpacing))
+
+                withModelsFrom(recommendedShows) { item ->
+                    PosterCardItemBindingModel_().apply {
+                        id(item.generateStableId())
+                        tmdbImageUrlProvider(tmdbImageUrlProvider)
+                        tiviShow(item.show)
+                        posterImage(item.images.findHighestRatedPoster())
+                        transitionName("recommended_${item.show.homepage}")
+                        clickListener { model, _, _, _ ->
+                            callbacks?.onItemClicked(model.id(), item)
+                        }
+                    }
+                }
+            }
+        } else {
+            emptyState {
+                id("recommended_placeholder")
                 spanSizeOverride(TotalSpanOverride)
             }
         }

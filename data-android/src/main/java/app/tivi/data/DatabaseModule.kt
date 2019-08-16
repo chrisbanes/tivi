@@ -74,4 +74,7 @@ class DatabaseModule {
 
     @Provides
     fun provideShowFtsDao(db: TiviDatabase) = db.showFtsDao()
+
+    @Provides
+    fun provideRecommendedShowsDao(db: TiviDatabase) = db.recommendedShowsDao()
 }

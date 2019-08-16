@@ -27,6 +27,7 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.LastRequest
 import app.tivi.data.entities.PopularShowEntry
+import app.tivi.data.entities.RecommendedShowEntry
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.ShowTmdbImage
@@ -53,6 +54,7 @@ import app.tivi.data.views.FollowedShowsWatchStats
             EpisodeWatchEntry::class,
             LastRequest::class,
             ShowTmdbImage::class,
+            RecommendedShowEntry::class,
             FakeTiviShowFts::class
         ],
         views = [
