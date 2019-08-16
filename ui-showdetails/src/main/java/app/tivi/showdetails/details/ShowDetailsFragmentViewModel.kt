@@ -38,6 +38,7 @@ import app.tivi.domain.observers.ObserveShowDetails
 import app.tivi.domain.observers.ObserveShowFollowStatus
 import app.tivi.domain.observers.ObserveShowNextEpisodeToWatch
 import app.tivi.domain.observers.ObserveShowSeasonData
+import app.tivi.domain.observers.ObserveShowViewStats
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.ObservableLoadingCounter
@@ -63,6 +64,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     private val changeSeasonWatchedStatus: ChangeSeasonWatchedStatus,
     observeShowFollowStatus: ObserveShowFollowStatus,
     observeNextEpisodeToWatch: ObserveShowNextEpisodeToWatch,
+    observeShowViewStats: ObserveShowViewStats,
     tmdbManager: TmdbManager,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val changeSeasonFollowStatus: ChangeSeasonFollowStatus
@@ -71,19 +73,16 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     private val loadingState = ObservableLoadingCounter()
 
     init {
-        viewModelScope.launchObserve(observeShowFollowStatus) {
-            it.distinctUntilChanged().execute { result ->
-                when (result) {
-                    is Success -> copy(isFollowed = result())
-                    else -> copy(isFollowed = false)
-                }
+        viewModelScope.launchObserve(observeShowFollowStatus) { flow ->
+            flow.distinctUntilChanged().execute {
+                copy(isFollowed = if (it is Success) it() else false)
             }
         }
 
-        viewModelScope.launchObserve(observeShowDetails) {
-            it.distinctUntilChanged().execute { result ->
-                if (result is Success) {
-                    val value = result()
+        viewModelScope.launchObserve(observeShowDetails) { flow ->
+            flow.distinctUntilChanged().execute {
+                if (it is Success) {
+                    val value = it()
                     copy(show = value.show, posterImage = value.poster, backdropImage = value.backdrop)
                 } else {
                     this
@@ -95,26 +94,24 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
             loadingState.observable.collect { setState { copy(refreshing = it) } }
         }
 
-        viewModelScope.launchObserve(observeRelatedShows) {
-            it.distinctUntilChanged().execute { result ->
-                copy(relatedShows = result)
-            }
+        viewModelScope.launchObserve(observeRelatedShows) { flow ->
+            flow.distinctUntilChanged().execute { copy(relatedShows = it) }
         }
 
-        viewModelScope.launchObserve(observeNextEpisodeToWatch) {
-            it.distinctUntilChanged()
-                    .execute { copy(nextEpisodeToWatch = it) }
+        viewModelScope.launchObserve(observeNextEpisodeToWatch) { flow ->
+            flow.distinctUntilChanged().execute { copy(nextEpisodeToWatch = it) }
         }
 
         viewModelScope.launch {
-            tmdbManager.imageProviderFlow
-                    .execute { copy(tmdbImageUrlProvider = it) }
+            tmdbManager.imageProviderFlow.execute { copy(tmdbImageUrlProvider = it) }
         }
 
-        viewModelScope.launchObserve(observeShowSeasons) {
-            it.distinctUntilChanged().execute { result ->
-                copy(seasons = result)
-            }
+        viewModelScope.launchObserve(observeShowSeasons) { flow ->
+            flow.distinctUntilChanged().execute { copy(seasons = it) }
+        }
+
+        viewModelScope.launchObserve(observeShowViewStats) { flow ->
+            flow.distinctUntilChanged().execute { copy(viewStats = it) }
         }
 
         withState {
@@ -123,6 +120,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
             observeRelatedShows(ObserveRelatedShows.Params(it.showId))
             observeShowSeasons(ObserveShowSeasonData.Params(it.showId))
             observeNextEpisodeToWatch(ObserveShowNextEpisodeToWatch.Params(it.showId))
+            observeShowViewStats(ObserveShowViewStats.Params(it.showId))
         }
 
         refresh(false)

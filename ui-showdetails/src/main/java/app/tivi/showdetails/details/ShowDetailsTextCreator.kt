@@ -21,11 +21,13 @@ import android.graphics.Color
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.text.italic
+import androidx.core.text.parseAsHtml
 import androidx.emoji.text.EmojiCompat
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
 import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
+import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.inject.PerActivity
 import app.tivi.ui.GenreStringer
 import app.tivi.util.TiviDateFormatter
@@ -116,5 +118,16 @@ class ShowDetailsTextCreator @Inject constructor(
 
     fun genreContentDescription(genres: List<Genre>?): CharSequence? {
         return genres?.joinToString(", ") { context.getString(GenreStringer.getLabel(it)) }
+    }
+
+    fun followedShowEpisodeWatchStatus(stats: FollowedShowsWatchStats?): CharSequence {
+        return if (stats != null && stats.watchedEpisodeCount < stats.episodeCount) {
+            context.getString(R.string.followed_watch_stats_to_watch,
+                    stats.episodeCount - stats.watchedEpisodeCount).parseAsHtml()
+        } else if (stats != null && stats.watchedEpisodeCount > 0) {
+            context.getString(R.string.followed_watch_stats_complete)
+        } else {
+            return ""
+        }
     }
 }

@@ -70,6 +70,8 @@
         <item quantity="other">Runtime: %1$d minutes</item>
     </plurals>
 
+    <string name="details_view_stats">View stats</string>
+
     <string name="details_next_episode_to_watch">Next episode to watch</string>
 
     <string name="follow_show_add">Follow show</string>
@@ -118,7 +120,7 @@
         <item quantity="other">%d shows &lt;small>(filtered)&lt;/small></item>
     </plurals>
 
-    <string name="followed_watch_stats_to_watch">&lt;b>%d&lt;/b> to watch</string>
+    <string name="followed_watch_stats_to_watch">&lt;b>%d&lt;/b> episodes to watch</string>
     <string name="followed_watch_stats_complete">Watched all</string>
 
     <string name="menu_refresh">Refresh</string>

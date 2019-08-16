@@ -25,6 +25,7 @@ import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.data.syncers.syncerForEntity
+import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.util.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -98,6 +99,10 @@ class FollowedShowsStore @Inject constructor(
     fun observeIsShowFollowed(showId: Long): Flow<Boolean> {
         return followedShowsDao.entryCountWithShowIdNotPendingDeleteObservable(showId)
                 .map { it > 0 }
+    }
+
+    fun observeShowViewStats(showId: Long): Flow<FollowedShowsWatchStats> {
+        return followedShowsDao.entryShowViewStats(showId)
     }
 
     suspend fun isShowFollowed(showId: Long) = followedShowsDao.entryCountWithShowId(showId) > 0
