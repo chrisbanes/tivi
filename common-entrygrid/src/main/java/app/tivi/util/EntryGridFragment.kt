@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import app.tivi.TiviFragment
 import app.tivi.api.UiError
 import app.tivi.api.UiLoading
+import app.tivi.common.entrygrid.R
 import app.tivi.common.entrygrid.databinding.FragmentEntryGridBinding
 import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.data.Entry
@@ -36,6 +37,7 @@ import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.transitions.GridToGridTransitioner
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
@@ -85,7 +87,7 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
 
         binding.gridSwipeRefresh.setOnRefreshListener(viewModel::refresh)
 
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.viewState.collect {
                 controller.tmdbImageUrlProvider = it.tmdbImageUrlProvider
                 controller.submitList(it.liveList)
@@ -95,8 +97,10 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
                         swipeRefreshLatch.refreshing = false
                         controller.isLoading = false
                         Snackbar.make(view,
-                                status.exception?.localizedMessage ?: "EMPTY",
-                                Snackbar.LENGTH_SHORT).show()
+                                status.exception?.localizedMessage
+                                        ?: getString(R.string.error_generic),
+                                Snackbar.LENGTH_SHORT
+                        ).show()
                     }
                     is UiLoading -> {
                         swipeRefreshLatch.refreshing = status.fullRefresh

@@ -129,4 +129,6 @@
 
     <string name="settings_open_source">Open source licenses</string>
     <string name="settings_open_source_summary">Tivi 💞 open source</string>
+
+    <string name="error_generic">An error occurred</string>
 </resources>
