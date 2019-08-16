@@ -46,7 +46,7 @@ apply plugin: 'com.github.triplet.play'
 play {
     track = 'internal'
     defaultToAppBundles = true
-    serviceAccountCredentials = rootProject.file('signing/play-account.json')
+    serviceAccountCredentials = rootProject.file('release/play-account.json')
 }
 
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
@@ -56,7 +56,7 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 def appVersionCode = propOrDef("tivi.versioncode", 17) as Integer
 println("APK version code: " + appVersionCode)
 
-def useReleaseKeystore = rootProject.file("signing/app-release.jks").exists()
+def useReleaseKeystore = rootProject.file("release/app-release.jks").exists()
 
 android {
     compileSdkVersion buildConfig.compileSdk
@@ -80,7 +80,7 @@ android {
 
     signingConfigs {
         debug {
-            storeFile rootProject.file("signing/app-debug.jks")
+            storeFile rootProject.file("release/app-debug.jks")
             storePassword "android"
             keyAlias "androiddebugkey"
             keyPassword "android"
@@ -88,7 +88,7 @@ android {
 
         release {
             if (useReleaseKeystore) {
-                storeFile rootProject.file("signing/app-release.jks")
+                storeFile rootProject.file("release/app-release.jks")
                 storePassword propOrDef('TIVI_RELEASE_KEYSTORE_PWD', "")
                 keyAlias "tivi"
                 keyPassword propOrDef('TIVI_RELEASE_KEY_PWD', "")
