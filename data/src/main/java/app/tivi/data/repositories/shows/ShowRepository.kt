@@ -20,6 +20,7 @@ import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.instantInPast
 import app.tivi.data.resultentities.ShowDetailed
+import app.tivi.extensions.launchOrJoin
 import app.tivi.inject.Trakt
 import org.threeten.bp.Instant
 import javax.inject.Inject
@@ -43,22 +44,26 @@ class ShowRepository @Inject constructor(
      * Updates the show with the given id from all network sources, saves the result to the database
      */
     suspend fun updateShow(showId: Long) {
-        val traktResult = traktShowDataSource.getShow(showStore.getShowOrEmpty(showId))
-        if (traktResult is Success) {
-            showStore.updateShowFromSources(showId, traktResult.get())
+        launchOrJoin("update_show_$showId") {
+            val traktResult = traktShowDataSource.getShow(showStore.getShowOrEmpty(showId))
+            if (traktResult is Success) {
+                showStore.updateShowFromSources(showId, traktResult.get())
 
-            // If the network requests were successful, update the last request timestamp
-            showLastRequestStore.updateLastRequest(showId)
+                // If the network requests were successful, update the last request timestamp
+                showLastRequestStore.updateLastRequest(showId)
+            }
         }
     }
 
     suspend fun updateShowImages(showId: Long) {
-        val show = showStore.getShow(showId)
-                ?: throw IllegalArgumentException("Show with ID $showId does not exist")
-        when (val result = tmdbShowImagesDataSource.getShowImages(show)) {
-            is Success -> {
-                showStore.saveImages(showId, result.get().map { it.copy(showId = showId) })
-                showImagesLastRequestStore.updateLastRequest(showId)
+        launchOrJoin("update_show_images_$showId") {
+            val show = showStore.getShow(showId)
+                    ?: throw IllegalArgumentException("Show with ID $showId does not exist")
+            when (val result = tmdbShowImagesDataSource.getShowImages(show)) {
+                is Success -> {
+                    showStore.saveImages(showId, result.get().map { it.copy(showId = showId) })
+                    showImagesLastRequestStore.updateLastRequest(showId)
+                }
             }
         }
     }

@@ -17,6 +17,7 @@
 package app.tivi.data.repositories.traktusers
 
 import app.tivi.data.entities.Success
+import app.tivi.extensions.launchOrJoin
 import org.threeten.bp.Instant
 import org.threeten.bp.Period
 import javax.inject.Inject
@@ -30,7 +31,7 @@ class TraktUsersRepository @Inject constructor(
 ) {
     fun observeUser(username: String) = traktUsersStore.observeUser(username)
 
-    suspend fun updateUser(username: String) {
+    suspend fun updateUser(username: String) = launchOrJoin("update_user_$username") {
         when (val response = traktDataSource.getUser(username)) {
             is Success -> {
                 var user = response.data
