@@ -39,8 +39,9 @@ class RecommendedShowsRepository @Inject constructor(
     fun observeForObservable() = recommendedShowsStore.observeForObservable(15, 0)
 
     suspend fun loadNextPage() {
-        val lastPage = recommendedShowsStore.getLastPage()
-        if (lastPage != null) updateFromDataSource(lastPage + 1, false) else update()
+        // TODO Recommendations does not support paging yet, so no-op this for now
+        // val lastPage = recommendedShowsStore.getLastPage()
+        // if (lastPage != null) updateFromDataSource(lastPage + 1, false) else update()
     }
 
     suspend fun needUpdate(expiry: Instant = instantInPast(days = 3)): Boolean {
