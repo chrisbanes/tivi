@@ -66,19 +66,22 @@ private val defaultConcurrency by lazy(LazyThreadSafetyMode.NONE) {
     Runtime.getRuntime().availableProcessors().coerceAtLeast(3)
 }
 
-private val inFlightDeferreds = ConcurrentHashMap<Any, Deferred<*>>()
-private val inFlightDeferredsCleanLaunched = AtomicBoolean()
+val deferreds = ConcurrentHashMap<Any, Deferred<*>>()
+val deferredsCleanLaunched = AtomicBoolean()
 
-suspend fun <T> asyncOrAwait(key: Any, action: suspend CoroutineScope.() -> T): T = coroutineScope {
-    val deferred = inFlightDeferreds[key]?.takeIf { it.isActive }
+suspend inline fun <T> asyncOrAwait(
+    key: Any,
+    crossinline action: suspend CoroutineScope.() -> T
+): T = coroutineScope {
+    val deferred = deferreds[key]?.takeIf { it.isActive }
             ?: async { action() }
-                    .also { inFlightDeferreds[key] = it }
+                    .also { deferreds[key] = it }
 
-    if (inFlightDeferreds.size > 100 && !inFlightDeferredsCleanLaunched.getAndSet(true)) {
+    if (deferreds.size > 100 && !deferredsCleanLaunched.getAndSet(true)) {
         launch {
             // Remove any complete entries
-            inFlightDeferreds.entries.removeAll { it.value.isCompleted }
-            inFlightDeferredsCleanLaunched.set(false)
+            deferreds.entries.removeAll { it.value.isCompleted }
+            deferredsCleanLaunched.set(false)
         }
     }
 
@@ -86,19 +89,22 @@ suspend fun <T> asyncOrAwait(key: Any, action: suspend CoroutineScope.() -> T): 
     deferred.await() as T
 }
 
-private val inFlightJobs = ConcurrentHashMap<Any, Job>()
-private val inFlightJobCleanLaunched = AtomicBoolean()
+val jobs = ConcurrentHashMap<Any, Job>()
+val jobsCleanLaunched = AtomicBoolean()
 
-suspend fun launchOrJoin(key: Any, action: suspend CoroutineScope.() -> Unit) = coroutineScope {
-    val job = inFlightJobs[key]?.takeIf { it.isActive }
+suspend inline fun launchOrJoin(
+    key: Any,
+    crossinline action: suspend CoroutineScope.() -> Unit
+) = coroutineScope {
+    val job = jobs[key]?.takeIf { it.isActive }
             ?: launch { action() }
-                    .also { inFlightJobs[key] = it }
+                    .also { jobs[key] = it }
 
-    if (inFlightJobs.size > 100 && !inFlightJobCleanLaunched.getAndSet(true)) {
+    if (jobs.size > 100 && !jobsCleanLaunched.getAndSet(true)) {
         launch {
             // Remove any complete entries
-            inFlightJobs.entries.removeAll { it.value.isCompleted }
-            inFlightJobCleanLaunched.set(false)
+            jobs.entries.removeAll { it.value.isCompleted }
+            jobsCleanLaunched.set(false)
         }
     }
 
