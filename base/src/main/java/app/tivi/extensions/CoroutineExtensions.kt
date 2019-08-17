@@ -25,8 +25,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicBoolean
 
 suspend fun <A, B> Collection<A>.parallelMap(
     concurrency: Int = defaultConcurrency,
@@ -66,27 +66,41 @@ private val defaultConcurrency by lazy(LazyThreadSafetyMode.NONE) {
     Runtime.getRuntime().availableProcessors().coerceAtLeast(3)
 }
 
-private val inFlightDeferreds = mutableMapOf<Any, Deferred<*>>()
-private val inFlightDeferredsLock = Mutex()
+private val inFlightDeferreds = ConcurrentHashMap<Any, Deferred<*>>()
+private val inFlightDeferredsCleanLaunched = AtomicBoolean()
 
 suspend fun <T> asyncOrAwait(key: Any, action: suspend CoroutineScope.() -> T): T = coroutineScope {
-    val deferred = inFlightDeferredsLock.withLock {
-        inFlightDeferreds[key]?.takeIf { it.isActive }
-                ?: async { action() }.also { inFlightDeferreds[key] = it }
+    val deferred = inFlightDeferreds[key]?.takeIf { it.isActive }
+            ?: async { action() }
+                    .also { inFlightDeferreds[key] = it }
+
+    if (inFlightDeferreds.size > 100 && !inFlightDeferredsCleanLaunched.getAndSet(true)) {
+        launch {
+            // Remove any complete entries
+            inFlightDeferreds.entries.removeAll { it.value.isCompleted }
+            inFlightDeferredsCleanLaunched.set(false)
+        }
     }
+
     @Suppress("UNCHECKED_CAST")
     deferred.await() as T
 }
 
-private val inFlightJobs = mutableMapOf<Any, Job>()
-private val inFlightJobsLock = Mutex()
-
-val list = mutableListOf<String>()
+private val inFlightJobs = ConcurrentHashMap<Any, Job>()
+private val inFlightJobCleanLaunched = AtomicBoolean()
 
 suspend fun launchOrJoin(key: Any, action: suspend CoroutineScope.() -> Unit) = coroutineScope {
-    val job = inFlightJobsLock.withLock {
-        inFlightJobs[key]?.takeIf { it.isActive }
-                ?: launch { action() }.also { inFlightJobs[key] = it }
+    val job = inFlightJobs[key]?.takeIf { it.isActive }
+            ?: launch { action() }
+                    .also { inFlightJobs[key] = it }
+
+    if (inFlightJobs.size > 100 && !inFlightJobCleanLaunched.getAndSet(true)) {
+        launch {
+            // Remove any complete entries
+            inFlightJobs.entries.removeAll { it.value.isCompleted }
+            inFlightJobCleanLaunched.set(false)
+        }
     }
+
     job.join()
 }

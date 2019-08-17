@@ -44,17 +44,13 @@ class ShowRepository @Inject constructor(
      * Updates the show with the given id from all network sources, saves the result to the database
      */
     suspend fun updateShow(showId: Long) {
-        val traktResult = traktShowDataSource.getShow(showStore.getShowOrEmpty(showId))
-        if (traktResult is Success) {
-            showStore.updateShowFromSources(showId, traktResult.get())
-            launchOrJoin("update_show_$showId") {
-                val traktResult = traktShowDataSource.getShow(showStore.getShowOrEmpty(showId))
-                if (traktResult is Success) {
-                    showStore.updateShowFromSources(showId, traktResult.get())
+        launchOrJoin("update_show_$showId") {
+            val traktResult = traktShowDataSource.getShow(showStore.getShowOrEmpty(showId))
+            if (traktResult is Success) {
+                showStore.updateShowFromSources(showId, traktResult.get())
 
-                    // If the network requests were successful, update the last request timestamp
-                    showLastRequestStore.updateLastRequest(showId)
-                }
+                // If the network requests were successful, update the last request timestamp
+                showLastRequestStore.updateLastRequest(showId)
             }
         }
     }
