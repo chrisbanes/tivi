@@ -58,9 +58,12 @@ fun View.doOnAttach(f: (View) -> Unit) {
         addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
             override fun onViewAttachedToWindow(v: View) {
                 f(v)
+                removeOnAttachStateChangeListener(this)
             }
 
-            override fun onViewDetachedFromWindow(v: View) = Unit
+            override fun onViewDetachedFromWindow(v: View) {
+                removeOnAttachStateChangeListener(this)
+            }
         })
     }
 }

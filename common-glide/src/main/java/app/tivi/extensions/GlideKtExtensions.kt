@@ -38,34 +38,37 @@ fun ImageView.loadTmdbImage(
     urlProvider: TmdbImageUrlProvider,
     saturateOnLoad: Boolean = true
 ) {
-    fun invokeGlide() {
-        GlideApp.with(this)
-                .optSaturateOnLoad(saturateOnLoad)
-                .load(image.toUrl(urlProvider, width))
-                .thumbnail(GlideApp.with(this)
-                        .optSaturateOnLoad(saturateOnLoad)
-                        .load(image.toUrl(urlProvider, 0)))
-                .into(this)
-    }
+    clearRequest()
 
     val requestKey = Objects.hash(image, urlProvider, saturateOnLoad)
-
-    if (getTag(R.id.image_key) == requestKey) {
-        // Image is already in progress
-        return
-    }
-
-    GlideApp.with(this).clear(this)
     setTag(R.id.image_key, requestKey)
 
     if (isLaidOut && isAttachedToWindow) {
-        invokeGlide()
+        image.createGlideRequest(
+                GlideApp.with(this),
+                urlProvider,
+                width,
+                saturateOnLoad
+        ).into(this)
     } else {
+        // If we're not laid out, start a request for a small image
+        image.createGlideRequest(
+                GlideApp.with(this),
+                urlProvider,
+                0,
+                saturateOnLoad
+        ).into(this)
+
         doOnAttach {
             if (getTag(R.id.image_key) == requestKey) {
                 doOnLayout {
                     if (getTag(R.id.image_key) == requestKey) {
-                        invokeGlide()
+                        image.createGlideRequest(
+                                GlideApp.with(this),
+                                urlProvider,
+                                width,
+                                saturateOnLoad
+                        ).into(this)
                     }
                 }
             }
@@ -77,6 +80,18 @@ fun ImageView.clearRequest() {
     GlideApp.with(this).clear(this)
     setTag(R.id.image_key, null)
 }
+
+fun TmdbImageEntity.createGlideRequest(
+    requests: GlideRequests,
+    urlProvider: TmdbImageUrlProvider,
+    viewWidth: Int,
+    saturateOnLoad: Boolean = true
+) = requests.optSaturateOnLoad(saturateOnLoad)
+        .load(toUrl(urlProvider, viewWidth))
+        .thumbnail(
+                requests.optSaturateOnLoad(saturateOnLoad)
+                        .load(toUrl(urlProvider, 0))
+        )
 
 fun TmdbImageEntity.toUrl(urlProvider: TmdbImageUrlProvider, width: Int) = when (type) {
     ImageType.BACKDROP -> urlProvider.getBackdropUrl(path, width)
