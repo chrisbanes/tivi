@@ -133,7 +133,7 @@ object Libs {
         }
 
         object Work {
-            private const val version = "2.1.0"
+            private const val version = "2.2.0"
             const val runtimeKtx = "androidx.work:work-runtime-ktx:$version"
         }
     }

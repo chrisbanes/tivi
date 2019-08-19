@@ -57,16 +57,17 @@ class ShowTasksImpl @Inject constructor(
     }
 
     override fun setupNightSyncs() {
-        val request = PeriodicWorkRequest.Builder(SyncAllFollowedShows::class.java,
-                24, TimeUnit.HOURS, 6, TimeUnit.HOURS)
-                .setConstraints(
-                        Constraints.Builder()
-                                .setRequiredNetworkType(NetworkType.UNMETERED)
-                                .setRequiresCharging(true)
-                                .setRequiresDeviceIdle(true)
-                                .build()
-                )
-                .build()
+        val request = PeriodicWorkRequest.Builder(
+                SyncAllFollowedShows::class.java,
+                24, TimeUnit.HOURS,
+                12, TimeUnit.HOURS
+        ).setConstraints(
+                Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .setRequiresBatteryNotLow(true)
+                        .setRequiresDeviceIdle(true)
+                        .build()
+        ).build()
 
         workManager.enqueueUniquePeriodicWork(
                 SyncAllFollowedShows.NIGHTLY_SYNC_TAG,
