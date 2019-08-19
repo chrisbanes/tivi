@@ -29,7 +29,7 @@ import androidx.transition.TransitionSet
 object GridToGridTransitioner {
 
     // If you wish to
-    private const val CONTENT_TRANSITION_DURATION = 260L
+    private const val CONTENT_TRANSITION_DURATION = 200L
 
     private const val RETURN_TRANSITION_FRACTION = 2 / 3f
     private const val GRID_SHARED_ELEMENT_ENTER_DURATION = CONTENT_TRANSITION_DURATION * 4 / 3
