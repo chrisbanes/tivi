@@ -35,6 +35,7 @@ import app.tivi.tmdb.TmdbManager
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.broadcastIn
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -80,7 +81,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
                 loaded.asFlow()
         ) { message, imageProvider, pagedList, loaded ->
             EntryViewState(message, imageProvider, pagedList, loaded)
-        }
+        }.broadcastIn(viewModelScope).asFlow()
     }
 
     fun onListScrolledToEnd() {
