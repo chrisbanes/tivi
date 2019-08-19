@@ -37,6 +37,10 @@ class TrendingShowsViewModel @Inject constructor(
     init {
         pagingInteractor(ObservePagedTrendingShows.Params(pageListConfig, boundaryCallback))
 
+        // Kick start the viewState to happen now, rather than when the Fragment
+        // starts observing
+        viewState
+
         refresh(false)
     }
 

@@ -37,6 +37,10 @@ class PopularShowsViewModel @Inject constructor(
     init {
         pagingInteractor(ObservePagedPopularShows.Params(pageListConfig, boundaryCallback))
 
+        // Kick start the viewState to happen now, rather than when the Fragment
+        // starts observing
+        viewState
+
         refresh(false)
     }
 
