@@ -122,8 +122,10 @@
         <item quantity="other">%d shows &lt;small>(filtered)&lt;/small></item>
     </plurals>
 
-    <string name="followed_watch_stats_to_watch">&lt;b>%d&lt;/b> episodes to watch</string>
+    <string name="followed_watch_stats_eps_to_watch">&lt;b>%d&lt;/b> episodes to watch</string>
     <string name="followed_watch_stats_complete">Watched all</string>
+    <string name="followed_watch_stats_runtime_watched">&lt;b>%d&lt;/b> hours watched</string>
+    <string name="followed_watch_stats_runtime_to_watch">&lt;b>%d&lt;/b> hours to watch</string>
 
     <string name="menu_refresh">Refresh</string>
 

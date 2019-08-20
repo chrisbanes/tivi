@@ -23,10 +23,10 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.inSpans
 import androidx.core.text.parseAsHtml
+import app.tivi.common.ui.R
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.inject.PerActivity
-import app.tivi.common.ui.R
 import app.tivi.ui.text.TypefaceSpan
 import app.tivi.ui.text.textAppearanceSpanForAttribute
 import javax.inject.Inject
@@ -68,7 +68,7 @@ class HomeTextCreator @Inject constructor(
 
     fun followedShowEpisodeWatchStatus(stats: FollowedShowsWatchStats?): CharSequence {
         return if (stats != null && stats.watchedEpisodeCount < stats.episodeCount) {
-            context.getString(R.string.followed_watch_stats_to_watch,
+            context.getString(R.string.followed_watch_stats_eps_to_watch,
                     stats.episodeCount - stats.watchedEpisodeCount).parseAsHtml()
         } else if (stats != null && stats.watchedEpisodeCount > 0) {
             context.getString(R.string.followed_watch_stats_complete)

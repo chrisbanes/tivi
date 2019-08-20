@@ -32,6 +32,7 @@ import app.tivi.inject.PerActivity
 import app.tivi.ui.GenreStringer
 import app.tivi.util.TiviDateFormatter
 import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.Duration
 import javax.inject.Inject
 
 class ShowDetailsTextCreator @Inject constructor(
@@ -120,14 +121,30 @@ class ShowDetailsTextCreator @Inject constructor(
         return genres?.joinToString(", ") { context.getString(GenreStringer.getLabel(it)) }
     }
 
-    fun followedShowEpisodeWatchStatus(stats: FollowedShowsWatchStats?): CharSequence {
-        return if (stats != null && stats.watchedEpisodeCount < stats.episodeCount) {
-            context.getString(R.string.followed_watch_stats_to_watch,
-                    stats.episodeCount - stats.watchedEpisodeCount).parseAsHtml()
-        } else if (stats != null && stats.watchedEpisodeCount > 0) {
-            context.getString(R.string.followed_watch_stats_complete)
-        } else {
-            return ""
+    fun followedShowEpisodeWatchStatus(stats: FollowedShowsWatchStats?): CharSequence? {
+        if (stats == null) {
+            return null
+        }
+        return buildSpannedString {
+            if (stats.watchedEpisodeCount < stats.episodeCount) {
+                append(context.getString(R.string.followed_watch_stats_eps_to_watch,
+                        stats.episodeCount - stats.watchedEpisodeCount)
+                        .parseAsHtml())
+            } else if (stats.watchedEpisodeCount > 0) {
+                append(context.getString(R.string.followed_watch_stats_complete))
+            }
+            if (stats.watchedEpisodeRuntime < stats.episodeRuntime) {
+                if (length > 0) append(" \u2022 ")
+                val d = Duration.ofMinutes(stats.episodeRuntime.toLong() - stats.watchedEpisodeRuntime)
+                append(context.getString(R.string.followed_watch_stats_runtime_to_watch,
+                        d.toHours()).parseAsHtml())
+            }
+            if (stats.watchedEpisodeRuntime > 0) {
+                if (length > 0) append(" \u2022 ")
+                val d = Duration.ofMinutes(stats.watchedEpisodeRuntime.toLong())
+                append(context.getString(R.string.followed_watch_stats_runtime_watched,
+                        d.toHours()).parseAsHtml())
+            }
         }
     }
 }
