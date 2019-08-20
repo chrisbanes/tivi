@@ -20,8 +20,14 @@ import androidx.room.DatabaseView
 import app.tivi.data.entities.Season
 
 @DatabaseView("""
-    SELECT fs.id, COUNT(*) as episodeCount, COUNT(ew.watched_at) as watchedEpisodeCount
+    SELECT
+        fs.id,
+        COUNT(*) as episodeCount,
+        COUNT(ew.watched_at) as watchedEpisodeCount,
+        shows.runtime * COUNT(*) AS episodeRuntime,
+        shows.runtime * COUNT(ew.watched_at) AS watchedEpisodeRuntime
     FROM myshows_entries as fs
+    INNER JOIN shows ON fs.show_id = shows.id
     INNER JOIN seasons AS s ON fs.show_id = s.show_id
     INNER JOIN episodes AS eps ON eps.season_id = s.id
     LEFT JOIN episode_watch_entries as ew ON ew.episode_id = eps.id
@@ -34,5 +40,7 @@ import app.tivi.data.entities.Season
 data class FollowedShowsWatchStats(
     val id: Long,
     val episodeCount: Int,
-    val watchedEpisodeCount: Int
+    val watchedEpisodeCount: Int,
+    val episodeRuntime: Int,
+    val watchedEpisodeRuntime: Int
 )
