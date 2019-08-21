@@ -43,7 +43,6 @@ android {
 dependencies {
     implementation project(":data")
     implementation project(":base-android")
-    implementation project(":domain")
 
     implementation Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.viewmodel
