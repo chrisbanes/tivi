@@ -79,7 +79,7 @@ class ShowDetailsEpoxyController @Inject constructor(
                 season(episodeWithSeason.season)
                 episode(episodeWithSeason.episode)
                 textCreator(textCreator)
-                clickListener { view -> callbacks?.onEpisodeClicked(episodeWithSeason.episode!!, view) }
+                clickListener { view -> callbacks?.onEpisodeClicked(episodeWithSeason.episode, view) }
             }
         }
 

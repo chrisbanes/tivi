@@ -50,6 +50,8 @@ class FollowedShowsRepository @Inject constructor(
 
     fun observeIsShowFollowed(showId: Long) = followedShowsStore.observeIsShowFollowed(showId)
 
+    fun observeNextShowToWatch() = followedShowsStore.observeNextShowToWatch()
+
     suspend fun isShowFollowed(showId: Long) = followedShowsStore.isShowFollowed(showId)
 
     suspend fun getFollowedShows(): List<FollowedShowEntry> {
@@ -58,14 +60,6 @@ class FollowedShowsRepository @Inject constructor(
 
     suspend fun needFollowedShowsSync(expiry: Instant = instantInPast(hours = 1)): Boolean {
         return followedShowsLastRequestStore.isRequestBefore(expiry)
-    }
-
-    suspend fun toggleFollowedShow(showId: Long) {
-        if (isShowFollowed(showId)) {
-            removeFollowedShow(showId)
-        } else {
-            addFollowedShow(showId)
-        }
     }
 
     suspend fun addFollowedShow(showId: Long) {

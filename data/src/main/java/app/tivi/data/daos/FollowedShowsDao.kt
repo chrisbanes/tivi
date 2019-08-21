@@ -64,6 +64,18 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     @Query(ENTRY_QUERY_ORDER_ADDED_FILTER)
     internal abstract fun pagedListAddedFilter(filter: String): DataSource.Factory<Int, FollowedShowEntryWithShow>
 
+    @Query("""
+        SELECT myshows_entries.* FROM myshows_entries
+            INNER JOIN seasons AS s ON s.show_id = myshows_entries.show_id
+			INNER JOIN followed_next_to_watch AS next ON next.id = myshows_entries.id
+			INNER JOIN episodes AS eps ON eps.season_id = s.id
+            INNER JOIN episode_watch_entries AS ew ON ew.episode_id = eps.id
+            WHERE s.number != ${Season.NUMBER_SPECIALS} AND s.ignored = 0
+			ORDER BY datetime(ew.watched_at) DESC
+			LIMIT 1
+    """)
+    abstract fun observeNextShowToWatch(): Flow<FollowedShowEntryWithShow>
+
     @Query("DELETE FROM myshows_entries")
     abstract override suspend fun deleteAll()
 

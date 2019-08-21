@@ -16,27 +16,14 @@
 
 package app.tivi.data.resultentities
 
-import androidx.room.Embedded
-import androidx.room.Relation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
-import java.util.Objects
+import app.tivi.data.entities.TiviShow
+import app.tivi.data.entities.TmdbImageEntity
 
-class EpisodeWithSeason {
-    @Embedded
-    lateinit var episode: Episode
-
-    @Relation(parentColumn = "season_id", entityColumn = "id")
-    var _seasons: List<Season> = emptyList()
-
-    val season: Season
-        get() = _seasons[0]
-
-    override fun equals(other: Any?): Boolean = when {
-        other === this -> true
-        other is EpisodeWithSeason -> episode == other.episode && _seasons == other._seasons
-        else -> false
-    }
-
-    override fun hashCode(): Int = Objects.hash(episode, _seasons)
-}
+data class EpisodeWithSeasonWithShow(
+    val episode: Episode,
+    val season: Season,
+    val show: TiviShow,
+    val images: List<TmdbImageEntity>
+)

@@ -62,8 +62,8 @@ class SeasonsEpisodesStore @Inject constructor(
     fun observeShowNextEpisodeToWatch(showId: Long): Flow<EpisodeWithSeason> {
         return episodesDao.latestWatchedEpisodeForShowId(showId).flatMapConcat {
             episodesDao.nextAiredEpisodeForShowAfter(showId,
-                    it.season!!.number!!,
-                    it.episode!!.number!!
+                    it.season.number!!,
+                    it.episode.number!!
             )
         }
     }

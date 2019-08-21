@@ -27,23 +27,22 @@ import app.tivi.common.layouts.header
 import app.tivi.data.Entry
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.data.resultentities.PopularEntryWithShow
-import app.tivi.data.resultentities.RecommendedEntryWithShow
-import app.tivi.data.resultentities.TrendingEntryWithShow
 import com.airbnb.epoxy.Carousel
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.TypedEpoxyController
 import javax.inject.Inject
 
 class DiscoverEpoxyController @Inject constructor(
-    private val context: Context
+    private val context: Context,
+    private val textCreator: DiscoverTextCreator
 ) : TypedEpoxyController<DiscoverViewState>() {
     var callbacks: Callbacks? = null
 
     interface Callbacks {
-        fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>)
-        fun onPopularHeaderClicked(items: List<PopularEntryWithShow>)
-        fun onRecommendedHeaderClicked(items: List<RecommendedEntryWithShow>)
+        fun onTrendingHeaderClicked()
+        fun onPopularHeaderClicked()
+        fun onRecommendedHeaderClicked()
+        fun onNextEpisodeToWatchClicked()
         fun onItemClicked(viewHolderId: Long, item: EntryWithShow<out Entry>)
     }
 
@@ -53,14 +52,31 @@ class DiscoverEpoxyController @Inject constructor(
         val recommendedShows = viewState.recommendedItems
         val tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
 
+        if (viewState.nextEpisodeWithShowToWatched != null) {
+            header {
+                id("keep_watching_header")
+                title(R.string.discover_keep_watching)
+                spanSizeOverride(TotalSpanOverride)
+            }
+            discoverNextShowEpisodeToWatch {
+                id("keep_watching_${viewState.nextEpisodeWithShowToWatched.episode.id}")
+                spanSizeOverride(TotalSpanOverride)
+                episode(viewState.nextEpisodeWithShowToWatched.episode)
+                season(viewState.nextEpisodeWithShowToWatched.season)
+                tmdbImageUrlProvider(viewState.tmdbImageUrlProvider)
+                tiviShow(viewState.nextEpisodeWithShowToWatched.show)
+                posterImage(viewState.nextEpisodeWithShowToWatched.images.findHighestRatedPoster())
+                textCreator(textCreator)
+                clickListener { _ -> callbacks?.onNextEpisodeToWatchClicked() }
+            }
+        }
+
         header {
             id("trending_header")
             title(R.string.discover_trending)
             showProgress(viewState.trendingRefreshing)
             spanSizeOverride(TotalSpanOverride)
-            buttonClickListener { _ ->
-                callbacks?.onTrendingHeaderClicked(trendingShows)
-            }
+            buttonClickListener { _ -> callbacks?.onTrendingHeaderClicked() }
         }
         if (trendingShows.isNotEmpty()) {
             carousel {
@@ -99,9 +115,7 @@ class DiscoverEpoxyController @Inject constructor(
                 title(R.string.discover_recommended)
                 showProgress(viewState.recommendedRefreshing)
                 spanSizeOverride(TotalSpanOverride)
-                buttonClickListener { _ ->
-                    callbacks?.onRecommendedHeaderClicked(recommendedShows)
-                }
+                buttonClickListener { _ -> callbacks?.onRecommendedHeaderClicked() }
             }
             carousel {
                 id("recommended_carousel")
@@ -133,9 +147,7 @@ class DiscoverEpoxyController @Inject constructor(
             title(R.string.discover_popular)
             showProgress(viewState.popularRefreshing)
             spanSizeOverride(TotalSpanOverride)
-            buttonClickListener { _ ->
-                callbacks?.onPopularHeaderClicked(popularShows)
-            }
+            buttonClickListener { _ -> callbacks?.onPopularHeaderClicked() }
         }
         if (popularShows.isNotEmpty()) {
             carousel {
