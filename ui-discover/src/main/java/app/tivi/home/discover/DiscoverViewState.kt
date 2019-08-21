@@ -16,6 +16,7 @@
 
 package app.tivi.home.discover
 
+import app.tivi.data.resultentities.EpisodeWithSeasonWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
@@ -29,5 +30,6 @@ data class DiscoverViewState(
     val popularRefreshing: Boolean = false,
     val recommendedItems: List<RecommendedEntryWithShow> = emptyList(),
     val recommendedRefreshing: Boolean = false,
+    val nextEpisodeWithShowToWatched: EpisodeWithSeasonWithShow? = null,
     val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider()
 ) : MvRxState

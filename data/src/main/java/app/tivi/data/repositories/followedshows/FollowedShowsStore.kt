@@ -101,6 +101,10 @@ class FollowedShowsStore @Inject constructor(
                 .map { it > 0 }
     }
 
+    fun observeNextShowToWatch(): Flow<FollowedShowEntryWithShow> {
+        return followedShowsDao.observeNextShowToWatch()
+    }
+
     fun observeShowViewStats(showId: Long): Flow<FollowedShowsWatchStats> {
         return followedShowsDao.entryShowViewStats(showId)
     }

@@ -23,6 +23,7 @@ import app.tivi.domain.interactors.UpdateRecommendedShows
 import app.tivi.domain.interactors.UpdateTrendingShows
 import app.tivi.domain.invoke
 import app.tivi.domain.launchObserve
+import app.tivi.domain.observers.ObserveNextShowEpisodeToWatch
 import app.tivi.domain.observers.ObservePopularShows
 import app.tivi.domain.observers.ObserveRecommendedShows
 import app.tivi.domain.observers.ObserveTraktAuthState
@@ -48,6 +49,7 @@ class DiscoverViewModel @AssistedInject constructor(
     observeTrendingShows: ObserveTrendingShows,
     private val updateRecommendedShows: UpdateRecommendedShows,
     observeRecommendedShows: ObserveRecommendedShows,
+    observeNextShowEpisodeToWatch: ObserveNextShowEpisodeToWatch,
     observeTraktAuthState: ObserveTraktAuthState,
     tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<DiscoverViewState>(initialState) {
@@ -100,6 +102,13 @@ class DiscoverViewModel @AssistedInject constructor(
             }
         }
         observeRecommendedShows()
+
+        viewModelScope.launchObserve(observeNextShowEpisodeToWatch) {
+            it.distinctUntilChanged().execute {
+                copy(nextEpisodeWithShowToWatched = it())
+            }
+        }
+        observeNextShowEpisodeToWatch()
 
         viewModelScope.launchObserve(observeTraktAuthState) { flow ->
             flow.distinctUntilChanged().collect {

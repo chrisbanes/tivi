@@ -19,6 +19,7 @@ package app.tivi.data.daos
 import androidx.room.Dao
 import androidx.room.Query
 import app.tivi.data.entities.Episode
+import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.EpisodeWithSeason
 import kotlinx.coroutines.flow.Flow
 
@@ -70,7 +71,7 @@ abstract class EpisodesDao : EntityDao<Episode> {
             INNER JOIN seasons AS s ON shows.id = s.show_id
             INNER JOIN episodes AS eps ON eps.season_id = s.id
             INNER JOIN episode_watch_entries AS ew ON ew.episode_id = eps.id
-            WHERE s.number != 0
+            WHERE s.number != ${Season.NUMBER_SPECIALS}
                 AND s.ignored = 0
                 AND shows.id = :showId
             """
@@ -80,7 +81,7 @@ abstract class EpisodesDao : EntityDao<Episode> {
             FROM shows
             INNER JOIN seasons AS s ON shows.id = s.show_id
             INNER JOIN episodes AS eps ON eps.season_id = s.id
-            WHERE s.number != 0
+            WHERE s.number != ${Season.NUMBER_SPECIALS}
                 AND s.ignored = 0
                 AND shows.id = :showId
                 AND ((1000 * s.number) + eps.number) > ((1000 * :seasonNumber) + :episodeNumber)

@@ -26,9 +26,6 @@ import app.tivi.TiviMvRxFragment
 import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.data.resultentities.PopularEntryWithShow
-import app.tivi.data.resultentities.RecommendedEntryWithShow
-import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.extensions.toFragmentNavigatorExtras
 import app.tivi.home.discover.databinding.FragmentDiscoverBinding
@@ -73,34 +70,40 @@ class DiscoverFragment : TiviMvRxFragment() {
         }
 
         controller.callbacks = object : DiscoverEpoxyController.Callbacks {
-            override fun onTrendingHeaderClicked(items: List<TrendingEntryWithShow>) {
-                val extras = listItemSharedElementHelper.createForItems(items)
+            override fun onTrendingHeaderClicked() {
+                withState(viewModel) {
+                    val extras = listItemSharedElementHelper.createForItems(it.trendingItems)
 
-                findNavController().navigate(
-                        R.id.navigation_trending,
-                        null,
-                        null,
-                        extras.toFragmentNavigatorExtras())
+                    findNavController().navigate(
+                            R.id.navigation_trending,
+                            null,
+                            null,
+                            extras.toFragmentNavigatorExtras())
+                }
             }
 
-            override fun onPopularHeaderClicked(items: List<PopularEntryWithShow>) {
-                val extras = listItemSharedElementHelper.createForItems(items)
+            override fun onPopularHeaderClicked() {
+                withState(viewModel) {
+                    val extras = listItemSharedElementHelper.createForItems(it.popularItems)
 
-                findNavController().navigate(
-                        R.id.navigation_popular,
-                        null,
-                        null,
-                        extras.toFragmentNavigatorExtras())
+                    findNavController().navigate(
+                            R.id.navigation_popular,
+                            null,
+                            null,
+                            extras.toFragmentNavigatorExtras())
+                }
             }
 
-            override fun onRecommendedHeaderClicked(items: List<RecommendedEntryWithShow>) {
-                val extras = listItemSharedElementHelper.createForItems(items)
+            override fun onRecommendedHeaderClicked() {
+                withState(viewModel) {
+                    val extras = listItemSharedElementHelper.createForItems(it.recommendedItems)
 
-                findNavController().navigate(
-                        R.id.navigation_recommended,
-                        null,
-                        null,
-                        extras.toFragmentNavigatorExtras())
+                    findNavController().navigate(
+                            R.id.navigation_recommended,
+                            null,
+                            null,
+                            extras.toFragmentNavigatorExtras())
+                }
             }
 
             override fun onItemClicked(viewHolderId: Long, item: EntryWithShow<out Entry>) {
@@ -114,6 +117,17 @@ class DiscoverFragment : TiviMvRxFragment() {
                         null,
                         elements.toActivityNavigatorExtras(requireActivity())
                 )
+            }
+
+            override fun onNextEpisodeToWatchClicked() {
+                withState(viewModel) {
+                    checkNotNull(it.nextEpisodeWithShowToWatched)
+
+                    findNavController().navigate(
+                            R.id.activity_show_details,
+                            bundleOf("show_id" to it.nextEpisodeWithShowToWatched.show.id)
+                    )
+                }
             }
         }
 
