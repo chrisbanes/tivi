@@ -21,9 +21,9 @@ object Versions {
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:3.5.0-rc03"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:3.5.0"
     const val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6"
-    const val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.2.1"
+    const val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.3.0"
 
     const val mvRx = "com.airbnb.android:mvrx:1.0.1"
 
@@ -31,7 +31,7 @@ object Libs {
     const val threeTenBpNoTzdb = "$threeTenBp:no-tzdb"
     const val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.2.1"
 
-    const val gravitySnapHelper = "com.github.rubensousa:gravitysnaphelper:2.0"
+    const val gravitySnapHelper = "com.github.rubensousa:gravitysnaphelper:2.1.0"
 
     const val timber = "com.jakewharton.timber:timber:4.7.1"
 
@@ -44,11 +44,9 @@ object Libs {
     const val robolectric = "org.robolectric:robolectric:4.3"
     const val mockK = "io.mockk:mockk:1.9.3"
 
-    const val coil = "io.coil-kt:coil:0.6.0"
-
     object Google {
         const val material = "com.google.android.material:material:1.1.0-alpha09"
-        const val firebaseCore = "com.google.firebase:firebase-core:17.0.1"
+        const val firebaseCore = "com.google.firebase:firebase-core:17.1.0"
         const val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.10.1"
         const val gmsGoogleServices = "com.google.gms:google-services:4.3.0"
         const val fabricPlugin = "io.fabric.tools:gradle:1.31.0"
@@ -76,7 +74,7 @@ object Libs {
         const val appcompat = "androidx.appcompat:appcompat:1.1.0-rc01"
         const val browser = "androidx.browser:browser:1.0.0"
         const val palette = "androidx.palette:palette:1.0.0"
-        const val recyclerview = "androidx.recyclerview:recyclerview:1.1.0-alpha06"
+        const val recyclerview = "androidx.recyclerview:recyclerview:1.1.0-beta03"
         const val emoji = "androidx.emoji:emoji:1.0.0"
         const val swiperefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02"
 
@@ -114,7 +112,7 @@ object Libs {
 
         const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.0-beta2"
 
-        const val coreKtx = "androidx.core:core-ktx:1.2.0-alpha02"
+        const val coreKtx = "androidx.core:core-ktx:1.2.0-alpha03"
 
         object Lifecycle {
             private const val version = "2.2.0-alpha03"
@@ -165,7 +163,7 @@ object Libs {
     }
 
     object OkHttp {
-        private const val version = "4.0.1"
+        private const val version = "4.1.0"
         const val okhttp = "com.squareup.okhttp3:okhttp:$version"
         const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$version"
     }
@@ -179,7 +177,7 @@ object Libs {
     }
 
     object AssistedInject {
-        private const val version = "0.4.0"
+        private const val version = "0.5.0"
         const val annotationDagger2 = "com.squareup.inject:assisted-inject-annotations-dagger2:$version"
         const val processorDagger2 = "com.squareup.inject:assisted-inject-processor-dagger2:$version"
     }
