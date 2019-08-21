@@ -33,7 +33,8 @@ import com.airbnb.epoxy.TypedEpoxyController
 import javax.inject.Inject
 
 class DiscoverEpoxyController @Inject constructor(
-    private val context: Context
+    private val context: Context,
+    private val textCreator: DiscoverTextCreator
 ) : TypedEpoxyController<DiscoverViewState>() {
     var callbacks: Callbacks? = null
 
@@ -65,6 +66,7 @@ class DiscoverEpoxyController @Inject constructor(
                 tmdbImageUrlProvider(viewState.tmdbImageUrlProvider)
                 tiviShow(viewState.nextEpisodeWithShowToWatched.show)
                 posterImage(viewState.nextEpisodeWithShowToWatched.images.findHighestRatedPoster())
+                textCreator(textCreator)
                 clickListener { _ -> callbacks?.onNextEpisodeToWatchClicked() }
             }
         }

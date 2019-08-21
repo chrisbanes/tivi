@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_normal"
-            android:text="@{episode.number.toString()}"
+            android:text="@{textCreator.seasonEpisodeTitleText(season, episode)}"
             android:textAppearance="?attr/textAppearanceCaption"
             app:layout_constraintBottom_toTopOf="@id/episode_title"
             app:layout_constraintStart_toEndOf="@id/show_poster"
@@ -57,7 +57,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_micro"
-            android:text="@{episode.title}"
+            android:text="@{textCreator.episodeTitleText(episode)}"
             android:textAppearance="?attr/textAppearanceBody1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -68,9 +68,10 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <data>
-        <!--        <variable-->
-        <!--            name="textCreator"-->
-        <!--            type="app.tivi.showdetails.details.ShowDetailsTextCreator" />-->
+
+        <variable
+            name="textCreator"
+            type="app.tivi.home.discover.DiscoverTextCreator" />
 
         <variable
             name="tiviShow"
