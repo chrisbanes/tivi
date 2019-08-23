@@ -56,17 +56,17 @@ abstract class EpisodesDao : EntityDao<Episode> {
     abstract suspend fun showIdForEpisodeId(episodeId: Long): Long
 
     @Query(latestWatchedEpisodeForShowId)
-    abstract fun latestWatchedEpisodeForShowId(showId: Long): Flow<EpisodeWithSeason?>
+    abstract fun observeLatestWatchedEpisodeForShowId(showId: Long): Flow<EpisodeWithSeason?>
 
     @Query(nextEpisodeForShowIdAfter)
-    abstract fun nextEpisodeForShowAfter(showId: Long, seasonNumber: Int, episodeNumber: Int): Flow<EpisodeWithSeason?>
+    abstract fun observeNextEpisodeForShowAfter(showId: Long, seasonNumber: Int, episodeNumber: Int): Flow<EpisodeWithSeason?>
 
     @Query(nextAiredEpisodeForShowIdAfter)
-    abstract fun nextAiredEpisodeForShowAfter(showId: Long, seasonNumber: Int, episodeNumber: Int): Flow<EpisodeWithSeason?>
+    abstract fun observeNextAiredEpisodeForShowAfter(showId: Long, seasonNumber: Int, episodeNumber: Int): Flow<EpisodeWithSeason?>
 
     companion object {
         const val latestWatchedEpisodeForShowId = """
-            SELECT eps.*, MAX((100 * s.number) + eps.number) AS computed_abs_number
+            SELECT eps.*, (100 * s.number) + eps.number AS computed_abs_number
             FROM shows
             INNER JOIN seasons AS s ON shows.id = s.show_id
             INNER JOIN episodes AS eps ON eps.season_id = s.id
@@ -74,23 +74,36 @@ abstract class EpisodesDao : EntityDao<Episode> {
             WHERE s.number != ${Season.NUMBER_SPECIALS}
                 AND s.ignored = 0
                 AND shows.id = :showId
+            ORDER BY computed_abs_number DESC
+            LIMIT 1
             """
 
         const val nextEpisodeForShowIdAfter = """
-            SELECT eps.*, MIN((1000 * s.number) + eps.number) AS computed_abs_number
+            SELECT eps.*, (1000 * s.number) + eps.number AS computed_abs_number
             FROM shows
             INNER JOIN seasons AS s ON shows.id = s.show_id
             INNER JOIN episodes AS eps ON eps.season_id = s.id
             WHERE s.number != ${Season.NUMBER_SPECIALS}
                 AND s.ignored = 0
                 AND shows.id = :showId
-                AND ((1000 * s.number) + eps.number) > ((1000 * :seasonNumber) + :episodeNumber)
+                AND computed_abs_number > ((1000 * :seasonNumber) + :episodeNumber)
+            ORDER BY computed_abs_number ASC
+            LIMIT 1
         """
 
         const val nextAiredEpisodeForShowIdAfter = """
-            $nextEpisodeForShowIdAfter
+            SELECT eps.*, (1000 * s.number) + eps.number AS computed_abs_number
+            FROM shows
+            INNER JOIN seasons AS s ON shows.id = s.show_id
+            INNER JOIN episodes AS eps ON eps.season_id = s.id
+            WHERE s.number != ${Season.NUMBER_SPECIALS}
+                AND s.ignored = 0
+                AND shows.id = :showId
+                AND computed_abs_number > ((1000 * :seasonNumber) + :episodeNumber)
                 AND eps.first_aired IS NOT NULL
                 AND datetime(eps.first_aired) < datetime('now')
+            ORDER BY computed_abs_number ASC
+            LIMIT 1
         """
     }
 }

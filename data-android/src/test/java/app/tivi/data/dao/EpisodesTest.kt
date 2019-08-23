@@ -21,8 +21,12 @@ import app.tivi.data.daos.EpisodesDao
 import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.insertShow
 import app.tivi.utils.s1
+import app.tivi.utils.s1_episodes
 import app.tivi.utils.s1e1
+import app.tivi.utils.s1e2
+import app.tivi.utils.s1e3
 import app.tivi.utils.showId
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
@@ -77,5 +81,22 @@ class EpisodesTest : BaseDatabaseTest() {
     fun showIdForEpisodeId() = runBlockingTest {
         episodeDao.insert(s1e1)
         assertThat(episodeDao.showIdForEpisodeId(s1e1.id), `is`(showId))
+    }
+
+    @Test
+    fun nextAiredEpisodeAfter() = runBlockingTest {
+        episodeDao.insertAll(s1_episodes)
+
+        assertThat(episodeDao.observeNextEpisodeForShowAfter(showId, 0, 0)
+                .first()?.episode, `is`(s1e1))
+
+        assertThat(episodeDao.observeNextEpisodeForShowAfter(showId, 1, 0)
+                .first()?.episode, `is`(s1e2))
+
+        assertThat(episodeDao.observeNextEpisodeForShowAfter(showId, 1, 1)
+                .first()?.episode, `is`(s1e3))
+
+        assertThat(episodeDao.observeNextEpisodeForShowAfter(showId, 1, 2)
+                .first()?.episode, nullValue())
     }
 }
