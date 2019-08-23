@@ -73,6 +73,7 @@ object Libs {
     object AndroidX {
         const val appcompat = "androidx.appcompat:appcompat:1.1.0-rc01"
         const val browser = "androidx.browser:browser:1.0.0"
+        const val collection = "androidx.collection:collection-ktx:1.1.0"
         const val palette = "androidx.palette:palette:1.0.0"
         const val recyclerview = "androidx.recyclerview:recyclerview:1.1.0-beta03"
         const val emoji = "androidx.emoji:emoji:1.0.0"

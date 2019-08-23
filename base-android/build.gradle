@@ -46,6 +46,7 @@ dependencies {
 
     implementation Libs.AndroidX.Fragment.fragment
     implementation Libs.AndroidX.coreKtx
+    implementation Libs.AndroidX.collection
 
     implementation Libs.timber
     implementation Libs.threeTenAbp
