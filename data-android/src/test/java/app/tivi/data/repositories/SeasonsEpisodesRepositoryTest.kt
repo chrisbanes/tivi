@@ -53,6 +53,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.withTimeout
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThat
@@ -263,7 +264,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         }
 
         // Wait for the first emission
-        while (results.size < 1) { delay(5) }
+        withTimeout(10_000) { while (results.size < 1) { delay(5) } }
         assertEquals(s1e1, results[0]?.episode)
 
         // Now mark s1e1 as watched
@@ -271,7 +272,8 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         coEvery { traktSeasonsDataSource.getEpisodeWatches(s1e1.id, any()) } returns Success(listOf(s1e1w))
         repository.markEpisodeWatched(s1e1.id, OffsetDateTime.now())
 
-        while (results.size < 2) { delay(5) }
+        // Wait for the second emission
+        withTimeout(10_000) { while (results.size < 2) { delay(5) } }
         assertEquals(s1e2, results[1]?.episode)
 
         job.cancel()
