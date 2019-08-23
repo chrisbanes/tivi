@@ -24,7 +24,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -66,8 +66,8 @@ suspend fun <A> Collection<A>.parallelForEach(
     }
 }
 
-fun <T, R> Flow<T?>.flatMapConcatNullable(transform: suspend (value: T) -> Flow<R>): Flow<R?> {
-    return flatMapConcat { if (it != null) transform(it) else flowOf(null) }
+fun <T, R> Flow<T?>.flatMapLatestNullable(transform: suspend (value: T) -> Flow<R>): Flow<R?> {
+    return flatMapLatest { if (it != null) transform(it) else flowOf(null) }
 }
 
 fun <T, R> Flow<T?>.mapNullable(transform: suspend (value: T) -> R): Flow<R?> {

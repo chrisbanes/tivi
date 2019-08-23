@@ -20,7 +20,7 @@ import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.resultentities.EpisodeWithSeasonWithShow
 import app.tivi.domain.SubjectInteractor
-import app.tivi.extensions.flatMapConcatNullable
+import app.tivi.extensions.flatMapLatestNullable
 import app.tivi.extensions.mapNullable
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineDispatcher
@@ -35,7 +35,7 @@ class ObserveNextShowEpisodeToWatch @Inject constructor(
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override fun createObservable(params: Unit): Flow<EpisodeWithSeasonWithShow?> {
-        return followedShowsRepository.observeNextShowToWatch().flatMapConcatNullable { nextShow ->
+        return followedShowsRepository.observeNextShowToWatch().flatMapLatestNullable { nextShow ->
             seasonsEpisodesRepository.observeNextEpisodeToWatch(nextShow.entry.showId).mapNullable {
                 EpisodeWithSeasonWithShow(it.episode!!, it.season!!, nextShow.show, nextShow.images)
             }
