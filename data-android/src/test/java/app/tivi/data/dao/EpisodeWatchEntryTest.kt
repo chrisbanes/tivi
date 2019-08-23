@@ -22,13 +22,13 @@ import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.episodeWatch2PendingDelete
 import app.tivi.utils.episodeWatch2PendingSend
 import app.tivi.utils.insertShow
-import app.tivi.utils.runBlockingTest
 import app.tivi.utils.s1
 import app.tivi.utils.s1_episodes
 import app.tivi.utils.s1e1
 import app.tivi.utils.s1e1w
 import app.tivi.utils.s1e1w_id
 import app.tivi.utils.showId
+import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Assert.assertThat

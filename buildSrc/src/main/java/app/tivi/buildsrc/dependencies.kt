@@ -68,6 +68,7 @@ object Libs {
         const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
         const val rx2 = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$version"
         const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
+        const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$version"
     }
 
     object AndroidX {

@@ -29,7 +29,6 @@ import app.tivi.extensions.launchOrJoin
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
-import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.async
 import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
@@ -39,7 +38,6 @@ import javax.inject.Singleton
 
 @Singleton
 class SeasonsEpisodesRepository @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
     private val episodeWatchStore: EpisodeWatchStore,
     private val episodeWatchLastLastRequestStore: EpisodeWatchLastRequestStore,
     private val seasonsEpisodesStore: SeasonsEpisodesStore,
@@ -90,10 +88,10 @@ class SeasonsEpisodesRepository @Inject constructor(
     suspend fun updateEpisode(episodeId: Long) = launchOrJoin("update_episode_$episodeId") {
         val local = seasonsEpisodesStore.getEpisode(episodeId)!!
         val season = seasonsEpisodesStore.getSeason(local.seasonId)!!
-        val traktResult = async(dispatchers.io) {
+        val traktResult = async {
             traktEpisodeDataSource.getEpisode(season.showId, season.number!!, local.number!!)
         }
-        val tmdbResult = async(dispatchers.io) {
+        val tmdbResult = async {
             tmdbEpisodeDataSource.getEpisode(season.showId, season.number!!, local.number!!)
         }
 

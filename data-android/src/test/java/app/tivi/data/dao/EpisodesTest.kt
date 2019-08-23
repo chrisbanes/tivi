@@ -20,11 +20,11 @@ import android.database.sqlite.SQLiteConstraintException
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.insertShow
-import app.tivi.utils.runBlockingTest
 import app.tivi.utils.s1
 import app.tivi.utils.s1e1
 import app.tivi.utils.showId
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Assert.assertThat

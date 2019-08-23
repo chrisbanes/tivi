@@ -33,7 +33,6 @@ import app.tivi.util.Logger
 import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.TestTransactionRunner
 import app.tivi.utils.insertShow
-import app.tivi.utils.runBlockingTest
 import app.tivi.utils.s1
 import app.tivi.utils.s1_episodes
 import app.tivi.utils.s1_id
@@ -45,10 +44,10 @@ import app.tivi.utils.s2_episodes
 import app.tivi.utils.s2_id
 import app.tivi.utils.s2e1
 import app.tivi.utils.showId
-import app.tivi.utils.testCoroutineDispatchers
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Test
@@ -90,7 +89,6 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         seasonEpisodeStore = SeasonsEpisodesStore(entityInserter, txRunner, seasonsDao, episodesDao, logger)
 
         repository = SeasonsEpisodesRepository(
-                testCoroutineDispatchers,
                 watchStore,
                 EpisodeWatchLastRequestStore(db.lastRequestDao()),
                 seasonEpisodeStore,
