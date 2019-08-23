@@ -17,15 +17,17 @@
 package app.tivi
 
 import android.view.View
+import androidx.collection.ArrayMap
 
-data class SharedElementHelper(
-    private val sharedElementViews: MutableMap<View, String?> = mutableMapOf()
-) {
-    val sharedElements: Map<View, String?> = sharedElementViews
+class SharedElementHelper {
+    private val _sharedElements = ArrayMap<View, String?>()
 
-    fun addSharedElement(view: View, name: String? = null) {
-        sharedElementViews[view] = name ?: view.transitionName
+    val sharedElements: Map<View, String?>
+        get() = _sharedElements
+
+    fun addSharedElement(view: View, transitionName: String? = view.transitionName) {
+        _sharedElements[view] = transitionName ?: view.transitionName
     }
 
-    fun isEmpty(): Boolean = sharedElementViews.isEmpty()
+    fun isEmpty(): Boolean = _sharedElements.isEmpty
 }
