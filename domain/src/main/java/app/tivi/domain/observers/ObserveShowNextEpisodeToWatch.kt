@@ -25,11 +25,11 @@ import javax.inject.Inject
 
 class ObserveShowNextEpisodeToWatch @Inject constructor(
     private val repository: SeasonsEpisodesRepository,
-    private val dispatchers: AppCoroutineDispatchers
-) : SubjectInteractor<ObserveShowNextEpisodeToWatch.Params, EpisodeWithSeason>() {
+    dispatchers: AppCoroutineDispatchers
+) : SubjectInteractor<ObserveShowNextEpisodeToWatch.Params, EpisodeWithSeason?>() {
     override val dispatcher = dispatchers.io
 
-    override fun createObservable(params: Params): Flow<EpisodeWithSeason> {
+    override fun createObservable(params: Params): Flow<EpisodeWithSeason?> {
         return repository.observeNextEpisodeToWatch(params.showId)
     }
 

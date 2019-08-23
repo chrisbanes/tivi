@@ -74,7 +74,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
 			ORDER BY datetime(ew.watched_at) DESC
 			LIMIT 1
     """)
-    abstract fun observeNextShowToWatch(): Flow<FollowedShowEntryWithShow>
+    abstract fun observeNextShowToWatch(): Flow<FollowedShowEntryWithShow?>
 
     @Query("DELETE FROM myshows_entries")
     abstract override suspend fun deleteAll()

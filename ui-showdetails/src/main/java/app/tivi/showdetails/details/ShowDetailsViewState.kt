@@ -34,7 +34,7 @@ data class ShowDetailsViewState(
     val posterImage: ShowTmdbImage? = null,
     val backdropImage: ShowTmdbImage? = null,
     val relatedShows: Async<List<RelatedShowEntryWithShow>> = Uninitialized,
-    val nextEpisodeToWatch: Async<EpisodeWithSeason> = Uninitialized,
+    val nextEpisodeToWatch: Async<EpisodeWithSeason?> = Uninitialized,
     val viewStats: Async<FollowedShowsWatchStats> = Uninitialized,
     val seasons: Async<List<SeasonWithEpisodesAndWatches>> = Uninitialized,
     val expandedSeasonIds: Set<Long> = emptySet(),
