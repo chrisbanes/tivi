@@ -24,13 +24,13 @@ import java.util.Objects
 
 class EpisodeWithSeason {
     @Embedded
-    lateinit var episode: Episode
+    var episode: Episode? = null
 
     @Relation(parentColumn = "season_id", entityColumn = "id")
     var _seasons: List<Season> = emptyList()
 
-    val season: Season
-        get() = _seasons[0]
+    val season: Season?
+        get() = _seasons.getOrNull(0)
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true

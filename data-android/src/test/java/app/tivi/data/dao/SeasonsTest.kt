@@ -21,12 +21,12 @@ import app.tivi.data.daos.SeasonsDao
 import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.deleteShow
 import app.tivi.utils.insertShow
-import app.tivi.utils.runBlockingTest
 import app.tivi.utils.s0
 import app.tivi.utils.s1
 import app.tivi.utils.s1_id
 import app.tivi.utils.s2
 import app.tivi.utils.showId
+import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Assert.assertThat

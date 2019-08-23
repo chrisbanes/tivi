@@ -23,6 +23,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import java.util.concurrent.ConcurrentHashMap
@@ -60,6 +64,14 @@ suspend fun <A> Collection<A>.parallelForEach(
             }
         }
     }
+}
+
+fun <T, R> Flow<T?>.flatMapLatestNullable(transform: suspend (value: T) -> Flow<R>): Flow<R?> {
+    return flatMapLatest { if (it != null) transform(it) else flowOf(null) }
+}
+
+fun <T, R> Flow<T?>.mapNullable(transform: suspend (value: T) -> R): Flow<R?> {
+    return map { if (it != null) transform(it) else null }
 }
 
 private val defaultConcurrency by lazy(LazyThreadSafetyMode.NONE) {

@@ -74,12 +74,12 @@ class ShowDetailsEpoxyController @Inject constructor(
                 spanSizeOverride(TotalSpanOverride)
             }
             detailsNextEpisodeToWatch {
-                id("next_episode_header_${episodeWithSeason.hashCode()}")
+                id("next_episode_header_${episodeWithSeason.episode!!.id}")
                 spanSizeOverride(TotalSpanOverride)
                 season(episodeWithSeason.season)
                 episode(episodeWithSeason.episode)
                 textCreator(textCreator)
-                clickListener { view -> callbacks?.onEpisodeClicked(episodeWithSeason.episode, view) }
+                clickListener { view -> callbacks?.onEpisodeClicked(episodeWithSeason.episode!!, view) }
             }
         }
 

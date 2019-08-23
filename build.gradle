@@ -61,10 +61,6 @@ allprojects {
         google()
         mavenCentral()
         jcenter()
-
-        // AndroidX snapshots. Remove this once Room 2.2.0-alpha03 is released
-        maven { url 'https://ci.android.com/builds/submitted/5799541/androidx_snapshot/latest/repository' }
-
         mavenLocal()
     }
 }

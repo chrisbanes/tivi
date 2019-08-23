@@ -28,30 +28,37 @@ import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.episodes.SeasonsEpisodesStore
 import app.tivi.data.repositories.episodes.SeasonsLastRequestStore
+import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.TestTransactionRunner
 import app.tivi.utils.insertShow
-import app.tivi.utils.runBlockingTest
 import app.tivi.utils.s1
 import app.tivi.utils.s1_episodes
 import app.tivi.utils.s1_id
 import app.tivi.utils.s1e1
 import app.tivi.utils.s1e1w
 import app.tivi.utils.s1e1w2
+import app.tivi.utils.s1e2
 import app.tivi.utils.s2
 import app.tivi.utils.s2_episodes
 import app.tivi.utils.s2_id
 import app.tivi.utils.s2e1
 import app.tivi.utils.showId
-import app.tivi.utils.testCoroutineDispatchers
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.withTimeout
 import org.hamcrest.Matchers.`is`
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThat
 import org.junit.Test
+import org.threeten.bp.OffsetDateTime
 import javax.inject.Provider
 
 class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
@@ -90,7 +97,6 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         seasonEpisodeStore = SeasonsEpisodesStore(entityInserter, txRunner, seasonsDao, episodesDao, logger)
 
         repository = SeasonsEpisodesRepository(
-                testCoroutineDispatchers,
                 watchStore,
                 EpisodeWatchLastRequestStore(db.lastRequestDao()),
                 seasonEpisodeStore,
@@ -243,5 +249,33 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         assertThat(seasonsDao.seasonsForShowId(showId), `is`(listOf(s1, s2)))
         assertThat(episodesDao.episodesWithSeasonId(s1_id), `is`(listOf(s1e1)))
         assertThat(episodesDao.episodesWithSeasonId(s2_id), `is`(listOf(s2e1)))
+    }
+
+    @Test
+    fun testObserveNextEpisodeToWatch_singleFlow() = runBlockingTest {
+        db.seasonsDao().insertAll(s1)
+        db.episodesDao().insertAll(s1_episodes)
+
+        val results = mutableListOf<EpisodeWithSeason?>()
+
+        // Launch the observe
+        val job = launch {
+            repository.observeNextEpisodeToWatch(showId).toList(results)
+        }
+
+        // Wait for the first emission
+        withTimeout(10_000) { while (results.size < 1) { delay(5) } }
+        assertEquals(s1e1, results[0]?.episode)
+
+        // Now mark s1e1 as watched
+        coEvery { traktSeasonsDataSource.addEpisodeWatches(any()) } returns Success(Unit)
+        coEvery { traktSeasonsDataSource.getEpisodeWatches(s1e1.id, any()) } returns Success(listOf(s1e1w))
+        repository.markEpisodeWatched(s1e1.id, OffsetDateTime.now())
+
+        // Wait for the second emission
+        withTimeout(10_000) { while (results.size < 2) { delay(5) } }
+        assertEquals(s1e2, results[1]?.episode)
+
+        job.cancel()
     }
 }

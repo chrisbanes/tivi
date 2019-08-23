@@ -20,24 +20,24 @@ import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.resultentities.EpisodeWithSeasonWithShow
 import app.tivi.domain.SubjectInteractor
+import app.tivi.extensions.flatMapLatestNullable
+import app.tivi.extensions.mapNullable
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class ObserveNextShowEpisodeToWatch @Inject constructor(
     private val followedShowsRepository: FollowedShowsRepository,
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
-    private val dispatchers: AppCoroutineDispatchers
-) : SubjectInteractor<Unit, EpisodeWithSeasonWithShow>() {
+    dispatchers: AppCoroutineDispatchers
+) : SubjectInteractor<Unit, EpisodeWithSeasonWithShow?>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
-    override fun createObservable(params: Unit): Flow<EpisodeWithSeasonWithShow> {
-        return followedShowsRepository.observeNextShowToWatch().flatMapConcat { nextShow ->
-            seasonsEpisodesRepository.observeNextEpisodeToWatch(nextShow.entry.showId).map {
-                EpisodeWithSeasonWithShow(it.episode, it.season, nextShow.show, nextShow.images)
+    override fun createObservable(params: Unit): Flow<EpisodeWithSeasonWithShow?> {
+        return followedShowsRepository.observeNextShowToWatch().flatMapLatestNullable { nextShow ->
+            seasonsEpisodesRepository.observeNextEpisodeToWatch(nextShow.entry.showId).mapNullable {
+                EpisodeWithSeasonWithShow(it.episode!!, it.season!!, nextShow.show, nextShow.images)
             }
         }
     }

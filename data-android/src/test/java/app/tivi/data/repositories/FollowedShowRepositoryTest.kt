@@ -37,11 +37,11 @@ import app.tivi.utils.followedShow2Local
 import app.tivi.utils.followedShow2Network
 import app.tivi.utils.insertFollowedShow
 import app.tivi.utils.insertShow
-import app.tivi.utils.runBlockingTest
 import app.tivi.utils.show
 import app.tivi.utils.show2
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThat
 import org.junit.Test

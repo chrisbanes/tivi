@@ -24,6 +24,7 @@ import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.ZoneOffset
 
 const val showId = 1L
 val show = TiviShow(id = showId, title = "Down Under", traktId = 243)
@@ -62,12 +63,14 @@ val s0 = Season(
         traktId = 7042
 )
 
-val s1e1 = Episode(id = 1, title = "Kangaroo Court", seasonId = s1.id, number = 0, traktId = 59830)
-val s1e2 = Episode(id = 2, title = "Bushtucker", seasonId = s1.id, number = 1, traktId = 33435)
-val s1e3 = Episode(id = 3, title = "Wallaby Bungee", seasonId = s1.id, number = 2, traktId = 44542)
+private val s1e1AirDate = OffsetDateTime.of(2000, 7, 1, 18, 0, 0, 0, ZoneOffset.UTC)
 
-val s2e1 = Episode(id = 4, title = "Noosa Pool", seasonId = s2.id, number = 0, traktId = 5656)
-val s2e2 = Episode(id = 5, title = "Alice Springer", seasonId = s2.id, number = 1, traktId = 8731)
+val s1e1 = Episode(id = 1, title = "Kangaroo Court", seasonId = s1.id, number = 0, traktId = 59830, firstAired = s1e1AirDate)
+val s1e2 = Episode(id = 2, title = "Bushtucker", seasonId = s1.id, number = 1, traktId = 33435, firstAired = s1e1AirDate.plusWeeks(1))
+val s1e3 = Episode(id = 3, title = "Wallaby Bungee", seasonId = s1.id, number = 2, traktId = 44542, firstAired = s1e1AirDate.plusWeeks(2))
+
+val s2e1 = Episode(id = 4, title = "Noosa Pool", seasonId = s2.id, number = 0, traktId = 5656, firstAired = s1e1AirDate.plusWeeks(3))
+val s2e2 = Episode(id = 5, title = "Alice Springer", seasonId = s2.id, number = 1, traktId = 8731, firstAired = s1e1AirDate.plusWeeks(4))
 
 val s1_episodes = listOf(s1e1, s1e2, s1e3)
 val s2_episodes = listOf(s2e1, s2e2)

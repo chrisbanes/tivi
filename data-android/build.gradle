@@ -81,6 +81,7 @@ dependencies {
     testImplementation Libs.AndroidX.archCoreTesting
     testImplementation Libs.AndroidX.Test.core
     testImplementation Libs.AndroidX.Room.testing
+    testImplementation Libs.Coroutines.test
     kaptTest Libs.AndroidX.Room.compiler
 
     // Needed for Tzdb
