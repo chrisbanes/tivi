@@ -33,12 +33,26 @@ import app.tivi.tmdb.TmdbImageUrlProvider
 )
 fun loadBackdrop(
     view: ImageView,
+    oldPath: String?,
+    oldUrlProvider: TmdbImageUrlProvider?,
+    oldSaturateOnLoad: Boolean?,
     path: String?,
     urlProvider: TmdbImageUrlProvider?,
     saturateOnLoad: Boolean?
 ) {
-    val image = if (path != null) ShowTmdbImage(path = path, type = ImageType.BACKDROP, showId = 0) else null
-    loadImage(view, image, urlProvider, saturateOnLoad)
+    if (oldPath == path && oldUrlProvider == urlProvider && oldSaturateOnLoad == saturateOnLoad) {
+        return
+    }
+    if (urlProvider != null && path != null) {
+        view.loadTmdbImage(
+                ShowTmdbImage(path = path, type = ImageType.BACKDROP, showId = 0),
+                urlProvider,
+                saturateOnLoad == null || saturateOnLoad
+        )
+    } else {
+        view.clearRequest()
+        view.setImageDrawable(null)
+    }
 }
 
 @BindingAdapter(
@@ -49,12 +63,22 @@ fun loadBackdrop(
 )
 fun loadImage(
     view: ImageView,
+    oldImage: TmdbImageEntity?,
+    oldUrlProvider: TmdbImageUrlProvider?,
+    oldSaturateOnLoad: Boolean?,
     image: TmdbImageEntity?,
     urlProvider: TmdbImageUrlProvider?,
     saturateOnLoad: Boolean?
 ) {
+    if (oldImage == image && oldUrlProvider == urlProvider && oldSaturateOnLoad == saturateOnLoad) {
+        return
+    }
     if (urlProvider != null && image != null) {
-        view.loadTmdbImage(image, urlProvider, saturateOnLoad == null || saturateOnLoad)
+        view.loadTmdbImage(
+                image,
+                urlProvider,
+                saturateOnLoad == null || saturateOnLoad
+        )
     } else {
         view.clearRequest()
         view.setImageDrawable(null)
