@@ -48,8 +48,8 @@ import app.tivi.utils.s2e1
 import app.tivi.utils.showId
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
@@ -256,26 +256,29 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         db.seasonsDao().insertAll(s1)
         db.episodesDao().insertAll(s1_episodes)
 
-        val results = mutableListOf<EpisodeWithSeason?>()
+        val results = Channel<EpisodeWithSeason?>(Channel.UNLIMITED)
 
         // Launch the observe
         val job = launch {
-            repository.observeNextEpisodeToWatch(showId).toList(results)
+            repository.observeNextEpisodeToWatch(showId).collect { results.send(it) }
         }
 
-        // Wait for the first emission
-        withTimeout(10_000) { while (results.size < 1) { delay(5) } }
-        assertEquals(s1e1, results[0]?.episode)
+        // Receive the first emission
+        withTimeout(10_000) {
+            assertEquals(s1e1, results.receive()?.episode)
+        }
 
         // Now mark s1e1 as watched
         coEvery { traktSeasonsDataSource.addEpisodeWatches(any()) } returns Success(Unit)
         coEvery { traktSeasonsDataSource.getEpisodeWatches(s1e1.id, any()) } returns Success(listOf(s1e1w))
         repository.markEpisodeWatched(s1e1.id, OffsetDateTime.now())
 
-        // Wait for the second emission
-        withTimeout(10_000) { while (results.size < 2) { delay(5) } }
-        assertEquals(s1e2, results[1]?.episode)
+        // Receive the second emission
+        withTimeout(10_000) {
+            assertEquals(s1e2, results.receive()?.episode)
+        }
 
+        results.close()
         job.cancel()
     }
 }
