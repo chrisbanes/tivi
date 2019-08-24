@@ -87,14 +87,16 @@
             app:backgroundColor="?android:attr/colorBackground"
             app:topLeftCutSize="@dimen/details_corner_cutout" />
 
-        <app.tivi.ui.widget.BaselineGridTextView
+        <TextView
             android:id="@+id/details_title"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:ellipsize="end"
+            android:gravity="center_vertical"
             android:text="@{state.show.title}"
-            android:lineSpacingMultiplier="0.7"
+            android:lineSpacingMultiplier="0.9"
             android:textAppearance="?attr/textAppearanceHeadline6"
+            app:autoSizeMaxTextSize="22sp"
+            app:autoSizeTextType="uniform"
             tools:text="@sample/shows.txt" />
 
         <app.tivi.ui.widget.TintingToolbar
