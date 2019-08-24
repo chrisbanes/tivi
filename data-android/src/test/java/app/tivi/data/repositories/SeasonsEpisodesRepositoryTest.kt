@@ -28,7 +28,6 @@ import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.episodes.SeasonsEpisodesStore
 import app.tivi.data.repositories.episodes.SeasonsLastRequestStore
-import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import app.tivi.utils.BaseDatabaseTest
@@ -48,9 +47,7 @@ import app.tivi.utils.s2e1
 import app.tivi.utils.showId
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.withTimeout
@@ -256,12 +253,7 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
         db.seasonsDao().insertAll(s1)
         db.episodesDao().insertAll(s1_episodes)
 
-        val results = Channel<EpisodeWithSeason?>(Channel.UNLIMITED)
-
-        // Launch the observe
-        val job = launch {
-            repository.observeNextEpisodeToWatch(showId).collect { results.send(it) }
-        }
+        val results = repository.observeNextEpisodeToWatch(showId).produceIn(this)
 
         // Receive the first emission
         withTimeout(10_000) {
@@ -278,7 +270,6 @@ class SeasonsEpisodesRepositoryTest : BaseDatabaseTest() {
             assertEquals(s1e2, results.receive()?.episode)
         }
 
-        results.close()
-        job.cancel()
+        results.cancel()
     }
 }
