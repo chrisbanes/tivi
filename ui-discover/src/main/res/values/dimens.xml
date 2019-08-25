@@ -16,8 +16,5 @@
   -->
 
 <resources>
-    <dimen name="list_vertical_padding">@dimen/spacing_small</dimen>
-    <dimen name="list_horizontal_padding">@dimen/spacing_normal</dimen>
-
-    <dimen name="related_shows_item_width">60dp</dimen>
+    <dimen name="discover_carousel_item_width">96dp</dimen>
 </resources>

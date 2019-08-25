@@ -21,6 +21,12 @@ apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
 
+apply plugin: 'kotlin-kapt'
+kapt {
+    correctErrorTypes = true
+    useBuildCache = true
+}
+
 android {
     compileSdkVersion buildConfig.compileSdk
 
@@ -44,4 +50,5 @@ dependencies {
     api Libs.Epoxy.epoxy
     api Libs.Epoxy.dataBinding
     api Libs.Epoxy.paging
+    kapt Libs.Epoxy.processor
 }
