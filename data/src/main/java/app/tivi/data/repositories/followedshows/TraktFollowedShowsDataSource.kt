@@ -16,12 +16,15 @@
 
 package app.tivi.data.repositories.followedshows
 
+import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.Result
+import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TraktListEntryToFollowedShowEntry
 import app.tivi.data.mappers.TraktListEntryToTiviShow
 import app.tivi.data.mappers.pairMapperOf
+import app.tivi.extensions.bodyOrThrow
 import app.tivi.extensions.executeWithRetry
 import app.tivi.extensions.toResult
 import app.tivi.extensions.toResultUnit
@@ -33,6 +36,7 @@ import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.enums.ListPrivacy
 import com.uwetrottmann.trakt5.services.Users
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -42,7 +46,7 @@ class TraktFollowedShowsDataSource @Inject constructor(
     listEntryToFollowedEntry: TraktListEntryToFollowedShowEntry
 ) : FollowedShowsDataSource {
     companion object {
-        private val LIST_NAME = "Following"
+        private val LIST_NAME = "Following TEST2"
     }
 
     private val listShowsMapper = pairMapperOf(listEntryToFollowedEntry, listEntryToShowMapper)
@@ -85,21 +89,29 @@ class TraktFollowedShowsDataSource @Inject constructor(
                 .toResult(listShowsMapper)
     }
 
-    override suspend fun getFollowedListId(): Int? {
-        val id = usersService.get().lists(UserSlug.ME)
-                .executeWithRetry()
-                .toResult()
-                .get()
-                ?.firstOrNull { it.name == LIST_NAME }
-                ?.let { it.ids?.trakt }
-        if (id != null) {
-            return id
+    override suspend fun getFollowedListId(): Result<Int> {
+        val fetchResult: Result<Int>? = try {
+            usersService.get().lists(UserSlug.ME)
+                    .executeWithRetry()
+                    .bodyOrThrow()
+                    .firstOrNull { it.name == LIST_NAME }
+                    ?.let { Success(it.ids.trakt) }
+        } catch (e: IOException) {
+            ErrorResult(e)
         }
 
-        return usersService.get().createList(UserSlug.ME,
-                TraktList().name(LIST_NAME)!!.privacy(ListPrivacy.PRIVATE))
-                .executeWithRetry()
-                .toResult()
-                .let { it.get()?.ids?.trakt }
+        if (fetchResult is Success) {
+            return fetchResult
+        }
+
+        return try {
+            usersService.get().createList(UserSlug.ME,
+                    TraktList().name(LIST_NAME).privacy(ListPrivacy.PRIVATE))
+                    .executeWithRetry()
+                    .bodyOrThrow()
+                    .let { Success(it.ids.trakt) }
+        } catch (e: IOException) {
+            ErrorResult(e)
+        }
     }
 }
