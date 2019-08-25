@@ -36,7 +36,6 @@ import com.uwetrottmann.trakt5.entities.UserSlug
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.enums.ListPrivacy
 import com.uwetrottmann.trakt5.services.Users
-import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -96,8 +95,8 @@ class TraktFollowedShowsDataSource @Inject constructor(
                     .bodyOrThrow()
                     .firstOrNull { it.name == LIST_NAME }
                     ?.let { Success(it.ids.trakt) }
-        } catch (e: IOException) {
-            ErrorResult(e)
+        } catch (t: Throwable) {
+            ErrorResult(t)
         }
 
         if (fetchResult is Success) {
@@ -110,8 +109,8 @@ class TraktFollowedShowsDataSource @Inject constructor(
                     .executeWithRetry()
                     .bodyOrThrow()
                     .let { Success(it.ids.trakt) }
-        } catch (e: IOException) {
-            ErrorResult(e)
+        } catch (t: Throwable) {
+            ErrorResult(t)
         }
     }
 }

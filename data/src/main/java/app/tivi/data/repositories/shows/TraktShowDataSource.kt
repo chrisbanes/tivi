@@ -48,7 +48,7 @@ class TraktShowDataSource @Inject constructor(
             if (response is Success) {
                 traktId = response.get()
             } else if (response is ErrorResult) {
-                return ErrorResult(response.exception)
+                return ErrorResult(response.throwable)
             }
         }
 
@@ -62,7 +62,7 @@ class TraktShowDataSource @Inject constructor(
             if (response is Success) {
                 traktId = response.get()
             } else if (response is ErrorResult) {
-                return ErrorResult(response.exception)
+                return ErrorResult(response.throwable)
             }
         }
 

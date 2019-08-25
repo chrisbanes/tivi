@@ -25,7 +25,7 @@ import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.Success
 import app.tivi.data.instantInPast
-import app.tivi.extensions.launchOrJoin
+import app.tivi.extensions.asyncOrAwait
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
@@ -64,45 +64,49 @@ class SeasonsEpisodesRepository @Inject constructor(
         seasonsEpisodesStore.deleteShowSeasonData(showId)
     }
 
-    suspend fun updateSeasonsEpisodes(showId: Long) = launchOrJoin("update_show_seasons_$showId") {
-        when (val result = traktSeasonsDataSource.getSeasonsEpisodes(showId)) {
-            is Success -> {
-                result.data.distinctBy { it.first.number }.associate { (season, episodes) ->
-                    val localSeason = seasonsEpisodesStore.getSeasonWithTraktId(season.traktId!!)
-                            ?: Season(showId = showId)
-                    val mergedSeason = mergeSeason(localSeason, season, Season.EMPTY)
+    suspend fun updateSeasonsEpisodes(showId: Long) {
+        asyncOrAwait("update_show_seasons_$showId") {
+            when (val result = traktSeasonsDataSource.getSeasonsEpisodes(showId)) {
+                is Success -> {
+                    result.data.distinctBy { it.first.number }.associate { (season, episodes) ->
+                        val localSeason = seasonsEpisodesStore.getSeasonWithTraktId(season.traktId!!)
+                                ?: Season(showId = showId)
+                        val mergedSeason = mergeSeason(localSeason, season, Season.EMPTY)
 
-                    val mergedEpisodes = episodes.distinctBy(Episode::number).map {
-                        val localEpisode = seasonsEpisodesStore.getEpisodeWithTraktId(it.traktId!!)
-                                ?: Episode(seasonId = mergedSeason.id)
-                        mergeEpisode(localEpisode, it, Episode.EMPTY)
-                    }
-                    mergedSeason to mergedEpisodes
-                }.also { seasonsEpisodesStore.save(showId, it) }
+                        val mergedEpisodes = episodes.distinctBy(Episode::number).map {
+                            val localEpisode = seasonsEpisodesStore.getEpisodeWithTraktId(it.traktId!!)
+                                    ?: Episode(seasonId = mergedSeason.id)
+                            mergeEpisode(localEpisode, it, Episode.EMPTY)
+                        }
+                        mergedSeason to mergedEpisodes
+                    }.also { seasonsEpisodesStore.save(showId, it) }
 
-                seasonsLastRequestStore.updateLastRequest(showId)
+                    seasonsLastRequestStore.updateLastRequest(showId)
+                }
             }
         }
     }
 
-    suspend fun updateEpisode(episodeId: Long) = launchOrJoin("update_episode_$episodeId") {
-        val local = seasonsEpisodesStore.getEpisode(episodeId)!!
-        val season = seasonsEpisodesStore.getSeason(local.seasonId)!!
-        val traktResult = async {
-            traktEpisodeDataSource.getEpisode(season.showId, season.number!!, local.number!!)
-        }
-        val tmdbResult = async {
-            tmdbEpisodeDataSource.getEpisode(season.showId, season.number!!, local.number!!)
-        }
+    suspend fun updateEpisode(episodeId: Long) {
+        asyncOrAwait("update_episode_$episodeId") {
+            val local = seasonsEpisodesStore.getEpisode(episodeId)!!
+            val season = seasonsEpisodesStore.getSeason(local.seasonId)!!
+            val traktResult = async {
+                traktEpisodeDataSource.getEpisode(season.showId, season.number!!, local.number!!)
+            }
+            val tmdbResult = async {
+                tmdbEpisodeDataSource.getEpisode(season.showId, season.number!!, local.number!!)
+            }
 
-        val trakt = traktResult.await().let {
-            if (it is Success) it.data else Episode.EMPTY
-        }
-        val tmdb = tmdbResult.await().let {
-            if (it is Success) it.data else Episode.EMPTY
-        }
+            val trakt = traktResult.await().let {
+                if (it is Success) it.data else Episode.EMPTY
+            }
+            val tmdb = tmdbResult.await().let {
+                if (it is Success) it.data else Episode.EMPTY
+            }
 
-        seasonsEpisodesStore.save(mergeEpisode(local, trakt, tmdb))
+            seasonsEpisodesStore.save(mergeEpisode(local, trakt, tmdb))
+        }
     }
 
     suspend fun updateShowEpisodeWatchesIfNeeded(
@@ -139,7 +143,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         }
     }
 
-    suspend fun syncEpisodeWatchesForShow(showId: Long) = launchOrJoin("sync_show_watches_$showId") {
+    suspend fun syncEpisodeWatchesForShow(showId: Long) = asyncOrAwait("sync_show_watches_$showId") {
         // Process any pending deletes
         episodeWatchStore.getEntriesWithDeleteAction(showId).also {
             it.isNotEmpty() && processPendingDeletes(it)

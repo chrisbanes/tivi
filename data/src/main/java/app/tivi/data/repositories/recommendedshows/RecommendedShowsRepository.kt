@@ -21,7 +21,7 @@ import app.tivi.data.entities.Success
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.data.repositories.shows.ShowStore
-import app.tivi.extensions.launchOrJoin
+import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
 import org.threeten.bp.Instant
 import javax.inject.Inject
@@ -55,28 +55,27 @@ class RecommendedShowsRepository @Inject constructor(
     }
 
     private suspend fun updateFromDataSource(page: Int, resetOnSave: Boolean) {
-        launchOrJoin("update_recommended_page$page") {
-            when (val response = traktDataSource.getRecommendedShows(page, 20)) {
-                is Success -> {
-                    response.data.map { show ->
-                        // Grab the show id if it exists, or save the show and use it's generated ID
-                        val showId = showStore.getIdOrSavePlaceholder(show)
-                        // Map to an entry
-                        RecommendedShowEntry(showId = showId, page = page)
-                    }.also { entries ->
-                        if (resetOnSave) {
-                            recommendedShowsStore.deleteAll()
+        asyncOrAwait("update_recommended_page$page") {
+            val response = traktDataSource.getRecommendedShows(page, 20)
+            if (response is Success) {
+                response.data.map { show ->
+                    // Grab the show id if it exists, or save the show and use it's generated ID
+                    val showId = showStore.getIdOrSavePlaceholder(show)
+                    // Map to an entry
+                    RecommendedShowEntry(showId = showId, page = page)
+                }.also { entries ->
+                    if (resetOnSave) {
+                        recommendedShowsStore.deleteAll()
+                    }
+                    // Save the related entriesWithShows
+                    recommendedShowsStore.savePage(page, entries)
+                    // Now update all of the related shows if needed
+                    entries.parallelForEach { entry ->
+                        if (showRepository.needsInitialUpdate(entry.showId)) {
+                            showRepository.updateShow(entry.showId)
                         }
-                        // Save the related entriesWithShows
-                        recommendedShowsStore.savePage(page, entries)
-                        // Now update all of the related shows if needed
-                        entries.parallelForEach { entry ->
-                            if (showRepository.needsInitialUpdate(entry.showId)) {
-                                showRepository.updateShow(entry.showId)
-                            }
-                            if (showRepository.needsImagesUpdate(entry.showId)) {
-                                showRepository.updateShowImages(entry.showId)
-                            }
+                        if (showRepository.needsImagesUpdate(entry.showId)) {
+                            showRepository.updateShowImages(entry.showId)
                         }
                     }
                 }

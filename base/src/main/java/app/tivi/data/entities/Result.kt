@@ -24,4 +24,7 @@ data class Success<T>(val data: T, val responseModified: Boolean = true) : Resul
     override fun get(): T = data
 }
 
-data class ErrorResult<T>(val exception: Exception? = null, val message: String? = null) : Result<T>()
+data class ErrorResult<T>(
+    val throwable: Throwable? = null,
+    val message: String? = null
+) : Result<T>()

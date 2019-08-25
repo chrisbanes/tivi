@@ -24,7 +24,8 @@ import app.tivi.api.UiIdle
 import app.tivi.api.UiLoading
 import app.tivi.api.UiSuccess
 import app.tivi.api.UiStatus
-import app.tivi.base.InvokeFinished
+import app.tivi.base.InvokeError
+import app.tivi.base.InvokeSuccess
 import app.tivi.base.InvokeStarted
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
@@ -91,8 +92,9 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
                     messages.send(UiError(it))
                 }.map {
                     when (it) {
-                        InvokeFinished -> UiSuccess
+                        InvokeSuccess -> UiSuccess
                         InvokeStarted -> UiLoading(false)
+                        is InvokeError -> UiError(it.throwable)
                         InvokeTimeout -> UiError()
                         else -> UiIdle
                     }
@@ -112,7 +114,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
                     messages.send(UiError(it))
                 }.map {
                     when (it) {
-                        InvokeFinished -> UiSuccess
+                        InvokeSuccess -> UiSuccess
                         InvokeStarted -> UiLoading(true)
                         InvokeTimeout -> UiError()
                         else -> UiIdle
