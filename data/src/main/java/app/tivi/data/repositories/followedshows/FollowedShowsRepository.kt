@@ -186,7 +186,12 @@ class FollowedShowsRepository @Inject constructor(
     }
 
     private suspend fun getFollowedTraktListId(): Int? {
+        if (followedShowsStore.traktListId == null) {
+            val result = dataSource.getFollowedListId()
+            if (result is Success) {
+                followedShowsStore.traktListId = result.get()
+            }
+        }
         return followedShowsStore.traktListId
-                ?: dataSource.getFollowedListId()?.also { followedShowsStore.traktListId = it }
     }
 }

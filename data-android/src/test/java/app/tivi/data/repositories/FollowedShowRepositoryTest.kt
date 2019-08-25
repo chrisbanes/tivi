@@ -18,6 +18,7 @@ package app.tivi.data.repositories
 
 import app.tivi.data.TiviEntityInserter
 import app.tivi.data.daos.FollowedShowsDao
+import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.Success
 import app.tivi.data.repositories.followedshows.FollowedShowsDataSource
 import app.tivi.data.repositories.followedshows.FollowedShowsLastRequestStore
@@ -88,7 +89,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
 
     @Test
     fun testSync() = runBlockingTest {
-        coEvery { traktDataSource.getFollowedListId() } returns 0
+        coEvery { traktDataSource.getFollowedListId() } returns Success(0)
         coEvery { traktDataSource.getListShows(0) } returns Success(listOf(followedShow1Network to show))
 
         repository.syncFollowedShows()
@@ -100,7 +101,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
     fun testSync_emptyResponse() = runBlockingTest {
         insertFollowedShow(db)
 
-        coEvery { traktDataSource.getFollowedListId() } returns 0
+        coEvery { traktDataSource.getFollowedListId() } returns Success(0)
         coEvery { traktDataSource.getListShows(0) } returns Success(emptyList())
 
         repository.syncFollowedShows()
@@ -112,7 +113,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
     fun testSync_responseDifferentShow() = runBlockingTest {
         insertFollowedShow(db)
 
-        coEvery { traktDataSource.getFollowedListId() } returns 0
+        coEvery { traktDataSource.getFollowedListId() } returns Success(0)
         coEvery { traktDataSource.getListShows(0) } returns Success(listOf(followedShow2Network to show2))
 
         repository.syncFollowedShows()
@@ -124,8 +125,8 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
     fun testSync_pendingDelete() = runBlockingTest {
         followShowsDao.insert(followedShow1PendingDelete)
 
-        // Return null for the list ID so that we disable syncing
-        coEvery { traktDataSource.getFollowedListId() } returns null
+        // Return error for the list ID so that we disable syncing
+        coEvery { traktDataSource.getFollowedListId() } returns ErrorResult()
 
         repository.syncFollowedShows()
 
@@ -136,8 +137,8 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
     fun testSync_pendingAdd() = runBlockingTest {
         followShowsDao.insert(followedShow1PendingUpload)
 
-        // Return null for the list ID so that we disable syncing
-        coEvery { traktDataSource.getFollowedListId() } returns null
+        // Return an error for the list ID so that we disable syncing
+        coEvery { traktDataSource.getFollowedListId() } returns ErrorResult()
 
         repository.syncFollowedShows()
 
