@@ -18,7 +18,7 @@ package app.tivi.home.discover
 
 import android.content.Context
 import app.tivi.common.epoxy.TotalSpanOverride
-import app.tivi.common.epoxy.carousel
+import app.tivi.common.epoxy.tiviCarousel
 import app.tivi.common.epoxy.withModelsFrom
 import app.tivi.common.layouts.HeaderBindingModel_
 import app.tivi.common.layouts.PosterCardItemBindingModel_
@@ -79,7 +79,7 @@ class DiscoverEpoxyController @Inject constructor(
             buttonClickListener { _ -> callbacks?.onTrendingHeaderClicked() }
         }
         if (trendingShows.isNotEmpty()) {
-            carousel {
+            tiviCarousel {
                 id("trending_carousel")
                 numViewsToShowOnScreen(3.25f)
                 hasFixedSize(true)
@@ -117,7 +117,7 @@ class DiscoverEpoxyController @Inject constructor(
                 spanSizeOverride(TotalSpanOverride)
                 buttonClickListener { _ -> callbacks?.onRecommendedHeaderClicked() }
             }
-            carousel {
+            tiviCarousel {
                 id("recommended_carousel")
                 numViewsToShowOnScreen(3.25f)
                 hasFixedSize(true)
@@ -150,7 +150,7 @@ class DiscoverEpoxyController @Inject constructor(
             buttonClickListener { _ -> callbacks?.onPopularHeaderClicked() }
         }
         if (popularShows.isNotEmpty()) {
-            carousel {
+            tiviCarousel {
                 id("popular_carousel")
                 numViewsToShowOnScreen(3.25f)
                 hasFixedSize(true)

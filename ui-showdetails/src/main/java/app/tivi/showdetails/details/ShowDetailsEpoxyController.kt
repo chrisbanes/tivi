@@ -22,7 +22,7 @@ import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.forEach
 import app.tivi.common.epoxy.TotalSpanOverride
-import app.tivi.common.epoxy.carousel
+import app.tivi.common.epoxy.tiviCarousel
 import app.tivi.common.epoxy.withModelsFrom
 import app.tivi.common.layouts.detailsBadge
 import app.tivi.common.layouts.detailsHeader
@@ -158,7 +158,7 @@ class ShowDetailsEpoxyController @Inject constructor(
                     title(R.string.details_related)
                     spanSizeOverride(TotalSpanOverride)
                 }
-                carousel {
+                tiviCarousel {
                     id("related_shows")
                     numViewsToShowOnScreen(5.25f)
                     hasFixedSize(true)
