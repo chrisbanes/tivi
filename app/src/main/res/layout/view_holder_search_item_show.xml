@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/spacing_normal"
             android:gravity="center_vertical"
-            android:text="@{textCreator.showTitle(tiviShow)}"
+            android:text="@{textCreator.showTitle(showTitle.getContext(), tiviShow)}"
             android:textAppearance="?attr/textAppearanceSubtitle1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/show_poster"
