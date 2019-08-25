@@ -20,7 +20,7 @@ import app.tivi.data.entities.Success
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.shows.ShowRepository
-import app.tivi.extensions.launchOrJoin
+import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
 import org.threeten.bp.Instant
 import javax.inject.Inject
@@ -53,28 +53,27 @@ class TrendingShowsRepository @Inject constructor(
     }
 
     private suspend fun updateTrendingShows(page: Int, resetOnSave: Boolean) {
-        launchOrJoin("update_trending_page$page") {
-            when (val response = traktDataSource.getTrendingShows(page, 20)) {
-                is Success -> {
-                    response.data.map { (show, entry) ->
-                        // Grab the show id if it exists, or save the show and use it's generated ID
-                        val showId = showStore.getIdOrSavePlaceholder(show)
-                        // Make a copy of the entry with the id
-                        entry.copy(showId = showId, page = page)
-                    }.also { entries ->
-                        if (resetOnSave) {
-                            trendingShowsStore.deleteAll()
+        asyncOrAwait("update_trending_page$page") {
+            val response = traktDataSource.getTrendingShows(page, 20)
+            if (response is Success) {
+                response.data.map { (show, entry) ->
+                    // Grab the show id if it exists, or save the show and use it's generated ID
+                    val showId = showStore.getIdOrSavePlaceholder(show)
+                    // Make a copy of the entry with the id
+                    entry.copy(showId = showId, page = page)
+                }.also { entries ->
+                    if (resetOnSave) {
+                        trendingShowsStore.deleteAll()
+                    }
+                    // Save the related entriesWithShows
+                    trendingShowsStore.saveTrendingShowsPage(page, entries)
+                    // Now update all of the related shows if needed
+                    entries.parallelForEach { entry ->
+                        if (showRepository.needsInitialUpdate(entry.showId)) {
+                            showRepository.updateShow(entry.showId)
                         }
-                        // Save the related entriesWithShows
-                        trendingShowsStore.saveTrendingShowsPage(page, entries)
-                        // Now update all of the related shows if needed
-                        entries.parallelForEach { entry ->
-                            if (showRepository.needsInitialUpdate(entry.showId)) {
-                                showRepository.updateShow(entry.showId)
-                            }
-                            if (showRepository.needsImagesUpdate(entry.showId)) {
-                                showRepository.updateShowImages(entry.showId)
-                            }
+                        if (showRepository.needsImagesUpdate(entry.showId)) {
+                            showRepository.updateShowImages(entry.showId)
                         }
                     }
                 }

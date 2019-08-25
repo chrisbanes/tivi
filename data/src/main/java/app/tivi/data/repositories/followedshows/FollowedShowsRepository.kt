@@ -23,7 +23,7 @@ import app.tivi.data.entities.Success
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.data.repositories.shows.ShowStore
-import app.tivi.extensions.launchOrJoin
+import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
@@ -95,7 +95,7 @@ class FollowedShowsRepository @Inject constructor(
         }
     }
 
-    suspend fun syncFollowedShows() = launchOrJoin("sync_followed_shows") {
+    suspend fun syncFollowedShows() = asyncOrAwait("sync_followed_shows") {
         val listId = if (traktAuthState.get() == TraktAuthState.LOGGED_IN) getFollowedTraktListId() else null
 
         processPendingAdditions(listId)

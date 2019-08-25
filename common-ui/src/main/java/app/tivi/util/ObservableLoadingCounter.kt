@@ -16,7 +16,8 @@
 
 package app.tivi.util
 
-import app.tivi.base.InvokeFinished
+import app.tivi.base.InvokeError
+import app.tivi.base.InvokeSuccess
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
 import app.tivi.base.InvokeTimeout
@@ -48,7 +49,7 @@ suspend fun ObservableLoadingCounter.collectFrom(statuses: Flow<InvokeStatus>) {
     statuses.collect {
         if (it == InvokeStarted) {
             addLoader()
-        } else if (it == InvokeFinished || it == InvokeTimeout) {
+        } else if (it == InvokeSuccess || it == InvokeTimeout || it is InvokeError) {
             removeLoader()
         }
     }

@@ -21,7 +21,7 @@ import app.tivi.data.entities.Success
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.shows.ShowRepository
-import app.tivi.extensions.launchOrJoin
+import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
 import org.threeten.bp.Instant
 import javax.inject.Inject
@@ -45,28 +45,30 @@ class WatchedShowsRepository @Inject constructor(
 
     suspend fun getWatchedShows() = watchedShowsStore.getWatchedShows()
 
-    suspend fun updateWatchedShows() = launchOrJoin("update_watched_shows") {
-        when (val response = traktDataSource.getWatchedShows()) {
-            is Success -> {
-                response.data.map { (show, entry) ->
-                    // Grab the show id if it exists, or save the show and use it's generated ID
-                    val watchedShowId = showStore.getIdOrSavePlaceholder(show)
-                    // Make a copy of the entry with the id
-                    entry.copy(showId = watchedShowId)
-                }.also { entries ->
-                    // Save the related entriesWithShows
-                    watchedShowsStore.saveWatchedShows(entries)
-                    // Now update all of the related shows if needed
-                    entries.parallelForEach { entry ->
-                        if (showRepository.needsInitialUpdate(entry.showId)) {
-                            showRepository.updateShow(entry.showId)
-                        }
-                        if (showRepository.needsImagesUpdate(entry.showId)) {
-                            showRepository.updateShowImages(entry.showId)
+    suspend fun updateWatchedShows() {
+        asyncOrAwait("update_watched_shows") {
+            when (val response = traktDataSource.getWatchedShows()) {
+                is Success -> {
+                    response.data.map { (show, entry) ->
+                        // Grab the show id if it exists, or save the show and use it's generated ID
+                        val watchedShowId = showStore.getIdOrSavePlaceholder(show)
+                        // Make a copy of the entry with the id
+                        entry.copy(showId = watchedShowId)
+                    }.also { entries ->
+                        // Save the related entriesWithShows
+                        watchedShowsStore.saveWatchedShows(entries)
+                        // Now update all of the related shows if needed
+                        entries.parallelForEach { entry ->
+                            if (showRepository.needsInitialUpdate(entry.showId)) {
+                                showRepository.updateShow(entry.showId)
+                            }
+                            if (showRepository.needsImagesUpdate(entry.showId)) {
+                                showRepository.updateShowImages(entry.showId)
+                            }
                         }
                     }
+                    lastRequestStore.updateLastRequest()
                 }
-                lastRequestStore.updateLastRequest()
             }
         }
     }

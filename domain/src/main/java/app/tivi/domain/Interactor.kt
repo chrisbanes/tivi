@@ -17,7 +17,8 @@
 package app.tivi.domain
 
 import androidx.paging.PagedList
-import app.tivi.base.InvokeFinished
+import app.tivi.base.InvokeError
+import app.tivi.base.InvokeSuccess
 import app.tivi.base.InvokeIdle
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
@@ -44,8 +45,12 @@ abstract class Interactor<in P> {
             try {
                 withTimeout(timeoutMs) {
                     channel.send(InvokeStarted)
-                    doWork(params)
-                    channel.send(InvokeFinished)
+                    try {
+                        doWork(params)
+                        channel.send(InvokeSuccess)
+                    } catch (t: Throwable) {
+                        channel.send(InvokeError(t))
+                    }
                 }
             } catch (t: TimeoutCancellationException) {
                 channel.send(InvokeTimeout)
