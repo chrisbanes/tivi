@@ -183,4 +183,10 @@ object Libs {
         const val annotationDagger2 = "com.squareup.inject:assisted-inject-annotations-dagger2:$version"
         const val processorDagger2 = "com.squareup.inject:assisted-inject-processor-dagger2:$version"
     }
+
+    object Roomigrant {
+        private const val version = "0.1.7"
+        const val library = "com.github.MatrixDev.Roomigrant:RoomigrantLib:$version"
+        const val compiler = "com.github.MatrixDev.Roomigrant:RoomigrantCompiler:$version"
+    }
 }

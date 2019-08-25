@@ -70,6 +70,9 @@ dependencies {
     implementation Libs.AndroidX.Room.runtime
     kapt Libs.AndroidX.Room.compiler
 
+    implementation Libs.Roomigrant.library
+    kapt Libs.Roomigrant.compiler
+
     implementation Libs.AndroidX.Paging.runtime
 
     kapt Libs.Dagger.compiler

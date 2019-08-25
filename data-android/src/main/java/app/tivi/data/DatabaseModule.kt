@@ -29,6 +29,7 @@ class DatabaseModule {
     @Provides
     fun provideDatabase(context: Context): TiviRoomDatabase {
         val builder = Room.databaseBuilder(context, TiviRoomDatabase::class.java, "shows.db")
+                .addMigrations(*TiviRoomDatabase_Migrations.build())
                 .fallbackToDestructiveMigration()
         if (Debug.isDebuggerConnected()) {
             builder.allowMainThreadQueries()
