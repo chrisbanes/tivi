@@ -47,7 +47,11 @@ class HomeTextCreator @Inject constructor(
             return field
         }
 
-    fun showTitle(show: TiviShow): CharSequence = buildSpannedString {
+    @JvmOverloads
+    fun showTitle(
+        context: Context = this.context,
+        show: TiviShow
+    ): CharSequence = buildSpannedString {
         append(show.title)
 
         show.firstAired?.also { firstAired ->
