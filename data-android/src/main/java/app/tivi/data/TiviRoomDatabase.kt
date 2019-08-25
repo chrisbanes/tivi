@@ -36,6 +36,7 @@ import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.data.views.FollowedShowsLastWatched
 import app.tivi.data.views.FollowedShowsNextToWatch
 import app.tivi.data.views.FollowedShowsWatchStats
+import dev.matrix.roomigrant.GenerateRoomMigrations
 
 @Database(
         entities = [
@@ -62,4 +63,5 @@ import app.tivi.data.views.FollowedShowsWatchStats
         version = 25
 )
 @TypeConverters(TiviTypeConverters::class)
+@GenerateRoomMigrations
 abstract class TiviRoomDatabase : RoomDatabase(), TiviDatabase
