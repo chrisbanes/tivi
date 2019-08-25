@@ -46,7 +46,7 @@
    public void *(android.view.View);
 }
 
-# For enumeration classes, see http://proguard.sourceforge.net/manual/examples.html#enumerations
+# For enumeration classes
 -keepclassmembers enum * {
     public static **[] values();
     public static ** valueOf(java.lang.String);
@@ -100,12 +100,24 @@
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
 # Keep Trakt-java Entity names (for GSON)
--keepclassmembers class com.uwetrottmann.trakt5.entities.** { <fields>; }
--keepclassmembers class com.uwetrottmann.trakt5.entities.** { <init>(...); }
+-keepclassmembers class com.uwetrottmann.trakt5.entities.** {
+    <fields>;
+    <init>(...);
+}
+-keepclassmembers class com.uwetrottmann.trakt5.enums.** {
+    <fields>;
+    <init>(...);
+}
 
 # Keep TMDb Entity names (for GSON)
--keepclassmembers class com.uwetrottmann.tmdb2.entities.** { <fields>; }
--keepclassmembers class com.uwetrottmann.tmdb2.entities.** { <init>(...); }
+-keepclassmembers class com.uwetrottmann.tmdb2.entities.** {
+    <fields>;
+    <init>(...);
+}
+-keepclassmembers class com.uwetrottmann.tmdb2.enums.** {
+    <fields>;
+    <init>(...);
+}
 
 # Glide
 -keep public class * implements com.bumptech.glide.module.GlideModule
