@@ -48,6 +48,7 @@
 
 # For enumeration classes
 -keepclassmembers enum * {
+    <fields>;
     public static **[] values();
     public static ** valueOf(java.lang.String);
 }
