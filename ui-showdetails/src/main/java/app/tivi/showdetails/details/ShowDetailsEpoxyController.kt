@@ -160,7 +160,7 @@ class ShowDetailsEpoxyController @Inject constructor(
                 }
                 tiviCarousel {
                     id("related_shows")
-                    numViewsToShowOnScreen(5.25f)
+                    itemWidth(context.resources.getDimensionPixelSize(R.dimen.related_shows_item_width))
                     hasFixedSize(true)
 
                     val vert = context.resources.getDimensionPixelSize(R.dimen.spacing_small)

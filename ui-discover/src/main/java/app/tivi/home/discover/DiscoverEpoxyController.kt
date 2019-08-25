@@ -81,7 +81,7 @@ class DiscoverEpoxyController @Inject constructor(
         if (trendingShows.isNotEmpty()) {
             tiviCarousel {
                 id("trending_carousel")
-                numViewsToShowOnScreen(3.25f)
+                itemWidth(context.resources.getDimensionPixelSize(R.dimen.discover_carousel_item_width))
                 hasFixedSize(true)
 
                 val vert = context.resources.getDimensionPixelSize(R.dimen.spacing_small)
@@ -119,7 +119,7 @@ class DiscoverEpoxyController @Inject constructor(
             }
             tiviCarousel {
                 id("recommended_carousel")
-                numViewsToShowOnScreen(3.25f)
+                itemWidth(context.resources.getDimensionPixelSize(R.dimen.discover_carousel_item_width))
                 hasFixedSize(true)
 
                 val vert = context.resources.getDimensionPixelSize(R.dimen.spacing_small)
@@ -152,7 +152,7 @@ class DiscoverEpoxyController @Inject constructor(
         if (popularShows.isNotEmpty()) {
             tiviCarousel {
                 id("popular_carousel")
-                numViewsToShowOnScreen(3.25f)
+                itemWidth(context.resources.getDimensionPixelSize(R.dimen.discover_carousel_item_width))
                 hasFixedSize(true)
 
                 val vert = context.resources.getDimensionPixelSize(R.dimen.spacing_small)
