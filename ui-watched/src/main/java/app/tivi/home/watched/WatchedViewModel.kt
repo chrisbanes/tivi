@@ -31,6 +31,7 @@ import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
+import app.tivi.util.ShowStateSelector
 import app.tivi.util.collectFrom
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
@@ -66,8 +67,7 @@ class WatchedViewModel @AssistedInject constructor(
     }
 
     private val loadingState = ObservableLoadingCounter()
-
-    private var isSelectionOpen = false
+    private val showSelection = ShowStateSelector()
 
     init {
         viewModelScope.launch {
@@ -80,6 +80,18 @@ class WatchedViewModel @AssistedInject constructor(
         viewModelScope.launch {
             tmdbManager.imageProviderFlow
                     .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
+        }
+
+        viewModelScope.launch {
+            showSelection.observeSelectedShowIds().collect {
+                setState { copy(selectedShowIds = it) }
+            }
+        }
+
+        viewModelScope.launch {
+            showSelection.observeIsSelectionOpen().collect {
+                setState { copy(selectionOpen = it) }
+            }
         }
 
         viewModelScope.launchObserve(observePagedWatchedShows) {
@@ -136,64 +148,34 @@ class WatchedViewModel @AssistedInject constructor(
     }
 
     fun clearSelection() {
-        isSelectionOpen = false
-        setState {
-            copy(selectionOpen = false, selectedShowIds = emptySet())
-        }
+        showSelection.clearSelection()
     }
 
     fun onItemClick(show: TiviShow): Boolean {
-        if (isSelectionOpen) {
-            setState {
-                val currentSelection = when {
-                    show.id in selectedShowIds -> selectedShowIds.minus(show.id)
-                    else -> selectedShowIds.plus(show.id)
-                }
-                isSelectionOpen = currentSelection.isNotEmpty()
-                copy(selectionOpen = isSelectionOpen, selectedShowIds = currentSelection)
-            }
-            return true
-        }
-        return false
+        return showSelection.onItemClick(show)
     }
 
     fun onItemLongClick(show: TiviShow): Boolean {
-        if (!isSelectionOpen) {
-            isSelectionOpen = true
-
-            setState {
-                var currentSelection = selectedShowIds
-                if (show.id !in currentSelection) {
-                    currentSelection = currentSelection.plus(show.id)
-                }
-                copy(selectionOpen = isSelectionOpen, selectedShowIds = currentSelection)
-            }
-            return true
-        }
-        return false
+        return showSelection.onItemLongClick(show)
     }
 
     fun followSelectedShows() {
-        withState {
-            changeShowFollowStatus(
-                    ChangeShowFollowStatus.Params(
-                            it.selectedShowIds,
-                            ChangeShowFollowStatus.Action.FOLLOW,
-                            deferDataFetch = true)
-            )
-            clearSelection()
-        }
+        changeShowFollowStatus(
+                ChangeShowFollowStatus.Params(
+                        showSelection.getSelectedShowIds(),
+                        ChangeShowFollowStatus.Action.FOLLOW,
+                        deferDataFetch = true)
+        )
+        showSelection.clearSelection()
     }
 
     fun unfollowSelectedShows() {
-        withState {
-            changeShowFollowStatus(
-                    ChangeShowFollowStatus.Params(
-                            it.selectedShowIds,
-                            ChangeShowFollowStatus.Action.UNFOLLOW)
-            )
-            clearSelection()
-        }
+        changeShowFollowStatus(
+                ChangeShowFollowStatus.Params(
+                        showSelection.getSelectedShowIds(),
+                        ChangeShowFollowStatus.Action.UNFOLLOW)
+        )
+        showSelection.clearSelection()
     }
 
     private fun refreshWatched(fromUser: Boolean) {
