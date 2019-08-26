@@ -59,6 +59,11 @@ class WatchedFragment : TiviMvRxFragment() {
 
         controller.callbacks = object : WatchedEpoxyController.Callbacks {
             override fun onItemClicked(item: WatchedShowEntryWithShow) {
+                // Let the ViewModel have the first go
+                if (viewModel.onItemClick(item.entry)) {
+                    return
+                }
+
                 val extras = listItemSharedElementHelper.createForItem(item, "poster") {
                     it.findViewById(R.id.show_poster)
                 }
@@ -69,6 +74,10 @@ class WatchedFragment : TiviMvRxFragment() {
                         null,
                         extras.toActivityNavigatorExtras(requireActivity())
                 )
+            }
+
+            override fun onItemLongClicked(item: WatchedShowEntryWithShow): Boolean {
+                return viewModel.onItemLongClick(item.entry)
             }
 
             override fun onFilterChanged(filter: String) = viewModel.setFilter(filter)

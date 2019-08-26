@@ -20,6 +20,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import app.tivi.TiviMvRxViewModel
 import app.tivi.data.entities.SortOption
+import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.domain.interactors.UpdateWatchedShows
 import app.tivi.domain.invoke
@@ -63,6 +64,8 @@ class WatchedViewModel @AssistedInject constructor(
     }
 
     private val loadingState = ObservableLoadingCounter()
+
+    private var selectionOpen = false
 
     init {
         viewModelScope.launch {
@@ -128,6 +131,40 @@ class WatchedViewModel @AssistedInject constructor(
 
     fun setSort(sort: SortOption) {
         setState { copy(sort = sort) }
+    }
+
+    fun onItemClick(entry: WatchedShowEntry): Boolean {
+        if (selectionOpen) {
+            setState {
+                val currentSelection = when {
+                    entry.id in selectedEntryIds -> selectedEntryIds.minus(entry.id)
+                    else -> selectedEntryIds.plus(entry.id)
+                }
+                this@WatchedViewModel.selectionOpen = currentSelection.isNotEmpty()
+                copy(
+                        selectionOpen = this@WatchedViewModel.selectionOpen,
+                        selectedEntryIds = currentSelection
+                )
+            }
+            return true
+        }
+        return false
+    }
+
+    fun onItemLongClick(entry: WatchedShowEntry): Boolean {
+        if (!selectionOpen) {
+            selectionOpen = true
+
+            setState {
+                var currentSelection = selectedEntryIds
+                if (entry.id !in currentSelection) {
+                    currentSelection = currentSelection.plus(entry.id)
+                }
+                copy(selectionOpen = selectionOpen, selectedEntryIds = currentSelection)
+            }
+            return true
+        }
+        return false
     }
 
     private fun refreshWatched(fromUser: Boolean) {
