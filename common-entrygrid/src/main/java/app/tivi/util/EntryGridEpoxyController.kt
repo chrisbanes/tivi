@@ -17,7 +17,7 @@
 package app.tivi.util
 
 import androidx.annotation.StringRes
-import app.tivi.common.epoxy.EpoxyModelProperty
+import app.tivi.api.UiLoading
 import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.common.layouts.GridHeaderBindingModel_
 import app.tivi.common.layouts.HeaderBindingModel_
@@ -27,15 +27,14 @@ import app.tivi.common.layouts.gridHeader
 import app.tivi.common.layouts.infiniteLoading
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.tmdb.TmdbImageUrlProvider
+import app.tivi.extensions.observable
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
 
 abstract class EntryGridEpoxyController<LI : EntryWithShow<out Entry>>(
     @StringRes private val titleRes: Int
 ) : PagedListEpoxyController<LI>() {
-    var isLoading by EpoxyModelProperty { false }
-    var tmdbImageUrlProvider by EpoxyModelProperty<TmdbImageUrlProvider?> { null }
+    var state: EntryViewState<LI> by observable(EntryViewState()) { requestForcedModelBuild() }
 
     @Suppress("UselessCallOnCollection")
     override fun addModels(models: List<EpoxyModel<*>>) {
@@ -56,7 +55,9 @@ abstract class EntryGridEpoxyController<LI : EntryWithShow<out Entry>>(
                 spanSizeOverride(TotalSpanOverride)
             }
         }
-        if (isLoading) {
+
+        val status = state.status
+        if (status is UiLoading && !status.fullRefresh) {
             infiniteLoading {
                 id("loading_view")
                 spanSizeOverride(TotalSpanOverride)

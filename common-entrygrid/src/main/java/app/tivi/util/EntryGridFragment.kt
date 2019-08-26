@@ -19,6 +19,7 @@ package app.tivi.util
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.view.ActionMode
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,6 +51,8 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
 
     private lateinit var controller: EntryGridEpoxyController<LI>
     protected lateinit var binding: FragmentEntryGridBinding
+
+    private var currentActionMode: ActionMode? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,37 +91,41 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
         binding.gridSwipeRefresh.setOnRefreshListener(viewModel::refresh)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.viewState.collect {
-                controller.tmdbImageUrlProvider = it.tmdbImageUrlProvider
-                controller.submitList(it.liveList)
-
-                when (val status = it.status) {
-                    is UiError -> {
-                        swipeRefreshLatch.refreshing = false
-                        controller.isLoading = false
-                        Snackbar.make(view,
-                                status.exception?.localizedMessage
-                                        ?: getString(R.string.error_generic),
-                                Snackbar.LENGTH_SHORT
-                        ).show()
-                    }
-                    is UiLoading -> {
-                        swipeRefreshLatch.refreshing = status.fullRefresh
-                        controller.isLoading = !status.fullRefresh
-                    }
-                    else -> {
-                        swipeRefreshLatch.refreshing = false
-                        controller.isLoading = false
-                    }
-                }
-
-                if (it.isLoaded) {
-                    // First time we've had state, start any postponed transitions
-                    scheduleStartPostponedTransitions()
-                }
-            }
+            viewModel.viewState.collect { invalidate(it) }
         }
     }
+
+    private fun invalidate(state: EntryViewState<LI>) {
+        controller.state = state
+        controller.submitList(state.liveList)
+
+        when (val status = state.status) {
+            is UiError -> {
+                swipeRefreshLatch.refreshing = false
+                Snackbar.make(requireView(),
+                        status.exception?.localizedMessage
+                                ?: getString(R.string.error_generic),
+                        Snackbar.LENGTH_SHORT
+                ).show()
+            }
+            is UiLoading -> swipeRefreshLatch.refreshing = status.fullRefresh
+            else -> swipeRefreshLatch.refreshing = false
+        }
+
+        if (state.selectionOpen && currentActionMode == null) {
+            currentActionMode = startSelectionActionMode()
+        } else if (!state.selectionOpen) {
+            currentActionMode?.finish()
+            currentActionMode = null
+        }
+
+        if (state.isLoaded) {
+            // First time we've had state, start any postponed transitions
+            scheduleStartPostponedTransitions()
+        }
+    }
+
+    abstract fun startSelectionActionMode(): ActionMode?
 
     abstract fun createController(): EntryGridEpoxyController<LI>
 }

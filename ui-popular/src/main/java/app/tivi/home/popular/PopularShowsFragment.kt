@@ -16,6 +16,9 @@
 
 package app.tivi.home.popular
 
+import android.view.ActionMode
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
@@ -54,12 +57,43 @@ class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShow
             override fun buildItemModel(item: PopularEntryWithShow): EpoxyModel<*> {
                 return PosterGridItemBindingModel_()
                         .id(item.generateStableId())
-                        .tmdbImageUrlProvider(tmdbImageUrlProvider)
+                        .tmdbImageUrlProvider(state.tmdbImageUrlProvider)
                         .posterImage(item.images.findHighestRatedPoster())
                         .tiviShow(item.show)
                         .transitionName(item.show.homepage)
-                        .clickListener(View.OnClickListener { onItemClicked(item) })
+                        .selected(item.show.id in state.selectedShowIds)
+                        .clickListener(View.OnClickListener {
+                            if (viewModel.onItemClick(item.show)) {
+                                return@OnClickListener
+                            }
+                            onItemClicked(item)
+                        })
+                        .longClickListener(View.OnLongClickListener {
+                            viewModel.onItemLongClick(item.show)
+                        })
             }
         }
+    }
+
+    override fun startSelectionActionMode(): ActionMode? {
+        return requireActivity().startActionMode(object : ActionMode.Callback {
+            override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+                when (item.itemId) {
+                    R.id.menu_follow -> viewModel.followSelectedShows()
+                }
+                return true
+            }
+
+            override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+                mode.menuInflater.inflate(R.menu.action_mode_entry, menu)
+                return true
+            }
+
+            override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = true
+
+            override fun onDestroyActionMode(mode: ActionMode) {
+                viewModel.clearSelection()
+            }
+        })
     }
 }

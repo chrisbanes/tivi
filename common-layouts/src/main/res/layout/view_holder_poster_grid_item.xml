@@ -43,15 +43,25 @@
         <variable
             name="clickListener"
             type="android.view.View.OnClickListener" />
+
+        <variable
+            name="longClickListener"
+            type="android.view.View.OnLongClickListener" />
+
+        <variable
+            name="selected"
+            type="boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:foreground="?android:attr/selectableItemBackground"
+        android:foreground="@drawable/ripple_selectable"
         android:onClick="@{clickListener}"
         android:transitionGroup="true"
-        android:transitionName="@{transitionName}">
+        android:transitionName="@{transitionName}"
+        app:onLongClick="@{longClickListener}"
+        app:selected="@{selected}">
 
         <TextView
             android:id="@+id/show_title"

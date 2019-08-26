@@ -18,6 +18,7 @@ package app.tivi.home.popular
 
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.base.InvokeStatus
+import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.observers.ObservePagedPopularShows
 import app.tivi.tmdb.TmdbManager
@@ -32,7 +33,8 @@ class PopularShowsViewModel @Inject constructor(
     override val pagingInteractor: ObservePagedPopularShows,
     private val interactor: UpdatePopularShows,
     override val tmdbManager: TmdbManager,
-    override val logger: Logger
+    override val logger: Logger,
+    override val changeShowFollowStatus: ChangeShowFollowStatus
 ) : EntryViewModel<PopularEntryWithShow, ObservePagedPopularShows>() {
     init {
         pagingInteractor(ObservePagedPopularShows.Params(pageListConfig, boundaryCallback))
