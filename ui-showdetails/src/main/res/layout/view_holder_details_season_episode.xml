@@ -66,8 +66,9 @@
             android:id="@+id/episode_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{textCreator.episodeTitleText(episodeWithWatches.episode)}"
+            android:text="@{episodeWithWatches.episode.title ?? @string/not_known_title}"
             android:textAppearance="?attr/textAppearanceBody1"
+            android:alpha="@{episodeWithWatches.hasAired() ? 1.0f : 0.5f}"
             tools:text="A tale of two halves" />
 
         <TextView

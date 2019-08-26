@@ -20,7 +20,6 @@ import android.content.Context
 import android.graphics.Color
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
-import androidx.core.text.italic
 import androidx.core.text.parseAsHtml
 import androidx.emoji.text.EmojiCompat
 import app.tivi.data.entities.Episode
@@ -31,7 +30,6 @@ import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.inject.PerActivity
 import app.tivi.ui.GenreStringer
 import app.tivi.util.TiviDateFormatter
-import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 
 class ShowDetailsTextCreator @Inject constructor(
@@ -71,20 +69,6 @@ class ShowDetailsTextCreator @Inject constructor(
         return text
     }
 
-    fun episodeTitleText(episode: Episode): CharSequence? {
-        val firstAired = episode.firstAired
-        val title = episode.title ?: context.getString(R.string.not_known_title)
-
-        if (firstAired == null || firstAired.isAfter(OffsetDateTime.now())) {
-            return buildSpannedString {
-                italic {
-                    append(title)
-                }
-            }
-        }
-        return title
-    }
-
     fun seasonEpisodeTitleText(season: Season, episode: Episode): String {
         return context.getString(R.string.season_episode_number, season.number, episode.number)
     }
@@ -96,7 +80,7 @@ class ShowDetailsTextCreator @Inject constructor(
     fun genreString(genres: List<Genre>?): CharSequence? {
         if (genres != null && genres.isNotEmpty()) {
             val spanned = buildSpannedString {
-                for (i in 0 until genres.size) {
+                for (i in genres.indices) {
                     val genre = genres[i]
                     append(context.getString(GenreStringer.getLabel(genre)))
                     append("\u00A0") // nbsp
