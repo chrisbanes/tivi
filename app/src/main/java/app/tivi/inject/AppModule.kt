@@ -34,7 +34,6 @@ import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.Locale
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import javax.inject.Named
@@ -102,8 +101,10 @@ class AppModule {
     @MediumDate
     fun provideMediumDateFormatter(application: TiviApplication): DateTimeFormatter {
         val dateF = AndroidDateFormat.getMediumDateFormat(application) as SimpleDateFormat
+
+        @Suppress("DEPRECATION")
         return DateTimeFormatter.ofPattern(dateF.toPattern())
-                .withLocale(Locale.getDefault())
+                .withLocale(application.resources.configuration.locale)
                 .withZone(ZoneId.systemDefault())
     }
 
@@ -113,8 +114,10 @@ class AppModule {
     fun provideDateTimeFormatter(application: TiviApplication): DateTimeFormatter {
         val dateF = AndroidDateFormat.getMediumDateFormat(application) as SimpleDateFormat
         val timeF = AndroidDateFormat.getTimeFormat(application) as SimpleDateFormat
+
+        @Suppress("DEPRECATION")
         return DateTimeFormatter.ofPattern("${dateF.toPattern()} ${timeF.toPattern()}")
-                .withLocale(Locale.getDefault())
+                .withLocale(application.resources.configuration.locale)
                 .withZone(ZoneId.systemDefault())
     }
 
@@ -123,8 +126,10 @@ class AppModule {
     @ShortDate
     fun provideShortDateFormatter(application: TiviApplication): DateTimeFormatter {
         val dateF = AndroidDateFormat.getDateFormat(application) as SimpleDateFormat
+
+        @Suppress("DEPRECATION")
         return DateTimeFormatter.ofPattern(dateF.toPattern())
-                .withLocale(Locale.getDefault())
+                .withLocale(application.resources.configuration.locale)
                 .withZone(ZoneId.systemDefault())
     }
 
