@@ -22,7 +22,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import app.tivi.SharedElementHelper
-import app.tivi.common.layouts.TrendingPosterGridItemBindingModel_
+import app.tivi.common.layouts.PosterGridItemBindingModel_
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.extensions.toActivityNavigatorExtras
@@ -38,12 +38,11 @@ class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingS
     override fun createController(): EntryGridEpoxyController<TrendingEntryWithShow> {
         return object : EntryGridEpoxyController<TrendingEntryWithShow>(R.string.discover_trending) {
             override fun buildItemModel(item: TrendingEntryWithShow): EpoxyModel<*> {
-                return TrendingPosterGridItemBindingModel_()
+                return PosterGridItemBindingModel_()
                         .id(item.generateStableId())
                         .tmdbImageUrlProvider(tmdbImageUrlProvider)
                         .posterImage(item.images.findHighestRatedPoster())
                         .tiviShow(item.show)
-                        .trendingShow(item.entry)
                         .transitionName(item.show.homepage)
                         .clickListener(View.OnClickListener { onItemClicked(item) })
             }
