@@ -21,6 +21,7 @@ import androidx.room.Relation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
+import org.threeten.bp.OffsetDateTime
 import java.util.Objects
 
 class EpisodeWithWatches {
@@ -42,6 +43,11 @@ class EpisodeWithWatches {
 
     fun onlyPendingDeletes() = watches.all {
         it.pendingAction == PendingAction.DELETE
+    }
+
+    fun hasAired(): Boolean {
+        val aired = episode?.firstAired
+        return aired == null || aired.isBefore(OffsetDateTime.now())
     }
 
     override fun equals(other: Any?): Boolean = when {
