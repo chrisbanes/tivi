@@ -17,7 +17,10 @@
 package app.tivi.home.watched
 
 import android.os.Bundle
+import android.view.ActionMode
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
@@ -43,6 +46,8 @@ class WatchedFragment : TiviMvRxFragment() {
 
     @Inject lateinit var controller: WatchedEpoxyController
 
+    private var currentActionMode: ActionMode? = null
+
     private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
         ListItemSharedElementHelper(binding.watchedRv)
     }
@@ -60,7 +65,7 @@ class WatchedFragment : TiviMvRxFragment() {
         controller.callbacks = object : WatchedEpoxyController.Callbacks {
             override fun onItemClicked(item: WatchedShowEntryWithShow) {
                 // Let the ViewModel have the first go
-                if (viewModel.onItemClick(item.entry)) {
+                if (viewModel.onItemClick(item.show)) {
                     return
                 }
 
@@ -77,7 +82,7 @@ class WatchedFragment : TiviMvRxFragment() {
             }
 
             override fun onItemLongClicked(item: WatchedShowEntryWithShow): Boolean {
-                return viewModel.onItemLongClick(item.entry)
+                return viewModel.onItemLongClick(item.show)
             }
 
             override fun onFilterChanged(filter: String) = viewModel.setFilter(filter)
@@ -101,6 +106,12 @@ class WatchedFragment : TiviMvRxFragment() {
             scheduleStartPostponedTransitions()
         }
 
+        if (state.selectionOpen && currentActionMode == null) {
+            startSelectionActionMode()
+        } else if (!state.selectionOpen && currentActionMode != null) {
+            currentActionMode?.finish()
+        }
+
         binding.state = state
 
         if (state.watchedShows != null) {
@@ -108,5 +119,32 @@ class WatchedFragment : TiviMvRxFragment() {
             controller.viewState = state
             controller.submitList(state.watchedShows)
         }
+    }
+
+    private fun startSelectionActionMode() {
+        currentActionMode = requireActivity().startActionMode(object : ActionMode.Callback {
+            override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+                when (item.itemId) {
+                    R.id.menu_follow -> viewModel.followSelectedShows()
+                    R.id.menu_unfollow -> viewModel.unfollowSelectedShows()
+                }
+                return true
+            }
+
+            override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+                mode.menuInflater.inflate(R.menu.action_mode_watched, menu)
+                return true
+            }
+
+            override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = true
+
+            override fun onDestroyActionMode(mode: ActionMode) {
+                viewModel.clearSelection()
+
+                if (mode == currentActionMode) {
+                    currentActionMode = null
+                }
+            }
+        })
     }
 }

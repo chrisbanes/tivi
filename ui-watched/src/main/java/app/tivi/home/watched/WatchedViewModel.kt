@@ -20,8 +20,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import app.tivi.TiviMvRxViewModel
 import app.tivi.data.entities.SortOption
-import app.tivi.data.entities.WatchedShowEntry
+import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
+import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.UpdateWatchedShows
 import app.tivi.domain.invoke
 import app.tivi.domain.launchObserve
@@ -45,6 +46,7 @@ import kotlinx.coroutines.launch
 class WatchedViewModel @AssistedInject constructor(
     @Assisted initialState: WatchedViewState,
     private val updateWatchedShows: UpdateWatchedShows,
+    private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val observePagedWatchedShows: ObservePagedWatchedShows,
     private val observeTraktAuthState: ObserveTraktAuthState,
     tmdbManager: TmdbManager
@@ -65,7 +67,7 @@ class WatchedViewModel @AssistedInject constructor(
 
     private val loadingState = ObservableLoadingCounter()
 
-    private var selectionOpen = false
+    private var isSelectionOpen = false
 
     init {
         viewModelScope.launch {
@@ -133,38 +135,65 @@ class WatchedViewModel @AssistedInject constructor(
         setState { copy(sort = sort) }
     }
 
-    fun onItemClick(entry: WatchedShowEntry): Boolean {
-        if (selectionOpen) {
+    fun clearSelection() {
+        isSelectionOpen = false
+        setState {
+            copy(selectionOpen = false, selectedShowIds = emptySet())
+        }
+    }
+
+    fun onItemClick(show: TiviShow): Boolean {
+        if (isSelectionOpen) {
             setState {
                 val currentSelection = when {
-                    entry.id in selectedEntryIds -> selectedEntryIds.minus(entry.id)
-                    else -> selectedEntryIds.plus(entry.id)
+                    show.id in selectedShowIds -> selectedShowIds.minus(show.id)
+                    else -> selectedShowIds.plus(show.id)
                 }
-                this@WatchedViewModel.selectionOpen = currentSelection.isNotEmpty()
-                copy(
-                        selectionOpen = this@WatchedViewModel.selectionOpen,
-                        selectedEntryIds = currentSelection
-                )
+                isSelectionOpen = currentSelection.isNotEmpty()
+                copy(selectionOpen = isSelectionOpen, selectedShowIds = currentSelection)
             }
             return true
         }
         return false
     }
 
-    fun onItemLongClick(entry: WatchedShowEntry): Boolean {
-        if (!selectionOpen) {
-            selectionOpen = true
+    fun onItemLongClick(show: TiviShow): Boolean {
+        if (!isSelectionOpen) {
+            isSelectionOpen = true
 
             setState {
-                var currentSelection = selectedEntryIds
-                if (entry.id !in currentSelection) {
-                    currentSelection = currentSelection.plus(entry.id)
+                var currentSelection = selectedShowIds
+                if (show.id !in currentSelection) {
+                    currentSelection = currentSelection.plus(show.id)
                 }
-                copy(selectionOpen = selectionOpen, selectedEntryIds = currentSelection)
+                copy(selectionOpen = isSelectionOpen, selectedShowIds = currentSelection)
             }
             return true
         }
         return false
+    }
+
+    fun followSelectedShows() {
+        withState {
+            changeShowFollowStatus(
+                    ChangeShowFollowStatus.Params(
+                            it.selectedShowIds,
+                            ChangeShowFollowStatus.Action.FOLLOW,
+                            deferDataFetch = true)
+            )
+            clearSelection()
+        }
+    }
+
+    fun unfollowSelectedShows() {
+        withState {
+            changeShowFollowStatus(
+                    ChangeShowFollowStatus.Params(
+                            it.selectedShowIds,
+                            ChangeShowFollowStatus.Action.UNFOLLOW)
+            )
+            clearSelection()
+        }
     }
 
     private fun refreshWatched(fromUser: Boolean) {

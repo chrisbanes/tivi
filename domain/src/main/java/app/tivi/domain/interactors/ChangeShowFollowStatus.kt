@@ -16,6 +16,7 @@
 
 package app.tivi.domain.interactors
 
+import app.tivi.actions.ShowTasks
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.domain.Interactor
@@ -29,6 +30,7 @@ class ChangeShowFollowStatus @Inject constructor(
     private val followedShowsRepository: FollowedShowsRepository,
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     dispatchers: AppCoroutineDispatchers,
+    private val showTasks: ShowTasks,
     @ProcessLifetime val processScope: CoroutineScope
 ) : Interactor<ChangeShowFollowStatus.Params>() {
     override val scope: CoroutineScope = processScope + dispatchers.io
@@ -42,28 +44,43 @@ class ChangeShowFollowStatus @Inject constructor(
 
         suspend fun follow(showId: Long) {
             followedShowsRepository.addFollowedShow(showId)
-
             // Update seasons, episodes and watches
-            if (seasonsEpisodesRepository.needShowSeasonsUpdate(showId)) {
-                seasonsEpisodesRepository.updateSeasonsEpisodes(showId)
+            if (!params.deferDataFetch) {
+                if (seasonsEpisodesRepository.needShowSeasonsUpdate(showId)) {
+                    seasonsEpisodesRepository.updateSeasonsEpisodes(showId)
+                }
+                seasonsEpisodesRepository.updateShowEpisodeWatchesIfNeeded(showId)
             }
-            seasonsEpisodesRepository.updateShowEpisodeWatchesIfNeeded(showId)
         }
 
-        when (params.action) {
-            Action.TOGGLE -> {
-                if (followedShowsRepository.isShowFollowed(params.showId)) {
-                    unfollow(params.showId)
-                } else {
-                    follow(params.showId)
+        for (showId in params.showIds) {
+            when (params.action) {
+                Action.TOGGLE -> {
+                    if (followedShowsRepository.isShowFollowed(showId)) {
+                        unfollow(showId)
+                    } else {
+                        follow(showId)
+                    }
                 }
+                Action.FOLLOW -> follow(showId)
+                Action.UNFOLLOW -> unfollow(showId)
             }
-            Action.FOLLOW -> follow(params.showId)
-            Action.UNFOLLOW -> unfollow(params.showId)
+        }
+        // Finally, sync the changes to Trakt
+        followedShowsRepository.syncFollowedShows()
+
+        if (params.deferDataFetch) {
+            showTasks.syncFollowedShows()
         }
     }
 
-    data class Params(val showId: Long, val action: Action)
+    data class Params(
+        val showIds: Collection<Long>,
+        val action: Action,
+        val deferDataFetch: Boolean = false
+    ) {
+        constructor(showId: Long, action: Action) : this(listOf(showId), action)
+    }
 
     enum class Action { FOLLOW, UNFOLLOW, TOGGLE }
 }

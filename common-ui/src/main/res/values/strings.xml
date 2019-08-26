@@ -79,6 +79,9 @@
     <string name="follow_show_add">Follow show</string>
     <string name="follow_show_remove">Un-follow show</string>
 
+    <string name="follow_shows_add">Follow shows</string>
+    <string name="follow_shows_remove">Un-follow shows</string>
+
     <string name="episode_watches">Episode watches</string>
 
     <string name="first_aired">First aired: %1$s</string>

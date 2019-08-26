@@ -86,7 +86,7 @@ class WatchedEpoxyController @Inject constructor(
                 tiviShow(item.show)
                 posterImage(item.images.findHighestRatedPoster())
                 posterTransitionName("show_${item.show.homepage}")
-                selected(item.entry.id in viewState.selectedEntryIds)
+                selected(item.show.id in viewState.selectedShowIds)
                 callbacks?.also { cb ->
                     clickListener(View.OnClickListener { cb.onItemClicked(item) })
                     longClickListener(View.OnLongClickListener { cb.onItemLongClicked(item) })

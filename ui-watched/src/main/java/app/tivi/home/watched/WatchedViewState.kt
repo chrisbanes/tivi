@@ -28,7 +28,7 @@ data class WatchedViewState(
     val isEmpty: Boolean = false,
     val watchedShows: PagedList<WatchedShowEntryWithShow>? = null,
     val selectionOpen: Boolean = false,
-    val selectedEntryIds: List<Long> = emptyList(),
+    val selectedShowIds: Set<Long> = emptySet(),
     val filterActive: Boolean = false,
     val filter: String? = null,
     val availableSorts: List<SortOption> = emptyList(),
