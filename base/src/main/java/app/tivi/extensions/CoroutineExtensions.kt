@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 suspend fun <A, B> Collection<A>.parallelMap(
     concurrency: Int = defaultConcurrency,
     block: suspend (A) -> B
-): List<B> = coroutineScope {
+): List<B> = supervisorScope {
     val semaphore = Channel<Unit>(concurrency)
     map { item ->
         async {
@@ -52,18 +52,8 @@ suspend fun <A, B> Collection<A>.parallelMap(
 suspend fun <A> Collection<A>.parallelForEach(
     concurrency: Int = defaultConcurrency,
     block: suspend (A) -> Unit
-): Unit = supervisorScope {
-    val semaphore = Channel<Unit>(concurrency)
-    forEach { item ->
-        launch {
-            semaphore.send(Unit) // Acquire concurrency permit
-            try {
-                block(item)
-            } finally {
-                semaphore.receive() // Release concurrency permit
-            }
-        }
-    }
+) {
+    parallelMap(concurrency) { block(it) }
 }
 
 fun <T, R> Flow<T?>.flatMapLatestNullable(transform: suspend (value: T) -> Flow<R>): Flow<R?> {
