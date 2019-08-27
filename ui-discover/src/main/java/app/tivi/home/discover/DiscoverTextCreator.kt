@@ -17,31 +17,14 @@
 package app.tivi.home.discover
 
 import android.content.Context
-import androidx.core.text.buildSpannedString
-import androidx.core.text.italic
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.inject.PerActivity
-import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 
 class DiscoverTextCreator @Inject constructor(
     @PerActivity private val context: Context
 ) {
-    fun episodeTitleText(episode: Episode): CharSequence? {
-        val firstAired = episode.firstAired
-        val title = episode.title ?: context.getString(R.string.not_known_title)
-
-        if (firstAired == null || firstAired.isAfter(OffsetDateTime.now())) {
-            return buildSpannedString {
-                italic {
-                    append(title)
-                }
-            }
-        }
-        return title
-    }
-
     fun seasonEpisodeTitleText(season: Season, episode: Episode): String {
         return context.getString(R.string.season_episode_number, season.number, episode.number)
     }

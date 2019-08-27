@@ -30,6 +30,7 @@ import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.inject.PerActivity
 import app.tivi.ui.GenreStringer
 import app.tivi.util.TiviDateFormatter
+import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 
 class ShowDetailsTextCreator @Inject constructor(
@@ -74,7 +75,13 @@ class ShowDetailsTextCreator @Inject constructor(
     }
 
     fun episodeNumberText(episode: Episode): CharSequence? {
-        return context.getString(R.string.episode_number, episode.number)
+        val text = StringBuilder()
+        text.append(context.getString(R.string.episode_number, episode.number))
+        if (episode.firstAired?.isAfter(OffsetDateTime.now()) == true) {
+            text.append(" \u2022 ")
+            text.append(tiviDateFormatter.formatShortRelativeTime(episode.firstAired!!))
+        }
+        return text
     }
 
     fun genreString(genres: List<Genre>?): CharSequence? {
