@@ -128,6 +128,11 @@ class FollowedFragment : TiviMvRxFragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        currentActionMode?.finish()
+    }
+
     private fun startSelectionActionMode() {
         currentActionMode = requireActivity().startActionMode(object : ActionMode.Callback {
             override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {

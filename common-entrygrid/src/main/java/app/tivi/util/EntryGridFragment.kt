@@ -130,6 +130,11 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        currentActionMode?.finish()
+    }
+
     abstract fun startSelectionActionMode(): ActionMode?
 
     abstract fun createController(): EntryGridEpoxyController<LI>
