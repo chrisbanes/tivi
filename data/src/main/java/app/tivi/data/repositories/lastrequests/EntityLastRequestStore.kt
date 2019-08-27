@@ -44,4 +44,6 @@ open class EntityLastRequestStore(
     suspend fun updateLastRequest(entityId: Long, timestamp: Instant = Instant.now()) {
         dao.insert(LastRequest(request = request, entityId = entityId, timestamp = timestamp))
     }
+
+    suspend fun invalidateLastRequest(entityId: Long) = updateLastRequest(entityId, Instant.EPOCH)
 }

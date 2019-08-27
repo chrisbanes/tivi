@@ -43,6 +43,8 @@ open class GroupLastRequestStore(
         dao.insert(LastRequest(request = request, entityId = DEFAULT_ID, timestamp = timestamp))
     }
 
+    suspend fun invalidateLastRequest() = updateLastRequest(Instant.EPOCH)
+
     companion object {
         private const val DEFAULT_ID = 0L
     }

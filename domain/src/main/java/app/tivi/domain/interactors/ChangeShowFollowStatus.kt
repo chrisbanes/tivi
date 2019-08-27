@@ -46,10 +46,8 @@ class ChangeShowFollowStatus @Inject constructor(
             followedShowsRepository.addFollowedShow(showId)
             // Update seasons, episodes and watches
             if (!params.deferDataFetch) {
-                if (seasonsEpisodesRepository.needShowSeasonsUpdate(showId)) {
-                    seasonsEpisodesRepository.updateSeasonsEpisodes(showId)
-                }
-                seasonsEpisodesRepository.updateShowEpisodeWatchesIfNeeded(showId)
+                seasonsEpisodesRepository.updateSeasonsEpisodes(showId)
+                seasonsEpisodesRepository.updateShowEpisodeWatches(showId, forceRefresh = true)
             }
         }
 
