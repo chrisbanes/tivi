@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories.search
 
+import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TmdbShowResultsPageToTiviShows
@@ -29,9 +30,11 @@ class TmdbSearchDataSource @Inject constructor(
     private val tmdb: Tmdb,
     private val mapper: TmdbShowResultsPageToTiviShows
 ) : SearchDataSource {
-    override suspend fun search(query: String): Result<List<TiviShow>> {
-        return tmdb.searchService().tv(query, 1, null, null)
+    override suspend fun search(query: String): Result<List<TiviShow>> = try {
+        tmdb.searchService().tv(query, 1, null, null)
                 .executeWithRetry()
                 .toResult(mapper.toLambda())
+    } catch (t: Throwable) {
+        ErrorResult(t)
     }
 }
