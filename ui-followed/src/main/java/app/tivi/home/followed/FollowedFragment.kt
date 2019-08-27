@@ -113,6 +113,11 @@ class FollowedFragment : TiviMvRxFragment() {
                 currentActionMode?.finish()
             }
 
+            if (currentActionMode != null) {
+                currentActionMode?.title = getString(R.string.selection_title,
+                        state.selectedShowIds.size)
+            }
+
             binding.state = state
 
             if (state.followedShows != null) {

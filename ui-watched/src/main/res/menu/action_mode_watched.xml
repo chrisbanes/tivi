@@ -15,17 +15,13 @@
   ~ limitations under the License.
   -->
 
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/menu_follow"
-        android:title="@string/follow_shows_add"
+    <item
+        android:id="@+id/menu_follow"
         android:icon="@drawable/ic_favorite"
-        app:showAsAction="ifRoom" />
-
-    <item android:id="@+id/menu_unfollow"
-        android:title="@string/follow_shows_remove"
-        android:icon="@drawable/ic_favorite_outline"
+        android:title="@string/follow_shows_add"
         app:showAsAction="ifRoom" />
 
 </menu>

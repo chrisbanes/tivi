@@ -112,6 +112,11 @@ class WatchedFragment : TiviMvRxFragment() {
             currentActionMode?.finish()
         }
 
+        if (currentActionMode != null) {
+            currentActionMode?.title = getString(R.string.selection_title,
+                    state.selectedShowIds.size)
+        }
+
         binding.state = state
 
         if (state.watchedShows != null) {
@@ -126,7 +131,6 @@ class WatchedFragment : TiviMvRxFragment() {
             override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
                 when (item.itemId) {
                     R.id.menu_follow -> viewModel.followSelectedShows()
-                    R.id.menu_unfollow -> viewModel.unfollowSelectedShows()
                 }
                 return true
             }

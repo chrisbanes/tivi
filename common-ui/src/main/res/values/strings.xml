@@ -116,6 +116,8 @@
         <item quantity="other">%d shows</item>
     </plurals>
 
+    <string name="selection_title">%d selected</string>
+
     <string name="episode_number">#%d</string>
 
     <string name="season_episode_number">Season %1$d - Episode %2$d</string>

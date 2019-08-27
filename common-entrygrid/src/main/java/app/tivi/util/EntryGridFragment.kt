@@ -119,6 +119,11 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
             currentActionMode = null
         }
 
+        if (currentActionMode != null) {
+            currentActionMode?.title = getString(R.string.selection_title,
+                    state.selectedShowIds.size)
+        }
+
         if (state.isLoaded) {
             // First time we've had state, start any postponed transitions
             scheduleStartPostponedTransitions()
