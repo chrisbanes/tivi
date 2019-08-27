@@ -70,7 +70,7 @@
             android:layout_marginEnd="@dimen/spacing_small"
             android:alpha="@{episodeWithWatches.hasAired() ? 1.0f : 0.5f}"
             android:text="@{episodeWithWatches.episode.title ?? @string/not_known_title}"
-            android:textAppearance="?attr/textAppearanceBody1"
+            android:textAppearance="?attr/textAppearanceBody2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/episode_watches_pending"
             app:layout_constraintHorizontal_bias="0.0"
