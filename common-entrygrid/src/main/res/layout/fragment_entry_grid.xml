@@ -29,15 +29,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <app.tivi.ui.widget.MaterialShapeConstraintLayout
-                android:id="@+id/header_holder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/colorSurface"
-                android:paddingHorizontal="4dp"
-                android:elevation="@dimen/sticky_header_elevation"
-                app:materialBackgroundColor="?attr/colorSurface" />
-
             <com.airbnb.epoxy.EpoxyRecyclerView
                 android:id="@+id/grid_recyclerview"
                 style="@style/Widget.Tivi.RecyclerView.FastScroll"
@@ -52,6 +43,24 @@
                 app:paddingBottomSystemWindowInsets="@{ true }"
                 app:spanCount="@integer/grid_span_count"
                 tools:listitem="@layout/view_holder_poster_grid_item" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/header_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorSurface"
+                android:paddingHorizontal="4dp">
+
+                <View
+                    android:id="@+id/header_divider"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:background="?android:attr/listDivider"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </FrameLayout>
 
