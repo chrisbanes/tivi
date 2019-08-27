@@ -59,6 +59,7 @@
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/settings_title"
+            android:parentActivityName=".home.HomeActivity"
             android:theme="@style/Theme.Tivi.Settings" />
 
         <meta-data
