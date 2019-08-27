@@ -41,44 +41,43 @@
     <app.tivi.ui.widget.MaterialShapeConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?android:attr/listPreferredItemHeightSmall"
         android:checked="@{expanded}"
         android:foreground="?android:attr/selectableItemBackground"
         android:onClick="@{clickListener}"
         android:stateListAnimator="@animator/details_season_state_anim"
         app:materialBackgroundColor="?attr/colorSurface">
 
-        <androidx.constraintlayout.helper.widget.Flow
-            android:id="@+id/flow"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/list_horizontal_padding"
-            android:layout_marginVertical="@dimen/list_vertical_padding"
-            app:constraint_referenced_ids="episode_title,episode_number,space,episode_watches_pending,episode_watched"
-            app:flow_horizontalGap="@dimen/spacing_small"
-            app:flow_verticalAlign="baseline"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/episode_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{episodeWithWatches.episode.title ?? @string/not_known_title}"
-            android:textAppearance="?attr/textAppearanceBody1"
-            android:alpha="@{episodeWithWatches.hasAired() ? 1.0f : 0.5f}"
-            tools:text="A tale of two halves" />
-
         <TextView
             android:id="@+id/episode_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/list_vertical_padding"
+            android:alpha="@{episodeWithWatches.hasAired() ? 1.0f : 0.5f}"
             android:text="@{textCreator.episodeNumberText(episodeWithWatches.episode)}"
             android:textAppearance="?attr/textAppearanceCaption"
+            app:layout_constraintBottom_toTopOf="@id/episode_title"
+            app:layout_constraintStart_toStartOf="@id/episode_title"
+            app:layout_constraintTop_toTopOf="parent"
             app:visibleIfNotNull="@{episodeWithWatches.episode.number}"
             tools:text="#1" />
+
+        <TextView
+            android:id="@+id/episode_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/list_vertical_padding"
+            android:layout_marginStart="@dimen/list_horizontal_padding"
+            android:layout_marginEnd="@dimen/spacing_small"
+            android:alpha="@{episodeWithWatches.hasAired() ? 1.0f : 0.5f}"
+            android:text="@{episodeWithWatches.episode.title ?? @string/not_known_title}"
+            android:textAppearance="?attr/textAppearanceBody1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/episode_watches_pending"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/episode_number"
+            app:layout_goneMarginEnd="@dimen/list_horizontal_padding"
+            tools:text="@tools:sample/full_names" />
 
         <Space
             android:id="@+id/space"
@@ -89,14 +88,25 @@
             android:id="@+id/episode_watches_pending"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spacing_small"
+            app:layout_goneMarginEnd="@dimen/list_horizontal_padding"
+            app:layout_constraintEnd_toStartOf="@id/episode_watched"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:src="@drawable/ic_upload_24dp"
+            tools:visibility="gone"
             app:visible="@{episodeWithWatches.hasPending()}" />
 
         <ImageView
             android:id="@+id/episode_watched"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/list_horizontal_padding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:src="@{episodeWithWatches.onlyPendingDeletes() ? @drawable/ic_eye_off_24dp : @drawable/ic_eye_24dp}"
+            tools:src="@drawable/ic_eye_off_24dp"
             app:visible="@{episodeWithWatches.hasWatches()}" />
 
     </app.tivi.ui.widget.MaterialShapeConstraintLayout>

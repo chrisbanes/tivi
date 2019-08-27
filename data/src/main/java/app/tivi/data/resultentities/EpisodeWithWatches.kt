@@ -47,7 +47,7 @@ class EpisodeWithWatches {
 
     fun hasAired(): Boolean {
         val aired = episode?.firstAired
-        return aired == null || aired.isBefore(OffsetDateTime.now())
+        return aired != null && aired.isBefore(OffsetDateTime.now())
     }
 
     override fun equals(other: Any?): Boolean = when {
