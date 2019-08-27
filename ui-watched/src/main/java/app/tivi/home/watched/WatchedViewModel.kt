@@ -20,7 +20,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import app.tivi.TiviMvRxViewModel
 import app.tivi.data.entities.SortOption
+import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
+import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.UpdateWatchedShows
 import app.tivi.domain.invoke
 import app.tivi.domain.launchObserve
@@ -29,6 +31,7 @@ import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
+import app.tivi.util.ShowStateSelector
 import app.tivi.util.collectFrom
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
@@ -44,6 +47,7 @@ import kotlinx.coroutines.launch
 class WatchedViewModel @AssistedInject constructor(
     @Assisted initialState: WatchedViewState,
     private val updateWatchedShows: UpdateWatchedShows,
+    private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val observePagedWatchedShows: ObservePagedWatchedShows,
     private val observeTraktAuthState: ObserveTraktAuthState,
     tmdbManager: TmdbManager
@@ -63,6 +67,7 @@ class WatchedViewModel @AssistedInject constructor(
     }
 
     private val loadingState = ObservableLoadingCounter()
+    private val showSelection = ShowStateSelector()
 
     init {
         viewModelScope.launch {
@@ -75,6 +80,18 @@ class WatchedViewModel @AssistedInject constructor(
         viewModelScope.launch {
             tmdbManager.imageProviderFlow
                     .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
+        }
+
+        viewModelScope.launch {
+            showSelection.observeSelectedShowIds().collect {
+                setState { copy(selectedShowIds = it) }
+            }
+        }
+
+        viewModelScope.launch {
+            showSelection.observeIsSelectionOpen().collect {
+                setState { copy(selectionOpen = it) }
+            }
         }
 
         viewModelScope.launchObserve(observePagedWatchedShows) {
@@ -128,6 +145,37 @@ class WatchedViewModel @AssistedInject constructor(
 
     fun setSort(sort: SortOption) {
         setState { copy(sort = sort) }
+    }
+
+    fun clearSelection() {
+        showSelection.clearSelection()
+    }
+
+    fun onItemClick(show: TiviShow): Boolean {
+        return showSelection.onItemClick(show)
+    }
+
+    fun onItemLongClick(show: TiviShow): Boolean {
+        return showSelection.onItemLongClick(show)
+    }
+
+    fun followSelectedShows() {
+        changeShowFollowStatus(
+                ChangeShowFollowStatus.Params(
+                        showSelection.getSelectedShowIds(),
+                        ChangeShowFollowStatus.Action.FOLLOW,
+                        deferDataFetch = true)
+        )
+        showSelection.clearSelection()
+    }
+
+    fun unfollowSelectedShows() {
+        changeShowFollowStatus(
+                ChangeShowFollowStatus.Params(
+                        showSelection.getSelectedShowIds(),
+                        ChangeShowFollowStatus.Action.UNFOLLOW)
+        )
+        showSelection.clearSelection()
     }
 
     private fun refreshWatched(fromUser: Boolean) {

@@ -24,6 +24,8 @@
     <style name="Base.Theme.Tivi" parent="Platform.Theme.Tivi">
         <item name="actionBarTheme">@style/ThemeOverlay.Tivi.ActionBar</item>
 
+        <item name="windowActionModeOverlay">true</item>
+
         <!-- Default widget styles -->
         <item name="toolbarStyle">@style/Widget.Tivi.Toolbar</item>
 

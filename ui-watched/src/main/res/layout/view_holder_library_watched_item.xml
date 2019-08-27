@@ -36,6 +36,10 @@
             type="app.tivi.data.entities.TiviShow" />
 
         <variable
+            name="selected"
+            type="boolean" />
+
+        <variable
             name="posterImage"
             type="app.tivi.data.entities.TmdbImageEntity" />
 
@@ -52,6 +56,10 @@
             type="android.view.View.OnClickListener" />
 
         <variable
+            name="longClickListener"
+            type="android.view.View.OnLongClickListener" />
+
+        <variable
             name="dateFormatter"
             type="app.tivi.util.TiviDateFormatter" />
     </data>
@@ -59,8 +67,10 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:onClick="@{clickListener}">
+        android:foreground="@drawable/ripple_selectable"
+        android:onClick="@{clickListener}"
+        app:onLongClick="@{longClickListener}"
+        app:selected="@{selected}">
 
         <View
             android:id="@+id/background"

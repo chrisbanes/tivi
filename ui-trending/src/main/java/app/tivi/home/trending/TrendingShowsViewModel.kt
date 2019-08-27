@@ -17,6 +17,7 @@
 package app.tivi.home.trending
 
 import app.tivi.data.resultentities.TrendingEntryWithShow
+import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.UpdateTrendingShows
 import app.tivi.domain.interactors.UpdateTrendingShows.Page.NEXT_PAGE
 import app.tivi.domain.interactors.UpdateTrendingShows.Page.REFRESH
@@ -32,7 +33,8 @@ class TrendingShowsViewModel @Inject constructor(
     override val pagingInteractor: ObservePagedTrendingShows,
     private val interactor: UpdateTrendingShows,
     override val tmdbManager: TmdbManager,
-    override val logger: Logger
+    override val logger: Logger,
+    override val changeShowFollowStatus: ChangeShowFollowStatus
 ) : EntryViewModel<TrendingEntryWithShow, ObservePagedTrendingShows>() {
     init {
         pagingInteractor(ObservePagedTrendingShows.Params(pageListConfig, boundaryCallback))

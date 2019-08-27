@@ -17,6 +17,7 @@
 package app.tivi.home.recommended
 
 import app.tivi.data.resultentities.RecommendedEntryWithShow
+import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.UpdateRecommendedShows
 import app.tivi.domain.interactors.UpdateRecommendedShows.Page.NEXT_PAGE
 import app.tivi.domain.interactors.UpdateRecommendedShows.Page.REFRESH
@@ -32,7 +33,8 @@ class RecommendedShowsViewModel @Inject constructor(
     override val pagingInteractor: ObservePagedRecommendedShows,
     private val interactor: UpdateRecommendedShows,
     override val tmdbManager: TmdbManager,
-    override val logger: Logger
+    override val logger: Logger,
+    override val changeShowFollowStatus: ChangeShowFollowStatus
 ) : EntryViewModel<RecommendedEntryWithShow, ObservePagedRecommendedShows>() {
     init {
         pagingInteractor(ObservePagedRecommendedShows.Params(pageListConfig, boundaryCallback))

@@ -21,7 +21,9 @@ import androidx.paging.PagedList
 import app.tivi.TiviMvRxViewModel
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
+import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.UpdateFollowedShows
 import app.tivi.domain.invoke
 import app.tivi.domain.launchObserve
@@ -30,6 +32,7 @@ import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
+import app.tivi.util.ShowStateSelector
 import app.tivi.util.collectFrom
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
@@ -47,6 +50,7 @@ class FollowedViewModel @AssistedInject constructor(
     private val updateFollowedShows: UpdateFollowedShows,
     private val observePagedFollowedShows: ObservePagedFollowedShows,
     private val observeTraktAuthState: ObserveTraktAuthState,
+    private val changeShowFollowStatus: ChangeShowFollowStatus,
     tmdbManager: TmdbManager
 ) : TiviMvRxViewModel<FollowedViewState>(initialState) {
     private val boundaryCallback = object : PagedList.BoundaryCallback<FollowedShowEntryWithShow>() {
@@ -64,6 +68,7 @@ class FollowedViewModel @AssistedInject constructor(
     }
 
     private val loadingState = ObservableLoadingCounter()
+    private val showSelection = ShowStateSelector()
 
     init {
         viewModelScope.launch {
@@ -84,6 +89,18 @@ class FollowedViewModel @AssistedInject constructor(
         viewModelScope.launchObserve(observePagedFollowedShows) {
             it.execute {
                 copy(followedShows = it())
+            }
+        }
+
+        viewModelScope.launch {
+            showSelection.observeSelectedShowIds().collect {
+                setState { copy(selectedShowIds = it) }
+            }
+        }
+
+        viewModelScope.launch {
+            showSelection.observeIsSelectionOpen().collect {
+                setState { copy(selectionOpen = it) }
             }
         }
 
@@ -140,6 +157,27 @@ class FollowedViewModel @AssistedInject constructor(
     fun setSort(sort: SortOption) = setState {
         require(availableSorts.contains(sort))
         copy(sort = sort)
+    }
+
+    fun clearSelection() {
+        showSelection.clearSelection()
+    }
+
+    fun onItemClick(show: TiviShow): Boolean {
+        return showSelection.onItemClick(show)
+    }
+
+    fun onItemLongClick(show: TiviShow): Boolean {
+        return showSelection.onItemLongClick(show)
+    }
+
+    fun unfollowSelectedShows() {
+        changeShowFollowStatus(
+                ChangeShowFollowStatus.Params(
+                        showSelection.getSelectedShowIds(),
+                        ChangeShowFollowStatus.Action.UNFOLLOW)
+        )
+        showSelection.clearSelection()
     }
 
     private fun refreshFollowed(fromInteraction: Boolean) {

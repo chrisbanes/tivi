@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package app.tivi.util
+package app.tivi.extensions
 
-import androidx.paging.PagedList
-import app.tivi.api.UiIdle
-import app.tivi.api.UiStatus
-import app.tivi.tmdb.TmdbImageUrlProvider
+import kotlin.properties.ObservableProperty
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
-data class EntryViewState<LI>(
-    val status: UiStatus = UiIdle,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider? = null,
-    val liveList: PagedList<LI>? = null,
-    val isLoaded: Boolean = false,
-    val selectionOpen: Boolean = false,
-    val selectedShowIds: Set<Long> = emptySet()
-)
+inline fun <T> observable(
+    initialValue: T,
+    crossinline onChange: () -> Unit
+): ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
+    override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) = onChange()
+}

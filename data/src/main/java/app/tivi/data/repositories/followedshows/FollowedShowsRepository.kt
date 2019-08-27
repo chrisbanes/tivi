@@ -78,9 +78,6 @@ class FollowedShowsRepository @Inject constructor(
             val newEntryId = followedShowsStore.save(newEntry)
 
             logger.v("addFollowedShow. Entry saved with ID: %s - %s", newEntryId, newEntry)
-
-            // Now sync it up
-            syncFollowedShows()
         }
     }
 
@@ -90,8 +87,6 @@ class FollowedShowsRepository @Inject constructor(
         if (entry != null) {
             // Mark the show as pending deletion
             followedShowsStore.save(entry.copy(pendingAction = PendingAction.DELETE))
-            // Now sync it up
-            syncFollowedShows()
         }
     }
 

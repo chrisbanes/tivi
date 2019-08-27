@@ -19,7 +19,6 @@ package app.tivi.home.followed
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import app.tivi.common.epoxy.EpoxyModelProperty
 import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.common.layouts.HeaderBindingModel_
 import app.tivi.common.layouts.emptyState
@@ -28,6 +27,7 @@ import app.tivi.common.layouts.header
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.extensions.observable
 import app.tivi.home.HomeTextCreator
 import app.tivi.ui.SortPopupMenuListener
 import app.tivi.ui.popupMenuItemIdToSortOption
@@ -38,8 +38,8 @@ import javax.inject.Inject
 class FollowedEpoxyController @Inject constructor(
     private val textCreator: HomeTextCreator
 ) : PagedListEpoxyController<FollowedShowEntryWithShow>() {
-    var viewState by EpoxyModelProperty { FollowedViewState() }
-    var callbacks by EpoxyModelProperty<Callbacks?> { null }
+    var viewState by observable(FollowedViewState()) { requestForcedModelBuild() }
+    var callbacks: Callbacks? by observable(null) { requestForcedModelBuild() }
 
     override fun addModels(models: List<EpoxyModel<*>>) {
         if (viewState.isEmpty) {
@@ -84,9 +84,11 @@ class FollowedEpoxyController @Inject constructor(
                 tiviShow(item.show)
                 posterImage(item.images.findHighestRatedPoster())
                 posterTransitionName("show_${item.show.homepage}")
-                clickListener(View.OnClickListener {
-                    callbacks?.onItemClicked(item)
-                })
+                selected(item.show.id in viewState.selectedShowIds)
+                callbacks?.also { cb ->
+                    clickListener(View.OnClickListener { cb.onItemClicked(item) })
+                    longClickListener(View.OnLongClickListener { cb.onItemLongClicked(item) })
+                }
             } else {
                 id("item_placeholder_$currentPosition")
             }
@@ -103,6 +105,7 @@ class FollowedEpoxyController @Inject constructor(
 
     interface Callbacks {
         fun onItemClicked(item: FollowedShowEntryWithShow)
+        fun onItemLongClicked(item: FollowedShowEntryWithShow): Boolean
         fun onFilterChanged(filter: String)
         fun onSortSelected(sort: SortOption)
     }

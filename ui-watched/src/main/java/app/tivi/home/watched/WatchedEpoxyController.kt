@@ -28,8 +28,8 @@ import app.tivi.common.layouts.filter
 import app.tivi.common.layouts.header
 import app.tivi.home.HomeTextCreator
 import app.tivi.ui.SortPopupMenuListener
-import app.tivi.common.epoxy.EpoxyModelProperty
 import app.tivi.common.epoxy.TotalSpanOverride
+import app.tivi.extensions.observable
 import app.tivi.ui.popupMenuItemIdToSortOption
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.epoxy.EpoxyModel
@@ -40,8 +40,8 @@ class WatchedEpoxyController @Inject constructor(
     private val textCreator: HomeTextCreator,
     private val dateFormatter: TiviDateFormatter
 ) : PagedListEpoxyController<WatchedShowEntryWithShow>() {
-    var viewState by EpoxyModelProperty { WatchedViewState() }
-    var callbacks: Callbacks? = null
+    var viewState by observable(WatchedViewState()) { requestForcedModelBuild() }
+    var callbacks: Callbacks? by observable(null) { requestForcedModelBuild() }
 
     override fun addModels(models: List<EpoxyModel<*>>) {
         if (viewState.isEmpty) {
@@ -86,9 +86,11 @@ class WatchedEpoxyController @Inject constructor(
                 tiviShow(item.show)
                 posterImage(item.images.findHighestRatedPoster())
                 posterTransitionName("show_${item.show.homepage}")
-                clickListener(View.OnClickListener {
-                    callbacks?.onItemClicked(item)
-                })
+                selected(item.show.id in viewState.selectedShowIds)
+                callbacks?.also { cb ->
+                    clickListener(View.OnClickListener { cb.onItemClicked(item) })
+                    longClickListener(View.OnLongClickListener { cb.onItemLongClicked(item) })
+                }
             } else {
                 id("item_placeholder_$currentPosition")
             }
@@ -105,6 +107,7 @@ class WatchedEpoxyController @Inject constructor(
 
     interface Callbacks {
         fun onItemClicked(item: WatchedShowEntryWithShow)
+        fun onItemLongClicked(item: WatchedShowEntryWithShow): Boolean
         fun onFilterChanged(filter: String)
         fun onSortSelected(sort: SortOption)
     }
