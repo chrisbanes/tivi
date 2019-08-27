@@ -109,7 +109,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         }
     }
 
-    suspend fun updateShowEpisodeWatchesIfNeeded(
+    suspend fun updateShowEpisodeWatches(
         showId: Long,
         refreshType: RefreshType = RefreshType.QUICK,
         forceRefresh: Boolean = false,

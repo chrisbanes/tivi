@@ -66,7 +66,7 @@ class UpdateFollowedShows @Inject constructor(
                 seasonEpisodeRepository.updateSeasonsEpisodes(it.showId)
             }
 
-            seasonEpisodeRepository.updateShowEpisodeWatchesIfNeeded(
+            seasonEpisodeRepository.updateShowEpisodeWatches(
                     it.showId,
                     params.type,
                     params.forceRefresh,
