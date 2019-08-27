@@ -23,7 +23,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.constraintlayout.motion.widget.TransitionAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -63,8 +62,6 @@ class HomeActivity : TiviActivityMvRxView() {
     private val authService by lazy(LazyThreadSafetyMode.NONE) { AuthorizationService(this) }
 
     private val viewModel: HomeActivityViewModel by viewModel()
-
-    private lateinit var searchView: SearchView
 
     private val navigationView = object : NavigationView {
         override fun open() {
@@ -115,15 +112,6 @@ class HomeActivity : TiviActivityMvRxView() {
                 constrainHeight(R.id.status_scrim, insets.systemWindowInsetTop)
             }
         }
-
-        binding.homeRoot.setTransitionListener(object : TransitionAdapter() {
-            override fun onTransitionCompleted(motionLayout: MotionLayout, transitionId: Int) {
-                if (transitionId == R.id.nav_closed) {
-                    // Clear the search results when the nav is closed
-                    // binding.homeSearchInput.text = null
-                }
-            }
-        })
 
         binding.homeToolbar.setOnMenuItemClickListener(::onMenuItemClicked)
 
@@ -271,7 +259,7 @@ class HomeActivity : TiviActivityMvRxView() {
             searchViewModel.clearQuery()
 
             binding.homeToolbar.beingDelayedTransition(100)
-            binding.homeRoot.transitionToState(R.id.nav_open)
+            binding.homeRoot.transitionToState(R.id.nav_closed)
             return true
         }
 
