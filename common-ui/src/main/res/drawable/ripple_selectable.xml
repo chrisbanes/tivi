@@ -30,7 +30,7 @@
             <item
                 android:state_enabled="true"
                 android:state_selected="true">
-                <shape android:tint="@color/color_secondary_25">
+                <shape android:tint="@color/color_secondary_40">
                     <solid android:color="#FF00FF" />
                 </shape>
             </item>
