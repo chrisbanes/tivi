@@ -23,6 +23,7 @@ import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.File
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -41,6 +42,9 @@ class TmdbModule {
                 builder.apply {
                     addInterceptor(interceptor)
                     cache(Cache(File(cacheDir, "tmdb_cache"), 10 * 1024 * 1024))
+                    connectTimeout(20, TimeUnit.SECONDS)
+                    readTimeout(20, TimeUnit.SECONDS)
+                    writeTimeout(20, TimeUnit.SECONDS)
                 }
             }
         }
