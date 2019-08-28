@@ -40,13 +40,14 @@
                 app:paddingBottomSystemWindowInsets="@{ true }"
                 tools:listitem="@layout/view_holder_library_followed_item" />
 
-            <app.tivi.ui.widget.MaterialShapeConstraintLayout
+            <app.tivi.ui.widget.HeaderHolderFrameLayout
                 android:id="@+id/header_holder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/colorSurface"
-                android:elevation="@dimen/sticky_header_elevation"
-                app:materialBackgroundColor="?attr/colorSurface" />
+                app:dividerMarginStart="@dimen/spacing_normal"
+                app:dividerMarginEnd="@dimen/spacing_normal"
+                app:dividerDrawable="?android:attr/listDivider" />
 
         </FrameLayout>
 

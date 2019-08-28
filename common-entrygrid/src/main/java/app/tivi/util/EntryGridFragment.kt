@@ -85,7 +85,12 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
 
             setController(controller)
             addItemDecoration(SpacingItemDecorator(paddingLeft))
-            addOnScrollListener(StickyHeaderScrollListener(controller, controller::isHeader, binding.headerHolder))
+            addOnScrollListener(
+                    StickyHeaderScrollListener(
+                    controller,
+                    controller::isHeader,
+                    binding.headerHolder
+            ))
         }
 
         binding.gridSwipeRefresh.setOnRefreshListener(viewModel::refresh)

@@ -66,7 +66,13 @@ class DiscoverFragment : TiviMvRxFragment() {
         binding.summaryRv.apply {
             setController(controller)
             addItemDecoration(SpacingItemDecorator(paddingLeft))
-            addOnScrollListener(StickyHeaderScrollListener(controller, controller::isHeader, binding.headerHolder))
+            addOnScrollListener(
+                    StickyHeaderScrollListener(
+                            controller,
+                            controller::isHeader,
+                            binding.headerHolder
+                    )
+            )
         }
 
         controller.callbacks = object : DiscoverEpoxyController.Callbacks {
