@@ -35,4 +35,10 @@
         <attr name="materialBackgroundTopRightRadius" format="dimension" />
         <attr name="materialBackgroundColor" format="color" />
     </declare-styleable>
+
+    <declare-styleable name="HeaderHolderFrameLayout">
+        <attr name="dividerDrawable" format="reference" />
+        <attr name="dividerMarginStart" format="dimension" />
+        <attr name="dividerMarginEnd" format="dimension" />
+    </declare-styleable>
 </resources>

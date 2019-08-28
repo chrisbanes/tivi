@@ -85,11 +85,11 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
 
             setController(controller)
             addItemDecoration(SpacingItemDecorator(paddingLeft))
-            addOnScrollListener(StickyHeaderScrollListener(
+            addOnScrollListener(
+                    StickyHeaderScrollListener(
                     controller,
                     controller::isHeader,
-                    binding.headerHolder,
-                    listOf(binding.headerDivider)
+                    binding.headerHolder
             ))
         }
 

@@ -70,8 +70,7 @@ class DiscoverFragment : TiviMvRxFragment() {
                     StickyHeaderScrollListener(
                             controller,
                             controller::isHeader,
-                            binding.headerHolder,
-                            listOf(binding.headerDivider)
+                            binding.headerHolder
                     )
             )
         }

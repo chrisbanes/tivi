@@ -47,23 +47,14 @@
                 app:paddingBottomSystemWindowInsets="@{ true }"
                 tools:listitem="@layout/view_holder_poster_grid_item" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <app.tivi.ui.widget.HeaderHolderFrameLayout
                 android:id="@+id/header_holder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/colorSurface">
-
-                <View
-                    android:id="@+id/header_divider"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="@dimen/spacing_normal"
-                    android:background="?android:attr/listDivider"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                android:background="?attr/colorSurface"
+                app:dividerDrawable="?android:attr/listDivider"
+                app:dividerMarginEnd="@dimen/spacing_normal"
+                app:dividerMarginStart="@dimen/spacing_normal" />
 
         </FrameLayout>
 

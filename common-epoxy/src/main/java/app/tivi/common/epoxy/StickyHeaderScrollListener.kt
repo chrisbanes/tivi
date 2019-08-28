@@ -18,7 +18,6 @@ package app.tivi.common.epoxy
 
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import app.tivi.extensions.createAndBind
@@ -31,8 +30,7 @@ import com.airbnb.epoxy.EpoxyModel
 class StickyHeaderScrollListener(
     private val epoxyController: EpoxyController,
     private val isHeader: (EpoxyModel<*>) -> Boolean,
-    private val headerHolder: ViewGroup,
-    private val staticViews: List<View> = emptyList()
+    private val headerHolder: ViewGroup
 ) : RecyclerView.OnScrollListener() {
 
     init {
@@ -133,16 +131,12 @@ class StickyHeaderScrollListener(
     private fun syncToHeaderHolder(header: RecyclerView.ViewHolder?) {
         if (header != null) {
             if (headerHolder.indexOfChild(header.itemView) < 0) {
-                headerHolder.addView(header.itemView, 0)
+                headerHolder.addView(header.itemView)
             }
             headerHolder.isVisible = true
         } else {
             if (headerHolder.childCount > 0) {
-                for (i in (0 until headerHolder.childCount).reversed()) {
-                    if (headerHolder[i] !in staticViews) {
-                        headerHolder.removeViewAt(i)
-                    }
-                }
+                headerHolder.removeAllViews()
             }
             headerHolder.isVisible = false
         }
