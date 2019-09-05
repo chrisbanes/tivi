@@ -27,8 +27,8 @@ import app.tivi.extensions.parallelForEach
 import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import javax.inject.Inject
 
@@ -43,20 +43,20 @@ class UpdateFollowedShows @Inject constructor(
     override val scope: CoroutineScope = processScope + dispatchers.io
 
     override suspend fun doWork(params: Params) = coroutineScope {
-        val syncFollowed = launch {
+        val syncFollowed = async {
             if (params.forceRefresh || followedShowsRepository.needFollowedShowsSync()) {
                 followedShowsRepository.syncFollowedShows()
             }
         }
-        val syncWatched = launch {
+        val syncWatched = async {
             // Refresh the watched shows list with a short expiry
             if (params.forceRefresh || watchedShowsRepository.needUpdate(instantInPast(hours = 1))) {
                 watchedShowsRepository.updateWatchedShows()
             }
         }
 
-        syncFollowed.join()
-        syncWatched.join()
+        syncFollowed.await()
+        syncWatched.await()
 
         // Finally sync the seasons/episodes and watches
         followedShowsRepository.syncFollowedShows()
