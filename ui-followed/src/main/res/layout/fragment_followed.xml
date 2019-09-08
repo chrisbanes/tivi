@@ -44,10 +44,8 @@
                 android:id="@+id/header_holder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/colorSurface"
                 app:dividerMarginStart="@dimen/spacing_normal"
-                app:dividerMarginEnd="@dimen/spacing_normal"
-                app:dividerDrawable="?android:attr/listDivider" />
+                app:dividerMarginEnd="@dimen/spacing_normal" />
 
         </FrameLayout>
 

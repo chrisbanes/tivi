@@ -40,5 +40,6 @@
         <attr name="dividerDrawable" format="reference" />
         <attr name="dividerMarginStart" format="dimension" />
         <attr name="dividerMarginEnd" format="dimension" />
+        <attr name="materialBackgroundColor" />
     </declare-styleable>
 </resources>

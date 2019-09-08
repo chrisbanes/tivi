@@ -30,4 +30,9 @@
         <item name="fastScrollVerticalTrackDrawable">@drawable/recyclerview_scroll_track</item>
     </style>
 
+    <style name="Widget.Tivi.HeaderHolderFrameLayout" parent="">
+        <item name="dividerDrawable">?android:attr/listDivider</item>
+        <item name="materialBackgroundColor">?attr/colorSurface</item>
+    </style>
+
 </resources>
