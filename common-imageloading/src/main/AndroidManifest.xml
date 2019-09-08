@@ -16,5 +16,5 @@
   ~
   -->
 
-<manifest package="app.tivi.common.glide">
+<manifest package="app.tivi.common.imageloading">
 </manifest>

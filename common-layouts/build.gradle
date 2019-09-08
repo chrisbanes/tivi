@@ -49,7 +49,7 @@ dependencies {
     implementation project(":data")
     implementation project(":common-ui")
     implementation project(":common-epoxy")
-    implementation project(":common-glide")
+    implementation project(':common-imageloading')
     implementation project(":common-databinding")
 
     implementation Libs.AndroidX.coreKtx

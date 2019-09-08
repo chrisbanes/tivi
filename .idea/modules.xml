@@ -9,7 +9,7 @@
       <module fileurl="file://$PROJECT_DIR$/common-databinding/common-databinding.iml" filepath="$PROJECT_DIR$/common-databinding/common-databinding.iml" />
       <module fileurl="file://$PROJECT_DIR$/common-entrygrid/common-entrygrid.iml" filepath="$PROJECT_DIR$/common-entrygrid/common-entrygrid.iml" />
       <module fileurl="file://$PROJECT_DIR$/common-epoxy/common-epoxy.iml" filepath="$PROJECT_DIR$/common-epoxy/common-epoxy.iml" />
-      <module fileurl="file://$PROJECT_DIR$/common-glide/common-glide.iml" filepath="$PROJECT_DIR$/common-glide/common-glide.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common-imageloading/common-imageloading.iml" filepath="$PROJECT_DIR$/common-imageloading/common-imageloading.iml" />
       <module fileurl="file://$PROJECT_DIR$/common-layouts/common-layouts.iml" filepath="$PROJECT_DIR$/common-layouts/common-layouts.iml" />
       <module fileurl="file://$PROJECT_DIR$/common-ui/common-ui.iml" filepath="$PROJECT_DIR$/common-ui/common-ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/data/data.iml" filepath="$PROJECT_DIR$/data/data.iml" />
@@ -17,7 +17,6 @@
       <module fileurl="file://$PROJECT_DIR$/domain/domain.iml" filepath="$PROJECT_DIR$/domain/domain.iml" />
       <module fileurl="file://$PROJECT_DIR$/tasks/tasks.iml" filepath="$PROJECT_DIR$/tasks/tasks.iml" />
       <module fileurl="file://$PROJECT_DIR$/tivi.iml" filepath="$PROJECT_DIR$/tivi.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ui-recommended/tivi-ui-recommended.iml" filepath="$PROJECT_DIR$/ui-recommended/tivi-ui-recommended.iml" />
       <module fileurl="file://$PROJECT_DIR$/tmdb/tmdb.iml" filepath="$PROJECT_DIR$/tmdb/tmdb.iml" />
       <module fileurl="file://$PROJECT_DIR$/trakt/trakt.iml" filepath="$PROJECT_DIR$/trakt/trakt.iml" />
       <module fileurl="file://$PROJECT_DIR$/trakt-auth/trakt-auth.iml" filepath="$PROJECT_DIR$/trakt-auth/trakt-auth.iml" />
