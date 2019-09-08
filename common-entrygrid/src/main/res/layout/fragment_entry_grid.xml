@@ -48,7 +48,6 @@
                 android:id="@+id/header_holder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/colorSurface"
                 android:paddingHorizontal="4dp"
                 app:dividerMarginEnd="@dimen/spacing_normal"
                 app:dividerMarginStart="@dimen/spacing_normal" />
