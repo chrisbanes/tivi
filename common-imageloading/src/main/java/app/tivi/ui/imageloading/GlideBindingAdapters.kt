@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package app.tivi.ui.glide
+package app.tivi.ui.imageloading
 
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TmdbImageEntity
-import app.tivi.extensions.clearRequest
-import app.tivi.extensions.loadTmdbImage
 import app.tivi.tmdb.TmdbImageUrlProvider
+import coil.api.loadAny
 
 @BindingAdapter(
         "tmdbBackdropPath",
@@ -44,13 +43,8 @@ fun loadBackdrop(
         return
     }
     if (urlProvider != null && path != null) {
-        view.loadTmdbImage(
-                ShowTmdbImage(path = path, type = ImageType.BACKDROP, showId = 0),
-                urlProvider,
-                saturateOnLoad == null || saturateOnLoad
-        )
+        view.loadAny(ShowTmdbImage(path = path, type = ImageType.BACKDROP, showId = 0))
     } else {
-        view.clearRequest()
         view.setImageDrawable(null)
     }
 }
@@ -74,13 +68,8 @@ fun loadImage(
         return
     }
     if (urlProvider != null && image != null) {
-        view.loadTmdbImage(
-                image,
-                urlProvider,
-                saturateOnLoad == null || saturateOnLoad
-        )
+        view.loadAny(image)
     } else {
-        view.clearRequest()
         view.setImageDrawable(null)
     }
 }

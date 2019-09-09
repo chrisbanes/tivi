@@ -19,6 +19,8 @@ package app.tivi.tmdb
 import com.uwetrottmann.tmdb2.Tmdb
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -29,6 +31,13 @@ import javax.inject.Singleton
 
 @Module
 class TmdbModule {
+    @Provides
+    fun provideTmdbImageUrlProvider(tmdbManager: TmdbManager): TmdbImageUrlProvider {
+        return runBlocking {
+            tmdbManager.imageProviderFlow.first()
+        }
+    }
+
     @Singleton
     @Provides
     fun provideTmdb(

@@ -22,6 +22,7 @@ import app.tivi.TiviAppNavigator
 import app.tivi.TiviApplication
 import app.tivi.appinitializers.AppInitializer
 import app.tivi.appinitializers.ArchTaskExecutorInitializer
+import app.tivi.appinitializers.CoilInitializer
 import app.tivi.appinitializers.EmojiInitializer
 import app.tivi.appinitializers.EpoxyInitializer
 import app.tivi.appinitializers.PreferencesInitializer
@@ -78,4 +79,8 @@ abstract class AppModuleBinds {
     @Binds
     @IntoSet
     abstract fun provideArchTaskExecutorInitializer(bind: ArchTaskExecutorInitializer): AppInitializer
+
+    @Binds
+    @IntoSet
+    abstract fun provideCoilInitializer(bind: CoilInitializer): AppInitializer
 }
