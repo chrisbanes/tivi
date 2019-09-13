@@ -27,7 +27,6 @@ import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeWatches
 import app.tivi.episodedetails.EpisodeDetailsViewState.Action
-import app.tivi.tmdb.TmdbManager
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
@@ -35,7 +34,6 @@ import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
 class EpisodeDetailsViewModel @AssistedInject constructor(
@@ -45,8 +43,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     private val observeEpisodeWatches: ObserveEpisodeWatches,
     private val addEpisodeWatch: AddEpisodeWatch,
     private val removeEpisodeWatches: RemoveEpisodeWatches,
-    private val removeEpisodeWatch: RemoveEpisodeWatch,
-    tmdbManager: TmdbManager
+    private val removeEpisodeWatch: RemoveEpisodeWatch
 ) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
     init {
         viewModelScope.launchObserve(observeEpisodeDetails) {
@@ -65,10 +62,6 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         withState {
             observeEpisodeDetails(ObserveEpisodeDetails.Params(it.episodeId))
             observeEpisodeWatches(ObserveEpisodeWatches.Params(it.episodeId))
-        }
-
-        viewModelScope.launch {
-            tmdbManager.imageProviderFlow.execute { copy(tmdbImageUrlProvider = it) }
         }
 
         refresh()

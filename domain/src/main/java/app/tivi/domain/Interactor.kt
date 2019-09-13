@@ -18,10 +18,10 @@ package app.tivi.domain
 
 import androidx.paging.PagedList
 import app.tivi.base.InvokeError
-import app.tivi.base.InvokeSuccess
 import app.tivi.base.InvokeIdle
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
+import app.tivi.base.InvokeSuccess
 import app.tivi.base.InvokeTimeout
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import java.util.concurrent.TimeUnit
 
@@ -59,9 +60,7 @@ abstract class Interactor<in P> {
         return channel.asFlow()
     }
 
-    suspend fun executeSync(params: P) {
-        scope.launch { doWork(params) }.join()
-    }
+    suspend fun executeSync(params: P) = withContext(scope.coroutineContext) { doWork(params) }
 
     protected abstract suspend fun doWork(params: P)
 

@@ -30,6 +30,7 @@ import kotlin.math.roundToLong
 private val fastOutSlowInInterpolator = FastOutSlowInInterpolator()
 
 fun saturateDrawableAnimator(current: Drawable, view: View): Animator {
+    current.mutate()
     view.setHasTransientState(true)
     val cm = ImageLoadingColorMatrix()
 

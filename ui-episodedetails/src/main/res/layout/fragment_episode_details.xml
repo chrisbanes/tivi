@@ -20,14 +20,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="episode"
             type="app.tivi.data.entities.Episode" />
-
-        <variable
-            name="tmdbImageUrlProvider"
-            type="app.tivi.tmdb.TmdbImageUrlProvider" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -47,8 +42,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tmdbBackdropPath="@{episode.tmdbBackdropPath}"
-            app:tmdbImageUrlProvider="@{tmdbImageUrlProvider}" />
+            app:tmdbBackdropPath="@{episode.tmdbBackdropPath}" />
 
         <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/ep_details_title"

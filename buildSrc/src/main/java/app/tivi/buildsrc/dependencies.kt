@@ -151,12 +151,6 @@ object Libs {
         const val androidProcessor = "com.google.dagger:dagger-android-processor:$version"
     }
 
-    object Glide {
-        private const val version = "4.9.0"
-        const val glide = "com.github.bumptech.glide:glide:$version"
-        const val compiler = "com.github.bumptech.glide:compiler:$version"
-    }
-
     object Retrofit {
         private const val version = "2.6.1"
         const val retrofit = "com.squareup.retrofit2:retrofit:$version"
@@ -176,6 +170,11 @@ object Libs {
         const val paging = "com.airbnb.android:epoxy-paging:$version"
         const val dataBinding = "com.airbnb.android:epoxy-databinding:$version"
         const val processor = "com.airbnb.android:epoxy-processor:$version"
+    }
+
+    object Coil {
+        private const val version = "0.7.0"
+        const val coil = "io.coil-kt:coil:$version"
     }
 
     object AssistedInject {

@@ -48,10 +48,6 @@
             type="String" />
 
         <variable
-            name="tmdbImageUrlProvider"
-            type="app.tivi.tmdb.TmdbImageUrlProvider" />
-
-        <variable
             name="clickListener"
             type="android.view.View.OnClickListener" />
 
@@ -97,7 +93,6 @@
             app:layout_constraintDimensionRatio="w,1.5:1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tmdbImageUrlProvider="@{tmdbImageUrlProvider}"
             app:image="@{posterImage}"
             app:topCornerOutlineProvider="@{ @dimen/image_round_rect_radius }" />
 

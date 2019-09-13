@@ -40,7 +40,6 @@ import app.tivi.domain.observers.ObserveShowNextEpisodeToWatch
 import app.tivi.domain.observers.ObserveShowSeasonData
 import app.tivi.domain.observers.ObserveShowViewStats
 import app.tivi.showdetails.ShowDetailsNavigator
-import app.tivi.tmdb.TmdbManager
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectFrom
 import com.airbnb.mvrx.FragmentViewModelContext
@@ -65,7 +64,6 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     observeShowFollowStatus: ObserveShowFollowStatus,
     observeNextEpisodeToWatch: ObserveShowNextEpisodeToWatch,
     observeShowViewStats: ObserveShowViewStats,
-    tmdbManager: TmdbManager,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val changeSeasonFollowStatus: ChangeSeasonFollowStatus
 ) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
@@ -100,10 +98,6 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
 
         viewModelScope.launchObserve(observeNextEpisodeToWatch) { flow ->
             flow.distinctUntilChanged().execute { copy(nextEpisodeToWatch = it) }
-        }
-
-        viewModelScope.launch {
-            tmdbManager.imageProviderFlow.execute { copy(tmdbImageUrlProvider = it) }
         }
 
         viewModelScope.launchObserve(observeShowSeasons) { flow ->

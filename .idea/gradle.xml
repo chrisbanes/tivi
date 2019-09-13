@@ -16,7 +16,7 @@
             <option value="$PROJECT_DIR$/common-databinding" />
             <option value="$PROJECT_DIR$/common-entrygrid" />
             <option value="$PROJECT_DIR$/common-epoxy" />
-            <option value="$PROJECT_DIR$/common-glide" />
+            <option value="$PROJECT_DIR$/common-imageloading" />
             <option value="$PROJECT_DIR$/common-layouts" />
             <option value="$PROJECT_DIR$/common-ui" />
             <option value="$PROJECT_DIR$/data" />

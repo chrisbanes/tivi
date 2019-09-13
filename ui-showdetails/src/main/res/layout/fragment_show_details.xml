@@ -45,8 +45,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:image="@{state.backdropImage}"
-            app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider.invoke()}" />
+            app:image="@{state.backdropImage}" />
 
         <View
             android:id="@+id/details_backdrop_scrim"
@@ -69,7 +68,6 @@
             app:clipToOutline="@{true}"
             app:imageSaturateOnLoad="@{false}"
             app:outlineProviderInstance="@{app.tivi.ui.RoundRectViewOutline.INSTANCE}"
-            app:tmdbImageUrlProvider="@{state.tmdbImageUrlProvider.invoke()}"
             app:image="@{state.posterImage}" />
 
         <!-- Needed to fill a rounding error gap in MotionLayout. See https://issuetracker.google.com/112728689 -->

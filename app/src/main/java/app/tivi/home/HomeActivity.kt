@@ -17,7 +17,6 @@
 package app.tivi.home
 
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -44,15 +43,18 @@ import app.tivi.home.search.SearchViewModel
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktConstants
 import app.tivi.ui.SpacingItemDecorator
-import app.tivi.ui.glide.GlideApp
-import app.tivi.ui.glide.asGlideTarget
 import app.tivi.ui.navigation.AppBarConfiguration
 import app.tivi.ui.navigation.NavigationUI
 import app.tivi.ui.navigation.NavigationView
+import coil.Coil
+import coil.api.load
+import coil.size.PixelSize
+import coil.size.Size
+import coil.size.SizeResolver
+import coil.transform.CircleCropTransformation
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.viewModel
 import com.airbnb.mvrx.withState
-import com.bumptech.glide.request.target.Target
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
@@ -90,7 +92,6 @@ class HomeActivity : TiviActivityMvRxView() {
     lateinit var homeNavigationViewModelFactory: HomeActivityViewModel.Factory
 
     private lateinit var binding: ActivityHomeBinding
-    private lateinit var userMenuItemGlideTarget: Target<Drawable>
 
     private val navigationEpoxyController = HomeNavigationEpoxyController(
             object : HomeNavigationEpoxyController.Callbacks {
@@ -139,9 +140,6 @@ class HomeActivity : TiviActivityMvRxView() {
             setController(navigationEpoxyController)
             addItemDecoration(SpacingItemDecorator(bottom = toDp(2)))
         }
-
-        userMenuItemGlideTarget = binding.homeToolbar.menu.findItem(R.id.home_menu_user_avatar)
-                .asGlideTarget(binding.homeToolbar)
     }
 
     override fun onStart() {
@@ -159,12 +157,16 @@ class HomeActivity : TiviActivityMvRxView() {
             val loginMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_login)
             if (state.authState == TraktAuthState.LOGGED_IN) {
                 userMenuItem.isVisible = true
-                state.user?.let { user ->
-                    if (user.avatarUrl != null) {
-                        GlideApp.with(this)
-                                .load(user.avatarUrl)
-                                .circleCrop()
-                                .into(userMenuItemGlideTarget)
+                if (state.user?.avatarUrl != null) {
+                    Coil.load(this, state.user.avatarUrl) {
+                        transformations(CircleCropTransformation())
+                        size(object : SizeResolver {
+                            override suspend fun size(): Size {
+                                val height = binding.homeToolbar.height
+                                return PixelSize(height, height)
+                            }
+                        })
+                        target { userMenuItem.icon = it }
                     }
                 }
                 loginMenuItem.isVisible = false

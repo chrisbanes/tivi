@@ -56,7 +56,7 @@ dependencies {
     implementation project(":common-ui")
     implementation project(":common-epoxy")
     implementation project(":common-layouts")
-    implementation project(":common-glide")
+    implementation project(':common-imageloading')
     implementation project(":common-databinding")
 
     implementation Libs.AndroidX.Lifecycle.extensions

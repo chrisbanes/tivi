@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,31 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-import app.tivi.buildsrc.Libs
+package app.tivi.appinitializers
 
-apply plugin: 'kotlin'
+import android.app.Application
+import app.tivi.domain.interactors.DeleteFolder
+import java.io.File
+import javax.inject.Inject
 
-apply plugin: 'kotlin-kapt'
-kapt {
-    correctErrorTypes = true
-    useBuildCache = true
-}
-
-dependencies {
-    api project(":base")
-    api project(":trakt")
-    implementation project(":tmdb")
-
-    api Libs.AndroidX.Room.common
-    api Libs.AndroidX.Room.ktx
-    implementation Libs.AndroidX.collection
-
-    api Libs.AndroidX.Paging.common
-
-    api Libs.threeTenBpNoTzdb
-
-    kapt Libs.Dagger.compiler
+class ClearGlideCacheInitializer @Inject constructor(
+    private val deleteFolder: DeleteFolder
+) : AppInitializer {
+    override fun init(application: Application) {
+        val dir = File(application.cacheDir, "image_manager_disk_cache")
+        deleteFolder(DeleteFolder.Params(dir))
+    }
 }

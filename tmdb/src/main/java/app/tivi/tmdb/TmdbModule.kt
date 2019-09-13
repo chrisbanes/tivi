@@ -29,6 +29,11 @@ import javax.inject.Singleton
 
 @Module
 class TmdbModule {
+    @Provides
+    fun provideTmdbImageUrlProvider(tmdbManager: TmdbManager): TmdbImageUrlProvider {
+        return tmdbManager.getLatestImageProvider()
+    }
+
     @Singleton
     @Provides
     fun provideTmdb(

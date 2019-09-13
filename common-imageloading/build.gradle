@@ -46,14 +46,12 @@ android {
 
 dependencies {
     implementation project(":base")
+    implementation project(":base-android")
     implementation project(":data")
     implementation project(":common-ui")
+    implementation project(":tmdb")
 
     implementation Libs.AndroidX.coreKtx
-    api Libs.AndroidX.palette
 
-    api Libs.Glide.glide
-    kapt Libs.Glide.compiler
-    // TODO work out why this is needed
-    kapt 'androidx.annotation:annotation:1.1.0'
+    api Libs.Coil.coil
 }

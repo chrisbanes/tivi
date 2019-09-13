@@ -43,7 +43,6 @@ class RecommendedShowsFragment : EntryGridFragment<RecommendedEntryWithShow, Rec
             override fun buildItemModel(item: RecommendedEntryWithShow): EpoxyModel<*> {
                 return PosterGridItemBindingModel_()
                         .id(item.generateStableId())
-                        .tmdbImageUrlProvider(state.tmdbImageUrlProvider)
                         .posterImage(item.images.findHighestRatedPoster())
                         .tiviShow(item.show)
                         .transitionName(item.show.homepage)

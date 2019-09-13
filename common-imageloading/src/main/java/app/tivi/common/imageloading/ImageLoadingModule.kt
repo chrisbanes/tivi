@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,31 +12,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-import app.tivi.buildsrc.Libs
+package app.tivi.common.imageloading
 
-apply plugin: 'kotlin'
+import app.tivi.appinitializers.AppInitializer
 
-apply plugin: 'kotlin-kapt'
-kapt {
-    correctErrorTypes = true
-    useBuildCache = true
-}
+import dagger.Binds
+import dagger.Module
+import dagger.multibindings.IntoSet
 
-dependencies {
-    api project(":base")
-    api project(":trakt")
-    implementation project(":tmdb")
-
-    api Libs.AndroidX.Room.common
-    api Libs.AndroidX.Room.ktx
-    implementation Libs.AndroidX.collection
-
-    api Libs.AndroidX.Paging.common
-
-    api Libs.threeTenBpNoTzdb
-
-    kapt Libs.Dagger.compiler
+@Module
+abstract class ImageLoadingModule {
+    @Binds
+    @IntoSet
+    abstract fun provideCoilInitializer(bind: CoilAppInitializer): AppInitializer
 }

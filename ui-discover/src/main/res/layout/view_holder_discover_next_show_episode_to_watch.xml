@@ -36,8 +36,7 @@
             app:layout_constraintDimensionRatio="w,1.5:1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:roundedCornerOutlineProvider="@{ @dimen/image_round_rect_radius }"
-            app:tmdbImageUrlProvider="@{tmdbImageUrlProvider}" />
+            app:roundedCornerOutlineProvider="@{ @dimen/image_round_rect_radius }" />
 
         <TextView
             android:id="@+id/season_episode_number"
@@ -80,10 +79,6 @@
         <variable
             name="posterImage"
             type="app.tivi.data.entities.TmdbImageEntity" />
-
-        <variable
-            name="tmdbImageUrlProvider"
-            type="app.tivi.tmdb.TmdbImageUrlProvider" />
 
         <variable
             name="episode"
