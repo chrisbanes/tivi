@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.ui.imageloading
+package app.tivi.common.imageloading
 
 import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.TmdbImageEntity

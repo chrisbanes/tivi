@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package app.tivi.appinitializers
+package app.tivi.common.imageloading
 
 import android.app.Application
-import app.tivi.ui.imageloading.TmdbImageEntityCoilMapper
+import app.tivi.appinitializers.AppInitializer
 import coil.Coil
 import coil.ImageLoader
 import javax.inject.Inject
 
-class CoilInitializer @Inject constructor(
+class CoilAppInitializer @Inject constructor(
     private val mapper: TmdbImageEntityCoilMapper
 ) : AppInitializer {
     override fun init(application: Application) {

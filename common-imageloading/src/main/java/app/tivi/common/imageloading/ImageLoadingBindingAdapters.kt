@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.ui.imageloading
+package app.tivi.common.imageloading
 
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter

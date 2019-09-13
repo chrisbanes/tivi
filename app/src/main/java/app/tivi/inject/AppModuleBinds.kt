@@ -22,12 +22,12 @@ import app.tivi.TiviAppNavigator
 import app.tivi.TiviApplication
 import app.tivi.appinitializers.AppInitializer
 import app.tivi.appinitializers.ArchTaskExecutorInitializer
-import app.tivi.appinitializers.CoilInitializer
 import app.tivi.appinitializers.EmojiInitializer
 import app.tivi.appinitializers.EpoxyInitializer
 import app.tivi.appinitializers.PreferencesInitializer
 import app.tivi.appinitializers.ThreeTenBpInitializer
 import app.tivi.appinitializers.TimberInitializer
+import app.tivi.appinitializers.TmdbInitializer
 import app.tivi.settings.TiviPreferences
 import app.tivi.settings.TiviPreferencesImpl
 import app.tivi.util.Logger
@@ -82,5 +82,5 @@ abstract class AppModuleBinds {
 
     @Binds
     @IntoSet
-    abstract fun provideCoilInitializer(bind: CoilInitializer): AppInitializer
+    abstract fun provideTmdbInitializer(bind: TmdbInitializer): AppInitializer
 }

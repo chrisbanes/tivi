@@ -41,11 +41,7 @@ class TmdbManager @Inject constructor(
 
     fun getLatestImageProvider() = imageProviderSubject.value
 
-    init {
-        refreshConfiguration()
-    }
-
-    private fun refreshConfiguration() {
+    fun refreshConfiguration() {
         processScope.launch {
             try {
                 val config = withContext(dispatchers.io) {
