@@ -28,7 +28,6 @@ import app.tivi.domain.invoke
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObservePagedWatchedShows
 import app.tivi.domain.observers.ObserveTraktAuthState
-import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.ShowStateSelector
@@ -49,8 +48,7 @@ class WatchedViewModel @AssistedInject constructor(
     private val updateWatchedShows: UpdateWatchedShows,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val observePagedWatchedShows: ObservePagedWatchedShows,
-    private val observeTraktAuthState: ObserveTraktAuthState,
-    tmdbManager: TmdbManager
+    private val observeTraktAuthState: ObserveTraktAuthState
 ) : TiviMvRxViewModel<WatchedViewState>(initialState) {
     private val boundaryCallback = object : PagedList.BoundaryCallback<WatchedShowEntryWithShow>() {
         override fun onZeroItemsLoaded() {
@@ -75,11 +73,6 @@ class WatchedViewModel @AssistedInject constructor(
                     .distinctUntilChanged()
                     .debounce(2000)
                     .execute { copy(isLoading = it() ?: false) }
-        }
-
-        viewModelScope.launch {
-            tmdbManager.imageProviderFlow
-                    .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
         }
 
         viewModelScope.launch {

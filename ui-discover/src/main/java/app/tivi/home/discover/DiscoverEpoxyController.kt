@@ -50,7 +50,6 @@ class DiscoverEpoxyController @Inject constructor(
         val trendingShows = viewState.trendingItems
         val popularShows = viewState.popularItems
         val recommendedShows = viewState.recommendedItems
-        val tmdbImageUrlProvider = viewState.tmdbImageUrlProvider
 
         if (viewState.nextEpisodeWithShowToWatched != null) {
             header {
@@ -63,7 +62,6 @@ class DiscoverEpoxyController @Inject constructor(
                 spanSizeOverride(TotalSpanOverride)
                 episode(viewState.nextEpisodeWithShowToWatched.episode)
                 season(viewState.nextEpisodeWithShowToWatched.season)
-                tmdbImageUrlProvider(viewState.tmdbImageUrlProvider)
                 tiviShow(viewState.nextEpisodeWithShowToWatched.show)
                 posterImage(viewState.nextEpisodeWithShowToWatched.images.findHighestRatedPoster())
                 textCreator(textCreator)
@@ -92,7 +90,6 @@ class DiscoverEpoxyController @Inject constructor(
                 withModelsFrom(trendingShows) { item ->
                     PosterCardItemBindingModel_().apply {
                         id(item.generateStableId())
-                        tmdbImageUrlProvider(tmdbImageUrlProvider)
                         tiviShow(item.show)
                         posterImage(item.images.findHighestRatedPoster())
                         transitionName("trending_${item.show.homepage}")
@@ -130,7 +127,6 @@ class DiscoverEpoxyController @Inject constructor(
                 withModelsFrom(recommendedShows) { item ->
                     PosterCardItemBindingModel_().apply {
                         id(item.generateStableId())
-                        tmdbImageUrlProvider(tmdbImageUrlProvider)
                         tiviShow(item.show)
                         posterImage(item.images.findHighestRatedPoster())
                         transitionName("recommended_${item.show.homepage}")
@@ -163,7 +159,6 @@ class DiscoverEpoxyController @Inject constructor(
                 withModelsFrom(popularShows) { item ->
                     PosterCardItemBindingModel_().apply {
                         id(item.generateStableId())
-                        tmdbImageUrlProvider(tmdbImageUrlProvider)
                         posterImage(item.images.findHighestRatedPoster())
                         tiviShow(item.show)
                         transitionName("popular_${item.show.homepage}")

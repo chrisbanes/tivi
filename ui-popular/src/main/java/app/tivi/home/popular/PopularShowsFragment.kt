@@ -57,7 +57,6 @@ class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShow
             override fun buildItemModel(item: PopularEntryWithShow): EpoxyModel<*> {
                 return PosterGridItemBindingModel_()
                         .id(item.generateStableId())
-                        .tmdbImageUrlProvider(state.tmdbImageUrlProvider)
                         .posterImage(item.images.findHighestRatedPoster())
                         .tiviShow(item.show)
                         .transitionName(item.show.homepage)

@@ -36,7 +36,6 @@ import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.inject.PerActivity
 import app.tivi.showdetails.details.databinding.ViewHolderDetailsSeasonBinding
-import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.ui.widget.PopupMenuButton
 import com.airbnb.epoxy.Carousel
 import com.airbnb.epoxy.TypedEpoxyController
@@ -83,7 +82,7 @@ class ShowDetailsEpoxyController @Inject constructor(
             }
         }
 
-        buildRelatedShowsModels(viewState.relatedShows, viewState.tmdbImageUrlProvider)
+        buildRelatedShowsModels(viewState.relatedShows)
 
         buildSeasonsModels(viewState.viewStats, viewState.seasons, viewState.expandedSeasonIds)
     }
@@ -146,10 +145,7 @@ class ShowDetailsEpoxyController @Inject constructor(
         }
     }
 
-    private fun buildRelatedShowsModels(
-        relatedShows: Async<List<RelatedShowEntryWithShow>>,
-        tmdbImageUrlProvider: Async<TmdbImageUrlProvider>
-    ) {
+    private fun buildRelatedShowsModels(relatedShows: Async<List<RelatedShowEntryWithShow>>) {
         if (relatedShows is Success) {
             val related = relatedShows()
             if (related.isNotEmpty()) {
@@ -174,7 +170,6 @@ class ShowDetailsEpoxyController @Inject constructor(
                                 .id("related_${relatedShow.id}")
                                 .tiviShow(relatedShow)
                                 .posterImage(relatedEntry.images.findHighestRatedPoster())
-                                .tmdbImageUrlProvider(tmdbImageUrlProvider())
                                 .clickListener { view -> callbacks?.onRelatedShowClicked(relatedShow, view) }
                     }
                 }

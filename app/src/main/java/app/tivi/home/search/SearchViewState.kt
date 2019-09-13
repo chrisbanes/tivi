@@ -17,11 +17,9 @@
 package app.tivi.home.search
 
 import app.tivi.data.entities.SearchResults
-import app.tivi.tmdb.TmdbImageUrlProvider
 import com.airbnb.mvrx.MvRxState
 
 data class SearchViewState(
     val searchResults: SearchResults? = null,
-    val refreshing: Boolean = false,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider()
+    val refreshing: Boolean = false
 ) : MvRxState

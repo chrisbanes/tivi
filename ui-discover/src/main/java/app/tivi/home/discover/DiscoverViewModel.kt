@@ -28,7 +28,6 @@ import app.tivi.domain.observers.ObservePopularShows
 import app.tivi.domain.observers.ObserveRecommendedShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveTrendingShows
-import app.tivi.tmdb.TmdbManager
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectFrom
@@ -50,20 +49,13 @@ class DiscoverViewModel @AssistedInject constructor(
     private val updateRecommendedShows: UpdateRecommendedShows,
     observeRecommendedShows: ObserveRecommendedShows,
     observeNextShowEpisodeToWatch: ObserveNextShowEpisodeToWatch,
-    observeTraktAuthState: ObserveTraktAuthState,
-    tmdbManager: TmdbManager
+    observeTraktAuthState: ObserveTraktAuthState
 ) : TiviMvRxViewModel<DiscoverViewState>(initialState) {
     private val trendingLoadingState = ObservableLoadingCounter()
     private val popularLoadingState = ObservableLoadingCounter()
     private val recommendedLoadingState = ObservableLoadingCounter()
 
     init {
-        viewModelScope.launch {
-            tmdbManager.imageProviderFlow.execute {
-                copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider)
-            }
-        }
-
         viewModelScope.launch {
             trendingLoadingState.observable.collect { active ->
                 setState { copy(trendingRefreshing = active) }

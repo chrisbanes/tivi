@@ -19,17 +19,17 @@ package app.tivi.home.watched
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.common.layouts.HeaderBindingModel_
-import app.tivi.data.entities.SortOption
-import app.tivi.data.entities.findHighestRatedPoster
-import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.common.layouts.emptyState
 import app.tivi.common.layouts.filter
 import app.tivi.common.layouts.header
+import app.tivi.data.entities.SortOption
+import app.tivi.data.entities.findHighestRatedPoster
+import app.tivi.data.resultentities.WatchedShowEntryWithShow
+import app.tivi.extensions.observable
 import app.tivi.home.HomeTextCreator
 import app.tivi.ui.SortPopupMenuListener
-import app.tivi.common.epoxy.TotalSpanOverride
-import app.tivi.extensions.observable
 import app.tivi.ui.popupMenuItemIdToSortOption
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.epoxy.EpoxyModel
@@ -97,7 +97,6 @@ class WatchedEpoxyController @Inject constructor(
             watchedEntry(item?.entry)
             dateFormatter(dateFormatter)
             textCreator(textCreator)
-            tmdbImageUrlProvider(viewState.tmdbImageUrlProvider)
         }
     }
 

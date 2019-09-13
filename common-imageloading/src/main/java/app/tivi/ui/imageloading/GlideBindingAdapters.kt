@@ -21,28 +21,24 @@ import androidx.databinding.BindingAdapter
 import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TmdbImageEntity
-import app.tivi.tmdb.TmdbImageUrlProvider
 import coil.api.loadAny
 
 @BindingAdapter(
         "tmdbBackdropPath",
-        "tmdbImageUrlProvider",
         "imageSaturateOnLoad",
         requireAll = false
 )
 fun loadBackdrop(
     view: ImageView,
     oldPath: String?,
-    oldUrlProvider: TmdbImageUrlProvider?,
     oldSaturateOnLoad: Boolean?,
     path: String?,
-    urlProvider: TmdbImageUrlProvider?,
     saturateOnLoad: Boolean?
 ) {
-    if (oldPath == path && oldUrlProvider == urlProvider && oldSaturateOnLoad == saturateOnLoad) {
+    if (oldPath == path && oldSaturateOnLoad == saturateOnLoad) {
         return
     }
-    if (urlProvider != null && path != null) {
+    if (path != null) {
         view.loadAny(ShowTmdbImage(path = path, type = ImageType.BACKDROP, showId = 0))
     } else {
         view.setImageDrawable(null)
@@ -51,23 +47,20 @@ fun loadBackdrop(
 
 @BindingAdapter(
         "image",
-        "tmdbImageUrlProvider",
         "imageSaturateOnLoad",
         requireAll = false
 )
 fun loadImage(
     view: ImageView,
     oldImage: TmdbImageEntity?,
-    oldUrlProvider: TmdbImageUrlProvider?,
     oldSaturateOnLoad: Boolean?,
     image: TmdbImageEntity?,
-    urlProvider: TmdbImageUrlProvider?,
     saturateOnLoad: Boolean?
 ) {
-    if (oldImage == image && oldUrlProvider == urlProvider && oldSaturateOnLoad == saturateOnLoad) {
+    if (oldImage == image && oldSaturateOnLoad == saturateOnLoad) {
         return
     }
-    if (urlProvider != null && image != null) {
+    if (image != null) {
         view.loadAny(image)
     } else {
         view.setImageDrawable(null)

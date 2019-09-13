@@ -34,7 +34,6 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.domain.PagingInteractor
 import app.tivi.domain.interactors.ChangeShowFollowStatus
-import app.tivi.extensions.combine
 import app.tivi.tmdb.TmdbManager
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
@@ -42,6 +41,7 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.broadcastIn
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -81,13 +81,12 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
     val viewState: Flow<EntryViewState<LI>> by lazy(LazyThreadSafetyMode.NONE) {
         combine(
                 messages.asFlow(),
-                tmdbManager.imageProviderFlow,
                 pagingInteractor.observe(),
                 loaded.asFlow(),
                 showSelection.observeIsSelectionOpen(),
                 showSelection.observeSelectedShowIds()
-        ) { message, imageProvider, pagedList, loaded, selectionOpen, selectedIds ->
-            EntryViewState(message, imageProvider, pagedList, loaded, selectionOpen, selectedIds)
+        ) { message, pagedList, loaded, selectionOpen, selectedIds ->
+            EntryViewState(message, pagedList, loaded, selectionOpen, selectedIds)
         }.broadcastIn(viewModelScope).asFlow()
     }
 

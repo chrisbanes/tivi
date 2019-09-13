@@ -38,10 +38,6 @@
             type="String" />
 
         <variable
-            name="tmdbImageUrlProvider"
-            type="app.tivi.tmdb.TmdbImageUrlProvider" />
-
-        <variable
             name="clickListener"
             type="android.view.View.OnClickListener" />
     </data>
@@ -75,7 +71,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="centerCrop"
-            app:tmdbImageUrlProvider="@{tmdbImageUrlProvider}"
             app:image="@{posterImage}" />
 
     </com.google.android.material.card.MaterialCardView>

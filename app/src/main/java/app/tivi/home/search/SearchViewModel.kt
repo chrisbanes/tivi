@@ -20,7 +20,6 @@ import androidx.lifecycle.viewModelScope
 import app.tivi.TiviMvRxViewModel
 import app.tivi.domain.interactors.SearchShows
 import app.tivi.domain.launchObserve
-import app.tivi.tmdb.TmdbManager
 import app.tivi.util.ObservableLoadingCounter
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
@@ -36,8 +35,7 @@ import kotlinx.coroutines.withContext
 
 class SearchViewModel @AssistedInject constructor(
     @Assisted initialState: SearchViewState,
-    private val searchShows: SearchShows,
-    tmdbManager: TmdbManager
+    private val searchShows: SearchShows
 ) : TiviMvRxViewModel<SearchViewState>(initialState) {
     private val searchQuery = ConflatedBroadcastChannel<String>()
     private val loadingState = ObservableLoadingCounter()
@@ -57,11 +55,6 @@ class SearchViewModel @AssistedInject constructor(
 
         viewModelScope.launch {
             loadingState.observable.collect { setState { copy(refreshing = it) } }
-        }
-
-        viewModelScope.launch {
-            tmdbManager.imageProviderFlow
-                    .execute { copy(tmdbImageUrlProvider = it() ?: tmdbImageUrlProvider) }
         }
 
         viewModelScope.launchObserve(searchShows) {

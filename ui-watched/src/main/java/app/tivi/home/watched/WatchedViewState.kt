@@ -19,11 +19,9 @@ package app.tivi.home.watched
 import androidx.paging.PagedList
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
-import app.tivi.tmdb.TmdbImageUrlProvider
 import com.airbnb.mvrx.MvRxState
 
 data class WatchedViewState(
-    val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider(),
     val isLoading: Boolean = false,
     val isEmpty: Boolean = false,
     val watchedShows: PagedList<WatchedShowEntryWithShow>? = null,

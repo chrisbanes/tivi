@@ -19,11 +19,9 @@ package app.tivi.home.followed
 import androidx.paging.PagedList
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
-import app.tivi.tmdb.TmdbImageUrlProvider
 import com.airbnb.mvrx.MvRxState
 
 data class FollowedViewState(
-    val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider(),
     val isLoading: Boolean = false,
     val isEmpty: Boolean = false,
     val followedShows: PagedList<FollowedShowEntryWithShow>? = null,

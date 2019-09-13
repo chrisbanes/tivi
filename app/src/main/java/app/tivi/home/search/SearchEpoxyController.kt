@@ -41,7 +41,6 @@ class SearchEpoxyController @Inject constructor(
                 id(showDetailed.show.id)
                 tiviShow(showDetailed.show)
                 textCreator(textCreator)
-                tmdbImageUrlProvider(viewState.tmdbImageUrlProvider)
                 clickListener { _ ->
                     callbacks?.onSearchItemClicked(showDetailed.show)
                 }

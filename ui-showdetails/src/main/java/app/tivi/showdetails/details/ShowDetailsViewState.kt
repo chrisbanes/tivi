@@ -22,7 +22,6 @@ import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.views.FollowedShowsWatchStats
-import app.tivi.tmdb.TmdbImageUrlProvider
 import com.airbnb.mvrx.Async
 import com.airbnb.mvrx.MvRxState
 import com.airbnb.mvrx.Uninitialized
@@ -38,7 +37,6 @@ data class ShowDetailsViewState(
     val viewStats: Async<FollowedShowsWatchStats> = Uninitialized,
     val seasons: Async<List<SeasonWithEpisodesAndWatches>> = Uninitialized,
     val expandedSeasonIds: Set<Long> = emptySet(),
-    val tmdbImageUrlProvider: Async<TmdbImageUrlProvider> = Uninitialized,
     val refreshing: Boolean = false
 ) : MvRxState {
     constructor(args: ShowDetailsFragment.Arguments) : this(args.showId)

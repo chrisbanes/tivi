@@ -23,11 +23,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.os.bundleOf
+import app.tivi.TiviMvRxBottomSheetFragment
+import app.tivi.common.epoxy.SwipeAwayCallbacks
+import app.tivi.episodedetails.databinding.FragmentEpisodeDetailsBinding
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.showdetails.ShowDetailsNavigator
-import app.tivi.common.epoxy.SwipeAwayCallbacks
-import app.tivi.TiviMvRxBottomSheetFragment
-import app.tivi.episodedetails.databinding.FragmentEpisodeDetailsBinding
 import com.airbnb.epoxy.EpoxyTouchHelper
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
@@ -113,7 +113,6 @@ class EpisodeDetailsFragment : TiviMvRxBottomSheetFragment() {
         withState(viewModel) { state ->
             // TODO don't just use the result
             binding.episode = state.episode()
-            binding.tmdbImageUrlProvider = state.tmdbImageUrlProvider()
 
             binding.epDetailsFab.apply {
                 when (state.action) {

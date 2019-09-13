@@ -43,7 +43,6 @@ class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingS
             override fun buildItemModel(item: TrendingEntryWithShow): EpoxyModel<*> {
                 return PosterGridItemBindingModel_()
                         .id(item.generateStableId())
-                        .tmdbImageUrlProvider(state.tmdbImageUrlProvider)
                         .posterImage(item.images.findHighestRatedPoster())
                         .tiviShow(item.show)
                         .transitionName(item.show.homepage)

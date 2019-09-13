@@ -20,7 +20,6 @@ import app.tivi.data.resultentities.EpisodeWithSeasonWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
-import app.tivi.tmdb.TmdbImageUrlProvider
 import com.airbnb.mvrx.MvRxState
 
 data class DiscoverViewState(
@@ -30,6 +29,5 @@ data class DiscoverViewState(
     val popularRefreshing: Boolean = false,
     val recommendedItems: List<RecommendedEntryWithShow> = emptyList(),
     val recommendedRefreshing: Boolean = false,
-    val nextEpisodeWithShowToWatched: EpisodeWithSeasonWithShow? = null,
-    val tmdbImageUrlProvider: TmdbImageUrlProvider = TmdbImageUrlProvider()
+    val nextEpisodeWithShowToWatched: EpisodeWithSeasonWithShow? = null
 ) : MvRxState
