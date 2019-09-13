@@ -41,8 +41,12 @@ class SearchRepository @Inject constructor(
         // We need to hit TMDb instead
         return when (val tmdbResult = tmdbDataSource.search(query)) {
             is Success -> {
-                tmdbResult.data.map {
-                    showStore.getIdOrSavePlaceholder(it)
+                tmdbResult.data.map { (show, images) ->
+                    val showId = showStore.getIdOrSavePlaceholder(show)
+                    if (images.isNotEmpty()) {
+                        showStore.saveImagesIfEmpty(showId, images.map { it.copy(showId = showId) })
+                    }
+                    showId
                 }.also { results ->
                     // We need to save the search results
                     searchStore.setResults(query, results.toLongArray())

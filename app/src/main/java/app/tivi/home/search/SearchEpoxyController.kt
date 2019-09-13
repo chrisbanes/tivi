@@ -40,10 +40,9 @@ class SearchEpoxyController @Inject constructor(
             searchItemShow {
                 id(showDetailed.show.id)
                 tiviShow(showDetailed.show)
+                posterImage(showDetailed.poster)
                 textCreator(textCreator)
-                clickListener { _ ->
-                    callbacks?.onSearchItemClicked(showDetailed.show)
-                }
+                clickListener { _ -> callbacks?.onSearchItemClicked(showDetailed.show) }
             }
         }
     }

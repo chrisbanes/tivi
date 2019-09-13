@@ -24,4 +24,7 @@ import app.tivi.data.entities.ShowTmdbImage
 abstract class ShowImagesDao : EntityDao<ShowTmdbImage> {
     @Query("DELETE FROM show_images WHERE show_id = :showId")
     abstract suspend fun deleteForShowId(showId: Long)
+
+    @Query("SELECT COUNT(*) FROM show_images WHERE show_id = :showId")
+    abstract suspend fun imageCountForShowId(showId: Long): Int
 }
