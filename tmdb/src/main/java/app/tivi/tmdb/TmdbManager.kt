@@ -39,6 +39,8 @@ class TmdbManager @Inject constructor(
     private val imageProviderSubject = ConflatedBroadcastChannel(TmdbImageUrlProvider())
     val imageProviderFlow: Flow<TmdbImageUrlProvider> = imageProviderSubject.asFlow()
 
+    fun getLatestImageProvider() = imageProviderSubject.value
+
     init {
         refreshConfiguration()
     }
