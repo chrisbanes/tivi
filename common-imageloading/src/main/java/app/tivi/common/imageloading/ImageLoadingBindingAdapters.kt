@@ -39,7 +39,13 @@ fun loadBackdrop(
         return
     }
     if (path != null) {
-        view.loadAny(ShowTmdbImage(path = path, type = ImageType.BACKDROP, showId = 0))
+        view.loadAny(ShowTmdbImage(path = path, type = ImageType.BACKDROP, showId = 0)) {
+            if (saturateOnLoad == null || saturateOnLoad == true) {
+                val saturatingTarget = SaturatingImageViewTarget(view)
+                target(saturatingTarget)
+                listener(saturatingTarget)
+            }
+        }
     } else {
         view.setImageDrawable(null)
     }
@@ -61,7 +67,13 @@ fun loadImage(
         return
     }
     if (image != null) {
-        view.loadAny(image)
+        view.loadAny(image) {
+            if (saturateOnLoad == null || saturateOnLoad == true) {
+                val saturatingTarget = SaturatingImageViewTarget(view)
+                target(saturatingTarget)
+                listener(saturatingTarget)
+            }
+        }
     } else {
         view.setImageDrawable(null)
     }
