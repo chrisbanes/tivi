@@ -40,5 +40,5 @@
     <color name="swipe_away_background">#DEDEDE</color>
 
     <color name="system_ui_scrim_light">#B3FFFFFF</color> <!-- 70% white -->
-    <color name="system_ui_scrim_dark">#40000000</color> <!-- 25% black -->
+    <color name="system_ui_scrim_dark">#30000000</color> <!-- 19% black -->
 </resources>

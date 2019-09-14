@@ -36,7 +36,7 @@
             <KeyPosition
                 app:framePosition="20"
                 app:keyPositionType="deltaRelative"
-                app:percentY="0.45"
+                app:percentY="0.5"
                 app:motionTarget="@id/details_poster" />
 
             <!-- This looks weird. We need a quick change from elevated to not-so-elevated at 18%
@@ -94,7 +94,7 @@
             android:id="@id/details_appbar_background"
             android:layout_width="0dp"
             android:layout_height="@dimen/details_corner_cutout"
-            app:layout_constraintBottom_toBottomOf="@id/details_poster"
+            app:layout_constraintBottom_toBottomOf="@id/details_backdrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -122,11 +122,10 @@
             android:layout_width="80dp"
             android:layout_height="0dp"
             android:layout_marginStart="@dimen/spacing_normal"
-            android:layout_marginTop="200dp"
             android:elevation="@dimen/details_poster_elevation"
             app:layout_constraintDimensionRatio="h,1:1.5"
             app:layout_constraintStart_toStartOf="@id/details_rv"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@id/details_appbar_background" />
 
         <Constraint
             android:id="@id/details_status_bar_anchor">
@@ -195,6 +194,13 @@
             app:layout_constraintDimensionRatio="h,1:1.5"
             app:layout_constraintStart_toStartOf="@id/details_title"
             app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor" />
+
+        <!-- This gives us our parallax effect -->
+        <Constraint
+            android:id="@id/details_backdrop">
+            <Transform
+                android:translationY="-80dp" />
+        </Constraint>
 
         <Constraint
             android:id="@id/details_status_bar_anchor">

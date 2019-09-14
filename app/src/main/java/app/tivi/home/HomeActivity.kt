@@ -22,6 +22,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -112,6 +113,9 @@ class HomeActivity : TiviActivityMvRxView() {
             (v as MotionLayout).updateConstraintSets {
                 constrainHeight(R.id.status_scrim, insets.systemWindowInsetTop)
             }
+
+            v.updatePadding(left = insets.systemWindowInsetLeft,
+                    right = insets.systemWindowInsetRight)
         }
 
         binding.homeToolbar.setOnMenuItemClickListener(::onMenuItemClicked)

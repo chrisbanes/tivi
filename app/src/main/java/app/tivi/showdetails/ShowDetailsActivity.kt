@@ -21,10 +21,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
+import androidx.core.view.updatePadding
 import androidx.navigation.navArgs
 import app.tivi.R
 import app.tivi.TiviActivity
 import app.tivi.episodedetails.EpisodeDetailsFragment
+import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.showdetails.details.ShowDetailsFragment
 import app.tivi.util.observeEvent
 
@@ -55,8 +57,16 @@ class ShowDetailsActivity : TiviActivity() {
             }
         }
 
-        findViewById<View>(R.id.details_root).systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        findViewById<View>(R.id.details_root).apply {
+            systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+
+            doOnApplyWindowInsets { view, insets, paddingState ->
+                view.updatePadding(left = insets.systemWindowInsetLeft + paddingState.left,
+                        right = insets.systemWindowInsetRight + paddingState.right)
+            }
+        }
 
         postponeEnterTransition()
     }
