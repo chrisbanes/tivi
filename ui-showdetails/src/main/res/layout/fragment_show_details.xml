@@ -137,7 +137,6 @@
             android:id="@+id/details_status_bar_anchor"
             android:layout_width="0dp"
             android:layout_height="1px"
-            android:background="@drawable/status_bar_translucent_scrim"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
 
