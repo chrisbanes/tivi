@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2019 Google LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +17,23 @@
 <MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <ConstraintSet android:id="@+id/episode_details_open">
+
+
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/episode_details_closed">
+
+        <Constraint android:id="@+id/ep_details_rv">
+            <Layout
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ep_details_toolbar" />
+        </Constraint>
+
+    </ConstraintSet>
+
     <Transition
         app:constraintSetEnd="@id/episode_details_closed"
         app:constraintSetStart="@id/episode_details_open"
@@ -27,34 +43,12 @@
         <OnSwipe
             app:dragDirection="dragUp"
             app:moveWhenScrollAtTop="true"
+            app:onTouchUp="decelerateAndComplete"
             app:touchAnchorId="@id/ep_details_rv"
             app:touchAnchorSide="top"
-            app:touchRegionId="@id/ep_details_rv"
-            app:onTouchUp="decelerateAndComplete"/>
+            app:touchRegionId="@id/ep_details_rv" />
 
     </Transition>
-
-    <ConstraintSet android:id="@+id/episode_details_open">
-
-
-
-    </ConstraintSet>
-
-    <ConstraintSet android:id="@+id/episode_details_closed">
-
-
-        <Constraint
-            android:id="@+id/ep_details_rv">
-
-            <Layout
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </Constraint>
-
-    </ConstraintSet>
 
 
 </MotionScene>

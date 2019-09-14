@@ -21,12 +21,15 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.updateLayoutParams
 import app.tivi.TiviMvRxBottomSheetFragment
 import app.tivi.common.epoxy.SwipeAwayCallbacks
 import app.tivi.episodedetails.databinding.FragmentEpisodeDetailsBinding
+import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.resolveThemeColor
+import app.tivi.extensions.updateConstraintSets
 import app.tivi.showdetails.ShowDetailsNavigator
 import com.airbnb.epoxy.EpoxyTouchHelper
 import com.airbnb.mvrx.MvRx
@@ -70,6 +73,12 @@ class EpisodeDetailsFragment : TiviMvRxBottomSheetFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.epDetailsRv.setController(controller)
+
+        binding.epDetailsRoot.doOnApplyWindowInsets { v, insets, _ ->
+            (v as MotionLayout).updateConstraintSets {
+                constrainHeight(R.id.ep_details_status_bar_anchor, insets.systemWindowInsetTop)
+            }
+        }
 
         val context = requireContext()
         val swipeCallback = object : SwipeAwayCallbacks<EpDetailsWatchItemBindingModel_>(
