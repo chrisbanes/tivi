@@ -16,6 +16,8 @@
 
 package app.tivi.data.mappers
 
+import app.tivi.data.entities.ImageType
+import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import com.uwetrottmann.tmdb2.entities.TvShowResultsPage
 import javax.inject.Inject
@@ -24,6 +26,29 @@ import javax.inject.Singleton
 @Singleton
 class TmdbShowResultsPageToTiviShows @Inject constructor(
     private val tmdbShowMapper: TmdbBaseShowToTiviShow
-) : Mapper<TvShowResultsPage, List<TiviShow>> {
-    override suspend fun map(from: TvShowResultsPage) = from.results.map { tmdbShowMapper.map(it) }
+) : Mapper<TvShowResultsPage, List<Pair<TiviShow, List<ShowTmdbImage>>>> {
+    override suspend fun map(from: TvShowResultsPage): List<Pair<TiviShow, List<ShowTmdbImage>>> {
+        return from.results.map {
+            val show = tmdbShowMapper.map(it)
+
+            val images = ArrayList<ShowTmdbImage>()
+            if (it.poster_path != null) {
+                images += ShowTmdbImage(
+                        showId = 0,
+                        path = it.poster_path,
+                        isPrimary = true,
+                        type = ImageType.POSTER
+                )
+            }
+            if (it.backdrop_path != null) {
+                images += ShowTmdbImage(
+                        showId = 0,
+                        path = it.backdrop_path,
+                        isPrimary = true,
+                        type = ImageType.BACKDROP
+                )
+            }
+            show to images
+        }
+    }
 }

@@ -17,8 +17,9 @@
 package app.tivi.data.repositories.search
 
 import app.tivi.data.entities.Result
+import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 
 interface SearchDataSource {
-    suspend fun search(query: String): Result<List<TiviShow>>
+    suspend fun search(query: String): Result<List<Pair<TiviShow, List<ShowTmdbImage>>>>
 }

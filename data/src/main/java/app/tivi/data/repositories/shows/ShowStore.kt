@@ -95,6 +95,12 @@ class ShowStore @Inject constructor(
         entityInserter.insertOrUpdate(showImagesDao, images)
     }
 
+    suspend fun saveImagesIfEmpty(showId: Long, images: List<ShowTmdbImage>) = transactionRunner {
+        if (showImagesDao.imageCountForShowId(showId) <= 0) {
+            showImagesDao.insertAll(images)
+        }
+    }
+
     private fun mergeShows(
         local: TiviShow,
         trakt: TiviShow = TiviShow.EMPTY_SHOW,
