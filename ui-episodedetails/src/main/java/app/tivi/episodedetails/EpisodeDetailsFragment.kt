@@ -21,8 +21,8 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.core.os.bundleOf
+import androidx.core.view.updateLayoutParams
 import app.tivi.TiviMvRxBottomSheetFragment
 import app.tivi.common.epoxy.SwipeAwayCallbacks
 import app.tivi.episodedetails.databinding.FragmentEpisodeDetailsBinding
@@ -103,9 +103,15 @@ class EpisodeDetailsFragment : TiviMvRxBottomSheetFragment() {
 
         // Need to remove the fitSystemWindows flag from the MDC Dialog, otherwise it will be padded above the
         // navigation bar
-        bottomSheetDialog.findViewById<FrameLayout>(com.google.android.material.R.id.container)?.apply {
+        bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.container)?.apply {
             fitsSystemWindows = false
             setPadding(0, 0, 0, 0)
+        }
+
+        bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)?.apply {
+            updateLayoutParams {
+                height = ViewGroup.LayoutParams.MATCH_PARENT
+            }
         }
     }
 
