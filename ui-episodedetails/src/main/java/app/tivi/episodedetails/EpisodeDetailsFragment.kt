@@ -31,6 +31,7 @@ import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.showdetails.ShowDetailsNavigator
+import app.tivi.ui.motionlayout.FabShowHideTransitionListener
 import com.airbnb.epoxy.EpoxyTouchHelper
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
@@ -79,6 +80,11 @@ class EpisodeDetailsFragment : TiviMvRxBottomSheetFragment() {
                 constrainHeight(R.id.ep_details_status_bar_anchor, insets.systemWindowInsetTop)
             }
         }
+
+        binding.epDetailsRoot.setTransitionListener(FabShowHideTransitionListener(
+                binding.epDetailsFab, R.id.episode_details_open, R.id.episode_details_closed))
+
+        binding.epDetailsToolbar.setNavigationOnClickListener { bottomSheetDialog.dismiss() }
 
         val context = requireContext()
         val swipeCallback = object : SwipeAwayCallbacks<EpDetailsWatchItemBindingModel_>(

@@ -50,7 +50,7 @@
             android:minHeight="?attr/actionBarSize"
             android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
             app:layout_constraintTop_toBottomOf="@id/ep_details_status_bar_anchor"
-            app:navigationIcon="?attr/homeAsUpIndicator" />
+            app:navigationIcon="@drawable/ic_close_24dp" />
 
         <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/ep_details_title"

@@ -24,6 +24,7 @@ import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.os.bundleOf
 import app.tivi.SharedElementHelper
+import app.tivi.TiviMvRxFragment
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -31,9 +32,8 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.showdetails.ShowDetailsNavigator
-import app.tivi.ui.TransitionListenerAdapter
-import app.tivi.TiviMvRxFragment
 import app.tivi.showdetails.details.databinding.FragmentShowDetailsBinding
+import app.tivi.ui.motionlayout.FabShowHideTransitionListener
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
@@ -83,42 +83,8 @@ class ShowDetailsFragment : TiviMvRxFragment() {
         binding.detailsMotion.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 
-        binding.detailsMotion.setTransitionListener(object : TransitionListenerAdapter() {
-            override fun onTransitionCompleted(parent: MotionLayout, currentId: Int) {
-                super.onTransitionCompleted(parent, currentId)
-
-                when (currentId) {
-                    R.id.show_details_open -> {
-                        if (!binding.detailsFollowFab.isOrWillBeShown) {
-                            binding.detailsFollowFab.show()
-                        }
-                    }
-                    R.id.show_details_closed -> {
-                        if (!binding.detailsFollowFab.isOrWillBeHidden) {
-                            binding.detailsFollowFab.hide()
-                        }
-                    }
-                }
-            }
-
-            override fun onTransitionChange(
-                parent: MotionLayout,
-                startId: Int,
-                endId: Int,
-                progress: Float,
-                positive: Boolean
-            ) {
-                if (startId == R.id.show_details_open && endId == R.id.show_details_closed) {
-                    if (progress >= 0.53 && positive &&
-                            !binding.detailsFollowFab.isOrWillBeHidden) {
-                        binding.detailsFollowFab.hide()
-                    } else if (progress <= 0.47 && !positive &&
-                            !binding.detailsFollowFab.isOrWillBeShown) {
-                        binding.detailsFollowFab.show()
-                    }
-                }
-            }
-        })
+        binding.detailsMotion.setTransitionListener(FabShowHideTransitionListener(
+                binding.detailsFollowFab, R.id.show_details_open, R.id.show_details_closed))
 
         binding.detailsFollowFab.setOnClickListener {
             viewModel.onToggleMyShowsButtonClicked()
