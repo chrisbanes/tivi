@@ -34,7 +34,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="?android:attr/listPreferredItemHeight">
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:foreground="?attr/selectableItemBackground">
 
         <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/watch_date"

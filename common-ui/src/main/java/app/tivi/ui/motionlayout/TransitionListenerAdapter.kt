@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.ui
+package app.tivi.ui.motionlayout
 
 import androidx.constraintlayout.motion.widget.MotionLayout
 
