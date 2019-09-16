@@ -26,12 +26,14 @@ import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class SearchViewModel @AssistedInject constructor(
     @Assisted initialState: SearchViewState,
@@ -44,12 +46,13 @@ class SearchViewModel @AssistedInject constructor(
         viewModelScope.launch {
             searchQuery.asFlow()
                     .debounce(300)
-                    .collect {
+                    .collectLatest { query ->
                         loadingState.addLoader()
-                        withContext(searchShows.dispatcher) {
-                            searchShows(SearchShows.Params(it))
+                        val job = async(searchShows.dispatcher) {
+                            searchShows(SearchShows.Params(query))
                         }
-                        loadingState.removeLoader()
+                        job.invokeOnCompletion { loadingState.removeLoader() }
+                        job.await()
                     }
         }
 
@@ -63,9 +66,7 @@ class SearchViewModel @AssistedInject constructor(
     }
 
     fun setSearchQuery(query: String) {
-        viewModelScope.launch {
-            searchQuery.send(query)
-        }
+        searchQuery.sendBlocking(query)
     }
 
     fun clearQuery() = setSearchQuery("")
