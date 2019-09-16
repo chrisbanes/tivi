@@ -56,7 +56,7 @@
             android:layout_marginBottom="@dimen/spacing_small"
             android:layout_marginStart="@dimen/spacing_normal"
             android:layout_marginTop="@dimen/spacing_small"
-            android:background="@drawable/placeholder_small"
+            android:background="@drawable/placeholder_24dp"
             android:scaleType="centerCrop"
             android:transitionName="@{posterTransitionName}"
             app:image="@{posterImage}"
