@@ -31,6 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
+        android:foreground="?attr/selectableItemBackground"
         android:padding="@dimen/spacing_normal"
         android:text="@{episode.summary}"
         android:textAppearance="?attr/textAppearanceBody1"

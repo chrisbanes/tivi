@@ -20,30 +20,34 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="app.tivi.episodedetails.EpisodeDetailsViewState.Action" />
+
         <variable
-            name="episode"
-            type="app.tivi.data.entities.Episode" />
+            name="state"
+            type="app.tivi.episodedetails.EpisodeDetailsViewState" />
     </data>
 
     <app.tivi.ui.widget.NestedChildMotionLayout
         android:id="@+id/ep_details_root"
         android:layout_width="match_parent"
-        android:layout_height="600dp"
+        android:layout_height="match_parent"
         app:layoutDescription="@xml/scene_episode_details">
 
         <ImageView
             android:id="@+id/ep_details_fanart"
             android:layout_width="0dp"
-            android:layout_height="200dp"
+            android:layout_height="0dp"
+            android:background="?android:attr/textColorSecondary"
             android:scaleType="centerCrop"
-            android:background="?attr/colorBackgroundFloating"
-            app:foregroundScrim="@{ android.graphics.Color.BLACK }"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintDimensionRatio="h,4:3"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_max="270dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tmdbBackdropPath="@{episode.tmdbBackdropPath}" />
+            app:tmdbBackdropPath="@{state.episode.invoke().tmdbBackdropPath}" />
 
-        <androidx.appcompat.widget.Toolbar
+        <app.tivi.ui.widget.TintingToolbar
             android:id="@+id/ep_details_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -56,14 +60,15 @@
             android:id="@+id/ep_details_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/spacing_normal"
+            android:layout_marginBottom="@dimen/spacing_normal"
+            android:layout_marginEnd="@dimen/spacing_normal"
+            android:layout_marginStart="@dimen/spacing_normal"
             android:ellipsize="end"
-            android:text="@{episode.title}"
+            android:text="@{state.episode.invoke().title}"
             android:textAppearance="?attr/textAppearanceHeadline6"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark"
-            app:layout_constraintBottom_toBottomOf="@+id/ep_details_fanart"
-            app:layout_constraintEnd_toStartOf="@+id/ep_details_fab"
-            app:layout_constraintStart_toStartOf="@+id/ep_details_fanart"
+            app:layout_constraintBottom_toBottomOf="@id/ep_details_fanart"
+            app:layout_constraintEnd_toStartOf="@id/ep_details_fab"
+            app:layout_constraintStart_toStartOf="@id/ep_details_fanart"
             tools:text="@sample/shows.txt" />
 
         <com.airbnb.epoxy.EpoxyRecyclerView
@@ -75,7 +80,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ep_details_fanart"
+            app:layout_constraintTop_toBottomOf="@id/ep_details_fanart"
             app:paddingBottomGestureInsets="@{ true }"
             app:spanCount="3" />
 
@@ -84,10 +89,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/spacing_normal"
-            android:src="@drawable/ic_eye_24dp"
-            app:layout_constraintBottom_toTopOf="@+id/ep_details_rv"
+            android:src="@{state.action == Action.WATCH ? @drawable/ic_eye_24dp : @drawable/ic_eye_off_24dp}"
+            app:layout_constraintBottom_toTopOf="@id/ep_details_rv"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/ep_details_rv" />
+            app:layout_constraintTop_toTopOf="@id/ep_details_rv"
+            tools:src="@drawable/ic_eye_24dp" />
 
         <!-- The height of this is updated via an OnApplyWindowInsetsListener  -->
         <View

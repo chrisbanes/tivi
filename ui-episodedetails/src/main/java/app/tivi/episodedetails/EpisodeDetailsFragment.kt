@@ -82,9 +82,18 @@ class EpisodeDetailsFragment : TiviMvRxBottomSheetFragment() {
         }
 
         binding.epDetailsRoot.setTransitionListener(FabShowHideTransitionListener(
-                binding.epDetailsFab, R.id.episode_details_open, R.id.episode_details_closed))
+                binding.epDetailsFab, R.id.episode_details_expanded, R.id.episode_details_collapsed))
 
         binding.epDetailsToolbar.setNavigationOnClickListener { bottomSheetDialog.dismiss() }
+
+        binding.epDetailsFab.setOnClickListener {
+            withState(viewModel) { state ->
+                when (state.action) {
+                    EpisodeDetailsViewState.Action.WATCH -> viewModel.markWatched()
+                    EpisodeDetailsViewState.Action.UNWATCH -> viewModel.markUnwatched()
+                }
+            }
+        }
 
         val context = requireContext()
         val swipeCallback = object : SwipeAwayCallbacks<EpDetailsWatchItemBindingModel_>(
@@ -113,41 +122,26 @@ class EpisodeDetailsFragment : TiviMvRxBottomSheetFragment() {
                 .andCallbacks(swipeCallback)
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
-        // Need to remove the fitSystemWindows flag from the MDC Dialog, otherwise it will be padded above the
-        // navigation bar
-        bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.container)?.apply {
-            fitsSystemWindows = false
-            setPadding(0, 0, 0, 0)
-        }
-
-        bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)?.apply {
+        bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)?.run {
             updateLayoutParams {
                 height = ViewGroup.LayoutParams.MATCH_PARENT
             }
+        }
+
+        // Need to remove the fitSystemWindows flag from the MDC Dialog, otherwise it will be
+        // padded above the navigation bar
+        bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.container)?.run {
+            fitsSystemWindows = false
+            setPadding(0, 0, 0, 0)
         }
     }
 
     override fun invalidate() {
         withState(viewModel) { state ->
-            // TODO don't just use the result
-            binding.episode = state.episode()
-
-            binding.epDetailsFab.apply {
-                when (state.action) {
-                    EpisodeDetailsViewState.Action.WATCH -> setImageResource(R.drawable.ic_eye_24dp)
-                    EpisodeDetailsViewState.Action.UNWATCH -> setImageResource(R.drawable.ic_eye_off_24dp)
-                }
-                setOnClickListener {
-                    when (state.action) {
-                        EpisodeDetailsViewState.Action.WATCH -> viewModel.markWatched()
-                        EpisodeDetailsViewState.Action.UNWATCH -> viewModel.markUnwatched()
-                    }
-                }
-            }
-
+            binding.state = state
             controller.setData(state)
         }
     }
