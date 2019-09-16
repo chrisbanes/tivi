@@ -30,7 +30,7 @@ import androidx.navigation.navOptions
 import app.tivi.R
 import app.tivi.TiviActivityMvRxView
 import app.tivi.databinding.ActivityHomeBinding
-import app.tivi.extensions.beingDelayedTransition
+import app.tivi.extensions.beginDelayedTransition
 import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.find
 import app.tivi.extensions.hideSoftInput
@@ -214,6 +214,14 @@ class HomeActivity : TiviActivityMvRxView() {
         }
     }
 
+    override fun onBackPressed() {
+        if (binding.homeToolbar.hasExpandedActionView()) {
+            binding.homeToolbar.collapseActionView()
+            return
+        }
+        super.onBackPressed()
+    }
+
     private fun onMenuItemClicked(item: MenuItem) = when (item.itemId) {
         R.id.home_menu_user_avatar -> {
             viewModel.onProfileItemClicked()
@@ -226,25 +234,20 @@ class HomeActivity : TiviActivityMvRxView() {
         else -> false
     }
 
-    private inner class SearchViewListeners : View.OnFocusChangeListener,
-            SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
+    private inner class SearchViewListeners : SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
         private val searchFragment: SearchFragment = supportFragmentManager.find(R.id.home_search_results)
         private val searchViewModel: SearchViewModel by searchFragment.fragmentViewModel()
 
         private var expandedMenuItem: MenuItem? = null
 
         override fun onQueryTextSubmit(query: String): Boolean {
-            if (binding.homeRoot.currentState == R.id.home_constraints_search_results) {
-                searchViewModel.setSearchQuery(query)
-                hideSoftInput()
-            }
+            searchViewModel.setSearchQuery(query)
+            hideSoftInput()
             return true
         }
 
         override fun onQueryTextChange(newText: String): Boolean {
-            if (binding.homeRoot.currentState == R.id.home_constraints_search_results) {
-                searchViewModel.setSearchQuery(newText)
-            }
+            searchViewModel.setSearchQuery(newText)
             return true
         }
 
@@ -253,28 +256,23 @@ class HomeActivity : TiviActivityMvRxView() {
 
             val searchView = item.actionView as SearchView
             searchView.setOnQueryTextListener(this)
-            searchView.setOnQueryTextFocusChangeListener(this)
 
-            binding.homeToolbar.beingDelayedTransition(100)
+            binding.homeToolbar.beginDelayedTransition(100)
+            binding.homeRoot.transitionToState(R.id.home_constraints_search_results)
             return true
         }
 
         override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
             expandedMenuItem = null
 
+            val searchView = item.actionView as SearchView
+            searchView.setOnQueryTextListener(null)
+
             searchViewModel.clearQuery()
 
-            binding.homeToolbar.beingDelayedTransition(100)
+            binding.homeToolbar.beginDelayedTransition(100)
             binding.homeRoot.transitionToState(R.id.nav_closed)
             return true
-        }
-
-        override fun onFocusChange(view: View, hasFocus: Boolean) {
-            if (hasFocus) {
-                binding.homeRoot.transitionToState(R.id.home_constraints_search_results)
-            } else {
-                expandedMenuItem?.collapseActionView()
-            }
         }
     }
 }

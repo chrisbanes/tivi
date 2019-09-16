@@ -56,13 +56,14 @@
             android:layout_marginBottom="@dimen/spacing_small"
             android:layout_marginStart="@dimen/spacing_normal"
             android:layout_marginTop="@dimen/spacing_small"
+            android:background="@drawable/placeholder_small"
             android:scaleType="centerCrop"
             android:transitionName="@{posterTransitionName}"
+            app:image="@{posterImage}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="w,1.5:1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:image="@{posterImage}"
             app:roundedCornerOutlineProvider="@{ @dimen/image_round_rect_radius }" />
 
         <TextView
