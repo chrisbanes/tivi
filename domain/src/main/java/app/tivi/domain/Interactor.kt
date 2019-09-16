@@ -88,7 +88,7 @@ abstract class SuspendingWorkInteractor<P : Any, T : Any> : ObservableInteractor
 
     abstract suspend fun doWork(params: P): T
 
-    override fun observe(): Flow<T> = channel.asFlow().distinctUntilChanged()
+    override fun observe(): Flow<T> = channel.asFlow()
 }
 
 abstract class SubjectInteractor<P : Any, T> : ObservableInteractor<T> {

@@ -24,7 +24,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
 
-fun ViewGroup.beingDelayedTransition(duration: Long = 200) {
+fun ViewGroup.beginDelayedTransition(duration: Long = 200) {
     TransitionManager.beginDelayedTransition(this, AutoTransition().apply { setDuration(duration) })
 }
 

@@ -43,6 +43,7 @@
             android:scaleType="centerCrop"
             app:image="@{state.backdropImage}"
             app:layout_constrainedHeight="true"
+            android:background="@drawable/placeholder"
             app:layout_constraintDimensionRatio="h,4:3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_max="270dp"
