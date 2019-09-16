@@ -169,7 +169,7 @@ class SeasonsEpisodesRepository @Inject constructor(
                 if (!episodeWatchStore.hasEpisodeBeenWatched(episode.id)) {
                     val timestamp = when (date) {
                         ActionDate.NOW -> OffsetDateTime.now()
-                        ActionDate.AIR_DATE -> episode.firstAired?.plusHours(1) ?: OffsetDateTime.now()
+                        ActionDate.AIR_DATE -> episode.firstAired ?: OffsetDateTime.now()
                     }
                     return@mapNotNull EpisodeWatchEntry(
                             episodeId = episode.id,
