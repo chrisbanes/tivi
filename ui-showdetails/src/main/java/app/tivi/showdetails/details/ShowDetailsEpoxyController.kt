@@ -38,6 +38,7 @@ import app.tivi.inject.PerActivity
 import app.tivi.showdetails.details.databinding.ViewHolderDetailsSeasonBinding
 import app.tivi.ui.widget.PopupMenuButton
 import com.airbnb.epoxy.Carousel
+import com.airbnb.epoxy.IdUtils
 import com.airbnb.epoxy.TypedEpoxyController
 import com.airbnb.mvrx.Async
 import com.airbnb.mvrx.Success
@@ -53,7 +54,7 @@ class ShowDetailsEpoxyController @Inject constructor(
 
     interface Callbacks {
         fun onRelatedShowClicked(show: TiviShow, view: View)
-        fun onEpisodeClicked(episode: Episode, view: View)
+        fun onEpisodeClicked(episode: Episode, view: View, itemId: Long)
         fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate)
         fun onMarkSeasonUnwatched(season: Season)
         fun toggleSeasonExpanded(season: Season)
@@ -73,12 +74,15 @@ class ShowDetailsEpoxyController @Inject constructor(
                 spanSizeOverride(TotalSpanOverride)
             }
             detailsNextEpisodeToWatch {
-                id("next_episode_header_${episodeWithSeason.episode!!.id}")
+                val itemId = IdUtils.hashString64Bit("next_episode_${episodeWithSeason.episode!!.id}")
+                id(itemId)
                 spanSizeOverride(TotalSpanOverride)
                 season(episodeWithSeason.season)
                 episode(episodeWithSeason.episode)
                 textCreator(textCreator)
-                clickListener { view -> callbacks?.onEpisodeClicked(episodeWithSeason.episode!!, view) }
+                clickListener { view ->
+                    callbacks?.onEpisodeClicked(episodeWithSeason.episode!!, view, itemId)
+                }
             }
         }
 
@@ -230,12 +234,15 @@ class ShowDetailsEpoxyController @Inject constructor(
                         season.episodes.forEach { episodeWithWatches ->
                             detailsSeasonEpisode {
                                 val episode = episodeWithWatches.episode!!
-                                id("episode_${episode.id}")
+                                val itemId = IdUtils.hashString64Bit("episode_${episode.id}")
+                                id(itemId)
                                 textCreator(textCreator)
                                 episodeWithWatches(episodeWithWatches)
                                 expanded(true)
                                 spanSizeOverride(TotalSpanOverride)
-                                clickListener { view -> callbacks?.onEpisodeClicked(episode, view) }
+                                clickListener { view ->
+                                    callbacks?.onEpisodeClicked(episode, view, itemId)
+                                }
                             }
                         }
                     }

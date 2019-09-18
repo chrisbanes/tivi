@@ -25,7 +25,6 @@ import androidx.core.view.updatePadding
 import androidx.navigation.navArgs
 import app.tivi.R
 import app.tivi.TiviActivity
-import app.tivi.episodedetails.EpisodeDetailsFragment
 import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.showdetails.details.ShowDetailsFragment
 import app.tivi.util.observeEvent
@@ -53,7 +52,7 @@ class ShowDetailsActivity : TiviActivity() {
         navigatorViewModel.events.observeEvent(this) {
             when (it) {
                 is NavigateUpEvent -> onNavigateUp()
-                is ShowEpisodeDetailsEvent -> showEpisodeDetails(it.episodeId)
+                //is ShowEpisodeDetailsEvent -> showEpisodeDetails(it.episodeId)
             }
         }
 
@@ -78,8 +77,8 @@ class ShowDetailsActivity : TiviActivity() {
                 .commit()
     }
 
-    private fun showEpisodeDetails(episodeId: Long) {
-        EpisodeDetailsFragment.create(episodeId)
-                .show(supportFragmentManager, "episode")
-    }
+//    private fun showEpisodeDetails(episodeId: Long) {
+//        EpisodeDetailsFragment.create(episodeId)
+//                .show(supportFragmentManager, "episode")
+//    }
 }

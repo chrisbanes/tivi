@@ -21,14 +21,21 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
+import androidx.fragment.app.commit
+import androidx.fragment.app.commitNow
+import androidx.fragment.app.transaction
+import androidx.recyclerview.widget.GridLayoutManager
 import app.tivi.SharedElementHelper
 import app.tivi.TiviMvRxFragment
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
+import app.tivi.episodedetails.EpisodeDetailsFragment
 import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.showdetails.ShowDetailsNavigator
@@ -38,6 +45,7 @@ import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import kotlinx.android.parcel.Parcelize
+import me.saket.inboxrecyclerview.page.PageStateChangeCallbacks
 import javax.inject.Inject
 
 class ShowDetailsFragment : TiviMvRxFragment() {
@@ -62,6 +70,12 @@ class ShowDetailsFragment : TiviMvRxFragment() {
 
     private lateinit var binding: FragmentShowDetailsBinding
 
+    private val backPressedCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            binding.detailsRv.collapse()
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentShowDetailsBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
@@ -77,6 +91,14 @@ class ShowDetailsFragment : TiviMvRxFragment() {
             (v as MotionLayout).updateConstraintSets {
                 constrainHeight(R.id.details_status_bar_anchor, insets.systemWindowInsetTop)
             }
+        }
+
+        binding.detailsMotion.updateConstraintSets {
+            setVisibility(R.id.details_expanded_pane, View.VISIBLE)
+        }
+
+        fragmentManager?.commit {
+            replace(R.id.details_expanded_pane_fragment, EpisodeDetailsFragment.create(1))
         }
 
         // Make the MotionLayout draw behind the status bar
@@ -115,8 +137,17 @@ class ShowDetailsFragment : TiviMvRxFragment() {
                 )
             }
 
-            override fun onEpisodeClicked(episode: Episode, view: View) {
-                viewModel.onRelatedShowClicked(showDetailsNavigator, episode)
+            override fun onEpisodeClicked(episode: Episode, view: View, itemId: Long) {
+//                fragmentManager?.commitNow {
+//                    replace(R.id.details_expanded_pane_fragment,
+//                            EpisodeDetailsFragment.create(episode.id))
+//                }
+
+                binding.detailsRv.expandItem(itemId)
+
+
+
+                //viewModel.onEpisodeClicked(showDetailsNavigator, episode)
             }
 
             override fun onMarkSeasonUnwatched(season: Season) {
@@ -144,7 +175,28 @@ class ShowDetailsFragment : TiviMvRxFragment() {
             }
         }
 
-        binding.detailsRv.setController(controller)
+        binding.detailsRv.apply {
+            adapter = controller.adapter
+            expandablePage = binding.detailsExpandedPane
+        }
+
+        // Add a listener to enabled/disable the back press callback, depending on the expanded
+        // pane state
+        binding.detailsExpandedPane.addStateChangeCallbacks(object : PageStateChangeCallbacks {
+            override fun onPageAboutToCollapse(collapseAnimDuration: Long) {}
+
+            override fun onPageAboutToExpand(expandAnimDuration: Long) {}
+
+            override fun onPageCollapsed() {
+                backPressedCallback.isEnabled = false
+            }
+
+            override fun onPageExpanded() {
+                backPressedCallback.isEnabled = true
+            }
+        })
+
+        requireActivity().onBackPressedDispatcher.addCallback(this, backPressedCallback)
     }
 
     override fun invalidate() {

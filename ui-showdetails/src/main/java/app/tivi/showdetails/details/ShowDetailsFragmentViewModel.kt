@@ -154,7 +154,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         showDetailsNavigator.showShowDetails(show, sharedElementHelper)
     }
 
-    fun onRelatedShowClicked(
+    fun onEpisodeClicked(
         showDetailsNavigator: ShowDetailsNavigator,
         episode: Episode
     ) {

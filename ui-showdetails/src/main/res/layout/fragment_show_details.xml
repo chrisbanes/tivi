@@ -119,19 +119,36 @@
 
         </app.tivi.ui.widget.TintingToolbar>
 
-        <com.airbnb.epoxy.EpoxyRecyclerView
+        <me.saket.inboxrecyclerview.InboxRecyclerView
             android:id="@+id/details_rv"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="?android:attr/colorBackground"
             android:paddingBottom="@dimen/spacing_normal"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/details_appbar_background"
-            app:paddingBottomSystemWindowInsets="@{ true }"
+            app:paddingBottomSystemWindowInsets="@{true}"
             app:spanCount="4" />
+
+        <me.saket.inboxrecyclerview.page.ExpandablePageLayout
+            android:id="@+id/details_expanded_pane"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/details_rv"
+            app:layout_constraintEnd_toEndOf="@id/details_rv"
+            app:layout_constraintStart_toStartOf="@id/details_rv"
+            app:layout_constraintTop_toTopOf="@id/details_rv"
+            app:visibilityMode="ignore">
+
+            <FrameLayout
+                android:id="@+id/details_expanded_pane_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </me.saket.inboxrecyclerview.page.ExpandablePageLayout>
 
         <!-- The height of this is updated via an OnApplyWindowInsetsListener  -->
         <View
