@@ -27,11 +27,10 @@
             type="app.tivi.episodedetails.EpisodeDetailsViewState" />
     </data>
 
-    <app.tivi.ui.widget.NestedChildMotionLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ep_details_root"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layoutDescription="@xml/scene_episode_details">
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/ep_details_fanart"
@@ -77,13 +76,12 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="?attr/colorSurface"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ep_details_fanart"
-            app:paddingBottomGestureInsets="@{ true }"
-            app:spanCount="3" />
+            app:paddingBottomGestureInsets="@{ true }" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/ep_details_fab"
@@ -105,6 +103,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
 
-    </app.tivi.ui.widget.NestedChildMotionLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

@@ -27,7 +27,6 @@ import app.tivi.common.epoxy.SwipeAwayCallbacks
 import app.tivi.episodedetails.databinding.FragmentEpisodeDetailsBinding
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.showdetails.ShowDetailsNavigator
-import app.tivi.ui.motionlayout.FabShowHideTransitionListener
 import com.airbnb.epoxy.EpoxyTouchHelper
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
@@ -66,9 +65,6 @@ class EpisodeDetailsFragment : TiviMvRxFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.epDetailsRv.setController(controller)
-
-        binding.epDetailsRoot.setTransitionListener(FabShowHideTransitionListener(
-                binding.epDetailsFab, R.id.episode_details_expanded, R.id.episode_details_collapsed))
 
         binding.epDetailsFab.setOnClickListener {
             withState(viewModel) { state ->

@@ -24,7 +24,7 @@ import androidx.core.view.forEach
 import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.common.epoxy.tiviCarousel
 import app.tivi.common.epoxy.withModelsFrom
-import app.tivi.common.layouts.detailsBadge
+import app.tivi.common.layouts.DetailsBadgeBindingModel_
 import app.tivi.common.layouts.detailsHeader
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
@@ -38,6 +38,7 @@ import app.tivi.inject.PerActivity
 import app.tivi.showdetails.details.databinding.ViewHolderDetailsSeasonBinding
 import app.tivi.ui.widget.PopupMenuButton
 import com.airbnb.epoxy.Carousel
+import com.airbnb.epoxy.EpoxyModelGroup
 import com.airbnb.epoxy.IdUtils
 import com.airbnb.epoxy.TypedEpoxyController
 import com.airbnb.mvrx.Async
@@ -92,8 +93,9 @@ class ShowDetailsEpoxyController @Inject constructor(
     }
 
     private fun buildShowModels(show: TiviShow) {
+        val badges = ArrayList<DetailsBadgeBindingModel_>()
         show.traktRating?.let { rating ->
-            detailsBadge {
+            badges += DetailsBadgeBindingModel_().apply {
                 val ratingOutOfOneHundred = (rating * 10).roundToInt()
                 id("rating")
                 label(context.getString(R.string.percentage_format, ratingOutOfOneHundred))
@@ -103,7 +105,7 @@ class ShowDetailsEpoxyController @Inject constructor(
             }
         }
         show.network?.let { network ->
-            detailsBadge {
+            badges += DetailsBadgeBindingModel_().apply {
                 id("network")
                 label(network)
                 icon(R.drawable.ic_details_network)
@@ -111,7 +113,7 @@ class ShowDetailsEpoxyController @Inject constructor(
             }
         }
         show.certification?.let { certificate ->
-            detailsBadge {
+            badges += DetailsBadgeBindingModel_().apply {
                 id("cert")
                 label(certificate)
                 icon(R.drawable.ic_details_certificate)
@@ -119,7 +121,7 @@ class ShowDetailsEpoxyController @Inject constructor(
             }
         }
         show.runtime?.let { runtime ->
-            detailsBadge {
+            badges += DetailsBadgeBindingModel_().apply {
                 val runtimeMinutes = context.getString(R.string.minutes_format, runtime)
                 id("runtime")
                 label(runtimeMinutes)
@@ -128,6 +130,7 @@ class ShowDetailsEpoxyController @Inject constructor(
                         R.plurals.runtime_content_description_format, runtime, runtime))
             }
         }
+        EpoxyModelGroup(R.layout.layout_badge_holder, badges).addTo(this)
 
         detailsHeader {
             id("about_show_header")

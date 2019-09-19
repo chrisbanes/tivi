@@ -188,6 +188,8 @@ class ShowDetailsFragment : TiviMvRxFragment() {
 
             override fun onPageExpanded() {
                 backPressedCallback.isEnabled = true
+
+                binding.detailsMotion.requestLayout()
             }
         })
 
