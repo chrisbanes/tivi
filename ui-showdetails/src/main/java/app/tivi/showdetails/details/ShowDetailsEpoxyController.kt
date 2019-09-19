@@ -130,7 +130,9 @@ class ShowDetailsEpoxyController @Inject constructor(
                         R.plurals.runtime_content_description_format, runtime, runtime))
             }
         }
-        EpoxyModelGroup(R.layout.layout_badge_holder, badges).addTo(this)
+        if (badges.isNotEmpty()) {
+            EpoxyModelGroup(R.layout.layout_badge_holder, badges).addTo(this)
+        }
 
         detailsHeader {
             id("about_show_header")
