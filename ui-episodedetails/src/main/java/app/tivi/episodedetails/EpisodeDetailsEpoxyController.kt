@@ -55,7 +55,9 @@ class EpisodeDetailsEpoxyController @Inject constructor(
                         icon(R.drawable.ic_details_date)
                     }
                 }
-                EpoxyModelGroup(R.layout.layout_badge_holder, badges).addTo(this)
+                if (badges.isNotEmpty()) {
+                    EpoxyModelGroup(R.layout.layout_badge_holder, badges).addTo(this)
+                }
 
                 epDetailsSummary {
                     id("episode_summary")
