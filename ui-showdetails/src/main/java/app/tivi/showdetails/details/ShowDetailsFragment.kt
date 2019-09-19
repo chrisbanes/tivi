@@ -39,7 +39,6 @@ import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.details.databinding.FragmentShowDetailsBinding
-import app.tivi.ui.motionlayout.FabShowHideTransitionListener
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
@@ -95,9 +94,6 @@ class ShowDetailsFragment : TiviMvRxFragment() {
         // Make the MotionLayout draw behind the status bar
         binding.detailsMotion.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-
-        binding.detailsMotion.setTransitionListener(FabShowHideTransitionListener(
-                binding.detailsFollowFab, R.id.show_details_open, R.id.show_details_closed))
 
         binding.detailsFollowFab.setOnClickListener {
             viewModel.onToggleMyShowsButtonClicked()
