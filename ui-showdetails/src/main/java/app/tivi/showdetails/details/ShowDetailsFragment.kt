@@ -21,23 +21,31 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.os.bundleOf
+import androidx.core.view.doOnNextLayout
+import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.commit
+import androidx.fragment.app.commitNow
 import app.tivi.SharedElementHelper
 import app.tivi.TiviMvRxFragment
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
+import app.tivi.episodedetails.EpisodeDetailsFragment
 import app.tivi.extensions.doOnApplyWindowInsets
+import app.tivi.extensions.resolveThemeColor
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.details.databinding.FragmentShowDetailsBinding
-import app.tivi.ui.motionlayout.FabShowHideTransitionListener
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import kotlinx.android.parcel.Parcelize
+import me.saket.inboxrecyclerview.dimming.TintPainter
+import me.saket.inboxrecyclerview.page.PageStateChangeCallbacks
 import javax.inject.Inject
 
 class ShowDetailsFragment : TiviMvRxFragment() {
@@ -62,6 +70,12 @@ class ShowDetailsFragment : TiviMvRxFragment() {
 
     private lateinit var binding: FragmentShowDetailsBinding
 
+    private val backPressedCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            binding.detailsRv.collapse()
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentShowDetailsBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
@@ -82,9 +96,6 @@ class ShowDetailsFragment : TiviMvRxFragment() {
         // Make the MotionLayout draw behind the status bar
         binding.detailsMotion.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-
-        binding.detailsMotion.setTransitionListener(FabShowHideTransitionListener(
-                binding.detailsFollowFab, R.id.show_details_open, R.id.show_details_closed))
 
         binding.detailsFollowFab.setOnClickListener {
             viewModel.onToggleMyShowsButtonClicked()
@@ -115,8 +126,17 @@ class ShowDetailsFragment : TiviMvRxFragment() {
                 )
             }
 
-            override fun onEpisodeClicked(episode: Episode, view: View) {
-                viewModel.onRelatedShowClicked(showDetailsNavigator, episode)
+            override fun onEpisodeClicked(episode: Episode, view: View, itemId: Long) {
+                fragmentManager?.commitNow {
+                    setTransition(FragmentTransaction.TRANSIT_NONE)
+                    replace(R.id.details_expanded_pane, EpisodeDetailsFragment.create(episode.id))
+                }
+                // We need to force MotionLayout to re-layout. Not entirely sure why.
+                binding.detailsMotion.requestLayout()
+
+                binding.detailsExpandedPane.doOnNextLayout {
+                    binding.detailsRv.expandItem(itemId)
+                }
             }
 
             override fun onMarkSeasonUnwatched(season: Season) {
@@ -144,7 +164,49 @@ class ShowDetailsFragment : TiviMvRxFragment() {
             }
         }
 
-        binding.detailsRv.setController(controller)
+        binding.detailsRv.apply {
+            adapter = controller.adapter
+            tintPainter = TintPainter.completeList(
+                    context.resolveThemeColor(R.attr.colorSurface),
+                    opacity = 0.7f
+            )
+            expandablePage = binding.detailsExpandedPane
+        }
+
+        // Add a listener to enabled/disable the back press callback, depending on the expanded
+        // pane state
+        binding.detailsExpandedPane.addStateChangeCallbacks(object : PageStateChangeCallbacks {
+            override fun onPageAboutToCollapse(collapseAnimDuration: Long) {}
+
+            override fun onPageAboutToExpand(expandAnimDuration: Long) {
+                // Make sure we're in the collapsed state
+                binding.detailsMotion.transitionToState(R.id.show_details_closed)
+            }
+
+            override fun onPageCollapsed() {
+                backPressedCallback.isEnabled = false
+
+                // Remove the episode details fragment to free-up resources
+                fragmentManager?.findFragmentById(R.id.details_expanded_pane)?.also { fragment ->
+                    fragmentManager?.commit {
+                        setTransition(FragmentTransaction.TRANSIT_NONE)
+                        remove(fragment)
+                    }
+                }
+
+                // Re-enable MotionLayout's motion handling
+                binding.detailsMotion.motionEnabled = true
+            }
+
+            override fun onPageExpanded() {
+                backPressedCallback.isEnabled = true
+                // Disable MotionLayout's motion handling while the pane is expanded
+                binding.detailsMotion.motionEnabled = false
+                binding.detailsMotion.requestLayout()
+            }
+        })
+
+        requireActivity().onBackPressedDispatcher.addCallback(this, backPressedCallback)
     }
 
     override fun invalidate() {

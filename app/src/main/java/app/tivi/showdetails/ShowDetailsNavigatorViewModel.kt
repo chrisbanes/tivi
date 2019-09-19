@@ -21,7 +21,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import app.tivi.AppNavigator
 import app.tivi.SharedElementHelper
-import app.tivi.data.entities.Episode
 import app.tivi.data.entities.TiviShow
 import app.tivi.util.Event
 import javax.inject.Inject
@@ -32,10 +31,6 @@ class ShowDetailsNavigatorViewModel @Inject constructor(
 ) : ViewModel(), ShowDetailsNavigator {
     override fun showShowDetails(show: TiviShow, sharedElements: SharedElementHelper?) {
         appNavigatorProvider.get().startShowDetails(show.id, sharedElements)
-    }
-
-    override fun showEpisodeDetails(episode: Episode) {
-        _events.value = Event(ShowEpisodeDetailsEvent(episode.id))
     }
 
     override fun navigateUp() {
@@ -49,4 +44,3 @@ class ShowDetailsNavigatorViewModel @Inject constructor(
 
 sealed class ShowDetailsNavigatorEvent
 object NavigateUpEvent : ShowDetailsNavigatorEvent()
-data class ShowEpisodeDetailsEvent(val episodeId: Long) : ShowDetailsNavigatorEvent()

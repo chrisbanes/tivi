@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2018 Google, Inc.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,76 +17,19 @@
 <MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <Transition
-        app:constraintSetEnd="@id/show_details_closed"
-        app:constraintSetStart="@id/show_details_open"
-        app:duration="400"
-        app:motionInterpolator="easeInOut">
-
-        <OnSwipe
-            app:dragDirection="dragUp"
-            app:moveWhenScrollAtTop="true"
-            app:touchAnchorId="@id/details_rv"
-            app:touchAnchorSide="top"
-            app:touchRegionId="@id/details_rv"
-            app:onTouchUp="decelerateAndComplete"/>
-
-        <KeyFrameSet>
-            <KeyPosition
-                app:framePosition="20"
-                app:keyPositionType="deltaRelative"
-                app:percentY="0.5"
-                app:motionTarget="@id/details_poster" />
-
-            <!-- This looks weird. We need a quick change from elevated to not-so-elevated at 18%
-                 so we set 2 key attributes, one at 21% and other at 25%. -->
-            <KeyAttribute
-                android:elevation="@dimen/details_poster_elevation"
-                android:rotation="47"
-                android:rotationY="15"
-                app:framePosition="20"
-                app:motionTarget="@id/details_poster" />
-
-            <KeyAttribute
-                android:elevation="@dimen/details_poster_not_elevation"
-                app:framePosition="25"
-                app:motionTarget="@id/details_poster" />
-
-            <!-- Only elevate the appbar background over the last 25% -->
-            <KeyAttribute
-                android:elevation="0dp"
-                app:framePosition="75"
-                app:motionTarget="@id/details_appbar_background" />
-
-            <!-- We only want to transition to opaque over the last 40% -->
-            <KeyAttribute
-                app:framePosition="60"
-                app:motionTarget="@id/details_status_bar_anchor">
-                <CustomAttribute
-                    app:attributeName="backgroundColor"
-                    app:customColorValue="@color/status_bar_scrim" />
-            </KeyAttribute>
-
-        </KeyFrameSet>
-
-    </Transition>
-
     <ConstraintSet android:id="@+id/show_details_open">
 
-        <Constraint
-            android:id="@id/details_backdrop_scrim">
+        <Constraint android:id="@id/details_backdrop_scrim">
             <CustomAttribute
                 app:attributeName="background"
                 app:customColorDrawableValue="@android:color/transparent" />
         </Constraint>
 
-        <Constraint
-            android:id="@id/details_toolbar">
-            <Transform
-                android:elevation="0dp" />
+        <Constraint android:id="@id/details_toolbar">
             <CustomAttribute
                 app:attributeName="iconTint"
                 app:customColorValue="?android:attr/textColorPrimaryInverse" />
+            <Transform android:elevation="0dp" />
         </Constraint>
 
         <Constraint
@@ -108,10 +50,10 @@
             android:id="@id/details_title"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="@dimen/spacing_normal"
-            android:layout_marginTop="@dimen/spacing_micro"
             android:layout_marginBottom="@dimen/spacing_micro"
             android:layout_marginEnd="@dimen/spacing_micro"
+            android:layout_marginStart="@dimen/spacing_normal"
+            android:layout_marginTop="@dimen/spacing_micro"
             app:layout_constraintBottom_toBottomOf="@id/details_appbar_background"
             app:layout_constraintEnd_toStartOf="@id/details_follow_fab"
             app:layout_constraintStart_toEndOf="@id/details_poster"
@@ -123,38 +65,33 @@
             android:layout_height="0dp"
             android:layout_marginStart="@dimen/spacing_normal"
             android:elevation="@dimen/details_poster_elevation"
+            app:layout_constraintBottom_toBottomOf="@id/details_appbar_background"
             app:layout_constraintDimensionRatio="h,1:1.5"
-            app:layout_constraintStart_toStartOf="@id/details_rv"
-            app:layout_constraintBottom_toBottomOf="@id/details_appbar_background" />
+            app:layout_constraintStart_toStartOf="@id/details_rv" />
 
-        <Constraint
-            android:id="@id/details_status_bar_anchor">
-
-            <Transform
-                android:elevation="0dp" />
+        <Constraint android:id="@id/details_status_bar_anchor">
 
             <CustomAttribute
                 app:attributeName="backgroundColor"
                 app:customColorValue="@color/status_bar_scrim" />
+
+            <Transform android:elevation="0dp" />
         </Constraint>
 
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/show_details_closed">
-        <Constraint
-            android:id="@id/details_backdrop_scrim">
+        <Constraint android:id="@id/details_backdrop_scrim">
             <CustomAttribute
                 app:attributeName="background"
                 app:customColorDrawableValue="@color/status_bar_scrim" />
         </Constraint>
 
-        <Constraint
-            android:id="@id/details_toolbar">
-            <Transform
-                android:elevation="@dimen/details_appbar_elevation" />
+        <Constraint android:id="@id/details_toolbar">
             <CustomAttribute
                 app:attributeName="iconTint"
                 app:customColorValue="?android:attr/textColorPrimary" />
+            <Transform android:elevation="@dimen/details_appbar_elevation" />
         </Constraint>
 
         <Constraint
@@ -196,24 +133,96 @@
             app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor" />
 
         <!-- This gives us our parallax effect -->
-        <Constraint
-            android:id="@id/details_backdrop">
-            <Transform
-                android:translationY="-80dp" />
+        <Constraint android:id="@id/details_backdrop">
+            <Transform android:translationY="-80dp" />
         </Constraint>
 
-        <Constraint
-            android:id="@id/details_status_bar_anchor">
-
-            <Transform
-                android:elevation="@dimen/details_appbar_elevation" />
+        <Constraint android:id="@id/details_status_bar_anchor">
 
             <CustomAttribute
                 app:attributeName="backgroundColor"
                 app:customColorValue="?android:attr/colorBackground" />
+
+            <Transform android:elevation="@dimen/details_appbar_elevation" />
+        </Constraint>
+
+        <Constraint android:id="@id/details_follow_fab">
+            <PropertySet android:visibility="invisible" />
+
+            <Transform
+                android:scaleX="0"
+                android:scaleY="0" />
+
         </Constraint>
 
     </ConstraintSet>
 
+    <Transition
+        app:constraintSetEnd="@id/show_details_closed"
+        app:constraintSetStart="@id/show_details_open"
+        app:duration="400"
+        app:motionInterpolator="easeInOut">
+
+        <KeyFrameSet>
+            <KeyAttribute
+                android:elevation="@dimen/details_poster_elevation"
+                android:rotation="47"
+                android:rotationY="15"
+                app:framePosition="20"
+                app:motionTarget="@id/details_poster" />
+
+            <!-- This looks weird. We need a quick change from elevated to not-so-elevated at 18%
+                 so we set 2 key attributes, one at 21% and other at 25%. -->
+            <KeyAttribute
+                android:elevation="@dimen/details_poster_not_elevation"
+                app:framePosition="25"
+                app:motionTarget="@id/details_poster" />
+
+            <KeyAttribute
+                android:elevation="0dp"
+                app:framePosition="75"
+                app:motionTarget="@id/details_appbar_background" />
+
+            <!-- Only elevate the appbar background over the last 25% -->
+            <KeyAttribute
+                app:framePosition="60"
+                app:motionTarget="@id/details_status_bar_anchor">
+                <CustomAttribute
+                    app:attributeName="backgroundColor"
+                    app:customColorValue="@color/status_bar_scrim" />
+            </KeyAttribute>
+
+            <!-- We only want to transition to opaque over the last 40% -->
+            <KeyAttribute
+                android:alpha="1"
+                android:scaleX="1"
+                android:scaleY="1"
+                app:framePosition="50"
+                app:motionTarget="@id/details_follow_fab" />
+
+            <KeyAttribute
+                android:alpha="0"
+                android:scaleX="0"
+                android:scaleY="0"
+                app:framePosition="70"
+                app:motionTarget="@id/details_follow_fab" />
+
+            <KeyPosition
+                app:framePosition="20"
+                app:keyPositionType="deltaRelative"
+                app:motionTarget="@id/details_poster"
+                app:percentY="0.5" />
+
+        </KeyFrameSet>
+
+        <OnSwipe
+            app:dragDirection="dragUp"
+            app:moveWhenScrollAtTop="true"
+            app:onTouchUp="decelerateAndComplete"
+            app:touchAnchorId="@id/details_rv"
+            app:touchAnchorSide="top"
+            app:touchRegionId="@id/details_rv" />
+
+    </Transition>
 
 </MotionScene>
