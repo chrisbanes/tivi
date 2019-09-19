@@ -28,6 +28,7 @@ import androidx.core.view.doOnNextLayout
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
+import androidx.recyclerview.widget.LinearSmoothScroller
 import app.tivi.SharedElementHelper
 import app.tivi.TiviMvRxFragment
 import app.tivi.data.entities.ActionDate
@@ -40,6 +41,7 @@ import app.tivi.extensions.resolveThemeColor
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.details.databinding.FragmentShowDetailsBinding
+import app.tivi.ui.recyclerview.TiviLinearSmoothScroller
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
@@ -116,17 +118,17 @@ class ShowDetailsFragment : TiviMvRxFragment() {
         }
 
         controller.callbacks = object : ShowDetailsEpoxyController.Callbacks {
-            override fun onRelatedShowClicked(show: TiviShow, view: View) {
+            override fun onRelatedShowClicked(show: TiviShow, itemView: View) {
                 viewModel.onRelatedShowClicked(
                         showDetailsNavigator,
                         show,
                         SharedElementHelper().apply {
-                            addSharedElement(view, "poster")
+                            addSharedElement(itemView, "poster")
                         }
                 )
             }
 
-            override fun onEpisodeClicked(episode: Episode, view: View, itemId: Long) {
+            override fun onEpisodeClicked(episode: Episode, itemView: View) {
                 fragmentManager?.commitNow {
                     setTransition(FragmentTransaction.TRANSIT_NONE)
                     replace(R.id.details_expanded_pane, EpisodeDetailsFragment.create(episode.id))
@@ -135,6 +137,7 @@ class ShowDetailsFragment : TiviMvRxFragment() {
                 binding.detailsMotion.requestLayout()
 
                 binding.detailsExpandedPane.doOnNextLayout {
+                    val itemId = binding.detailsRv.getChildItemId(itemView)
                     binding.detailsRv.expandItem(itemId)
                 }
             }
@@ -147,8 +150,22 @@ class ShowDetailsFragment : TiviMvRxFragment() {
                 viewModel.onMarkSeasonWatched(season, onlyAired, date)
             }
 
-            override fun toggleSeasonExpanded(season: Season) {
-                viewModel.toggleSeasonExpanded(season)
+            override fun onExpandSeason(season: Season, itemView: View) {
+                viewModel.expandSeason(season)
+
+                val scroller = TiviLinearSmoothScroller(
+                        itemView.context,
+                        snapPreference = LinearSmoothScroller.SNAP_TO_START,
+                        scrollMsPerInch = 60f
+                )
+                scroller.targetPosition = binding.detailsRv.getChildAdapterPosition(itemView)
+                scroller.targetOffset = itemView.height / 3
+
+                binding.detailsRv.layoutManager?.startSmoothScroll(scroller)
+            }
+
+            override fun onCollapseSeason(season: Season, itemView: View) {
+                viewModel.collapseSeason(season)
             }
 
             override fun onMarkSeasonFollowed(season: Season) {

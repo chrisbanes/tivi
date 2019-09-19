@@ -161,13 +161,12 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         changeSeasonWatchedStatus(Params(season.id, Action.UNWATCH))
     }
 
-    fun toggleSeasonExpanded(season: Season) = setState {
-        val newExpandedSeason = if (expandedSeasonIds.contains(season.id)) {
-            expandedSeasonIds - season.id
-        } else {
-            expandedSeasonIds + season.id
-        }
-        copy(expandedSeasonIds = newExpandedSeason)
+    fun expandSeason(season: Season) = setState {
+        copy(expandedSeasonIds = expandedSeasonIds.plus(season.id))
+    }
+
+    fun collapseSeason(season: Season) = setState {
+        copy(expandedSeasonIds = expandedSeasonIds.minus(season.id))
     }
 
     fun onMarkSeasonFollowed(season: Season) {
