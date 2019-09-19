@@ -150,7 +150,9 @@
                 android:id="@+id/details_expanded_pane"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:clickable="true" />
+                android:background="?attr/colorSurface"
+                android:clickable="true"
+                android:elevation="2dp" />
 
         </FrameLayout>
 

@@ -36,6 +36,7 @@ import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.episodedetails.EpisodeDetailsFragment
 import app.tivi.extensions.doOnApplyWindowInsets
+import app.tivi.extensions.resolveThemeColor
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.details.databinding.FragmentShowDetailsBinding
@@ -43,6 +44,7 @@ import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import kotlinx.android.parcel.Parcelize
+import me.saket.inboxrecyclerview.dimming.TintPainter
 import me.saket.inboxrecyclerview.page.PageStateChangeCallbacks
 import javax.inject.Inject
 
@@ -164,6 +166,10 @@ class ShowDetailsFragment : TiviMvRxFragment() {
 
         binding.detailsRv.apply {
             adapter = controller.adapter
+            tintPainter = TintPainter.completeList(
+                    context.resolveThemeColor(R.attr.colorSurface),
+                    opacity = 0.7f
+            )
             expandablePage = binding.detailsExpandedPane
         }
 
