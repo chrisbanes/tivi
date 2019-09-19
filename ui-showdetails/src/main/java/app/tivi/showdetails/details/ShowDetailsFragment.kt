@@ -24,11 +24,10 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
+import androidx.core.view.doOnNextLayout
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
-import androidx.fragment.app.transaction
-import androidx.recyclerview.widget.GridLayoutManager
 import app.tivi.SharedElementHelper
 import app.tivi.TiviMvRxFragment
 import app.tivi.data.entities.ActionDate
@@ -93,14 +92,6 @@ class ShowDetailsFragment : TiviMvRxFragment() {
             }
         }
 
-        binding.detailsMotion.updateConstraintSets {
-            setVisibility(R.id.details_expanded_pane, View.VISIBLE)
-        }
-
-        fragmentManager?.commit {
-            replace(R.id.details_expanded_pane_fragment, EpisodeDetailsFragment.create(1))
-        }
-
         // Make the MotionLayout draw behind the status bar
         binding.detailsMotion.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -138,16 +129,16 @@ class ShowDetailsFragment : TiviMvRxFragment() {
             }
 
             override fun onEpisodeClicked(episode: Episode, view: View, itemId: Long) {
-//                fragmentManager?.commitNow {
-//                    replace(R.id.details_expanded_pane_fragment,
-//                            EpisodeDetailsFragment.create(episode.id))
-//                }
+                fragmentManager?.commitNow {
+                    setTransition(FragmentTransaction.TRANSIT_NONE)
+                    replace(R.id.details_expanded_pane, EpisodeDetailsFragment.create(episode.id))
+                }
+                // We need to force MotionLayout to re-layout. Not entirely sure why.
+                binding.detailsMotion.requestLayout()
 
-                binding.detailsRv.expandItem(itemId)
-
-
-
-                //viewModel.onEpisodeClicked(showDetailsNavigator, episode)
+                binding.detailsExpandedPane.doOnNextLayout {
+                    binding.detailsRv.expandItem(itemId)
+                }
             }
 
             override fun onMarkSeasonUnwatched(season: Season) {
@@ -189,6 +180,14 @@ class ShowDetailsFragment : TiviMvRxFragment() {
 
             override fun onPageCollapsed() {
                 backPressedCallback.isEnabled = false
+
+                // Remove the episode details fragment to free-up resources
+                fragmentManager?.findFragmentById(R.id.details_expanded_pane)?.also { fragment ->
+                    fragmentManager?.commit {
+                        setTransition(FragmentTransaction.TRANSIT_NONE)
+                        remove(fragment)
+                    }
+                }
             }
 
             override fun onPageExpanded() {

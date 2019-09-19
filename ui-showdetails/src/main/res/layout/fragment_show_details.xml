@@ -133,22 +133,25 @@
             app:paddingBottomSystemWindowInsets="@{true}"
             app:spanCount="4" />
 
-        <me.saket.inboxrecyclerview.page.ExpandablePageLayout
-            android:id="@+id/details_expanded_pane"
+        <!-- We need to use an intermediary FrameLayout here since MotionLayout is very
+             zealous in wanting to control children's visibility via constraint sets. Since
+             the ExpandablePageLayout will change visibility on it's own accord, the intermediary
+             layers means the MotionLayout just sees a single always visible view.
+        -->
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="@id/details_rv"
             app:layout_constraintEnd_toEndOf="@id/details_rv"
             app:layout_constraintStart_toStartOf="@id/details_rv"
-            app:layout_constraintTop_toTopOf="@id/details_rv"
-            app:visibilityMode="ignore">
+            app:layout_constraintTop_toTopOf="@id/details_rv">
 
-            <FrameLayout
-                android:id="@+id/details_expanded_pane_fragment"
+            <me.saket.inboxrecyclerview.page.ExpandablePageLayout
+                android:id="@+id/details_expanded_pane"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-        </me.saket.inboxrecyclerview.page.ExpandablePageLayout>
+        </FrameLayout>
 
         <!-- The height of this is updated via an OnApplyWindowInsetsListener  -->
         <View

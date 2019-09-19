@@ -52,7 +52,6 @@ class ShowDetailsActivity : TiviActivity() {
         navigatorViewModel.events.observeEvent(this) {
             when (it) {
                 is NavigateUpEvent -> onNavigateUp()
-                //is ShowEpisodeDetailsEvent -> showEpisodeDetails(it.episodeId)
             }
         }
 
@@ -76,9 +75,4 @@ class ShowDetailsActivity : TiviActivity() {
                 .replace(R.id.details_content, ShowDetailsFragment.create(args.showId))
                 .commit()
     }
-
-//    private fun showEpisodeDetails(episodeId: Long) {
-//        EpisodeDetailsFragment.create(episodeId)
-//                .show(supportFragmentManager, "episode")
-//    }
 }

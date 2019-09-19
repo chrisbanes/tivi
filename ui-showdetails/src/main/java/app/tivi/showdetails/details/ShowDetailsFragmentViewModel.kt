@@ -20,7 +20,6 @@ import androidx.lifecycle.viewModelScope
 import app.tivi.SharedElementHelper
 import app.tivi.TiviMvRxViewModel
 import app.tivi.data.entities.ActionDate
-import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.domain.interactors.ChangeSeasonFollowStatus
@@ -152,13 +151,6 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         sharedElementHelper: SharedElementHelper? = null
     ) {
         showDetailsNavigator.showShowDetails(show, sharedElementHelper)
-    }
-
-    fun onEpisodeClicked(
-        showDetailsNavigator: ShowDetailsNavigator,
-        episode: Episode
-    ) {
-        showDetailsNavigator.showEpisodeDetails(episode)
     }
 
     fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
