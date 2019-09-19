@@ -124,21 +124,21 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="?android:attr/colorBackground"
+            android:clipToPadding="false"
             android:paddingBottom="@dimen/spacing_normal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/details_appbar_background"
-            app:paddingBottomSystemWindowInsets="@{true}"
-            app:spanCount="4" />
+            app:paddingBottomSystemWindowInsets="@{true}" />
 
         <!-- We need to use an intermediary FrameLayout here since MotionLayout is very
              zealous in wanting to control children's visibility via constraint sets. Since
              the ExpandablePageLayout will change visibility on it's own accord, the intermediary
-             layers means the MotionLayout just sees a single always visible view.
-        -->
+             layers means the MotionLayout just sees a single always visible view. -->
         <FrameLayout
+            android:id="@+id/details_expanded_pane_holder"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="@id/details_rv"
