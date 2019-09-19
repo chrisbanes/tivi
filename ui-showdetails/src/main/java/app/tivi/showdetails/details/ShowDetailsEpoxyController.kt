@@ -54,11 +54,12 @@ class ShowDetailsEpoxyController @Inject constructor(
     var callbacks: Callbacks? = null
 
     interface Callbacks {
-        fun onRelatedShowClicked(show: TiviShow, view: View)
-        fun onEpisodeClicked(episode: Episode, view: View, itemId: Long)
+        fun onRelatedShowClicked(show: TiviShow, itemView: View)
+        fun onEpisodeClicked(episode: Episode, itemView: View)
         fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate)
         fun onMarkSeasonUnwatched(season: Season)
-        fun toggleSeasonExpanded(season: Season)
+        fun onCollapseSeason(season: Season, itemView: View)
+        fun onExpandSeason(season: Season, itemView: View)
         fun onMarkSeasonFollowed(season: Season)
         fun onMarkSeasonIgnored(season: Season)
         fun onMarkPreviousSeasonsIgnored(season: Season)
@@ -75,14 +76,13 @@ class ShowDetailsEpoxyController @Inject constructor(
                 spanSizeOverride(TotalSpanOverride)
             }
             detailsNextEpisodeToWatch {
-                val itemId = IdUtils.hashString64Bit("next_episode_${episodeWithSeason.episode!!.id}")
-                id(itemId)
+                id("next_episode_${episodeWithSeason.episode!!.id}")
                 spanSizeOverride(TotalSpanOverride)
                 season(episodeWithSeason.season)
                 episode(episodeWithSeason.episode)
                 textCreator(textCreator)
                 clickListener { view ->
-                    callbacks?.onEpisodeClicked(episodeWithSeason.episode!!, view, itemId)
+                    callbacks?.onEpisodeClicked(episodeWithSeason.episode!!, view)
                 }
             }
         }
@@ -224,7 +224,13 @@ class ShowDetailsEpoxyController @Inject constructor(
                         spanSizeOverride(TotalSpanOverride)
                         textCreator(textCreator)
                         expanded(expanded)
-                        clickListener { _ -> callbacks?.toggleSeasonExpanded(season.season) }
+                        clickListener { model, _, clickedView, _ ->
+                            if (model.expanded()) {
+                                callbacks?.onCollapseSeason(season.season, clickedView)
+                            } else {
+                                callbacks?.onExpandSeason(season.season, clickedView)
+                            }
+                        }
                         popupMenuListener(SeasonPopupMenuListener(season))
                         popupMenuClickListener(SeasonPopupClickListener(season.season))
 
@@ -246,7 +252,7 @@ class ShowDetailsEpoxyController @Inject constructor(
                                 expanded(true)
                                 spanSizeOverride(TotalSpanOverride)
                                 clickListener { view ->
-                                    callbacks?.onEpisodeClicked(episode, view, itemId)
+                                    callbacks?.onEpisodeClicked(episode, view)
                                 }
                             }
                         }
