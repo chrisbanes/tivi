@@ -39,6 +39,7 @@
             android:background="@drawable/placeholder_72dp"
             android:scaleType="centerCrop"
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
+            app:foregroundScrim="@{ android.graphics.Color.BLACK }"
             app:layout_constrainedHeight="true"
             app:layout_constraintDimensionRatio="h,4:3"
             app:layout_constraintEnd_toEndOf="parent"
@@ -46,15 +47,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tmdbBackdropPath="@{state.episode.invoke().tmdbBackdropPath}" />
-
-        <app.tivi.ui.widget.TintingToolbar
-            android:id="@+id/ep_details_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
-            app:layout_constraintTop_toBottomOf="@id/ep_details_status_bar_anchor"
-            app:navigationIcon="@drawable/ic_close_24dp" />
 
         <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/ep_details_title"
@@ -66,6 +58,7 @@
             android:ellipsize="end"
             android:text="@{state.episode.invoke().title}"
             android:textAppearance="?attr/textAppearanceHeadline6"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
             app:layout_constraintBottom_toBottomOf="@id/ep_details_fanart"
             app:layout_constraintEnd_toStartOf="@id/ep_details_fab"
             app:layout_constraintStart_toStartOf="@id/ep_details_fanart"

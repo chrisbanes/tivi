@@ -172,7 +172,10 @@ class ShowDetailsFragment : TiviMvRxFragment() {
         binding.detailsExpandedPane.addStateChangeCallbacks(object : PageStateChangeCallbacks {
             override fun onPageAboutToCollapse(collapseAnimDuration: Long) {}
 
-            override fun onPageAboutToExpand(expandAnimDuration: Long) {}
+            override fun onPageAboutToExpand(expandAnimDuration: Long) {
+                // Make sure we're in the collapsed state
+                binding.detailsMotion.transitionToState(R.id.show_details_closed)
+            }
 
             override fun onPageCollapsed() {
                 backPressedCallback.isEnabled = false
@@ -184,11 +187,15 @@ class ShowDetailsFragment : TiviMvRxFragment() {
                         remove(fragment)
                     }
                 }
+
+                // Re-enable MotionLayout's motion handling
+                binding.detailsMotion.motionEnabled = true
             }
 
             override fun onPageExpanded() {
                 backPressedCallback.isEnabled = true
-
+                // Disable MotionLayout's motion handling while the pane is expanded
+                binding.detailsMotion.motionEnabled = false
                 binding.detailsMotion.requestLayout()
             }
         })

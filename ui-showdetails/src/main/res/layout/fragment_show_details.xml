@@ -29,7 +29,7 @@
             type="app.tivi.showdetails.details.ShowDetailsViewState" />
     </data>
 
-    <androidx.constraintlayout.motion.widget.MotionLayout
+    <app.tivi.ui.widget.TiviMotionLayout
         android:id="@+id/details_motion"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -149,7 +149,8 @@
             <me.saket.inboxrecyclerview.page.ExpandablePageLayout
                 android:id="@+id/details_expanded_pane"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:clickable="true" />
 
         </FrameLayout>
 
@@ -173,5 +174,5 @@
             app:layout_constraintEnd_toEndOf="@id/details_appbar_background"
             app:layout_constraintTop_toTopOf="@id/details_appbar_background" />
 
-    </androidx.constraintlayout.motion.widget.MotionLayout>
+    </app.tivi.ui.widget.TiviMotionLayout>
 </layout>
