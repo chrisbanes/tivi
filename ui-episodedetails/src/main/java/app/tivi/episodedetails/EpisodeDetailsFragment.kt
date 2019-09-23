@@ -22,7 +22,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import app.tivi.TiviMvRxFragment
+import app.tivi.DaggerMvRxFragment
 import app.tivi.common.epoxy.SwipeAwayCallbacks
 import app.tivi.episodedetails.databinding.FragmentEpisodeDetailsBinding
 import app.tivi.extensions.resolveThemeColor
@@ -34,7 +34,7 @@ import com.airbnb.mvrx.withState
 import kotlinx.android.parcel.Parcelize
 import javax.inject.Inject
 
-class EpisodeDetailsFragment : TiviMvRxFragment() {
+class EpisodeDetailsFragment : DaggerMvRxFragment() {
     companion object {
         @JvmStatic
         fun create(id: Long): EpisodeDetailsFragment {

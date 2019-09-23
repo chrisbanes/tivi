@@ -30,7 +30,7 @@ import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
 import androidx.recyclerview.widget.LinearSmoothScroller
 import app.tivi.SharedElementHelper
-import app.tivi.TiviMvRxFragment
+import app.tivi.DaggerMvRxFragment
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -38,6 +38,7 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.episodedetails.EpisodeDetailsFragment
 import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.resolveThemeColor
+import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.details.databinding.FragmentShowDetailsBinding
@@ -50,7 +51,7 @@ import me.saket.inboxrecyclerview.dimming.TintPainter
 import me.saket.inboxrecyclerview.page.PageStateChangeCallbacks
 import javax.inject.Inject
 
-class ShowDetailsFragment : TiviMvRxFragment() {
+class ShowDetailsFragment : DaggerMvRxFragment() {
     companion object {
         @JvmStatic
         fun create(id: Long): ShowDetailsFragment {

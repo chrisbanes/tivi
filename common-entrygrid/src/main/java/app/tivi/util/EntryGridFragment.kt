@@ -25,7 +25,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
-import app.tivi.TiviFragment
 import app.tivi.api.UiError
 import app.tivi.api.UiLoading
 import app.tivi.common.entrygrid.R
@@ -33,16 +32,20 @@ import app.tivi.common.entrygrid.databinding.FragmentEntryGridBinding
 import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
+import app.tivi.extensions.postponeEnterTransitionWithTimeout
+import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.ui.ProgressTimeLatch
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.transitions.GridToGridTransitioner
 import com.google.android.material.snackbar.Snackbar
+import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
-abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewModel<LI, *>> : TiviFragment() {
+abstract class EntryGridFragment<LI, VM> : DaggerFragment()
+        where LI : EntryWithShow<out Entry>, VM : EntryViewModel<LI, *> {
     protected abstract val viewModel: VM
 
     @Inject internal lateinit var _fakeInjection: Context
@@ -72,7 +75,7 @@ abstract class EntryGridFragment<LI : EntryWithShow<out Entry>, VM : EntryViewMo
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        postponeEnterTransition()
+        postponeEnterTransitionWithTimeout()
 
         swipeRefreshLatch = ProgressTimeLatch(minShowTime = 1350) {
             binding.gridSwipeRefresh.isRefreshing = it

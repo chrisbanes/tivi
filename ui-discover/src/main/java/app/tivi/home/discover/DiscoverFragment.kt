@@ -22,10 +22,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
-import app.tivi.TiviMvRxFragment
+import app.tivi.DaggerMvRxFragment
 import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
+import app.tivi.extensions.postponeEnterTransitionWithTimeout
+import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.extensions.toFragmentNavigatorExtras
 import app.tivi.home.discover.databinding.FragmentDiscoverBinding
@@ -36,7 +38,7 @@ import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
-class DiscoverFragment : TiviMvRxFragment() {
+class DiscoverFragment : DaggerMvRxFragment() {
     private lateinit var binding: FragmentDiscoverBinding
 
     private lateinit var listItemSharedElementHelper: ListItemSharedElementHelper
@@ -61,7 +63,7 @@ class DiscoverFragment : TiviMvRxFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Disable transition for now due to https://issuetracker.google.com/129035555
-        // postponeEnterTransition()
+        postponeEnterTransitionWithTimeout()
 
         binding.summaryRv.apply {
             setController(controller)

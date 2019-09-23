@@ -16,9 +16,26 @@
 
 package app.tivi.extensions
 
+import android.view.ViewGroup
+import androidx.core.view.doOnNextLayout
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
+import app.tivi.TiviActivity
+import java.util.concurrent.TimeUnit
 
-@Suppress("UNCHECKED_CAST")
-fun <T : Fragment> FragmentManager.find(id: Int): T = findFragmentById(id) as? T?
-        ?: throw IllegalArgumentException("Fragment not found")
+fun Fragment.scheduleStartPostponedTransitions() {
+    view?.doOnNextLayout {
+        (it.parent as? ViewGroup)?.doOnPreDraw {
+            startPostponedEnterTransition()
+        }
+    }
+
+    val activity = activity
+    if (activity is TiviActivity) {
+        activity.scheduleStartPostponedTransitions()
+    }
+}
+
+fun Fragment.postponeEnterTransitionWithTimeout(timeoutMs: Long = 5000) {
+    postponeEnterTransition(timeoutMs, TimeUnit.MILLISECONDS)
+}
