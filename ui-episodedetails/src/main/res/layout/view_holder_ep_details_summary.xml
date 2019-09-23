@@ -20,22 +20,30 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="episode"
             type="app.tivi.data.entities.Episode" />
     </data>
 
-    <app.tivi.ui.widget.BaselineGridTextView
-        android:id="@+id/ep_details_summary"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:foreground="?attr/selectableItemBackground"
-        android:padding="@dimen/spacing_normal"
-        android:text="@{episode.summary}"
-        android:textAppearance="?attr/textAppearanceBody1"
-        app:maxLinesToggle="@{@integer/details_summary_collapsed_lines}"
-        tools:text="@sample/episode_summary.txt" />
+        android:addStatesFromChildren="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:paddingHorizontal="@dimen/spacing_normal"
+        android:paddingVertical="@dimen/spacing_small"
+        android:transitionGroup="true">
+
+        <app.tivi.ui.widget.BaselineGridTextView
+            android:id="@+id/ep_details_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:text="@{episode.summary}"
+            android:textAppearance="?attr/textAppearanceBody2"
+            app:maxLinesToggle="@{@integer/details_summary_collapsed_lines}"
+            tools:text="@sample/shows.txt" />
+
+    </FrameLayout>
 
 </layout>

@@ -47,7 +47,7 @@ abstract class EpisodesDao : EntityDao<Episode> {
     abstract suspend fun episodeIdWithTraktId(traktId: Int): Long?
 
     @Query("SELECT * from episodes WHERE id = :id")
-    abstract fun episodeWithIdObservable(id: Long): Flow<Episode>
+    abstract fun episodeWithIdObservable(id: Long): Flow<EpisodeWithSeason>
 
     @Query("SELECT shows.id FROM shows" +
             " INNER JOIN seasons AS s ON s.show_id = shows.id" +

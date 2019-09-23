@@ -14,11 +14,22 @@
  * limitations under the License.
  */
 
-package app.tivi.extensions
+package app.tivi.episodedetails
 
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
+import android.content.Context
+import app.tivi.data.entities.Episode
+import app.tivi.data.entities.Season
+import app.tivi.inject.PerActivity
+import javax.inject.Inject
 
-@Suppress("UNCHECKED_CAST")
-fun <T : Fragment> FragmentManager.find(id: Int): T = findFragmentById(id) as? T?
-        ?: throw IllegalArgumentException("Fragment not found")
+class EpisodeDetailsTextCreator @Inject constructor(
+    @PerActivity private val context: Context
+) {
+    fun seasonEpisodeTitleText(season: Season?, episode: Episode?): String? {
+        return if (season != null && episode != null) {
+            context.getString(R.string.season_episode_number, season.number, episode.number)
+        } else {
+            null
+        }
+    }
+}

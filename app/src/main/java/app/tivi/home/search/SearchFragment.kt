@@ -27,12 +27,12 @@ import app.tivi.databinding.FragmentSearchBinding
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
 import app.tivi.ui.transitions.GridToGridTransitioner
-import app.tivi.TiviMvRxFragment
+import app.tivi.DaggerMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
-internal class SearchFragment : TiviMvRxFragment() {
+internal class SearchFragment : DaggerMvRxFragment() {
     private lateinit var binding: FragmentSearchBinding
     private lateinit var listItemSharedElementHelper: ListItemSharedElementHelper
 

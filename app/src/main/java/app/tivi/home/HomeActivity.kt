@@ -32,7 +32,6 @@ import app.tivi.TiviActivityMvRxView
 import app.tivi.databinding.ActivityHomeBinding
 import app.tivi.extensions.beginDelayedTransition
 import app.tivi.extensions.doOnApplyWindowInsets
-import app.tivi.extensions.find
 import app.tivi.extensions.hideSoftInput
 import app.tivi.extensions.toDp
 import app.tivi.extensions.updateConstraintSets
@@ -235,7 +234,8 @@ class HomeActivity : TiviActivityMvRxView() {
     }
 
     private inner class SearchViewListeners : SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
-        private val searchFragment: SearchFragment = supportFragmentManager.find(R.id.home_search_results)
+        private val searchFragment = supportFragmentManager
+                .findFragmentById(R.id.home_search_results) as SearchFragment
         private val searchViewModel: SearchViewModel by searchFragment.fragmentViewModel()
 
         private var expandedMenuItem: MenuItem? = null

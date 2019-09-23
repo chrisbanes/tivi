@@ -47,7 +47,11 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
 ) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
     init {
         viewModelScope.launchObserve(observeEpisodeDetails) {
-            it.execute { result -> copy(episode = result) }
+            it.execute { result ->
+                val episode = result()?.episode
+                val season = result()?.season
+                copy(episode = episode, season = season)
+            }
         }
 
         viewModelScope.launchObserve(observeEpisodeWatches) {
@@ -55,7 +59,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
                 emit(emptyList())
             }.execute { result ->
                 val action = if (result is Success && result().isNotEmpty()) Action.UNWATCH else Action.WATCH
-                copy(watches = result, action = action)
+                copy(watches = result() ?: emptyList(), action = action)
             }
         }
 

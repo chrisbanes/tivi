@@ -25,10 +25,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
-import app.tivi.TiviMvRxFragment
+import app.tivi.DaggerMvRxFragment
 import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
+import app.tivi.extensions.postponeEnterTransitionWithTimeout
+import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.home.watched.databinding.FragmentWatchedBinding
 import app.tivi.ui.ListItemSharedElementHelper
@@ -38,7 +40,7 @@ import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
-class WatchedFragment : TiviMvRxFragment() {
+class WatchedFragment : DaggerMvRxFragment() {
     private lateinit var binding: FragmentWatchedBinding
 
     private val viewModel: WatchedViewModel by fragmentViewModel()
@@ -60,7 +62,7 @@ class WatchedFragment : TiviMvRxFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        postponeEnterTransition()
+        postponeEnterTransitionWithTimeout()
 
         controller.callbacks = object : WatchedEpoxyController.Callbacks {
             override fun onItemClicked(item: WatchedShowEntryWithShow) {

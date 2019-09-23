@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,23 @@
 package app.tivi
 
 import android.content.Context
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.airbnb.mvrx.BaseMvRxFragment
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
-abstract class DaggerBottomSheetFragment : BottomSheetDialogFragment(), HasAndroidInjector {
-    @Inject internal lateinit var childFragmentInjector: DispatchingAndroidInjector<Any>
+abstract class DaggerMvRxFragment : BaseMvRxFragment(), HasAndroidInjector {
+    @Inject
+    lateinit var androidInjector: DispatchingAndroidInjector<Any>
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
     }
 
-    override fun androidInjector(): AndroidInjector<Any> = childFragmentInjector
+    override fun androidInjector(): AndroidInjector<Any> {
+        return androidInjector
+    }
 }

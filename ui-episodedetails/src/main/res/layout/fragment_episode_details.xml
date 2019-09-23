@@ -25,6 +25,10 @@
         <variable
             name="state"
             type="app.tivi.episodedetails.EpisodeDetailsViewState" />
+
+        <variable
+            name="textCreator"
+            type="app.tivi.episodedetails.EpisodeDetailsTextCreator" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -39,16 +43,32 @@
             android:background="@drawable/placeholder_72dp"
             android:scaleType="centerCrop"
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
-            app:foregroundScrim="@{ android.graphics.Color.BLACK }"
+            app:foregroundScrim="@{@android:color/black}"
             app:layout_constrainedHeight="true"
             app:layout_constraintDimensionRatio="h,4:3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_max="270dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tmdbBackdropPath="@{state.episode.invoke().tmdbBackdropPath}" />
+            app:tmdbBackdropPath="@{state.episode.tmdbBackdropPath}" />
 
-        <app.tivi.ui.widget.BaselineGridTextView
+        <TextView
+            android:id="@+id/ep_details_season_episode_number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/spacing_normal"
+            android:layout_marginVertical="@dimen/spacing_micro"
+            android:shadowColor="@android:color/black"
+            android:shadowDy="1.5"
+            android:shadowRadius="0.6"
+            android:text="@{textCreator.seasonEpisodeTitleText(state.season, state.episode)}"
+            android:textAppearance="?attr/textAppearanceOverline"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/ep_details_title"
+            tools:text="Season 1 - Episode 5" />
+
+        <TextView
             android:id="@+id/ep_details_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -56,7 +76,7 @@
             android:layout_marginEnd="@dimen/spacing_normal"
             android:layout_marginStart="@dimen/spacing_normal"
             android:ellipsize="end"
-            android:text="@{state.episode.invoke().title}"
+            android:text="@{state.episode.title}"
             android:textAppearance="?attr/textAppearanceHeadline6"
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
             app:layout_constraintBottom_toBottomOf="@id/ep_details_fanart"
