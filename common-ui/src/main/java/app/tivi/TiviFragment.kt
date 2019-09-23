@@ -17,12 +17,9 @@
 package app.tivi
 
 import android.content.Context
-import android.os.Bundle
 import android.view.ViewGroup
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.doOnPreDraw
-import androidx.transition.TransitionInflater
-import app.tivi.common.ui.R
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
@@ -39,15 +36,6 @@ abstract class TiviFragment : DaggerFragment() {
     lateinit var _dummyTiviFragment: Context
 
     private var postponedTransition = false
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        TransitionInflater.from(context).run {
-            enterTransition = inflateTransition(R.transition.fragment_enter)
-            exitTransition = inflateTransition(R.transition.fragment_exit)
-        }
-    }
 
     override fun postponeEnterTransition() {
         super.postponeEnterTransition()
