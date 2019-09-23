@@ -46,7 +46,7 @@
             app:layout_constraintHeight_max="270dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tmdbBackdropPath="@{state.episode.invoke().tmdbBackdropPath}" />
+            app:tmdbBackdropPath="@{state.episode.tmdbBackdropPath}" />
 
         <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/ep_details_title"
@@ -56,7 +56,7 @@
             android:layout_marginEnd="@dimen/spacing_normal"
             android:layout_marginStart="@dimen/spacing_normal"
             android:ellipsize="end"
-            android:text="@{state.episode.invoke().title}"
+            android:text="@{state.episode.title}"
             android:textAppearance="?attr/textAppearanceHeadline6"
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
             app:layout_constraintBottom_toBottomOf="@id/ep_details_fanart"

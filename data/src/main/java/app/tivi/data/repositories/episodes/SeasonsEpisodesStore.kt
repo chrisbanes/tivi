@@ -51,7 +51,7 @@ class SeasonsEpisodesStore @Inject constructor(
             logger
     )
 
-    fun observeEpisode(episodeId: Long): Flow<Episode> {
+    fun observeEpisode(episodeId: Long): Flow<EpisodeWithSeason> {
         return episodesDao.episodeWithIdObservable(episodeId)
     }
 
