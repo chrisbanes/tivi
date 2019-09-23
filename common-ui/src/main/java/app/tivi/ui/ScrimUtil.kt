@@ -26,6 +26,9 @@ import android.graphics.drawable.shapes.RectShape
 import android.util.LruCache
 import android.view.Gravity
 import androidx.annotation.ColorInt
+import androidx.core.graphics.ColorUtils
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 /**
  * Utility methods for creating prettier gradient scrims.
@@ -57,8 +60,9 @@ object ScrimUtil {
 
         for (i in 0 until numStops) {
             val x = i * 1f / (numStops - 1)
-            val opacity = Math.pow(x.toDouble(), 3.0).toFloat()
-            stopColors[i] = (Math.round(alpha * opacity).coerceIn(0, 255) shl 24) or (baseColor and 0xFFFFFF)
+            val opacity = x.toDouble().pow(3.0).toFloat()
+            stopColors[i] = ColorUtils.setAlphaComponent(baseColor,
+                    (alpha * opacity).roundToInt().coerceIn(0, 255))
         }
 
         val x0: Float

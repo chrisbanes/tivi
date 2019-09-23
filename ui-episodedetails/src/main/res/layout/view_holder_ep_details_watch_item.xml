@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2018 Google, Inc.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,44 +18,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-        <import type="app.tivi.data.entities.EpisodeWatchEntry" />
-        <import type="app.tivi.data.entities.PendingAction" />
-
-        <variable
-            name="watch"
-            type="EpisodeWatchEntry" />
-
-        <variable
-            name="dateTimeFormatter"
-            type="app.tivi.util.TiviDateFormatter" />
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="?android:attr/listPreferredItemHeight"
-        android:foreground="?attr/selectableItemBackground">
-
-        <app.tivi.ui.widget.BaselineGridTextView
-            android:id="@+id/watch_date"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/spacing_small"
-            android:layout_marginStart="@dimen/spacing_normal"
-            android:ellipsize="end"
-            android:text="@{dateTimeFormatter.formatMediumDateTime(watch.watchedAt)}"
-            android:textAppearance="?attr/textAppearanceBody2"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/watch_ic_sync"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="6 Jun 2018 19:34:43" />
+        android:layout_height="wrap_content"
+        android:foreground="?attr/selectableItemBackground"
+        android:minHeight="48dp">
 
         <ImageView
             android:id="@+id/watch_ic_sync"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/spacing_small"
+            android:layout_marginVertical="@dimen/spacing_small"
             android:src="@drawable/ic_upload_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/watch_ic_watch"
@@ -68,12 +41,44 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/spacing_normal"
+            android:layout_marginVertical="@dimen/spacing_small"
             android:src="@{watch.pendingAction != PendingAction.DELETE ? @drawable/ic_eye_24dp : @drawable/ic_eye_off_24dp}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/ic_eye_24dp" />
 
+        <app.tivi.ui.widget.BaselineGridTextView
+            android:id="@+id/watch_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spacing_small"
+            android:layout_marginStart="@dimen/spacing_normal"
+            android:layout_marginVertical="@dimen/spacing_small"
+            android:ellipsize="end"
+            android:text="@{dateTimeFormatter.formatMediumDateTime(watch.watchedAt)}"
+            android:textAppearance="?attr/textAppearanceBody2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/watch_ic_sync"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="6 Jun 2018 19:34:43" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+
+        <import type="app.tivi.data.entities.EpisodeWatchEntry" />
+
+        <import type="app.tivi.data.entities.PendingAction" />
+
+        <variable
+            name="watch"
+            type="EpisodeWatchEntry" />
+
+        <variable
+            name="dateTimeFormatter"
+            type="app.tivi.util.TiviDateFormatter" />
+    </data>
 
 </layout>

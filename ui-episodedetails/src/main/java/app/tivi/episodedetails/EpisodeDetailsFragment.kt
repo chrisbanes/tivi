@@ -53,11 +53,14 @@ class EpisodeDetailsFragment : DaggerMvRxFragment() {
     @Inject lateinit var controller: EpisodeDetailsEpoxyController
     @Inject lateinit var showDetailsNavigator: ShowDetailsNavigator
 
+    @Inject lateinit var textCreator: EpisodeDetailsTextCreator
+
     private lateinit var binding: FragmentEpisodeDetailsBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentEpisodeDetailsBinding.inflate(layoutInflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.textCreator = textCreator
         return binding.root
     }
 
