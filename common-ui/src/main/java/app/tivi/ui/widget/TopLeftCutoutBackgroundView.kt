@@ -65,9 +65,10 @@ class TopLeftCutoutBackgroundView : View {
         val shapeModel = shapeDrawable.shapeAppearanceModel
         val newCutSize = lerp(0f, maxCutSize, cutProgress)
 
-        if (newCutSize != shapeModel.topLeftCorner?.cornerSize) {
-            shapeModel.topLeftCorner = CutCornerTreatment(newCutSize)
-            shapeDrawable.shapeAppearanceModel = shapeModel
+        if (newCutSize != shapeModel.topLeftCorner.cornerSize) {
+            shapeDrawable.shapeAppearanceModel = shapeModel.toBuilder()
+                    .setTopLeftCorner(CutCornerTreatment(newCutSize))
+                    .build()
         }
     }
 }

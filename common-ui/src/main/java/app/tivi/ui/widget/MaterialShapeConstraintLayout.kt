@@ -37,16 +37,20 @@ class MaterialShapeConstraintLayout @JvmOverloads constructor(
             background = MaterialShapeDrawable.createWithElevationOverlay(context, elevation).apply {
                 fillColor = ta.getColorStateList(R.styleable.MaterialShapeConstraintLayout_materialBackgroundColor)
 
+                val builder = shapeAppearanceModel.toBuilder()
+
                 val topLeft = ta.getDimensionPixelSize(
                         R.styleable.MaterialShapeConstraintLayout_materialBackgroundTopLeftRadius, 0)
                 if (topLeft > 0) {
-                    shapeAppearanceModel.setTopLeftCorner(CornerFamily.ROUNDED, topLeft)
+                    builder.setTopLeftCorner(CornerFamily.ROUNDED, topLeft)
                 }
                 val topRight = ta.getDimensionPixelSize(
                         R.styleable.MaterialShapeConstraintLayout_materialBackgroundTopRightRadius, 0)
                 if (topRight > 0) {
-                    shapeAppearanceModel.setTopRightCorner(CornerFamily.ROUNDED, topRight)
+                    builder.setTopRightCorner(CornerFamily.ROUNDED, topRight)
                 }
+
+                shapeAppearanceModel = builder.build()
             }
         }
     }
