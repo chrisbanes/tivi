@@ -26,7 +26,6 @@ import app.tivi.DaggerMvRxFragment
 import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.extensions.postponeEnterTransitionWithTimeout
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.extensions.toFragmentNavigatorExtras
@@ -63,7 +62,7 @@ class DiscoverFragment : DaggerMvRxFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Disable transition for now due to https://issuetracker.google.com/129035555
-        postponeEnterTransitionWithTimeout()
+        // postponeEnterTransitionWithTimeout()
 
         binding.summaryRv.apply {
             setController(controller)
