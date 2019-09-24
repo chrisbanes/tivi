@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.map
  * Simple ViewModel which exposes a [CompositeDisposable] which is automatically cleared/stopped when
  * the ViewModel is cleared.
  */
-open class TiviMvRxViewModel<S : MvRxState>(
+abstract class TiviMvRxViewModel<S : MvRxState>(
     initialState: S
 ) : BaseMvRxViewModel<S>(initialState, debugMode = BuildConfig.DEBUG) {
 

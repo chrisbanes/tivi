@@ -16,6 +16,7 @@
 
 package app.tivi.episodedetails
 
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewModelScope
 import app.tivi.TiviMvRxViewModel
 import app.tivi.domain.interactors.AddEpisodeWatch
@@ -36,7 +37,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
-internal class EpisodeDetailsViewModel @AssistedInject constructor(
+class EpisodeDetailsViewModel @AssistedInject constructor(
     @Assisted initialState: EpisodeDetailsViewState,
     private val updateEpisodeDetails: UpdateEpisodeDetails,
     observeEpisodeDetails: ObserveEpisodeDetails,
@@ -108,19 +109,24 @@ internal class EpisodeDetailsViewModel @AssistedInject constructor(
         fun create(initialState: EpisodeDetailsViewState): EpisodeDetailsViewModel
     }
 
+    interface FactoryProvider {
+        fun provideFactory(): Factory
+    }
+
     companion object : MvRxViewModelFactory<EpisodeDetailsViewModel, EpisodeDetailsViewState> {
         override fun create(
             viewModelContext: ViewModelContext,
             state: EpisodeDetailsViewState
         ): EpisodeDetailsViewModel? {
-            val f: EpisodeDetailsFragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return f.episodeDetailsViewModelFactory.create(state)
+            val fvmc = viewModelContext as FragmentViewModelContext
+            val f: FactoryProvider = (fvmc.fragment<Fragment>()) as FactoryProvider
+            return f.provideFactory().create(state)
         }
 
         override fun initialState(
             viewModelContext: ViewModelContext
         ): EpisodeDetailsViewState? {
-            val f: EpisodeDetailsFragment = (viewModelContext as FragmentViewModelContext).fragment()
+            val f: Fragment = (viewModelContext as FragmentViewModelContext).fragment()
             val args = f.requireArguments()
             return EpisodeDetailsViewState(episodeId = args.getLong("episode_id"))
         }
