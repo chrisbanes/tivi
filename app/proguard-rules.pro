@@ -75,6 +75,8 @@
 -keep class com.crashlytics.** { *; }
 -dontwarn com.crashlytics.**
 
+-dontwarn org.conscrypt.**
+
 # Dagger
 -dontwarn com.google.errorprone.annotations.*
 
@@ -97,10 +99,3 @@
     <fields>;
     <init>(...);
 }
-
--dontwarn org.jetbrains.annotations.**
--keep class kotlin.Metadata { *; }
-
-# Kotlin Reflect internal impl
--keep public class kotlin.reflect.jvm.internal.impl.builtins.* { public *; }
--keep public class kotlin.reflect.jvm.internal.impl.serialization.deserialization.builtins.* { public *; }
