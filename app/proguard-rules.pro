@@ -99,3 +99,11 @@
     <fields>;
     <init>(...);
 }
+
+# For kotlin-reflect
+-keepclassmembers class kotlin.Metadata {
+    public <methods>;
+}
+
+# Need to keep class name due to kotlin-reflect and persisting state
+-keep class * implements com.airbnb.mvrx.MvRxState { *; }
