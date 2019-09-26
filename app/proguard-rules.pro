@@ -101,10 +101,12 @@
 }
 
 # For kotlin-reflect
--keepclassmembers class kotlin.Metadata {
-    public <fields>;
-    public <methods>;
-}
+-dontwarn org.jetbrains.annotations.**
+-keep class kotlin.Metadata { *; }
+
+# Kotlin Reflect internal impl
+-keep public class kotlin.reflect.jvm.internal.impl.builtins.* { public *; }
+-keep public class kotlin.reflect.jvm.internal.impl.serialization.deserialization.builtins.* { public *; }
 
 # Need to keep due to kotlin-reflect
 -keep interface com.airbnb.mvrx.MvRxState
