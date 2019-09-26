@@ -102,8 +102,10 @@
 
 # For kotlin-reflect
 -keepclassmembers class kotlin.Metadata {
+    public <fields>;
     public <methods>;
 }
 
-# Need to keep class name due to kotlin-reflect and persisting state
+# Need to keep due to kotlin-reflect
+-keep interface com.airbnb.mvrx.MvRxState
 -keep class * implements com.airbnb.mvrx.MvRxState { *; }
