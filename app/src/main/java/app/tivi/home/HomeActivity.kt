@@ -18,41 +18,32 @@ package app.tivi.home
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.SearchView
-import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.core.view.updatePadding
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.navOptions
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupWithNavController
 import app.tivi.R
 import app.tivi.TiviActivityMvRxView
 import app.tivi.databinding.ActivityHomeBinding
 import app.tivi.extensions.beginDelayedTransition
 import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.hideSoftInput
-import app.tivi.extensions.toDp
-import app.tivi.extensions.updateConstraintSets
-import app.tivi.home.main.HomeNavigationEpoxyController
-import app.tivi.home.main.HomeNavigationItem
-import app.tivi.home.main.homeNavigationItemForDestinationId
-import app.tivi.home.search.SearchFragment
-import app.tivi.home.search.SearchViewModel
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktConstants
-import app.tivi.ui.SpacingItemDecorator
-import app.tivi.ui.navigation.AppBarConfiguration
-import app.tivi.ui.navigation.NavigationUI
-import app.tivi.ui.navigation.NavigationView
 import coil.Coil
 import coil.api.load
 import coil.size.PixelSize
 import coil.size.Size
 import coil.size.SizeResolver
 import coil.transform.CircleCropTransformation
-import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.viewModel
 import com.airbnb.mvrx.withState
 import net.openid.appauth.AuthorizationException
@@ -65,41 +56,13 @@ class HomeActivity : TiviActivityMvRxView() {
 
     private val viewModel: HomeActivityViewModel by viewModel()
 
-    private val navigationView = object : NavigationView {
-        override fun open() {
-            binding.homeRoot.transitionToState(R.id.nav_open)
-            // Make sure the keyboard is dismissed when we open the navigation menu
-            hideSoftInput()
-        }
-
-        override fun close() {
-            binding.homeRoot.transitionToState(R.id.nav_closed)
-            // Make sure the keyboard is dismissed when we close the navigation menu
-            hideSoftInput()
-        }
-
-        override fun toggle() {
-            binding.homeRoot.run {
-                when (currentState) {
-                    R.id.nav_closed -> open()
-                    else -> close()
-                }
-            }
-        }
-    }
-
     @Inject
     lateinit var homeNavigationViewModelFactory: HomeActivityViewModel.Factory
 
     private lateinit var binding: ActivityHomeBinding
 
-    private val navigationEpoxyController = HomeNavigationEpoxyController(
-            object : HomeNavigationEpoxyController.Callbacks {
-                override fun onNavigationItemSelected(item: HomeNavigationItem) = showNavigationItem(item)
-            })
-
     private val navController: NavController
-        get() = (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
+        get() = findNavController(R.id.nav_host_fragment)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,13 +71,12 @@ class HomeActivity : TiviActivityMvRxView() {
 
         binding.homeRoot.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-        binding.homeRoot.doOnApplyWindowInsets { v, insets, _ ->
-            (v as MotionLayout).updateConstraintSets {
-                constrainHeight(R.id.status_scrim, insets.systemWindowInsetTop)
-            }
 
-            v.updatePadding(left = insets.systemWindowInsetLeft,
-                    right = insets.systemWindowInsetRight)
+        binding.statusScrim.doOnApplyWindowInsets { view, insets, _ ->
+            view.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                height = insets.systemWindowInsetTop
+                validate()
+            }
         }
 
         binding.homeToolbar.setOnMenuItemClickListener(::onMenuItemClicked)
@@ -127,21 +89,14 @@ class HomeActivity : TiviActivityMvRxView() {
                 navController,
                 AppBarConfiguration.Builder(R.id.navigation_followed, R.id.navigation_watched,
                         R.id.navigation_discover)
-                        .setNavigationView(navigationView)
                         .build()
         )
 
-        navController.addOnDestinationChangedListener { _, destination, _ ->
+        binding.homeBottomNavigation.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { _, _, _ ->
             // Ensure that the keyboard is dismissed when we navigate between fragments
             hideSoftInput()
-
-            // Update our recycler view menu
-            navigationEpoxyController.selectedItem = homeNavigationItemForDestinationId(destination.id)
-        }
-
-        binding.homeNavRv.apply {
-            setController(navigationEpoxyController)
-            addItemDecoration(SpacingItemDecorator(bottom = toDp(2)))
         }
     }
 
@@ -154,7 +109,14 @@ class HomeActivity : TiviActivityMvRxView() {
         withState(viewModel) { state ->
             binding.state = state
 
-            navigationEpoxyController.items = state.navigationItems
+            binding.homeBottomNavigation.menu.apply {
+                clear()
+                state.navigationItems.forEach {
+                    add(Menu.NONE, it.destinationId, Menu.NONE, it.labelResId).apply {
+                        setIcon(it.iconResId)
+                    }
+                }
+            }
 
             val userMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_avatar)
             val loginMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_login)
@@ -190,29 +152,6 @@ class HomeActivity : TiviActivityMvRxView() {
         }
     }
 
-    private fun showNavigationItem(item: HomeNavigationItem) {
-        fun navigate(id: Int) {
-            if (navController.currentDestination?.id != id) {
-                navController.navigate(id, null, navOptions {
-                    anim {
-                        enter = R.anim.nav_default_enter_anim
-                        exit = R.anim.nav_default_exit_anim
-                        popEnter = R.anim.nav_default_pop_enter_anim
-                        popExit = R.anim.nav_default_pop_exit_anim
-                    }
-                    popUpTo = navController.graph.startDestination
-                    launchSingleTop = true
-                })
-            }
-        }
-        if (item == HomeNavigationItem.SETTINGS) {
-            navController.navigate(R.id.settings)
-            navigationView.close()
-        } else {
-            navigate(item.destinationId)
-        }
-    }
-
     override fun onBackPressed() {
         if (binding.homeToolbar.hasExpandedActionView()) {
             binding.homeToolbar.collapseActionView()
@@ -234,20 +173,20 @@ class HomeActivity : TiviActivityMvRxView() {
     }
 
     private inner class SearchViewListeners : SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
-        private val searchFragment = supportFragmentManager
-                .findFragmentById(R.id.home_search_results) as SearchFragment
-        private val searchViewModel: SearchViewModel by searchFragment.fragmentViewModel()
+//        private val searchFragment = supportFragmentManager
+//                .findFragmentById(R.id.home_search_results) as SearchFragment
+//        private val searchViewModel: SearchViewModel by searchFragment.fragmentViewModel()
 
         private var expandedMenuItem: MenuItem? = null
 
         override fun onQueryTextSubmit(query: String): Boolean {
-            searchViewModel.setSearchQuery(query)
+            // searchViewModel.setSearchQuery(query)
             hideSoftInput()
             return true
         }
 
         override fun onQueryTextChange(newText: String): Boolean {
-            searchViewModel.setSearchQuery(newText)
+            // searchViewModel.setSearchQuery(newText)
             return true
         }
 
@@ -258,7 +197,7 @@ class HomeActivity : TiviActivityMvRxView() {
             searchView.setOnQueryTextListener(this)
 
             binding.homeToolbar.beginDelayedTransition(100)
-            binding.homeRoot.transitionToState(R.id.home_constraints_search_results)
+            // binding.homeRoot.transitionToState(R.id.home_constraints_search_results)
             return true
         }
 
@@ -268,10 +207,10 @@ class HomeActivity : TiviActivityMvRxView() {
             val searchView = item.actionView as SearchView
             searchView.setOnQueryTextListener(null)
 
-            searchViewModel.clearQuery()
+            // searchViewModel.clearQuery()
 
             binding.homeToolbar.beginDelayedTransition(100)
-            binding.homeRoot.transitionToState(R.id.nav_closed)
+            // binding.homeRoot.transitionToState(R.id.nav_closed)
             return true
         }
     }

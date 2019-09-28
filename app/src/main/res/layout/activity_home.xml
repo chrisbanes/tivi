@@ -19,47 +19,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.motion.widget.MotionLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/home_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/colorPrimarySurface"
         android:theme="@style/ThemeOverlay.Tivi.ThemedSurface"
-        app:layoutDescription="@xml/scene_home_nav"
+        app:paddingLeftSystemWindowInsets="@{true}"
+        app:paddingRightSystemWindowInsets="@{true}"
         tools:context=".home.HomeActivity">
 
         <!-- The height of this is updated via an OnApplyWindowInsetsListener  -->
-        <app.tivi.ui.widget.MaterialShapeConstraintLayout
-            android:id="@+id/home_content_background"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:elevation="4dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/home_toolbar"
-            app:materialBackgroundColor="?attr/colorSurface"
-            app:topCornerOutlineProvider="@{@dimen/backdrop_corner_radius}">
-
-            <fragment
-                android:id="@+id/nav_host_fragment"
-                android:name="androidx.navigation.fragment.NavHostFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:defaultNavHost="true"
-                app:navGraph="@navigation/nav_graph" />
-
-        </app.tivi.ui.widget.MaterialShapeConstraintLayout>
-
         <View
             android:id="@+id/status_scrim"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="1px"
-            android:background="?attr/colorPrimaryDark" />
-
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:focusable="true"
-            android:focusableInTouchMode="true" />
+            android:background="?attr/colorPrimaryDark"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/home_toolbar"
@@ -69,37 +47,27 @@
             app:layout_constraintTop_toBottomOf="@id/status_scrim"
             app:menu="@menu/home_toolbar" />
 
-        <com.airbnb.epoxy.EpoxyRecyclerView
-            android:id="@+id/home_nav_rv"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:orientation="vertical"
-            android:paddingBottom="@dimen/spacing_small"
-            android:paddingTop="@dimen/spacing_small"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintTop_toBottomOf="@id/home_toolbar"
-            tools:listitem="@layout/view_holder_home_nav_item" />
-
-        <FrameLayout
-            android:id="@+id/home_search_results_holder"
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/home_bottom_navigation"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:alpha="0"
-            android:visibility="invisible"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <fragment
+            android:id="@+id/nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:defaultNavHost="true"
+            app:layout_constraintBottom_toTopOf="@id/home_bottom_navigation"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/home_toolbar">
+            app:layout_constraintTop_toBottomOf="@id/home_toolbar"
+            app:navGraph="@navigation/nav_graph" />
 
-            <fragment
-                android:id="@+id/home_search_results"
-                android:name="app.tivi.home.search.SearchFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </FrameLayout>
-
-    </androidx.constraintlayout.motion.widget.MotionLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <data>
         <variable
