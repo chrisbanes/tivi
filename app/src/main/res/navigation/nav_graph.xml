@@ -21,11 +21,6 @@
     app:startDestination="@id/navigation_discover">
 
     <activity
-        android:id="@+id/settings"
-        android:name="app.tivi.settings.SettingsActivity"
-        android:label="@string/settings_title" />
-
-    <activity
         android:id="@id/activity_show_details"
         android:name="app.tivi.showdetails.ShowDetailsActivity"
         android:label="activity_show_details"
@@ -68,5 +63,9 @@
     <fragment android:id="@id/navigation_search"
         android:name="app.tivi.home.search.SearchFragment"
         android:label="@string/search_menu_title" />
+
+    <fragment android:id="@id/navigation_settings"
+        android:name="app.tivi.settings.SettingsFragment"
+        android:label="@string/settings_title" />
 
 </navigation>

@@ -22,9 +22,5 @@ enum class HomeNavigationItem(val destinationId: Int, val labelResId: Int, val i
     DISCOVER(R.id.navigation_discover, R.string.discover_title, R.drawable.ic_popular),
     WATCHED(R.id.navigation_watched, R.string.library_watched, R.drawable.ic_eye_24dp),
     FOLLOWED(R.id.navigation_followed, R.string.library_followed_shows, R.drawable.ic_heart_border),
-    SETTINGS(R.id.settings, R.string.settings_title, R.drawable.ic_settings_black_24dp)
-}
-
-fun homeNavigationItemForDestinationId(destinationId: Int): HomeNavigationItem? {
-    return HomeNavigationItem.values().find { it.destinationId == destinationId }
+    SETTINGS(R.id.navigation_settings, R.string.settings_title, R.drawable.ic_settings_black_24dp)
 }

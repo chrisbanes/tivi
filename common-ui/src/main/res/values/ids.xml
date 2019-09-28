@@ -25,6 +25,7 @@
     <id name="navigation_watched" />
     <id name="navigation_recommended" />
     <id name="navigation_search" />
+    <id name="navigation_settings" />
 
     <id name="activity_show_details" />
 
