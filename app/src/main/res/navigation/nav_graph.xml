@@ -65,4 +65,8 @@
         android:name="app.tivi.home.followed.FollowedFragment"
         android:label="@string/library_followed_shows" />
 
+    <fragment android:id="@id/navigation_search"
+        android:name="app.tivi.home.search.SearchFragment"
+        android:label="@string/search_menu_title" />
+
 </navigation>

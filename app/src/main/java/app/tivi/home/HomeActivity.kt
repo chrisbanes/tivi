@@ -18,32 +18,38 @@ package app.tivi.home
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
+import androidx.recyclerview.widget.DiffUtil
 import app.tivi.R
 import app.tivi.TiviActivityMvRxView
 import app.tivi.databinding.ActivityHomeBinding
 import app.tivi.extensions.beginDelayedTransition
 import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.hideSoftInput
+import app.tivi.home.main.HomeNavigationItemDiffAdapter
+import app.tivi.home.main.HomeNavigationItemDiffCallback
+import app.tivi.home.search.SearchFragment
+import app.tivi.home.search.SearchViewModel
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktConstants
+import app.tivi.util.AppCoroutineDispatchers
 import coil.Coil
 import coil.api.load
 import coil.size.PixelSize
 import coil.size.Size
 import coil.size.SizeResolver
 import coil.transform.CircleCropTransformation
+import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.viewModel
 import com.airbnb.mvrx.withState
 import net.openid.appauth.AuthorizationException
@@ -59,10 +65,19 @@ class HomeActivity : TiviActivityMvRxView() {
     @Inject
     lateinit var homeNavigationViewModelFactory: HomeActivityViewModel.Factory
 
+    @Inject
+    lateinit var dispatchers: AppCoroutineDispatchers
+
     private lateinit var binding: ActivityHomeBinding
 
+    private val navHostFragment: NavHostFragment
+        get() = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+
     private val navController: NavController
-        get() = findNavController(R.id.nav_host_fragment)
+        get() = navHostFragment.navController
+
+    private val primaryNavigationFragment: Fragment?
+        get() = navHostFragment.childFragmentManager.primaryNavigationFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,12 +99,13 @@ class HomeActivity : TiviActivityMvRxView() {
         val searchMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_search)
         searchMenuItem.setOnActionExpandListener(SearchViewListeners())
 
-        NavigationUI.setupWithNavController(
-                binding.homeToolbar,
+        binding.homeToolbar.setupWithNavController(
                 navController,
-                AppBarConfiguration.Builder(R.id.navigation_followed, R.id.navigation_watched,
-                        R.id.navigation_discover)
-                        .build()
+                AppBarConfiguration.Builder(
+                        R.id.navigation_followed,
+                        R.id.navigation_watched,
+                        R.id.navigation_discover
+                ).build()
         )
 
         binding.homeBottomNavigation.setupWithNavController(navController)
@@ -109,14 +125,12 @@ class HomeActivity : TiviActivityMvRxView() {
         withState(viewModel) { state ->
             binding.state = state
 
-            binding.homeBottomNavigation.menu.apply {
-                clear()
-                state.navigationItems.forEach {
-                    add(Menu.NONE, it.destinationId, Menu.NONE, it.labelResId).apply {
-                        setIcon(it.iconResId)
-                    }
-                }
-            }
+            val bottomNavMenu = binding.homeBottomNavigation.menu
+            val diffCallback = HomeNavigationItemDiffCallback(
+                    state.navigationItems, bottomNavMenu)
+            val result = DiffUtil.calculateDiff(diffCallback, false)
+            result.dispatchUpdatesTo(
+                    HomeNavigationItemDiffAdapter(state.navigationItems, bottomNavMenu))
 
             val userMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_avatar)
             val loginMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_user_login)
@@ -173,20 +187,22 @@ class HomeActivity : TiviActivityMvRxView() {
     }
 
     private inner class SearchViewListeners : SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
-//        private val searchFragment = supportFragmentManager
-//                .findFragmentById(R.id.home_search_results) as SearchFragment
-//        private val searchViewModel: SearchViewModel by searchFragment.fragmentViewModel()
-
         private var expandedMenuItem: MenuItem? = null
 
         override fun onQueryTextSubmit(query: String): Boolean {
-            // searchViewModel.setSearchQuery(query)
+            (primaryNavigationFragment as? SearchFragment)?.run {
+                val searchViewModel: SearchViewModel by fragmentViewModel()
+                searchViewModel.setSearchQuery(query)
+            }
             hideSoftInput()
             return true
         }
 
         override fun onQueryTextChange(newText: String): Boolean {
-            // searchViewModel.setSearchQuery(newText)
+            (primaryNavigationFragment as? SearchFragment)?.run {
+                val searchViewModel: SearchViewModel by fragmentViewModel()
+                searchViewModel.setSearchQuery(newText)
+            }
             return true
         }
 
@@ -197,20 +213,31 @@ class HomeActivity : TiviActivityMvRxView() {
             searchView.setOnQueryTextListener(this)
 
             binding.homeToolbar.beginDelayedTransition(100)
-            // binding.homeRoot.transitionToState(R.id.home_constraints_search_results)
+
+            // Open the search fragment
+            navController.navigate(R.id.navigation_search)
+
             return true
         }
 
         override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+            binding.homeToolbar.beginDelayedTransition(100)
+
             expandedMenuItem = null
 
             val searchView = item.actionView as SearchView
             searchView.setOnQueryTextListener(null)
 
-            // searchViewModel.clearQuery()
+            (primaryNavigationFragment as? SearchFragment)?.run {
+                val searchViewModel: SearchViewModel by fragmentViewModel()
+                searchViewModel.clearQuery()
+            }
 
-            binding.homeToolbar.beginDelayedTransition(100)
-            // binding.homeRoot.transitionToState(R.id.nav_closed)
+            // Pop the search fragment off
+            if (navController.currentDestination?.id == R.id.navigation_search) {
+                navController.popBackStack()
+            }
+
             return true
         }
     }
