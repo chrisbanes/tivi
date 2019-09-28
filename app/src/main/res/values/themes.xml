@@ -76,7 +76,9 @@
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">@bool/use_light_nav_bar</item>
     </style>
 
-    <style name="Theme.Tivi.Home" parent="Theme.Tivi.Immerse" />
+    <style name="Theme.Tivi.Home" parent="Theme.Tivi.Immerse">
+        <item name="android:windowLightStatusBar">@bool/use_light_status_bar</item>
+    </style>
 
     <style name="Theme.Tivi.ShowDetails" parent="Theme.Tivi.Immerse">
         <item name="android:windowLightStatusBar">@bool/use_light_status_bar</item>
@@ -88,10 +90,6 @@
 
     <style name="ThemeOverlay.Tivi.Primary" parent="ThemeOverlay.AppCompat.DayNight.ActionBar">
         <item name="android:textColorPrimary">?attr/colorOnPrimary</item>
-    </style>
-
-    <style name="ThemeOverlay.Tivi.ThemedSurface" parent="ThemeOverlay.AppCompat.DayNight.ActionBar">
-        <item name="android:textColorPrimary">?attr/colorOnPrimarySurface</item>
     </style>
 
 </resources>

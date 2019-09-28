@@ -56,12 +56,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".settings.SettingsActivity"
-            android:label="@string/settings_title"
-            android:parentActivityName=".home.HomeActivity"
-            android:theme="@style/Theme.Tivi.Settings" />
-
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

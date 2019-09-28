@@ -60,9 +60,9 @@ class ShowDetailsActivity : TiviActivity() {
                     View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                     View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 
-            doOnApplyWindowInsets { view, insets, paddingState ->
-                view.updatePadding(left = insets.systemWindowInsetLeft + paddingState.left,
-                        right = insets.systemWindowInsetRight + paddingState.right)
+            doOnApplyWindowInsets { view, insets, initialPadding, _ ->
+                view.updatePadding(left = insets.systemWindowInsetLeft + initialPadding.left,
+                        right = insets.systemWindowInsetRight + initialPadding.right)
             }
         }
 
