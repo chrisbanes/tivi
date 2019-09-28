@@ -32,11 +32,19 @@ fun View.getBounds(rect: Rect) {
     rect.set(left, top, right, bottom)
 }
 
-fun View.doOnApplyWindowInsets(f: (View, WindowInsetsCompat, ViewPaddingState) -> Unit) {
+fun View.doOnApplyWindowInsets(
+    f: (
+        View,
+        insets: WindowInsetsCompat,
+        initialPadding: ViewDimensions,
+        initialMargin: ViewDimensions
+    ) -> Unit
+) {
     // Create a snapshot of the view's padding state
-    val paddingState = createStateForView(this)
+    val initialPadding = createStateForViewPadding(this)
+    val initialMargin = createStateForViewMargin(this)
     ViewCompat.setOnApplyWindowInsetsListener(this) { v, insets ->
-        f(v, insets, paddingState)
+        f(v, insets, initialPadding, initialMargin)
         insets
     }
     requestApplyInsetsWhenAttached()
@@ -68,14 +76,23 @@ fun View.doOnAttach(f: (View) -> Unit) {
     }
 }
 
-private fun createStateForView(view: View) = ViewPaddingState(view.paddingLeft,
-        view.paddingTop, view.paddingRight, view.paddingBottom, view.paddingStart, view.paddingEnd)
+private fun createStateForViewPadding(view: View) = ViewDimensions(
+        view.paddingLeft, view.paddingTop, view.paddingRight, view.paddingBottom, view.paddingStart,
+        view.paddingEnd
+)
 
-data class ViewPaddingState(
-    val left: Int,
-    val top: Int,
-    val right: Int,
-    val bottom: Int,
-    val start: Int,
-    val end: Int
+private fun createStateForViewMargin(view: View): ViewDimensions {
+    return (view.layoutParams as? ViewGroup.MarginLayoutParams)?.let {
+        ViewDimensions(it.leftMargin, it.topMargin, it.rightMargin, it.bottomMargin,
+                it.marginStart, it.marginEnd)
+    } ?: ViewDimensions()
+}
+
+data class ViewDimensions(
+    val left: Int = 0,
+    val top: Int = 0,
+    val right: Int = 0,
+    val bottom: Int = 0,
+    val start: Int = 0,
+    val end: Int = 0
 )
