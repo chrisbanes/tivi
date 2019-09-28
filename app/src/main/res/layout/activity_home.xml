@@ -41,7 +41,6 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
-            app:labelVisibilityMode="labeled"
             app:layout_constraintTop_toBottomOf="@id/status_scrim"
             app:menu="@menu/home_toolbar" />
 
@@ -49,6 +48,7 @@
             android:id="@+id/home_bottom_navigation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:labelVisibilityMode="labeled"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
