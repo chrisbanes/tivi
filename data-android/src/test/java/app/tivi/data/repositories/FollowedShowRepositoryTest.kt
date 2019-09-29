@@ -16,20 +16,20 @@
 
 package app.tivi.data.repositories
 
-import app.tivi.data.TiviEntityInserter
+import android.content.Context
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.test.core.app.ApplicationProvider
+import app.tivi.data.DaggerTestComponent
+import app.tivi.data.TestContextModule
+import app.tivi.data.TestDataSourceModule
+import app.tivi.data.TiviDatabase
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.Success
-import app.tivi.data.repositories.followedshows.FollowedShowsDataSource
-import app.tivi.data.repositories.followedshows.FollowedShowsLastRequestStore
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
-import app.tivi.data.repositories.followedshows.FollowedShowsStore
+import app.tivi.data.repositories.followedshows.TraktFollowedShowsDataSource
 import app.tivi.data.repositories.shows.ShowRepository
-import app.tivi.data.repositories.shows.ShowStore
-import app.tivi.trakt.TraktAuthState
-import app.tivi.util.Logger
-import app.tivi.utils.BaseDatabaseTest
-import app.tivi.utils.TestTransactionRunner
+import app.tivi.utils.SuccessFakeShowDataSource
 import app.tivi.utils.followedShow1Local
 import app.tivi.utils.followedShow1Network
 import app.tivi.utils.followedShow1PendingDelete
@@ -41,49 +41,47 @@ import app.tivi.utils.insertShow
 import app.tivi.utils.show
 import app.tivi.utils.show2
 import io.mockk.coEvery
-import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThat
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
-import javax.inject.Provider
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
-class FollowedShowRepositoryTest : BaseDatabaseTest() {
-    private lateinit var followShowsDao: FollowedShowsDao
+@RunWith(RobolectricTestRunner::class)
+class FollowedShowRepositoryTest {
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private lateinit var traktDataSource: FollowedShowsDataSource
-    private lateinit var showRepository: ShowRepository
+    @Inject lateinit var followShowsDao: FollowedShowsDao
+    @Inject lateinit var showRepository: ShowRepository
+    @Inject lateinit var repository: FollowedShowsRepository
+    @Inject lateinit var database: TiviDatabase
+    @Inject lateinit var traktDataSource: TraktFollowedShowsDataSource
 
-    private lateinit var repository: FollowedShowsRepository
+    @Before
+    fun setup() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
 
-    override fun setup() {
-        super.setup()
+        val fakeShowDataSource = SuccessFakeShowDataSource()
+
+        DaggerTestComponent.builder()
+                .testContextModule(TestContextModule(context))
+                .testDataSourceModule(
+                        TestDataSourceModule(
+                                traktShowDataSource = fakeShowDataSource,
+                                tmdbShowDataSource = fakeShowDataSource
+                        )
+                )
+                .build()
+                .inject(this)
 
         runBlockingTest {
             // We'll assume that there's a show in the db
-            insertShow(db)
-
-            followShowsDao = db.followedShowsDao()
-
-            showRepository = mockk(relaxUnitFun = true)
-            coEvery { showRepository.needsUpdate(any()) } returns true
-            coEvery { showRepository.needsInitialUpdate(any()) } returns true
-            coEvery { showRepository.needsImagesUpdate(any(), any()) } returns true
-
-            val logger = mockk<Logger>(relaxUnitFun = true)
-            val txRunner = TestTransactionRunner
-            val entityInserter = TiviEntityInserter(txRunner, logger)
-            traktDataSource = mockk()
-
-            repository = FollowedShowsRepository(
-                    FollowedShowsStore(txRunner, entityInserter, db.followedShowsDao(), logger),
-                    FollowedShowsLastRequestStore(db.lastRequestDao()),
-                    ShowStore(entityInserter, db.showDao(), db.showFtsDao(), db.showImagesDao(), txRunner),
-                    traktDataSource,
-                    showRepository,
-                    Provider { TraktAuthState.LOGGED_IN },
-                    logger
-            )
+            insertShow(database)
         }
     }
 
@@ -94,31 +92,34 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
 
         repository.syncFollowedShows()
 
-        assertThat(repository.getFollowedShows(), `is`(listOf(followedShow1Local)))
+        assertThat(repository.getFollowedShows(),
+                `is`(listOf(followedShow1Local)))
     }
 
     @Test
     fun testSync_emptyResponse() = runBlockingTest {
-        insertFollowedShow(db)
+        insertFollowedShow(database)
 
         coEvery { traktDataSource.getFollowedListId() } returns Success(0)
         coEvery { traktDataSource.getListShows(0) } returns Success(emptyList())
 
         repository.syncFollowedShows()
 
-        assertThat(repository.getFollowedShows(), `is`(emptyList()))
+        assertThat(repository.getFollowedShows(),
+                `is`(emptyList()))
     }
 
     @Test
     fun testSync_responseDifferentShow() = runBlockingTest {
-        insertFollowedShow(db)
+        insertFollowedShow(database)
 
         coEvery { traktDataSource.getFollowedListId() } returns Success(0)
         coEvery { traktDataSource.getListShows(0) } returns Success(listOf(followedShow2Network to show2))
 
         repository.syncFollowedShows()
 
-        assertThat(repository.getFollowedShows(), `is`(listOf(followedShow2Local)))
+        assertThat(repository.getFollowedShows(),
+                `is`(listOf(followedShow2Local)))
     }
 
     @Test
@@ -130,7 +131,8 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
 
         repository.syncFollowedShows()
 
-        assertThat(repository.getFollowedShows(), `is`(emptyList()))
+        assertThat(repository.getFollowedShows(),
+                `is`(emptyList()))
     }
 
     @Test
@@ -142,6 +144,7 @@ class FollowedShowRepositoryTest : BaseDatabaseTest() {
 
         repository.syncFollowedShows()
 
-        assertThat(repository.getFollowedShows(), `is`(listOf(followedShow1Local)))
+        assertThat(repository.getFollowedShows(),
+                `is`(listOf(followedShow1Local)))
     }
 }

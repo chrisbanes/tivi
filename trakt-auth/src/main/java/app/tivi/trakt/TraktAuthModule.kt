@@ -20,7 +20,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import app.tivi.inject.ApplicationId
-import com.uwetrottmann.trakt5.TraktV2
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.flow.first
@@ -30,58 +29,11 @@ import net.openid.appauth.AuthorizationServiceConfiguration
 import net.openid.appauth.ClientAuthentication
 import net.openid.appauth.ClientSecretBasic
 import net.openid.appauth.ResponseTypeValues
-import okhttp3.Cache
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import java.io.File
-import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 class TraktAuthModule {
-    @Provides
-    @Singleton
-    fun provideTrakt(
-        @Named("cache") cacheDir: File,
-        interceptor: HttpLoggingInterceptor,
-        @Named("trakt-client-id") clientId: String
-    ): TraktV2 {
-        return object : TraktV2(clientId) {
-            override fun setOkHttpClientDefaults(builder: OkHttpClient.Builder) {
-                super.setOkHttpClientDefaults(builder)
-                builder.apply {
-                    addInterceptor(interceptor)
-                    cache(Cache(File(cacheDir, "trakt_cache"), 10 * 1024 * 1024))
-                    connectTimeout(20, TimeUnit.SECONDS)
-                    readTimeout(20, TimeUnit.SECONDS)
-                    writeTimeout(20, TimeUnit.SECONDS)
-                }
-            }
-        }
-    }
-
-    @Provides
-    fun provideTraktUsersService(traktV2: TraktV2) = traktV2.users()
-
-    @Provides
-    fun provideTraktShowsService(traktV2: TraktV2) = traktV2.shows()
-
-    @Provides
-    fun provideTraktEpisodesService(traktV2: TraktV2) = traktV2.episodes()
-
-    @Provides
-    fun provideTraktSeasonsService(traktV2: TraktV2) = traktV2.seasons()
-
-    @Provides
-    fun provideTraktSyncService(traktV2: TraktV2) = traktV2.sync()
-
-    @Provides
-    fun provideTraktSearchService(traktV2: TraktV2) = traktV2.search()
-
-    @Provides
-    fun provideTraktRecommendationsService(traktV2: TraktV2) = traktV2.recommendations()
-
     @Singleton
     @Provides
     fun provideAuthConfig(): AuthorizationServiceConfiguration {

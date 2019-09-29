@@ -25,7 +25,6 @@ import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
-import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import org.threeten.bp.Instant
@@ -39,7 +38,7 @@ class FollowedShowsRepository @Inject constructor(
     private val followedShowsStore: FollowedShowsStore,
     private val followedShowsLastRequestStore: FollowedShowsLastRequestStore,
     private val showStore: ShowStore,
-    @Trakt private val dataSource: FollowedShowsDataSource,
+    private val dataSource: TraktFollowedShowsDataSource,
     private val showRepository: ShowRepository,
     private val traktAuthState: Provider<TraktAuthState>,
     private val logger: Logger

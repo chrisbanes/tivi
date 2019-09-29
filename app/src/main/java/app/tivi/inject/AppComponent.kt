@@ -26,6 +26,7 @@ import app.tivi.showdetails.ShowDetailsBuilder
 import app.tivi.tasks.inject.TasksModule
 import app.tivi.tmdb.TmdbModule
 import app.tivi.trakt.TraktAuthModule
+import app.tivi.trakt.TraktModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector
@@ -42,6 +43,7 @@ import javax.inject.Singleton
     DataModule::class,
     HomeBuilder::class,
     ShowDetailsBuilder::class,
+    TraktModule::class,
     TraktAuthModule::class,
     TmdbModule::class,
     NetworkModule::class,

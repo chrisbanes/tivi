@@ -1,0 +1,137 @@
+/*
+ * Copyright 2019 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package app.tivi.data
+
+import android.content.Context
+import androidx.room.Room
+import app.tivi.data.daos.EntityInserter
+import app.tivi.data.entities.Success
+import app.tivi.data.entities.TiviShow
+import app.tivi.data.repositories.FollowedShowRepositoryTest
+import app.tivi.data.repositories.SeasonsEpisodesRepositoryTest
+import app.tivi.data.repositories.episodes.EpisodeDataSource
+import app.tivi.data.repositories.episodes.TraktSeasonsEpisodesDataSource
+import app.tivi.data.repositories.followedshows.TraktFollowedShowsDataSource
+import app.tivi.data.repositories.shows.ShowDataSource
+import app.tivi.inject.Trakt
+import app.tivi.trakt.TraktAuthState
+import app.tivi.trakt.TraktServiceModule
+import app.tivi.util.Logger
+import app.tivi.utils.TestTransactionRunner
+import app.tivi.utils.TiviTestDatabase
+import com.uwetrottmann.tmdb2.Tmdb
+import com.uwetrottmann.trakt5.TraktV2
+import dagger.Binds
+import dagger.Component
+import dagger.Module
+import dagger.Provides
+import io.mockk.coEvery
+import io.mockk.mockk
+import javax.inject.Singleton
+
+@Singleton
+@Component(modules = [
+    TestDataSourceModule::class,
+    TestDatabaseModule::class,
+    TestContextModule::class
+])
+interface TestComponent {
+    fun inject(test: SeasonsEpisodesRepositoryTest)
+    fun inject(test: FollowedShowRepositoryTest)
+}
+
+@Module
+class TestContextModule(private val context: Context) {
+    @Provides
+    fun provideContext(): Context = context
+}
+
+@Module
+class TestDataSourceModule(
+    private val traktFollowedShowsDataSource: TraktFollowedShowsDataSource = mockk(),
+    private val traktEpisodeDataSource: EpisodeDataSource = mockk(),
+    private val tmdbEpisodeDataSource: EpisodeDataSource = mockk(),
+    private val seasonsDataSource: TraktSeasonsEpisodesDataSource = mockk(),
+    private val traktShowDataSource: ShowDataSource = mockk(),
+    private val tmdbShowDataSource: ShowDataSource = mockk()
+) {
+    @Provides
+    fun provideTraktFollowedShowsDataSource() = traktFollowedShowsDataSource
+
+    @Provides
+    @Trakt
+    fun provideTraktEpisodeDataSource() = traktEpisodeDataSource
+
+    @Provides
+    @app.tivi.inject.Tmdb
+    fun provideTmdbEpisodeDataSource() = tmdbEpisodeDataSource
+
+    @Provides
+    @Trakt
+    fun provideTraktSeasonsEpisodesDataSource() = seasonsDataSource
+
+    @Provides
+    @Trakt
+    fun provideTraktShowDataSource(): ShowDataSource = traktShowDataSource
+
+    @Provides
+    @app.tivi.inject.Tmdb
+    fun provideTmdbShowDataSource(): ShowDataSource = tmdbShowDataSource
+}
+
+@Module(includes = [
+    TestRoomDatabaseModule::class,
+    TestDatabaseModuleBinds::class,
+    DatabaseDaoModule::class,
+    TraktServiceModule::class
+])
+class TestDatabaseModule {
+    @Provides
+    fun provideTrakt(): TraktV2 = TraktV2("fakefakefake")
+
+    @Provides
+    fun provideTmdb(): Tmdb = Tmdb("fakefakefake")
+
+    @Provides
+    fun provideTraktAuthState() = TraktAuthState.LOGGED_IN
+}
+
+@Module
+class TestRoomDatabaseModule {
+    @Singleton
+    @Provides
+    fun provideDatabase(context: Context): TiviDatabase {
+        return Room.inMemoryDatabaseBuilder(context, TiviTestDatabase::class.java)
+                .allowMainThreadQueries()
+                .build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideDatabaseTransactionRunner(): DatabaseTransactionRunner = TestTransactionRunner
+
+    @Singleton
+    @Provides
+    fun provideLogger(): Logger = mockk(relaxUnitFun = true)
+}
+
+@Module
+abstract class TestDatabaseModuleBinds {
+    @Singleton
+    @Binds
+    abstract fun provideEntityInserter(inserter: TiviEntityInserter): EntityInserter
+}

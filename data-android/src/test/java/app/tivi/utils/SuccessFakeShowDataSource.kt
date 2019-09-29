@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
-package app.tivi.data
+package app.tivi.utils
 
-import app.tivi.data.daos.EntityInserter
-import dagger.Binds
-import dagger.Module
-import javax.inject.Singleton
+import app.tivi.data.entities.Result
+import app.tivi.data.entities.Success
+import app.tivi.data.entities.TiviShow
+import app.tivi.data.repositories.shows.ShowDataSource
 
-@Module
-abstract class DatabaseModuleBinds {
-    @Binds
-    abstract fun bindTiviDatabase(context: TiviRoomDatabase): TiviDatabase
-
-    @Singleton
-    @Binds
-    abstract fun provideDatabaseTransactionRunner(runner: RoomTransactionRunner): DatabaseTransactionRunner
-
-    @Singleton
-    @Binds
-    abstract fun provideEntityInserter(inserter: TiviEntityInserter): EntityInserter
+class SuccessFakeShowDataSource : ShowDataSource {
+    override suspend fun getShow(show: TiviShow): Result<TiviShow> {
+        return Success(show)
+    }
 }

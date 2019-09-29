@@ -19,6 +19,12 @@ import app.tivi.buildsrc.Libs
 
 apply plugin: 'kotlin'
 
+apply plugin: 'kotlin-kapt'
+kapt {
+    correctErrorTypes = true
+    useBuildCache = true
+}
+
 dependencies {
     api (Libs.traktJava) {
         exclude group: 'org.threeten', module: 'threetenbp'
@@ -26,6 +32,8 @@ dependencies {
     api Libs.threeTenBpNoTzdb
 
     implementation project(":base")
+
+    kapt Libs.Dagger.compiler
 
     implementation Libs.OkHttp.okhttp
     implementation Libs.Retrofit.retrofit
