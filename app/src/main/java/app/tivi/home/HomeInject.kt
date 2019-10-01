@@ -27,6 +27,7 @@ import app.tivi.home.trending.TrendingBuilder
 import app.tivi.home.watched.WatchedBuilder
 import app.tivi.inject.PerActivity
 import app.tivi.inject.ViewModelBuilder
+import app.tivi.settings.SettingsFragment
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -59,4 +60,7 @@ abstract class HomeModuleBinds {
     @Binds
     @PerActivity
     abstract fun bindContext(activity: HomeActivity): Context
+
+    @ContributesAndroidInjector
+    abstract fun settingsFragment(): SettingsFragment
 }
