@@ -53,7 +53,7 @@ class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShow
     }
 
     override fun createController(): EntryGridEpoxyController<PopularEntryWithShow> {
-        return object : EntryGridEpoxyController<PopularEntryWithShow>(R.string.discover_popular) {
+        return object : EntryGridEpoxyController<PopularEntryWithShow>(R.string.discover_popular_title) {
             override fun buildItemModel(item: PopularEntryWithShow): EpoxyModel<*> {
                 return PosterGridItemBindingModel_()
                         .id(item.generateStableId())

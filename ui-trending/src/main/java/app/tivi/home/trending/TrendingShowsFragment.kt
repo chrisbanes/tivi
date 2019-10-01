@@ -39,7 +39,7 @@ class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingS
     override val viewModel: TrendingShowsViewModel by viewModels(factoryProducer = { viewModelFactory })
 
     override fun createController(): EntryGridEpoxyController<TrendingEntryWithShow> {
-        return object : EntryGridEpoxyController<TrendingEntryWithShow>(R.string.discover_trending) {
+        return object : EntryGridEpoxyController<TrendingEntryWithShow>(R.string.discover_trending_title) {
             override fun buildItemModel(item: TrendingEntryWithShow): EpoxyModel<*> {
                 return PosterGridItemBindingModel_()
                         .id(item.generateStableId())

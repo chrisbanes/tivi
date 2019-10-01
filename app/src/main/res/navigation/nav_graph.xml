@@ -33,22 +33,22 @@
     <fragment
         android:id="@id/navigation_trending"
         android:name="app.tivi.home.trending.TrendingShowsFragment"
-        android:label="@string/discover_trending" />
+        android:label="@string/discover_trending_title" />
 
     <fragment
         android:id="@id/navigation_popular"
         android:name="app.tivi.home.popular.PopularShowsFragment"
-        android:label="@string/discover_popular" />
+        android:label="@string/discover_popular_title" />
 
     <fragment
         android:id="@id/navigation_recommended"
         android:name="app.tivi.home.recommended.RecommendedShowsFragment"
-        android:label="@string/discover_recommended" />
+        android:label="@string/discover_recommended_title" />
 
     <fragment
         android:id="@id/navigation_watched"
         android:name="app.tivi.home.watched.WatchedFragment"
-        android:label="@string/library_watched" />
+        android:label="@string/watched_shows_title" />
 
     <fragment
         android:id="@id/navigation_discover"
@@ -58,7 +58,7 @@
     <fragment
         android:id="@id/navigation_followed"
         android:name="app.tivi.home.followed.FollowedFragment"
-        android:label="@string/library_followed_shows" />
+        android:label="@string/following_shows_title" />
 
     <fragment android:id="@id/navigation_search"
         android:name="app.tivi.home.search.SearchFragment"

@@ -54,7 +54,7 @@ class DiscoverEpoxyController @Inject constructor(
         if (viewState.nextEpisodeWithShowToWatched != null) {
             header {
                 id("keep_watching_header")
-                title(R.string.discover_keep_watching)
+                title(R.string.discover_keep_watching_title)
                 spanSizeOverride(TotalSpanOverride)
             }
             discoverNextShowEpisodeToWatch {
@@ -71,7 +71,7 @@ class DiscoverEpoxyController @Inject constructor(
 
         header {
             id("trending_header")
-            title(R.string.discover_trending)
+            title(R.string.discover_trending_title)
             showProgress(viewState.trendingRefreshing)
             spanSizeOverride(TotalSpanOverride)
             buttonClickListener { _ -> callbacks?.onTrendingHeaderClicked() }
@@ -109,7 +109,7 @@ class DiscoverEpoxyController @Inject constructor(
         if (recommendedShows.isNotEmpty()) {
             header {
                 id("recommended_header")
-                title(R.string.discover_recommended)
+                title(R.string.discover_recommended_title)
                 showProgress(viewState.recommendedRefreshing)
                 spanSizeOverride(TotalSpanOverride)
                 buttonClickListener { _ -> callbacks?.onRecommendedHeaderClicked() }
@@ -140,7 +140,7 @@ class DiscoverEpoxyController @Inject constructor(
 
         header {
             id("popular_header")
-            title(R.string.discover_popular)
+            title(R.string.discover_popular_title)
             showProgress(viewState.popularRefreshing)
             spanSizeOverride(TotalSpanOverride)
             buttonClickListener { _ -> callbacks?.onPopularHeaderClicked() }
