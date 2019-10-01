@@ -20,14 +20,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/grid_swipe_refresh"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/grid_swipe_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.airbnb.epoxy.EpoxyRecyclerView
                 android:id="@+id/grid_recyclerview"
@@ -44,16 +48,19 @@
                 app:spanCount="@integer/grid_span_count"
                 tools:listitem="@layout/view_holder_poster_grid_item" />
 
-            <app.tivi.ui.widget.HeaderHolderFrameLayout
-                android:id="@+id/header_holder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="4dp"
-                app:dividerMarginEnd="@dimen/spacing_normal"
-                app:dividerMarginStart="@dimen/spacing_normal" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        </FrameLayout>
+        <app.tivi.ui.widget.HeaderHolderFrameLayout
+            android:id="@+id/header_holder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="4dp"
+            app:dividerMarginEnd="@dimen/spacing_normal"
+            app:dividerMarginStart="@dimen/spacing_normal"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/grid_swipe_refresh" />
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

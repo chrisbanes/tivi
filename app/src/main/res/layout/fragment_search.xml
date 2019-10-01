@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2019 Google, Inc.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,33 +19,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <ProgressBar
-            android:id="@+id/search_progress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:indeterminate="true"
-            app:visible="@{state.refreshing}" />
 
         <com.airbnb.epoxy.EpoxyRecyclerView
             android:id="@+id/search_recyclerview"
             style="@style/Widget.Tivi.RecyclerView.FastScroll"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:clipToPadding="false"
             android:paddingBottom="@dimen/spacing_small"
             android:paddingTop="@dimen/spacing_small"
-            android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:paddingBottomSystemWindowInsets="@{ true }"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:listitem="@layout/view_holder_search_item_show" />
 
-    </FrameLayout>
+        <ProgressBar
+            android:id="@+id/search_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            app:layout_constraintTop_toTopOf="@id/search_recyclerview"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:visible="@{state.refreshing}" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <data>
         <variable

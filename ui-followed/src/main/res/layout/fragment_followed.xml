@@ -19,37 +19,43 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/followed_swipe_refresh"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:isRefreshing="@{state.isLoading}">
+        android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/followed_content"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/followed_swipe_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:isRefreshing="@{state.isLoading}">
 
             <com.airbnb.epoxy.EpoxyRecyclerView
                 android:id="@+id/followed_rv"
                 style="@style/Widget.Tivi.RecyclerView.FastScroll"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:clipToPadding="false"
                 android:paddingVertical="8dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:paddingBottomSystemWindowInsets="@{ true }"
                 tools:listitem="@layout/view_holder_library_followed_item" />
 
-            <app.tivi.ui.widget.HeaderHolderFrameLayout
-                android:id="@+id/header_holder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:dividerMarginStart="@dimen/spacing_normal"
-                app:dividerMarginEnd="@dimen/spacing_normal" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        </FrameLayout>
+        <app.tivi.ui.widget.HeaderHolderFrameLayout
+            android:id="@+id/header_holder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:dividerMarginEnd="@dimen/spacing_normal"
+            app:dividerMarginStart="@dimen/spacing_normal"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/followed_swipe_refresh" />
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <data>
         <variable

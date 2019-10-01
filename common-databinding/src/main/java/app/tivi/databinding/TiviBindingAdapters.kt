@@ -222,34 +222,38 @@ fun applySystemWindows(
         val marginInsetRequested = marginSystemWindowLeft || marginGestureLeft ||
                 marginSystemWindowTop || marginGestureTop || marginSystemWindowRight ||
                 marginGestureRight || marginSystemWindowBottom || marginGestureBottom
-        require(!(marginInsetRequested && v.layoutParams !is ViewGroup.MarginLayoutParams)) {
-            "Margin inset handling requested but view LayoutParams do not extend MarginLayoutParams"
-        }
-        val marginLeft = when {
-            marginGestureLeft -> insets.systemGestureInsets.left
-            marginSystemWindowLeft -> insets.systemWindowInsetLeft
-            else -> 0
-        }
-        val marginTop = when {
-            marginGestureTop -> insets.systemGestureInsets.top
-            marginSystemWindowTop -> insets.systemWindowInsetTop
-            else -> 0
-        }
-        val marginRight = when {
-            marginGestureRight -> insets.systemGestureInsets.right
-            marginSystemWindowRight -> insets.systemWindowInsetRight
-            else -> 0
-        }
-        val marginBottom = when {
-            marginGestureBottom -> insets.systemGestureInsets.bottom
-            marginSystemWindowBottom -> insets.systemWindowInsetBottom
-            else -> 0
-        }
-        v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-            leftMargin = initialMargin.left + marginLeft
-            topMargin = initialMargin.top + marginTop
-            rightMargin = initialMargin.right + marginRight
-            bottomMargin = initialMargin.bottom + marginBottom
+        if (marginInsetRequested) {
+            require(v.layoutParams is ViewGroup.MarginLayoutParams) {
+                "Margin inset handling requested but view LayoutParams do not" +
+                        " extend MarginLayoutParams"
+            }
+
+            val marginLeft = when {
+                marginGestureLeft -> insets.systemGestureInsets.left
+                marginSystemWindowLeft -> insets.systemWindowInsetLeft
+                else -> 0
+            }
+            val marginTop = when {
+                marginGestureTop -> insets.systemGestureInsets.top
+                marginSystemWindowTop -> insets.systemWindowInsetTop
+                else -> 0
+            }
+            val marginRight = when {
+                marginGestureRight -> insets.systemGestureInsets.right
+                marginSystemWindowRight -> insets.systemWindowInsetRight
+                else -> 0
+            }
+            val marginBottom = when {
+                marginGestureBottom -> insets.systemGestureInsets.bottom
+                marginSystemWindowBottom -> insets.systemWindowInsetBottom
+                else -> 0
+            }
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                leftMargin = initialMargin.left + marginLeft
+                topMargin = initialMargin.top + marginTop
+                rightMargin = initialMargin.right + marginRight
+                bottomMargin = initialMargin.bottom + marginBottom
+            }
         }
     }
 }
