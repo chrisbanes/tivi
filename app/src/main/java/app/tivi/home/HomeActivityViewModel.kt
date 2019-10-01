@@ -53,8 +53,7 @@ class HomeActivityViewModel @AssistedInject constructor(
             copy(navigationItems = listOf(
                     HomeNavigationItem.DISCOVER,
                     HomeNavigationItem.FOLLOWED,
-                    HomeNavigationItem.WATCHED,
-                    HomeNavigationItem.SETTINGS)
+                    HomeNavigationItem.WATCHED)
             )
         }
 

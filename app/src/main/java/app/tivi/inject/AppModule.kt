@@ -146,7 +146,6 @@ class AppModule {
     fun provideAppBarConfiguration() = AppBarConfiguration.Builder(
             R.id.navigation_followed,
             R.id.navigation_watched,
-            R.id.navigation_discover,
-            R.id.navigation_settings
+            R.id.navigation_discover
     ).build()
 }

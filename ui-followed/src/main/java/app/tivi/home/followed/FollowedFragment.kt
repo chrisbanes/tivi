@@ -35,6 +35,7 @@ import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.extensions.doOnApplyWindowInsets
+import app.tivi.extensions.navigateToNavDestination
 import app.tivi.extensions.postponeEnterTransitionWithTimeout
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.toActivityNavigatorExtras
@@ -93,7 +94,12 @@ class FollowedFragment : DaggerMvRxFragment() {
 
             setOnMenuItemClickListener {
                 when (it.itemId) {
-                    R.id.home_menu_user_login -> viewModel.onLoginClicked()
+                    R.id.home_menu_user_login -> {
+                        viewModel.onLoginClicked()
+                    }
+                    R.id.home_menu_user_avatar -> {
+                        findNavController().navigateToNavDestination(R.id.navigation_settings)
+                    }
                 }
                 true
             }
