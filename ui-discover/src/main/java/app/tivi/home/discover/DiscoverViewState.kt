@@ -16,13 +16,17 @@
 
 package app.tivi.home.discover
 
+import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.EpisodeWithSeasonWithShow
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
+import app.tivi.trakt.TraktAuthState
 import com.airbnb.mvrx.MvRxState
 
 data class DiscoverViewState(
+    val user: TraktUser? = null,
+    val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
     val trendingItems: List<TrendingEntryWithShow> = emptyList(),
     val trendingRefreshing: Boolean = false,
     val popularItems: List<PopularEntryWithShow> = emptyList(),

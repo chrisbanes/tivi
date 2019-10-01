@@ -20,18 +20,26 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
+import androidx.core.view.updateLayoutParams
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import app.tivi.DaggerMvRxFragment
 import app.tivi.common.epoxy.StickyHeaderScrollListener
+import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
+import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.extensions.toFragmentNavigatorExtras
 import app.tivi.home.discover.databinding.FragmentDiscoverBinding
+import app.tivi.ui.AuthStateMenuItemBinder
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
+import app.tivi.ui.authStateToolbarMenuBinder
 import app.tivi.ui.transitions.GridToGridTransitioner
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
@@ -46,6 +54,9 @@ class DiscoverFragment : DaggerMvRxFragment() {
     @Inject lateinit var discoverViewModelFactory: DiscoverViewModel.Factory
 
     @Inject lateinit var controller: DiscoverEpoxyController
+    @Inject lateinit var appBarConfiguration: AppBarConfiguration
+
+    private lateinit var authStateMenuItemBinder: AuthStateMenuItemBinder
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +85,30 @@ class DiscoverFragment : DaggerMvRxFragment() {
                             binding.headerHolder
                     )
             )
+        }
+
+        authStateMenuItemBinder = authStateToolbarMenuBinder(
+                binding.discoverToolbar,
+                R.id.home_menu_user_avatar,
+                R.id.home_menu_user_login
+        ) { menuItem, url -> menuItem.loadImageUrl(requireContext(), url) }
+
+        binding.statusScrim.doOnApplyWindowInsets { scrim, insets, _, _ ->
+            scrim.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                height = insets.systemWindowInsetTop
+                validate()
+            }
+        }
+
+        binding.discoverToolbar.apply {
+            setupWithNavController(findNavController(), appBarConfiguration)
+
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.home_menu_user_login -> viewModel.onLoginClicked()
+                }
+                true
+            }
         }
 
         controller.callbacks = object : DiscoverEpoxyController.Callbacks {
@@ -154,6 +189,8 @@ class DiscoverFragment : DaggerMvRxFragment() {
                 // First time we've had state, start any postponed transitions
                 scheduleStartPostponedTransitions()
             }
+
+            authStateMenuItemBinder.bind(state.authState, state.user)
 
             binding.state = state
             controller.setData(state)

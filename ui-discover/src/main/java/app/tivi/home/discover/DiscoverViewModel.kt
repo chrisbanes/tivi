@@ -17,6 +17,7 @@
 package app.tivi.home.discover
 
 import androidx.lifecycle.viewModelScope
+import app.tivi.AppNavigator
 import app.tivi.TiviMvRxViewModel
 import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.interactors.UpdateRecommendedShows
@@ -28,6 +29,7 @@ import app.tivi.domain.observers.ObservePopularShows
 import app.tivi.domain.observers.ObserveRecommendedShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveTrendingShows
+import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectFrom
@@ -38,6 +40,7 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class DiscoverViewModel @AssistedInject constructor(
@@ -49,7 +52,9 @@ class DiscoverViewModel @AssistedInject constructor(
     private val updateRecommendedShows: UpdateRecommendedShows,
     observeRecommendedShows: ObserveRecommendedShows,
     observeNextShowEpisodeToWatch: ObserveNextShowEpisodeToWatch,
-    observeTraktAuthState: ObserveTraktAuthState
+    observeTraktAuthState: ObserveTraktAuthState,
+    observeUserDetails: ObserveUserDetails,
+    private val appNavigator: AppNavigator
 ) : TiviMvRxViewModel<DiscoverViewState>(initialState) {
     private val trendingLoadingState = ObservableLoadingCounter()
     private val popularLoadingState = ObservableLoadingCounter()
@@ -103,15 +108,26 @@ class DiscoverViewModel @AssistedInject constructor(
         observeNextShowEpisodeToWatch()
 
         viewModelScope.launchObserve(observeTraktAuthState) { flow ->
-            flow.distinctUntilChanged().collect {
+            flow.distinctUntilChanged().onEach {
                 if (it == TraktAuthState.LOGGED_IN) {
                     refresh(false)
                 }
+            }.execute {
+                copy(authState = it() ?: TraktAuthState.LOGGED_OUT)
             }
         }
         observeTraktAuthState()
 
+        viewModelScope.launchObserve(observeUserDetails) {
+            it.execute { copy(user = it()) }
+        }
+        observeUserDetails(ObserveUserDetails.Params("me"))
+
         refresh(false)
+    }
+
+    fun onLoginClicked() {
+        appNavigator.startLogin()
     }
 
     fun refresh() = refresh(true)
