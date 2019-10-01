@@ -24,14 +24,32 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- The height of this is updated via an OnApplyWindowInsetsListener  -->
+        <View
+            android:id="@+id/status_scrim"
+            android:layout_width="0dp"
+            android:layout_height="1px"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/grid_toolbar"
+            android:layout_width="0dp"
+            android:layout_height="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/status_scrim" />
+
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/grid_swipe_refresh"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/grid_toolbar">
 
             <com.airbnb.epoxy.EpoxyRecyclerView
                 android:id="@+id/grid_recyclerview"
@@ -49,17 +67,6 @@
                 tools:listitem="@layout/view_holder_poster_grid_item" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-        <app.tivi.ui.widget.HeaderHolderFrameLayout
-            android:id="@+id/header_holder"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="4dp"
-            app:dividerMarginEnd="@dimen/spacing_normal"
-            app:dividerMarginStart="@dimen/spacing_normal"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@id/grid_swipe_refresh" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

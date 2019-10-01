@@ -17,21 +17,24 @@
 package app.tivi.util
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.view.ActionMode
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import app.tivi.api.UiError
 import app.tivi.api.UiLoading
 import app.tivi.common.entrygrid.R
 import app.tivi.common.entrygrid.databinding.FragmentEntryGridBinding
-import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
+import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.postponeEnterTransitionWithTimeout
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.ui.ProgressTimeLatch
@@ -48,12 +51,12 @@ abstract class EntryGridFragment<LI, VM> : DaggerFragment()
         where LI : EntryWithShow<out Entry>, VM : EntryViewModel<LI, *> {
     protected abstract val viewModel: VM
 
-    @Inject internal lateinit var _fakeInjection: Context
-
     private lateinit var swipeRefreshLatch: ProgressTimeLatch
 
     private lateinit var controller: EntryGridEpoxyController<LI>
     protected lateinit var binding: FragmentEntryGridBinding
+
+    @Inject lateinit var appBarConfiguration: AppBarConfiguration
 
     private var currentActionMode: ActionMode? = null
 
@@ -74,12 +77,22 @@ abstract class EntryGridFragment<LI, VM> : DaggerFragment()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         postponeEnterTransitionWithTimeout()
 
         swipeRefreshLatch = ProgressTimeLatch(minShowTime = 1350) {
             binding.gridSwipeRefresh.isRefreshing = it
         }
+
+        binding.statusScrim.doOnApplyWindowInsets { scrim, insets, _, _ ->
+            val lp = scrim.layoutParams as ConstraintLayout.LayoutParams
+            if (lp.height != insets.systemWindowInsetTop) {
+                lp.height = insets.systemWindowInsetTop
+                lp.validate()
+                scrim.requestLayout()
+            }
+        }
+
+        binding.gridToolbar.setupWithNavController(findNavController(), appBarConfiguration)
 
         binding.gridRecyclerview.apply {
             // We set the item animator to null since it can interfere with the enter/shared element
@@ -88,12 +101,6 @@ abstract class EntryGridFragment<LI, VM> : DaggerFragment()
 
             setController(controller)
             addItemDecoration(SpacingItemDecorator(paddingLeft))
-            addOnScrollListener(
-                    StickyHeaderScrollListener(
-                    controller,
-                    controller::isHeader,
-                    binding.headerHolder
-            ))
         }
 
         binding.gridSwipeRefresh.setOnRefreshListener(viewModel::refresh)
