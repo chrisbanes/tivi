@@ -81,10 +81,6 @@ class HomeActivityViewModel @AssistedInject constructor(
         }
     }
 
-    fun onProfileItemClicked() {
-        // TODO
-    }
-
     fun onLoginItemClicked(authService: AuthorizationService) {
         traktManager.startAuth(0, authService)
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package app.tivi
+package app.tivi.home
 
-import android.app.PendingIntent
+import app.tivi.TiviAppActivityNavigator
 
-interface AppNavigator {
-    fun provideAuthHandleResponseIntent(requestCode: Int): PendingIntent
-    fun startShowDetails(id: Long, sharedElements: SharedElementHelper?)
-    fun startLogin()
+internal class HomeAppNavigator(
+    private val activity: HomeActivity
+) : TiviAppActivityNavigator(activity) {
+    override fun startLogin() {
+        activity.startLogin()
+    }
 }

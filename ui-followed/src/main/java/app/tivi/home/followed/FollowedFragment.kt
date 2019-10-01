@@ -23,18 +23,26 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
+import androidx.core.view.updateLayoutParams
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import app.tivi.DaggerMvRxFragment
 import app.tivi.common.epoxy.StickyHeaderScrollListener
+import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.postponeEnterTransitionWithTimeout
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.home.followed.databinding.FragmentFollowedBinding
+import app.tivi.ui.AuthStateMenuItemBinder
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
+import app.tivi.ui.authStateToolbarMenuBinder
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
@@ -51,8 +59,11 @@ class FollowedFragment : DaggerMvRxFragment() {
     }
 
     @Inject lateinit var controller: FollowedEpoxyController
+    @Inject lateinit var appBarConfiguration: AppBarConfiguration
 
     private var currentActionMode: ActionMode? = null
+
+    private lateinit var authStateMenuItemBinder: AuthStateMenuItemBinder
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentFollowedBinding.inflate(inflater, container, false)
@@ -63,6 +74,30 @@ class FollowedFragment : DaggerMvRxFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         postponeEnterTransitionWithTimeout()
+
+        authStateMenuItemBinder = authStateToolbarMenuBinder(
+                binding.followedToolbar,
+                R.id.home_menu_user_avatar,
+                R.id.home_menu_user_login
+        ) { menuItem, url -> menuItem.loadImageUrl(requireContext(), url) }
+
+        binding.statusScrim.doOnApplyWindowInsets { scrim, insets, _, _ ->
+            scrim.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                height = insets.systemWindowInsetTop
+                validate()
+            }
+        }
+
+        binding.followedToolbar.apply {
+            setupWithNavController(findNavController(), appBarConfiguration)
+
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.home_menu_user_login -> viewModel.onLoginClicked()
+                }
+                true
+            }
+        }
 
         controller.callbacks = object : FollowedEpoxyController.Callbacks {
             override fun onItemClicked(item: FollowedShowEntryWithShow) {
@@ -119,6 +154,8 @@ class FollowedFragment : DaggerMvRxFragment() {
                 currentActionMode?.title = getString(R.string.selection_title,
                         state.selectedShowIds.size)
             }
+
+            authStateMenuItemBinder.bind(state.authState, state.user)
 
             binding.state = state
 

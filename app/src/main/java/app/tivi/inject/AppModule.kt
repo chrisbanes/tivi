@@ -21,9 +21,11 @@ import android.content.SharedPreferences
 import android.os.Build
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.coroutineScope
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.preference.PreferenceManager
 import app.tivi.BuildConfig
 import app.tivi.TiviApplication
+import app.tivi.home.followed.R
 import app.tivi.util.AppCoroutineDispatchers
 import dagger.Module
 import dagger.Provides
@@ -138,4 +140,13 @@ class AppModule {
     fun provideLongLifetimeScope(): CoroutineScope {
         return ProcessLifecycleOwner.get().lifecycle.coroutineScope
     }
+
+    @Provides
+    @Singleton
+    fun provideAppBarConfiguration() = AppBarConfiguration.Builder(
+            R.id.navigation_followed,
+            R.id.navigation_watched,
+            R.id.navigation_discover,
+            R.id.navigation_settings
+    ).build()
 }

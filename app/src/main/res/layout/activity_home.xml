@@ -27,23 +27,6 @@
         app:paddingRightSystemWindowInsets="@{true}"
         tools:context=".home.HomeActivity">
 
-        <!-- The height of this is updated via an OnApplyWindowInsetsListener  -->
-        <View
-            android:id="@+id/status_scrim"
-            android:layout_width="0dp"
-            android:layout_height="1px"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/home_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
-            app:layout_constraintTop_toBottomOf="@id/status_scrim"
-            app:menu="@menu/home_toolbar" />
-
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/home_bottom_navigation"
             android:layout_width="0dp"
@@ -62,7 +45,7 @@
             app:layout_constraintBottom_toTopOf="@id/home_bottom_navigation"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/home_toolbar"
+            app:layout_constraintTop_toTopOf="parent"
             app:navGraph="@navigation/nav_graph" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

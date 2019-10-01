@@ -18,7 +18,6 @@ package app.tivi.home
 
 import android.content.Context
 import app.tivi.AppNavigator
-import app.tivi.TiviAppActivityNavigator
 import app.tivi.home.discover.DiscoverBuilder
 import app.tivi.home.followed.FollowedBuilder
 import app.tivi.home.popular.PopularBuilder
@@ -52,9 +51,7 @@ internal abstract class HomeBuilder {
 @Module(includes = [HomeModuleBinds::class])
 class HomeModule {
     @Provides
-    fun provideAppNavigator(activity: HomeActivity): AppNavigator {
-        return TiviAppActivityNavigator(activity)
-    }
+    fun provideAppNavigator(activity: HomeActivity): AppNavigator = HomeAppNavigator(activity)
 }
 
 @Module
