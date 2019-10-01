@@ -21,7 +21,7 @@ import app.tivi.trakt.TraktAuthState
 import com.airbnb.mvrx.MvRxState
 
 data class HomeActivityViewState(
-    val navigationItems: List<HomeNavigationItem> = HomeNavigationItem.values().asList(),
+    val navigationItems: List<HomeNavigationItem> = emptyList(),
     val user: TraktUser? = null,
     val authState: TraktAuthState = TraktAuthState.LOGGED_OUT
 ) : MvRxState

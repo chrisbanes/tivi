@@ -39,7 +39,7 @@ class RecommendedShowsFragment : EntryGridFragment<RecommendedEntryWithShow, Rec
     override val viewModel: RecommendedShowsViewModel by viewModels(factoryProducer = { viewModelFactory })
 
     override fun createController(): EntryGridEpoxyController<RecommendedEntryWithShow> {
-        return object : EntryGridEpoxyController<RecommendedEntryWithShow>(R.string.discover_recommended) {
+        return object : EntryGridEpoxyController<RecommendedEntryWithShow>(R.string.discover_recommended_title) {
             override fun buildItemModel(item: RecommendedEntryWithShow): EpoxyModel<*> {
                 return PosterGridItemBindingModel_()
                         .id(item.generateStableId())
