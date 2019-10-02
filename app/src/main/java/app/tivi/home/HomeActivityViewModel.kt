@@ -53,8 +53,9 @@ class HomeActivityViewModel @AssistedInject constructor(
             copy(navigationItems = listOf(
                     HomeNavigationItem.DISCOVER,
                     HomeNavigationItem.FOLLOWED,
-                    HomeNavigationItem.WATCHED)
-            )
+                    HomeNavigationItem.WATCHED,
+                    HomeNavigationItem.SEARCH
+            ))
         }
 
         observeUserDetails(ObserveUserDetails.Params("me"))

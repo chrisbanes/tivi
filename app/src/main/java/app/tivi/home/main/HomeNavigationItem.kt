@@ -22,5 +22,5 @@ enum class HomeNavigationItem(val destinationId: Int, val labelResId: Int, val i
     DISCOVER(R.id.navigation_discover, R.string.discover_title, R.drawable.ic_weekend_black_24dp),
     WATCHED(R.id.navigation_watched, R.string.watched_shows_title, R.drawable.ic_eye_24dp),
     FOLLOWED(R.id.navigation_followed, R.string.following_shows_title, R.drawable.ic_favorite),
-    SETTINGS(R.id.navigation_settings, R.string.settings_title, R.drawable.ic_settings_black_24dp)
+    SEARCH(R.id.navigation_search, R.string.search_menu_title, R.drawable.ic_search_24dp)
 }
