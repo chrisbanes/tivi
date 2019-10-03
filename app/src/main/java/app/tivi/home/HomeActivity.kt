@@ -18,13 +18,10 @@ package app.tivi.home
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
-import androidx.appcompat.widget.SearchView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -35,11 +32,8 @@ import app.tivi.databinding.ActivityHomeBinding
 import app.tivi.extensions.hideSoftInput
 import app.tivi.home.main.HomeNavigationItemDiffAdapter
 import app.tivi.home.main.HomeNavigationItemDiffCallback
-import app.tivi.home.search.SearchFragment
-import app.tivi.home.search.SearchViewModel
 import app.tivi.trakt.TraktConstants
 import app.tivi.util.AppCoroutineDispatchers
-import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.viewModel
 import com.airbnb.mvrx.withState
 import net.openid.appauth.AuthorizationException
@@ -66,9 +60,6 @@ class HomeActivity : TiviActivityMvRxView() {
     private val navController: NavController
         get() = navHostFragment.navController
 
-    private val primaryNavigationFragment: Fragment?
-        get() = navHostFragment.childFragmentManager.primaryNavigationFragment
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -76,9 +67,6 @@ class HomeActivity : TiviActivityMvRxView() {
 
         binding.homeRoot.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-
-//        val searchMenuItem = binding.homeToolbar.menu.findItem(R.id.home_menu_search)
-//        searchMenuItem.setOnActionExpandListener(SearchViewListeners())
 
         binding.homeBottomNavigation.setupWithNavController(navController)
 
@@ -127,57 +115,5 @@ class HomeActivity : TiviActivityMvRxView() {
 
     internal fun startLogin() {
         viewModel.onLoginItemClicked(authService)
-    }
-
-    private inner class SearchViewListeners : SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
-        private var expandedMenuItem: MenuItem? = null
-
-        override fun onQueryTextSubmit(query: String): Boolean {
-            (primaryNavigationFragment as? SearchFragment)?.run {
-                val searchViewModel: SearchViewModel by fragmentViewModel()
-                searchViewModel.setSearchQuery(query)
-            }
-            hideSoftInput()
-            return true
-        }
-
-        override fun onQueryTextChange(newText: String): Boolean {
-            (primaryNavigationFragment as? SearchFragment)?.run {
-                val searchViewModel: SearchViewModel by fragmentViewModel()
-                searchViewModel.setSearchQuery(newText)
-            }
-            return true
-        }
-
-        override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-            expandedMenuItem = item
-
-            val searchView = item.actionView as SearchView
-            searchView.setOnQueryTextListener(this)
-
-            // Open the search fragment
-            navController.navigate(R.id.navigation_search)
-
-            return true
-        }
-
-        override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-            expandedMenuItem = null
-
-            val searchView = item.actionView as SearchView
-            searchView.setOnQueryTextListener(null)
-
-            (primaryNavigationFragment as? SearchFragment)?.run {
-                val searchViewModel: SearchViewModel by fragmentViewModel()
-                searchViewModel.clearQuery()
-            }
-
-            // Pop the search fragment off
-            if (navController.currentDestination?.id == R.id.navigation_search) {
-                navController.popBackStack()
-            }
-
-            return true
-        }
     }
 }

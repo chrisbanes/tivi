@@ -48,6 +48,8 @@ fun Activity.hideSoftInput() {
     }
 }
 
+fun Fragment.hideSoftInput() = requireActivity().hideSoftInput()
+
 fun Fragment.toDp(px: Int) = resources.toDp(px)
 fun Activity.toDp(px: Int) = resources.toDp(px)
 fun Resources.toDp(px: Int) = (displayMetrics.density * px).roundToInt()

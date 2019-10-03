@@ -23,6 +23,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- The height of this is updated via an OnApplyWindowInsetsListener  -->
+        <View
+            android:id="@+id/status_scrim"
+            android:layout_width="0dp"
+            android:layout_height="1px"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/search_toolbar"
+            android:layout_width="0dp"
+            android:layout_height="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/status_scrim"
+            app:menu="@menu/search_toolbar" />
+
         <com.airbnb.epoxy.EpoxyRecyclerView
             android:id="@+id/search_recyclerview"
             style="@style/Widget.Tivi.RecyclerView.FastScroll"
@@ -35,7 +54,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/search_toolbar"
             tools:listitem="@layout/view_holder_search_item_show" />
 
         <ProgressBar

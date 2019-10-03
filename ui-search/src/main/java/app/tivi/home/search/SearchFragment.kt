@@ -18,16 +18,23 @@ package app.tivi.home.search
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import app.tivi.AppNavigator
-import app.tivi.R
+import app.tivi.DaggerMvRxFragment
 import app.tivi.data.entities.TiviShow
-import app.tivi.databinding.FragmentSearchBinding
+import app.tivi.extensions.doOnApplyWindowInsets
+import app.tivi.extensions.hideSoftInput
+import app.tivi.home.search.databinding.FragmentSearchBinding
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
 import app.tivi.ui.transitions.GridToGridTransitioner
-import app.tivi.DaggerMvRxFragment
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import javax.inject.Inject
@@ -41,6 +48,7 @@ internal class SearchFragment : DaggerMvRxFragment() {
     @Inject lateinit var searchViewModelFactory: SearchViewModel.Factory
     @Inject lateinit var controller: SearchEpoxyController
     @Inject lateinit var appNavigator: AppNavigator
+    @Inject lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +71,21 @@ internal class SearchFragment : DaggerMvRxFragment() {
             addOnScrollListener(HideImeOnScrollListener())
         }
 
+        binding.statusScrim.doOnApplyWindowInsets { scrim, insets, _, _ ->
+            val lp = scrim.layoutParams as ConstraintLayout.LayoutParams
+            if (lp.height != insets.systemWindowInsetTop) {
+                lp.height = insets.systemWindowInsetTop
+                lp.validate()
+                scrim.requestLayout()
+            }
+        }
+
+        binding.searchToolbar.setupWithNavController(findNavController(), appBarConfiguration)
+
+        val searchMenuItem = binding.searchToolbar.menu.findItem(R.id.menu_search)
+        searchMenuItem.setOnActionExpandListener(SearchViewListeners())
+        searchMenuItem.expandActionView()
+
         controller.callbacks = object : SearchEpoxyController.Callbacks {
             override fun onSearchItemClicked(show: TiviShow) {
                 // We should really use AndroidX navigation here, but this fragment isn't in the tree
@@ -77,5 +100,33 @@ internal class SearchFragment : DaggerMvRxFragment() {
     override fun invalidate() = withState(viewModel) { state ->
         binding.state = state
         controller.viewState = state
+    }
+
+    private inner class SearchViewListeners : SearchView.OnQueryTextListener,
+            MenuItem.OnActionExpandListener {
+        override fun onQueryTextSubmit(query: String): Boolean {
+            viewModel.setSearchQuery(query)
+            hideSoftInput()
+            return true
+        }
+
+        override fun onQueryTextChange(newText: String): Boolean {
+            viewModel.setSearchQuery(newText)
+            return true
+        }
+
+        override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+            val searchView = item.actionView as SearchView
+            searchView.setOnQueryTextListener(this)
+            return true
+        }
+
+        override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+            val searchView = item.actionView as SearchView
+            searchView.setOnQueryTextListener(null)
+
+            viewModel.clearQuery()
+            return true
+        }
     }
 }
