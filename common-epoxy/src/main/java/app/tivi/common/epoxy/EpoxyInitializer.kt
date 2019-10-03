@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.appinitializers
+package app.tivi.common.epoxy
 
 import android.app.Application
 import android.content.Context
 import android.view.Gravity
 import androidx.recyclerview.widget.SnapHelper
+import app.tivi.appinitializers.AppInitializer
 import com.airbnb.epoxy.Carousel
 import com.airbnb.epoxy.EpoxyAsyncUtil
 import com.airbnb.epoxy.EpoxyController

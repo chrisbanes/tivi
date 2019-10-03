@@ -54,7 +54,6 @@ dependencies {
 
     implementation Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.viewmodel
-    kapt Libs.AndroidX.Lifecycle.compiler
 
     implementation Libs.AndroidX.Paging.runtime
 

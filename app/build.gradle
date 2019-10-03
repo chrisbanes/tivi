@@ -187,7 +187,6 @@ dependencies {
 
     implementation Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.viewmodel
-    kapt Libs.AndroidX.Lifecycle.compiler
 
     implementation Libs.AndroidX.appcompat
     implementation Libs.AndroidX.browser
@@ -222,13 +221,6 @@ dependencies {
     kapt Libs.AssistedInject.processorDagger2
 
     implementation Libs.mvRx
-
-    implementation Libs.Epoxy.epoxy
-    implementation Libs.Epoxy.paging
-    implementation Libs.Epoxy.dataBinding
-    kapt Libs.Epoxy.processor
-
-    implementation Libs.gravitySnapHelper
 
     implementation Libs.Google.firebaseCore
     implementation Libs.Google.crashlytics

@@ -47,6 +47,10 @@ dependencies {
 
     implementation Libs.AndroidX.coreKtx
 
+    implementation Libs.gravitySnapHelper
+
+    kapt Libs.Dagger.compiler
+
     api Libs.Epoxy.epoxy
     api Libs.Epoxy.dataBinding
     api Libs.Epoxy.paging
