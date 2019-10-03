@@ -23,17 +23,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import androidx.recyclerview.widget.DiffUtil
 import app.tivi.R
 import app.tivi.TiviActivityMvRxView
 import app.tivi.databinding.ActivityHomeBinding
 import app.tivi.extensions.hideSoftInput
-import app.tivi.home.main.HomeNavigationItemDiffAdapter
-import app.tivi.home.main.HomeNavigationItemDiffCallback
 import app.tivi.trakt.TraktConstants
 import app.tivi.util.AppCoroutineDispatchers
 import com.airbnb.mvrx.viewModel
-import com.airbnb.mvrx.withState
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
@@ -82,16 +78,6 @@ class HomeActivity : TiviActivityMvRxView() {
     }
 
     override fun invalidate() {
-        withState(viewModel) { state ->
-            binding.state = state
-
-            val bottomNavMenu = binding.homeBottomNavigation.menu
-            val diffCallback = HomeNavigationItemDiffCallback(
-                    state.navigationItems, bottomNavMenu)
-            val result = DiffUtil.calculateDiff(diffCallback, false)
-            result.dispatchUpdatesTo(
-                    HomeNavigationItemDiffAdapter(state.navigationItems, bottomNavMenu))
-        }
     }
 
     override fun handleIntent(intent: Intent) {
