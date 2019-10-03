@@ -23,9 +23,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
-import androidx.core.view.updateLayoutParams
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -34,7 +32,6 @@ import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
-import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.navigateToNavDestination
 import app.tivi.extensions.postponeEnterTransitionWithTimeout
 import app.tivi.extensions.scheduleStartPostponedTransitions
@@ -81,13 +78,6 @@ class FollowedFragment : DaggerMvRxFragment() {
                 R.id.home_menu_user_avatar,
                 R.id.home_menu_user_login
         ) { menuItem, url -> menuItem.loadImageUrl(requireContext(), url) }
-
-        binding.statusScrim.doOnApplyWindowInsets { scrim, insets, _, _ ->
-            scrim.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                height = insets.systemWindowInsetTop
-                validate()
-            }
-        }
 
         binding.followedToolbar.apply {
             setupWithNavController(findNavController(), appBarConfiguration)

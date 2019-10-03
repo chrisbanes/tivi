@@ -19,8 +19,6 @@ package app.tivi.home
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -66,21 +64,14 @@ class HomeActivity : TiviActivityMvRxView() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
 
         binding.homeRoot.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 
         binding.homeBottomNavigation.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
-                R.id.navigation_search -> {
-                    // Hide the bottom nav when search is visible
-                    binding.homeBottomNavigation.isGone = true
-                }
-                else -> {
-                    binding.homeBottomNavigation.isVisible = true
-                    // Ensure that the keyboard is dismissed when we navigate between fragments
-                    hideSoftInput()
-                }
+            if (destination.id != R.id.navigation_search) {
+                hideSoftInput()
             }
         }
     }

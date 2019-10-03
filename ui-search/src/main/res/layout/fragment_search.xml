@@ -20,27 +20,27 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/search_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- The height of this is updated via an OnApplyWindowInsetsListener  -->
-        <View
-            android:id="@+id/status_scrim"
+        <FrameLayout
+            android:id="@+id/search_app_bar"
             android:layout_width="0dp"
-            android:layout_height="1px"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/search_toolbar"
-            android:layout_width="0dp"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="wrap_content"
             android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/status_scrim"
-            app:menu="@menu/search_toolbar" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:paddingTopSystemWindowInsets="@{true}">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/search_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:menu="@menu/search_toolbar" />
+
+        </FrameLayout>
 
         <com.airbnb.epoxy.EpoxyRecyclerView
             android:id="@+id/search_recyclerview"
@@ -54,7 +54,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/search_toolbar"
+            app:layout_constraintTop_toBottomOf="@id/search_app_bar"
             tools:listitem="@layout/view_holder_search_item_show" />
 
         <ProgressBar

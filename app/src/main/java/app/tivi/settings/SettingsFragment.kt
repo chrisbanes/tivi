@@ -20,14 +20,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.commitNow
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import app.tivi.R
 import app.tivi.databinding.FragmentSettingsBinding
-import app.tivi.extensions.doOnApplyWindowInsets
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
@@ -49,15 +47,6 @@ class SettingsFragment : DaggerFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.settingsToolbar.setupWithNavController(findNavController(), appBarConfiguration)
-
-        binding.statusScrim.doOnApplyWindowInsets { scrim, insets, _, _ ->
-            val lp = scrim.layoutParams as ConstraintLayout.LayoutParams
-            if (lp.height != insets.systemWindowInsetTop) {
-                lp.height = insets.systemWindowInsetTop
-                lp.validate()
-                scrim.requestLayout()
-            }
-        }
 
         childFragmentManager.commitNow {
             replace(R.id.settings_container, SettingsPreferenceFragment())

@@ -22,14 +22,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import app.tivi.AppNavigator
 import app.tivi.DaggerMvRxFragment
 import app.tivi.data.entities.TiviShow
-import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.hideSoftInput
 import app.tivi.home.search.databinding.FragmentSearchBinding
 import app.tivi.ui.ListItemSharedElementHelper
@@ -69,15 +67,6 @@ internal class SearchFragment : DaggerMvRxFragment() {
         binding.searchRecyclerview.apply {
             setController(controller)
             addOnScrollListener(HideImeOnScrollListener())
-        }
-
-        binding.statusScrim.doOnApplyWindowInsets { scrim, insets, _, _ ->
-            val lp = scrim.layoutParams as ConstraintLayout.LayoutParams
-            if (lp.height != insets.systemWindowInsetTop) {
-                lp.height = insets.systemWindowInsetTop
-                lp.validate()
-                scrim.requestLayout()
-            }
         }
 
         binding.searchToolbar.setupWithNavController(findNavController(), appBarConfiguration)
@@ -126,6 +115,9 @@ internal class SearchFragment : DaggerMvRxFragment() {
             searchView.setOnQueryTextListener(null)
 
             viewModel.clearQuery()
+
+            findNavController().navigateUp()
+
             return true
         }
     }
