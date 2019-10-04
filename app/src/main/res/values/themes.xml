@@ -28,6 +28,7 @@
 
         <!-- Default widget styles -->
         <item name="toolbarStyle">@style/Widget.Tivi.Toolbar</item>
+        <item name="appBarLayoutStyle">@style/Widget.MaterialComponents.AppBarLayout.Surface</item>
 
         <!-- Type styles -->
         <item name="textAppearanceHeadline1">@style/TextAppearance.Tivi.Headline1</item>

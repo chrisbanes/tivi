@@ -20,7 +20,7 @@
     <dimen name="header_margin">14dp</dimen>
     <dimen name="image_round_rect_radius">4dp</dimen>
 
-    <dimen name="details_appbar_elevation">4dp</dimen>
+    <dimen name="elevation_appbar">4dp</dimen>
 
     <dimen name="spacing_xlarge">48dp</dimen>
     <dimen name="spacing_large">24dp</dimen>

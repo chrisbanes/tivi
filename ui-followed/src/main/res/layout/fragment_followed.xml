@@ -23,15 +23,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/followed_app_bar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
+            android:fitsSystemWindows="true"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:paddingTopSystemWindowInsets="@{true}">
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/followed_toolbar"
@@ -39,7 +38,7 @@
                 android:layout_height="?attr/actionBarSize"
                 app:menu="@menu/followed_toolbar" />
 
-        </FrameLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/followed_swipe_refresh"
@@ -62,16 +61,6 @@
                 tools:listitem="@layout/view_holder_library_followed_item" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-        <app.tivi.ui.widget.HeaderHolderFrameLayout
-            android:id="@+id/header_holder"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:dividerMarginEnd="@dimen/spacing_normal"
-            app:dividerMarginStart="@dimen/spacing_normal"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@id/followed_swipe_refresh" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -22,7 +22,6 @@ import android.view.ActionMode
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -34,7 +33,6 @@ import app.tivi.common.entrygrid.R
 import app.tivi.common.entrygrid.databinding.FragmentEntryGridBinding
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.postponeEnterTransitionWithTimeout
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.ui.ProgressTimeLatch
@@ -70,7 +68,11 @@ abstract class EntryGridFragment<LI, VM> : DaggerFragment()
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = FragmentEntryGridBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -81,15 +83,6 @@ abstract class EntryGridFragment<LI, VM> : DaggerFragment()
 
         swipeRefreshLatch = ProgressTimeLatch(minShowTime = 1350) {
             binding.gridSwipeRefresh.isRefreshing = it
-        }
-
-        binding.statusScrim.doOnApplyWindowInsets { scrim, insets, _, _ ->
-            val lp = scrim.layoutParams as ConstraintLayout.LayoutParams
-            if (lp.height != insets.systemWindowInsetTop) {
-                lp.height = insets.systemWindowInsetTop
-                lp.validate()
-                scrim.requestLayout()
-            }
         }
 
         binding.gridToolbar.setupWithNavController(findNavController(), appBarConfiguration)

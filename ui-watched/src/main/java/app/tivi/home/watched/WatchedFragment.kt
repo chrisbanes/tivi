@@ -28,7 +28,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import app.tivi.DaggerMvRxFragment
-import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
@@ -125,7 +124,6 @@ class WatchedFragment : DaggerMvRxFragment() {
 
         binding.watchedRv.apply {
             addItemDecoration(SpacingItemDecorator(paddingLeft))
-            addOnScrollListener(StickyHeaderScrollListener(controller, controller::isHeader, binding.headerHolder))
             addOnScrollListener(HideImeOnScrollListener())
             setController(controller)
         }

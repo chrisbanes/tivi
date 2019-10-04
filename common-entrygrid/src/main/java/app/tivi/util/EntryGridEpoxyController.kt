@@ -32,7 +32,7 @@ import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
 
 abstract class EntryGridEpoxyController<LI : EntryWithShow<out Entry>>(
-    @StringRes private val titleRes: Int
+    @StringRes private val titleRes: Int? = null
 ) : PagedListEpoxyController<LI>() {
     var state: EntryViewState<LI> by observable(EntryViewState()) { requestForcedModelBuild() }
 
@@ -42,12 +42,13 @@ abstract class EntryGridEpoxyController<LI : EntryWithShow<out Entry>>(
         val modelsFiltered = models.filterNotNull()
 
         if (modelsFiltered.isNotEmpty()) {
-            gridHeader {
-                id("header")
-                title(titleRes)
-                spanSizeOverride(TotalSpanOverride)
+            if (titleRes != null) {
+                gridHeader {
+                    id("header")
+                    title(titleRes)
+                    spanSizeOverride(TotalSpanOverride)
+                }
             }
-
             super.addModels(modelsFiltered)
         } else {
             emptyState {
