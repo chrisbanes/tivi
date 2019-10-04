@@ -18,6 +18,7 @@ package app.tivi.home.followed
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
+import app.tivi.AppNavigator
 import app.tivi.TiviMvRxViewModel
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
@@ -29,6 +30,7 @@ import app.tivi.domain.invoke
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObservePagedFollowedShows
 import app.tivi.domain.observers.ObserveTraktAuthState
+import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.ShowStateSelector
@@ -42,6 +44,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class FollowedViewModel @AssistedInject constructor(
@@ -49,7 +52,9 @@ class FollowedViewModel @AssistedInject constructor(
     private val updateFollowedShows: UpdateFollowedShows,
     private val observePagedFollowedShows: ObservePagedFollowedShows,
     private val observeTraktAuthState: ObserveTraktAuthState,
-    private val changeShowFollowStatus: ChangeShowFollowStatus
+    private val changeShowFollowStatus: ChangeShowFollowStatus,
+    private val observeUserDetails: ObserveUserDetails,
+    private val appNavigator: AppNavigator
 ) : TiviMvRxViewModel<FollowedViewState>(initialState) {
     private val boundaryCallback = object : PagedList.BoundaryCallback<FollowedShowEntryWithShow>() {
         override fun onZeroItemsLoaded() {
@@ -97,13 +102,18 @@ class FollowedViewModel @AssistedInject constructor(
         }
 
         viewModelScope.launchObserve(observeTraktAuthState) { flow ->
-            flow.distinctUntilChanged().collect {
+            flow.distinctUntilChanged().onEach {
                 if (it == TraktAuthState.LOGGED_IN) {
                     refreshFollowed(false)
                 }
-            }
+            }.execute { copy(authState = it() ?: TraktAuthState.LOGGED_OUT) }
         }
         observeTraktAuthState()
+
+        viewModelScope.launchObserve(observeUserDetails) {
+            it.execute { copy(user = it()) }
+        }
+        observeUserDetails(ObserveUserDetails.Params("me"))
 
         // Set the available sorting options
         setState {
@@ -170,6 +180,10 @@ class FollowedViewModel @AssistedInject constructor(
                         ChangeShowFollowStatus.Action.UNFOLLOW)
         )
         showSelection.clearSelection()
+    }
+
+    fun onLoginClicked() {
+        appNavigator.startLogin()
     }
 
     private fun refreshFollowed(fromInteraction: Boolean) {

@@ -17,6 +17,7 @@
 package app.tivi.inject
 
 import app.tivi.TiviApplication
+import app.tivi.common.epoxy.EpoxyModule
 import app.tivi.common.imageloading.ImageLoadingModule
 import app.tivi.data.DataModule
 import app.tivi.data.DatabaseModule
@@ -44,7 +45,8 @@ import javax.inject.Singleton
     TraktAuthModule::class,
     TmdbModule::class,
     NetworkModule::class,
-    ImageLoadingModule::class
+    ImageLoadingModule::class,
+    EpoxyModule::class
 ])
 interface AppComponent : AndroidInjector<TiviApplication> {
     @Component.Factory

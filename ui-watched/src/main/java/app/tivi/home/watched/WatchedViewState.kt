@@ -18,10 +18,14 @@ package app.tivi.home.watched
 
 import androidx.paging.PagedList
 import app.tivi.data.entities.SortOption
+import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
+import app.tivi.trakt.TraktAuthState
 import com.airbnb.mvrx.MvRxState
 
 data class WatchedViewState(
+    val user: TraktUser? = null,
+    val authState: TraktAuthState = TraktAuthState.LOGGED_OUT,
     val isLoading: Boolean = false,
     val isEmpty: Boolean = false,
     val watchedShows: PagedList<WatchedShowEntryWithShow>? = null,

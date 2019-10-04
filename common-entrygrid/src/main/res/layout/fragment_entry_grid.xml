@@ -20,14 +20,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/grid_swipe_refresh"
+    <LinearLayout
+        android:id="@+id/grid_root"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <FrameLayout
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/grid_appbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/grid_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/grid_swipe_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1">
 
             <com.airbnb.epoxy.EpoxyRecyclerView
                 android:id="@+id/grid_recyclerview"
@@ -40,20 +56,12 @@
                 android:paddingRight="2dp"
                 android:paddingTop="2dp"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:paddingBottomSystemWindowInsets="@{ true }"
+                app:paddingBottomSystemWindowInsets="@{true}"
                 app:spanCount="@integer/grid_span_count"
                 tools:listitem="@layout/view_holder_poster_grid_item" />
 
-            <app.tivi.ui.widget.HeaderHolderFrameLayout
-                android:id="@+id/header_holder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="4dp"
-                app:dividerMarginEnd="@dimen/spacing_normal"
-                app:dividerMarginStart="@dimen/spacing_normal" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        </FrameLayout>
-
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </LinearLayout>
 
 </layout>

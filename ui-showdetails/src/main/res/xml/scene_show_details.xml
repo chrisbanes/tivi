@@ -91,14 +91,14 @@
             <CustomAttribute
                 app:attributeName="iconTint"
                 app:customColorValue="?android:attr/textColorPrimary" />
-            <Transform android:elevation="@dimen/details_appbar_elevation" />
+            <Transform android:elevation="@dimen/elevation_appbar" />
         </Constraint>
 
         <Constraint
             android:id="@id/details_appbar_background"
             android:layout_width="0dp"
             android:layout_height="?android:attr/actionBarSize"
-            android:elevation="@dimen/details_appbar_elevation"
+            android:elevation="@dimen/elevation_appbar"
             app:layout_constraintEnd_toEndOf="@id/details_rv"
             app:layout_constraintStart_toStartOf="@id/details_rv"
             app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor">
@@ -117,7 +117,7 @@
             android:layout_marginEnd="@dimen/spacing_xlarge"
             android:layout_marginStart="64dp"
             android:layout_marginTop="@dimen/spacing_micro"
-            android:elevation="@dimen/details_appbar_elevation"
+            android:elevation="@dimen/elevation_appbar"
             app:layout_constraintBottom_toBottomOf="@id/details_appbar_background"
             app:layout_constraintEnd_toEndOf="@id/details_appbar_background"
             app:layout_constraintStart_toStartOf="@id/details_appbar_background"
@@ -143,7 +143,7 @@
                 app:attributeName="backgroundColor"
                 app:customColorValue="?android:attr/colorBackground" />
 
-            <Transform android:elevation="@dimen/details_appbar_elevation" />
+            <Transform android:elevation="@dimen/elevation_appbar" />
         </Constraint>
 
         <Constraint android:id="@id/details_follow_fab">

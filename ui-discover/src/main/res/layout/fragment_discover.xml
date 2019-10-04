@@ -20,22 +20,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-        <variable
-            name="state"
-            type="app.tivi.home.discover.DiscoverViewState" />
-    </data>
-
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/summary_swipe_refresh"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/followed_root"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="match_parent">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/followed_app_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/discover_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:menu="@menu/discover_toolbar" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/summary_swipe_refresh"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/followed_app_bar">
 
             <com.airbnb.epoxy.EpoxyRecyclerView
                 android:id="@+id/summary_rv"
@@ -44,18 +58,26 @@
                 android:clipToPadding="false"
                 android:paddingVertical="8dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:paddingBottomSystemWindowInsets="@{ true }"
                 tools:listitem="@layout/view_holder_poster_grid_item" />
 
-            <app.tivi.ui.widget.HeaderHolderFrameLayout
-                android:id="@+id/header_holder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:dividerMarginEnd="@dimen/spacing_normal"
-                app:dividerMarginStart="@dimen/spacing_normal" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        </FrameLayout>
+        <app.tivi.ui.widget.HeaderHolderFrameLayout
+            android:id="@+id/header_holder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:dividerMarginEnd="@dimen/spacing_normal"
+            app:dividerMarginStart="@dimen/spacing_normal"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/summary_swipe_refresh" />
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+        <variable
+            name="state"
+            type="app.tivi.home.discover.DiscoverViewState" />
+    </data>
 
 </layout>

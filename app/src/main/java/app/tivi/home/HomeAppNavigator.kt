@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package app.tivi.home.main
+package app.tivi.home
 
-import app.tivi.R
+import app.tivi.TiviAppActivityNavigator
 
-enum class HomeNavigationItem(val destinationId: Int, val labelResId: Int, val iconResId: Int) {
-    DISCOVER(R.id.navigation_discover, R.string.discover_title, R.drawable.ic_weekend_black_24dp),
-    WATCHED(R.id.navigation_watched, R.string.watched_shows_title, R.drawable.ic_eye_24dp),
-    FOLLOWED(R.id.navigation_followed, R.string.following_shows_title, R.drawable.ic_favorite),
-    SETTINGS(R.id.navigation_settings, R.string.settings_title, R.drawable.ic_settings_black_24dp)
+internal class HomeAppNavigator(
+    private val activity: HomeActivity
+) : TiviAppActivityNavigator(activity) {
+    override fun startLogin() {
+        activity.startLogin()
+    }
 }

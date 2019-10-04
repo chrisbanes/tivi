@@ -25,16 +25,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import app.tivi.DaggerMvRxFragment
-import app.tivi.common.epoxy.StickyHeaderScrollListener
+import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
+import app.tivi.extensions.navigateToNavDestination
 import app.tivi.extensions.postponeEnterTransitionWithTimeout
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.home.watched.databinding.FragmentWatchedBinding
+import app.tivi.ui.AuthStateMenuItemBinder
 import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
+import app.tivi.ui.authStateToolbarMenuBinder
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
@@ -47,6 +52,9 @@ class WatchedFragment : DaggerMvRxFragment() {
     @Inject lateinit var watchedViewModelFactory: WatchedViewModel.Factory
 
     @Inject lateinit var controller: WatchedEpoxyController
+    @Inject lateinit var appBarConfiguration: AppBarConfiguration
+
+    private lateinit var authStateMenuItemBinder: AuthStateMenuItemBinder
 
     private var currentActionMode: ActionMode? = null
 
@@ -63,6 +71,28 @@ class WatchedFragment : DaggerMvRxFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         postponeEnterTransitionWithTimeout()
+
+        authStateMenuItemBinder = authStateToolbarMenuBinder(
+                binding.watchedToolbar,
+                R.id.home_menu_user_avatar,
+                R.id.home_menu_user_login
+        ) { menuItem, url -> menuItem.loadImageUrl(requireContext(), url) }
+
+        binding.watchedToolbar.apply {
+            setupWithNavController(findNavController(), appBarConfiguration)
+
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.home_menu_user_login -> {
+                        viewModel.onLoginClicked()
+                    }
+                    R.id.home_menu_user_avatar -> {
+                        findNavController().navigateToNavDestination(R.id.navigation_settings)
+                    }
+                }
+                true
+            }
+        }
 
         controller.callbacks = object : WatchedEpoxyController.Callbacks {
             override fun onItemClicked(item: WatchedShowEntryWithShow) {
@@ -94,7 +124,6 @@ class WatchedFragment : DaggerMvRxFragment() {
 
         binding.watchedRv.apply {
             addItemDecoration(SpacingItemDecorator(paddingLeft))
-            addOnScrollListener(StickyHeaderScrollListener(controller, controller::isHeader, binding.headerHolder))
             addOnScrollListener(HideImeOnScrollListener())
             setController(controller)
         }
@@ -120,6 +149,8 @@ class WatchedFragment : DaggerMvRxFragment() {
         }
 
         binding.state = state
+
+        authStateMenuItemBinder.bind(state.authState, state.user)
 
         if (state.watchedShows != null) {
             // PagingEpoxyController does not like being updated before it has a list

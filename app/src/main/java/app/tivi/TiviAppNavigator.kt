@@ -39,9 +39,13 @@ open class TiviAppNavigator @Inject constructor(
     override fun startShowDetails(id: Long, sharedElements: SharedElementHelper?) {
         context.startActivity(ShowDetailsActivity.createIntent(context, id))
     }
+
+    override fun startLogin() {
+        throw IllegalArgumentException("This app navigator can't handle login calls")
+    }
 }
 
-internal class TiviAppActivityNavigator(private val activity: Activity) : TiviAppNavigator(activity) {
+internal open class TiviAppActivityNavigator(private val activity: Activity) : TiviAppNavigator(activity) {
     override fun startShowDetails(id: Long, sharedElements: SharedElementHelper?) {
         activity.startActivityForResult(
                 ShowDetailsActivity.createIntent(activity, id),

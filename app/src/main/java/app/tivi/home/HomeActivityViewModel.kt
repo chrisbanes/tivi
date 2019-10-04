@@ -23,8 +23,6 @@ import app.tivi.domain.invoke
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
-import app.tivi.home.main.HomeActivityViewState
-import app.tivi.home.main.HomeNavigationItem
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import com.airbnb.mvrx.MvRxViewModelFactory
@@ -49,15 +47,6 @@ class HomeActivityViewModel @AssistedInject constructor(
             it.execute { copy(user = it()) }
         }
 
-        setState {
-            copy(navigationItems = listOf(
-                    HomeNavigationItem.DISCOVER,
-                    HomeNavigationItem.FOLLOWED,
-                    HomeNavigationItem.WATCHED,
-                    HomeNavigationItem.SETTINGS)
-            )
-        }
-
         observeUserDetails(ObserveUserDetails.Params("me"))
 
         viewModelScope.launchObserve(observeTraktAuthState) { flow ->
@@ -79,10 +68,6 @@ class HomeActivityViewModel @AssistedInject constructor(
             response != null -> traktManager.onAuthResponse(authService, response)
             ex != null -> traktManager.onAuthException(ex)
         }
-    }
-
-    fun onProfileItemClicked() {
-        // TODO
     }
 
     fun onLoginItemClicked(authService: AuthorizationService) {

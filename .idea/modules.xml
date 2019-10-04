@@ -25,6 +25,7 @@
       <module fileurl="file://$PROJECT_DIR$/ui-followed/ui-followed.iml" filepath="$PROJECT_DIR$/ui-followed/ui-followed.iml" />
       <module fileurl="file://$PROJECT_DIR$/ui-popular/ui-popular.iml" filepath="$PROJECT_DIR$/ui-popular/ui-popular.iml" />
       <module fileurl="file://$PROJECT_DIR$/ui-recommended/ui-recommended.iml" filepath="$PROJECT_DIR$/ui-recommended/ui-recommended.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui-search/ui-search.iml" filepath="$PROJECT_DIR$/ui-search/ui-search.iml" />
       <module fileurl="file://$PROJECT_DIR$/ui-showdetails/ui-showdetails.iml" filepath="$PROJECT_DIR$/ui-showdetails/ui-showdetails.iml" />
       <module fileurl="file://$PROJECT_DIR$/ui-trending/ui-trending.iml" filepath="$PROJECT_DIR$/ui-trending/ui-trending.iml" />
       <module fileurl="file://$PROJECT_DIR$/ui-watched/ui-watched.iml" filepath="$PROJECT_DIR$/ui-watched/ui-watched.iml" />

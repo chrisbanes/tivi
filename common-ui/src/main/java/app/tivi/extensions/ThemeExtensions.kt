@@ -21,6 +21,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import androidx.annotation.AttrRes
+import androidx.core.content.res.getDimensionPixelSizeOrThrow
 import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.content.res.use
 
@@ -42,5 +43,12 @@ fun Context.resolveThemeColorStateList(@AttrRes resId: Int): ColorStateList? {
 fun Context.resolveThemeReferenceResId(@AttrRes resId: Int): Int {
     return obtainStyledAttributes(intArrayOf(resId)).use {
         it.getResourceIdOrThrow(0)
+    }
+}
+
+@SuppressLint("Recycle")
+fun Context.resolveThemeDimensionPixelSize(@AttrRes resId: Int): Int {
+    return obtainStyledAttributes(intArrayOf(resId)).use {
+        it.getDimensionPixelSizeOrThrow(0)
     }
 }
