@@ -22,12 +22,15 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.marginBottom
+import androidx.core.view.updatePadding
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import app.tivi.AppNavigator
 import app.tivi.DaggerMvRxFragment
 import app.tivi.data.entities.TiviShow
+import app.tivi.extensions.doOnLayouts
 import app.tivi.extensions.hideSoftInput
 import app.tivi.home.search.databinding.FragmentSearchBinding
 import app.tivi.ui.ListItemSharedElementHelper
@@ -67,6 +70,11 @@ internal class SearchFragment : DaggerMvRxFragment() {
         binding.searchRecyclerview.apply {
             setController(controller)
             addOnScrollListener(HideImeOnScrollListener())
+        }
+
+        binding.searchAppbar.doOnLayouts { appBar ->
+            binding.searchRecyclerview.updatePadding(top = appBar.bottom + appBar.marginBottom)
+            true
         }
 
         binding.searchToolbar.setupWithNavController(findNavController(), appBarConfiguration)

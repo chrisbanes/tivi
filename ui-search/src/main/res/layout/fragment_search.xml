@@ -24,53 +24,64 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/search_app_bar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:paddingTopSystemWindowInsets="@{true}">
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/search_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:menu="@menu/search_toolbar" />
-
-        </FrameLayout>
-
         <com.airbnb.epoxy.EpoxyRecyclerView
             android:id="@+id/search_recyclerview"
             style="@style/Widget.Tivi.RecyclerView.FastScroll"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:clipToPadding="false"
-            android:paddingBottom="@dimen/spacing_small"
             android:paddingTop="@dimen/spacing_small"
+            android:paddingBottom="@dimen/spacing_small"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/search_app_bar"
+            app:layout_constraintTop_toTopOf="parent"
             tools:listitem="@layout/view_holder_search_item_show" />
 
-        <ProgressBar
-            android:id="@+id/search_progress"
-            style="?android:attr/progressBarStyleHorizontal"
+        <View
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:indeterminate="true"
-            app:layout_constraintTop_toTopOf="@id/search_recyclerview"
+            android:layout_height="0dp"
+            android:background="@drawable/rectangle"
+            android:backgroundTint="@color/color_surface_70"
+            app:layout_constraintBottom_toBottomOf="@id/search_appbar"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:visible="@{state.refreshing}" />
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/search_appbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/spacing_normal"
+            android:layout_marginVertical="@dimen/spacing_small"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:marginTopSystemWindowInsets="@{true}">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/search_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
+                app:menu="@menu/search_toolbar" />
+
+            <ProgressBar
+                android:id="@+id/search_progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:indeterminate="true"
+                app:visible="@{state.refreshing}" />
+
+        </com.google.android.material.card.MaterialCardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <data>
+
         <variable
             name="state"
             type="app.tivi.home.search.SearchViewState" />

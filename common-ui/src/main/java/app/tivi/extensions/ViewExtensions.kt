@@ -76,6 +76,30 @@ fun View.doOnAttach(f: (View) -> Unit) {
     }
 }
 
+/**
+ * Allows easy listening to layout passing. Return [true] if you need the listener to keep being
+ * attached.
+ */
+inline fun View.doOnLayouts(crossinline action: (view: View) -> Boolean) {
+    addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+        override fun onLayoutChange(
+            view: View,
+            left: Int,
+            top: Int,
+            right: Int,
+            bottom: Int,
+            oldLeft: Int,
+            oldTop: Int,
+            oldRight: Int,
+            oldBottom: Int
+        ) {
+            if (!action(view)) {
+                view.removeOnLayoutChangeListener(this)
+            }
+        }
+    })
+}
+
 private fun createStateForViewPadding(view: View) = ViewDimensions(
         view.paddingLeft, view.paddingTop, view.paddingRight, view.paddingBottom, view.paddingStart,
         view.paddingEnd
