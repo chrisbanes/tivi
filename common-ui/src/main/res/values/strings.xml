@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="empty_prompt">Y u no watch some TV?</string>
     <string name="empty_emoji">😏</string>
 
@@ -47,7 +47,7 @@
 
     <string name="login">Login</string>
 
-    <string name="search_menu_title">Search</string>
+    <string name="search_menu_title" tools:ignore="PrivateResource">Search</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_ui_category_title">User Interface</string>

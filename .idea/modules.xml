@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/StudioProjects-tivi.iml" filepath="$PROJECT_DIR$/StudioProjects-tivi.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/base/base.iml" filepath="$PROJECT_DIR$/base/base.iml" />
       <module fileurl="file://$PROJECT_DIR$/base-android/base-android.iml" filepath="$PROJECT_DIR$/base-android/base-android.iml" />
@@ -17,6 +18,32 @@
       <module fileurl="file://$PROJECT_DIR$/domain/domain.iml" filepath="$PROJECT_DIR$/domain/domain.iml" />
       <module fileurl="file://$PROJECT_DIR$/tasks/tasks.iml" filepath="$PROJECT_DIR$/tasks/tasks.iml" />
       <module fileurl="file://$PROJECT_DIR$/tivi.iml" filepath="$PROJECT_DIR$/tivi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/tivi-app.iml" filepath="$PROJECT_DIR$/app/tivi-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/base/tivi-base.iml" filepath="$PROJECT_DIR$/base/tivi-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/base-android/tivi-base-android.iml" filepath="$PROJECT_DIR$/base-android/tivi-base-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/buildSrc/tivi-buildSrc.iml" filepath="$PROJECT_DIR$/buildSrc/tivi-buildSrc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common-databinding/tivi-common-databinding.iml" filepath="$PROJECT_DIR$/common-databinding/tivi-common-databinding.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common-entrygrid/tivi-common-entrygrid.iml" filepath="$PROJECT_DIR$/common-entrygrid/tivi-common-entrygrid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common-epoxy/tivi-common-epoxy.iml" filepath="$PROJECT_DIR$/common-epoxy/tivi-common-epoxy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common-imageloading/tivi-common-imageloading.iml" filepath="$PROJECT_DIR$/common-imageloading/tivi-common-imageloading.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common-layouts/tivi-common-layouts.iml" filepath="$PROJECT_DIR$/common-layouts/tivi-common-layouts.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common-ui/tivi-common-ui.iml" filepath="$PROJECT_DIR$/common-ui/tivi-common-ui.iml" />
+      <module fileurl="file://$PROJECT_DIR$/data/tivi-data.iml" filepath="$PROJECT_DIR$/data/tivi-data.iml" />
+      <module fileurl="file://$PROJECT_DIR$/data-android/tivi-data-android.iml" filepath="$PROJECT_DIR$/data-android/tivi-data-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/domain/tivi-domain.iml" filepath="$PROJECT_DIR$/domain/tivi-domain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tasks/tivi-tasks.iml" filepath="$PROJECT_DIR$/tasks/tivi-tasks.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tmdb/tivi-tmdb.iml" filepath="$PROJECT_DIR$/tmdb/tivi-tmdb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trakt/tivi-trakt.iml" filepath="$PROJECT_DIR$/trakt/tivi-trakt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trakt-auth/tivi-trakt-auth.iml" filepath="$PROJECT_DIR$/trakt-auth/tivi-trakt-auth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui-discover/tivi-ui-discover.iml" filepath="$PROJECT_DIR$/ui-discover/tivi-ui-discover.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui-episodedetails/tivi-ui-episodedetails.iml" filepath="$PROJECT_DIR$/ui-episodedetails/tivi-ui-episodedetails.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui-followed/tivi-ui-followed.iml" filepath="$PROJECT_DIR$/ui-followed/tivi-ui-followed.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui-popular/tivi-ui-popular.iml" filepath="$PROJECT_DIR$/ui-popular/tivi-ui-popular.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui-recommended/tivi-ui-recommended.iml" filepath="$PROJECT_DIR$/ui-recommended/tivi-ui-recommended.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui-search/tivi-ui-search.iml" filepath="$PROJECT_DIR$/ui-search/tivi-ui-search.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui-showdetails/tivi-ui-showdetails.iml" filepath="$PROJECT_DIR$/ui-showdetails/tivi-ui-showdetails.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui-trending/tivi-ui-trending.iml" filepath="$PROJECT_DIR$/ui-trending/tivi-ui-trending.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui-watched/tivi-ui-watched.iml" filepath="$PROJECT_DIR$/ui-watched/tivi-ui-watched.iml" />
       <module fileurl="file://$PROJECT_DIR$/tmdb/tmdb.iml" filepath="$PROJECT_DIR$/tmdb/tmdb.iml" />
       <module fileurl="file://$PROJECT_DIR$/trakt/trakt.iml" filepath="$PROJECT_DIR$/trakt/trakt.iml" />
       <module fileurl="file://$PROJECT_DIR$/trakt-auth/trakt-auth.iml" filepath="$PROJECT_DIR$/trakt-auth/trakt-auth.iml" />

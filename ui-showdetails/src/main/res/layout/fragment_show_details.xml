@@ -77,7 +77,7 @@
         <View
             android:id="@+id/details_gap_filler"
             android:layout_width="match_parent"
-            android:layout_height="2px"
+            android:layout_height="2dp"
             android:background="?android:attr/colorBackground"
             app:layout_constraintBottom_toTopOf="@id/details_rv" />
 

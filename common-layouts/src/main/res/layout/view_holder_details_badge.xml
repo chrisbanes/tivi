@@ -36,7 +36,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:contentDescription="@{contentDescription}"
         android:transitionGroup="true">
 
@@ -52,7 +51,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
             app:srcRes="@{icon}"
-            tools:src="@drawable/ic_details_rating" />
+            tools:src="@drawable/ic_details_rating"
+            tools:ignore="ContentDescription" />
 
         <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/details_badge_label"

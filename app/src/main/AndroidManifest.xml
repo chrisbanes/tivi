@@ -28,7 +28,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Tivi">
+        android:theme="@style/Theme.Tivi"
+        android:fullBackupContent="false">
 
         <activity
             android:name=".home.HomeActivity"
