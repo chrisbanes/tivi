@@ -1,13 +1,24 @@
-*.iml
+# Gradle
 .gradle
-/local.properties
-/.idea/workspace.xml
-/.idea/libraries
-/.idea/caches
-/.idea/navEditor.xml
-.DS_Store
 build/
+
 captures
+
+/local.properties
+
+# IntelliJ .idea folder
+.idea/workspace.xml
+.idea/libraries
+.idea/caches
+.idea/navEditor.xml
+.idea/tasks.xml
+.idea/tasks.xml
+.idea/modules.xml
+gradle.xml
+*.iml
+
+# General
+.DS_Store
 .externalNativeBuild
 
 # Do not commit plain-text release keys
