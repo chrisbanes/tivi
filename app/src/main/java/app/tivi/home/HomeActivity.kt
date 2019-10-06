@@ -21,13 +21,13 @@ import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.observe
+import androidx.navigation.NavController
 import app.tivi.R
 import app.tivi.TiviActivityMvRxView
 import app.tivi.databinding.ActivityHomeBinding
 import app.tivi.extensions.hideSoftInput
 import app.tivi.extensions.setupWithNavController
 import app.tivi.trakt.TraktConstants
-import app.tivi.util.AppCoroutineDispatchers
 import com.airbnb.mvrx.viewModel
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
@@ -39,13 +39,11 @@ class HomeActivity : TiviActivityMvRxView() {
 
     private val viewModel: HomeActivityViewModel by viewModel()
 
-    @Inject
-    lateinit var homeNavigationViewModelFactory: HomeActivityViewModel.Factory
-
-    @Inject
-    lateinit var dispatchers: AppCoroutineDispatchers
+    @Inject lateinit var homeNavigationViewModelFactory: HomeActivityViewModel.Factory
 
     private lateinit var binding: ActivityHomeBinding
+
+    private var currentNavController: NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,24 +54,22 @@ class HomeActivity : TiviActivityMvRxView() {
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 
-        binding.homeBottomNavigation.setupWithNavController(
-                listOf(R.navigation.discover_nav_graph, R.navigation.watched_nav_graph,
-                        R.navigation.following_nav_graph, R.navigation.search_nav_graph),
-                supportFragmentManager,
-                R.id.home_nav_container,
-                intent
-        ).observe(this) {
-            it.addOnDestinationChangedListener { _, destination, _ ->
-                if (destination.id != R.id.navigation_search) {
-                    hideSoftInput()
-                }
-            }
+        if (savedInstanceState == null) {
+            setupBottomNavigationBar()
         }
     }
 
     override fun onStart() {
         super.onStart()
         viewModel.subscribe(this) { postInvalidate() }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        // Now that BottomNavigationBar has restored its instance state
+        // and its selectedItemId, we can proceed with setting up the
+        // BottomNavigationBar with Navigation
+        setupBottomNavigationBar()
     }
 
     override fun invalidate() {
@@ -91,5 +87,27 @@ class HomeActivity : TiviActivityMvRxView() {
 
     internal fun startLogin() {
         viewModel.onLoginItemClicked(authService)
+    }
+
+    private fun setupBottomNavigationBar() {
+        binding.homeBottomNavigation.setupWithNavController(
+                listOf(R.navigation.discover_nav_graph, R.navigation.watched_nav_graph,
+                        R.navigation.following_nav_graph, R.navigation.search_nav_graph),
+                supportFragmentManager,
+                R.id.home_nav_container,
+                intent
+        ).observe(this) { navController ->
+            currentNavController = navController
+
+            navController.addOnDestinationChangedListener { _, destination, _ ->
+                if (destination.id != R.id.navigation_search) {
+                    hideSoftInput()
+                }
+            }
+        }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return currentNavController?.navigateUp() ?: super.onSupportNavigateUp()
     }
 }
