@@ -30,4 +30,7 @@ abstract class EpisodesModule {
     @Binds
     @Tmdb
     abstract fun bindTmdbEpisodeDataSource(source: TmdbEpisodeDataSource): EpisodeDataSource
+
+    @Binds
+    abstract fun bindSeasonsEpisodesDataSource(source: TraktSeasonsEpisodesDataSource): SeasonsEpisodesDataSource
 }

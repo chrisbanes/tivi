@@ -17,8 +17,12 @@
 package app.tivi.data.dao
 
 import android.database.sqlite.SQLiteConstraintException
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import app.tivi.data.DaggerTestComponent
+import app.tivi.data.TestDataSourceModule
+import app.tivi.data.TiviDatabase
 import app.tivi.data.daos.EpisodesDao
-import app.tivi.utils.BaseDatabaseTest
+import app.tivi.data.daos.SeasonsDao
 import app.tivi.utils.insertShow
 import app.tivi.utils.s1
 import app.tivi.utils.s1_episodes
@@ -32,19 +36,33 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Assert.assertThat
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
-class EpisodesTest : BaseDatabaseTest() {
-    private lateinit var episodeDao: EpisodesDao
+@RunWith(RobolectricTestRunner::class)
+class EpisodesTest {
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    override fun setup() {
-        super.setup()
+    @Inject lateinit var database: TiviDatabase
+    @Inject lateinit var episodeDao: EpisodesDao
+    @Inject lateinit var seasonsDao: SeasonsDao
+
+    @Before
+    fun setup() {
+        DaggerTestComponent.builder()
+                .testDataSourceModule(TestDataSourceModule())
+                .build()
+                .inject(this)
 
         runBlocking {
-            episodeDao = db.episodesDao()
             // We'll assume that there's a show and season in the db
-            insertShow(db)
-            db.seasonsDao().insert(s1)
+            insertShow(database)
+            seasonsDao.insert(s1)
         }
     }
 
@@ -73,7 +91,7 @@ class EpisodesTest : BaseDatabaseTest() {
     fun deleteSeason_deletesEpisode() = runBlockingTest {
         episodeDao.insert(s1e1)
         // Now delete season
-        db.seasonsDao().delete(s1)
+        seasonsDao.delete(s1)
         assertThat(episodeDao.episodeWithId(s1e1.id), `is`(nullValue()))
     }
 

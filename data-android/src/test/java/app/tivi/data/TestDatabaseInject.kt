@@ -18,13 +18,15 @@ package app.tivi.data
 
 import android.content.Context
 import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
+import app.tivi.data.dao.EpisodeWatchEntryTest
+import app.tivi.data.dao.EpisodesTest
+import app.tivi.data.dao.SeasonsTest
 import app.tivi.data.daos.EntityInserter
-import app.tivi.data.entities.Success
-import app.tivi.data.entities.TiviShow
 import app.tivi.data.repositories.FollowedShowRepositoryTest
 import app.tivi.data.repositories.SeasonsEpisodesRepositoryTest
 import app.tivi.data.repositories.episodes.EpisodeDataSource
-import app.tivi.data.repositories.episodes.TraktSeasonsEpisodesDataSource
+import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.repositories.followedshows.TraktFollowedShowsDataSource
 import app.tivi.data.repositories.shows.ShowDataSource
 import app.tivi.inject.Trakt
@@ -39,25 +41,20 @@ import dagger.Binds
 import dagger.Component
 import dagger.Module
 import dagger.Provides
-import io.mockk.coEvery
 import io.mockk.mockk
 import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [
     TestDataSourceModule::class,
-    TestDatabaseModule::class,
-    TestContextModule::class
+    TestDatabaseModule::class
 ])
 interface TestComponent {
     fun inject(test: SeasonsEpisodesRepositoryTest)
     fun inject(test: FollowedShowRepositoryTest)
-}
-
-@Module
-class TestContextModule(private val context: Context) {
-    @Provides
-    fun provideContext(): Context = context
+    fun inject(test: EpisodesTest)
+    fun inject(test: EpisodeWatchEntryTest)
+    fun inject(test: SeasonsTest)
 }
 
 @Module
@@ -65,7 +62,7 @@ class TestDataSourceModule(
     private val traktFollowedShowsDataSource: TraktFollowedShowsDataSource = mockk(),
     private val traktEpisodeDataSource: EpisodeDataSource = mockk(),
     private val tmdbEpisodeDataSource: EpisodeDataSource = mockk(),
-    private val seasonsDataSource: TraktSeasonsEpisodesDataSource = mockk(),
+    private val seasonsDataSource: SeasonsEpisodesDataSource = mockk(),
     private val traktShowDataSource: ShowDataSource = mockk(),
     private val tmdbShowDataSource: ShowDataSource = mockk()
 ) {
@@ -81,8 +78,7 @@ class TestDataSourceModule(
     fun provideTmdbEpisodeDataSource() = tmdbEpisodeDataSource
 
     @Provides
-    @Trakt
-    fun provideTraktSeasonsEpisodesDataSource() = seasonsDataSource
+    fun provideSeasonsEpisodesDataSource() = seasonsDataSource
 
     @Provides
     @Trakt
@@ -108,6 +104,13 @@ class TestDatabaseModule {
 
     @Provides
     fun provideTraktAuthState() = TraktAuthState.LOGGED_IN
+
+    @Provides
+    fun provideContext(): Context = ApplicationProvider.getApplicationContext()
+
+    @Singleton
+    @Provides
+    fun provideLogger(): Logger = mockk(relaxUnitFun = true)
 }
 
 @Module
@@ -123,10 +126,6 @@ class TestRoomDatabaseModule {
     @Singleton
     @Provides
     fun provideDatabaseTransactionRunner(): DatabaseTransactionRunner = TestTransactionRunner
-
-    @Singleton
-    @Provides
-    fun provideLogger(): Logger = mockk(relaxUnitFun = true)
 }
 
 @Module

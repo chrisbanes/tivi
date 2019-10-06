@@ -16,11 +16,8 @@
 
 package app.tivi.data.repositories
 
-import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.core.app.ApplicationProvider
 import app.tivi.data.DaggerTestComponent
-import app.tivi.data.TestContextModule
 import app.tivi.data.TestDataSourceModule
 import app.tivi.data.TiviDatabase
 import app.tivi.data.daos.FollowedShowsDao
@@ -64,12 +61,9 @@ class FollowedShowRepositoryTest {
 
     @Before
     fun setup() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-
         val fakeShowDataSource = SuccessFakeShowDataSource()
 
         DaggerTestComponent.builder()
-                .testContextModule(TestContextModule(context))
                 .testDataSourceModule(
                         TestDataSourceModule(
                                 traktShowDataSource = fakeShowDataSource,

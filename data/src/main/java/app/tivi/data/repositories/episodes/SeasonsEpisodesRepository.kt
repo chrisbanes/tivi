@@ -42,7 +42,7 @@ class SeasonsEpisodesRepository @Inject constructor(
     private val episodeWatchLastLastRequestStore: EpisodeWatchLastRequestStore,
     private val seasonsEpisodesStore: SeasonsEpisodesStore,
     private val seasonsLastRequestStore: SeasonsLastRequestStore,
-    private val traktSeasonsDataSource: TraktSeasonsEpisodesDataSource,
+    private val traktSeasonsDataSource: SeasonsEpisodesDataSource,
     @Trakt private val traktEpisodeDataSource: EpisodeDataSource,
     @Tmdb private val tmdbEpisodeDataSource: EpisodeDataSource,
     private val traktAuthState: Provider<TraktAuthState>,

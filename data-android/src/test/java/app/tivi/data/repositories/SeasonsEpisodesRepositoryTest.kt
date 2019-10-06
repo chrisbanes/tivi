@@ -16,11 +16,8 @@
 
 package app.tivi.data.repositories
 
-import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.core.app.ApplicationProvider
 import app.tivi.data.DaggerTestComponent
-import app.tivi.data.TestContextModule
 import app.tivi.data.TestDataSourceModule
 import app.tivi.data.TiviDatabase
 import app.tivi.data.daos.EpisodeWatchEntryDao
@@ -28,9 +25,8 @@ import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.entities.Success
 import app.tivi.data.repositories.episodes.EpisodeWatchStore
+import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
-import app.tivi.data.repositories.episodes.TraktSeasonsEpisodesDataSource
-import app.tivi.utils.SuccessFakeShowDataSource
 import app.tivi.utils.insertShow
 import app.tivi.utils.s1
 import app.tivi.utils.s1_episodes
@@ -70,22 +66,12 @@ class SeasonsEpisodesRepositoryTest {
     @Inject lateinit var episodesDao: EpisodesDao
     @Inject lateinit var watchStore: EpisodeWatchStore
     @Inject lateinit var repository: SeasonsEpisodesRepository
-    @Inject lateinit var traktSeasonsDataSource: TraktSeasonsEpisodesDataSource
+    @Inject lateinit var seasonsDataSource: SeasonsEpisodesDataSource
 
     @Before
     fun setup() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-
-        val fakeShowDataSource = SuccessFakeShowDataSource()
-
         DaggerTestComponent.builder()
-                .testContextModule(TestContextModule(context))
-                .testDataSourceModule(
-                        TestDataSourceModule(
-                                traktShowDataSource = fakeShowDataSource,
-                                tmdbShowDataSource = fakeShowDataSource
-                        )
-                )
+                .testDataSourceModule(TestDataSourceModule())
                 .build()
                 .inject(this)
 
@@ -101,7 +87,7 @@ class SeasonsEpisodesRepositoryTest {
         episodesDao.insertAll(s1_episodes)
 
         // Return a response with 2 items
-        coEvery { traktSeasonsDataSource.getShowEpisodeWatches(showId) } returns
+        coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
                 Success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
         // Sync
         repository.syncEpisodeWatchesForShow(showId)
@@ -117,7 +103,7 @@ class SeasonsEpisodesRepositoryTest {
         // Insert both the watches
         episodeWatchDao.insertAll(s1e1w, s1e1w2)
         // Return a response with the same items
-        coEvery { traktSeasonsDataSource.getShowEpisodeWatches(showId) } returns
+        coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
                 Success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
         // Now re-sync with the same response
         repository.syncEpisodeWatchesForShow(showId)
@@ -133,7 +119,7 @@ class SeasonsEpisodesRepositoryTest {
         // Insert both the watches
         episodeWatchDao.insertAll(s1e1w, s1e1w2)
         // Return a response with just the second item
-        coEvery { traktSeasonsDataSource.getShowEpisodeWatches(showId) } returns
+        coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
                 Success(listOf(s1e1 to s1e1w2))
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
@@ -149,7 +135,7 @@ class SeasonsEpisodesRepositoryTest {
         // Insert both the watches
         episodeWatchDao.insertAll(s1e1w, s1e1w2)
         // Return a empty response
-        coEvery { traktSeasonsDataSource.getShowEpisodeWatches(showId) } returns
+        coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
                 Success(emptyList())
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
@@ -160,7 +146,7 @@ class SeasonsEpisodesRepositoryTest {
     @Test
     fun testSyncSeasonsEpisodes() = runBlockingTest {
         // Return a response with 2 items
-        coEvery { traktSeasonsDataSource.getSeasonsEpisodes(showId) } returns
+        coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns
                 Success(listOf(s1 to s1_episodes))
         repository.updateSeasonsEpisodes(showId)
 
@@ -175,7 +161,7 @@ class SeasonsEpisodesRepositoryTest {
         episodesDao.insertAll(s1_episodes)
 
         // Return a response with the same items
-        coEvery { traktSeasonsDataSource.getSeasonsEpisodes(showId) } returns
+        coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns
                 Success(listOf(s1 to s1_episodes))
         repository.updateSeasonsEpisodes(showId)
 
@@ -190,7 +176,7 @@ class SeasonsEpisodesRepositoryTest {
         episodesDao.insertAll(s1_episodes)
 
         // Return an empty response
-        coEvery { traktSeasonsDataSource.getSeasonsEpisodes(showId) } returns
+        coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns
                 Success(emptyList())
         repository.updateSeasonsEpisodes(showId)
 
@@ -206,7 +192,7 @@ class SeasonsEpisodesRepositoryTest {
         episodesDao.insertAll(s2_episodes)
 
         // Return a response with just the first season
-        coEvery { traktSeasonsDataSource.getSeasonsEpisodes(showId) } returns
+        coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns
                 Success(listOf(s1 to s1_episodes))
         repository.updateSeasonsEpisodes(showId)
 
@@ -222,7 +208,7 @@ class SeasonsEpisodesRepositoryTest {
         episodesDao.insertAll(s2_episodes)
 
         // Return a response with both seasons, but just a single episodes in each
-        coEvery { traktSeasonsDataSource.getSeasonsEpisodes(showId) } returns
+        coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns
                 Success(listOf(s1 to listOf(s1e1), s2 to listOf(s2e1)))
         repository.updateSeasonsEpisodes(showId)
 
@@ -245,8 +231,8 @@ class SeasonsEpisodesRepositoryTest {
         }
 
         // Now mark s1e1 as watched
-        coEvery { traktSeasonsDataSource.addEpisodeWatches(any()) } returns Success(Unit)
-        coEvery { traktSeasonsDataSource.getEpisodeWatches(s1e1.id, any()) } returns Success(listOf(s1e1w))
+        coEvery { seasonsDataSource.addEpisodeWatches(any()) } returns Success(Unit)
+        coEvery { seasonsDataSource.getEpisodeWatches(s1e1.id, any()) } returns Success(listOf(s1e1w))
         repository.markEpisodeWatched(s1e1.id, OffsetDateTime.now())
 
         // Receive the second emission
