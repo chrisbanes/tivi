@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2019 Google, Inc.
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2019 Google LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -17,18 +18,13 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph"
+    android:id="@id/navigation_discover"
     app:startDestination="@id/navigation_discover">
 
-    <activity
-        android:id="@id/activity_show_details"
-        android:name="app.tivi.showdetails.ShowDetailsActivity"
-        android:label="activity_show_details"
-        tools:layout="@layout/activity_show_details">
-        <argument
-            android:name="show_id"
-            app:argType="long" />
-    </activity>
+    <fragment
+        android:id="@id/navigation_discover"
+        android:name="app.tivi.home.discover.DiscoverFragment"
+        android:label="@string/discover_title" />
 
     <fragment
         android:id="@id/navigation_trending"
@@ -46,26 +42,18 @@
         android:label="@string/discover_recommended_title" />
 
     <fragment
-        android:id="@id/navigation_watched"
-        android:name="app.tivi.home.watched.WatchedFragment"
-        android:label="@string/watched_shows_title" />
-
-    <fragment
-        android:id="@id/navigation_discover"
-        android:name="app.tivi.home.discover.DiscoverFragment"
-        android:label="@string/discover_title" />
-
-    <fragment
-        android:id="@id/navigation_followed"
-        android:name="app.tivi.home.followed.FollowedFragment"
-        android:label="@string/following_shows_title" />
-
-    <fragment android:id="@id/navigation_search"
-        android:name="app.tivi.home.search.SearchFragment"
-        android:label="@string/search_menu_title" />
-
-    <fragment android:id="@id/navigation_settings"
+        android:id="@id/navigation_settings"
         android:name="app.tivi.settings.SettingsFragment"
         android:label="@string/settings_title" />
+
+    <activity
+        android:id="@id/activity_show_details"
+        android:name="app.tivi.showdetails.ShowDetailsActivity"
+        android:label="activity_show_details"
+        tools:layout="@layout/activity_show_details">
+        <argument
+            android:name="show_id"
+            app:argType="long" />
+    </activity>
 
 </navigation>
