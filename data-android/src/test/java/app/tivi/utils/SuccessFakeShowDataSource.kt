@@ -16,16 +16,13 @@
 
 package app.tivi.utils
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.runBlocking
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
+import app.tivi.data.entities.Result
+import app.tivi.data.entities.Success
+import app.tivi.data.entities.TiviShow
+import app.tivi.data.repositories.shows.ShowDataSource
 
-/**
- * Wrapper around [runBlocking] but does not return a value.
- */
-fun <T> runBlockingTest(context: CoroutineContext = EmptyCoroutineContext, block: suspend CoroutineScope.() -> T) {
-    runBlocking(context) {
-        block()
+class SuccessFakeShowDataSource : ShowDataSource {
+    override suspend fun getShow(show: TiviShow): Result<TiviShow> {
+        return Success(show)
     }
 }

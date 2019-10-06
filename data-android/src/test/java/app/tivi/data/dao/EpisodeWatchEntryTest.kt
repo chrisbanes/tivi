@@ -17,8 +17,13 @@
 package app.tivi.data.dao
 
 import android.database.sqlite.SQLiteConstraintException
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import app.tivi.data.DaggerTestComponent
+import app.tivi.data.TestDataSourceModule
+import app.tivi.data.TiviDatabase
 import app.tivi.data.daos.EpisodeWatchEntryDao
-import app.tivi.utils.BaseDatabaseTest
+import app.tivi.data.daos.EpisodesDao
+import app.tivi.data.daos.SeasonsDao
 import app.tivi.utils.episodeWatch2PendingDelete
 import app.tivi.utils.episodeWatch2PendingSend
 import app.tivi.utils.insertShow
@@ -32,21 +37,35 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Assert.assertThat
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
-class EpisodeWatchEntryTest : BaseDatabaseTest() {
-    private lateinit var episodeWatchEntryDao: EpisodeWatchEntryDao
+@RunWith(RobolectricTestRunner::class)
+class EpisodeWatchEntryTest {
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    override fun setup() {
-        super.setup()
+    @Inject lateinit var database: TiviDatabase
+    @Inject lateinit var episodesDao: EpisodesDao
+    @Inject lateinit var seasonsDao: SeasonsDao
+    @Inject lateinit var episodeWatchEntryDao: EpisodeWatchEntryDao
 
-        episodeWatchEntryDao = db.episodeWatchesDao()
+    @Before
+    fun setup() {
+        DaggerTestComponent.builder()
+                .testDataSourceModule(TestDataSourceModule())
+                .build()
+                .inject(this)
 
         runBlockingTest {
             // We'll assume that there's a show, season and s1_episodes in the db
-            insertShow(db)
-            db.seasonsDao().insert(s1)
-            db.episodesDao().insertAll(s1_episodes)
+            insertShow(database)
+            seasonsDao.insert(s1)
+            episodesDao.insertAll(s1_episodes)
         }
     }
 
@@ -91,7 +110,7 @@ class EpisodeWatchEntryTest : BaseDatabaseTest() {
     fun deleteEpisode_deletesWatch() = runBlockingTest {
         episodeWatchEntryDao.insert(s1e1w)
         // Now delete episode
-        db.episodesDao().delete(s1e1)
+        episodesDao.delete(s1e1)
         assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id), `is`(nullValue()))
     }
 }

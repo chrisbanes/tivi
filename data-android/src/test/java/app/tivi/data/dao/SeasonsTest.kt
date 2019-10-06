@@ -17,8 +17,11 @@
 package app.tivi.data.dao
 
 import android.database.sqlite.SQLiteConstraintException
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import app.tivi.data.DaggerTestComponent
+import app.tivi.data.TestDataSourceModule
+import app.tivi.data.TiviDatabase
 import app.tivi.data.daos.SeasonsDao
-import app.tivi.utils.BaseDatabaseTest
 import app.tivi.utils.deleteShow
 import app.tivi.utils.insertShow
 import app.tivi.utils.s0
@@ -30,18 +33,31 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.Assert.assertThat
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
-class SeasonsTest : BaseDatabaseTest() {
-    private lateinit var seasonsDao: SeasonsDao
+@RunWith(RobolectricTestRunner::class)
+class SeasonsTest {
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    override fun setup() {
-        super.setup()
+    @Inject lateinit var database: TiviDatabase
+    @Inject lateinit var seasonsDao: SeasonsDao
+
+    @Before
+    fun setup() {
+        DaggerTestComponent.builder()
+                .testDataSourceModule(TestDataSourceModule())
+                .build()
+                .inject(this)
 
         runBlockingTest {
-            seasonsDao = db.seasonsDao()
             // We'll assume that there's a show in the db
-            insertShow(db)
+            insertShow(database)
         }
     }
 
@@ -86,7 +102,7 @@ class SeasonsTest : BaseDatabaseTest() {
     fun deleteShow_deletesSeason() = runBlockingTest {
         seasonsDao.insert(s1)
         // Now delete show
-        deleteShow(db)
+        deleteShow(database)
 
         assertThat(seasonsDao.seasonWithId(s1_id), `is`(nullValue()))
     }

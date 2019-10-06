@@ -20,8 +20,14 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+/**
+ * A fake version of TiviShowFts to model the same entity
+ * table, but without actually using FTS. This is because
+ * Robolectric's SQL implementation does not support everything
+ * needed for Room's FTS support.
+ */
 @Entity(tableName = "shows_fts")
-data class FakeTiviShowFts(
+internal data class FakeTiviShowFts(
     @PrimaryKey @ColumnInfo(name = "id") val id: Long? = null,
     @ColumnInfo(name = "title") val title: String? = null,
     @ColumnInfo(name = "original_title") val originalTitle: String? = null,

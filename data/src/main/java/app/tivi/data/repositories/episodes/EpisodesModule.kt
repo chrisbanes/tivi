@@ -25,13 +25,12 @@ import dagger.Module
 abstract class EpisodesModule {
     @Binds
     @Trakt
-    abstract fun bindTraktSeasonsEpisodesDataSource(source: TraktSeasonsEpisodesDataSource): SeasonsEpisodesDataSource
-
-    @Binds
-    @Trakt
     abstract fun bindTraktEpisodeDataSource(source: TraktEpisodeDataSource): EpisodeDataSource
 
     @Binds
     @Tmdb
     abstract fun bindTmdbEpisodeDataSource(source: TmdbEpisodeDataSource): EpisodeDataSource
+
+    @Binds
+    abstract fun bindSeasonsEpisodesDataSource(source: TraktSeasonsEpisodesDataSource): SeasonsEpisodesDataSource
 }

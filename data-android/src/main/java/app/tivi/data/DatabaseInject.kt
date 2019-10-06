@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,21 @@ package app.tivi.data
 import androidx.room.Room
 import android.content.Context
 import android.os.Debug
+import app.tivi.data.daos.EntityInserter
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
-@Module(includes = [DatabaseModuleBinds::class])
-class DatabaseModule {
+@Module(includes = [
+    RoomDatabaseModule::class,
+    DatabaseModuleBinds::class,
+    DatabaseDaoModule::class
+])
+class DatabaseModule
+
+@Module
+class RoomDatabaseModule {
     @Singleton
     @Provides
     fun provideDatabase(context: Context): TiviRoomDatabase {
@@ -36,7 +45,10 @@ class DatabaseModule {
         }
         return builder.build()
     }
+}
 
+@Module
+class DatabaseDaoModule {
     @Provides
     fun provideTiviShowDao(db: TiviDatabase) = db.showDao()
 
@@ -78,4 +90,18 @@ class DatabaseModule {
 
     @Provides
     fun provideRecommendedShowsDao(db: TiviDatabase) = db.recommendedShowsDao()
+}
+
+@Module
+abstract class DatabaseModuleBinds {
+    @Binds
+    abstract fun bindTiviDatabase(context: TiviRoomDatabase): TiviDatabase
+
+    @Singleton
+    @Binds
+    abstract fun provideDatabaseTransactionRunner(runner: RoomTransactionRunner): DatabaseTransactionRunner
+
+    @Singleton
+    @Binds
+    abstract fun provideEntityInserter(inserter: TiviEntityInserter): EntityInserter
 }
