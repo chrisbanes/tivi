@@ -28,14 +28,11 @@
         app:paddingRightSystemWindowInsets="@{true}"
         tools:context=".home.HomeActivity">
 
-        <fragment
-            android:id="@+id/nav_host_fragment"
-            android:name="androidx.navigation.fragment.NavHostFragment"
+        <FrameLayout
+            android:id="@+id/home_nav_container"
             android:layout_width="match_parent"
             android:layout_height="0px"
-            android:layout_weight="1"
-            app:defaultNavHost="true"
-            app:navGraph="@navigation/nav_graph" />
+            android:layout_weight="1" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/home_bottom_navigation"
