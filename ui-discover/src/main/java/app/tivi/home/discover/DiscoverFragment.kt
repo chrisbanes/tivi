@@ -62,7 +62,6 @@ class DiscoverFragment : DaggerMvRxFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        controller.onRestoreInstanceState(savedInstanceState)
         binding = FragmentDiscoverBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
@@ -180,11 +179,6 @@ class DiscoverFragment : DaggerMvRxFragment() {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        controller.onSaveInstanceState(outState)
-    }
-
     override fun invalidate() {
         withState(viewModel) { state ->
             if (binding.state == null) {
@@ -197,10 +191,5 @@ class DiscoverFragment : DaggerMvRxFragment() {
             binding.state = state
             controller.setData(state)
         }
-    }
-
-    override fun onDestroyView() {
-        binding.summaryRv.clear()
-        super.onDestroyView()
     }
 }
