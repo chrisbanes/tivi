@@ -38,8 +38,10 @@ androidExtensions {
 
 apply plugin: 'com.getkeepsafe.dexcount'
 dexcount {
+    // Re-enable after Dexcount plugin releases support for AGP 3.6.0
+    enabled = false
+    // enabled = ci
     // Only run the method counter on CI
-    enabled = ci
 }
 
 apply plugin: 'com.github.triplet.play'
@@ -114,7 +116,10 @@ android {
         // Ignore any tests
         ignoreTestSources true
 
-        disable 'GradleCompatible', 'FontValidationError'
+        disable 'GradleCompatible'
+        disable 'FontValidationError'
+        // Lint doesn't seem to handle Kotlin int types + string format very well
+        disable 'StringFormatMatches'
     }
 
     dataBinding {

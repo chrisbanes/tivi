@@ -47,7 +47,7 @@
 
     <string name="login">Login</string>
 
-    <string name="search_menu_title">Search</string>
+    <string name="search_navigation_title">Search</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_ui_category_title">User Interface</string>

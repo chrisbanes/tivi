@@ -16,6 +16,7 @@
 
 package app.tivi.appinitializers
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Handler
 import android.os.Looper
@@ -27,6 +28,7 @@ import javax.inject.Inject
 class ArchTaskExecutorInitializer @Inject constructor(
     private val backgroundExecutor: Executor
 ) : AppInitializer {
+    @SuppressLint("RestrictedApi")
     override fun init(application: Application) {
         ArchTaskExecutor.getInstance().setDelegate(object : TaskExecutor() {
             @Volatile private var mainHandler: Handler? = null

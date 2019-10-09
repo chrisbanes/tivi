@@ -21,7 +21,6 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.View
 import androidx.annotation.ColorInt
 import app.tivi.ui.animations.lerp
@@ -60,7 +59,6 @@ abstract class SwipeAwayCallbacks<T : EpoxyModel<*>>(
         swipeProgress: Float,
         canvas: Canvas
     ) {
-        Log.d("SwipeAwayCallbacks", "progress: $swipeProgress")
         rect.set(itemView.left.toFloat(), itemView.top.toFloat(), itemView.right.toFloat(), itemView.bottom.toFloat())
         rect.offset(itemView.translationX, itemView.translationY)
 

@@ -23,7 +23,7 @@
 
     <fragment android:id="@id/navigation_search"
         android:name="app.tivi.home.search.SearchFragment"
-        android:label="@string/search_menu_title" />
+        android:label="@string/search_navigation_title" />
 
     <activity
         android:id="@id/activity_show_details"

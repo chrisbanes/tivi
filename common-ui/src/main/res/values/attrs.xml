@@ -42,4 +42,14 @@
         <attr name="dividerMarginEnd" format="dimension" />
         <attr name="materialBackgroundColor" />
     </declare-styleable>
+
+    <!-- Remove these once ConstraintLayout 2.0.0-beta3 is out
+         https://issuetracker.google.com/136103084 -->
+    <attr name="flow_horizontalSeparator" />
+    <attr name="flow_verticalSeparator" />
+    <attr name="motionProgress" />
+    <attr name="waveDecay" />
+    <attr name="motionPathRotate" />
+    <attr name="duration" />
+
 </resources>

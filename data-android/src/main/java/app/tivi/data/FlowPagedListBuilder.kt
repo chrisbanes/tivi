@@ -16,6 +16,7 @@
 
 package app.tivi.data
 
+import android.annotation.SuppressLint
 import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.paging.DataSource
 import androidx.paging.PagedList
@@ -82,6 +83,7 @@ class FlowPagedListBuilder<K, V>(
      *
      * @return The Flow of PagedLists
      */
+    @SuppressLint("RestrictedApi")
     fun buildFlow(): Flow<PagedList<V>> = channelFlow {
         val nExecutor = notifyExecutor ?: ArchTaskExecutor.getMainThreadExecutor()
         val fExecutor = fetchExecutor ?: ArchTaskExecutor.getIOThreadExecutor()
