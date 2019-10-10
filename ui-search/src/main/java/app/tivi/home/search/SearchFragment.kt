@@ -25,8 +25,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.marginBottom
 import androidx.core.view.updatePadding
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
 import app.tivi.AppNavigator
 import app.tivi.DaggerMvRxFragment
 import app.tivi.data.entities.TiviShow
@@ -49,7 +47,6 @@ internal class SearchFragment : DaggerMvRxFragment() {
     @Inject lateinit var searchViewModelFactory: SearchViewModel.Factory
     @Inject lateinit var controller: SearchEpoxyController
     @Inject lateinit var appNavigator: AppNavigator
-    @Inject lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,8 +73,6 @@ internal class SearchFragment : DaggerMvRxFragment() {
             binding.searchRecyclerview.updatePadding(top = appBar.bottom + appBar.marginBottom)
             true
         }
-
-        binding.searchToolbar.setupWithNavController(findNavController(), appBarConfiguration)
 
         val searchMenuItem = binding.searchToolbar.menu.findItem(R.id.menu_search)
         searchMenuItem.setOnActionExpandListener(SearchViewListeners())

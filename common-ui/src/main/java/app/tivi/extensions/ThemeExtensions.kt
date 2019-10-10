@@ -20,6 +20,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import androidx.annotation.AttrRes
 import androidx.core.content.res.getDimensionPixelSizeOrThrow
 import androidx.core.content.res.getResourceIdOrThrow
@@ -51,4 +52,9 @@ fun Context.resolveThemeDimensionPixelSize(@AttrRes resId: Int): Int {
     return obtainStyledAttributes(intArrayOf(resId)).use {
         it.getDimensionPixelSizeOrThrow(0)
     }
+}
+
+@SuppressLint("Recycle")
+fun Context.resolveThemeDrawable(@AttrRes resId: Int): Drawable? {
+    return obtainStyledAttributes(intArrayOf(resId)).use { it.getDrawable(0) }
 }

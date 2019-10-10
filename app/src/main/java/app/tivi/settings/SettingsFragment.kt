@@ -20,19 +20,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.commitNow
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
 import app.tivi.R
 import app.tivi.databinding.FragmentSettingsBinding
-import dagger.android.support.DaggerFragment
-import javax.inject.Inject
 
-class SettingsFragment : DaggerFragment() {
+class SettingsFragment : Fragment() {
     private lateinit var binding: FragmentSettingsBinding
-
-    @Inject lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,7 +41,9 @@ class SettingsFragment : DaggerFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.settingsToolbar.setupWithNavController(findNavController(), appBarConfiguration)
+        binding.settingsToolbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
 
         childFragmentManager.commitNow {
             replace(R.id.settings_container, SettingsPreferenceFragment())

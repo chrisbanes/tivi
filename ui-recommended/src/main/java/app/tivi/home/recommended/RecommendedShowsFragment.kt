@@ -16,6 +16,7 @@
 
 package app.tivi.home.recommended
 
+import android.os.Bundle
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
@@ -28,6 +29,7 @@ import app.tivi.SharedElementHelper
 import app.tivi.common.layouts.PosterGridItemBindingModel_
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.RecommendedEntryWithShow
+import app.tivi.extensions.resolveThemeDrawable
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.util.EntryGridEpoxyController
 import app.tivi.util.EntryGridFragment
@@ -37,6 +39,15 @@ import javax.inject.Inject
 class RecommendedShowsFragment : EntryGridFragment<RecommendedEntryWithShow, RecommendedShowsViewModel>() {
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     override val viewModel: RecommendedShowsViewModel by viewModels(factoryProducer = { viewModelFactory })
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.gridToolbar.apply {
+            navigationIcon = context.resolveThemeDrawable(android.R.attr.homeAsUpIndicator)
+            setTitle(R.string.discover_recommended_title)
+        }
+    }
 
     override fun createController(): EntryGridEpoxyController<RecommendedEntryWithShow> {
         return object : EntryGridEpoxyController<RecommendedEntryWithShow>(R.string.discover_recommended_title) {

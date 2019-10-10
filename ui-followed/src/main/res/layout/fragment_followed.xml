@@ -36,7 +36,8 @@
                 android:id="@+id/followed_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:menu="@menu/followed_toolbar" />
+                app:menu="@menu/followed_toolbar"
+                app:title="@string/following_shows_title" />
 
         </com.google.android.material.appbar.AppBarLayout>
 

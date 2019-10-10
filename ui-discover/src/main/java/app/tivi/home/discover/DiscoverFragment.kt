@@ -22,8 +22,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
 import app.tivi.DaggerMvRxFragment
 import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.common.imageloading.loadImageUrl
@@ -52,7 +50,6 @@ class DiscoverFragment : DaggerMvRxFragment() {
     @Inject lateinit var discoverViewModelFactory: DiscoverViewModel.Factory
 
     @Inject lateinit var controller: DiscoverEpoxyController
-    @Inject lateinit var appBarConfiguration: AppBarConfiguration
 
     private lateinit var authStateMenuItemBinder: AuthStateMenuItemBinder
 
@@ -91,20 +88,16 @@ class DiscoverFragment : DaggerMvRxFragment() {
                 R.id.home_menu_user_login
         ) { menuItem, url -> menuItem.loadImageUrl(requireContext(), url) }
 
-        binding.discoverToolbar.apply {
-            setupWithNavController(findNavController(), appBarConfiguration)
-
-            setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.home_menu_user_login -> {
-                        viewModel.onLoginClicked()
-                    }
-                    R.id.home_menu_user_avatar -> {
-                        findNavController().navigateToNavDestination(R.id.navigation_settings)
-                    }
+        binding.discoverToolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.home_menu_user_login -> {
+                    viewModel.onLoginClicked()
                 }
-                true
+                R.id.home_menu_user_avatar -> {
+                    findNavController().navigateToNavDestination(R.id.navigation_settings)
+                }
             }
+            true
         }
 
         controller.callbacks = object : DiscoverEpoxyController.Callbacks {
