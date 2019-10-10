@@ -22,7 +22,7 @@ import androidx.navigation.NavGraph
 import androidx.navigation.navOptions
 import androidx.navigation.ui.R
 
-fun NavController.navigateToNavDestination(itemId: Int): Boolean {
+fun NavController.navigateToNavDestination(itemId: Int, popUpToStart: Boolean = true): Boolean {
     val options = navOptions {
         launchSingleTop = true
         anim {
@@ -31,8 +31,10 @@ fun NavController.navigateToNavDestination(itemId: Int): Boolean {
             popEnter = R.anim.nav_default_pop_enter_anim
             popExit = R.anim.nav_default_pop_exit_anim
         }
-        popUpTo(graph.findStartDestination().id) {
-            inclusive = false
+        if (popUpToStart) {
+            popUpTo(graph.findStartDestination().id) {
+                inclusive = false
+            }
         }
     }
 

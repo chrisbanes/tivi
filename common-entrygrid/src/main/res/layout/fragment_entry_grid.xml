@@ -30,7 +30,8 @@
             android:id="@+id/grid_appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fitsSystemWindows="true">
+            android:fitsSystemWindows="true"
+            android:transitionGroup="true">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/grid_toolbar"

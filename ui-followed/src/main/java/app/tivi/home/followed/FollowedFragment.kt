@@ -25,8 +25,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
 import app.tivi.DaggerMvRxFragment
 import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.entities.SortOption
@@ -56,7 +54,6 @@ class FollowedFragment : DaggerMvRxFragment() {
     }
 
     @Inject lateinit var controller: FollowedEpoxyController
-    @Inject lateinit var appBarConfiguration: AppBarConfiguration
 
     private var currentActionMode: ActionMode? = null
 
@@ -78,20 +75,16 @@ class FollowedFragment : DaggerMvRxFragment() {
                 R.id.home_menu_user_login
         ) { menuItem, url -> menuItem.loadImageUrl(requireContext(), url) }
 
-        binding.followedToolbar.apply {
-            setupWithNavController(findNavController(), appBarConfiguration)
-
-            setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.home_menu_user_login -> {
-                        viewModel.onLoginClicked()
-                    }
-                    R.id.home_menu_user_avatar -> {
-                        findNavController().navigateToNavDestination(R.id.navigation_settings)
-                    }
+        binding.followedToolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.home_menu_user_login -> {
+                    viewModel.onLoginClicked()
                 }
-                true
+                R.id.home_menu_user_avatar -> {
+                    findNavController().navigateToNavDestination(R.id.navigation_settings)
+                }
             }
+            true
         }
 
         controller.callbacks = object : FollowedEpoxyController.Callbacks {

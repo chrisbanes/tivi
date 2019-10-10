@@ -25,7 +25,6 @@ import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import app.tivi.api.UiError
 import app.tivi.api.UiLoading
@@ -63,7 +62,7 @@ abstract class EntryGridFragment<LI, VM> : DaggerFragment()
 
         controller = createController()
 
-        GridToGridTransitioner.setupSecondFragment(this) {
+        GridToGridTransitioner.setupSecondFragment(this, R.id.grid_appbar) {
             binding.gridRecyclerview.itemAnimator = DefaultItemAnimator()
         }
     }
@@ -85,7 +84,9 @@ abstract class EntryGridFragment<LI, VM> : DaggerFragment()
             binding.gridSwipeRefresh.isRefreshing = it
         }
 
-        binding.gridToolbar.setupWithNavController(findNavController(), appBarConfiguration)
+        binding.gridToolbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
 
         binding.gridRecyclerview.apply {
             // We set the item animator to null since it can interfere with the enter/shared element

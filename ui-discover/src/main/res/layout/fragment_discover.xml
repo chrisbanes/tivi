@@ -38,7 +38,8 @@
                 android:id="@+id/discover_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:menu="@menu/discover_toolbar" />
+                app:menu="@menu/discover_toolbar"
+                app:title="@string/discover_title" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
