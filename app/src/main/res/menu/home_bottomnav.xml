@@ -35,6 +35,6 @@
     <item
         android:id="@id/navigation_search"
         android:icon="@drawable/ic_search_24dp"
-        android:title="@string/search_menu_title" />
+        android:title="@string/search_navigation_title" />
 
 </menu>
