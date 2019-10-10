@@ -29,8 +29,8 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
 import androidx.recyclerview.widget.LinearSmoothScroller
-import app.tivi.SharedElementHelper
 import app.tivi.DaggerMvRxFragment
+import app.tivi.SharedElementHelper
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -130,13 +130,10 @@ class ShowDetailsFragment : DaggerMvRxFragment() {
             }
 
             override fun onEpisodeClicked(episode: Episode, itemView: View) {
-                fragmentManager?.commitNow {
+                childFragmentManager.commitNow {
                     setTransition(FragmentTransaction.TRANSIT_NONE)
                     replace(R.id.details_expanded_pane, EpisodeDetailsFragment.create(episode.id))
                 }
-                // We need to force MotionLayout to re-layout. Not entirely sure why.
-                binding.detailsMotion.requestLayout()
-
                 binding.detailsExpandedPane.doOnNextLayout {
                     val itemId = binding.detailsRv.getChildItemId(itemView)
                     binding.detailsRv.expandItem(itemId)
@@ -205,10 +202,11 @@ class ShowDetailsFragment : DaggerMvRxFragment() {
                 backPressedCallback.isEnabled = false
 
                 // Remove the episode details fragment to free-up resources
-                fragmentManager?.findFragmentById(R.id.details_expanded_pane)?.also { fragment ->
-                    fragmentManager?.commit {
+                val episodeFrag = childFragmentManager.findFragmentById(R.id.details_expanded_pane)
+                if (episodeFrag != null) {
+                    childFragmentManager.commit {
                         setTransition(FragmentTransaction.TRANSIT_NONE)
-                        remove(fragment)
+                        remove(episodeFrag)
                     }
                 }
 

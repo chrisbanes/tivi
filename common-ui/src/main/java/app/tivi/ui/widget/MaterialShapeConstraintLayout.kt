@@ -39,13 +39,13 @@ class MaterialShapeConstraintLayout @JvmOverloads constructor(
 
                 val builder = shapeAppearanceModel.toBuilder()
 
-                val topLeft = ta.getDimensionPixelSize(
-                        R.styleable.MaterialShapeConstraintLayout_materialBackgroundTopLeftRadius, 0)
+                val topLeft = ta.getDimension(
+                        R.styleable.MaterialShapeConstraintLayout_materialBackgroundTopLeftRadius, 0f)
                 if (topLeft > 0) {
                     builder.setTopLeftCorner(CornerFamily.ROUNDED, topLeft)
                 }
-                val topRight = ta.getDimensionPixelSize(
-                        R.styleable.MaterialShapeConstraintLayout_materialBackgroundTopRightRadius, 0)
+                val topRight = ta.getDimension(
+                        R.styleable.MaterialShapeConstraintLayout_materialBackgroundTopRightRadius, 0f)
                 if (topRight > 0) {
                     builder.setTopRightCorner(CornerFamily.ROUNDED, topRight)
                 }

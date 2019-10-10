@@ -23,7 +23,7 @@ import android.view.View
 import androidx.annotation.Keep
 import app.tivi.common.ui.R
 import app.tivi.ui.animations.lerp
-import com.google.android.material.shape.CutCornerTreatment
+import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 
 class TopLeftCutoutBackgroundView : View {
@@ -50,25 +50,24 @@ class TopLeftCutoutBackgroundView : View {
 
     var maxCutSize: Float = 0f
         set(value) {
-            field = value
-            syncCutSize()
+            if (value != field) {
+                field = value
+                syncCutSize()
+            }
         }
 
     @set:Keep
     var cutProgress: Float = 1f
         set(value) {
-            field = value
-            syncCutSize()
+            if (value != field) {
+                field = value
+                syncCutSize()
+            }
         }
 
     private fun syncCutSize() {
-        val shapeModel = shapeDrawable.shapeAppearanceModel
-        val newCutSize = lerp(0f, maxCutSize, cutProgress)
-
-        if (newCutSize != shapeModel.topLeftCorner.cornerSize) {
-            shapeDrawable.shapeAppearanceModel = shapeModel.toBuilder()
-                    .setTopLeftCorner(CutCornerTreatment(newCutSize))
-                    .build()
-        }
+        shapeDrawable.shapeAppearanceModel = shapeDrawable.shapeAppearanceModel.toBuilder()
+                .setTopLeftCorner(CornerFamily.CUT, lerp(0f, maxCutSize, cutProgress))
+                .build()
     }
 }
