@@ -36,7 +36,6 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.episodedetails.EpisodeDetailsFragment
-import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.updateConstraintSets
@@ -46,6 +45,7 @@ import app.tivi.ui.recyclerview.TiviLinearSmoothScroller
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
+import dev.chrisbanes.insetter.doOnApplyWindowInsets
 import kotlinx.android.parcel.Parcelize
 import me.saket.inboxrecyclerview.dimming.TintPainter
 import me.saket.inboxrecyclerview.page.PageStateChangeCallbacks

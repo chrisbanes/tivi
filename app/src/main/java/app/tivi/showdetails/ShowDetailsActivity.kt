@@ -25,9 +25,9 @@ import androidx.core.view.updatePadding
 import androidx.navigation.navArgs
 import app.tivi.R
 import app.tivi.TiviActivity
-import app.tivi.extensions.doOnApplyWindowInsets
 import app.tivi.showdetails.details.ShowDetailsFragment
 import app.tivi.util.observeEvent
+import dev.chrisbanes.insetter.doOnApplyWindowInsets
 
 class ShowDetailsActivity : TiviActivity() {
 

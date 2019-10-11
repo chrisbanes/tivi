@@ -49,6 +49,8 @@ dependencies {
     implementation project(":data")
     implementation project(":common-ui")
 
+    api Libs.Insetter.dbx
+
     implementation Libs.AndroidX.swiperefresh
     implementation Libs.AndroidX.coreKtx
 }
