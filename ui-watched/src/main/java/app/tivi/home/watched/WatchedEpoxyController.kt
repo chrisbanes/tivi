@@ -20,10 +20,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import app.tivi.common.epoxy.TotalSpanOverride
-import app.tivi.common.layouts.HeaderBindingModel_
 import app.tivi.common.layouts.emptyState
 import app.tivi.common.layouts.filter
-import app.tivi.common.layouts.header
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
@@ -50,13 +48,10 @@ class WatchedEpoxyController @Inject constructor(
                 spanSizeOverride(TotalSpanOverride)
             }
         } else {
-            header {
-                id("header")
-                titleString(textCreator.showHeaderCount(models.size, viewState.filterActive))
-            }
             filter {
                 id("filters")
                 filter(viewState.filter)
+                numberShows(models.size)
                 watcher(object : TextWatcher {
                     override fun afterTextChanged(s: Editable?) {
                         callbacks?.onFilterChanged(s?.toString() ?: "")
@@ -98,10 +93,6 @@ class WatchedEpoxyController @Inject constructor(
             dateFormatter(dateFormatter)
             textCreator(textCreator)
         }
-    }
-
-    fun isHeader(model: EpoxyModel<*>): Boolean {
-        return model is HeaderBindingModel_
     }
 
     interface Callbacks {
