@@ -106,7 +106,7 @@
     <string name="library_last_watched">Last watched:</string>
 
     <string name="next_prefix">Next: %s</string>
-    <string name="filter_shows">Filter shows</string>
+    <string name="filter_shows">Filter %1$d shows</string>
 
     <plurals name="header_show_count">
         <item quantity="one">%d show</item>
