@@ -18,13 +18,11 @@ package app.tivi.home.search
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.marginBottom
 import androidx.core.view.updatePadding
-import androidx.navigation.fragment.findNavController
 import app.tivi.AppNavigator
 import app.tivi.DaggerMvRxFragment
 import app.tivi.data.entities.TiviShow
@@ -74,9 +72,20 @@ internal class SearchFragment : DaggerMvRxFragment() {
             true
         }
 
-        val searchMenuItem = binding.searchToolbar.menu.findItem(R.id.menu_search)
-        searchMenuItem.setOnActionExpandListener(SearchViewListeners())
-        searchMenuItem.expandActionView()
+        binding.searchSearchview.apply {
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    viewModel.setSearchQuery(query)
+                    hideSoftInput()
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String): Boolean {
+                    viewModel.setSearchQuery(newText)
+                    return true
+                }
+            })
+        }
 
         controller.callbacks = object : SearchEpoxyController.Callbacks {
             override fun onSearchItemClicked(show: TiviShow) {
@@ -92,36 +101,5 @@ internal class SearchFragment : DaggerMvRxFragment() {
     override fun invalidate() = withState(viewModel) { state ->
         binding.state = state
         controller.viewState = state
-    }
-
-    private inner class SearchViewListeners : SearchView.OnQueryTextListener,
-            MenuItem.OnActionExpandListener {
-        override fun onQueryTextSubmit(query: String): Boolean {
-            viewModel.setSearchQuery(query)
-            hideSoftInput()
-            return true
-        }
-
-        override fun onQueryTextChange(newText: String): Boolean {
-            viewModel.setSearchQuery(newText)
-            return true
-        }
-
-        override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-            val searchView = item.actionView as SearchView
-            searchView.setOnQueryTextListener(this)
-            return true
-        }
-
-        override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-            val searchView = item.actionView as SearchView
-            searchView.setOnQueryTextListener(null)
-
-            viewModel.clearQuery()
-
-            findNavController().navigateUp()
-
-            return true
-        }
     }
 }

@@ -60,12 +60,12 @@
             app:layout_constraintTop_toTopOf="parent"
             app:marginTopSystemWindowInsets="@{true}">
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/search_toolbar"
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_searchview"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="wrap_content"
                 android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
-                app:menu="@menu/search_toolbar" />
+                app:iconifiedByDefault="false"/>
 
             <ProgressBar
                 android:id="@+id/search_progress"
