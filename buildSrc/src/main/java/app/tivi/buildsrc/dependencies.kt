@@ -47,7 +47,7 @@ object Libs {
     const val inboxRecyclerView = "me.saket:inboxrecyclerview:2.0.0-beta3"
 
     object Insetter {
-        private const val version = "0.0.2"
+        private const val version = "0.0.3"
         const val dbx = "dev.chrisbanes:insetter-dbx:$version"
         const val ktx = "dev.chrisbanes:insetter-ktx:$version"
     }
