@@ -46,6 +46,12 @@ object Libs {
 
     const val inboxRecyclerView = "me.saket:inboxrecyclerview:2.0.0-beta3"
 
+    object Insetter {
+        private const val version = "0.0.2"
+        const val dbx = "dev.chrisbanes:insetter-dbx:$version"
+        const val ktx = "dev.chrisbanes:insetter-ktx:$version"
+    }
+
     object Google {
         const val material = "com.google.android.material:material:1.1.0-beta01"
         const val firebaseCore = "com.google.firebase:firebase-core:17.2.0"

@@ -208,6 +208,8 @@ dependencies {
 
     implementation Libs.Google.material
 
+    implementation Libs.Insetter.ktx
+
     implementation Libs.threeTenAbp
 
     implementation Libs.timber
