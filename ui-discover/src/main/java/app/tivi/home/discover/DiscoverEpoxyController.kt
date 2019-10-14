@@ -20,7 +20,6 @@ import android.content.Context
 import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.common.epoxy.tiviCarousel
 import app.tivi.common.epoxy.withModelsFrom
-import app.tivi.common.layouts.HeaderBindingModel_
 import app.tivi.common.layouts.PosterCardItemBindingModel_
 import app.tivi.common.layouts.emptyState
 import app.tivi.common.layouts.header
@@ -29,7 +28,6 @@ import app.tivi.data.Entry
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.EntryWithShow
 import com.airbnb.epoxy.Carousel
-import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.TypedEpoxyController
 import javax.inject.Inject
 
@@ -52,6 +50,10 @@ class DiscoverEpoxyController @Inject constructor(
         val popularShows = viewState.popularItems
         val recommendedShows = viewState.recommendedItems
 
+        vertSpacerNormal {
+            id("top_spacer")
+        }
+
         if (viewState.nextEpisodeWithShowToWatched != null) {
             header {
                 id("keep_watching_header")
@@ -70,7 +72,7 @@ class DiscoverEpoxyController @Inject constructor(
             }
         }
 
-        if (modelCountBuiltSoFar > 0) {
+        if (modelCountBuiltSoFar > 1) {
             vertSpacerNormal {
                 id("trending_header_spacer")
             }
@@ -113,10 +115,8 @@ class DiscoverEpoxyController @Inject constructor(
         }
 
         if (recommendedShows.isNotEmpty()) {
-            if (modelCountBuiltSoFar > 0) {
-                vertSpacerNormal {
-                    id("recommended_header_spacer")
-                }
+            vertSpacerNormal {
+                id("recommended_header_spacer")
             }
             header {
                 id("recommended_header")
@@ -149,10 +149,8 @@ class DiscoverEpoxyController @Inject constructor(
             }
         }
 
-        if (modelCountBuiltSoFar > 0) {
-            vertSpacerNormal {
-                id("popular_header_spacer")
-            }
+        vertSpacerNormal {
+            id("popular_header_spacer")
         }
         header {
             id("popular_header")
@@ -190,9 +188,9 @@ class DiscoverEpoxyController @Inject constructor(
                 spanSizeOverride(TotalSpanOverride)
             }
         }
-    }
 
-    fun isHeader(model: EpoxyModel<*>): Boolean {
-        return model is HeaderBindingModel_
+        vertSpacerNormal {
+            id("bottom_spacer")
+        }
     }
 }

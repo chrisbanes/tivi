@@ -29,6 +29,8 @@
             android:id="@+id/followed_app_bar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:background="@drawable/rectangle"
+            android:backgroundTint="@color/color_surface_93"
             android:fitsSystemWindows="true"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -50,28 +52,17 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/followed_app_bar">
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.airbnb.epoxy.EpoxyRecyclerView
                 android:id="@+id/summary_rv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
-                android:paddingVertical="8dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/view_holder_poster_grid_item" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-        <app.tivi.ui.widget.HeaderHolderFrameLayout
-            android:id="@+id/header_holder"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:dividerMarginEnd="@dimen/spacing_normal"
-            app:dividerMarginStart="@dimen/spacing_normal"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@id/summary_swipe_refresh" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -21,12 +21,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.updatePadding
 import androidx.navigation.fragment.findNavController
 import app.tivi.DaggerMvRxFragment
-import app.tivi.common.epoxy.StickyHeaderScrollListener
 import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
+import app.tivi.extensions.doOnLayouts
 import app.tivi.extensions.navigateToNavDestination
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.toActivityNavigatorExtras
@@ -73,13 +74,11 @@ class DiscoverFragment : DaggerMvRxFragment() {
         binding.summaryRv.apply {
             setController(controller)
             addItemDecoration(SpacingItemDecorator(paddingLeft))
-            addOnScrollListener(
-                    StickyHeaderScrollListener(
-                            controller,
-                            controller::isHeader,
-                            binding.headerHolder
-                    )
-            )
+        }
+
+        binding.followedAppBar.doOnLayouts {
+            binding.summaryRv.updatePadding(top = it.height)
+            true
         }
 
         authStateMenuItemBinder = authStateToolbarMenuBinder(
