@@ -91,6 +91,7 @@ class FollowedFragment : DaggerMvRxFragment() {
 
         binding.followedAppBar.doOnLayouts {
             binding.followedRv.updatePadding(top = it.height)
+            binding.followedSwipeRefresh.setProgressViewOffset(true, 0, it.height)
             true
         }
 

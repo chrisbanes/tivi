@@ -78,6 +78,7 @@ class DiscoverFragment : DaggerMvRxFragment() {
 
         binding.followedAppBar.doOnLayouts {
             binding.summaryRv.updatePadding(top = it.height)
+            binding.summarySwipeRefresh.setProgressViewOffset(true, 0, it.height)
             true
         }
 
