@@ -16,40 +16,36 @@
 
 package app.tivi.util
 
-import androidx.annotation.StringRes
 import app.tivi.api.UiLoading
 import app.tivi.common.epoxy.TotalSpanOverride
-import app.tivi.common.layouts.GridHeaderBindingModel_
-import app.tivi.common.layouts.HeaderBindingModel_
 import app.tivi.common.layouts.PosterGridItemBindingModel_
 import app.tivi.common.layouts.emptyState
-import app.tivi.common.layouts.gridHeader
 import app.tivi.common.layouts.infiniteLoading
+import app.tivi.common.layouts.vertSpacerSmall
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.extensions.observable
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
 
-abstract class EntryGridEpoxyController<LI : EntryWithShow<out Entry>>(
-    @StringRes private val titleRes: Int? = null
-) : PagedListEpoxyController<LI>() {
+abstract class EntryGridEpoxyController<LI : EntryWithShow<out Entry>> :
+    PagedListEpoxyController<LI>() {
     var state: EntryViewState<LI> by observable(EntryViewState()) { requestForcedModelBuild() }
 
     @Suppress("UselessCallOnCollection")
     override fun addModels(models: List<EpoxyModel<*>>) {
-        // Need to do this due to https://github.com/airbnb/epoxy/issues/567
-        val modelsFiltered = models.filterNotNull()
-
-        if (modelsFiltered.isNotEmpty()) {
-            if (titleRes != null) {
-                gridHeader {
-                    id("header")
-                    title(titleRes)
-                    spanSizeOverride(TotalSpanOverride)
-                }
+        if (models.isNotEmpty()) {
+            vertSpacerSmall {
+                id("top_spacer")
+                spanSizeOverride(TotalSpanOverride)
             }
-            super.addModels(modelsFiltered)
+
+            super.addModels(models)
+
+            vertSpacerSmall {
+                id("bottom_spacer")
+                spanSizeOverride(TotalSpanOverride)
+            }
         } else {
             emptyState {
                 id("item_placeholder")
@@ -75,9 +71,5 @@ abstract class EntryGridEpoxyController<LI : EntryWithShow<out Entry>>(
     protected open fun buildItemPlaceholder(index: Int): PosterGridItemBindingModel_ {
         return PosterGridItemBindingModel_()
                 .id("placeholder_$index")
-    }
-
-    open fun isHeader(model: EpoxyModel<*>): Boolean {
-        return model is GridHeaderBindingModel_ || model is HeaderBindingModel_
     }
 }
