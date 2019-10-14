@@ -24,11 +24,13 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.updatePadding
 import androidx.navigation.fragment.findNavController
 import app.tivi.DaggerMvRxFragment
 import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.extensions.doOnLayouts
 import app.tivi.extensions.navigateToNavDestination
 import app.tivi.extensions.postponeEnterTransitionWithTimeout
 import app.tivi.extensions.scheduleStartPostponedTransitions
@@ -84,6 +86,11 @@ class FollowedFragment : DaggerMvRxFragment() {
                     findNavController().navigateToNavDestination(R.id.navigation_settings)
                 }
             }
+            true
+        }
+
+        binding.followedAppBar.doOnLayouts {
+            binding.followedRv.updatePadding(top = it.height)
             true
         }
 
