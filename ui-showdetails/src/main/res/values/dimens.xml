@@ -19,5 +19,5 @@
     <dimen name="list_vertical_padding">@dimen/spacing_small</dimen>
     <dimen name="list_horizontal_padding">@dimen/spacing_normal</dimen>
 
-    <dimen name="related_shows_item_width">60dp</dimen>
+    <dimen name="related_shows_item_width">80dp</dimen>
 </resources>

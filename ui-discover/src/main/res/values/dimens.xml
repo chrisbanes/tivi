@@ -16,5 +16,5 @@
   -->
 
 <resources>
-    <dimen name="discover_carousel_item_width">96dp</dimen>
+    <dimen name="discover_carousel_item_width">140dp</dimen>
 </resources>
