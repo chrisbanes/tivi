@@ -50,7 +50,7 @@ class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingS
     }
 
     override fun createController(): EntryGridEpoxyController<TrendingEntryWithShow> {
-        return object : EntryGridEpoxyController<TrendingEntryWithShow>(R.string.discover_trending_title) {
+        return object : EntryGridEpoxyController<TrendingEntryWithShow>() {
             override fun buildItemModel(item: TrendingEntryWithShow): EpoxyModel<*> {
                 return PosterGridItemBindingModel_()
                         .id(item.generateStableId())

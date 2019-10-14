@@ -22,6 +22,7 @@ import android.view.ActionMode
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -32,6 +33,7 @@ import app.tivi.common.entrygrid.R
 import app.tivi.common.entrygrid.databinding.FragmentEntryGridBinding
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
+import app.tivi.extensions.doOnLayouts
 import app.tivi.extensions.postponeEnterTransitionWithTimeout
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.ui.ProgressTimeLatch
@@ -86,6 +88,12 @@ abstract class EntryGridFragment<LI, VM> : DaggerFragment()
 
         binding.gridToolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
+        }
+
+        binding.gridAppbar.doOnLayouts {
+            binding.gridRecyclerview.updatePadding(top = it.height)
+            binding.gridSwipeRefresh.setProgressViewOffset(true, 0, it.height)
+            true
         }
 
         binding.gridRecyclerview.apply {

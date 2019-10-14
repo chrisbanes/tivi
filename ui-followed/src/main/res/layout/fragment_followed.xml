@@ -27,6 +27,8 @@
             android:id="@+id/followed_app_bar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:background="@drawable/rectangle"
+            android:backgroundTint="@color/color_surface_93"
             android:fitsSystemWindows="true"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -49,7 +51,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/followed_app_bar">
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.airbnb.epoxy.EpoxyRecyclerView
                 android:id="@+id/followed_rv"

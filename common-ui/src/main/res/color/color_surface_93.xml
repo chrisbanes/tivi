@@ -15,9 +15,6 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <dimen name="list_vertical_padding">@dimen/spacing_small</dimen>
-    <dimen name="list_horizontal_padding">@dimen/spacing_normal</dimen>
-
-    <dimen name="related_shows_item_width">80dp</dimen>
-</resources>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="?attr/colorSurface" android:alpha="0.93" />
+</selector>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2019 Google LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,9 +14,11 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <dimen name="list_vertical_padding">@dimen/spacing_small</dimen>
-    <dimen name="list_horizontal_padding">@dimen/spacing_normal</dimen>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <dimen name="related_shows_item_width">80dp</dimen>
-</resources>
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/spacing_small" />
+
+    <data />
+</layout>

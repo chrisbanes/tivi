@@ -50,7 +50,7 @@ class RecommendedShowsFragment : EntryGridFragment<RecommendedEntryWithShow, Rec
     }
 
     override fun createController(): EntryGridEpoxyController<RecommendedEntryWithShow> {
-        return object : EntryGridEpoxyController<RecommendedEntryWithShow>(R.string.discover_recommended_title) {
+        return object : EntryGridEpoxyController<RecommendedEntryWithShow>() {
             override fun buildItemModel(item: RecommendedEntryWithShow): EpoxyModel<*> {
                 return PosterGridItemBindingModel_()
                         .id(item.generateStableId())

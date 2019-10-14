@@ -24,17 +24,18 @@
         android:layout_height="wrap_content"
         android:foreground="?android:attr/selectableItemBackground"
         android:orientation="horizontal"
+        android:paddingVertical="@dimen/spacing_small"
+        android:paddingHorizontal="@dimen/spacing_normal"
         android:transitionGroup="true">
 
         <TextView
             android:id="@+id/header_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/spacing_normal"
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:text="@{titleString ?? context.getString(title)}"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:textAppearance="?attr/textAppearanceHeadline6"
             tools:text="Popular" />
 
         <ProgressBar
@@ -48,7 +49,6 @@
             android:id="@+id/header_more"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/spacing_normal"
             android:layout_gravity="center_vertical"
             android:onClick="@{buttonClickListener}"
             android:text="@{buttonTitle != 0 ? context.getString(buttonTitle) : @string/header_more}"

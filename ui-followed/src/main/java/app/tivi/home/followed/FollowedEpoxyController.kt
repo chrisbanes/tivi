@@ -22,6 +22,7 @@ import android.view.View
 import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.common.layouts.emptyState
 import app.tivi.common.layouts.filter
+import app.tivi.common.layouts.vertSpacerNormal
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
@@ -46,6 +47,9 @@ class FollowedEpoxyController @Inject constructor(
                 spanSizeOverride(TotalSpanOverride)
             }
         } else {
+            vertSpacerNormal {
+                id("top_spacer")
+            }
             filter {
                 id("filters")
                 filter(viewState.filter)
@@ -68,7 +72,12 @@ class FollowedEpoxyController @Inject constructor(
                     true
                 }
             }
+
             super.addModels(models)
+
+            vertSpacerNormal {
+                id("bottom_spacer")
+            }
         }
     }
 
