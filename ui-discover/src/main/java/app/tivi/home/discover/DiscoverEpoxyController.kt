@@ -24,6 +24,7 @@ import app.tivi.common.layouts.HeaderBindingModel_
 import app.tivi.common.layouts.PosterCardItemBindingModel_
 import app.tivi.common.layouts.emptyState
 import app.tivi.common.layouts.header
+import app.tivi.common.layouts.vertSpacerNormal
 import app.tivi.data.Entry
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.EntryWithShow
@@ -69,6 +70,11 @@ class DiscoverEpoxyController @Inject constructor(
             }
         }
 
+        if (modelCountBuiltSoFar > 0) {
+            vertSpacerNormal {
+                id("trending_header_spacer")
+            }
+        }
         header {
             id("trending_header")
             title(R.string.discover_trending_title)
@@ -107,6 +113,11 @@ class DiscoverEpoxyController @Inject constructor(
         }
 
         if (recommendedShows.isNotEmpty()) {
+            if (modelCountBuiltSoFar > 0) {
+                vertSpacerNormal {
+                    id("recommended_header_spacer")
+                }
+            }
             header {
                 id("recommended_header")
                 title(R.string.discover_recommended_title)
@@ -138,6 +149,11 @@ class DiscoverEpoxyController @Inject constructor(
             }
         }
 
+        if (modelCountBuiltSoFar > 0) {
+            vertSpacerNormal {
+                id("popular_header_spacer")
+            }
+        }
         header {
             id("popular_header")
             title(R.string.discover_popular_title)
