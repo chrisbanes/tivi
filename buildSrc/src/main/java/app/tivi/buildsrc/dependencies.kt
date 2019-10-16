@@ -21,7 +21,7 @@ object Versions {
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:3.5.1"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:3.6.0-beta01"
     const val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6"
     const val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.4.2"
 
@@ -59,7 +59,7 @@ object Libs {
         const val gmsGoogleServices = "com.google.gms:google-services:4.3.2"
         const val fabricPlugin = "io.fabric.tools:gradle:1.31.1"
 
-        const val openSourceLicensesPlugin = "com.google.android.gms:oss-licenses-plugin:0.9.5"
+        const val openSourceLicensesPlugin = "com.google.android.gms:oss-licenses-plugin:0.10.0"
         const val openSourceLicensesLibrary = "com.google.android.gms:play-services-oss-licenses:17.0.0"
     }
 
