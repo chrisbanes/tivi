@@ -90,7 +90,7 @@ class ShowDetailsFragment : DaggerMvRxFragment() {
 
         binding.textCreator = textCreator
 
-        binding.detailsMotion.doOnApplyWindowInsets { v, insets, _, _ ->
+        binding.detailsMotion.doOnApplyWindowInsets { v, insets, _ ->
             (v as MotionLayout).updateConstraintSets {
                 constrainHeight(R.id.details_status_bar_anchor, insets.systemWindowInsetTop)
             }
