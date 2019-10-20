@@ -57,13 +57,9 @@ class TopLeftCutoutBackgroundView : View {
         }
 
     @set:Keep
-    var cutProgress: Float = 1f
-        set(value) {
-            if (value != field) {
-                field = value
-                syncCutSize()
-            }
-        }
+    var cutProgress: Float
+        get() = shapeDrawable.interpolation
+        set(value) { shapeDrawable.interpolation = value }
 
     private fun syncCutSize() {
         shapeDrawable.shapeAppearanceModel = shapeDrawable.shapeAppearanceModel.toBuilder()
