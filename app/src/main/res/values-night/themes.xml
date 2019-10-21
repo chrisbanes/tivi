@@ -26,8 +26,5 @@
         <item name="colorSecondary">@color/tivi_mtrl_orange_500</item>
         <item name="colorSecondaryVariant">@color/tivi_mtrl_orange_700</item>
         <item name="colorOnSecondary">#000000</item>
-
-        <item name="colorPrimarySurface">?attr/colorSurface</item>
-        <item name="colorOnPrimarySurface">?attr/colorOnSurface</item>
     </style>
 </resources>

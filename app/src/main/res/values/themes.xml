@@ -60,9 +60,6 @@
         <item name="colorSecondary">@color/tivi_mtrl_orange_700</item>
         <item name="colorSecondaryVariant">@color/tivi_mtrl_orange_500</item>
         <item name="colorOnSecondary">#000000</item>
-
-        <item name="colorPrimarySurface">?attr/colorPrimary</item>
-        <item name="colorOnPrimarySurface">?attr/colorOnPrimary</item>
     </style>
 
     <style name="Theme.Tivi.NoActionBar">
