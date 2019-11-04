@@ -3,7 +3,17 @@ version: 2.0
 workspace: &workspace
   ~/tivi
 
-config_android: &config_android
+config_android_debug: &config_android_debug
+  docker:
+    - image: circleci/android:api-29
+  working_directory: *workspace
+  environment:
+    JAVA_TOOL_OPTIONS: "-Xmx3072m"
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false -Dkotlin.compiler.execution.strategy=in-process"
+    TERM: dumb
+
+# R8 seems to run out of process so we need to limit max heap for release builds
+config_android_release: &config_android_release
   docker:
     - image: circleci/android:api-29
   working_directory: *workspace
@@ -26,14 +36,17 @@ gen_cache_key: &gen_cache_key
 
 restore_cache: &restore_cache
   restore_cache:
-    key: gradle-{{ checksum "/tmp/checksum.txt" }}
+    keys:
+      - gradle-{{ .Branch }}-{{ checksum "/tmp/checksum.txt" }}
+      - gradle-{{ .Branch }}-
+      - gradle-
 
 save_cache: &save_cache
   save_cache:
     paths:
       - ~/.gradle/caches
       - ~/.gradle/wrapper
-    key: gradle-{{ checksum "/tmp/checksum.txt" }}
+    key: gradle-{{ .Branch }}-{{ checksum "/tmp/checksum.txt" }}
 
 attach_workspace: &attach_workspace
   attach_workspace:
@@ -57,7 +70,7 @@ clean_secrets: &clean_secrets
 
 jobs:
   build_debug:
-    <<: *config_android
+    <<: *config_android_debug
     steps:
       - <<: *update_sdk
       - checkout
@@ -69,7 +82,7 @@ jobs:
           command: ./gradlew dependencies
       - run:
           name: Assemble and Test APKs
-          command: ./gradlew bundleDebug assembleDebug -Ptivi.versioncode=$CIRCLE_BUILD_NUM
+          command: ./gradlew bundleDebug assembleDebug -Ptivi.versioncode=$CIRCLE_BUILD_NUM --scan
       - <<: *clean_secrets
       - <<: *save_cache
       - store_artifacts:
@@ -78,7 +91,7 @@ jobs:
       - <<: *persist_workspace
 
   check:
-    <<: *config_android
+    <<: *config_android_debug
     steps:
       - <<: *update_sdk
       - checkout
@@ -86,8 +99,11 @@ jobs:
       - <<: *gen_cache_key
       - <<: *restore_cache
       - run:
-          name: Check app and dependencies
-          command: ./gradlew app:lintDebug testDebug spotlessCheck dependencyUpdates
+          name: Check code style
+          command: ./gradlew spotlessCheck
+      - run:
+          name: Run tests and lint
+          command: ./gradlew testDebug app:lintDebug dependencyUpdates --scan
       - store_artifacts:
           path: app/build/reports
           destination: reports
@@ -106,7 +122,7 @@ jobs:
           path: ~/junit      
 
   build_release:
-    <<: *config_android
+    <<: *config_android_release
     steps:
       - <<: *update_sdk
       - checkout
@@ -116,7 +132,7 @@ jobs:
       - <<: *decrypt_secrets
       - run:
           name: Check and assemble APKs
-          command: ./gradlew bundleRelease assembleRelease -Ptivi.versioncode=$CIRCLE_BUILD_NUM
+          command: ./gradlew bundleRelease assembleRelease -Ptivi.versioncode=$CIRCLE_BUILD_NUM --scan
       - <<: *clean_secrets
       - store_artifacts:
           path: app/build/outputs
@@ -127,7 +143,7 @@ jobs:
       - <<: *persist_workspace
 
   deploy_to_play:
-    <<: *config_android
+    <<: *config_android_release
     steps:
       - <<: *update_sdk
       - checkout
@@ -137,7 +153,7 @@ jobs:
       - <<: *decrypt_secrets
       - run:
           name: Deploy to Alpha channel
-          command: ./gradlew publishRelease -Ptivi.versioncode=$CIRCLE_BUILD_NUM
+          command: ./gradlew publishRelease -Ptivi.versioncode=$CIRCLE_BUILD_NUM --scan
       - <<: *clean_secrets
 
   deploy_to_github_release:
