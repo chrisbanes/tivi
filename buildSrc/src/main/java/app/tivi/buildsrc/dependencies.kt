@@ -21,7 +21,7 @@ object Versions {
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:3.6.0-beta02"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:3.6.0-beta01"
     const val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6"
     const val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.5.0"
 
