@@ -89,8 +89,11 @@ jobs:
       - <<: *gen_cache_key
       - <<: *restore_cache
       - run:
-          name: Check app and dependencies
-          command: ./gradlew app:lintDebug testDebug spotlessCheck dependencyUpdates --scan
+          name: Check code style
+          command: ./gradlew spotlessCheck
+      - run:
+          name: Run tests and lint
+          command: ./gradlew testDebug app:lintDebug dependencyUpdates --scan
       - store_artifacts:
           path: app/build/reports
           destination: reports
