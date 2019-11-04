@@ -58,7 +58,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:marginTopSystemWindowInsets="@{true}">
+            app:layout_marginTopSystemWindowInsets="@{true}">
 
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/search_searchview"
