@@ -69,7 +69,7 @@ jobs:
           command: ./gradlew dependencies
       - run:
           name: Assemble and Test APKs
-          command: ./gradlew bundleDebug assembleDebug -Ptivi.versioncode=$CIRCLE_BUILD_NUM
+          command: ./gradlew bundleDebug assembleDebug -Ptivi.versioncode=$CIRCLE_BUILD_NUM --scan
       - <<: *clean_secrets
       - <<: *save_cache
       - store_artifacts:
@@ -87,7 +87,7 @@ jobs:
       - <<: *restore_cache
       - run:
           name: Check app and dependencies
-          command: ./gradlew app:lintDebug testDebug spotlessCheck dependencyUpdates
+          command: ./gradlew app:lintDebug testDebug spotlessCheck dependencyUpdates --scan
       - store_artifacts:
           path: app/build/reports
           destination: reports
@@ -116,7 +116,7 @@ jobs:
       - <<: *decrypt_secrets
       - run:
           name: Check and assemble APKs
-          command: ./gradlew bundleRelease assembleRelease -Ptivi.versioncode=$CIRCLE_BUILD_NUM
+          command: ./gradlew bundleRelease assembleRelease -Ptivi.versioncode=$CIRCLE_BUILD_NUM --scan
       - <<: *clean_secrets
       - store_artifacts:
           path: app/build/outputs
@@ -137,7 +137,7 @@ jobs:
       - <<: *decrypt_secrets
       - run:
           name: Deploy to Alpha channel
-          command: ./gradlew publishRelease -Ptivi.versioncode=$CIRCLE_BUILD_NUM
+          command: ./gradlew publishRelease -Ptivi.versioncode=$CIRCLE_BUILD_NUM --scan
       - <<: *clean_secrets
 
   deploy_to_github_release:
