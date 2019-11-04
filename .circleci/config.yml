@@ -26,14 +26,17 @@ gen_cache_key: &gen_cache_key
 
 restore_cache: &restore_cache
   restore_cache:
-    key: gradle-{{ checksum "/tmp/checksum.txt" }}
+    keys:
+      - gradle-{{ .Branch }}-{{ checksum "/tmp/checksum.txt" }}
+      - gradle-{{ .Branch }}-
+      - gradle-
 
 save_cache: &save_cache
   save_cache:
     paths:
       - ~/.gradle/caches
       - ~/.gradle/wrapper
-    key: gradle-{{ checksum "/tmp/checksum.txt" }}
+    key: gradle-{{ .Branch }}-{{ checksum "/tmp/checksum.txt" }}
 
 attach_workspace: &attach_workspace
   attach_workspace:
