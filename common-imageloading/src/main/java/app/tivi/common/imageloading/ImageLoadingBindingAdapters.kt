@@ -28,26 +28,19 @@ import coil.api.loadAny
         "imageSaturateOnLoad",
         requireAll = false
 )
-fun loadBackdrop(
-    view: ImageView,
+fun ImageView.loadBackdrop(
     oldPath: String?,
     oldSaturateOnLoad: Boolean?,
     path: String?,
     saturateOnLoad: Boolean?
 ) {
-    if (oldPath == path && oldSaturateOnLoad == saturateOnLoad) {
-        return
-    }
-    if (path != null) {
-        view.loadAny(ShowTmdbImage(path = path, type = ImageType.BACKDROP, showId = 0)) {
-            if (saturateOnLoad == null || saturateOnLoad == true) {
-                val saturatingTarget = SaturatingImageViewTarget(view)
-                target(saturatingTarget)
-                listener(saturatingTarget)
-            }
-        }
-    } else {
-        view.setImageDrawable(null)
+    if (oldPath != path || oldSaturateOnLoad != saturateOnLoad) {
+        loadImage(
+                null,
+                oldSaturateOnLoad,
+                path?.let { ShowTmdbImage(path = path, type = ImageType.BACKDROP, showId = 0) },
+                saturateOnLoad
+        )
     }
 }
 
@@ -56,25 +49,19 @@ fun loadBackdrop(
         "imageSaturateOnLoad",
         requireAll = false
 )
-fun loadImage(
-    view: ImageView,
+fun ImageView.loadImage(
     oldImage: TmdbImageEntity?,
     oldSaturateOnLoad: Boolean?,
     image: TmdbImageEntity?,
     saturateOnLoad: Boolean?
 ) {
-    if (oldImage == image && oldSaturateOnLoad == saturateOnLoad) {
-        return
-    }
-    if (image != null) {
-        view.loadAny(image) {
-            if (saturateOnLoad == null || saturateOnLoad == true) {
-                val saturatingTarget = SaturatingImageViewTarget(view)
-                target(saturatingTarget)
-                listener(saturatingTarget)
-            }
+    if (oldImage == image && oldSaturateOnLoad == saturateOnLoad) return
+
+    loadAny(image) {
+        if (saturateOnLoad == null || saturateOnLoad == true) {
+            val saturatingTarget = SaturatingImageViewTarget(this@loadImage)
+            target(saturatingTarget)
+            listener(saturatingTarget)
         }
-    } else {
-        view.setImageDrawable(null)
     }
 }
