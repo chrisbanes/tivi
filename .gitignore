@@ -12,7 +12,6 @@ captures
 .idea/caches
 .idea/navEditor.xml
 .idea/tasks.xml
-.idea/tasks.xml
 .idea/modules.xml
 gradle.xml
 *.iml
