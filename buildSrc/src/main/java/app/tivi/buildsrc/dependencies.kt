@@ -21,11 +21,11 @@ object Versions {
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:3.6.0-beta01"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:3.6.0-beta02"
     const val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6"
-    const val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.4.2"
+    const val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.5.0"
 
-    const val mvRx = "com.airbnb.android:mvrx:1.1.0"
+    const val mvRx = "com.airbnb.android:mvrx:1.3.0"
 
     const val threeTenBp = "org.threeten:threetenbp:1.4.0"
     const val threeTenBpNoTzdb = "$threeTenBp:no-tzdb"
@@ -41,13 +41,13 @@ object Libs {
     const val appauth = "net.openid:appauth:0.7.1"
 
     const val junit = "junit:junit:4.12"
-    const val robolectric = "org.robolectric:robolectric:4.3"
+    const val robolectric = "org.robolectric:robolectric:4.3.1"
     const val mockK = "io.mockk:mockk:1.9.3"
 
     const val inboxRecyclerView = "me.saket:inboxrecyclerview:2.0.0-beta3"
 
     object Insetter {
-        private const val version = "0.1.1"
+        private const val version = "0.2.0"
         const val dbx = "dev.chrisbanes:insetter-dbx:$version"
         const val ktx = "dev.chrisbanes:insetter-ktx:$version"
     }
@@ -84,19 +84,19 @@ object Libs {
         const val browser = "androidx.browser:browser:1.0.0"
         const val collection = "androidx.collection:collection-ktx:1.1.0"
         const val palette = "androidx.palette:palette:1.0.0"
-        const val recyclerview = "androidx.recyclerview:recyclerview:1.1.0-beta05"
+        const val recyclerview = "androidx.recyclerview:recyclerview:1.1.0-rc01"
         const val emoji = "androidx.emoji:emoji:1.0.0"
         const val swiperefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha03"
 
         object Navigation {
-            private const val version = "2.2.0-beta01"
+            private const val version = "2.2.0-rc01"
             const val fragment = "androidx.navigation:navigation-fragment-ktx:$version"
             const val ui = "androidx.navigation:navigation-ui-ktx:$version"
             const val safeArgs = "androidx.navigation:navigation-safe-args-gradle-plugin:$version"
         }
 
         object Fragment {
-            private const val version = "1.2.0-beta01"
+            private const val version = "1.2.0-rc01"
             const val fragment = "androidx.fragment:fragment:$version"
             const val fragmentKtx = "androidx.fragment:fragment-ktx:$version"
         }
@@ -120,18 +120,18 @@ object Libs {
 
         const val preference = "androidx.preference:preference:1.1.0"
 
-        const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.0-beta2"
+        const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.0-beta3"
 
         const val coreKtx = "androidx.core:core-ktx:1.2.0-beta01"
 
         object Lifecycle {
-            private const val version = "2.2.0-beta01"
+            private const val version = "2.2.0-rc01"
             const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
             const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
         }
 
         object Room {
-            private const val version = "2.2.0"
+            private const val version = "2.2.1"
             const val common = "androidx.room:room-common:$version"
             const val runtime = "androidx.room:room-runtime:$version"
             const val compiler = "androidx.room:room-compiler:$version"
@@ -151,7 +151,7 @@ object Libs {
     }
 
     object Dagger {
-        private const val version = "2.24"
+        private const val version = "2.25.2"
         const val dagger = "com.google.dagger:dagger:$version"
         const val androidSupport = "com.google.dagger:dagger-android-support:$version"
         const val compiler = "com.google.dagger:dagger-compiler:$version"
@@ -180,12 +180,12 @@ object Libs {
     }
 
     object Coil {
-        private const val version = "0.7.0"
+        private const val version = "0.8.0"
         const val coil = "io.coil-kt:coil:$version"
     }
 
     object AssistedInject {
-        private const val version = "0.5.0"
+        private const val version = "0.5.1"
         const val annotationDagger2 = "com.squareup.inject:assisted-inject-annotations-dagger2:$version"
         const val processorDagger2 = "com.squareup.inject:assisted-inject-processor-dagger2:$version"
     }
