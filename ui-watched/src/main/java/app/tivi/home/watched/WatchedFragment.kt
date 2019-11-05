@@ -30,7 +30,7 @@ import app.tivi.DaggerMvRxFragment
 import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
-import app.tivi.extensions.doOnLayouts
+import app.tivi.extensions.doOnSizeChange
 import app.tivi.extensions.navigateToNavDestination
 import app.tivi.extensions.postponeEnterTransitionWithTimeout
 import app.tivi.extensions.scheduleStartPostponedTransitions
@@ -92,9 +92,10 @@ class WatchedFragment : DaggerMvRxFragment() {
             findNavController().navigateUp()
         }
 
-        binding.watchedAppBar.doOnLayouts {
+        binding.watchedAppBar.doOnSizeChange {
             binding.watchedRv.updatePadding(top = it.height)
-            binding.watchedSwipeRefresh.setProgressViewOffset(true, 0, it.height)
+            binding.watchedSwipeRefresh.setProgressViewOffset(true, 0,
+                    it.height + binding.watchedSwipeRefresh.progressCircleDiameter / 2)
             true
         }
 

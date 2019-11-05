@@ -27,7 +27,7 @@ import app.tivi.DaggerMvRxFragment
 import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.extensions.doOnLayouts
+import app.tivi.extensions.doOnSizeChange
 import app.tivi.extensions.navigateToNavDestination
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.toActivityNavigatorExtras
@@ -76,9 +76,10 @@ class DiscoverFragment : DaggerMvRxFragment() {
             addItemDecoration(SpacingItemDecorator(paddingLeft))
         }
 
-        binding.followedAppBar.doOnLayouts {
+        binding.followedAppBar.doOnSizeChange {
             binding.summaryRv.updatePadding(top = it.height)
-            binding.summarySwipeRefresh.setProgressViewOffset(true, 0, it.height)
+            binding.summarySwipeRefresh.setProgressViewOffset(true, 0,
+                    it.height + binding.summarySwipeRefresh.progressCircleDiameter / 2)
             true
         }
 
