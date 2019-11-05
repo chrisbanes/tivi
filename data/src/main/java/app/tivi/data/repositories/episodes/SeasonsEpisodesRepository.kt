@@ -217,7 +217,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         seasonsEpisodesStore.updatePreviousSeasonFollowed(seasonId, false)
     }
 
-    suspend fun markEpisodeWatched(episodeId: Long, timestamp: OffsetDateTime) {
+    suspend fun addEpisodeWatch(episodeId: Long, timestamp: OffsetDateTime) {
         val entry = EpisodeWatchEntry(
                 episodeId = episodeId,
                 watchedAt = timestamp,
@@ -228,21 +228,21 @@ class SeasonsEpisodesRepository @Inject constructor(
         syncEpisodeWatches(episodeId)
     }
 
-    suspend fun markEpisodeUnwatched(episodeId: Long) {
-        val watchesForEpisode = episodeWatchStore.getWatchesForEpisode(episodeId)
-        if (watchesForEpisode.isNotEmpty()) {
-            val ids = watchesForEpisode.map { it.id }
-            // First mark them as pending deletion
-            episodeWatchStore.updateWatchEntriesWithAction(ids, PendingAction.DELETE)
-        }
-        syncEpisodeWatches(episodeId)
-    }
-
     suspend fun removeEpisodeWatch(episodeWatchId: Long) {
         val episodeWatch = episodeWatchStore.getEpisodeWatch(episodeWatchId)
         if (episodeWatch != null && episodeWatch.pendingAction != PendingAction.DELETE) {
             episodeWatchStore.save(episodeWatch.copy(pendingAction = PendingAction.DELETE))
             syncEpisodeWatches(episodeWatch.episodeId)
+        }
+    }
+
+    suspend fun removeAllEpisodeWatches(episodeId: Long) {
+        val watchesForEpisode = episodeWatchStore.getWatchesForEpisode(episodeId)
+        if (watchesForEpisode.isNotEmpty()) {
+            // First mark them as pending deletion
+            episodeWatchStore.updateWatchEntriesWithAction(
+                    watchesForEpisode.map { it.id }, PendingAction.DELETE)
+            syncEpisodeWatches(episodeId)
         }
     }
 

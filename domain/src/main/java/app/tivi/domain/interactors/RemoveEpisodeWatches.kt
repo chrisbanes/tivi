@@ -32,7 +32,7 @@ class RemoveEpisodeWatches @Inject constructor(
     override val scope: CoroutineScope = processScope + dispatchers.io
 
     override suspend fun doWork(params: Params) {
-        seasonsEpisodesRepository.markEpisodeUnwatched(params.episodeId)
+        seasonsEpisodesRepository.removeAllEpisodeWatches(params.episodeId)
     }
 
     data class Params(val episodeId: Long)
