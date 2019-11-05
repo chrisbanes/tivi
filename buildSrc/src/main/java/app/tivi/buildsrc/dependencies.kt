@@ -46,6 +46,8 @@ object Libs {
 
     const val inboxRecyclerView = "me.saket:inboxrecyclerview:2.0.0-beta3"
 
+    const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.0-beta-3"
+
     object Insetter {
         private const val version = "0.2.0"
         const val dbx = "dev.chrisbanes:insetter-dbx:$version"
