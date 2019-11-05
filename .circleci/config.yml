@@ -3,22 +3,12 @@ version: 2.0
 workspace: &workspace
   ~/tivi
 
-config_android_debug: &config_android_debug
+config_android: &config_android
   docker:
     - image: circleci/android:api-29
   working_directory: *workspace
   environment:
-    JAVA_TOOL_OPTIONS: "-Xmx3072m"
-    GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false -Dkotlin.compiler.execution.strategy=in-process"
-    TERM: dumb
-
-# R8 seems to run out of process so we need to limit max heap for release builds
-config_android_release: &config_android_release
-  docker:
-    - image: circleci/android:api-29
-  working_directory: *workspace
-  environment:
-    JAVA_TOOL_OPTIONS: "-Xmx1536m"
+    JAVA_TOOL_OPTIONS: "-Xmx2048m"
     GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false -Dkotlin.compiler.execution.strategy=in-process"
     TERM: dumb
 
@@ -70,7 +60,7 @@ clean_secrets: &clean_secrets
 
 jobs:
   build_debug:
-    <<: *config_android_debug
+    <<: *config_android
     steps:
       - <<: *update_sdk
       - checkout
@@ -91,7 +81,7 @@ jobs:
       - <<: *persist_workspace
 
   check:
-    <<: *config_android_debug
+    <<: *config_android
     steps:
       - <<: *update_sdk
       - checkout
@@ -100,10 +90,13 @@ jobs:
       - <<: *restore_cache
       - run:
           name: Check code style
-          command: ./gradlew spotlessCheck
+          command: ./gradlew spotlessCheck --scan
       - run:
-          name: Run tests and lint
-          command: ./gradlew testDebug app:lintDebug dependencyUpdates --scan
+          name: Run tests
+          command: ./gradlew testDebug --scan
+      - run:
+          name: Run lint
+          command: ./gradlew app:lintDebug dependencyUpdates --scan
       - store_artifacts:
           path: app/build/reports
           destination: reports
@@ -122,7 +115,7 @@ jobs:
           path: ~/junit      
 
   build_release:
-    <<: *config_android_release
+    <<: *config_android
     steps:
       - <<: *update_sdk
       - checkout
@@ -143,7 +136,7 @@ jobs:
       - <<: *persist_workspace
 
   deploy_to_play:
-    <<: *config_android_release
+    <<: *config_android
     steps:
       - <<: *update_sdk
       - checkout
