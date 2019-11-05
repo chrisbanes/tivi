@@ -32,8 +32,8 @@
             android:id="@+id/header_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:gravity="center_vertical"
             android:text="@{titleString ?? context.getString(title)}"
             android:textAppearance="?attr/textAppearanceHeadline6"
             tools:text="Popular" />
@@ -43,6 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginHorizontal="@dimen/spacing_small"
             app:visible="@{showProgress}" />
 
         <TextView
