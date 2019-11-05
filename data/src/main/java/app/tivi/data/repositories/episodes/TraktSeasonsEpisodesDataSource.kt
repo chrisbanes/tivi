@@ -42,6 +42,7 @@ import com.uwetrottmann.trakt5.services.Seasons
 import com.uwetrottmann.trakt5.services.Sync
 import com.uwetrottmann.trakt5.services.Users
 import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.ZoneOffset
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -91,7 +92,7 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
         items.episodes = watches.map {
             SyncEpisode()
                     .id(EpisodeIds.trakt(episodeIdToTraktIdMapper.map(it.episodeId)))!!
-                    .watchedAt(it.watchedAt)
+                    .watchedAt(it.watchedAt.withOffsetSameInstant(ZoneOffset.UTC))
         }
         return syncService.get().addItemsToWatchedHistory(items)
                 .executeWithRetry()
