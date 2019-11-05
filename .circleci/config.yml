@@ -100,10 +100,13 @@ jobs:
       - <<: *restore_cache
       - run:
           name: Check code style
-          command: ./gradlew spotlessCheck
+          command: ./gradlew spotlessCheck dependencyUpdates --scan
       - run:
-          name: Run tests and lint
-          command: ./gradlew testDebug app:lintDebug dependencyUpdates --scan
+          name: Run tests
+          command: ./gradlew testDebug --scan
+      - run:
+          name: Run lint
+          command: ./gradlew app:lintDebug --scan
       - store_artifacts:
           path: app/build/reports
           destination: reports
