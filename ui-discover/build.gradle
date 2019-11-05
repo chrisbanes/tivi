@@ -63,6 +63,7 @@ dependencies {
     implementation Libs.AndroidX.browser
     implementation Libs.AndroidX.palette
     implementation Libs.AndroidX.recyclerview
+    implementation Libs.AndroidX.swiperefresh
     implementation Libs.AndroidX.emoji
     implementation Libs.AndroidX.preference
     implementation Libs.AndroidX.constraintlayout

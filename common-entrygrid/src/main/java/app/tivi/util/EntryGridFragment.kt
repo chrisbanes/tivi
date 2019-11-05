@@ -33,7 +33,7 @@ import app.tivi.common.entrygrid.R
 import app.tivi.common.entrygrid.databinding.FragmentEntryGridBinding
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.extensions.doOnLayouts
+import app.tivi.extensions.doOnSizeChange
 import app.tivi.extensions.postponeEnterTransitionWithTimeout
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.ui.ProgressTimeLatch
@@ -90,9 +90,10 @@ abstract class EntryGridFragment<LI, VM> : DaggerFragment()
             findNavController().navigateUp()
         }
 
-        binding.gridAppbar.doOnLayouts {
+        binding.gridAppbar.doOnSizeChange {
             binding.gridRecyclerview.updatePadding(top = it.height)
-            binding.gridSwipeRefresh.setProgressViewOffset(true, 0, it.height)
+            binding.gridSwipeRefresh.setProgressViewOffset(true, 0,
+                    it.height + binding.gridSwipeRefresh.progressCircleDiameter / 2)
             true
         }
 

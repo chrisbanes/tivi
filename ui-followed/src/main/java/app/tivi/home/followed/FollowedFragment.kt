@@ -30,7 +30,7 @@ import app.tivi.DaggerMvRxFragment
 import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
-import app.tivi.extensions.doOnLayouts
+import app.tivi.extensions.doOnSizeChange
 import app.tivi.extensions.navigateToNavDestination
 import app.tivi.extensions.postponeEnterTransitionWithTimeout
 import app.tivi.extensions.scheduleStartPostponedTransitions
@@ -89,9 +89,10 @@ class FollowedFragment : DaggerMvRxFragment() {
             true
         }
 
-        binding.followedAppBar.doOnLayouts {
+        binding.followedAppBar.doOnSizeChange {
             binding.followedRv.updatePadding(top = it.height)
-            binding.followedSwipeRefresh.setProgressViewOffset(true, 0, it.height)
+            binding.followedSwipeRefresh.setProgressViewOffset(true, 0,
+                    it.height + binding.followedSwipeRefresh.progressCircleDiameter / 2)
             true
         }
 
