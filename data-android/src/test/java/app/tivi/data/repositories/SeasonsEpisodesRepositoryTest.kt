@@ -233,7 +233,7 @@ class SeasonsEpisodesRepositoryTest {
         // Now mark s1e1 as watched
         coEvery { seasonsDataSource.addEpisodeWatches(any()) } returns Success(Unit)
         coEvery { seasonsDataSource.getEpisodeWatches(s1e1.id, any()) } returns Success(listOf(s1e1w))
-        repository.markEpisodeWatched(s1e1.id, OffsetDateTime.now())
+        repository.addEpisodeWatch(s1e1.id, OffsetDateTime.now())
 
         // Receive the second emission
         withTimeout(10_000) {

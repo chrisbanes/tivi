@@ -33,7 +33,7 @@ class AddEpisodeWatch @Inject constructor(
     override val scope: CoroutineScope = processScope + dispatchers.io
 
     override suspend fun doWork(params: Params) {
-        seasonsEpisodesRepository.markEpisodeWatched(params.episodeId, params.timestamp)
+        seasonsEpisodesRepository.addEpisodeWatch(params.episodeId, params.timestamp)
     }
 
     data class Params(val episodeId: Long, val timestamp: OffsetDateTime)
