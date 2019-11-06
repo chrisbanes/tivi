@@ -22,7 +22,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import app.tivi.DaggerMvRxFragment
+import app.tivi.TiviFragmentWithBinding
 import app.tivi.common.epoxy.SwipeAwayCallbacks
 import app.tivi.episodedetails.databinding.FragmentEpisodeDetailsBinding
 import app.tivi.extensions.resolveThemeColor
@@ -34,7 +34,7 @@ import com.airbnb.mvrx.withState
 import kotlinx.android.parcel.Parcelize
 import javax.inject.Inject
 
-class EpisodeDetailsFragment : DaggerMvRxFragment() {
+class EpisodeDetailsFragment : TiviFragmentWithBinding<FragmentEpisodeDetailsBinding>() {
     companion object {
         @JvmStatic
         fun create(id: Long): EpisodeDetailsFragment {
@@ -55,18 +55,11 @@ class EpisodeDetailsFragment : DaggerMvRxFragment() {
 
     @Inject lateinit var textCreator: EpisodeDetailsTextCreator
 
-    private lateinit var binding: FragmentEpisodeDetailsBinding
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentEpisodeDetailsBinding.inflate(layoutInflater, container, false)
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.textCreator = textCreator
-        return binding.root
+    override fun createBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): FragmentEpisodeDetailsBinding {
+        return FragmentEpisodeDetailsBinding.inflate(layoutInflater, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    override fun onViewCreated(binding: FragmentEpisodeDetailsBinding, savedInstanceState: Bundle?) {
         binding.epDetailsRv.setController(controller)
 
         binding.epDetailsFab.setOnClickListener {
@@ -100,15 +93,19 @@ class EpisodeDetailsFragment : DaggerMvRxFragment() {
         }
 
         EpoxyTouchHelper.initSwiping(binding.epDetailsRv)
-                .let { if (view.layoutDirection == View.LAYOUT_DIRECTION_RTL) it.right() else it.left() }
+                .let {
+                    if (binding.epDetailsRv.layoutDirection == View.LAYOUT_DIRECTION_RTL) {
+                        it.right()
+                    } else {
+                        it.left()
+                    }
+                }
                 .withTarget(EpDetailsWatchItemBindingModel_::class.java)
                 .andCallbacks(swipeCallback)
     }
 
-    override fun invalidate() {
-        withState(viewModel) { state ->
-            binding.state = state
-            controller.setData(state)
-        }
-    }
+    override fun invalidate(binding: FragmentEpisodeDetailsBinding) = withState(viewModel) { state ->
+                binding.state = state
+                controller.setData(state)
+            }
 }

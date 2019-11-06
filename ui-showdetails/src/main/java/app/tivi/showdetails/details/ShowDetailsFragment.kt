@@ -29,8 +29,8 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
 import androidx.recyclerview.widget.LinearSmoothScroller
-import app.tivi.DaggerMvRxFragment
 import app.tivi.SharedElementHelper
+import app.tivi.TiviFragmentWithBinding
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -51,7 +51,7 @@ import me.saket.inboxrecyclerview.dimming.TintPainter
 import me.saket.inboxrecyclerview.page.PageStateChangeCallbacks
 import javax.inject.Inject
 
-class ShowDetailsFragment : DaggerMvRxFragment() {
+class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>() {
     companion object {
         @JvmStatic
         fun create(id: Long): ShowDetailsFragment {
@@ -71,23 +71,17 @@ class ShowDetailsFragment : DaggerMvRxFragment() {
     @Inject lateinit var showDetailsNavigator: ShowDetailsNavigator
     @Inject lateinit var textCreator: ShowDetailsTextCreator
 
-    private lateinit var binding: FragmentShowDetailsBinding
-
     private val backPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
-            binding.detailsRv.collapse()
+            requireBinding().detailsRv.collapse()
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentShowDetailsBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = viewLifecycleOwner
-        return binding.root
+    override fun createBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): FragmentShowDetailsBinding {
+        return FragmentShowDetailsBinding.inflate(inflater, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    override fun onViewCreated(binding: FragmentShowDetailsBinding, savedInstanceState: Bundle?) {
         binding.textCreator = textCreator
 
         binding.detailsMotion.doOnApplyWindowInsets { v, insets, _ ->
@@ -225,7 +219,7 @@ class ShowDetailsFragment : DaggerMvRxFragment() {
         requireActivity().onBackPressedDispatcher.addCallback(this, backPressedCallback)
     }
 
-    override fun invalidate() {
+    override fun invalidate(binding: FragmentShowDetailsBinding) {
         withState(viewModel) {
             if (binding.state == null) {
                 // First time we've had state, start any postponed transitions
