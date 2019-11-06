@@ -37,9 +37,9 @@ import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.home.watched.databinding.FragmentWatchedBinding
 import app.tivi.ui.AuthStateMenuItemBinder
-import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.authStateToolbarMenuBinder
+import app.tivi.ui.createSharedElementHelperForItem
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
@@ -56,10 +56,6 @@ class WatchedFragment : DaggerMvRxFragment() {
     private lateinit var authStateMenuItemBinder: AuthStateMenuItemBinder
 
     private var currentActionMode: ActionMode? = null
-
-    private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
-        ListItemSharedElementHelper(binding.watchedRv)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentWatchedBinding.inflate(inflater, container, false)
@@ -106,7 +102,7 @@ class WatchedFragment : DaggerMvRxFragment() {
                     return
                 }
 
-                val extras = listItemSharedElementHelper.createForItem(item, "poster") {
+                val extras = binding.watchedRv.createSharedElementHelperForItem(item, "poster") {
                     it.findViewById(R.id.show_poster)
                 }
 

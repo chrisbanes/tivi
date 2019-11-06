@@ -37,9 +37,9 @@ import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.home.followed.databinding.FragmentFollowedBinding
 import app.tivi.ui.AuthStateMenuItemBinder
-import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.authStateToolbarMenuBinder
+import app.tivi.ui.createSharedElementHelperForItem
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
@@ -50,10 +50,6 @@ class FollowedFragment : DaggerMvRxFragment() {
 
     private val viewModel: FollowedViewModel by fragmentViewModel()
     @Inject lateinit var followedViewModelFactory: FollowedViewModel.Factory
-
-    private val listItemSharedElementHelper by lazy(LazyThreadSafetyMode.NONE) {
-        ListItemSharedElementHelper(binding.followedRv)
-    }
 
     @Inject lateinit var controller: FollowedEpoxyController
 
@@ -103,7 +99,7 @@ class FollowedFragment : DaggerMvRxFragment() {
                     return
                 }
 
-                val extras = listItemSharedElementHelper.createForItem(item, "poster") {
+                val extras = binding.followedRv.createSharedElementHelperForItem(item, "poster") {
                     it.findViewById(R.id.show_poster)
                 }
 
@@ -133,33 +129,31 @@ class FollowedFragment : DaggerMvRxFragment() {
         binding.followedSwipeRefresh.setOnRefreshListener(viewModel::refresh)
     }
 
-    override fun invalidate() {
-        withState(viewModel) { state ->
-            if (binding.state == null) {
-                // First time we've had state, start any postponed transitions
-                scheduleStartPostponedTransitions()
-            }
+    override fun invalidate() = withState(viewModel) { state ->
+        if (binding.state == null) {
+            // First time we've had state, start any postponed transitions
+            scheduleStartPostponedTransitions()
+        }
 
-            if (state.selectionOpen && currentActionMode == null) {
-                startSelectionActionMode()
-            } else if (!state.selectionOpen && currentActionMode != null) {
-                currentActionMode?.finish()
-            }
+        if (state.selectionOpen && currentActionMode == null) {
+            startSelectionActionMode()
+        } else if (!state.selectionOpen && currentActionMode != null) {
+            currentActionMode?.finish()
+        }
 
-            if (currentActionMode != null) {
-                currentActionMode?.title = getString(R.string.selection_title,
-                        state.selectedShowIds.size)
-            }
+        if (currentActionMode != null) {
+            currentActionMode?.title = getString(R.string.selection_title,
+                    state.selectedShowIds.size)
+        }
 
-            authStateMenuItemBinder.bind(state.authState, state.user)
+        authStateMenuItemBinder.bind(state.authState, state.user)
 
-            binding.state = state
+        binding.state = state
 
-            if (state.followedShows != null) {
-                // PagingEpoxyController does not like being updated before it has a list
-                controller.viewState = state
-                controller.submitList(state.followedShows)
-            }
+        if (state.followedShows != null) {
+            // PagingEpoxyController does not like being updated before it has a list
+            controller.viewState = state
+            controller.submitList(state.followedShows)
         }
     }
 

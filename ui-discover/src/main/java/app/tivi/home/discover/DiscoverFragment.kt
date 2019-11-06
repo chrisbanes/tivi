@@ -34,9 +34,10 @@ import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.extensions.toFragmentNavigatorExtras
 import app.tivi.home.discover.databinding.FragmentDiscoverBinding
 import app.tivi.ui.AuthStateMenuItemBinder
-import app.tivi.ui.ListItemSharedElementHelper
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.authStateToolbarMenuBinder
+import app.tivi.ui.createSharedElementHelperForItemId
+import app.tivi.ui.createSharedElementHelperForItems
 import app.tivi.ui.transitions.GridToGridTransitioner
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
@@ -44,8 +45,6 @@ import javax.inject.Inject
 
 class DiscoverFragment : DaggerMvRxFragment() {
     private lateinit var binding: FragmentDiscoverBinding
-
-    private lateinit var listItemSharedElementHelper: ListItemSharedElementHelper
 
     private val viewModel: DiscoverViewModel by fragmentViewModel()
     @Inject lateinit var discoverViewModelFactory: DiscoverViewModel.Factory
@@ -103,8 +102,8 @@ class DiscoverFragment : DaggerMvRxFragment() {
 
         controller.callbacks = object : DiscoverEpoxyController.Callbacks {
             override fun onTrendingHeaderClicked() {
-                withState(viewModel) {
-                    val extras = listItemSharedElementHelper.createForItems(it.trendingItems)
+                withState(viewModel) { state ->
+                    val extras = binding.summaryRv.createSharedElementHelperForItems(state.trendingItems)
 
                     findNavController().navigate(
                             R.id.navigation_trending,
@@ -115,8 +114,8 @@ class DiscoverFragment : DaggerMvRxFragment() {
             }
 
             override fun onPopularHeaderClicked() {
-                withState(viewModel) {
-                    val extras = listItemSharedElementHelper.createForItems(it.popularItems)
+                withState(viewModel) { state ->
+                    val extras = binding.summaryRv.createSharedElementHelperForItems(state.popularItems)
 
                     findNavController().navigate(
                             R.id.navigation_popular,
@@ -127,8 +126,8 @@ class DiscoverFragment : DaggerMvRxFragment() {
             }
 
             override fun onRecommendedHeaderClicked() {
-                withState(viewModel) {
-                    val extras = listItemSharedElementHelper.createForItems(it.recommendedItems)
+                withState(viewModel) { state ->
+                    val extras = binding.summaryRv.createSharedElementHelperForItems(state.recommendedItems)
 
                     findNavController().navigate(
                             R.id.navigation_recommended,
@@ -139,7 +138,7 @@ class DiscoverFragment : DaggerMvRxFragment() {
             }
 
             override fun onItemClicked(viewHolderId: Long, item: EntryWithShow<out Entry>) {
-                val elements = listItemSharedElementHelper.createForId(viewHolderId, "poster") {
+                val elements = binding.summaryRv.createSharedElementHelperForItemId(viewHolderId, "poster") {
                     it.findViewById(R.id.show_poster)
                 }
 
@@ -162,8 +161,6 @@ class DiscoverFragment : DaggerMvRxFragment() {
                 }
             }
         }
-
-        listItemSharedElementHelper = ListItemSharedElementHelper(binding.summaryRv)
 
         binding.summarySwipeRefresh.setOnRefreshListener {
             viewModel.refresh()

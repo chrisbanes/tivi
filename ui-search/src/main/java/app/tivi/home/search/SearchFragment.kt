@@ -29,7 +29,7 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.extensions.doOnLayouts
 import app.tivi.extensions.hideSoftInput
 import app.tivi.home.search.databinding.FragmentSearchBinding
-import app.tivi.ui.ListItemSharedElementHelper
+import app.tivi.ui.createSharedElementHelperForItemId
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
 import app.tivi.ui.transitions.GridToGridTransitioner
 import com.airbnb.mvrx.fragmentViewModel
@@ -38,7 +38,6 @@ import javax.inject.Inject
 
 internal class SearchFragment : DaggerMvRxFragment() {
     private lateinit var binding: FragmentSearchBinding
-    private lateinit var listItemSharedElementHelper: ListItemSharedElementHelper
 
     private val viewModel: SearchViewModel by fragmentViewModel()
 
@@ -51,7 +50,11 @@ internal class SearchFragment : DaggerMvRxFragment() {
         GridToGridTransitioner.setupFirstFragment(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
@@ -59,8 +62,6 @@ internal class SearchFragment : DaggerMvRxFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        listItemSharedElementHelper = ListItemSharedElementHelper(binding.searchRecyclerview)
 
         binding.searchRecyclerview.apply {
             setController(controller)
@@ -90,7 +91,7 @@ internal class SearchFragment : DaggerMvRxFragment() {
         controller.callbacks = object : SearchEpoxyController.Callbacks {
             override fun onSearchItemClicked(show: TiviShow) {
                 // We should really use AndroidX navigation here, but this fragment isn't in the tree
-                val extras = listItemSharedElementHelper.createForId(show.id, "poster") {
+                val extras = binding.searchRecyclerview.createSharedElementHelperForItemId(show.id, "poster") {
                     it.findViewById(R.id.show_poster)
                 }
                 appNavigator.startShowDetails(show.id, extras)
