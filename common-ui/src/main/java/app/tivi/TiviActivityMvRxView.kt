@@ -18,28 +18,24 @@ package app.tivi
 
 import android.os.Bundle
 import com.airbnb.mvrx.MvRxView
-import java.util.UUID
+import com.airbnb.mvrx.MvRxViewId
 
 /**
  * Base Activity class which supports LifecycleOwner and Dagger injection.
  */
 abstract class TiviActivityMvRxView : TiviActivity(), MvRxView {
 
-    final override val mvrxViewId
-        get() = mvrxPersistedViewId
-
-    private lateinit var mvrxPersistedViewId: String
+    private val mvrxViewIdProperty = MvRxViewId()
+    final override val mvrxViewId: String by mvrxViewIdProperty
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        mvrxViewIdProperty.restoreFrom(savedInstanceState)
         super.onCreate(savedInstanceState)
-
-        mvrxPersistedViewId = savedInstanceState?.getString(PERSISTED_VIEW_ID_KEY)
-                ?: "${this::class.java.simpleName}_${UUID.randomUUID()}"
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(PERSISTED_VIEW_ID_KEY, mvrxViewId)
+        mvrxViewIdProperty.saveTo(outState)
     }
 
     override fun onStart() {
@@ -47,9 +43,5 @@ abstract class TiviActivityMvRxView : TiviActivity(), MvRxView {
         // This ensures that invalidate() is called for static screens that don't
         // subscribe to a ViewModel.
         postInvalidate()
-    }
-
-    companion object {
-        private const val PERSISTED_VIEW_ID_KEY = "mvrx:persisted_view_id"
     }
 }
