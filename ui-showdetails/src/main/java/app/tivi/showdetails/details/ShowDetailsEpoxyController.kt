@@ -135,7 +135,7 @@ class ShowDetailsEpoxyController @Inject constructor(
             }
         }
         if (badges.isNotEmpty()) {
-            EpoxyModelGroup(R.layout.layout_badge_holder, badges)
+            EpoxyModelGroup(R.layout.layout_show_details_info_holder, badges)
                     .addTo(this)
         }
 

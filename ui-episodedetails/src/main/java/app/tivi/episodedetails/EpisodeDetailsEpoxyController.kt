@@ -17,10 +17,10 @@
 package app.tivi.episodedetails
 
 import android.content.Context
-import app.tivi.common.layouts.DetailsBadgeBindingModel_
 import app.tivi.common.layouts.detailsHeader
 import app.tivi.inject.PerActivity
 import app.tivi.util.TiviDateFormatter
+import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.EpoxyModelGroup
 import com.airbnb.epoxy.TypedEpoxyController
 import javax.inject.Inject
@@ -35,9 +35,9 @@ class EpisodeDetailsEpoxyController @Inject constructor(
         if (viewState.episode != null) {
             val episode = viewState.episode
 
-            val badges = ArrayList<DetailsBadgeBindingModel_>()
+            val badges = ArrayList<EpoxyModel<*>>()
             episode.traktRating?.also { rating ->
-                badges += DetailsBadgeBindingModel_().apply {
+                badges += EpisodeDetailsBadgeBindingModel_().apply {
                     val ratingOutOfOneHundred = (rating * 10).roundToInt()
                     id("rating")
                     label(context.getString(R.string.percentage_format, ratingOutOfOneHundred))
@@ -47,7 +47,7 @@ class EpisodeDetailsEpoxyController @Inject constructor(
                 }
             }
             episode.firstAired?.also { firstAired ->
-                badges += DetailsBadgeBindingModel_().apply {
+                badges += EpisodeDetailsBadgeBindingModel_().apply {
                     id("aired")
                     label(dateFormatter.formatShortRelativeTime(firstAired))
                     icon(R.drawable.ic_details_date)
@@ -57,7 +57,7 @@ class EpisodeDetailsEpoxyController @Inject constructor(
                 EpoxyModelGroup(R.layout.layout_badge_holder, badges).addTo(this)
             }
 
-            epDetailsSummary {
+            episodeDetailsSummary {
                 id("episode_summary")
                 episode(episode)
             }
@@ -70,7 +70,7 @@ class EpisodeDetailsEpoxyController @Inject constructor(
                 title(R.string.episode_watches)
             }
             watches.forEach { entry ->
-                epDetailsWatchItem {
+                episodeDetailsWatchItem {
                     id("watch_${entry.id}")
                     dateTimeFormatter(dateFormatter)
                     watch(entry)
