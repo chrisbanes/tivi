@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2017 Google, Inc.
+  ~ Copyright 2019 Google LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -13,14 +13,12 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  ~
   -->
 
-<resources>
-    <integer name="details_summary_collapsed_lines">4</integer>
-
-    <integer name="grid_span_count">3</integer>
-    <integer name="grid_condensed_span_count">4</integer>
-
-    <integer name="nav_anim_duration">350</integer>
-</resources>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <alpha
+        android:interpolator="@android:interpolator/fast_out_slow_in"
+        android:duration="@integer/nav_anim_duration"
+        android:fromAlpha="1.0"
+        android:toAlpha="0.0"/>
+</set>
