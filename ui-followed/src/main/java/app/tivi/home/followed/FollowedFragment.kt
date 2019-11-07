@@ -52,7 +52,7 @@ class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
 
     private var currentActionMode: ActionMode? = null
 
-    private lateinit var authStateMenuItemBinder: AuthStateMenuItemBinder
+    private var authStateMenuItemBinder: AuthStateMenuItemBinder? = null
 
     override fun createBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): FragmentFollowedBinding {
         return FragmentFollowedBinding.inflate(inflater, container, false)
@@ -140,7 +140,7 @@ class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
                     state.selectedShowIds.size)
         }
 
-        authStateMenuItemBinder.bind(state.authState, state.user)
+        authStateMenuItemBinder?.bind(state.authState, state.user)
 
         binding.state = state
 
@@ -155,6 +155,7 @@ class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
         super.onDestroyView()
         currentActionMode?.finish()
         controller.clear()
+        authStateMenuItemBinder = null
     }
 
     private fun startSelectionActionMode() {
