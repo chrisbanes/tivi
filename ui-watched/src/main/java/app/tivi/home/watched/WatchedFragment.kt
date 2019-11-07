@@ -50,7 +50,7 @@ class WatchedFragment : TiviFragmentWithBinding<FragmentWatchedBinding>() {
 
     @Inject lateinit var controller: WatchedEpoxyController
 
-    private lateinit var authStateMenuItemBinder: AuthStateMenuItemBinder
+    private var authStateMenuItemBinder: AuthStateMenuItemBinder? = null
 
     private var currentActionMode: ActionMode? = null
 
@@ -145,7 +145,7 @@ class WatchedFragment : TiviFragmentWithBinding<FragmentWatchedBinding>() {
 
         binding.state = state
 
-        authStateMenuItemBinder.bind(state.authState, state.user)
+        authStateMenuItemBinder?.bind(state.authState, state.user)
 
         if (state.watchedShows != null) {
             // PagingEpoxyController does not like being updated before it has a list

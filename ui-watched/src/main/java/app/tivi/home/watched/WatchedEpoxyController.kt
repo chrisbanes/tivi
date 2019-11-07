@@ -18,7 +18,6 @@ package app.tivi.home.watched
 
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
 import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.common.layouts.emptyState
 import app.tivi.common.layouts.filter
@@ -92,10 +91,8 @@ class WatchedEpoxyController @Inject constructor(
                 posterImage(item.images.findHighestRatedPoster())
                 posterTransitionName("show_${item.show.homepage}")
                 selected(item.show.id in state.selectedShowIds)
-                callbacks?.also { cb ->
-                    clickListener(View.OnClickListener { cb.onItemClicked(item) })
-                    longClickListener(View.OnLongClickListener { cb.onItemLongClicked(item) })
-                }
+                clickListener { _ -> callbacks?.onItemClicked(item) }
+                longClickListener { _ -> callbacks?.onItemLongClicked(item) ?: false }
             } else {
                 id("item_placeholder_$currentPosition")
             }
