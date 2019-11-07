@@ -18,6 +18,7 @@ package app.tivi.showdetails.details
 
 import android.content.Context
 import android.graphics.Color
+import androidx.annotation.StringRes
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.text.parseAsHtml
@@ -121,4 +122,6 @@ class ShowDetailsTextCreator @Inject constructor(
             return ""
         }
     }
+
+    fun getString(@StringRes stringRes: Int) = context.getString(stringRes)
 }

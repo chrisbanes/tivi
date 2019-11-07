@@ -22,6 +22,7 @@ import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TmdbImageEntity
 import coil.api.loadAny
+import coil.transform.RoundedCornersTransformation
 
 @BindingAdapter(
         "tmdbBackdropPath",
@@ -38,8 +39,10 @@ fun ImageView.loadBackdrop(
         loadImage(
                 null,
                 oldSaturateOnLoad,
+                0f,
                 path?.let { ShowTmdbImage(path = path, type = ImageType.BACKDROP, showId = 0) },
-                saturateOnLoad
+                saturateOnLoad,
+                0f
         )
     }
 }
@@ -47,21 +50,29 @@ fun ImageView.loadBackdrop(
 @BindingAdapter(
         "image",
         "imageSaturateOnLoad",
+        "imageCornerRadius",
         requireAll = false
 )
 fun ImageView.loadImage(
     oldImage: TmdbImageEntity?,
     oldSaturateOnLoad: Boolean?,
+    oldCornerRadius: Float,
     image: TmdbImageEntity?,
-    saturateOnLoad: Boolean?
+    saturateOnLoad: Boolean?,
+    cornerRadius: Float
 ) {
-    if (oldImage == image && oldSaturateOnLoad == saturateOnLoad) return
+    if (oldImage == image &&
+            oldSaturateOnLoad == saturateOnLoad &&
+            oldCornerRadius == cornerRadius) return
 
     loadAny(image) {
         if (saturateOnLoad == null || saturateOnLoad == true) {
             val saturatingTarget = SaturatingImageViewTarget(this@loadImage)
             target(saturatingTarget)
             listener(saturatingTarget)
+        }
+        if (cornerRadius > 0) {
+            transformations(RoundedCornersTransformation(cornerRadius))
         }
     }
 }

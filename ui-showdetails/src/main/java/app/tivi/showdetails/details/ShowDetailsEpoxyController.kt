@@ -21,10 +21,11 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.forEach
+import app.tivi.common.epoxy.HalfSpanOverride
 import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.common.epoxy.tiviCarousel
 import app.tivi.common.epoxy.withModelsFrom
-import app.tivi.common.layouts.DetailsBadgeBindingModel_
+import app.tivi.common.layouts.DetailsInfoItemBindingModel_
 import app.tivi.common.layouts.detailsHeader
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
@@ -40,6 +41,7 @@ import app.tivi.showdetails.details.databinding.ViewHolderDetailsSeasonBinding
 import app.tivi.ui.widget.PopupMenuButton
 import com.airbnb.epoxy.Carousel
 import com.airbnb.epoxy.EpoxyController
+import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.EpoxyModelGroup
 import com.airbnb.epoxy.IdUtils
 import com.airbnb.mvrx.Async
@@ -67,7 +69,7 @@ class ShowDetailsEpoxyController @Inject constructor(
     }
 
     override fun buildModels() {
-        buildShowModels(state.show)
+        buildShowModels(state)
 
         val episodeWithSeason = state.nextEpisodeToWatch()
         if (episodeWithSeason?.episode != null) {
@@ -93,46 +95,48 @@ class ShowDetailsEpoxyController @Inject constructor(
         buildSeasonsModels(state.viewStats, state.seasons, state.expandedSeasonIds)
     }
 
-    private fun buildShowModels(show: TiviShow) {
-        val badges = ArrayList<DetailsBadgeBindingModel_>()
+    private fun buildShowModels(state: ShowDetailsViewState) {
+        detailsPosterItem {
+            id("poster")
+            posterImage(state.posterImage)
+            spanSizeOverride(HalfSpanOverride)
+        }
+
+        val show = state.show
+        val badges = ArrayList<EpoxyModel<*>>()
         show.traktRating?.let { rating ->
-            badges += DetailsBadgeBindingModel_().apply {
+            badges += DetailsInfoItemBindingModel_().apply {
                 val ratingOutOfOneHundred = (rating * 10).roundToInt()
                 id("rating")
                 label(context.getString(R.string.percentage_format, ratingOutOfOneHundred))
-                icon(R.drawable.ic_details_rating)
-                contentDescription(context.getString(R.string.rating_content_description_format,
-                        ratingOutOfOneHundred))
+                title(textCreator.getString(R.string.rating_title))
             }
         }
         show.network?.let { network ->
-            badges += DetailsBadgeBindingModel_().apply {
+            badges += DetailsInfoItemBindingModel_().apply {
                 id("network")
                 label(network)
-                icon(R.drawable.ic_details_network)
-                contentDescription(context.getString(R.string.network_content_description_format, network))
+                title(textCreator.getString(R.string.network_title))
             }
         }
         show.certification?.let { certificate ->
-            badges += DetailsBadgeBindingModel_().apply {
+            badges += DetailsInfoItemBindingModel_().apply {
                 id("cert")
                 label(certificate)
-                icon(R.drawable.ic_details_certificate)
-                contentDescription(context.getString(R.string.certificate_content_description_format, certificate))
+                title(textCreator.getString(R.string.certificate_title))
             }
         }
         show.runtime?.let { runtime ->
-            badges += DetailsBadgeBindingModel_().apply {
+            badges += DetailsInfoItemBindingModel_().apply {
                 val runtimeMinutes = context.getString(R.string.minutes_format, runtime)
                 id("runtime")
                 label(runtimeMinutes)
-                icon(R.drawable.ic_details_runtime)
-                contentDescription(context.resources?.getQuantityString(
-                        R.plurals.runtime_content_description_format, runtime, runtime))
+                title(textCreator.getString(R.string.runtime_title))
             }
         }
         if (badges.isNotEmpty()) {
-            EpoxyModelGroup(R.layout.layout_badge_holder, badges).addTo(this)
+            EpoxyModelGroup(R.layout.layout_badge_holder, badges)
+                    .addTo(this)
         }
 
         detailsHeader {
@@ -168,6 +172,7 @@ class ShowDetailsEpoxyController @Inject constructor(
                     id("related_shows")
                     itemWidth(context.resources.getDimensionPixelSize(R.dimen.related_shows_item_width))
                     hasFixedSize(true)
+                    spanSizeOverride(TotalSpanOverride)
 
                     val vert = context.resources.getDimensionPixelSize(R.dimen.spacing_small)
                     val horiz = context.resources.getDimensionPixelSize(R.dimen.spacing_normal)

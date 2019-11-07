@@ -31,6 +31,7 @@ import androidx.fragment.app.commitNow
 import androidx.recyclerview.widget.LinearSmoothScroller
 import app.tivi.SharedElementHelper
 import app.tivi.TiviFragmentWithBinding
+import app.tivi.common.epoxy.syncSpanSizes
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -175,6 +176,9 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
 
         binding.detailsRv.apply {
             adapter = controller.adapter
+            syncSpanSizes(controller)
+            setHasFixedSize(true)
+
             tintPainter = TintPainter.completeList(
                     context.resolveThemeColor(R.attr.colorSurface),
                     opacity = 0.7f

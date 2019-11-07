@@ -16,6 +16,9 @@
 
 package app.tivi.common.epoxy
 
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.epoxy.EpoxyController
 import com.airbnb.epoxy.EpoxyModel
 
 /** Add models to a CarouselModel_ by transforming a list of items into EpoxyModels.
@@ -28,4 +31,15 @@ inline fun <T> TiviCarouselModelBuilder.withModelsFrom(
     modelBuilder: (T) -> EpoxyModel<*>
 ) {
     models(items.map { modelBuilder(it) })
+}
+
+fun RecyclerView.syncSpanSizes(controller: EpoxyController) {
+    val layout = layoutManager
+    if (layout is GridLayoutManager) {
+        if (controller.spanCount != layout.spanCount ||
+                layout.spanSizeLookup !== controller.spanSizeLookup) {
+            controller.spanCount = layout.spanCount
+            layout.spanSizeLookup = controller.spanSizeLookup
+        }
+    }
 }
