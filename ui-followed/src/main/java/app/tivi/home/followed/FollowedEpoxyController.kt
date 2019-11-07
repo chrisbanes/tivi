@@ -37,11 +37,11 @@ import javax.inject.Inject
 class FollowedEpoxyController @Inject constructor(
     private val textCreator: HomeTextCreator
 ) : PagedListEpoxyController<FollowedShowEntryWithShow>() {
-    var viewState by observable(FollowedViewState()) { requestForcedModelBuild() }
-    var callbacks: Callbacks? by observable(null) { requestForcedModelBuild() }
+    var state by observable(FollowedViewState(), ::requestModelBuild)
+    var callbacks: Callbacks? by observable(null, ::requestModelBuild)
 
     override fun addModels(models: List<EpoxyModel<*>>) {
-        if (viewState.isEmpty) {
+        if (state.isEmpty) {
             emptyState {
                 id("empty")
                 spanSizeOverride(TotalSpanOverride)
@@ -52,7 +52,7 @@ class FollowedEpoxyController @Inject constructor(
             }
             filter {
                 id("filters")
-                filter(viewState.filter)
+                filter(state.filter)
                 numberShows(models.size)
                 watcher(object : TextWatcher {
                     override fun afterTextChanged(s: Editable?) {
@@ -64,7 +64,7 @@ class FollowedEpoxyController @Inject constructor(
                     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 })
 
-                popupMenuListener(SortPopupMenuListener(viewState.sort, viewState.availableSorts))
+                popupMenuListener(SortPopupMenuListener(state.sort, state.availableSorts))
                 popupMenuClickListener {
                     val option = popupMenuItemIdToSortOption(it.itemId)
                             ?: throw IllegalArgumentException("Selected sort option is null")
@@ -88,7 +88,7 @@ class FollowedEpoxyController @Inject constructor(
                 tiviShow(item.show)
                 posterImage(item.images.findHighestRatedPoster())
                 posterTransitionName("show_${item.show.homepage}")
-                selected(item.show.id in viewState.selectedShowIds)
+                selected(item.show.id in state.selectedShowIds)
                 callbacks?.also { cb ->
                     clickListener(View.OnClickListener { cb.onItemClicked(item) })
                     longClickListener(View.OnLongClickListener { cb.onItemLongClicked(item) })
@@ -100,6 +100,10 @@ class FollowedEpoxyController @Inject constructor(
             stats(item?.stats)
             textCreator(textCreator)
         }
+    }
+
+    fun clear() {
+        callbacks = null
     }
 
     interface Callbacks {

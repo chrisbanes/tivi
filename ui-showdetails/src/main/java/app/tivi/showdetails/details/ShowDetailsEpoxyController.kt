@@ -34,13 +34,14 @@ import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.views.FollowedShowsWatchStats
+import app.tivi.extensions.observable
 import app.tivi.inject.PerActivity
 import app.tivi.showdetails.details.databinding.ViewHolderDetailsSeasonBinding
 import app.tivi.ui.widget.PopupMenuButton
 import com.airbnb.epoxy.Carousel
+import com.airbnb.epoxy.EpoxyController
 import com.airbnb.epoxy.EpoxyModelGroup
 import com.airbnb.epoxy.IdUtils
-import com.airbnb.epoxy.TypedEpoxyController
 import com.airbnb.mvrx.Async
 import com.airbnb.mvrx.Success
 import javax.inject.Inject
@@ -49,9 +50,9 @@ import kotlin.math.roundToInt
 class ShowDetailsEpoxyController @Inject constructor(
     @PerActivity private val context: Context,
     private val textCreator: ShowDetailsTextCreator
-) : TypedEpoxyController<ShowDetailsViewState>() {
-
-    var callbacks: Callbacks? = null
+) : EpoxyController() {
+    var state by observable(ShowDetailsViewState(), ::requestModelBuild)
+    var callbacks: Callbacks? by observable(null, ::requestModelBuild)
 
     interface Callbacks {
         fun onRelatedShowClicked(show: TiviShow, itemView: View)
@@ -65,10 +66,10 @@ class ShowDetailsEpoxyController @Inject constructor(
         fun onMarkPreviousSeasonsIgnored(season: Season)
     }
 
-    override fun buildModels(viewState: ShowDetailsViewState) {
-        buildShowModels(viewState.show)
+    override fun buildModels() {
+        buildShowModels(state.show)
 
-        val episodeWithSeason = viewState.nextEpisodeToWatch()
+        val episodeWithSeason = state.nextEpisodeToWatch()
         if (episodeWithSeason?.episode != null) {
             detailsHeader {
                 id("next_episode_header")
@@ -87,9 +88,9 @@ class ShowDetailsEpoxyController @Inject constructor(
             }
         }
 
-        buildRelatedShowsModels(viewState.relatedShows)
+        buildRelatedShowsModels(state.relatedShows)
 
-        buildSeasonsModels(viewState.viewStats, viewState.seasons, viewState.expandedSeasonIds)
+        buildSeasonsModels(state.viewStats, state.seasons, state.expandedSeasonIds)
     }
 
     private fun buildShowModels(show: TiviShow) {
@@ -324,5 +325,9 @@ class ShowDetailsEpoxyController @Inject constructor(
             }
             return true
         }
+    }
+
+    fun clear() {
+        callbacks = null
     }
 }

@@ -94,6 +94,11 @@ internal class SearchFragment : TiviFragmentWithBinding<FragmentSearchBinding>()
 
     override fun invalidate(binding: FragmentSearchBinding) = withState(viewModel) { state ->
         binding.state = state
-        controller.viewState = state
+        controller.state = state
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        controller.clear()
     }
 }

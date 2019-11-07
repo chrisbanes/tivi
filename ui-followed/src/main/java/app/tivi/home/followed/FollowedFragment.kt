@@ -146,7 +146,7 @@ class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
 
         if (state.followedShows != null) {
             // PagingEpoxyController does not like being updated before it has a list
-            controller.viewState = state
+            controller.state = state
             controller.submitList(state.followedShows)
         }
     }
@@ -154,6 +154,7 @@ class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
     override fun onDestroyView() {
         super.onDestroyView()
         currentActionMode?.finish()
+        controller.clear()
     }
 
     private fun startSelectionActionMode() {

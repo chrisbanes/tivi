@@ -176,6 +176,11 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
         authStateMenuItemBinder.bind(state.authState, state.user)
 
         binding.state = state
-        controller.setData(state)
+        controller.state = state
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        controller.clear()
     }
 }

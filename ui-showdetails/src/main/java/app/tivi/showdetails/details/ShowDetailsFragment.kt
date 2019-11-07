@@ -227,7 +227,12 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
             }
 
             binding.state = it
-            controller.setData(it)
+            controller.state = it
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        controller.clear()
     }
 }

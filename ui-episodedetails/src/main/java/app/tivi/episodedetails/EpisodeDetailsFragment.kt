@@ -105,7 +105,7 @@ class EpisodeDetailsFragment : TiviFragmentWithBinding<FragmentEpisodeDetailsBin
     }
 
     override fun invalidate(binding: FragmentEpisodeDetailsBinding) = withState(viewModel) { state ->
-                binding.state = state
-                controller.setData(state)
-            }
+        binding.state = state
+        controller.setData(state)
+    }
 }
