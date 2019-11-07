@@ -24,22 +24,26 @@ import app.tivi.domain.interactors.UpdateTrendingShows.Page.REFRESH
 import app.tivi.domain.observers.ObservePagedTrendingShows
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.EntryViewModel
+import app.tivi.util.EntryViewState
 import app.tivi.util.Logger
-import javax.inject.Inject
+import com.airbnb.mvrx.FragmentViewModelContext
+import com.airbnb.mvrx.MvRxViewModelFactory
+import com.airbnb.mvrx.ViewModelContext
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 
-class TrendingShowsViewModel @Inject constructor(
+class TrendingShowsViewModel @AssistedInject constructor(
+    @Assisted initialState: EntryViewState<TrendingEntryWithShow>,
     override val dispatchers: AppCoroutineDispatchers,
     override val pagingInteractor: ObservePagedTrendingShows,
     private val interactor: UpdateTrendingShows,
     override val logger: Logger,
     override val changeShowFollowStatus: ChangeShowFollowStatus
-) : EntryViewModel<TrendingEntryWithShow, ObservePagedTrendingShows>() {
+) : EntryViewModel<TrendingEntryWithShow, ObservePagedTrendingShows>(initialState) {
     init {
         pagingInteractor(ObservePagedTrendingShows.Params(pageListConfig, boundaryCallback))
 
-        // Kick start the viewState to happen now, rather than when the Fragment
-        // starts observing
-        viewState
+        launchObserves()
 
         refresh(false)
     }
@@ -47,4 +51,19 @@ class TrendingShowsViewModel @Inject constructor(
     override fun callLoadMore() = interactor(UpdateTrendingShows.Params(NEXT_PAGE, true))
 
     override fun callRefresh(fromUser: Boolean) = interactor(UpdateTrendingShows.Params(REFRESH, fromUser))
+
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(initialState: EntryViewState<TrendingEntryWithShow>): TrendingShowsViewModel
+    }
+
+    companion object : MvRxViewModelFactory<TrendingShowsViewModel, EntryViewState<TrendingEntryWithShow>> {
+        override fun create(
+            viewModelContext: ViewModelContext,
+            state: EntryViewState<TrendingEntryWithShow>
+        ): TrendingShowsViewModel? {
+            val fragment: TrendingShowsFragment = (viewModelContext as FragmentViewModelContext).fragment()
+            return fragment.trendingShowsViewModelFactory.create(state)
+        }
+    }
 }

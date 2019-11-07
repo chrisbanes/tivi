@@ -28,7 +28,8 @@ abstract class TiviFragmentWithBinding<V : ViewDataBinding> : TiviFragment() {
     // Fake injected variable to force Dagger to create the factory
     @Inject lateinit var logger: Logger
 
-    private var binding: V? = null
+    var binding: V? = null
+        private set
 
     final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return createBinding(inflater, container, savedInstanceState)

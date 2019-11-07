@@ -16,20 +16,18 @@
 
 package app.tivi.home.popular
 
-import androidx.lifecycle.ViewModel
-import app.tivi.inject.ViewModelKey
-import dagger.Binds
+import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
-import dagger.multibindings.IntoMap
 
 @Module
 abstract class PopularBuilder {
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [
+        PopularAssistedModule::class
+    ])
     internal abstract fun popularShowsFragment(): PopularShowsFragment
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(PopularShowsViewModel::class)
-    abstract fun bindPopularShowsViewModel(viewModel: PopularShowsViewModel): ViewModel
 }
+
+@Module(includes = [AssistedInject_PopularAssistedModule::class])
+@AssistedModule
+interface PopularAssistedModule

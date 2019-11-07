@@ -84,6 +84,9 @@ dependencies {
     kapt Libs.Dagger.compiler
     kapt Libs.Dagger.androidProcessor
 
+    compileOnly Libs.AssistedInject.annotationDagger2
+    kapt Libs.AssistedInject.processorDagger2
+
     implementation Libs.mvRx
 
     implementation Libs.Epoxy.epoxy

@@ -20,13 +20,12 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.ActionMode
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.updatePadding
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.recyclerview.widget.DefaultItemAnimator
+import app.tivi.TiviFragmentWithBinding
 import app.tivi.api.UiError
 import app.tivi.api.UiLoading
 import app.tivi.common.entrygrid.R
@@ -39,21 +38,17 @@ import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.ui.ProgressTimeLatch
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.transitions.GridToGridTransitioner
+import com.airbnb.mvrx.withState
 import com.google.android.material.snackbar.Snackbar
-import dagger.android.support.DaggerFragment
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
-abstract class EntryGridFragment<LI, VM> : DaggerFragment()
+abstract class EntryGridFragment<LI, VM> : TiviFragmentWithBinding<FragmentEntryGridBinding>()
         where LI : EntryWithShow<out Entry>, VM : EntryViewModel<LI, *> {
     protected abstract val viewModel: VM
 
     private lateinit var swipeRefreshLatch: ProgressTimeLatch
-
     private lateinit var controller: EntryGridEpoxyController<LI>
-    protected lateinit var binding: FragmentEntryGridBinding
 
     @Inject lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -65,21 +60,19 @@ abstract class EntryGridFragment<LI, VM> : DaggerFragment()
         controller = createController()
 
         GridToGridTransitioner.setupSecondFragment(this, R.id.grid_appbar) {
-            binding.gridRecyclerview.itemAnimator = DefaultItemAnimator()
+            requireBinding().gridRecyclerview.itemAnimator = DefaultItemAnimator()
         }
     }
 
-    override fun onCreateView(
+    override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentEntryGridBinding.inflate(inflater, container, false)
-        return binding.root
+    ): FragmentEntryGridBinding {
+        return FragmentEntryGridBinding.inflate(inflater, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(binding: FragmentEntryGridBinding, savedInstanceState: Bundle?) {
         postponeEnterTransitionWithTimeout()
 
         swipeRefreshLatch = ProgressTimeLatch(minShowTime = 1350) {
@@ -107,13 +100,9 @@ abstract class EntryGridFragment<LI, VM> : DaggerFragment()
         }
 
         binding.gridSwipeRefresh.setOnRefreshListener(viewModel::refresh)
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.viewState.collect { invalidate(it) }
-        }
     }
 
-    private fun invalidate(state: EntryViewState<LI>) {
+    override fun invalidate(binding: FragmentEntryGridBinding) = withState(viewModel) { state ->
         controller.state = state
         controller.submitList(state.liveList)
 
@@ -150,7 +139,9 @@ abstract class EntryGridFragment<LI, VM> : DaggerFragment()
 
     override fun onDestroyView() {
         super.onDestroyView()
+
         currentActionMode?.finish()
+        currentActionMode = null
     }
 
     abstract fun startSelectionActionMode(): ActionMode?

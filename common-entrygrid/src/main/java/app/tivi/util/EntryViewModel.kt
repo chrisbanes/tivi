@@ -16,9 +16,9 @@
 
 package app.tivi.util
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
+import app.tivi.TiviMvRxViewModel
 import app.tivi.api.UiError
 import app.tivi.api.UiIdle
 import app.tivi.api.UiLoading
@@ -34,19 +34,19 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.domain.PagingInteractor
 import app.tivi.domain.interactors.ChangeShowFollowStatus
+import app.tivi.domain.launchObserve
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.broadcastIn
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteractor<*, LI>>(
+    initialState: EntryViewState<LI>,
     private val pageSize: Int = 21
-) : ViewModel() {
+) : TiviMvRxViewModel<EntryViewState<LI>>(initialState) {
     protected abstract val dispatchers: AppCoroutineDispatchers
     protected abstract val pagingInteractor: PI
     protected abstract val logger: Logger
@@ -76,16 +76,34 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
         }
     }
 
-    val viewState: Flow<EntryViewState<LI>> by lazy(LazyThreadSafetyMode.NONE) {
-        combine(
-                messages.asFlow(),
-                pagingInteractor.observe(),
-                loaded.asFlow(),
-                showSelection.observeIsSelectionOpen(),
-                showSelection.observeSelectedShowIds()
-        ) { message, pagedList, loaded, selectionOpen, selectedIds ->
-            EntryViewState(message, pagedList, loaded, selectionOpen, selectedIds)
-        }.broadcastIn(viewModelScope).asFlow()
+    protected fun launchObserves() {
+        viewModelScope.launch {
+            messages.asFlow().execute {
+                copy(status = it() ?: UiSuccess)
+            }
+        }
+
+        viewModelScope.launchObserve(pagingInteractor) {
+            it.execute { copy(liveList = it()) }
+        }
+
+        viewModelScope.launch {
+            loaded.asFlow().execute {
+                copy(isLoaded = it() ?: false)
+            }
+        }
+
+        viewModelScope.launch {
+            showSelection.observeIsSelectionOpen().execute {
+                copy(selectionOpen = it() ?: false)
+            }
+        }
+
+        viewModelScope.launch {
+            showSelection.observeSelectedShowIds().execute {
+                copy(selectedShowIds = it() ?: emptySet())
+            }
+        }
     }
 
     fun onListScrolledToEnd() {

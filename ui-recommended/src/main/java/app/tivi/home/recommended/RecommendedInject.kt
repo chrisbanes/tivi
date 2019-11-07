@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package app.tivi.home.trending
+package app.tivi.home.recommended
 
-import androidx.lifecycle.ViewModel
-import app.tivi.inject.ViewModelKey
-import dagger.Binds
+import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
-import dagger.multibindings.IntoMap
 
 @Module
-abstract class TrendingBuilder {
-    @ContributesAndroidInjector
-    internal abstract fun trendingShowsFragment(): TrendingShowsFragment
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(TrendingShowsViewModel::class)
-    abstract fun bindTrendingShowsViewModel(viewModel: TrendingShowsViewModel): ViewModel
+abstract class RecommendedBuilder {
+    @ContributesAndroidInjector(modules = [
+        RecommendedAssistedModule::class
+    ])
+    internal abstract fun RecommendedShowsFragment(): RecommendedShowsFragment
 }
+
+@Module(includes = [AssistedInject_RecommendedAssistedModule::class])
+@AssistedModule
+interface RecommendedAssistedModule
