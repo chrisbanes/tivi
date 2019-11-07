@@ -25,8 +25,7 @@ import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 abstract class TiviFragment : BaseMvRxFragment(), HasAndroidInjector {
-    @Inject
-    lateinit var androidInjector: DispatchingAndroidInjector<Any>
+    @Inject lateinit var androidInjector: DispatchingAndroidInjector<Any>
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)

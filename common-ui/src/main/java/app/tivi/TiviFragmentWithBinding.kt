@@ -21,8 +21,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
+import app.tivi.util.Logger
+import javax.inject.Inject
 
 abstract class TiviFragmentWithBinding<V : ViewDataBinding> : TiviFragment() {
+    // Fake injected variable to force Dagger to create the factory
+    @Inject lateinit var logger: Logger
+
     private var binding: V? = null
 
     final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
