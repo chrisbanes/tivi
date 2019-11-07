@@ -33,8 +33,7 @@
         android:id="@+id/details_motion"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutDescription="@xml/scene_show_details"
-        app:layout_optimizationLevel="standard">
+        app:layoutDescription="@xml/scene_show_details">
 
         <ImageView
             android:id="@+id/details_backdrop"
@@ -59,20 +58,6 @@
             app:layout_constraintStart_toStartOf="@id/details_backdrop"
             app:layout_constraintTop_toTopOf="@id/details_backdrop" />
 
-        <ImageView
-            android:id="@+id/details_poster"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/placeholder_48dp"
-            android:scaleType="centerCrop"
-            android:transformPivotX="0px"
-            android:transformPivotY="0px"
-            android:transitionName="poster"
-            app:clipToOutline="@{true}"
-            app:imageSaturateOnLoad="@{false}"
-            app:outlineProviderInstance="@{app.tivi.ui.RoundRectViewOutline.INSTANCE}"
-            app:image="@{state.posterImage}" />
-
         <!-- Needed to fill a rounding error gap in MotionLayout. See https://issuetracker.google.com/112728689 -->
         <View
             android:id="@+id/details_gap_filler"
@@ -81,12 +66,11 @@
             android:background="?android:attr/colorBackground"
             app:layout_constraintBottom_toTopOf="@id/details_rv" />
 
-        <app.tivi.ui.widget.TopLeftCutoutBackgroundView
+        <View
             android:id="@+id/details_appbar_background"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:backgroundColor="?android:attr/colorBackground"
-            app:topLeftCutSize="@dimen/details_corner_cutout" />
+            android:background="?android:attr/colorBackground" />
 
         <TextView
             android:id="@+id/details_title"
@@ -126,7 +110,8 @@
             android:background="?android:attr/colorBackground"
             android:clipToPadding="false"
             android:paddingBottom="@dimen/spacing_normal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

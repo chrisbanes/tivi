@@ -21,6 +21,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.forEach
+import app.tivi.common.epoxy.HalfSpanOverride
 import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.common.epoxy.tiviCarousel
 import app.tivi.common.epoxy.withModelsFrom
@@ -67,7 +68,7 @@ class ShowDetailsEpoxyController @Inject constructor(
     }
 
     override fun buildModels() {
-        buildShowModels(state.show)
+        buildShowModels(state)
 
         val episodeWithSeason = state.nextEpisodeToWatch()
         if (episodeWithSeason?.episode != null) {
@@ -93,7 +94,14 @@ class ShowDetailsEpoxyController @Inject constructor(
         buildSeasonsModels(state.viewStats, state.seasons, state.expandedSeasonIds)
     }
 
-    private fun buildShowModels(show: TiviShow) {
+    private fun buildShowModels(state: ShowDetailsViewState) {
+        detailsPosterItem {
+            id("poster")
+            posterImage(state.posterImage)
+            spanSizeOverride(HalfSpanOverride)
+        }
+
+        val show = state.show
         val badges = ArrayList<DetailsBadgeBindingModel_>()
         show.traktRating?.let { rating ->
             badges += DetailsBadgeBindingModel_().apply {
@@ -132,7 +140,8 @@ class ShowDetailsEpoxyController @Inject constructor(
             }
         }
         if (badges.isNotEmpty()) {
-            EpoxyModelGroup(R.layout.layout_badge_holder, badges).addTo(this)
+            EpoxyModelGroup(R.layout.layout_badge_holder, badges)
+                    .addTo(this)
         }
 
         detailsHeader {
@@ -168,6 +177,7 @@ class ShowDetailsEpoxyController @Inject constructor(
                     id("related_shows")
                     itemWidth(context.resources.getDimensionPixelSize(R.dimen.related_shows_item_width))
                     hasFixedSize(true)
+                    spanSizeOverride(TotalSpanOverride)
 
                     val vert = context.resources.getDimensionPixelSize(R.dimen.spacing_small)
                     val horiz = context.resources.getDimensionPixelSize(R.dimen.spacing_normal)

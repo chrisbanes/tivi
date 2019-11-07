@@ -36,15 +36,9 @@
             android:id="@id/details_appbar_background"
             android:layout_width="0dp"
             android:layout_height="@dimen/details_corner_cutout"
-            app:layout_constraintBottom_toBottomOf="@id/details_backdrop"
+            app:layout_constraintTop_toBottomOf="@id/details_backdrop"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <CustomAttribute
-                app:attributeName="cutProgress"
-                app:customFloatValue="1.0" />
-
-        </Constraint>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Constraint
             android:id="@id/details_title"
@@ -56,18 +50,8 @@
             android:layout_marginTop="@dimen/spacing_micro"
             app:layout_constraintBottom_toBottomOf="@id/details_appbar_background"
             app:layout_constraintEnd_toStartOf="@id/details_follow_fab"
-            app:layout_constraintStart_toEndOf="@id/details_poster"
+            app:layout_constraintStart_toStartOf="@id/details_appbar_background"
             app:layout_constraintTop_toTopOf="@id/details_appbar_background" />
-
-        <Constraint
-            android:id="@id/details_poster"
-            android:layout_width="80dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="@dimen/spacing_normal"
-            android:elevation="@dimen/details_poster_elevation"
-            app:layout_constraintBottom_toBottomOf="@id/details_appbar_background"
-            app:layout_constraintDimensionRatio="h,1:1.5"
-            app:layout_constraintStart_toStartOf="@id/details_rv" />
 
         <Constraint android:id="@id/details_status_bar_anchor">
 
@@ -101,13 +85,7 @@
             android:elevation="@dimen/elevation_appbar"
             app:layout_constraintEnd_toEndOf="@id/details_rv"
             app:layout_constraintStart_toStartOf="@id/details_rv"
-            app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor">
-
-            <CustomAttribute
-                app:attributeName="cutProgress"
-                app:customFloatValue="0.0" />
-
-        </Constraint>
+            app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor" />
 
         <Constraint
             android:id="@id/details_title"
@@ -122,15 +100,6 @@
             app:layout_constraintEnd_toEndOf="@id/details_appbar_background"
             app:layout_constraintStart_toStartOf="@id/details_appbar_background"
             app:layout_constraintTop_toTopOf="@id/details_appbar_background" />
-
-        <Constraint
-            android:id="@id/details_poster"
-            android:layout_width="72dp"
-            android:layout_height="0dp"
-            android:elevation="@dimen/details_poster_not_elevation"
-            app:layout_constraintDimensionRatio="h,1:1.5"
-            app:layout_constraintStart_toStartOf="@id/details_title"
-            app:layout_constraintTop_toBottomOf="@id/details_status_bar_anchor" />
 
         <!-- This gives us our parallax effect -->
         <Constraint android:id="@id/details_backdrop">
@@ -165,20 +134,6 @@
 
         <KeyFrameSet>
             <KeyAttribute
-                android:elevation="@dimen/details_poster_elevation"
-                android:rotation="47"
-                android:rotationY="15"
-                app:framePosition="20"
-                app:motionTarget="@id/details_poster" />
-
-            <!-- This looks weird. We need a quick change from elevated to not-so-elevated at 18%
-                 so we set 2 key attributes, one at 21% and other at 25%. -->
-            <KeyAttribute
-                android:elevation="@dimen/details_poster_not_elevation"
-                app:framePosition="25"
-                app:motionTarget="@id/details_poster" />
-
-            <KeyAttribute
                 android:elevation="0dp"
                 app:framePosition="75"
                 app:motionTarget="@id/details_appbar_background" />
@@ -206,12 +161,6 @@
                 android:scaleY="0"
                 app:framePosition="70"
                 app:motionTarget="@id/details_follow_fab" />
-
-            <KeyPosition
-                app:framePosition="20"
-                app:keyPositionType="deltaRelative"
-                app:motionTarget="@id/details_poster"
-                app:percentY="0.5" />
 
         </KeyFrameSet>
 
