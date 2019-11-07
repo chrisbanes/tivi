@@ -27,7 +27,7 @@ import com.airbnb.mvrx.MvRxState
 import com.airbnb.mvrx.Uninitialized
 
 data class ShowDetailsViewState(
-    val showId: Long,
+    val showId: Long = 0,
     val isFollowed: Boolean = false,
     val show: TiviShow = TiviShow.EMPTY_SHOW,
     val posterImage: ShowTmdbImage? = null,

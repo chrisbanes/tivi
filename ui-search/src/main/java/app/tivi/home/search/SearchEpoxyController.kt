@@ -18,31 +18,36 @@ package app.tivi.home.search
 
 import app.tivi.data.entities.TiviShow
 import app.tivi.home.HomeTextCreator
-import app.tivi.common.epoxy.EpoxyModelProperty
+import app.tivi.extensions.observable
 import com.airbnb.epoxy.EpoxyController
+import dagger.Lazy
 import javax.inject.Inject
 
 class SearchEpoxyController @Inject constructor(
-    private val textCreator: HomeTextCreator
+    private val textCreator: Lazy<HomeTextCreator>
 ) : EpoxyController() {
-    var callbacks by EpoxyModelProperty<Callbacks?> { null }
-    var viewState by EpoxyModelProperty { SearchViewState() }
+    var callbacks: Callbacks? by observable(null, ::requestModelBuild)
+    var state by observable(SearchViewState(), ::requestModelBuild)
 
     interface Callbacks {
         fun onSearchItemClicked(show: TiviShow)
     }
 
     override fun buildModels() {
-        val searchResult = viewState.searchResults
+        val searchResult = state.searchResults
 
         searchResult?.results?.forEach { showDetailed ->
             searchItemShow {
                 id(showDetailed.show.id)
                 tiviShow(showDetailed.show)
                 posterImage(showDetailed.poster)
-                textCreator(textCreator)
+                textCreator(textCreator.get())
                 clickListener { _ -> callbacks?.onSearchItemClicked(showDetailed.show) }
             }
         }
+    }
+
+    fun clear() {
+        callbacks = null
     }
 }

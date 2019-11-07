@@ -27,15 +27,17 @@ import app.tivi.common.layouts.vertSpacerNormal
 import app.tivi.data.Entry
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.EntryWithShow
+import app.tivi.extensions.observable
 import com.airbnb.epoxy.Carousel
-import com.airbnb.epoxy.TypedEpoxyController
+import com.airbnb.epoxy.EpoxyController
 import javax.inject.Inject
 
 class DiscoverEpoxyController @Inject constructor(
     private val context: Context,
     private val textCreator: DiscoverTextCreator
-) : TypedEpoxyController<DiscoverViewState>() {
-    var callbacks: Callbacks? = null
+) : EpoxyController() {
+    var callbacks: Callbacks? by observable(null, ::requestModelBuild)
+    var state: DiscoverViewState by observable(DiscoverViewState(), ::requestModelBuild)
 
     interface Callbacks {
         fun onTrendingHeaderClicked()
@@ -45,28 +47,28 @@ class DiscoverEpoxyController @Inject constructor(
         fun onItemClicked(viewHolderId: Long, item: EntryWithShow<out Entry>)
     }
 
-    override fun buildModels(viewState: DiscoverViewState) {
-        val trendingShows = viewState.trendingItems
-        val popularShows = viewState.popularItems
-        val recommendedShows = viewState.recommendedItems
+    override fun buildModels() {
+        val trendingShows = state.trendingItems
+        val popularShows = state.popularItems
+        val recommendedShows = state.recommendedItems
 
         vertSpacerNormal {
             id("top_spacer")
         }
 
-        if (viewState.nextEpisodeWithShowToWatched != null) {
+        state.nextEpisodeWithShowToWatched?.also { nextEpisodeToWatch ->
             header {
                 id("keep_watching_header")
                 title(R.string.discover_keep_watching_title)
                 spanSizeOverride(TotalSpanOverride)
             }
             discoverNextShowEpisodeToWatch {
-                id("keep_watching_${viewState.nextEpisodeWithShowToWatched.episode.id}")
+                id("keep_watching_${nextEpisodeToWatch.episode.id}")
                 spanSizeOverride(TotalSpanOverride)
-                episode(viewState.nextEpisodeWithShowToWatched.episode)
-                season(viewState.nextEpisodeWithShowToWatched.season)
-                tiviShow(viewState.nextEpisodeWithShowToWatched.show)
-                posterImage(viewState.nextEpisodeWithShowToWatched.images.findHighestRatedPoster())
+                episode(nextEpisodeToWatch.episode)
+                season(nextEpisodeToWatch.season)
+                tiviShow(nextEpisodeToWatch.show)
+                posterImage(nextEpisodeToWatch.images.findHighestRatedPoster())
                 textCreator(textCreator)
                 clickListener { _ -> callbacks?.onNextEpisodeToWatchClicked() }
             }
@@ -80,7 +82,7 @@ class DiscoverEpoxyController @Inject constructor(
         header {
             id("trending_header")
             title(R.string.discover_trending_title)
-            showProgress(viewState.trendingRefreshing)
+            showProgress(state.trendingRefreshing)
             spanSizeOverride(TotalSpanOverride)
             buttonClickListener { _ -> callbacks?.onTrendingHeaderClicked() }
         }
@@ -121,7 +123,7 @@ class DiscoverEpoxyController @Inject constructor(
             header {
                 id("recommended_header")
                 title(R.string.discover_recommended_title)
-                showProgress(viewState.recommendedRefreshing)
+                showProgress(state.recommendedRefreshing)
                 spanSizeOverride(TotalSpanOverride)
                 buttonClickListener { _ -> callbacks?.onRecommendedHeaderClicked() }
             }
@@ -155,7 +157,7 @@ class DiscoverEpoxyController @Inject constructor(
         header {
             id("popular_header")
             title(R.string.discover_popular_title)
-            showProgress(viewState.popularRefreshing)
+            showProgress(state.popularRefreshing)
             spanSizeOverride(TotalSpanOverride)
             buttonClickListener { _ -> callbacks?.onPopularHeaderClicked() }
         }
@@ -192,5 +194,9 @@ class DiscoverEpoxyController @Inject constructor(
         vertSpacerNormal {
             id("bottom_spacer")
         }
+    }
+
+    fun clear() {
+        callbacks = null
     }
 }

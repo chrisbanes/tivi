@@ -22,29 +22,27 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.core.os.bundleOf
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import app.tivi.SharedElementHelper
+import app.tivi.common.entrygrid.databinding.FragmentEntryGridBinding
 import app.tivi.common.layouts.PosterGridItemBindingModel_
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.RecommendedEntryWithShow
-import app.tivi.extensions.resolveThemeDrawable
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.util.EntryGridEpoxyController
 import app.tivi.util.EntryGridFragment
 import com.airbnb.epoxy.EpoxyModel
+import com.airbnb.mvrx.fragmentViewModel
 import javax.inject.Inject
 
 class RecommendedShowsFragment : EntryGridFragment<RecommendedEntryWithShow, RecommendedShowsViewModel>() {
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    override val viewModel: RecommendedShowsViewModel by viewModels(factoryProducer = { viewModelFactory })
+    override val viewModel: RecommendedShowsViewModel by fragmentViewModel()
+    @Inject lateinit var recommendedShowsViewModelFactory: RecommendedShowsViewModel.Factory
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(binding: FragmentEntryGridBinding, savedInstanceState: Bundle?) {
+        super.onViewCreated(binding, savedInstanceState)
 
         binding.gridToolbar.apply {
-            navigationIcon = context.resolveThemeDrawable(android.R.attr.homeAsUpIndicator)
             setTitle(R.string.discover_recommended_title)
         }
     }
@@ -73,7 +71,7 @@ class RecommendedShowsFragment : EntryGridFragment<RecommendedEntryWithShow, Rec
 
     internal fun onItemClicked(item: RecommendedEntryWithShow) {
         val sharedElements = SharedElementHelper()
-        binding.gridRecyclerview.findViewHolderForItemId(item.generateStableId())?.let {
+        requireBinding().gridRecyclerview.findViewHolderForItemId(item.generateStableId())?.let {
             sharedElements.addSharedElement(it.itemView, "poster")
         }
 

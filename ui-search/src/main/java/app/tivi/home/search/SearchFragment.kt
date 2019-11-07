@@ -18,13 +18,12 @@ package app.tivi.home.search
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.marginBottom
 import androidx.core.view.updatePadding
 import app.tivi.AppNavigator
-import app.tivi.DaggerMvRxFragment
+import app.tivi.TiviFragmentWithBinding
 import app.tivi.data.entities.TiviShow
 import app.tivi.extensions.doOnLayouts
 import app.tivi.extensions.hideSoftInput
@@ -36,9 +35,7 @@ import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
-internal class SearchFragment : DaggerMvRxFragment() {
-    private lateinit var binding: FragmentSearchBinding
-
+internal class SearchFragment : TiviFragmentWithBinding<FragmentSearchBinding>() {
     private val viewModel: SearchViewModel by fragmentViewModel()
 
     @Inject lateinit var searchViewModelFactory: SearchViewModel.Factory
@@ -50,19 +47,15 @@ internal class SearchFragment : DaggerMvRxFragment() {
         GridToGridTransitioner.setupFirstFragment(this)
     }
 
-    override fun onCreateView(
+    override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentSearchBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = viewLifecycleOwner
-        return binding.root
+    ): FragmentSearchBinding {
+        return FragmentSearchBinding.inflate(inflater, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    override fun onViewCreated(binding: FragmentSearchBinding, savedInstanceState: Bundle?) {
         binding.searchRecyclerview.apply {
             setController(controller)
             addOnScrollListener(HideImeOnScrollListener())
@@ -99,8 +92,13 @@ internal class SearchFragment : DaggerMvRxFragment() {
         }
     }
 
-    override fun invalidate() = withState(viewModel) { state ->
+    override fun invalidate(binding: FragmentSearchBinding) = withState(viewModel) { state ->
         binding.state = state
-        controller.viewState = state
+        controller.state = state
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        controller.clear()
     }
 }

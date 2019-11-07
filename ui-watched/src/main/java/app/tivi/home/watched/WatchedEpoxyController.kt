@@ -18,7 +18,6 @@ package app.tivi.home.watched
 
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
 import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.common.layouts.emptyState
 import app.tivi.common.layouts.filter
@@ -39,11 +38,11 @@ class WatchedEpoxyController @Inject constructor(
     private val textCreator: HomeTextCreator,
     private val dateFormatter: TiviDateFormatter
 ) : PagedListEpoxyController<WatchedShowEntryWithShow>() {
-    var viewState by observable(WatchedViewState()) { requestForcedModelBuild() }
-    var callbacks: Callbacks? by observable(null) { requestForcedModelBuild() }
+    var state by observable(WatchedViewState(), ::requestModelBuild)
+    var callbacks: Callbacks? by observable(null, ::requestModelBuild)
 
     override fun addModels(models: List<EpoxyModel<*>>) {
-        if (viewState.isEmpty) {
+        if (state.isEmpty) {
             emptyState {
                 id("empty")
                 spanSizeOverride(TotalSpanOverride)
@@ -55,7 +54,7 @@ class WatchedEpoxyController @Inject constructor(
 
             filter {
                 id("filters")
-                filter(viewState.filter)
+                filter(state.filter)
                 numberShows(models.size)
                 watcher(object : TextWatcher {
                     override fun afterTextChanged(s: Editable?) {
@@ -67,7 +66,7 @@ class WatchedEpoxyController @Inject constructor(
                     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 })
 
-                popupMenuListener(SortPopupMenuListener(viewState.sort, viewState.availableSorts))
+                popupMenuListener(SortPopupMenuListener(state.sort, state.availableSorts))
                 popupMenuClickListener {
                     val option = popupMenuItemIdToSortOption(it.itemId)
                             ?: throw IllegalArgumentException("Selected sort option is null")
@@ -91,11 +90,9 @@ class WatchedEpoxyController @Inject constructor(
                 tiviShow(item.show)
                 posterImage(item.images.findHighestRatedPoster())
                 posterTransitionName("show_${item.show.homepage}")
-                selected(item.show.id in viewState.selectedShowIds)
-                callbacks?.also { cb ->
-                    clickListener(View.OnClickListener { cb.onItemClicked(item) })
-                    longClickListener(View.OnLongClickListener { cb.onItemLongClicked(item) })
-                }
+                selected(item.show.id in state.selectedShowIds)
+                clickListener { _ -> callbacks?.onItemClicked(item) }
+                longClickListener { _ -> callbacks?.onItemLongClicked(item) ?: false }
             } else {
                 id("item_placeholder_$currentPosition")
             }
@@ -103,6 +100,10 @@ class WatchedEpoxyController @Inject constructor(
             dateFormatter(dateFormatter)
             textCreator(textCreator)
         }
+    }
+
+    fun clear() {
+        callbacks = null
     }
 
     interface Callbacks {

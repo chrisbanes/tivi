@@ -21,12 +21,11 @@ import android.view.ActionMode
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.updatePadding
 import androidx.navigation.fragment.findNavController
-import app.tivi.DaggerMvRxFragment
+import app.tivi.TiviFragmentWithBinding
 import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
@@ -45,9 +44,7 @@ import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
-class FollowedFragment : DaggerMvRxFragment() {
-    private lateinit var binding: FragmentFollowedBinding
-
+class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
     private val viewModel: FollowedViewModel by fragmentViewModel()
     @Inject lateinit var followedViewModelFactory: FollowedViewModel.Factory
 
@@ -55,16 +52,13 @@ class FollowedFragment : DaggerMvRxFragment() {
 
     private var currentActionMode: ActionMode? = null
 
-    private lateinit var authStateMenuItemBinder: AuthStateMenuItemBinder
+    private var authStateMenuItemBinder: AuthStateMenuItemBinder? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentFollowedBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = viewLifecycleOwner
-        return binding.root
+    override fun createBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): FragmentFollowedBinding {
+        return FragmentFollowedBinding.inflate(inflater, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(binding: FragmentFollowedBinding, savedInstanceState: Bundle?) {
         postponeEnterTransitionWithTimeout()
 
         authStateMenuItemBinder = authStateToolbarMenuBinder(
@@ -129,7 +123,7 @@ class FollowedFragment : DaggerMvRxFragment() {
         binding.followedSwipeRefresh.setOnRefreshListener(viewModel::refresh)
     }
 
-    override fun invalidate() = withState(viewModel) { state ->
+    override fun invalidate(binding: FragmentFollowedBinding) = withState(viewModel) { state ->
         if (binding.state == null) {
             // First time we've had state, start any postponed transitions
             scheduleStartPostponedTransitions()
@@ -146,13 +140,13 @@ class FollowedFragment : DaggerMvRxFragment() {
                     state.selectedShowIds.size)
         }
 
-        authStateMenuItemBinder.bind(state.authState, state.user)
+        authStateMenuItemBinder?.bind(state.authState, state.user)
 
         binding.state = state
 
         if (state.followedShows != null) {
             // PagingEpoxyController does not like being updated before it has a list
-            controller.viewState = state
+            controller.state = state
             controller.submitList(state.followedShows)
         }
     }
@@ -160,6 +154,8 @@ class FollowedFragment : DaggerMvRxFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         currentActionMode?.finish()
+        controller.clear()
+        authStateMenuItemBinder = null
     }
 
     private fun startSelectionActionMode() {

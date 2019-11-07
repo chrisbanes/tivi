@@ -21,12 +21,11 @@ import android.view.ActionMode
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.updatePadding
 import androidx.navigation.fragment.findNavController
-import app.tivi.DaggerMvRxFragment
+import app.tivi.TiviFragmentWithBinding
 import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
@@ -45,26 +44,21 @@ import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
-class WatchedFragment : DaggerMvRxFragment() {
-    private lateinit var binding: FragmentWatchedBinding
-
+class WatchedFragment : TiviFragmentWithBinding<FragmentWatchedBinding>() {
     private val viewModel: WatchedViewModel by fragmentViewModel()
     @Inject lateinit var watchedViewModelFactory: WatchedViewModel.Factory
 
     @Inject lateinit var controller: WatchedEpoxyController
 
-    private lateinit var authStateMenuItemBinder: AuthStateMenuItemBinder
+    private var authStateMenuItemBinder: AuthStateMenuItemBinder? = null
 
     private var currentActionMode: ActionMode? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentWatchedBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = viewLifecycleOwner
-        return binding.root
+    override fun createBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): FragmentWatchedBinding {
+        return FragmentWatchedBinding.inflate(inflater, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(binding: FragmentWatchedBinding, savedInstanceState: Bundle?) {
         postponeEnterTransitionWithTimeout()
 
         authStateMenuItemBinder = authStateToolbarMenuBinder(
@@ -132,7 +126,7 @@ class WatchedFragment : DaggerMvRxFragment() {
         binding.watchedSwipeRefresh.setOnRefreshListener(viewModel::refresh)
     }
 
-    override fun invalidate() = withState(viewModel) { state ->
+    override fun invalidate(binding: FragmentWatchedBinding) = withState(viewModel) { state ->
         if (binding.state == null) {
             // First time we've had state, start any postponed transitions
             scheduleStartPostponedTransitions()
@@ -151,11 +145,11 @@ class WatchedFragment : DaggerMvRxFragment() {
 
         binding.state = state
 
-        authStateMenuItemBinder.bind(state.authState, state.user)
+        authStateMenuItemBinder?.bind(state.authState, state.user)
 
         if (state.watchedShows != null) {
             // PagingEpoxyController does not like being updated before it has a list
-            controller.viewState = state
+            controller.state = state
             controller.submitList(state.watchedShows)
         }
     }
@@ -163,6 +157,8 @@ class WatchedFragment : DaggerMvRxFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         currentActionMode?.finish()
+        controller.clear()
+        authStateMenuItemBinder = null
     }
 
     private fun startSelectionActionMode() {

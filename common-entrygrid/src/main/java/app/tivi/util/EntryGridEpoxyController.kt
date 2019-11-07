@@ -30,7 +30,7 @@ import com.airbnb.epoxy.paging.PagedListEpoxyController
 
 abstract class EntryGridEpoxyController<LI : EntryWithShow<out Entry>> :
     PagedListEpoxyController<LI>() {
-    var state: EntryViewState<LI> by observable(EntryViewState()) { requestForcedModelBuild() }
+    var state: EntryViewState<LI> by observable(EntryViewState(), ::requestModelBuild)
 
     @Suppress("UselessCallOnCollection")
     override fun addModels(models: List<EpoxyModel<*>>) {
