@@ -48,7 +48,7 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
 
     @Inject lateinit var controller: DiscoverEpoxyController
 
-    private lateinit var authStateMenuItemBinder: AuthStateMenuItemBinder
+    private var authStateMenuItemBinder: AuthStateMenuItemBinder? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -173,7 +173,7 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
             scheduleStartPostponedTransitions()
         }
 
-        authStateMenuItemBinder.bind(state.authState, state.user)
+        authStateMenuItemBinder?.bind(state.authState, state.user)
 
         binding.state = state
         controller.state = state
@@ -182,5 +182,6 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
     override fun onDestroyView() {
         super.onDestroyView()
         controller.clear()
+        authStateMenuItemBinder = null
     }
 }

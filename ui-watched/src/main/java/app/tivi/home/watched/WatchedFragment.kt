@@ -158,6 +158,7 @@ class WatchedFragment : TiviFragmentWithBinding<FragmentWatchedBinding>() {
         super.onDestroyView()
         currentActionMode?.finish()
         controller.clear()
+        authStateMenuItemBinder = null
     }
 
     private fun startSelectionActionMode() {
