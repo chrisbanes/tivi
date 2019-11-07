@@ -72,22 +72,20 @@ class EpisodeDetailsFragment : TiviFragmentWithBinding<FragmentEpisodeDetailsBin
         }
 
         val context = requireContext()
-        val swipeCallback = object : SwipeAwayCallbacks<EpDetailsWatchItemBindingModel_>(
+        val swipeCallback = object : SwipeAwayCallbacks<EpisodeDetailsWatchItemBindingModel_>(
                 context.getDrawable(R.drawable.ic_eye_off_24dp)!!,
                 context.resources.getDimensionPixelSize(R.dimen.spacing_large),
                 context.getColor(R.color.swipe_away_background),
                 context.resolveThemeColor(R.attr.colorSecondary)
         ) {
             override fun onSwipeCompleted(
-                model: EpDetailsWatchItemBindingModel_,
+                model: EpisodeDetailsWatchItemBindingModel_,
                 itemView: View,
                 position: Int,
                 direction: Int
-            ) {
-                model.watch().also(viewModel::removeWatchEntry)
-            }
+            ) = viewModel.removeWatchEntry(model.watch())
 
-            override fun isSwipeEnabledForModel(model: EpDetailsWatchItemBindingModel_): Boolean {
+            override fun isSwipeEnabledForModel(model: EpisodeDetailsWatchItemBindingModel_): Boolean {
                 return model.watch() != null
             }
         }
@@ -100,7 +98,7 @@ class EpisodeDetailsFragment : TiviFragmentWithBinding<FragmentEpisodeDetailsBin
                         it.left()
                     }
                 }
-                .withTarget(EpDetailsWatchItemBindingModel_::class.java)
+                .withTarget(EpisodeDetailsWatchItemBindingModel_::class.java)
                 .andCallbacks(swipeCallback)
     }
 
