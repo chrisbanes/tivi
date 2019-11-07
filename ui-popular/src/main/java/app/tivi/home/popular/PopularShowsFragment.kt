@@ -29,7 +29,6 @@ import app.tivi.SharedElementHelper
 import app.tivi.common.layouts.PosterGridItemBindingModel_
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.PopularEntryWithShow
-import app.tivi.extensions.resolveThemeDrawable
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.util.EntryGridEpoxyController
 import app.tivi.util.EntryGridFragment
@@ -44,7 +43,6 @@ class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShow
         super.onViewCreated(view, savedInstanceState)
 
         binding.gridToolbar.apply {
-            navigationIcon = context.resolveThemeDrawable(android.R.attr.homeAsUpIndicator)
             setTitle(R.string.discover_popular_title)
         }
     }

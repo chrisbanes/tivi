@@ -51,12 +51,14 @@
             android:background="@drawable/rectangle"
             android:backgroundTint="@color/color_surface_93"
             android:fitsSystemWindows="true"
+            android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
             android:transitionGroup="true">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/grid_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize" />
+                android:layout_height="?attr/actionBarSize"
+                app:navigationIcon="?attr/homeAsUpIndicator"/>
 
         </com.google.android.material.appbar.AppBarLayout>
 
