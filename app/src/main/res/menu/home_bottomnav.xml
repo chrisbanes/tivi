@@ -24,12 +24,12 @@
 
     <item
         android:id="@id/navigation_followed"
-        android:icon="@drawable/ic_eye_24dp"
+        android:icon="@drawable/ic_favorite"
         android:title="@string/following_shows_title" />
 
     <item
         android:id="@id/navigation_watched"
-        android:icon="@drawable/ic_favorite"
+        android:icon="@drawable/ic_eye_24dp"
         android:title="@string/watched_shows_title" />
 
     <item
