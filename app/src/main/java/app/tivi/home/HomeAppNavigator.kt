@@ -16,11 +16,11 @@
 
 package app.tivi.home
 
-import app.tivi.TiviAppActivityNavigator
+import app.tivi.TiviAppNavigator
 
 internal class HomeAppNavigator(
     private val activity: HomeActivity
-) : TiviAppActivityNavigator(activity) {
+) : TiviAppNavigator(activity) {
     override fun startLogin() {
         activity.startLogin()
     }

@@ -21,7 +21,7 @@ import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.core.os.bundleOf
+import androidx.core.net.toUri
 import androidx.navigation.fragment.findNavController
 import app.tivi.SharedElementHelper
 import app.tivi.common.entrygrid.databinding.FragmentEntryGridBinding
@@ -76,8 +76,7 @@ class RecommendedShowsFragment : EntryGridFragment<RecommendedEntryWithShow, Rec
         }
 
         findNavController().navigate(
-                R.id.activity_show_details,
-                bundleOf("show_id" to item.show.id),
+                "app.tivi://show/${item.show.id}".toUri(),
                 null,
                 sharedElements.toActivityNavigatorExtras(requireActivity())
         )

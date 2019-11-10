@@ -20,13 +20,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.core.net.toUri
 import androidx.core.view.marginBottom
 import androidx.core.view.updatePadding
-import app.tivi.AppNavigator
+import androidx.navigation.fragment.findNavController
 import app.tivi.TiviFragmentWithBinding
 import app.tivi.data.entities.TiviShow
 import app.tivi.extensions.doOnLayouts
 import app.tivi.extensions.hideSoftInput
+import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.home.search.databinding.FragmentSearchBinding
 import app.tivi.ui.createSharedElementHelperForItemId
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
@@ -40,7 +42,6 @@ internal class SearchFragment : TiviFragmentWithBinding<FragmentSearchBinding>()
 
     @Inject lateinit var searchViewModelFactory: SearchViewModel.Factory
     @Inject lateinit var controller: SearchEpoxyController
-    @Inject lateinit var appNavigator: AppNavigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +88,10 @@ internal class SearchFragment : TiviFragmentWithBinding<FragmentSearchBinding>()
                 val extras = binding.searchRecyclerview.createSharedElementHelperForItemId(show.id, "poster") {
                     it.findViewById(R.id.show_poster)
                 }
-                appNavigator.startShowDetails(show.id, extras)
+                findNavController().navigate(
+                        "app.tivi://show/${show.id}".toUri(),
+                        null,
+                        extras.toActivityNavigatorExtras(requireActivity()))
             }
         }
     }

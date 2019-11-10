@@ -43,7 +43,11 @@
         <activity
             android:name=".showdetails.ShowDetailsActivity"
             android:parentActivityName=".home.HomeActivity"
-            android:theme="@style/Theme.Tivi.ShowDetails" />
+            android:theme="@style/Theme.Tivi.ShowDetails">
+
+            <nav-graph android:value="@navigation/show_details_nav_graph" />
+
+        </activity>
 
         <activity
             android:name="net.openid.appauth.RedirectUriReceiverActivity"

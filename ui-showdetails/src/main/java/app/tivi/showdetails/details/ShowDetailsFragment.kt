@@ -23,13 +23,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.core.os.bundleOf
+import androidx.core.net.toUri
 import androidx.core.view.doOnNextLayout
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearSmoothScroller
-import app.tivi.SharedElementHelper
 import app.tivi.TiviFragmentWithBinding
 import app.tivi.common.epoxy.syncSpanSizes
 import app.tivi.data.entities.ActionDate
@@ -39,8 +39,9 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.episodedetails.EpisodeDetailsFragment
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.extensions.scheduleStartPostponedTransitions
+import app.tivi.extensions.sharedElementHelperOf
+import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.extensions.updateConstraintSets
-import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.showdetails.details.databinding.FragmentShowDetailsBinding
 import app.tivi.ui.recyclerview.TiviLinearSmoothScroller
 import com.airbnb.mvrx.MvRx
@@ -53,15 +54,6 @@ import me.saket.inboxrecyclerview.page.PageStateChangeCallbacks
 import javax.inject.Inject
 
 class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>() {
-    companion object {
-        @JvmStatic
-        fun create(id: Long): ShowDetailsFragment {
-            return ShowDetailsFragment().apply {
-                arguments = bundleOf(MvRx.KEY_ARG to Arguments(id))
-            }
-        }
-    }
-
     @Parcelize
     data class Arguments(val showId: Long) : Parcelable
 
@@ -69,13 +61,20 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
     @Inject lateinit var showDetailsViewModelFactory: ShowDetailsFragmentViewModel.Factory
 
     @Inject lateinit var controller: ShowDetailsEpoxyController
-    @Inject lateinit var showDetailsNavigator: ShowDetailsNavigator
     @Inject lateinit var textCreator: ShowDetailsTextCreator
 
     private val backPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
             requireBinding().detailsRv.collapse()
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // We need to map the arguments bundle to something MvRx understands
+        val args = arguments
+        args?.putParcelable(MvRx.KEY_ARG, Arguments(args.getLong("show_id")))
     }
 
     override fun createBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): FragmentShowDetailsBinding {
@@ -91,16 +90,12 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
             }
         }
 
-        // Make the MotionLayout draw behind the status bar
-        binding.detailsMotion.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-
         binding.detailsFollowFab.setOnClickListener {
             viewModel.onToggleMyShowsButtonClicked()
         }
 
         binding.detailsToolbar.setNavigationOnClickListener {
-            viewModel.onUpClicked(showDetailsNavigator)
+            findNavController().navigateUp()
         }
 
         binding.detailsToolbar.setOnMenuItemClickListener {
@@ -115,13 +110,11 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
 
         controller.callbacks = object : ShowDetailsEpoxyController.Callbacks {
             override fun onRelatedShowClicked(show: TiviShow, itemView: View) {
-                viewModel.onRelatedShowClicked(
-                        showDetailsNavigator,
-                        show,
-                        SharedElementHelper().apply {
-                            addSharedElement(itemView, "poster")
-                        }
-                )
+                findNavController().navigate(
+                        "app.tivi://show/${show.id}".toUri(),
+                        null,
+                        sharedElementHelperOf(itemView to "poster")
+                                .toActivityNavigatorExtras(requireActivity()))
             }
 
             override fun onEpisodeClicked(episode: Episode, itemView: View) {

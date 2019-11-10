@@ -22,7 +22,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
+import androidx.core.net.toUri
 import androidx.core.view.updatePadding
 import androidx.navigation.fragment.findNavController
 import app.tivi.TiviFragmentWithBinding
@@ -101,8 +101,7 @@ class WatchedFragment : TiviFragmentWithBinding<FragmentWatchedBinding>() {
                 }
 
                 findNavController().navigate(
-                        R.id.activity_show_details,
-                        bundleOf("show_id" to item.show.id),
+                        "app.tivi://show/${item.show.id}".toUri(),
                         null,
                         extras.toActivityNavigatorExtras(requireActivity())
                 )

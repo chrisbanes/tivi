@@ -20,12 +20,13 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.core.view.doOnPreDraw
-import androidx.lifecycle.ViewModelProvider
+import app.tivi.util.Logger
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
 abstract class TiviActivity : DaggerAppCompatActivity() {
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    // Dummy injection
+    @Inject lateinit var logger: Logger
 
     private var postponedTransition = false
 
@@ -67,7 +68,5 @@ abstract class TiviActivity : DaggerAppCompatActivity() {
         super.finishAfterTransition()
     }
 
-    open fun onPopulateResultIntent(intent: Intent): Int {
-        return Activity.RESULT_OK
-    }
+    open fun onPopulateResultIntent(intent: Intent): Int = Activity.RESULT_OK
 }

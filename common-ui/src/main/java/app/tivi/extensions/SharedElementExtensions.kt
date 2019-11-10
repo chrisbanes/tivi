@@ -18,6 +18,7 @@ package app.tivi.extensions
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.View
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.fragment.app.FragmentTransaction
@@ -54,4 +55,8 @@ fun SharedElementHelper.toFragmentNavigatorExtras(): Navigator.Extras {
 
 fun SharedElementHelper.toActivityNavigatorExtras(activity: Activity): Navigator.Extras {
     return ActivityNavigatorExtras(toActivityOptions(activity))
+}
+
+fun sharedElementHelperOf(vararg elements: kotlin.Pair<View, String>) = SharedElementHelper().apply {
+    elements.forEach { (view, transitionName) -> addSharedElement(view, transitionName) }
 }

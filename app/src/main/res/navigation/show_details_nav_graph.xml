@@ -18,19 +18,32 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@id/navigation_watched"
-    app:startDestination="@id/navigation_watched">
+    android:id="@id/navigation_show_details"
+    app:startDestination="@id/navigation_show_details">
 
-    <fragment
-        android:id="@id/navigation_watched"
-        android:name="app.tivi.home.watched.WatchedFragment"
-        android:label="@string/watched_shows_title" />
+    <fragment android:id="@id/navigation_show_details"
+        android:name="app.tivi.showdetails.details.ShowDetailsFragment"
+        android:label="@string/showdetails_navigation_title">
 
-    <fragment
-        android:id="@id/navigation_settings"
-        android:name="app.tivi.settings.SettingsFragment"
-        android:label="@string/settings_title" />
+        <argument
+            android:name="show_id"
+            app:argType="long" />
 
-    <include app:graph="@navigation/show_details_nav_graph" />
+    </fragment>
+
+    <activity
+        android:id="@id/activity_show_details"
+        android:name="app.tivi.showdetails.ShowDetailsActivity"
+        android:label="activity_show_details"
+        tools:layout="@layout/activity_show_details">
+
+        <argument
+            android:name="show_id"
+            app:argType="long" />
+
+        <deepLink
+            app:uri="app.tivi://show/{show_id}" />
+
+    </activity>
 
 </navigation>

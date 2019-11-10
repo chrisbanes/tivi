@@ -16,13 +16,10 @@
 
 package app.tivi
 
-import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import app.tivi.extensions.toBundle
 import app.tivi.home.HomeActivity
-import app.tivi.showdetails.ShowDetailsActivity
 import app.tivi.trakt.TraktConstants
 import javax.inject.Inject
 
@@ -36,20 +33,7 @@ open class TiviAppNavigator @Inject constructor(
         return PendingIntent.getActivity(context, requestCode, intent, 0)
     }
 
-    override fun startShowDetails(id: Long, sharedElements: SharedElementHelper?) {
-        context.startActivity(ShowDetailsActivity.createIntent(context, id))
-    }
-
     override fun startLogin() {
         throw IllegalArgumentException("This app navigator can't handle login calls")
-    }
-}
-
-internal open class TiviAppActivityNavigator(private val activity: Activity) : TiviAppNavigator(activity) {
-    override fun startShowDetails(id: Long, sharedElements: SharedElementHelper?) {
-        activity.startActivityForResult(
-                ShowDetailsActivity.createIntent(activity, id),
-                0,
-                sharedElements?.toBundle(activity))
     }
 }

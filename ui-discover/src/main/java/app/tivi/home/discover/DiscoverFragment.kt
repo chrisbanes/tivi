@@ -19,7 +19,7 @@ package app.tivi.home.discover
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
+import androidx.core.net.toUri
 import androidx.core.view.updatePadding
 import androidx.navigation.fragment.findNavController
 import app.tivi.TiviFragmentWithBinding
@@ -138,10 +138,8 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
                 val elements = binding.summaryRv.createSharedElementHelperForItemId(viewHolderId, "poster") {
                     it.findViewById(R.id.show_poster)
                 }
-
                 findNavController().navigate(
-                        R.id.activity_show_details,
-                        bundleOf("show_id" to item.show.id),
+                        "app.tivi://show/${item.show.id}".toUri(),
                         null,
                         elements.toActivityNavigatorExtras(requireActivity())
                 )
@@ -152,8 +150,7 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
                     checkNotNull(it.nextEpisodeWithShowToWatched)
 
                     findNavController().navigate(
-                            R.id.activity_show_details,
-                            bundleOf("show_id" to it.nextEpisodeWithShowToWatched.show.id)
+                            "app.tivi://show/${it.nextEpisodeWithShowToWatched.show.id}".toUri()
                     )
                 }
             }

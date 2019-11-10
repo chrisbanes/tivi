@@ -171,9 +171,9 @@ private fun BottomNavigationView.setupDeepLinks(
                 containerId
         )
         // Handle Intent
-        if (navHostFragment.navController.handleDeepLink(intent) &&
-                selectedItemId != navHostFragment.navController.graph.id) {
-            this.selectedItemId = navHostFragment.navController.graph.id
+        if (selectedItemId != navHostFragment.navController.graph.id &&
+                navHostFragment.navController.handleDeepLink(intent)) {
+            selectedItemId = navHostFragment.navController.graph.id
         }
     }
 }
