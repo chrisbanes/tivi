@@ -17,7 +17,6 @@
 
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@id/navigation_followed"
     app:startDestination="@id/navigation_followed">
 
@@ -31,14 +30,6 @@
         android:name="app.tivi.settings.SettingsFragment"
         android:label="@string/settings_title" />
 
-    <activity
-        android:id="@id/activity_show_details"
-        android:name="app.tivi.showdetails.ShowDetailsActivity"
-        android:label="activity_show_details"
-        tools:layout="@layout/activity_show_details">
-        <argument
-            android:name="show_id"
-            app:argType="long" />
-    </activity>
+    <include app:graph="@navigation/show_details_nav_graph" />
 
 </navigation>

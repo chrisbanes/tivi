@@ -41,6 +41,9 @@
             android:name="show_id"
             app:argType="long" />
 
+        <deepLink
+            app:uri="app.tivi://show/{show_id}" />
+
     </activity>
 
 </navigation>

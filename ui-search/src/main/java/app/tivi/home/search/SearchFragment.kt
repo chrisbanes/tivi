@@ -20,7 +20,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
-import androidx.core.os.bundleOf
+import androidx.core.net.toUri
 import androidx.core.view.marginBottom
 import androidx.core.view.updatePadding
 import androidx.navigation.fragment.findNavController
@@ -89,8 +89,7 @@ internal class SearchFragment : TiviFragmentWithBinding<FragmentSearchBinding>()
                     it.findViewById(R.id.show_poster)
                 }
                 findNavController().navigate(
-                        R.id.activity_show_details,
-                        bundleOf("show_id" to show.id),
+                        "app.tivi://show/${show.id}".toUri(),
                         null,
                         extras.toActivityNavigatorExtras(requireActivity()))
             }

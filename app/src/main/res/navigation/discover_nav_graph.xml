@@ -46,14 +46,6 @@
         android:name="app.tivi.settings.SettingsFragment"
         android:label="@string/settings_title" />
 
-    <activity
-        android:id="@id/activity_show_details"
-        android:name="app.tivi.showdetails.ShowDetailsActivity"
-        android:label="activity_show_details"
-        tools:layout="@layout/activity_show_details">
-        <argument
-            android:name="show_id"
-            app:argType="long" />
-    </activity>
+    <include app:graph="@navigation/show_details_nav_graph" />
 
 </navigation>

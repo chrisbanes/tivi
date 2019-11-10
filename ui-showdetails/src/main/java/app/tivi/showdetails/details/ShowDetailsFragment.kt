@@ -23,7 +23,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.core.os.bundleOf
+import androidx.core.net.toUri
 import androidx.core.view.doOnNextLayout
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
@@ -111,8 +111,7 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
         controller.callbacks = object : ShowDetailsEpoxyController.Callbacks {
             override fun onRelatedShowClicked(show: TiviShow, itemView: View) {
                 findNavController().navigate(
-                        R.id.activity_show_details,
-                        bundleOf("show_id" to show.id),
+                        "app.tivi://show/${show.id}".toUri(),
                         null,
                         sharedElementHelperOf(itemView to "poster")
                                 .toActivityNavigatorExtras(requireActivity()))
