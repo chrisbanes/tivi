@@ -42,6 +42,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Provider
 
 class DiscoverViewModel @AssistedInject constructor(
     @Assisted initialState: DiscoverViewState,
@@ -54,7 +55,7 @@ class DiscoverViewModel @AssistedInject constructor(
     observeNextShowEpisodeToWatch: ObserveNextShowEpisodeToWatch,
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
-    private val appNavigator: AppNavigator
+    private val appNavigator: Provider<AppNavigator>
 ) : TiviMvRxViewModel<DiscoverViewState>(initialState) {
     private val trendingLoadingState = ObservableLoadingCounter()
     private val popularLoadingState = ObservableLoadingCounter()
@@ -127,7 +128,7 @@ class DiscoverViewModel @AssistedInject constructor(
     }
 
     fun onLoginClicked() {
-        appNavigator.startLogin()
+        appNavigator.get().startLogin()
     }
 
     fun refresh() = refresh(true)

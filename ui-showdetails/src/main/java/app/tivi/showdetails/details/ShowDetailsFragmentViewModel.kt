@@ -17,11 +17,9 @@
 package app.tivi.showdetails.details
 
 import androidx.lifecycle.viewModelScope
-import app.tivi.SharedElementHelper
 import app.tivi.TiviMvRxViewModel
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Season
-import app.tivi.data.entities.TiviShow
 import app.tivi.domain.interactors.ChangeSeasonFollowStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Action
@@ -38,7 +36,6 @@ import app.tivi.domain.observers.ObserveShowFollowStatus
 import app.tivi.domain.observers.ObserveShowNextEpisodeToWatch
 import app.tivi.domain.observers.ObserveShowSeasonData
 import app.tivi.domain.observers.ObserveShowViewStats
-import app.tivi.showdetails.ShowDetailsNavigator
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectFrom
 import com.airbnb.mvrx.FragmentViewModelContext
@@ -145,14 +142,6 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         }
     }
 
-    fun onRelatedShowClicked(
-        showDetailsNavigator: ShowDetailsNavigator,
-        show: TiviShow,
-        sharedElementHelper: SharedElementHelper? = null
-    ) {
-        showDetailsNavigator.showShowDetails(show, sharedElementHelper)
-    }
-
     fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
         changeSeasonWatchedStatus(Params(season.id, Action.WATCHED, onlyAired, date))
     }
@@ -187,8 +176,6 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
                         ChangeSeasonFollowStatus.Action.IGNORE_PREVIOUS)
         )
     }
-
-    fun onUpClicked(showDetailsNavigator: ShowDetailsNavigator) = showDetailsNavigator.navigateUp()
 
     @AssistedInject.Factory
     interface Factory {

@@ -16,44 +16,20 @@
 
 package app.tivi.showdetails
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.activity.viewModels
 import androidx.core.view.updatePadding
-import androidx.navigation.navArgs
+import androidx.fragment.app.commit
+import androidx.navigation.fragment.NavHostFragment
 import app.tivi.R
 import app.tivi.TiviActivity
-import app.tivi.showdetails.details.ShowDetailsFragment
-import app.tivi.util.observeEvent
 import dev.chrisbanes.insetter.doOnApplyWindowInsets
 
 class ShowDetailsActivity : TiviActivity() {
-
-    companion object {
-        private const val KEY_SHOW_ID = "show_id"
-
-        fun createIntent(context: Context, id: Long): Intent {
-            return Intent(context, ShowDetailsActivity::class.java).apply {
-                putExtra(KEY_SHOW_ID, id)
-            }
-        }
-    }
-
-    val navigatorViewModel: ShowDetailsNavigatorViewModel by viewModels(factoryProducer = {
-        viewModelFactory
-    })
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_details)
-
-        navigatorViewModel.events.observeEvent(this) {
-            when (it) {
-                is NavigateUpEvent -> onNavigateUp()
-            }
-        }
 
         findViewById<View>(R.id.details_root).apply {
             systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
@@ -72,9 +48,9 @@ class ShowDetailsActivity : TiviActivity() {
     }
 
     override fun handleIntent(intent: Intent) {
-        val args: ShowDetailsActivityArgs by navArgs()
-        supportFragmentManager.beginTransaction()
-                .replace(R.id.details_content, ShowDetailsFragment.create(args.showId))
-                .commit()
+        supportFragmentManager.commit {
+            replace(R.id.details_content,
+                    NavHostFragment.create(R.navigation.show_details_nav_graph, intent.extras))
+        }
     }
 }

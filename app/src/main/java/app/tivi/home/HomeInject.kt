@@ -26,7 +26,6 @@ import app.tivi.home.search.SearchBuilder
 import app.tivi.home.trending.TrendingBuilder
 import app.tivi.home.watched.WatchedBuilder
 import app.tivi.inject.PerActivity
-import app.tivi.inject.ViewModelBuilder
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -35,7 +34,6 @@ import dagger.android.ContributesAndroidInjector
 @Module
 internal abstract class HomeBuilder {
     @ContributesAndroidInjector(modules = [
-        ViewModelBuilder::class,
         HomeModule::class,
         SearchBuilder::class,
         DiscoverBuilder::class,

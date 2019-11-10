@@ -26,7 +26,6 @@ import app.tivi.TiviFragmentWithBinding
 import app.tivi.common.epoxy.SwipeAwayCallbacks
 import app.tivi.episodedetails.databinding.FragmentEpisodeDetailsBinding
 import app.tivi.extensions.resolveThemeColor
-import app.tivi.showdetails.ShowDetailsNavigator
 import com.airbnb.epoxy.EpoxyTouchHelper
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
@@ -51,7 +50,6 @@ class EpisodeDetailsFragment : TiviFragmentWithBinding<FragmentEpisodeDetailsBin
     @Inject lateinit var episodeDetailsViewModelFactory: EpisodeDetailsViewModel.Factory
 
     @Inject lateinit var controller: EpisodeDetailsEpoxyController
-    @Inject lateinit var showDetailsNavigator: ShowDetailsNavigator
 
     @Inject lateinit var textCreator: EpisodeDetailsTextCreator
 
