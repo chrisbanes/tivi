@@ -89,7 +89,8 @@ class HomeActivity : TiviActivityMvRxView() {
                 listOf(R.navigation.discover_nav_graph, R.navigation.watched_nav_graph,
                         R.navigation.following_nav_graph, R.navigation.search_nav_graph),
                 supportFragmentManager,
-                R.id.home_nav_container
+                R.id.home_nav_container,
+                intent
         ).observe(this) { navController ->
             currentNavController = navController
 
