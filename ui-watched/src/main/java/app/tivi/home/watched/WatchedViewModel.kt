@@ -39,6 +39,7 @@ import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -72,6 +73,9 @@ class WatchedViewModel @AssistedInject constructor(
     private val loadingState = ObservableLoadingCounter()
     private val showSelection = ShowStateSelector()
 
+    val pagedList: Flow<PagedList<WatchedShowEntryWithShow>>
+        get() = observePagedWatchedShows.observe()
+
     init {
         viewModelScope.launch {
             loadingState.observable
@@ -90,10 +94,6 @@ class WatchedViewModel @AssistedInject constructor(
             showSelection.observeIsSelectionOpen().collect {
                 setState { copy(selectionOpen = it) }
             }
-        }
-
-        viewModelScope.launchObserve(observePagedWatchedShows) {
-            it.execute { copy(watchedShows = it()) }
         }
 
         viewModelScope.launchObserve(observeTraktAuthState) { flow ->

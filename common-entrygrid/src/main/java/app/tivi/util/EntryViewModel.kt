@@ -34,7 +34,6 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.domain.PagingInteractor
 import app.tivi.domain.interactors.ChangeShowFollowStatus
-import app.tivi.domain.launchObserve
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
@@ -44,9 +43,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteractor<*, LI>>(
-    initialState: EntryViewState<LI>,
+    initialState: EntryViewState,
     private val pageSize: Int = 21
-) : TiviMvRxViewModel<EntryViewState<LI>>(initialState) {
+) : TiviMvRxViewModel<EntryViewState>(initialState) {
     protected abstract val dispatchers: AppCoroutineDispatchers
     protected abstract val pagingInteractor: PI
     protected abstract val logger: Logger
@@ -54,6 +53,9 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
 
     private val messages = ConflatedBroadcastChannel<UiStatus>(UiIdle)
     private val loaded = ConflatedBroadcastChannel(false)
+
+    val pagedList: Flow<PagedList<LI>>
+        get() = pagingInteractor.observe()
 
     private val showSelection = ShowStateSelector()
 
@@ -81,10 +83,6 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
             messages.asFlow().execute {
                 copy(status = it() ?: UiSuccess)
             }
-        }
-
-        viewModelScope.launchObserve(pagingInteractor) {
-            it.execute { copy(liveList = it()) }
         }
 
         viewModelScope.launch {

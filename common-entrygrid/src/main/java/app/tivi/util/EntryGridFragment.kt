@@ -22,6 +22,7 @@ import android.view.ActionMode
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.updatePadding
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -40,6 +41,7 @@ import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.transitions.GridToGridTransitioner
 import com.airbnb.mvrx.withState
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
@@ -100,11 +102,14 @@ abstract class EntryGridFragment<LI, VM> : TiviFragmentWithBinding<FragmentEntry
         }
 
         binding.gridSwipeRefresh.setOnRefreshListener(viewModel::refresh)
+
+        lifecycleScope.launchWhenStarted {
+            viewModel.pagedList.collect { controller.submitList(it) }
+        }
     }
 
     override fun invalidate(binding: FragmentEntryGridBinding) = withState(viewModel) { state ->
         controller.state = state
-        controller.submitList(state.liveList)
 
         when (val status = state.status) {
             is UiError -> {

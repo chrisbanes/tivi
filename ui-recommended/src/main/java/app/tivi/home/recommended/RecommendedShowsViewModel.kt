@@ -33,7 +33,7 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 
 class RecommendedShowsViewModel @AssistedInject constructor(
-    @Assisted initialState: EntryViewState<RecommendedEntryWithShow>,
+    @Assisted initialState: EntryViewState,
     override val dispatchers: AppCoroutineDispatchers,
     override val pagingInteractor: ObservePagedRecommendedShows,
     private val interactor: UpdateRecommendedShows,
@@ -54,11 +54,11 @@ class RecommendedShowsViewModel @AssistedInject constructor(
 
     @AssistedInject.Factory
     interface Factory {
-        fun create(initialState: EntryViewState<RecommendedEntryWithShow>): RecommendedShowsViewModel
+        fun create(initialState: EntryViewState): RecommendedShowsViewModel
     }
 
-    companion object : MvRxViewModelFactory<RecommendedShowsViewModel, EntryViewState<RecommendedEntryWithShow>> {
-        override fun create(viewModelContext: ViewModelContext, state: EntryViewState<RecommendedEntryWithShow>): RecommendedShowsViewModel? {
+    companion object : MvRxViewModelFactory<RecommendedShowsViewModel, EntryViewState> {
+        override fun create(viewModelContext: ViewModelContext, state: EntryViewState): RecommendedShowsViewModel? {
             val fragment: RecommendedShowsFragment = (viewModelContext as FragmentViewModelContext).fragment()
             return fragment.recommendedShowsViewModelFactory.create(state)
         }
