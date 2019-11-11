@@ -91,7 +91,7 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
         }
 
         binding.detailsFollowFab.setOnClickListener {
-            viewModel.onToggleMyShowsButtonClicked()
+            viewModel.submitAction(FollowShowToggleAction)
         }
 
         binding.detailsToolbar.setNavigationOnClickListener {
@@ -101,7 +101,7 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
         binding.detailsToolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_refresh -> {
-                    viewModel.refresh(true)
+                    viewModel.submitAction(RefreshAction)
                     true
                 }
                 else -> false
@@ -129,15 +129,15 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
             }
 
             override fun onMarkSeasonUnwatched(season: Season) {
-                viewModel.onMarkSeasonUnwatched(season)
+                viewModel.submitAction(MarkSeasonUnwatchedAction(season.id))
             }
 
             override fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
-                viewModel.onMarkSeasonWatched(season, onlyAired, date)
+                viewModel.submitAction(MarkSeasonWatchedAction(season.id, onlyAired, date))
             }
 
             override fun onExpandSeason(season: Season, itemView: View) {
-                viewModel.expandSeason(season)
+                viewModel.submitAction(ChangeSeasonExpandedAction(season.id, true))
 
                 val scroller = TiviLinearSmoothScroller(
                         itemView.context,
@@ -151,19 +151,19 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
             }
 
             override fun onCollapseSeason(season: Season, itemView: View) {
-                viewModel.collapseSeason(season)
+                viewModel.submitAction(ChangeSeasonExpandedAction(season.id, false))
             }
 
             override fun onMarkSeasonFollowed(season: Season) {
-                viewModel.onMarkSeasonFollowed(season)
+                viewModel.submitAction(ChangeSeasonFollowedAction(season.id, true))
             }
 
             override fun onMarkSeasonIgnored(season: Season) {
-                viewModel.onMarkSeasonIgnored(season)
+                viewModel.submitAction(ChangeSeasonFollowedAction(season.id, false))
             }
 
             override fun onMarkPreviousSeasonsIgnored(season: Season) {
-                viewModel.onMarkPreviousSeasonsIgnored(season)
+                viewModel.submitAction(UnfollowPreviousSeasonsFollowedAction(season.id))
             }
         }
 

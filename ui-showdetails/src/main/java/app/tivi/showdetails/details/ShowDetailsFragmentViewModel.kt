@@ -18,8 +18,6 @@ package app.tivi.showdetails.details
 
 import androidx.lifecycle.viewModelScope
 import app.tivi.TiviMvRxViewModel
-import app.tivi.data.entities.ActionDate
-import app.tivi.data.entities.Season
 import app.tivi.domain.interactors.ChangeSeasonFollowStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Action
@@ -44,6 +42,8 @@ import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -65,6 +65,8 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
 ) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
 
     private val loadingState = ObservableLoadingCounter()
+
+    private val pendingActions = Channel<ShowDetailsAction>(Channel.BUFFERED)
 
     init {
         viewModelScope.launchObserve(observeShowFollowStatus) { flow ->
@@ -104,6 +106,20 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
             flow.distinctUntilChanged().execute { copy(viewStats = it) }
         }
 
+        viewModelScope.launch {
+            for (action in pendingActions) {
+                when (action) {
+                    is RefreshAction -> refresh(true)
+                    FollowShowToggleAction -> onToggleMyShowsButtonClicked()
+                    is MarkSeasonWatchedAction -> onMarkSeasonWatched(action)
+                    is MarkSeasonUnwatchedAction -> onMarkSeasonUnwatched(action)
+                    is ChangeSeasonFollowedAction -> onChangeSeasonFollowState(action)
+                    is ChangeSeasonExpandedAction -> onChangeSeasonExpandState(action)
+                    is UnfollowPreviousSeasonsFollowedAction -> onUnfollowPreviousSeasonsFollowState(action)
+                }
+            }
+        }
+
         withState {
             observeShowFollowStatus(ObserveShowFollowStatus.Params(it.showId))
             observeShowDetails(ObserveShowDetails.Params(it.showId))
@@ -116,7 +132,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         refresh(false)
     }
 
-    fun refresh(fromUserInteraction: Boolean) = withState {
+    private fun refresh(fromUserInteraction: Boolean) = withState {
         updateShowDetails(UpdateShowDetails.Params(it.showId, fromUserInteraction)).also {
             viewModelScope.launch {
                 loadingState.collectFrom(it)
@@ -134,7 +150,9 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         }
     }
 
-    fun onToggleMyShowsButtonClicked() = withState {
+    fun submitAction(action: ShowDetailsAction) = pendingActions.sendBlocking(action)
+
+    private fun onToggleMyShowsButtonClicked() = withState {
         changeShowFollowStatus(ChangeShowFollowStatus.Params(it.showId, TOGGLE)).also {
             viewModelScope.launch {
                 loadingState.collectFrom(it)
@@ -142,37 +160,35 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         }
     }
 
-    fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
-        changeSeasonWatchedStatus(Params(season.id, Action.WATCHED, onlyAired, date))
+    private fun onMarkSeasonWatched(action: MarkSeasonWatchedAction) {
+        changeSeasonWatchedStatus(Params(action.seasonId, Action.WATCHED, action.onlyAired, action.date))
     }
 
-    fun onMarkSeasonUnwatched(season: Season) {
-        changeSeasonWatchedStatus(Params(season.id, Action.UNWATCH))
+    private fun onMarkSeasonUnwatched(action: MarkSeasonUnwatchedAction) {
+        changeSeasonWatchedStatus(Params(action.seasonId, Action.UNWATCH))
     }
 
-    fun expandSeason(season: Season) = setState {
-        copy(expandedSeasonIds = expandedSeasonIds.plus(season.id))
+    private fun onChangeSeasonExpandState(action: ChangeSeasonExpandedAction) = setState {
+        if (action.expanded) {
+            copy(expandedSeasonIds = expandedSeasonIds.plus(action.seasonId))
+        } else {
+            copy(expandedSeasonIds = expandedSeasonIds.minus(action.seasonId))
+        }
     }
 
-    fun collapseSeason(season: Season) = setState {
-        copy(expandedSeasonIds = expandedSeasonIds.minus(season.id))
+    private fun onChangeSeasonFollowState(action: ChangeSeasonFollowedAction) {
+        changeSeasonFollowStatus(ChangeSeasonFollowStatus.Params(
+                action.seasonId,
+                when {
+                    action.followed -> ChangeSeasonFollowStatus.Action.FOLLOW
+                    else -> ChangeSeasonFollowStatus.Action.IGNORE
+                }
+        ))
     }
 
-    fun onMarkSeasonFollowed(season: Season) {
+    private fun onUnfollowPreviousSeasonsFollowState(action: UnfollowPreviousSeasonsFollowedAction) {
         changeSeasonFollowStatus(
-                ChangeSeasonFollowStatus.Params(season.id, ChangeSeasonFollowStatus.Action.FOLLOW)
-        )
-    }
-
-    fun onMarkSeasonIgnored(season: Season) {
-        changeSeasonFollowStatus(
-                ChangeSeasonFollowStatus.Params(season.id, ChangeSeasonFollowStatus.Action.IGNORE)
-        )
-    }
-
-    fun onMarkPreviousSeasonsIgnored(season: Season) {
-        changeSeasonFollowStatus(
-                ChangeSeasonFollowStatus.Params(season.id,
+                ChangeSeasonFollowStatus.Params(action.seasonId,
                         ChangeSeasonFollowStatus.Action.IGNORE_PREVIOUS)
         )
     }
