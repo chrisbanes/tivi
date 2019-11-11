@@ -20,16 +20,16 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph
 import androidx.navigation.navOptions
-import androidx.navigation.ui.R
+import app.tivi.common.ui.R
 
 fun NavController.navigateToNavDestination(itemId: Int, popUpToStart: Boolean = true): Boolean {
     val options = navOptions {
         launchSingleTop = true
         anim {
-            enter = R.anim.nav_default_enter_anim
-            exit = R.anim.nav_default_exit_anim
-            popEnter = R.anim.nav_default_pop_enter_anim
-            popExit = R.anim.nav_default_pop_exit_anim
+            enter = R.anim.tivi_enter_anim
+            exit = R.anim.tivi_exit_anim
+            popEnter = R.anim.tivi_pop_enter_anim
+            popExit = R.anim.tivi_pop_exit_anim
         }
         if (popUpToStart) {
             popUpTo(graph.findStartDestination().id) {
