@@ -41,8 +41,15 @@
             android:name="show_id"
             app:argType="long" />
 
+        <argument
+            android:name="episode_id"
+            app:argType="long" />
+
         <deepLink
             app:uri="app.tivi://show/{show_id}" />
+
+        <deepLink
+            app:uri="app.tivi://show/{show_id}/episode/{episode_id}" />
 
     </activity>
 

@@ -148,9 +148,10 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
             override fun onNextEpisodeToWatchClicked() {
                 withState(viewModel) {
                     checkNotNull(it.nextEpisodeWithShowToWatched)
-
+                    val show = it.nextEpisodeWithShowToWatched.show
+                    val episode = it.nextEpisodeWithShowToWatched.episode
                     findNavController().navigate(
-                            "app.tivi://show/${it.nextEpisodeWithShowToWatched.show.id}".toUri()
+                            "app.tivi://show/${show.id}/episode/${episode.id}".toUri()
                     )
                 }
             }

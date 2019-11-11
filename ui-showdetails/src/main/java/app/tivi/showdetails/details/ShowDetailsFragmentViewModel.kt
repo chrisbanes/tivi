@@ -162,6 +162,9 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
 
     private fun openEpisodeDetails(action: OpenEpisodeDetails) {
         setState { copy(expandedEpisodeId = action.episodeId) }
+    }
+
+    fun clearExpandedEpisode() {
         setState { copy(expandedEpisodeId = null) }
     }
 
@@ -180,12 +183,15 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
             setState {
                 copy(focusedSeasonId = action.seasonId, expandedSeasonIds = expandedSeasonIds + action.seasonId)
             }
-            setState { copy(focusedSeasonId = null) }
         } else {
             setState {
                 copy(expandedSeasonIds = expandedSeasonIds - action.seasonId)
             }
         }
+    }
+
+    fun clearFocusedSeason() {
+        setState { copy(focusedSeasonId = null) }
     }
 
     private fun onChangeSeasonFollowState(action: ChangeSeasonFollowedAction) {

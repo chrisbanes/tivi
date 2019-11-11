@@ -41,5 +41,8 @@ data class ShowDetailsViewState(
     val expandedEpisodeId: Long? = null,
     val refreshing: Boolean = false
 ) : MvRxState {
-    constructor(args: ShowDetailsFragment.Arguments) : this(args.showId)
+    internal constructor(args: ShowDetailsFragment.Arguments) : this(
+            showId = args.showId,
+            expandedEpisodeId = args.episodeToExpand
+    )
 }

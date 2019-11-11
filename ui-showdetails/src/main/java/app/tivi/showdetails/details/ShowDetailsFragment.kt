@@ -56,7 +56,7 @@ import javax.inject.Inject
 
 class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>() {
     @Parcelize
-    data class Arguments(val showId: Long) : Parcelable
+    internal data class Arguments(val showId: Long, val episodeToExpand: Long?) : Parcelable
 
     private val viewModel: ShowDetailsFragmentViewModel by fragmentViewModel()
     @Inject lateinit var showDetailsViewModelFactory: ShowDetailsFragmentViewModel.Factory
@@ -75,7 +75,10 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
 
         // We need to map the arguments bundle to something MvRx understands
         val args = arguments
-        args?.putParcelable(MvRx.KEY_ARG, Arguments(args.getLong("show_id")))
+        args?.putParcelable(MvRx.KEY_ARG, Arguments(
+                args.getLong("show_id"),
+                args.getLong("episode_id", Long.MIN_VALUE).let { if (it >= 0) it else null }
+        ))
     }
 
     override fun createBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): FragmentShowDetailsBinding {
@@ -208,8 +211,10 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
         binding.state = state
         controller.state = state
 
-        if (state.focusedSeasonId != null) {
-            binding.detailsRv.scrollToItemId(generateSeasonItemId(state.focusedSeasonId))
+        val seasonsLoaded = state.seasons()?.isNotEmpty() == true
+        if (seasonsLoaded && state.focusedSeasonId != null) {
+            binding.detailsRv.smoothScrollToItemId(generateSeasonItemId(state.focusedSeasonId))
+            viewModel.clearFocusedSeason()
         }
 
         if (state.expandedEpisodeId != null) {
@@ -221,6 +226,7 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
             binding.detailsExpandedPane.doOnNextLayout {
                 binding.detailsRv.expandItem(generateEpisodeItemId(state.expandedEpisodeId))
             }
+            viewModel.clearExpandedEpisode()
         }
     }
 
@@ -229,7 +235,7 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
         controller.clear()
     }
 
-    private fun RecyclerView.scrollToItemId(itemId: Long) {
+    private fun RecyclerView.smoothScrollToItemId(itemId: Long) {
         val vh = findViewHolderForItemId(itemId)
         if (vh != null) {
             val scroller = TiviLinearSmoothScroller(
