@@ -43,7 +43,6 @@ import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -151,7 +150,9 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         }
     }
 
-    fun submitAction(action: ShowDetailsAction) = pendingActions.sendBlocking(action)
+    fun submitAction(action: ShowDetailsAction) = viewModelScope.launch {
+        pendingActions.send(action)
+    }
 
     private fun onToggleMyShowsButtonClicked() = withState {
         changeShowFollowStatus(ChangeShowFollowStatus.Params(it.showId, TOGGLE)).also {
