@@ -24,6 +24,7 @@ import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.core.view.updatePadding
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.TiviFragmentWithBinding
 import app.tivi.common.imageloading.loadImageUrl
@@ -42,6 +43,7 @@ import app.tivi.ui.createSharedElementHelperForItem
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
+import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 class WatchedFragment : TiviFragmentWithBinding<FragmentWatchedBinding>() {
@@ -123,6 +125,12 @@ class WatchedFragment : TiviFragmentWithBinding<FragmentWatchedBinding>() {
         }
 
         binding.watchedSwipeRefresh.setOnRefreshListener(viewModel::refresh)
+
+        lifecycleScope.launchWhenStarted {
+            viewModel.pagedList.collect {
+                controller.submitList(it)
+            }
+        }
     }
 
     override fun invalidate(binding: FragmentWatchedBinding) = withState(viewModel) { state ->
@@ -137,20 +145,12 @@ class WatchedFragment : TiviFragmentWithBinding<FragmentWatchedBinding>() {
             currentActionMode?.finish()
         }
 
-        if (currentActionMode != null) {
-            currentActionMode?.title = getString(R.string.selection_title,
-                    state.selectedShowIds.size)
-        }
-
-        binding.state = state
+        currentActionMode?.title = getString(R.string.selection_title, state.selectedShowIds.size)
 
         authStateMenuItemBinder?.bind(state.authState, state.user)
 
-        if (state.watchedShows != null) {
-            // PagingEpoxyController does not like being updated before it has a list
-            controller.state = state
-            controller.submitList(state.watchedShows)
-        }
+        binding.state = state
+        controller.state = state
     }
 
     override fun onDestroyView() {

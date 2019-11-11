@@ -33,7 +33,7 @@ import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.flow.Flow
 
 class PopularShowsViewModel @AssistedInject constructor(
-    @Assisted initialState: EntryViewState<PopularEntryWithShow>,
+    @Assisted initialState: EntryViewState,
     override val dispatchers: AppCoroutineDispatchers,
     override val pagingInteractor: ObservePagedPopularShows,
     private val interactor: UpdatePopularShows,
@@ -58,13 +58,13 @@ class PopularShowsViewModel @AssistedInject constructor(
 
     @AssistedInject.Factory
     interface Factory {
-        fun create(initialState: EntryViewState<PopularEntryWithShow>): PopularShowsViewModel
+        fun create(initialState: EntryViewState): PopularShowsViewModel
     }
 
-    companion object : MvRxViewModelFactory<PopularShowsViewModel, EntryViewState<PopularEntryWithShow>> {
+    companion object : MvRxViewModelFactory<PopularShowsViewModel, EntryViewState> {
         override fun create(
             viewModelContext: ViewModelContext,
-            state: EntryViewState<PopularEntryWithShow>
+            state: EntryViewState
         ): PopularShowsViewModel? {
             val fragment: PopularShowsFragment = (viewModelContext as FragmentViewModelContext).fragment()
             return fragment.popularShowsViewModelFactory.create(state)

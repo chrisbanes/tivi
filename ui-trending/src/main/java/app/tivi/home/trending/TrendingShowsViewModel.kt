@@ -33,7 +33,7 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 
 class TrendingShowsViewModel @AssistedInject constructor(
-    @Assisted initialState: EntryViewState<TrendingEntryWithShow>,
+    @Assisted initialState: EntryViewState,
     override val dispatchers: AppCoroutineDispatchers,
     override val pagingInteractor: ObservePagedTrendingShows,
     private val interactor: UpdateTrendingShows,
@@ -54,13 +54,13 @@ class TrendingShowsViewModel @AssistedInject constructor(
 
     @AssistedInject.Factory
     interface Factory {
-        fun create(initialState: EntryViewState<TrendingEntryWithShow>): TrendingShowsViewModel
+        fun create(initialState: EntryViewState): TrendingShowsViewModel
     }
 
-    companion object : MvRxViewModelFactory<TrendingShowsViewModel, EntryViewState<TrendingEntryWithShow>> {
+    companion object : MvRxViewModelFactory<TrendingShowsViewModel, EntryViewState> {
         override fun create(
             viewModelContext: ViewModelContext,
-            state: EntryViewState<TrendingEntryWithShow>
+            state: EntryViewState
         ): TrendingShowsViewModel? {
             val fragment: TrendingShowsFragment = (viewModelContext as FragmentViewModelContext).fragment()
             return fragment.trendingShowsViewModelFactory.create(state)

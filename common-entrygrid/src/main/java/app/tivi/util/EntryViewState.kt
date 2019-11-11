@@ -16,14 +16,12 @@
 
 package app.tivi.util
 
-import androidx.paging.PagedList
 import app.tivi.api.UiIdle
 import app.tivi.api.UiStatus
 import com.airbnb.mvrx.MvRxState
 
-data class EntryViewState<LI>(
+data class EntryViewState(
     val status: UiStatus = UiIdle,
-    val liveList: PagedList<LI>? = null,
     val isLoaded: Boolean = false,
     val selectionOpen: Boolean = false,
     val selectedShowIds: Set<Long> = emptySet()
