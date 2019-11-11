@@ -150,8 +150,8 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         }
     }
 
-    fun submitAction(action: ShowDetailsAction) = viewModelScope.launch {
-        pendingActions.send(action)
+    fun submitAction(action: ShowDetailsAction) {
+        viewModelScope.launch { pendingActions.send(action) }
     }
 
     private fun onToggleMyShowsButtonClicked() = withState {

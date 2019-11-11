@@ -100,7 +100,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/spacing_normal"
-            android:src="@{state.action == Action.WATCH ? @drawable/ic_eye_24dp : @drawable/ic_eye_off_24dp}"
+            android:src="@{state.action == Action.WATCH ? @drawable/ic_add_24dp : @drawable/ic_eye_off_24dp}"
             app:layout_constraintBottom_toTopOf="@id/ep_details_rv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/ep_details_rv"

@@ -18,7 +18,6 @@ package app.tivi.episodedetails
 
 import androidx.lifecycle.viewModelScope
 import app.tivi.TiviMvRxViewModel
-import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.domain.interactors.AddEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatches
@@ -33,7 +32,9 @@ import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
 class EpisodeDetailsViewModel @AssistedInject constructor(
@@ -45,6 +46,9 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch
 ) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
+
+    private val pendingActions = Channel<EpisodeDetailsAction>(Channel.BUFFERED)
+
     init {
         viewModelScope.launchObserve(observeEpisodeDetails) {
             it.execute { result ->
@@ -63,6 +67,17 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
             }
         }
 
+        viewModelScope.launch {
+            for (action in pendingActions) {
+                when (action) {
+                    RefreshAction -> refresh()
+                    AddEpisodeWatchAction -> markWatched()
+                    RemoveAllEpisodeWatchesAction -> markUnwatched()
+                    is RemoveEpisodeWatchAction -> removeWatchEntry(action)
+                }
+            }
+        }
+
         withState {
             observeEpisodeDetails(ObserveEpisodeDetails.Params(it.episodeId))
             observeEpisodeWatches(ObserveEpisodeWatches.Params(it.episodeId))
@@ -71,19 +86,23 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         refresh()
     }
 
+    fun submitAction(action: EpisodeDetailsAction) {
+        viewModelScope.launch { pendingActions.send(action) }
+    }
+
     private fun refresh() = withState {
         updateEpisodeDetails(UpdateEpisodeDetails.Params(it.episodeId, true))
     }
 
-    fun removeWatchEntry(entry: EpisodeWatchEntry) {
-        removeEpisodeWatch(RemoveEpisodeWatch.Params(entry.id))
+    private fun removeWatchEntry(action: RemoveEpisodeWatchAction) {
+        removeEpisodeWatch(RemoveEpisodeWatch.Params(action.watchId))
     }
 
-    fun markWatched() = withState {
+    private fun markWatched() = withState {
         addEpisodeWatch(AddEpisodeWatch.Params(it.episodeId, OffsetDateTime.now()))
     }
 
-    fun markUnwatched() = withState {
+    private fun markUnwatched() = withState {
         removeEpisodeWatches(RemoveEpisodeWatches.Params(it.episodeId))
     }
 
