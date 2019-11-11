@@ -200,28 +200,26 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
         requireActivity().onBackPressedDispatcher.addCallback(this, backPressedCallback)
     }
 
-    override fun invalidate(binding: FragmentShowDetailsBinding) {
-        withState(viewModel) { state ->
-            if (binding.state == null) {
-                // First time we've had state, start any postponed transitions
-                scheduleStartPostponedTransitions()
-            }
-            binding.state = state
-            controller.state = state
+    override fun invalidate(binding: FragmentShowDetailsBinding) = withState(viewModel) { state ->
+        if (binding.state == null) {
+            // First time we've had state, start any postponed transitions
+            scheduleStartPostponedTransitions()
+        }
+        binding.state = state
+        controller.state = state
 
-            if (state.focusedSeasonId != null) {
-                binding.detailsRv.scrollToItemId(generateSeasonItemId(state.focusedSeasonId))
-            }
+        if (state.focusedSeasonId != null) {
+            binding.detailsRv.scrollToItemId(generateSeasonItemId(state.focusedSeasonId))
+        }
 
-            if (state.expandedEpisodeId != null) {
-                childFragmentManager.commitNow {
-                    setTransition(FragmentTransaction.TRANSIT_NONE)
-                    replace(R.id.details_expanded_pane,
-                            EpisodeDetailsFragment.create(state.expandedEpisodeId))
-                }
-                binding.detailsExpandedPane.doOnNextLayout {
-                    binding.detailsRv.expandItem(generateEpisodeItemId(state.expandedEpisodeId))
-                }
+        if (state.expandedEpisodeId != null) {
+            childFragmentManager.commitNow {
+                setTransition(FragmentTransaction.TRANSIT_NONE)
+                replace(R.id.details_expanded_pane,
+                        EpisodeDetailsFragment.create(state.expandedEpisodeId))
+            }
+            binding.detailsExpandedPane.doOnNextLayout {
+                binding.detailsRv.expandItem(generateEpisodeItemId(state.expandedEpisodeId))
             }
         }
     }

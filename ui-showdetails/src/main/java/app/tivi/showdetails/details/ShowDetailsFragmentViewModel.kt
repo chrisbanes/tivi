@@ -106,17 +106,15 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         }
 
         viewModelScope.launch {
-            for (action in pendingActions) {
-                when (action) {
-                    is RefreshAction -> refresh(true)
-                    FollowShowToggleAction -> onToggleMyShowsButtonClicked()
-                    is MarkSeasonWatchedAction -> onMarkSeasonWatched(action)
-                    is MarkSeasonUnwatchedAction -> onMarkSeasonUnwatched(action)
-                    is ChangeSeasonFollowedAction -> onChangeSeasonFollowState(action)
-                    is ChangeSeasonExpandedAction -> onChangeSeasonExpandState(action)
-                    is UnfollowPreviousSeasonsFollowedAction -> onUnfollowPreviousSeasonsFollowState(action)
-                    is OpenEpisodeDetails -> openEpisodeDetails(action)
-                }
+            for (action in pendingActions) when (action) {
+                is RefreshAction -> refresh(true)
+                FollowShowToggleAction -> onToggleMyShowsButtonClicked()
+                is MarkSeasonWatchedAction -> onMarkSeasonWatched(action)
+                is MarkSeasonUnwatchedAction -> onMarkSeasonUnwatched(action)
+                is ChangeSeasonFollowedAction -> onChangeSeasonFollowState(action)
+                is ChangeSeasonExpandedAction -> onChangeSeasonExpandState(action)
+                is UnfollowPreviousSeasonsFollowedAction -> onUnfollowPreviousSeasonsFollowState(action)
+                is OpenEpisodeDetails -> openEpisodeDetails(action)
             }
         }
 

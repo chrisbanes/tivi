@@ -68,13 +68,11 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         }
 
         viewModelScope.launch {
-            for (action in pendingActions) {
-                when (action) {
-                    RefreshAction -> refresh()
-                    AddEpisodeWatchAction -> markWatched()
-                    RemoveAllEpisodeWatchesAction -> markUnwatched()
-                    is RemoveEpisodeWatchAction -> removeWatchEntry(action)
-                }
+            for (action in pendingActions) when (action) {
+                RefreshAction -> refresh()
+                AddEpisodeWatchAction -> markWatched()
+                RemoveAllEpisodeWatchesAction -> markUnwatched()
+                is RemoveEpisodeWatchAction -> removeWatchEntry(action)
             }
         }
 
