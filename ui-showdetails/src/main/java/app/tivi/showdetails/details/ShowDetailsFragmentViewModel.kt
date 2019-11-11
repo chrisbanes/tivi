@@ -168,11 +168,18 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         changeSeasonWatchedStatus(Params(action.seasonId, Action.UNWATCH))
     }
 
-    private fun onChangeSeasonExpandState(action: ChangeSeasonExpandedAction) = setState {
+    private fun onChangeSeasonExpandState(action: ChangeSeasonExpandedAction) {
         if (action.expanded) {
-            copy(expandedSeasonIds = expandedSeasonIds.plus(action.seasonId))
+            // Since focusedSeasonId is a transient piece of state, we run the reducer twice.
+            // First with our 'event', and second clearing the 'event'.
+            setState {
+                copy(focusedSeasonId = action.seasonId, expandedSeasonIds = expandedSeasonIds + action.seasonId)
+            }
+            setState { copy(focusedSeasonId = null) }
         } else {
-            copy(expandedSeasonIds = expandedSeasonIds.minus(action.seasonId))
+            setState {
+                copy(expandedSeasonIds = expandedSeasonIds - action.seasonId)
+            }
         }
     }
 

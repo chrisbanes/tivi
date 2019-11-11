@@ -30,6 +30,7 @@ import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.RecyclerView
 import app.tivi.TiviFragmentWithBinding
 import app.tivi.common.epoxy.syncSpanSizes
 import app.tivi.data.entities.ActionDate
@@ -138,16 +139,6 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
 
             override fun onExpandSeason(season: Season, itemView: View) {
                 viewModel.submitAction(ChangeSeasonExpandedAction(season.id, true))
-
-                val scroller = TiviLinearSmoothScroller(
-                        itemView.context,
-                        snapPreference = LinearSmoothScroller.SNAP_TO_START,
-                        scrollMsPerInch = 60f
-                )
-                scroller.targetPosition = binding.detailsRv.getChildAdapterPosition(itemView)
-                scroller.targetOffset = itemView.height / 3
-
-                binding.detailsRv.layoutManager?.startSmoothScroll(scroller)
             }
 
             override fun onCollapseSeason(season: Season, itemView: View) {
@@ -217,19 +208,36 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
     }
 
     override fun invalidate(binding: FragmentShowDetailsBinding) {
-        withState(viewModel) {
+        withState(viewModel) { state ->
             if (binding.state == null) {
                 // First time we've had state, start any postponed transitions
                 scheduleStartPostponedTransitions()
             }
+            binding.state = state
+            controller.state = state
 
-            binding.state = it
-            controller.state = it
+            if (state.focusedSeasonId != null) {
+                binding.detailsRv.scrollToItemId(generateSeasonItemId(state.focusedSeasonId))
+            }
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         controller.clear()
+    }
+
+    private fun RecyclerView.scrollToItemId(itemId: Long) {
+        val vh = findViewHolderForItemId(itemId)
+        if (vh != null) {
+            val scroller = TiviLinearSmoothScroller(
+                    requireContext(),
+                    snapPreference = LinearSmoothScroller.SNAP_TO_START,
+                    scrollMsPerInch = 60f
+            )
+            scroller.targetPosition = vh.adapterPosition
+            scroller.targetOffset = vh.itemView.height / 3
+            layoutManager?.startSmoothScroll(scroller)
+        }
     }
 }

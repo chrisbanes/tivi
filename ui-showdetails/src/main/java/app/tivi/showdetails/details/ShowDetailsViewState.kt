@@ -37,6 +37,7 @@ data class ShowDetailsViewState(
     val viewStats: Async<FollowedShowsWatchStats> = Uninitialized,
     val seasons: Async<List<SeasonWithEpisodesAndWatches>> = Uninitialized,
     val expandedSeasonIds: Set<Long> = emptySet(),
+    val focusedSeasonId: Long? = null,
     val refreshing: Boolean = false
 ) : MvRxState {
     constructor(args: ShowDetailsFragment.Arguments) : this(args.showId)

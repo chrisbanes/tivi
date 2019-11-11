@@ -225,7 +225,7 @@ class ShowDetailsEpoxyController @Inject constructor(
                     val expanded = expandedSeasonIds.contains(season.season.id)
 
                     detailsSeason {
-                        id("season_${season.season.id}")
+                        id(generateSeasonItemId(season.season.id))
                         season(season)
                         spanSizeOverride(TotalSpanOverride)
                         textCreator(textCreator)
