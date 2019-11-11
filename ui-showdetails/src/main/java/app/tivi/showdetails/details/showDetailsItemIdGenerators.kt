@@ -19,3 +19,4 @@ package app.tivi.showdetails.details
 import com.airbnb.epoxy.IdUtils
 
 internal fun generateSeasonItemId(seasonId: Long): Long = IdUtils.hashString64Bit("season_$seasonId")
+internal fun generateEpisodeItemId(episodeId: Long): Long = IdUtils.hashString64Bit("episode_$episodeId")

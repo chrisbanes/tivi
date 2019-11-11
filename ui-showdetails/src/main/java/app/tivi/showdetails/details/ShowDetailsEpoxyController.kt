@@ -43,7 +43,6 @@ import com.airbnb.epoxy.Carousel
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.EpoxyModelGroup
-import com.airbnb.epoxy.IdUtils
 import com.airbnb.mvrx.Async
 import com.airbnb.mvrx.Success
 import javax.inject.Inject
@@ -251,15 +250,12 @@ class ShowDetailsEpoxyController @Inject constructor(
                         season.episodes.forEach { episodeWithWatches ->
                             detailsSeasonEpisode {
                                 val episode = episodeWithWatches.episode!!
-                                val itemId = IdUtils.hashString64Bit("episode_${episode.id}")
-                                id(itemId)
+                                id(generateEpisodeItemId(episode.id))
                                 textCreator(textCreator)
                                 episodeWithWatches(episodeWithWatches)
                                 expanded(true)
                                 spanSizeOverride(TotalSpanOverride)
-                                clickListener { view ->
-                                    callbacks?.onEpisodeClicked(episode, view)
-                                }
+                                clickListener { view -> callbacks?.onEpisodeClicked(episode, view) }
                             }
                         }
                     }

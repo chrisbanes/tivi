@@ -96,7 +96,7 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
         }
 
         binding.detailsToolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
+            findNavController().navigateUp() || requireActivity().onNavigateUp()
         }
 
         binding.detailsToolbar.setOnMenuItemClickListener {
@@ -119,14 +119,7 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
             }
 
             override fun onEpisodeClicked(episode: Episode, itemView: View) {
-                childFragmentManager.commitNow {
-                    setTransition(FragmentTransaction.TRANSIT_NONE)
-                    replace(R.id.details_expanded_pane, EpisodeDetailsFragment.create(episode.id))
-                }
-                binding.detailsExpandedPane.doOnNextLayout {
-                    val itemId = binding.detailsRv.getChildItemId(itemView)
-                    binding.detailsRv.expandItem(itemId)
-                }
+                viewModel.submitAction(OpenEpisodeDetails(episode.id))
             }
 
             override fun onMarkSeasonUnwatched(season: Season) {
@@ -218,6 +211,17 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
 
             if (state.focusedSeasonId != null) {
                 binding.detailsRv.scrollToItemId(generateSeasonItemId(state.focusedSeasonId))
+            }
+
+            if (state.expandedEpisodeId != null) {
+                childFragmentManager.commitNow {
+                    setTransition(FragmentTransaction.TRANSIT_NONE)
+                    replace(R.id.details_expanded_pane,
+                            EpisodeDetailsFragment.create(state.expandedEpisodeId))
+                }
+                binding.detailsExpandedPane.doOnNextLayout {
+                    binding.detailsRv.expandItem(generateEpisodeItemId(state.expandedEpisodeId))
+                }
             }
         }
     }

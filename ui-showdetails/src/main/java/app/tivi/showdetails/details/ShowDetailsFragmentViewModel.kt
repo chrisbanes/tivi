@@ -116,6 +116,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
                     is ChangeSeasonFollowedAction -> onChangeSeasonFollowState(action)
                     is ChangeSeasonExpandedAction -> onChangeSeasonExpandState(action)
                     is UnfollowPreviousSeasonsFollowedAction -> onUnfollowPreviousSeasonsFollowState(action)
+                    is OpenEpisodeDetails -> openEpisodeDetails(action)
                 }
             }
         }
@@ -158,6 +159,11 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
                 loadingState.collectFrom(it)
             }
         }
+    }
+
+    private fun openEpisodeDetails(action: OpenEpisodeDetails) {
+        setState { copy(expandedEpisodeId = action.episodeId) }
+        setState { copy(expandedEpisodeId = null) }
     }
 
     private fun onMarkSeasonWatched(action: MarkSeasonWatchedAction) {
