@@ -31,13 +31,19 @@ jobs:
       - name: Generate cache key
         run: ./checksum.sh checksum.txt
         
-# Cache is disabled currently since our cache is larger than the GitHub limit
-#      - uses: actions/cache@v1
-#        with:
-#          path: ~/.gradle/caches
-#          key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
-#          restore-keys: |
-#            ${{ runner.os }}-gradle-
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches/modules-2
+          key: ${{ runner.os }}-gradlemodules-${{ hashFiles('checksum.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-gradlemodules-
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches/jars-3
+          key: ${{ runner.os }}-gradlejars-${{ hashFiles('checksum.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-gradlejars-
 
       - name: Generate build number
         id: buildnumber
