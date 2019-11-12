@@ -8,7 +8,4 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Check app and dependencies
-        uses: msfjarvis/setup-android@1.0
-        with:
-          entrypoint: ./gradlew
-          args: bundleDebug assembleDebug
+        run: ./gradlew bundleDebug assembleDebug
