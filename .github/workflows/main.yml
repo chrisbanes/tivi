@@ -3,12 +3,18 @@ name: CI
 on: [push]
 
 jobs:
-  build-debug:
+  build:
     runs-on: ubuntu-latest
     env:
       JAVA_TOOL_OPTIONS: -Xmx4096m
       GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false -Dkotlin.compiler.execution.strategy=in-process
-      TERM: dumb
+      ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
+      ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY }}
+      ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID }}
+      ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_SECRET: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_SECRET }}
+      ORG_GRADLE_PROJECT_TIVI_RELEASE_KEYSTORE_PWD: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_RELEASE_KEYSTORE_PWD }}
+      ORG_GRADLE_PROJECT_TIVI_RELEASE_KEY_PWD: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_RELEASE_KEY_PWD }}
+      ORG_GRADLE_PROJECT_TIVI_PLAY_PUBLISHER_ACCOUNT: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_PLAY_PUBLISHER_ACCOUNT }}
     steps:
       - uses: actions/checkout@v1
         with:
@@ -17,6 +23,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+      - name: Decrypt secrets
+        run: release/signing-setup.sh $ENCRYPT_KEY
+        env:
+          ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
       - name: Generate cache key
         run: ./checksum.sh checksum.txt
       - uses: actions/cache@v1
@@ -25,43 +35,25 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
+      - name: Run Spotless Check (fail fast)
+        run: ./gradlew spotlessCheck --scan
       - name: Build debug
         run: ./gradlew bundleDebug assembleDebug --scan
+      - name: Run tests
+        run: ./gradlew testDebug --scan
+      - name: Run Lint
+        run: ./gradlew app:lintDebug dependencyUpdates --scan
+      - name: Build release
+        run: ./gradlew bundleRelease assembleRelease --scan
+
+      - name: Clean secrets
+        run: release/signing-cleanup.sh
       - name: Upload build outputs
         uses: actions/upload-artifact@v1
         with:
           name: build-outputs
           path: app/build/outputs
-
-  check:
-    needs: build-debug
-    runs-on: ubuntu-latest
-    env:
-      JAVA_TOOL_OPTIONS: -Xmx4096m
-      GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false -Dkotlin.compiler.execution.strategy=in-process
-      TERM: dumb
-    steps:
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
-      - name: set up JDK 1.8
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.8
-      - name: Generate cache key
-        run: ./checksum.sh checksum.txt
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Run Spotless
-        run: ./gradlew spotlessCheck --scan
-      - name: Run tests
-        run: ./gradlew testDebug --scan
-      - name: Run Lint
-        run: ./gradlew app:lintDebug dependencyUpdates --scan
       - name: Upload build reports
         uses: actions/upload-artifact@v1
         with:
