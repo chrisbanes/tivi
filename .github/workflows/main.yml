@@ -7,5 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - name: Generate cache key
+        run: ./checksum.sh checksum.txt
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: Check app and dependencies
         run: ./gradlew bundleDebug assembleDebug
