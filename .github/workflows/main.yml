@@ -46,6 +46,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradlejars-
 
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches/build-cache-1
+          key: ${{ runner.os }}-gradlebuildcache-${{ hashFiles('checksum.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-gradlebuildcache-
+
       - name: Generate build number
         id: buildnumber
         uses: einaregilsson/build-number@v1
