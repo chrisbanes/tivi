@@ -35,17 +35,26 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - name: Generate build number
+        id: buildnumber
+        uses: einaregilsson/build-number@v1
+        with:
+          token: ${{secrets.github_token}}
 
       - name: Run Spotless Check (fail fast)
         run: ./gradlew spotlessCheck --scan
       - name: Build debug
-        run: ./gradlew bundleDebug assembleDebug --scan
+        run: ./gradlew bundleDebug assembleDebug -Ptivi.versioncode=$BUILD_NUMBER --scan
       - name: Run tests
         run: ./gradlew testDebug --scan
       - name: Run Lint
         run: ./gradlew app:lintDebug dependencyUpdates --scan
       - name: Build release
-        run: ./gradlew bundleRelease assembleRelease --scan
+        run: ./gradlew bundleRelease assembleRelease -Ptivi.versioncode=$BUILD_NUMBER --scan
+
+      - name: Publish to Play Store
+        if: github.ref == 'refs/heads/master'
+        run: ./gradlew publishRelease -Ptivi.versioncode=$BUILD_NUMBER --scan
 
       - name: Clean secrets
         run: release/signing-cleanup.sh
