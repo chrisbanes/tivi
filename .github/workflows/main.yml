@@ -60,27 +60,34 @@ jobs:
         run: ./gradlew publishRelease -Ptivi.versioncode=$BUILD_NUMBER --scan
 
       - name: Clean secrets
+        if: always()
         run: release/signing-cleanup.sh
+
       - name: Upload build outputs
+        if: always()
         uses: actions/upload-artifact@v1
         with:
           name: build-outputs
           path: app/build/outputs
       - name: Upload build reports
+        if: always()
         uses: actions/upload-artifact@v1
         with:
           name: build-reports
           path: app/build/reports
       - name: Upload dependency updates report
+        if: always()
         uses: actions/upload-artifact@v1
         with:
           name: dependency-updates
           path: build/dependencyUpdates
       - name: Copy test results
+        if: always()
         run: |
           mkdir -p junit
           find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} junit/ \;
       - name: Upload test results
+        if: always()
         uses: actions/upload-artifact@v1
         with:
           name: junit-results
