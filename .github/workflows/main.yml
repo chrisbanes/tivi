@@ -6,7 +6,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      JAVA_TOOL_OPTIONS: -Xmx4096m
+      JAVA_TOOL_OPTIONS: -Xmx5120m
       GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false -Dkotlin.compiler.execution.strategy=in-process
       TERM: dumb
       ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
@@ -28,9 +28,9 @@ jobs:
         run: release/signing-setup.sh $ENCRYPT_KEY
         env:
           ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
+
       - name: Generate cache key
         run: ./checksum.sh checksum.txt
-        
 
       - uses: actions/cache@v1
         with:
@@ -38,6 +38,7 @@ jobs:
           key: ${{ runner.os }}-gradlemodules-${{ hashFiles('checksum.txt') }}
           restore-keys: |
             ${{ runner.os }}-gradlemodules-
+
       - uses: actions/cache@v1
         with:
           path: ~/.gradle/caches/jars-3
@@ -51,14 +52,18 @@ jobs:
         with:
           token: ${{secrets.github_token}}
 
-      - name: Run Spotless Check (fail fast)
+      - name: Run Spotless Check
         run: ./gradlew spotlessCheck --scan
+
       - name: Build debug
         run: ./gradlew bundleDebug assembleDebug -Ptivi.versioncode=$BUILD_NUMBER --scan
+
       - name: Run tests
         run: ./gradlew testDebug --scan
+
       - name: Run Lint
         run: ./gradlew app:lintDebug dependencyUpdates --scan
+
       - name: Build release
         run: ./gradlew bundleRelease assembleRelease -Ptivi.versioncode=$BUILD_NUMBER --scan
 
@@ -76,18 +81,20 @@ jobs:
         with:
           name: build-outputs
           path: app/build/outputs
+
       - name: Upload build reports
         if: always()
         uses: actions/upload-artifact@v1
         with:
           name: build-reports
           path: app/build/reports
+
       - name: Upload dependency updates report
-        if: always()
         uses: actions/upload-artifact@v1
         with:
           name: dependency-updates
           path: build/dependencyUpdates
+
       - name: Copy test results
         if: always()
         run: |
