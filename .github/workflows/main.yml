@@ -6,7 +6,7 @@ jobs:
   build-debug:
     runs-on: ubuntu-latest
     env:
-      JAVA_TOOL_OPTIONS: -Xmx2048m
+      JAVA_TOOL_OPTIONS: -Xmx4096m
       GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false -Dkotlin.compiler.execution.strategy=in-process
       TERM: dumb
     steps:
@@ -27,7 +27,8 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Build debug
         run: ./gradlew bundleDebug assembleDebug --scan
-      - uses: actions/upload-artifact@v1
+      - name: Upload build outputs
+        uses: actions/upload-artifact@v1
         with:
           name: build-outputs
           path: app/build/outputs
@@ -36,7 +37,7 @@ jobs:
     needs: build-debug
     runs-on: ubuntu-latest
     env:
-      JAVA_TOOL_OPTIONS: -Xmx2048m
+      JAVA_TOOL_OPTIONS: -Xmx4096m
       GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false -Dkotlin.compiler.execution.strategy=in-process
       TERM: dumb
     steps:
@@ -61,11 +62,13 @@ jobs:
         run: ./gradlew testDebug --scan
       - name: Run Lint
         run: ./gradlew app:lintDebug dependencyUpdates --scan
-      - uses: actions/upload-artifact@v1
+      - name: Upload build reports
+        uses: actions/upload-artifact@v1
         with:
           name: build-reports
           path: app/build/reports
-      - uses: actions/upload-artifact@v1
+      - name: Upload dependency updates report
+        uses: actions/upload-artifact@v1
         with:
           name: dependency-updates
           path: build/dependencyUpdates
@@ -73,7 +76,8 @@ jobs:
         run: |
           mkdir -p junit
           find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} junit/ \;
-      - uses: actions/upload-artifact@v1
+      - name: Upload test results
+        uses: actions/upload-artifact@v1
         with:
           name: junit-results
           path: junit
