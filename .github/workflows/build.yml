@@ -57,7 +57,7 @@ jobs:
         id: buildnumber
         uses: einaregilsson/build-number@v1
         with:
-          token: ${{secrets.github_token}}
+          token: ${{secrets.GITHUB_TOKEN}}
 
       - name: Run Spotless Check
         run: ./gradlew spotlessCheck --scan
