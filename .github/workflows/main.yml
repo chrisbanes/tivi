@@ -72,6 +72,7 @@ jobs:
         run: ./gradlew app:lintDebug dependencyUpdates --scan
 
       - name: Build release
+        if: github.ref != 'refs/heads/master'
         run: ./gradlew bundleRelease assembleRelease -Ptivi.versioncode=$BUILD_NUMBER --scan
 
       - name: Publish to Play Store
