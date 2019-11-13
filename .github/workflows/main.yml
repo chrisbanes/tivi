@@ -1,0 +1,115 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      JAVA_TOOL_OPTIONS: -Xmx5120m
+      GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false -Dkotlin.compiler.execution.strategy=in-process
+      TERM: dumb
+      ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
+      ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY }}
+      ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_ID }}
+      ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_SECRET: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TRAKT_CLIENT_SECRET }}
+      ORG_GRADLE_PROJECT_TIVI_RELEASE_KEYSTORE_PWD: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_RELEASE_KEYSTORE_PWD }}
+      ORG_GRADLE_PROJECT_TIVI_RELEASE_KEY_PWD: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_RELEASE_KEY_PWD }}
+      ORG_GRADLE_PROJECT_TIVI_PLAY_PUBLISHER_ACCOUNT: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_PLAY_PUBLISHER_ACCOUNT }}
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Decrypt secrets
+        run: release/signing-setup.sh $ENCRYPT_KEY
+        env:
+          ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
+
+      - name: Generate cache key
+        run: ./checksum.sh checksum.txt
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches/modules-2
+          key: ${{ runner.os }}-gradlemodules-${{ hashFiles('checksum.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-gradlemodules-
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches/jars-3
+          key: ${{ runner.os }}-gradlejars-${{ hashFiles('checksum.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-gradlejars-
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches/build-cache-1
+          key: ${{ runner.os }}-gradlebuildcache-${{ hashFiles('checksum.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-gradlebuildcache-
+
+      - name: Generate build number
+        id: buildnumber
+        uses: einaregilsson/build-number@v1
+        with:
+          token: ${{secrets.github_token}}
+
+      - name: Run Spotless Check
+        run: ./gradlew spotlessCheck --scan
+
+      - name: Build debug
+        run: ./gradlew bundleDebug assembleDebug -Ptivi.versioncode=$BUILD_NUMBER --scan
+
+      - name: Run tests
+        run: ./gradlew testDebug --scan
+
+      - name: Run Lint
+        run: ./gradlew app:lintDebug dependencyUpdates --scan
+
+      - name: Build release
+        run: ./gradlew bundleRelease assembleRelease -Ptivi.versioncode=$BUILD_NUMBER --scan
+
+      - name: Publish to Play Store
+        if: github.ref == 'refs/heads/master'
+        run: ./gradlew publishRelease -Ptivi.versioncode=$BUILD_NUMBER --scan
+
+      - name: Clean secrets
+        if: always()
+        run: release/signing-cleanup.sh
+
+      - name: Upload build outputs
+        if: always()
+        uses: actions/upload-artifact@v1
+        with:
+          name: build-outputs
+          path: app/build/outputs
+
+      - name: Upload build reports
+        if: always()
+        uses: actions/upload-artifact@v1
+        with:
+          name: build-reports
+          path: app/build/reports
+
+      - name: Upload dependency updates report
+        uses: actions/upload-artifact@v1
+        with:
+          name: dependency-updates
+          path: build/dependencyUpdates
+
+      - name: Copy test results
+        if: always()
+        run: |
+          mkdir -p junit
+          find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} junit/ \;
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v1
+        with:
+          name: junit-results
+          path: junit
