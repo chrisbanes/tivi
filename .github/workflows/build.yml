@@ -79,6 +79,16 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: ./gradlew publishRelease -Ptivi.versioncode=$BUILD_NUMBER --scan
 
+      - name: Create release for tags
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          draft: true
+          files: |
+            app/build/outputs/apk/release/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Clean secrets
         if: always()
         run: release/signing-cleanup.sh
