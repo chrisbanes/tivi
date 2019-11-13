@@ -62,6 +62,7 @@ allprojects {
         mavenCentral()
         jcenter()
         maven { url 'https://jitpack.io' }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
         mavenLocal()
     }
 }
@@ -84,6 +85,8 @@ subprojects {
             // Enable experimental coroutines APIs, including Flow
             freeCompilerArgs += "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"
             freeCompilerArgs += "-Xuse-experimental=kotlinx.coroutines.FlowPreview"
+            freeCompilerArgs += "-Xuse-experimental=kotlinx.coroutines.FlowPreview"
+            freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
 
             // Set JVM target to 1.8
             jvmTarget = "1.8"

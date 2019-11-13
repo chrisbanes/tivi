@@ -21,6 +21,7 @@ import androidx.databinding.BindingAdapter
 import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TmdbImageEntity
+import coil.annotation.ExperimentalCoil
 import coil.api.loadAny
 import coil.transform.RoundedCornersTransformation
 import coil.transform.Transformation
@@ -77,6 +78,7 @@ fun ImageView.loadLogo(
     "imageCornerRadius",
     requireAll = false
 )
+@UseExperimental(ExperimentalCoil::class)
 fun ImageView.loadImage(
     oldImage: TmdbImageEntity?,
     oldSaturateOnLoad: Boolean?,
@@ -90,18 +92,14 @@ fun ImageView.loadImage(
         oldCornerRadius == cornerRadius) return
 
     loadAny(image) {
-        if (saturateOnLoad == null || saturateOnLoad == true) {
-            val saturatingTarget = SaturatingImageViewTarget(this@loadImage)
-            target(saturatingTarget)
-            listener(saturatingTarget)
-        }
+        transition(SaturatingTransformation())
 
         val transformations = ArrayList<Transformation>()
         if (cornerRadius > 0) {
             transformations += RoundedCornersTransformation(cornerRadius)
         }
         if (image?.type == ImageType.LOGO) {
-            transformations += TrimTransparentEdgesTransformation()
+            transformations += TrimTransparentEdgesTransformation
         }
         transformations(transformations)
     }
