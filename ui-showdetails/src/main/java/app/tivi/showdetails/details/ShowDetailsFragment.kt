@@ -29,8 +29,6 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearSmoothScroller
-import androidx.recyclerview.widget.RecyclerView
 import app.tivi.TiviFragmentWithBinding
 import app.tivi.common.epoxy.syncSpanSizes
 import app.tivi.data.entities.ActionDate
@@ -38,13 +36,14 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.episodedetails.EpisodeDetailsFragment
+import app.tivi.extensions.doOnLayouts
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.extensions.scheduleStartPostponedTransitions
+import app.tivi.extensions.scrollToItemId
 import app.tivi.extensions.sharedElementHelperOf
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.showdetails.details.databinding.FragmentShowDetailsBinding
-import app.tivi.ui.recyclerview.TiviLinearSmoothScroller
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
@@ -109,6 +108,44 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
                     true
                 }
                 else -> false
+            }
+        }
+
+        viewModel.selectSubscribe(
+                viewLifecycleOwner,
+                ShowDetailsViewState::focusedSeason,
+                deliveryMode = uniqueOnly()
+        ) { focusedSeason ->
+            if (focusedSeason != null) {
+                val itemId = generateSeasonItemId(focusedSeason.seasonId)
+                val handled = binding.detailsRv.scrollToItemId(itemId, focusedSeason.animatedScroll)
+
+                if (!handled) {
+                    binding.detailsRv.doOnLayouts {
+                        !it.scrollToItemId(itemId, focusedSeason.animatedScroll)
+                    }
+                }
+
+                viewModel.clearFocusedSeason()
+            }
+        }
+
+        viewModel.selectSubscribe(
+                viewLifecycleOwner,
+                ShowDetailsViewState::expandedEpisodeId,
+                deliveryMode = uniqueOnly()
+        ) { expandedEpisode ->
+            if (expandedEpisode != null) {
+                childFragmentManager.commitNow {
+                    setTransition(FragmentTransaction.TRANSIT_NONE)
+                    replace(R.id.details_expanded_pane,
+                            EpisodeDetailsFragment.create(expandedEpisode.episodeId))
+                }
+                binding.detailsExpandedPane.doOnNextLayout {
+                    binding.detailsRv.expandItem(
+                            generateEpisodeItemId(expandedEpisode.episodeId))
+                }
+                viewModel.clearExpandedEpisode()
             }
         }
 
@@ -210,42 +247,10 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
         }
         binding.state = state
         controller.state = state
-
-        val seasonsLoaded = state.seasons()?.isNotEmpty() == true
-        if (seasonsLoaded && state.focusedSeasonId != null) {
-            binding.detailsRv.smoothScrollToItemId(generateSeasonItemId(state.focusedSeasonId))
-            viewModel.clearFocusedSeason()
-        }
-
-        if (state.expandedEpisodeId != null) {
-            childFragmentManager.commitNow {
-                setTransition(FragmentTransaction.TRANSIT_NONE)
-                replace(R.id.details_expanded_pane,
-                        EpisodeDetailsFragment.create(state.expandedEpisodeId))
-            }
-            binding.detailsExpandedPane.doOnNextLayout {
-                binding.detailsRv.expandItem(generateEpisodeItemId(state.expandedEpisodeId))
-            }
-            viewModel.clearExpandedEpisode()
-        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         controller.clear()
-    }
-
-    private fun RecyclerView.smoothScrollToItemId(itemId: Long) {
-        val vh = findViewHolderForItemId(itemId)
-        if (vh != null) {
-            val scroller = TiviLinearSmoothScroller(
-                    requireContext(),
-                    snapPreference = LinearSmoothScroller.SNAP_TO_START,
-                    scrollMsPerInch = 60f
-            )
-            scroller.targetPosition = vh.adapterPosition
-            scroller.targetOffset = vh.itemView.height / 3
-            layoutManager?.startSmoothScroll(scroller)
-        }
     }
 }

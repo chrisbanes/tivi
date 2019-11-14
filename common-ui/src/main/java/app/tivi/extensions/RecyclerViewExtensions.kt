@@ -17,10 +17,38 @@
 package app.tivi.extensions
 
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
+import app.tivi.ui.recyclerview.TiviLinearSmoothScroller
 
 fun <VH : RecyclerView.ViewHolder> RecyclerView.Adapter<VH>.createAndBind(parent: ViewGroup, position: Int): VH {
     val vh = onCreateViewHolder(parent, getItemViewType(position))
     onBindViewHolder(vh, position)
     return vh
+}
+
+fun RecyclerView.scrollToItemId(itemId: Long, animatedScroll: Boolean = false): Boolean {
+    val vh = findViewHolderForItemId(itemId)
+    if (vh != null) {
+        if (animatedScroll) {
+            smoothScrollToViewHolder(vh)
+        } else {
+            scrollToPosition(vh.adapterPosition)
+        }
+        return true
+    }
+    return false
+}
+
+fun RecyclerView.smoothScrollToViewHolder(
+    viewHolder: RecyclerView.ViewHolder
+) {
+    val scroller = TiviLinearSmoothScroller(
+            context,
+            snapPreference = LinearSmoothScroller.SNAP_TO_START,
+            scrollMsPerInch = 60f
+    )
+    scroller.targetPosition = viewHolder.adapterPosition
+    scroller.targetOffset = viewHolder.itemView.height / 3
+    layoutManager?.startSmoothScroll(scroller)
 }

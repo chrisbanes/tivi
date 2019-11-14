@@ -37,12 +37,15 @@ data class ShowDetailsViewState(
     val viewStats: Async<FollowedShowsWatchStats> = Uninitialized,
     val seasons: Async<List<SeasonWithEpisodesAndWatches>> = Uninitialized,
     val expandedSeasonIds: Set<Long> = emptySet(),
-    val focusedSeasonId: Long? = null,
-    val expandedEpisodeId: Long? = null,
+    val focusedSeason: PendingFocusSeasonUiEffect? = null,
+    val expandedEpisodeId: PendingOpenEpisodeUiEffect? = null,
     val refreshing: Boolean = false
 ) : MvRxState {
     internal constructor(args: ShowDetailsFragment.Arguments) : this(
             showId = args.showId,
-            expandedEpisodeId = args.episodeToExpand
+            expandedEpisodeId = args.episodeToExpand?.let(::PendingOpenEpisodeUiEffect)
     )
 }
+
+data class PendingFocusSeasonUiEffect(val seasonId: Long, val animatedScroll: Boolean)
+data class PendingOpenEpisodeUiEffect(val episodeId: Long)

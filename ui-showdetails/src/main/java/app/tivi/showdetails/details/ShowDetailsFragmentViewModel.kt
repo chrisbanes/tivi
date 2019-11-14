@@ -161,7 +161,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     private fun openEpisodeDetails(action: OpenEpisodeDetails) {
-        setState { copy(expandedEpisodeId = action.episodeId) }
+        setState { copy(expandedEpisodeId = PendingOpenEpisodeUiEffect(action.episodeId)) }
     }
 
     fun clearExpandedEpisode() {
@@ -178,10 +178,9 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
 
     private fun onChangeSeasonExpandState(action: ChangeSeasonExpandedAction) {
         if (action.expanded) {
-            // Since focusedSeasonId is a transient piece of state, we run the reducer twice.
-            // First with our 'event', and second clearing the 'event'.
             setState {
-                copy(focusedSeasonId = action.seasonId, expandedSeasonIds = expandedSeasonIds + action.seasonId)
+                copy(focusedSeason = PendingFocusSeasonUiEffect(action.seasonId, true),
+                        expandedSeasonIds = expandedSeasonIds + action.seasonId)
             }
         } else {
             setState {
@@ -191,7 +190,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     fun clearFocusedSeason() {
-        setState { copy(focusedSeasonId = null) }
+        setState { copy(focusedSeason = null) }
     }
 
     private fun onChangeSeasonFollowState(action: ChangeSeasonFollowedAction) {

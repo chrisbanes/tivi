@@ -60,8 +60,9 @@ fun View.doOnAttach(f: (View) -> Unit) {
  * Allows easy listening to layout passing. Return [true] if you need the listener to keep being
  * attached.
  */
-inline fun View.doOnLayouts(crossinline action: (view: View) -> Boolean) {
+inline fun <V : View> V.doOnLayouts(crossinline action: (view: V) -> Boolean) {
     addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+        @Suppress("UNCHECKED_CAST")
         override fun onLayoutChange(
             view: View,
             left: Int,
@@ -73,7 +74,7 @@ inline fun View.doOnLayouts(crossinline action: (view: View) -> Boolean) {
             oldRight: Int,
             oldBottom: Int
         ) {
-            if (!action(view)) {
+            if (!action(view as V)) {
                 view.removeOnLayoutChangeListener(this)
             }
         }
