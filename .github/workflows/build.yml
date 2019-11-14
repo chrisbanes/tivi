@@ -6,8 +6,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      JAVA_TOOL_OPTIONS: -Xmx5120m
-      GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.incremental=false -Dkotlin.compiler.execution.strategy=in-process
       TERM: dumb
       ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TMDB_API_KEY }}
       ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_TVDB_API_KEY }}
@@ -31,6 +29,9 @@ jobs:
 
       - name: Generate cache key
         run: ./checksum.sh checksum.txt
+
+      - name: Copy CI gradle.properties
+        run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
 
       - uses: actions/cache@v1
         with:
