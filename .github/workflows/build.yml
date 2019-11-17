@@ -60,17 +60,8 @@ jobs:
         with:
           token: ${{secrets.GITHUB_TOKEN}}
 
-      - name: Run Spotless Check
-        run: ./gradlew spotlessCheck --scan
-
-      - name: Build debug
-        run: ./gradlew bundleDebug assembleDebug -Ptivi.versioncode=$BUILD_NUMBER --scan
-
-      - name: Run tests
-        run: ./gradlew testDebug --scan
-
-      - name: Run Lint
-        run: ./gradlew app:lintDebug dependencyUpdates --scan
+      - name: Build debug and check
+        run: ./gradlew spotlessCheck app:assembleDebug app:lintDebug testDebug dependencyUpdates -Ptivi.versioncode=$BUILD_NUMBER --scan
 
       - name: Build release
         if: github.ref != 'refs/heads/master'
