@@ -19,6 +19,7 @@ package app.tivi.common.epoxy
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.epoxy.EpoxyController
+import com.airbnb.epoxy.EpoxyControllerAdapter
 import com.airbnb.epoxy.EpoxyModel
 
 /** Add models to a CarouselModel_ by transforming a list of items into EpoxyModels.
@@ -42,4 +43,9 @@ fun RecyclerView.syncSpanSizes(controller: EpoxyController) {
             layout.spanSizeLookup = controller.spanSizeLookup
         }
     }
+}
+
+fun EpoxyControllerAdapter.findPositionOfItemId(itemId: Long): Int {
+    return (0 until itemCount).firstOrNull { getItemId(it) == itemId }
+            ?: RecyclerView.NO_POSITION
 }

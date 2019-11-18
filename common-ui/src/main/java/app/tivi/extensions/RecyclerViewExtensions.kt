@@ -40,15 +40,23 @@ fun RecyclerView.scrollToItemId(itemId: Long, animatedScroll: Boolean = false): 
     return false
 }
 
-fun RecyclerView.smoothScrollToViewHolder(
-    viewHolder: RecyclerView.ViewHolder
-) {
-    val scroller = TiviLinearSmoothScroller(
-            context,
-            snapPreference = LinearSmoothScroller.SNAP_TO_START,
-            scrollMsPerInch = 60f
-    )
-    scroller.targetPosition = viewHolder.adapterPosition
-    scroller.targetOffset = viewHolder.itemView.height / 3
-    layoutManager?.startSmoothScroll(scroller)
+fun RecyclerView.smoothScrollToViewHolder(vh: RecyclerView.ViewHolder) = TiviLinearSmoothScroller(
+        context,
+        snapPreference = LinearSmoothScroller.SNAP_TO_START,
+        scrollMsPerInch = 60f
+).apply {
+    targetPosition = vh.adapterPosition
+    targetOffset = vh.itemView.height / 3
+}.also {
+    layoutManager!!.startSmoothScroll(it)
+}
+
+fun RecyclerView.smoothScrollToItemPosition(position: Int) = TiviLinearSmoothScroller(
+        context,
+        snapPreference = LinearSmoothScroller.SNAP_TO_START,
+        scrollMsPerInch = 60f
+).apply {
+    targetPosition = position
+}.also {
+    layoutManager!!.startSmoothScroll(it)
 }

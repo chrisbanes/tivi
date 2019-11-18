@@ -24,12 +24,14 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.net.toUri
-import androidx.core.view.doOnNextLayout
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import app.tivi.TiviFragmentWithBinding
+import app.tivi.common.epoxy.findPositionOfItemId
 import app.tivi.common.epoxy.syncSpanSizes
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
@@ -41,6 +43,7 @@ import app.tivi.extensions.resolveThemeColor
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.scrollToItemId
 import app.tivi.extensions.sharedElementHelperOf
+import app.tivi.extensions.smoothScrollToItemPosition
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.showdetails.details.databinding.FragmentShowDetailsBinding
@@ -49,6 +52,8 @@ import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import dev.chrisbanes.insetter.doOnApplyWindowInsets
 import kotlinx.android.parcel.Parcelize
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import me.saket.inboxrecyclerview.dimming.TintPainter
 import me.saket.inboxrecyclerview.page.PageStateChangeCallbacks
 import javax.inject.Inject
@@ -132,19 +137,40 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
 
         viewModel.selectSubscribe(
                 viewLifecycleOwner,
-                ShowDetailsViewState::expandedEpisodeId,
+                ShowDetailsViewState::openEpisodeUiEffect,
                 deliveryMode = uniqueOnly()
         ) { expandedEpisode ->
-            if (expandedEpisode != null) {
+            if (expandedEpisode is ExecutableOpenEpisodeUiEffect) {
                 childFragmentManager.commitNow {
                     setTransition(FragmentTransaction.TRANSIT_NONE)
                     replace(R.id.details_expanded_pane,
                             EpisodeDetailsFragment.create(expandedEpisode.episodeId))
                 }
-                binding.detailsExpandedPane.doOnNextLayout {
-                    binding.detailsRv.expandItem(
-                            generateEpisodeItemId(expandedEpisode.episodeId))
+
+                binding.detailsMotion.transitionToState(R.id.show_details_closed)
+
+                val seasonItemId = generateSeasonItemId(expandedEpisode.seasonId)
+                val episodeItemId = generateEpisodeItemId(expandedEpisode.episodeId)
+
+                lifecycleScope.launch {
+                    var seasonPosition = RecyclerView.NO_POSITION
+                    var episodePosition = RecyclerView.NO_POSITION
+
+                    while (seasonPosition < 0 || episodePosition < 0) {
+                        delay(16)
+
+                        seasonPosition = controller.adapter.findPositionOfItemId(seasonItemId)
+                        episodePosition = controller.adapter.findPositionOfItemId(episodeItemId)
+                    }
+
+                    val scroller = binding.detailsRv.smoothScrollToItemPosition(seasonPosition)
+                    while (scroller.isRunning) {
+                        delay(16)
+                    }
+
+                    binding.detailsRv.expandItem(episodeItemId)
                 }
+
                 viewModel.clearExpandedEpisode()
             }
         }
@@ -208,10 +234,7 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
         binding.detailsExpandedPane.addStateChangeCallbacks(object : PageStateChangeCallbacks {
             override fun onPageAboutToCollapse(collapseAnimDuration: Long) {}
 
-            override fun onPageAboutToExpand(expandAnimDuration: Long) {
-                // Make sure we're in the collapsed state
-                binding.detailsMotion.transitionToState(R.id.show_details_closed)
-            }
+            override fun onPageAboutToExpand(expandAnimDuration: Long) {}
 
             override fun onPageCollapsed() {
                 backPressedCallback.isEnabled = false

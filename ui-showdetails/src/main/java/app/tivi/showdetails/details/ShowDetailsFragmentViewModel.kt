@@ -24,6 +24,7 @@ import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Action
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Params
 import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.ChangeShowFollowStatus.Action.TOGGLE
+import app.tivi.domain.interactors.GetEpisodeDetails
 import app.tivi.domain.interactors.UpdateRelatedShows
 import app.tivi.domain.interactors.UpdateShowDetails
 import app.tivi.domain.interactors.UpdateShowSeasonData
@@ -60,7 +61,8 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     observeNextEpisodeToWatch: ObserveShowNextEpisodeToWatch,
     observeShowViewStats: ObserveShowViewStats,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
-    private val changeSeasonFollowStatus: ChangeSeasonFollowStatus
+    private val changeSeasonFollowStatus: ChangeSeasonFollowStatus,
+    private val getEpisode: GetEpisodeDetails
 ) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
 
     private val loadingState = ObservableLoadingCounter()
@@ -118,13 +120,17 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
             }
         }
 
-        withState {
-            observeShowFollowStatus(ObserveShowFollowStatus.Params(it.showId))
-            observeShowDetails(ObserveShowDetails.Params(it.showId))
-            observeRelatedShows(ObserveRelatedShows.Params(it.showId))
-            observeShowSeasons(ObserveShowSeasonData.Params(it.showId))
-            observeNextEpisodeToWatch(ObserveShowNextEpisodeToWatch.Params(it.showId))
-            observeShowViewStats(ObserveShowViewStats.Params(it.showId))
+        withState { state ->
+            observeShowFollowStatus(ObserveShowFollowStatus.Params(state.showId))
+            observeShowDetails(ObserveShowDetails.Params(state.showId))
+            observeRelatedShows(ObserveRelatedShows.Params(state.showId))
+            observeShowSeasons(ObserveShowSeasonData.Params(state.showId))
+            observeNextEpisodeToWatch(ObserveShowNextEpisodeToWatch.Params(state.showId))
+            observeShowViewStats(ObserveShowViewStats.Params(state.showId))
+
+            if (state.openEpisodeUiEffect is PendingOpenEpisodeUiEffect) {
+                openEpisodeDetails(OpenEpisodeDetails(state.openEpisodeUiEffect.episodeId))
+            }
         }
 
         refresh(false)
@@ -161,11 +167,19 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     private fun openEpisodeDetails(action: OpenEpisodeDetails) {
-        setState { copy(expandedEpisodeId = PendingOpenEpisodeUiEffect(action.episodeId)) }
+        viewModelScope.launch {
+            val episode = getEpisode(GetEpisodeDetails.Params(action.episodeId))
+            if (episode != null) {
+                setState {
+                    copy(expandedSeasonIds = expandedSeasonIds + episode.seasonId,
+                            openEpisodeUiEffect = ExecutableOpenEpisodeUiEffect(action.episodeId, episode.seasonId))
+                }
+            }
+        }
     }
 
     fun clearExpandedEpisode() {
-        setState { copy(expandedEpisodeId = null) }
+        setState { copy(openEpisodeUiEffect = null) }
     }
 
     private fun onMarkSeasonWatched(action: MarkSeasonWatchedAction) {
