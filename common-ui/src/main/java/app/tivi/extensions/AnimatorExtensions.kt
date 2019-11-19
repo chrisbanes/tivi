@@ -20,6 +20,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 fun animatorSetOf(vararg animators: Animator, playTogether: Boolean = true) = AnimatorSet().apply {
     if (playTogether) {
@@ -38,14 +39,18 @@ fun animatorSetOf(animators: List<Animator>, playTogether: Boolean = true) = Ani
 }
 
 suspend fun Animator.awaitEnd() = suspendCancellableCoroutine<Unit> { cont ->
+    // Add an invokeOnCancellation listener. If the coroutine is
+    // cancelled, cancel the animation too
+    cont.invokeOnCancellation { cancel() }
+
     addListener(object : AnimatorListenerAdapter() {
         override fun onAnimationEnd(animation: Animator) {
-            cont.resume(Unit) {
-                end()
-            }
+            // Animation ended successfully, resume the coroutine
+            cont.resume(Unit)
         }
 
         override fun onAnimationCancel(animation: Animator) {
+            // The animator was cancelled, so we cancel the coroutine too
             cont.cancel()
         }
     })

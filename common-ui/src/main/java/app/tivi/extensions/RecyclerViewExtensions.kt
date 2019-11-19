@@ -20,6 +20,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import app.tivi.ui.recyclerview.TiviLinearSmoothScroller
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -70,7 +71,12 @@ suspend fun RecyclerView.awaitScrollEnd() {
     // Now we can check if we're actually idle. If so, return now
     if (scrollState == RecyclerView.SCROLL_STATE_IDLE) return
 
-    suspendCoroutine<Unit> { cont ->
+    suspendCancellableCoroutine<Unit> { cont ->
+        cont.invokeOnCancellation {
+            // If the coroutine is cancelled, stop the RecyclerView scrolling
+            stopScroll()
+        }
+
         addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
