@@ -102,7 +102,7 @@ fun <VH : RecyclerView.ViewHolder> RecyclerView.Adapter<VH>.findItemIdPosition(i
 /**
  * Await an item in the data set with the given [itemId], and return its adapter position.
  */
-suspend fun <VH : RecyclerView.ViewHolder> RecyclerView.Adapter<VH>.awaitItemIdPosition(itemId: Long): Int {
+suspend fun <VH : RecyclerView.ViewHolder> RecyclerView.Adapter<VH>.awaitItemIdExists(itemId: Long): Int {
     val currentPos = findItemIdPosition(itemId)
     // If the item is already in the data set, return the position now
     if (currentPos >= 0) return currentPos
@@ -112,7 +112,11 @@ suspend fun <VH : RecyclerView.ViewHolder> RecyclerView.Adapter<VH>.awaitItemIdP
         registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 (positionStart until positionStart + itemCount).forEach { position ->
+                    // Iterate through the new items and check if any have our itemId
                     if (getItemId(position) == itemId) {
+                        // Remove this observer so we don't leak the coroutine
+                        unregisterAdapterDataObserver(this)
+                        // And resume the coroutine
                         cont.resume(position)
                     }
                 }
