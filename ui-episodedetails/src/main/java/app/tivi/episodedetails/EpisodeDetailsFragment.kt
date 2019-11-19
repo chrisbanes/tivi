@@ -63,8 +63,8 @@ class EpisodeDetailsFragment : TiviFragmentWithBinding<FragmentEpisodeDetailsBin
         binding.epDetailsFab.setOnClickListener {
             withState(viewModel) { state ->
                 when (state.action) {
-                    EpisodeDetailsViewState.Action.WATCH -> viewModel.markWatched()
-                    EpisodeDetailsViewState.Action.UNWATCH -> viewModel.markUnwatched()
+                    EpisodeDetailsViewState.Action.WATCH -> viewModel.submitAction(AddEpisodeWatchAction)
+                    EpisodeDetailsViewState.Action.UNWATCH -> viewModel.submitAction(RemoveAllEpisodeWatchesAction)
                 }
             }
         }
@@ -81,7 +81,7 @@ class EpisodeDetailsFragment : TiviFragmentWithBinding<FragmentEpisodeDetailsBin
                 itemView: View,
                 position: Int,
                 direction: Int
-            ) = viewModel.removeWatchEntry(model.watch())
+            ) = viewModel.submitAction(RemoveEpisodeWatchAction(model.watch().id))
 
             override fun isSwipeEnabledForModel(model: EpisodeDetailsWatchItemBindingModel_): Boolean {
                 return model.watch() != null

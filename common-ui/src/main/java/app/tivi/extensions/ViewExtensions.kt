@@ -19,8 +19,13 @@ package app.tivi.extensions
 import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnLayout
+import androidx.core.view.doOnNextLayout
+import androidx.core.view.doOnPreDraw
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 fun ViewGroup.beginDelayedTransition(duration: Long = 200) {
     TransitionManager.beginDelayedTransition(this, AutoTransition().apply { setDuration(duration) })
@@ -60,8 +65,9 @@ fun View.doOnAttach(f: (View) -> Unit) {
  * Allows easy listening to layout passing. Return [true] if you need the listener to keep being
  * attached.
  */
-inline fun View.doOnLayouts(crossinline action: (view: View) -> Boolean) {
+inline fun <V : View> V.doOnLayouts(crossinline action: (view: V) -> Boolean) {
     addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+        @Suppress("UNCHECKED_CAST")
         override fun onLayoutChange(
             view: View,
             left: Int,
@@ -73,7 +79,7 @@ inline fun View.doOnLayouts(crossinline action: (view: View) -> Boolean) {
             oldRight: Int,
             oldBottom: Int
         ) {
-            if (!action(view)) {
+            if (!action(view as V)) {
                 view.removeOnLayoutChangeListener(this)
             }
         }
@@ -104,4 +110,21 @@ inline fun View.doOnSizeChange(crossinline action: (view: View) -> Boolean) {
             }
         }
     })
+}
+
+suspend fun View.awaitNextLayout() = suspendCoroutine<Unit> { cont ->
+    doOnNextLayout { cont.resume(Unit) }
+}
+
+suspend fun View.awaitLayout() {
+    if (isLaidOut) return
+    suspendCoroutine<Unit> { cont -> doOnLayout { cont.resume(Unit) } }
+}
+
+suspend fun View.awaitPreDraw() = suspendCoroutine<Unit> { cont ->
+    doOnPreDraw { cont.resume(Unit) }
+}
+
+suspend fun View.awaitAnimationFrame() = suspendCoroutine<Unit> { cont ->
+    postOnAnimation { cont.resume(Unit) }
 }

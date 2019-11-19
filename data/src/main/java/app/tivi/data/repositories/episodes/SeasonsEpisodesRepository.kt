@@ -52,6 +52,8 @@ class SeasonsEpisodesRepository @Inject constructor(
 
     fun observeEpisode(episodeId: Long) = seasonsEpisodesStore.observeEpisode(episodeId)
 
+    suspend fun getEpisode(episodeId: Long): Episode? = seasonsEpisodesStore.getEpisode(episodeId)
+
     fun observeEpisodeWatches(episodeId: Long) = episodeWatchStore.observeEpisodeWatches(episodeId)
 
     fun observeNextEpisodeToWatch(showId: Long) = seasonsEpisodesStore.observeShowNextEpisodeToWatch(showId)

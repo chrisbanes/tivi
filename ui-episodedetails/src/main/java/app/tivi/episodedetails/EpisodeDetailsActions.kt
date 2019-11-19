@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,10 @@
  * limitations under the License.
  */
 
-package app.tivi.extensions
+package app.tivi.episodedetails
 
-import android.animation.Animator
-import android.animation.AnimatorSet
-
-fun animatorSetOf(vararg animators: Animator, playTogether: Boolean = true) = AnimatorSet().apply {
-    if (playTogether) {
-        playTogether(*animators)
-    } else {
-        playSequentially(*animators)
-    }
-}
-
-fun animatorSetOf(animators: List<Animator>, playTogether: Boolean = true) = AnimatorSet().apply {
-    if (playTogether) {
-        playTogether(animators)
-    } else {
-        playSequentially(animators)
-    }
-}
+sealed class EpisodeDetailsAction
+object RefreshAction : EpisodeDetailsAction()
+object AddEpisodeWatchAction : EpisodeDetailsAction()
+data class RemoveEpisodeWatchAction(val watchId: Long) : EpisodeDetailsAction()
+object RemoveAllEpisodeWatchesAction : EpisodeDetailsAction()
