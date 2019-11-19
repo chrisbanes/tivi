@@ -80,3 +80,33 @@ suspend fun RecyclerView.awaitScrollEnd() {
         })
     }
 }
+
+/**
+ * Finds the first item with the given [itemId] in the data set, or [RecyclerView.NO_POSITION] if
+ * there is no item with the id.
+ */
+fun <VH : RecyclerView.ViewHolder> RecyclerView.Adapter<VH>.findItemIdPosition(itemId: Long): Int {
+    return (0 until itemCount).firstOrNull { getItemId(it) == itemId } ?: RecyclerView.NO_POSITION
+}
+
+/**
+ * Await an item in the data set with the given [itemId], and return its adapter position.
+ */
+suspend fun <VH : RecyclerView.ViewHolder> RecyclerView.Adapter<VH>.awaitItemIdPosition(itemId: Long): Int {
+    val currentPos = findItemIdPosition(itemId)
+    // If the item is already in the data set, return the position now
+    if (currentPos >= 0) return currentPos
+
+    // Otherwise we register a data set observer and wait for the item ID to be added
+    return suspendCoroutine { cont ->
+        registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                (positionStart until positionStart + itemCount).forEach { position ->
+                    if (getItemId(position) == itemId) {
+                        cont.resume(position)
+                    }
+                }
+            }
+        })
+    }
+}

@@ -29,15 +29,14 @@ import androidx.fragment.app.commit
 import androidx.fragment.app.commitNow
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
 import app.tivi.TiviFragmentWithBinding
-import app.tivi.common.epoxy.findPositionOfItemId
 import app.tivi.common.epoxy.syncSpanSizes
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.episodedetails.EpisodeDetailsFragment
+import app.tivi.extensions.awaitItemIdPosition
 import app.tivi.extensions.awaitScrollEnd
 import app.tivi.extensions.awaitTransitionComplete
 import app.tivi.extensions.doOnLayouts
@@ -54,7 +53,6 @@ import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import dev.chrisbanes.insetter.doOnApplyWindowInsets
 import kotlinx.android.parcel.Parcelize
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.saket.inboxrecyclerview.dimming.TintPainter
 import me.saket.inboxrecyclerview.page.PageStateChangeCallbacks
@@ -152,21 +150,14 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
                 val seasonItemId = generateSeasonItemId(expandedEpisode.seasonId)
                 val episodeItemId = generateEpisodeItemId(expandedEpisode.episodeId)
 
-                lifecycleScope.launch {
+                viewLifecycleOwner.lifecycleScope.launch {
                     binding.detailsMotion.transitionToState(R.id.show_details_closed)
                     binding.detailsMotion.awaitTransitionComplete(R.id.show_details_closed)
 
-                    var seasonPosition = RecyclerView.NO_POSITION
-                    var episodePosition = RecyclerView.NO_POSITION
+                    val seasonItemPosition = controller.adapter.awaitItemIdPosition(seasonItemId)
+                    controller.adapter.awaitItemIdPosition(episodeItemId)
 
-                    while (seasonPosition < 0 || episodePosition < 0) {
-                        delay(16)
-
-                        seasonPosition = controller.adapter.findPositionOfItemId(seasonItemId)
-                        episodePosition = controller.adapter.findPositionOfItemId(episodeItemId)
-                    }
-
-                    binding.detailsRv.smoothScrollToItemPosition(seasonPosition)
+                    binding.detailsRv.smoothScrollToItemPosition(seasonItemPosition)
                     binding.detailsRv.awaitScrollEnd()
 
                     binding.detailsRv.expandItem(episodeItemId)
