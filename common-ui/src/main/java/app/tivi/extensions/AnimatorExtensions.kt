@@ -44,14 +44,24 @@ suspend fun Animator.awaitEnd() = suspendCancellableCoroutine<Unit> { cont ->
     cont.invokeOnCancellation { cancel() }
 
     addListener(object : AnimatorListenerAdapter() {
+        private var endedSuccessfully = true
+
         override fun onAnimationEnd(animation: Animator) {
-            // Animation ended successfully, resume the coroutine
-            cont.resume(Unit)
+            // Make sure we remove the listener so we don't keep leak the coroutine continuation
+            animation.removeListener(this)
+
+            if (endedSuccessfully) {
+                // Animation ended successfully, resume the coroutine
+                cont.resume(Unit)
+            } else {
+                // The animator was cancelled, cancel the coroutine too
+                cont.cancel()
+            }
         }
 
         override fun onAnimationCancel(animation: Animator) {
-            // The animator was cancelled, so we cancel the coroutine too
-            cont.cancel()
+            // Animator has been cancelled, so flip the success flag
+            endedSuccessfully = false
         }
     })
 }

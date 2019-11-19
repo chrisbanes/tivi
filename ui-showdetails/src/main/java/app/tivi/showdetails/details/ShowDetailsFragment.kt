@@ -40,6 +40,7 @@ import app.tivi.extensions.awaitItemIdPosition
 import app.tivi.extensions.awaitScrollEnd
 import app.tivi.extensions.awaitTransitionComplete
 import app.tivi.extensions.doOnLayouts
+import app.tivi.extensions.findItemIdPosition
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.scrollToItemId
@@ -154,8 +155,8 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
                     binding.detailsMotion.transitionToState(R.id.show_details_closed)
                     binding.detailsMotion.awaitTransitionComplete(R.id.show_details_closed)
 
-                    val seasonItemPosition = controller.adapter.awaitItemIdPosition(seasonItemId)
                     controller.adapter.awaitItemIdPosition(episodeItemId)
+                    val seasonItemPosition = controller.adapter.findItemIdPosition(seasonItemId)
 
                     binding.detailsRv.smoothScrollToItemPosition(seasonItemPosition)
                     binding.detailsRv.awaitScrollEnd()
