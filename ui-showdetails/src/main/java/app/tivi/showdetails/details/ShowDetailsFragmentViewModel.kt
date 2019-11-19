@@ -193,7 +193,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     private fun onChangeSeasonExpandState(action: ChangeSeasonExpandedAction) {
         if (action.expanded) {
             setState {
-                copy(focusedSeason = PendingFocusSeasonUiEffect(action.seasonId, true),
+                copy(focusedSeason = FocusSeasonUiEffect(action.seasonId),
                         expandedSeasonIds = expandedSeasonIds + action.seasonId)
             }
         } else {

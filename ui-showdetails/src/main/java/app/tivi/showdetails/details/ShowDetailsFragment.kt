@@ -37,13 +37,12 @@ import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.episodedetails.EpisodeDetailsFragment
 import app.tivi.extensions.awaitItemIdExists
+import app.tivi.extensions.awaitLayout
 import app.tivi.extensions.awaitScrollEnd
 import app.tivi.extensions.awaitTransitionComplete
-import app.tivi.extensions.doOnLayouts
 import app.tivi.extensions.findItemIdPosition
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.extensions.scheduleStartPostponedTransitions
-import app.tivi.extensions.scrollToItemId
 import app.tivi.extensions.sharedElementHelperOf
 import app.tivi.extensions.smoothScrollToItemPosition
 import app.tivi.extensions.toActivityNavigatorExtras
@@ -123,15 +122,11 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
                 deliveryMode = uniqueOnly()
         ) { focusedSeason ->
             if (focusedSeason != null) {
-                val itemId = generateSeasonItemId(focusedSeason.seasonId)
-                val handled = binding.detailsRv.scrollToItemId(itemId, focusedSeason.animatedScroll)
-
-                if (!handled) {
-                    binding.detailsRv.doOnLayouts {
-                        !it.scrollToItemId(itemId, focusedSeason.animatedScroll)
-                    }
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val seasonItemId = generateSeasonItemId(focusedSeason.seasonId)
+                    val seasonItemPosition = controller.adapter.awaitItemIdExists(seasonItemId)
+                    binding.detailsRv.smoothScrollToItemPosition(seasonItemPosition)
                 }
-
                 viewModel.clearFocusedSeason()
             }
         }
@@ -142,16 +137,18 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
                 deliveryMode = uniqueOnly()
         ) { expandedEpisode ->
             if (expandedEpisode is ExecutableOpenEpisodeUiEffect) {
+                // We can add the fragment to the pane now while waiting for any animations/
+                // scrolling to happen
+                val episodeFragment = EpisodeDetailsFragment.create(expandedEpisode.episodeId)
                 childFragmentManager.commitNow {
                     setTransition(FragmentTransaction.TRANSIT_NONE)
-                    replace(R.id.details_expanded_pane,
-                            EpisodeDetailsFragment.create(expandedEpisode.episodeId))
+                    replace(R.id.details_expanded_pane, episodeFragment)
                 }
 
-                val seasonItemId = generateSeasonItemId(expandedEpisode.seasonId)
-                val episodeItemId = generateEpisodeItemId(expandedEpisode.episodeId)
-
                 viewLifecycleOwner.lifecycleScope.launch {
+                    val seasonItemId = generateSeasonItemId(expandedEpisode.seasonId)
+                    val episodeItemId = generateEpisodeItemId(expandedEpisode.episodeId)
+
                     binding.detailsMotion.transitionToState(R.id.show_details_closed)
                     binding.detailsMotion.awaitTransitionComplete(R.id.show_details_closed)
 
@@ -161,6 +158,7 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
                     binding.detailsRv.smoothScrollToItemPosition(seasonItemPosition)
                     binding.detailsRv.awaitScrollEnd()
 
+                    episodeFragment.requireView().awaitLayout()
                     binding.detailsRv.expandItem(episodeItemId)
                 }
 

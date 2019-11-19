@@ -37,7 +37,7 @@ data class ShowDetailsViewState(
     val viewStats: Async<FollowedShowsWatchStats> = Uninitialized,
     val seasons: Async<List<SeasonWithEpisodesAndWatches>> = Uninitialized,
     val expandedSeasonIds: Set<Long> = emptySet(),
-    val focusedSeason: PendingFocusSeasonUiEffect? = null,
+    val focusedSeason: FocusSeasonUiEffect? = null,
     val openEpisodeUiEffect: OpenEpisodeUiEffect? = null,
     val refreshing: Boolean = false
 ) : MvRxState {
@@ -47,7 +47,7 @@ data class ShowDetailsViewState(
     )
 }
 
-data class PendingFocusSeasonUiEffect(val seasonId: Long, val animatedScroll: Boolean)
+data class FocusSeasonUiEffect(val seasonId: Long)
 
 sealed class OpenEpisodeUiEffect
 data class PendingOpenEpisodeUiEffect(val episodeId: Long) : OpenEpisodeUiEffect()

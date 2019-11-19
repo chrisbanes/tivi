@@ -19,6 +19,7 @@ package app.tivi.extensions
 import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnLayout
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.doOnPreDraw
 import androidx.transition.AutoTransition
@@ -113,6 +114,11 @@ inline fun View.doOnSizeChange(crossinline action: (view: View) -> Boolean) {
 
 suspend fun View.awaitNextLayout() = suspendCoroutine<Unit> { cont ->
     doOnNextLayout { cont.resume(Unit) }
+}
+
+suspend fun View.awaitLayout() {
+    if (isLaidOut) return
+    suspendCoroutine<Unit> { cont -> doOnLayout { cont.resume(Unit) } }
 }
 
 suspend fun View.awaitPreDraw() = suspendCoroutine<Unit> { cont ->
