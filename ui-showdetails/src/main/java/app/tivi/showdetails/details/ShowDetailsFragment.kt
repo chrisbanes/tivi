@@ -38,6 +38,8 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
 import app.tivi.episodedetails.EpisodeDetailsFragment
+import app.tivi.extensions.awaitScrollEnd
+import app.tivi.extensions.awaitTransitionComplete
 import app.tivi.extensions.doOnLayouts
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.extensions.scheduleStartPostponedTransitions
@@ -147,12 +149,13 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
                             EpisodeDetailsFragment.create(expandedEpisode.episodeId))
                 }
 
-                binding.detailsMotion.transitionToState(R.id.show_details_closed)
-
                 val seasonItemId = generateSeasonItemId(expandedEpisode.seasonId)
                 val episodeItemId = generateEpisodeItemId(expandedEpisode.episodeId)
 
                 lifecycleScope.launch {
+                    binding.detailsMotion.transitionToState(R.id.show_details_closed)
+                    binding.detailsMotion.awaitTransitionComplete(R.id.show_details_closed)
+
                     var seasonPosition = RecyclerView.NO_POSITION
                     var episodePosition = RecyclerView.NO_POSITION
 
@@ -163,10 +166,8 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
                         episodePosition = controller.adapter.findPositionOfItemId(episodeItemId)
                     }
 
-                    val scroller = binding.detailsRv.smoothScrollToItemPosition(seasonPosition)
-                    while (scroller.isRunning) {
-                        delay(16)
-                    }
+                    binding.detailsRv.smoothScrollToItemPosition(seasonPosition)
+                    binding.detailsRv.awaitScrollEnd()
 
                     binding.detailsRv.expandItem(episodeItemId)
                 }

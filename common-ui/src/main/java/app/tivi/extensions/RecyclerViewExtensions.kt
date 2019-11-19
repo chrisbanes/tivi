@@ -20,6 +20,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import app.tivi.ui.recyclerview.TiviLinearSmoothScroller
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 fun <VH : RecyclerView.ViewHolder> RecyclerView.Adapter<VH>.createAndBind(parent: ViewGroup, position: Int): VH {
     val vh = onCreateViewHolder(parent, getItemViewType(position))
@@ -59,4 +61,22 @@ fun RecyclerView.smoothScrollToItemPosition(position: Int) = TiviLinearSmoothScr
     targetPosition = position
 }.also {
     layoutManager!!.startSmoothScroll(it)
+}
+
+suspend fun RecyclerView.awaitScrollEnd() {
+    // If a smooth scroll has just been started, it won't actually start until the next
+    // animation frame, so we'll await that first
+    awaitAnimationFrame()
+    // Now we can check if we're actually idle. If so, return now
+    if (scrollState == RecyclerView.SCROLL_STATE_IDLE) return
+
+    suspendCoroutine<Unit> { cont ->
+        addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    cont.resume(Unit)
+                }
+            }
+        })
+    }
 }

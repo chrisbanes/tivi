@@ -17,7 +17,9 @@
 package app.tivi.extensions
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 fun animatorSetOf(vararg animators: Animator, playTogether: Boolean = true) = AnimatorSet().apply {
     if (playTogether) {
@@ -33,4 +35,18 @@ fun animatorSetOf(animators: List<Animator>, playTogether: Boolean = true) = Ani
     } else {
         playSequentially(animators)
     }
+}
+
+suspend fun Animator.awaitEnd() = suspendCancellableCoroutine<Unit> { cont ->
+    addListener(object : AnimatorListenerAdapter() {
+        override fun onAnimationEnd(animation: Animator) {
+            cont.resume(Unit) {
+                end()
+            }
+        }
+
+        override fun onAnimationCancel(animation: Animator) {
+            cont.cancel()
+        }
+    })
 }

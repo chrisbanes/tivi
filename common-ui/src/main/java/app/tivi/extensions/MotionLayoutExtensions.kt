@@ -17,7 +17,11 @@
 package app.tivi.extensions
 
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.constraintlayout.motion.widget.TransitionAdapter
 import androidx.constraintlayout.widget.ConstraintSet
+import app.tivi.ui.widget.TiviMotionLayout
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * Applies the given function over each [ConstraintSet]
@@ -25,5 +29,24 @@ import androidx.constraintlayout.widget.ConstraintSet
 inline fun MotionLayout.updateConstraintSets(f: ConstraintSet.() -> Unit) {
     for (id in constraintSetIds) {
         updateState(id, getConstraintSet(id).apply { f() })
+    }
+}
+
+/**
+ * Wait for the transition to complete so that the given [transitionId] is fully displayed.
+ */
+suspend fun TiviMotionLayout.awaitTransitionComplete(transitionId: Int) {
+    // If we're already at the specified state, return now
+    if (currentState == transitionId) return
+
+    suspendCoroutine<Unit> { cont ->
+        addTransitionListener(object : TransitionAdapter() {
+            override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {
+                if (currentId == transitionId) {
+                    removeTransitionListener(this)
+                    cont.resume(Unit)
+                }
+            }
+        })
     }
 }

@@ -30,4 +30,6 @@
 
     <id name="activity_show_details" />
 
+    <id name="motion_layout_listeners" />
+
 </resources>
