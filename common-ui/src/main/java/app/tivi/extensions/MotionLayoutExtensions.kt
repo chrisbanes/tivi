@@ -20,8 +20,8 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.TransitionAdapter
 import androidx.constraintlayout.widget.ConstraintSet
 import app.tivi.ui.widget.TiviMotionLayout
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 /**
  * Applies the given function over each [ConstraintSet]
@@ -39,14 +39,21 @@ suspend fun TiviMotionLayout.awaitTransitionComplete(transitionId: Int) {
     // If we're already at the specified state, return now
     if (currentState == transitionId) return
 
-    suspendCoroutine<Unit> { cont ->
-        addTransitionListener(object : TransitionAdapter() {
+    suspendCancellableCoroutine<Unit> { cont ->
+        val listener = object : TransitionAdapter() {
             override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {
                 if (currentId == transitionId) {
                     removeTransitionListener(this)
                     cont.resume(Unit)
                 }
             }
-        })
+        }
+        // If the coroutine is cancelled, remove the listener
+        cont.invokeOnCancellation {
+            removeTransitionListener(listener)
+            // TODO maybe reverse the current transition?
+        }
+        // And finally add the listener
+        addTransitionListener(listener)
     }
 }
