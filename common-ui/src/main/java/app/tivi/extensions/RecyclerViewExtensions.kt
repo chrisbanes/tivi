@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView
 import app.tivi.ui.recyclerview.TiviLinearSmoothScroller
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 fun <VH : RecyclerView.ViewHolder> RecyclerView.Adapter<VH>.createAndBind(parent: ViewGroup, position: Int): VH {
     val vh = onCreateViewHolder(parent, getItemViewType(position))
@@ -108,8 +107,8 @@ suspend fun <VH : RecyclerView.ViewHolder> RecyclerView.Adapter<VH>.awaitItemIdE
     if (currentPos >= 0) return currentPos
 
     // Otherwise we register a data set observer and wait for the item ID to be added
-    return suspendCoroutine { cont ->
-        registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+    return suspendCancellableCoroutine { cont ->
+        val observer = object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 (positionStart until positionStart + itemCount).forEach { position ->
                     // Iterate through the new items and check if any have our itemId
@@ -121,6 +120,10 @@ suspend fun <VH : RecyclerView.ViewHolder> RecyclerView.Adapter<VH>.awaitItemIdE
                     }
                 }
             }
-        })
+        }
+        // If the coroutine is cancelled, remove the observer
+        cont.invokeOnCancellation { unregisterAdapterDataObserver(observer) }
+        // And finally register the observer
+        registerAdapterDataObserver(observer)
     }
 }
