@@ -20,7 +20,10 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.TransitionAdapter
 import androidx.constraintlayout.widget.ConstraintSet
 import app.tivi.ui.widget.TiviMotionLayout
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeout
 import kotlin.coroutines.resume
 
 /**
@@ -34,26 +37,41 @@ inline fun MotionLayout.updateConstraintSets(f: ConstraintSet.() -> Unit) {
 
 /**
  * Wait for the transition to complete so that the given [transitionId] is fully displayed.
+ *
+ * @param transitionId The transition set to await the completion of
+ * @param timeout Timeout for the transition to take place. Defaults to 5 seconds.
  */
-suspend fun TiviMotionLayout.awaitTransitionComplete(transitionId: Int) {
+suspend fun TiviMotionLayout.awaitTransitionComplete(transitionId: Int, timeout: Long = 5000L) {
     // If we're already at the specified state, return now
     if (currentState == transitionId) return
 
-    suspendCancellableCoroutine<Unit> { cont ->
-        val listener = object : TransitionAdapter() {
-            override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {
-                if (currentId == transitionId) {
-                    removeTransitionListener(this)
-                    cont.resume(Unit)
+    var listener: MotionLayout.TransitionListener? = null
+
+    try {
+        withTimeout(timeout) {
+            suspendCancellableCoroutine<Unit> { cont ->
+                val l = object : TransitionAdapter() {
+                    override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {
+                        if (currentId == transitionId) {
+                            removeTransitionListener(this)
+                            cont.resume(Unit)
+                        }
+                    }
                 }
+                // If the coroutine is cancelled, remove the listener
+                cont.invokeOnCancellation {
+                    removeTransitionListener(l)
+                }
+                // And finally add the listener
+                addTransitionListener(l)
+                listener = l
             }
         }
-        // If the coroutine is cancelled, remove the listener
-        cont.invokeOnCancellation {
-            removeTransitionListener(listener)
-            // TODO maybe reverse the current transition?
-        }
-        // And finally add the listener
-        addTransitionListener(listener)
+    } catch (tex: TimeoutCancellationException) {
+        // Transition didn't happen in time. Remove our listener and throw a cancellation
+        // exception to let the coroutine know
+        listener?.let(::removeTransitionListener)
+        throw CancellationException("Transition to state with id: $transitionId did not" +
+                " complete in timeout.", tex)
     }
 }
