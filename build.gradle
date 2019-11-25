@@ -54,7 +54,6 @@ buildscript {
 plugins {
     id 'com.diffplug.gradle.spotless' version '3.26.0'
     id 'com.github.ben-manes.versions' version '0.27.0'
-    id 'com.gradle.build-scan' version '3.0'
 }
 
 allprojects {
@@ -65,11 +64,6 @@ allprojects {
         maven { url 'https://jitpack.io' }
         mavenLocal()
     }
-}
-
-buildScan {
-    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-    termsOfServiceAgree = 'yes'
 }
 
 subprojects {
