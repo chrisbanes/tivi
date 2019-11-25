@@ -20,10 +20,10 @@ import android.text.format.DateUtils
 import app.tivi.inject.MediumDate
 import app.tivi.inject.MediumDateTime
 import app.tivi.inject.ShortDate
+import javax.inject.Inject
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.Temporal
-import javax.inject.Inject
 
 class TiviDateFormatter @Inject constructor(
     @ShortDate private val shortDateFormatter: DateTimeFormatter,

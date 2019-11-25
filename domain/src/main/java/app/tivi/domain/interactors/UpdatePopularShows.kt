@@ -21,9 +21,9 @@ import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdatePopularShows.Params
 import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
-import javax.inject.Inject
 
 class UpdatePopularShows @Inject constructor(
     private val popularShowsRepository: PopularShowsRepository,

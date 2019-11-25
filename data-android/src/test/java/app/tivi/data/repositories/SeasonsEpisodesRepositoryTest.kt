@@ -41,6 +41,7 @@ import app.tivi.utils.s2_id
 import app.tivi.utils.s2e1
 import app.tivi.utils.showId
 import io.mockk.coEvery
+import javax.inject.Inject
 import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.withTimeout
@@ -53,7 +54,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.threeten.bp.OffsetDateTime
-import javax.inject.Inject
 
 @RunWith(RobolectricTestRunner::class)
 class SeasonsEpisodesRepositoryTest {

@@ -30,6 +30,7 @@ import app.tivi.utils.s1e1
 import app.tivi.utils.s1e2
 import app.tivi.utils.s1e3
 import app.tivi.utils.showId
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
@@ -41,7 +42,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import javax.inject.Inject
 
 @RunWith(RobolectricTestRunner::class)
 class EpisodesTest {

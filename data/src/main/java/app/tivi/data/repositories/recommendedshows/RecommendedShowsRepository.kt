@@ -23,9 +23,9 @@ import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
-import org.threeten.bp.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
+import org.threeten.bp.Instant
 
 @Singleton
 class RecommendedShowsRepository @Inject constructor(

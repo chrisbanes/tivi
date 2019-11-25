@@ -20,9 +20,9 @@ import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.data.resultentities.ShowDetailed
 import app.tivi.domain.SubjectInteractor
 import app.tivi.util.AppCoroutineDispatchers
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
 class ObserveShowDetails @Inject constructor(
     private val showRepository: ShowRepository,

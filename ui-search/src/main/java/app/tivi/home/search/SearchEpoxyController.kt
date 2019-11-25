@@ -17,8 +17,8 @@
 package app.tivi.home.search
 
 import app.tivi.data.entities.TiviShow
-import app.tivi.home.HomeTextCreator
 import app.tivi.extensions.observable
+import app.tivi.home.HomeTextCreator
 import com.airbnb.epoxy.EpoxyController
 import dagger.Lazy
 import javax.inject.Inject

@@ -17,8 +17,8 @@
 package app.tivi.ui.text
 
 import android.graphics.Paint
-import android.text.TextPaint
 import android.graphics.Typeface
+import android.text.TextPaint
 import android.text.style.MetricAffectingSpan
 
 class TypefaceSpan(private val typeface: Typeface? = null) : MetricAffectingSpan() {

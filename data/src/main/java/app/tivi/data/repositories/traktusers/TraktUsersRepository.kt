@@ -18,10 +18,10 @@ package app.tivi.data.repositories.traktusers
 
 import app.tivi.data.entities.Success
 import app.tivi.extensions.asyncOrAwait
-import org.threeten.bp.Instant
-import org.threeten.bp.Period
 import javax.inject.Inject
 import javax.inject.Singleton
+import org.threeten.bp.Instant
+import org.threeten.bp.Period
 
 @Singleton
 class TraktUsersRepository @Inject constructor(

@@ -28,10 +28,10 @@ import app.tivi.extensions.hideSoftInput
 import app.tivi.extensions.setupWithNavController
 import app.tivi.trakt.TraktConstants
 import com.airbnb.mvrx.viewModel
+import javax.inject.Inject
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
-import javax.inject.Inject
 
 class HomeActivity : TiviActivityMvRxView() {
     private val authService by lazy(LazyThreadSafetyMode.NONE) { AuthorizationService(this) }

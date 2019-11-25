@@ -17,7 +17,6 @@
 package app.tivi.common.imageloading
 
 import app.tivi.appinitializers.AppInitializer
-
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoSet

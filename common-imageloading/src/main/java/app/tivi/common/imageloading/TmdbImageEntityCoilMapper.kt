@@ -22,10 +22,10 @@ import app.tivi.tmdb.TmdbImageUrlProvider
 import coil.map.MeasuredMapper
 import coil.size.PixelSize
 import coil.size.Size
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import javax.inject.Inject
 import javax.inject.Provider
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 
 class TmdbImageEntityCoilMapper @Inject constructor(
     private val tmdbImageUrlProvider: Provider<TmdbImageUrlProvider>

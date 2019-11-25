@@ -22,9 +22,9 @@ import app.tivi.data.instantInPast
 import app.tivi.data.resultentities.ShowDetailed
 import app.tivi.extensions.asyncOrAwait
 import app.tivi.inject.Trakt
-import org.threeten.bp.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
+import org.threeten.bp.Instant
 
 @Singleton
 class ShowRepository @Inject constructor(

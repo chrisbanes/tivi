@@ -41,8 +41,8 @@ import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.transitions.GridToGridTransitioner
 import com.airbnb.mvrx.withState
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collect
 
 @SuppressLint("ValidFragment")
 abstract class EntryGridFragment<LI, VM> : TiviFragmentWithBinding<FragmentEntryGridBinding>()

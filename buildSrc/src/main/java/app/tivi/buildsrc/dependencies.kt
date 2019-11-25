@@ -17,7 +17,7 @@
 package app.tivi.buildsrc
 
 object Versions {
-    const val ktlint = "0.33.0"
+    const val ktlint = "0.35.0"
 }
 
 object Libs {

@@ -22,8 +22,8 @@ import android.view.ViewGroup
 import androidx.core.view.OneShotPreDrawListener
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 fun ViewGroup.beginDelayedTransition(duration: Long = 200) {
     TransitionManager.beginDelayedTransition(this, AutoTransition().apply { setDuration(duration) })

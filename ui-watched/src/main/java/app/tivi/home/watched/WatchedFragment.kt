@@ -43,8 +43,8 @@ import app.tivi.ui.createSharedElementHelperForItem
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
-import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collect
 
 class WatchedFragment : TiviFragmentWithBinding<FragmentWatchedBinding>() {
     private val viewModel: WatchedViewModel by fragmentViewModel()

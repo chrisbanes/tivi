@@ -19,9 +19,9 @@ package app.tivi.util
 import android.os.Build
 import android.util.Log
 import com.crashlytics.android.Crashlytics
-import timber.log.Timber
 import java.util.regex.Pattern
 import javax.inject.Inject
+import timber.log.Timber
 
 class TiviLogger @Inject constructor() : Logger {
     fun setup(debugMode: Boolean) {

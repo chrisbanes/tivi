@@ -41,10 +41,10 @@ import com.uwetrottmann.trakt5.enums.HistoryType
 import com.uwetrottmann.trakt5.services.Seasons
 import com.uwetrottmann.trakt5.services.Sync
 import com.uwetrottmann.trakt5.services.Users
-import org.threeten.bp.OffsetDateTime
-import org.threeten.bp.ZoneOffset
 import javax.inject.Inject
 import javax.inject.Provider
+import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.ZoneOffset
 
 class TraktSeasonsEpisodesDataSource @Inject constructor(
     private val showIdToTraktIdMapper: ShowIdToTraktIdMapper,
