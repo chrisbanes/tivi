@@ -38,10 +38,8 @@ androidExtensions {
 
 apply plugin: 'com.getkeepsafe.dexcount'
 dexcount {
-    // Re-enable after Dexcount plugin releases support for AGP 3.6.0
-    enabled = false
-    // enabled = ci
     // Only run the method counter on CI
+    enabled = ci
 }
 
 apply plugin: 'com.github.triplet.play'

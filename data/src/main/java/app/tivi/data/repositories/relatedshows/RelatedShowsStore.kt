@@ -21,8 +21,8 @@ import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class RelatedShowsStore @Inject constructor(
     private val entityInserter: EntityInserter,

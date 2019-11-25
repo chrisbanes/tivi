@@ -17,13 +17,13 @@
 package app.tivi.buildsrc
 
 object Versions {
-    const val ktlint = "0.33.0"
+    const val ktlint = "0.35.0"
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:3.5.1"
-    const val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6"
-    const val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.5.0"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:3.6.0-beta04"
+    const val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:1.0.0"
+    const val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.6.1"
 
     const val mvRx = "com.airbnb.android:mvrx:1.3.0"
 
@@ -46,7 +46,7 @@ object Libs {
 
     const val inboxRecyclerView = "me.saket:inboxrecyclerview:2.0.0-beta3"
 
-    const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.0-beta-3"
+    const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.0-beta-4"
 
     object Insetter {
         private const val version = "0.2.0"
@@ -55,18 +55,18 @@ object Libs {
     }
 
     object Google {
-        const val material = "com.google.android.material:material:1.1.0-beta01"
-        const val firebaseCore = "com.google.firebase:firebase-core:17.2.0"
+        const val material = "com.google.android.material:material:1.1.0-beta02"
+        const val firebaseCore = "com.google.firebase:firebase-core:17.2.1"
         const val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.10.1"
-        const val gmsGoogleServices = "com.google.gms:google-services:4.3.2"
-        const val fabricPlugin = "io.fabric.tools:gradle:1.31.1"
+        const val gmsGoogleServices = "com.google.gms:google-services:4.3.3"
+        const val fabricPlugin = "io.fabric.tools:gradle:1.31.2"
 
         const val openSourceLicensesPlugin = "com.google.android.gms:oss-licenses-plugin:0.10.0"
         const val openSourceLicensesLibrary = "com.google.android.gms:play-services-oss-licenses:17.0.0"
     }
 
     object Kotlin {
-        private const val version = "1.3.50"
+        private const val version = "1.3.60"
         const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         const val reflect = "org.jetbrains.kotlin:kotlin-reflect:$version"
         const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
@@ -86,12 +86,12 @@ object Libs {
         const val browser = "androidx.browser:browser:1.0.0"
         const val collection = "androidx.collection:collection-ktx:1.1.0"
         const val palette = "androidx.palette:palette:1.0.0"
-        const val recyclerview = "androidx.recyclerview:recyclerview:1.1.0-rc01"
+        const val recyclerview = "androidx.recyclerview:recyclerview:1.1.0"
         const val emoji = "androidx.emoji:emoji:1.0.0"
         const val swiperefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha03"
 
         object Navigation {
-            private const val version = "2.2.0-rc01"
+            private const val version = "2.2.0-rc02"
             const val fragment = "androidx.navigation:navigation-fragment-ktx:$version"
             const val ui = "androidx.navigation:navigation-ui-ktx:$version"
             const val safeArgs = "androidx.navigation:navigation-safe-args-gradle-plugin:$version"
@@ -124,16 +124,16 @@ object Libs {
 
         const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.0-beta3"
 
-        const val coreKtx = "androidx.core:core-ktx:1.2.0-beta01"
+        const val coreKtx = "androidx.core:core-ktx:1.2.0-rc01"
 
         object Lifecycle {
-            private const val version = "2.2.0-rc01"
+            private const val version = "2.2.0-rc02"
             const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
             const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
         }
 
         object Room {
-            private const val version = "2.2.1"
+            private const val version = "2.2.2"
             const val common = "androidx.room:room-common:$version"
             const val runtime = "androidx.room:room-runtime:$version"
             const val compiler = "androidx.room:room-compiler:$version"
@@ -187,7 +187,7 @@ object Libs {
     }
 
     object AssistedInject {
-        private const val version = "0.5.1"
+        private const val version = "0.5.2"
         const val annotationDagger2 = "com.squareup.inject:assisted-inject-annotations-dagger2:$version"
         const val processorDagger2 = "com.squareup.inject:assisted-inject-processor-dagger2:$version"
     }

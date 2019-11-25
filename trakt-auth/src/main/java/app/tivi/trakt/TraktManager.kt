@@ -25,6 +25,10 @@ import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
+import javax.inject.Inject
+import javax.inject.Named
+import javax.inject.Provider
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
@@ -39,10 +43,6 @@ import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.ClientAuthentication
 import net.openid.appauth.TokenResponse
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Provider
-import javax.inject.Singleton
 
 @Singleton
 class TraktManager @Inject constructor(

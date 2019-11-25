@@ -20,9 +20,9 @@ import app.tivi.data.repositories.trendingshows.TrendingShowsRepository
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.domain.SubjectInteractor
 import app.tivi.util.AppCoroutineDispatchers
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
 class ObserveTrendingShows @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,

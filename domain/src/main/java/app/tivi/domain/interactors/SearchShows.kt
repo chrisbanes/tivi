@@ -21,8 +21,8 @@ import app.tivi.data.repositories.search.SearchRepository
 import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.domain.SuspendingWorkInteractor
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 
 class SearchShows @Inject constructor(
     private val searchRepository: SearchRepository,

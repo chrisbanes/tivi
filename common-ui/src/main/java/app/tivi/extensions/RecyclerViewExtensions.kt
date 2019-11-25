@@ -20,8 +20,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import app.tivi.ui.recyclerview.TiviLinearSmoothScroller
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 fun <VH : RecyclerView.ViewHolder> RecyclerView.Adapter<VH>.createAndBind(parent: ViewGroup, position: Int): VH {
     val vh = onCreateViewHolder(parent, getItemViewType(position))

@@ -20,8 +20,8 @@ import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.domain.SubjectInteractor
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class ObserveShowViewStats @Inject constructor(
     private val repository: FollowedShowsRepository,

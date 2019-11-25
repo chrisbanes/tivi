@@ -33,6 +33,7 @@ import app.tivi.utils.s1e1
 import app.tivi.utils.s1e1w
 import app.tivi.utils.s1e1w_id
 import app.tivi.utils.showId
+import javax.inject.Inject
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
@@ -42,7 +43,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import javax.inject.Inject
 
 @RunWith(RobolectricTestRunner::class)
 class EpisodeWatchEntryTest {

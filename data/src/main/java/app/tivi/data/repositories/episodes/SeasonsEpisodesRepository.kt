@@ -29,12 +29,12 @@ import app.tivi.extensions.asyncOrAwait
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
-import kotlinx.coroutines.async
-import org.threeten.bp.Instant
-import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
+import kotlinx.coroutines.async
+import org.threeten.bp.Instant
+import org.threeten.bp.OffsetDateTime
 
 @Singleton
 class SeasonsEpisodesRepository @Inject constructor(

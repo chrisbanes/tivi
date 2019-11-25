@@ -30,8 +30,8 @@ import com.airbnb.epoxy.EpoxyTouchHelper
 import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
-import kotlinx.android.parcel.Parcelize
 import javax.inject.Inject
+import kotlinx.android.parcel.Parcelize
 
 class EpisodeDetailsFragment : TiviFragmentWithBinding<FragmentEpisodeDetailsBinding>() {
     companion object {

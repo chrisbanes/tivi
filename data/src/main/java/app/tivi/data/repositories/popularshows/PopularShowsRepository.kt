@@ -19,15 +19,15 @@ package app.tivi.data.repositories.popularshows
 import androidx.paging.DataSource
 import app.tivi.data.entities.Success
 import app.tivi.data.instantInPast
-import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.shows.ShowRepository
+import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
-import kotlinx.coroutines.flow.Flow
-import org.threeten.bp.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import org.threeten.bp.Instant
 
 @Singleton
 class PopularShowsRepository @Inject constructor(

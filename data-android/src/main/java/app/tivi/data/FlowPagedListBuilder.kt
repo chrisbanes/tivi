@@ -20,13 +20,13 @@ import android.annotation.SuppressLint
 import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.paging.DataSource
 import androidx.paging.PagedList
+import java.util.concurrent.Executor
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.concurrent.Executor
 
 /**
  * Builder for `Flow<PagedList>` given a [DataSource.Factory] and a [PagedList.Config].

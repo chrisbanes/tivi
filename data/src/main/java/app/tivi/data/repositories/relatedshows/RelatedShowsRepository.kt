@@ -20,13 +20,13 @@ import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.instantInPast
-import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.shows.ShowRepository
+import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
-import org.threeten.bp.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
+import org.threeten.bp.Instant
 
 @Singleton
 class RelatedShowsRepository @Inject constructor(

@@ -22,9 +22,9 @@ import app.tivi.data.repositories.popularshows.PopularShowsRepository
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.domain.PagingInteractor
 import app.tivi.util.AppCoroutineDispatchers
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
 class ObservePagedPopularShows @Inject constructor(
     dispatchers: AppCoroutineDispatchers,

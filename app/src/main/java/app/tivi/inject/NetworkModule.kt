@@ -19,8 +19,8 @@ package app.tivi.inject
 import app.tivi.BuildConfig
 import dagger.Module
 import dagger.Provides
-import okhttp3.logging.HttpLoggingInterceptor
 import javax.inject.Singleton
+import okhttp3.logging.HttpLoggingInterceptor
 
 @Module
 class NetworkModule {

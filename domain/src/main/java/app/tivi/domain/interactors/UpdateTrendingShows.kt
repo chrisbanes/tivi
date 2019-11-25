@@ -21,9 +21,9 @@ import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateTrendingShows.Params
 import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
-import javax.inject.Inject
 
 class UpdateTrendingShows @Inject constructor(
     private val trendingShowsRepository: TrendingShowsRepository,

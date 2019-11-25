@@ -52,11 +52,11 @@ import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import dev.chrisbanes.insetter.doOnApplyWindowInsets
+import javax.inject.Inject
 import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.launch
 import me.saket.inboxrecyclerview.dimming.TintPainter
 import me.saket.inboxrecyclerview.page.PageStateChangeCallbacks
-import javax.inject.Inject
 
 class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>() {
     @Parcelize

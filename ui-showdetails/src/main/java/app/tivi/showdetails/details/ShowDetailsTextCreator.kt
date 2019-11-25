@@ -31,8 +31,8 @@ import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.inject.PerActivity
 import app.tivi.ui.GenreStringer
 import app.tivi.util.TiviDateFormatter
-import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
+import org.threeten.bp.OffsetDateTime
 
 class ShowDetailsTextCreator @Inject constructor(
     @PerActivity private val context: Context,

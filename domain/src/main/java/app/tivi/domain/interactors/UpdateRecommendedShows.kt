@@ -22,10 +22,10 @@ import app.tivi.inject.ProcessLifetime
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.AppCoroutineDispatchers
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.plus
-import javax.inject.Inject
 
 class UpdateRecommendedShows @Inject constructor(
     private val recommendedShowsRepository: RecommendedShowsRepository,

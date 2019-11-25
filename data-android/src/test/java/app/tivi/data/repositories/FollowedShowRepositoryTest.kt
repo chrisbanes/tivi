@@ -38,6 +38,7 @@ import app.tivi.utils.insertShow
 import app.tivi.utils.show
 import app.tivi.utils.show2
 import io.mockk.coEvery
+import javax.inject.Inject
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert.assertThat
@@ -46,7 +47,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import javax.inject.Inject
 
 @RunWith(RobolectricTestRunner::class)
 class FollowedShowRepositoryTest {

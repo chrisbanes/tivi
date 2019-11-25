@@ -23,9 +23,9 @@ import app.tivi.domain.interactors.UpdateRelatedShows.Params
 import app.tivi.extensions.parallelForEach
 import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
-import javax.inject.Inject
 
 class UpdateRelatedShows @Inject constructor(
     private val relatedShowsRepository: RelatedShowsRepository,

@@ -16,9 +16,9 @@
 
 package app.tivi.data
 
-import androidx.room.Room
 import android.content.Context
 import android.os.Debug
+import androidx.room.Room
 import app.tivi.data.daos.EntityInserter
 import dagger.Binds
 import dagger.Module
