@@ -34,7 +34,7 @@ import app.tivi.util.TiviDateFormatter
 import javax.inject.Inject
 import org.threeten.bp.OffsetDateTime
 
-class ShowDetailsTextCreator @Inject constructor(
+internal class ShowDetailsTextCreator @Inject constructor(
     @PerActivity private val context: Context,
     private val tiviDateFormatter: TiviDateFormatter
 ) {

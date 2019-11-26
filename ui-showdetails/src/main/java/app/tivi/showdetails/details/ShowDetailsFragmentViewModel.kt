@@ -48,7 +48,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
-class ShowDetailsFragmentViewModel @AssistedInject constructor(
+internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
     @Assisted initialState: ShowDetailsViewState,
     private val updateShowDetails: UpdateShowDetails,
     observeShowDetails: ObserveShowDetails,

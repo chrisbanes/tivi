@@ -57,10 +57,10 @@ import me.saket.inboxrecyclerview.page.PageStateChangeCallbacks
 
 class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>() {
     private val viewModel: ShowDetailsFragmentViewModel by fragmentViewModel()
-    @Inject lateinit var showDetailsViewModelFactory: ShowDetailsFragmentViewModel.Factory
 
-    @Inject lateinit var controller: ShowDetailsEpoxyController
-    @Inject lateinit var textCreator: ShowDetailsTextCreator
+    @Inject internal lateinit var showDetailsViewModelFactory: ShowDetailsFragmentViewModel.Factory
+    @Inject internal lateinit var controller: ShowDetailsEpoxyController
+    @Inject internal lateinit var textCreator: ShowDetailsTextCreator
 
     private val backPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
