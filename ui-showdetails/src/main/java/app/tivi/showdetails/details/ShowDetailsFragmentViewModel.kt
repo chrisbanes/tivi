@@ -230,9 +230,27 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     companion object : MvRxViewModelFactory<ShowDetailsFragmentViewModel, ShowDetailsViewState> {
-        override fun create(viewModelContext: ViewModelContext, state: ShowDetailsViewState): ShowDetailsFragmentViewModel? {
-            val fragment: ShowDetailsFragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return fragment.showDetailsViewModelFactory.create(state)
+        override fun create(
+            viewModelContext: ViewModelContext,
+            state: ShowDetailsViewState
+        ): ShowDetailsFragmentViewModel? {
+            val f: ShowDetailsFragment = (viewModelContext as FragmentViewModelContext).fragment()
+            return f.showDetailsViewModelFactory.create(state).apply {
+                val args = f.requireArguments()
+
+                // If the fragment arguments contain an episode id, deep link into it
+                if (args.containsKey("episode_id")) {
+                    submitAction(OpenEpisodeDetails(args.getLong("episode_id")))
+                }
+            }
+        }
+
+        override fun initialState(
+            viewModelContext: ViewModelContext
+        ): ShowDetailsViewState? {
+            val f: ShowDetailsFragment = (viewModelContext as FragmentViewModelContext).fragment()
+            val args = f.requireArguments()
+            return ShowDetailsViewState(showId = args.getLong("show_id"))
         }
     }
 }

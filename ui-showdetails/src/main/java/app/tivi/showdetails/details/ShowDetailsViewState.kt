@@ -40,12 +40,7 @@ data class ShowDetailsViewState(
     val focusedSeason: FocusSeasonUiEffect? = null,
     val openEpisodeUiEffect: OpenEpisodeUiEffect? = null,
     val refreshing: Boolean = false
-) : MvRxState {
-    internal constructor(args: ShowDetailsFragment.Arguments) : this(
-            showId = args.showId,
-            openEpisodeUiEffect = args.episodeToExpand?.let(::PendingOpenEpisodeUiEffect)
-    )
-}
+) : MvRxState
 
 data class FocusSeasonUiEffect(val seasonId: Long)
 

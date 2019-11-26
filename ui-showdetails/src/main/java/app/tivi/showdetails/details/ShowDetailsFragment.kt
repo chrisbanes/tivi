@@ -17,7 +17,6 @@
 package app.tivi.showdetails.details
 
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,20 +47,15 @@ import app.tivi.extensions.smoothScrollToItemPosition
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.extensions.updateConstraintSets
 import app.tivi.showdetails.details.databinding.FragmentShowDetailsBinding
-import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import dev.chrisbanes.insetter.doOnApplyWindowInsets
 import javax.inject.Inject
-import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.launch
 import me.saket.inboxrecyclerview.dimming.TintPainter
 import me.saket.inboxrecyclerview.page.PageStateChangeCallbacks
 
 class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>() {
-    @Parcelize
-    internal data class Arguments(val showId: Long, val episodeToExpand: Long?) : Parcelable
-
     private val viewModel: ShowDetailsFragmentViewModel by fragmentViewModel()
     @Inject lateinit var showDetailsViewModelFactory: ShowDetailsFragmentViewModel.Factory
 
@@ -72,17 +66,6 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
         override fun handleOnBackPressed() {
             requireBinding().detailsRv.collapse()
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // We need to map the arguments bundle to something MvRx understands
-        val args = arguments
-        args?.putParcelable(MvRx.KEY_ARG, Arguments(
-                args.getLong("show_id"),
-                args.getLong("episode_id", Long.MIN_VALUE).let { if (it >= 0) it else null }
-        ))
     }
 
     override fun createBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): FragmentShowDetailsBinding {
