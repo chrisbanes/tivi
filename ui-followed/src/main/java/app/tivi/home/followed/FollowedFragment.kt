@@ -48,9 +48,9 @@ import kotlinx.coroutines.flow.collect
 
 class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
     private val viewModel: FollowedViewModel by fragmentViewModel()
-    @Inject lateinit var followedViewModelFactory: FollowedViewModel.Factory
 
-    @Inject lateinit var controller: FollowedEpoxyController
+    @Inject internal lateinit var followedViewModelFactory: FollowedViewModel.Factory
+    @Inject internal lateinit var controller: FollowedEpoxyController
 
     private var currentActionMode: ActionMode? = null
 

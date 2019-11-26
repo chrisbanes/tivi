@@ -33,7 +33,7 @@ import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
 import javax.inject.Inject
 
-class FollowedEpoxyController @Inject constructor(
+internal class FollowedEpoxyController @Inject constructor(
     private val textCreator: HomeTextCreator
 ) : PagedListEpoxyController<FollowedShowEntryWithShow>() {
     var state by observable(FollowedViewState(), ::requestModelBuild)

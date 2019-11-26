@@ -48,9 +48,9 @@ import kotlinx.coroutines.flow.collect
 
 class WatchedFragment : TiviFragmentWithBinding<FragmentWatchedBinding>() {
     private val viewModel: WatchedViewModel by fragmentViewModel()
-    @Inject lateinit var watchedViewModelFactory: WatchedViewModel.Factory
 
-    @Inject lateinit var controller: WatchedEpoxyController
+    @Inject internal lateinit var watchedViewModelFactory: WatchedViewModel.Factory
+    @Inject internal lateinit var controller: WatchedEpoxyController
 
     private var authStateMenuItemBinder: AuthStateMenuItemBinder? = null
 

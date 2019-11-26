@@ -44,7 +44,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class DiscoverViewModel @AssistedInject constructor(
+internal class DiscoverViewModel @AssistedInject constructor(
     @Assisted initialState: DiscoverViewState,
     private val updatePopularShows: UpdatePopularShows,
     observePopularShows: ObservePopularShows,

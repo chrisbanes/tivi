@@ -32,7 +32,7 @@ import com.airbnb.epoxy.Carousel
 import com.airbnb.epoxy.EpoxyController
 import javax.inject.Inject
 
-class DiscoverEpoxyController @Inject constructor(
+internal class DiscoverEpoxyController @Inject constructor(
     private val context: Context,
     private val textCreator: DiscoverTextCreator
 ) : EpoxyController() {
