@@ -33,6 +33,7 @@ class TraktShowToTiviShow @Inject constructor(
             summary = from.overview,
             homepage = from.homepage,
             traktRating = from.rating?.toFloat(),
+            traktVotes = from.votes,
             certification = from.certification,
             runtime = from.runtime,
             network = from.network,

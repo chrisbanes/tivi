@@ -35,7 +35,7 @@
             android:id="@+id/details_info_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/trakt_rating_title"
+            android:text="@{tiviShow.traktVotes != null ? @string/trakt_rating_title_votes((float) tiviShow.traktVotes / 1000f) : @string/trakt_rating_title}"
             android:textAppearance="?attr/textAppearanceSubtitle2"
             tools:text="Rating" />
 

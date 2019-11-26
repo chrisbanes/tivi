@@ -120,6 +120,7 @@ class ShowStore @Inject constructor(
             // Trakt specific stuff
             traktId = trakt.traktId ?: local.traktId,
             traktRating = trakt.traktRating ?: local.traktRating,
+            traktVotes = trakt.traktVotes ?: local.traktVotes,
             traktDataUpdate = trakt.traktDataUpdate ?: local.traktDataUpdate,
 
             // TMDb specific stuff
