@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 
-class SearchViewModel @AssistedInject constructor(
+internal class SearchViewModel @AssistedInject constructor(
     @Assisted initialState: SearchViewState,
     private val searchShows: SearchShows
 ) : TiviMvRxViewModel<SearchViewState>(initialState) {

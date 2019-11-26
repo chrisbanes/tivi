@@ -44,9 +44,9 @@ import javax.inject.Inject
 
 class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
     private val viewModel: DiscoverViewModel by fragmentViewModel()
-    @Inject lateinit var discoverViewModelFactory: DiscoverViewModel.Factory
 
-    @Inject lateinit var controller: DiscoverEpoxyController
+    @Inject internal lateinit var discoverViewModelFactory: DiscoverViewModel.Factory
+    @Inject internal lateinit var controller: DiscoverEpoxyController
 
     private var authStateMenuItemBinder: AuthStateMenuItemBinder? = null
 

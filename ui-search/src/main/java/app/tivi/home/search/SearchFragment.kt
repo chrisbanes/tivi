@@ -40,8 +40,8 @@ import javax.inject.Inject
 internal class SearchFragment : TiviFragmentWithBinding<FragmentSearchBinding>() {
     private val viewModel: SearchViewModel by fragmentViewModel()
 
-    @Inject lateinit var searchViewModelFactory: SearchViewModel.Factory
-    @Inject lateinit var controller: SearchEpoxyController
+    @Inject internal lateinit var searchViewModelFactory: SearchViewModel.Factory
+    @Inject internal lateinit var controller: SearchEpoxyController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -47,7 +47,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class WatchedViewModel @AssistedInject constructor(
+internal class WatchedViewModel @AssistedInject constructor(
     @Assisted initialState: WatchedViewState,
     private val updateWatchedShows: UpdateWatchedShows,
     private val changeShowFollowStatus: ChangeShowFollowStatus,

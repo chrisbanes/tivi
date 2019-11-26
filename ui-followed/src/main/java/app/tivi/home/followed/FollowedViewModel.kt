@@ -48,7 +48,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class FollowedViewModel @AssistedInject constructor(
+internal class FollowedViewModel @AssistedInject constructor(
     @Assisted initialState: FollowedViewState,
     private val updateFollowedShows: UpdateFollowedShows,
     private val observePagedFollowedShows: ObservePagedFollowedShows,

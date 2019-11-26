@@ -23,7 +23,7 @@ import com.airbnb.epoxy.EpoxyController
 import dagger.Lazy
 import javax.inject.Inject
 
-class SearchEpoxyController @Inject constructor(
+internal class SearchEpoxyController @Inject constructor(
     private val textCreator: Lazy<HomeTextCreator>
 ) : EpoxyController() {
     var callbacks: Callbacks? by observable(null, ::requestModelBuild)

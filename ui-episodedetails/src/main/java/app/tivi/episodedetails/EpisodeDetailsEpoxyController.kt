@@ -26,7 +26,7 @@ import com.airbnb.epoxy.TypedEpoxyController
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
-class EpisodeDetailsEpoxyController @Inject constructor(
+internal class EpisodeDetailsEpoxyController @Inject constructor(
     @PerActivity private val context: Context,
     private val dateFormatter: TiviDateFormatter
 ) : TypedEpoxyController<EpisodeDetailsViewState>() {

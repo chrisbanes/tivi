@@ -20,7 +20,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="app.tivi.episodedetails.EpisodeDetailsViewState.Action" />
+        <import type="app.tivi.episodedetails.Action" />
 
         <variable
             name="state"

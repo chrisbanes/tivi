@@ -34,7 +34,7 @@ import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.epoxy.paging.PagedListEpoxyController
 import javax.inject.Inject
 
-class WatchedEpoxyController @Inject constructor(
+internal class WatchedEpoxyController @Inject constructor(
     private val textCreator: HomeTextCreator,
     private val dateFormatter: TiviDateFormatter
 ) : PagedListEpoxyController<WatchedShowEntryWithShow>() {

@@ -48,7 +48,7 @@ import com.airbnb.mvrx.Success
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
-class ShowDetailsEpoxyController @Inject constructor(
+internal class ShowDetailsEpoxyController @Inject constructor(
     @PerActivity private val context: Context,
     private val textCreator: ShowDetailsTextCreator
 ) : EpoxyController() {

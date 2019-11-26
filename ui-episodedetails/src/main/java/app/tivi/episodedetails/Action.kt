@@ -16,20 +16,7 @@
 
 package app.tivi.episodedetails
 
-import android.content.Context
-import app.tivi.data.entities.Episode
-import app.tivi.data.entities.Season
-import app.tivi.inject.PerActivity
-import javax.inject.Inject
-
-internal class EpisodeDetailsTextCreator @Inject constructor(
-    @PerActivity private val context: Context
-) {
-    fun seasonEpisodeTitleText(season: Season?, episode: Episode?): String? {
-        return if (season != null && episode != null) {
-            context.getString(R.string.season_episode_number, season.number, episode.number)
-        } else {
-            null
-        }
-    }
+enum class Action {
+    WATCH,
+    UNWATCH
 }

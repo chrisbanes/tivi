@@ -22,7 +22,7 @@ import app.tivi.data.entities.Season
 import app.tivi.inject.PerActivity
 import javax.inject.Inject
 
-class DiscoverTextCreator @Inject constructor(
+internal class DiscoverTextCreator @Inject constructor(
     @PerActivity private val context: Context
 ) {
     fun seasonEpisodeTitleText(season: Season, episode: Episode): String {
