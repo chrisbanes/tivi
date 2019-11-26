@@ -17,7 +17,6 @@
 package app.tivi.episodedetails
 
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,31 +26,25 @@ import app.tivi.common.epoxy.SwipeAwayCallbacks
 import app.tivi.episodedetails.databinding.FragmentEpisodeDetailsBinding
 import app.tivi.extensions.resolveThemeColor
 import com.airbnb.epoxy.EpoxyTouchHelper
-import com.airbnb.mvrx.MvRx
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import javax.inject.Inject
-import kotlinx.android.parcel.Parcelize
 
 class EpisodeDetailsFragment : TiviFragmentWithBinding<FragmentEpisodeDetailsBinding>() {
     companion object {
         @JvmStatic
         fun create(id: Long): EpisodeDetailsFragment {
             return EpisodeDetailsFragment().apply {
-                arguments = bundleOf(MvRx.KEY_ARG to Arguments(id))
+                arguments = bundleOf("episode_id" to id)
             }
         }
     }
 
-    @Parcelize
-    data class Arguments(val episodeId: Long) : Parcelable
-
     private val viewModel: EpisodeDetailsViewModel by fragmentViewModel()
-    @Inject lateinit var episodeDetailsViewModelFactory: EpisodeDetailsViewModel.Factory
 
-    @Inject lateinit var controller: EpisodeDetailsEpoxyController
-
-    @Inject lateinit var textCreator: EpisodeDetailsTextCreator
+    @Inject internal lateinit var episodeDetailsViewModelFactory: EpisodeDetailsViewModel.Factory
+    @Inject internal lateinit var controller: EpisodeDetailsEpoxyController
+    @Inject internal lateinit var textCreator: EpisodeDetailsTextCreator
 
     override fun createBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): FragmentEpisodeDetailsBinding {
         return FragmentEpisodeDetailsBinding.inflate(layoutInflater, container, false)
@@ -63,8 +56,8 @@ class EpisodeDetailsFragment : TiviFragmentWithBinding<FragmentEpisodeDetailsBin
         binding.epDetailsFab.setOnClickListener {
             withState(viewModel) { state ->
                 when (state.action) {
-                    EpisodeDetailsViewState.Action.WATCH -> viewModel.submitAction(AddEpisodeWatchAction)
-                    EpisodeDetailsViewState.Action.UNWATCH -> viewModel.submitAction(RemoveAllEpisodeWatchesAction)
+                    Action.WATCH -> viewModel.submitAction(AddEpisodeWatchAction)
+                    Action.UNWATCH -> viewModel.submitAction(RemoveAllEpisodeWatchesAction)
                 }
             }
         }

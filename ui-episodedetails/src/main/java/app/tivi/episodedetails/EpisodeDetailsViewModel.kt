@@ -25,7 +25,6 @@ import app.tivi.domain.interactors.UpdateEpisodeDetails
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeWatches
-import app.tivi.episodedetails.EpisodeDetailsViewState.Action
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
@@ -37,7 +36,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
-class EpisodeDetailsViewModel @AssistedInject constructor(
+internal class EpisodeDetailsViewModel @AssistedInject constructor(
     @Assisted initialState: EpisodeDetailsViewState,
     private val updateEpisodeDetails: UpdateEpisodeDetails,
     observeEpisodeDetails: ObserveEpisodeDetails,
@@ -110,9 +109,20 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     }
 
     companion object : MvRxViewModelFactory<EpisodeDetailsViewModel, EpisodeDetailsViewState> {
-        override fun create(viewModelContext: ViewModelContext, state: EpisodeDetailsViewState): EpisodeDetailsViewModel? {
-            val fragment: EpisodeDetailsFragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return fragment.episodeDetailsViewModelFactory.create(state)
+        override fun create(
+            viewModelContext: ViewModelContext,
+            state: EpisodeDetailsViewState
+        ): EpisodeDetailsViewModel? {
+            val f: EpisodeDetailsFragment = (viewModelContext as FragmentViewModelContext).fragment()
+            return f.episodeDetailsViewModelFactory.create(state)
+        }
+
+        override fun initialState(
+            viewModelContext: ViewModelContext
+        ): EpisodeDetailsViewState? {
+            val f: EpisodeDetailsFragment = (viewModelContext as FragmentViewModelContext).fragment()
+            val args = f.requireArguments()
+            return EpisodeDetailsViewState(episodeId = args.getLong("episode_id"))
         }
     }
 }

@@ -16,8 +16,8 @@
 
 package app.tivi.episodedetails
 
-sealed class EpisodeDetailsAction
-object RefreshAction : EpisodeDetailsAction()
-object AddEpisodeWatchAction : EpisodeDetailsAction()
-data class RemoveEpisodeWatchAction(val watchId: Long) : EpisodeDetailsAction()
-object RemoveAllEpisodeWatchesAction : EpisodeDetailsAction()
+internal sealed class EpisodeDetailsAction
+internal object RefreshAction : EpisodeDetailsAction()
+internal object AddEpisodeWatchAction : EpisodeDetailsAction()
+internal data class RemoveEpisodeWatchAction(val watchId: Long) : EpisodeDetailsAction()
+internal object RemoveAllEpisodeWatchesAction : EpisodeDetailsAction()

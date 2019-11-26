@@ -27,10 +27,4 @@ data class EpisodeDetailsViewState(
     val episode: Episode? = null,
     val watches: List<EpisodeWatchEntry> = emptyList(),
     val action: Action = Action.WATCH
-) : MvRxState {
-    constructor(args: EpisodeDetailsFragment.Arguments) : this(args.episodeId)
-
-    enum class Action {
-        WATCH, UNWATCH
-    }
-}
+) : MvRxState
