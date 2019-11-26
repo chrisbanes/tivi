@@ -63,7 +63,7 @@
     <string name="percentage_format">%1$d%%</string>
     <string name="minutes_format">%1$dm</string>
 
-    <string name="rating_title">Rating</string>
+    <string name="trakt_rating_title">Trakt Rating</string>
     <string name="network_title">Network</string>
     <string name="certificate_title">Certificate</string>
     <string name="runtime_title">Length</string>

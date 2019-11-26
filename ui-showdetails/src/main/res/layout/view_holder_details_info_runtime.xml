@@ -19,31 +19,25 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
-            name="title"
-            type="CharSequence" />
-
-        <variable
-            name="label"
-            type="CharSequence" />
+            name="tiviShow"
+            type="app.tivi.data.entities.TiviShow" />
     </data>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/spacing_small"
-        android:transitionGroup="true">
+        android:transitionGroup="true"
+        android:paddingBottom="@dimen/spacing_small">
 
         <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/details_info_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/runtime_title"
             android:layout_marginBottom="@dimen/spacing_micro"
-            android:text="@{title}"
-            android:textAppearance="?attr/textAppearanceSubtitle2"
-            tools:text="Network" />
+            android:textAppearance="?attr/textAppearanceSubtitle2" />
 
         <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/details_info_content"
@@ -51,9 +45,9 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:gravity="center"
-            android:text="@{label}"
+            android:text="@{@string/minutes_format(tiviShow.runtime)}"
             android:textAppearance="?attr/textAppearanceBody2"
-            tools:text="HBO" />
+            tools:text="PG" />
 
     </LinearLayout>
 </layout>

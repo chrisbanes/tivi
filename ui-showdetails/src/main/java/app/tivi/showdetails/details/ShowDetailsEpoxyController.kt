@@ -25,7 +25,6 @@ import app.tivi.common.epoxy.HalfSpanOverride
 import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.common.epoxy.tiviCarousel
 import app.tivi.common.epoxy.withModelsFrom
-import app.tivi.common.layouts.DetailsInfoItemBindingModel_
 import app.tivi.common.layouts.detailsHeader
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
@@ -46,7 +45,6 @@ import com.airbnb.epoxy.EpoxyModelGroup
 import com.airbnb.mvrx.Async
 import com.airbnb.mvrx.Success
 import javax.inject.Inject
-import kotlin.math.roundToInt
 
 class ShowDetailsEpoxyController @Inject constructor(
     @PerActivity private val context: Context,
@@ -103,34 +101,26 @@ class ShowDetailsEpoxyController @Inject constructor(
 
         val show = state.show
         val badges = ArrayList<EpoxyModel<*>>()
-        show.traktRating?.let { rating ->
-            badges += DetailsInfoItemBindingModel_().apply {
-                val ratingOutOfOneHundred = (rating * 10).roundToInt()
-                id("rating")
-                label(context.getString(R.string.percentage_format, ratingOutOfOneHundred))
-                title(textCreator.getString(R.string.rating_title))
-            }
+        badges += DetailsInfoRatingBindingModel_().apply {
+            id("rating")
+            tiviShow(show)
         }
-        show.network?.let { network ->
-            badges += DetailsInfoItemBindingModel_().apply {
+        if (show.network != null) {
+            badges += DetailsInfoNetworkBindingModel_().apply {
                 id("network")
-                label(network)
-                title(textCreator.getString(R.string.network_title))
+                tiviShow(show)
             }
         }
-        show.certification?.let { certificate ->
-            badges += DetailsInfoItemBindingModel_().apply {
+        if (show.certification != null) {
+            badges += DetailsInfoCertBindingModel_().apply {
                 id("cert")
-                label(certificate)
-                title(textCreator.getString(R.string.certificate_title))
+                tiviShow(show)
             }
         }
-        show.runtime?.let { runtime ->
-            badges += DetailsInfoItemBindingModel_().apply {
-                val runtimeMinutes = context.getString(R.string.minutes_format, runtime)
+        if (show.runtime != null) {
+            badges += DetailsInfoRuntimeBindingModel_().apply {
                 id("runtime")
-                label(runtimeMinutes)
-                title(textCreator.getString(R.string.runtime_title))
+                tiviShow(show)
             }
         }
         if (badges.isNotEmpty()) {
