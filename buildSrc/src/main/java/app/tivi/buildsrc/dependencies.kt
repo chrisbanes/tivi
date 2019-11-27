@@ -48,6 +48,8 @@ object Libs {
 
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.0-beta-4"
 
+    const val flexbox = "com.google.android:flexbox:2.0.0"
+
     object Insetter {
         private const val version = "0.2.0"
         const val dbx = "dev.chrisbanes:insetter-dbx:$version"

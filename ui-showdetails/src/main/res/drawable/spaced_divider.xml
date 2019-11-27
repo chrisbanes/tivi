@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2019 Google LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,13 +14,13 @@
   ~ limitations under the License.
   -->
 
-<com.google.android.flexbox.FlexboxLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingVertical="@dimen/spacing_small"
-    android:paddingEnd="@dimen/spacing_normal"
-    app:dividerDrawableVertical="@drawable/spaced_divider"
-    app:flexWrap="wrap"
-    app:showDividerVertical="middle" />
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="?android:attr/listDivider"
+        android:left="@dimen/spacing_small"
+        android:right="@dimen/spacing_small"
+        android:top="@dimen/spacing_small"
+        android:bottom="@dimen/spacing_small" />
+
+</layer-list>
