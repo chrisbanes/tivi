@@ -36,11 +36,13 @@
             android:text="@string/certificate_title"
             android:textAppearance="?attr/textAppearanceSubtitle2" />
 
-        <app.tivi.ui.widget.BaselineGridTextView
+        <!-- We use a normal TextView here so we can tweak the padding for the background -->
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:gravity="center"
+            android:background="@drawable/cert_background"
             android:text="@{tiviShow.certification}"
             android:textAppearance="?attr/textAppearanceBody2"
             tools:text="PG" />
