@@ -18,8 +18,13 @@ package app.tivi.data.mappers
 
 import app.tivi.data.entities.TiviShow
 import com.uwetrottmann.trakt5.entities.Show
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
+import org.threeten.bp.DayOfWeek
+import org.threeten.bp.LocalTime
+import org.threeten.bp.ZoneId
+import org.threeten.bp.format.TextStyle
 
 @Singleton
 class TraktShowToTiviShow @Inject constructor(
@@ -41,6 +46,27 @@ class TraktShowToTiviShow @Inject constructor(
             firstAired = from.first_aired,
             _genres = from.genres?.joinToString(","),
             traktDataUpdate = from.updated_at,
-            status = from.status?.let { statusMapper.map(it) }
+            status = from.status?.let {
+                statusMapper.map(it)
+            },
+            airsDay = from.airs?.day?.let { dayString ->
+                DayOfWeek.values().firstOrNull { day ->
+                    dayString.equals(day.getDisplayName(TextStyle.FULL, Locale.getDefault()), true)
+                }
+            },
+            airsTime = from.airs?.time?.let {
+                try {
+                    LocalTime.parse(it)
+                } catch (e: Exception) {
+                    null
+                }
+            },
+            airsTimeZone = from.airs?.timezone?.let {
+                try {
+                    ZoneId.of(it)
+                } catch (e: Exception) {
+                    null
+                }
+            }
     )
 }

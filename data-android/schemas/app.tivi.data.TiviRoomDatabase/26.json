@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 26,
-    "identityHash": "4996114c78a5cbb0e5c5c52b1d53918b",
+    "identityHash": "9597ae3e4d6c8012a30ac4303399f9e5",
     "entities": [
       {
         "tableName": "shows",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `imdb_id` TEXT, `overview` TEXT, `homepage` TEXT, `trakt_rating` REAL, `trakt_votes` INTEGER, `certification` TEXT, `first_aired` TEXT, `country` TEXT, `network` TEXT, `network_logo_path` TEXT, `runtime` INTEGER, `genres` TEXT, `last_trakt_data_update` TEXT, `status` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `imdb_id` TEXT, `overview` TEXT, `homepage` TEXT, `trakt_rating` REAL, `trakt_votes` INTEGER, `certification` TEXT, `first_aired` TEXT, `country` TEXT, `network` TEXT, `network_logo_path` TEXT, `runtime` INTEGER, `genres` TEXT, `last_trakt_data_update` TEXT, `status` TEXT, `airs_day` INTEGER, `airs_time` TEXT, `airs_tz` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -119,6 +119,24 @@
           {
             "fieldPath": "status",
             "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "airsDay",
+            "columnName": "airs_day",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "airsTime",
+            "columnName": "airs_time",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "airsTimeZone",
+            "columnName": "airs_tz",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -1091,7 +1109,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4996114c78a5cbb0e5c5c52b1d53918b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9597ae3e4d6c8012a30ac4303399f9e5')"
     ]
   }
 }

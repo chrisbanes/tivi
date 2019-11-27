@@ -151,4 +151,7 @@
     <string name="status_active">Continuing</string>
     <string name="status_in_production">In production</string>
 
+    <string name="airs_title">Airs</string>
+    <string name="airs_text">%1$s at %2$s</string>
+
 </resources>

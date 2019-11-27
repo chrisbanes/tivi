@@ -21,7 +21,10 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import org.threeten.bp.DayOfWeek
+import org.threeten.bp.LocalTime
 import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.ZoneId
 
 @Entity(tableName = "shows",
         indices = [
@@ -48,7 +51,10 @@ data class TiviShow(
     @ColumnInfo(name = "runtime") val runtime: Int? = null,
     @ColumnInfo(name = "genres") val _genres: String? = null,
     @ColumnInfo(name = "last_trakt_data_update") val traktDataUpdate: OffsetDateTime? = null,
-    @ColumnInfo(name = "status") val status: ShowStatus? = null
+    @ColumnInfo(name = "status") val status: ShowStatus? = null,
+    @ColumnInfo(name = "airs_day") val airsDay: DayOfWeek? = null,
+    @ColumnInfo(name = "airs_time") val airsTime: LocalTime? = null,
+    @ColumnInfo(name = "airs_tz") val airsTimeZone: ZoneId? = null
 ) : TiviEntity, TraktIdEntity, TmdbIdEntity {
     @Ignore constructor() : this(0)
 

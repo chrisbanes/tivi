@@ -131,6 +131,14 @@ class ShowDetailsEpoxyController @Inject constructor(
                 textCreator(textCreator)
             }
         }
+        if (show.airsTime != null && show.airsDay != null && show.airsTimeZone != null &&
+                (show.status == null || show.status == ShowStatus.RETURNING)) {
+            badges += DetailsInfoAirsBindingModel_().apply {
+                id("airs")
+                tiviShow(show)
+                textCreator(textCreator)
+            }
+        }
         if (badges.isNotEmpty()) {
             EpoxyModelGroup(R.layout.layout_show_details_info_holder, badges)
                     .addTo(this)

@@ -115,6 +115,9 @@ class ShowStore @Inject constructor(
             firstAired = trakt.firstAired ?: local.firstAired,
             _genres = trakt._genres ?: local._genres,
             status = trakt.status ?: local.status,
+            airsDay = trakt.airsDay ?: local.airsDay,
+            airsTimeZone = trakt.airsTimeZone ?: local.airsTimeZone,
+            airsTime = trakt.airsTime ?: local.airsTime,
 
             // Trakt specific stuff
             traktId = trakt.traktId ?: local.traktId,
