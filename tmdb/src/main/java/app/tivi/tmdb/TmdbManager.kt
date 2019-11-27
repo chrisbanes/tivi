@@ -60,7 +60,9 @@ class TmdbManager @Inject constructor(
                 val newProvider = TmdbImageUrlProvider(
                         images.secure_base_url!!,
                         images.poster_sizes ?: emptyList(),
-                        images.backdrop_sizes ?: emptyList())
+                        images.backdrop_sizes ?: emptyList(),
+                        images.logo_sizes ?: emptyList()
+                )
                 imageProviderSubject.send(newProvider)
             }
         }

@@ -44,6 +44,7 @@ data class TiviShow(
     @ColumnInfo(name = "first_aired") val firstAired: OffsetDateTime? = null,
     @ColumnInfo(name = "country") val country: String? = null,
     @ColumnInfo(name = "network") val network: String? = null,
+    @ColumnInfo(name = "network_logo_path") val networkLogoPath: String? = null,
     @ColumnInfo(name = "runtime") val runtime: Int? = null,
     @ColumnInfo(name = "genres") val _genres: String? = null,
     @ColumnInfo(name = "last_trakt_data_update") val traktDataUpdate: OffsetDateTime? = null,

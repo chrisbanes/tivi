@@ -51,6 +51,11 @@ fun textOrGoneIfEmpty(view: TextView, s: CharSequence?) {
     view.isGone = s.isNullOrEmpty()
 }
 
+@BindingAdapter("goneIfNull")
+fun goneIfNull(view: View, value: Any?) {
+    view.isGone = value == null
+}
+
 @BindingAdapter("srcRes")
 fun imageViewSrcRes(view: ImageView, drawableRes: Int) {
     if (drawableRes != 0) {

@@ -25,7 +25,7 @@
     </data>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:transitionGroup="true"
@@ -39,6 +39,16 @@
             android:layout_marginBottom="@dimen/spacing_micro"
             android:textAppearance="?attr/textAppearanceSubtitle2" />
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:tint="@color/color_on_background_87"
+            app:goneIfNull="@{tiviShow.networkLogoPath}"
+            app:imageSaturateOnLoad="@{false}"
+            app:tmdbLogoPath="@{tiviShow.networkLogoPath}" />
+
         <app.tivi.ui.widget.BaselineGridTextView
             android:id="@+id/details_info_content"
             android:layout_width="wrap_content"
@@ -47,6 +57,7 @@
             android:gravity="center"
             android:text="@{tiviShow.network}"
             android:textAppearance="?attr/textAppearanceBody2"
+            app:visible="@{tiviShow.networkLogoPath == null}"
             tools:text="HBO" />
 
     </LinearLayout>

@@ -33,9 +33,10 @@ class TmdbImagesToShowImages @Inject constructor() : Mapper<TvShow, List<ShowTmd
                     type = type,
                     language = image.iso_639_1,
                     rating = image.vote_average?.toFloat() ?: 0f,
-                    isPrimary = image.file_path!! == when (type) {
-                        ImageType.BACKDROP -> from.backdrop_path
-                        ImageType.POSTER -> from.poster_path
+                    isPrimary = when (type) {
+                        ImageType.BACKDROP -> image.file_path == from.backdrop_path
+                        ImageType.POSTER -> image.file_path == from.poster_path
+                        else -> false
                     }
             )
         }

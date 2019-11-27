@@ -48,6 +48,29 @@ fun ImageView.loadBackdrop(
 }
 
 @BindingAdapter(
+        "tmdbLogoPath",
+        "imageSaturateOnLoad",
+        requireAll = false
+)
+fun ImageView.loadLogo(
+    oldPath: String?,
+    oldSaturateOnLoad: Boolean?,
+    path: String?,
+    saturateOnLoad: Boolean?
+) {
+    if (oldPath != path || oldSaturateOnLoad != saturateOnLoad) {
+        loadImage(
+                null,
+                oldSaturateOnLoad,
+                0f,
+                path?.let { ShowTmdbImage(path = path, type = ImageType.LOGO, showId = 0) },
+                saturateOnLoad,
+                0f
+        )
+    }
+}
+
+@BindingAdapter(
         "image",
         "imageSaturateOnLoad",
         "imageCornerRadius",

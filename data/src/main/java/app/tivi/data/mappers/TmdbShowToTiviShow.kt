@@ -28,6 +28,8 @@ class TmdbShowToTiviShow @Inject constructor() : Mapper<TvShow, TiviShow> {
             imdbId = from.external_ids?.imdb_id,
             title = from.name,
             summary = from.overview,
-            homepage = from.homepage
+            homepage = from.homepage,
+            network = from.networks?.firstOrNull()?.name,
+            networkLogoPath = from.networks?.firstOrNull()?.logo_path
     )
 }

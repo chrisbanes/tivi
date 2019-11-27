@@ -35,7 +35,7 @@ object Libs {
 
     const val timber = "com.jakewharton.timber:timber:4.7.1"
 
-    const val tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.1.1"
+    const val tmdbJava = "com.github.chrisbanes:tmdb-java:master-SNAPSHOT"
     const val traktJava = "com.uwetrottmann.trakt5:trakt-java:6.4.0"
 
     const val appauth = "net.openid:appauth:0.7.1"

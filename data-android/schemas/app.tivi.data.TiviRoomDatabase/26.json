@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 26,
-    "identityHash": "c0240bf6aae544e47f58990d02830f60",
+    "identityHash": "4996114c78a5cbb0e5c5c52b1d53918b",
     "entities": [
       {
         "tableName": "shows",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `imdb_id` TEXT, `overview` TEXT, `homepage` TEXT, `trakt_rating` REAL, `trakt_votes` INTEGER, `certification` TEXT, `first_aired` TEXT, `country` TEXT, `network` TEXT, `runtime` INTEGER, `genres` TEXT, `last_trakt_data_update` TEXT, `status` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `original_title` TEXT, `trakt_id` INTEGER, `tmdb_id` INTEGER, `imdb_id` TEXT, `overview` TEXT, `homepage` TEXT, `trakt_rating` REAL, `trakt_votes` INTEGER, `certification` TEXT, `first_aired` TEXT, `country` TEXT, `network` TEXT, `network_logo_path` TEXT, `runtime` INTEGER, `genres` TEXT, `last_trakt_data_update` TEXT, `status` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -89,6 +89,12 @@
           {
             "fieldPath": "network",
             "columnName": "network",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "networkLogoPath",
+            "columnName": "network_logo_path",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -1085,7 +1091,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c0240bf6aae544e47f58990d02830f60')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4996114c78a5cbb0e5c5c52b1d53918b')"
     ]
   }
 }

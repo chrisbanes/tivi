@@ -36,4 +36,14 @@ object TmdbImageSizes {
             "w1280",
             "original"
     )
+
+    val logoSizes = listOf(
+            "w45",
+            "w92",
+            "w154",
+            "w185",
+            "w300",
+            "w500",
+            "original"
+    )
 }

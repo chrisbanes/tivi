@@ -42,9 +42,9 @@ class ShowStore @Inject constructor(
 
     suspend fun saveShow(show: TiviShow) = entityInserter.insertOrUpdate(showDao, show)
 
-    suspend fun updateShowFromSources(showId: Long, trakt: TiviShow) = transactionRunner {
+    suspend fun updateShowFromSources(showId: Long, trakt: TiviShow, tmdb: TiviShow) = transactionRunner {
         val localShow = getShowOrEmpty(showId)
-        val merged = mergeShows(localShow, trakt)
+        val merged = mergeShows(localShow, trakt, tmdb)
 
         if (localShow != merged) {
             saveShow(merged)
@@ -109,7 +109,6 @@ class ShowStore @Inject constructor(
             title = trakt.title ?: local.title,
             summary = trakt.summary ?: local.summary,
             homepage = trakt.homepage ?: local.homepage,
-            network = trakt.network ?: local.network,
             certification = trakt.certification ?: local.certification,
             runtime = trakt.runtime ?: local.runtime,
             country = trakt.country ?: local.country,
@@ -124,6 +123,8 @@ class ShowStore @Inject constructor(
             traktDataUpdate = trakt.traktDataUpdate ?: local.traktDataUpdate,
 
             // TMDb specific stuff
-            tmdbId = tmdb.tmdbId ?: trakt.tmdbId ?: local.tmdbId
+            tmdbId = tmdb.tmdbId ?: trakt.tmdbId ?: local.tmdbId,
+            network = tmdb.network ?: trakt.network ?: local.network,
+            networkLogoPath = tmdb.networkLogoPath ?: local.networkLogoPath
     )
 }
