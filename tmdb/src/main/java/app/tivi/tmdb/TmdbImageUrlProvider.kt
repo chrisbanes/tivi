@@ -21,7 +21,8 @@ private val IMAGE_SIZE_PATTERN = "w(\\d+)$".toRegex()
 data class TmdbImageUrlProvider(
     private val baseImageUrl: String = TmdbImageSizes.baseImageUrl,
     private val posterSizes: List<String> = TmdbImageSizes.posterSizes,
-    private val backdropSizes: List<String> = TmdbImageSizes.backdropSizes
+    private val backdropSizes: List<String> = TmdbImageSizes.backdropSizes,
+    private val logoSizes: List<String> = TmdbImageSizes.logoSizes
 ) {
     fun getPosterUrl(path: String, imageWidth: Int): String {
         return "$baseImageUrl${selectSize(posterSizes, imageWidth)}$path"
@@ -29,6 +30,10 @@ data class TmdbImageUrlProvider(
 
     fun getBackdropUrl(path: String, imageWidth: Int): String {
         return "$baseImageUrl${selectSize(backdropSizes, imageWidth)}$path"
+    }
+
+    fun getLogoUrl(path: String, imageWidth: Int): String {
+        return "$baseImageUrl${selectSize(logoSizes, imageWidth)}$path"
     }
 
     private fun selectSize(sizes: List<String>, imageWidth: Int): String {

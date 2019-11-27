@@ -82,6 +82,8 @@ dependencies {
 
     implementation Libs.inboxRecyclerView
 
+    implementation Libs.flexbox
+
     implementation Libs.Google.material
 
     implementation Libs.Kotlin.stdlib

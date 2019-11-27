@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2019 Google LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +14,11 @@
   ~ limitations under the License.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/spacing_small" />
-</layout>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="?android:attr/listDivider"
+        android:left="@dimen/spacing_small"
+        android:right="@dimen/spacing_small" />
+
+</layer-list>

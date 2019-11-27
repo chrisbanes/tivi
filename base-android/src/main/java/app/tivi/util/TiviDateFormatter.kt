@@ -20,12 +20,17 @@ import android.text.format.DateUtils
 import app.tivi.inject.MediumDate
 import app.tivi.inject.MediumDateTime
 import app.tivi.inject.ShortDate
+import app.tivi.inject.ShortTime
 import javax.inject.Inject
+import javax.inject.Singleton
+import org.threeten.bp.LocalTime
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.Temporal
 
+@Singleton
 class TiviDateFormatter @Inject constructor(
+    @ShortTime private val shortTimeFormatter: DateTimeFormatter,
     @ShortDate private val shortDateFormatter: DateTimeFormatter,
     @MediumDate private val mediumDateFormatter: DateTimeFormatter,
     @MediumDateTime private val mediumDateTimeFormatter: DateTimeFormatter
@@ -35,6 +40,8 @@ class TiviDateFormatter @Inject constructor(
     fun formatMediumDate(temporalAmount: Temporal): String = mediumDateFormatter.format(temporalAmount)
 
     fun formatMediumDateTime(temporalAmount: Temporal): String = mediumDateTimeFormatter.format(temporalAmount)
+
+    fun formatShortTime(localTime: LocalTime): String = shortTimeFormatter.format(localTime)
 
     fun formatShortRelativeTime(dateTime: OffsetDateTime?): CharSequence? {
         if (dateTime == null) {

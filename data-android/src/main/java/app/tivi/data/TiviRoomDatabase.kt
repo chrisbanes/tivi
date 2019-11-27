@@ -60,7 +60,7 @@ import dev.matrix.roomigrant.GenerateRoomMigrations
             FollowedShowsLastWatched::class,
             FollowedShowsNextToWatch::class
         ],
-        version = 25
+        version = 26
 )
 @TypeConverters(TiviTypeConverters::class)
 @GenerateRoomMigrations

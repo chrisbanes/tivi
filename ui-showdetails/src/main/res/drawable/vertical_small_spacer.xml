@@ -15,8 +15,11 @@
   ~ limitations under the License.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/spacing_small" />
-</layout>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="?android:attr/listDivider"
+        android:top="@dimen/spacing_small"
+        android:bottom="@dimen/spacing_small" />
+
+</layer-list>

@@ -46,6 +46,11 @@ annotation class ShortDate
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier
 @MustBeDocumented
+annotation class ShortTime
+
+@Retention(AnnotationRetention.RUNTIME)
+@Qualifier
+@MustBeDocumented
 annotation class PerActivity
 
 @Retention(AnnotationRetention.RUNTIME)

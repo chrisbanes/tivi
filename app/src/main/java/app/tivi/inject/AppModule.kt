@@ -26,6 +26,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.preference.PreferenceManager
 import app.tivi.BuildConfig
 import app.tivi.TiviApplication
+import app.tivi.extensions.toThreeTenDateTimeFormatter
 import app.tivi.home.followed.R
 import app.tivi.util.AppCoroutineDispatchers
 import dagger.Module
@@ -102,10 +103,9 @@ class AppModule {
     @Provides
     @MediumDate
     fun provideMediumDateFormatter(application: TiviApplication): DateTimeFormatter {
-        val dateF = AndroidDateFormat.getMediumDateFormat(application) as SimpleDateFormat
-
         @Suppress("DEPRECATION")
-        return DateTimeFormatter.ofPattern(dateF.toPattern())
+        return (AndroidDateFormat.getMediumDateFormat(application) as SimpleDateFormat)
+                .toThreeTenDateTimeFormatter()
                 .withLocale(application.resources.configuration.locale)
                 .withZone(ZoneId.systemDefault())
     }
@@ -127,12 +127,20 @@ class AppModule {
     @Provides
     @ShortDate
     fun provideShortDateFormatter(application: TiviApplication): DateTimeFormatter {
-        val dateF = AndroidDateFormat.getDateFormat(application) as SimpleDateFormat
-
         @Suppress("DEPRECATION")
-        return DateTimeFormatter.ofPattern(dateF.toPattern())
+        return (AndroidDateFormat.getDateFormat(application) as SimpleDateFormat)
+                .toThreeTenDateTimeFormatter()
                 .withLocale(application.resources.configuration.locale)
                 .withZone(ZoneId.systemDefault())
+    }
+
+    @Singleton
+    @Provides
+    @ShortTime
+    fun provideShortTimeFormatter(application: TiviApplication): DateTimeFormatter {
+        @Suppress("DEPRECATION")
+        return (AndroidDateFormat.getTimeFormat(application) as SimpleDateFormat)
+                .toThreeTenDateTimeFormatter()
     }
 
     @Provides

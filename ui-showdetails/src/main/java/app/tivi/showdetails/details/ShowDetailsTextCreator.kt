@@ -18,7 +18,6 @@ package app.tivi.showdetails.details
 
 import android.content.Context
 import android.graphics.Color
-import androidx.annotation.StringRes
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.text.parseAsHtml
@@ -26,13 +25,19 @@ import androidx.emoji.text.EmojiCompat
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
 import app.tivi.data.entities.Season
+import app.tivi.data.entities.ShowStatus
+import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.inject.PerActivity
 import app.tivi.ui.GenreStringer
 import app.tivi.util.TiviDateFormatter
+import java.util.Locale
 import javax.inject.Inject
 import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.ZoneId
+import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.format.TextStyle
 
 internal class ShowDetailsTextCreator @Inject constructor(
     @PerActivity private val context: Context,
@@ -123,5 +128,32 @@ internal class ShowDetailsTextCreator @Inject constructor(
         }
     }
 
-    fun getString(@StringRes stringRes: Int) = context.getString(stringRes)
+    fun airsText(show: TiviShow): CharSequence? {
+        val airTime = show.airsTime
+        val airTz = show.airsTimeZone
+        val airDay = show.airsDay
+
+        if (airTime == null || airTz == null || airDay == null) {
+            // If we don't have all the necessary info, return null
+            return null
+        }
+
+        val local = ZonedDateTime.now()
+                .withZoneSameLocal(airTz)
+                .with(show.airsDay)
+                .with(airTime)
+                .withZoneSameInstant(ZoneId.systemDefault())
+
+        return context.getString(
+                R.string.airs_text,
+                local.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
+                tiviDateFormatter.formatShortTime(local.toLocalTime())
+        )
+    }
+
+    fun showStatusText(status: ShowStatus): CharSequence = when (status) {
+        ShowStatus.CANCELED, ShowStatus.ENDED -> context.getString(R.string.status_ended)
+        ShowStatus.RETURNING -> context.getString(R.string.status_active)
+        ShowStatus.IN_PRODUCTION -> context.getString(R.string.status_in_production)
+    }
 }

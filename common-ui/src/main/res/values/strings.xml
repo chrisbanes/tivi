@@ -63,7 +63,8 @@
     <string name="percentage_format">%1$d%%</string>
     <string name="minutes_format">%1$dm</string>
 
-    <string name="rating_title">Rating</string>
+    <string name="trakt_rating_title">Trakt Rating</string>
+    <string name="trakt_rating_title_votes">Trakt Rating (%1$.1fk votes)</string>
     <string name="network_title">Network</string>
     <string name="certificate_title">Certificate</string>
     <string name="runtime_title">Length</string>
@@ -144,4 +145,13 @@
     <string name="settings_open_source_summary">Tivi 💞 open source</string>
 
     <string name="error_generic">An error occurred</string>
+
+    <string name="status_title">Status</string>
+    <string name="status_ended">Ended</string>
+    <string name="status_active">Continuing</string>
+    <string name="status_in_production">In production</string>
+
+    <string name="airs_title">Airs</string>
+    <string name="airs_text">%1$s at %2$s</string>
+
 </resources>

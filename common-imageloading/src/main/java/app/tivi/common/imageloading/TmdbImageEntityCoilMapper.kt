@@ -36,11 +36,11 @@ class TmdbImageEntityCoilMapper @Inject constructor(
     override fun map(data: TmdbImageEntity, size: Size): HttpUrl {
         val width = if (size is PixelSize) size.width else 0
 
+        val urlProvider = tmdbImageUrlProvider.get()
         return when (data.type) {
-            ImageType.BACKDROP -> tmdbImageUrlProvider.get()
-                    .getBackdropUrl(data.path, width).toHttpUrl()
-            ImageType.POSTER -> tmdbImageUrlProvider.get()
-                    .getPosterUrl(data.path, width).toHttpUrl()
+            ImageType.BACKDROP -> urlProvider.getBackdropUrl(data.path, width).toHttpUrl()
+            ImageType.POSTER -> urlProvider.getPosterUrl(data.path, width).toHttpUrl()
+            ImageType.LOGO -> urlProvider.getLogoUrl(data.path, width).toHttpUrl()
         }
     }
 }

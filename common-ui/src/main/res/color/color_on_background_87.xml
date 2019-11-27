@@ -15,8 +15,6 @@
   ~ limitations under the License.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/spacing_small" />
-</layout>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="?attr/colorOnBackground" android:alpha="0.87" />
+</selector>
