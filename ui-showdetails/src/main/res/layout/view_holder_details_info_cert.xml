@@ -15,7 +15,6 @@
   -->
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -28,11 +27,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:transitionGroup="true"
-        android:paddingBottom="@dimen/spacing_small">
+        android:transitionGroup="true">
 
         <app.tivi.ui.widget.BaselineGridTextView
-            android:id="@+id/details_info_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_micro"
@@ -40,7 +37,6 @@
             android:textAppearance="?attr/textAppearanceSubtitle2" />
 
         <app.tivi.ui.widget.BaselineGridTextView
-            android:id="@+id/details_info_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"

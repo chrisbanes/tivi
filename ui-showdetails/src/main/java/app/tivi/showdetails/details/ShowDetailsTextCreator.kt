@@ -18,7 +18,6 @@ package app.tivi.showdetails.details
 
 import android.content.Context
 import android.graphics.Color
-import androidx.annotation.StringRes
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.text.parseAsHtml
@@ -26,6 +25,7 @@ import androidx.emoji.text.EmojiCompat
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
 import app.tivi.data.entities.Season
+import app.tivi.data.entities.ShowStatus
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.inject.PerActivity
@@ -123,5 +123,9 @@ class ShowDetailsTextCreator @Inject constructor(
         }
     }
 
-    fun getString(@StringRes stringRes: Int) = context.getString(stringRes)
+    fun showStatusText(status: ShowStatus): CharSequence = when (status) {
+        ShowStatus.CANCELED, ShowStatus.ENDED -> context.getString(R.string.status_ended)
+        ShowStatus.RETURNING -> context.getString(R.string.status_active)
+        ShowStatus.IN_PRODUCTION -> context.getString(R.string.status_in_production)
+    }
 }

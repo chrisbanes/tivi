@@ -15,48 +15,40 @@
   -->
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
             name="tiviShow"
             type="app.tivi.data.entities.TiviShow" />
+
+        <variable
+            name="textCreator"
+            type="app.tivi.showdetails.details.ShowDetailsTextCreator" />
     </data>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:transitionGroup="true">
+        android:transitionGroup="true"
+        android:paddingBottom="@dimen/spacing_small">
 
         <app.tivi.ui.widget.BaselineGridTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/network_title"
+            android:text="@string/status_title"
             android:layout_marginBottom="@dimen/spacing_micro"
             android:textAppearance="?attr/textAppearanceSubtitle2" />
-
-        <ImageView
-            android:layout_width="72dp"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:maxHeight="32dp"
-            android:scaleType="fitStart"
-            android:tint="@color/color_on_background_87"
-            app:goneIfNull="@{tiviShow.networkLogoPath}"
-            app:imageSaturateOnLoad="@{false}"
-            app:tmdbLogoPath="@{tiviShow.networkLogoPath}" />
 
         <app.tivi.ui.widget.BaselineGridTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:gravity="center"
-            android:text="@{tiviShow.network}"
+            android:text="@{textCreator.showStatusText(tiviShow.status)}"
             android:textAppearance="?attr/textAppearanceBody2"
-            app:visible="@{tiviShow.networkLogoPath == null}"
-            tools:text="HBO" />
+            tools:text="Returning" />
 
     </LinearLayout>
 </layout>

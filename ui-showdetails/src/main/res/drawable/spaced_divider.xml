@@ -19,8 +19,6 @@
     <item
         android:drawable="?android:attr/listDivider"
         android:left="@dimen/spacing_small"
-        android:right="@dimen/spacing_small"
-        android:top="@dimen/spacing_small"
-        android:bottom="@dimen/spacing_small" />
+        android:right="@dimen/spacing_small" />
 
 </layer-list>

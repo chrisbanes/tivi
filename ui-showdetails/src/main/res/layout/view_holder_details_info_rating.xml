@@ -28,11 +28,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:transitionGroup="true"
-        android:paddingBottom="@dimen/spacing_small">
+        android:transitionGroup="true">
 
         <app.tivi.ui.widget.BaselineGridTextView
-            android:id="@+id/details_info_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{tiviShow.traktVotes != null ? @string/trakt_rating_title_votes((float) tiviShow.traktVotes / 1000f) : @string/trakt_rating_title}"
@@ -40,7 +38,6 @@
             tools:text="Rating" />
 
         <RatingBar
-            android:id="@+id/details_info_rating_bar"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:isIndicator="true"

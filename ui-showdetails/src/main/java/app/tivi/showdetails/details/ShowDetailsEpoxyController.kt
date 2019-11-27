@@ -29,6 +29,7 @@ import app.tivi.common.layouts.detailsHeader
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
+import app.tivi.data.entities.ShowStatus
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
@@ -121,6 +122,13 @@ class ShowDetailsEpoxyController @Inject constructor(
             badges += DetailsInfoRuntimeBindingModel_().apply {
                 id("runtime")
                 tiviShow(show)
+            }
+        }
+        if (show.status != null && show.status != ShowStatus.RETURNING) {
+            badges += DetailsInfoStatusBindingModel_().apply {
+                id("status")
+                tiviShow(show)
+                textCreator(textCreator)
             }
         }
         if (badges.isNotEmpty()) {

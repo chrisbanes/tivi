@@ -145,4 +145,10 @@
     <string name="settings_open_source_summary">Tivi 💞 open source</string>
 
     <string name="error_generic">An error occurred</string>
+
+    <string name="status_title">Status</string>
+    <string name="status_ended">Ended</string>
+    <string name="status_active">Continuing</string>
+    <string name="status_in_production">In production</string>
+
 </resources>

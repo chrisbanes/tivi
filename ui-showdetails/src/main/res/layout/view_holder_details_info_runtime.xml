@@ -28,11 +28,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:transitionGroup="true"
-        android:paddingBottom="@dimen/spacing_small">
+        android:transitionGroup="true">
 
         <app.tivi.ui.widget.BaselineGridTextView
-            android:id="@+id/details_info_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/runtime_title"
@@ -40,7 +38,6 @@
             android:textAppearance="?attr/textAppearanceSubtitle2" />
 
         <app.tivi.ui.widget.BaselineGridTextView
-            android:id="@+id/details_info_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
