@@ -30,14 +30,14 @@
         android:orientation="vertical"
         android:transitionGroup="true">
 
-        <app.tivi.ui.widget.BaselineGridTextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/runtime_title"
             android:layout_marginBottom="@dimen/spacing_micro"
             android:textAppearance="?attr/textAppearanceSubtitle2" />
 
-        <app.tivi.ui.widget.BaselineGridTextView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
