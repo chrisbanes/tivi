@@ -23,6 +23,7 @@ import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TmdbImageEntity
 import coil.api.loadAny
 import coil.transform.RoundedCornersTransformation
+import coil.transform.Transformation
 
 @BindingAdapter(
         "tmdbBackdropPath",
@@ -94,8 +95,14 @@ fun ImageView.loadImage(
             target(saturatingTarget)
             listener(saturatingTarget)
         }
+
+        val transformations = ArrayList<Transformation>()
         if (cornerRadius > 0) {
-            transformations(RoundedCornersTransformation(cornerRadius))
+            transformations += RoundedCornersTransformation(cornerRadius)
         }
+        if (image?.type == ImageType.LOGO) {
+            transformations += TrimTransparentEdgesTransformation()
+        }
+        transformations(transformations)
     }
 }

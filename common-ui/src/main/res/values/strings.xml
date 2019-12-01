@@ -64,7 +64,9 @@
     <string name="minutes_format">%1$dm</string>
 
     <string name="trakt_rating_title">Trakt Rating</string>
-    <string name="trakt_rating_title_votes">Trakt Rating (%1$.1fk votes)</string>
+    <string name="trakt_rating_text">%1$.0f%%</string>
+    <string name="trakt_rating_votes">%1$.1fk votes</string>
+
     <string name="network_title">Network</string>
     <string name="certificate_title">Certificate</string>
     <string name="runtime_title">Length</string>

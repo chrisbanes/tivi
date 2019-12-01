@@ -81,8 +81,8 @@ dependencies {
     implementation Libs.Insetter.ktx
 
     implementation Libs.inboxRecyclerView
-
     implementation Libs.flexbox
+    implementation Libs.materialRatingBar
 
     implementation Libs.Google.material
 
