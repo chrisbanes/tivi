@@ -40,43 +40,37 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Rating" />
 
-        <me.zhanghai.android.materialratingbar.MaterialRatingBar
-            android:id="@+id/rating"
-            style="@style/Widget.MaterialRatingBar.RatingBar.Indicator"
+        <ImageView
+            android:id="@+id/rating_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:numStars="5"
-            android:stepSize="0.25"
+            android:layout_marginTop="@dimen/spacing_micro"
+            android:src="@drawable/mrb_star_icon_black_36dp"
+            android:tint="?attr/colorSecondaryVariant"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/title"
-            app:mrb_progressTint="@color/color_on_background_87"
-            app:rating="@{tiviShow.traktRating / 2f}"
-            tools:rating="3.25" />
+            app:layout_constraintTop_toBottomOf="@+id/title" />
 
         <TextView
-            android:id="@+id/rating_text"
+            android:id="@+id/rating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_small"
             android:text="@{@string/trakt_rating_text(tiviShow.traktRating * 10f)}"
-            android:textAppearance="?attr/textAppearanceCaption"
-            app:layout_constraintEnd_toStartOf="@id/votes"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rating"
-            tools:text="65%" />
+            android:textAppearance="?attr/textAppearanceBody2"
+            app:layout_constraintStart_toEndOf="@id/rating_icon"
+            app:layout_constraintTop_toTopOf="@id/rating_icon"
+            tools:text="69%" />
 
         <TextView
             android:id="@+id/votes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing_small"
             android:text="@{@string/trakt_rating_votes((float) tiviShow.traktVotes / 1000f)}"
             android:textAppearance="?attr/textAppearanceCaption"
-            app:layout_constraintEnd_toEndOf="@+id/rating"
-            app:layout_constraintStart_toEndOf="@id/rating_text"
+            app:layout_constraintStart_toStartOf="@id/rating"
             app:layout_constraintTop_toBottomOf="@id/rating"
             tools:text="2.4k votes" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
