@@ -19,34 +19,64 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="tiviShow"
             type="app.tivi.data.entities.TiviShow" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:transitionGroup="true">
 
         <TextView
+            android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_micro"
-            android:text="@{tiviShow.traktVotes != null ? @string/trakt_rating_title_votes((float) tiviShow.traktVotes / 1000f) : @string/trakt_rating_title}"
+            android:text="@string/trakt_rating_title"
             android:textAppearance="?attr/textAppearanceSubtitle2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="Rating" />
 
-        <RatingBar
+        <me.zhanghai.android.materialratingbar.MaterialRatingBar
+            android:id="@+id/rating"
+            style="@style/Widget.MaterialRatingBar.RatingBar.Indicator"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:isIndicator="true"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:numStars="5"
             android:stepSize="0.25"
-            style="?attr/ratingBarStyleIndicator"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            app:mrb_progressTint="@color/color_on_background_87"
             app:rating="@{tiviShow.traktRating / 2f}"
             tools:rating="3.25" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/rating_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{@string/trakt_rating_text(tiviShow.traktRating * 10f)}"
+            android:textAppearance="?attr/textAppearanceCaption"
+            app:layout_constraintEnd_toStartOf="@id/votes"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rating"
+            tools:text="65%" />
+
+        <TextView
+            android:id="@+id/votes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_small"
+            android:text="@{@string/trakt_rating_votes((float) tiviShow.traktVotes / 1000f)}"
+            android:textAppearance="?attr/textAppearanceCaption"
+            app:layout_constraintEnd_toEndOf="@+id/rating"
+            app:layout_constraintStart_toEndOf="@id/rating_text"
+            app:layout_constraintTop_toBottomOf="@id/rating"
+            tools:text="2.4k votes" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
