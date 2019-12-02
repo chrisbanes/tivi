@@ -36,7 +36,9 @@ class EpoxyInitializer @Inject constructor() : AppInitializer {
         // Also setup Carousel to use a more sane snapping behavior
         Carousel.setDefaultGlobalSnapHelperFactory(object : Carousel.SnapHelperFactory() {
             override fun buildSnapHelper(context: Context): SnapHelper {
-                return GravitySnapHelper(Gravity.START)
+                return GravitySnapHelper(Gravity.START).apply {
+                    scrollMsPerInch = 70f
+                }
             }
         })
     }
