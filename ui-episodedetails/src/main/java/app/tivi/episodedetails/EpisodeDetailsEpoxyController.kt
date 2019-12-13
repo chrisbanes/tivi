@@ -17,7 +17,8 @@
 package app.tivi.episodedetails
 
 import android.content.Context
-import app.tivi.common.layouts.detailsHeader
+import app.tivi.common.layouts.header
+import app.tivi.common.layouts.vertSpacerMicro
 import app.tivi.inject.PerActivity
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.epoxy.EpoxyModel
@@ -65,7 +66,10 @@ internal class EpisodeDetailsEpoxyController @Inject constructor(
 
         val watches = viewState.watches
         if (watches.isNotEmpty()) {
-            detailsHeader {
+            vertSpacerMicro {
+                id("watches_spacer")
+            }
+            header {
                 id("watches_header")
                 title(R.string.episode_watches)
             }

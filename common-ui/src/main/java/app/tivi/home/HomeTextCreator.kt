@@ -34,11 +34,11 @@ import javax.inject.Inject
 class HomeTextCreator @Inject constructor(
     @PerActivity private val context: Context
 ) {
-    private var barlowTypeface: Typeface = Typeface.DEFAULT
+    private var bodyTypeface: Typeface = Typeface.DEFAULT
         get() {
             if (field == Typeface.DEFAULT) {
                 try {
-                    ResourcesCompat.getFont(context, R.font.barlow_400)?.also { field = it }
+                    ResourcesCompat.getFont(context, R.font.rubik_400)?.also { field = it }
                 } catch (nfe: Resources.NotFoundException) {
                     // getFont will throw a NFE if the device if offline or doesn't have
                     // Play Services. Lets not crash
@@ -57,7 +57,7 @@ class HomeTextCreator @Inject constructor(
         show.firstAired?.also { firstAired ->
             append(" ")
             inSpans(textAppearanceSpanForAttribute(context, R.attr.textAppearanceCaption),
-                    TypefaceSpan(barlowTypeface)) {
+                    TypefaceSpan(bodyTypeface)) {
                 append("(")
                 append(firstAired.year.toString())
                 append(")")
