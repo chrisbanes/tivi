@@ -35,7 +35,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:text="@{titleString ?? context.getString(title)}"
-            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
             tools:text="Popular" />
 
         <ProgressBar

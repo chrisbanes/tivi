@@ -17,8 +17,8 @@
 
 <resources>
     <array name="preloaded_fonts" translatable="false">
-        <item>@font/barlow_300</item>
-        <item>@font/barlow_400</item>
-        <item>@font/barlow_500</item>
+        <item>@font/rubik_300</item>
+        <item>@font/rubik_400</item>
+        <item>@font/rubik_500</item>
     </array>
 </resources>

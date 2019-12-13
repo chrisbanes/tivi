@@ -25,7 +25,8 @@ import app.tivi.common.epoxy.HalfSpanOverride
 import app.tivi.common.epoxy.TotalSpanOverride
 import app.tivi.common.epoxy.tiviCarousel
 import app.tivi.common.epoxy.withModelsFrom
-import app.tivi.common.layouts.detailsHeader
+import app.tivi.common.layouts.header
+import app.tivi.common.layouts.vertSpacerSmall
 import app.tivi.data.entities.ActionDate
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -71,7 +72,11 @@ internal class ShowDetailsEpoxyController @Inject constructor(
 
         val episodeWithSeason = state.nextEpisodeToWatch()
         if (episodeWithSeason?.episode != null) {
-            detailsHeader {
+            vertSpacerSmall {
+                id("next_episode_spacer")
+                spanSizeOverride(TotalSpanOverride)
+            }
+            header {
                 id("next_episode_header")
                 title(R.string.details_next_episode_to_watch)
                 spanSizeOverride(TotalSpanOverride)
@@ -144,7 +149,11 @@ internal class ShowDetailsEpoxyController @Inject constructor(
                     .addTo(this)
         }
 
-        detailsHeader {
+        vertSpacerSmall {
+            id("about_show_spacer")
+            spanSizeOverride(TotalSpanOverride)
+        }
+        header {
             id("about_show_header")
             title(R.string.details_about)
             spanSizeOverride(TotalSpanOverride)
@@ -168,7 +177,11 @@ internal class ShowDetailsEpoxyController @Inject constructor(
         if (relatedShows is Success) {
             val related = relatedShows()
             if (related.isNotEmpty()) {
-                detailsHeader {
+                vertSpacerSmall {
+                    id("related_spacer")
+                    spanSizeOverride(TotalSpanOverride)
+                }
+                header {
                     id("related_header")
                     title(R.string.details_related)
                     spanSizeOverride(TotalSpanOverride)
@@ -204,7 +217,11 @@ internal class ShowDetailsEpoxyController @Inject constructor(
     ) {
         val stats = asyncStats()
         if (stats != null) {
-            detailsHeader {
+            vertSpacerSmall {
+                id("view_stats_spacer")
+                spanSizeOverride(TotalSpanOverride)
+            }
+            header {
                 id("view_stats_header")
                 title(R.string.details_view_stats)
                 spanSizeOverride(TotalSpanOverride)
@@ -220,8 +237,12 @@ internal class ShowDetailsEpoxyController @Inject constructor(
         if (asyncSeasons is Success) {
             val seasons = asyncSeasons()
             if (seasons.isNotEmpty()) {
-                detailsHeader {
-                    id("title_seasons")
+                vertSpacerSmall {
+                    id("seasons_spacer")
+                    spanSizeOverride(TotalSpanOverride)
+                }
+                header {
+                    id("seasons_header")
                     title(R.string.show_details_seasons)
                     spanSizeOverride(TotalSpanOverride)
                 }
