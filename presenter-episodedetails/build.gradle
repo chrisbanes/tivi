@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google, Inc.
+ * Copyright 2019 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,10 +43,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    dataBinding {
-        enabled = true
-    }
 }
 
 dependencies {
@@ -54,49 +50,20 @@ dependencies {
     implementation project(":base-android")
     implementation project(':domain')
     implementation project(":common-ui")
-    implementation project(":common-epoxy")
-    implementation project(":common-layouts")
-    implementation project(':common-imageloading')
-    implementation project(":common-databinding")
-
-    api project(":presenter-episodedetails")
 
     implementation Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.viewmodel
 
     implementation Libs.AndroidX.Paging.runtime
 
-    implementation Libs.AndroidX.appcompat
-    implementation Libs.AndroidX.browser
-    implementation Libs.AndroidX.palette
-    implementation Libs.AndroidX.recyclerview
-    implementation Libs.AndroidX.emoji
-    implementation Libs.AndroidX.preference
-    implementation Libs.AndroidX.constraintlayout
-    implementation Libs.AndroidX.coreKtx
-    implementation Libs.AndroidX.Fragment.fragment
-    implementation Libs.AndroidX.Fragment.fragmentKtx
-    implementation Libs.AndroidX.Navigation.fragment
-    implementation Libs.AndroidX.Navigation.ui
-
-    implementation Libs.Google.material
-
     implementation Libs.Kotlin.stdlib
     implementation Libs.Kotlin.reflect
 
-    implementation Libs.Dagger.androidSupport
+    implementation Libs.Dagger.dagger
     kapt Libs.Dagger.compiler
-    kapt Libs.Dagger.androidProcessor
 
     compileOnly Libs.AssistedInject.annotationDagger2
     kapt Libs.AssistedInject.processorDagger2
 
     implementation Libs.mvRx
-
-    implementation Libs.Epoxy.epoxy
-    implementation Libs.Epoxy.paging
-    implementation Libs.Epoxy.dataBinding
-    kapt Libs.Epoxy.processor
-
-    implementation Libs.gravitySnapHelper
 }

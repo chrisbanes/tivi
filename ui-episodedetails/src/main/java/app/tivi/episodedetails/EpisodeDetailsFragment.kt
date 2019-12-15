@@ -30,7 +30,8 @@ import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
-class EpisodeDetailsFragment : TiviFragmentWithBinding<FragmentEpisodeDetailsBinding>() {
+class EpisodeDetailsFragment : TiviFragmentWithBinding<FragmentEpisodeDetailsBinding>(),
+        EpisodeDetailsViewModel.FactoryProvider {
     companion object {
         @JvmStatic
         fun create(id: Long): EpisodeDetailsFragment {
@@ -97,4 +98,6 @@ class EpisodeDetailsFragment : TiviFragmentWithBinding<FragmentEpisodeDetailsBin
         binding.state = state
         controller.setData(state)
     }
+
+    override fun provideFactory(): EpisodeDetailsViewModel.Factory = episodeDetailsViewModelFactory
 }

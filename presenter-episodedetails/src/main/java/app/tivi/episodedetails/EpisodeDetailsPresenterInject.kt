@@ -16,13 +16,9 @@
 
 package app.tivi.episodedetails
 
+import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
-import dagger.android.ContributesAndroidInjector
 
-@Module
-abstract class EpisodeDetailsFragmentBuilder {
-    @ContributesAndroidInjector(modules = [
-        EpisodeDetailsPresenterAssistedModule::class
-    ])
-    abstract fun episodeDetailsFragment(): EpisodeDetailsFragment
-}
+@Module(includes = [AssistedInject_EpisodeDetailsPresenterAssistedModule::class])
+@AssistedModule
+interface EpisodeDetailsPresenterAssistedModule
