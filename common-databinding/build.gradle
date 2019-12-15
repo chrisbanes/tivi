@@ -47,7 +47,7 @@ android {
 dependencies {
     implementation project(":base")
     implementation project(":data")
-    implementation project(":common-ui")
+    implementation project(":common-ui-view")
 
     api Libs.Insetter.dbx
 
