@@ -17,6 +17,8 @@
 package app.tivi
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import app.tivi.common.ui.BuildConfig
 import com.airbnb.mvrx.Async
 import com.airbnb.mvrx.BaseMvRxViewModel
@@ -25,6 +27,7 @@ import com.airbnb.mvrx.Loading
 import com.airbnb.mvrx.MvRxState
 import com.airbnb.mvrx.Success
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -37,6 +40,8 @@ import kotlinx.coroutines.flow.map
 abstract class TiviMvRxViewModel<S : MvRxState>(
     initialState: S
 ) : BaseMvRxViewModel<S>(initialState, debugMode = BuildConfig.DEBUG) {
+
+    private val liveData by lazy(LazyThreadSafetyMode.NONE) { MvRxStateLiveData() }
 
     protected suspend inline fun <T> Flow<T>.execute(
         crossinline stateReducer: S.(Async<T>) -> S
@@ -58,5 +63,24 @@ abstract class TiviMvRxViewModel<S : MvRxState>(
                 emit(Fail(it))
             }
             .collect { setState { stateReducer(it) } }
+    }
+
+    fun observeAsLiveData(): LiveData<S> = liveData
+
+    private inner class MvRxStateLiveData : MutableLiveData<S>() {
+        private var disposable: Disposable? = null
+
+        override fun onActive() {
+            disposable = subscribe { value = it }
+        }
+
+        override fun onInactive() {
+            val d = disposable
+            disposable = null
+
+            if (d != null && !d.isDisposed) {
+                d.dispose()
+            }
+        }
     }
 }

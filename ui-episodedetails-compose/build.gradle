@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google, Inc.
+ * Copyright 2019 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,17 +21,6 @@ apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
 
-apply plugin: 'kotlin-kapt'
-kapt {
-    correctErrorTypes = true
-    useBuildCache = true
-}
-
-apply plugin: 'kotlin-android-extensions'
-androidExtensions {
-    experimental = true
-}
-
 android {
     compileSdkVersion buildConfig.compileSdk
 
@@ -43,32 +32,33 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    buildFeatures {
+        compose true
+    }
 }
 
 dependencies {
+    implementation project(':data')
     implementation project(':base')
     implementation project(':base-android')
-    implementation project(':domain')
-    implementation project(':common-ui-view')
-    implementation project(':ui-episodedetails-compose')
 
-    api project(':presenter-episodedetails')
+    //implementation project(':common-ui')
+    //implementation project(':common-imageloading')
 
-    implementation Libs.AndroidX.Lifecycle.extensions
-    implementation Libs.AndroidX.Lifecycle.viewmodelKtx
+    implementation project(':presenter-episodedetails')
 
     implementation Libs.AndroidX.coreKtx
-    implementation Libs.AndroidX.Fragment.fragment
-    implementation Libs.AndroidX.Fragment.fragmentKtx
+
+    implementation Libs.AndroidX.UI.composeRuntime
+    implementation Libs.AndroidX.UI.foundation
+    implementation Libs.AndroidX.UI.framework
+    implementation Libs.AndroidX.UI.layout
+    implementation Libs.AndroidX.UI.material
+    implementation Libs.AndroidX.UI.animation
+    implementation Libs.AndroidX.UI.tooling
 
     implementation Libs.Google.material
 
     implementation Libs.Kotlin.stdlib
-
-    implementation Libs.Dagger.androidSupport
-    kapt Libs.Dagger.compiler
-    kapt Libs.Dagger.androidProcessor
-
-    compileOnly Libs.AssistedInject.annotationDagger2
-    kapt Libs.AssistedInject.processorDagger2
 }
