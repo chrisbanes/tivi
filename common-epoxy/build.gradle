@@ -41,9 +41,9 @@ android {
 }
 
 dependencies {
-    implementation project(":base")
-    implementation project(":base-android")
-    implementation project(":common-ui-view")
+    implementation project(':base')
+    implementation project(':base-android')
+    implementation project(':common-ui-view')
 
     implementation Libs.AndroidX.coreKtx
 

@@ -46,7 +46,7 @@ dependencies {
     api project(':common-ui-resources')
 
     implementation Libs.AndroidX.Lifecycle.extensions
-    implementation Libs.AndroidX.Lifecycle.viewmodel
+    implementation Libs.AndroidX.Lifecycle.viewmodelKtx
 
     api Libs.AndroidX.appcompat
     implementation Libs.AndroidX.recyclerview

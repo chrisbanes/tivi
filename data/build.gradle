@@ -26,12 +26,11 @@ kapt {
 }
 
 dependencies {
-    api project(":base")
-    api project(":trakt")
-    api project(":tmdb")
+    api project(':base')
+    api project(':trakt')
+    api project(':tmdb')
 
     api Libs.AndroidX.Room.common
-    api Libs.AndroidX.Room.ktx
     implementation Libs.AndroidX.collection
 
     api Libs.AndroidX.Paging.common

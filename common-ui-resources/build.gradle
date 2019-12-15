@@ -41,11 +41,11 @@ android {
 }
 
 dependencies {
-    implementation project(":data")
-    implementation project(":base-android")
+    implementation project(':data')
+    implementation project(':base-android')
 
     implementation Libs.AndroidX.Lifecycle.extensions
-    implementation Libs.AndroidX.Lifecycle.viewmodel
+    implementation Libs.AndroidX.Lifecycle.viewmodelKtx
 
     api Libs.AndroidX.appcompat
     api Libs.Google.material

@@ -50,8 +50,6 @@ object Libs {
 
     const val flexbox = "com.google.android:flexbox:2.0.0"
 
-    const val materialRatingBar = "me.zhanghai.android.materialratingbar:library:1.3.3"
-
     object Insetter {
         private const val version = "0.2.0"
         const val dbx = "dev.chrisbanes:insetter-dbx:$version"
@@ -133,7 +131,7 @@ object Libs {
         object Lifecycle {
             private const val version = "2.2.0-rc02"
             const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
-            const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
+            const val viewmodelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
         }
 
         object Room {

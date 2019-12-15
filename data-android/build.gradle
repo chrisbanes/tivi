@@ -63,11 +63,12 @@ android {
 }
 
 dependencies {
-    implementation project(":base")
-    implementation project(":base-android")
-    implementation project(":data")
+    implementation project(':base')
+    implementation project(':base-android')
+    api project(':data')
 
     implementation Libs.AndroidX.Room.runtime
+    implementation Libs.AndroidX.Room.ktx
     kapt Libs.AndroidX.Room.compiler
 
     implementation Libs.Roomigrant.library

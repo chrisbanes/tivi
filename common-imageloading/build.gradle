@@ -45,11 +45,11 @@ android {
 }
 
 dependencies {
-    implementation project(":base")
-    implementation project(":base-android")
-    implementation project(":data")
-    implementation project(":common-ui-view")
-    implementation project(":tmdb")
+    implementation project(':base')
+    implementation project(':base-android')
+    implementation project(':data')
+    implementation project(':common-ui-view')
+    implementation project(':tmdb')
 
     implementation Libs.AndroidX.coreKtx
 
