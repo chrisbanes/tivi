@@ -38,21 +38,32 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    dataBinding {
-        enabled = true
-    }
 }
 
 dependencies {
-    implementation project(":base")
-    implementation project(":data")
-    implementation project(":common-ui-view")
+    implementation project(':data')
+    implementation project(':base-android')
+    api project(':common-ui-resources')
 
-    api Libs.Insetter.dbx
+    implementation Libs.AndroidX.Lifecycle.extensions
+    implementation Libs.AndroidX.Lifecycle.viewmodel
 
-    implementation Libs.AndroidX.swiperefresh
+    api Libs.AndroidX.appcompat
+    implementation Libs.AndroidX.recyclerview
+    implementation Libs.AndroidX.constraintlayout
     implementation Libs.AndroidX.coreKtx
+    implementation Libs.AndroidX.Fragment.fragment
+    implementation Libs.AndroidX.Fragment.fragmentKtx
+    implementation Libs.AndroidX.Navigation.fragment
+    implementation Libs.AndroidX.Navigation.ui
 
+    api Libs.Google.material
+
+    implementation Libs.Kotlin.reflect
+
+    api Libs.Dagger.androidSupport
     kapt Libs.Dagger.compiler
+    kapt Libs.Dagger.androidProcessor
+
+    api Libs.mvRx
 }
