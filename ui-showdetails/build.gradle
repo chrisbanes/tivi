@@ -82,7 +82,6 @@ dependencies {
 
     implementation Libs.inboxRecyclerView
     implementation Libs.flexbox
-    implementation Libs.materialRatingBar
 
     implementation Libs.Google.material
 
@@ -102,6 +101,4 @@ dependencies {
     implementation Libs.Epoxy.paging
     implementation Libs.Epoxy.dataBinding
     kapt Libs.Epoxy.processor
-
-    implementation Libs.gravitySnapHelper
 }
