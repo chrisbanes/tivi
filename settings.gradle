@@ -29,6 +29,7 @@ gradleEnterprise {
 include ':base'
 include ':base-android'
 include ':common-ui'
+include ':common-ui-resources'
 include ':common-layouts'
 include ':common-epoxy'
 include ':common-imageloading'
