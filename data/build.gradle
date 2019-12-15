@@ -31,7 +31,6 @@ dependencies {
     api project(":tmdb")
 
     api Libs.AndroidX.Room.common
-    api Libs.AndroidX.Room.ktx
     implementation Libs.AndroidX.collection
 
     api Libs.AndroidX.Paging.common

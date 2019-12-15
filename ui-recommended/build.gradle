@@ -57,17 +57,13 @@ dependencies {
     implementation project(":common-entrygrid")
 
     implementation Libs.AndroidX.Lifecycle.extensions
-    implementation Libs.AndroidX.Lifecycle.viewmodel
+    implementation Libs.AndroidX.Lifecycle.viewmodelKtx
 
     implementation Libs.AndroidX.Paging.runtime
 
     implementation Libs.AndroidX.appcompat
-    implementation Libs.AndroidX.browser
-    implementation Libs.AndroidX.palette
     implementation Libs.AndroidX.recyclerview
     implementation Libs.AndroidX.swiperefresh
-    implementation Libs.AndroidX.emoji
-    implementation Libs.AndroidX.preference
     implementation Libs.AndroidX.constraintlayout
     implementation Libs.AndroidX.coreKtx
     implementation Libs.AndroidX.Fragment.fragment
@@ -77,9 +73,6 @@ dependencies {
 
     implementation Libs.Google.material
 
-    implementation Libs.Kotlin.stdlib
-    implementation Libs.Kotlin.reflect
-
     implementation Libs.Dagger.androidSupport
     kapt Libs.Dagger.compiler
     kapt Libs.Dagger.androidProcessor
@@ -88,8 +81,4 @@ dependencies {
     kapt Libs.AssistedInject.processorDagger2
 
     implementation Libs.mvRx
-
-    implementation Libs.Epoxy.epoxy
-    implementation Libs.Epoxy.paging
-    implementation Libs.Epoxy.dataBinding
 }

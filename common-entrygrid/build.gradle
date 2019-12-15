@@ -53,7 +53,7 @@ dependencies {
     implementation project(":common-databinding")
 
     implementation Libs.AndroidX.Lifecycle.extensions
-    implementation Libs.AndroidX.Lifecycle.viewmodel
+    implementation Libs.AndroidX.Lifecycle.viewmodelKtx
 
     implementation Libs.AndroidX.Paging.runtime
 
@@ -63,7 +63,7 @@ dependencies {
     implementation Libs.AndroidX.coreKtx
     implementation Libs.AndroidX.Fragment.fragmentKtx
     implementation Libs.AndroidX.Navigation.fragment
-    implementation Libs.AndroidX.Navigation.ui
+    api Libs.AndroidX.Navigation.ui
 
     kapt Libs.Dagger.compiler
 }

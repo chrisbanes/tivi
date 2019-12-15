@@ -54,7 +54,7 @@ dependencies {
     implementation project(":base")
     implementation project(":base-android")
     implementation project(':domain')
-    implementation project(":trakt-auth")
+
     implementation project(":common-ui-view")
     implementation project(":common-epoxy")
     implementation project(":common-layouts")
@@ -62,28 +62,20 @@ dependencies {
     implementation project(":common-databinding")
 
     implementation Libs.AndroidX.Lifecycle.extensions
-    implementation Libs.AndroidX.Lifecycle.viewmodel
+    implementation Libs.AndroidX.Lifecycle.viewmodelKtx
 
     implementation Libs.AndroidX.Paging.runtime
 
     implementation Libs.AndroidX.appcompat
-    implementation Libs.AndroidX.browser
-    implementation Libs.AndroidX.palette
     implementation Libs.AndroidX.recyclerview
     implementation Libs.AndroidX.swiperefresh
-    implementation Libs.AndroidX.emoji
-    implementation Libs.AndroidX.preference
     implementation Libs.AndroidX.constraintlayout
     implementation Libs.AndroidX.coreKtx
     implementation Libs.AndroidX.Fragment.fragment
     implementation Libs.AndroidX.Fragment.fragmentKtx
     implementation Libs.AndroidX.Navigation.fragment
-    implementation Libs.AndroidX.Navigation.ui
 
     implementation Libs.Google.material
-
-    implementation Libs.Kotlin.stdlib
-    implementation Libs.Kotlin.reflect
 
     implementation Libs.Dagger.androidSupport
     kapt Libs.Dagger.compiler
@@ -94,8 +86,5 @@ dependencies {
 
     implementation Libs.mvRx
 
-    implementation Libs.Epoxy.epoxy
-    implementation Libs.Epoxy.paging
-    implementation Libs.Epoxy.dataBinding
     kapt Libs.Epoxy.processor
 }

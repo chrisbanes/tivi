@@ -29,7 +29,7 @@ dependencies {
     api (Libs.traktJava) {
         exclude group: 'org.threeten', module: 'threetenbp'
     }
-    api Libs.threeTenBpNoTzdb
+    implementation Libs.threeTenBpNoTzdb
 
     implementation project(":base")
 

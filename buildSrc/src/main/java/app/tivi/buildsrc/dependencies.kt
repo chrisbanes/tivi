@@ -131,7 +131,7 @@ object Libs {
         object Lifecycle {
             private const val version = "2.2.0-rc02"
             const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
-            const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
+            const val viewmodelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
         }
 
         object Room {

@@ -68,6 +68,7 @@ dependencies {
     api project(":data")
 
     implementation Libs.AndroidX.Room.runtime
+    implementation Libs.AndroidX.Room.ktx
     kapt Libs.AndroidX.Room.compiler
 
     implementation Libs.Roomigrant.library

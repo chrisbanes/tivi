@@ -52,12 +52,7 @@ dependencies {
     implementation project(":common-ui-view")
 
     implementation Libs.AndroidX.Lifecycle.extensions
-    implementation Libs.AndroidX.Lifecycle.viewmodel
-
-    implementation Libs.AndroidX.Paging.runtime
-
-    implementation Libs.Kotlin.stdlib
-    implementation Libs.Kotlin.reflect
+    implementation Libs.AndroidX.Lifecycle.viewmodelKtx
 
     implementation Libs.Dagger.dagger
     kapt Libs.Dagger.compiler
