@@ -42,10 +42,10 @@ android {
 }
 
 dependencies {
-    implementation project(":base")
-    implementation project(":base-android")
-    implementation project(":data")
-    api project(":trakt")
+    implementation project(':base')
+    implementation project(':base-android')
+    implementation project(':data')
+    api project(':trakt')
 
     kapt Libs.Dagger.compiler
 

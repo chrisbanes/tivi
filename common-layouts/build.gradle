@@ -45,12 +45,12 @@ android {
 }
 
 dependencies {
-    implementation project(":base")
-    implementation project(":data")
-    implementation project(":common-ui-view")
-    implementation project(":common-epoxy")
+    implementation project(':base')
+    implementation project(':data')
+    implementation project(':common-ui-view')
+    implementation project(':common-epoxy')
     implementation project(':common-imageloading')
-    implementation project(":common-databinding")
+    implementation project(':common-databinding')
 
     implementation Libs.AndroidX.coreKtx
     implementation Libs.AndroidX.constraintlayout

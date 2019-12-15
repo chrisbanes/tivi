@@ -31,7 +31,7 @@ dependencies {
     }
     implementation Libs.threeTenBpNoTzdb
 
-    implementation project(":base")
+    implementation project(':base')
 
     kapt Libs.Dagger.compiler
 

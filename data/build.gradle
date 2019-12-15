@@ -26,9 +26,9 @@ kapt {
 }
 
 dependencies {
-    api project(":base")
-    api project(":trakt")
-    api project(":tmdb")
+    api project(':base')
+    api project(':trakt')
+    api project(':tmdb')
 
     api Libs.AndroidX.Room.common
     implementation Libs.AndroidX.collection

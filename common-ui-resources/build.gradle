@@ -41,8 +41,8 @@ android {
 }
 
 dependencies {
-    implementation project(":data")
-    implementation project(":base-android")
+    implementation project(':data')
+    implementation project(':base-android')
 
     implementation Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.viewmodelKtx

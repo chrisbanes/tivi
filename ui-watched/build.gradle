@@ -51,15 +51,15 @@ android {
 }
 
 dependencies {
-    implementation project(":base")
-    implementation project(":base-android")
+    implementation project(':base')
+    implementation project(':base-android')
     implementation project(':domain')
-    implementation project(":trakt-auth")
-    implementation project(":common-ui-view")
-    implementation project(":common-epoxy")
-    implementation project(":common-layouts")
+    implementation project(':trakt-auth')
+    implementation project(':common-ui-view')
+    implementation project(':common-epoxy')
+    implementation project(':common-layouts')
     implementation project(':common-imageloading')
-    implementation project(":common-databinding")
+    implementation project(':common-databinding')
 
     implementation Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.viewmodelKtx
