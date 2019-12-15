@@ -92,6 +92,4 @@ dependencies {
     implementation Libs.Epoxy.epoxy
     implementation Libs.Epoxy.paging
     implementation Libs.Epoxy.dataBinding
-
-    implementation Libs.gravitySnapHelper
 }

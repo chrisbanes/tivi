@@ -91,8 +91,4 @@ dependencies {
     implementation Libs.Epoxy.paging
     implementation Libs.Epoxy.dataBinding
     kapt Libs.Epoxy.processor
-
-    implementation Libs.gravitySnapHelper
-
-
 }
