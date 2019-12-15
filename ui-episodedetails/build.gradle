@@ -59,8 +59,6 @@ dependencies {
     implementation project(':common-imageloading')
     implementation project(":common-databinding")
 
-    api project(":presenter-episodedetails")
-
     implementation Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.viewmodel
 

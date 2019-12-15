@@ -16,8 +16,8 @@
 
 package app.tivi.episodedetails
 
-import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
-
-@Parcelize
-data class EpisodeDetailsArguments(val episodeId: Long) : Parcelable
+internal sealed class EpisodeDetailsAction
+internal object RefreshAction : EpisodeDetailsAction()
+internal object AddEpisodeWatchAction : EpisodeDetailsAction()
+internal data class RemoveEpisodeWatchAction(val watchId: Long) : EpisodeDetailsAction()
+internal object RemoveAllEpisodeWatchesAction : EpisodeDetailsAction()

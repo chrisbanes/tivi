@@ -16,10 +16,8 @@
 
 package app.tivi.episodedetails
 
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewModelScope
-import app.tivi.data.entities.EpisodeWatchEntry
-import app.tivi.data.resultentities.EpisodeWithSeason
+import app.tivi.TiviMvRxViewModel
 import app.tivi.domain.interactors.AddEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatches
@@ -27,20 +25,18 @@ import app.tivi.domain.interactors.UpdateEpisodeDetails
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeWatches
-import app.tivi.episodedetails.presenter.BuildConfig
-import com.airbnb.mvrx.BaseMvRxViewModel
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
+import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
-class EpisodeDetailsViewModel @AssistedInject constructor(
+internal class EpisodeDetailsViewModel @AssistedInject constructor(
     @Assisted initialState: EpisodeDetailsViewState,
     private val updateEpisodeDetails: UpdateEpisodeDetails,
     observeEpisodeDetails: ObserveEpisodeDetails,
@@ -48,19 +44,26 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     private val addEpisodeWatch: AddEpisodeWatch,
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch
-) : BaseMvRxViewModel<EpisodeDetailsViewState>(initialState, debugMode = BuildConfig.DEBUG) {
+) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
 
     private val pendingActions = Channel<EpisodeDetailsAction>(Channel.BUFFERED)
 
     init {
         viewModelScope.launchObserve(observeEpisodeDetails) {
-            it.collect { result -> updateFromEpisodeDetails(result) }
+            it.execute { result ->
+                val episode = result()?.episode
+                val season = result()?.season
+                copy(episode = episode, season = season)
+            }
         }
 
         viewModelScope.launchObserve(observeEpisodeWatches) {
             it.onStart {
                 emit(emptyList())
-            }.collect { result -> updateFromEpisodeWatches(result) }
+            }.execute { result ->
+                val action = if (result is Success && result().isNotEmpty()) Action.UNWATCH else Action.WATCH
+                copy(watches = result() ?: emptyList(), action = action)
+            }
         }
 
         viewModelScope.launch {
@@ -78,15 +81,6 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         }
 
         refresh()
-    }
-
-    private fun updateFromEpisodeDetails(episodeWithSeason: EpisodeWithSeason) = setState {
-        copy(episode = episodeWithSeason.episode, season = episodeWithSeason.season)
-    }
-
-    private fun updateFromEpisodeWatches(watches: List<EpisodeWatchEntry>) = setState {
-        val action = if (watches.isNotEmpty()) Action.UNWATCH else Action.WATCH
-        copy(watches = watches, action = action)
     }
 
     fun submitAction(action: EpisodeDetailsAction) {
@@ -114,24 +108,19 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         fun create(initialState: EpisodeDetailsViewState): EpisodeDetailsViewModel
     }
 
-    interface FactoryProvider {
-        fun provideFactory(): Factory
-    }
-
     companion object : MvRxViewModelFactory<EpisodeDetailsViewModel, EpisodeDetailsViewState> {
         override fun create(
             viewModelContext: ViewModelContext,
             state: EpisodeDetailsViewState
         ): EpisodeDetailsViewModel? {
-            val fvmc = viewModelContext as FragmentViewModelContext
-            val f: FactoryProvider = (fvmc.fragment<Fragment>()) as FactoryProvider
-            return f.provideFactory().create(state)
+            val f: EpisodeDetailsFragment = (viewModelContext as FragmentViewModelContext).fragment()
+            return f.episodeDetailsViewModelFactory.create(state)
         }
 
         override fun initialState(
             viewModelContext: ViewModelContext
         ): EpisodeDetailsViewState? {
-            val f: Fragment = (viewModelContext as FragmentViewModelContext).fragment()
+            val f: EpisodeDetailsFragment = (viewModelContext as FragmentViewModelContext).fragment()
             val args = f.requireArguments()
             return EpisodeDetailsViewState(episodeId = args.getLong("episode_id"))
         }
