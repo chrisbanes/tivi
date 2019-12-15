@@ -120,8 +120,8 @@ android {
         disable 'StringFormatMatches'
     }
 
-    dataBinding {
-        enabled = true
+    buildFeatures {
+        dataBinding true
     }
 
     testOptions {
