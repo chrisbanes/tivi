@@ -68,7 +68,7 @@ object Libs {
     }
 
     object Kotlin {
-        private const val version = "1.3.60"
+        private const val version = "1.3.61"
         const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         const val reflect = "org.jetbrains.kotlin:kotlin-reflect:$version"
         const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
@@ -146,6 +146,18 @@ object Libs {
         object Work {
             private const val version = "2.2.0"
             const val runtimeKtx = "androidx.work:work-runtime-ktx:$version"
+        }
+
+        object UI {
+            private const val version = "0.1.0-dev03"
+
+            const val composeRuntime = "androidx.compose:compose-runtime:${version}"
+            const val framework = "androidx.ui:ui-framework:$version"
+            const val layout = "androidx.ui:ui-layout:$version"
+            const val material = "androidx.ui:ui-material:$version"
+            const val foundation = "androidx.ui:ui-foundation:$version"
+            const val animation = "androidx.ui:ui-animation:$version"
+            const val tooling = "androidx.ui:ui-tooling:$version"
         }
     }
 

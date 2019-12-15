@@ -46,6 +46,7 @@ android {
 
     buildFeatures {
         dataBinding true
+        compose true
     }
 }
 
@@ -74,6 +75,14 @@ dependencies {
     implementation Libs.AndroidX.Fragment.fragmentKtx
     implementation Libs.AndroidX.Navigation.fragment
     implementation Libs.AndroidX.Navigation.ui
+
+    implementation Libs.AndroidX.UI.composeRuntime
+    implementation Libs.AndroidX.UI.foundation
+    implementation Libs.AndroidX.UI.framework
+    implementation Libs.AndroidX.UI.layout
+    implementation Libs.AndroidX.UI.material
+    implementation Libs.AndroidX.UI.animation
+    implementation Libs.AndroidX.UI.tooling
 
     implementation Libs.Google.material
 
