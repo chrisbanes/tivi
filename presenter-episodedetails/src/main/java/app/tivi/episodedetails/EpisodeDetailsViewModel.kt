@@ -18,7 +18,8 @@ package app.tivi.episodedetails
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewModelScope
-import app.tivi.TiviMvRxViewModel
+import app.tivi.data.entities.EpisodeWatchEntry
+import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.domain.interactors.AddEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatches
@@ -26,13 +27,15 @@ import app.tivi.domain.interactors.UpdateEpisodeDetails
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeWatches
+import app.tivi.episodedetails.presenter.BuildConfig
+import com.airbnb.mvrx.BaseMvRxViewModel
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
-import com.airbnb.mvrx.Success
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
@@ -45,26 +48,19 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     private val addEpisodeWatch: AddEpisodeWatch,
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch
-) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
+) : BaseMvRxViewModel<EpisodeDetailsViewState>(initialState, debugMode = BuildConfig.DEBUG) {
 
     private val pendingActions = Channel<EpisodeDetailsAction>(Channel.BUFFERED)
 
     init {
         viewModelScope.launchObserve(observeEpisodeDetails) {
-            it.execute { result ->
-                val episode = result()?.episode
-                val season = result()?.season
-                copy(episode = episode, season = season)
-            }
+            it.collect { result -> updateFromEpisodeDetails(result) }
         }
 
         viewModelScope.launchObserve(observeEpisodeWatches) {
             it.onStart {
                 emit(emptyList())
-            }.execute { result ->
-                val action = if (result is Success && result().isNotEmpty()) Action.UNWATCH else Action.WATCH
-                copy(watches = result() ?: emptyList(), action = action)
-            }
+            }.collect { result -> updateFromEpisodeWatches(result) }
         }
 
         viewModelScope.launch {
@@ -82,6 +78,15 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         }
 
         refresh()
+    }
+
+    private fun updateFromEpisodeDetails(episodeWithSeason: EpisodeWithSeason) = setState {
+        copy(episode = episodeWithSeason.episode, season = episodeWithSeason.season)
+    }
+
+    private fun updateFromEpisodeWatches(watches: List<EpisodeWatchEntry>) = setState {
+        val action = if (watches.isNotEmpty()) Action.UNWATCH else Action.WATCH
+        copy(watches = watches, action = action)
     }
 
     fun submitAction(action: EpisodeDetailsAction) {
