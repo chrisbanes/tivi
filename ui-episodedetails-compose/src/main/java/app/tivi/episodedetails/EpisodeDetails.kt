@@ -31,6 +31,9 @@ import androidx.ui.foundation.VerticalScroller
 import androidx.ui.layout.Column
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.TopAppBar
+import androidx.ui.tooling.preview.Preview
+import app.tivi.data.entities.Episode
+import app.tivi.data.entities.Season
 
 /**
  * This is a bit of hack. I can't make `ui-episodedetails` depend on any of the compose libraries,
@@ -38,22 +41,24 @@ import androidx.ui.material.TopAppBar
  */
 fun composeEpisodeDetails(viewGroup: ViewGroup, state: LiveData<EpisodeDetailsViewState>) {
     viewGroup.setContent {
-        EpisodeDetails(state)
+        val viewState = +observe(state)
+        if (viewState != null) {
+            MaterialTheme(typography = themeTypography) {
+                EpisodeDetails(viewState)
+            }
+        }
     }
 }
 
 @Composable
-private fun EpisodeDetails(vm: LiveData<EpisodeDetailsViewState>) {
-    MaterialTheme(typography = themeTypography) {
-        val viewState = +observe(vm)
-        Column {
-            TopAppBar(
-                    title = { Text(text = viewState?.episode?.title ?: "No episode") }
-            )
-            VerticalScroller(modifier = Flexible(1f)) {
-                Column {
-                    Text("blah")
-                }
+private fun EpisodeDetails(viewState: EpisodeDetailsViewState) {
+    Column {
+        TopAppBar(
+                title = { Text(text = viewState.episode?.title ?: "No episode") }
+        )
+        VerticalScroller(modifier = Flexible(1f)) {
+            Column {
+                Text("blah")
             }
         }
     }
@@ -71,4 +76,22 @@ fun <T> observe(data: LiveData<T>) = effectOf<T?> {
     }
 
     result.value
+}
+
+@Preview
+@Composable
+private fun previewEpisodeDetails() {
+    EpisodeDetails(
+            viewState = EpisodeDetailsViewState(
+                    episodeId = 0,
+                    episode = Episode(
+                            seasonId = 100,
+                            title = "A show too far"
+                    ),
+                    season = Season(
+                            id = 100,
+                            showId = 0
+                    )
+            )
+    )
 }
