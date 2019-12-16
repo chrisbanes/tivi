@@ -43,8 +43,7 @@ dependencies {
     implementation project(':base')
     implementation project(':base-android')
 
-    //implementation project(':common-ui')
-    //implementation project(':common-imageloading')
+    implementation project(':common-imageloading')
 
     implementation project(':presenter-episodedetails')
 

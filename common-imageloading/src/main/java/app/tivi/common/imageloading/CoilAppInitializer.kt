@@ -23,7 +23,8 @@ import coil.ImageLoader
 import javax.inject.Inject
 
 class CoilAppInitializer @Inject constructor(
-    private val tmdbImageEntityMapper: TmdbImageEntityCoilMapper
+    private val tmdbImageEntityMapper: TmdbImageEntityCoilMapper,
+    private val episodeEntityMapper: EpisodeCoilMapper
 ) : AppInitializer {
     override fun init(application: Application) {
         Coil.setDefaultImageLoader {
@@ -36,6 +37,7 @@ class CoilAppInitializer @Inject constructor(
 
                 componentRegistry {
                     add(tmdbImageEntityMapper)
+                    add(episodeEntityMapper)
                 }
             }
         }
