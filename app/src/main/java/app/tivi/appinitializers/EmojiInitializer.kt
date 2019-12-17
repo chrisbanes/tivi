@@ -26,13 +26,13 @@ import javax.inject.Inject
 class EmojiInitializer @Inject constructor() : AppInitializer {
     override fun init(application: Application) {
         val fontRequest = FontRequest(
-                "com.google.android.gms.fonts",
-                "com.google.android.gms",
-                "Noto Color Emoji Compat",
-                R.array.com_google_android_gms_fonts_certs)
+            "com.google.android.gms.fonts",
+            "com.google.android.gms",
+            "Noto Color Emoji Compat",
+            R.array.com_google_android_gms_fonts_certs)
 
         val config = FontRequestEmojiCompatConfig(application, fontRequest)
-                .setReplaceAll(true)
+            .setReplaceAll(true)
 
         EmojiCompat.init(config)
     }

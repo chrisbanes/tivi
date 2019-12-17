@@ -26,9 +26,9 @@ import coil.transform.RoundedCornersTransformation
 import coil.transform.Transformation
 
 @BindingAdapter(
-        "tmdbBackdropPath",
-        "imageSaturateOnLoad",
-        requireAll = false
+    "tmdbBackdropPath",
+    "imageSaturateOnLoad",
+    requireAll = false
 )
 fun ImageView.loadBackdrop(
     oldPath: String?,
@@ -38,20 +38,20 @@ fun ImageView.loadBackdrop(
 ) {
     if (oldPath != path || oldSaturateOnLoad != saturateOnLoad) {
         loadImage(
-                null,
-                oldSaturateOnLoad,
-                0f,
-                path?.let { ShowTmdbImage(path = path, type = ImageType.BACKDROP, showId = 0) },
-                saturateOnLoad,
-                0f
+            null,
+            oldSaturateOnLoad,
+            0f,
+            path?.let { ShowTmdbImage(path = path, type = ImageType.BACKDROP, showId = 0) },
+            saturateOnLoad,
+            0f
         )
     }
 }
 
 @BindingAdapter(
-        "tmdbLogoPath",
-        "imageSaturateOnLoad",
-        requireAll = false
+    "tmdbLogoPath",
+    "imageSaturateOnLoad",
+    requireAll = false
 )
 fun ImageView.loadLogo(
     oldPath: String?,
@@ -61,21 +61,21 @@ fun ImageView.loadLogo(
 ) {
     if (oldPath != path || oldSaturateOnLoad != saturateOnLoad) {
         loadImage(
-                null,
-                oldSaturateOnLoad,
-                0f,
-                path?.let { ShowTmdbImage(path = path, type = ImageType.LOGO, showId = 0) },
-                saturateOnLoad,
-                0f
+            null,
+            oldSaturateOnLoad,
+            0f,
+            path?.let { ShowTmdbImage(path = path, type = ImageType.LOGO, showId = 0) },
+            saturateOnLoad,
+            0f
         )
     }
 }
 
 @BindingAdapter(
-        "image",
-        "imageSaturateOnLoad",
-        "imageCornerRadius",
-        requireAll = false
+    "image",
+    "imageSaturateOnLoad",
+    "imageCornerRadius",
+    requireAll = false
 )
 fun ImageView.loadImage(
     oldImage: TmdbImageEntity?,
@@ -86,8 +86,8 @@ fun ImageView.loadImage(
     cornerRadius: Float
 ) {
     if (oldImage == image &&
-            oldSaturateOnLoad == saturateOnLoad &&
-            oldCornerRadius == cornerRadius) return
+        oldSaturateOnLoad == saturateOnLoad &&
+        oldCornerRadius == cornerRadius) return
 
     loadAny(image) {
         if (saturateOnLoad == null || saturateOnLoad == true) {

@@ -51,9 +51,9 @@ class SeasonsTest {
     @Before
     fun setup() {
         DaggerTestComponent.builder()
-                .testDataSourceModule(TestDataSourceModule())
-                .build()
-                .inject(this)
+            .testDataSourceModule(TestDataSourceModule())
+            .build()
+            .inject(this)
 
         runBlockingTest {
             // We'll assume that there's a show in the db
@@ -86,7 +86,7 @@ class SeasonsTest {
 
         // Specials should always be last
         assertThat(seasonsDao.seasonsForShowId(showId),
-                `is`(listOf(s1, s2, s0))
+            `is`(listOf(s1, s2, s0))
         )
     }
 

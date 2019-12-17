@@ -51,20 +51,20 @@ class RecommendedShowsFragment : EntryGridFragment<RecommendedEntryWithShow, Rec
         return object : EntryGridEpoxyController<RecommendedEntryWithShow>() {
             override fun buildItemModel(item: RecommendedEntryWithShow): EpoxyModel<*> {
                 return PosterGridItemBindingModel_()
-                        .id(item.generateStableId())
-                        .posterImage(item.images.findHighestRatedPoster())
-                        .tiviShow(item.show)
-                        .transitionName(item.show.homepage)
-                        .selected(item.show.id in state.selectedShowIds)
-                        .clickListener(View.OnClickListener {
-                            if (viewModel.onItemClick(item.show)) {
-                                return@OnClickListener
-                            }
-                            onItemClicked(item)
-                        })
-                        .longClickListener(View.OnLongClickListener {
-                            viewModel.onItemLongClick(item.show)
-                        })
+                    .id(item.generateStableId())
+                    .posterImage(item.images.findHighestRatedPoster())
+                    .tiviShow(item.show)
+                    .transitionName(item.show.homepage)
+                    .selected(item.show.id in state.selectedShowIds)
+                    .clickListener(View.OnClickListener {
+                        if (viewModel.onItemClick(item.show)) {
+                            return@OnClickListener
+                        }
+                        onItemClicked(item)
+                    })
+                    .longClickListener(View.OnLongClickListener {
+                        viewModel.onItemLongClick(item.show)
+                    })
             }
         }
     }
@@ -76,9 +76,9 @@ class RecommendedShowsFragment : EntryGridFragment<RecommendedEntryWithShow, Rec
         }
 
         findNavController().navigate(
-                "app.tivi://show/${item.show.id}".toUri(),
-                null,
-                sharedElements.toActivityNavigatorExtras(requireActivity())
+            "app.tivi://show/${item.show.id}".toUri(),
+            null,
+            sharedElements.toActivityNavigatorExtras(requireActivity())
         )
     }
 

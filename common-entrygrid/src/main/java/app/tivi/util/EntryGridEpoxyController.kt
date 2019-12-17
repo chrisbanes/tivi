@@ -70,6 +70,6 @@ abstract class EntryGridEpoxyController<LI : EntryWithShow<out Entry>> :
 
     protected open fun buildItemPlaceholder(index: Int): PosterGridItemBindingModel_ {
         return PosterGridItemBindingModel_()
-                .id("placeholder_$index")
+            .id("placeholder_$index")
     }
 }

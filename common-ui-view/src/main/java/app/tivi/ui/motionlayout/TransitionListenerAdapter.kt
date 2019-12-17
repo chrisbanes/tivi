@@ -26,7 +26,8 @@ open class TransitionListenerAdapter : MotionLayout.TransitionListener {
         triggerId: Int,
         positive: Boolean,
         progress: Float
-    ) {}
+    ) {
+    }
 
     override fun onTransitionStarted(
         parent: MotionLayout,

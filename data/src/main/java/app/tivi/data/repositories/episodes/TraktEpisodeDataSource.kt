@@ -36,10 +36,10 @@ class TraktEpisodeDataSource @Inject constructor(
 ) : EpisodeDataSource {
     override suspend fun getEpisode(showId: Long, seasonNumber: Int, episodeNumber: Int): Result<Episode> {
         val traktId = traktIdMapper.map(showId)
-                ?: return ErrorResult(message = "No Trakt ID for show with ID: $showId")
+            ?: return ErrorResult(message = "No Trakt ID for show with ID: $showId")
 
         return service.get().summary(traktId.toString(), seasonNumber, episodeNumber, Extended.FULL)
-                .executeWithRetry()
-                .toResult(episodeMapper.toLambda())
+            .executeWithRetry()
+            .toResult(episodeMapper.toLambda())
     }
 }

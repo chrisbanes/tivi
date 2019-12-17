@@ -32,7 +32,7 @@ class TasksModule {
     @Provides
     fun provideWorkConfiguration(workerFactory: TiviWorkerFactory): Configuration {
         return Configuration.Builder()
-                .setWorkerFactory(workerFactory)
-                .build()
+            .setWorkerFactory(workerFactory)
+            .build()
     }
 }

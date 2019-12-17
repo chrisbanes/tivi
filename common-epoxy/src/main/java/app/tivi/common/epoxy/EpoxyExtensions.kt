@@ -38,7 +38,7 @@ fun RecyclerView.syncSpanSizes(controller: EpoxyController) {
     val layout = layoutManager
     if (layout is GridLayoutManager) {
         if (controller.spanCount != layout.spanCount ||
-                layout.spanSizeLookup !== controller.spanSizeLookup) {
+            layout.spanSizeLookup !== controller.spanSizeLookup) {
             controller.spanCount = layout.spanCount
             layout.spanSizeLookup = controller.spanSizeLookup
         }
@@ -47,5 +47,5 @@ fun RecyclerView.syncSpanSizes(controller: EpoxyController) {
 
 fun EpoxyControllerAdapter.findPositionOfItemId(itemId: Long): Int {
     return (0 until itemCount).firstOrNull { getItemId(it) == itemId }
-            ?: RecyclerView.NO_POSITION
+        ?: RecyclerView.NO_POSITION
 }

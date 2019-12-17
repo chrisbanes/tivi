@@ -59,11 +59,13 @@ class TopLeftCutoutBackgroundView : View {
     @set:Keep
     var cutProgress: Float
         get() = shapeDrawable.interpolation
-        set(value) { shapeDrawable.interpolation = value }
+        set(value) {
+            shapeDrawable.interpolation = value
+        }
 
     private fun syncCutSize() {
         shapeDrawable.shapeAppearanceModel = shapeDrawable.shapeAppearanceModel.toBuilder()
-                .setTopLeftCorner(CornerFamily.CUT, lerp(0f, maxCutSize, cutProgress))
-                .build()
+            .setTopLeftCorner(CornerFamily.CUT, lerp(0f, maxCutSize, cutProgress))
+            .build()
     }
 }

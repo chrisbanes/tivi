@@ -45,7 +45,7 @@ class TmdbRelatedShowsDataSource @Inject constructor(
 
     override suspend fun getRelatedShows(showId: Long): Result<List<Pair<TiviShow, RelatedShowEntry>>> {
         return tmdb.tvService().similar(tmdbIdMapper.map(showId), 1, null)
-                .executeWithRetry()
-                .toResult(resultMapper)
+            .executeWithRetry()
+            .toResult(resultMapper)
     }
 }

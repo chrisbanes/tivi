@@ -100,9 +100,9 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
         }
 
         viewModel.selectSubscribe(
-                viewLifecycleOwner,
-                ShowDetailsViewState::focusedSeason,
-                deliveryMode = uniqueOnly()
+            viewLifecycleOwner,
+            ShowDetailsViewState::focusedSeason,
+            deliveryMode = uniqueOnly()
         ) { focusedSeason ->
             if (focusedSeason != null) {
                 viewLifecycleOwner.lifecycleScope.launch {
@@ -115,9 +115,9 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
         }
 
         viewModel.selectSubscribe(
-                viewLifecycleOwner,
-                ShowDetailsViewState::openEpisodeUiEffect,
-                deliveryMode = uniqueOnly()
+            viewLifecycleOwner,
+            ShowDetailsViewState::openEpisodeUiEffect,
+            deliveryMode = uniqueOnly()
         ) { expandedEpisode ->
             if (expandedEpisode is ExecutableOpenEpisodeUiEffect) {
                 // We can add the fragment to the pane now while waiting for any animations/
@@ -152,10 +152,10 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
         controller.callbacks = object : ShowDetailsEpoxyController.Callbacks {
             override fun onRelatedShowClicked(show: TiviShow, itemView: View) {
                 findNavController().navigate(
-                        "app.tivi://show/${show.id}".toUri(),
-                        null,
-                        sharedElementHelperOf(itemView to "poster")
-                                .toActivityNavigatorExtras(requireActivity()))
+                    "app.tivi://show/${show.id}".toUri(),
+                    null,
+                    sharedElementHelperOf(itemView to "poster")
+                        .toActivityNavigatorExtras(requireActivity()))
             }
 
             override fun onEpisodeClicked(episode: Episode, itemView: View) {
@@ -197,8 +197,8 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
             setHasFixedSize(true)
 
             tintPainter = TintPainter.completeList(
-                    context.resolveThemeColor(R.attr.colorSurface),
-                    opacity = 0.7f
+                context.resolveThemeColor(R.attr.colorSurface),
+                opacity = 0.7f
             )
             expandablePage = binding.detailsExpandedPane
         }

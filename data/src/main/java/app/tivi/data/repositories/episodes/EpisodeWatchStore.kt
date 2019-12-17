@@ -33,10 +33,10 @@ class EpisodeWatchStore @Inject constructor(
     private val logger: Logger
 ) {
     private val episodeWatchSyncer = syncerForEntity(
-            episodeWatchEntryDao,
-            { it.traktId },
-            { entity, id -> entity.copy(id = id ?: 0) },
-            logger
+        episodeWatchEntryDao,
+        { it.traktId },
+        { entity, id -> entity.copy(id = id ?: 0) },
+        logger
     )
 
     fun observeEpisodeWatches(episodeId: Long): Flow<List<EpisodeWatchEntry>> {

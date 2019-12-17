@@ -119,8 +119,8 @@ class TestRoomDatabaseModule {
     @Provides
     fun provideDatabase(context: Context): TiviDatabase {
         return Room.inMemoryDatabaseBuilder(context, TiviTestDatabase::class.java)
-                .allowMainThreadQueries()
-                .build()
+            .allowMainThreadQueries()
+            .build()
     }
 
     @Singleton

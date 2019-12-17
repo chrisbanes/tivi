@@ -23,8 +23,8 @@ import androidx.room.PrimaryKey
 import org.threeten.bp.Instant
 
 @Entity(
-        tableName = "last_requests",
-        indices = [Index(value = ["request", "entity_id"], unique = true)]
+    tableName = "last_requests",
+    indices = [Index(value = ["request", "entity_id"], unique = true)]
 )
 data class LastRequest(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override val id: Long = 0,

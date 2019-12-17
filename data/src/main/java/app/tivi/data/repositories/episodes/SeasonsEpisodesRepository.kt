@@ -72,12 +72,12 @@ class SeasonsEpisodesRepository @Inject constructor(
                 is Success -> {
                     result.data.distinctBy { it.first.number }.associate { (season, episodes) ->
                         val localSeason = seasonsEpisodesStore.getSeasonWithTraktId(season.traktId!!)
-                                ?: Season(showId = showId)
+                            ?: Season(showId = showId)
                         val mergedSeason = mergeSeason(localSeason, season, Season.EMPTY)
 
                         val mergedEpisodes = episodes.distinctBy(Episode::number).map {
                             val localEpisode = seasonsEpisodesStore.getEpisodeWithTraktId(it.traktId!!)
-                                    ?: Episode(seasonId = mergedSeason.id)
+                                ?: Episode(seasonId = mergedSeason.id)
                             mergeEpisode(localEpisode, it, Episode.EMPTY)
                         }
                         mergedSeason to mergedEpisodes
@@ -174,9 +174,9 @@ class SeasonsEpisodesRepository @Inject constructor(
                         ActionDate.AIR_DATE -> episode.firstAired ?: OffsetDateTime.now()
                     }
                     return@mapNotNull EpisodeWatchEntry(
-                            episodeId = episode.id,
-                            watchedAt = timestamp,
-                            pendingAction = PendingAction.UPLOAD
+                        episodeId = episode.id,
+                        watchedAt = timestamp,
+                        pendingAction = PendingAction.UPLOAD
                     )
                 }
             }
@@ -221,9 +221,9 @@ class SeasonsEpisodesRepository @Inject constructor(
 
     suspend fun addEpisodeWatch(episodeId: Long, timestamp: OffsetDateTime) {
         val entry = EpisodeWatchEntry(
-                episodeId = episodeId,
-                watchedAt = timestamp,
-                pendingAction = PendingAction.UPLOAD
+            episodeId = episodeId,
+            watchedAt = timestamp,
+            pendingAction = PendingAction.UPLOAD
         )
         episodeWatchStore.save(entry)
 
@@ -243,7 +243,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         if (watchesForEpisode.isNotEmpty()) {
             // First mark them as pending deletion
             episodeWatchStore.updateWatchEntriesWithAction(
-                    watchesForEpisode.map { it.id }, PendingAction.DELETE)
+                watchesForEpisode.map { it.id }, PendingAction.DELETE)
             syncEpisodeWatches(episodeId)
         }
     }
@@ -274,7 +274,7 @@ class SeasonsEpisodesRepository @Inject constructor(
             is Success -> transactionRunner {
                 val watches = response.data.mapNotNull { (episode, watchEntry) ->
                     val epId = seasonsEpisodesStore.getEpisodeIdForTraktId(episode.traktId!!)
-                            ?: return@mapNotNull null // We don't have the episode, skip
+                        ?: return@mapNotNull null // We don't have the episode, skip
                     watchEntry.copy(episodeId = epId)
                 }
                 if (since != null) {
@@ -340,38 +340,38 @@ class SeasonsEpisodesRepository @Inject constructor(
     }
 
     private fun mergeSeason(local: Season, trakt: Season, tmdb: Season) = local.copy(
-            title = trakt.title ?: local.title,
-            summary = trakt.summary ?: local.summary,
-            number = trakt.number ?: local.number,
+        title = trakt.title ?: local.title,
+        summary = trakt.summary ?: local.summary,
+        number = trakt.number ?: local.number,
 
-            network = trakt.network ?: tmdb.network ?: local.network,
-            episodeCount = trakt.episodeCount ?: tmdb.episodeCount ?: local.episodeCount,
-            episodesAired = trakt.episodesAired ?: tmdb.episodesAired ?: local.episodesAired,
+        network = trakt.network ?: tmdb.network ?: local.network,
+        episodeCount = trakt.episodeCount ?: tmdb.episodeCount ?: local.episodeCount,
+        episodesAired = trakt.episodesAired ?: tmdb.episodesAired ?: local.episodesAired,
 
-            // Trakt specific stuff
-            traktId = trakt.traktId ?: local.traktId,
-            traktRating = trakt.traktRating ?: local.traktRating,
-            traktRatingVotes = trakt.traktRatingVotes ?: local.traktRatingVotes,
+        // Trakt specific stuff
+        traktId = trakt.traktId ?: local.traktId,
+        traktRating = trakt.traktRating ?: local.traktRating,
+        traktRatingVotes = trakt.traktRatingVotes ?: local.traktRatingVotes,
 
-            // TMDb specific stuff
-            tmdbId = tmdb.tmdbId ?: trakt.tmdbId ?: local.tmdbId,
-            tmdbPosterPath = tmdb.tmdbPosterPath ?: local.tmdbPosterPath,
-            tmdbBackdropPath = tmdb.tmdbBackdropPath ?: local.tmdbBackdropPath
+        // TMDb specific stuff
+        tmdbId = tmdb.tmdbId ?: trakt.tmdbId ?: local.tmdbId,
+        tmdbPosterPath = tmdb.tmdbPosterPath ?: local.tmdbPosterPath,
+        tmdbBackdropPath = tmdb.tmdbBackdropPath ?: local.tmdbBackdropPath
     )
 
     private fun mergeEpisode(local: Episode, trakt: Episode, tmdb: Episode) = local.copy(
-            title = trakt.title ?: tmdb.title ?: local.title,
-            summary = trakt.summary ?: tmdb.summary ?: local.summary,
-            number = trakt.number ?: tmdb.number ?: local.number,
-            firstAired = trakt.firstAired ?: tmdb.firstAired ?: local.firstAired,
+        title = trakt.title ?: tmdb.title ?: local.title,
+        summary = trakt.summary ?: tmdb.summary ?: local.summary,
+        number = trakt.number ?: tmdb.number ?: local.number,
+        firstAired = trakt.firstAired ?: tmdb.firstAired ?: local.firstAired,
 
-            // Trakt specific stuff
-            traktId = trakt.traktId ?: local.traktId,
-            traktRating = trakt.traktRating ?: local.traktRating,
-            traktRatingVotes = trakt.traktRatingVotes ?: local.traktRatingVotes,
+        // Trakt specific stuff
+        traktId = trakt.traktId ?: local.traktId,
+        traktRating = trakt.traktRating ?: local.traktRating,
+        traktRatingVotes = trakt.traktRatingVotes ?: local.traktRatingVotes,
 
-            // TMDb specific stuff
-            tmdbId = tmdb.tmdbId ?: trakt.tmdbId ?: local.tmdbId,
-            tmdbBackdropPath = tmdb.tmdbBackdropPath ?: local.tmdbBackdropPath
+        // TMDb specific stuff
+        tmdbId = tmdb.tmdbId ?: trakt.tmdbId ?: local.tmdbId,
+        tmdbBackdropPath = tmdb.tmdbBackdropPath ?: local.tmdbBackdropPath
     )
 }

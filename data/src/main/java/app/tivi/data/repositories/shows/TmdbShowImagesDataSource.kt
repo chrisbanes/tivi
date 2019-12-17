@@ -37,8 +37,8 @@ class TmdbShowImagesDataSource @Inject constructor(
         val tmdbId = show.tmdbId
         return if (tmdbId != null) {
             tmdb.tvService().tv(tmdbId, null, AppendToResponse(AppendToResponseItem.IMAGES))
-                    .executeWithRetry()
-                    .toResult(mapper.toLambda())
+                .executeWithRetry()
+                .toResult(mapper.toLambda())
         } else {
             ErrorResult(IllegalArgumentException("TmdbId for show does not exist [$show]"))
         }

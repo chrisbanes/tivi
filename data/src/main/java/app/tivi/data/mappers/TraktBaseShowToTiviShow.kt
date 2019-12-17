@@ -28,7 +28,7 @@ class TraktBaseShowToTiviShow @Inject constructor(
     override suspend fun map(from: BaseShow): TiviShow {
         val mapped = showMapper.map(from.show)
         return mapped.copy(
-                traktDataUpdate = from.last_updated_at ?: mapped.traktDataUpdate
+            traktDataUpdate = from.last_updated_at ?: mapped.traktDataUpdate
         )
     }
 }

@@ -33,8 +33,8 @@ class TmdbSearchDataSource @Inject constructor(
 ) : SearchDataSource {
     override suspend fun search(query: String): Result<List<Pair<TiviShow, List<ShowTmdbImage>>>> = try {
         tmdb.searchService().tv(query, 1, null, null)
-                .executeWithRetry()
-                .toResult(mapper.toLambda())
+            .executeWithRetry()
+            .toResult(mapper.toLambda())
     } catch (t: Throwable) {
         ErrorResult(t)
     }

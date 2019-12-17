@@ -34,7 +34,7 @@ class TraktUsersDataSource @Inject constructor(
 ) {
     suspend fun getUser(slug: String): Result<TraktUser> {
         return usersService.get().profile(UserSlug(slug), Extended.FULL)
-                    .executeWithRetry()
-                    .toResult(mapper.toLambda())
+            .executeWithRetry()
+            .toResult(mapper.toLambda())
     }
 }

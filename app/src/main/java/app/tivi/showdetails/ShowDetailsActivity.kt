@@ -33,13 +33,13 @@ class ShowDetailsActivity : TiviActivity() {
 
         findViewById<View>(R.id.details_root).apply {
             systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
-                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 
             doOnApplyWindowInsets { view, insets, initialState ->
                 view.updatePadding(
-                        left = insets.systemWindowInsetLeft + initialState.paddings.left,
-                        right = insets.systemWindowInsetRight + initialState.paddings.right
+                    left = insets.systemWindowInsetLeft + initialState.paddings.left,
+                    right = insets.systemWindowInsetRight + initialState.paddings.right
                 )
             }
         }
@@ -50,7 +50,7 @@ class ShowDetailsActivity : TiviActivity() {
     override fun handleIntent(intent: Intent) {
         supportFragmentManager.commit {
             replace(R.id.details_content,
-                    NavHostFragment.create(R.navigation.show_details_nav_graph, intent.extras))
+                NavHostFragment.create(R.navigation.show_details_nav_graph, intent.extras))
         }
     }
 }

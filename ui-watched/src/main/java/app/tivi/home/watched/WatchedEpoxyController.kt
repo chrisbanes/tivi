@@ -69,7 +69,7 @@ internal class WatchedEpoxyController @Inject constructor(
                 popupMenuListener(SortPopupMenuListener(state.sort, state.availableSorts))
                 popupMenuClickListener {
                     val option = popupMenuItemIdToSortOption(it.itemId)
-                            ?: throw IllegalArgumentException("Selected sort option is null")
+                        ?: throw IllegalArgumentException("Selected sort option is null")
                     callbacks?.onSortSelected(option)
                     true
                 }

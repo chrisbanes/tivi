@@ -55,16 +55,16 @@ class AppModule {
     @Singleton
     @Provides
     fun provideCoroutineDispatchers() = AppCoroutineDispatchers(
-            io = Dispatchers.IO,
-            computation = Dispatchers.Default,
-            main = Dispatchers.Main
+        io = Dispatchers.IO,
+        computation = Dispatchers.Default,
+        main = Dispatchers.Main
     )
 
     @Singleton
     @Provides
     fun provideBackgroundExecutor(): Executor {
         val parallelism = (Runtime.getRuntime().availableProcessors() * 2)
-                .coerceIn(4, 32)
+            .coerceIn(4, 32)
         return if (Build.VERSION.SDK_INT < 24) {
             Executors.newFixedThreadPool(parallelism)
         } else {
@@ -105,9 +105,9 @@ class AppModule {
     fun provideMediumDateFormatter(application: TiviApplication): DateTimeFormatter {
         @Suppress("DEPRECATION")
         return (AndroidDateFormat.getMediumDateFormat(application) as SimpleDateFormat)
-                .toThreeTenDateTimeFormatter()
-                .withLocale(application.resources.configuration.locale)
-                .withZone(ZoneId.systemDefault())
+            .toThreeTenDateTimeFormatter()
+            .withLocale(application.resources.configuration.locale)
+            .withZone(ZoneId.systemDefault())
     }
 
     @Singleton
@@ -119,8 +119,8 @@ class AppModule {
 
         @Suppress("DEPRECATION")
         return DateTimeFormatter.ofPattern("${dateF.toPattern()} ${timeF.toPattern()}")
-                .withLocale(application.resources.configuration.locale)
-                .withZone(ZoneId.systemDefault())
+            .withLocale(application.resources.configuration.locale)
+            .withZone(ZoneId.systemDefault())
     }
 
     @Singleton
@@ -129,9 +129,9 @@ class AppModule {
     fun provideShortDateFormatter(application: TiviApplication): DateTimeFormatter {
         @Suppress("DEPRECATION")
         return (AndroidDateFormat.getDateFormat(application) as SimpleDateFormat)
-                .toThreeTenDateTimeFormatter()
-                .withLocale(application.resources.configuration.locale)
-                .withZone(ZoneId.systemDefault())
+            .toThreeTenDateTimeFormatter()
+            .withLocale(application.resources.configuration.locale)
+            .withZone(ZoneId.systemDefault())
     }
 
     @Singleton
@@ -140,7 +140,7 @@ class AppModule {
     fun provideShortTimeFormatter(application: TiviApplication): DateTimeFormatter {
         @Suppress("DEPRECATION")
         return (AndroidDateFormat.getTimeFormat(application) as SimpleDateFormat)
-                .toThreeTenDateTimeFormatter()
+            .toThreeTenDateTimeFormatter()
     }
 
     @Provides
@@ -152,9 +152,9 @@ class AppModule {
     @Provides
     @Singleton
     fun provideAppBarConfiguration() = AppBarConfiguration.Builder(
-            R.id.navigation_followed,
-            R.id.navigation_watched,
-            R.id.navigation_discover,
-            R.id.navigation_search
+        R.id.navigation_followed,
+        R.id.navigation_watched,
+        R.id.navigation_discover,
+        R.id.navigation_search
     ).build()
 }

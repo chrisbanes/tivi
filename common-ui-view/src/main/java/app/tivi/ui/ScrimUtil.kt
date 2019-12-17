@@ -62,7 +62,7 @@ object ScrimUtil {
             val x = i * 1f / (numStops - 1)
             val opacity = x.toDouble().pow(3.0).toFloat()
             stopColors[i] = ColorUtils.setAlphaComponent(baseColor,
-                    (alpha * opacity).roundToInt().coerceIn(0, 255))
+                (alpha * opacity).roundToInt().coerceIn(0, 255))
         }
 
         val x0: Float
@@ -101,13 +101,13 @@ object ScrimUtil {
         paintDrawable.shaderFactory = object : ShapeDrawable.ShaderFactory() {
             override fun resize(width: Int, height: Int): Shader {
                 return LinearGradient(
-                        width * x0,
-                        height * y0,
-                        width * x1,
-                        height * y1,
-                        stopColors,
-                        null,
-                        Shader.TileMode.CLAMP)
+                    width * x0,
+                    height * y0,
+                    width * x1,
+                    height * y1,
+                    stopColors,
+                    null,
+                    Shader.TileMode.CLAMP)
             }
         }
         cache.put(cacheKeyHash, paintDrawable)

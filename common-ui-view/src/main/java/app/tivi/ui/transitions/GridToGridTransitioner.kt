@@ -34,7 +34,7 @@ object GridToGridTransitioner {
     private const val RETURN_TRANSITION_FRACTION = 2 / 3f
     private const val GRID_SHARED_ELEMENT_ENTER_DURATION = CONTENT_TRANSITION_DURATION * 4 / 3
     private const val GRID_SHARED_ELEMENT_RETURN_DURATION =
-            (GRID_SHARED_ELEMENT_ENTER_DURATION * RETURN_TRANSITION_FRACTION).toLong()
+        (GRID_SHARED_ELEMENT_ENTER_DURATION * RETURN_TRANSITION_FRACTION).toLong()
 
     private val LINEAR_INTERPOLATOR = LinearInterpolator()
     private val FAST_OUT_SLOW_IN_INTERPOLATOR = FastOutSlowInInterpolator()

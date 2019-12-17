@@ -46,7 +46,7 @@ import kotlinx.coroutines.flow.collect
 
 @SuppressLint("ValidFragment")
 abstract class EntryGridFragment<LI, VM> : TiviFragmentWithBinding<FragmentEntryGridBinding>()
-        where LI : EntryWithShow<out Entry>, VM : EntryViewModel<LI, *> {
+    where LI : EntryWithShow<out Entry>, VM : EntryViewModel<LI, *> {
     protected abstract val viewModel: VM
 
     private lateinit var swipeRefreshLatch: ProgressTimeLatch
@@ -88,7 +88,7 @@ abstract class EntryGridFragment<LI, VM> : TiviFragmentWithBinding<FragmentEntry
         binding.gridAppbar.doOnSizeChange {
             binding.gridRecyclerview.updatePadding(top = it.height)
             binding.gridSwipeRefresh.setProgressViewOffset(true, 0,
-                    it.height + binding.gridSwipeRefresh.progressCircleDiameter / 2)
+                it.height + binding.gridSwipeRefresh.progressCircleDiameter / 2)
             true
         }
 
@@ -115,9 +115,9 @@ abstract class EntryGridFragment<LI, VM> : TiviFragmentWithBinding<FragmentEntry
             is UiError -> {
                 swipeRefreshLatch.refreshing = false
                 Snackbar.make(requireView(),
-                        status.exception?.localizedMessage
-                                ?: getString(R.string.error_generic),
-                        Snackbar.LENGTH_SHORT
+                    status.exception?.localizedMessage
+                        ?: getString(R.string.error_generic),
+                    Snackbar.LENGTH_SHORT
                 ).show()
             }
             is UiLoading -> swipeRefreshLatch.refreshing = status.fullRefresh
@@ -133,7 +133,7 @@ abstract class EntryGridFragment<LI, VM> : TiviFragmentWithBinding<FragmentEntry
 
         if (currentActionMode != null) {
             currentActionMode?.title = getString(R.string.selection_title,
-                    state.selectedShowIds.size)
+                state.selectedShowIds.size)
         }
 
         if (state.isLoaded) {

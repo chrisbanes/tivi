@@ -38,9 +38,9 @@ class TraktAuthModule {
     @Provides
     fun provideAuthConfig(): AuthorizationServiceConfiguration {
         return AuthorizationServiceConfiguration(
-                Uri.parse("https://trakt.tv/oauth/authorize"),
-                Uri.parse("https://trakt.tv/oauth/token"),
-                null)
+            Uri.parse("https://trakt.tv/oauth/authorize"),
+            Uri.parse("https://trakt.tv/oauth/token"),
+            null)
     }
 
     @Provides
@@ -55,10 +55,10 @@ class TraktAuthModule {
         @ApplicationId applicationId: String
     ): AuthorizationRequest {
         return AuthorizationRequest.Builder(
-                serviceConfig,
-                clientId,
-                ResponseTypeValues.CODE,
-                Uri.parse("$applicationId://${TraktConstants.URI_AUTH_CALLBACK_PATH}")
+            serviceConfig,
+            clientId,
+            ResponseTypeValues.CODE,
+            Uri.parse("$applicationId://${TraktConstants.URI_AUTH_CALLBACK_PATH}")
         ).build()
     }
 

@@ -50,13 +50,13 @@ abstract class TiviMvRxViewModel<S : MvRxState>(
 
         @Suppress("USELESS_CAST")
         return map { Success(mapper(it)) as Async<V> }
-                .catch {
-                    if (BuildConfig.DEBUG) {
-                        Log.e(this@TiviMvRxViewModel::class.java.simpleName,
-                                "Exception during observe", it)
-                    }
-                    emit(Fail(it))
+            .catch {
+                if (BuildConfig.DEBUG) {
+                    Log.e(this@TiviMvRxViewModel::class.java.simpleName,
+                        "Exception during observe", it)
                 }
-                .collect { setState { stateReducer(it) } }
+                emit(Fail(it))
+            }
+            .collect { setState { stateReducer(it) } }
     }
 }

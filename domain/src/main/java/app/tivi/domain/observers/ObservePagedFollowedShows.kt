@@ -35,9 +35,9 @@ class ObservePagedFollowedShows @Inject constructor(
 
     override fun createObservable(params: Parameters): Flow<PagedList<FollowedShowEntryWithShow>> {
         return FlowPagedListBuilder(
-                followedShowsRepository.observeFollowedShows(params.sort, params.filter),
-                params.pagingConfig,
-                boundaryCallback = params.boundaryCallback
+            followedShowsRepository.observeFollowedShows(params.sort, params.filter),
+            params.pagingConfig,
+            boundaryCallback = params.boundaryCallback
         ).buildFlow()
     }
 

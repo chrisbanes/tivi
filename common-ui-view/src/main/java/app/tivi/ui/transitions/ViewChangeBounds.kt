@@ -125,19 +125,19 @@ open class ViewChangeBounds : Transition() {
         val originalAlpha = bounds.getAlpha()
 
         val outTopLeftPropVal = PropertyValuesHolder.ofObject<PointF>(
-                TOP_LEFT_PROPERTY,
-                null,
-                pathMotion.getPath(
-                        startBounds.left.toFloat(), startBounds.top.toFloat(),
-                        endBounds.left.toFloat(), endBounds.top.toFloat())
+            TOP_LEFT_PROPERTY,
+            null,
+            pathMotion.getPath(
+                startBounds.left.toFloat(), startBounds.top.toFloat(),
+                endBounds.left.toFloat(), endBounds.top.toFloat())
         )
 
         val outBottomRightPropVal = PropertyValuesHolder.ofObject<PointF>(
-                BOTTOM_RIGHT_PROPERTY,
-                null,
-                pathMotion.getPath(
-                        startBounds.right.toFloat(), startBounds.bottom.toFloat(),
-                        endBounds.right.toFloat(), endBounds.bottom.toFloat())
+            BOTTOM_RIGHT_PROPERTY,
+            null,
+            pathMotion.getPath(
+                startBounds.right.toFloat(), startBounds.bottom.toFloat(),
+                endBounds.right.toFloat(), endBounds.bottom.toFloat())
         )
 
         val alphaPropVal = PropertyValuesHolder.ofFloat(ALPHA_PROPERTY, startAlpha, endAlpha)
@@ -147,9 +147,9 @@ open class ViewChangeBounds : Transition() {
         bounds.setLeftTopRightBottom(startBounds.left, startBounds.top, startBounds.right, startBounds.bottom)
 
         return ObjectAnimator.ofPropertyValuesHolder(bounds,
-                outTopLeftPropVal,
-                outBottomRightPropVal,
-                alphaPropVal
+            outTopLeftPropVal,
+            outBottomRightPropVal,
+            alphaPropVal
         ).apply {
             doOnEnd {
                 bounds.setAlpha(originalAlpha)
@@ -253,21 +253,21 @@ open class ViewChangeBounds : Transition() {
         val TRANSITION_PROPS = arrayOf(PROPNAME_BOUNDS, PROPNAME_PARENT)
 
         val TOP_LEFT_PROPERTY: Property<PointFBounds, PointF> =
-                object : Property<PointFBounds, PointF>(PointF::class.java, "topLeft") {
-                    override fun set(bounds: PointFBounds, topLeft: PointF) = bounds.setTopLeft(topLeft)
-                    override fun get(bounds: PointFBounds): PointF? = bounds.getTopLeft()
-                }
+            object : Property<PointFBounds, PointF>(PointF::class.java, "topLeft") {
+                override fun set(bounds: PointFBounds, topLeft: PointF) = bounds.setTopLeft(topLeft)
+                override fun get(bounds: PointFBounds): PointF? = bounds.getTopLeft()
+            }
 
         val BOTTOM_RIGHT_PROPERTY: Property<PointFBounds, PointF> =
-                object : Property<PointFBounds, PointF>(PointF::class.java, "bottomRight") {
-                    override fun set(bounds: PointFBounds, bottomRight: PointF) = bounds.setBottomRight(bottomRight)
-                    override fun get(bounds: PointFBounds): PointF? = bounds.getBottomRight()
-                }
+            object : Property<PointFBounds, PointF>(PointF::class.java, "bottomRight") {
+                override fun set(bounds: PointFBounds, bottomRight: PointF) = bounds.setBottomRight(bottomRight)
+                override fun get(bounds: PointFBounds): PointF? = bounds.getBottomRight()
+            }
 
         val ALPHA_PROPERTY: Property<PointFBounds, Float> =
-                createFloatProperty(object : FloatProp<PointFBounds>("alpha") {
-                    override fun set(o: PointFBounds, value: Float) = o.setAlpha(value)
-                    override fun get(o: PointFBounds): Float = o.getAlpha()
-                })
+            createFloatProperty(object : FloatProp<PointFBounds>("alpha") {
+                override fun set(o: PointFBounds, value: Float) = o.setAlpha(value)
+                override fun get(o: PointFBounds): Float = o.getAlpha()
+            })
     }
 }

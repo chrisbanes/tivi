@@ -57,9 +57,9 @@ class EpisodeWatchEntryTest {
     @Before
     fun setup() {
         DaggerTestComponent.builder()
-                .testDataSourceModule(TestDataSourceModule())
-                .build()
-                .inject(this)
+            .testDataSourceModule(TestDataSourceModule())
+            .build()
+            .inject(this)
 
         runBlockingTest {
             // We'll assume that there's a show, season and s1_episodes in the db
@@ -87,7 +87,7 @@ class EpisodeWatchEntryTest {
     fun fetchEntries_WithPendingSendAction() = runBlockingTest {
         episodeWatchEntryDao.insertAll(s1e1w, episodeWatch2PendingSend)
         assertThat(episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId),
-                `is`(listOf(episodeWatch2PendingSend))
+            `is`(listOf(episodeWatch2PendingSend))
         )
     }
 
@@ -95,7 +95,7 @@ class EpisodeWatchEntryTest {
     fun fetchEntries_WithPendingDeleteAction() = runBlockingTest {
         episodeWatchEntryDao.insertAll(s1e1w, episodeWatch2PendingDelete)
         assertThat(episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId),
-                `is`(listOf(episodeWatch2PendingDelete))
+            `is`(listOf(episodeWatch2PendingDelete))
         )
     }
 

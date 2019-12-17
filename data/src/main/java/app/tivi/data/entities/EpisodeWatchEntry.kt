@@ -24,19 +24,19 @@ import androidx.room.PrimaryKey
 import org.threeten.bp.OffsetDateTime
 
 @Entity(tableName = "episode_watch_entries",
-        indices = [
-            Index(value = ["episode_id"]),
-            Index(value = ["trakt_id"], unique = true)
-        ],
-        foreignKeys = [
-            ForeignKey(
-                    entity = Episode::class,
-                    parentColumns = arrayOf("id"),
-                    childColumns = arrayOf("episode_id"),
-                    onUpdate = ForeignKey.CASCADE,
-                    onDelete = ForeignKey.CASCADE
-            )
-        ]
+    indices = [
+        Index(value = ["episode_id"]),
+        Index(value = ["trakt_id"], unique = true)
+    ],
+    foreignKeys = [
+        ForeignKey(
+            entity = Episode::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("episode_id"),
+            onUpdate = ForeignKey.CASCADE,
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
 )
 data class EpisodeWatchEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long = 0,

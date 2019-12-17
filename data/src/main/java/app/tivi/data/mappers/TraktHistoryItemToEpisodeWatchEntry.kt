@@ -24,8 +24,8 @@ import javax.inject.Singleton
 @Singleton
 class TraktHistoryItemToEpisodeWatchEntry @Inject constructor() : Mapper<HistoryEntry, EpisodeWatchEntry> {
     override suspend fun map(from: HistoryEntry) = EpisodeWatchEntry(
-            episodeId = 0,
-            traktId = from.id,
-            watchedAt = from.watched_at
+        episodeId = 0,
+        traktId = from.id,
+        watchedAt = from.watched_at
     )
 }

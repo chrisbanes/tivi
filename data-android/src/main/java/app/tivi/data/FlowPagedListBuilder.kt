@@ -123,12 +123,12 @@ class FlowPagedListBuilder<K, V>(
                     }
 
                     val list = PagedList.Builder(dataSource!!, config)
-                            .setNotifyExecutor(nExecutor)
-                            .setFetchExecutor(fExecutor)
-                            .setBoundaryCallback(boundaryCallback)
-                            .setInitialKey(prevList?.lastKey as? K ?: initialLoadKey)
-                            .build()
-                            .also { prevList = it }
+                        .setNotifyExecutor(nExecutor)
+                        .setFetchExecutor(fExecutor)
+                        .setBoundaryCallback(boundaryCallback)
+                        .setInitialKey(prevList?.lastKey as? K ?: initialLoadKey)
+                        .build()
+                        .also { prevList = it }
                 } while (list.isDetached)
 
                 return prevList!!

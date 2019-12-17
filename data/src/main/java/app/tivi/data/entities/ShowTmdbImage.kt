@@ -23,16 +23,16 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "show_images",
-        indices = [
-            Index(value = ["show_id"])
-        ],
-        foreignKeys = [
-            ForeignKey(entity = TiviShow::class,
-                    parentColumns = arrayOf("id"),
-                    childColumns = arrayOf("show_id"),
-                    onUpdate = ForeignKey.CASCADE,
-                    onDelete = ForeignKey.CASCADE)
-        ])
+    indices = [
+        Index(value = ["show_id"])
+    ],
+    foreignKeys = [
+        ForeignKey(entity = TiviShow::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("show_id"),
+            onUpdate = ForeignKey.CASCADE,
+            onDelete = ForeignKey.CASCADE)
+    ])
 data class ShowTmdbImage(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override val id: Long = 0,
     @ColumnInfo(name = "show_id") val showId: Long,

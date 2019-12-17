@@ -79,9 +79,9 @@ internal class WatchedViewModel @AssistedInject constructor(
     init {
         viewModelScope.launch {
             loadingState.observable
-                    .distinctUntilChanged()
-                    .debounce(2000)
-                    .execute { copy(isLoading = it() ?: false) }
+                .distinctUntilChanged()
+                .debounce(2000)
+                .execute { copy(isLoading = it() ?: false) }
         }
 
         viewModelScope.launch {
@@ -125,12 +125,12 @@ internal class WatchedViewModel @AssistedInject constructor(
 
     private fun updateDataSource(state: WatchedViewState) {
         observePagedWatchedShows(
-                ObservePagedWatchedShows.Params(
-                        sort = state.sort,
-                        filter = state.filter,
-                        pagingConfig = PAGING_CONFIG,
-                        boundaryCallback = boundaryCallback
-                )
+            ObservePagedWatchedShows.Params(
+                sort = state.sort,
+                filter = state.filter,
+                pagingConfig = PAGING_CONFIG,
+                boundaryCallback = boundaryCallback
+            )
         )
     }
 
@@ -139,8 +139,8 @@ internal class WatchedViewModel @AssistedInject constructor(
     private fun refresh(fromUser: Boolean) {
         viewModelScope.launch {
             observeTraktAuthState.observe()
-                    .first { it == TraktAuthState.LOGGED_IN }
-                    .also { refreshWatched(fromUser) }
+                .first { it == TraktAuthState.LOGGED_IN }
+                .also { refreshWatched(fromUser) }
         }
     }
 
@@ -170,19 +170,19 @@ internal class WatchedViewModel @AssistedInject constructor(
 
     fun followSelectedShows() {
         changeShowFollowStatus(
-                ChangeShowFollowStatus.Params(
-                        showSelection.getSelectedShowIds(),
-                        ChangeShowFollowStatus.Action.FOLLOW,
-                        deferDataFetch = true)
+            ChangeShowFollowStatus.Params(
+                showSelection.getSelectedShowIds(),
+                ChangeShowFollowStatus.Action.FOLLOW,
+                deferDataFetch = true)
         )
         showSelection.clearSelection()
     }
 
     fun unfollowSelectedShows() {
         changeShowFollowStatus(
-                ChangeShowFollowStatus.Params(
-                        showSelection.getSelectedShowIds(),
-                        ChangeShowFollowStatus.Action.UNFOLLOW)
+            ChangeShowFollowStatus.Params(
+                showSelection.getSelectedShowIds(),
+                ChangeShowFollowStatus.Action.UNFOLLOW)
         )
         showSelection.clearSelection()
     }
@@ -202,10 +202,10 @@ internal class WatchedViewModel @AssistedInject constructor(
 
     companion object : MvRxViewModelFactory<WatchedViewModel, WatchedViewState> {
         private val PAGING_CONFIG = PagedList.Config.Builder()
-                .setPageSize(60)
-                .setPrefetchDistance(20)
-                .setEnablePlaceholders(false)
-                .build()
+            .setPageSize(60)
+            .setPrefetchDistance(20)
+            .setEnablePlaceholders(false)
+            .build()
 
         override fun create(viewModelContext: ViewModelContext, state: WatchedViewState): WatchedViewModel? {
             val fragment: WatchedFragment = (viewModelContext as FragmentViewModelContext).fragment()

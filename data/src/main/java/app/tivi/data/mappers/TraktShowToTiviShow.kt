@@ -31,42 +31,42 @@ class TraktShowToTiviShow @Inject constructor(
     private val statusMapper: TraktStatusToShowStatus
 ) : Mapper<Show, TiviShow> {
     override suspend fun map(from: Show) = TiviShow(
-            traktId = from.ids?.trakt,
-            tmdbId = from.ids?.tmdb,
-            imdbId = from.ids?.imdb,
-            title = from.title,
-            summary = from.overview,
-            homepage = from.homepage,
-            traktRating = from.rating?.toFloat(),
-            traktVotes = from.votes,
-            certification = from.certification,
-            runtime = from.runtime,
-            network = from.network,
-            country = from.country,
-            firstAired = from.first_aired,
-            _genres = from.genres?.joinToString(","),
-            traktDataUpdate = from.updated_at,
-            status = from.status?.let {
-                statusMapper.map(it)
-            },
-            airsDay = from.airs?.day?.let { dayString ->
-                DayOfWeek.values().firstOrNull { day ->
-                    dayString.equals(day.getDisplayName(TextStyle.FULL, Locale.getDefault()), true)
-                }
-            },
-            airsTime = from.airs?.time?.let {
-                try {
-                    LocalTime.parse(it)
-                } catch (e: Exception) {
-                    null
-                }
-            },
-            airsTimeZone = from.airs?.timezone?.let {
-                try {
-                    ZoneId.of(it)
-                } catch (e: Exception) {
-                    null
-                }
+        traktId = from.ids?.trakt,
+        tmdbId = from.ids?.tmdb,
+        imdbId = from.ids?.imdb,
+        title = from.title,
+        summary = from.overview,
+        homepage = from.homepage,
+        traktRating = from.rating?.toFloat(),
+        traktVotes = from.votes,
+        certification = from.certification,
+        runtime = from.runtime,
+        network = from.network,
+        country = from.country,
+        firstAired = from.first_aired,
+        _genres = from.genres?.joinToString(","),
+        traktDataUpdate = from.updated_at,
+        status = from.status?.let {
+            statusMapper.map(it)
+        },
+        airsDay = from.airs?.day?.let { dayString ->
+            DayOfWeek.values().firstOrNull { day ->
+                dayString.equals(day.getDisplayName(TextStyle.FULL, Locale.getDefault()), true)
             }
+        },
+        airsTime = from.airs?.time?.let {
+            try {
+                LocalTime.parse(it)
+            } catch (e: Exception) {
+                null
+            }
+        },
+        airsTimeZone = from.airs?.timezone?.let {
+            try {
+                ZoneId.of(it)
+            } catch (e: Exception) {
+                null
+            }
+        }
     )
 }

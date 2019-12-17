@@ -45,15 +45,15 @@ internal class SearchViewModel @AssistedInject constructor(
     init {
         viewModelScope.launch {
             searchQuery.asFlow()
-                    .debounce(300)
-                    .collectLatest { query ->
-                        loadingState.addLoader()
-                        val job = async(searchShows.dispatcher) {
-                            searchShows(SearchShows.Params(query))
-                        }
-                        job.invokeOnCompletion { loadingState.removeLoader() }
-                        job.await()
+                .debounce(300)
+                .collectLatest { query ->
+                    loadingState.addLoader()
+                    val job = async(searchShows.dispatcher) {
+                        searchShows(SearchShows.Params(query))
                     }
+                    job.invokeOnCompletion { loadingState.removeLoader() }
+                    job.await()
+                }
         }
 
         viewModelScope.launch {

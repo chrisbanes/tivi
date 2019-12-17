@@ -64,9 +64,9 @@ class WatchedFragment : TiviFragmentWithBinding<FragmentWatchedBinding>() {
         postponeEnterTransitionWithTimeout()
 
         authStateMenuItemBinder = authStateToolbarMenuBinder(
-                binding.watchedToolbar,
-                R.id.home_menu_user_avatar,
-                R.id.home_menu_user_login
+            binding.watchedToolbar,
+            R.id.home_menu_user_avatar,
+            R.id.home_menu_user_login
         ) { menuItem, url -> menuItem.loadImageUrl(requireContext(), url) }
 
         binding.watchedToolbar.setOnMenuItemClickListener {
@@ -87,7 +87,7 @@ class WatchedFragment : TiviFragmentWithBinding<FragmentWatchedBinding>() {
         binding.watchedAppBar.doOnSizeChange {
             binding.watchedRv.updatePadding(top = it.height)
             binding.watchedSwipeRefresh.setProgressViewOffset(true, 0,
-                    it.height + binding.watchedSwipeRefresh.progressCircleDiameter / 2)
+                it.height + binding.watchedSwipeRefresh.progressCircleDiameter / 2)
             true
         }
 
@@ -103,9 +103,9 @@ class WatchedFragment : TiviFragmentWithBinding<FragmentWatchedBinding>() {
                 }
 
                 findNavController().navigate(
-                        "app.tivi://show/${item.show.id}".toUri(),
-                        null,
-                        extras.toActivityNavigatorExtras(requireActivity())
+                    "app.tivi://show/${item.show.id}".toUri(),
+                    null,
+                    extras.toActivityNavigatorExtras(requireActivity())
                 )
             }
 

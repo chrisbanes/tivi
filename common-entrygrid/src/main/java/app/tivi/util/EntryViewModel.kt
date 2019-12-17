@@ -140,11 +140,11 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
 
     fun followSelectedShows() {
         changeShowFollowStatus(
-                ChangeShowFollowStatus.Params(
-                        showSelection.getSelectedShowIds(),
-                        ChangeShowFollowStatus.Action.FOLLOW,
-                        deferDataFetch = true
-                )
+            ChangeShowFollowStatus.Params(
+                showSelection.getSelectedShowIds(),
+                ChangeShowFollowStatus.Action.FOLLOW,
+                deferDataFetch = true
+            )
         )
         showSelection.clearSelection()
     }

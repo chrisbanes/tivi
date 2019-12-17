@@ -35,9 +35,9 @@ class ChangeSeasonWatchedStatus @Inject constructor(
     override suspend fun doWork(params: Params) = when (params.action) {
         Action.WATCHED -> {
             seasonsEpisodesRepository.markSeasonWatched(
-                    params.seasonId,
-                    params.onlyAired,
-                    params.actionDate
+                params.seasonId,
+                params.onlyAired,
+                params.actionDate
             )
         }
         Action.UNWATCH -> {

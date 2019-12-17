@@ -33,7 +33,7 @@ class TraktRecommendedShowsDataSource @Inject constructor(
     override suspend fun getRecommendedShows(page: Int, pageSize: Int): Result<List<TiviShow>> {
         // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
         return recommendationsService.get().shows(page + 1, pageSize, null)
-                .executeWithRetry()
-                .toResult(showMapper.toListMapper())
+            .executeWithRetry()
+            .toResult(showMapper.toListMapper())
     }
 }

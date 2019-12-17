@@ -38,29 +38,29 @@ internal suspend fun deleteShow(db: TiviDatabase) = db.showDao().delete(show)
 
 const val s1_id = 1L
 val s1 = Season(
-        id = s1_id,
-        showId = showId,
-        title = "Season 1",
-        number = 1,
-        traktId = 5443
+    id = s1_id,
+    showId = showId,
+    title = "Season 1",
+    number = 1,
+    traktId = 5443
 )
 
 const val s2_id = 2L
 val s2 = Season(
-        id = s2_id,
-        showId = showId,
-        title = "Season 2",
-        number = 2,
-        traktId = 5434
+    id = s2_id,
+    showId = showId,
+    title = "Season 2",
+    number = 2,
+    traktId = 5434
 )
 
 const val s0_id = 3L
 val s0 = Season(
-        id = s0_id,
-        showId = showId,
-        title = "Specials",
-        number = Season.NUMBER_SPECIALS,
-        traktId = 7042
+    id = s0_id,
+    showId = showId,
+    title = "Specials",
+    number = Season.NUMBER_SPECIALS,
+    traktId = 7042
 )
 
 private val s1e1AirDate = OffsetDateTime.of(2000, 7, 1, 18, 0, 0, 0, ZoneOffset.UTC)
@@ -77,10 +77,10 @@ val s2_episodes = listOf(s2e1, s2e2)
 
 const val s1e1w_id = 1L
 val s1e1w = EpisodeWatchEntry(
-        id = s1e1w_id,
-        watchedAt = OffsetDateTime.now(),
-        episodeId = s1e1.id,
-        traktId = 435214
+    id = s1e1w_id,
+    watchedAt = OffsetDateTime.now(),
+    episodeId = s1e1.id,
+    traktId = 435214
 )
 
 const val s1e1w2_id = 2L

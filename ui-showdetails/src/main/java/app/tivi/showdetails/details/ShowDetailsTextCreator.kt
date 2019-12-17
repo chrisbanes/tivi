@@ -68,8 +68,8 @@ internal class ShowDetailsTextCreator @Inject constructor(
             if (nextToAir != null) {
                 text.append(". ")
                 text.append(context.getString(
-                        R.string.next_prefix,
-                        tiviDateFormatter.formatShortRelativeTime(nextToAir.firstAired)
+                    R.string.next_prefix,
+                    tiviDateFormatter.formatShortRelativeTime(nextToAir.firstAired)
                 ))
             }
         }
@@ -120,7 +120,7 @@ internal class ShowDetailsTextCreator @Inject constructor(
     fun followedShowEpisodeWatchStatus(stats: FollowedShowsWatchStats?): CharSequence {
         return if (stats != null && stats.watchedEpisodeCount < stats.episodeCount) {
             context.getString(R.string.followed_watch_stats_to_watch,
-                    stats.episodeCount - stats.watchedEpisodeCount).parseAsHtml()
+                stats.episodeCount - stats.watchedEpisodeCount).parseAsHtml()
         } else if (stats != null && stats.watchedEpisodeCount > 0) {
             context.getString(R.string.followed_watch_stats_complete)
         } else {
@@ -139,15 +139,15 @@ internal class ShowDetailsTextCreator @Inject constructor(
         }
 
         val local = ZonedDateTime.now()
-                .withZoneSameLocal(airTz)
-                .with(show.airsDay)
-                .with(airTime)
-                .withZoneSameInstant(ZoneId.systemDefault())
+            .withZoneSameLocal(airTz)
+            .with(show.airsDay)
+            .with(airTime)
+            .withZoneSameInstant(ZoneId.systemDefault())
 
         return context.getString(
-                R.string.airs_text,
-                local.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
-                tiviDateFormatter.formatShortTime(local.toLocalTime())
+            R.string.airs_text,
+            local.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
+            tiviDateFormatter.formatShortTime(local.toLocalTime())
         )
     }
 
