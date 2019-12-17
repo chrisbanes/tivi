@@ -56,7 +56,11 @@ class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
 
     private var authStateMenuItemBinder: AuthStateMenuItemBinder? = null
 
-    override fun createBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): FragmentFollowedBinding {
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): FragmentFollowedBinding {
         return FragmentFollowedBinding.inflate(inflater, container, false)
     }
 

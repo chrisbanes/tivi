@@ -260,7 +260,11 @@ open class ViewChangeBounds : Transition() {
 
         val BOTTOM_RIGHT_PROPERTY: Property<PointFBounds, PointF> =
             object : Property<PointFBounds, PointF>(PointF::class.java, "bottomRight") {
-                override fun set(bounds: PointFBounds, bottomRight: PointF) = bounds.setBottomRight(bottomRight)
+                override fun set(
+                    bounds: PointFBounds,
+                    bottomRight: PointF
+                ) = bounds.setBottomRight(bottomRight)
+
                 override fun get(bounds: PointFBounds): PointF? = bounds.getBottomRight()
             }
 

@@ -157,7 +157,10 @@ internal class DiscoverViewModel @AssistedInject constructor(
     }
 
     companion object : MvRxViewModelFactory<DiscoverViewModel, DiscoverViewState> {
-        override fun create(viewModelContext: ViewModelContext, state: DiscoverViewState): DiscoverViewModel? {
+        override fun create(
+            viewModelContext: ViewModelContext,
+            state: DiscoverViewState
+        ): DiscoverViewModel? {
             val fragment: DiscoverFragment = (viewModelContext as FragmentViewModelContext).fragment()
             return fragment.discoverViewModelFactory.create(state)
         }

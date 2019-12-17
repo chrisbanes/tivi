@@ -62,7 +62,10 @@ class FollowedShowsStore @Inject constructor(
 
     suspend fun deleteEntriesInIds(ids: List<Long>) = followedShowsDao.deleteWithIds(ids)
 
-    fun observeForPaging(sort: SortOption, filter: String?): DataSource.Factory<Int, FollowedShowEntryWithShow> {
+    fun observeForPaging(
+        sort: SortOption,
+        filter: String?
+    ): DataSource.Factory<Int, FollowedShowEntryWithShow> {
         val filtered = filter != null && filter.isNotEmpty()
         return when (sort) {
             SortOption.SUPER_SORT -> {

@@ -35,7 +35,10 @@ class WatchedShowsRepository @Inject constructor(
     private val traktDataSource: TraktWatchedShowsDataSource,
     private val showRepository: ShowRepository
 ) {
-    fun observeWatchedShowsPagedList(filter: String?, sort: SortOption) = watchedShowsStore.observePagedList(filter, sort)
+    fun observeWatchedShowsPagedList(
+        filter: String?,
+        sort: SortOption
+    ) = watchedShowsStore.observePagedList(filter, sort)
 
     suspend fun needUpdate(expiry: Instant = instantInPast(hours = 12)): Boolean {
         return lastRequestStore.isRequestBefore(expiry)

@@ -21,9 +21,22 @@ import app.tivi.data.entities.ActionDate
 internal sealed class ShowDetailsAction
 internal object RefreshAction : ShowDetailsAction()
 internal object FollowShowToggleAction : ShowDetailsAction()
-internal data class MarkSeasonWatchedAction(val seasonId: Long, val onlyAired: Boolean, val date: ActionDate) : ShowDetailsAction()
+internal data class MarkSeasonWatchedAction(
+    val seasonId: Long,
+    val onlyAired: Boolean,
+    val date: ActionDate
+) : ShowDetailsAction()
+
 internal data class MarkSeasonUnwatchedAction(val seasonId: Long) : ShowDetailsAction()
-internal data class ChangeSeasonFollowedAction(val seasonId: Long, val followed: Boolean) : ShowDetailsAction()
+internal data class ChangeSeasonFollowedAction(
+    val seasonId: Long,
+    val followed: Boolean
+) : ShowDetailsAction()
+
 internal data class UnfollowPreviousSeasonsFollowedAction(val seasonId: Long) : ShowDetailsAction()
-internal data class ChangeSeasonExpandedAction(val seasonId: Long, val expanded: Boolean) : ShowDetailsAction()
+internal data class ChangeSeasonExpandedAction(
+    val seasonId: Long,
+    val expanded: Boolean
+) : ShowDetailsAction()
+
 internal data class OpenEpisodeDetails(val episodeId: Long) : ShowDetailsAction()

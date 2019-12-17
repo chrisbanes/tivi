@@ -73,7 +73,11 @@ object GridToGridTransitioner {
      * @param fragment The fragment to setup
      * @param fadeElementIds An array of view ids which will fade rather than slide. This will typically be your toolbar
      */
-    fun setupSecondFragment(fragment: Fragment, vararg fadeElementIds: Int, onTransitionEnd: () -> Unit) {
+    fun setupSecondFragment(
+        fragment: Fragment,
+        vararg fadeElementIds: Int,
+        onTransitionEnd: () -> Unit
+    ) {
         fragment.sharedElementEnterTransition = ColumnedChangeBounds().apply {
             interpolator = FAST_OUT_SLOW_IN_INTERPOLATOR
             duration = GRID_SHARED_ELEMENT_ENTER_DURATION

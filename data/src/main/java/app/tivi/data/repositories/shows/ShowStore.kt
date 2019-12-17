@@ -42,7 +42,11 @@ class ShowStore @Inject constructor(
 
     suspend fun saveShow(show: TiviShow) = entityInserter.insertOrUpdate(showDao, show)
 
-    suspend fun updateShowFromSources(showId: Long, trakt: TiviShow, tmdb: TiviShow) = transactionRunner {
+    suspend fun updateShowFromSources(
+        showId: Long,
+        trakt: TiviShow,
+        tmdb: TiviShow
+    ) = transactionRunner {
         val localShow = getShowOrEmpty(showId)
         val merged = mergeShows(localShow, trakt, tmdb)
 

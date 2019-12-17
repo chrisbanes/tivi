@@ -58,7 +58,10 @@ class SeasonsEpisodesRepository @Inject constructor(
 
     fun observeNextEpisodeToWatch(showId: Long) = seasonsEpisodesStore.observeShowNextEpisodeToWatch(showId)
 
-    suspend fun needShowSeasonsUpdate(showId: Long, expiry: Instant = instantInPast(days = 7)): Boolean {
+    suspend fun needShowSeasonsUpdate(
+        showId: Long,
+        expiry: Instant = instantInPast(days = 7)
+    ): Boolean {
         return seasonsLastRequestStore.isRequestBefore(showId, expiry)
     }
 
@@ -161,7 +164,10 @@ class SeasonsEpisodesRepository @Inject constructor(
         }
     }
 
-    suspend fun needShowEpisodeWatchesSync(showId: Long, expiry: Instant = instantInPast(hours = 1)): Boolean {
+    suspend fun needShowEpisodeWatchesSync(
+        showId: Long,
+        expiry: Instant = instantInPast(hours = 1)
+    ): Boolean {
         return episodeWatchLastLastRequestStore.isRequestBefore(showId, expiry)
     }
 

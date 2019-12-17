@@ -30,8 +30,16 @@ import app.tivi.common.ui.R
 
 class PopupMenuButton : AppCompatImageButton {
     constructor(context: Context) : this(context, null)
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, android.R.attr.actionOverflowButtonStyle)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    constructor(
+        context: Context,
+        attrs: AttributeSet?
+    ) : this(context, attrs, android.R.attr.actionOverflowButtonStyle)
+
+    constructor(
+        context: Context,
+        attrs: AttributeSet?,
+        defStyleAttr: Int
+    ) : super(context, attrs, defStyleAttr) {
         val a = context.obtainStyledAttributes(attrs, R.styleable.PopupMenuButton)
         val menuRes = a.getResourceId(R.styleable.PopupMenuButton_menu, -1)
         if (menuRes != -1) {

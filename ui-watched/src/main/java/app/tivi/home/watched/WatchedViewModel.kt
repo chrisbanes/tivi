@@ -207,7 +207,10 @@ internal class WatchedViewModel @AssistedInject constructor(
             .setEnablePlaceholders(false)
             .build()
 
-        override fun create(viewModelContext: ViewModelContext, state: WatchedViewState): WatchedViewModel? {
+        override fun create(
+            viewModelContext: ViewModelContext,
+            state: WatchedViewState
+        ): WatchedViewModel? {
             val fragment: WatchedFragment = (viewModelContext as FragmentViewModelContext).fragment()
             return fragment.watchedViewModelFactory.create(state)
         }

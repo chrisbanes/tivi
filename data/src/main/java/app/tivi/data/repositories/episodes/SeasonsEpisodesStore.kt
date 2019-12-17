@@ -91,7 +91,10 @@ class SeasonsEpisodesStore @Inject constructor(
         seasonsDao.updateSeasonIgnoreFlag(seasonId, !followed)
     }
 
-    suspend fun updatePreviousSeasonFollowed(seasonId: Long, followed: Boolean) = transactionRunner {
+    suspend fun updatePreviousSeasonFollowed(
+        seasonId: Long,
+        followed: Boolean
+    ) = transactionRunner {
         for (id in seasonsDao.showPreviousSeasonIds(seasonId)) {
             seasonsDao.updateSeasonIgnoreFlag(id, !followed)
         }

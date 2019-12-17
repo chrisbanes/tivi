@@ -58,7 +58,10 @@ class RecommendedShowsViewModel @AssistedInject constructor(
     }
 
     companion object : MvRxViewModelFactory<RecommendedShowsViewModel, EntryViewState> {
-        override fun create(viewModelContext: ViewModelContext, state: EntryViewState): RecommendedShowsViewModel? {
+        override fun create(
+            viewModelContext: ViewModelContext,
+            state: EntryViewState
+        ): RecommendedShowsViewModel? {
             val fragment: RecommendedShowsFragment = (viewModelContext as FragmentViewModelContext).fragment()
             return fragment.recommendedShowsViewModelFactory.create(state)
         }

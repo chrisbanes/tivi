@@ -46,4 +46,7 @@ data class FocusSeasonUiEffect(val seasonId: Long)
 
 sealed class OpenEpisodeUiEffect
 data class PendingOpenEpisodeUiEffect(val episodeId: Long) : OpenEpisodeUiEffect()
-data class ExecutableOpenEpisodeUiEffect(val episodeId: Long, val seasonId: Long) : OpenEpisodeUiEffect()
+data class ExecutableOpenEpisodeUiEffect(
+    val episodeId: Long,
+    val seasonId: Long
+) : OpenEpisodeUiEffect()

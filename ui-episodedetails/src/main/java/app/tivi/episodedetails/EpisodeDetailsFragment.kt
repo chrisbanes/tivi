@@ -47,11 +47,18 @@ class EpisodeDetailsFragment : TiviFragmentWithBinding<FragmentEpisodeDetailsBin
     @Inject internal lateinit var controller: EpisodeDetailsEpoxyController
     @Inject internal lateinit var textCreator: EpisodeDetailsTextCreator
 
-    override fun createBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): FragmentEpisodeDetailsBinding {
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): FragmentEpisodeDetailsBinding {
         return FragmentEpisodeDetailsBinding.inflate(layoutInflater, container, false)
     }
 
-    override fun onViewCreated(binding: FragmentEpisodeDetailsBinding, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        binding: FragmentEpisodeDetailsBinding,
+        savedInstanceState: Bundle?
+    ) {
         binding.epDetailsRv.setController(controller)
 
         binding.epDetailsFab.setOnClickListener {

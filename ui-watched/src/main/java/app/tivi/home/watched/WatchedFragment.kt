@@ -56,7 +56,11 @@ class WatchedFragment : TiviFragmentWithBinding<FragmentWatchedBinding>() {
 
     private var currentActionMode: ActionMode? = null
 
-    override fun createBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): FragmentWatchedBinding {
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): FragmentWatchedBinding {
         return FragmentWatchedBinding.inflate(inflater, container, false)
     }
 

@@ -87,7 +87,10 @@ class ShowRepository @Inject constructor(
         }
     }
 
-    suspend fun needsImagesUpdate(showId: Long, expiry: Instant = instantInPast(days = 30)): Boolean {
+    suspend fun needsImagesUpdate(
+        showId: Long,
+        expiry: Instant = instantInPast(days = 30)
+    ): Boolean {
         return showImagesLastRequestStore.isRequestBefore(showId, expiry)
     }
 

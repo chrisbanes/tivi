@@ -59,10 +59,18 @@ abstract class EpisodesDao : EntityDao<Episode> {
     abstract fun observeLatestWatchedEpisodeForShowId(showId: Long): Flow<EpisodeWithSeason?>
 
     @Query(nextEpisodeForShowIdAfter)
-    abstract fun observeNextEpisodeForShowAfter(showId: Long, seasonNumber: Int, episodeNumber: Int): Flow<EpisodeWithSeason?>
+    abstract fun observeNextEpisodeForShowAfter(
+        showId: Long,
+        seasonNumber: Int,
+        episodeNumber: Int
+    ): Flow<EpisodeWithSeason?>
 
     @Query(nextAiredEpisodeForShowIdAfter)
-    abstract fun observeNextAiredEpisodeForShowAfter(showId: Long, seasonNumber: Int, episodeNumber: Int): Flow<EpisodeWithSeason?>
+    abstract fun observeNextAiredEpisodeForShowAfter(
+        showId: Long,
+        seasonNumber: Int,
+        episodeNumber: Int
+    ): Flow<EpisodeWithSeason?>
 
     companion object {
         const val latestWatchedEpisodeForShowId = """

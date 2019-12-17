@@ -25,7 +25,10 @@ class RecommendedShowsStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val recommendedDao: RecommendedDao
 ) {
-    fun observeForObservable(count: Int, offset: Int) = recommendedDao.entriesObservable(count, offset)
+    fun observeForObservable(
+        count: Int,
+        offset: Int
+    ) = recommendedDao.entriesObservable(count, offset)
 
     fun observeForPaging() = recommendedDao.entriesDataSource()
 

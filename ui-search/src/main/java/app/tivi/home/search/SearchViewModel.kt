@@ -77,7 +77,10 @@ internal class SearchViewModel @AssistedInject constructor(
     }
 
     companion object : MvRxViewModelFactory<SearchViewModel, SearchViewState> {
-        override fun create(viewModelContext: ViewModelContext, state: SearchViewState): SearchViewModel? {
+        override fun create(
+            viewModelContext: ViewModelContext,
+            state: SearchViewState
+        ): SearchViewModel? {
             val fragment: SearchFragment = (viewModelContext as FragmentViewModelContext).fragment()
             return fragment.searchViewModelFactory.create(state)
         }

@@ -94,7 +94,11 @@ class StickyHeaderScrollListener(
         return false
     }
 
-    private fun getChildInContact(parent: RecyclerView, contactPoint: Int, currentHeaderPos: Int): View? {
+    private fun getChildInContact(
+        parent: RecyclerView,
+        contactPoint: Int,
+        currentHeaderPos: Int
+    ): View? {
         for (i in 0 until parent.childCount) {
             var heightTolerance = 0
             val child = parent.getChildAt(i)
