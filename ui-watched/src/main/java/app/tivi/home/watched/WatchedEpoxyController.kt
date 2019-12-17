@@ -61,15 +61,27 @@ internal class WatchedEpoxyController @Inject constructor(
                         callbacks?.onFilterChanged(s?.toString() ?: "")
                     }
 
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int
+                    ) {
+                    }
 
-                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                    override fun onTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int
+                    ) {
+                    }
                 })
 
                 popupMenuListener(SortPopupMenuListener(state.sort, state.availableSorts))
                 popupMenuClickListener {
                     val option = popupMenuItemIdToSortOption(it.itemId)
-                            ?: throw IllegalArgumentException("Selected sort option is null")
+                        ?: throw IllegalArgumentException("Selected sort option is null")
                     callbacks?.onSortSelected(option)
                     true
                 }
@@ -83,7 +95,10 @@ internal class WatchedEpoxyController @Inject constructor(
         }
     }
 
-    override fun buildItemModel(currentPosition: Int, item: WatchedShowEntryWithShow?): EpoxyModel<*> {
+    override fun buildItemModel(
+        currentPosition: Int,
+        item: WatchedShowEntryWithShow?
+    ): EpoxyModel<*> {
         return LibraryWatchedItemBindingModel_().apply {
             if (item != null) {
                 id(item.generateStableId())

@@ -172,7 +172,7 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
             if (episode != null) {
                 setState {
                     copy(expandedSeasonIds = expandedSeasonIds + episode.seasonId,
-                            openEpisodeUiEffect = ExecutableOpenEpisodeUiEffect(action.episodeId, episode.seasonId))
+                        openEpisodeUiEffect = ExecutableOpenEpisodeUiEffect(action.episodeId, episode.seasonId))
                 }
             }
         }
@@ -194,7 +194,7 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
         if (action.expanded) {
             setState {
                 copy(focusedSeason = FocusSeasonUiEffect(action.seasonId),
-                        expandedSeasonIds = expandedSeasonIds + action.seasonId)
+                    expandedSeasonIds = expandedSeasonIds + action.seasonId)
             }
         } else {
             setState {
@@ -209,18 +209,18 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
 
     private fun onChangeSeasonFollowState(action: ChangeSeasonFollowedAction) {
         changeSeasonFollowStatus(ChangeSeasonFollowStatus.Params(
-                action.seasonId,
-                when {
-                    action.followed -> ChangeSeasonFollowStatus.Action.FOLLOW
-                    else -> ChangeSeasonFollowStatus.Action.IGNORE
-                }
+            action.seasonId,
+            when {
+                action.followed -> ChangeSeasonFollowStatus.Action.FOLLOW
+                else -> ChangeSeasonFollowStatus.Action.IGNORE
+            }
         ))
     }
 
     private fun onUnfollowPreviousSeasonsFollowState(action: UnfollowPreviousSeasonsFollowedAction) {
         changeSeasonFollowStatus(
-                ChangeSeasonFollowStatus.Params(action.seasonId,
-                        ChangeSeasonFollowStatus.Action.IGNORE_PREVIOUS)
+            ChangeSeasonFollowStatus.Params(action.seasonId,
+                ChangeSeasonFollowStatus.Action.IGNORE_PREVIOUS)
         )
     }
 

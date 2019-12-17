@@ -61,7 +61,10 @@ abstract class EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry> {
         INNER JOIN shows ON s.show_id = shows.id
         WHERE shows.id = :showId AND ew.pending_action = :pendingAction
     """)
-    internal abstract suspend fun entriesForShowIdWithPendingAction(showId: Long, pendingAction: String): List<EpisodeWatchEntry>
+    internal abstract suspend fun entriesForShowIdWithPendingAction(
+        showId: Long,
+        pendingAction: String
+    ): List<EpisodeWatchEntry>
 
     @Query("""
         SELECT ew.* FROM episode_watch_entries AS ew

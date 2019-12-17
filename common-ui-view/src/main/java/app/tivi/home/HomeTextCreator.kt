@@ -57,7 +57,7 @@ class HomeTextCreator @Inject constructor(
         show.firstAired?.also { firstAired ->
             append(" ")
             inSpans(textAppearanceSpanForAttribute(context, R.attr.textAppearanceCaption),
-                    TypefaceSpan(bodyTypeface)) {
+                TypefaceSpan(bodyTypeface)) {
                 append("(")
                 append(firstAired.year.toString())
                 append(")")
@@ -73,7 +73,7 @@ class HomeTextCreator @Inject constructor(
     fun followedShowEpisodeWatchStatus(stats: FollowedShowsWatchStats?): CharSequence {
         return if (stats != null && stats.watchedEpisodeCount < stats.episodeCount) {
             context.getString(R.string.followed_watch_stats_to_watch,
-                    stats.episodeCount - stats.watchedEpisodeCount).parseAsHtml()
+                stats.episodeCount - stats.watchedEpisodeCount).parseAsHtml()
         } else if (stats != null && stats.watchedEpisodeCount > 0) {
             context.getString(R.string.followed_watch_stats_complete)
         } else {

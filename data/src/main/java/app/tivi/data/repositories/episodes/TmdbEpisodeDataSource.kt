@@ -31,10 +31,14 @@ class TmdbEpisodeDataSource @Inject constructor(
     private val tmdb: Tmdb,
     private val episodeMapper: TmdbEpisodeToEpisode
 ) : EpisodeDataSource {
-    override suspend fun getEpisode(showId: Long, seasonNumber: Int, episodeNumber: Int): Result<Episode> {
+    override suspend fun getEpisode(
+        showId: Long,
+        seasonNumber: Int,
+        episodeNumber: Int
+    ): Result<Episode> {
         return tmdb.tvEpisodesService()
-                .episode(tmdbIdMapper.map(showId), seasonNumber, episodeNumber, null)
-                .executeWithRetry()
-                .toResult(episodeMapper.toLambda())
+            .episode(tmdbIdMapper.map(showId), seasonNumber, episodeNumber, null)
+            .executeWithRetry()
+            .toResult(episodeMapper.toLambda())
     }
 }

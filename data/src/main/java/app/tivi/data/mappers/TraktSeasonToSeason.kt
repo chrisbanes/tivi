@@ -24,16 +24,16 @@ import javax.inject.Singleton
 @Singleton
 class TraktSeasonToSeason @Inject constructor() : Mapper<TraktSeason, Season> {
     override suspend fun map(from: TraktSeason) = Season(
-            showId = 0,
-            traktId = from.ids?.trakt,
-            tmdbId = from.ids?.tmdb,
-            number = from.number,
-            title = from.title,
-            summary = from.overview,
-            traktRating = from.rating?.toFloat() ?: 0f,
-            traktRatingVotes = from.votes ?: 0,
-            episodeCount = from.episode_count,
-            episodesAired = from.aired_episodes,
-            network = from.network
+        showId = 0,
+        traktId = from.ids?.trakt,
+        tmdbId = from.ids?.tmdb,
+        number = from.number,
+        title = from.title,
+        summary = from.overview,
+        traktRating = from.rating?.toFloat() ?: 0f,
+        traktRatingVotes = from.votes ?: 0,
+        episodeCount = from.episode_count,
+        episodesAired = from.aired_episodes,
+        network = from.network
     )
 }

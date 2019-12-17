@@ -31,7 +31,11 @@ class TopLeftCutoutBackgroundView : View {
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    constructor(
+        context: Context,
+        attrs: AttributeSet?,
+        defStyleAttr: Int
+    ) : super(context, attrs, defStyleAttr) {
         val a = context.obtainStyledAttributes(attrs, R.styleable.TopLeftCutoutBackgroundView)
         color = a.getColor(R.styleable.TopLeftCutoutBackgroundView_backgroundColor, Color.MAGENTA)
         maxCutSize = a.getDimension(R.styleable.TopLeftCutoutBackgroundView_topLeftCutSize, 0f)
@@ -59,11 +63,13 @@ class TopLeftCutoutBackgroundView : View {
     @set:Keep
     var cutProgress: Float
         get() = shapeDrawable.interpolation
-        set(value) { shapeDrawable.interpolation = value }
+        set(value) {
+            shapeDrawable.interpolation = value
+        }
 
     private fun syncCutSize() {
         shapeDrawable.shapeAppearanceModel = shapeDrawable.shapeAppearanceModel.toBuilder()
-                .setTopLeftCorner(CornerFamily.CUT, lerp(0f, maxCutSize, cutProgress))
-                .build()
+            .setTopLeftCorner(CornerFamily.CUT, lerp(0f, maxCutSize, cutProgress))
+            .build()
     }
 }

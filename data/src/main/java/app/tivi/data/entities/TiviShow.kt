@@ -27,10 +27,10 @@ import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneId
 
 @Entity(tableName = "shows",
-        indices = [
-            Index(value = ["trakt_id"], unique = true),
-            Index(value = ["tmdb_id"])
-        ]
+    indices = [
+        Index(value = ["trakt_id"], unique = true),
+        Index(value = ["tmdb_id"])
+    ]
 )
 data class TiviShow(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override val id: Long = 0,
@@ -56,7 +56,8 @@ data class TiviShow(
     @ColumnInfo(name = "airs_time") val airsTime: LocalTime? = null,
     @ColumnInfo(name = "airs_tz") val airsTimeZone: ZoneId? = null
 ) : TiviEntity, TraktIdEntity, TmdbIdEntity {
-    @Ignore constructor() : this(0)
+    @Ignore
+    constructor() : this(0)
 
     @delegate:Ignore
     val genres by lazy(LazyThreadSafetyMode.NONE) {

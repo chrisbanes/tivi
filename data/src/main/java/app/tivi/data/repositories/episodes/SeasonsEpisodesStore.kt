@@ -38,17 +38,17 @@ class SeasonsEpisodesStore @Inject constructor(
     private val logger: Logger
 ) {
     private val seasonSyncer = syncerForEntity(
-            seasonsDao,
-            { it.traktId },
-            { entity, id -> entity.copy(id = id ?: 0) },
-            logger
+        seasonsDao,
+        { it.traktId },
+        { entity, id -> entity.copy(id = id ?: 0) },
+        logger
     )
 
     private val episodeSyncer = syncerForEntity(
-            episodesDao,
-            { it.traktId },
-            { entity, id -> entity.copy(id = id ?: 0) },
-            logger
+        episodesDao,
+        { it.traktId },
+        { entity, id -> entity.copy(id = id ?: 0) },
+        logger
     )
 
     fun observeEpisode(episodeId: Long): Flow<EpisodeWithSeason> {
@@ -62,9 +62,9 @@ class SeasonsEpisodesStore @Inject constructor(
     fun observeShowNextEpisodeToWatch(showId: Long): Flow<EpisodeWithSeason?> {
         return episodesDao.observeLatestWatchedEpisodeForShowId(showId).flatMapLatest {
             episodesDao.observeNextAiredEpisodeForShowAfter(
-                    showId,
-                    it?.season?.number ?: 0,
-                    it?.episode?.number ?: 0
+                showId,
+                it?.season?.number ?: 0,
+                it?.episode?.number ?: 0
             )
         }
     }
@@ -91,7 +91,10 @@ class SeasonsEpisodesStore @Inject constructor(
         seasonsDao.updateSeasonIgnoreFlag(seasonId, !followed)
     }
 
-    suspend fun updatePreviousSeasonFollowed(seasonId: Long, followed: Boolean) = transactionRunner {
+    suspend fun updatePreviousSeasonFollowed(
+        seasonId: Long,
+        followed: Boolean
+    ) = transactionRunner {
         for (id in seasonsDao.showPreviousSeasonIds(seasonId)) {
             seasonsDao.updateSeasonIgnoreFlag(id, !followed)
         }

@@ -71,9 +71,9 @@ class SeasonsEpisodesRepositoryTest {
     @Before
     fun setup() {
         DaggerTestComponent.builder()
-                .testDataSourceModule(TestDataSourceModule())
-                .build()
-                .inject(this)
+            .testDataSourceModule(TestDataSourceModule())
+            .build()
+            .inject(this)
 
         runBlockingTest {
             // We'll assume that there's a show in the db
@@ -88,7 +88,7 @@ class SeasonsEpisodesRepositoryTest {
 
         // Return a response with 2 items
         coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
-                Success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
+            Success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
         // Sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that both are in the db
@@ -104,7 +104,7 @@ class SeasonsEpisodesRepositoryTest {
         episodeWatchDao.insertAll(s1e1w, s1e1w2)
         // Return a response with the same items
         coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
-                Success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
+            Success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
         // Now re-sync with the same response
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that both are in the db
@@ -120,7 +120,7 @@ class SeasonsEpisodesRepositoryTest {
         episodeWatchDao.insertAll(s1e1w, s1e1w2)
         // Return a response with just the second item
         coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
-                Success(listOf(s1e1 to s1e1w2))
+            Success(listOf(s1e1 to s1e1w2))
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that only the second is in the db
@@ -136,7 +136,7 @@ class SeasonsEpisodesRepositoryTest {
         episodeWatchDao.insertAll(s1e1w, s1e1w2)
         // Return a empty response
         coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
-                Success(emptyList())
+            Success(emptyList())
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that the database is empty
@@ -147,7 +147,7 @@ class SeasonsEpisodesRepositoryTest {
     fun testSyncSeasonsEpisodes() = runBlockingTest {
         // Return a response with 2 items
         coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns
-                Success(listOf(s1 to s1_episodes))
+            Success(listOf(s1 to s1_episodes))
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
@@ -162,7 +162,7 @@ class SeasonsEpisodesRepositoryTest {
 
         // Return a response with the same items
         coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns
-                Success(listOf(s1 to s1_episodes))
+            Success(listOf(s1 to s1_episodes))
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
@@ -177,7 +177,7 @@ class SeasonsEpisodesRepositoryTest {
 
         // Return an empty response
         coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns
-                Success(emptyList())
+            Success(emptyList())
         repository.updateSeasonsEpisodes(showId)
 
         // Assert the database is empty
@@ -193,7 +193,7 @@ class SeasonsEpisodesRepositoryTest {
 
         // Return a response with just the first season
         coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns
-                Success(listOf(s1 to s1_episodes))
+            Success(listOf(s1 to s1_episodes))
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
@@ -209,7 +209,7 @@ class SeasonsEpisodesRepositoryTest {
 
         // Return a response with both seasons, but just a single episodes in each
         coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns
-                Success(listOf(s1 to listOf(s1e1), s2 to listOf(s2e1)))
+            Success(listOf(s1 to listOf(s1e1), s2 to listOf(s2e1)))
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db

@@ -141,10 +141,10 @@ class ColumnedChangeBounds : ViewChangeBounds() {
         val newEndRight = startBounds.left - gap
         val newEndTop = endBounds.bottom + gap
         val newEndBounds = Rect(
-                newEndRight - endBounds.width(),
-                newEndTop,
-                newEndRight,
-                newEndTop + endBounds.height())
+            newEndRight - endBounds.width(),
+            newEndTop,
+            newEndRight,
+            newEndTop + endBounds.height())
 
         return createPointToPointAnimator(view, startBounds, newEndBounds, 1f, 0f, true)
     }
@@ -155,13 +155,14 @@ class ColumnedChangeBounds : ViewChangeBounds() {
         startBounds: Rect,
         endBounds: Rect
     ): Animator? {
-        val prevEndBounds = findPreviousItemViewWithGreaterRight(endParent, view, endBounds.right) ?: return null
+        val prevEndBounds = findPreviousItemViewWithGreaterRight(endParent, view, endBounds.right)
+            ?: return null
 
         val newEndLeft = prevEndBounds.right + endBounds.left
         val newEndTop = prevEndBounds.top
         val newEndBounds = Rect(newEndLeft, newEndTop,
-                newEndLeft + endBounds.width(),
-                newEndTop + endBounds.height())
+            newEndLeft + endBounds.width(),
+            newEndTop + endBounds.height())
 
         return createPointToPointAnimator(view, startBounds, newEndBounds, 1f, 0f, true)
     }

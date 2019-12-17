@@ -27,13 +27,19 @@ class PopularShowsStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val popularShowDao: PopularDao
 ) {
-    fun observeForObservable(count: Int, offset: Int) = popularShowDao.entriesObservable(count, offset)
+    fun observeForObservable(
+        count: Int,
+        offset: Int
+    ) = popularShowDao.entriesObservable(count, offset)
 
     fun observeForPaging(): DataSource.Factory<Int, PopularEntryWithShow> {
         return popularShowDao.entriesDataSource()
     }
 
-    suspend fun savePopularShowsPage(page: Int, entries: List<PopularShowEntry>) = transactionRunner {
+    suspend fun savePopularShowsPage(
+        page: Int,
+        entries: List<PopularShowEntry>
+    ) = transactionRunner {
         popularShowDao.deletePage(page)
         popularShowDao.insertAll(entries)
     }

@@ -64,14 +64,14 @@ class FollowedShowRepositoryTest {
         val fakeShowDataSource = SuccessFakeShowDataSource()
 
         DaggerTestComponent.builder()
-                .testDataSourceModule(
-                        TestDataSourceModule(
-                                traktShowDataSource = fakeShowDataSource,
-                                tmdbShowDataSource = fakeShowDataSource
-                        )
+            .testDataSourceModule(
+                TestDataSourceModule(
+                    traktShowDataSource = fakeShowDataSource,
+                    tmdbShowDataSource = fakeShowDataSource
                 )
-                .build()
-                .inject(this)
+            )
+            .build()
+            .inject(this)
 
         runBlockingTest {
             // We'll assume that there's a show in the db
@@ -87,7 +87,7 @@ class FollowedShowRepositoryTest {
         repository.syncFollowedShows()
 
         assertThat(repository.getFollowedShows(),
-                `is`(listOf(followedShow1Local)))
+            `is`(listOf(followedShow1Local)))
     }
 
     @Test
@@ -100,7 +100,7 @@ class FollowedShowRepositoryTest {
         repository.syncFollowedShows()
 
         assertThat(repository.getFollowedShows(),
-                `is`(emptyList()))
+            `is`(emptyList()))
     }
 
     @Test
@@ -113,7 +113,7 @@ class FollowedShowRepositoryTest {
         repository.syncFollowedShows()
 
         assertThat(repository.getFollowedShows(),
-                `is`(listOf(followedShow2Local)))
+            `is`(listOf(followedShow2Local)))
     }
 
     @Test
@@ -126,7 +126,7 @@ class FollowedShowRepositoryTest {
         repository.syncFollowedShows()
 
         assertThat(repository.getFollowedShows(),
-                `is`(emptyList()))
+            `is`(emptyList()))
     }
 
     @Test
@@ -139,6 +139,6 @@ class FollowedShowRepositoryTest {
         repository.syncFollowedShows()
 
         assertThat(repository.getFollowedShows(),
-                `is`(listOf(followedShow1Local)))
+            `is`(listOf(followedShow1Local)))
     }
 }

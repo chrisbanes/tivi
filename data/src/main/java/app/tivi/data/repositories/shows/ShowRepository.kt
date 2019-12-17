@@ -62,9 +62,9 @@ class ShowRepository @Inject constructor(
             val tmdbResult = tmdbDeferred.await()
 
             showStore.updateShowFromSources(
-                    showId,
-                    traktResult.get() ?: EMPTY_SHOW,
-                    tmdbResult.get() ?: EMPTY_SHOW
+                showId,
+                traktResult.get() ?: EMPTY_SHOW,
+                tmdbResult.get() ?: EMPTY_SHOW
             )
 
             if (traktResult is Success) {
@@ -77,7 +77,7 @@ class ShowRepository @Inject constructor(
     suspend fun updateShowImages(showId: Long) {
         asyncOrAwait("update_show_images_$showId") {
             val show = showStore.getShow(showId)
-                    ?: throw IllegalArgumentException("Show with ID $showId does not exist")
+                ?: throw IllegalArgumentException("Show with ID $showId does not exist")
             when (val result = tmdbShowImagesDataSource.getShowImages(show)) {
                 is Success -> {
                     showStore.saveImages(showId, result.get().map { it.copy(showId = showId) })
@@ -87,7 +87,10 @@ class ShowRepository @Inject constructor(
         }
     }
 
-    suspend fun needsImagesUpdate(showId: Long, expiry: Instant = instantInPast(days = 30)): Boolean {
+    suspend fun needsImagesUpdate(
+        showId: Long,
+        expiry: Instant = instantInPast(days = 30)
+    ): Boolean {
         return showImagesLastRequestStore.isRequestBefore(showId, expiry)
     }
 

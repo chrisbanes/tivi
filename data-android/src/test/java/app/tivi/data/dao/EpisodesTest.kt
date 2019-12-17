@@ -55,9 +55,9 @@ class EpisodesTest {
     @Before
     fun setup() {
         DaggerTestComponent.builder()
-                .testDataSourceModule(TestDataSourceModule())
-                .build()
-                .inject(this)
+            .testDataSourceModule(TestDataSourceModule())
+            .build()
+            .inject(this)
 
         runBlocking {
             // We'll assume that there's a show and season in the db
@@ -106,15 +106,15 @@ class EpisodesTest {
         episodeDao.insertAll(s1_episodes)
 
         assertThat(episodeDao.observeNextEpisodeForShowAfter(showId, 0, 0)
-                .first()?.episode, `is`(s1e1))
+            .first()?.episode, `is`(s1e1))
 
         assertThat(episodeDao.observeNextEpisodeForShowAfter(showId, 1, 0)
-                .first()?.episode, `is`(s1e2))
+            .first()?.episode, `is`(s1e2))
 
         assertThat(episodeDao.observeNextEpisodeForShowAfter(showId, 1, 1)
-                .first()?.episode, `is`(s1e3))
+            .first()?.episode, `is`(s1e3))
 
         assertThat(episodeDao.observeNextEpisodeForShowAfter(showId, 1, 2)
-                .first()?.episode, nullValue())
+            .first()?.episode, nullValue())
     }
 }

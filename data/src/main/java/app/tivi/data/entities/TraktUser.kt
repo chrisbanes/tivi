@@ -23,8 +23,8 @@ import androidx.room.PrimaryKey
 import org.threeten.bp.OffsetDateTime
 
 @Entity(
-        tableName = "users",
-        indices = [Index(value = ["username"], unique = true)]
+    tableName = "users",
+    indices = [Index(value = ["username"], unique = true)]
 )
 data class TraktUser(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") override val id: Long = 0,

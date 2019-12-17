@@ -24,17 +24,17 @@ import androidx.room.PrimaryKey
 import app.tivi.data.PaginatedEntry
 
 @Entity(tableName = "trending_shows",
-        indices = [
-            Index(value = ["show_id"], unique = true)
-        ],
-        foreignKeys = [
-            ForeignKey(entity = TiviShow::class,
-                    parentColumns = arrayOf("id"),
-                    childColumns = arrayOf("show_id"),
-                    onUpdate = ForeignKey.CASCADE,
-                    onDelete = ForeignKey.CASCADE
-            )
-        ]
+    indices = [
+        Index(value = ["show_id"], unique = true)
+    ],
+    foreignKeys = [
+        ForeignKey(entity = TiviShow::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("show_id"),
+            onUpdate = ForeignKey.CASCADE,
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
 )
 data class TrendingShowEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long = 0,

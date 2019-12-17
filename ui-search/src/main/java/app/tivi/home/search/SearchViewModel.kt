@@ -45,15 +45,15 @@ internal class SearchViewModel @AssistedInject constructor(
     init {
         viewModelScope.launch {
             searchQuery.asFlow()
-                    .debounce(300)
-                    .collectLatest { query ->
-                        loadingState.addLoader()
-                        val job = async(searchShows.dispatcher) {
-                            searchShows(SearchShows.Params(query))
-                        }
-                        job.invokeOnCompletion { loadingState.removeLoader() }
-                        job.await()
+                .debounce(300)
+                .collectLatest { query ->
+                    loadingState.addLoader()
+                    val job = async(searchShows.dispatcher) {
+                        searchShows(SearchShows.Params(query))
                     }
+                    job.invokeOnCompletion { loadingState.removeLoader() }
+                    job.await()
+                }
         }
 
         viewModelScope.launch {
@@ -77,7 +77,10 @@ internal class SearchViewModel @AssistedInject constructor(
     }
 
     companion object : MvRxViewModelFactory<SearchViewModel, SearchViewState> {
-        override fun create(viewModelContext: ViewModelContext, state: SearchViewState): SearchViewModel? {
+        override fun create(
+            viewModelContext: ViewModelContext,
+            state: SearchViewState
+        ): SearchViewModel? {
             val fragment: SearchFragment = (viewModelContext as FragmentViewModelContext).fragment()
             return fragment.searchViewModelFactory.create(state)
         }

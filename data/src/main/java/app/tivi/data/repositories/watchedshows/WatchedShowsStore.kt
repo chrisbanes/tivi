@@ -34,7 +34,10 @@ class WatchedShowsStore @Inject constructor(
 
     suspend fun getWatchedShow(showId: Long) = watchedShowDao.entryWithShowId(showId)
 
-    fun observePagedList(filter: String?, sort: SortOption): DataSource.Factory<Int, WatchedShowEntryWithShow> {
+    fun observePagedList(
+        filter: String?,
+        sort: SortOption
+    ): DataSource.Factory<Int, WatchedShowEntryWithShow> {
         val filtered = filter != null && filter.isNotEmpty()
         return when (sort) {
             SortOption.LAST_WATCHED -> {

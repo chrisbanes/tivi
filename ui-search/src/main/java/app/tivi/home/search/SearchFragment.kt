@@ -89,9 +89,9 @@ internal class SearchFragment : TiviFragmentWithBinding<FragmentSearchBinding>()
                     it.findViewById(R.id.show_poster)
                 }
                 findNavController().navigate(
-                        "app.tivi://show/${show.id}".toUri(),
-                        null,
-                        extras.toActivityNavigatorExtras(requireActivity()))
+                    "app.tivi://show/${show.id}".toUri(),
+                    null,
+                    extras.toActivityNavigatorExtras(requireActivity()))
             }
         }
     }

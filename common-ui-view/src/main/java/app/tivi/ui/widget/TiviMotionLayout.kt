@@ -41,7 +41,12 @@ class TiviMotionLayout @JvmOverloads constructor(
 
     init {
         super.setTransitionListener(object : TransitionListener {
-            override fun onTransitionTrigger(motionLayout: MotionLayout, triggerId: Int, positive: Boolean, progress: Float) {
+            override fun onTransitionTrigger(
+                motionLayout: MotionLayout,
+                triggerId: Int,
+                positive: Boolean,
+                progress: Float
+            ) {
                 listeners.forEach {
                     it.onTransitionTrigger(motionLayout, triggerId, positive, progress)
                 }
@@ -53,7 +58,12 @@ class TiviMotionLayout @JvmOverloads constructor(
                 }
             }
 
-            override fun onTransitionChange(motionLayout: MotionLayout, startId: Int, endId: Int, progress: Float) {
+            override fun onTransitionChange(
+                motionLayout: MotionLayout,
+                startId: Int,
+                endId: Int,
+                progress: Float
+            ) {
                 listeners.forEach {
                     it.onTransitionChange(motionLayout, startId, endId, progress)
                 }

@@ -80,7 +80,10 @@ class HomeActivityViewModel @AssistedInject constructor(
     }
 
     companion object : MvRxViewModelFactory<HomeActivityViewModel, HomeActivityViewState> {
-        override fun create(viewModelContext: ViewModelContext, state: HomeActivityViewState): HomeActivityViewModel? {
+        override fun create(
+            viewModelContext: ViewModelContext,
+            state: HomeActivityViewState
+        ): HomeActivityViewModel? {
             val fragment: HomeActivity = viewModelContext.activity()
             return fragment.homeNavigationViewModelFactory.create(state)
         }

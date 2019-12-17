@@ -105,13 +105,13 @@ fun <ET : TiviEntity, NT, NID> syncerForEntity(
     networkEntityToLocalEntityMapperFunc: suspend (NT, Long?) -> ET,
     logger: Logger
 ) = ItemSyncer(
-        entityDao::insert,
-        entityDao::update,
-        entityDao::delete,
-        localEntityToIdFunc,
-        networkEntityToIdFunc,
-        networkEntityToLocalEntityMapperFunc,
-        logger
+    entityDao::insert,
+    entityDao::update,
+    entityDao::delete,
+    localEntityToIdFunc,
+    networkEntityToIdFunc,
+    networkEntityToLocalEntityMapperFunc,
+    logger
 )
 
 fun <ET : TiviEntity, NID> syncerForEntity(
@@ -120,11 +120,11 @@ fun <ET : TiviEntity, NID> syncerForEntity(
     mapper: suspend (ET, Long?) -> ET,
     logger: Logger
 ) = ItemSyncer(
-        entityDao::insert,
-        entityDao::update,
-        entityDao::delete,
-        entityToIdFunc,
-        entityToIdFunc,
-        mapper,
-        logger
+    entityDao::insert,
+    entityDao::update,
+    entityDao::delete,
+    entityToIdFunc,
+    entityToIdFunc,
+    mapper,
+    logger
 )

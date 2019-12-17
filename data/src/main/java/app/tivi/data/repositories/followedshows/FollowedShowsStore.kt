@@ -42,10 +42,10 @@ class FollowedShowsStore @Inject constructor(
     var traktListId: Int? = null
 
     private val syncer = syncerForEntity(
-            followedShowsDao,
-            { it.traktId },
-            { entity, id -> entity.copy(id = id ?: 0) },
-            logger
+        followedShowsDao,
+        { it.traktId },
+        { entity, id -> entity.copy(id = id ?: 0) },
+        logger
     )
 
     suspend fun getEntryForShowId(showId: Long): FollowedShowEntry? = followedShowsDao.entryWithShowId(showId)
@@ -62,7 +62,10 @@ class FollowedShowsStore @Inject constructor(
 
     suspend fun deleteEntriesInIds(ids: List<Long>) = followedShowsDao.deleteWithIds(ids)
 
-    fun observeForPaging(sort: SortOption, filter: String?): DataSource.Factory<Int, FollowedShowEntryWithShow> {
+    fun observeForPaging(
+        sort: SortOption,
+        filter: String?
+    ): DataSource.Factory<Int, FollowedShowEntryWithShow> {
         val filtered = filter != null && filter.isNotEmpty()
         return when (sort) {
             SortOption.SUPER_SORT -> {
@@ -98,7 +101,7 @@ class FollowedShowsStore @Inject constructor(
 
     fun observeIsShowFollowed(showId: Long): Flow<Boolean> {
         return followedShowsDao.entryCountWithShowIdNotPendingDeleteObservable(showId)
-                .map { it > 0 }
+            .map { it > 0 }
     }
 
     fun observeNextShowToWatch(): Flow<FollowedShowEntryWithShow?> {

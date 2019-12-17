@@ -94,16 +94,16 @@ class TraktManager @Inject constructor(
 
     fun startAuth(requestCode: Int, authService: AuthorizationService) {
         authService.performAuthorizationRequest(
-                requestProvider.get(),
-                appNavigator.provideAuthHandleResponseIntent(requestCode)
+            requestProvider.get(),
+            appNavigator.provideAuthHandleResponseIntent(requestCode)
         )
     }
 
     fun onAuthResponse(authService: AuthorizationService, response: AuthorizationResponse) {
         authService.performTokenRequest(
-                response.createTokenExchangeRequest(),
-                clientAuth.get(),
-                ::onTokenExchangeResponse
+            response.createTokenExchangeRequest(),
+            clientAuth.get(),
+            ::onTokenExchangeResponse
         )
     }
 

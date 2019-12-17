@@ -64,7 +64,9 @@ object TiviTypeConverters {
     @TypeConverter
     @JvmStatic
     fun toDayOfWeek(value: Int?): DayOfWeek? {
-        return if (value != null) { dayOfWeekValues.firstOrNull { it.value == value } } else null
+        return if (value != null) {
+            dayOfWeekValues.firstOrNull { it.value == value }
+        } else null
     }
 
     @TypeConverter

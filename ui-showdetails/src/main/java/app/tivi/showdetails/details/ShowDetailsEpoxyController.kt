@@ -137,7 +137,7 @@ internal class ShowDetailsEpoxyController @Inject constructor(
             }
         }
         if (show.airsTime != null && show.airsDay != null && show.airsTimeZone != null &&
-                (show.status == null || show.status == ShowStatus.RETURNING)) {
+            (show.status == null || show.status == ShowStatus.RETURNING)) {
             badges += DetailsInfoAirsBindingModel_().apply {
                 id("airs")
                 tiviShow(show)
@@ -146,7 +146,7 @@ internal class ShowDetailsEpoxyController @Inject constructor(
         }
         if (badges.isNotEmpty()) {
             EpoxyModelGroup(R.layout.layout_show_details_info_holder, badges)
-                    .addTo(this)
+                .addTo(this)
         }
 
         vertSpacerSmall {
@@ -200,10 +200,10 @@ internal class ShowDetailsEpoxyController @Inject constructor(
                     withModelsFrom(related) { relatedEntry ->
                         val relatedShow = relatedEntry.show
                         DetailsRelatedItemBindingModel_()
-                                .id("related_${relatedShow.id}")
-                                .tiviShow(relatedShow)
-                                .posterImage(relatedEntry.images.findHighestRatedPoster())
-                                .clickListener { view -> callbacks?.onRelatedShowClicked(relatedShow, view) }
+                            .id("related_${relatedShow.id}")
+                            .tiviShow(relatedShow)
+                            .posterImage(relatedEntry.images.findHighestRatedPoster())
+                            .clickListener { view -> callbacks?.onRelatedShowClicked(relatedShow, view) }
                     }
                 }
             }
@@ -314,7 +314,7 @@ internal class ShowDetailsEpoxyController @Inject constructor(
                     }
                     R.id.season_mark_watched_aired -> {
                         item.isVisible = season.numberWatched < season.numberAired &&
-                                season.numberAired < season.numberEpisodes
+                            season.numberAired < season.numberEpisodes
                     }
                 }
             }

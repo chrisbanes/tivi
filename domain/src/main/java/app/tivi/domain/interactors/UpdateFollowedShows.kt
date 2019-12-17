@@ -67,10 +67,10 @@ class UpdateFollowedShows @Inject constructor(
             }
 
             seasonEpisodeRepository.updateShowEpisodeWatches(
-                    it.showId,
-                    params.type,
-                    params.forceRefresh,
-                    showRepository.getShow(it.showId)?.traktDataUpdate
+                it.showId,
+                params.type,
+                params.forceRefresh,
+                showRepository.getShow(it.showId)?.traktDataUpdate
             )
         }
     }

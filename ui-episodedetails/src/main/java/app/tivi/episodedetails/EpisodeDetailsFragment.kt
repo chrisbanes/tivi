@@ -31,7 +31,7 @@ import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
 class EpisodeDetailsFragment : TiviFragmentWithBinding<FragmentEpisodeDetailsBinding>(),
-        EpisodeDetailsViewModel.FactoryProvider {
+    EpisodeDetailsViewModel.FactoryProvider {
     companion object {
         @JvmStatic
         fun create(id: Long): EpisodeDetailsFragment {
@@ -47,11 +47,18 @@ class EpisodeDetailsFragment : TiviFragmentWithBinding<FragmentEpisodeDetailsBin
     @Inject internal lateinit var controller: EpisodeDetailsEpoxyController
     @Inject internal lateinit var textCreator: EpisodeDetailsTextCreator
 
-    override fun createBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): FragmentEpisodeDetailsBinding {
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): FragmentEpisodeDetailsBinding {
         return FragmentEpisodeDetailsBinding.inflate(layoutInflater, container, false)
     }
 
-    override fun onViewCreated(binding: FragmentEpisodeDetailsBinding, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        binding: FragmentEpisodeDetailsBinding,
+        savedInstanceState: Bundle?
+    ) {
         binding.epDetailsRv.setController(controller)
 
         binding.epDetailsFab.setOnClickListener {
@@ -65,10 +72,10 @@ class EpisodeDetailsFragment : TiviFragmentWithBinding<FragmentEpisodeDetailsBin
 
         val context = requireContext()
         val swipeCallback = object : SwipeAwayCallbacks<EpisodeDetailsWatchItemBindingModel_>(
-                context.getDrawable(R.drawable.ic_eye_off_24dp)!!,
-                context.resources.getDimensionPixelSize(R.dimen.spacing_large),
-                context.getColor(R.color.swipe_away_background),
-                context.resolveThemeColor(R.attr.colorSecondary)
+            context.getDrawable(R.drawable.ic_eye_off_24dp)!!,
+            context.resources.getDimensionPixelSize(R.dimen.spacing_large),
+            context.getColor(R.color.swipe_away_background),
+            context.resolveThemeColor(R.attr.colorSecondary)
         ) {
             override fun onSwipeCompleted(
                 model: EpisodeDetailsWatchItemBindingModel_,
@@ -83,15 +90,15 @@ class EpisodeDetailsFragment : TiviFragmentWithBinding<FragmentEpisodeDetailsBin
         }
 
         EpoxyTouchHelper.initSwiping(binding.epDetailsRv)
-                .let {
-                    if (binding.epDetailsRv.layoutDirection == View.LAYOUT_DIRECTION_RTL) {
-                        it.right()
-                    } else {
-                        it.left()
-                    }
+            .let {
+                if (binding.epDetailsRv.layoutDirection == View.LAYOUT_DIRECTION_RTL) {
+                    it.right()
+                } else {
+                    it.left()
                 }
-                .withTarget(EpisodeDetailsWatchItemBindingModel_::class.java)
-                .andCallbacks(swipeCallback)
+            }
+            .withTarget(EpisodeDetailsWatchItemBindingModel_::class.java)
+            .andCallbacks(swipeCallback)
     }
 
     override fun invalidate(binding: FragmentEpisodeDetailsBinding) = withState(viewModel) { state ->

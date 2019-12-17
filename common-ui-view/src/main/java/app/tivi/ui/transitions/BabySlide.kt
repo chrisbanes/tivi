@@ -40,9 +40,9 @@ class BabySlide(
         view.alpha = 0f
 
         return ObjectAnimator.ofPropertyValuesHolder(view,
-                PropertyValuesHolder.ofFloat(View.TRANSLATION_X, 0f),
-                PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 0f),
-                PropertyValuesHolder.ofFloat(View.ALPHA, 1f))
+            PropertyValuesHolder.ofFloat(View.TRANSLATION_X, 0f),
+            PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 0f),
+            PropertyValuesHolder.ofFloat(View.ALPHA, 1f))
     }
 
     override fun onDisappear(
@@ -52,17 +52,17 @@ class BabySlide(
         endValues: TransitionValues?
     ): Animator {
         return ObjectAnimator.ofPropertyValuesHolder(view,
-                translatePropValForGravity(view),
-                PropertyValuesHolder.ofFloat(View.ALPHA, 0f))
+            translatePropValForGravity(view),
+            PropertyValuesHolder.ofFloat(View.ALPHA, 0f))
     }
 
     private fun translatePropValForGravity(view: View): PropertyValuesHolder =
-            when (Gravity.getAbsoluteGravity(gravity, view.layoutDirection)) {
-                Gravity.TOP -> PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, -view.height / babyFraction)
-                Gravity.RIGHT -> PropertyValuesHolder.ofFloat(View.TRANSLATION_X, view.width / babyFraction)
-                Gravity.BOTTOM -> PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, view.height / babyFraction)
-                else -> PropertyValuesHolder.ofFloat(View.TRANSLATION_X, -view.width / babyFraction)
-            }
+        when (Gravity.getAbsoluteGravity(gravity, view.layoutDirection)) {
+            Gravity.TOP -> PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, -view.height / babyFraction)
+            Gravity.RIGHT -> PropertyValuesHolder.ofFloat(View.TRANSLATION_X, view.width / babyFraction)
+            Gravity.BOTTOM -> PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, view.height / babyFraction)
+            else -> PropertyValuesHolder.ofFloat(View.TRANSLATION_X, -view.width / babyFraction)
+        }
 
     private fun setupTranslation(view: View) {
         when (Gravity.getAbsoluteGravity(gravity, view.layoutDirection)) {

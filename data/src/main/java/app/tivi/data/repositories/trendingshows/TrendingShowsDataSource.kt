@@ -21,5 +21,8 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TrendingShowEntry
 
 interface TrendingShowsDataSource {
-    suspend fun getTrendingShows(page: Int, pageSize: Int): Result<List<Pair<TiviShow, TrendingShowEntry>>>
+    suspend fun getTrendingShows(
+        page: Int,
+        pageSize: Int
+    ): Result<List<Pair<TiviShow, TrendingShowEntry>>>
 }

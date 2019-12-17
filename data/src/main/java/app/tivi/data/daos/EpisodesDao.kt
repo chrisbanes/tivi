@@ -50,19 +50,27 @@ abstract class EpisodesDao : EntityDao<Episode> {
     abstract fun episodeWithIdObservable(id: Long): Flow<EpisodeWithSeason>
 
     @Query("SELECT shows.id FROM shows" +
-            " INNER JOIN seasons AS s ON s.show_id = shows.id" +
-            " INNER JOIN episodes AS eps ON eps.season_id = s.id" +
-            " WHERE eps.id = :episodeId")
+        " INNER JOIN seasons AS s ON s.show_id = shows.id" +
+        " INNER JOIN episodes AS eps ON eps.season_id = s.id" +
+        " WHERE eps.id = :episodeId")
     abstract suspend fun showIdForEpisodeId(episodeId: Long): Long
 
     @Query(latestWatchedEpisodeForShowId)
     abstract fun observeLatestWatchedEpisodeForShowId(showId: Long): Flow<EpisodeWithSeason?>
 
     @Query(nextEpisodeForShowIdAfter)
-    abstract fun observeNextEpisodeForShowAfter(showId: Long, seasonNumber: Int, episodeNumber: Int): Flow<EpisodeWithSeason?>
+    abstract fun observeNextEpisodeForShowAfter(
+        showId: Long,
+        seasonNumber: Int,
+        episodeNumber: Int
+    ): Flow<EpisodeWithSeason?>
 
     @Query(nextAiredEpisodeForShowIdAfter)
-    abstract fun observeNextAiredEpisodeForShowAfter(showId: Long, seasonNumber: Int, episodeNumber: Int): Flow<EpisodeWithSeason?>
+    abstract fun observeNextAiredEpisodeForShowAfter(
+        showId: Long,
+        seasonNumber: Int,
+        episodeNumber: Int
+    ): Flow<EpisodeWithSeason?>
 
     companion object {
         const val latestWatchedEpisodeForShowId = """

@@ -28,16 +28,16 @@ class TmdbImagesToShowImages @Inject constructor() : Mapper<TvShow, List<ShowTmd
     override suspend fun map(from: TvShow): List<ShowTmdbImage> {
         fun mapImage(image: Image, type: ImageType): ShowTmdbImage {
             return ShowTmdbImage(
-                    showId = 0,
-                    path = image.file_path!!,
-                    type = type,
-                    language = image.iso_639_1,
-                    rating = image.vote_average?.toFloat() ?: 0f,
-                    isPrimary = when (type) {
-                        ImageType.BACKDROP -> image.file_path == from.backdrop_path
-                        ImageType.POSTER -> image.file_path == from.poster_path
-                        else -> false
-                    }
+                showId = 0,
+                path = image.file_path!!,
+                type = type,
+                language = image.iso_639_1,
+                rating = image.vote_average?.toFloat() ?: 0f,
+                isPrimary = when (type) {
+                    ImageType.BACKDROP -> image.file_path == from.backdrop_path
+                    ImageType.POSTER -> image.file_path == from.poster_path
+                    else -> false
+                }
             )
         }
 

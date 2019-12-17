@@ -59,6 +59,9 @@ class EventObserver<T>(private val onEventUnhandledContent: (T) -> Unit) : Obser
     }
 }
 
-inline fun <T> LiveData<Event<T>>.observeEvent(owner: LifecycleOwner, crossinline observer: (T) -> Unit) {
+inline fun <T> LiveData<Event<T>>.observeEvent(
+    owner: LifecycleOwner,
+    crossinline observer: (T) -> Unit
+) {
     observe(owner, EventObserver { observer(it) })
 }

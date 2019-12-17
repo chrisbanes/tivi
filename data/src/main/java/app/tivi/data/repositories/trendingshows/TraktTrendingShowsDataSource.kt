@@ -41,10 +41,13 @@ class TraktTrendingShowsDataSource @Inject constructor(
     }
     private val responseMapper = pairMapperOf(showMapper, entryMapper)
 
-    override suspend fun getTrendingShows(page: Int, pageSize: Int): Result<List<Pair<TiviShow, TrendingShowEntry>>> {
+    override suspend fun getTrendingShows(
+        page: Int,
+        pageSize: Int
+    ): Result<List<Pair<TiviShow, TrendingShowEntry>>> {
         // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
         return showService.get().trending(page + 1, pageSize, Extended.NOSEASONS)
-                .executeWithRetry()
-                .toResult(responseMapper)
+            .executeWithRetry()
+            .toResult(responseMapper)
     }
 }

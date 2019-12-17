@@ -34,8 +34,8 @@ fun SharedElementHelper.toBundle(activity: Activity): Bundle? {
 fun SharedElementHelper.toActivityOptions(activity: Activity): ActivityOptionsCompat? {
     if (!isEmpty()) {
         return ActivityOptionsCompat.makeSceneTransitionAnimation(
-                activity,
-                *sharedElements.map { Pair(it.key, it.value) }.toTypedArray()
+            activity,
+            *sharedElements.map { Pair(it.key, it.value) }.toTypedArray()
         )
     }
     return null
@@ -49,8 +49,8 @@ fun SharedElementHelper.applyToTransaction(tx: FragmentTransaction) {
 
 fun SharedElementHelper.toFragmentNavigatorExtras(): Navigator.Extras {
     return FragmentNavigator.Extras.Builder()
-            .addSharedElements(sharedElements)
-            .build()
+        .addSharedElements(sharedElements)
+        .build()
 }
 
 fun SharedElementHelper.toActivityNavigatorExtras(activity: Activity): Navigator.Extras {

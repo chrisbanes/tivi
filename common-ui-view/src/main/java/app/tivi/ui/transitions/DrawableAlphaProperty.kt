@@ -20,7 +20,9 @@ import android.graphics.drawable.Drawable
 import android.util.Property
 
 object DrawableAlphaProperty : Property<Drawable, Int>(Int::class.java, "drawableAlpha") {
-    override fun set(d: Drawable, value: Int) { d.alpha = value }
+    override fun set(d: Drawable, value: Int) {
+        d.alpha = value
+    }
 
     override fun get(d: Drawable): Int = d.alpha
 }

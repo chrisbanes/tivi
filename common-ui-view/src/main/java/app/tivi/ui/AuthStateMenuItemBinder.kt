@@ -44,7 +44,7 @@ fun authStateToolbarMenuBinder(
     loginMenuItemId: Int,
     loadImageFunc: (MenuItem, url: String) -> Unit
 ) = AuthStateMenuItemBinder(
-        toolbar.menu.findItem(userMenuItemId),
-        toolbar.menu.findItem(loginMenuItemId),
-        loadImageFunc
+    toolbar.menu.findItem(userMenuItemId),
+    toolbar.menu.findItem(loginMenuItemId),
+    loadImageFunc
 )

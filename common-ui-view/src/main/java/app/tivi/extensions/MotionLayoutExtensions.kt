@@ -72,6 +72,6 @@ suspend fun TiviMotionLayout.awaitTransitionComplete(transitionId: Int, timeout:
         // exception to let the coroutine know
         listener?.let(::removeTransitionListener)
         throw CancellationException("Transition to state with id: $transitionId did not" +
-                " complete in timeout.", tex)
+            " complete in timeout.", tex)
     }
 }

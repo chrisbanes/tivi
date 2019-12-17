@@ -75,14 +75,14 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
         binding.followedAppBar.doOnSizeChange {
             binding.summaryRv.updatePadding(top = it.height)
             binding.summarySwipeRefresh.setProgressViewOffset(true, 0,
-                    it.height + binding.summarySwipeRefresh.progressCircleDiameter / 2)
+                it.height + binding.summarySwipeRefresh.progressCircleDiameter / 2)
             true
         }
 
         authStateMenuItemBinder = authStateToolbarMenuBinder(
-                binding.discoverToolbar,
-                R.id.home_menu_user_avatar,
-                R.id.home_menu_user_login
+            binding.discoverToolbar,
+            R.id.home_menu_user_avatar,
+            R.id.home_menu_user_login
         ) { menuItem, url -> menuItem.loadImageUrl(requireContext(), url) }
 
         binding.discoverToolbar.setOnMenuItemClickListener {
@@ -103,10 +103,10 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
                     val extras = binding.summaryRv.createSharedElementHelperForItems(state.trendingItems)
 
                     findNavController().navigate(
-                            R.id.navigation_trending,
-                            null,
-                            null,
-                            extras.toFragmentNavigatorExtras())
+                        R.id.navigation_trending,
+                        null,
+                        null,
+                        extras.toFragmentNavigatorExtras())
                 }
             }
 
@@ -115,10 +115,10 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
                     val extras = binding.summaryRv.createSharedElementHelperForItems(state.popularItems)
 
                     findNavController().navigate(
-                            R.id.navigation_popular,
-                            null,
-                            null,
-                            extras.toFragmentNavigatorExtras())
+                        R.id.navigation_popular,
+                        null,
+                        null,
+                        extras.toFragmentNavigatorExtras())
                 }
             }
 
@@ -127,10 +127,10 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
                     val extras = binding.summaryRv.createSharedElementHelperForItems(state.recommendedItems)
 
                     findNavController().navigate(
-                            R.id.navigation_recommended,
-                            null,
-                            null,
-                            extras.toFragmentNavigatorExtras())
+                        R.id.navigation_recommended,
+                        null,
+                        null,
+                        extras.toFragmentNavigatorExtras())
                 }
             }
 
@@ -139,9 +139,9 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
                     it.findViewById(R.id.show_poster)
                 }
                 findNavController().navigate(
-                        "app.tivi://show/${item.show.id}".toUri(),
-                        null,
-                        elements.toActivityNavigatorExtras(requireActivity())
+                    "app.tivi://show/${item.show.id}".toUri(),
+                    null,
+                    elements.toActivityNavigatorExtras(requireActivity())
                 )
             }
 
@@ -151,7 +151,7 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
                     val show = it.nextEpisodeWithShowToWatched.show
                     val episode = it.nextEpisodeWithShowToWatched.episode
                     findNavController().navigate(
-                            "app.tivi://show/${show.id}/episode/${episode.id}".toUri()
+                        "app.tivi://show/${show.id}/episode/${episode.id}".toUri()
                     )
                 }
             }

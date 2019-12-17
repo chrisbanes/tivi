@@ -34,18 +34,18 @@ class TmdbShowResultsPageToTiviShows @Inject constructor(
             val images = ArrayList<ShowTmdbImage>()
             if (it.poster_path != null) {
                 images += ShowTmdbImage(
-                        showId = 0,
-                        path = it.poster_path,
-                        isPrimary = true,
-                        type = ImageType.POSTER
+                    showId = 0,
+                    path = it.poster_path,
+                    isPrimary = true,
+                    type = ImageType.POSTER
                 )
             }
             if (it.backdrop_path != null) {
                 images += ShowTmdbImage(
-                        showId = 0,
-                        path = it.backdrop_path,
-                        isPrimary = true,
-                        type = ImageType.BACKDROP
+                    showId = 0,
+                    path = it.backdrop_path,
+                    isPrimary = true,
+                    type = ImageType.BACKDROP
                 )
             }
             show to images

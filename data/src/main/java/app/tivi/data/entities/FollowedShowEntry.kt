@@ -25,18 +25,18 @@ import app.tivi.data.Entry
 import org.threeten.bp.OffsetDateTime
 
 @Entity(tableName = "myshows_entries",
-        indices = [
-            Index(value = ["show_id"], unique = true)
-        ],
-        foreignKeys = [
-            ForeignKey(
-                    entity = TiviShow::class,
-                    parentColumns = arrayOf("id"),
-                    childColumns = arrayOf("show_id"),
-                    onUpdate = ForeignKey.CASCADE,
-                    onDelete = ForeignKey.CASCADE
-            )
-        ]
+    indices = [
+        Index(value = ["show_id"], unique = true)
+    ],
+    foreignKeys = [
+        ForeignKey(
+            entity = TiviShow::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("show_id"),
+            onUpdate = ForeignKey.CASCADE,
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
 )
 data class FollowedShowEntry(
     @PrimaryKey(autoGenerate = true) override val id: Long = 0,

@@ -114,7 +114,11 @@ fun roundedCornerOutlineProvider(view: View, oldRadius: Float, radius: Float) {
 }
 
 @BindingAdapter("textAppearanceAttr")
-fun textAppearanceAttr(view: TextView, oldTextAppearanceStyleAttr: Int, textAppearanceStyleAttr: Int) {
+fun textAppearanceAttr(
+    view: TextView,
+    oldTextAppearanceStyleAttr: Int,
+    textAppearanceStyleAttr: Int
+) {
     if (oldTextAppearanceStyleAttr != textAppearanceStyleAttr) {
         view.setTextAppearance(view.context.resolveThemeReferenceResId(textAppearanceStyleAttr))
     }

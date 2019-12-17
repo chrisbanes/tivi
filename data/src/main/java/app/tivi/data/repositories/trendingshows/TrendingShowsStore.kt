@@ -27,11 +27,17 @@ class TrendingShowsStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
     private val trendingShowsDao: TrendingDao
 ) {
-    fun observeForObservable(count: Int, offset: Int) = trendingShowsDao.entriesObservable(count, offset)
+    fun observeForObservable(
+        count: Int,
+        offset: Int
+    ) = trendingShowsDao.entriesObservable(count, offset)
 
     fun observeForPaging(): DataSource.Factory<Int, TrendingEntryWithShow> = trendingShowsDao.entriesDataSource()
 
-    suspend fun saveTrendingShowsPage(page: Int, entries: List<TrendingShowEntry>) = transactionRunner {
+    suspend fun saveTrendingShowsPage(
+        page: Int,
+        entries: List<TrendingShowEntry>
+    ) = transactionRunner {
         trendingShowsDao.deletePage(page)
         trendingShowsDao.insertAll(entries)
     }

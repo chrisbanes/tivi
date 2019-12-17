@@ -23,7 +23,10 @@ import app.tivi.ui.recyclerview.TiviLinearSmoothScroller
 import kotlin.coroutines.resume
 import kotlinx.coroutines.suspendCancellableCoroutine
 
-fun <VH : RecyclerView.ViewHolder> RecyclerView.Adapter<VH>.createAndBind(parent: ViewGroup, position: Int): VH {
+fun <VH : RecyclerView.ViewHolder> RecyclerView.Adapter<VH>.createAndBind(
+    parent: ViewGroup,
+    position: Int
+): VH {
     val vh = onCreateViewHolder(parent, getItemViewType(position))
     onBindViewHolder(vh, position)
     return vh
@@ -43,9 +46,9 @@ fun RecyclerView.scrollToItemId(itemId: Long, animatedScroll: Boolean = false): 
 }
 
 fun RecyclerView.smoothScrollToViewHolder(vh: RecyclerView.ViewHolder) = TiviLinearSmoothScroller(
-        context,
-        snapPreference = LinearSmoothScroller.SNAP_TO_START,
-        scrollMsPerInch = 60f
+    context,
+    snapPreference = LinearSmoothScroller.SNAP_TO_START,
+    scrollMsPerInch = 60f
 ).apply {
     targetPosition = vh.adapterPosition
     targetOffset = vh.itemView.height / 3
@@ -54,9 +57,9 @@ fun RecyclerView.smoothScrollToViewHolder(vh: RecyclerView.ViewHolder) = TiviLin
 }
 
 fun RecyclerView.smoothScrollToItemPosition(position: Int) = TiviLinearSmoothScroller(
-        context,
-        snapPreference = LinearSmoothScroller.SNAP_TO_START,
-        scrollMsPerInch = 60f
+    context,
+    snapPreference = LinearSmoothScroller.SNAP_TO_START,
+    scrollMsPerInch = 60f
 ).apply {
     targetPosition = position
 }.also {

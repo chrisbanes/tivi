@@ -31,10 +31,14 @@ abstract class TiviFragmentWithBinding<V : ViewDataBinding> : TiviFragment() {
     var binding: V? = null
         private set
 
-    final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    final override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return createBinding(inflater, container, savedInstanceState)
-                .also { binding = it }
-                .root
+            .also { binding = it }
+            .root
     }
 
     final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

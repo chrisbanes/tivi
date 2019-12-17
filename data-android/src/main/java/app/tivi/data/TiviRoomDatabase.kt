@@ -39,28 +39,28 @@ import app.tivi.data.views.FollowedShowsWatchStats
 import dev.matrix.roomigrant.GenerateRoomMigrations
 
 @Database(
-        entities = [
-            TiviShow::class,
-            TiviShowFts::class,
-            TrendingShowEntry::class,
-            PopularShowEntry::class,
-            TraktUser::class,
-            WatchedShowEntry::class,
-            FollowedShowEntry::class,
-            Season::class,
-            Episode::class,
-            RelatedShowEntry::class,
-            EpisodeWatchEntry::class,
-            LastRequest::class,
-            ShowTmdbImage::class,
-            RecommendedShowEntry::class
-        ],
-        views = [
-            FollowedShowsWatchStats::class,
-            FollowedShowsLastWatched::class,
-            FollowedShowsNextToWatch::class
-        ],
-        version = 26
+    entities = [
+        TiviShow::class,
+        TiviShowFts::class,
+        TrendingShowEntry::class,
+        PopularShowEntry::class,
+        TraktUser::class,
+        WatchedShowEntry::class,
+        FollowedShowEntry::class,
+        Season::class,
+        Episode::class,
+        RelatedShowEntry::class,
+        EpisodeWatchEntry::class,
+        LastRequest::class,
+        ShowTmdbImage::class,
+        RecommendedShowEntry::class
+    ],
+    views = [
+        FollowedShowsWatchStats::class,
+        FollowedShowsLastWatched::class,
+        FollowedShowsNextToWatch::class
+    ],
+    version = 26
 )
 @TypeConverters(TiviTypeConverters::class)
 @GenerateRoomMigrations

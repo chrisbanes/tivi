@@ -44,7 +44,7 @@ internal class EpisodeDetailsEpoxyController @Inject constructor(
                     label(context.getString(R.string.percentage_format, ratingOutOfOneHundred))
                     icon(R.drawable.ic_details_rating)
                     contentDescription(context.getString(
-                            R.string.rating_content_description_format, ratingOutOfOneHundred))
+                        R.string.rating_content_description_format, ratingOutOfOneHundred))
                 }
             }
             episode?.firstAired?.also { firstAired ->

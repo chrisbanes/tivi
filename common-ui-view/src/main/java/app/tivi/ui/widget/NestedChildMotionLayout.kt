@@ -82,7 +82,7 @@ class NestedChildMotionLayout @JvmOverloads constructor(
             // If there is any dx/dy remaining, let MotionLayout handle it
             val innerConsumed = tmpArray
             super.onNestedPreScroll(target, dx - consumed[0], dy - consumed[1],
-                    innerConsumed, type)
+                innerConsumed, type)
             consumed[0] += innerConsumed[0]
             consumed[1] += innerConsumed[1]
         }
@@ -98,13 +98,13 @@ class NestedChildMotionLayout @JvmOverloads constructor(
         consumed: IntArray
     ) {
         super.onNestedScroll(target, dxConsumed, dyConsumed,
-                dxUnconsumed, dyUnconsumed,
-                type, consumed)
+            dxUnconsumed, dyUnconsumed,
+            type, consumed)
 
         dispatchNestedScroll(dxConsumed, dyConsumed,
-                dxUnconsumed, dyUnconsumed,
-                null,
-                type, tmpArray)
+            dxUnconsumed, dyUnconsumed,
+            null,
+            type, tmpArray)
     }
 
     override fun onNestedPreFling(
@@ -113,7 +113,7 @@ class NestedChildMotionLayout @JvmOverloads constructor(
         velocityY: Float
     ): Boolean {
         return dispatchNestedPreFling(velocityX, velocityY) ||
-                super.onNestedPreFling(target, velocityX, velocityY)
+            super.onNestedPreFling(target, velocityX, velocityY)
     }
 
     override fun onNestedFling(
@@ -123,7 +123,7 @@ class NestedChildMotionLayout @JvmOverloads constructor(
         consumed: Boolean
     ): Boolean {
         return dispatchNestedFling(velocityX, velocityY, consumed) ||
-                super.onNestedFling(target, velocityX, velocityY, consumed)
+            super.onNestedFling(target, velocityX, velocityY, consumed)
     }
 
     override fun onStopNestedScroll(
@@ -162,8 +162,8 @@ class NestedChildMotionLayout @JvmOverloads constructor(
         consumed: IntArray
     ) {
         helper.dispatchNestedScroll(dxConsumed, dyConsumed,
-                dxUnconsumed, dyUnconsumed,
-                offsetInWindow, type, consumed)
+            dxUnconsumed, dyUnconsumed,
+            offsetInWindow, type, consumed)
     }
 
     override fun dispatchNestedScroll(
@@ -174,7 +174,7 @@ class NestedChildMotionLayout @JvmOverloads constructor(
         offsetInWindow: IntArray?,
         type: Int
     ) = helper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
-            offsetInWindow, type)
+        offsetInWindow, type)
 
     override fun dispatchNestedPreFling(
         velocityX: Float,

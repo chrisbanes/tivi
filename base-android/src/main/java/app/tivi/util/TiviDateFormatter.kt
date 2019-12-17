@@ -54,10 +54,10 @@ class TiviDateFormatter @Inject constructor(
             if (dateTime.year == now.year || dateTime.isAfter(now.minusDays(7))) {
                 // Within the past week
                 DateUtils.getRelativeTimeSpanString(
-                        dateTime.toInstant().toEpochMilli(),
-                        System.currentTimeMillis(),
-                        DateUtils.MINUTE_IN_MILLIS,
-                        DateUtils.FORMAT_SHOW_DATE)
+                    dateTime.toInstant().toEpochMilli(),
+                    System.currentTimeMillis(),
+                    DateUtils.MINUTE_IN_MILLIS,
+                    DateUtils.FORMAT_SHOW_DATE)
             } else {
                 // More than 7 days ago
                 formatShortDate(dateTime)
@@ -66,10 +66,10 @@ class TiviDateFormatter @Inject constructor(
             if (dateTime.year == now.year || dateTime.isBefore(now.plusDays(14))) {
                 // In the near future (next 2 weeks)
                 DateUtils.getRelativeTimeSpanString(
-                        dateTime.toInstant().toEpochMilli(),
-                        System.currentTimeMillis(),
-                        DateUtils.MINUTE_IN_MILLIS,
-                        DateUtils.FORMAT_SHOW_DATE)
+                    dateTime.toInstant().toEpochMilli(),
+                    System.currentTimeMillis(),
+                    DateUtils.MINUTE_IN_MILLIS,
+                    DateUtils.FORMAT_SHOW_DATE)
             } else {
                 // In the far future
                 formatShortDate(dateTime)

@@ -59,50 +59,59 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
 ) : SeasonsEpisodesDataSource {
     override suspend fun getSeasonsEpisodes(showId: Long): Result<List<Pair<Season, List<Episode>>>> {
         return seasonsService.get().summary(showIdToTraktIdMapper.map(showId).toString(), Extended.FULLEPISODES)
-                .executeWithRetry()
-                .toResult(seasonMapper.toListMapper())
+            .executeWithRetry()
+            .toResult(seasonMapper.toListMapper())
     }
 
-    override suspend fun getShowEpisodeWatches(showId: Long, since: OffsetDateTime?): Result<List<Pair<Episode, EpisodeWatchEntry>>> {
+    override suspend fun getShowEpisodeWatches(
+        showId: Long,
+        since: OffsetDateTime?
+    ): Result<List<Pair<Episode, EpisodeWatchEntry>>> {
         val showTraktId = showIdToTraktIdMapper.map(showId)
-                ?: return ErrorResult(message = "No Trakt ID for show with ID: $showId")
+            ?: return ErrorResult(message = "No Trakt ID for show with ID: $showId")
 
         return usersService.get().history(UserSlug.ME, HistoryType.SHOWS, showTraktId,
-                0, 10000, Extended.NOSEASONS, since, null)
-                .executeWithRetry()
-                .toResult(pairMapperOf(episodeMapper, historyItemMapper))
+            0, 10000, Extended.NOSEASONS, since, null)
+            .executeWithRetry()
+            .toResult(pairMapperOf(episodeMapper, historyItemMapper))
     }
 
-    override suspend fun getSeasonWatches(seasonId: Long, since: OffsetDateTime?): Result<List<Pair<Episode, EpisodeWatchEntry>>> {
+    override suspend fun getSeasonWatches(
+        seasonId: Long,
+        since: OffsetDateTime?
+    ): Result<List<Pair<Episode, EpisodeWatchEntry>>> {
         return usersService.get().history(UserSlug.ME, HistoryType.SEASONS, seasonIdToTraktIdMapper.map(seasonId),
-                0, 10000, Extended.NOSEASONS, since, null)
-                .executeWithRetry()
-                .toResult(pairMapperOf(episodeMapper, historyItemMapper))
+            0, 10000, Extended.NOSEASONS, since, null)
+            .executeWithRetry()
+            .toResult(pairMapperOf(episodeMapper, historyItemMapper))
     }
 
-    override suspend fun getEpisodeWatches(episodeId: Long, since: OffsetDateTime?): Result<List<EpisodeWatchEntry>> {
+    override suspend fun getEpisodeWatches(
+        episodeId: Long,
+        since: OffsetDateTime?
+    ): Result<List<EpisodeWatchEntry>> {
         return usersService.get().history(UserSlug.ME, HistoryType.EPISODES, episodeIdToTraktIdMapper.map(episodeId),
-                0, 10000, Extended.NOSEASONS, since, null)
-                .executeWithRetry()
-                .toResult(historyItemMapper.toListMapper())
+            0, 10000, Extended.NOSEASONS, since, null)
+            .executeWithRetry()
+            .toResult(historyItemMapper.toListMapper())
     }
 
     override suspend fun addEpisodeWatches(watches: List<EpisodeWatchEntry>): Result<Unit> {
         val items = SyncItems()
         items.episodes = watches.map {
             SyncEpisode()
-                    .id(EpisodeIds.trakt(episodeIdToTraktIdMapper.map(it.episodeId)))!!
-                    .watchedAt(it.watchedAt.withOffsetSameInstant(ZoneOffset.UTC))
+                .id(EpisodeIds.trakt(episodeIdToTraktIdMapper.map(it.episodeId)))!!
+                .watchedAt(it.watchedAt.withOffsetSameInstant(ZoneOffset.UTC))
         }
         return syncService.get().addItemsToWatchedHistory(items)
-                .executeWithRetry()
-                .toResultUnit()
+            .executeWithRetry()
+            .toResultUnit()
     }
 
     override suspend fun removeEpisodeWatches(watches: List<EpisodeWatchEntry>): Result<Unit> {
         val items = SyncItems()
         items.ids = watches.mapNotNull { it.traktId }
         return syncService.get().deleteItemsFromWatchedHistory(items).executeWithRetry()
-                .toResultUnit()
+            .toResultUnit()
     }
 }

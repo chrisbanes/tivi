@@ -56,7 +56,11 @@ class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
 
     private var authStateMenuItemBinder: AuthStateMenuItemBinder? = null
 
-    override fun createBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): FragmentFollowedBinding {
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): FragmentFollowedBinding {
         return FragmentFollowedBinding.inflate(inflater, container, false)
     }
 
@@ -64,9 +68,9 @@ class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
         postponeEnterTransitionWithTimeout()
 
         authStateMenuItemBinder = authStateToolbarMenuBinder(
-                binding.followedToolbar,
-                R.id.home_menu_user_avatar,
-                R.id.home_menu_user_login
+            binding.followedToolbar,
+            R.id.home_menu_user_avatar,
+            R.id.home_menu_user_login
         ) { menuItem, url -> menuItem.loadImageUrl(requireContext(), url) }
 
         binding.followedToolbar.setOnMenuItemClickListener {
@@ -84,7 +88,7 @@ class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
         binding.followedAppBar.doOnSizeChange {
             binding.followedRv.updatePadding(top = it.height)
             binding.followedSwipeRefresh.setProgressViewOffset(true, 0,
-                    it.height + binding.followedSwipeRefresh.progressCircleDiameter / 2)
+                it.height + binding.followedSwipeRefresh.progressCircleDiameter / 2)
             true
         }
 
@@ -100,9 +104,9 @@ class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
                 }
 
                 findNavController().navigate(
-                        "app.tivi://show/${item.show.id}".toUri(),
-                        null,
-                        extras.toActivityNavigatorExtras(requireActivity())
+                    "app.tivi://show/${item.show.id}".toUri(),
+                    null,
+                    extras.toActivityNavigatorExtras(requireActivity())
                 )
             }
 

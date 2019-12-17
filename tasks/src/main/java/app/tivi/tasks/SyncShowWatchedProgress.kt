@@ -37,8 +37,8 @@ class SyncShowWatchedProgress @AssistedInject constructor(
         private const val PARAM_SHOW_ID = "show-id"
 
         fun buildData(showId: Long) = Data.Builder()
-                .putLong(PARAM_SHOW_ID, showId)
-                .build()
+            .putLong(PARAM_SHOW_ID, showId)
+            .build()
     }
 
     override suspend fun doWork(): Result {

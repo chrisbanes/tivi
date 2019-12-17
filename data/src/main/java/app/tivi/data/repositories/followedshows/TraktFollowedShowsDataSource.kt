@@ -62,8 +62,8 @@ class TraktFollowedShowsDataSource @Inject constructor(
             }
         }
         return usersService.get().addListItems(UserSlug.ME, listId.toString(), syncItems)
-                .executeWithRetry()
-                .toResultUnit()
+            .executeWithRetry()
+            .toResultUnit()
     }
 
     override suspend fun removeShowIdsFromList(listId: Int, shows: List<TiviShow>): Result<Unit> {
@@ -78,23 +78,23 @@ class TraktFollowedShowsDataSource @Inject constructor(
             }
         }
         return usersService.get().deleteListItems(UserSlug.ME, listId.toString(), syncItems)
-                .executeWithRetry()
-                .toResultUnit()
+            .executeWithRetry()
+            .toResultUnit()
     }
 
     override suspend fun getListShows(listId: Int): Result<List<Pair<FollowedShowEntry, TiviShow>>> {
         return usersService.get().listItems(UserSlug.ME, listId.toString(), Extended.NOSEASONS)
-                .executeWithRetry()
-                .toResult(listShowsMapper)
+            .executeWithRetry()
+            .toResult(listShowsMapper)
     }
 
     override suspend fun getFollowedListId(): Result<Int> {
         val fetchResult: Result<Int>? = try {
             usersService.get().lists(UserSlug.ME)
-                    .executeWithRetry()
-                    .bodyOrThrow()
-                    .firstOrNull { it.name == LIST_NAME }
-                    ?.let { Success(it.ids.trakt) }
+                .executeWithRetry()
+                .bodyOrThrow()
+                .firstOrNull { it.name == LIST_NAME }
+                ?.let { Success(it.ids.trakt) }
         } catch (t: Throwable) {
             ErrorResult(t)
         }
@@ -105,10 +105,10 @@ class TraktFollowedShowsDataSource @Inject constructor(
 
         return try {
             usersService.get().createList(UserSlug.ME,
-                    TraktList().name(LIST_NAME).privacy(ListPrivacy.PRIVATE))
-                    .executeWithRetry()
-                    .bodyOrThrow()
-                    .let { Success(it.ids.trakt) }
+                TraktList().name(LIST_NAME).privacy(ListPrivacy.PRIVATE))
+                .executeWithRetry()
+                .bodyOrThrow()
+                .let { Success(it.ids.trakt) }
         } catch (t: Throwable) {
             ErrorResult(t)
         }

@@ -33,9 +33,9 @@ internal class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         findPreference<Preference>("privacy_policy")?.setOnPreferenceClickListener {
             CustomTabsIntent.Builder()
-                    .setToolbarColor(requireContext().resolveThemeColor(R.attr.colorPrimaryVariant))
-                    .build()
-                    .launchUrl(requireContext(), getString(R.string.privacy_policy_url).toUri())
+                .setToolbarColor(requireContext().resolveThemeColor(R.attr.colorPrimaryVariant))
+                .build()
+                .launchUrl(requireContext(), getString(R.string.privacy_policy_url).toUri())
             true
         }
 
@@ -46,7 +46,7 @@ internal class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         findPreference<Preference>("version")?.apply {
             summary = getString(R.string.settings_app_version_summary,
-                    BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
+                BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
         }
     }
 }

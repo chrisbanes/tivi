@@ -43,7 +43,7 @@ class TraktWatchedShowsDataSource @Inject constructor(
 
     override suspend fun getWatchedShows(): Result<List<Pair<TiviShow, WatchedShowEntry>>> {
         return syncService.get().watchedShows(Extended.NOSEASONS)
-                .executeWithRetry()
-                .toResult(responseMapper)
+            .executeWithRetry()
+            .toResult(responseMapper)
     }
 }

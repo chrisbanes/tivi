@@ -35,7 +35,10 @@ class RelatedShowsStore @Inject constructor(
         return relatedShowsDao.entriesWithShowsObservable(showId)
     }
 
-    suspend fun saveRelatedShows(showId: Long, relatedShows: List<RelatedShowEntry>) = transactionRunner {
+    suspend fun saveRelatedShows(
+        showId: Long,
+        relatedShows: List<RelatedShowEntry>
+    ) = transactionRunner {
         relatedShowsDao.deleteWithShowId(showId)
         entityInserter.insertOrUpdate(relatedShowsDao, relatedShows)
     }

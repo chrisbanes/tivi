@@ -109,8 +109,8 @@ abstract class SubjectInteractor<P : Any, T> : ObservableInteractor<T> {
     protected abstract fun createObservable(params: P): Flow<T>
 
     override fun observe(): Flow<T> = channel.asFlow()
-            .distinctUntilChanged()
-            .flatMapLatest { createObservable(it) }
+        .distinctUntilChanged()
+        .flatMapLatest { createObservable(it) }
 }
 
 operator fun Interactor<Unit>.invoke() = invoke(Unit)

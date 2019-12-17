@@ -33,10 +33,10 @@ class EpisodeWatchStore @Inject constructor(
     private val logger: Logger
 ) {
     private val episodeWatchSyncer = syncerForEntity(
-            episodeWatchEntryDao,
-            { it.traktId },
-            { entity, id -> entity.copy(id = id ?: 0) },
-            logger
+        episodeWatchEntryDao,
+        { it.traktId },
+        { entity, id -> entity.copy(id = id ?: 0) },
+        logger
     )
 
     fun observeEpisodeWatches(episodeId: Long): Flow<List<EpisodeWatchEntry>> {
@@ -65,17 +65,26 @@ class EpisodeWatchStore @Inject constructor(
         return episodeWatchEntryDao.updateEntriesToPendingAction(ids, action.value)
     }
 
-    suspend fun addNewShowWatchEntries(showId: Long, watches: List<EpisodeWatchEntry>) = transactionRunner {
+    suspend fun addNewShowWatchEntries(
+        showId: Long,
+        watches: List<EpisodeWatchEntry>
+    ) = transactionRunner {
         val currentWatches = episodeWatchEntryDao.entriesForShowIdWithNoPendingAction(showId)
         episodeWatchSyncer.sync(currentWatches, watches, removeNotMatched = false)
     }
 
-    suspend fun syncShowWatchEntries(showId: Long, watches: List<EpisodeWatchEntry>) = transactionRunner {
+    suspend fun syncShowWatchEntries(
+        showId: Long,
+        watches: List<EpisodeWatchEntry>
+    ) = transactionRunner {
         val currentWatches = episodeWatchEntryDao.entriesForShowIdWithNoPendingAction(showId)
         episodeWatchSyncer.sync(currentWatches, watches)
     }
 
-    suspend fun syncEpisodeWatchEntries(episodeId: Long, watches: List<EpisodeWatchEntry>) = transactionRunner {
+    suspend fun syncEpisodeWatchEntries(
+        episodeId: Long,
+        watches: List<EpisodeWatchEntry>
+    ) = transactionRunner {
         val currentWatches = episodeWatchEntryDao.watchesForEpisode(episodeId)
         episodeWatchSyncer.sync(currentWatches, watches)
     }

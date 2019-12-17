@@ -43,7 +43,10 @@ class FollowedShowsRepository @Inject constructor(
     private val traktAuthState: Provider<TraktAuthState>,
     private val logger: Logger
 ) {
-    fun observeFollowedShows(sort: SortOption, filter: String? = null) = followedShowsStore.observeForPaging(sort, filter)
+    fun observeFollowedShows(
+        sort: SortOption,
+        filter: String? = null
+    ) = followedShowsStore.observeForPaging(sort, filter)
 
     fun observeShowViewStats(showId: Long) = followedShowsStore.observeShowViewStats(showId)
 
@@ -69,10 +72,10 @@ class FollowedShowsRepository @Inject constructor(
         if (entry == null || entry.pendingAction == PendingAction.DELETE) {
             // If we don't have an entry, or it is marked for deletion, lets update it to be uploaded
             val newEntry = FollowedShowEntry(
-                    id = entry?.id ?: 0,
-                    showId = showId,
-                    followedAt = entry?.followedAt ?: OffsetDateTime.now(),
-                    pendingAction = PendingAction.UPLOAD
+                id = entry?.id ?: 0,
+                showId = showId,
+                followedAt = entry?.followedAt ?: OffsetDateTime.now(),
+                pendingAction = PendingAction.UPLOAD
             )
             val newEntryId = followedShowsStore.save(newEntry)
 

@@ -42,9 +42,12 @@ class TraktPopularShowsDataSource @Inject constructor(
 
     private val resultsMapper = pairMapperOf(showMapper, entryMapper)
 
-    override suspend fun getPopularShows(page: Int, pageSize: Int): Result<List<Pair<TiviShow, PopularShowEntry>>> {
+    override suspend fun getPopularShows(
+        page: Int,
+        pageSize: Int
+    ): Result<List<Pair<TiviShow, PopularShowEntry>>> {
         return showService.get().popular(page + 1, pageSize, Extended.NOSEASONS)
-                .executeWithRetry()
-                .toResult(resultsMapper)
+            .executeWithRetry()
+            .toResult(resultsMapper)
     }
 }
