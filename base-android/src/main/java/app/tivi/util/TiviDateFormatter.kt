@@ -43,11 +43,7 @@ class TiviDateFormatter @Inject constructor(
 
     fun formatShortTime(localTime: LocalTime): String = shortTimeFormatter.format(localTime)
 
-    fun formatShortRelativeTime(dateTime: OffsetDateTime?): CharSequence? {
-        if (dateTime == null) {
-            return null
-        }
-
+    fun formatShortRelativeTime(dateTime: OffsetDateTime): String {
         val now = OffsetDateTime.now()
 
         return if (dateTime.isBefore(now)) {
@@ -57,7 +53,7 @@ class TiviDateFormatter @Inject constructor(
                     dateTime.toInstant().toEpochMilli(),
                     System.currentTimeMillis(),
                     DateUtils.MINUTE_IN_MILLIS,
-                    DateUtils.FORMAT_SHOW_DATE)
+                    DateUtils.FORMAT_SHOW_DATE).toString()
             } else {
                 // More than 7 days ago
                 formatShortDate(dateTime)
@@ -69,7 +65,7 @@ class TiviDateFormatter @Inject constructor(
                     dateTime.toInstant().toEpochMilli(),
                     System.currentTimeMillis(),
                     DateUtils.MINUTE_IN_MILLIS,
-                    DateUtils.FORMAT_SHOW_DATE)
+                    DateUtils.FORMAT_SHOW_DATE).toString()
             } else {
                 // In the far future
                 formatShortDate(dateTime)

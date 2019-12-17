@@ -16,17 +16,14 @@
 
 package app.tivi.episodedetails
 
-import android.text.format.DateFormat
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.compose.Composable
 import androidx.compose.ambient
 import androidx.compose.state
 import androidx.compose.unaryPlus
-import androidx.core.os.ConfigurationCompat
 import androidx.lifecycle.LiveData
 import androidx.ui.core.Alignment
-import androidx.ui.core.ContextAmbient
 import androidx.ui.core.Modifier
 import androidx.ui.core.Text
 import androidx.ui.core.dp
@@ -56,24 +53,27 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.episodedetails.compose.R
-import app.tivi.extensions.toThreeTenDateTimeFormatter
-import java.text.SimpleDateFormat
-import org.threeten.bp.ZoneId
-import org.threeten.bp.format.DateTimeFormatter
+import app.tivi.util.TiviDateFormatter
 
 /**
  * This is a bit of hack. I can't make `ui-episodedetails` depend on any of the compose libraries,
  * so I wrap `setContext` as my own function, which `ui-episodedetails` can use.
  */
-fun composeEpisodeDetails(viewGroup: ViewGroup, state: LiveData<EpisodeDetailsViewState>) {
+fun composeEpisodeDetails(
+    viewGroup: ViewGroup,
+    state: LiveData<EpisodeDetailsViewState>,
+    tiviDateFormatter: TiviDateFormatter
+) {
     viewGroup.setContent {
-        val viewState = +observe(state)
-        if (viewState != null) {
-            MaterialTheme(
-                    typography = themeTypography,
-                    colors = if (+isSystemInDarkTheme()) darkThemeColors else lightThemeColors
-            ) {
-                EpisodeDetails(viewState)
+        WrapInAmbients(tiviDateFormatter) {
+            val viewState = +observe(state)
+            if (viewState != null) {
+                MaterialTheme(
+                        typography = themeTypography,
+                        colors = if (+isSystemInDarkTheme()) darkThemeColors else lightThemeColors
+                ) {
+                    EpisodeDetails(viewState)
+                }
             }
         }
     }
@@ -139,22 +139,20 @@ private fun InfoPanes(episode: Episode) {
     Row(
             arrangement = Arrangement.SpaceAround
     ) {
-        InfoPane(
-                iconResId = R.drawable.ic_details_rating,
-                label = +stringResource(R.string.trakt_rating_text,
-                        (episode.traktRating ?: 0f) * 10f)
-        )
+        episode.traktRating?.let { rating ->
+            InfoPane(
+                    iconResId = R.drawable.ic_details_rating,
+                    label = +stringResource(R.string.trakt_rating_text, rating * 10f)
+            )
+        }
 
-        val context = +ambient(ContextAmbient)
-        val formatter = (DateFormat.getDateFormat(context) as SimpleDateFormat)
-                .toThreeTenDateTimeFormatter()
-                .withLocale(ConfigurationCompat.getLocales(context.resources.configuration)[0])
-                .withZone(ZoneId.systemDefault())
-
-        InfoPane(
-                iconResId = R.drawable.ic_details_date,
-                label = formatter.format(episode.firstAired)
-        )
+        episode.firstAired?.let { firstAired ->
+            val formatter = +ambient(TiviDateFormatterAmbient)
+            InfoPane(
+                    iconResId = R.drawable.ic_details_date,
+                    label = formatter.formatShortRelativeTime(firstAired)
+            )
+        }
     }
 }
 
@@ -164,7 +162,7 @@ private fun InfoPane(
     label: String
 ) {
     Column(
-            modifier = modifier wraps Spacing(all = 16.dp)
+            // modifier = modifier wraps Spacing(all = 16.dp)
     ) {
         VectorImage(
                 id = iconResId,
@@ -208,17 +206,10 @@ private fun Header() {
 private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
     Padding(padding = EdgeInsets(16.dp, 8.dp, 16.dp, 8.dp)) {
         Row {
-            val context = +ambient(ContextAmbient)
-            val dateF = DateFormat.getMediumDateFormat(context) as SimpleDateFormat
-            val timeF = DateFormat.getTimeFormat(context) as SimpleDateFormat
-
-            val formatter = DateTimeFormatter.ofPattern("${dateF.toPattern()} ${timeF.toPattern()}")
-                    .withLocale(ConfigurationCompat.getLocales(context.resources.configuration)[0])
-                    .withZone(ZoneId.systemDefault())
-
+            val formatter = +ambient(TiviDateFormatterAmbient)
             Text(
                     modifier = Flexible(1f),
-                    text = formatter.format(episodeWatchEntry.watchedAt),
+                    text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
                     style = (+MaterialTheme.typography()).body2.withOpacity(0.87f)
             )
 

@@ -65,11 +65,11 @@ internal class ShowDetailsTextCreator @Inject constructor(
             text.append(context.getString(R.string.season_summary_to_air, toAir))
 
             val nextToAir = season.nextToAir
-            if (nextToAir != null) {
+            if (nextToAir?.firstAired != null) {
                 text.append(". ")
                 text.append(context.getString(
                     R.string.next_prefix,
-                    tiviDateFormatter.formatShortRelativeTime(nextToAir.firstAired)
+                    tiviDateFormatter.formatShortRelativeTime(nextToAir.firstAired!!)
                 ))
             }
         }

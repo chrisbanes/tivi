@@ -24,6 +24,7 @@ import android.view.ViewGroup.LayoutParams
 import android.widget.FrameLayout
 import androidx.core.os.bundleOf
 import app.tivi.TiviFragment
+import app.tivi.util.TiviDateFormatter
 import com.airbnb.mvrx.fragmentViewModel
 import javax.inject.Inject
 
@@ -39,6 +40,10 @@ class EpisodeDetailsFragment : TiviFragment(), EpisodeDetailsViewModel.FactoryPr
 
     private val viewModel: EpisodeDetailsViewModel by fragmentViewModel()
 
+    @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
+    @Inject internal lateinit var episodeDetailsViewModelFactory: EpisodeDetailsViewModel.Factory
+    @Inject internal lateinit var textCreator: EpisodeDetailsTextCreator
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -46,12 +51,9 @@ class EpisodeDetailsFragment : TiviFragment(), EpisodeDetailsViewModel.FactoryPr
     ): View? {
         return FrameLayout(requireContext()).apply {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-            composeEpisodeDetails(this, viewModel.observeAsLiveData())
+            composeEpisodeDetails(this, viewModel.observeAsLiveData(), tiviDateFormatter)
         }
     }
-
-    @Inject internal lateinit var episodeDetailsViewModelFactory: EpisodeDetailsViewModel.Factory
-    @Inject internal lateinit var textCreator: EpisodeDetailsTextCreator
 
     override fun invalidate() = Unit
 
