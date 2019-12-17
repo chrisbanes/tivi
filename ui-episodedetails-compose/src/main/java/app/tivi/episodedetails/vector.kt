@@ -28,11 +28,15 @@ import androidx.ui.layout.Size
 import androidx.ui.res.vectorResource
 
 @Composable
-fun VectorImage(modifier: Modifier = Modifier.None, @DrawableRes id: Int, tint: Color = Color.Transparent) {
+fun VectorImage(
+    modifier: Modifier = Modifier.None,
+    @DrawableRes id: Int,
+    tint: Color = Color.Transparent
+) {
     val vector = +vectorResource(id)
     WithDensity {
         Container(
-                modifier = modifier wraps Size(vector.defaultWidth.toDp(), vector.defaultHeight.toDp())
+            modifier = modifier wraps Size(vector.defaultWidth.toDp(), vector.defaultHeight.toDp())
         ) {
             DrawVector(vector, tint)
         }

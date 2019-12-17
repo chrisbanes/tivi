@@ -162,7 +162,7 @@ private fun InfoPane(
     label: String
 ) {
     Column(
-            // modifier = modifier wraps Spacing(all = 16.dp)
+            modifier = modifier wraps Spacing(all = 16.dp)
     ) {
         VectorImage(
                 id = iconResId,

@@ -30,8 +30,8 @@ fun WrapInAmbients(
     content: @Composable() () -> Unit
 ) {
     listOf<AmbientProvider>(
-            { children ->
-                TiviDateFormatterAmbient.Provider(value = tiviDateFormatter, children = children)
-            }
+        { children ->
+            TiviDateFormatterAmbient.Provider(value = tiviDateFormatter, children = children)
+        }
     ).fold(content, { current, ambient -> { ambient(current) } }).invoke()
 }

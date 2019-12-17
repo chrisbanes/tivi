@@ -40,9 +40,9 @@ fun GradientScrim(baseColor: Color, numStops: Int = 16) {
         }
 
         paint.shader = LinearGradientShader(
-                Offset.zero,
-                Offset(0f, parentSize.height.value),
-                colors
+            Offset.zero,
+            Offset(0f, parentSize.height.value),
+            colors
         )
 
         canvas.drawRect(parentSize.toRect(), paint)
