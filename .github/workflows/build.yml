@@ -15,9 +15,7 @@ jobs:
       ORG_GRADLE_PROJECT_TIVI_RELEASE_KEY_PWD: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_RELEASE_KEY_PWD }}
       ORG_GRADLE_PROJECT_TIVI_PLAY_PUBLISHER_ACCOUNT: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_PLAY_PUBLISHER_ACCOUNT }}
     steps:
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
+      - uses: actions/checkout@v2
       - name: set up JDK 1.8
         uses: actions/setup-java@v1
         with:
