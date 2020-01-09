@@ -31,26 +31,12 @@ jobs:
       - name: Copy CI gradle.properties
         run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@v1.1.0
         with:
-          path: ~/.gradle/caches/modules-2
-          key: ${{ runner.os }}-gradlemodules-${{ hashFiles('checksum.txt') }}
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
           restore-keys: |
-            ${{ runner.os }}-gradlemodules-
-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches/jars-3
-          key: ${{ runner.os }}-gradlejars-${{ hashFiles('checksum.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-gradlejars-
-
-      - uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches/build-cache-1
-          key: ${{ runner.os }}-gradlebuildcache-${{ hashFiles('checksum.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-gradlebuildcache-
+            ${{ runner.os }}-gradle-
 
       - name: Generate build number
         id: buildnumber
