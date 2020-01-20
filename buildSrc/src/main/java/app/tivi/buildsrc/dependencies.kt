@@ -21,7 +21,7 @@ object Versions {
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:3.6.0-beta05"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:4.0.0-alpha08"
     const val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:1.0.0"
     const val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.6.1"
 
@@ -68,7 +68,7 @@ object Libs {
     }
 
     object Kotlin {
-        private const val version = "1.3.60"
+        private const val version = "1.3.61"
         const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         const val reflect = "org.jetbrains.kotlin:kotlin-reflect:$version"
         const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
