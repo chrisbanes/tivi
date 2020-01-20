@@ -29,31 +29,36 @@ import kotlin.math.roundToLong
 
 private val fastOutSlowInInterpolator = FastOutSlowInInterpolator()
 
-fun saturateDrawableAnimator(current: Drawable, view: View): Animator {
+fun saturateDrawableAnimator(
+    current: Drawable,
+    duration: Long = SATURATION_ANIMATION_DURATION,
+    view: View? = null
+): Animator {
     current.mutate()
-    view.setHasTransientState(true)
+    view?.setHasTransientState(true)
+
     val cm = ImageLoadingColorMatrix()
 
     val satAnim = ObjectAnimator.ofFloat(cm, ImageLoadingColorMatrix.PROP_SATURATION, 0f, 1f)
-    satAnim.duration = SATURATION_ANIMATION_DURATION
+    satAnim.duration = duration
     satAnim.addUpdateListener {
         current.colorFilter = ColorMatrixColorFilter(cm)
     }
 
     val alphaAnim = ObjectAnimator.ofFloat(cm, ImageLoadingColorMatrix.PROP_ALPHA, 0f, 1f)
-    alphaAnim.duration = SATURATION_ANIMATION_DURATION / 2
+    alphaAnim.duration = duration / 2
 
     val darkenAnim = ObjectAnimator.ofFloat(cm, ImageLoadingColorMatrix.PROP_BRIGHTNESS, 0.8f, 1f)
-    darkenAnim.duration = (SATURATION_ANIMATION_DURATION * 0.75f).roundToLong()
+    darkenAnim.duration = (duration * 0.75f).roundToLong()
 
     return AnimatorSet().apply {
         playTogether(satAnim, alphaAnim, darkenAnim)
         interpolator = fastOutSlowInInterpolator
         doOnEnd {
             current.clearColorFilter()
-            view.setHasTransientState(false)
+            view?.setHasTransientState(false)
         }
     }
 }
 
-private const val SATURATION_ANIMATION_DURATION = 1000L
+const val SATURATION_ANIMATION_DURATION = 1000L

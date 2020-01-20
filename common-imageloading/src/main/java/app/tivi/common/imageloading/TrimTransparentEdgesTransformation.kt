@@ -21,15 +21,16 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import androidx.core.graphics.alpha
 import coil.bitmappool.BitmapPool
+import coil.size.Size
 import coil.transform.Transformation
 
 /**
  * A [Transformation] that trims transparent edges from an image.
  */
-class TrimTransparentEdgesTransformation : Transformation {
+object TrimTransparentEdgesTransformation : Transformation {
     override fun key(): String = TrimTransparentEdgesTransformation::class.java.name
 
-    override suspend fun transform(pool: BitmapPool, input: Bitmap): Bitmap {
+    override suspend fun transform(pool: BitmapPool, input: Bitmap, size: Size): Bitmap {
         val inputWidth = input.width
         val inputHeight = input.height
 
@@ -85,13 +86,17 @@ class TrimTransparentEdgesTransformation : Transformation {
             return input
         }
 
-        val bitmap = pool.get(1 + lastX - firstX, 1 + lastY - firstY, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
+        val output = pool.get(1 + lastX - firstX, 1 + lastY - firstY, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
 
-        val src = Rect(firstX, firstY, firstX + bitmap.width, firstY + bitmap.height)
-        val dst = Rect(0, 0, bitmap.width, bitmap.height)
+        val src = Rect(firstX, firstY, firstX + output.width, firstY + output.height)
+        val dst = Rect(0, 0, output.width, output.height)
 
         canvas.drawBitmap(input, src, dst, null)
-        return bitmap
+
+        // Put the original bitmap in the pool
+        pool.put(input)
+
+        return output
     }
 }
