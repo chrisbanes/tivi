@@ -18,11 +18,10 @@ package app.tivi.episodedetails
 
 import android.graphics.Bitmap
 import android.os.Build
-import androidx.annotation.CheckResult
 import androidx.annotation.RequiresApi
-import androidx.compose.effectOf
-import androidx.compose.memo
+import androidx.compose.Composable
 import androidx.compose.onCommit
+import androidx.compose.remember
 import androidx.compose.state
 import androidx.core.graphics.drawable.toBitmap
 import androidx.ui.graphics.Image
@@ -40,25 +39,25 @@ import kotlinx.coroutines.launch
 /**
  * A simple [image] effect, which loads [data] with the default options.
  */
-@CheckResult(suggest = "+")
-fun image(data: Any) = effectOf<Image?> {
+@Composable
+fun image(data: Any): Image? {
     // Positionally memoize the request creation so
     // it will only be recreated if data changes.
-    val request = +memo(data) {
+    val request = remember(data) {
         Coil.loader().newGetBuilder().data(data).build()
     }
-    +image(request)
+    return image(request)
 }
 
 /**
  * A configurable [image] effect, which accepts a [request] value object.
  */
-@CheckResult(suggest = "+")
-fun image(request: GetRequest) = effectOf<Image?> {
-    val image = +state<Image?> { null }
+@Composable
+fun image(request: GetRequest): Image? {
+    val image = state<Image?> { null }
 
     // Execute the following code whenever the request changes.
-    +onCommit(request) {
+    onCommit(request) {
         val job = CoroutineScope(Dispatchers.Main.immediate).launch {
             // Start loading the image and await the result.
             val drawable = Coil.loader().get(request)
@@ -71,7 +70,7 @@ fun image(request: GetRequest) = effectOf<Image?> {
     }
 
     // Emit a null Image to start with.
-    image.value
+    return image.value
 }
 
 /**

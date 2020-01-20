@@ -17,8 +17,7 @@
 package app.tivi.episodedetails
 
 import androidx.compose.Composable
-import androidx.compose.memo
-import androidx.compose.unaryPlus
+import androidx.compose.remember
 import androidx.ui.core.Draw
 import androidx.ui.core.toRect
 import androidx.ui.engine.geometry.Offset
@@ -29,7 +28,7 @@ import kotlin.math.pow
 
 @Composable
 fun GradientScrim(baseColor: Color, numStops: Int = 16) {
-    val paint = +memo { Paint() }
+    val paint = remember { Paint() }
 
     Draw { canvas, parentSize ->
         val alpha = baseColor.alpha

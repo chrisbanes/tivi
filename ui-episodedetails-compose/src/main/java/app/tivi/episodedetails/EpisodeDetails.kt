@@ -21,9 +21,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.Composable
 import androidx.compose.ambient
 import androidx.compose.state
-import androidx.compose.unaryPlus
 import androidx.lifecycle.LiveData
-import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.core.Text
 import androidx.ui.core.dp
@@ -33,18 +31,23 @@ import androidx.ui.foundation.DrawImage
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.isSystemInDarkTheme
 import androidx.ui.layout.Arrangement
-import androidx.ui.layout.AspectRatio
 import androidx.ui.layout.Column
+import androidx.ui.layout.Container
 import androidx.ui.layout.EdgeInsets
-import androidx.ui.layout.HeightSpacer
+import androidx.ui.layout.LayoutAlign
+import androidx.ui.layout.LayoutAspectRatio
+import androidx.ui.layout.LayoutGravity
+import androidx.ui.layout.LayoutHeight
+import androidx.ui.layout.LayoutPadding
 import androidx.ui.layout.Padding
 import androidx.ui.layout.Row
-import androidx.ui.layout.Spacing
+import androidx.ui.layout.Spacer
 import androidx.ui.layout.Stack
+import androidx.ui.material.EmphasisLevels
 import androidx.ui.material.MaterialTheme
+import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.ripple.Ripple
 import androidx.ui.material.surface.Surface
-import androidx.ui.material.withOpacity
 import androidx.ui.res.stringResource
 import androidx.ui.text.style.TextOverflow
 import androidx.ui.tooling.preview.Preview
@@ -66,11 +69,11 @@ fun composeEpisodeDetails(
 ) {
     viewGroup.setContent {
         WrapInAmbients(tiviDateFormatter) {
-            val viewState = +observe(state)
+            val viewState = observe(state)
             if (viewState != null) {
                 MaterialTheme(
-                        typography = themeTypography,
-                        colors = if (+isSystemInDarkTheme()) darkThemeColors else lightThemeColors
+                    typography = themeTypography,
+                    colors = if (isSystemInDarkTheme()) darkThemeColors else lightThemeColors
                 ) {
                     EpisodeDetails(viewState)
                 }
@@ -85,7 +88,7 @@ private fun EpisodeDetails(viewState: EpisodeDetailsViewState) {
         viewState.episode?.let {
             Backdrop(episode = it)
         }
-        VerticalScroller(modifier = Flexible(1f)) {
+        VerticalScroller(modifier = LayoutFlexible(1f)) {
             Column {
                 val episode = viewState.episode
                 if (episode != null) {
@@ -108,49 +111,51 @@ private fun EpisodeDetails(viewState: EpisodeDetailsViewState) {
 @Composable
 private fun Backdrop(episode: Episode) {
     Surface(
-            color = (+MaterialTheme.colors()).onSurface.copy(alpha = 0.1f),
-            modifier = AspectRatio(16 / 9f)
+        color = MaterialTheme.colors().onSurface.copy(alpha = 0.1f),
+        modifier = LayoutAspectRatio(16f / 9)
     ) {
         Stack {
-            expanded {
-                if (episode.tmdbBackdropPath != null) {
-                    val image = +image(episode)
-                    if (image != null) {
+            if (episode.tmdbBackdropPath != null) {
+                val image = image(episode)
+                if (image != null) {
+                    Container(modifier = LayoutGravity.Stretch) {
                         DrawImage(image = image)
                     }
                 }
             }
-            expanded {
+
+            Container(modifier = LayoutGravity.Stretch) {
                 GradientScrim(baseColor = darkThemeColors.background)
             }
-            aligned(Alignment.BottomLeft) {
-                val type = +MaterialTheme.typography()
-                Text(
-                        text = episode.title ?: "No title",
-                        style = type.h6.copy(color = darkThemeColors.onSurface),
-                        modifier = Spacing(all = 16.dp)
-                )
-            }
+
+            val type = MaterialTheme.typography()
+            Text(
+                text = episode.title ?: "No title",
+                style = type.h6.copy(color = darkThemeColors.onSurface),
+                modifier = LayoutPadding(all = 16.dp) + LayoutGravity.BottomLeft
+            )
         }
     }
 }
 
 private fun InfoPanes(episode: Episode) {
     Row(
-            arrangement = Arrangement.SpaceAround
+        arrangement = Arrangement.SpaceEvenly
     ) {
         episode.traktRating?.let { rating ->
             InfoPane(
-                    iconResId = R.drawable.ic_details_rating,
-                    label = +stringResource(R.string.trakt_rating_text, rating * 10f)
+                modifier = LayoutFlexible(1f),
+                iconResId = R.drawable.ic_details_rating,
+                label = stringResource(R.string.trakt_rating_text, rating * 10f)
             )
         }
 
         episode.firstAired?.let { firstAired ->
-            val formatter = +ambient(TiviDateFormatterAmbient)
+            val formatter = ambient(TiviDateFormatterAmbient)
             InfoPane(
-                    iconResId = R.drawable.ic_details_date,
-                    label = formatter.formatShortRelativeTime(firstAired)
+                modifier = LayoutFlexible(1f),
+                iconResId = R.drawable.ic_details_date,
+                label = formatter.formatShortRelativeTime(firstAired)
             )
         }
     }
@@ -162,17 +167,23 @@ private fun InfoPane(
     label: String
 ) {
     Column(
-            modifier = modifier wraps Spacing(all = 16.dp)
+        modifier = modifier + LayoutPadding(all = 16.dp)
     ) {
         VectorImage(
-                id = iconResId,
-                tint = (+MaterialTheme.colors()).onSurface.copy(alpha = 0.7f)
+            modifier = LayoutAlign.CenterHorizontally,
+            id = iconResId,
+            tint = MaterialTheme.colors().onSurface.copy(alpha = 0.7f)
         )
-        HeightSpacer(height = 4.dp)
-        Text(
+
+        Spacer(modifier = LayoutHeight(4.dp))
+
+        ProvideEmphasis(emphasis = EmphasisLevels().high) {
+            Text(
+                modifier = LayoutAlign.CenterHorizontally,
                 text = label,
-                style = (+MaterialTheme.typography()).body1.withOpacity(0.87f)
-        )
+                style = MaterialTheme.typography().body1
+            )
+        }
     }
 }
 
@@ -180,14 +191,16 @@ private fun Summary(episode: Episode) {
     Surface {
         Ripple(bounded = false) {
             Padding(padding = EdgeInsets(16.dp)) {
-                val expanded = +state { false }
+                val expanded = state { false }
                 Clickable(onClick = { expanded.value = !expanded.value }) {
-                    Text(
+                    ProvideEmphasis(emphasis = EmphasisLevels().high) {
+                        Text(
                             text = episode.summary ?: "No summary",
-                            style = (+MaterialTheme.typography()).body2.withOpacity(0.87f),
-                            maxLines = if (expanded.value) null else 4,
-                            overflow = TextOverflow.Ellipsis
-                    )
+                            style = MaterialTheme.typography().body2,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = if (expanded.value) Int.MAX_VALUE else 4
+                        )
+                    }
                 }
             }
         }
@@ -196,37 +209,41 @@ private fun Summary(episode: Episode) {
 
 private fun Header() {
     Padding(padding = EdgeInsets(16.dp, 8.dp, 16.dp, 8.dp)) {
-        Text(
-                text = +stringResource(R.string.episode_watches),
-                style = (+MaterialTheme.typography()).subtitle1.withOpacity(0.87f)
-        )
+        ProvideEmphasis(emphasis = EmphasisLevels().medium) {
+            Text(
+                text = stringResource(R.string.episode_watches),
+                style = MaterialTheme.typography().subtitle1
+            )
+        }
     }
 }
 
 private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
     Padding(padding = EdgeInsets(16.dp, 8.dp, 16.dp, 8.dp)) {
         Row {
-            val formatter = +ambient(TiviDateFormatterAmbient)
-            Text(
-                    modifier = Flexible(1f),
+            val formatter = ambient(TiviDateFormatterAmbient)
+            ProvideEmphasis(emphasis = EmphasisLevels().medium) {
+                Text(
+                    modifier = LayoutFlexible(1f),
                     text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
-                    style = (+MaterialTheme.typography()).body2.withOpacity(0.87f)
-            )
+                    style = MaterialTheme.typography().body2
+                )
+            }
 
             if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
                 VectorImage(
-                        id = R.drawable.ic_upload_24dp,
-                        tint = (+MaterialTheme.colors()).onSurface.copy(alpha = 0.7f),
-                        modifier = Spacing(left = 8.dp)
+                    id = R.drawable.ic_upload_24dp,
+                    tint = MaterialTheme.colors().onSurface.copy(alpha = 0.7f),
+                    modifier = LayoutPadding(left = 8.dp)
                 )
             }
             VectorImage(
-                    id = when (episodeWatchEntry.pendingAction) {
-                        PendingAction.DELETE -> R.drawable.ic_eye_off_24dp
-                        else -> R.drawable.ic_eye_24dp
-                    },
-                    tint = (+MaterialTheme.colors()).onSurface.copy(alpha = 0.7f),
-                    modifier = Spacing(left = 8.dp)
+                id = when (episodeWatchEntry.pendingAction) {
+                    PendingAction.DELETE -> R.drawable.ic_eye_off_24dp
+                    else -> R.drawable.ic_eye_24dp
+                },
+                tint = MaterialTheme.colors().onSurface.copy(alpha = 0.7f),
+                modifier = LayoutPadding(left = 8.dp)
             )
         }
     }
@@ -234,7 +251,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
 
 @Preview
 @Composable
-private fun previewEpisodeDetails() {
+fun previewEpisodeDetails() {
     EpisodeDetails(
             viewState = EpisodeDetailsViewState(
                     episodeId = 0,

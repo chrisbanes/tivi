@@ -16,23 +16,22 @@
 
 package app.tivi.episodedetails
 
-import androidx.compose.effectOf
-import androidx.compose.memo
+import androidx.compose.Composable
 import androidx.compose.onCommit
+import androidx.compose.remember
 import androidx.compose.state
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 
-// general purpose observe effect. this will likely be provided by LiveData. effect API for
-// compose will also simplify soon.
-fun <T> observe(data: LiveData<T>) = effectOf<T?> {
-    val result = +state { data.value }
-    val observer = +memo { Observer<T> { result.value = it } }
+@Composable
+fun <T> observe(data: LiveData<T>): T? {
+    val result = state { data.value }
+    val observer = remember { Observer<T> { result.value = it } }
 
-    +onCommit(data) {
+    onCommit(data) {
         data.observeForever(observer)
         onDispose { data.removeObserver(observer) }
     }
 
-    result.value
+    return result.value
 }
