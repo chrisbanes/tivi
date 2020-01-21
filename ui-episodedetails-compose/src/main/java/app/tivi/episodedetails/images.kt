@@ -19,59 +19,11 @@ package app.tivi.episodedetails
 import android.graphics.Bitmap
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.Composable
-import androidx.compose.onCommit
-import androidx.compose.remember
-import androidx.compose.state
-import androidx.core.graphics.drawable.toBitmap
 import androidx.ui.graphics.Image
 import androidx.ui.graphics.ImageConfig
 import androidx.ui.graphics.NativeImage
 import androidx.ui.graphics.colorspace.ColorSpace
 import androidx.ui.graphics.colorspace.ColorSpaces
-import coil.Coil
-import coil.api.newGetBuilder
-import coil.request.GetRequest
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-
-/**
- * A simple [image] effect, which loads [data] with the default options.
- */
-@Composable
-fun image(data: Any): Image? {
-    // Positionally memoize the request creation so
-    // it will only be recreated if data changes.
-    val request = remember(data) {
-        Coil.loader().newGetBuilder().data(data).build()
-    }
-    return image(request)
-}
-
-/**
- * A configurable [image] effect, which accepts a [request] value object.
- */
-@Composable
-fun image(request: GetRequest): Image? {
-    val image = state<Image?> { null }
-
-    // Execute the following code whenever the request changes.
-    onCommit(request) {
-        val job = CoroutineScope(Dispatchers.Main.immediate).launch {
-            // Start loading the image and await the result.
-            val drawable = Coil.loader().get(request)
-            image.value = AndroidImage(drawable.toBitmap())
-        }
-
-        // Cancel the request if the input to onCommit changes or
-        // the Composition is removed from the composition tree.
-        onDispose { job.cancel() }
-    }
-
-    // Emit a null Image to start with.
-    return image.value
-}
 
 /**
  * This is copied from the Compose source

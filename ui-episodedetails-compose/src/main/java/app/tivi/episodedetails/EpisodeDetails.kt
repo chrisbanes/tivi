@@ -138,6 +138,7 @@ private fun Backdrop(episode: Episode) {
     }
 }
 
+@Composable
 private fun InfoPanes(episode: Episode) {
     Row(
         arrangement = Arrangement.SpaceEvenly
@@ -161,6 +162,7 @@ private fun InfoPanes(episode: Episode) {
     }
 }
 
+@Composable
 private fun InfoPane(
     modifier: Modifier = Modifier.None,
     @DrawableRes iconResId: Int,
@@ -187,6 +189,7 @@ private fun InfoPane(
     }
 }
 
+@Composable
 private fun Summary(episode: Episode) {
     Surface {
         Ripple(bounded = false) {
@@ -207,9 +210,10 @@ private fun Summary(episode: Episode) {
     }
 }
 
+@Composable
 private fun Header() {
     Padding(padding = EdgeInsets(16.dp, 8.dp, 16.dp, 8.dp)) {
-        ProvideEmphasis(emphasis = EmphasisLevels().medium) {
+        ProvideEmphasis(emphasis = EmphasisLevels().high) {
             Text(
                 text = stringResource(R.string.episode_watches),
                 style = MaterialTheme.typography().subtitle1
@@ -218,11 +222,12 @@ private fun Header() {
     }
 }
 
+@Composable
 private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
     Padding(padding = EdgeInsets(16.dp, 8.dp, 16.dp, 8.dp)) {
         Row {
             val formatter = ambient(TiviDateFormatterAmbient)
-            ProvideEmphasis(emphasis = EmphasisLevels().medium) {
+            ProvideEmphasis(emphasis = EmphasisLevels().high) {
                 Text(
                     modifier = LayoutFlexible(1f),
                     text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
@@ -251,18 +256,16 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
 
 @Preview
 @Composable
-fun previewEpisodeDetails() {
-    EpisodeDetails(
-            viewState = EpisodeDetailsViewState(
-                    episodeId = 0,
-                    episode = Episode(
-                            seasonId = 100,
-                            title = "A show too far"
-                    ),
-                    season = Season(
-                            id = 100,
-                            showId = 0
-                    )
-            )
-    )
-}
+fun previewEpisodeDetails() = EpisodeDetails(
+        viewState = EpisodeDetailsViewState(
+                episodeId = 0,
+                episode = Episode(
+                        seasonId = 100,
+                        title = "A show too far"
+                ),
+                season = Season(
+                        id = 100,
+                        showId = 0
+                )
+        )
+)
