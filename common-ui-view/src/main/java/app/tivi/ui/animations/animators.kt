@@ -21,6 +21,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.drawable.Drawable
+import android.util.Property
 import android.view.View
 import androidx.core.animation.doOnEnd
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
@@ -34,16 +35,16 @@ fun saturateDrawableAnimator(current: Drawable, view: View): Animator {
     view.setHasTransientState(true)
     val cm = ImageLoadingColorMatrix()
 
-    val satAnim = ObjectAnimator.ofFloat(cm, ImageLoadingColorMatrix.PROP_SATURATION, 0f, 1f)
+    val satAnim = ObjectAnimator.ofFloat(cm, PROP_SATURATION, 0f, 1f)
     satAnim.duration = SATURATION_ANIMATION_DURATION
     satAnim.addUpdateListener {
         current.colorFilter = ColorMatrixColorFilter(cm)
     }
 
-    val alphaAnim = ObjectAnimator.ofFloat(cm, ImageLoadingColorMatrix.PROP_ALPHA, 0f, 1f)
+    val alphaAnim = ObjectAnimator.ofFloat(cm, PROP_ALPHA, 0f, 1f)
     alphaAnim.duration = SATURATION_ANIMATION_DURATION / 2
 
-    val darkenAnim = ObjectAnimator.ofFloat(cm, ImageLoadingColorMatrix.PROP_BRIGHTNESS, 0.8f, 1f)
+    val darkenAnim = ObjectAnimator.ofFloat(cm, PROP_BRIGHTNESS, 0.8f, 1f)
     darkenAnim.duration = (SATURATION_ANIMATION_DURATION * 0.75f).roundToLong()
 
     return AnimatorSet().apply {
@@ -57,3 +58,28 @@ fun saturateDrawableAnimator(current: Drawable, view: View): Animator {
 }
 
 private const val SATURATION_ANIMATION_DURATION = 1000L
+
+private val saturationFloatProp: FloatProp<ImageLoadingColorMatrix> = object : FloatProp<ImageLoadingColorMatrix>("saturation") {
+    override operator fun get(o: ImageLoadingColorMatrix): Float = o.saturationFraction
+    override operator fun set(o: ImageLoadingColorMatrix, value: Float) {
+        o.saturationFraction = value
+    }
+}
+
+private val alphaFloatProp: FloatProp<ImageLoadingColorMatrix> = object : FloatProp<ImageLoadingColorMatrix>("alpha") {
+    override operator fun get(o: ImageLoadingColorMatrix): Float = o.alphaFraction
+    override operator fun set(o: ImageLoadingColorMatrix, value: Float) {
+        o.alphaFraction = value
+    }
+}
+
+private val brightnessFloatProp: FloatProp<ImageLoadingColorMatrix> = object : FloatProp<ImageLoadingColorMatrix>("darken") {
+    override operator fun get(o: ImageLoadingColorMatrix): Float = o.brightnessFraction
+    override operator fun set(o: ImageLoadingColorMatrix, value: Float) {
+        o.brightnessFraction = value
+    }
+}
+
+private val PROP_SATURATION: Property<ImageLoadingColorMatrix, Float> = createFloatProperty(saturationFloatProp)
+private val PROP_ALPHA: Property<ImageLoadingColorMatrix, Float> = createFloatProperty(alphaFloatProp)
+private val PROP_BRIGHTNESS: Property<ImageLoadingColorMatrix, Float> = createFloatProperty(brightnessFloatProp)

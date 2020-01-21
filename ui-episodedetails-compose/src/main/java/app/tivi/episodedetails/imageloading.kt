@@ -16,37 +16,106 @@
 
 package app.tivi.episodedetails
 
+import android.graphics.ColorMatrixColorFilter
+import androidx.animation.FloatPropKey
+import androidx.animation.transitionDefinition
 import androidx.compose.Composable
 import androidx.compose.onCommit
 import androidx.compose.remember
 import androidx.compose.state
 import androidx.core.graphics.drawable.toBitmap
+import androidx.ui.animation.Transition
+import androidx.ui.core.Modifier
 import androidx.ui.graphics.Image
+import androidx.ui.layout.Container
+import app.tivi.ui.graphics.ImageLoadingColorMatrix
 import coil.Coil
 import coil.api.newGetBuilder
 import coil.request.GetRequest
+import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-/**
- * A simple [image] effect, which loads [data] with the default options.
- */
-@Composable
-fun image(data: Any): Image? {
-    // Positionally memoize the request creation so
-    // it will only be recreated if data changes.
-    val request = remember(data) {
-        Coil.loader().newGetBuilder().data(data).build()
+private enum class ImageLoadState {
+    Loaded,
+    Empty
+}
+
+private val alpha = FloatPropKey()
+private val brightness = FloatPropKey()
+private val saturation = FloatPropKey()
+
+private const val transitionDuration = 1000
+
+private val imageSaturationTransitionDef = transitionDefinition {
+    state(ImageLoadState.Empty) {
+        this[alpha] = 0f
+        this[brightness] = 0.8f
+        this[saturation] = 0f
     }
-    return image(request)
+    state(ImageLoadState.Loaded) {
+        this[alpha] = 1f
+        this[brightness] = 1f
+        this[saturation] = 1f
+    }
+
+    transition {
+        alpha using tween {
+            duration = transitionDuration / 2
+        }
+        brightness using tween {
+            duration = (transitionDuration * 0.75f).roundToInt()
+        }
+        saturation using tween {
+            duration = transitionDuration
+        }
+    }
+}
+
+@Composable
+fun LoadAndShowImage(
+    modifier: Modifier = Modifier.None,
+    data: Any
+) {
+    val imgLoadState = state { ImageLoadState.Empty }
+    val image = LoadImage(data) {
+        // Once loaded, update the load state
+        imgLoadState.value = ImageLoadState.Loaded
+    }
+
+    Transition(
+        definition = imageSaturationTransitionDef,
+        toState = imgLoadState.value
+    ) { transitionState ->
+        Container(modifier = modifier) {
+            if (image != null) {
+                DrawImage(image = image) { paint ->
+                    val matrix = remember(image) { ImageLoadingColorMatrix() }
+                    // Update the ImageLoadingColorMatrix from the transition state
+                    matrix.saturationFraction = transitionState[saturation]
+                    matrix.alphaFraction = transitionState[alpha]
+                    matrix.brightnessFraction = transitionState[brightness]
+
+                    // We have to unwrap to the framework paint instance to use
+                    // a ColorMatrixColorFilter, for our ImageLoadingColorMatrix
+                    paint.asFrameworkPaint().colorFilter = ColorMatrixColorFilter(matrix)
+
+                    // TODO clear ColorFilter on paint once the transition has finished
+                }
+            }
+        }
+    }
 }
 
 /**
- * A configurable [image] effect, which accepts a [request] value object.
+ * A configurable [LoadImage] composable, which accepts a Coil [request] object.
  */
 @Composable
-fun image(request: GetRequest): Image? {
+fun LoadImage(
+    request: GetRequest,
+    onLoad: () -> Unit
+): Image? {
     val image = state<Image?> { null }
 
     // Execute the following code whenever the request changes.
@@ -55,6 +124,7 @@ fun image(request: GetRequest): Image? {
             // Start loading the image and await the result.
             val drawable = Coil.loader().get(request)
             image.value = AndroidImage(drawable.toBitmap())
+            onLoad()
         }
 
         // Cancel the request if the input to onCommit changes or
@@ -64,4 +134,20 @@ fun image(request: GetRequest): Image? {
 
     // Emit a null Image to start with.
     return image.value
+}
+
+/**
+ * A simple [LoadImage] composable, which loads [data] with the default options.
+ */
+@Composable
+fun LoadImage(
+    data: Any,
+    onLoad: () -> Unit
+): Image? {
+    // Positionally memoize the request creation so
+    // it will only be recreated if data changes.
+    val request = remember(data) {
+        Coil.loader().newGetBuilder().data(data).build()
+    }
+    return LoadImage(request, onLoad)
 }

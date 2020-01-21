@@ -17,9 +17,6 @@
 package app.tivi.ui.graphics
 
 import android.graphics.ColorMatrix
-import android.util.Property
-import app.tivi.ui.animations.FloatProp
-import app.tivi.ui.animations.createFloatProperty
 
 /**
  * An extension to [ColorMatrix] which implements the Material image loading pattern
@@ -79,31 +76,4 @@ class ImageLoadingColorMatrix : ColorMatrix() {
             }
             field = value
         }
-
-    companion object {
-        private val saturationFloatProp: FloatProp<ImageLoadingColorMatrix> = object : FloatProp<ImageLoadingColorMatrix>("saturation") {
-            override operator fun get(o: ImageLoadingColorMatrix): Float = o.saturationFraction
-            override operator fun set(o: ImageLoadingColorMatrix, value: Float) {
-                o.saturationFraction = value
-            }
-        }
-
-        private val alphaFloatProp: FloatProp<ImageLoadingColorMatrix> = object : FloatProp<ImageLoadingColorMatrix>("alpha") {
-            override operator fun get(o: ImageLoadingColorMatrix): Float = o.alphaFraction
-            override operator fun set(o: ImageLoadingColorMatrix, value: Float) {
-                o.alphaFraction = value
-            }
-        }
-
-        private val brightnessFloatProp: FloatProp<ImageLoadingColorMatrix> = object : FloatProp<ImageLoadingColorMatrix>("darken") {
-            override operator fun get(o: ImageLoadingColorMatrix): Float = o.brightnessFraction
-            override operator fun set(o: ImageLoadingColorMatrix, value: Float) {
-                o.brightnessFraction = value
-            }
-        }
-
-        val PROP_SATURATION: Property<ImageLoadingColorMatrix, Float> = createFloatProperty(saturationFloatProp)
-        val PROP_ALPHA: Property<ImageLoadingColorMatrix, Float> = createFloatProperty(alphaFloatProp)
-        val PROP_BRIGHTNESS: Property<ImageLoadingColorMatrix, Float> = createFloatProperty(brightnessFloatProp)
-    }
 }

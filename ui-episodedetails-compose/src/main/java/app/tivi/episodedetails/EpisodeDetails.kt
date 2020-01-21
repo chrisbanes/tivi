@@ -27,7 +27,6 @@ import androidx.ui.core.Text
 import androidx.ui.core.dp
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Clickable
-import androidx.ui.foundation.DrawImage
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.isSystemInDarkTheme
 import androidx.ui.layout.Arrangement
@@ -116,12 +115,7 @@ private fun Backdrop(episode: Episode) {
     ) {
         Stack {
             if (episode.tmdbBackdropPath != null) {
-                val image = image(episode)
-                if (image != null) {
-                    Container(modifier = LayoutGravity.Stretch) {
-                        DrawImage(image = image)
-                    }
-                }
+                LoadAndShowImage(modifier = LayoutGravity.Stretch, data = episode)
             }
 
             Container(modifier = LayoutGravity.Stretch) {
@@ -257,15 +251,15 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
 @Preview
 @Composable
 fun previewEpisodeDetails() = EpisodeDetails(
-        viewState = EpisodeDetailsViewState(
-                episodeId = 0,
-                episode = Episode(
-                        seasonId = 100,
-                        title = "A show too far"
-                ),
-                season = Season(
-                        id = 100,
-                        showId = 0
-                )
+    viewState = EpisodeDetailsViewState(
+        episodeId = 0,
+        episode = Episode(
+            seasonId = 100,
+            title = "A show too far"
+        ),
+        season = Season(
+            id = 100,
+            showId = 0
         )
+    )
 )
