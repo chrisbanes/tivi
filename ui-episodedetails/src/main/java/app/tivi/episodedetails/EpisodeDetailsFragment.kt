@@ -51,8 +51,19 @@ class EpisodeDetailsFragment : TiviFragment(), EpisodeDetailsViewModel.FactoryPr
     ): View? {
         return FrameLayout(requireContext()).apply {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-            composeEpisodeDetails(this, viewModel.observeAsLiveData(), tiviDateFormatter)
+
+            composeEpisodeDetails(
+                this,
+                viewModel.observeAsLiveData(),
+                viewModel::submitAction,
+                tiviDateFormatter
+            )
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (view as? ViewGroup)?.disposeComposition()
     }
 
     override fun invalidate() = Unit

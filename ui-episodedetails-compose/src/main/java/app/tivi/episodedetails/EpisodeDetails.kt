@@ -19,6 +19,7 @@ package app.tivi.episodedetails
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.compose.Composable
+import androidx.compose.Compose
 import androidx.compose.ambient
 import androidx.compose.state
 import androidx.lifecycle.LiveData
@@ -43,6 +44,7 @@ import androidx.ui.layout.Row
 import androidx.ui.layout.Spacer
 import androidx.ui.layout.Stack
 import androidx.ui.material.EmphasisLevels
+import androidx.ui.material.FloatingActionButton
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.ripple.Ripple
@@ -64,6 +66,7 @@ import app.tivi.util.TiviDateFormatter
 fun composeEpisodeDetails(
     viewGroup: ViewGroup,
     state: LiveData<EpisodeDetailsViewState>,
+    actioner: (EpisodeDetailsAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter
 ) {
     viewGroup.setContent {
@@ -74,35 +77,61 @@ fun composeEpisodeDetails(
                     typography = themeTypography,
                     colors = if (isSystemInDarkTheme()) darkThemeColors else lightThemeColors
                 ) {
-                    EpisodeDetails(viewState)
+                    EpisodeDetails(viewState, actioner)
                 }
             }
         }
     }
 }
 
-@Composable
-private fun EpisodeDetails(viewState: EpisodeDetailsViewState) {
-    Column {
-        viewState.episode?.let {
-            Backdrop(episode = it)
-        }
-        VerticalScroller(modifier = LayoutFlexible(1f)) {
-            Column {
-                val episode = viewState.episode
-                if (episode != null) {
-                    InfoPanes(episode)
-                    Summary(episode)
-                }
+fun ViewGroup.disposeComposition() = Compose.disposeComposition(this)
 
-                val watches = viewState.watches
-                if (watches.isNotEmpty()) {
-                    Header()
-                    watches.forEach {
-                        EpisodeWatch(it)
+@Composable
+private fun EpisodeDetails(
+    viewState: EpisodeDetailsViewState,
+    actioner: (EpisodeDetailsAction) -> Unit
+) {
+    Stack {
+        Column {
+            viewState.episode?.let {
+                Backdrop(episode = it)
+            }
+            VerticalScroller(modifier = LayoutFlexible(1f)) {
+                Column {
+                    val episode = viewState.episode
+                    if (episode != null) {
+                        InfoPanes(episode)
+                        Summary(episode)
+                    }
+
+                    val watches = viewState.watches
+                    if (watches.isNotEmpty()) {
+                        Header()
+                        watches.forEach {
+                            EpisodeWatch(it)
+                        }
                     }
                 }
             }
+        }
+
+        FloatingActionButton(
+            modifier = LayoutGravity.BottomRight + LayoutPadding(horizontal = 16.dp, bottom = 16.dp),
+            onClick = {
+                actioner(
+                    when (viewState.action) {
+                        Action.WATCH -> AddEpisodeWatchAction
+                        Action.UNWATCH -> RemoveAllEpisodeWatchesAction
+                    }
+                )
+            }
+        ) {
+            VectorImage(
+                id = when (viewState.action) {
+                    Action.WATCH -> R.drawable.ic_eye_24dp
+                    Action.UNWATCH -> R.drawable.ic_eye_off_24dp
+                }
+            )
         }
     }
 }
@@ -261,5 +290,6 @@ fun previewEpisodeDetails() = EpisodeDetails(
             id = 100,
             showId = 0
         )
-    )
+    ),
+    actioner = {}
 )
