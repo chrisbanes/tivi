@@ -31,7 +31,7 @@ import androidx.ui.core.dp
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.VerticalScroller
-import androidx.ui.foundation.isSystemInDarkTheme
+import androidx.ui.graphics.Color
 import androidx.ui.layout.Arrangement
 import androidx.ui.layout.Column
 import androidx.ui.layout.Container
@@ -77,10 +77,7 @@ fun ViewGroup.composeEpisodeDetails(
 
             val viewState = observe(state)
             if (viewState != null) {
-                MaterialTheme(
-                    typography = themeTypography,
-                    colors = if (isSystemInDarkTheme()) darkThemeColors else lightThemeColors
-                ) {
+                MaterialThemeFromAndroidTheme(context) {
                     EpisodeDetails(viewState, actioner)
                 }
             }
@@ -141,13 +138,13 @@ private fun Backdrop(episode: Episode) {
             }
 
             Container(modifier = LayoutGravity.Stretch) {
-                GradientScrim(baseColor = darkThemeColors.background)
+                GradientScrim(baseColor = Color.Black)
             }
 
             val type = MaterialTheme.typography()
             Text(
                 text = episode.title ?: "No title",
-                style = type.h6.copy(color = darkThemeColors.onSurface),
+                style = type.h6.copy(color = Color.White),
                 modifier = LayoutPadding(all = 16.dp) + LayoutGravity.BottomLeft
             )
         }
@@ -277,6 +274,7 @@ fun WatchButton(
     actioner: (EpisodeDetailsAction) -> Unit
 ) = FloatingActionButton(
     modifier = modifier,
+    color = MaterialTheme.colors().secondary,
     onClick = {
         actioner(
             when (action) {
