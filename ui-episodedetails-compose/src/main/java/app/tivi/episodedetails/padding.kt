@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,21 @@
 
 package app.tivi.episodedetails
 
-import androidx.compose.Composable
-import androidx.compose.onCommit
-import androidx.compose.onDispose
-import androidx.compose.remember
-import androidx.compose.state
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
+import androidx.ui.core.Dp
+import androidx.ui.core.dp
 
-@Composable
-fun <T> observe(data: LiveData<T>): T? {
-    val result = state { data.value }
-    val observer = remember { Observer<T> { result.value = it } }
+private val ZeroDp = 0.dp
 
-    onCommit(data) {
-        data.observeForever(observer)
-        onDispose { data.removeObserver(observer) }
-    }
-
-    return result.value
-}
+fun LayoutPadding(
+    horizontal: Dp = ZeroDp,
+    vertical: Dp = ZeroDp,
+    left: Dp = ZeroDp,
+    top: Dp = ZeroDp,
+    right: Dp = ZeroDp,
+    bottom: Dp = ZeroDp
+) = androidx.ui.layout.LayoutPadding(
+    left = if (left > ZeroDp) left else horizontal,
+    top = if (top > ZeroDp) top else vertical,
+    right = if (right > ZeroDp) right else horizontal,
+    bottom = if (bottom > ZeroDp) bottom else vertical
+)

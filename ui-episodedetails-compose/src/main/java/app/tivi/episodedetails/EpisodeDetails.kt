@@ -22,9 +22,11 @@ import androidx.compose.Composable
 import androidx.compose.Compose
 import androidx.compose.ambient
 import androidx.compose.state
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LiveData
 import androidx.ui.core.Modifier
 import androidx.ui.core.Text
+import androidx.ui.core.WithDensity
 import androidx.ui.core.dp
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Clickable
@@ -63,14 +65,16 @@ import app.tivi.util.TiviDateFormatter
  * This is a bit of hack. I can't make `ui-episodedetails` depend on any of the compose libraries,
  * so I wrap `setContext` as my own function, which `ui-episodedetails` can use.
  */
-fun composeEpisodeDetails(
-    viewGroup: ViewGroup,
+fun ViewGroup.composeEpisodeDetails(
     state: LiveData<EpisodeDetailsViewState>,
+    insets: LiveData<WindowInsetsCompat>,
     actioner: (EpisodeDetailsAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter
 ) {
-    viewGroup.setContent {
-        WrapInAmbients(tiviDateFormatter) {
+    setContent {
+        WrapInAmbients(tiviDateFormatter, InsetsHolder()) {
+            observeInsets(insets)
+
             val viewState = observe(state)
             if (viewState != null) {
                 MaterialTheme(
@@ -107,30 +111,19 @@ private fun EpisodeDetails(
                     val watches = viewState.watches
                     if (watches.isNotEmpty()) {
                         Header()
-                        watches.forEach {
-                            EpisodeWatch(it)
-                        }
+                        watches.forEach { EpisodeWatch(it) }
                     }
                 }
             }
         }
 
-        FloatingActionButton(
-            modifier = LayoutGravity.BottomRight + LayoutPadding(horizontal = 16.dp, bottom = 16.dp),
-            onClick = {
-                actioner(
-                    when (viewState.action) {
-                        Action.WATCH -> AddEpisodeWatchAction
-                        Action.UNWATCH -> RemoveAllEpisodeWatchesAction
-                    }
-                )
-            }
-        ) {
-            VectorImage(
-                id = when (viewState.action) {
-                    Action.WATCH -> R.drawable.ic_eye_24dp
-                    Action.UNWATCH -> R.drawable.ic_eye_off_24dp
-                }
+        val insets = ambient(InsetsAmbient)
+        WithDensity {
+            WatchButton(
+                modifier = LayoutGravity.BottomRight +
+                    LayoutPadding(horizontal = 16.dp, bottom = 16.dp + insets.bottom.toDp()),
+                action = viewState.action,
+                actioner = actioner
             )
         }
     }
@@ -275,6 +268,30 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
             )
         }
     }
+}
+
+@Composable
+fun WatchButton(
+    modifier: Modifier = Modifier.None,
+    action: Action,
+    actioner: (EpisodeDetailsAction) -> Unit
+) = FloatingActionButton(
+    modifier = modifier,
+    onClick = {
+        actioner(
+            when (action) {
+                Action.WATCH -> AddEpisodeWatchAction
+                Action.UNWATCH -> RemoveAllEpisodeWatchesAction
+            }
+        )
+    }
+) {
+    VectorImage(
+        id = when (action) {
+            Action.WATCH -> R.drawable.ic_eye_24dp
+            Action.UNWATCH -> R.drawable.ic_eye_off_24dp
+        }
+    )
 }
 
 @Preview

@@ -27,11 +27,15 @@ private typealias AmbientProvider = @Composable() (@Composable() () -> Unit) -> 
 @Suppress("MoveLambdaOutsideParentheses")
 fun WrapInAmbients(
     tiviDateFormatter: TiviDateFormatter,
+    insetsHolder: InsetsHolder,
     content: @Composable() () -> Unit
 ) {
     listOf<AmbientProvider>(
         { children ->
             TiviDateFormatterAmbient.Provider(value = tiviDateFormatter, children = children)
+        },
+        { children ->
+            InsetsAmbient.Provider(value = insetsHolder, children = children)
         }
     ).fold(content, { current, ambient -> { ambient(current) } }).invoke()
 }
