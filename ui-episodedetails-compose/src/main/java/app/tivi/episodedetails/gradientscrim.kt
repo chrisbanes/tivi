@@ -19,11 +19,11 @@ package app.tivi.episodedetails
 import androidx.compose.Composable
 import androidx.compose.remember
 import androidx.ui.core.Draw
-import androidx.ui.core.toRect
-import androidx.ui.engine.geometry.Offset
+import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.LinearGradientShader
 import androidx.ui.graphics.Paint
+import androidx.ui.unit.toRect
 import kotlin.math.pow
 
 @Composable

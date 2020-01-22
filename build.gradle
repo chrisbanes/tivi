@@ -62,7 +62,7 @@ allprojects {
         mavenCentral()
         jcenter()
         maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
-        maven { url 'https://ci.android.com/builds/submitted/6079043/androidx_snapshot/latest/ui/repository/' }
+        maven { url 'https://ci.android.com/builds/submitted/6153956/androidx_snapshot/latest/ui/repository/' }
         maven { url 'https://jitpack.io' }
         mavenLocal()
     }

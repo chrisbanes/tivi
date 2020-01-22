@@ -30,8 +30,8 @@ import androidx.core.view.doOnDetach
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.ui.core.IntPx
-import androidx.ui.core.ipx
+import androidx.ui.unit.IntPx
+import androidx.ui.unit.ipx
 
 @Model
 data class InsetsHolder(

@@ -16,8 +16,8 @@
 
 package app.tivi.episodedetails
 
-import androidx.ui.core.Dp
-import androidx.ui.core.dp
+import androidx.ui.unit.Dp
+import androidx.ui.unit.dp
 
 private val ZeroDp = 0.dp
 

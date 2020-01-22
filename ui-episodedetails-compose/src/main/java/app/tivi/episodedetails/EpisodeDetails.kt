@@ -27,7 +27,6 @@ import androidx.lifecycle.LiveData
 import androidx.ui.core.Modifier
 import androidx.ui.core.Text
 import androidx.ui.core.WithDensity
-import androidx.ui.core.dp
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.VerticalScroller
@@ -54,6 +53,7 @@ import androidx.ui.material.surface.Surface
 import androidx.ui.res.stringResource
 import androidx.ui.text.style.TextOverflow
 import androidx.ui.tooling.preview.Preview
+import androidx.ui.unit.dp
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction

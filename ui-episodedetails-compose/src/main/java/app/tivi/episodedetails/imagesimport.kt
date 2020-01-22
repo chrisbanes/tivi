@@ -22,7 +22,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.Composable
 import androidx.compose.remember
 import androidx.ui.core.Draw
-import androidx.ui.engine.geometry.Rect
+import androidx.ui.geometry.Rect
 import androidx.ui.graphics.BlendMode
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.ColorFilter
@@ -42,7 +42,7 @@ import androidx.ui.graphics.colorspace.ColorSpaces
 fun DrawImage(
     image: Image,
     tint: Color? = null,
-    paintModifier: ((Paint) -> Unit)? = null
+    paintModifier: @Composable ((Paint) -> Unit)? = null
 ) {
     val paint = remember {
         Paint().apply {

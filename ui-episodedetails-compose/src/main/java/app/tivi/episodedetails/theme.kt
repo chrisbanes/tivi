@@ -23,12 +23,8 @@ import androidx.compose.Composable
 import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.content.res.use
 import androidx.core.graphics.ColorUtils
-import androidx.ui.core.DensityScope
-import androidx.ui.core.TextUnit
 import androidx.ui.core.WithDensity
-import androidx.ui.core.em
-import androidx.ui.core.px
-import androidx.ui.engine.geometry.Offset
+import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.Shadow
 import androidx.ui.material.MaterialTheme
@@ -41,6 +37,10 @@ import androidx.ui.text.font.FontFamily
 import androidx.ui.text.font.FontStyle
 import androidx.ui.text.font.FontWeight
 import androidx.ui.text.font.asFontFamily
+import androidx.ui.unit.DensityScope
+import androidx.ui.unit.TextUnit
+import androidx.ui.unit.em
+import androidx.ui.unit.px
 import app.tivi.episodedetails.compose.R
 
 private const val DEFAULT_COLOR = android.graphics.Color.MAGENTA
