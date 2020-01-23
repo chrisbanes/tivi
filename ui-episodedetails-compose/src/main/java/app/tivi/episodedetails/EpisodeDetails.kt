@@ -29,6 +29,7 @@ import androidx.ui.core.Text
 import androidx.ui.core.WithDensity
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Clickable
+import androidx.ui.foundation.ColoredRect
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.graphics.Color
 import androidx.ui.layout.Arrangement
@@ -106,9 +107,19 @@ private fun EpisodeDetails(
                     }
 
                     val watches = viewState.watches
-                    if (watches.isNotEmpty()) {
-                        Header()
-                        watches.forEach { EpisodeWatch(it) }
+                    if (watches.isNotEmpty()) { Header() }
+                    watches.forEach { watch ->
+                        SwipeToDismiss(
+                            onSwipeComplete = {
+                                actioner(RemoveEpisodeWatchAction(watch.id))
+                            },
+                            backgroundChildren = {
+                                ColoredRect(Color.Cyan)
+                            },
+                            swipeChildren = {
+                                EpisodeWatch(watch)
+                            }
+                        )
                     }
                 }
             }
@@ -237,33 +248,32 @@ private fun Header() {
 
 @Composable
 private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
-    Padding(padding = EdgeInsets(16.dp, 8.dp, 16.dp, 8.dp)) {
-        Row {
-            val formatter = ambient(TiviDateFormatterAmbient)
-            ProvideEmphasis(emphasis = EmphasisLevels().high) {
-                Text(
-                    modifier = LayoutFlexible(1f),
-                    text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
-                    style = MaterialTheme.typography().body2
-                )
-            }
+    Row(modifier = LayoutPadding(16.dp, 8.dp, 16.dp, 8.dp)) {
+        val formatter = ambient(TiviDateFormatterAmbient)
+        ProvideEmphasis(emphasis = EmphasisLevels().high) {
+            Text(
+                modifier = LayoutFlexible(1f),
+                text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
+                style = MaterialTheme.typography().body2
+            )
+        }
 
-            if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
-                VectorImage(
-                    id = R.drawable.ic_upload_24dp,
-                    tint = MaterialTheme.colors().onSurface.copy(alpha = 0.7f),
-                    modifier = LayoutPadding(left = 8.dp)
-                )
-            }
+        if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
             VectorImage(
-                id = when (episodeWatchEntry.pendingAction) {
-                    PendingAction.DELETE -> R.drawable.ic_eye_off_24dp
-                    else -> R.drawable.ic_eye_24dp
-                },
+                id = R.drawable.ic_upload_24dp,
                 tint = MaterialTheme.colors().onSurface.copy(alpha = 0.7f),
                 modifier = LayoutPadding(left = 8.dp)
             )
         }
+
+        VectorImage(
+            id = when (episodeWatchEntry.pendingAction) {
+                PendingAction.DELETE -> R.drawable.ic_eye_off_24dp
+                else -> R.drawable.ic_eye_24dp
+            },
+            tint = MaterialTheme.colors().onSurface.copy(alpha = 0.7f),
+            modifier = LayoutPadding(left = 8.dp)
+        )
     }
 }
 
