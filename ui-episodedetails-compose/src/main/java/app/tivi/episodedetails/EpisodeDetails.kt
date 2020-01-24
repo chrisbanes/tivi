@@ -23,15 +23,22 @@ import androidx.compose.Compose
 import androidx.compose.ambient
 import androidx.compose.state
 import androidx.core.view.WindowInsetsCompat
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.lifecycle.LiveData
+import androidx.ui.core.DrawModifier
 import androidx.ui.core.Modifier
+import androidx.ui.core.OnChildPositioned
 import androidx.ui.core.Text
 import androidx.ui.core.WithDensity
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Clickable
-import androidx.ui.foundation.ColoredRect
 import androidx.ui.foundation.VerticalScroller
+import androidx.ui.foundation.background
+import androidx.ui.geometry.Offset
+import androidx.ui.graphics.Canvas
 import androidx.ui.graphics.Color
+import androidx.ui.graphics.Paint
+import androidx.ui.graphics.withSave
 import androidx.ui.layout.Arrangement
 import androidx.ui.layout.Column
 import androidx.ui.layout.Container
@@ -41,6 +48,7 @@ import androidx.ui.layout.LayoutAspectRatio
 import androidx.ui.layout.LayoutGravity
 import androidx.ui.layout.LayoutHeight
 import androidx.ui.layout.LayoutPadding
+import androidx.ui.layout.LayoutSize
 import androidx.ui.layout.Padding
 import androidx.ui.layout.Row
 import androidx.ui.layout.Spacer
@@ -54,13 +62,22 @@ import androidx.ui.material.surface.Surface
 import androidx.ui.res.stringResource
 import androidx.ui.text.style.TextOverflow
 import androidx.ui.tooling.preview.Preview
+import androidx.ui.unit.Density
+import androidx.ui.unit.Px
+import androidx.ui.unit.PxPosition
+import androidx.ui.unit.PxSize
 import androidx.ui.unit.dp
+import androidx.ui.unit.toOffset
+import androidx.ui.unit.toRect
+import app.tivi.animation.invoke
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.episodedetails.compose.R
+import app.tivi.ui.animations.lerp
 import app.tivi.util.TiviDateFormatter
+import kotlin.math.hypot
 
 /**
  * This is a bit of hack. I can't make `ui-episodedetails` depend on any of the compose libraries,
@@ -107,17 +124,24 @@ private fun EpisodeDetails(
                     }
 
                     val watches = viewState.watches
-                    if (watches.isNotEmpty()) { Header() }
+                    if (watches.isNotEmpty()) {
+                        Header()
+                    }
                     watches.forEach { watch ->
                         SwipeToDismiss(
+                            // TODO: this should change to START eventually
+                            swipeDirections = listOf(SwipeDirection.LEFT),
                             onSwipeComplete = {
                                 actioner(RemoveEpisodeWatchAction(watch.id))
                             },
-                            backgroundChildren = {
-                                ColoredRect(Color.Cyan)
+                            swipeChildren = { swipeProgress, _ ->
+                                EpisodeWatch(
+                                    episodeWatchEntry = watch,
+                                    drawBackground = swipeProgress != 0f
+                                )
                             },
-                            swipeChildren = {
-                                EpisodeWatch(watch)
+                            backgroundChildren = { swipeProgress, completeOnRelease ->
+                                EpisodeWatchSwipeBackground(swipeProgress, completeOnRelease)
                             }
                         )
                     }
@@ -195,11 +219,12 @@ private fun InfoPane(
     Column(
         modifier = modifier + LayoutPadding(all = 16.dp)
     ) {
-        VectorImage(
-            modifier = LayoutAlign.CenterHorizontally,
-            id = iconResId,
-            tint = MaterialTheme.colors().onSurface.copy(alpha = 0.7f)
-        )
+        ProvideEmphasis(emphasis = EmphasisLevels().medium) {
+            VectorImage(
+                modifier = LayoutAlign.CenterHorizontally,
+                id = iconResId
+            )
+        }
 
         Spacer(modifier = LayoutHeight(4.dp))
 
@@ -247,33 +272,103 @@ private fun Header() {
 }
 
 @Composable
-private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
-    Row(modifier = LayoutPadding(16.dp, 8.dp, 16.dp, 8.dp)) {
-        val formatter = ambient(TiviDateFormatterAmbient)
-        ProvideEmphasis(emphasis = EmphasisLevels().high) {
-            Text(
-                modifier = LayoutFlexible(1f),
-                text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
-                style = MaterialTheme.typography().body2
-            )
-        }
+private fun EpisodeWatch(
+    episodeWatchEntry: EpisodeWatchEntry,
+    drawBackground: Boolean = false
+) {
+    Surface(
+        color = if (drawBackground) MaterialTheme.colors().surface else Color.Transparent
+    ) {
+        Row(modifier = LayoutPadding(16.dp, 8.dp, 16.dp, 8.dp) + LayoutSize.Min(40.dp)) {
+            ProvideEmphasis(emphasis = EmphasisLevels().high) {
+                val formatter = ambient(TiviDateFormatterAmbient)
+                Text(
+                    modifier = LayoutFlexible(1f) + LayoutGravity.Center,
+                    text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
+                    style = MaterialTheme.typography().body2
+                )
+            }
 
-        if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
-            VectorImage(
-                id = R.drawable.ic_upload_24dp,
-                tint = MaterialTheme.colors().onSurface.copy(alpha = 0.7f),
-                modifier = LayoutPadding(left = 8.dp)
-            )
-        }
+            ProvideEmphasis(emphasis = EmphasisLevels().medium) {
+                if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
+                    VectorImage(
+                        id = R.drawable.ic_upload_24dp,
+                        modifier = LayoutPadding(left = 8.dp) + LayoutGravity.Center
+                    )
+                }
 
-        VectorImage(
-            id = when (episodeWatchEntry.pendingAction) {
-                PendingAction.DELETE -> R.drawable.ic_eye_off_24dp
-                else -> R.drawable.ic_eye_24dp
-            },
-            tint = MaterialTheme.colors().onSurface.copy(alpha = 0.7f),
-            modifier = LayoutPadding(left = 8.dp)
+                VectorImage(
+                    id = when (episodeWatchEntry.pendingAction) {
+                        PendingAction.DELETE -> R.drawable.ic_eye_off_24dp
+                        else -> R.drawable.ic_eye_24dp
+                    },
+                    modifier = LayoutPadding(left = 8.dp) + LayoutGravity.Center
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EpisodeWatchSwipeBackground(
+    swipeProgress: Float,
+    wouldCompleteOnRelease: Boolean = false
+) {
+    Stack(
+        modifier = background(MaterialTheme.colors().onSurface.copy(alpha = 0.2f))
+    ) {
+        val iconCenter = state { PxPosition(Px.Zero, Px.Zero) }
+
+        val maxRadius = hypot(
+            iconCenter.value.x.value.toDouble(),
+            iconCenter.value.y.value.toDouble()
         )
+
+        // This container allows us to draw the expanding circle which grows as the user
+        // swipes. The circle is drawn via the circleDrawModifier()
+        Container(
+            modifier = circleDrawModifier(
+                // TODO: ideally we'd animate this color state change
+                when {
+                    wouldCompleteOnRelease -> MaterialTheme.colors().secondary
+                    else -> MaterialTheme.colors().onSurface.copy(alpha = 0.3f)
+                },
+                iconCenter.value.toOffset(),
+                // A simple lerp with acceleration
+                lerp(0f, maxRadius.toFloat(), fastOutLinearIn(swipeProgress))
+            ),
+            expanded = true,
+            children = {}
+        )
+
+        OnChildPositioned(onPositioned = { iconCenter.value = it.center }) {
+            ProvideEmphasis(emphasis = EmphasisLevels().medium) {
+                VectorImage(
+                    id = R.drawable.ic_eye_off_24dp,
+                    modifier = LayoutPadding(right = 16.dp) + LayoutGravity.CenterRight
+                )
+            }
+        }
+    }
+}
+
+private fun circleDrawModifier(
+    color: Color,
+    centerPoint: Offset,
+    radius: Float
+) = object : DrawModifier {
+    private val paint = Paint()
+
+    init {
+        paint.isAntiAlias = true
+        paint.color = color
+    }
+
+    override fun draw(density: Density, drawContent: () -> Unit, canvas: Canvas, size: PxSize) {
+        canvas.withSave {
+            canvas.clipRect(size.toRect())
+            canvas.drawCircle(centerPoint, radius, paint)
+        }
     }
 }
 
@@ -318,3 +413,5 @@ fun previewEpisodeDetails() = EpisodeDetails(
     ),
     actioner = {}
 )
+
+private val fastOutLinearIn = FastOutLinearInInterpolator()

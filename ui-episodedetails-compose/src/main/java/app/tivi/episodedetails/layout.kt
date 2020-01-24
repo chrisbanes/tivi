@@ -18,9 +18,11 @@ package app.tivi.episodedetails
 
 import androidx.compose.Composable
 import androidx.ui.core.Layout
+import androidx.ui.core.LayoutCoordinates
 import androidx.ui.core.RepaintBoundary
 import androidx.ui.foundation.ValueHolder
 import androidx.ui.unit.IntPx
+import androidx.ui.unit.PxPosition
 import androidx.ui.unit.min
 import androidx.ui.unit.px
 
@@ -57,3 +59,10 @@ fun WithOffset(
         }
     }
 }
+
+val LayoutCoordinates.center: PxPosition
+    get() {
+        val pos = position
+        val size = size
+        return PxPosition(pos.x + size.width / 2, pos.y + size.height / 2)
+    }

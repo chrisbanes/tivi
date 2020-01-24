@@ -20,6 +20,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.Composable
 import androidx.ui.core.Modifier
 import androidx.ui.core.WithDensity
+import androidx.ui.foundation.contentColor
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.vector.DrawVector
 import androidx.ui.layout.Container
@@ -30,7 +31,7 @@ import androidx.ui.res.vectorResource
 fun VectorImage(
     modifier: Modifier = Modifier.None,
     @DrawableRes id: Int,
-    tint: Color = Color.Transparent
+    tint: Color = contentColor()
 ) {
     val vector = vectorResource(id)
     WithDensity {
