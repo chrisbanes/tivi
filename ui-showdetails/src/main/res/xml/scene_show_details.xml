@@ -167,7 +167,7 @@
         <OnSwipe
             app:dragDirection="dragUp"
             app:moveWhenScrollAtTop="true"
-            app:onTouchUp="autoCompleteToStart"
+            app:onTouchUp="autoComplete"
             app:touchAnchorId="@id/details_rv"
             app:touchAnchorSide="top"
             app:touchRegionId="@id/details_rv" />

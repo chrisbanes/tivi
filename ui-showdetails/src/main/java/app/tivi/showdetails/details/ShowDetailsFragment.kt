@@ -227,13 +227,13 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
                 }
 
                 // Re-enable MotionLayout's motion handling
-                binding.detailsMotion.motionEnabled = true
+                binding.detailsMotion.isInteractionEnabled = true
             }
 
             override fun onPageExpanded() {
                 backPressedCallback.isEnabled = true
                 // Disable MotionLayout's motion handling while the pane is expanded
-                binding.detailsMotion.motionEnabled = false
+                binding.detailsMotion.isInteractionEnabled = false
                 binding.detailsMotion.requestLayout()
             }
         })
