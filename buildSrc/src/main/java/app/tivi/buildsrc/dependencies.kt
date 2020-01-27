@@ -21,7 +21,7 @@ object Versions {
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:3.6.0-beta05"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:3.6.0-rc01"
     const val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:1.0.0"
     const val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.6.1"
 
@@ -124,7 +124,7 @@ object Libs {
 
         const val preference = "androidx.preference:preference:1.1.0"
 
-        const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.0-beta3"
+        const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.0-beta4"
 
         const val coreKtx = "androidx.core:core-ktx:1.2.0-rc01"
 
