@@ -18,8 +18,6 @@ package app.tivi.ui.widget
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.MotionEvent
-import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -80,28 +78,5 @@ class TiviMotionLayout @JvmOverloads constructor(
     @Deprecated("Use addTransitionListener instead")
     override fun setTransitionListener(listener: TransitionListener) {
         throw IllegalArgumentException("Use addTransitionListener instead")
-    }
-
-    /**
-     * Whether this MotionLayout should react to nested scrolls and touch events
-     */
-    var motionEnabled = true
-
-    override fun onStartNestedScroll(child: View, target: View, axes: Int, type: Int): Boolean {
-        return motionEnabled && super.onStartNestedScroll(child, target, axes, type)
-    }
-
-    override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
-        if (event.action == MotionEvent.ACTION_DOWN && !motionEnabled) {
-            return false
-        }
-        return super.onInterceptTouchEvent(event)
-    }
-
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (event.action == MotionEvent.ACTION_DOWN && !motionEnabled) {
-            return false
-        }
-        return super.onTouchEvent(event)
     }
 }

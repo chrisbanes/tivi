@@ -40,8 +40,8 @@ import app.tivi.utils.show2
 import io.mockk.coEvery
 import javax.inject.Inject
 import kotlinx.coroutines.test.runBlockingTest
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
-import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
