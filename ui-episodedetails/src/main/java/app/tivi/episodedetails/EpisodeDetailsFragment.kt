@@ -24,6 +24,7 @@ import android.view.ViewGroup.LayoutParams
 import android.widget.FrameLayout
 import androidx.core.os.bundleOf
 import app.tivi.TiviFragment
+import app.tivi.common.compose.observeWindowInsets
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.mvrx.fragmentViewModel
 import javax.inject.Inject

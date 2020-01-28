@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.episodedetails
+package app.tivi.common.compose
 
 import androidx.ui.unit.Dp
 import androidx.ui.unit.dp

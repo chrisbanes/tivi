@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.episodedetails
+package app.tivi.common.compose
 
 import android.content.Context
 import android.graphics.Typeface
@@ -41,7 +41,6 @@ import androidx.ui.unit.DensityScope
 import androidx.ui.unit.TextUnit
 import androidx.ui.unit.em
 import androidx.ui.unit.px
-import app.tivi.episodedetails.compose.R
 
 private const val DEFAULT_COLOR = android.graphics.Color.MAGENTA
 

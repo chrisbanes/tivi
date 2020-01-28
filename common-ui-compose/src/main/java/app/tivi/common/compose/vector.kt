@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.episodedetails
+package app.tivi.common.compose
 
 import androidx.annotation.DrawableRes
 import androidx.compose.Composable

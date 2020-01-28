@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.episodedetails
+package app.tivi.common.compose
 
 import android.graphics.Bitmap
 import android.os.Build
