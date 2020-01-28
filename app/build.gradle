@@ -114,10 +114,10 @@ android {
         // Ignore any tests
         ignoreTestSources true
 
-        disable 'GradleCompatible'
-        disable 'FontValidationError'
         // Lint doesn't seem to handle Kotlin int types + string format very well
         disable 'StringFormatMatches'
+        // Seems to be broken in 4.0.0-alpha09 https://issuetracker.google.com/issues/148172219
+        disable 'Instantiatable'
     }
 
     buildFeatures {
