@@ -19,18 +19,17 @@ package app.tivi.episodedetails
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.compose.Composable
-import androidx.compose.Composition
 import androidx.compose.ambient
 import androidx.compose.state
 import androidx.core.view.WindowInsetsCompat
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.ui.core.DrawModifier
 import androidx.ui.core.Modifier
 import androidx.ui.core.OnChildPositioned
 import androidx.ui.core.Text
 import androidx.ui.core.WithDensity
-import androidx.ui.core.setContent
 import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.background
@@ -84,6 +83,7 @@ import app.tivi.common.compose.WrapInAmbients
 import app.tivi.common.compose.center
 import app.tivi.common.compose.observe
 import app.tivi.common.compose.observeInsets
+import app.tivi.common.compose.setContentWithLifecycle
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
@@ -101,11 +101,12 @@ import kotlin.math.hypot
  * on Compose
  */
 fun ViewGroup.composeEpisodeDetails(
+    lifecycleOwner: LifecycleOwner,
     state: LiveData<EpisodeDetailsViewState>,
     insets: LiveData<WindowInsetsCompat>,
     actioner: (EpisodeDetailsAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter
-): Any = setContent {
+): Any = setContentWithLifecycle(lifecycleOwner) {
     WrapInAmbients(tiviDateFormatter, InsetsHolder()) {
         observeInsets(insets)
 
@@ -116,14 +117,6 @@ fun ViewGroup.composeEpisodeDetails(
             }
         }
     }
-}
-
-/**
- * We need to return an `Any` since this method will be called from modules which do not depend
- * on Compose
- */
-fun disposeComposition(composition: Any) {
-    (composition as? Composition)?.dispose()
 }
 
 @Composable

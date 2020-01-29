@@ -45,10 +45,6 @@ class EpisodeDetailsFragment : TiviFragment(), EpisodeDetailsViewModel.FactoryPr
     @Inject internal lateinit var episodeDetailsViewModelFactory: EpisodeDetailsViewModel.Factory
     @Inject internal lateinit var textCreator: EpisodeDetailsTextCreator
 
-    // This should be the Composition type from Compose, but we unfortunately can't
-    // depend on Compose in this module (due to Coroutines)
-    private var currentComposition: Any? = null
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,20 +53,14 @@ class EpisodeDetailsFragment : TiviFragment(), EpisodeDetailsViewModel.FactoryPr
         return FrameLayout(requireContext()).apply {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
 
-            currentComposition = composeEpisodeDetails(
+            composeEpisodeDetails(
+                viewLifecycleOwner,
                 viewModel.observeAsLiveData(),
                 observeWindowInsets(),
                 viewModel::submitAction,
                 tiviDateFormatter
             )
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-
-        currentComposition?.let { disposeComposition(it) }
-        currentComposition = null
     }
 
     override fun invalidate() = Unit
