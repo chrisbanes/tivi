@@ -17,14 +17,18 @@
 package app.tivi.episodedetails
 
 import android.view.ViewGroup
+import androidx.animation.transitionDefinition
 import androidx.annotation.DrawableRes
 import androidx.compose.Composable
 import androidx.compose.ambient
+import androidx.compose.remember
 import androidx.compose.state
 import androidx.core.view.WindowInsetsCompat
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.ui.animation.ColorPropKey
+import androidx.ui.animation.Transition
 import androidx.ui.core.DrawModifier
 import androidx.ui.core.Modifier
 import androidx.ui.core.OnChildPositioned
@@ -323,6 +327,8 @@ private fun EpisodeWatch(
     }
 }
 
+private val color = ColorPropKey()
+
 @Composable
 private fun EpisodeWatchSwipeBackground(
     swipeProgress: Float,
@@ -338,22 +344,40 @@ private fun EpisodeWatchSwipeBackground(
             iconCenter.value.y.value.toDouble()
         )
 
+        // Note: can't reference these directly in transitionDefinition {} as
+        // it's not @Composable
+        val secondary = MaterialTheme.colors().secondary.copy(alpha = 0.5f)
+        val default = MaterialTheme.colors().onSurface.copy(alpha = 0.2f)
+
+        val transition = remember(secondary, default) {
+            transitionDefinition {
+                state(true) {
+                    this[color] = secondary
+                }
+                state(false) {
+                    this[color] = default
+                }
+
+                transition {
+                    color using tween { duration = 200 }
+                }
+            }
+        }
+
         // This container allows us to draw the expanding circle which grows as the user
         // swipes. The circle is drawn via the circleDrawModifier()
-        Container(
-            modifier = circleDrawModifier(
-                // TODO: ideally we'd animate this color state change
-                when {
-                    wouldCompleteOnRelease -> MaterialTheme.colors().secondary
-                    else -> MaterialTheme.colors().onSurface.copy(alpha = 0.3f)
-                },
-                iconCenter.value.toOffset(),
-                // A simple lerp with acceleration
-                lerp(0f, maxRadius.toFloat(), fastOutLinearIn(swipeProgress))
-            ),
-            expanded = true,
-            children = {}
-        )
+        Transition(definition = transition, toState = wouldCompleteOnRelease) { transitionState ->
+            Container(
+                modifier = circleDrawModifier(
+                    transitionState[color],
+                    iconCenter.value.toOffset(),
+                    // A simple lerp with acceleration
+                    lerp(0f, maxRadius.toFloat(), fastOutLinearIn(swipeProgress))
+                ),
+                expanded = true,
+                children = {}
+            )
+        }
 
         OnChildPositioned(onPositioned = { iconCenter.value = it.center }) {
             ProvideEmphasis(emphasis = EmphasisLevels().medium) {
