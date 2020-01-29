@@ -134,34 +134,36 @@ private fun EpisodeDetails(
                 Backdrop(episode = it)
             }
             VerticalScroller(modifier = LayoutFlexible(1f)) {
-                Column {
-                    val episode = viewState.episode
-                    if (episode != null) {
-                        InfoPanes(episode)
-                        Summary(episode)
-                    }
+                Surface(elevation = 2.dp) {
+                    Column {
+                        val episode = viewState.episode
+                        if (episode != null) {
+                            InfoPanes(episode)
+                            Summary(episode)
+                        }
 
-                    val watches = viewState.watches
-                    if (watches.isNotEmpty()) {
-                        Header()
-                    }
-                    watches.forEach { watch ->
-                        SwipeToDismiss(
-                            // TODO: this should change to START eventually
-                            swipeDirections = listOf(SwipeDirection.LEFT),
-                            onSwipeComplete = {
-                                actioner(RemoveEpisodeWatchAction(watch.id))
-                            },
-                            swipeChildren = { swipeProgress, _ ->
-                                EpisodeWatch(
-                                    episodeWatchEntry = watch,
-                                    drawBackground = swipeProgress != 0f
-                                )
-                            },
-                            backgroundChildren = { swipeProgress, completeOnRelease ->
-                                EpisodeWatchSwipeBackground(swipeProgress, completeOnRelease)
-                            }
-                        )
+                        val watches = viewState.watches
+                        if (watches.isNotEmpty()) {
+                            Header()
+                        }
+                        watches.forEach { watch ->
+                            SwipeToDismiss(
+                                // TODO: this should change to START eventually
+                                swipeDirections = listOf(SwipeDirection.LEFT),
+                                onSwipeComplete = {
+                                    actioner(RemoveEpisodeWatchAction(watch.id))
+                                },
+                                swipeChildren = { swipeProgress, _ ->
+                                    EpisodeWatch(
+                                        episodeWatchEntry = watch,
+                                        drawBackground = swipeProgress != 0f
+                                    )
+                                },
+                                backgroundChildren = { swipeProgress, completeOnRelease ->
+                                    EpisodeWatchSwipeBackground(swipeProgress, completeOnRelease)
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -181,10 +183,7 @@ private fun EpisodeDetails(
 
 @Composable
 private fun Backdrop(episode: Episode) {
-    Surface(
-        color = MaterialTheme.colors().onSurface.copy(alpha = 0.1f),
-        modifier = LayoutAspectRatio(16f / 9)
-    ) {
+    Surface(modifier = LayoutAspectRatio(16f / 9)) {
         Stack {
             if (episode.tmdbBackdropPath != null) {
                 LoadAndShowImage(modifier = LayoutGravity.Stretch, data = episode)
@@ -258,19 +257,17 @@ private fun InfoPane(
 
 @Composable
 private fun Summary(episode: Episode) {
-    Surface {
-        Ripple(bounded = false) {
-            Padding(padding = EdgeInsets(16.dp)) {
-                val expanded = state { false }
-                Clickable(onClick = { expanded.value = !expanded.value }) {
-                    ProvideEmphasis(emphasis = EmphasisLevels().high) {
-                        Text(
-                            text = episode.summary ?: "No summary",
-                            style = MaterialTheme.typography().body2,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = if (expanded.value) Int.MAX_VALUE else 4
-                        )
-                    }
+    Ripple(bounded = true) {
+        val expanded = state { false }
+        Clickable(onClick = { expanded.value = !expanded.value }) {
+            ProvideEmphasis(emphasis = EmphasisLevels().high) {
+                Padding(padding = EdgeInsets(16.dp)) {
+                    Text(
+                        text = episode.summary ?: "No summary",
+                        style = MaterialTheme.typography().body2,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = if (expanded.value) Int.MAX_VALUE else 4
+                    )
                 }
             }
         }
@@ -415,24 +412,28 @@ fun WatchButton(
     modifier: Modifier = Modifier.None,
     action: Action,
     actioner: (EpisodeDetailsAction) -> Unit
-) = FloatingActionButton(
-    modifier = modifier,
-    color = MaterialTheme.colors().secondary,
-    onClick = {
-        actioner(
-            when (action) {
-                Action.WATCH -> AddEpisodeWatchAction
-                Action.UNWATCH -> RemoveAllEpisodeWatchesAction
-            }
-        )
-    }
 ) {
-    VectorImage(
-        id = when (action) {
-            Action.WATCH -> R.drawable.ic_eye_24dp
-            Action.UNWATCH -> R.drawable.ic_eye_off_24dp
+    ProvideEmphasis(EmphasisLevels().high) {
+        FloatingActionButton(
+            modifier = modifier,
+            color = MaterialTheme.colors().secondary,
+            onClick = {
+                actioner(
+                    when (action) {
+                        Action.WATCH -> AddEpisodeWatchAction
+                        Action.UNWATCH -> RemoveAllEpisodeWatchesAction
+                    }
+                )
+            }
+        ) {
+            VectorImage(
+                id = when (action) {
+                    Action.WATCH -> R.drawable.ic_eye_24dp
+                    Action.UNWATCH -> R.drawable.ic_eye_off_24dp
+                }
+            )
         }
-    )
+    }
 }
 
 @Preview
