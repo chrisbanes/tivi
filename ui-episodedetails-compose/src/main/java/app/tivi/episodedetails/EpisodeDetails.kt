@@ -19,7 +19,7 @@ package app.tivi.episodedetails
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.compose.Composable
-import androidx.compose.Compose
+import androidx.compose.Composition
 import androidx.compose.ambient
 import androidx.compose.state
 import androidx.core.view.WindowInsetsCompat
@@ -96,28 +96,35 @@ import kotlin.math.hypot
 /**
  * This is a bit of hack. I can't make `ui-episodedetails` depend on any of the compose libraries,
  * so I wrap `setContext` as my own function, which `ui-episodedetails` can use.
+ *
+ * We need to return an `Any` since this method will be called from modules which do not depend
+ * on Compose
  */
 fun ViewGroup.composeEpisodeDetails(
     state: LiveData<EpisodeDetailsViewState>,
     insets: LiveData<WindowInsetsCompat>,
     actioner: (EpisodeDetailsAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter
-) {
-    setContent {
-        WrapInAmbients(tiviDateFormatter, InsetsHolder()) {
-            observeInsets(insets)
+): Any = setContent {
+    WrapInAmbients(tiviDateFormatter, InsetsHolder()) {
+        observeInsets(insets)
 
-            val viewState = observe(state)
-            if (viewState != null) {
-                MaterialThemeFromAndroidTheme(context) {
-                    EpisodeDetails(viewState, actioner)
-                }
+        val viewState = observe(state)
+        if (viewState != null) {
+            MaterialThemeFromAndroidTheme(context) {
+                EpisodeDetails(viewState, actioner)
             }
         }
     }
 }
 
-fun ViewGroup.disposeComposition() = Compose.disposeComposition(this)
+/**
+ * We need to return an `Any` since this method will be called from modules which do not depend
+ * on Compose
+ */
+fun disposeComposition(composition: Any) {
+    (composition as? Composition)?.dispose()
+}
 
 @Composable
 private fun EpisodeDetails(
