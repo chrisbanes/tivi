@@ -18,25 +18,24 @@ package app.tivi.data.daos
 
 import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.Transaction
 import androidx.room.Update
 import app.tivi.data.entities.TiviEntity
 
-interface EntityDao<in E : TiviEntity> {
+abstract class EntityDao<in E : TiviEntity> {
     @Insert
-    suspend fun insert(entity: E): Long
+    abstract suspend fun insert(entity: E): Long
 
     @Insert
-    suspend fun insertAll(vararg entity: E)
+    abstract suspend fun insertAll(vararg entity: E)
 
     @Insert
-    suspend fun insertAll(entities: List<E>)
+    abstract suspend fun insertAll(entities: List<E>)
 
     @Update
-    suspend fun update(entity: E)
+    abstract suspend fun update(entity: E)
 
     @Delete
-    suspend fun deleteEntity(entity: E): Int
+    abstract suspend fun deleteEntity(entity: E): Int
 
     suspend fun insertOrUpdate(entity: E): Long {
         return if (entity.id == 0L) {
@@ -47,7 +46,6 @@ interface EntityDao<in E : TiviEntity> {
         }
     }
 
-    @Transaction
     suspend fun insertOrUpdate(entities: List<E>) {
         entities.forEach {
             insertOrUpdate(it)

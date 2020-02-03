@@ -18,14 +18,13 @@ package app.tivi.data.daos
 
 import androidx.room.Dao
 import androidx.room.Query
-import androidx.room.Transaction
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.repositories.shows.mergeShows
 import app.tivi.data.resultentities.ShowDetailed
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class TiviShowDao : EntityDao<TiviShow> {
+abstract class TiviShowDao : EntityDao<TiviShow>() {
     @Query("SELECT * FROM shows WHERE trakt_id = :id")
     abstract suspend fun getShowWithTraktId(id: Int): TiviShow?
 
@@ -65,7 +64,6 @@ abstract class TiviShowDao : EntityDao<TiviShow> {
     @Query("DELETE FROM shows")
     abstract suspend fun deleteAll()
 
-    @Transaction
     suspend fun getIdOrSavePlaceholder(show: TiviShow): Long {
         val idForTraktId: Long? = if (show.traktId != null) getIdForTraktId(show.traktId) else null
         val idForTmdbId: Long? = if (show.tmdbId != null) getIdForTmdbId(show.tmdbId) else null

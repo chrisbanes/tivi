@@ -25,7 +25,7 @@ import app.tivi.data.resultentities.TrendingEntryWithShow
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class TrendingDao : PaginatedEntryDao<TrendingShowEntry, TrendingEntryWithShow> {
+abstract class TrendingDao : PaginatedEntryDao<TrendingShowEntry, TrendingEntryWithShow>() {
     @Transaction
     @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC, id ASC LIMIT :count OFFSET :offset")
     abstract fun entriesObservable(count: Int, offset: Int): Flow<List<TrendingEntryWithShow>>

@@ -28,7 +28,7 @@ import app.tivi.data.views.FollowedShowsWatchStats
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryWithShow> {
+abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryWithShow>() {
     @Query("SELECT * FROM myshows_entries")
     abstract suspend fun entries(): List<FollowedShowEntry>
 

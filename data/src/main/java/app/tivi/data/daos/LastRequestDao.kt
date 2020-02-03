@@ -25,7 +25,7 @@ import app.tivi.data.entities.LastRequest
 import app.tivi.data.entities.Request
 
 @Dao
-abstract class LastRequestDao : EntityDao<LastRequest> {
+abstract class LastRequestDao : EntityDao<LastRequest>() {
     @Query("SELECT * FROM last_requests WHERE request = :request AND entity_id = :entityId")
     abstract suspend fun lastRequest(request: Request, entityId: Long): LastRequest?
 

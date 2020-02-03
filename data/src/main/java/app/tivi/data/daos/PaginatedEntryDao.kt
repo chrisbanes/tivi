@@ -18,24 +18,22 @@ package app.tivi.data.daos
 
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
-import androidx.room.Transaction
 import app.tivi.data.PaginatedEntry
 import app.tivi.data.resultentities.EntryWithShow
 
-interface PaginatedEntryDao<EC : PaginatedEntry, LI : EntryWithShow<EC>> : EntryDao<EC, LI> {
+abstract class PaginatedEntryDao<EC : PaginatedEntry, LI : EntryWithShow<EC>> : EntryDao<EC, LI>() {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    override suspend fun insert(entity: EC): Long
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    override suspend fun insertAll(vararg entity: EC)
+    abstract override suspend fun insert(entity: EC): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    override suspend fun insertAll(entities: List<EC>)
+    abstract override suspend fun insertAll(vararg entity: EC)
 
-    suspend fun deletePage(page: Int)
-    suspend fun getLastPage(): Int?
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract override suspend fun insertAll(entities: List<EC>)
 
-    @Transaction
+    abstract suspend fun deletePage(page: Int)
+    abstract suspend fun getLastPage(): Int?
+
     suspend fun updatePage(page: Int, entities: List<EC>) {
         deletePage(page)
         insertAll(entities)

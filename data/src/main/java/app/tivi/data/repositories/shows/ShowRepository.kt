@@ -16,8 +16,8 @@
 
 package app.tivi.data.repositories.shows
 
+import app.tivi.data.daos.ShowImagesDao
 import app.tivi.data.entities.Success
-import app.tivi.data.entities.TiviShow
 import app.tivi.data.instantInPast
 import app.tivi.data.resultentities.ShowDetailed
 import app.tivi.extensions.asyncOrAwait
@@ -29,16 +29,13 @@ import org.threeten.bp.Instant
 @Singleton
 class ShowRepository @Inject constructor(
     private val showStore: ShowStore,
+    private val showImagesDao: ShowImagesDao,
     private val showLastRequestStore: ShowLastRequestStore,
     private val showImagesLastRequestStore: ShowImagesLastRequestStore,
     private val tmdbShowImagesDataSource: TmdbShowImagesDataSource,
     private val showStore2: ShowStoreRepository
 ) {
     fun observeShow(showId: Long) = showStore.observeShowDetailed(showId)
-
-    suspend fun getShow(showId: Long): TiviShow? {
-        return showStore2.get(showId)
-    }
 
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
@@ -54,7 +51,7 @@ class ShowRepository @Inject constructor(
                 ?: throw IllegalArgumentException("Show with ID $showId does not exist")
             when (val result = tmdbShowImagesDataSource.getShowImages(show)) {
                 is Success -> {
-                    showStore.saveImages(showId, result.get().map { it.copy(showId = showId) })
+                    showImagesDao.saveImages(showId, result.get().map { it.copy(showId = showId) })
                     showImagesLastRequestStore.updateLastRequest(showId)
                 }
             }

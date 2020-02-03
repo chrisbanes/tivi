@@ -24,7 +24,7 @@ import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class RelatedShowsDao : PairEntryDao<RelatedShowEntry, RelatedShowEntryWithShow> {
+abstract class RelatedShowsDao : PairEntryDao<RelatedShowEntry, RelatedShowEntryWithShow>() {
     @Transaction
     @Query("SELECT * FROM related_shows WHERE show_id = :showId ORDER BY order_index")
     abstract override fun entries(showId: Long): List<RelatedShowEntry>

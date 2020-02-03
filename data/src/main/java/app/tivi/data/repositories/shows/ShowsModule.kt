@@ -46,7 +46,6 @@ typealias ShowTmdbImagesStore = Store<Long, List<ShowTmdbImage>>
 
 @Module(includes = [ShowsModuleBinds::class])
 class ShowsModule {
-
     fun provideShowStore(
         showDao: TiviShowDao,
         @Trakt traktShowDataSource: ShowDataSource,

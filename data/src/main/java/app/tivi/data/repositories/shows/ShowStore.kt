@@ -19,8 +19,6 @@ package app.tivi.data.repositories.shows
 import app.tivi.data.daos.ShowFtsDao
 import app.tivi.data.daos.ShowImagesDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.entities.ShowTmdbImage
-import app.tivi.data.entities.TiviShow
 import javax.inject.Inject
 
 class ShowStore @Inject constructor(
@@ -30,15 +28,7 @@ class ShowStore @Inject constructor(
 ) {
     suspend fun getShow(showId: Long) = showDao.getShowWithId(showId)
 
-    suspend fun getShowOrEmpty(showId: Long) = showDao.getShowWithId(showId) ?: TiviShow.EMPTY_SHOW
-
-    suspend fun getShowDetailed(showId: Long) = showDao.getShowWithIdDetailed(showId)
-
     fun observeShowDetailed(showId: Long) = showDao.getShowDetailedWithIdFlow(showId)
 
     suspend fun searchShows(query: String) = showFtsDao.search("*$query*")
-
-    suspend fun saveImages(showId: Long, images: List<ShowTmdbImage>) {
-        showImagesDao.saveImages(showId, images)
-    }
 }

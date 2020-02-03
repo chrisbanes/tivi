@@ -25,7 +25,7 @@ import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow> {
+abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithShow>() {
     @Transaction
     @Query("SELECT * FROM watched_entries WHERE show_id = :showId")
     abstract suspend fun entryWithShowId(showId: Long): WatchedShowEntry?
