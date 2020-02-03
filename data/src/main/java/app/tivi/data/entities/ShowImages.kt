@@ -16,17 +16,17 @@
 
 package app.tivi.data.entities
 
-data class ShowImages(val images: List<TmdbImageEntity>) {
+data class ShowImages(val images: List<ShowTmdbImage>) {
 
-    val backdrop: TmdbImageEntity? by lazy(LazyThreadSafetyMode.NONE) {
+    val backdrop by lazy(LazyThreadSafetyMode.NONE) {
         findHighestRatedForType(ImageType.BACKDROP)
     }
 
-    val poster: TmdbImageEntity? by lazy(LazyThreadSafetyMode.NONE) {
+    val poster by lazy(LazyThreadSafetyMode.NONE) {
         findHighestRatedForType(ImageType.POSTER)
     }
 
-    private fun findHighestRatedForType(type: ImageType): TmdbImageEntity? {
+    private fun findHighestRatedForType(type: ImageType): ShowTmdbImage? {
         return images.filter { it.type == type }
             .maxBy { it.rating + (if (it.isPrimary) 10f else 0f) }
     }

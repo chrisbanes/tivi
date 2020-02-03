@@ -20,7 +20,6 @@ import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreRequest
 import com.dropbox.android.external.store4.StoreResponse
 import com.dropbox.android.external.store4.fresh
-import com.dropbox.android.external.store4.get
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.first
@@ -39,14 +38,16 @@ suspend fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
     key: Key,
     forceFresh: Boolean = false
 ): Output {
-    return if (forceFresh) {
-        get(key)
-    } else {
-        fresh(key)
-    }
+    return if (forceFresh) fresh(key) else get(key, refresh = true)
 }
 
-suspend fun <Key : Any, Output : Any> Store<Key, Output>.cached(key: Key): Output? {
+suspend fun <Key : Any, Output : Any> Store<Key, Output>.get(key: Key, refresh: Boolean = false) = stream(
+    StoreRequest.cached(key, refresh = refresh)
+).filterNot {
+    it is StoreResponse.Loading
+}.first().requireData()
+
+suspend fun <Key : Any, Output : Any> Store<Key, Output>.cachedOnly(key: Key): Output? {
     return stream(StoreRequest.cached(key, refresh = false))
         .filterNot { it is StoreResponse.Loading }
         .first()

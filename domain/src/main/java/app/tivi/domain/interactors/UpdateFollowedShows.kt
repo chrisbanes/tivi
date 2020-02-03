@@ -16,7 +16,7 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.cached
+import app.tivi.data.cachedOnly
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.ShowStore
@@ -71,7 +71,7 @@ class UpdateFollowedShows @Inject constructor(
                 it.showId,
                 params.type,
                 params.forceRefresh,
-                showStore.cached(it.showId)?.traktDataUpdate
+                showStore.cachedOnly(it.showId)?.traktDataUpdate
             )
         }
     }

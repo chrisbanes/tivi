@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,24 +18,22 @@ package app.tivi.domain.interactors
 
 import app.tivi.data.fetch
 import app.tivi.data.repositories.ShowImagesStore
-import app.tivi.data.repositories.ShowStore
 import app.tivi.domain.Interactor
-import app.tivi.domain.interactors.UpdateShowDetails.Params
 import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
 
-class UpdateShowDetails @Inject constructor(
-    private val showStore: ShowStore,
+class UpdateShowImages @Inject constructor(
+    private val showImagesStore: ShowImagesStore,
     dispatchers: AppCoroutineDispatchers,
     @ProcessLifetime val processScope: CoroutineScope
-) : Interactor<Params>() {
+) : Interactor<UpdateShowImages.Params>() {
     override val scope: CoroutineScope = processScope + dispatchers.io
 
     override suspend fun doWork(params: Params) {
-        showStore.fetch(params.showId, params.forceLoad)
+        showImagesStore.fetch(params.showId, params.forceLoad)
     }
 
     data class Params(val showId: Long, val forceLoad: Boolean)

@@ -27,11 +27,13 @@ import app.tivi.domain.interactors.ChangeShowFollowStatus.Action.TOGGLE
 import app.tivi.domain.interactors.GetEpisodeDetails
 import app.tivi.domain.interactors.UpdateRelatedShows
 import app.tivi.domain.interactors.UpdateShowDetails
+import app.tivi.domain.interactors.UpdateShowImages
 import app.tivi.domain.interactors.UpdateShowSeasonData
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObserveRelatedShows
 import app.tivi.domain.observers.ObserveShowDetails
 import app.tivi.domain.observers.ObserveShowFollowStatus
+import app.tivi.domain.observers.ObserveShowImages
 import app.tivi.domain.observers.ObserveShowNextEpisodeToWatch
 import app.tivi.domain.observers.ObserveShowSeasonData
 import app.tivi.domain.observers.ObserveShowViewStats
@@ -52,6 +54,8 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
     @Assisted initialState: ShowDetailsViewState,
     private val updateShowDetails: UpdateShowDetails,
     observeShowDetails: ObserveShowDetails,
+    observeShowImages: ObserveShowImages,
+    private val updateShowImages: UpdateShowImages,
     private val updateRelatedShows: UpdateRelatedShows,
     observeRelatedShows: ObserveRelatedShows,
     private val updateShowSeasons: UpdateShowSeasonData,
@@ -80,6 +84,16 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
             flow.distinctUntilChanged().execute {
                 if (it is Success) {
                     copy(show = it())
+                } else {
+                    this
+                }
+            }
+        }
+
+        viewModelScope.launchObserve(observeShowImages) { flow ->
+            flow.distinctUntilChanged().execute { images ->
+                if (images is Success) {
+                    copy(backdropImage = images().backdrop, posterImage = images().poster)
                 } else {
                     this
                 }
@@ -122,6 +136,7 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
         withState { state ->
             observeShowFollowStatus(ObserveShowFollowStatus.Params(state.showId))
             observeShowDetails(ObserveShowDetails.Params(state.showId))
+            observeShowImages(ObserveShowImages.Params(state.showId))
             observeRelatedShows(ObserveRelatedShows.Params(state.showId))
             observeShowSeasons(ObserveShowSeasonData.Params(state.showId))
             observeNextEpisodeToWatch(ObserveShowNextEpisodeToWatch.Params(state.showId))
@@ -137,6 +152,11 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
 
     private fun refresh(fromUserInteraction: Boolean) = withState {
         updateShowDetails(UpdateShowDetails.Params(it.showId, fromUserInteraction)).also {
+            viewModelScope.launch {
+                loadingState.collectFrom(it)
+            }
+        }
+        updateShowImages(UpdateShowImages.Params(it.showId, fromUserInteraction)).also {
             viewModelScope.launch {
                 loadingState.collectFrom(it)
             }
