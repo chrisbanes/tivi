@@ -18,8 +18,10 @@ package app.tivi.data.repositories.trendingshows
 
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.Success
+import app.tivi.data.fetchIfEmpty
 import app.tivi.data.instantInPast
-import app.tivi.data.repositories.shows.ShowRepository
+import app.tivi.data.repositories.ShowImagesStore
+import app.tivi.data.repositories.ShowStore
 import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
 import javax.inject.Inject
@@ -30,9 +32,10 @@ import org.threeten.bp.Instant
 class TrendingShowsRepository @Inject constructor(
     private val trendingShowsStore: TrendingShowsStore,
     private val lastRequestStore: TrendingShowsLastRequestStore,
-    private val showDao: TiviShowDao,
     private val traktDataSource: TraktTrendingShowsDataSource,
-    private val showRepository: ShowRepository
+    private val showDao: TiviShowDao,
+    private val showStore: ShowStore,
+    private val showImagesStore: ShowImagesStore
 ) {
     fun observeForPaging() = trendingShowsStore.observeForPaging()
 
@@ -69,12 +72,8 @@ class TrendingShowsRepository @Inject constructor(
                     trendingShowsStore.saveTrendingShowsPage(page, entries)
                     // Now update all of the related shows if needed
                     entries.parallelForEach { entry ->
-                        if (showRepository.needsInitialUpdate(entry.showId)) {
-                            showRepository.updateShow(entry.showId)
-                        }
-                        if (showRepository.needsImagesUpdate(entry.showId)) {
-                            showRepository.updateShowImages(entry.showId)
-                        }
+                        showStore.fetchIfEmpty(entry.showId)
+                        showImagesStore.fetchIfEmpty(entry.showId)
                     }
                 }
             }

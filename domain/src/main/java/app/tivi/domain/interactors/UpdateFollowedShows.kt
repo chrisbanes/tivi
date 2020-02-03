@@ -16,11 +16,12 @@
 
 package app.tivi.domain.interactors
 
+import app.tivi.data.cached
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.instantInPast
+import app.tivi.data.repositories.ShowStore
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
-import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.data.repositories.watchedshows.WatchedShowsRepository
 import app.tivi.domain.Interactor
 import app.tivi.extensions.parallelForEach
@@ -33,7 +34,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.plus
 
 class UpdateFollowedShows @Inject constructor(
-    private val showRepository: ShowRepository,
+    private val showStore: ShowStore,
     private val followedShowsRepository: FollowedShowsRepository,
     private val watchedShowsRepository: WatchedShowsRepository,
     private val seasonEpisodeRepository: SeasonsEpisodesRepository,
@@ -70,7 +71,7 @@ class UpdateFollowedShows @Inject constructor(
                 it.showId,
                 params.type,
                 params.forceRefresh,
-                showRepository.getShow(it.showId)?.traktDataUpdate
+                showStore.cached(it.showId)?.traktDataUpdate
             )
         }
     }

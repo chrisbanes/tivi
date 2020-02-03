@@ -19,7 +19,9 @@ package app.tivi.data
 import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreRequest
 import com.dropbox.android.external.store4.StoreResponse
+import com.dropbox.android.external.store4.fresh
 import com.dropbox.android.external.store4.get
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.first
 
@@ -31,4 +33,26 @@ suspend fun <Key : Any, Output : Any> Store<Key, Output>.fetchIfEmpty(key: Key) 
         // If we don't have a valid Data response, just get it
         get(key)
     }
+}
+
+suspend fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
+    key: Key,
+    forceFresh: Boolean = false
+): Output {
+    return if (forceFresh) {
+        get(key)
+    } else {
+        fresh(key)
+    }
+}
+
+suspend fun <Key : Any, Output : Any> Store<Key, Output>.cached(key: Key): Output? {
+    return stream(StoreRequest.cached(key, refresh = false))
+        .filterNot { it is StoreResponse.Loading }
+        .first()
+        .dataOrNull()
+}
+
+suspend fun <Output : Any> Flow<StoreResponse<Output>>.requireFirstData(): Output? {
+    return filterNot { it is StoreResponse.Loading }.first().requireData()
 }

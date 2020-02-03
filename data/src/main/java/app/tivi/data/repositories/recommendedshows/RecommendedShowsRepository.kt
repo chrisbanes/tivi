@@ -21,8 +21,8 @@ import app.tivi.data.entities.RecommendedShowEntry
 import app.tivi.data.entities.Success
 import app.tivi.data.fetchIfEmpty
 import app.tivi.data.instantInPast
-import app.tivi.data.repositories.shows.ShowRepository
-import app.tivi.data.repositories.shows.ShowStoreRepository
+import app.tivi.data.repositories.ShowImagesStore
+import app.tivi.data.repositories.ShowStore
 import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
 import javax.inject.Inject
@@ -33,10 +33,10 @@ import org.threeten.bp.Instant
 class RecommendedShowsRepository @Inject constructor(
     private val recommendedShowsStore: RecommendedShowsStore,
     private val lastRequestStore: RecommendedShowsLastRequestStore,
-    private val showStore: TiviShowDao,
     private val traktDataSource: TraktRecommendedShowsDataSource,
-    private val showRepository: ShowRepository,
-    private val showStoreRepository: ShowStoreRepository
+    private val showDao: TiviShowDao,
+    private val showStore: ShowStore,
+    private val showImagesStore: ShowImagesStore
 ) {
     fun observeForPaging() = recommendedShowsStore.observeForPaging()
 
@@ -63,7 +63,7 @@ class RecommendedShowsRepository @Inject constructor(
             if (response is Success) {
                 response.data.map { show ->
                     // Grab the show id if it exists, or save the show and use it's generated ID
-                    val showId = showStore.getIdOrSavePlaceholder(show)
+                    val showId = showDao.getIdOrSavePlaceholder(show)
                     // Map to an entry
                     RecommendedShowEntry(showId = showId, page = page)
                 }.also { entries ->
@@ -74,11 +74,8 @@ class RecommendedShowsRepository @Inject constructor(
                     recommendedShowsStore.savePage(page, entries)
                     // Now update all of the related shows if needed
                     entries.parallelForEach { entry ->
-                        showStoreRepository.fetchIfEmpty(entry.showId)
-
-                        if (showRepository.needsImagesUpdate(entry.showId)) {
-                            showRepository.updateShowImages(entry.showId)
-                        }
+                        showStore.fetchIfEmpty(entry.showId)
+                        showImagesStore.fetchIfEmpty(entry.showId)
                     }
                 }
             }

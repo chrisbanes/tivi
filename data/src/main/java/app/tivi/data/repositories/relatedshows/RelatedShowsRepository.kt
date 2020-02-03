@@ -20,8 +20,10 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.fetchIfEmpty
 import app.tivi.data.instantInPast
-import app.tivi.data.repositories.shows.ShowRepository
+import app.tivi.data.repositories.ShowImagesStore
+import app.tivi.data.repositories.ShowStore
 import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
 import javax.inject.Inject
@@ -32,10 +34,11 @@ import org.threeten.bp.Instant
 class RelatedShowsRepository @Inject constructor(
     private val relatedShowsStore: RelatedShowsStore,
     private val lastRequestStore: RelatedShowsLastRequestStore,
-    private val showDao: TiviShowDao,
     private val traktDataSource: TraktRelatedShowsDataSource,
     private val tmdbDataSource: TmdbRelatedShowsDataSource,
-    private val showRepository: ShowRepository
+    private val showDao: TiviShowDao,
+    private val showStore: ShowStore,
+    private val showImagesStore: ShowImagesStore
 ) {
     fun observeRelatedShows(showId: Long) = relatedShowsStore.observeRelatedShows(showId)
 
@@ -74,12 +77,8 @@ class RelatedShowsRepository @Inject constructor(
             relatedShowsStore.saveRelatedShows(showId, entries)
             // Now update all of the related shows if needed
             entries.parallelForEach { entry ->
-                if (showRepository.needsUpdate(entry.otherShowId)) {
-                    showRepository.updateShow(entry.otherShowId)
-                }
-                if (showRepository.needsImagesUpdate(entry.showId)) {
-                    showRepository.updateShowImages(entry.showId)
-                }
+                showStore.fetchIfEmpty(entry.showId)
+                showImagesStore.fetchIfEmpty(entry.showId)
             }
         }
     }

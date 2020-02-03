@@ -16,7 +16,9 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.repositories.shows.ShowRepository
+import app.tivi.data.fetch
+import app.tivi.data.repositories.ShowImagesStore
+import app.tivi.data.repositories.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateShowDetails.Params
 import app.tivi.inject.ProcessLifetime
@@ -26,19 +28,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
 
 class UpdateShowDetails @Inject constructor(
-    private val showRepository: ShowRepository,
+    private val showStore: ShowStore,
+    private val showImagesStore: ShowImagesStore,
     dispatchers: AppCoroutineDispatchers,
     @ProcessLifetime val processScope: CoroutineScope
 ) : Interactor<Params>() {
     override val scope: CoroutineScope = processScope + dispatchers.io
 
     override suspend fun doWork(params: Params) {
-        if (params.forceLoad || showRepository.needsUpdate(params.showId)) {
-            showRepository.updateShow(params.showId)
-        }
-        if (params.forceLoad || showRepository.needsImagesUpdate(params.showId)) {
-            showRepository.updateShowImages(params.showId)
-        }
+        showStore.fetch(params.showId, params.forceLoad)
+        showImagesStore.fetch(params.showId, params.forceLoad)
     }
 
     data class Params(val showId: Long, val forceLoad: Boolean)

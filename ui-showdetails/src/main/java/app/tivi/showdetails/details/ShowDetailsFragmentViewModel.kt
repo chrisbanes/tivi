@@ -79,8 +79,7 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
         viewModelScope.launchObserve(observeShowDetails) { flow ->
             flow.distinctUntilChanged().execute {
                 if (it is Success) {
-                    val value = it()
-                    copy(show = value.show, posterImage = value.poster, backdropImage = value.backdrop)
+                    copy(show = it())
                 } else {
                     this
                 }

@@ -19,8 +19,10 @@ package app.tivi.data.repositories.watchedshows
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.Success
+import app.tivi.data.fetchIfEmpty
 import app.tivi.data.instantInPast
-import app.tivi.data.repositories.shows.ShowRepository
+import app.tivi.data.repositories.ShowImagesStore
+import app.tivi.data.repositories.ShowStore
 import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
 import javax.inject.Inject
@@ -30,10 +32,11 @@ import org.threeten.bp.Instant
 @Singleton
 class WatchedShowsRepository @Inject constructor(
     private val watchedShowsStore: WatchedShowsStore,
-    private val showDao: TiviShowDao,
     private val lastRequestStore: WatchedShowsLastRequestStore,
     private val traktDataSource: TraktWatchedShowsDataSource,
-    private val showRepository: ShowRepository
+    private val showDao: TiviShowDao,
+    private val showStore: ShowStore,
+    private val showImagesStore: ShowImagesStore
 ) {
     fun observeWatchedShowsPagedList(
         filter: String?,
@@ -62,12 +65,8 @@ class WatchedShowsRepository @Inject constructor(
                         watchedShowsStore.saveWatchedShows(entries)
                         // Now update all of the related shows if needed
                         entries.parallelForEach { entry ->
-                            if (showRepository.needsInitialUpdate(entry.showId)) {
-                                showRepository.updateShow(entry.showId)
-                            }
-                            if (showRepository.needsImagesUpdate(entry.showId)) {
-                                showRepository.updateShowImages(entry.showId)
-                            }
+                            showStore.fetchIfEmpty(entry.showId)
+                            showImagesStore.fetchIfEmpty(entry.showId)
                         }
                     }
                     lastRequestStore.updateLastRequest()

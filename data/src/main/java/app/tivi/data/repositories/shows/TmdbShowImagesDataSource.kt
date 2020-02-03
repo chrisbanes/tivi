@@ -29,7 +29,7 @@ import com.uwetrottmann.tmdb2.entities.AppendToResponse
 import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem
 import javax.inject.Inject
 
-class TmdbShowImagesDataSource @Inject constructor(
+internal class TmdbShowImagesDataSource @Inject constructor(
     private val tmdb: Tmdb,
     private val mapper: TmdbImagesToShowImages
 ) : ShowImagesDataSource {

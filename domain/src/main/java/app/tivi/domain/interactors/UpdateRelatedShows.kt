@@ -16,8 +16,9 @@
 
 package app.tivi.domain.interactors
 
+import app.tivi.data.fetch
+import app.tivi.data.repositories.ShowImagesStore
 import app.tivi.data.repositories.relatedshows.RelatedShowsRepository
-import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateRelatedShows.Params
 import app.tivi.extensions.parallelForEach
@@ -29,7 +30,7 @@ import kotlinx.coroutines.plus
 
 class UpdateRelatedShows @Inject constructor(
     private val relatedShowsRepository: RelatedShowsRepository,
-    private val showRepository: ShowRepository,
+    private val showImagesStore: ShowImagesStore,
     dispatchers: AppCoroutineDispatchers,
     @ProcessLifetime val processScope: CoroutineScope
 ) : Interactor<Params>() {
@@ -40,9 +41,7 @@ class UpdateRelatedShows @Inject constructor(
             relatedShowsRepository.updateRelatedShows(params.showId)
         }
         relatedShowsRepository.getRelatedShows(params.showId).parallelForEach {
-            if (params.forceLoad || showRepository.needsImagesUpdate(it.otherShowId)) {
-                showRepository.updateShowImages(it.otherShowId)
-            }
+            showImagesStore.fetch(params.showId, params.forceLoad)
         }
     }
 

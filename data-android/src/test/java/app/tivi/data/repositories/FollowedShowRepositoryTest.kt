@@ -25,7 +25,6 @@ import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.Success
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.repositories.followedshows.TraktFollowedShowsDataSource
-import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.utils.SuccessFakeShowDataSource
 import app.tivi.utils.followedShow1Local
 import app.tivi.utils.followedShow1Network
@@ -54,7 +53,6 @@ class FollowedShowRepositoryTest {
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Inject lateinit var followShowsDao: FollowedShowsDao
-    @Inject lateinit var showRepository: ShowRepository
     @Inject lateinit var repository: FollowedShowsRepository
     @Inject lateinit var database: TiviDatabase
     @Inject lateinit var traktDataSource: TraktFollowedShowsDataSource

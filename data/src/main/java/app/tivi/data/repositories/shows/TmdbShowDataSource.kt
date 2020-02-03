@@ -26,7 +26,7 @@ import app.tivi.extensions.toResult
 import com.uwetrottmann.tmdb2.Tmdb
 import javax.inject.Inject
 
-class TmdbShowDataSource @Inject constructor(
+internal class TmdbShowDataSource @Inject constructor(
     private val tmdb: Tmdb,
     private val mapper: TmdbShowToTiviShow
 ) : ShowDataSource {

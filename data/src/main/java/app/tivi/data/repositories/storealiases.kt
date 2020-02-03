@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.shows
+package app.tivi.data.repositories
 
-import app.tivi.data.daos.LastRequestDao
-import app.tivi.data.entities.Request
-import app.tivi.data.repositories.lastrequests.EntityLastRequestStore
-import javax.inject.Inject
+import app.tivi.data.entities.ShowTmdbImage
+import app.tivi.data.entities.TiviShow
+import com.dropbox.android.external.store4.Store
 
-class ShowLastRequestStore @Inject constructor(
-    dao: LastRequestDao
-) : EntityLastRequestStore(Request.SHOW_DETAILS, dao)
+typealias ShowStore = Store<Long, TiviShow>
+
+typealias ShowImagesStore = Store<Long, List<ShowTmdbImage>>

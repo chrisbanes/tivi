@@ -19,8 +19,10 @@ package app.tivi.data.repositories.popularshows
 import androidx.paging.DataSource
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.Success
+import app.tivi.data.fetchIfEmpty
 import app.tivi.data.instantInPast
-import app.tivi.data.repositories.shows.ShowRepository
+import app.tivi.data.repositories.ShowImagesStore
+import app.tivi.data.repositories.ShowStore
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
@@ -33,9 +35,10 @@ import org.threeten.bp.Instant
 class PopularShowsRepository @Inject constructor(
     private val popularShowsStore: PopularShowsStore,
     private val lastRequestStore: PopularShowsLastRequestStore,
-    private val showDao: TiviShowDao,
     private val traktDataSource: TraktPopularShowsDataSource,
-    private val showRepository: ShowRepository
+    private val showDao: TiviShowDao,
+    private val showStore: ShowStore,
+    private val showImagesStore: ShowImagesStore
 ) {
     fun observeForPaging(): DataSource.Factory<Int, PopularEntryWithShow> = popularShowsStore.observeForPaging()
 
@@ -74,12 +77,8 @@ class PopularShowsRepository @Inject constructor(
                     popularShowsStore.savePopularShowsPage(page, entries)
                     // Now update all of the related shows if needed
                     entries.parallelForEach { entry ->
-                        if (showRepository.needsUpdate(entry.showId)) {
-                            showRepository.updateShow(entry.showId)
-                        }
-                        if (showRepository.needsImagesUpdate(entry.showId)) {
-                            showRepository.updateShowImages(entry.showId)
-                        }
+                        showStore.fetchIfEmpty(entry.showId)
+                        showImagesStore.fetchIfEmpty(entry.showId)
                     }
                 }
             }

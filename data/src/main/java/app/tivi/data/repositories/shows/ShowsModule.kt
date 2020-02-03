@@ -19,18 +19,20 @@ package app.tivi.data.repositories.shows
 import app.tivi.data.daos.ShowImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.ErrorResult
-import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.repositories.ShowImagesStore
+import app.tivi.data.repositories.ShowStore
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
-import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
+import javax.inject.Singleton
 
 @Module
-abstract class ShowsModuleBinds {
+internal abstract class ShowsModuleBinds {
     @Binds
     @Trakt
     abstract fun bindTraktShowDataSource(source: TraktShowDataSource): ShowDataSource
@@ -38,19 +40,21 @@ abstract class ShowsModuleBinds {
     @Binds
     @Tmdb
     abstract fun bindTmdbShowDataSource(source: TmdbShowDataSource): ShowDataSource
+
+    @Binds
+    @Tmdb
+    abstract fun bindTmdbShowImagesDataSource(source: TmdbShowImagesDataSource): ShowImagesDataSource
 }
-
-typealias ShowStoreRepository = Store<Long, TiviShow>
-
-typealias ShowTmdbImagesStore = Store<Long, List<ShowTmdbImage>>
 
 @Module(includes = [ShowsModuleBinds::class])
 class ShowsModule {
+    @Provides
+    @Singleton
     fun provideShowStore(
         showDao: TiviShowDao,
         @Trakt traktShowDataSource: ShowDataSource,
         @Tmdb tmdbShowDataSource: ShowDataSource
-    ): ShowStoreRepository {
+    ): ShowStore {
         return StoreBuilder.fromNonFlow { showId: Long ->
             val localShow = showDao.getShowWithId(showId) ?: TiviShow.EMPTY_SHOW
             // TODO parallelize these calls again
@@ -70,11 +74,13 @@ class ShowsModule {
         ).build()
     }
 
+    @Provides
+    @Singleton
     fun provideTmdbShowImagesStore(
         showImagesDao: ShowImagesDao,
         showDao: TiviShowDao,
-        tmdbShowImagesDataSource: TmdbShowImagesDataSource
-    ): ShowTmdbImagesStore {
+        @Tmdb tmdbShowImagesDataSource: ShowImagesDataSource
+    ): ShowImagesStore {
         return StoreBuilder.fromNonFlow { showId: Long ->
             val show = showDao.getShowWithId(showId)
                 ?: throw IllegalArgumentException("Show with ID $showId does not exist")

@@ -21,8 +21,10 @@ import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.Success
+import app.tivi.data.fetchIfEmpty
 import app.tivi.data.instantInPast
-import app.tivi.data.repositories.shows.ShowRepository
+import app.tivi.data.repositories.ShowImagesStore
+import app.tivi.data.repositories.ShowStore
 import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
 import app.tivi.trakt.TraktAuthState
@@ -37,11 +39,12 @@ import org.threeten.bp.OffsetDateTime
 class FollowedShowsRepository @Inject constructor(
     private val followedShowsStore: FollowedShowsStore,
     private val followedShowsLastRequestStore: FollowedShowsLastRequestStore,
-    private val showDao: TiviShowDao,
     private val dataSource: TraktFollowedShowsDataSource,
-    private val showRepository: ShowRepository,
     private val traktAuthState: Provider<TraktAuthState>,
-    private val logger: Logger
+    private val logger: Logger,
+    private val showDao: TiviShowDao,
+    private val showStore: ShowStore,
+    private val showImagesStore: ShowImagesStore
 ) {
     fun observeFollowedShows(
         sort: SortOption,
@@ -120,12 +123,8 @@ class FollowedShowsRepository @Inject constructor(
                     followedShowsStore.sync(entries)
                     // Now update all of the followed shows if needed
                     entries.parallelForEach { entry ->
-                        if (showRepository.needsInitialUpdate(entry.showId)) {
-                            showRepository.updateShow(entry.showId)
-                        }
-                        if (showRepository.needsImagesUpdate(entry.showId)) {
-                            showRepository.updateShowImages(entry.showId)
-                        }
+                        showStore.fetchIfEmpty(entry.showId)
+                        showImagesStore.fetchIfEmpty(entry.showId)
                     }
                 }
             }

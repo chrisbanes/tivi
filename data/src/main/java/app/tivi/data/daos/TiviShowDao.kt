@@ -38,13 +38,13 @@ abstract class TiviShowDao : EntityDao<TiviShow>() {
     abstract fun getShowWithIdFlow(id: Long): Flow<TiviShow>
 
     @Query("SELECT * FROM shows WHERE id = :id")
+    abstract suspend fun getShowWithIdDetailed(id: Long): ShowDetailed?
+
+    @Query("SELECT * FROM shows WHERE id = :id")
     abstract fun getShowDetailedWithIdFlow(id: Long): Flow<ShowDetailed>
 
     @Query("SELECT * FROM shows WHERE id = :id")
     abstract suspend fun getShowWithId(id: Long): TiviShow?
-
-    @Query("SELECT * FROM shows WHERE id = :id")
-    abstract suspend fun getShowWithIdDetailed(id: Long): ShowDetailed?
 
     @Query("SELECT trakt_id FROM shows WHERE id = :id")
     abstract suspend fun getTraktIdForShowId(id: Long): Int?
