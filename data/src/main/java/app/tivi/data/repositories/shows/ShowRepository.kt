@@ -18,15 +18,12 @@ package app.tivi.data.repositories.shows
 
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.entities.TiviShow.Companion.EMPTY_SHOW
 import app.tivi.data.instantInPast
 import app.tivi.data.resultentities.ShowDetailed
 import app.tivi.extensions.asyncOrAwait
-import app.tivi.inject.Tmdb
-import app.tivi.inject.Trakt
+import com.dropbox.android.external.store4.get
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.async
 import org.threeten.bp.Instant
 
 @Singleton
@@ -35,43 +32,20 @@ class ShowRepository @Inject constructor(
     private val showLastRequestStore: ShowLastRequestStore,
     private val showImagesLastRequestStore: ShowImagesLastRequestStore,
     private val tmdbShowImagesDataSource: TmdbShowImagesDataSource,
-    @Trakt private val traktShowDataSource: ShowDataSource,
-    @Tmdb private val tmdbShowDataSource: ShowDataSource
+    private val showStore2: ShowStoreRepository
 ) {
     fun observeShow(showId: Long) = showStore.observeShowDetailed(showId)
 
     suspend fun getShow(showId: Long): TiviShow? {
-        return showStore.getShow(showId)
+        return showStore2.get(showId)
     }
 
     /**
      * Updates the show with the given id from all network sources, saves the result to the database
      */
+    @Suppress("UNUSED_PARAMETER")
     suspend fun updateShow(showId: Long) {
-        asyncOrAwait("update_show_$showId") {
-            val localShow = showStore.getShowOrEmpty(showId)
-
-            val traktDeferred = async {
-                traktShowDataSource.getShow(localShow)
-            }
-            val tmdbDeferred = async {
-                tmdbShowDataSource.getShow(localShow)
-            }
-
-            val traktResult = traktDeferred.await()
-            val tmdbResult = tmdbDeferred.await()
-
-            showStore.updateShowFromSources(
-                showId,
-                traktResult.get() ?: EMPTY_SHOW,
-                tmdbResult.get() ?: EMPTY_SHOW
-            )
-
-            if (traktResult is Success) {
-                // If the network requests were successful, update the last request timestamp
-                showLastRequestStore.updateLastRequest(showId)
-            }
-        }
+        showStore2.get(showId)
     }
 
     suspend fun updateShowImages(showId: Long) {

@@ -18,7 +18,6 @@ package app.tivi.data.repositories.watchedshows
 
 import androidx.paging.DataSource
 import app.tivi.data.DatabaseTransactionRunner
-import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.WatchedShowEntry
@@ -26,7 +25,6 @@ import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import javax.inject.Inject
 
 class WatchedShowsStore @Inject constructor(
-    private val entityInserter: EntityInserter,
     private val transactionRunner: DatabaseTransactionRunner,
     private val watchedShowDao: WatchedShowDao
 ) {
@@ -60,6 +58,6 @@ class WatchedShowsStore @Inject constructor(
 
     suspend fun saveWatchedShows(watchedShows: List<WatchedShowEntry>) = transactionRunner {
         watchedShowDao.deleteAll()
-        entityInserter.insertOrUpdate(watchedShowDao, watchedShows)
+        watchedShowDao.insertOrUpdate(watchedShows)
     }
 }

@@ -16,13 +16,21 @@
 
 package app.tivi.data.repositories.shows
 
+import app.tivi.data.daos.ShowImagesDao
+import app.tivi.data.daos.TiviShowDao
+import app.tivi.data.entities.ErrorResult
+import app.tivi.data.entities.ShowTmdbImage
+import app.tivi.data.entities.Success
+import app.tivi.data.entities.TiviShow
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
+import com.dropbox.android.external.store4.Store
+import com.dropbox.android.external.store4.StoreBuilder
 import dagger.Binds
 import dagger.Module
 
 @Module
-abstract class ShowsModule {
+abstract class ShowsModuleBinds {
     @Binds
     @Trakt
     abstract fun bindTraktShowDataSource(source: TraktShowDataSource): ShowDataSource
@@ -30,4 +38,56 @@ abstract class ShowsModule {
     @Binds
     @Tmdb
     abstract fun bindTmdbShowDataSource(source: TmdbShowDataSource): ShowDataSource
+}
+
+typealias ShowStoreRepository = Store<Long, TiviShow>
+
+typealias ShowTmdbImagesStore = Store<Long, List<ShowTmdbImage>>
+
+@Module(includes = [ShowsModuleBinds::class])
+class ShowsModule {
+
+    fun provideShowStore(
+        showDao: TiviShowDao,
+        @Trakt traktShowDataSource: ShowDataSource,
+        @Tmdb tmdbShowDataSource: ShowDataSource
+    ): ShowStoreRepository {
+        return StoreBuilder.fromNonFlow { showId: Long ->
+            val localShow = showDao.getShowWithId(showId) ?: TiviShow.EMPTY_SHOW
+            // TODO parallelize these calls again
+            val traktResult = traktShowDataSource.getShow(localShow)
+            val tmdbResult = tmdbShowDataSource.getShow(localShow)
+
+            mergeShows(
+                localShow,
+                traktResult.get() ?: TiviShow.EMPTY_SHOW,
+                tmdbResult.get() ?: TiviShow.EMPTY_SHOW
+            )
+        }.persister(
+            reader = showDao::getShowWithIdFlow,
+            writer = { _, show -> showDao.insertOrUpdate(show) },
+            delete = showDao::delete,
+            deleteAll = showDao::deleteAll
+        ).build()
+    }
+
+    fun provideTmdbShowImagesStore(
+        showImagesDao: ShowImagesDao,
+        showDao: TiviShowDao,
+        tmdbShowImagesDataSource: TmdbShowImagesDataSource
+    ): ShowTmdbImagesStore {
+        return StoreBuilder.fromNonFlow { showId: Long ->
+            val show = showDao.getShowWithId(showId)
+                ?: throw IllegalArgumentException("Show with ID $showId does not exist")
+            when (val result = tmdbShowImagesDataSource.getShowImages(show)) {
+                is Success -> result.get().map { it.copy(showId = showId) }
+                is ErrorResult -> throw result.throwable!!
+            }
+        }.persister(
+            reader = showImagesDao::getImagesForShowId,
+            writer = { showId, images -> showImagesDao.saveImages(showId, images) },
+            delete = showImagesDao::deleteForShowId,
+            deleteAll = showImagesDao::deleteAll
+        ).build()
+    }
 }

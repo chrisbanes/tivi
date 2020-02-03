@@ -16,13 +16,13 @@
 
 package app.tivi.data.repositories.followedshows
 
+import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.Success
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.shows.ShowRepository
-import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
 import app.tivi.trakt.TraktAuthState
@@ -37,7 +37,7 @@ import org.threeten.bp.OffsetDateTime
 class FollowedShowsRepository @Inject constructor(
     private val followedShowsStore: FollowedShowsStore,
     private val followedShowsLastRequestStore: FollowedShowsLastRequestStore,
-    private val showStore: ShowStore,
+    private val showDao: TiviShowDao,
     private val dataSource: TraktFollowedShowsDataSource,
     private val showRepository: ShowRepository,
     private val traktAuthState: Provider<TraktAuthState>,
@@ -112,7 +112,7 @@ class FollowedShowsRepository @Inject constructor(
             is Success -> {
                 response.data.map { (entry, show) ->
                     // Grab the show id if it exists, or save the show and use it's generated ID
-                    val showId = showStore.getIdOrSavePlaceholder(show)
+                    val showId = showDao.getIdOrSavePlaceholder(show)
                     // Create a followed show entry with the show id
                     entry.copy(showId = showId)
                 }.also { entries ->
@@ -141,7 +141,7 @@ class FollowedShowsRepository @Inject constructor(
         }
 
         if (listId != null && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
-            val shows = pending.mapNotNull { showStore.getShow(it.showId) }
+            val shows = pending.mapNotNull { showDao.getShowWithId(it.showId) }
             logger.v("processPendingAdditions. Entries mapped: %s", shows)
 
             val response = dataSource.addShowIdsToList(listId, shows)
@@ -166,7 +166,7 @@ class FollowedShowsRepository @Inject constructor(
         }
 
         if (listId != null && traktAuthState.get() == TraktAuthState.LOGGED_IN) {
-            val shows = pending.mapNotNull { showStore.getShow(it.showId) }
+            val shows = pending.mapNotNull { showDao.getShowWithId(it.showId) }
             logger.v("processPendingDelete. Entries mapped: %s", shows)
 
             val response = dataSource.removeShowIdsFromList(listId, shows)

@@ -16,13 +16,11 @@
 
 package app.tivi.data.repositories.recommendedshows
 
-import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.RecommendedDao
 import app.tivi.data.entities.RecommendedShowEntry
 import javax.inject.Inject
 
 class RecommendedShowsStore @Inject constructor(
-    private val transactionRunner: DatabaseTransactionRunner,
     private val recommendedDao: RecommendedDao
 ) {
     fun observeForObservable(
@@ -32,10 +30,7 @@ class RecommendedShowsStore @Inject constructor(
 
     fun observeForPaging() = recommendedDao.entriesDataSource()
 
-    suspend fun savePage(page: Int, entries: List<RecommendedShowEntry>) = transactionRunner {
-        recommendedDao.deletePage(page)
-        recommendedDao.insertAll(entries)
-    }
+    suspend fun savePage(page: Int, entries: List<RecommendedShowEntry>) = recommendedDao.updatePage(page, entries)
 
     suspend fun deleteAll() = recommendedDao.deleteAll()
 

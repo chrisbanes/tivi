@@ -102,7 +102,7 @@ class EpisodeWatchEntryTest {
     @Test
     fun delete() = runBlockingTest {
         episodeWatchEntryDao.insert(s1e1w)
-        episodeWatchEntryDao.delete(s1e1w)
+        episodeWatchEntryDao.deleteEntity(s1e1w)
         assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id), `is`(nullValue()))
     }
 
@@ -110,7 +110,7 @@ class EpisodeWatchEntryTest {
     fun deleteEpisode_deletesWatch() = runBlockingTest {
         episodeWatchEntryDao.insert(s1e1w)
         // Now delete episode
-        episodesDao.delete(s1e1)
+        episodesDao.deleteEntity(s1e1)
         assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id), `is`(nullValue()))
     }
 }

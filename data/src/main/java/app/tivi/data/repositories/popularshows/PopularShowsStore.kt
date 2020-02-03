@@ -17,14 +17,12 @@
 package app.tivi.data.repositories.popularshows
 
 import androidx.paging.DataSource
-import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.PopularDao
 import app.tivi.data.entities.PopularShowEntry
 import app.tivi.data.resultentities.PopularEntryWithShow
 import javax.inject.Inject
 
 class PopularShowsStore @Inject constructor(
-    private val transactionRunner: DatabaseTransactionRunner,
     private val popularShowDao: PopularDao
 ) {
     fun observeForObservable(
@@ -39,10 +37,7 @@ class PopularShowsStore @Inject constructor(
     suspend fun savePopularShowsPage(
         page: Int,
         entries: List<PopularShowEntry>
-    ) = transactionRunner {
-        popularShowDao.deletePage(page)
-        popularShowDao.insertAll(entries)
-    }
+    ) = popularShowDao.updatePage(page, entries)
 
     suspend fun deleteAll() = popularShowDao.deleteAll()
 

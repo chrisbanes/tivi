@@ -16,11 +16,11 @@
 
 package app.tivi.data.repositories.watchedshows
 
+import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.Success
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.shows.ShowRepository
-import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
 import javax.inject.Inject
@@ -30,7 +30,7 @@ import org.threeten.bp.Instant
 @Singleton
 class WatchedShowsRepository @Inject constructor(
     private val watchedShowsStore: WatchedShowsStore,
-    private val showStore: ShowStore,
+    private val showDao: TiviShowDao,
     private val lastRequestStore: WatchedShowsLastRequestStore,
     private val traktDataSource: TraktWatchedShowsDataSource,
     private val showRepository: ShowRepository
@@ -54,7 +54,7 @@ class WatchedShowsRepository @Inject constructor(
                 is Success -> {
                     response.data.map { (show, entry) ->
                         // Grab the show id if it exists, or save the show and use it's generated ID
-                        val watchedShowId = showStore.getIdOrSavePlaceholder(show)
+                        val watchedShowId = showDao.getIdOrSavePlaceholder(show)
                         // Make a copy of the entry with the id
                         entry.copy(showId = watchedShowId)
                     }.also { entries ->

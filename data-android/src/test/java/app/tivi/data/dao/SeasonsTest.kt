@@ -93,7 +93,7 @@ class SeasonsTest {
     @Test
     fun deleteSeason() = runBlockingTest {
         seasonsDao.insert(s1)
-        seasonsDao.delete(s1)
+        seasonsDao.deleteEntity(s1)
 
         assertThat(seasonsDao.seasonWithId(s1_id), `is`(nullValue()))
     }

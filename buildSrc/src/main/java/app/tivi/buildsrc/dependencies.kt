@@ -50,6 +50,8 @@ object Libs {
 
     const val flexbox = "com.google.android:flexbox:2.0.1"
 
+    const val store = "com.dropbox.mobile.store:store4:4.0.0-alpha02"
+
     object Insetter {
         private const val version = "0.2.0"
         const val dbx = "dev.chrisbanes:insetter-dbx:$version"

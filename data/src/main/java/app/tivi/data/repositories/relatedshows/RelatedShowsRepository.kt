@@ -16,12 +16,12 @@
 
 package app.tivi.data.repositories.relatedshows
 
+import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.shows.ShowRepository
-import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
 import javax.inject.Inject
@@ -32,7 +32,7 @@ import org.threeten.bp.Instant
 class RelatedShowsRepository @Inject constructor(
     private val relatedShowsStore: RelatedShowsStore,
     private val lastRequestStore: RelatedShowsLastRequestStore,
-    private val showStore: ShowStore,
+    private val showDao: TiviShowDao,
     private val traktDataSource: TraktRelatedShowsDataSource,
     private val tmdbDataSource: TmdbRelatedShowsDataSource,
     private val showRepository: ShowRepository
@@ -66,7 +66,7 @@ class RelatedShowsRepository @Inject constructor(
     private suspend fun process(showId: Long, list: List<Pair<TiviShow, RelatedShowEntry>>) {
         list.map { (show, entry) ->
             // Grab the show id if it exists, or save the show and use it's generated ID
-            val relatedShowId = showStore.getIdOrSavePlaceholder(show)
+            val relatedShowId = showDao.getIdOrSavePlaceholder(show)
             // Make a copy of the entry with the id
             entry.copy(showId = showId, otherShowId = relatedShowId)
         }.also { entries ->

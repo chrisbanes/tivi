@@ -17,14 +17,12 @@
 package app.tivi.data.repositories.trendingshows
 
 import androidx.paging.DataSource
-import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.entities.TrendingShowEntry
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import javax.inject.Inject
 
 class TrendingShowsStore @Inject constructor(
-    private val transactionRunner: DatabaseTransactionRunner,
     private val trendingShowsDao: TrendingDao
 ) {
     fun observeForObservable(
@@ -37,10 +35,7 @@ class TrendingShowsStore @Inject constructor(
     suspend fun saveTrendingShowsPage(
         page: Int,
         entries: List<TrendingShowEntry>
-    ) = transactionRunner {
-        trendingShowsDao.deletePage(page)
-        trendingShowsDao.insertAll(entries)
-    }
+    ) = trendingShowsDao.updatePage(page, entries)
 
     suspend fun deleteAll() = trendingShowsDao.deleteAll()
 

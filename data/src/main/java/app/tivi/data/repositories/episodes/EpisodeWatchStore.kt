@@ -17,7 +17,6 @@
 package app.tivi.data.repositories.episodes
 
 import app.tivi.data.DatabaseTransactionRunner
-import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.EpisodeWatchEntryDao
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
@@ -27,7 +26,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 class EpisodeWatchStore @Inject constructor(
-    private val entityInserter: EntityInserter,
     private val transactionRunner: DatabaseTransactionRunner,
     private val episodeWatchEntryDao: EpisodeWatchEntryDao,
     private val logger: Logger
@@ -43,9 +41,9 @@ class EpisodeWatchStore @Inject constructor(
         return episodeWatchEntryDao.watchesForEpisodeObservable(episodeId)
     }
 
-    suspend fun save(watch: EpisodeWatchEntry) = entityInserter.insertOrUpdate(episodeWatchEntryDao, watch)
+    suspend fun save(watch: EpisodeWatchEntry) = episodeWatchEntryDao.insertOrUpdate(watch)
 
-    suspend fun save(watches: List<EpisodeWatchEntry>) = entityInserter.insertOrUpdate(episodeWatchEntryDao, watches)
+    suspend fun save(watches: List<EpisodeWatchEntry>) = episodeWatchEntryDao.insertOrUpdate(watches)
 
     suspend fun getEpisodeWatchesForShow(showId: Long) = episodeWatchEntryDao.entriesForShowId(showId)
 

@@ -16,8 +16,6 @@
 
 package app.tivi.data.repositories.relatedshows
 
-import app.tivi.data.DatabaseTransactionRunner
-import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
@@ -25,8 +23,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 class RelatedShowsStore @Inject constructor(
-    private val entityInserter: EntityInserter,
-    private val transactionRunner: DatabaseTransactionRunner,
     private val relatedShowsDao: RelatedShowsDao
 ) {
     suspend fun getRelatedShows(showId: Long) = relatedShowsDao.entries(showId)
@@ -38,8 +34,8 @@ class RelatedShowsStore @Inject constructor(
     suspend fun saveRelatedShows(
         showId: Long,
         relatedShows: List<RelatedShowEntry>
-    ) = transactionRunner {
+    ) {
         relatedShowsDao.deleteWithShowId(showId)
-        entityInserter.insertOrUpdate(relatedShowsDao, relatedShows)
+        relatedShowsDao.insertOrUpdate(relatedShows)
     }
 }

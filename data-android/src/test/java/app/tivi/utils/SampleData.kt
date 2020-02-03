@@ -34,7 +34,7 @@ val show2 = TiviShow(id = show2Id, title = "G'day mate", traktId = 546)
 
 internal suspend fun insertShow(db: TiviDatabase) = db.showDao().insert(show)
 
-internal suspend fun deleteShow(db: TiviDatabase) = db.showDao().delete(show)
+internal suspend fun deleteShow(db: TiviDatabase) = db.showDao().deleteEntity(show)
 
 const val s1_id = 1L
 val s1 = Season(

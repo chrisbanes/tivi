@@ -107,7 +107,7 @@ fun <ET : TiviEntity, NT, NID> syncerForEntity(
 ) = ItemSyncer(
     entityDao::insert,
     entityDao::update,
-    entityDao::delete,
+    entityDao::deleteEntity,
     localEntityToIdFunc,
     networkEntityToIdFunc,
     networkEntityToLocalEntityMapperFunc,
@@ -122,7 +122,7 @@ fun <ET : TiviEntity, NID> syncerForEntity(
 ) = ItemSyncer(
     entityDao::insert,
     entityDao::update,
-    entityDao::delete,
+    entityDao::deleteEntity,
     entityToIdFunc,
     entityToIdFunc,
     mapper,

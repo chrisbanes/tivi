@@ -17,10 +17,10 @@
 package app.tivi.data.repositories.popularshows
 
 import androidx.paging.DataSource
+import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.Success
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.shows.ShowRepository
-import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
@@ -33,7 +33,7 @@ import org.threeten.bp.Instant
 class PopularShowsRepository @Inject constructor(
     private val popularShowsStore: PopularShowsStore,
     private val lastRequestStore: PopularShowsLastRequestStore,
-    private val showStore: ShowStore,
+    private val showDao: TiviShowDao,
     private val traktDataSource: TraktPopularShowsDataSource,
     private val showRepository: ShowRepository
 ) {
@@ -63,7 +63,7 @@ class PopularShowsRepository @Inject constructor(
             if (response is Success) {
                 response.data.map { (show, entry) ->
                     // Grab the show id if it exists, or save the show and use it's generated ID
-                    val showId = showStore.getIdOrSavePlaceholder(show)
+                    val showId = showDao.getIdOrSavePlaceholder(show)
                     // Make a copy of the entry with the id
                     entry.copy(showId = showId, page = page)
                 }.also { entries ->

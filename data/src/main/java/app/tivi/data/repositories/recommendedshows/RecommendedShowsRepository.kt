@@ -16,11 +16,13 @@
 
 package app.tivi.data.repositories.recommendedshows
 
+import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.RecommendedShowEntry
 import app.tivi.data.entities.Success
+import app.tivi.data.fetchIfEmpty
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.shows.ShowRepository
-import app.tivi.data.repositories.shows.ShowStore
+import app.tivi.data.repositories.shows.ShowStoreRepository
 import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
 import javax.inject.Inject
@@ -31,9 +33,10 @@ import org.threeten.bp.Instant
 class RecommendedShowsRepository @Inject constructor(
     private val recommendedShowsStore: RecommendedShowsStore,
     private val lastRequestStore: RecommendedShowsLastRequestStore,
-    private val showStore: ShowStore,
+    private val showStore: TiviShowDao,
     private val traktDataSource: TraktRecommendedShowsDataSource,
-    private val showRepository: ShowRepository
+    private val showRepository: ShowRepository,
+    private val showStoreRepository: ShowStoreRepository
 ) {
     fun observeForPaging() = recommendedShowsStore.observeForPaging()
 
@@ -71,9 +74,8 @@ class RecommendedShowsRepository @Inject constructor(
                     recommendedShowsStore.savePage(page, entries)
                     // Now update all of the related shows if needed
                     entries.parallelForEach { entry ->
-                        if (showRepository.needsInitialUpdate(entry.showId)) {
-                            showRepository.updateShow(entry.showId)
-                        }
+                        showStoreRepository.fetchIfEmpty(entry.showId)
+
                         if (showRepository.needsImagesUpdate(entry.showId)) {
                             showRepository.updateShowImages(entry.showId)
                         }
