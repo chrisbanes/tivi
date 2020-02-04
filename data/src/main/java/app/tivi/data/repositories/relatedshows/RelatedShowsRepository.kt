@@ -20,7 +20,7 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.fetchIfEmpty
+import app.tivi.data.fetch
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.ShowImagesStore
 import app.tivi.data.repositories.ShowStore
@@ -77,8 +77,8 @@ class RelatedShowsRepository @Inject constructor(
             relatedShowsStore.saveRelatedShows(showId, entries)
             // Now update all of the related shows if needed
             entries.parallelForEach { entry ->
-                showStore.fetchIfEmpty(entry.showId)
-                showImagesStore.fetchIfEmpty(entry.showId)
+                showStore.fetch(entry.showId)
+                showImagesStore.fetch(entry.showId)
             }
         }
     }

@@ -21,7 +21,7 @@ import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.Success
-import app.tivi.data.fetchIfEmpty
+import app.tivi.data.fetch
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.ShowImagesStore
 import app.tivi.data.repositories.ShowStore
@@ -123,8 +123,8 @@ class FollowedShowsRepository @Inject constructor(
                     followedShowsStore.sync(entries)
                     // Now update all of the followed shows if needed
                     entries.parallelForEach { entry ->
-                        showStore.fetchIfEmpty(entry.showId)
-                        showImagesStore.fetchIfEmpty(entry.showId)
+                        showStore.fetch(entry.showId)
+                        showImagesStore.fetch(entry.showId)
                     }
                 }
             }

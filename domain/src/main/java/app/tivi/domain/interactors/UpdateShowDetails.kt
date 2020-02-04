@@ -17,7 +17,8 @@
 package app.tivi.domain.interactors
 
 import app.tivi.data.fetch
-import app.tivi.data.repositories.ShowImagesStore
+import app.tivi.data.instantInPast
+import app.tivi.data.isBefore
 import app.tivi.data.repositories.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateShowDetails.Params
@@ -35,7 +36,10 @@ class UpdateShowDetails @Inject constructor(
     override val scope: CoroutineScope = processScope + dispatchers.io
 
     override suspend fun doWork(params: Params) {
-        showStore.fetch(params.showId, params.forceLoad)
+        showStore.fetch(params.showId, params.forceLoad) {
+            val updateTime = it.traktDataUpdate
+            updateTime == null || updateTime.isBefore(instantInPast(days = 30))
+        }
     }
 
     data class Params(val showId: Long, val forceLoad: Boolean)

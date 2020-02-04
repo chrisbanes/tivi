@@ -20,40 +20,33 @@ import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreRequest
 import com.dropbox.android.external.store4.StoreResponse
 import com.dropbox.android.external.store4.fresh
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.first
 
-suspend fun <Key : Any, Output : Any> Store<Key, Output>.fetchIfEmpty(key: Key) {
-    val localValue = stream(StoreRequest.cached(key, refresh = false))
-        .filterNot { it is StoreResponse.Loading }
-        .first()
-    if (localValue !is StoreResponse.Data) {
-        // If we don't have a valid Data response, just get it
-        get(key)
-    }
-}
-
 suspend fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
     key: Key,
-    forceFresh: Boolean = false
+    forceFresh: Boolean = false,
+    doFreshIf: ((Output) -> Boolean)? = null
 ): Output {
-    return if (forceFresh) fresh(key) else get(key, refresh = true)
+    return if (forceFresh) {
+        // If we're forcing a fresh fetch, do it now
+        fresh(key)
+    } else {
+        // Else we'll check the current cached value
+        val cached = cachedOnly(key)
+        if (cached == null || doFreshIf?.invoke(cached) == true) {
+            // Our cached value isn't valid, do a fresh fetch
+            fresh(key)
+        } else {
+            // We have a current cached value
+            cached
+        }
+    }
 }
-
-suspend fun <Key : Any, Output : Any> Store<Key, Output>.get(key: Key, refresh: Boolean = false) = stream(
-    StoreRequest.cached(key, refresh = refresh)
-).filterNot {
-    it is StoreResponse.Loading
-}.first().requireData()
 
 suspend fun <Key : Any, Output : Any> Store<Key, Output>.cachedOnly(key: Key): Output? {
     return stream(StoreRequest.cached(key, refresh = false))
         .filterNot { it is StoreResponse.Loading }
         .first()
         .dataOrNull()
-}
-
-suspend fun <Output : Any> Flow<StoreResponse<Output>>.requireFirstData(): Output? {
-    return filterNot { it is StoreResponse.Loading }.first().requireData()
 }

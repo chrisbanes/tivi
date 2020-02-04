@@ -19,7 +19,7 @@ package app.tivi.data.repositories.watchedshows
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.Success
-import app.tivi.data.fetchIfEmpty
+import app.tivi.data.fetch
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.ShowImagesStore
 import app.tivi.data.repositories.ShowStore
@@ -65,8 +65,8 @@ class WatchedShowsRepository @Inject constructor(
                         watchedShowsStore.saveWatchedShows(entries)
                         // Now update all of the related shows if needed
                         entries.parallelForEach { entry ->
-                            showStore.fetchIfEmpty(entry.showId)
-                            showImagesStore.fetchIfEmpty(entry.showId)
+                            showStore.fetch(entry.showId)
+                            showImagesStore.fetch(entry.showId)
                         }
                     }
                     lastRequestStore.updateLastRequest()
