@@ -20,7 +20,6 @@ import android.view.ViewGroup
 import androidx.animation.transitionDefinition
 import androidx.annotation.DrawableRes
 import androidx.compose.Composable
-import androidx.compose.ambient
 import androidx.compose.remember
 import androidx.compose.state
 import androidx.core.view.WindowInsetsCompat
@@ -83,7 +82,7 @@ import app.tivi.common.compose.SwipeDirection
 import app.tivi.common.compose.SwipeToDismiss
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
-import app.tivi.common.compose.WrapInAmbients
+import app.tivi.common.compose.WrapWithAmbients
 import app.tivi.common.compose.center
 import app.tivi.common.compose.observe
 import app.tivi.common.compose.observeInsets
@@ -111,7 +110,7 @@ fun ViewGroup.composeEpisodeDetails(
     actioner: (EpisodeDetailsAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter
 ): Any = setContentWithLifecycle(lifecycleOwner) {
-    WrapInAmbients(tiviDateFormatter, InsetsHolder()) {
+    WrapWithAmbients(tiviDateFormatter, InsetsHolder()) {
         observeInsets(insets)
 
         val viewState = observe(state)
@@ -169,7 +168,7 @@ private fun EpisodeDetails(
             }
         }
 
-        val insets = ambient(InsetsAmbient)
+        val insets = InsetsAmbient.current
         WithDensity {
             WatchButton(
                 modifier = LayoutGravity.BottomRight +
@@ -217,7 +216,7 @@ private fun InfoPanes(episode: Episode) {
         }
 
         episode.firstAired?.let { firstAired ->
-            val formatter = ambient(TiviDateFormatterAmbient)
+            val formatter = TiviDateFormatterAmbient.current
             InfoPane(
                 modifier = LayoutFlexible(1f),
                 iconResId = R.drawable.ic_details_date,
@@ -296,7 +295,7 @@ private fun EpisodeWatch(
     ) {
         Row(modifier = LayoutPadding(16.dp, 8.dp, 16.dp, 8.dp) + LayoutSize.Min(40.dp)) {
             ProvideEmphasis(emphasis = EmphasisLevels().high) {
-                val formatter = ambient(TiviDateFormatterAmbient)
+                val formatter = TiviDateFormatterAmbient.current
                 Text(
                     modifier = LayoutFlexible(1f) + LayoutGravity.Center,
                     text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),

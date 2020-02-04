@@ -62,7 +62,5 @@ fun WithOffset(
 
 val LayoutCoordinates.center: PxPosition
     get() {
-        val pos = position
-        val size = size
-        return PxPosition(pos.x + size.width / 2, pos.y + size.height / 2)
+        return PxPosition(size.width / 2, size.height / 2)
     }

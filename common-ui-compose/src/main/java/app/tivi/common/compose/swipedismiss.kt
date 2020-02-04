@@ -26,7 +26,8 @@ import androidx.ui.foundation.gestures.DragDirection
 import androidx.ui.foundation.gestures.Draggable
 import androidx.ui.layout.Container
 import androidx.ui.layout.Stack
-import androidx.ui.unit.PxSize
+import androidx.ui.unit.IntPx
+import androidx.ui.unit.IntPxSize
 import kotlin.math.absoluteValue
 
 enum class SwipeDirection {
@@ -49,15 +50,15 @@ fun SwipeToDismiss(
 
     OnPositioned(onPositioned = { coordinates ->
         if (SwipeDirection.LEFT in swipeDirections) {
-            min.value = -coordinates.size.width.value
+            min.value = -coordinates.size.width.value.toFloat()
         }
         if (SwipeDirection.RIGHT in swipeDirections) {
-            max.value = coordinates.size.width.value
+            max.value = coordinates.size.width.value.toFloat()
         }
     })
 
     val position = animatedDragValue(0f, min.value, max.value)
-    val swipeChildrenSize = state { PxSize.Zero }
+    val swipeChildrenSize = state { IntPxSize(IntPx.Zero, IntPx.Zero) }
     val progress = state { 0f }
 
     if (position.value != 0f) {

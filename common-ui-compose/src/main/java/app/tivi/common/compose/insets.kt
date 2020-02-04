@@ -17,10 +17,9 @@
 package app.tivi.common.compose
 
 import android.view.View
-import androidx.compose.Ambient
 import androidx.compose.Composable
 import androidx.compose.Model
-import androidx.compose.ambient
+import androidx.compose.ambientOf
 import androidx.compose.onCommit
 import androidx.compose.remember
 import androidx.core.view.ViewCompat
@@ -63,11 +62,11 @@ fun InsetsHolder.setFrom(insets: WindowInsetsCompat) {
     }
 }
 
-val InsetsAmbient = Ambient.of { InsetsHolder() }
+val InsetsAmbient = ambientOf { InsetsHolder() }
 
 @Composable
 fun observeInsets(liveData: LiveData<WindowInsetsCompat>) {
-    val insetsHolder = ambient(InsetsAmbient)
+    val insetsHolder = InsetsAmbient.current
     val observer = remember {
         Observer<WindowInsetsCompat> { insets -> insets?.let(insetsHolder::setFrom) }
     }

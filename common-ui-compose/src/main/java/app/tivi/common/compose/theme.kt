@@ -18,6 +18,7 @@ package app.tivi.common.compose
 
 import android.content.Context
 import android.graphics.Typeface
+import android.util.TypedValue
 import androidx.annotation.StyleRes
 import androidx.compose.Composable
 import androidx.core.content.res.getResourceIdOrThrow
@@ -32,11 +33,11 @@ import androidx.ui.material.Typography
 import androidx.ui.material.darkColorPalette
 import androidx.ui.material.lightColorPalette
 import androidx.ui.text.TextStyle
-import androidx.ui.text.font.Font
 import androidx.ui.text.font.FontFamily
 import androidx.ui.text.font.FontStyle
 import androidx.ui.text.font.FontWeight
 import androidx.ui.text.font.asFontFamily
+import androidx.ui.text.font.font
 import androidx.ui.unit.DensityScope
 import androidx.ui.unit.TextUnit
 import androidx.ui.unit.em
@@ -131,19 +132,6 @@ private fun DensityScope.textStyleFromTextAppearance(context: Context, @StyleRes
 
         val typeface = a.getInt(R.styleable.ComposeTextAppearance_android_typeface, -1)
 
-        // Compose does not allow creation of Fonts from Typefaces, so can't use
-        // ResourcesCompat.getFont() for @font resources from android:fontFamily
-        // (i.e. for downloadable fonts). We can use static typefaces from assets though
-        val fontFamily = if (a.hasValue(R.styleable.ComposeTextAppearance_android_fontFamily)) {
-            a.getString(R.styleable.ComposeTextAppearance_android_fontFamily)
-        } else {
-            a.getString(R.styleable.ComposeTextAppearance_fontFamily)
-        }?.let { v ->
-            // This is a bit gross. Compose's Font wants just the filename of the TTF, so
-            // we need to remove the path from the string
-            v.substringAfter("res/font/")
-        }
-
         val featureSettings = a.getString(R.styleable.ComposeTextAppearance_android_fontFeatureSettings)
 
         // TODO read and expand android:fontVariationSettings.
@@ -156,14 +144,32 @@ private fun DensityScope.textStyleFromTextAppearance(context: Context, @StyleRes
 
         val lineHeight = a.getDimensionPixelSize(R.styleable.ComposeTextAppearance_android_lineHeight, -1)
 
+        fun readFontFamily(index: Int): FontFamily? {
+            // TODO cache this TypedValue
+            val tv = TypedValue()
+            if (a.getValue(index, tv)) {
+                return when (tv.type) {
+                    TypedValue.TYPE_REFERENCE -> {
+                        font(tv.data).asFontFamily()
+                    }
+                    else -> null
+                }
+            }
+            return null
+        }
+
         TextStyle(
             color = if (color != DEFAULT_COLOR) Color(color) else null,
             fontSize = textSize.toSp(),
             lineHeight = if (lineHeight != -1) lineHeight.toSp() else TextUnit.Inherit,
             fontFamily = when {
-                // FYI, this only works with static font files in assets. It will crash
-                // for @font XML resources
-                fontFamily != null -> Font(fontFamily).asFontFamily()
+                // FYI, this only works with static font files in assets
+                a.hasValue(R.styleable.ComposeTextAppearance_android_fontFamily) -> {
+                    readFontFamily(R.styleable.ComposeTextAppearance_android_fontFamily)
+                }
+                a.hasValue(R.styleable.ComposeTextAppearance_fontFamily) -> {
+                    readFontFamily(R.styleable.ComposeTextAppearance_fontFamily)
+                }
                 // Values below are from frameworks/base attrs.xml
                 typeface == 1 -> FontFamily.SansSerif
                 typeface == 2 -> FontFamily.Serif
