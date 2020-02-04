@@ -25,7 +25,10 @@ jobs:
         env:
           ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
 
-      - name: Generate cache key
+# Hello Chris, I'm opening this PR just to ask why are you using a .txt file instead of using a variable to store the hashes.. 
+# I was doing some tests using your approach, and when I used a variable instead of a .txt file the time was almost cut in half just in the write step.
+# Is there a reason to use a file instead of a variable? Thank you in advance =)
+      - name: Generate cache key 
         run: ./checksum.sh checksum.txt
 
       - name: Copy CI gradle.properties
