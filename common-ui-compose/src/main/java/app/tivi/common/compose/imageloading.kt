@@ -23,6 +23,7 @@ import androidx.compose.Composable
 import androidx.compose.onCommit
 import androidx.compose.remember
 import androidx.compose.state
+import androidx.compose.stateFor
 import androidx.core.graphics.drawable.toBitmap
 import androidx.ui.animation.Transition
 import androidx.ui.core.Modifier
@@ -30,6 +31,7 @@ import androidx.ui.graphics.Image
 import androidx.ui.layout.Container
 import app.tivi.ui.graphics.ImageLoadingColorMatrix
 import coil.Coil
+import coil.api.get
 import coil.api.newGetBuilder
 import coil.request.GetRequest
 import kotlin.math.roundToInt
@@ -78,30 +80,31 @@ fun LoadAndShowImage(
     modifier: Modifier = Modifier.None,
     data: Any
 ) {
-    val imgLoadState = state { ImageLoadState.Empty }
+    var imgLoadState by state { ImageLoadState.Empty }
     val image = LoadImage(data) {
         // Once loaded, update the load state
-        imgLoadState.value = ImageLoadState.Loaded
+        imgLoadState = ImageLoadState.Loaded
     }
 
-    Transition(
-        definition = imageSaturationTransitionDef,
-        toState = imgLoadState.value
-    ) { transitionState ->
-        Container(modifier = modifier) {
-            if (image != null) {
-                DrawImage(image = image) { paint ->
-                    val matrix = remember(image) { ImageLoadingColorMatrix() }
-                    // Update the ImageLoadingColorMatrix from the transition state
-                    matrix.saturationFraction = transitionState[saturation]
-                    matrix.alphaFraction = transitionState[alpha]
-                    matrix.brightnessFraction = transitionState[brightness]
+    val matrix = remember(image) { ImageLoadingColorMatrix() }
+    var colorFilter by stateFor(image) { ColorMatrixColorFilter(matrix) }
 
+    Container(modifier = modifier) {
+        Transition(
+            definition = imageSaturationTransitionDef,
+            toState = imgLoadState
+        ) { transitionState ->
+            if (image != null) {
+                // Update the ImageLoadingColorMatrix from the transition state
+                matrix.saturationFraction = transitionState[saturation]
+                matrix.alphaFraction = transitionState[alpha]
+                matrix.brightnessFraction = transitionState[brightness]
+                colorFilter = ColorMatrixColorFilter(matrix)
+
+                DrawImage(image = image) { paint ->
                     // We have to unwrap to the framework paint instance to use
                     // a ColorMatrixColorFilter, for our ImageLoadingColorMatrix
-                    paint.asFrameworkPaint().colorFilter = ColorMatrixColorFilter(matrix)
-
-                    // TODO clear ColorFilter on paint once the transition has finished
+                    paint.asFrameworkPaint().colorFilter = colorFilter
                 }
             }
         }
@@ -116,7 +119,7 @@ fun LoadImage(
     request: GetRequest,
     onLoad: () -> Unit
 ): Image? {
-    val image = state<Image?> { null }
+    val image = stateFor<Image?>(request) { null }
 
     // Execute the following code whenever the request changes.
     onCommit(request) {
