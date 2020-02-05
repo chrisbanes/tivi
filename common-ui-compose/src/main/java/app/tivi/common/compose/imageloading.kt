@@ -27,13 +27,16 @@ import androidx.compose.stateFor
 import androidx.core.graphics.drawable.toBitmap
 import androidx.ui.animation.Transition
 import androidx.ui.core.Modifier
+import androidx.ui.core.OnChildPositioned
 import androidx.ui.graphics.Image
 import androidx.ui.layout.Container
+import androidx.ui.unit.PxSize
+import androidx.ui.unit.minDimension
+import androidx.ui.unit.px
 import app.tivi.ui.graphics.ImageLoadingColorMatrix
 import coil.Coil
-import coil.api.get
 import coil.api.newGetBuilder
-import coil.request.GetRequest
+import coil.size.Scale
 import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -78,55 +81,81 @@ private val imageSaturationTransitionDef = transitionDefinition {
 @Composable
 fun LoadAndShowImage(
     modifier: Modifier = Modifier.None,
-    data: Any
+    data: Any,
+    crossFadeIn: Boolean = false
 ) {
-    var imgLoadState by state { ImageLoadState.Empty }
-    val image = LoadImage(data) {
-        // Once loaded, update the load state
-        imgLoadState = ImageLoadState.Loaded
-    }
+    var childSize by state { PxSize.Zero }
 
-    val matrix = remember(image) { ImageLoadingColorMatrix() }
-    var colorFilter by stateFor(image) { ColorMatrixColorFilter(matrix) }
+    OnChildPositioned(onPositioned = { childSize = it.size }) {
+        var imgLoadState by stateFor(data, childSize) { ImageLoadState.Empty }
 
-    Container(modifier = modifier) {
-        Transition(
-            definition = imageSaturationTransitionDef,
-            toState = imgLoadState
-        ) { transitionState ->
-            if (image != null) {
-                // Update the ImageLoadingColorMatrix from the transition state
-                matrix.saturationFraction = transitionState[saturation]
-                matrix.alphaFraction = transitionState[alpha]
-                matrix.brightnessFraction = transitionState[brightness]
-                colorFilter = ColorMatrixColorFilter(matrix)
+        val image = if (childSize.minDimension > 0.px) {
+            // If we have a size, we can now load the image using those bounds...
+            LoadImage(data, childSize) {
+                // Once loaded, update the load state
+                imgLoadState = ImageLoadState.Loaded
+            }
+        } else null
 
-                DrawImage(image = image) { paint ->
-                    // We have to unwrap to the framework paint instance to use
-                    // a ColorMatrixColorFilter, for our ImageLoadingColorMatrix
-                    paint.asFrameworkPaint().colorFilter = colorFilter
+        Container(modifier = modifier) {
+            if (crossFadeIn) {
+                val matrix = remember(image) { ImageLoadingColorMatrix() }
+                var colorFilter by stateFor(image) { ColorMatrixColorFilter(matrix) }
+
+                Transition(
+                    definition = imageSaturationTransitionDef,
+                    toState = imgLoadState
+                ) { transitionState ->
+                    if (image != null) {
+                        // Update the ImageLoadingColorMatrix from the transition state
+                        matrix.saturationFraction = transitionState[saturation]
+                        matrix.alphaFraction = transitionState[alpha]
+                        matrix.brightnessFraction = transitionState[brightness]
+                        colorFilter = ColorMatrixColorFilter(matrix)
+
+                        DrawImage(image = image) { paint ->
+                            // We have to unwrap to the framework paint instance to use
+                            // a ColorMatrixColorFilter, for our ImageLoadingColorMatrix
+                            paint.asFrameworkPaint().colorFilter = colorFilter
+                        }
+                    }
                 }
+            } else if (image != null) {
+                DrawImage(image = image)
             }
         }
     }
 }
 
 /**
- * A configurable [LoadImage] composable, which accepts a Coil [request] object.
+ * A simple [LoadImage] composable, which loads [data].
  */
 @Composable
 fun LoadImage(
-    request: GetRequest,
+    data: Any,
+    pxSize: PxSize = PxSize.Zero,
     onLoad: () -> Unit
 ): Image? {
-    val image = stateFor<Image?>(request) { null }
+    val request = remember(data, pxSize) {
+        Coil.loader().newGetBuilder()
+            .data(data)
+            .apply {
+                if (pxSize.minDimension > 0.px) {
+                    size(pxSize.width.value.roundToInt(), pxSize.height.value.roundToInt())
+                    scale(Scale.FILL)
+                }
+            }
+            .build()
+    }
+
+    var image by stateFor<Image?>(request) { null }
 
     // Execute the following code whenever the request changes.
     onCommit(request) {
         val job = CoroutineScope(Dispatchers.Main.immediate).launch {
             // Start loading the image and await the result.
             val drawable = Coil.loader().get(request)
-            image.value = AndroidImage(drawable.toBitmap())
+            image = AndroidImage(drawable.toBitmap())
             onLoad()
         }
 
@@ -136,21 +165,5 @@ fun LoadImage(
     }
 
     // Emit a null Image to start with.
-    return image.value
-}
-
-/**
- * A simple [LoadImage] composable, which loads [data] with the default options.
- */
-@Composable
-fun LoadImage(
-    data: Any,
-    onLoad: () -> Unit
-): Image? {
-    // Positionally memoize the request creation so
-    // it will only be recreated if data changes.
-    val request = remember(data) {
-        Coil.loader().newGetBuilder().data(data).build()
-    }
-    return LoadImage(request, onLoad)
+    return image
 }
