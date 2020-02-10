@@ -16,8 +16,8 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.repositories.ShowImagesStore
 import app.tivi.data.repositories.relatedshows.RelatedShowsRepository
+import app.tivi.data.repositories.shows.ShowImagesStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateRelatedShows.Params
 import app.tivi.inject.ProcessLifetime

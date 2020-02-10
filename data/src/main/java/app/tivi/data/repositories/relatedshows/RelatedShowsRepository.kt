@@ -23,8 +23,8 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.fetch
 import app.tivi.data.fetchCollection
 import app.tivi.data.instantInPast
-import app.tivi.data.repositories.ShowImagesStore
-import app.tivi.data.repositories.ShowStore
+import app.tivi.data.repositories.shows.ShowImagesStore
+import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.extensions.asyncOrAwait
 import app.tivi.extensions.parallelForEach
 import javax.inject.Inject

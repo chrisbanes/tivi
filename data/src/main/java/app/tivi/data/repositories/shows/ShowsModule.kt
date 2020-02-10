@@ -21,8 +21,6 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.repositories.ShowImagesStore
-import app.tivi.data.repositories.ShowStore
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import com.dropbox.android.external.store4.StoreBuilder

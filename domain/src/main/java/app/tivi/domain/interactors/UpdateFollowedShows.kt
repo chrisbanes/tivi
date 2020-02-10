@@ -19,9 +19,9 @@ package app.tivi.domain.interactors
 import app.tivi.data.cachedOnly
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.instantInPast
-import app.tivi.data.repositories.ShowStore
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
+import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.watchedshows.WatchedShowsRepository
 import app.tivi.domain.Interactor
 import app.tivi.extensions.parallelForEach

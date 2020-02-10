@@ -17,7 +17,7 @@
 package app.tivi.domain.observers
 
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.repositories.ShowStore
+import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.SubjectInteractor
 import app.tivi.util.AppCoroutineDispatchers
 import com.dropbox.android.external.store4.StoreRequest

@@ -17,7 +17,7 @@
 package app.tivi.domain.interactors
 
 import app.tivi.data.fetchCollection
-import app.tivi.data.repositories.ShowImagesStore
+import app.tivi.data.repositories.shows.ShowImagesStore
 import app.tivi.domain.Interactor
 import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
