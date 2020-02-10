@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.trendingshows
+package app.tivi.data.mappers
 
-import app.tivi.data.daos.LastRequestDao
-import app.tivi.data.entities.Request
-import app.tivi.data.repositories.lastrequests.GroupLastRequestStore
+import app.tivi.data.entities.TrendingShowEntry
+import com.uwetrottmann.trakt5.entities.TrendingShow
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class TrendingShowsLastRequestStore @Inject constructor(
-    dao: LastRequestDao
-) : GroupLastRequestStore(Request.TRENDING_SHOWS, dao)
+@Singleton
+class TraktTrendingShowToTrendingShowEntry @Inject constructor() : Mapper<TrendingShow, TrendingShowEntry> {
+    override suspend fun map(from: TrendingShow): TrendingShowEntry {
+        return TrendingShowEntry(
+            showId = 0,
+            watchers = from.watchers ?: 0,
+            page = 0
+        )
+    }
+}

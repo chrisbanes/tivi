@@ -46,7 +46,7 @@ class TraktRelatedShowsDataSource @Inject constructor(
 
     override suspend fun getRelatedShows(showId: Long): Result<List<Pair<TiviShow, RelatedShowEntry>>> {
         val traktId = traktIdMapper.map(showId)
-            ?: return ErrorResult(message = "No Trakt ID for show with ID: $showId")
+            ?: return ErrorResult(IllegalArgumentException("No Trakt ID for show with ID: $showId"))
         return showService.get().related(traktId.toString(), 0, 10, Extended.NOSEASONS)
             .executeWithRetry()
             .toResult(resultMapper)

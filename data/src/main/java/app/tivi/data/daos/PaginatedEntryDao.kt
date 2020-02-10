@@ -18,6 +18,7 @@ package app.tivi.data.daos
 
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
+import androidx.room.Transaction
 import app.tivi.data.PaginatedEntry
 import app.tivi.data.resultentities.EntryWithShow
 
@@ -34,7 +35,8 @@ abstract class PaginatedEntryDao<EC : PaginatedEntry, LI : EntryWithShow<EC>> : 
     abstract suspend fun deletePage(page: Int)
     abstract suspend fun getLastPage(): Int?
 
-    suspend fun updatePage(page: Int, entities: List<EC>) {
+    @Transaction
+    open suspend fun updatePage(page: Int, entities: List<EC>) {
         deletePage(page)
         insertAll(entities)
     }

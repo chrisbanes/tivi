@@ -85,7 +85,7 @@ internal class DiscoverViewModel @AssistedInject constructor(
                 copy(trendingItems = it() ?: emptyList())
             }
         }
-        observeTrendingShows()
+        observeTrendingShows(ObserveTrendingShows.Params(15))
 
         viewModelScope.launchObserve(observePopularShows) {
             it.distinctUntilChanged().execute {

@@ -19,11 +19,11 @@ package app.tivi.data.mappers
 import com.uwetrottmann.tmdb2.entities.BaseTvShow
 import com.uwetrottmann.tmdb2.entities.TvShowResultsPage
 
-fun <F, T> Mapper<F, T>.toListMapper(): suspend (List<F>) -> List<T> {
+fun <F, T> Mapper<F, T>.forLists(): suspend (List<F>) -> List<T> {
     return { list -> list.map { item -> map(item) } }
 }
 
-fun <F, T> IndexedMapper<F, T>.toListMapper(): suspend (List<F>) -> List<T> {
+fun <F, T> IndexedMapper<F, T>.forLists(): suspend (List<F>) -> List<T> {
     return { list -> list.mapIndexed { index, item -> map(index, item) } }
 }
 

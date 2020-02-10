@@ -119,7 +119,7 @@ class FollowedShowRepositoryTest {
         followShowsDao.insert(followedShow1PendingDelete)
 
         // Return error for the list ID so that we disable syncing
-        coEvery { traktDataSource.getFollowedListId() } returns ErrorResult()
+        coEvery { traktDataSource.getFollowedListId() } returns ErrorResult(IllegalArgumentException())
 
         repository.syncFollowedShows()
 
@@ -132,7 +132,7 @@ class FollowedShowRepositoryTest {
         followShowsDao.insert(followedShow1PendingUpload)
 
         // Return an error for the list ID so that we disable syncing
-        coEvery { traktDataSource.getFollowedListId() } returns ErrorResult()
+        coEvery { traktDataSource.getFollowedListId() } returns ErrorResult(IllegalArgumentException())
 
         repository.syncFollowedShows()
 

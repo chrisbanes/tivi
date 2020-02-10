@@ -18,8 +18,6 @@ package app.tivi.data.repositories.shows
 
 import app.tivi.data.daos.ShowImagesDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.entities.ErrorResult
-import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
@@ -99,9 +97,8 @@ class ShowStoreModule {
         return StoreBuilder.fromNonFlow { showId: Long ->
             val show = showDao.getShowWithId(showId)
                 ?: throw IllegalArgumentException("Show with ID $showId does not exist")
-            when (val result = tmdbShowImagesDataSource.getShowImages(show)) {
-                is Success -> result.get().map { it.copy(showId = showId) }
-                is ErrorResult -> throw result.throwable!!
+            tmdbShowImagesDataSource.getShowImages(show).getOrThrow().map {
+                it.copy(showId = showId)
             }
         }.persister(
             reader = showImagesDao::getImagesForShowId,

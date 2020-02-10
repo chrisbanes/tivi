@@ -19,7 +19,7 @@ package app.tivi.data.repositories.recommendedshows
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TraktShowToTiviShow
-import app.tivi.data.mappers.toListMapper
+import app.tivi.data.mappers.forLists
 import app.tivi.extensions.executeWithRetry
 import app.tivi.extensions.toResult
 import com.uwetrottmann.trakt5.services.Recommendations
@@ -34,6 +34,6 @@ class TraktRecommendedShowsDataSource @Inject constructor(
         // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
         return recommendationsService.get().shows(page + 1, pageSize, null)
             .executeWithRetry()
-            .toResult(showMapper.toListMapper())
+            .toResult(showMapper.forLists())
     }
 }

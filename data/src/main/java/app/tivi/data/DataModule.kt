@@ -18,10 +18,12 @@ package app.tivi.data
 
 import app.tivi.data.repositories.episodes.EpisodesModule
 import app.tivi.data.repositories.shows.ShowsModule
+import app.tivi.data.repositories.trendingshows.TrendingShowsModule
 import dagger.Module
 
 @Module(includes = [
     EpisodesModule::class,
-    ShowsModule::class
+    ShowsModule::class,
+    TrendingShowsModule::class
 ])
 abstract class DataModule

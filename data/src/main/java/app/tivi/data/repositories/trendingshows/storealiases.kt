@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.data.repositories.trendingshows
 
-sealed class Result<T> {
-    open fun get(): T? = null
+import app.tivi.data.entities.TrendingShowEntry
+import com.dropbox.android.external.store4.Store
 
-    fun getOrThrow(): T = when (this) {
-        is Success -> get()
-        is ErrorResult -> throw throwable
-    }
-}
-
-data class Success<T>(val data: T, val responseModified: Boolean = true) : Result<T>() {
-    override fun get(): T = data
-}
-
-data class ErrorResult<T>(val throwable: Throwable) : Result<T>()
+typealias TrendingShowsStore = Store<Int, List<TrendingShowEntry>>
