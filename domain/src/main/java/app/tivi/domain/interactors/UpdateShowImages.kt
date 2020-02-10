@@ -16,7 +16,7 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.fetch
+import app.tivi.data.fetchCollection
 import app.tivi.data.repositories.ShowImagesStore
 import app.tivi.domain.Interactor
 import app.tivi.inject.ProcessLifetime
@@ -33,7 +33,7 @@ class UpdateShowImages @Inject constructor(
     override val scope: CoroutineScope = processScope + dispatchers.io
 
     override suspend fun doWork(params: Params) {
-        showImagesStore.fetch(params.showId, params.forceLoad)
+        showImagesStore.fetchCollection(params.showId, params.forceLoad)
     }
 
     data class Params(val showId: Long, val forceLoad: Boolean)

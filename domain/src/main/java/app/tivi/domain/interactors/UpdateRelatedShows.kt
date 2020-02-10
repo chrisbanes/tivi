@@ -16,12 +16,10 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.fetch
 import app.tivi.data.repositories.ShowImagesStore
 import app.tivi.data.repositories.relatedshows.RelatedShowsRepository
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateRelatedShows.Params
-import app.tivi.extensions.parallelForEach
 import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
 import javax.inject.Inject
@@ -39,9 +37,6 @@ class UpdateRelatedShows @Inject constructor(
     override suspend fun doWork(params: Params) {
         if (params.forceLoad || relatedShowsRepository.needUpdate(params.showId)) {
             relatedShowsRepository.updateRelatedShows(params.showId)
-        }
-        relatedShowsRepository.getRelatedShows(params.showId).parallelForEach {
-            showImagesStore.fetch(params.showId, params.forceLoad)
         }
     }
 

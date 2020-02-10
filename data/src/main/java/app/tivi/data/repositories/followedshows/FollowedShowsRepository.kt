@@ -22,6 +22,7 @@ import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.Success
 import app.tivi.data.fetch
+import app.tivi.data.fetchCollection
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.ShowImagesStore
 import app.tivi.data.repositories.ShowStore
@@ -124,7 +125,7 @@ class FollowedShowsRepository @Inject constructor(
                     // Now update all of the followed shows if needed
                     entries.parallelForEach { entry ->
                         showStore.fetch(entry.showId)
-                        showImagesStore.fetch(entry.showId)
+                        showImagesStore.fetchCollection(entry.showId)
                     }
                 }
             }

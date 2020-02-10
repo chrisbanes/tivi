@@ -23,10 +23,10 @@ import com.dropbox.android.external.store4.fresh
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.first
 
-suspend fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
+suspend inline fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
     key: Key,
     forceFresh: Boolean = false,
-    doFreshIf: ((Output) -> Boolean)? = null
+    crossinline doFreshIf: (Output) -> Boolean = { false }
 ): Output {
     return if (forceFresh) {
         // If we're forcing a fresh fetch, do it now
@@ -34,13 +34,27 @@ suspend fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
     } else {
         // Else we'll check the current cached value
         val cached = cachedOnly(key)
-        if (cached == null || doFreshIf?.invoke(cached) == true) {
+        if (cached == null || doFreshIf.invoke(cached)) {
             // Our cached value isn't valid, do a fresh fetch
             fresh(key)
         } else {
             // We have a current cached value
             cached
         }
+    }
+}
+
+/**
+ * A wrapper around [fetch] which supports non-nullable collection outputs.
+ * Primarily it checks for empty collections
+ */
+suspend inline fun <Key : Any, Output : Collection<Any>> Store<Key, Output>.fetchCollection(
+    key: Key,
+    forceFresh: Boolean = false,
+    crossinline doFreshIf: (Output) -> Boolean = { false }
+): Output {
+    return fetch(key, forceFresh = forceFresh) { output ->
+        output.isEmpty() || doFreshIf.invoke(output)
     }
 }
 
