@@ -43,7 +43,7 @@ import app.tivi.utils.showId
 import io.mockk.coEvery
 import javax.inject.Inject
 import kotlinx.coroutines.flow.produceIn
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
@@ -75,14 +75,14 @@ class SeasonsEpisodesRepositoryTest {
             .build()
             .inject(this)
 
-        runBlockingTest {
+        runBlocking {
             // We'll assume that there's a show in the db
             insertShow(database)
         }
     }
 
     @Test
-    fun testSyncEpisodeWatches() = runBlockingTest {
+    fun testSyncEpisodeWatches() = runBlocking {
         seasonsDao.insert(s1)
         episodesDao.insertAll(s1_episodes)
 
@@ -96,7 +96,7 @@ class SeasonsEpisodesRepositoryTest {
     }
 
     @Test
-    fun testEpisodeWatches_sameEntries() = runBlockingTest {
+    fun testEpisodeWatches_sameEntries() = runBlocking {
         seasonsDao.insert(s1)
         episodesDao.insertAll(s1_episodes)
 
@@ -112,7 +112,7 @@ class SeasonsEpisodesRepositoryTest {
     }
 
     @Test
-    fun testEpisodeWatches_deletesMissing() = runBlockingTest {
+    fun testEpisodeWatches_deletesMissing() = runBlocking {
         seasonsDao.insert(s1)
         episodesDao.insertAll(s1_episodes)
 
@@ -128,7 +128,7 @@ class SeasonsEpisodesRepositoryTest {
     }
 
     @Test
-    fun testEpisodeWatches_emptyResponse() = runBlockingTest {
+    fun testEpisodeWatches_emptyResponse() = runBlocking {
         seasonsDao.insert(s1)
         episodesDao.insertAll(s1_episodes)
 
@@ -144,7 +144,7 @@ class SeasonsEpisodesRepositoryTest {
     }
 
     @Test
-    fun testSyncSeasonsEpisodes() = runBlockingTest {
+    fun testSyncSeasonsEpisodes() = runBlocking {
         // Return a response with 2 items
         coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns
             Success(listOf(s1 to s1_episodes))
@@ -156,7 +156,7 @@ class SeasonsEpisodesRepositoryTest {
     }
 
     @Test
-    fun testSyncSeasonsEpisodes_sameEntries() = runBlockingTest {
+    fun testSyncSeasonsEpisodes_sameEntries() = runBlocking {
         seasonsDao.insert(s1)
         episodesDao.insertAll(s1_episodes)
 
@@ -171,7 +171,7 @@ class SeasonsEpisodesRepositoryTest {
     }
 
     @Test
-    fun testSyncSeasonsEpisodes_emptyResponse() = runBlockingTest {
+    fun testSyncSeasonsEpisodes_emptyResponse() = runBlocking {
         seasonsDao.insert(s1)
         episodesDao.insertAll(s1_episodes)
 
@@ -186,7 +186,7 @@ class SeasonsEpisodesRepositoryTest {
     }
 
     @Test
-    fun testSyncSeasonsEpisodes_deletesMissingSeasons() = runBlockingTest {
+    fun testSyncSeasonsEpisodes_deletesMissingSeasons() = runBlocking {
         seasonsDao.insertAll(s1, s2)
         episodesDao.insertAll(s1_episodes)
         episodesDao.insertAll(s2_episodes)
@@ -202,7 +202,7 @@ class SeasonsEpisodesRepositoryTest {
     }
 
     @Test
-    fun testSyncSeasonsEpisodes_deletesMissingEpisodes() = runBlockingTest {
+    fun testSyncSeasonsEpisodes_deletesMissingEpisodes() = runBlocking {
         seasonsDao.insertAll(s1, s2)
         episodesDao.insertAll(s1_episodes)
         episodesDao.insertAll(s2_episodes)
@@ -219,7 +219,7 @@ class SeasonsEpisodesRepositoryTest {
     }
 
     @Test
-    fun testObserveNextEpisodeToWatch_singleFlow() = runBlockingTest {
+    fun testObserveNextEpisodeToWatch_singleFlow() = runBlocking {
         seasonsDao.insertAll(s1)
         episodesDao.insertAll(s1_episodes)
 

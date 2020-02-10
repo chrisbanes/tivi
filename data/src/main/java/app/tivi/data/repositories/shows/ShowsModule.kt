@@ -31,6 +31,9 @@ import javax.inject.Singleton
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
+@Module(includes = [ShowsModuleBinds::class, ShowStoreModule::class])
+class ShowsModule
+
 @Module
 internal abstract class ShowsModuleBinds {
     @Binds
@@ -46,8 +49,8 @@ internal abstract class ShowsModuleBinds {
     abstract fun bindTmdbShowImagesDataSource(source: TmdbShowImagesDataSource): ShowImagesDataSource
 }
 
-@Module(includes = [ShowsModuleBinds::class])
-class ShowsModule {
+@Module
+class ShowStoreModule {
     @Provides
     @Singleton
     fun provideShowStore(

@@ -17,12 +17,20 @@
 package app.tivi.utils
 
 import app.tivi.data.entities.Result
+import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.repositories.shows.ShowDataSource
+import app.tivi.data.repositories.shows.ShowImagesDataSource
 
-class SuccessFakeShowDataSource : ShowDataSource {
+object SuccessFakeShowDataSource : ShowDataSource {
     override suspend fun getShow(show: TiviShow): Result<TiviShow> {
         return Success(show)
+    }
+}
+
+object SuccessFakeShowImagesDataSource : ShowImagesDataSource {
+    override suspend fun getShowImages(show: TiviShow): Result<List<ShowTmdbImage>> {
+        return Success(emptyList())
     }
 }

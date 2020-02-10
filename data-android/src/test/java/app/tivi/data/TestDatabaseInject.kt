@@ -22,13 +22,14 @@ import androidx.test.core.app.ApplicationProvider
 import app.tivi.data.dao.EpisodeWatchEntryTest
 import app.tivi.data.dao.EpisodesTest
 import app.tivi.data.dao.SeasonsTest
-import app.tivi.data.daos.EntityInserter
 import app.tivi.data.repositories.FollowedShowRepositoryTest
 import app.tivi.data.repositories.SeasonsEpisodesRepositoryTest
 import app.tivi.data.repositories.episodes.EpisodeDataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.repositories.followedshows.TraktFollowedShowsDataSource
 import app.tivi.data.repositories.shows.ShowDataSource
+import app.tivi.data.repositories.shows.ShowImagesDataSource
+import app.tivi.data.repositories.shows.ShowStoreModule
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktServiceModule
@@ -37,7 +38,6 @@ import app.tivi.utils.TestTransactionRunner
 import app.tivi.utils.TiviTestDatabase
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.trakt5.TraktV2
-import dagger.Binds
 import dagger.Component
 import dagger.Module
 import dagger.Provides
@@ -64,7 +64,8 @@ class TestDataSourceModule(
     private val tmdbEpisodeDataSource: EpisodeDataSource = mockk(),
     private val seasonsDataSource: SeasonsEpisodesDataSource = mockk(),
     private val traktShowDataSource: ShowDataSource = mockk(),
-    private val tmdbShowDataSource: ShowDataSource = mockk()
+    private val tmdbShowDataSource: ShowDataSource = mockk(),
+    private val tmdbShowImagesDataSource: ShowImagesDataSource = mockk()
 ) {
     @Provides
     fun provideTraktFollowedShowsDataSource() = traktFollowedShowsDataSource
@@ -87,13 +88,17 @@ class TestDataSourceModule(
     @Provides
     @app.tivi.inject.Tmdb
     fun provideTmdbShowDataSource(): ShowDataSource = tmdbShowDataSource
+
+    @Provides
+    @app.tivi.inject.Tmdb
+    fun provideTmdbShowImagesDataSource(): ShowImagesDataSource = tmdbShowImagesDataSource
 }
 
 @Module(includes = [
     TestRoomDatabaseModule::class,
-    TestDatabaseModuleBinds::class,
     DatabaseDaoModule::class,
-    TraktServiceModule::class
+    TraktServiceModule::class,
+    ShowStoreModule::class
 ])
 class TestDatabaseModule {
     @Provides
@@ -126,11 +131,4 @@ class TestRoomDatabaseModule {
     @Singleton
     @Provides
     fun provideDatabaseTransactionRunner(): DatabaseTransactionRunner = TestTransactionRunner
-}
-
-@Module
-abstract class TestDatabaseModuleBinds {
-    @Singleton
-    @Binds
-    abstract fun provideEntityInserter(inserter: TiviEntityInserter): EntityInserter
 }
