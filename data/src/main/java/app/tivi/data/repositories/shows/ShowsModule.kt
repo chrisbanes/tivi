@@ -30,6 +30,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 @Module
 internal abstract class ShowsModuleBinds {
@@ -56,16 +58,22 @@ class ShowsModule {
         @Tmdb tmdbShowDataSource: ShowDataSource
     ): ShowStore {
         return StoreBuilder.fromNonFlow { showId: Long ->
-            val localShow = showDao.getShowWithId(showId) ?: TiviShow.EMPTY_SHOW
-            // TODO parallelize these calls again
-            val traktResult = traktShowDataSource.getShow(localShow)
-            val tmdbResult = tmdbShowDataSource.getShow(localShow)
+            val localShow = showDao.getShowWithId(showId)
+                ?: throw IllegalArgumentException("No show with id $showId in database")
 
-            mergeShows(
-                localShow,
-                traktResult.get() ?: TiviShow.EMPTY_SHOW,
-                tmdbResult.get() ?: TiviShow.EMPTY_SHOW
-            )
+            coroutineScope {
+                val traktResult = async {
+                    traktShowDataSource.getShow(localShow)
+                }
+                val tmdbResult = async {
+                    tmdbShowDataSource.getShow(localShow)
+                }
+                mergeShows(
+                    localShow,
+                    traktResult.await().get() ?: TiviShow.EMPTY_SHOW,
+                    tmdbResult.await().get() ?: TiviShow.EMPTY_SHOW
+                )
+            }
         }.persister(
             reader = showDao::getShowWithIdFlow,
             writer = { _, show -> showDao.insertOrUpdate(show) },
@@ -90,7 +98,7 @@ class ShowsModule {
             }
         }.persister(
             reader = showImagesDao::getImagesForShowId,
-            writer = { showId, images -> showImagesDao.saveImages(showId, images) },
+            writer = showImagesDao::saveImages,
             delete = showImagesDao::deleteForShowId,
             deleteAll = showImagesDao::deleteAll
         ).build()
