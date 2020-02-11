@@ -16,11 +16,10 @@
 
 package app.tivi.data
 
-import com.dropbox.android.external.store4.ResponseOrigin
 import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreRequest
 import com.dropbox.android.external.store4.StoreResponse
-import kotlinx.coroutines.flow.filter
+import com.dropbox.android.external.store4.fresh
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.first
 
@@ -29,20 +28,20 @@ suspend fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
     forceFresh: Boolean = false,
     doFreshIf: suspend (Output) -> Boolean = { false }
 ): Output {
-    val request = if (forceFresh) {
-        StoreRequest.fresh(key)
+    return if (forceFresh) {
+        // If we're forcing a fresh fetch, do it now
+        fresh(key)
     } else {
-        StoreRequest.cached(key, refresh = true)
-    }
-    return stream(request).filter { result ->
-        when (result) {
-            is StoreResponse.Error -> true // let errors pass
-            is StoreResponse.Data -> {
-                result.origin == ResponseOrigin.Fetcher || !doFreshIf(result.requireData())
-            }
-            else -> false // drop anything else
+        // Else we'll check the current cached value
+        val cached = cachedOnly(key)
+        if (cached == null || doFreshIf.invoke(cached)) {
+            // Our cached value isn't valid, do a fresh fetch
+            fresh(key)
+        } else {
+            // We have a current cached value
+            cached
         }
-    }.first().requireData()
+    }
 }
 
 /**
