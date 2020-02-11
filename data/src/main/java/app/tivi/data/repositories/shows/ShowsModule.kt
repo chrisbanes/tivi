@@ -79,8 +79,10 @@ class ShowStoreModule {
         }.persister(
             reader = showDao::getShowWithIdFlow,
             writer = { id, response ->
-                val local = showDao.getShowWithId(id) ?: TiviShow.EMPTY_SHOW
-                showDao.insertOrUpdate(mergeShows(local, response.trakt, response.tmdb))
+                showDao.withTransaction {
+                    val local = showDao.getShowWithId(id) ?: TiviShow.EMPTY_SHOW
+                    showDao.insertOrUpdate(mergeShows(local, response.trakt, response.tmdb))
+                }
             },
             delete = showDao::delete,
             deleteAll = showDao::deleteAll
