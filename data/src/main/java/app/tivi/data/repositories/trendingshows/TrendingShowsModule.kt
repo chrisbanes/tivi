@@ -18,6 +18,7 @@ package app.tivi.data.repositories.trendingshows
 
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.TrendingDao
+import app.tivi.data.entities.Success
 import com.dropbox.android.external.store4.StoreBuilder
 import dagger.Module
 import dagger.Provides
@@ -30,10 +31,15 @@ class TrendingShowsModule {
     fun provideTrendingShowsStore(
         traktDataSource: TraktTrendingShowsDataSource,
         trendingShowsDao: TrendingDao,
-        showDao: TiviShowDao
+        showDao: TiviShowDao,
+        lastRequestStore: TrendingShowsLastRequestStore
     ): TrendingShowsStore {
         return StoreBuilder.fromNonFlow { page: Int ->
-            traktDataSource.getTrendingShows(page, 20).getOrThrow()
+            val response = traktDataSource.getTrendingShows(page, 20)
+            if (page == 0 && response is Success) {
+                lastRequestStore.updateLastRequest()
+            }
+            response.getOrThrow()
         }.persister(
             reader = trendingShowsDao::entriesForPage,
             writer = { page, response ->

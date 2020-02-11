@@ -21,6 +21,7 @@ import app.tivi.data.fetch
 import app.tivi.data.fetchCollection
 import app.tivi.data.repositories.shows.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
+import app.tivi.data.repositories.trendingshows.TrendingShowsLastRequestStore
 import app.tivi.data.repositories.trendingshows.TrendingShowsStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateTrendingShows.Params
@@ -30,12 +31,14 @@ import app.tivi.util.AppCoroutineDispatchers
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
+import org.threeten.bp.Duration
 
 class UpdateTrendingShows @Inject constructor(
     private val trendingShowsStore: TrendingShowsStore,
     private val showsStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
     private val trendingShowsDao: TrendingDao,
+    private val lastRequestStore: TrendingShowsLastRequestStore,
     dispatchers: AppCoroutineDispatchers,
     @ProcessLifetime val processScope: CoroutineScope
 ) : Interactor<Params>() {
@@ -43,14 +46,15 @@ class UpdateTrendingShows @Inject constructor(
 
     override suspend fun doWork(params: Params) {
         val lastPage = trendingShowsDao.getLastPage()
-
-        val entries = if (lastPage != null && params.page == Page.NEXT_PAGE) {
-            trendingShowsStore.fetchCollection(lastPage + 1, forceFresh = params.forceRefresh)
-        } else {
-            trendingShowsStore.fetchCollection(0, forceFresh = params.forceRefresh)
+        val page = when {
+            lastPage != null && params.page == Page.NEXT_PAGE -> lastPage + 1
+            else -> 0
         }
 
-        entries.parallelForEach {
+        trendingShowsStore.fetchCollection(page, forceFresh = params.forceRefresh) {
+            // Refresh if our local data is over 3 hours old
+            page == 0 && lastRequestStore.isRequestExpired(Duration.ofHours(3))
+        }.parallelForEach {
             showsStore.fetch(it.showId)
             showImagesStore.fetchCollection(it.showId)
         }

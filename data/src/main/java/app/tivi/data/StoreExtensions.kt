@@ -24,10 +24,10 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.first
 
-suspend inline fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
+suspend fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
     key: Key,
     forceFresh: Boolean = false,
-    crossinline doFreshIf: (Output) -> Boolean = { false }
+    doFreshIf: suspend (Output) -> Boolean = { false }
 ): Output {
     val request = if (forceFresh) {
         StoreRequest.fresh(key)
@@ -49,10 +49,10 @@ suspend inline fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
  * A wrapper around [fetch] which supports non-nullable collection outputs.
  * Primarily it checks for empty collections
  */
-suspend inline fun <Key : Any, Output : Collection<Any>> Store<Key, Output>.fetchCollection(
+suspend fun <Key : Any, Output : Collection<Any>> Store<Key, Output>.fetchCollection(
     key: Key,
     forceFresh: Boolean = false,
-    crossinline doFreshIf: (Output) -> Boolean = { false }
+    doFreshIf: suspend (Output) -> Boolean = { false }
 ): Output {
     return fetch(key, forceFresh = forceFresh) { output ->
         output.isEmpty() || doFreshIf(output)

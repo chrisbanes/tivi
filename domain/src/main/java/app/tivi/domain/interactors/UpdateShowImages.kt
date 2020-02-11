@@ -17,6 +17,7 @@
 package app.tivi.domain.interactors
 
 import app.tivi.data.fetchCollection
+import app.tivi.data.repositories.shows.ShowImagesLastRequestStore
 import app.tivi.data.repositories.shows.ShowImagesStore
 import app.tivi.domain.Interactor
 import app.tivi.inject.ProcessLifetime
@@ -24,16 +25,21 @@ import app.tivi.util.AppCoroutineDispatchers
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
+import org.threeten.bp.Period
 
 class UpdateShowImages @Inject constructor(
     private val showImagesStore: ShowImagesStore,
+    private val lastRequestStore: ShowImagesLastRequestStore,
     dispatchers: AppCoroutineDispatchers,
     @ProcessLifetime val processScope: CoroutineScope
 ) : Interactor<UpdateShowImages.Params>() {
     override val scope: CoroutineScope = processScope + dispatchers.io
 
     override suspend fun doWork(params: Params) {
-        showImagesStore.fetchCollection(params.showId, params.forceLoad)
+        showImagesStore.fetchCollection(params.showId, params.forceLoad) {
+            // Refresh if our local data is over 30 days old
+            lastRequestStore.isRequestExpired(params.showId, Period.ofDays(30))
+        }
     }
 
     data class Params(val showId: Long, val forceLoad: Boolean)

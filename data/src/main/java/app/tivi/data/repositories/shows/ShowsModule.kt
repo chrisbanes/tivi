@@ -18,6 +18,7 @@ package app.tivi.data.repositories.shows
 
 import app.tivi.data.daos.ShowImagesDao
 import app.tivi.data.daos.TiviShowDao
+import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
@@ -55,6 +56,7 @@ class ShowStoreModule {
     @Singleton
     fun provideShowStore(
         showDao: TiviShowDao,
+        lastRequestStore: ShowLastRequestStore,
         @Trakt traktShowDataSource: ShowDataSource,
         @Tmdb tmdbShowDataSource: ShowDataSource
     ): ShowStore {
@@ -69,6 +71,12 @@ class ShowStoreModule {
                 val tmdbResult = async {
                     tmdbShowDataSource.getShow(localShow)
                 }
+
+                // Update our last request timestamp
+                if (traktResult is Success<*> && tmdbResult is Success<*>) {
+                    lastRequestStore.updateLastRequest(showId)
+                }
+
                 ShowStoreFetcherResponse(
                     trakt = traktResult.await().get() ?: TiviShow.EMPTY_SHOW,
                     tmdb = tmdbResult.await().get() ?: TiviShow.EMPTY_SHOW
@@ -92,12 +100,19 @@ class ShowStoreModule {
     fun provideTmdbShowImagesStore(
         showImagesDao: ShowImagesDao,
         showDao: TiviShowDao,
+        lastRequestStore: ShowImagesLastRequestStore,
         @Tmdb tmdbShowImagesDataSource: ShowImagesDataSource
     ): ShowImagesStore {
         return StoreBuilder.fromNonFlow { showId: Long ->
             val show = showDao.getShowWithId(showId)
                 ?: throw IllegalArgumentException("Show with ID $showId does not exist")
-            tmdbShowImagesDataSource.getShowImages(show).getOrThrow().map {
+            val result = tmdbShowImagesDataSource.getShowImages(show)
+
+            if (result is Success) {
+                lastRequestStore.updateLastRequest(showId)
+            }
+
+            result.getOrThrow().map {
                 it.copy(showId = showId)
             }
         }.persister(
