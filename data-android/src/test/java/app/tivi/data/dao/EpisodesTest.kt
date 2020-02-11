@@ -33,10 +33,12 @@ import app.tivi.utils.showId
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -48,6 +50,8 @@ class EpisodesTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    private val testScope = TestCoroutineScope()
+
     @Inject lateinit var database: TiviDatabase
     @Inject lateinit var episodeDao: EpisodesDao
     @Inject lateinit var seasonsDao: SeasonsDao
@@ -55,7 +59,7 @@ class EpisodesTest {
     @Before
     fun setup() {
         DaggerTestComponent.builder()
-            .testDataSourceModule(TestDataSourceModule())
+            .testDataSourceModule(TestDataSourceModule(storeScope = testScope))
             .build()
             .inject(this)
 
@@ -67,13 +71,13 @@ class EpisodesTest {
     }
 
     @Test
-    fun insert() = runBlockingTest {
+    fun insert() = testScope.runBlockingTest {
         episodeDao.insert(s1e1)
         assertThat(episodeDao.episodeWithId(s1e1.id), `is`(s1e1))
     }
 
     @Test(expected = SQLiteConstraintException::class)
-    fun insert_withSameTraktId() = runBlockingTest {
+    fun insert_withSameTraktId() = testScope.runBlockingTest {
         episodeDao.insert(s1e1)
         // Make a copy with a 0 id
         val copy = s1e1.copy(id = 0)
@@ -81,14 +85,14 @@ class EpisodesTest {
     }
 
     @Test
-    fun delete() = runBlockingTest {
+    fun delete() = testScope.runBlockingTest {
         episodeDao.insert(s1e1)
         episodeDao.deleteEntity(s1e1)
         assertThat(episodeDao.episodeWithId(s1e1.id), `is`(nullValue()))
     }
 
     @Test
-    fun deleteSeason_deletesEpisode() = runBlockingTest {
+    fun deleteSeason_deletesEpisode() = testScope.runBlockingTest {
         episodeDao.insert(s1e1)
         // Now delete season
         seasonsDao.deleteEntity(s1)
@@ -96,13 +100,13 @@ class EpisodesTest {
     }
 
     @Test
-    fun showIdForEpisodeId() = runBlockingTest {
+    fun showIdForEpisodeId() = testScope.runBlockingTest {
         episodeDao.insert(s1e1)
         assertThat(episodeDao.showIdForEpisodeId(s1e1.id), `is`(showId))
     }
 
     @Test
-    fun nextAiredEpisodeAfter() = runBlockingTest {
+    fun nextAiredEpisodeAfter() = testScope.runBlockingTest {
         episodeDao.insertAll(s1_episodes)
 
         assertThat(episodeDao.observeNextEpisodeForShowAfter(showId, 0, 0)
@@ -116,5 +120,10 @@ class EpisodesTest {
 
         assertThat(episodeDao.observeNextEpisodeForShowAfter(showId, 1, 2)
             .first()?.episode, nullValue())
+    }
+
+    @After
+    fun cleanup() {
+        testScope.cleanupTestCoroutines()
     }
 }

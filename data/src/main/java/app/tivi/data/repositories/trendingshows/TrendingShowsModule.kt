@@ -23,6 +23,7 @@ import com.dropbox.android.external.store4.StoreBuilder
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineScope
 
 @Module
 class TrendingShowsModule {
@@ -32,7 +33,8 @@ class TrendingShowsModule {
         traktDataSource: TraktTrendingShowsDataSource,
         trendingShowsDao: TrendingDao,
         showDao: TiviShowDao,
-        lastRequestStore: TrendingShowsLastRequestStore
+        lastRequestStore: TrendingShowsLastRequestStore,
+        scope: CoroutineScope
     ): TrendingShowsStore {
         return StoreBuilder.fromNonFlow { page: Int ->
             val response = traktDataSource.getTrendingShows(page, 20)
@@ -58,6 +60,6 @@ class TrendingShowsModule {
             },
             delete = trendingShowsDao::deletePage,
             deleteAll = trendingShowsDao::deleteAll
-        ).build()
+        ).scope(scope).build()
     }
 }

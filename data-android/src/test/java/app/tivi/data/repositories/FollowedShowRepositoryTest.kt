@@ -40,8 +40,11 @@ import app.tivi.utils.show2
 import io.mockk.coEvery
 import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -52,6 +55,8 @@ import org.robolectric.RobolectricTestRunner
 class FollowedShowRepositoryTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    private val testScope = TestCoroutineScope()
 
     @Inject lateinit var followShowsDao: FollowedShowsDao
     @Inject lateinit var repository: FollowedShowsRepository
@@ -65,7 +70,8 @@ class FollowedShowRepositoryTest {
                 TestDataSourceModule(
                     traktShowDataSource = SuccessFakeShowDataSource,
                     tmdbShowDataSource = SuccessFakeShowDataSource,
-                    tmdbShowImagesDataSource = SuccessFakeShowImagesDataSource
+                    tmdbShowImagesDataSource = SuccessFakeShowImagesDataSource,
+                    storeScope = testScope
                 )
             )
             .build()
@@ -78,7 +84,7 @@ class FollowedShowRepositoryTest {
     }
 
     @Test
-    fun testSync() = runBlocking {
+    fun testSync() = testScope.runBlockingTest {
         coEvery { traktDataSource.getFollowedListId() } returns Success(0)
         coEvery { traktDataSource.getListShows(0) } returns Success(listOf(followedShow1Network to show))
 
@@ -89,7 +95,7 @@ class FollowedShowRepositoryTest {
     }
 
     @Test
-    fun testSync_emptyResponse() = runBlocking {
+    fun testSync_emptyResponse() = testScope.runBlockingTest {
         insertFollowedShow(database)
 
         coEvery { traktDataSource.getFollowedListId() } returns Success(0)
@@ -102,7 +108,7 @@ class FollowedShowRepositoryTest {
     }
 
     @Test
-    fun testSync_responseDifferentShow() = runBlocking {
+    fun testSync_responseDifferentShow() = testScope.runBlockingTest {
         insertFollowedShow(database)
 
         coEvery { traktDataSource.getFollowedListId() } returns Success(0)
@@ -115,7 +121,7 @@ class FollowedShowRepositoryTest {
     }
 
     @Test
-    fun testSync_pendingDelete() = runBlocking {
+    fun testSync_pendingDelete() = testScope.runBlockingTest {
         followShowsDao.insert(followedShow1PendingDelete)
 
         // Return error for the list ID so that we disable syncing
@@ -128,7 +134,7 @@ class FollowedShowRepositoryTest {
     }
 
     @Test
-    fun testSync_pendingAdd() = runBlocking {
+    fun testSync_pendingAdd() = testScope.runBlockingTest {
         followShowsDao.insert(followedShow1PendingUpload)
 
         // Return an error for the list ID so that we disable syncing
@@ -138,5 +144,10 @@ class FollowedShowRepositoryTest {
 
         assertThat(repository.getFollowedShows(),
             `is`(listOf(followedShow1Local)))
+    }
+
+    @After
+    fun cleanup() {
+        testScope.cleanupTestCoroutines()
     }
 }

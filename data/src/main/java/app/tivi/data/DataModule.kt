@@ -19,11 +19,17 @@ package app.tivi.data
 import app.tivi.data.repositories.episodes.EpisodesModule
 import app.tivi.data.repositories.shows.ShowsModule
 import app.tivi.data.repositories.trendingshows.TrendingShowsModule
+import app.tivi.inject.ProcessLifetime
+import dagger.Binds
 import dagger.Module
+import kotlinx.coroutines.CoroutineScope
 
 @Module(includes = [
     EpisodesModule::class,
     ShowsModule::class,
     TrendingShowsModule::class
 ])
-abstract class DataModule
+abstract class DataModule {
+    @Binds
+    abstract fun provideStoreCoroutineScope(@ProcessLifetime scope: CoroutineScope): CoroutineScope
+}

@@ -43,6 +43,7 @@ import dagger.Module
 import dagger.Provides
 import io.mockk.mockk
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineScope
 
 @Singleton
 @Component(modules = [
@@ -65,7 +66,8 @@ class TestDataSourceModule(
     private val seasonsDataSource: SeasonsEpisodesDataSource = mockk(),
     private val traktShowDataSource: ShowDataSource = mockk(),
     private val tmdbShowDataSource: ShowDataSource = mockk(),
-    private val tmdbShowImagesDataSource: ShowImagesDataSource = mockk()
+    private val tmdbShowImagesDataSource: ShowImagesDataSource = mockk(),
+    private val storeScope: CoroutineScope
 ) {
     @Provides
     fun provideTraktFollowedShowsDataSource() = traktFollowedShowsDataSource
@@ -92,6 +94,9 @@ class TestDataSourceModule(
     @Provides
     @app.tivi.inject.Tmdb
     fun provideTmdbShowImagesDataSource(): ShowImagesDataSource = tmdbShowImagesDataSource
+
+    @Provides
+    fun provideStoreCoroutineScope(): CoroutineScope = storeScope
 }
 
 @Module(includes = [

@@ -27,6 +27,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
@@ -58,7 +59,8 @@ class ShowStoreModule {
         showDao: TiviShowDao,
         lastRequestStore: ShowLastRequestStore,
         @Trakt traktShowDataSource: ShowDataSource,
-        @Tmdb tmdbShowDataSource: ShowDataSource
+        @Tmdb tmdbShowDataSource: ShowDataSource,
+        scope: CoroutineScope
     ): ShowStore {
         return StoreBuilder.fromNonFlow { showId: Long ->
             val localShow = showDao.getShowWithId(showId)
@@ -92,7 +94,7 @@ class ShowStoreModule {
             },
             delete = showDao::delete,
             deleteAll = showDao::deleteAll
-        ).build()
+        ).scope(scope).build()
     }
 
     @Provides
@@ -101,7 +103,8 @@ class ShowStoreModule {
         showImagesDao: ShowImagesDao,
         showDao: TiviShowDao,
         lastRequestStore: ShowImagesLastRequestStore,
-        @Tmdb tmdbShowImagesDataSource: ShowImagesDataSource
+        @Tmdb tmdbShowImagesDataSource: ShowImagesDataSource,
+        scope: CoroutineScope
     ): ShowImagesStore {
         return StoreBuilder.fromNonFlow { showId: Long ->
             val show = showDao.getShowWithId(showId)
@@ -120,6 +123,6 @@ class ShowStoreModule {
             writer = showImagesDao::saveImages,
             delete = showImagesDao::deleteForShowId,
             deleteAll = showImagesDao::deleteAll
-        ).build()
+        ).scope(scope).build()
     }
 }

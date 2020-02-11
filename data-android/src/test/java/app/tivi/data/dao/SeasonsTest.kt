@@ -30,10 +30,12 @@ import app.tivi.utils.s1_id
 import app.tivi.utils.s2
 import app.tivi.utils.showId
 import javax.inject.Inject
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -45,13 +47,15 @@ class SeasonsTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    private val testScope = TestCoroutineScope()
+
     @Inject lateinit var database: TiviDatabase
     @Inject lateinit var seasonsDao: SeasonsDao
 
     @Before
     fun setup() {
         DaggerTestComponent.builder()
-            .testDataSourceModule(TestDataSourceModule())
+            .testDataSourceModule(TestDataSourceModule(storeScope = testScope))
             .build()
             .inject(this)
 
@@ -62,14 +66,14 @@ class SeasonsTest {
     }
 
     @Test
-    fun insertSeason() = runBlockingTest {
+    fun insertSeason() = testScope.runBlockingTest {
         seasonsDao.insert(s1)
 
         assertThat(seasonsDao.seasonWithId(s1_id), `is`(s1))
     }
 
     @Test(expected = SQLiteConstraintException::class)
-    fun insert_withSameTraktId() = runBlockingTest {
+    fun insert_withSameTraktId() = testScope.runBlockingTest {
         seasonsDao.insert(s1)
 
         // Make a copy with a 0 id
@@ -79,7 +83,7 @@ class SeasonsTest {
     }
 
     @Test
-    fun specialsOrder() = runBlockingTest {
+    fun specialsOrder() = testScope.runBlockingTest {
         seasonsDao.insert(s0)
         seasonsDao.insert(s1)
         seasonsDao.insert(s2)
@@ -91,7 +95,7 @@ class SeasonsTest {
     }
 
     @Test
-    fun deleteSeason() = runBlockingTest {
+    fun deleteSeason() = testScope.runBlockingTest {
         seasonsDao.insert(s1)
         seasonsDao.deleteEntity(s1)
 
@@ -99,11 +103,16 @@ class SeasonsTest {
     }
 
     @Test
-    fun deleteShow_deletesSeason() = runBlockingTest {
+    fun deleteShow_deletesSeason() = testScope.runBlockingTest {
         seasonsDao.insert(s1)
         // Now delete show
         deleteShow(database)
 
         assertThat(seasonsDao.seasonWithId(s1_id), `is`(nullValue()))
+    }
+
+    @After
+    fun cleanup() {
+        testScope.cleanupTestCoroutines()
     }
 }

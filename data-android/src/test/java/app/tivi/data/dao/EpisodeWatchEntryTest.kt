@@ -34,10 +34,12 @@ import app.tivi.utils.s1e1w
 import app.tivi.utils.s1e1w_id
 import app.tivi.utils.showId
 import javax.inject.Inject
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -54,10 +56,12 @@ class EpisodeWatchEntryTest {
     @Inject lateinit var seasonsDao: SeasonsDao
     @Inject lateinit var episodeWatchEntryDao: EpisodeWatchEntryDao
 
+    private val testScope = TestCoroutineScope()
+
     @Before
     fun setup() {
         DaggerTestComponent.builder()
-            .testDataSourceModule(TestDataSourceModule())
+            .testDataSourceModule(TestDataSourceModule(storeScope = testScope))
             .build()
             .inject(this)
 
@@ -70,13 +74,13 @@ class EpisodeWatchEntryTest {
     }
 
     @Test
-    fun insert() = runBlockingTest {
+    fun insert() = testScope.runBlockingTest {
         episodeWatchEntryDao.insert(s1e1w)
         assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id), `is`(s1e1w))
     }
 
     @Test(expected = SQLiteConstraintException::class)
-    fun insert_withSameTraktId() = runBlockingTest {
+    fun insert_withSameTraktId() = testScope.runBlockingTest {
         episodeWatchEntryDao.insert(s1e1w)
         // Make a copy with a 0 id
         val copy = s1e1w.copy(id = 0)
@@ -84,7 +88,7 @@ class EpisodeWatchEntryTest {
     }
 
     @Test
-    fun fetchEntries_WithPendingSendAction() = runBlockingTest {
+    fun fetchEntries_WithPendingSendAction() = testScope.runBlockingTest {
         episodeWatchEntryDao.insertAll(s1e1w, episodeWatch2PendingSend)
         assertThat(episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId),
             `is`(listOf(episodeWatch2PendingSend))
@@ -92,7 +96,7 @@ class EpisodeWatchEntryTest {
     }
 
     @Test
-    fun fetchEntries_WithPendingDeleteAction() = runBlockingTest {
+    fun fetchEntries_WithPendingDeleteAction() = testScope.runBlockingTest {
         episodeWatchEntryDao.insertAll(s1e1w, episodeWatch2PendingDelete)
         assertThat(episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId),
             `is`(listOf(episodeWatch2PendingDelete))
@@ -100,17 +104,22 @@ class EpisodeWatchEntryTest {
     }
 
     @Test
-    fun delete() = runBlockingTest {
+    fun delete() = testScope.runBlockingTest {
         episodeWatchEntryDao.insert(s1e1w)
         episodeWatchEntryDao.deleteEntity(s1e1w)
         assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id), `is`(nullValue()))
     }
 
     @Test
-    fun deleteEpisode_deletesWatch() = runBlockingTest {
+    fun deleteEpisode_deletesWatch() = testScope.runBlockingTest {
         episodeWatchEntryDao.insert(s1e1w)
         // Now delete episode
         episodesDao.deleteEntity(s1e1)
         assertThat(episodeWatchEntryDao.entryWithId(s1e1w_id), `is`(nullValue()))
+    }
+
+    @After
+    fun cleanup() {
+        testScope.cleanupTestCoroutines()
     }
 }

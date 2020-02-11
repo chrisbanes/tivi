@@ -31,6 +31,6 @@ object SuccessFakeShowDataSource : ShowDataSource {
 
 object SuccessFakeShowImagesDataSource : ShowImagesDataSource {
     override suspend fun getShowImages(show: TiviShow): Result<List<ShowTmdbImage>> {
-        return Success(emptyList())
+        return Success(listOf(showPoster))
     }
 }
