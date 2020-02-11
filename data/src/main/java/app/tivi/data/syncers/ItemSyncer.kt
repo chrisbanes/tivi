@@ -92,9 +92,9 @@ class ItemSyncer<ET : TiviEntity, NT, NID>(
     }
 
     data class ItemSyncerResult<ET : TiviEntity>(
-        val added: List<ET>,
-        val deleted: List<ET>,
-        val updated: List<ET>
+        val added: List<ET> = emptyList(),
+        val deleted: List<ET> = emptyList(),
+        val updated: List<ET> = emptyList()
     )
 }
 

@@ -21,13 +21,9 @@ import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.Success
-import app.tivi.data.fetch
-import app.tivi.data.fetchCollection
 import app.tivi.data.instantInPast
-import app.tivi.data.repositories.shows.ShowImagesStore
-import app.tivi.data.repositories.shows.ShowStore
+import app.tivi.data.syncers.ItemSyncer
 import app.tivi.extensions.asyncOrAwait
-import app.tivi.extensions.parallelForEach
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import javax.inject.Inject
@@ -43,9 +39,7 @@ class FollowedShowsRepository @Inject constructor(
     private val dataSource: TraktFollowedShowsDataSource,
     private val traktAuthState: Provider<TraktAuthState>,
     private val logger: Logger,
-    private val showDao: TiviShowDao,
-    private val showStore: ShowStore,
-    private val showImagesStore: ShowImagesStore
+    private val showDao: TiviShowDao
 ) {
     fun observeFollowedShows(
         sort: SortOption,
@@ -96,39 +90,38 @@ class FollowedShowsRepository @Inject constructor(
         }
     }
 
-    suspend fun syncFollowedShows() = asyncOrAwait("sync_followed_shows") {
-        val listId = if (traktAuthState.get() == TraktAuthState.LOGGED_IN) getFollowedTraktListId() else null
+    suspend fun syncFollowedShows(): ItemSyncer.ItemSyncerResult<FollowedShowEntry> {
+        return asyncOrAwait("sync_followed_shows") {
+            val listId = when (TraktAuthState.LOGGED_IN) {
+                traktAuthState.get() -> getFollowedTraktListId()
+                else -> null
+            }
 
-        processPendingAdditions(listId)
-        processPendingDelete(listId)
+            processPendingAdditions(listId)
+            processPendingDelete(listId)
 
-        if (listId != null) {
-            pullDownTraktFollowedList(listId)
+            when {
+                listId != null -> pullDownTraktFollowedList(listId)
+                else -> ItemSyncer.ItemSyncerResult()
+            }.also {
+                followedShowsLastRequestStore.updateLastRequest()
+            }
         }
-
-        followedShowsLastRequestStore.updateLastRequest()
     }
 
-    private suspend fun pullDownTraktFollowedList(listId: Int) {
+    private suspend fun pullDownTraktFollowedList(
+        listId: Int
+    ): ItemSyncer.ItemSyncerResult<FollowedShowEntry> {
         val response = dataSource.getListShows(listId)
         logger.d("pullDownTraktFollowedList. Response: %s", response)
-        when (response) {
-            is Success -> {
-                response.data.map { (entry, show) ->
-                    // Grab the show id if it exists, or save the show and use it's generated ID
-                    val showId = showDao.getIdOrSavePlaceholder(show)
-                    // Create a followed show entry with the show id
-                    entry.copy(showId = showId)
-                }.also { entries ->
-                    // Save the show entriesWithShows
-                    followedShowsStore.sync(entries)
-                    // Now update all of the followed shows if needed
-                    entries.parallelForEach { entry ->
-                        showStore.fetch(entry.showId)
-                        showImagesStore.fetchCollection(entry.showId)
-                    }
-                }
-            }
+        return response.getOrThrow().map { (entry, show) ->
+            // Grab the show id if it exists, or save the show and use it's generated ID
+            val showId = showDao.getIdOrSavePlaceholder(show)
+            // Create a followed show entry with the show id
+            entry.copy(showId = showId)
+        }.let { entries ->
+            // Save the show entries
+            followedShowsStore.sync(entries)
         }
     }
 

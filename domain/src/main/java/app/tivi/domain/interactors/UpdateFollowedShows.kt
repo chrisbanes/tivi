@@ -18,9 +18,12 @@ package app.tivi.domain.interactors
 
 import app.tivi.data.cachedOnly
 import app.tivi.data.entities.RefreshType
+import app.tivi.data.fetch
+import app.tivi.data.fetchCollection
 import app.tivi.data.instantInPast
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
+import app.tivi.data.repositories.shows.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.watchedshows.WatchedShowsRepository
 import app.tivi.domain.Interactor
@@ -34,10 +37,11 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.plus
 
 class UpdateFollowedShows @Inject constructor(
-    private val showStore: ShowStore,
     private val followedShowsRepository: FollowedShowsRepository,
     private val watchedShowsRepository: WatchedShowsRepository,
     private val seasonEpisodeRepository: SeasonsEpisodesRepository,
+    private val showStore: ShowStore,
+    private val showImagesStore: ShowImagesStore,
     dispatchers: AppCoroutineDispatchers,
     @ProcessLifetime val processScope: CoroutineScope
 ) : Interactor<UpdateFollowedShows.Params>() {
@@ -60,8 +64,10 @@ class UpdateFollowedShows @Inject constructor(
         syncWatched.await()
 
         // Finally sync the seasons/episodes and watches
-        followedShowsRepository.syncFollowedShows()
         followedShowsRepository.getFollowedShows().parallelForEach {
+            showStore.fetch(it.showId)
+            showImagesStore.fetchCollection(it.showId)
+
             // Download the seasons + episodes
             if (params.forceRefresh || seasonEpisodeRepository.needShowSeasonsUpdate(it.showId)) {
                 seasonEpisodeRepository.updateSeasonsEpisodes(it.showId)
