@@ -51,6 +51,8 @@ internal abstract class ShowsModuleBinds {
 
 @Module
 class ShowStoreModule {
+    private inner class ShowStoreFetcherResponse(val trakt: TiviShow, val tmdb: TiviShow)
+
     @Provides
     @Singleton
     fun provideShowStore(
@@ -69,15 +71,17 @@ class ShowStoreModule {
                 val tmdbResult = async {
                     tmdbShowDataSource.getShow(localShow)
                 }
-                mergeShows(
-                    localShow,
-                    traktResult.await().get() ?: TiviShow.EMPTY_SHOW,
-                    tmdbResult.await().get() ?: TiviShow.EMPTY_SHOW
+                ShowStoreFetcherResponse(
+                    trakt = traktResult.await().get() ?: TiviShow.EMPTY_SHOW,
+                    tmdb = tmdbResult.await().get() ?: TiviShow.EMPTY_SHOW
                 )
             }
         }.persister(
             reader = showDao::getShowWithIdFlow,
-            writer = { _, show -> showDao.insertOrUpdate(show) },
+            writer = { id, response ->
+                val local = showDao.getShowWithId(id) ?: TiviShow.EMPTY_SHOW
+                showDao.insertOrUpdate(mergeShows(local, response.trakt, response.tmdb))
+            },
             delete = showDao::delete,
             deleteAll = showDao::deleteAll
         ).build()

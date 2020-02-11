@@ -19,7 +19,7 @@ package app.tivi.data.repositories.shows
 import app.tivi.data.entities.TiviShow
 
 internal fun mergeShows(
-    local: TiviShow,
+    local: TiviShow = TiviShow.EMPTY_SHOW,
     trakt: TiviShow = TiviShow.EMPTY_SHOW,
     tmdb: TiviShow = TiviShow.EMPTY_SHOW
 ) = local.copy(
