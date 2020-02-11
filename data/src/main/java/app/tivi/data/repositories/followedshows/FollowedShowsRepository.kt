@@ -22,7 +22,7 @@ import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.Success
 import app.tivi.data.instantInPast
-import app.tivi.data.syncers.ItemSyncer
+import app.tivi.data.syncers.ItemSyncerResult
 import app.tivi.extensions.asyncOrAwait
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
@@ -90,7 +90,7 @@ class FollowedShowsRepository @Inject constructor(
         }
     }
 
-    suspend fun syncFollowedShows(): ItemSyncer.ItemSyncerResult<FollowedShowEntry> {
+    suspend fun syncFollowedShows(): ItemSyncerResult<FollowedShowEntry> {
         return asyncOrAwait("sync_followed_shows") {
             val listId = when (TraktAuthState.LOGGED_IN) {
                 traktAuthState.get() -> getFollowedTraktListId()
@@ -102,7 +102,7 @@ class FollowedShowsRepository @Inject constructor(
 
             when {
                 listId != null -> pullDownTraktFollowedList(listId)
-                else -> ItemSyncer.ItemSyncerResult()
+                else -> ItemSyncerResult()
             }.also {
                 followedShowsLastRequestStore.updateLastRequest()
             }
@@ -111,7 +111,7 @@ class FollowedShowsRepository @Inject constructor(
 
     private suspend fun pullDownTraktFollowedList(
         listId: Int
-    ): ItemSyncer.ItemSyncerResult<FollowedShowEntry> {
+    ): ItemSyncerResult<FollowedShowEntry> {
         val response = dataSource.getListShows(listId)
         logger.d("pullDownTraktFollowedList. Response: %s", response)
         return response.getOrThrow().map { (entry, show) ->
