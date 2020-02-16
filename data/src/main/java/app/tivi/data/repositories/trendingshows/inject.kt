@@ -19,11 +19,16 @@ package app.tivi.data.repositories.trendingshows
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.entities.Success
+import app.tivi.data.entities.TrendingShowEntry
+import app.tivi.inject.ForStore
+import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
+
+typealias TrendingShowsStore = Store<Int, List<TrendingShowEntry>>
 
 @Module
 class TrendingShowsModule {
@@ -34,7 +39,7 @@ class TrendingShowsModule {
         trendingShowsDao: TrendingDao,
         showDao: TiviShowDao,
         lastRequestStore: TrendingShowsLastRequestStore,
-        scope: CoroutineScope
+        @ForStore scope: CoroutineScope
     ): TrendingShowsStore {
         return StoreBuilder.fromNonFlow { page: Int ->
             val response = traktTrendingShows(page, 20)

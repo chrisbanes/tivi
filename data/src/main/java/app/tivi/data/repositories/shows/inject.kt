@@ -16,12 +16,13 @@
 
 package app.tivi.data.repositories.shows
 
-import app.tivi.data.daos.ShowImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
+import app.tivi.inject.ForStore
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
+import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
 import dagger.Binds
 import dagger.Module
@@ -43,14 +44,12 @@ internal abstract class ShowsModuleBinds {
     @Binds
     @Tmdb
     abstract fun bindTmdbShowDataSource(source: TmdbShowDataSource): ShowDataSource
-
-    @Binds
-    @Tmdb
-    abstract fun bindTmdbShowImagesDataSource(source: TmdbShowImagesDataSource): ShowImagesDataSource
 }
 
+typealias ShowStore = Store<Long, TiviShow>
+
 @Module
-class ShowStoreModule {
+internal class ShowStoreModule {
     private inner class ShowStoreFetcherResponse(val trakt: TiviShow, val tmdb: TiviShow)
 
     @Provides
@@ -60,7 +59,7 @@ class ShowStoreModule {
         lastRequestStore: ShowLastRequestStore,
         @Trakt traktShowDataSource: ShowDataSource,
         @Tmdb tmdbShowDataSource: ShowDataSource,
-        scope: CoroutineScope
+        @ForStore scope: CoroutineScope
     ): ShowStore {
         return StoreBuilder.fromNonFlow { showId: Long ->
             val localShow = showDao.getShowWithId(showId)
@@ -94,35 +93,6 @@ class ShowStoreModule {
             },
             delete = showDao::delete,
             deleteAll = showDao::deleteAll
-        ).scope(scope).build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideTmdbShowImagesStore(
-        showImagesDao: ShowImagesDao,
-        showDao: TiviShowDao,
-        lastRequestStore: ShowImagesLastRequestStore,
-        @Tmdb tmdbShowImagesDataSource: ShowImagesDataSource,
-        scope: CoroutineScope
-    ): ShowImagesStore {
-        return StoreBuilder.fromNonFlow { showId: Long ->
-            val show = showDao.getShowWithId(showId)
-                ?: throw IllegalArgumentException("Show with ID $showId does not exist")
-            val result = tmdbShowImagesDataSource.getShowImages(show)
-
-            if (result is Success) {
-                lastRequestStore.updateLastRequest(showId)
-            }
-
-            result.getOrThrow().map {
-                it.copy(showId = showId)
-            }
-        }.persister(
-            reader = showImagesDao::getImagesForShowId,
-            writer = showImagesDao::saveImages,
-            delete = showImagesDao::deleteForShowId,
-            deleteAll = showImagesDao::deleteAll
         ).scope(scope).build()
     }
 }

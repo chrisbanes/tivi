@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.shows
+package app.tivi.data.repositories.showimages
 
 import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.entities.Request

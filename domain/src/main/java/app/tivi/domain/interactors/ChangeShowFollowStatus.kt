@@ -21,7 +21,7 @@ import app.tivi.data.fetch
 import app.tivi.data.fetchCollection
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
-import app.tivi.data.repositories.shows.ShowImagesStore
+import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.inject.ProcessLifetime

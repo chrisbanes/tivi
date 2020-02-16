@@ -19,7 +19,7 @@ package app.tivi.domain.interactors
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.fetch
 import app.tivi.data.fetchCollection
-import app.tivi.data.repositories.shows.ShowImagesStore
+import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.trendingshows.TrendingShowsLastRequestStore
 import app.tivi.data.repositories.trendingshows.TrendingShowsStore

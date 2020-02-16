@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.shows
+package app.tivi.data.repositories.showimages
 
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.ShowTmdbImage

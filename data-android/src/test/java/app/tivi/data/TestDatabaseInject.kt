@@ -27,9 +27,9 @@ import app.tivi.data.repositories.SeasonsEpisodesRepositoryTest
 import app.tivi.data.repositories.episodes.EpisodeDataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.repositories.followedshows.TraktFollowedShowsDataSource
+import app.tivi.data.repositories.showimages.ShowImagesDataSource
 import app.tivi.data.repositories.shows.ShowDataSource
-import app.tivi.data.repositories.shows.ShowImagesDataSource
-import app.tivi.data.repositories.shows.ShowStoreModule
+import app.tivi.inject.ForStore
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktServiceModule
@@ -96,6 +96,7 @@ class TestDataSourceModule(
     fun provideTmdbShowImagesDataSource(): ShowImagesDataSource = tmdbShowImagesDataSource
 
     @Provides
+    @ForStore
     fun provideStoreCoroutineScope(): CoroutineScope = storeScope
 }
 

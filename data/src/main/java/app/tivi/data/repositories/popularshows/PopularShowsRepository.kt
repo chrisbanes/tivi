@@ -22,7 +22,7 @@ import app.tivi.data.entities.Success
 import app.tivi.data.fetch
 import app.tivi.data.fetchCollection
 import app.tivi.data.instantInPast
-import app.tivi.data.repositories.shows.ShowImagesStore
+import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.extensions.asyncOrAwait
