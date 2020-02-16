@@ -33,10 +33,10 @@ class TraktTrendingShowsDataSource @Inject constructor(
     private val showService: Provider<Shows>,
     showMapper: TraktTrendingShowToTiviShow,
     entryMapper: TraktTrendingShowToTrendingShowEntry
-) : TrendingShowsDataSource {
+) {
     private val responseMapper = pairMapperOf(showMapper, entryMapper)
 
-    override suspend fun getTrendingShows(
+    suspend operator fun invoke(
         page: Int,
         pageSize: Int
     ): Result<List<Pair<TiviShow, TrendingShowEntry>>> {

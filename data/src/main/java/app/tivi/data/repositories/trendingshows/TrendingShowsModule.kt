@@ -30,14 +30,14 @@ class TrendingShowsModule {
     @Provides
     @Singleton
     fun provideTrendingShowsStore(
-        traktDataSource: TraktTrendingShowsDataSource,
+        traktTrendingShows: TraktTrendingShowsDataSource,
         trendingShowsDao: TrendingDao,
         showDao: TiviShowDao,
         lastRequestStore: TrendingShowsLastRequestStore,
         scope: CoroutineScope
     ): TrendingShowsStore {
         return StoreBuilder.fromNonFlow { page: Int ->
-            val response = traktDataSource.getTrendingShows(page, 20)
+            val response = traktTrendingShows(page, 20)
             if (page == 0 && response is Success) {
                 lastRequestStore.updateLastRequest()
             }
