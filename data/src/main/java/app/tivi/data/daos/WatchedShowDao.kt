@@ -20,6 +20,7 @@ import androidx.paging.DataSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
+import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.WatchedShowEntry
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import kotlinx.coroutines.flow.Flow
@@ -32,27 +33,51 @@ abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithS
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
-    abstract suspend fun entries(): List<WatchedShowEntryWithShow>
-
-    @Transaction
-    @Query("$ENTRY_QUERY_ORDER_LAST_WATCHED LIMIT :count OFFSET :offset")
-    abstract fun entriesObservable(count: Int, offset: Int): Flow<List<WatchedShowEntryWithShow>>
+    abstract suspend fun entries(): List<WatchedShowEntry>
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
-    internal abstract fun pagedListLastWatched(): DataSource.Factory<Int, WatchedShowEntryWithShow>
+    abstract fun entriesObservable(): Flow<List<WatchedShowEntry>>
+
+    fun observePagedList(
+        filter: String?,
+        sort: SortOption
+    ): DataSource.Factory<Int, WatchedShowEntryWithShow> {
+        val filtered = filter != null && filter.isNotEmpty()
+        return when (sort) {
+            SortOption.LAST_WATCHED -> {
+                if (filtered) {
+                    pagedListLastWatchedFilter("*$filter*")
+                } else {
+                    pagedListLastWatched()
+                }
+            }
+            SortOption.ALPHABETICAL -> {
+                if (filtered) {
+                    pagedListAlphaFilter("*$filter*")
+                } else {
+                    pagedListAlpha()
+                }
+            }
+            else -> throw IllegalArgumentException("$sort option is not supported")
+        }
+    }
+
+    @Transaction
+    @Query(ENTRY_QUERY_ORDER_LAST_WATCHED)
+    protected abstract fun pagedListLastWatched(): DataSource.Factory<Int, WatchedShowEntryWithShow>
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_LAST_WATCHED_FILTER)
-    internal abstract fun pagedListLastWatchedFilter(filter: String): DataSource.Factory<Int, WatchedShowEntryWithShow>
+    protected abstract fun pagedListLastWatchedFilter(filter: String): DataSource.Factory<Int, WatchedShowEntryWithShow>
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_ALPHA)
-    internal abstract fun pagedListAlpha(): DataSource.Factory<Int, WatchedShowEntryWithShow>
+    protected abstract fun pagedListAlpha(): DataSource.Factory<Int, WatchedShowEntryWithShow>
 
     @Transaction
     @Query(ENTRY_QUERY_ORDER_ALPHA_FILTER)
-    internal abstract fun pagedListAlphaFilter(filter: String): DataSource.Factory<Int, WatchedShowEntryWithShow>
+    protected abstract fun pagedListAlphaFilter(filter: String): DataSource.Factory<Int, WatchedShowEntryWithShow>
 
     @Query("DELETE FROM watched_entries")
     abstract override suspend fun deleteAll()

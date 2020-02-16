@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories.showimages
 
+import androidx.annotation.VisibleForTesting
 import app.tivi.data.daos.ShowImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.ShowTmdbImage
@@ -43,7 +44,8 @@ internal abstract class ShowImagesModuleBinds {
 }
 
 @Module
-internal class ShowImagesStoreModule {
+@VisibleForTesting
+class ShowImagesStoreModule {
     @Provides
     @Singleton
     fun provideTmdbShowImagesStore(

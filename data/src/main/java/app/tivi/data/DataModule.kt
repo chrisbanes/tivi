@@ -20,6 +20,7 @@ import app.tivi.data.repositories.episodes.EpisodesModule
 import app.tivi.data.repositories.showimages.ShowsImagesModule
 import app.tivi.data.repositories.shows.ShowsModule
 import app.tivi.data.repositories.trendingshows.TrendingShowsModule
+import app.tivi.data.repositories.watchedshows.WatchedShowsModule
 import app.tivi.inject.ForStore
 import dagger.Module
 import dagger.Provides
@@ -31,7 +32,8 @@ import kotlinx.coroutines.CoroutineScope
     EpisodesModule::class,
     ShowsModule::class,
     ShowsImagesModule::class,
-    TrendingShowsModule::class
+    TrendingShowsModule::class,
+    WatchedShowsModule::class
 ])
 class DataModule {
     @ForStore

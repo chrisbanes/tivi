@@ -18,8 +18,8 @@ package app.tivi.domain.observers
 
 import androidx.paging.PagedList
 import app.tivi.data.FlowPagedListBuilder
+import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.entities.SortOption
-import app.tivi.data.repositories.watchedshows.WatchedShowsRepository
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.domain.PagingInteractor
 import app.tivi.util.AppCoroutineDispatchers
@@ -29,13 +29,13 @@ import kotlinx.coroutines.flow.Flow
 
 class ObservePagedWatchedShows @Inject constructor(
     dispatchers: AppCoroutineDispatchers,
-    private val watchedShowsRepository: WatchedShowsRepository
+    private val watchedShowDao: WatchedShowDao
 ) : PagingInteractor<ObservePagedWatchedShows.Params, WatchedShowEntryWithShow>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override fun createObservable(params: Params): Flow<PagedList<WatchedShowEntryWithShow>> {
         return FlowPagedListBuilder(
-            watchedShowsRepository.observeWatchedShowsPagedList(params.filter, params.sort),
+            watchedShowDao.observePagedList(params.filter, params.sort),
             params.pagingConfig,
             boundaryCallback = params.boundaryCallback
         ).buildFlow()

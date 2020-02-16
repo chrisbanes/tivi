@@ -16,6 +16,7 @@
 
 package app.tivi.data.repositories.shows
 
+import androidx.annotation.VisibleForTesting
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
@@ -49,7 +50,8 @@ internal abstract class ShowsModuleBinds {
 typealias ShowStore = Store<Long, TiviShow>
 
 @Module
-internal class ShowStoreModule {
+@VisibleForTesting
+class ShowStoreModule {
     private inner class ShowStoreFetcherResponse(val trakt: TiviShow, val tmdb: TiviShow)
 
     @Provides

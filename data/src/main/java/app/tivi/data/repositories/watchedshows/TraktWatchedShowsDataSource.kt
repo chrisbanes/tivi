@@ -30,10 +30,10 @@ import com.uwetrottmann.trakt5.services.Sync
 import javax.inject.Inject
 import javax.inject.Provider
 
-class TraktWatchedShowsDataSource @Inject constructor(
+internal class TraktWatchedShowsDataSource @Inject constructor(
     private val syncService: Provider<Sync>,
     showMapper: TraktBaseShowToTiviShow
-) : WatchedShowsDataSource {
+) {
     private val entryMapper = object : Mapper<BaseShow, WatchedShowEntry> {
         override suspend fun map(from: BaseShow): WatchedShowEntry {
             return WatchedShowEntry(showId = 0, lastWatched = from.last_watched_at!!)
@@ -41,7 +41,7 @@ class TraktWatchedShowsDataSource @Inject constructor(
     }
     private val responseMapper = pairMapperOf(showMapper, entryMapper)
 
-    override suspend fun getWatchedShows(): Result<List<Pair<TiviShow, WatchedShowEntry>>> {
+    suspend operator fun invoke(): Result<List<Pair<TiviShow, WatchedShowEntry>>> {
         return syncService.get().watchedShows(Extended.NOSEASONS)
             .executeWithRetry()
             .toResult(responseMapper)

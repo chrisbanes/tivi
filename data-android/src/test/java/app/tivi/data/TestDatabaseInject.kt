@@ -28,7 +28,9 @@ import app.tivi.data.repositories.episodes.EpisodeDataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.repositories.followedshows.TraktFollowedShowsDataSource
 import app.tivi.data.repositories.showimages.ShowImagesDataSource
+import app.tivi.data.repositories.showimages.ShowImagesStoreModule
 import app.tivi.data.repositories.shows.ShowDataSource
+import app.tivi.data.repositories.shows.ShowStoreModule
 import app.tivi.inject.ForStore
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
@@ -104,7 +106,8 @@ class TestDataSourceModule(
     TestRoomDatabaseModule::class,
     DatabaseDaoModule::class,
     TraktServiceModule::class,
-    ShowStoreModule::class
+    ShowStoreModule::class,
+    ShowImagesStoreModule::class
 ])
 class TestDatabaseModule {
     @Provides
