@@ -35,10 +35,10 @@ import org.threeten.bp.Duration
 
 class UpdateTrendingShows @Inject constructor(
     private val trendingShowsStore: TrendingShowsStore,
-    private val showsStore: ShowStore,
-    private val showImagesStore: ShowImagesStore,
     private val trendingShowsDao: TrendingDao,
     private val lastRequestStore: TrendingShowsLastRequestStore,
+    private val showsStore: ShowStore,
+    private val showImagesStore: ShowImagesStore,
     dispatchers: AppCoroutineDispatchers,
     @ProcessLifetime val processScope: CoroutineScope
 ) : Interactor<Params>() {

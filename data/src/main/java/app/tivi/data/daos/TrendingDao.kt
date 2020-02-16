@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 abstract class TrendingDao : PaginatedEntryDao<TrendingShowEntry, TrendingEntryWithShow>() {
     @Query("SELECT * FROM trending_shows WHERE page = :page ORDER BY watchers DESC, id ASC")
-    abstract fun entriesForPage(page: Int): Flow<List<TrendingShowEntry>>
+    abstract fun entriesObservable(page: Int): Flow<List<TrendingShowEntry>>
 
     @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC, id ASC LIMIT :count OFFSET :offset")
     abstract fun entriesObservable(count: Int, offset: Int): Flow<List<TrendingEntryWithShow>>

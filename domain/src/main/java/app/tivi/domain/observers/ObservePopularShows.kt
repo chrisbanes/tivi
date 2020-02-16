@@ -16,7 +16,7 @@
 
 package app.tivi.domain.observers
 
-import app.tivi.data.repositories.popularshows.PopularShowsRepository
+import app.tivi.data.daos.PopularDao
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.domain.SubjectInteractor
 import app.tivi.util.AppCoroutineDispatchers
@@ -26,11 +26,11 @@ import kotlinx.coroutines.flow.Flow
 
 class ObservePopularShows @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
-    private val popularShowsRepository: PopularShowsRepository
+    private val popularShowsRepository: PopularDao
 ) : SubjectInteractor<Unit, List<PopularEntryWithShow>>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override fun createObservable(params: Unit): Flow<List<PopularEntryWithShow>> {
-        return popularShowsRepository.observeForObservable()
+        return popularShowsRepository.entriesObservable()
     }
 }

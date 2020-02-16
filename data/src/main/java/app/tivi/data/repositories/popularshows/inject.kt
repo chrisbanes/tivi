@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.trendingshows
+package app.tivi.data.repositories.popularshows
 
+import app.tivi.data.daos.PopularDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.daos.TrendingDao
+import app.tivi.data.entities.PopularShowEntry
 import app.tivi.data.entities.Success
-import app.tivi.data.entities.TrendingShowEntry
 import app.tivi.inject.ForStore
 import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
@@ -28,43 +28,43 @@ import dagger.Provides
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 
-typealias TrendingShowsStore = Store<Int, List<TrendingShowEntry>>
+typealias PopularShowsStore = Store<Int, List<PopularShowEntry>>
 
 @Module
-class TrendingShowsModule {
+internal class PopularShowsModule {
     @Provides
     @Singleton
-    fun provideTrendingShowsStore(
-        traktTrendingShows: TraktTrendingShowsDataSource,
-        trendingShowsDao: TrendingDao,
+    fun providePopularShowsStore(
+        traktPopularShows: TraktPopularShowsDataSource,
+        popularShowsDao: PopularDao,
         showDao: TiviShowDao,
-        lastRequestStore: TrendingShowsLastRequestStore,
+        lastRequestStore: PopularShowsLastRequestStore,
         @ForStore scope: CoroutineScope
-    ): TrendingShowsStore {
+    ): PopularShowsStore {
         return StoreBuilder.fromNonFlow { page: Int ->
-            val response = traktTrendingShows(page, 20)
+            val response = traktPopularShows(page, 20)
             if (page == 0 && response is Success) {
                 lastRequestStore.updateLastRequest()
             }
             response.getOrThrow()
         }.persister(
-            reader = trendingShowsDao::entriesObservable,
+            reader = popularShowsDao::entriesObservable,
             writer = { page, response ->
-                trendingShowsDao.withTransaction {
+                popularShowsDao.withTransaction {
                     val entries = response.map { (show, entry) ->
                         entry.copy(showId = showDao.getIdOrSavePlaceholder(show), page = page)
                     }
                     if (page == 0) {
                         // If we've requested page 0, remove any existing entries first
-                        trendingShowsDao.deleteAll()
-                        trendingShowsDao.insertAll(entries)
+                        popularShowsDao.deleteAll()
+                        popularShowsDao.insertAll(entries)
                     } else {
-                        trendingShowsDao.updatePage(page, entries)
+                        popularShowsDao.updatePage(page, entries)
                     }
                 }
             },
-            delete = trendingShowsDao::deletePage,
-            deleteAll = trendingShowsDao::deleteAll
+            delete = popularShowsDao::deletePage,
+            deleteAll = popularShowsDao::deleteAll
         ).scope(scope).build()
     }
 }
