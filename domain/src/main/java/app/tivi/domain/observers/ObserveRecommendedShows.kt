@@ -16,7 +16,7 @@
 
 package app.tivi.domain.observers
 
-import app.tivi.data.repositories.recommendedshows.RecommendedShowsRepository
+import app.tivi.data.daos.RecommendedDao
 import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.domain.SubjectInteractor
 import app.tivi.util.AppCoroutineDispatchers
@@ -26,11 +26,11 @@ import kotlinx.coroutines.flow.Flow
 
 class ObserveRecommendedShows @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
-    private val recommendedShowsRepository: RecommendedShowsRepository
+    private val recommendedDao: RecommendedDao
 ) : SubjectInteractor<Unit, List<RecommendedEntryWithShow>>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override fun createObservable(params: Unit): Flow<List<RecommendedEntryWithShow>> {
-        return recommendedShowsRepository.observeForObservable()
+        return recommendedDao.entriesObservable(20, 0)
     }
 }
