@@ -18,7 +18,6 @@ package app.tivi.data.repositories.followedshows
 
 import androidx.paging.DataSource
 import app.tivi.data.DatabaseTransactionRunner
-import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.PendingAction
@@ -35,7 +34,6 @@ import kotlinx.coroutines.flow.map
 @Singleton
 class FollowedShowsStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,
-    private val entityInserter: EntityInserter,
     private val followedShowsDao: FollowedShowsDao,
     logger: Logger
 ) {
@@ -118,5 +116,5 @@ class FollowedShowsStore @Inject constructor(
         syncer.sync(followedShowsDao.entries(), entities)
     }
 
-    suspend fun save(entry: FollowedShowEntry) = entityInserter.insertOrUpdate(followedShowsDao, entry)
+    suspend fun save(entry: FollowedShowEntry) = followedShowsDao.insertOrUpdate(entry)
 }

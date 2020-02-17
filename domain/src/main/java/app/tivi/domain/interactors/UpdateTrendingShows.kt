@@ -16,32 +16,47 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.repositories.trendingshows.TrendingShowsRepository
+import app.tivi.data.daos.TrendingDao
+import app.tivi.data.fetch
+import app.tivi.data.fetchCollection
+import app.tivi.data.repositories.showimages.ShowImagesStore
+import app.tivi.data.repositories.shows.ShowStore
+import app.tivi.data.repositories.trendingshows.TrendingShowsLastRequestStore
+import app.tivi.data.repositories.trendingshows.TrendingShowsStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateTrendingShows.Params
+import app.tivi.extensions.parallelForEach
 import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
+import org.threeten.bp.Duration
 
 class UpdateTrendingShows @Inject constructor(
-    private val trendingShowsRepository: TrendingShowsRepository,
+    private val trendingShowsStore: TrendingShowsStore,
+    private val trendingShowsDao: TrendingDao,
+    private val lastRequestStore: TrendingShowsLastRequestStore,
+    private val showsStore: ShowStore,
+    private val showImagesStore: ShowImagesStore,
     dispatchers: AppCoroutineDispatchers,
     @ProcessLifetime val processScope: CoroutineScope
 ) : Interactor<Params>() {
     override val scope: CoroutineScope = processScope + dispatchers.io
 
     override suspend fun doWork(params: Params) {
-        when (params.page) {
-            Page.NEXT_PAGE -> {
-                trendingShowsRepository.loadNextPage()
-            }
-            Page.REFRESH -> {
-                if (params.forceRefresh || trendingShowsRepository.needUpdate()) {
-                    trendingShowsRepository.update()
-                }
-            }
+        val lastPage = trendingShowsDao.getLastPage()
+        val page = when {
+            lastPage != null && params.page == Page.NEXT_PAGE -> lastPage + 1
+            else -> 0
+        }
+
+        trendingShowsStore.fetchCollection(page, forceFresh = params.forceRefresh) {
+            // Refresh if our local data is over 3 hours old
+            page == 0 && lastRequestStore.isRequestExpired(Duration.ofHours(3))
+        }.parallelForEach {
+            showsStore.fetch(it.showId)
+            showImagesStore.fetchCollection(it.showId)
         }
     }
 

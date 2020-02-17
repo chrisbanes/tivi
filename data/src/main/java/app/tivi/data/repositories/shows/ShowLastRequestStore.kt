@@ -20,7 +20,9 @@ import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.entities.Request
 import app.tivi.data.repositories.lastrequests.EntityLastRequestStore
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ShowLastRequestStore @Inject constructor(
     dao: LastRequestDao
 ) : EntityLastRequestStore(Request.SHOW_DETAILS, dao)

@@ -17,8 +17,12 @@
 package app.tivi.domain.interactors
 
 import app.tivi.actions.ShowTasks
+import app.tivi.data.fetch
+import app.tivi.data.fetchCollection
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
+import app.tivi.data.repositories.showimages.ShowImagesStore
+import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
@@ -29,6 +33,8 @@ import kotlinx.coroutines.plus
 class ChangeShowFollowStatus @Inject constructor(
     private val followedShowsRepository: FollowedShowsRepository,
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
+    private val showStore: ShowStore,
+    private val showImagesStore: ShowImagesStore,
     dispatchers: AppCoroutineDispatchers,
     private val showTasks: ShowTasks,
     @ProcessLifetime val processScope: CoroutineScope
@@ -65,7 +71,12 @@ class ChangeShowFollowStatus @Inject constructor(
             }
         }
         // Finally, sync the changes to Trakt
-        followedShowsRepository.syncFollowedShows()
+        val result = followedShowsRepository.syncFollowedShows()
+
+        result.added.forEach {
+            showStore.fetch(it.showId)
+            showImagesStore.fetchCollection(it.showId)
+        }
 
         if (params.deferDataFetch) {
             showTasks.syncFollowedShows()

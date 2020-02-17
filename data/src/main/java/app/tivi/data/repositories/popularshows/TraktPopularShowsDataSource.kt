@@ -30,10 +30,10 @@ import com.uwetrottmann.trakt5.services.Shows
 import javax.inject.Inject
 import javax.inject.Provider
 
-class TraktPopularShowsDataSource @Inject constructor(
+internal class TraktPopularShowsDataSource @Inject constructor(
     private val showService: Provider<Shows>,
     private val showMapper: TraktShowToTiviShow
-) : PopularShowsDataSource {
+) {
     private val entryMapper = object : IndexedMapper<Show, PopularShowEntry> {
         override suspend fun map(index: Int, from: Show): PopularShowEntry {
             return PopularShowEntry(showId = 0, pageOrder = index, page = 0)
@@ -42,7 +42,7 @@ class TraktPopularShowsDataSource @Inject constructor(
 
     private val resultsMapper = pairMapperOf(showMapper, entryMapper)
 
-    override suspend fun getPopularShows(
+    suspend operator fun invoke(
         page: Int,
         pageSize: Int
     ): Result<List<Pair<TiviShow, PopularShowEntry>>> {

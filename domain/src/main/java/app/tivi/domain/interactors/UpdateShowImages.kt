@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,40 +16,31 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.fetch
 import app.tivi.data.fetchCollection
+import app.tivi.data.repositories.showimages.ShowImagesLastRequestStore
 import app.tivi.data.repositories.showimages.ShowImagesStore
-import app.tivi.data.repositories.shows.ShowStore
-import app.tivi.data.repositories.watchedshows.WatchedShowsLastRequestStore
-import app.tivi.data.repositories.watchedshows.WatchedShowsStore
 import app.tivi.domain.Interactor
-import app.tivi.extensions.parallelForEach
 import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
-import org.threeten.bp.Duration
+import org.threeten.bp.Period
 
-class UpdateWatchedShows @Inject constructor(
-    private val watchedShowsStore: WatchedShowsStore,
-    private val showsStore: ShowStore,
+class UpdateShowImages @Inject constructor(
     private val showImagesStore: ShowImagesStore,
-    private val lastRequestStore: WatchedShowsLastRequestStore,
+    private val lastRequestStore: ShowImagesLastRequestStore,
     dispatchers: AppCoroutineDispatchers,
     @ProcessLifetime val processScope: CoroutineScope
-) : Interactor<UpdateWatchedShows.Params>() {
+) : Interactor<UpdateShowImages.Params>() {
     override val scope: CoroutineScope = processScope + dispatchers.io
 
     override suspend fun doWork(params: Params) {
-        watchedShowsStore.fetchCollection(Unit, forceFresh = params.forceRefresh) {
-            // Refresh if our local data is over 12 hours old
-            lastRequestStore.isRequestExpired(Duration.ofHours(12))
-        }.parallelForEach {
-            showsStore.fetch(it.showId)
-            showImagesStore.fetchCollection(it.showId)
+        showImagesStore.fetchCollection(params.showId, params.forceLoad) {
+            // Refresh if our local data is over 30 days old
+            lastRequestStore.isRequestExpired(params.showId, Period.ofDays(30))
         }
     }
 
-    data class Params(val forceRefresh: Boolean)
+    data class Params(val showId: Long, val forceLoad: Boolean)
 }

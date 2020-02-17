@@ -24,28 +24,28 @@ import app.tivi.data.entities.TraktUser
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface UserDao : EntityDao<TraktUser> {
+abstract class UserDao : EntityDao<TraktUser>() {
     @Query("SELECT * FROM users WHERE is_me != 0")
-    fun observeMe(): Flow<TraktUser>
+    abstract fun observeMe(): Flow<TraktUser>
 
     @Query("SELECT * FROM users WHERE username = :username")
-    fun observeTraktUser(username: String): Flow<TraktUser>
+    abstract fun observeTraktUser(username: String): Flow<TraktUser>
 
     @Query("SELECT * FROM users WHERE username = :username")
-    suspend fun getTraktUser(username: String): TraktUser?
+    abstract suspend fun getTraktUser(username: String): TraktUser?
 
     @Query("SELECT * FROM users WHERE is_me != 0")
-    suspend fun getMe(): TraktUser?
+    abstract suspend fun getMe(): TraktUser?
 
     @Query("SELECT id FROM users WHERE username = :username")
-    suspend fun getIdForUsername(username: String): Long?
+    abstract suspend fun getIdForUsername(username: String): Long?
 
     @Query("SELECT id FROM users WHERE is_me != 0")
-    suspend fun getIdForMe(): Long?
+    abstract suspend fun getIdForMe(): Long?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    override suspend fun insert(entity: TraktUser): Long
+    abstract override suspend fun insert(entity: TraktUser): Long
 
     @Query("DELETE FROM users")
-    suspend fun deleteAll()
+    abstract suspend fun deleteAll()
 }

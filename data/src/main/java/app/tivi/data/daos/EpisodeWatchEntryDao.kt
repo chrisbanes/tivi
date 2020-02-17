@@ -23,7 +23,7 @@ import app.tivi.data.entities.PendingAction
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry> {
+abstract class EpisodeWatchEntryDao : EntityDao<EpisodeWatchEntry>() {
     @Query("SELECT * FROM episode_watch_entries WHERE episode_id = :episodeId")
     abstract suspend fun watchesForEpisode(episodeId: Long): List<EpisodeWatchEntry>
 

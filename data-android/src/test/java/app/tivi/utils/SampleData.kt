@@ -20,8 +20,10 @@ import app.tivi.data.TiviDatabase
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.FollowedShowEntry
+import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
+import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
@@ -34,7 +36,7 @@ val show2 = TiviShow(id = show2Id, title = "G'day mate", traktId = 546)
 
 internal suspend fun insertShow(db: TiviDatabase) = db.showDao().insert(show)
 
-internal suspend fun deleteShow(db: TiviDatabase) = db.showDao().delete(show)
+internal suspend fun deleteShow(db: TiviDatabase) = db.showDao().deleteEntity(show)
 
 const val s1_id = 1L
 val s1 = Season(
@@ -100,3 +102,5 @@ val followedShow1PendingUpload = followedShow1Local.copy(pendingAction = Pending
 const val followedShow2Id = 2L
 val followedShow2Network = FollowedShowEntry(0, show2Id, traktId = 101)
 val followedShow2Local = followedShow2Network.copy(id = followedShow2Id)
+
+val showPoster = ShowTmdbImage(showId = 0, path = "/folder/fake.jpg", type = ImageType.POSTER)

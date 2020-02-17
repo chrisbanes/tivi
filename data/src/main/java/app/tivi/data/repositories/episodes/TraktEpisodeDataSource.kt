@@ -40,7 +40,7 @@ class TraktEpisodeDataSource @Inject constructor(
         episodeNumber: Int
     ): Result<Episode> {
         val traktId = traktIdMapper.map(showId)
-            ?: return ErrorResult(message = "No Trakt ID for show with ID: $showId")
+            ?: return ErrorResult(IllegalArgumentException("No Trakt ID for show with ID: $showId"))
 
         return service.get().summary(traktId.toString(), seasonNumber, episodeNumber, Extended.FULL)
             .executeWithRetry()

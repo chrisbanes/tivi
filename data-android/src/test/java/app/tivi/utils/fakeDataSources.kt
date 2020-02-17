@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2019 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.popularshows
+package app.tivi.utils
 
-import app.tivi.data.entities.PopularShowEntry
 import app.tivi.data.entities.Result
+import app.tivi.data.entities.ShowTmdbImage
+import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.repositories.showimages.ShowImagesDataSource
+import app.tivi.data.repositories.shows.ShowDataSource
 
-interface PopularShowsDataSource {
-    suspend fun getPopularShows(
-        page: Int,
-        pageSize: Int
-    ): Result<List<Pair<TiviShow, PopularShowEntry>>>
+object SuccessFakeShowDataSource : ShowDataSource {
+    override suspend fun getShow(show: TiviShow): Result<TiviShow> {
+        return Success(show)
+    }
+}
+
+object SuccessFakeShowImagesDataSource : ShowImagesDataSource {
+    override suspend fun getShowImages(show: TiviShow): Result<List<ShowTmdbImage>> {
+        return Success(listOf(showPoster))
+    }
 }

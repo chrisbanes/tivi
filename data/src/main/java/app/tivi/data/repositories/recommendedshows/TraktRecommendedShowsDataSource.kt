@@ -19,21 +19,21 @@ package app.tivi.data.repositories.recommendedshows
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TraktShowToTiviShow
-import app.tivi.data.mappers.toListMapper
+import app.tivi.data.mappers.forLists
 import app.tivi.extensions.executeWithRetry
 import app.tivi.extensions.toResult
 import com.uwetrottmann.trakt5.services.Recommendations
 import javax.inject.Inject
 import javax.inject.Provider
 
-class TraktRecommendedShowsDataSource @Inject constructor(
+internal class TraktRecommendedShowsDataSource @Inject constructor(
     private val recommendationsService: Provider<Recommendations>,
     private val showMapper: TraktShowToTiviShow
-) : RecommendedShowsDataSource {
-    override suspend fun getRecommendedShows(page: Int, pageSize: Int): Result<List<TiviShow>> {
+) {
+    suspend operator fun invoke(page: Int, pageSize: Int): Result<List<TiviShow>> {
         // We add 1 because Trakt uses a 1-based index whereas we use a 0-based index
         return recommendationsService.get().shows(page + 1, pageSize, null)
             .executeWithRetry()
-            .toResult(showMapper.toListMapper())
+            .toResult(showMapper.forLists())
     }
 }

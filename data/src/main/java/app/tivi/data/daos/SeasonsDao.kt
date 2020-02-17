@@ -25,7 +25,7 @@ import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class SeasonsDao : EntityDao<Season> {
+abstract class SeasonsDao : EntityDao<Season>() {
     @Transaction
     @Query("SELECT * FROM seasons WHERE show_id = :showId ORDER BY number=$NUMBER_SPECIALS, number")
     abstract fun seasonsWithEpisodesForShowId(showId: Long): Flow<List<SeasonWithEpisodesAndWatches>>
