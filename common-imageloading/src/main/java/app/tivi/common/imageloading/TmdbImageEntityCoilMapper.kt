@@ -19,6 +19,7 @@ package app.tivi.common.imageloading
 import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.TmdbImageEntity
 import app.tivi.tmdb.TmdbImageUrlProvider
+import app.tivi.util.PowerController
 import coil.map.MeasuredMapper
 import coil.size.PixelSize
 import coil.size.Size
@@ -28,13 +29,21 @@ import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
 class TmdbImageEntityCoilMapper @Inject constructor(
-    private val tmdbImageUrlProvider: Provider<TmdbImageUrlProvider>
+    private val tmdbImageUrlProvider: Provider<TmdbImageUrlProvider>,
+    private val powerController: PowerController
 ) : MeasuredMapper<TmdbImageEntity, HttpUrl> {
 
     override fun handles(data: TmdbImageEntity): Boolean = true
 
     override fun map(data: TmdbImageEntity, size: Size): HttpUrl {
-        val width = if (size is PixelSize) size.width else 0
+        val width = if (size is PixelSize) {
+            if (powerController.canFetchHighResolutionImages()) {
+                size.width
+            } else {
+                // If we can't download hi-res images, we load half-width images (so ~1/4 in size)
+                size.width / 2
+            }
+        } else 0
 
         val urlProvider = tmdbImageUrlProvider.get()
         return when (data.type) {
