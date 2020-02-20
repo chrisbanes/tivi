@@ -48,16 +48,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Build debug and check
-        run: ./gradlew spotlessCheck app:assembleDebug app:lintDebug testDebug -Ptivi.versioncode=$BUILD_NUMBER --scan
-
-      - name: Build release
-        if: github.ref != 'refs/heads/master'
-        run: ./gradlew assembleRelease bundleRelease -Ptivi.versioncode=$BUILD_NUMBER --scan
+      - name: Build and check
+        run: ./gradlew spotlessCheck assembleDebug assembleRelease bundleRelease app:lintDebug testDebug -Ptivi.versioncode=$BUILD_NUMBER --scan
 
       - name: Publish to Play Store
         if: github.ref == 'refs/heads/master'
-        run: ./gradlew assembleRelease publishRelease -Ptivi.versioncode=$BUILD_NUMBER --scan
+        run: ./gradlew publishRelease -Ptivi.versioncode=$BUILD_NUMBER --scan
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1
