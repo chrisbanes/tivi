@@ -1,0 +1,33 @@
+name: Nightly tasks
+
+on:
+  schedule:
+    - cron:  '0 0 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      TERM: dumb
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Copy CI gradle.properties
+        run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
+
+      - name: Check dependency updates
+        run: ./gradlew dependencyUpdates
+
+      - name: Upload dependency updates report
+        uses: actions/upload-artifact@v1
+        with:
+          name: dependency-updates
+          path: build/dependencyUpdates
