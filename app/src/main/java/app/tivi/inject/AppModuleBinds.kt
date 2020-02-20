@@ -30,7 +30,9 @@ import app.tivi.appinitializers.TimberInitializer
 import app.tivi.appinitializers.TmdbInitializer
 import app.tivi.settings.TiviPreferences
 import app.tivi.settings.TiviPreferencesImpl
+import app.tivi.util.AndroidPowerController
 import app.tivi.util.Logger
+import app.tivi.util.PowerController
 import app.tivi.util.TiviLogger
 import dagger.Binds
 import dagger.Module
@@ -42,6 +44,9 @@ import javax.inject.Singleton
 abstract class AppModuleBinds {
     @Binds
     abstract fun provideApplication(bind: TiviApplication): Application
+
+    @Binds
+    internal abstract fun providePowerController(bind: AndroidPowerController): PowerController
 
     @Singleton
     @Named("app")
