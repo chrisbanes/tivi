@@ -17,6 +17,11 @@ jobs:
       ORG_GRADLE_PROJECT_TIVI_PLAY_PUBLISHER_ACCOUNT: ${{ secrets.ORG_GRADLE_PROJECT_TIVI_PLAY_PUBLISHER_ACCOUNT }}
 
     steps:
+      - name: Generate build number
+        shell: bash
+        run: |
+          echo "::set-env name=BUILD_NUMBER::$(expr $GITHUB_RUN_NUMBER + 5200)"
+
       - uses: actions/checkout@v2
 
       - name: set up JDK 1.8
@@ -42,12 +47,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-
-      - name: Generate build number
-        id: buildnumber
-        uses: einaregilsson/build-number@v1
-        with:
-          token: ${{secrets.GITHUB_TOKEN}}
 
       - name: Build debug and check
         run: ./gradlew spotlessCheck app:assembleDebug app:lintDebug testDebug -Ptivi.versioncode=$BUILD_NUMBER --scan
