@@ -39,6 +39,7 @@ class TiviPreferencesImpl @Inject constructor(
 
     companion object {
         const val KEY_THEME = "pref_theme"
+        const val KEY_DATA_SAVER = "pref_data_saver"
     }
 
     override fun setup() {
@@ -50,6 +51,12 @@ class TiviPreferencesImpl @Inject constructor(
         get() = getThemeForStorageValue(sharedPreferences.getString(KEY_THEME, defaultThemeValue)!!)
         set(value) = sharedPreferences.edit {
             putString(KEY_THEME, getStorageKeyForTheme(value))
+        }
+
+    override var useLessData: Boolean
+        get() = sharedPreferences.getBoolean(KEY_DATA_SAVER, false)
+        set(value) = sharedPreferences.edit {
+            putBoolean(KEY_DATA_SAVER, value)
         }
 
     private fun getStorageKeyForTheme(theme: Theme) = when (theme) {
