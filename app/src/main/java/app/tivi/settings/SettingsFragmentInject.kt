@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,11 @@
 
 package app.tivi.settings
 
-interface TiviPreferences {
+import dagger.Module
+import dagger.android.ContributesAndroidInjector
 
-    fun setup()
-
-    var themePreference: Theme
-    var useLessData: Boolean
-
-    enum class Theme {
-        LIGHT,
-        DARK,
-        BATTERY_SAVER_ONLY,
-        SYSTEM
-    }
+@Module
+internal abstract class SettingsPreferenceFragmentBuilder {
+    @ContributesAndroidInjector
+    abstract fun settingsPreferenceFragment(): SettingsPreferenceFragment
 }

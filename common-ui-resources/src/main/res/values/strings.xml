@@ -55,6 +55,10 @@
     <string name="settings_ui_category_title">User Interface</string>
     <string name="settings_theme_title">Theme</string>
 
+    <string name="settings_data_saver_title">Fetch less data</string>
+    <string name="settings_data_saver_summary_on">Fetch data as required and display lower quality images</string>
+    <string name="settings_data_saver_summary_system">Automatically enabled due to system setting</string>
+
     <string name="settings_about_category_title">About Tivi</string>
 
     <string name="details_related">Related shows</string>

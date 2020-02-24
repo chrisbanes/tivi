@@ -20,6 +20,7 @@ import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.TmdbImageEntity
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.util.PowerController
+import app.tivi.util.SaveData
 import coil.map.MeasuredMapper
 import coil.size.PixelSize
 import coil.size.Size
@@ -37,7 +38,7 @@ class TmdbImageEntityCoilMapper @Inject constructor(
 
     override fun map(data: TmdbImageEntity, size: Size): HttpUrl {
         val width = if (size is PixelSize) {
-            if (powerController.canFetchHighResolutionImages()) {
+            if (powerController.shouldSaveData() is SaveData.Enabled) {
                 size.width
             } else {
                 // If we can't download hi-res images, we load half-width images (so ~1/4 in size)
