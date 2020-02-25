@@ -17,12 +17,12 @@
 package app.tivi.buildsrc
 
 object Versions {
-    const val ktlint = "0.35.0"
+    const val ktlint = "0.36.0"
 }
 
 object Libs {
     const val androidGradlePlugin = "com.android.tools.build:gradle:3.6.0"
-    const val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:1.0.0"
+    const val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:1.0.2"
     const val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.6.1"
 
     const val mvRx = "com.airbnb.android:mvrx:1.3.0"
@@ -35,7 +35,7 @@ object Libs {
 
     const val timber = "com.jakewharton.timber:timber:4.7.1"
 
-    const val tmdbJava = "com.github.chrisbanes:tmdb-java:master-SNAPSHOT"
+    const val tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.2.0"
     const val traktJava = "com.uwetrottmann.trakt5:trakt-java:6.4.0"
 
     const val appauth = "net.openid:appauth:0.7.1"
@@ -46,20 +46,20 @@ object Libs {
 
     const val inboxRecyclerView = "me.saket:inboxrecyclerview:2.0.0-beta3"
 
-    const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.1"
+    const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.2"
 
     const val flexbox = "com.google.android:flexbox:2.0.1"
 
-    const val store = "com.dropbox.mobile.store:store4:4.0.0-alpha02"
+    const val store = "com.dropbox.mobile.store:store4:4.0.0-alpha03"
 
     object Insetter {
-        private const val version = "0.2.0"
+        private const val version = "0.2.1"
         const val dbx = "dev.chrisbanes:insetter-dbx:$version"
         const val ktx = "dev.chrisbanes:insetter-ktx:$version"
     }
 
     object Google {
-        const val material = "com.google.android.material:material:1.1.0-rc02"
+        const val material = "com.google.android.material:material:1.1.0"
         const val firebaseCore = "com.google.firebase:firebase-core:17.2.2"
         const val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.10.1"
         const val gmsGoogleServices = "com.google.gms:google-services:4.3.3"
@@ -95,14 +95,14 @@ object Libs {
         const val swiperefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha03"
 
         object Navigation {
-            private const val version = "2.2.0-rc02"
+            private const val version = "2.2.1"
             const val fragment = "androidx.navigation:navigation-fragment-ktx:$version"
             const val ui = "androidx.navigation:navigation-ui-ktx:$version"
             const val safeArgs = "androidx.navigation:navigation-safe-args-gradle-plugin:$version"
         }
 
         object Fragment {
-            private const val version = "1.2.0-rc01"
+            private const val version = "1.2.2"
             const val fragment = "androidx.fragment:fragment:$version"
             const val fragmentKtx = "androidx.fragment:fragment-ktx:$version"
         }
@@ -137,7 +137,7 @@ object Libs {
         }
 
         object Room {
-            private const val version = "2.2.3"
+            private const val version = "2.2.4"
             const val common = "androidx.room:room-common:$version"
             const val runtime = "androidx.room:room-runtime:$version"
             const val compiler = "androidx.room:room-compiler:$version"
@@ -146,7 +146,7 @@ object Libs {
         }
 
         object Work {
-            private const val version = "2.3.0"
+            private const val version = "2.3.2"
             const val runtimeKtx = "androidx.work:work-runtime-ktx:$version"
         }
     }
@@ -157,7 +157,7 @@ object Libs {
     }
 
     object Dagger {
-        private const val version = "2.25.4"
+        private const val version = "2.26"
         const val dagger = "com.google.dagger:dagger:$version"
         const val androidSupport = "com.google.dagger:dagger-android-support:$version"
         const val compiler = "com.google.dagger:dagger-compiler:$version"
@@ -172,7 +172,7 @@ object Libs {
     }
 
     object OkHttp {
-        private const val version = "4.3.1"
+        private const val version = "4.4.0"
         const val okhttp = "com.squareup.okhttp3:okhttp:$version"
         const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$version"
     }
@@ -186,7 +186,7 @@ object Libs {
     }
 
     object Coil {
-        private const val version = "0.9.2"
+        private const val version = "0.9.5"
         const val coil = "io.coil-kt:coil:$version"
     }
 
