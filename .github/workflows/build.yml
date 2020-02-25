@@ -49,7 +49,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build and check
-        run: ./gradlew spotlessCheck assembleDebug assembleRelease bundleRelease app:lintDebug testDebug -Ptivi.versioncode=$BUILD_NUMBER --scan
+        run: ./gradlew spotlessCheck detekt assemble bundleRelease app:lintDebug testDebug -Ptivi.versioncode=$BUILD_NUMBER --scan
 
       - name: Publish to Play Store
         if: github.ref == 'refs/heads/master'

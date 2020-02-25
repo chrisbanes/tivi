@@ -54,6 +54,7 @@ buildscript {
 plugins {
     id 'com.diffplug.gradle.spotless' version '3.27.1'
     id 'com.github.ben-manes.versions' version '0.28.0'
+    id 'io.gitlab.arturbosch.detekt' version '1.5.1'
 }
 
 allprojects {
@@ -77,6 +78,14 @@ subprojects {
         }
     }
 
+    apply plugin: 'io.gitlab.arturbosch.detekt'
+    detekt {
+        reports {
+            html.enabled = true
+            txt.enabled = true
+        }
+    }
+
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         kotlinOptions {
             // Treat all Kotlin warnings as errors
@@ -91,6 +100,11 @@ subprojects {
             // Set JVM target to 1.8
             jvmTarget = "1.8"
         }
+    }
+
+    tasks.withType(io.gitlab.arturbosch.detekt.Detekt).all {
+        // Target version of the generated JVM bytecode. It is used for type resolution.
+        jvmTarget = "1.8"
     }
 }
 
