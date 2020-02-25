@@ -238,7 +238,8 @@ class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>(
             }
         })
 
-        requireActivity().onBackPressedDispatcher.addCallback(this, backPressedCallback)
+        requireActivity().onBackPressedDispatcher
+            .addCallback(viewLifecycleOwner, backPressedCallback)
     }
 
     override fun invalidate(binding: FragmentShowDetailsBinding) = withState(viewModel) { state ->
