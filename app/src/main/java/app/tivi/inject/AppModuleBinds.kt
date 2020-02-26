@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("TooManyFunctions")
+
 package app.tivi.inject
 
 import android.app.Application

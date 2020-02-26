@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("TooManyFunctions")
+
 package app.tivi.inject
 
 import android.content.Context
@@ -62,9 +64,9 @@ class AppModule {
 
     @Singleton
     @Provides
+    @Suppress("MagicNumber")
     fun provideBackgroundExecutor(): Executor {
-        val parallelism = (Runtime.getRuntime().availableProcessors() * 2)
-            .coerceIn(4, 32)
+        val parallelism = (Runtime.getRuntime().availableProcessors() * 2).coerceIn(4, 32)
         return if (Build.VERSION.SDK_INT < 24) {
             Executors.newFixedThreadPool(parallelism)
         } else {

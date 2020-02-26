@@ -49,17 +49,13 @@ internal class AndroidPowerController @Inject constructor(
         }
     }
 
-    override fun shouldSaveData(): SaveData {
-        if (preferences.useLessData) {
-            return SaveData.Enabled(SaveDataReason.PREFERENCE)
+    override fun shouldSaveData(): SaveData = when {
+        preferences.useLessData -> SaveData.Enabled(SaveDataReason.PREFERENCE)
+        powerManager.isPowerSaveMode -> SaveData.Enabled(SaveDataReason.SYSTEM_POWER_SAVER)
+        ConnectivityManagerCompat.getRestrictBackgroundStatus(connectivityManager)
+            == ConnectivityManagerCompat.RESTRICT_BACKGROUND_STATUS_ENABLED -> {
+            SaveData.Enabled(SaveDataReason.SYSTEM_DATA_SAVER)
         }
-        if (powerManager.isPowerSaveMode) {
-            return SaveData.Enabled(SaveDataReason.SYSTEM_POWER_SAVER)
-        }
-        if (ConnectivityManagerCompat.getRestrictBackgroundStatus(connectivityManager)
-            == ConnectivityManagerCompat.RESTRICT_BACKGROUND_STATUS_ENABLED) {
-            return SaveData.Enabled(SaveDataReason.SYSTEM_DATA_SAVER)
-        }
-        return SaveData.Disabled
+        else -> SaveData.Disabled
     }
 }

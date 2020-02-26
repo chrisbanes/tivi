@@ -67,8 +67,7 @@ class HomeActivity : TiviActivityMvRxView() {
         setupBottomNavigationBar()
     }
 
-    override fun invalidate() {
-    }
+    override fun invalidate() = Unit
 
     override fun handleIntent(intent: Intent) {
         when (intent.action) {
