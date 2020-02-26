@@ -30,9 +30,8 @@ import androidx.ui.core.Modifier
 import androidx.ui.core.OnChildPositioned
 import androidx.ui.graphics.Image
 import androidx.ui.layout.Container
-import androidx.ui.unit.PxSize
-import androidx.ui.unit.minDimension
-import androidx.ui.unit.px
+import androidx.ui.unit.IntPx
+import androidx.ui.unit.IntPxSize
 import app.tivi.ui.graphics.ImageLoadingColorMatrix
 import coil.Coil
 import coil.api.newGetBuilder
@@ -84,12 +83,12 @@ fun LoadAndShowImage(
     data: Any,
     crossFadeIn: Boolean = false
 ) {
-    var childSize by state { PxSize.Zero }
+    var childSize by state { IntPxSize(IntPx.Zero, IntPx.Zero) }
 
     OnChildPositioned(onPositioned = { childSize = it.size }) {
         var imgLoadState by stateFor(data, childSize) { ImageLoadState.Empty }
 
-        val image = if (childSize.minDimension > 0.px) {
+        val image = if (childSize.width > IntPx.Zero && childSize.height > IntPx.Zero) {
             // If we have a size, we can now load the image using those bounds...
             LoadImage(data, childSize) {
                 // Once loaded, update the load state
@@ -133,15 +132,15 @@ fun LoadAndShowImage(
 @Composable
 fun LoadImage(
     data: Any,
-    pxSize: PxSize = PxSize.Zero,
+    pxSize: IntPxSize,
     onLoad: () -> Unit
 ): Image? {
     val request = remember(data, pxSize) {
         Coil.loader().newGetBuilder()
             .data(data)
             .apply {
-                if (pxSize.minDimension > 0.px) {
-                    size(pxSize.width.value.roundToInt(), pxSize.height.value.roundToInt())
+                if (pxSize.width > IntPx.Zero && pxSize.height > IntPx.Zero) {
+                    size(pxSize.width.value, pxSize.height.value)
                     scale(Scale.FILL)
                 }
             }
