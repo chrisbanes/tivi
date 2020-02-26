@@ -20,7 +20,6 @@ import android.view.ViewGroup
 import androidx.animation.transitionDefinition
 import androidx.annotation.DrawableRes
 import androidx.compose.Composable
-import androidx.compose.ambient
 import androidx.compose.remember
 import androidx.compose.state
 import androidx.core.view.WindowInsetsCompat
@@ -29,14 +28,14 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.ui.animation.ColorPropKey
 import androidx.ui.animation.Transition
+import androidx.ui.core.DensityAmbient
 import androidx.ui.core.DrawModifier
 import androidx.ui.core.Modifier
 import androidx.ui.core.OnChildPositioned
 import androidx.ui.core.Text
-import androidx.ui.core.WithDensity
 import androidx.ui.foundation.Clickable
+import androidx.ui.foundation.DrawBackground
 import androidx.ui.foundation.VerticalScroller
-import androidx.ui.foundation.background
 import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Canvas
 import androidx.ui.graphics.Color
@@ -45,14 +44,12 @@ import androidx.ui.graphics.withSave
 import androidx.ui.layout.Arrangement
 import androidx.ui.layout.Column
 import androidx.ui.layout.Container
-import androidx.ui.layout.EdgeInsets
 import androidx.ui.layout.LayoutAlign
 import androidx.ui.layout.LayoutAspectRatio
 import androidx.ui.layout.LayoutGravity
 import androidx.ui.layout.LayoutHeight
 import androidx.ui.layout.LayoutPadding
 import androidx.ui.layout.LayoutSize
-import androidx.ui.layout.Padding
 import androidx.ui.layout.Row
 import androidx.ui.layout.Spacer
 import androidx.ui.layout.Stack
@@ -76,14 +73,13 @@ import app.tivi.animation.invoke
 import app.tivi.common.compose.GradientScrim
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.InsetsHolder
-import app.tivi.common.compose.LayoutPadding
 import app.tivi.common.compose.LoadAndShowImage
 import app.tivi.common.compose.MaterialThemeFromAndroidTheme
 import app.tivi.common.compose.SwipeDirection
 import app.tivi.common.compose.SwipeToDismiss
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
-import app.tivi.common.compose.WrapInAmbients
+import app.tivi.common.compose.WrapWithAmbients
 import app.tivi.common.compose.center
 import app.tivi.common.compose.observe
 import app.tivi.common.compose.observeInsets
@@ -111,7 +107,7 @@ fun ViewGroup.composeEpisodeDetails(
     actioner: (EpisodeDetailsAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter
 ): Any = setContentWithLifecycle(lifecycleOwner) {
-    WrapInAmbients(tiviDateFormatter, InsetsHolder()) {
+    WrapWithAmbients(tiviDateFormatter, InsetsHolder()) {
         observeInsets(insets)
 
         val viewState = observe(state)
@@ -169,11 +165,11 @@ private fun EpisodeDetails(
             }
         }
 
-        val insets = ambient(InsetsAmbient)
-        WithDensity {
+        val insets = InsetsAmbient.current
+        with(DensityAmbient.current) {
             WatchButton(
                 modifier = LayoutGravity.BottomRight +
-                    LayoutPadding(horizontal = 16.dp, bottom = 16.dp + insets.bottom.toDp()),
+                    LayoutPadding(start = 16.dp, end = 16.dp, bottom = 16.dp + insets.bottom.toDp()),
                 action = viewState.action,
                 actioner = actioner
             )
@@ -217,7 +213,7 @@ private fun InfoPanes(episode: Episode) {
         }
 
         episode.firstAired?.let { firstAired ->
-            val formatter = ambient(TiviDateFormatterAmbient)
+            val formatter = TiviDateFormatterAmbient.current
             InfoPane(
                 modifier = LayoutFlexible(1f),
                 iconResId = R.drawable.ic_details_date,
@@ -261,14 +257,13 @@ private fun Summary(episode: Episode) {
         val expanded = state { false }
         Clickable(onClick = { expanded.value = !expanded.value }) {
             ProvideEmphasis(emphasis = EmphasisLevels().high) {
-                Padding(padding = EdgeInsets(16.dp)) {
-                    Text(
-                        text = episode.summary ?: "No summary",
-                        style = MaterialTheme.typography().body2,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = if (expanded.value) Int.MAX_VALUE else 4
-                    )
-                }
+                Text(
+                    modifier = LayoutPadding(16.dp),
+                    text = episode.summary ?: "No summary",
+                    style = MaterialTheme.typography().body2,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = if (expanded.value) Int.MAX_VALUE else 4
+                )
             }
         }
     }
@@ -276,13 +271,12 @@ private fun Summary(episode: Episode) {
 
 @Composable
 private fun Header() {
-    Padding(padding = EdgeInsets(16.dp, 8.dp, 16.dp, 8.dp)) {
-        ProvideEmphasis(emphasis = EmphasisLevels().high) {
-            Text(
-                text = stringResource(R.string.episode_watches),
-                style = MaterialTheme.typography().subtitle1
-            )
-        }
+    ProvideEmphasis(emphasis = EmphasisLevels().high) {
+        Text(
+            modifier = LayoutPadding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+            text = stringResource(R.string.episode_watches),
+            style = MaterialTheme.typography().subtitle1
+        )
     }
 }
 
@@ -296,7 +290,7 @@ private fun EpisodeWatch(
     ) {
         Row(modifier = LayoutPadding(16.dp, 8.dp, 16.dp, 8.dp) + LayoutSize.Min(40.dp)) {
             ProvideEmphasis(emphasis = EmphasisLevels().high) {
-                val formatter = ambient(TiviDateFormatterAmbient)
+                val formatter = TiviDateFormatterAmbient.current
                 Text(
                     modifier = LayoutFlexible(1f) + LayoutGravity.Center,
                     text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
@@ -308,7 +302,7 @@ private fun EpisodeWatch(
                 if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
                     VectorImage(
                         id = R.drawable.ic_upload_24dp,
-                        modifier = LayoutPadding(left = 8.dp) + LayoutGravity.Center
+                        modifier = LayoutPadding(start = 8.dp) + LayoutGravity.Center
                     )
                 }
 
@@ -317,7 +311,7 @@ private fun EpisodeWatch(
                         PendingAction.DELETE -> R.drawable.ic_eye_off_24dp
                         else -> R.drawable.ic_eye_24dp
                     },
-                    modifier = LayoutPadding(left = 8.dp) + LayoutGravity.Center
+                    modifier = LayoutPadding(start = 8.dp) + LayoutGravity.Center
                 )
             }
         }
@@ -332,7 +326,7 @@ private fun EpisodeWatchSwipeBackground(
     wouldCompleteOnRelease: Boolean = false
 ) {
     Stack(
-        modifier = background(MaterialTheme.colors().onSurface.copy(alpha = 0.2f))
+        modifier = DrawBackground(MaterialTheme.colors().onSurface.copy(alpha = 0.2f))
     ) {
         val iconCenter = state { PxPosition(Px.Zero, Px.Zero) }
 
@@ -380,7 +374,7 @@ private fun EpisodeWatchSwipeBackground(
             ProvideEmphasis(emphasis = EmphasisLevels().medium) {
                 VectorImage(
                     id = R.drawable.ic_eye_off_24dp,
-                    modifier = LayoutPadding(right = 16.dp) + LayoutGravity.CenterRight
+                    modifier = LayoutPadding(end = 16.dp) + LayoutGravity.CenterRight
                 )
             }
         }

@@ -16,27 +16,21 @@
 
 package app.tivi.common.compose
 
-import androidx.compose.Ambient
 import androidx.compose.Composable
+import androidx.compose.Providers
+import androidx.compose.staticAmbientOf
 import app.tivi.util.TiviDateFormatter
 
-val TiviDateFormatterAmbient = Ambient.of<TiviDateFormatter>()
-
-private typealias AmbientProvider = @Composable() (@Composable() () -> Unit) -> Unit
+val TiviDateFormatterAmbient = staticAmbientOf<TiviDateFormatter>()
 
 @Suppress("MoveLambdaOutsideParentheses")
 @Composable
-fun WrapInAmbients(
+fun WrapWithAmbients(
     tiviDateFormatter: TiviDateFormatter,
     insetsHolder: InsetsHolder,
     content: @Composable() () -> Unit
-) {
-    listOf<AmbientProvider>(
-        { children ->
-            TiviDateFormatterAmbient.Provider(value = tiviDateFormatter, children = children)
-        },
-        { children ->
-            InsetsAmbient.Provider(value = insetsHolder, children = children)
-        }
-    ).fold(content, { current, ambient -> { ambient(current) } }).invoke()
-}
+) = Providers(
+    TiviDateFormatterAmbient provides tiviDateFormatter,
+    InsetsAmbient provides insetsHolder,
+    children = content
+)

@@ -42,7 +42,7 @@ import androidx.ui.graphics.colorspace.ColorSpaces
 fun DrawImage(
     image: Image,
     tint: Color? = null,
-    paintModifier: @Composable ((Paint) -> Unit)? = null
+    paintModifier: @Composable() ((Paint) -> Unit) = {}
 ) {
     val paint = remember {
         Paint().apply {
@@ -50,7 +50,7 @@ fun DrawImage(
         }
     }
     paint.colorFilter = tint?.let { ColorFilter(it, BlendMode.srcIn) }
-    paintModifier?.invoke(paint)
+    paintModifier(paint)
 
     Draw { canvas, parentSize ->
         val inputWidth = image.width.toFloat()

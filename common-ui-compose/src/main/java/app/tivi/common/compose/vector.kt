@@ -19,7 +19,6 @@ package app.tivi.common.compose
 import androidx.annotation.DrawableRes
 import androidx.compose.Composable
 import androidx.ui.core.Modifier
-import androidx.ui.core.WithDensity
 import androidx.ui.foundation.contentColor
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.vector.DrawVector
@@ -34,11 +33,7 @@ fun VectorImage(
     tint: Color = contentColor()
 ) {
     val vector = vectorResource(id)
-    WithDensity {
-        Container(
-            modifier = modifier + LayoutSize(vector.defaultWidth, vector.defaultHeight)
-        ) {
-            DrawVector(vector, tint)
-        }
+    Container(modifier = modifier + LayoutSize(vector.defaultWidth, vector.defaultHeight)) {
+        DrawVector(vector, tint)
     }
 }

@@ -18,12 +18,13 @@ package app.tivi.common.compose
 
 import android.content.Context
 import android.graphics.Typeface
+import android.util.TypedValue
 import androidx.annotation.StyleRes
 import androidx.compose.Composable
 import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.content.res.use
 import androidx.core.graphics.ColorUtils
-import androidx.ui.core.WithDensity
+import androidx.ui.core.DensityAmbient
 import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.Shadow
@@ -32,12 +33,11 @@ import androidx.ui.material.Typography
 import androidx.ui.material.darkColorPalette
 import androidx.ui.material.lightColorPalette
 import androidx.ui.text.TextStyle
-import androidx.ui.text.font.Font
 import androidx.ui.text.font.FontFamily
 import androidx.ui.text.font.FontStyle
 import androidx.ui.text.font.FontWeight
 import androidx.ui.text.font.asFontFamily
-import androidx.ui.unit.DensityScope
+import androidx.ui.text.font.font
 import androidx.ui.unit.TextUnit
 import androidx.ui.unit.em
 import androidx.ui.unit.px
@@ -52,7 +52,7 @@ private const val DEFAULT_COLOR = android.graphics.Color.MAGENTA
 fun MaterialThemeFromAndroidTheme(
     context: Context,
     children: @Composable() () -> Unit
-) = WithDensity {
+) {
     context.obtainStyledAttributes(R.styleable.ComposeTheme).use { ta ->
         /* First we'll read the Material color palette */
         val primary = ta.getColor(R.styleable.ComposeTheme_colorPrimary, DEFAULT_COLOR)
@@ -122,7 +122,8 @@ fun MaterialThemeFromAndroidTheme(
     }
 }
 
-private fun DensityScope.textStyleFromTextAppearance(context: Context, @StyleRes id: Int): TextStyle {
+@Composable
+private fun textStyleFromTextAppearance(context: Context, @StyleRes id: Int): TextStyle {
     return context.obtainStyledAttributes(id, R.styleable.ComposeTextAppearance).use { a ->
         val color = a.getColor(R.styleable.ComposeTextAppearance_android_textColor, DEFAULT_COLOR)
         val textSize = a.getDimensionPixelSize(R.styleable.ComposeTextAppearance_android_textSize, -1)
@@ -130,19 +131,6 @@ private fun DensityScope.textStyleFromTextAppearance(context: Context, @StyleRes
         val textFontWeight = a.getInt(R.styleable.ComposeTextAppearance_android_textFontWeight, -1)
 
         val typeface = a.getInt(R.styleable.ComposeTextAppearance_android_typeface, -1)
-
-        // Compose does not allow creation of Fonts from Typefaces, so can't use
-        // ResourcesCompat.getFont() for @font resources from android:fontFamily
-        // (i.e. for downloadable fonts). We can use static typefaces from assets though
-        val fontFamily = if (a.hasValue(R.styleable.ComposeTextAppearance_android_fontFamily)) {
-            a.getString(R.styleable.ComposeTextAppearance_android_fontFamily)
-        } else {
-            a.getString(R.styleable.ComposeTextAppearance_fontFamily)
-        }?.let { v ->
-            // This is a bit gross. Compose's Font wants just the filename of the TTF, so
-            // we need to remove the path from the string
-            v.substringAfter("res/font/")
-        }
 
         val featureSettings = a.getString(R.styleable.ComposeTextAppearance_android_fontFeatureSettings)
 
@@ -156,47 +144,62 @@ private fun DensityScope.textStyleFromTextAppearance(context: Context, @StyleRes
 
         val lineHeight = a.getDimensionPixelSize(R.styleable.ComposeTextAppearance_android_lineHeight, -1)
 
-        TextStyle(
-            color = if (color != DEFAULT_COLOR) Color(color) else null,
-            fontSize = textSize.toSp(),
-            lineHeight = if (lineHeight != -1) lineHeight.toSp() else TextUnit.Inherit,
-            fontFamily = when {
-                // FYI, this only works with static font files in assets. It will crash
-                // for @font XML resources
-                fontFamily != null -> Font(fontFamily).asFontFamily()
-                // Values below are from frameworks/base attrs.xml
-                typeface == 1 -> FontFamily.SansSerif
-                typeface == 2 -> FontFamily.Serif
-                typeface == 3 -> FontFamily.Monospace
-                else -> null
-            },
-            fontStyle = if ((textStyle and Typeface.ITALIC) != 0) FontStyle.Italic else FontStyle.Normal,
-            fontWeight = when {
-                textFontWeight in 0..199 -> FontWeight.W100
-                textFontWeight in 200..299 -> FontWeight.W200
-                textFontWeight in 300..399 -> FontWeight.W300
-                textFontWeight in 400..499 -> FontWeight.W400
-                textFontWeight in 500..599 -> FontWeight.W500
-                textFontWeight in 600..699 -> FontWeight.W600
-                textFontWeight in 700..799 -> FontWeight.W700
-                textFontWeight in 800..899 -> FontWeight.W800
-                textFontWeight in 900..999 -> FontWeight.W900
-                // else, check the text style
-                (textStyle and Typeface.BOLD) != 0 -> FontWeight.Bold
-                else -> null
-            },
-            fontFeatureSettings = featureSettings,
-            shadow = if (shadowColor != DEFAULT_COLOR) {
-                Shadow(Color(shadowColor), Offset(shadowDx, shadowDy), shadowRadius.px)
-            } else {
-                null
-            },
-            letterSpacing = if (a.hasValue(R.styleable.ComposeTextAppearance_android_letterSpacing)) {
-                a.getFloat(R.styleable.ComposeTextAppearance_android_letterSpacing, 0f).em
-            } else {
-                TextUnit.Inherit
+        fun readFontFamily(index: Int): FontFamily? {
+            // TODO cache this TypedValue
+            val tv = TypedValue()
+            if (a.getValue(index, tv)) {
+                if (tv.type == TypedValue.TYPE_STRING) {
+                    return font(tv.resourceId).asFontFamily()
+                }
             }
-        )
+            return null
+        }
+
+        with(DensityAmbient.current) {
+            TextStyle(
+                color = if (color != DEFAULT_COLOR) Color(color) else null,
+                fontSize = textSize.toSp(),
+                lineHeight = if (lineHeight != -1) lineHeight.toSp() else TextUnit.Inherit,
+                fontFamily = when {
+                    // FYI, this only works with static font files in assets
+                    a.hasValue(R.styleable.ComposeTextAppearance_android_fontFamily) -> {
+                        readFontFamily(R.styleable.ComposeTextAppearance_android_fontFamily)
+                    }
+                    a.hasValue(R.styleable.ComposeTextAppearance_fontFamily) -> {
+                        readFontFamily(R.styleable.ComposeTextAppearance_fontFamily)
+                    }
+                    // Values below are from frameworks/base attrs.xml
+                    typeface == 1 -> FontFamily.SansSerif
+                    typeface == 2 -> FontFamily.Serif
+                    typeface == 3 -> FontFamily.Monospace
+                    else -> null
+                },
+                fontStyle = if ((textStyle and Typeface.ITALIC) != 0) FontStyle.Italic else FontStyle.Normal,
+                fontWeight = when {
+                    textFontWeight in 0..199 -> FontWeight.W100
+                    textFontWeight in 200..299 -> FontWeight.W200
+                    textFontWeight in 300..399 -> FontWeight.W300
+                    textFontWeight in 400..499 -> FontWeight.W400
+                    textFontWeight in 500..599 -> FontWeight.W500
+                    textFontWeight in 600..699 -> FontWeight.W600
+                    textFontWeight in 700..799 -> FontWeight.W700
+                    textFontWeight in 800..899 -> FontWeight.W800
+                    textFontWeight in 900..999 -> FontWeight.W900
+                    // else, check the text style
+                    (textStyle and Typeface.BOLD) != 0 -> FontWeight.Bold
+                    else -> null
+                },
+                fontFeatureSettings = featureSettings,
+                shadow = if (shadowColor != DEFAULT_COLOR) {
+                    Shadow(Color(shadowColor), Offset(shadowDx, shadowDy), shadowRadius.px)
+                } else null,
+                letterSpacing = if (a.hasValue(R.styleable.ComposeTextAppearance_android_letterSpacing)) {
+                    a.getFloat(R.styleable.ComposeTextAppearance_android_letterSpacing, 0f).em
+                } else {
+                    TextUnit.Inherit
+                }
+            )
+        }
     }
 }
 
