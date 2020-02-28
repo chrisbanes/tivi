@@ -33,6 +33,7 @@ import androidx.ui.core.DrawModifier
 import androidx.ui.core.Modifier
 import androidx.ui.core.OnChildPositioned
 import androidx.ui.core.Text
+import androidx.ui.core.boundsInRoot
 import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.DrawBackground
 import androidx.ui.foundation.VerticalScroller
@@ -92,6 +93,7 @@ import app.tivi.episodedetails.compose.R
 import app.tivi.ui.animations.lerp
 import app.tivi.util.TiviDateFormatter
 import kotlin.math.hypot
+import org.threeten.bp.OffsetDateTime
 
 /**
  * This is a bit of hack. I can't make `ui-episodedetails` depend on any of the compose libraries,
@@ -156,7 +158,10 @@ private fun EpisodeDetails(
                                     )
                                 },
                                 backgroundChildren = { swipeProgress, completeOnRelease ->
-                                    EpisodeWatchSwipeBackground(swipeProgress, completeOnRelease)
+                                    EpisodeWatchSwipeBackground(
+                                        swipeProgress = swipeProgress,
+                                        wouldCompleteOnRelease = completeOnRelease
+                                    )
                                 }
                             )
                         }
@@ -325,63 +330,56 @@ private fun EpisodeWatchSwipeBackground(
     swipeProgress: Float,
     wouldCompleteOnRelease: Boolean = false
 ) {
-    Stack(
-        modifier = DrawBackground(MaterialTheme.colors().onSurface.copy(alpha = 0.2f))
-    ) {
-        val iconCenter = state { PxPosition(Px.Zero, Px.Zero) }
+    val iconCenter = state { PxPosition(Px.Zero, Px.Zero) }
 
-        val maxRadius = hypot(
-            iconCenter.value.x.value.toDouble(),
-            iconCenter.value.y.value.toDouble()
-        )
+    val maxRadius = hypot(
+        iconCenter.value.x.value.toDouble(),
+        iconCenter.value.y.value.toDouble()
+    )
 
-        // Note: can't reference these directly in transitionDefinition {} as
-        // it's not @Composable
-        val secondary = MaterialTheme.colors().secondary.copy(alpha = 0.5f)
-        val default = MaterialTheme.colors().onSurface.copy(alpha = 0.2f)
+    // Note: can't reference these directly in transitionDefinition {} as
+    // it's not @Composable
+    val secondary = MaterialTheme.colors().secondary.copy(alpha = 0.5f)
+    val default = MaterialTheme.colors().onSurface.copy(alpha = 0.2f)
 
-        val transition = remember(secondary, default) {
-            transitionDefinition {
-                state(true) {
-                    this[color] = secondary
-                }
-                state(false) {
-                    this[color] = default
-                }
+    val transition = remember(secondary, default) {
+        transitionDefinition {
+            state(true) {
+                this[color] = secondary
+            }
+            state(false) {
+                this[color] = default
+            }
 
-                transition {
-                    color using tween { duration = 200 }
-                }
+            transition {
+                color using tween { duration = 200 }
             }
         }
+    }
 
-        // This container allows us to draw the expanding circle which grows as the user
-        // swipes. The circle is drawn via the circleDrawModifier()
-        Transition(definition = transition, toState = wouldCompleteOnRelease) { transitionState ->
-            Container(
-                modifier = circleDrawModifier(
+    Transition(definition = transition, toState = wouldCompleteOnRelease) { transitionState ->
+        Stack(
+            modifier = LayoutSize.Fill +
+                DrawBackground(MaterialTheme.colors().onSurface.copy(alpha = 0.2f)) +
+                CircleGrowDrawModifier(
                     transitionState[color],
                     iconCenter.value.toOffset(),
-                    // A simple lerp with acceleration
                     lerp(0f, maxRadius.toFloat(), fastOutLinearIn(swipeProgress))
-                ),
-                expanded = true,
-                children = {}
-            )
-        }
-
-        OnChildPositioned(onPositioned = { iconCenter.value = it.center }) {
-            ProvideEmphasis(emphasis = EmphasisLevels().medium) {
-                VectorImage(
-                    id = R.drawable.ic_eye_off_24dp,
-                    modifier = LayoutPadding(end = 16.dp) + LayoutGravity.CenterRight
                 )
+        ) {
+            OnChildPositioned(onPositioned = { iconCenter.value = it.boundsInRoot.center }) {
+                ProvideEmphasis(emphasis = EmphasisLevels().medium) {
+                    VectorImage(
+                        id = R.drawable.ic_eye_off_24dp,
+                        modifier = LayoutPadding(end = 16.dp) + LayoutGravity.CenterRight
+                    )
+                }
             }
         }
     }
 }
 
-private fun circleDrawModifier(
+private fun CircleGrowDrawModifier(
     color: Color,
     centerPoint: Offset,
     radius: Float
@@ -394,6 +392,8 @@ private fun circleDrawModifier(
     }
 
     override fun draw(density: Density, drawContent: () -> Unit, canvas: Canvas, size: PxSize) {
+        drawContent()
+
         canvas.withSave {
             canvas.clipRect(size.toRect())
             canvas.drawCircle(centerPoint, radius, paint)
@@ -437,11 +437,22 @@ fun previewEpisodeDetails() = EpisodeDetails(
         episodeId = 0,
         episode = Episode(
             seasonId = 100,
-            title = "A show too far"
+            title = "A show too far",
+            summary = "A long description of a episode",
+            traktRating = 0.5f,
+            traktRatingVotes = 84,
+            firstAired = OffsetDateTime.now()
         ),
         season = Season(
             id = 100,
             showId = 0
+        ),
+        watches = listOf(
+            EpisodeWatchEntry(
+                id = 10,
+                episodeId = 100,
+                watchedAt = OffsetDateTime.now()
+            )
         )
     ),
     actioner = {}
