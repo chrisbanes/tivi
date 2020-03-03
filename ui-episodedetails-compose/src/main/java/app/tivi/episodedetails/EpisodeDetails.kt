@@ -22,6 +22,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.Composable
 import androidx.compose.remember
 import androidx.compose.state
+import androidx.compose.stateFor
 import androidx.core.view.WindowInsetsCompat
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.lifecycle.LifecycleOwner
@@ -44,6 +45,7 @@ import androidx.ui.graphics.Color
 import androidx.ui.graphics.Paint
 import androidx.ui.graphics.withSave
 import androidx.ui.layout.Column
+import androidx.ui.layout.Container
 import androidx.ui.layout.LayoutAspectRatio
 import androidx.ui.layout.LayoutGravity
 import androidx.ui.layout.LayoutHeight
@@ -251,17 +253,27 @@ private fun InfoPane(
 
 @Composable
 private fun Summary(episode: Episode) {
-    Ripple(bounded = true) {
-        val expanded = state { false }
-        Clickable(onClick = { expanded.value = !expanded.value }) {
-            ProvideEmphasis(emphasis = EmphasisLevels().high) {
-                Text(
-                    modifier = LayoutPadding(16.dp),
-                    text = episode.summary ?: "No summary",
-                    style = MaterialTheme.typography().body2,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = if (expanded.value) Int.MAX_VALUE else 4
-                )
+    var canExpand by stateFor(episode) { true }
+
+    Ripple(bounded = true, enabled = canExpand) {
+        Container {
+            var expanded by state { false }
+
+            Clickable(onClick = { expanded = !expanded }) {
+                ProvideEmphasis(emphasis = EmphasisLevels().high) {
+                    Text(
+                        modifier = LayoutPadding(16.dp),
+                        text = episode.summary ?: "No summary",
+                        style = MaterialTheme.typography().body2,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = if (expanded) Int.MAX_VALUE else 4
+                    ) {
+                        if (!expanded) {
+                            // TODO: this is currently always false /shruggie
+                            // canExpand = it.hasVisualOverflow
+                        }
+                    }
+                }
             }
         }
     }
