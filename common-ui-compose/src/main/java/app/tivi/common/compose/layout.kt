@@ -19,12 +19,14 @@ package app.tivi.common.compose
 import androidx.animation.AnimatedFloat
 import androidx.compose.Composable
 import androidx.ui.core.Layout
+import androidx.ui.core.LayoutCoordinates
 import androidx.ui.core.RepaintBoundary
 import androidx.ui.unit.IntPx
 import androidx.ui.unit.PxBounds
 import androidx.ui.unit.PxPosition
 import androidx.ui.unit.min
 import androidx.ui.unit.px
+import androidx.ui.unit.toPxSize
 
 /**
  * This is copied from `ui/ui-material/src/main/java/androidx/ui/material/Drawer.kt`
@@ -60,7 +62,11 @@ fun WithOffset(
     }
 }
 
-val PxBounds.center: PxPosition
-    get() {
-        return PxPosition((left + right) / 2, (top + bottom) / 2)
-    }
+inline val PxBounds.center: PxPosition
+    get() = PxPosition((left + right) / 2, (top + bottom) / 2)
+
+inline val LayoutCoordinates.positionInParent: PxPosition
+    get() = parentCoordinates?.childToLocal(this, PxPosition.Origin) ?: PxPosition.Origin
+
+inline val LayoutCoordinates.boundsInParent: PxBounds
+    get() = PxBounds(positionInParent, size.toPxSize())

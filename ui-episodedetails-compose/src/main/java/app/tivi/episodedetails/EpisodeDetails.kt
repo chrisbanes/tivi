@@ -34,7 +34,6 @@ import androidx.ui.core.DrawModifier
 import androidx.ui.core.Modifier
 import androidx.ui.core.OnChildPositioned
 import androidx.ui.core.Text
-import androidx.ui.core.boundsInRoot
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.DrawBackground
@@ -81,6 +80,7 @@ import app.tivi.common.compose.SwipeToDismiss
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.WrapWithAmbients
+import app.tivi.common.compose.boundsInParent
 import app.tivi.common.compose.center
 import app.tivi.common.compose.observe
 import app.tivi.common.compose.observeInsets
@@ -335,12 +335,11 @@ private fun EpisodeWatchSwipeBackground(
     swipeProgress: Float,
     wouldCompleteOnRelease: Boolean = false
 ) {
-    val iconCenter = state { PxPosition(Px.Zero, Px.Zero) }
+    var iconCenter by state { PxPosition(Px.Zero, Px.Zero) }
 
-    val maxRadius = hypot(
-        iconCenter.value.x.value.toDouble(),
-        iconCenter.value.y.value.toDouble()
-    )
+    val maxRadius = remember(iconCenter) {
+        hypot(iconCenter.x.value.toDouble(), iconCenter.y.value.toDouble())
+    }
 
     // Note: can't reference these directly in transitionDefinition {} as
     // it's not @Composable
@@ -362,17 +361,25 @@ private fun EpisodeWatchSwipeBackground(
         }
     }
 
-    Transition(definition = transition, toState = wouldCompleteOnRelease) { transitionState ->
+    Transition(
+        definition = transition,
+        toState = wouldCompleteOnRelease
+    ) { transitionState ->
         Stack(
             modifier = LayoutSize.Fill +
-                DrawBackground(MaterialTheme.colors().onSurface.copy(alpha = 0.2f)) +
-                CircleGrowDrawModifier(
-                    transitionState[color],
-                    iconCenter.value.toOffset(),
-                    lerp(0f, maxRadius.toFloat(), fastOutLinearIn(swipeProgress))
-                )
+                DrawBackground(MaterialTheme.colors().onSurface.copy(alpha = 0.2f))
         ) {
-            OnChildPositioned(onPositioned = { iconCenter.value = it.boundsInRoot.center }) {
+            // A simple box to draw the growing circle, which emanates from behind the icon
+            Box(
+                modifier = LayoutSize.Fill +
+                    CircleGrowDrawModifier(
+                        transitionState[color],
+                        iconCenter.toOffset(),
+                        lerp(0f, maxRadius.toFloat(), fastOutLinearIn(swipeProgress))
+                    )
+            )
+
+            OnChildPositioned(onPositioned = { iconCenter = it.boundsInParent.center }) {
                 ProvideEmphasis(emphasis = EmphasisLevels().medium) {
                     VectorImage(
                         id = R.drawable.ic_eye_off_24dp,
