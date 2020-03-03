@@ -206,7 +206,7 @@ class SeasonsEpisodesRepository @Inject constructor(
             watches += episodeWatchStore.getWatchesForEpisode(episode.id)
         }
         if (watches.isNotEmpty()) {
-            episodeWatchStore.updateWatchEntriesWithAction(watches.map { it.id }, PendingAction.DELETE)
+            episodeWatchStore.updateEntriesWithAction(watches.map { it.id }, PendingAction.DELETE)
         }
 
         // Should probably make this more granular
@@ -248,7 +248,7 @@ class SeasonsEpisodesRepository @Inject constructor(
         val watchesForEpisode = episodeWatchStore.getWatchesForEpisode(episodeId)
         if (watchesForEpisode.isNotEmpty()) {
             // First mark them as pending deletion
-            episodeWatchStore.updateWatchEntriesWithAction(
+            episodeWatchStore.updateEntriesWithAction(
                 watchesForEpisode.map { it.id }, PendingAction.DELETE)
             syncEpisodeWatches(episodeId)
         }
@@ -312,15 +312,23 @@ class SeasonsEpisodesRepository @Inject constructor(
      */
     private suspend fun processPendingDeletes(entries: List<EpisodeWatchEntry>): Boolean {
         if (traktAuthState.get() == TraktAuthState.LOGGED_IN) {
-            val response = traktSeasonsDataSource.removeEpisodeWatches(entries)
-            if (response is Success) {
-                // Now update the database
-                episodeWatchStore.deleteWatchEntriesWithIds(entries.map { it.id })
-                return true
+            val localOnlyDeletes = entries.filter { it.traktId == null }
+            // If we've got deletes which are local only, just remove them from the DB
+            if (localOnlyDeletes.isNotEmpty()) {
+                episodeWatchStore.deleteEntriesWithIds(localOnlyDeletes.map(EpisodeWatchEntry::id))
+            }
+
+            if (entries.size > localOnlyDeletes.size) {
+                val remoteRemovals = entries.filter { it.traktId != null }
+                if (traktSeasonsDataSource.removeEpisodeWatches(remoteRemovals) is Success) {
+                    // Now update the database
+                    episodeWatchStore.deleteEntriesWithIds(entries.map(EpisodeWatchEntry::id))
+                    return true
+                }
             }
         } else {
             // We're not logged in so just update the database
-            episodeWatchStore.deleteWatchEntriesWithIds(entries.map { it.id })
+            episodeWatchStore.deleteEntriesWithIds(entries.map { it.id })
         }
         return false
     }
@@ -335,12 +343,12 @@ class SeasonsEpisodesRepository @Inject constructor(
             val response = traktSeasonsDataSource.addEpisodeWatches(entries)
             if (response is Success) {
                 // Now update the database
-                episodeWatchStore.updateWatchEntriesWithAction(entries.map { it.id }, PendingAction.NOTHING)
+                episodeWatchStore.updateEntriesWithAction(entries.map { it.id }, PendingAction.NOTHING)
                 return true
             }
         } else {
             // We're not logged in so just update the database
-            episodeWatchStore.updateWatchEntriesWithAction(entries.map { it.id }, PendingAction.NOTHING)
+            episodeWatchStore.updateEntriesWithAction(entries.map { it.id }, PendingAction.NOTHING)
         }
         return false
     }
