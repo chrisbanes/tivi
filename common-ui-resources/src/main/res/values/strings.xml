@@ -91,6 +91,9 @@
 
     <string name="episode_watches">Episode watches</string>
 
+    <string name="episode_mark_watched">Mark watched</string>
+    <string name="episode_add_watch">Add episode watch</string>
+
     <string name="first_aired">First aired: %1$s</string>
 
     <string name="season_summary_to_watch">%1$d to watch</string>

@@ -56,6 +56,7 @@ import androidx.ui.layout.Stack
 import androidx.ui.material.EmphasisLevels
 import androidx.ui.material.FloatingActionButton
 import androidx.ui.material.MaterialTheme
+import androidx.ui.material.OutlinedButton
 import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.ripple.Ripple
 import androidx.ui.material.surface.Surface
@@ -126,58 +127,65 @@ private fun EpisodeDetails(
     viewState: EpisodeDetailsViewState,
     actioner: (EpisodeDetailsAction) -> Unit
 ) {
-    Stack {
-        Column {
-            viewState.episode?.let {
-                Backdrop(episode = it)
-            }
-            VerticalScroller(modifier = LayoutFlexible(1f)) {
-                Surface(elevation = 2.dp) {
-                    Column {
-                        val episode = viewState.episode
-                        if (episode != null) {
-                            InfoPanes(episode)
-                            Summary(episode)
-                        }
+    Column {
+        viewState.episode?.let {
+            Backdrop(episode = it)
+        }
+        VerticalScroller {
+            Surface(elevation = 2.dp) {
+                Column {
+                    val episode = viewState.episode
+                    if (episode != null) {
+                        InfoPanes(episode)
+                        Summary(episode)
+                    }
 
-                        val watches = viewState.watches
-                        if (watches.isNotEmpty()) {
-                            Header()
-                        }
-                        watches.forEach { watch ->
-                            SwipeToDismiss(
-                                // TODO: this should change to START eventually
-                                swipeDirections = listOf(SwipeDirection.LEFT),
-                                onSwipeComplete = {
-                                    actioner(RemoveEpisodeWatchAction(watch.id))
-                                },
-                                swipeChildren = { swipeProgress, _ ->
-                                    EpisodeWatch(
-                                        episodeWatchEntry = watch,
-                                        drawBackground = swipeProgress != 0f
-                                    )
-                                },
-                                backgroundChildren = { swipeProgress, completeOnRelease ->
-                                    EpisodeWatchSwipeBackground(
-                                        swipeProgress = swipeProgress,
-                                        wouldCompleteOnRelease = completeOnRelease
-                                    )
-                                }
-                            )
-                        }
+                    val watches = viewState.watches
+
+                    if (watches.isEmpty()) {
+                        MarkWatchedButton(
+                            modifier = LayoutGravity.Center,
+                            actioner = actioner
+                        )
+                    } else {
+                        AddWatchButton(
+                            modifier = LayoutGravity.Center,
+                            actioner = actioner
+                        )
+                    }
+
+                    Spacer(modifier = LayoutHeight(16.dp))
+
+                    if (watches.isNotEmpty()) {
+                        Header()
+                    }
+                    watches.forEach { watch ->
+                        SwipeToDismiss(
+                            // TODO: this should change to START eventually
+                            swipeDirections = listOf(SwipeDirection.LEFT),
+                            onSwipeComplete = {
+                                actioner(RemoveEpisodeWatchAction(watch.id))
+                            },
+                            swipeChildren = { swipeProgress, _ ->
+                                EpisodeWatch(
+                                    episodeWatchEntry = watch,
+                                    drawBackground = swipeProgress != 0f
+                                )
+                            },
+                            backgroundChildren = { swipeProgress, completeOnRelease ->
+                                EpisodeWatchSwipeBackground(
+                                    swipeProgress = swipeProgress,
+                                    wouldCompleteOnRelease = completeOnRelease
+                                )
+                            }
+                        )
+                    }
+
+                    with(DensityAmbient.current) {
+                        Spacer(modifier = LayoutHeight(InsetsAmbient.current.bottom.toDp()))
                     }
                 }
             }
-        }
-
-        val insets = InsetsAmbient.current
-        with(DensityAmbient.current) {
-            WatchButton(
-                modifier = LayoutGravity.BottomEnd +
-                    LayoutPadding(start = 16.dp, end = 16.dp, bottom = 16.dp + insets.bottom.toDp()),
-                action = viewState.action,
-                actioner = actioner
-            )
         }
     }
 }
@@ -343,7 +351,7 @@ private fun EpisodeWatchSwipeBackground(
 
     // Note: can't reference these directly in transitionDefinition {} as
     // it's not @Composable
-    val secondary = MaterialTheme.colors().secondary.copy(alpha = 0.5f)
+    val secondary = MaterialTheme.colors().error.copy(alpha = 0.5f)
     val default = MaterialTheme.colors().onSurface.copy(alpha = 0.2f)
 
     val transition = remember(secondary, default) {
@@ -382,7 +390,7 @@ private fun EpisodeWatchSwipeBackground(
             OnChildPositioned(onPositioned = { iconCenter = it.boundsInParent.center }) {
                 ProvideEmphasis(emphasis = EmphasisLevels().medium) {
                     VectorImage(
-                        id = R.drawable.ic_eye_off_24dp,
+                        id = R.drawable.ic_delete_24,
                         modifier = LayoutPadding(end = 16.dp) + LayoutGravity.CenterEnd
                     )
                 }
@@ -414,31 +422,32 @@ private fun CircleGrowDrawModifier(
 }
 
 @Composable
-fun WatchButton(
+fun MarkWatchedButton(
     modifier: Modifier = Modifier.None,
-    action: Action,
     actioner: (EpisodeDetailsAction) -> Unit
 ) {
     ProvideEmphasis(EmphasisLevels().high) {
         FloatingActionButton(
             modifier = modifier,
             color = MaterialTheme.colors().secondary,
-            onClick = {
-                actioner(
-                    when (action) {
-                        Action.WATCH -> AddEpisodeWatchAction
-                        Action.UNWATCH -> RemoveAllEpisodeWatchesAction
-                    }
-                )
-            }
-        ) {
-            VectorImage(
-                id = when (action) {
-                    Action.WATCH -> R.drawable.ic_eye_24dp
-                    Action.UNWATCH -> R.drawable.ic_eye_off_24dp
-                }
-            )
-        }
+            text = stringResource(R.string.episode_mark_watched),
+            textStyle = MaterialTheme.typography().button
+                .copy(color = MaterialTheme.colors().onSecondary),
+            onClick = { actioner(AddEpisodeWatchAction) }
+        )
+    }
+}
+
+@Composable
+fun AddWatchButton(
+    modifier: Modifier = Modifier.None,
+    actioner: (EpisodeDetailsAction) -> Unit
+) {
+    OutlinedButton(
+        modifier = modifier,
+        onClick = { actioner(AddEpisodeWatchAction) }
+    ) {
+        Text(text = stringResource(R.string.episode_add_watch))
     }
 }
 
