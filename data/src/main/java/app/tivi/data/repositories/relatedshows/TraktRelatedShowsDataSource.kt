@@ -32,11 +32,11 @@ import com.uwetrottmann.trakt5.services.Shows
 import javax.inject.Inject
 import javax.inject.Provider
 
-class TraktRelatedShowsDataSource @Inject constructor(
+internal class TraktRelatedShowsDataSource @Inject constructor(
     private val traktIdMapper: ShowIdToTraktIdMapper,
     private val showService: Provider<Shows>,
     private val showMapper: TraktShowToTiviShow
-) : RelatedShowsDataSource {
+) {
     private val entryMapper = object : IndexedMapper<Show, RelatedShowEntry> {
         override suspend fun map(index: Int, from: Show): RelatedShowEntry {
             return RelatedShowEntry(showId = 0, otherShowId = 0, orderIndex = index)
@@ -44,9 +44,9 @@ class TraktRelatedShowsDataSource @Inject constructor(
     }
     private val resultMapper = pairMapperOf(showMapper, entryMapper)
 
-    override suspend fun getRelatedShows(showId: Long): Result<List<Pair<TiviShow, RelatedShowEntry>>> {
+    suspend operator fun invoke(showId: Long): Result<List<Pair<TiviShow, RelatedShowEntry>>> {
         val traktId = traktIdMapper.map(showId)
-            ?: return ErrorResult(message = "No Trakt ID for show with ID: $showId")
+            ?: return ErrorResult(IllegalArgumentException("No Trakt ID for show with ID: $showId"))
         return showService.get().related(traktId.toString(), 0, 10, Extended.NOSEASONS)
             .executeWithRetry()
             .toResult(resultMapper)

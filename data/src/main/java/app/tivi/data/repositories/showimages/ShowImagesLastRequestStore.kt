@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.shows
+package app.tivi.data.repositories.showimages
 
-import app.tivi.inject.Tmdb
-import app.tivi.inject.Trakt
-import dagger.Binds
-import dagger.Module
+import app.tivi.data.daos.LastRequestDao
+import app.tivi.data.entities.Request
+import app.tivi.data.repositories.lastrequests.EntityLastRequestStore
+import javax.inject.Inject
+import javax.inject.Singleton
 
-@Module
-abstract class ShowsModule {
-    @Binds
-    @Trakt
-    abstract fun bindTraktShowDataSource(source: TraktShowDataSource): ShowDataSource
-
-    @Binds
-    @Tmdb
-    abstract fun bindTmdbShowDataSource(source: TmdbShowDataSource): ShowDataSource
-}
+@Singleton
+class ShowImagesLastRequestStore @Inject constructor(
+    dao: LastRequestDao
+) : EntityLastRequestStore(Request.SHOW_IMAGES, dao)

@@ -16,15 +16,11 @@
 
 package app.tivi.data.repositories.traktusers
 
-import app.tivi.data.DatabaseTransactionRunner
-import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.UserDao
 import app.tivi.data.entities.TraktUser
 import javax.inject.Inject
 
 class TraktUsersStore @Inject constructor(
-    private val entityInserter: EntityInserter,
-    private val transactionRunner: DatabaseTransactionRunner,
     private val userDao: UserDao
 ) {
     fun observeUser(username: String) = when (username) {
@@ -42,7 +38,5 @@ class TraktUsersStore @Inject constructor(
         else -> userDao.getIdForUsername(username)
     }
 
-    suspend fun save(user: TraktUser) = transactionRunner {
-        entityInserter.insertOrUpdate(userDao, user)
-    }
+    suspend fun save(user: TraktUser) = userDao.insertOrUpdate(user)
 }

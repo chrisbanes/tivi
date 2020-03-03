@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,20 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.recommendedshows
+package app.tivi.data.entities
 
-import app.tivi.data.entities.Result
-import app.tivi.data.entities.TiviShow
+data class ShowImages(val images: List<ShowTmdbImage>) {
 
-interface RecommendedShowsDataSource {
-    suspend fun getRecommendedShows(page: Int, pageSize: Int): Result<List<TiviShow>>
+    val backdrop by lazy(LazyThreadSafetyMode.NONE) {
+        findHighestRatedForType(ImageType.BACKDROP)
+    }
+
+    val poster by lazy(LazyThreadSafetyMode.NONE) {
+        findHighestRatedForType(ImageType.POSTER)
+    }
+
+    private fun findHighestRatedForType(type: ImageType): ShowTmdbImage? {
+        return images.filter { it.type == type }
+            .maxBy { it.rating + (if (it.isPrimary) 10f else 0f) }
+    }
 }

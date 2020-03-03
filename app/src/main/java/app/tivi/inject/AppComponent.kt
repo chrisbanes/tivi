@@ -22,6 +22,7 @@ import app.tivi.common.imageloading.ImageLoadingModule
 import app.tivi.data.DataModule
 import app.tivi.data.DatabaseModule
 import app.tivi.home.HomeBuilder
+import app.tivi.settings.SettingsPreferenceFragmentBuilder
 import app.tivi.showdetails.ShowDetailsBuilder
 import app.tivi.tasks.inject.TasksModule
 import app.tivi.tmdb.TmdbModule
@@ -48,7 +49,8 @@ import javax.inject.Singleton
     TmdbModule::class,
     NetworkModule::class,
     ImageLoadingModule::class,
-    EpoxyModule::class
+    EpoxyModule::class,
+    SettingsPreferenceFragmentBuilder::class
 ])
 interface AppComponent : AndroidInjector<TiviApplication> {
     @Component.Factory

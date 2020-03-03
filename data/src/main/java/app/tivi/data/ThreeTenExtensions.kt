@@ -17,6 +17,7 @@
 package app.tivi.data
 
 import org.threeten.bp.Instant
+import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.Period
 import org.threeten.bp.temporal.ChronoUnit
 import org.threeten.bp.temporal.TemporalAmount
@@ -38,3 +39,5 @@ fun instantInPast(days: Int = 0, hours: Int = 0, minutes: Int = 0): Instant {
     }
     return instant
 }
+
+fun OffsetDateTime.isBefore(instant: Instant): Boolean = toInstant().isBefore(instant)

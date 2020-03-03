@@ -20,7 +20,8 @@ interface TiviPreferences {
 
     fun setup()
 
-    val themePreference: Theme
+    var themePreference: Theme
+    var useLessData: Boolean
 
     enum class Theme {
         LIGHT,

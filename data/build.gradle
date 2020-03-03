@@ -33,6 +33,8 @@ dependencies {
     api Libs.AndroidX.Room.common
     implementation Libs.AndroidX.collection
 
+    api Libs.store
+
     api Libs.AndroidX.Paging.common
 
     api Libs.threeTenBpNoTzdb

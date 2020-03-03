@@ -17,11 +17,33 @@
 package app.tivi.data
 
 import app.tivi.data.repositories.episodes.EpisodesModule
+import app.tivi.data.repositories.popularshows.PopularShowsModule
+import app.tivi.data.repositories.recommendedshows.RecommendedShowsModule
+import app.tivi.data.repositories.relatedshows.RelatedShowsModule
+import app.tivi.data.repositories.showimages.ShowsImagesModule
 import app.tivi.data.repositories.shows.ShowsModule
+import app.tivi.data.repositories.trendingshows.TrendingShowsModule
+import app.tivi.data.repositories.watchedshows.WatchedShowsModule
+import app.tivi.inject.ForStore
 import dagger.Module
+import dagger.Provides
+import javax.inject.Singleton
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlinx.coroutines.CoroutineScope
 
 @Module(includes = [
     EpisodesModule::class,
-    ShowsModule::class
+    ShowsModule::class,
+    ShowsImagesModule::class,
+    TrendingShowsModule::class,
+    WatchedShowsModule::class,
+    RecommendedShowsModule::class,
+    RelatedShowsModule::class,
+    PopularShowsModule::class
 ])
-abstract class DataModule
+class DataModule {
+    @ForStore
+    @Singleton
+    @Provides
+    fun providesStoreDispatcher(): CoroutineScope = CoroutineScope(EmptyCoroutineContext)
+}

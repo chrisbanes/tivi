@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.popularshows
+package app.tivi.util
 
-import app.tivi.data.entities.PopularShowEntry
-import app.tivi.data.entities.Result
-import app.tivi.data.entities.TiviShow
+import kotlinx.coroutines.flow.Flow
 
-interface PopularShowsDataSource {
-    suspend fun getPopularShows(
-        page: Int,
-        pageSize: Int
-    ): Result<List<Pair<TiviShow, PopularShowEntry>>>
+interface PowerController {
+    fun observeShouldSaveData(ignorePreference: Boolean): Flow<SaveData>
+    fun shouldSaveData(): SaveData
+}
+
+sealed class SaveData {
+    object Disabled : SaveData()
+    data class Enabled(val reason: SaveDataReason) : SaveData()
+}
+
+enum class SaveDataReason {
+    PREFERENCE, SYSTEM_DATA_SAVER, SYSTEM_POWER_SAVER
 }

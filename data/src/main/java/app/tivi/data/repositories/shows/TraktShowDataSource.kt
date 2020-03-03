@@ -31,7 +31,7 @@ import com.uwetrottmann.trakt5.services.Shows
 import javax.inject.Inject
 import javax.inject.Provider
 
-class TraktShowDataSource @Inject constructor(
+internal class TraktShowDataSource @Inject constructor(
     private val showService: Provider<Shows>,
     private val searchService: Provider<Search>,
     private val mapper: TraktShowToTiviShow

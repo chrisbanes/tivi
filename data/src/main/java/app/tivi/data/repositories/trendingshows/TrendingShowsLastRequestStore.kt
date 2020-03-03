@@ -20,7 +20,9 @@ import app.tivi.data.daos.LastRequestDao
 import app.tivi.data.entities.Request
 import app.tivi.data.repositories.lastrequests.GroupLastRequestStore
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class TrendingShowsLastRequestStore @Inject constructor(
     dao: LastRequestDao
 ) : GroupLastRequestStore(Request.TRENDING_SHOWS, dao)

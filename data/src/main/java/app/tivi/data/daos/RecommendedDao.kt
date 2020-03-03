@@ -25,7 +25,10 @@ import app.tivi.data.resultentities.RecommendedEntryWithShow
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class RecommendedDao : PaginatedEntryDao<RecommendedShowEntry, RecommendedEntryWithShow> {
+abstract class RecommendedDao : PaginatedEntryDao<RecommendedShowEntry, RecommendedEntryWithShow>() {
+    @Query("SELECT * FROM recommended_entries WHERE page = :page ORDER BY id ASC")
+    abstract fun entriesForPage(page: Int): Flow<List<RecommendedShowEntry>>
+
     @Transaction
     @Query("SELECT * FROM recommended_entries ORDER BY page ASC, id ASC LIMIT :count OFFSET :offset")
     abstract fun entriesObservable(count: Int, offset: Int): Flow<List<RecommendedEntryWithShow>>

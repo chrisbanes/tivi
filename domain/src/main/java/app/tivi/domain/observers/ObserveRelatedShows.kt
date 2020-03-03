@@ -16,7 +16,7 @@
 
 package app.tivi.domain.observers
 
-import app.tivi.data.repositories.relatedshows.RelatedShowsRepository
+import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.domain.SubjectInteractor
 import app.tivi.util.AppCoroutineDispatchers
@@ -26,12 +26,12 @@ import kotlinx.coroutines.flow.Flow
 
 class ObserveRelatedShows @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
-    private val repository: RelatedShowsRepository
+    private val relatedShowsDao: RelatedShowsDao
 ) : SubjectInteractor<ObserveRelatedShows.Params, List<RelatedShowEntryWithShow>>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override fun createObservable(params: Params): Flow<List<RelatedShowEntryWithShow>> {
-        return repository.observeRelatedShows(params.showId)
+        return relatedShowsDao.entriesWithShowsObservable(params.showId)
     }
 
     data class Params(val showId: Long)

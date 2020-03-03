@@ -16,8 +16,12 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.repositories.relatedshows.RelatedShowsRepository
-import app.tivi.data.repositories.shows.ShowRepository
+import app.tivi.data.fetch
+import app.tivi.data.fetchCollection
+import app.tivi.data.repositories.relatedshows.RelatedShowsLastRequestStore
+import app.tivi.data.repositories.relatedshows.RelatedShowsStore
+import app.tivi.data.repositories.showimages.ShowImagesStore
+import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateRelatedShows.Params
 import app.tivi.extensions.parallelForEach
@@ -26,23 +30,25 @@ import app.tivi.util.AppCoroutineDispatchers
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
+import org.threeten.bp.Period
 
 class UpdateRelatedShows @Inject constructor(
-    private val relatedShowsRepository: RelatedShowsRepository,
-    private val showRepository: ShowRepository,
+    private val relatedShowsStore: RelatedShowsStore,
+    private val lastRequestStore: RelatedShowsLastRequestStore,
+    private val showsStore: ShowStore,
+    private val showImagesStore: ShowImagesStore,
     dispatchers: AppCoroutineDispatchers,
     @ProcessLifetime val processScope: CoroutineScope
 ) : Interactor<Params>() {
     override val scope: CoroutineScope = processScope + dispatchers.io
 
     override suspend fun doWork(params: Params) {
-        if (params.forceLoad || relatedShowsRepository.needUpdate(params.showId)) {
-            relatedShowsRepository.updateRelatedShows(params.showId)
-        }
-        relatedShowsRepository.getRelatedShows(params.showId).parallelForEach {
-            if (params.forceLoad || showRepository.needsImagesUpdate(it.otherShowId)) {
-                showRepository.updateShowImages(it.otherShowId)
-            }
+        relatedShowsStore.fetchCollection(params.showId, forceFresh = params.forceLoad) {
+            // Refresh if our local data is over 28 days old
+            lastRequestStore.isRequestExpired(params.showId, Period.ofDays(28))
+        }.parallelForEach {
+            showsStore.fetch(it.showId)
+            showImagesStore.fetchCollection(it.showId)
         }
     }
 

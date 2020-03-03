@@ -29,6 +29,19 @@
             android:title="@string/settings_theme_title"
             app:useSimpleSummaryProvider="true" />
 
+        <SwitchPreferenceCompat
+            android:key="pref_data_saver"
+            android:defaultValue="false"
+            android:title="@string/settings_data_saver_title"
+            android:summaryOn="@string/settings_data_saver_summary_on" />
+
+        <Preference
+            android:key="pref_data_saver_disabled"
+            android:title="@string/settings_data_saver_title"
+            android:summary="@string/settings_data_saver_summary_system"
+            app:isPreferenceVisible="false"
+            android:enabled="false"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory

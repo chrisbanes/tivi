@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package app.tivi.data.daos
+package app.tivi.settings
 
-import app.tivi.data.entities.TiviEntity
+import dagger.Module
+import dagger.android.ContributesAndroidInjector
 
-interface EntityInserter {
-    suspend fun <E : TiviEntity> insertOrUpdate(dao: EntityDao<E>, entities: List<E>)
-    suspend fun <E : TiviEntity> insertOrUpdate(dao: EntityDao<E>, entity: E): Long
+@Module
+internal abstract class SettingsPreferenceFragmentBuilder {
+    @ContributesAndroidInjector
+    abstract fun settingsPreferenceFragment(): SettingsPreferenceFragment
 }

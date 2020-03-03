@@ -25,8 +25,8 @@ import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.Success
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.repositories.followedshows.TraktFollowedShowsDataSource
-import app.tivi.data.repositories.shows.ShowRepository
 import app.tivi.utils.SuccessFakeShowDataSource
+import app.tivi.utils.SuccessFakeShowImagesDataSource
 import app.tivi.utils.followedShow1Local
 import app.tivi.utils.followedShow1Network
 import app.tivi.utils.followedShow1PendingDelete
@@ -39,9 +39,12 @@ import app.tivi.utils.show
 import app.tivi.utils.show2
 import io.mockk.coEvery
 import javax.inject.Inject
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -53,34 +56,35 @@ class FollowedShowRepositoryTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    private val testScope = TestCoroutineScope()
+
     @Inject lateinit var followShowsDao: FollowedShowsDao
-    @Inject lateinit var showRepository: ShowRepository
     @Inject lateinit var repository: FollowedShowsRepository
     @Inject lateinit var database: TiviDatabase
     @Inject lateinit var traktDataSource: TraktFollowedShowsDataSource
 
     @Before
     fun setup() {
-        val fakeShowDataSource = SuccessFakeShowDataSource()
-
         DaggerTestComponent.builder()
             .testDataSourceModule(
                 TestDataSourceModule(
-                    traktShowDataSource = fakeShowDataSource,
-                    tmdbShowDataSource = fakeShowDataSource
+                    traktShowDataSource = SuccessFakeShowDataSource,
+                    tmdbShowDataSource = SuccessFakeShowDataSource,
+                    tmdbShowImagesDataSource = SuccessFakeShowImagesDataSource,
+                    storeScope = testScope
                 )
             )
             .build()
             .inject(this)
 
-        runBlockingTest {
+        runBlocking {
             // We'll assume that there's a show in the db
             insertShow(database)
         }
     }
 
     @Test
-    fun testSync() = runBlockingTest {
+    fun testSync() = testScope.runBlockingTest {
         coEvery { traktDataSource.getFollowedListId() } returns Success(0)
         coEvery { traktDataSource.getListShows(0) } returns Success(listOf(followedShow1Network to show))
 
@@ -91,7 +95,7 @@ class FollowedShowRepositoryTest {
     }
 
     @Test
-    fun testSync_emptyResponse() = runBlockingTest {
+    fun testSync_emptyResponse() = testScope.runBlockingTest {
         insertFollowedShow(database)
 
         coEvery { traktDataSource.getFollowedListId() } returns Success(0)
@@ -104,7 +108,7 @@ class FollowedShowRepositoryTest {
     }
 
     @Test
-    fun testSync_responseDifferentShow() = runBlockingTest {
+    fun testSync_responseDifferentShow() = testScope.runBlockingTest {
         insertFollowedShow(database)
 
         coEvery { traktDataSource.getFollowedListId() } returns Success(0)
@@ -117,11 +121,11 @@ class FollowedShowRepositoryTest {
     }
 
     @Test
-    fun testSync_pendingDelete() = runBlockingTest {
+    fun testSync_pendingDelete() = testScope.runBlockingTest {
         followShowsDao.insert(followedShow1PendingDelete)
 
         // Return error for the list ID so that we disable syncing
-        coEvery { traktDataSource.getFollowedListId() } returns ErrorResult()
+        coEvery { traktDataSource.getFollowedListId() } returns ErrorResult(IllegalArgumentException())
 
         repository.syncFollowedShows()
 
@@ -130,15 +134,20 @@ class FollowedShowRepositoryTest {
     }
 
     @Test
-    fun testSync_pendingAdd() = runBlockingTest {
+    fun testSync_pendingAdd() = testScope.runBlockingTest {
         followShowsDao.insert(followedShow1PendingUpload)
 
         // Return an error for the list ID so that we disable syncing
-        coEvery { traktDataSource.getFollowedListId() } returns ErrorResult()
+        coEvery { traktDataSource.getFollowedListId() } returns ErrorResult(IllegalArgumentException())
 
         repository.syncFollowedShows()
 
         assertThat(repository.getFollowedShows(),
             `is`(listOf(followedShow1Local)))
+    }
+
+    @After
+    fun cleanup() {
+        testScope.cleanupTestCoroutines()
     }
 }

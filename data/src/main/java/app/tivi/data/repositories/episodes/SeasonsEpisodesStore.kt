@@ -17,7 +17,6 @@
 package app.tivi.data.repositories.episodes
 
 import app.tivi.data.DatabaseTransactionRunner
-import app.tivi.data.daos.EntityInserter
 import app.tivi.data.daos.EpisodesDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.entities.Episode
@@ -31,7 +30,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 
 class SeasonsEpisodesStore @Inject constructor(
-    private val entityInserter: EntityInserter,
     private val transactionRunner: DatabaseTransactionRunner,
     private val seasonsDao: SeasonsDao,
     private val episodesDao: EpisodesDao,
@@ -100,7 +98,7 @@ class SeasonsEpisodesStore @Inject constructor(
         }
     }
 
-    suspend fun save(episode: Episode) = entityInserter.insertOrUpdate(episodesDao, episode)
+    suspend fun save(episode: Episode) = episodesDao.insertOrUpdate(episode)
 
     suspend fun save(showId: Long, data: Map<Season, List<Episode>>) = transactionRunner {
         seasonSyncer.sync(seasonsDao.seasonsForShowId(showId), data.keys)
