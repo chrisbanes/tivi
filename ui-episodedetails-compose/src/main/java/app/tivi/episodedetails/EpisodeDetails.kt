@@ -338,11 +338,13 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
             )
         }
 
-        IconButton(
-            modifier = LayoutPadding(end = 4.dp),
-            onClick = { onSweepWatchesClick() }
-        ) {
-            VectorImage(id = R.drawable.ic_delete_sweep_24)
+        ProvideEmphasis(MaterialTheme.emphasisLevels().disabled) {
+            IconButton(
+                modifier = LayoutPadding(end = 4.dp),
+                onClick = { onSweepWatchesClick() }
+            ) {
+                VectorImage(id = R.drawable.ic_delete_sweep_24)
+            }
         }
     }
 }
