@@ -57,6 +57,7 @@ import androidx.ui.layout.Spacer
 import androidx.ui.layout.Stack
 import androidx.ui.material.EmphasisLevels
 import androidx.ui.material.FloatingActionButton
+import androidx.ui.material.IconButton
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.OutlinedButton
 import androidx.ui.material.ProvideEmphasis
@@ -146,6 +147,8 @@ private fun EpisodeDetails(
                     val watches = viewState.watches
 
                     if (viewState.canAddEpisodeWatch) {
+                        Spacer(modifier = LayoutHeight(8.dp))
+
                         if (watches.isEmpty()) {
                             MarkWatchedButton(modifier = LayoutGravity.Center, actioner = actioner)
                         } else {
@@ -153,7 +156,7 @@ private fun EpisodeDetails(
                         }
                     }
 
-                    Spacer(modifier = LayoutHeight(16.dp))
+                    Spacer(modifier = LayoutHeight(8.dp))
 
                     if (watches.isNotEmpty()) {
                         var openDialog by state { false }
@@ -324,20 +327,22 @@ private fun Summary(episode: Episode) {
 
 @Composable
 private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
-    Row(modifier = LayoutPadding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)) {
+    Row {
         ProvideEmphasis(emphasis = EmphasisLevels().high) {
             Text(
-                modifier = LayoutFlexible(flex = 1f),
+                modifier = LayoutPadding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp) +
+                    LayoutGravity.Center +
+                    LayoutFlexible(flex = 1f),
                 text = stringResource(R.string.episode_watches),
                 style = MaterialTheme.typography().subtitle1
             )
         }
 
-        Clickable(onClick = { onSweepWatchesClick() }) {
-            // Disabled emphasis isn't semantically correct, but it looks correct
-            ProvideEmphasis(emphasis = EmphasisLevels().disabled) {
-                VectorImage(id = R.drawable.ic_delete_sweep_24)
-            }
+        IconButton(
+            modifier = LayoutPadding(end = 4.dp),
+            onClick = { onSweepWatchesClick() }
+        ) {
+            VectorImage(id = R.drawable.ic_delete_sweep_24)
         }
     }
 }
@@ -368,13 +373,12 @@ private fun EpisodeWatch(
                     )
                 }
 
-                VectorImage(
-                    id = when (episodeWatchEntry.pendingAction) {
-                        PendingAction.DELETE -> R.drawable.ic_eye_off_24dp
-                        else -> R.drawable.ic_eye_24dp
-                    },
-                    modifier = LayoutPadding(start = 8.dp) + LayoutGravity.Center
-                )
+                if (episodeWatchEntry.pendingAction == PendingAction.DELETE) {
+                    VectorImage(
+                        id = R.drawable.ic_eye_off_24dp,
+                        modifier = LayoutPadding(start = 8.dp) + LayoutGravity.Center
+                    )
+                } else Unit
             }
         }
     }
