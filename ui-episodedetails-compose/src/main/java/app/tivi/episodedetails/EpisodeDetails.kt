@@ -37,7 +37,9 @@ import androidx.ui.core.Text
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.DrawBackground
+import androidx.ui.foundation.ProvideContentColor
 import androidx.ui.foundation.VerticalScroller
+import androidx.ui.foundation.contentColor
 import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Canvas
 import androidx.ui.graphics.Color
@@ -128,8 +130,8 @@ private fun EpisodeDetails(
     actioner: (EpisodeDetailsAction) -> Unit
 ) {
     Column {
-        viewState.episode?.let {
-            Backdrop(episode = it)
+        if (viewState.episode != null && viewState.season != null) {
+            Backdrop(season = viewState.season!!, episode = viewState.episode!!)
         }
         VerticalScroller {
             Surface(elevation = 2.dp) {
@@ -157,7 +159,7 @@ private fun EpisodeDetails(
                     Spacer(modifier = LayoutHeight(16.dp))
 
                     if (watches.isNotEmpty()) {
-                        Header()
+                        EpisodeWatchesHeader()
                     }
                     watches.forEach { watch ->
                         SwipeToDismiss(
@@ -191,8 +193,8 @@ private fun EpisodeDetails(
 }
 
 @Composable
-private fun Backdrop(episode: Episode) {
-    Surface(modifier = LayoutAspectRatio(16f / 9)) {
+private fun Backdrop(season: Season, episode: Episode) {
+    Surface(modifier = LayoutAspectRatio(16f / 10)) {
         Stack {
             if (episode.tmdbBackdropPath != null) {
                 LoadNetworkImageWithCrossfade(modifier = LayoutGravity.Stretch, data = episode)
@@ -201,12 +203,31 @@ private fun Backdrop(episode: Episode) {
             Box(modifier = LayoutGravity.Stretch +
                 GradientScrimDrawModifier(baseColor = Color.Black))
 
-            val type = MaterialTheme.typography()
-            Text(
-                text = episode.title ?: "No title",
-                style = type.h6.copy(color = Color.White),
-                modifier = LayoutPadding(all = 16.dp) + LayoutGravity.BottomStart
-            )
+            Column(modifier = LayoutPadding(all = 16.dp) + LayoutGravity.BottomStart) {
+                val type = MaterialTheme.typography()
+                val epNumber = episode.number
+                val seasonNumber = season.number
+
+                ProvideContentColor(color = Color.White) {
+                    if (seasonNumber != null && epNumber != null) {
+                        ProvideEmphasis(emphasis = EmphasisLevels().medium) {
+                            Text(
+                                text = stringResource(R.string.season_episode_number,
+                                    seasonNumber, epNumber).toUpperCase(),
+                                style = MaterialTheme.typography().overline.copy(color = contentColor())
+                            )
+                        }
+                        Spacer(modifier = LayoutHeight(4.dp))
+                    }
+
+                    ProvideEmphasis(emphasis = EmphasisLevels().high) {
+                        Text(
+                            text = episode.title ?: "No title",
+                            style = type.h6.copy(color = contentColor())
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -288,7 +309,7 @@ private fun Summary(episode: Episode) {
 }
 
 @Composable
-private fun Header() {
+private fun EpisodeWatchesHeader() {
     ProvideEmphasis(emphasis = EmphasisLevels().high) {
         Text(
             modifier = LayoutPadding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
