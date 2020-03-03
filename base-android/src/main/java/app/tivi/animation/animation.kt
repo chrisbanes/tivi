@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-@EpoxyDataBindingPattern(rClass = R.class, layoutPrefix = "view_holder")
-package app.tivi.episodedetails;
+package app.tivi.animation
 
-import com.airbnb.epoxy.EpoxyDataBindingPattern;
+import android.view.animation.Interpolator
+
+operator fun Interpolator.invoke(progress: Float) = getInterpolation(progress)

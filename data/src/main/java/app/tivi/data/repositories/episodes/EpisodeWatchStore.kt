@@ -57,9 +57,9 @@ class EpisodeWatchStore @Inject constructor(
 
     suspend fun getEntriesWithDeleteAction(showId: Long) = episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId)
 
-    suspend fun deleteWatchEntriesWithIds(ids: List<Long>) = episodeWatchEntryDao.deleteWithIds(ids)
+    suspend fun deleteEntriesWithIds(ids: List<Long>) = episodeWatchEntryDao.deleteWithIds(ids)
 
-    suspend fun updateWatchEntriesWithAction(ids: List<Long>, action: PendingAction): Int {
+    suspend fun updateEntriesWithAction(ids: List<Long>, action: PendingAction): Int {
         return episodeWatchEntryDao.updateEntriesToPendingAction(ids, action.value)
     }
 

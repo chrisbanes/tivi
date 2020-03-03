@@ -13,6 +13,7 @@ captures
 .idea/navEditor.xml
 .idea/tasks.xml
 .idea/modules.xml
+/.idea/jarRepositories.xml
 gradle.xml
 *.iml
 

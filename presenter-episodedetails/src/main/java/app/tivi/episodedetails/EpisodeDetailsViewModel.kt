@@ -18,6 +18,7 @@ package app.tivi.episodedetails
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewModelScope
+import app.tivi.TiviMvRxViewModel
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.domain.interactors.AddEpisodeWatch
@@ -27,8 +28,6 @@ import app.tivi.domain.interactors.UpdateEpisodeDetails
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeWatches
-import app.tivi.episodedetails.presenter.BuildConfig
-import com.airbnb.mvrx.BaseMvRxViewModel
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
@@ -48,7 +47,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     private val addEpisodeWatch: AddEpisodeWatch,
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch
-) : BaseMvRxViewModel<EpisodeDetailsViewState>(initialState, debugMode = BuildConfig.DEBUG) {
+) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
 
     private val pendingActions = Channel<EpisodeDetailsAction>(Channel.BUFFERED)
 
@@ -81,12 +80,16 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     }
 
     private fun updateFromEpisodeDetails(episodeWithSeason: EpisodeWithSeason) = setState {
-        copy(episode = episodeWithSeason.episode, season = episodeWithSeason.season)
+        val firstAired = episodeWithSeason.episode?.firstAired
+        copy(
+            episode = episodeWithSeason.episode,
+            season = episodeWithSeason.season,
+            canAddEpisodeWatch = firstAired?.isBefore(OffsetDateTime.now()) == true
+        )
     }
 
     private fun updateFromEpisodeWatches(watches: List<EpisodeWatchEntry>) = setState {
-        val action = if (watches.isNotEmpty()) Action.UNWATCH else Action.WATCH
-        copy(watches = watches, action = action)
+        copy(watches = watches)
     }
 
     fun submitAction(action: EpisodeDetailsAction) {

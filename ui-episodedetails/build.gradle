@@ -43,10 +43,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    dataBinding {
-        enabled = true
-    }
 }
 
 dependencies {
@@ -54,28 +50,20 @@ dependencies {
     implementation project(':base-android')
     implementation project(':domain')
     implementation project(':common-ui-view')
-    implementation project(':common-epoxy')
-    implementation project(':common-layouts')
-    implementation project(':common-imageloading')
-    implementation project(':common-databinding')
+    implementation project(':ui-episodedetails-compose')
 
     api project(':presenter-episodedetails')
 
     implementation Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.viewmodelKtx
 
-    implementation Libs.AndroidX.Paging.runtime
-
-    implementation Libs.AndroidX.appcompat
-    implementation Libs.AndroidX.recyclerview
-    implementation Libs.AndroidX.constraintlayout
     implementation Libs.AndroidX.coreKtx
     implementation Libs.AndroidX.Fragment.fragment
     implementation Libs.AndroidX.Fragment.fragmentKtx
-    implementation Libs.AndroidX.Navigation.fragment
-    implementation Libs.AndroidX.Navigation.ui
 
     implementation Libs.Google.material
+
+    implementation Libs.Kotlin.stdlib
 
     implementation Libs.Dagger.androidSupport
     kapt Libs.Dagger.compiler
@@ -83,8 +71,4 @@ dependencies {
 
     compileOnly Libs.AssistedInject.annotationDagger2
     kapt Libs.AssistedInject.processorDagger2
-
-    implementation Libs.mvRx
-
-    kapt Libs.Epoxy.processor
 }
