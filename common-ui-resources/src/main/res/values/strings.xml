@@ -159,4 +159,9 @@
     <string name="airs_title">Airs</string>
     <string name="airs_text">%1$s at %2$s</string>
 
+    <string name="episode_remove_watches_dialog_title">Remove watches</string>
+    <string name="episode_remove_watches_dialog_message">Are you sure that you want to remove all episode watches?</string>
+    <string name="episode_remove_watches_dialog_confirm">Remove all</string>
+    <string name="dialog_dismiss">Dismiss</string>
+
 </resources>

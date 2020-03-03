@@ -80,6 +80,7 @@ import app.tivi.common.compose.LoadNetworkImageWithCrossfade
 import app.tivi.common.compose.MaterialThemeFromAndroidTheme
 import app.tivi.common.compose.SwipeDirection
 import app.tivi.common.compose.SwipeToDismiss
+import app.tivi.common.compose.TiviAlertDialog
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.WrapWithAmbients
@@ -155,8 +156,25 @@ private fun EpisodeDetails(
                     Spacer(modifier = LayoutHeight(16.dp))
 
                     if (watches.isNotEmpty()) {
-                        EpisodeWatchesHeader()
+                        var openDialog by state { false }
+
+                        EpisodeWatchesHeader(onSweepWatchesClick = { openDialog = true })
+
+                        if (openDialog) {
+                            TiviAlertDialog(
+                                title = stringResource(R.string.episode_remove_watches_dialog_title),
+                                message = stringResource(R.string.episode_remove_watches_dialog_message),
+                                confirmText = stringResource(R.string.episode_remove_watches_dialog_confirm),
+                                onConfirm = {
+                                    actioner(RemoveAllEpisodeWatchesAction)
+                                    openDialog = false
+                                },
+                                dismissText = stringResource(R.string.dialog_dismiss),
+                                onDismiss = { openDialog = false }
+                            )
+                        }
                     }
+
                     watches.forEach { watch ->
                         SwipeToDismiss(
                             // TODO: this should change to START eventually
@@ -305,13 +323,22 @@ private fun Summary(episode: Episode) {
 }
 
 @Composable
-private fun EpisodeWatchesHeader() {
-    ProvideEmphasis(emphasis = EmphasisLevels().high) {
-        Text(
-            modifier = LayoutPadding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
-            text = stringResource(R.string.episode_watches),
-            style = MaterialTheme.typography().subtitle1
-        )
+private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
+    Row(modifier = LayoutPadding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)) {
+        ProvideEmphasis(emphasis = EmphasisLevels().high) {
+            Text(
+                modifier = LayoutFlexible(flex = 1f),
+                text = stringResource(R.string.episode_watches),
+                style = MaterialTheme.typography().subtitle1
+            )
+        }
+
+        Clickable(onClick = { onSweepWatchesClick() }) {
+            // Disabled emphasis isn't semantically correct, but it looks correct
+            ProvideEmphasis(emphasis = EmphasisLevels().disabled) {
+                VectorImage(id = R.drawable.ic_delete_sweep_24)
+            }
+        }
     }
 }
 
