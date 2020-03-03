@@ -28,10 +28,17 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.ui.animation.Transition
 import androidx.ui.core.Modifier
 import androidx.ui.core.OnChildPositioned
+import androidx.ui.core.toModifier
+import androidx.ui.foundation.Box
+import androidx.ui.geometry.Offset
+import androidx.ui.graphics.Canvas
 import androidx.ui.graphics.Image
-import androidx.ui.layout.Container
+import androidx.ui.graphics.Paint
+import androidx.ui.graphics.painter.ImagePainter
+import androidx.ui.graphics.painter.Painter
 import androidx.ui.unit.IntPx
 import androidx.ui.unit.IntPxSize
+import androidx.ui.unit.PxSize
 import app.tivi.ui.graphics.ImageLoadingColorMatrix
 import coil.Coil
 import coil.api.newGetBuilder
@@ -77,53 +84,96 @@ private val imageSaturationTransitionDef = transitionDefinition {
     }
 }
 
+/**
+ * A composable which loads an image using [Coil] into a [Box], using a crossfade when first
+ * loaded.
+ */
 @Composable
-fun LoadAndShowImage(
+fun LoadNetworkImageWithCrossfade(
     modifier: Modifier = Modifier.None,
-    data: Any,
-    crossFadeIn: Boolean = false
+    data: Any
 ) {
     var childSize by state { IntPxSize(IntPx.Zero, IntPx.Zero) }
 
     OnChildPositioned(onPositioned = { childSize = it.size }) {
         var imgLoadState by stateFor(data, childSize) { ImageLoadState.Empty }
 
-        val image = if (childSize.width > IntPx.Zero && childSize.height > IntPx.Zero) {
-            // If we have a size, we can now load the image using those bounds...
-            LoadImage(data, childSize) {
-                // Once loaded, update the load state
-                imgLoadState = ImageLoadState.Loaded
-            }
-        } else null
-
-        Container(modifier = modifier) {
-            if (crossFadeIn) {
-                val matrix = remember(image) { ImageLoadingColorMatrix() }
-                var colorFilter by stateFor(image) { ColorMatrixColorFilter(matrix) }
-
-                Transition(
-                    definition = imageSaturationTransitionDef,
-                    toState = imgLoadState
-                ) { transitionState ->
-                    if (image != null) {
-                        // Update the ImageLoadingColorMatrix from the transition state
-                        matrix.saturationFraction = transitionState[saturation]
-                        matrix.alphaFraction = transitionState[alpha]
-                        matrix.brightnessFraction = transitionState[brightness]
-                        colorFilter = ColorMatrixColorFilter(matrix)
-
-                        DrawImage(image = image) { paint ->
-                            // We have to unwrap to the framework paint instance to use
-                            // a ColorMatrixColorFilter, for our ImageLoadingColorMatrix
-                            paint.asFrameworkPaint().colorFilter = colorFilter
-                        }
-                    }
+        Transition(
+            definition = imageSaturationTransitionDef,
+            toState = imgLoadState
+        ) { transitionState ->
+            val image = if (childSize.width > IntPx.Zero && childSize.height > IntPx.Zero) {
+                // If we have a size, we can now load the image using those bounds...
+                LoadImage(data, childSize) {
+                    // Once loaded, update the load state
+                    imgLoadState = ImageLoadState.Loaded
                 }
-            } else if (image != null) {
-                DrawImage(image = image)
+            } else null
+
+            if (image != null) {
+                // Create and update the ImageLoadingColorMatrix from the transition state
+                val matrix = remember(image) { ImageLoadingColorMatrix() }
+                matrix.saturationFraction = transitionState[saturation]
+                matrix.alphaFraction = transitionState[alpha]
+                matrix.brightnessFraction = transitionState[brightness]
+
+                // Unfortunately ColorMatrixColorFilter is not mutable so we have to create a new
+                // one every time
+                val cf = ColorMatrixColorFilter(matrix)
+                Box(modifier = modifier + AndroidColorMatrixImagePainter(image, cf).toModifier())
+            } else {
+                Box(modifier = modifier)
             }
         }
     }
+}
+
+/**
+ * A simple composable which loads an image using [Coil] into a [Box]
+ */
+@Composable
+fun LoadNetworkImage(
+    modifier: Modifier = Modifier.None,
+    data: Any
+) {
+    var childSize by state { IntPxSize(IntPx.Zero, IntPx.Zero) }
+
+    OnChildPositioned(onPositioned = { childSize = it.size }) {
+        val image = if (childSize.width > IntPx.Zero && childSize.height > IntPx.Zero) {
+            // If we have a size, we can now load the image using those bounds...
+            LoadImage(data, childSize)
+        } else null
+
+        Box(modifier = modifier +
+            if (image != null) ImagePainter(image).toModifier() else Modifier.None)
+    }
+}
+
+/**
+ * An [ImagePainter] which draws the image with the given Android framework
+ * [android.graphics.ColorFilter].
+ */
+internal class AndroidColorMatrixImagePainter(
+    private val image: Image,
+    colorFilter: android.graphics.ColorFilter
+) : Painter() {
+    private val paint = Paint()
+    private val size = PxSize(IntPx(image.width), IntPx(image.height))
+
+    init {
+        paint.asFrameworkPaint().colorFilter = colorFilter
+    }
+
+    override fun onDraw(canvas: Canvas, bounds: PxSize) {
+        // Always draw the image in the top left as we expect it to be translated and scaled
+        // in the appropriate position
+        canvas.drawImage(image, Offset.zero, paint)
+    }
+
+    /**
+     * Return the dimension of the underlying [Image] as it's intrinsic width and height
+     */
+    override val intrinsicSize: PxSize get() = size
 }
 
 /**
@@ -133,7 +183,7 @@ fun LoadAndShowImage(
 fun LoadImage(
     data: Any,
     pxSize: IntPxSize,
-    onLoad: () -> Unit
+    onLoad: () -> Unit = {}
 ): Image? {
     val request = remember(data, pxSize) {
         Coil.loader().newGetBuilder()

@@ -19,80 +19,16 @@ package app.tivi.common.compose
 import android.graphics.Bitmap
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.Composable
-import androidx.compose.remember
-import androidx.ui.core.Draw
-import androidx.ui.geometry.Rect
-import androidx.ui.graphics.BlendMode
-import androidx.ui.graphics.Color
-import androidx.ui.graphics.ColorFilter
-import androidx.ui.graphics.FilterQuality
 import androidx.ui.graphics.Image
 import androidx.ui.graphics.ImageConfig
 import androidx.ui.graphics.NativeImage
-import androidx.ui.graphics.Paint
 import androidx.ui.graphics.colorspace.ColorSpace
 import androidx.ui.graphics.colorspace.ColorSpaces
 
 /**
- * An import of `DrawImage` from `Image.kt` in `ui-foundation`. This function contains a small
- * change to allow modification of the [Paint] instance via a lambda.
- */
-@Composable
-fun DrawImage(
-    image: Image,
-    tint: Color? = null,
-    paintModifier: @Composable() ((Paint) -> Unit) = {}
-) {
-    val paint = remember {
-        Paint().apply {
-            filterQuality = FilterQuality.low // we only support low currently
-        }
-    }
-    paint.colorFilter = tint?.let { ColorFilter(it, BlendMode.srcIn) }
-    paintModifier(paint)
-
-    Draw { canvas, parentSize ->
-        val inputWidth = image.width.toFloat()
-        val inputHeight = image.height.toFloat()
-        val inputAspectRatio = inputWidth / inputHeight
-
-        val outputWidth = parentSize.width.value
-        val outputHeight = parentSize.height.value
-        val outputAspectRatio = outputWidth / outputHeight
-
-        val fittedWidth = if (outputAspectRatio > inputAspectRatio) {
-            inputWidth
-        } else {
-            inputHeight * outputAspectRatio
-        }
-        val fittedHeight = if (outputAspectRatio > inputAspectRatio) {
-            inputWidth / outputAspectRatio
-        } else {
-            inputHeight
-        }
-
-        val srcRect = Rect(
-            left = (inputWidth - fittedWidth) / 2,
-            top = (inputHeight - fittedHeight) / 2,
-            right = (inputWidth + fittedWidth) / 2,
-            bottom = (inputHeight + fittedHeight) / 2
-        )
-
-        val dstRect = Rect(
-            left = 0f,
-            top = 0f,
-            right = outputWidth,
-            bottom = outputHeight
-        )
-        canvas.drawImageRect(image, srcRect, dstRect, paint)
-    }
-}
-
-/**
  * This is a copy of the internal `AndroidImage` class from the `ui-foundation` source
  */
-class AndroidImage(val bitmap: Bitmap) : Image {
+internal class AndroidImage(val bitmap: Bitmap) : Image {
 
     /**
      * @see Image.width

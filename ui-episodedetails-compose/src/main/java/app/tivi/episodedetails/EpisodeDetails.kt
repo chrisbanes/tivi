@@ -34,6 +34,7 @@ import androidx.ui.core.Modifier
 import androidx.ui.core.OnChildPositioned
 import androidx.ui.core.Text
 import androidx.ui.core.boundsInRoot
+import androidx.ui.foundation.Box
 import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.DrawBackground
 import androidx.ui.foundation.VerticalScroller
@@ -44,7 +45,6 @@ import androidx.ui.graphics.Paint
 import androidx.ui.graphics.withSave
 import androidx.ui.layout.Arrangement
 import androidx.ui.layout.Column
-import androidx.ui.layout.Container
 import androidx.ui.layout.LayoutAlign
 import androidx.ui.layout.LayoutAspectRatio
 import androidx.ui.layout.LayoutGravity
@@ -71,10 +71,10 @@ import androidx.ui.unit.dp
 import androidx.ui.unit.toOffset
 import androidx.ui.unit.toRect
 import app.tivi.animation.invoke
-import app.tivi.common.compose.GradientScrim
+import app.tivi.common.compose.GradientScrimDrawModifier
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.InsetsHolder
-import app.tivi.common.compose.LoadAndShowImage
+import app.tivi.common.compose.LoadNetworkImageWithCrossfade
 import app.tivi.common.compose.MaterialThemeFromAndroidTheme
 import app.tivi.common.compose.SwipeDirection
 import app.tivi.common.compose.SwipeToDismiss
@@ -173,7 +173,7 @@ private fun EpisodeDetails(
         val insets = InsetsAmbient.current
         with(DensityAmbient.current) {
             WatchButton(
-                modifier = LayoutGravity.BottomRight +
+                modifier = LayoutGravity.BottomEnd +
                     LayoutPadding(start = 16.dp, end = 16.dp, bottom = 16.dp + insets.bottom.toDp()),
                 action = viewState.action,
                 actioner = actioner
@@ -187,18 +187,17 @@ private fun Backdrop(episode: Episode) {
     Surface(modifier = LayoutAspectRatio(16f / 9)) {
         Stack {
             if (episode.tmdbBackdropPath != null) {
-                LoadAndShowImage(modifier = LayoutGravity.Stretch, data = episode)
+                LoadNetworkImageWithCrossfade(modifier = LayoutGravity.Stretch, data = episode)
             }
 
-            Container(modifier = LayoutGravity.Stretch) {
-                GradientScrim(baseColor = Color.Black)
-            }
+            Box(modifier = LayoutGravity.Stretch +
+                GradientScrimDrawModifier(baseColor = Color.Black))
 
             val type = MaterialTheme.typography()
             Text(
                 text = episode.title ?: "No title",
                 style = type.h6.copy(color = Color.White),
-                modifier = LayoutPadding(all = 16.dp) + LayoutGravity.BottomLeft
+                modifier = LayoutPadding(all = 16.dp) + LayoutGravity.BottomStart
             )
         }
     }
@@ -371,7 +370,7 @@ private fun EpisodeWatchSwipeBackground(
                 ProvideEmphasis(emphasis = EmphasisLevels().medium) {
                     VectorImage(
                         id = R.drawable.ic_eye_off_24dp,
-                        modifier = LayoutPadding(end = 16.dp) + LayoutGravity.CenterRight
+                        modifier = LayoutPadding(end = 16.dp) + LayoutGravity.CenterEnd
                     )
                 }
             }
