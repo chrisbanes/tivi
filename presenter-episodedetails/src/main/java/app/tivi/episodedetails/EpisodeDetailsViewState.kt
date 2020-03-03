@@ -26,5 +26,5 @@ data class EpisodeDetailsViewState(
     val season: Season? = null,
     val episode: Episode? = null,
     val watches: List<EpisodeWatchEntry> = emptyList(),
-    val action: Action = Action.WATCH
+    val canAddEpisodeWatch: Boolean = false
 ) : MvRxState

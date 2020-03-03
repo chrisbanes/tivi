@@ -144,16 +144,12 @@ private fun EpisodeDetails(
 
                     val watches = viewState.watches
 
-                    if (watches.isEmpty()) {
-                        MarkWatchedButton(
-                            modifier = LayoutGravity.Center,
-                            actioner = actioner
-                        )
-                    } else {
-                        AddWatchButton(
-                            modifier = LayoutGravity.Center,
-                            actioner = actioner
-                        )
+                    if (viewState.canAddEpisodeWatch) {
+                        if (watches.isEmpty()) {
+                            MarkWatchedButton(modifier = LayoutGravity.Center, actioner = actioner)
+                        } else {
+                            AddWatchButton(modifier = LayoutGravity.Center, actioner = actioner)
+                        }
                     }
 
                     Spacer(modifier = LayoutHeight(16.dp))

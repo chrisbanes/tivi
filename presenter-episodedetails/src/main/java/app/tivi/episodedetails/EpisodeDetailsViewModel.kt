@@ -80,12 +80,16 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     }
 
     private fun updateFromEpisodeDetails(episodeWithSeason: EpisodeWithSeason) = setState {
-        copy(episode = episodeWithSeason.episode, season = episodeWithSeason.season)
+        val firstAired = episodeWithSeason.episode?.firstAired
+        copy(
+            episode = episodeWithSeason.episode,
+            season = episodeWithSeason.season,
+            canAddEpisodeWatch = firstAired?.isBefore(OffsetDateTime.now()) == true
+        )
     }
 
     private fun updateFromEpisodeWatches(watches: List<EpisodeWatchEntry>) = setState {
-        val action = if (watches.isNotEmpty()) Action.UNWATCH else Action.WATCH
-        copy(watches = watches, action = action)
+        copy(watches = watches)
     }
 
     fun submitAction(action: EpisodeDetailsAction) {
