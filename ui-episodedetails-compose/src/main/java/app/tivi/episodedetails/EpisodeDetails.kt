@@ -43,9 +43,7 @@ import androidx.ui.graphics.Canvas
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.Paint
 import androidx.ui.graphics.withSave
-import androidx.ui.layout.Arrangement
 import androidx.ui.layout.Column
-import androidx.ui.layout.LayoutAlign
 import androidx.ui.layout.LayoutAspectRatio
 import androidx.ui.layout.LayoutGravity
 import androidx.ui.layout.LayoutHeight
@@ -205,9 +203,7 @@ private fun Backdrop(episode: Episode) {
 
 @Composable
 private fun InfoPanes(episode: Episode) {
-    Row(
-        arrangement = Arrangement.SpaceEvenly
-    ) {
+    Row {
         episode.traktRating?.let { rating ->
             InfoPane(
                 modifier = LayoutFlexible(1f),
@@ -233,12 +229,10 @@ private fun InfoPane(
     @DrawableRes iconResId: Int,
     label: String
 ) {
-    Column(
-        modifier = modifier + LayoutPadding(all = 16.dp)
-    ) {
+    Column(modifier = modifier + LayoutPadding(all = 16.dp)) {
         ProvideEmphasis(emphasis = EmphasisLevels().medium) {
             VectorImage(
-                modifier = LayoutAlign.CenterHorizontally,
+                modifier = LayoutGravity.Center,
                 id = iconResId
             )
         }
@@ -247,7 +241,7 @@ private fun InfoPane(
 
         ProvideEmphasis(emphasis = EmphasisLevels().high) {
             Text(
-                modifier = LayoutAlign.CenterHorizontally,
+                modifier = LayoutGravity.Center,
                 text = label,
                 style = MaterialTheme.typography().body1
             )
