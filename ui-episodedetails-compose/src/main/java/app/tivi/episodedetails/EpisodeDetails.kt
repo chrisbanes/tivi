@@ -181,7 +181,7 @@ private fun EpisodeDetails(
                     watches.forEach { watch ->
                         SwipeToDismiss(
                             // TODO: this should change to START eventually
-                            swipeDirections = listOf(SwipeDirection.LEFT),
+                            swipeDirections = listOf(SwipeDirection.START),
                             onSwipeComplete = {
                                 actioner(RemoveEpisodeWatchAction(watch.id))
                             },

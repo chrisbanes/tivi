@@ -22,6 +22,8 @@ import androidx.compose.onCommit
 import androidx.compose.state
 import androidx.ui.animation.animatedFloat
 import androidx.ui.core.DensityAmbient
+import androidx.ui.core.LayoutDirection
+import androidx.ui.core.LayoutDirectionAmbient
 import androidx.ui.core.OnPositioned
 import androidx.ui.foundation.gestures.DragDirection
 import androidx.ui.foundation.gestures.Draggable
@@ -32,10 +34,10 @@ import androidx.ui.unit.IntPxSize
 import kotlin.math.absoluteValue
 
 enum class SwipeDirection {
-    LEFT, RIGHT
+    START, END
 }
 
-private val defaultDirections = listOf(SwipeDirection.LEFT, SwipeDirection.RIGHT)
+private val defaultDirections = listOf(SwipeDirection.START, SwipeDirection.END)
 
 @Composable
 fun SwipeToDismiss(
@@ -52,14 +54,26 @@ fun SwipeToDismiss(
     var size by state { IntPxSize(IntPx.Zero, IntPx.Zero) }
     var progress by state { 0f }
 
+    val layoutDir = LayoutDirectionAmbient.current
+
     OnPositioned { coordinates ->
         size = coordinates.size
 
-        if (SwipeDirection.LEFT in swipeDirections) {
-            position.setBounds(-coordinates.size.width.value.toFloat(), position.max)
-        }
-        if (SwipeDirection.RIGHT in swipeDirections) {
-            position.setBounds(position.min, coordinates.size.width.value.toFloat())
+        when {
+            SwipeDirection.START in swipeDirections && SwipeDirection.END in swipeDirections -> {
+                position.setBounds(
+                    -coordinates.size.width.value.toFloat(),
+                    coordinates.size.width.value.toFloat()
+                )
+            }
+            SwipeDirection.START in swipeDirections && layoutDir == LayoutDirection.Ltr ||
+                SwipeDirection.END in swipeDirections && layoutDir == LayoutDirection.Rtl -> {
+                position.setBounds(-coordinates.size.width.value.toFloat(), 0f)
+            }
+            SwipeDirection.END in swipeDirections && layoutDir == LayoutDirection.Ltr ||
+                SwipeDirection.START in swipeDirections && layoutDir == LayoutDirection.Rtl -> {
+                position.setBounds(0f, coordinates.size.width.value.toFloat())
+            }
         }
     }
 
@@ -79,14 +93,24 @@ fun SwipeToDismiss(
                 position.max > 0f && position.value / position.max >= swipeCompletePercentage -> {
                     position.animateTo(position.max, onEnd = { endReason, _ ->
                         if (endReason != AnimationEndReason.Interrupted) {
-                            onSwipeComplete(SwipeDirection.RIGHT)
+                            onSwipeComplete(
+                                when (layoutDir) {
+                                    LayoutDirection.Ltr -> SwipeDirection.END
+                                    LayoutDirection.Rtl -> SwipeDirection.START
+                                }
+                            )
                         }
                     })
                 }
                 position.min < 0f && position.value / position.min >= swipeCompletePercentage -> {
                     position.animateTo(position.min, onEnd = { endReason, _ ->
                         if (endReason != AnimationEndReason.Interrupted) {
-                            onSwipeComplete(SwipeDirection.LEFT)
+                            onSwipeComplete(
+                                when (layoutDir) {
+                                    LayoutDirection.Ltr -> SwipeDirection.START
+                                    LayoutDirection.Rtl -> SwipeDirection.END
+                                }
+                            )
                         }
                     })
                 }
