@@ -181,16 +181,11 @@ private fun EpisodeDetails(
                     watches.forEach { watch ->
                         SwipeToDismiss(
                             // TODO: this should change to START eventually
-                            swipeDirections = listOf(SwipeDirection.LEFT),
+                            swipeDirections = listOf(SwipeDirection.START),
                             onSwipeComplete = {
                                 actioner(RemoveEpisodeWatchAction(watch.id))
                             },
-                            swipeChildren = { swipeProgress, _ ->
-                                EpisodeWatch(
-                                    episodeWatchEntry = watch,
-                                    drawBackground = swipeProgress != 0f
-                                )
-                            },
+                            swipeChildren = { _, _ -> EpisodeWatch(episodeWatchEntry = watch) },
                             backgroundChildren = { swipeProgress, completeOnRelease ->
                                 EpisodeWatchSwipeBackground(
                                     swipeProgress = swipeProgress,
@@ -350,13 +345,8 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
 }
 
 @Composable
-private fun EpisodeWatch(
-    episodeWatchEntry: EpisodeWatchEntry,
-    drawBackground: Boolean = false
-) {
-    Surface(
-        color = if (drawBackground) MaterialTheme.colors().surface else Color.Transparent
-    ) {
+private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
+    Surface {
         Row(modifier = LayoutPadding(16.dp, 8.dp, 16.dp, 8.dp) + LayoutSize.Min(40.dp)) {
             ProvideEmphasis(emphasis = EmphasisLevels().high) {
                 val formatter = TiviDateFormatterAmbient.current
