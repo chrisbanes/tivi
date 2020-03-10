@@ -104,7 +104,7 @@ fun LoadNetworkImageWithCrossfade(
         ) { transitionState ->
             val image = if (childSize.width > IntPx.Zero && childSize.height > IntPx.Zero) {
                 // If we have a size, we can now load the image using those bounds...
-                LoadImage(data, childSize) {
+                loadImage(data, childSize) {
                     // Once loaded, update the load state
                     imgLoadState = ImageLoadState.Loaded
                 }
@@ -141,7 +141,7 @@ fun LoadNetworkImage(
     OnChildPositioned(onPositioned = { childSize = it.size }) {
         val image = if (childSize.width > IntPx.Zero && childSize.height > IntPx.Zero) {
             // If we have a size, we can now load the image using those bounds...
-            LoadImage(data, childSize)
+            loadImage(data, childSize)
         } else null
 
         Box(modifier = modifier +
@@ -177,10 +177,10 @@ internal class AndroidColorMatrixImagePainter(
 }
 
 /**
- * A simple [LoadImage] composable, which loads [data].
+ * A simple [loadImage] composable, which loads [data].
  */
 @Composable
-fun LoadImage(
+fun loadImage(
     data: Any,
     pxSize: IntPxSize,
     onLoad: () -> Unit = {}
