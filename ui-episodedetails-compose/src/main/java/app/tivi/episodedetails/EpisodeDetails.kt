@@ -74,7 +74,7 @@ import androidx.ui.unit.dp
 import androidx.ui.unit.toOffset
 import androidx.ui.unit.toRect
 import app.tivi.animation.invoke
-import app.tivi.common.compose.GradientScrimDrawModifier
+import app.tivi.common.compose.gradientScrimDrawModifier
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.InsetsHolder
 import app.tivi.common.compose.LoadNetworkImageWithCrossfade
@@ -213,7 +213,7 @@ private fun Backdrop(season: Season, episode: Episode) {
             }
 
             Box(modifier = LayoutGravity.Stretch +
-                GradientScrimDrawModifier(baseColor = Color.Black))
+                gradientScrimDrawModifier(baseColor = Color.Black))
 
             Column(modifier = LayoutPadding(all = 16.dp) + LayoutGravity.BottomStart) {
                 val type = MaterialTheme.typography()

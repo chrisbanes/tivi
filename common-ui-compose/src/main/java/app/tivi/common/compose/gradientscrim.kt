@@ -28,7 +28,7 @@ import androidx.ui.unit.toRect
 import kotlin.math.pow
 
 @Composable
-fun GradientScrimDrawModifier(baseColor: Color, numStops: Int = 16): DrawModifier {
+fun gradientScrimDrawModifier(baseColor: Color, numStops: Int = 16): DrawModifier {
     val paint = remember { Paint() }
 
     return draw { canvas, parentSize ->
