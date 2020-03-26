@@ -48,9 +48,6 @@ TIVI_TRAKT_CLIENT_SECRET=<insert>
 
 # Get this from TMDb
 TIVI_TMDB_API_KEY=<insert>
-
-# Get this from Fabric/Crashlytics
-TIVI_FABRIC_API_KEY=<insert>
 ```
 
 On Linux/Mac that file is typically found at `~/.gradle/gradle.properties` or in the project directory `tivi/gradle.properties`
