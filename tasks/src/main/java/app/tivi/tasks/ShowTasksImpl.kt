@@ -59,8 +59,8 @@ class ShowTasksImpl @Inject constructor(
     override fun setupNightSyncs() {
         val request = PeriodicWorkRequest.Builder(
             SyncAllFollowedShows::class.java,
-            24, TimeUnit.HOURS,
-            12, TimeUnit.HOURS
+            24L, TimeUnit.HOURS,
+            12L, TimeUnit.HOURS
         ).setConstraints(
             Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
