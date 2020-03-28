@@ -55,7 +55,7 @@ import androidx.ui.layout.LayoutSize
 import androidx.ui.layout.Row
 import androidx.ui.layout.Spacer
 import androidx.ui.layout.Stack
-import androidx.ui.material.FloatingActionButton
+import androidx.ui.material.Button
 import androidx.ui.material.IconButton
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.OutlinedButton
@@ -156,7 +156,7 @@ private fun EpisodeDetails(
                         }
                     }
 
-                    Spacer(modifier = LayoutHeight(8.dp))
+                    Spacer(modifier = LayoutHeight(16.dp))
 
                     if (watches.isNotEmpty()) {
                         var openDialog by state { false }
@@ -373,7 +373,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
                             LayoutPadding(start = 8.dp) +
                             LayoutGravity.Center
                     )
-                } else Unit
+                }
             }
         }
     }
@@ -469,15 +469,11 @@ fun MarkWatchedButton(
     modifier: Modifier = Modifier.None,
     actioner: (EpisodeDetailsAction) -> Unit
 ) {
-    ProvideEmphasis(MaterialTheme.emphasisLevels().high) {
-        FloatingActionButton(
-            modifier = modifier,
-            color = MaterialTheme.colors().secondary,
-            text = stringResource(R.string.episode_mark_watched),
-            textStyle = MaterialTheme.typography().button
-                .copy(color = MaterialTheme.colors().onSecondary),
-            onClick = { actioner(AddEpisodeWatchAction) }
-        )
+    Button(
+        modifier = modifier,
+        onClick = { actioner(AddEpisodeWatchAction) }
+    ) {
+        Text(text = stringResource(R.string.episode_mark_watched))
     }
 }
 
