@@ -223,7 +223,7 @@ dependencies {
     implementation Libs.mvRx
 
     implementation Libs.Google.firebaseCore
-    implementation Libs.Google.crashlytics
+    // implementation Libs.Google.crashlytics
     implementation Libs.Google.openSourceLicensesLibrary
 
     debugImplementation Libs.leakCanary
@@ -250,5 +250,5 @@ android.applicationVariants.all { variant ->
 
 if (file("google-services.json").exists()) {
     apply plugin: 'com.google.gms.google-services'
-    //apply plugin: 'io.fabric'
+    // apply plugin: 'com.google.firebase.crashlytics'
 }

@@ -18,7 +18,6 @@ package app.tivi.util
 
 import android.os.Build
 import android.util.Log
-import com.crashlytics.android.Crashlytics
 import java.util.regex.Pattern
 import javax.inject.Inject
 import timber.log.Timber
@@ -143,6 +142,6 @@ private class CrashlyticsTree : Timber.Tree() {
     }
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        Crashlytics.log(message)
+        // Crashlytics.log(message)
     }
 }

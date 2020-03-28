@@ -28,8 +28,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://maven.fabric.io/public' }
-
         jcenter()
     }
 
@@ -43,7 +41,7 @@ buildscript {
         classpath Libs.playPublisherPlugin
 
         classpath Libs.Google.gmsGoogleServices
-        classpath Libs.Google.fabricPlugin
+        classpath Libs.Google.crashlyticsGradle
         classpath Libs.Google.openSourceLicensesPlugin
 
         classpath Libs.AndroidX.Navigation.safeArgs
@@ -61,7 +59,6 @@ allprojects {
         mavenCentral()
         jcenter()
         maven { url 'https://jitpack.io' }
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
         mavenLocal()
     }
