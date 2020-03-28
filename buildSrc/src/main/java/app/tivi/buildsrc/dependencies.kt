@@ -23,20 +23,20 @@ object Versions {
 object Libs {
     const val androidGradlePlugin = "com.android.tools.build:gradle:4.1.0-alpha04"
     const val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:1.0.2"
-    const val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.7.1"
+    const val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.7.3"
 
     const val mvRx = "com.airbnb.android:mvrx:1.3.0"
 
-    const val threeTenBp = "org.threeten:threetenbp:1.4.1"
+    const val threeTenBp = "org.threeten:threetenbp:1.4.2"
     const val threeTenBpNoTzdb = "$threeTenBp:no-tzdb"
-    const val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.2.2"
+    const val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.2.3"
 
     const val gravitySnapHelper = "com.github.rubensousa:gravitysnaphelper:2.2.0"
 
     const val timber = "com.jakewharton.timber:timber:4.7.1"
 
     const val tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.2.0"
-    const val traktJava = "com.uwetrottmann.trakt5:trakt-java:6.4.0"
+    const val traktJava = "com.uwetrottmann.trakt5:trakt-java:6.5.0"
 
     const val appauth = "net.openid:appauth:0.7.1"
 
@@ -60,17 +60,17 @@ object Libs {
 
     object Google {
         const val material = "com.google.android.material:material:1.1.0"
-        const val firebaseCore = "com.google.firebase:firebase-core:17.2.2"
+        const val firebaseCore = "com.google.firebase:firebase-core:17.2.3"
         const val crashlytics = "com.crashlytics.sdk.android:crashlytics:2.10.1"
         const val gmsGoogleServices = "com.google.gms:google-services:4.3.3"
         const val fabricPlugin = "io.fabric.tools:gradle:1.31.2"
 
-        const val openSourceLicensesPlugin = "com.google.android.gms:oss-licenses-plugin:0.10.1"
+        const val openSourceLicensesPlugin = "com.google.android.gms:oss-licenses-plugin:0.10.2"
         const val openSourceLicensesLibrary = "com.google.android.gms:play-services-oss-licenses:17.0.0"
     }
 
     object Kotlin {
-        private const val version = "1.3.61"
+        private const val version = "1.3.71"
         const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         const val reflect = "org.jetbrains.kotlin:kotlin-reflect:$version"
         const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
@@ -78,7 +78,7 @@ object Libs {
     }
 
     object Coroutines {
-        private const val version = "1.3.2"
+        private const val version = "1.3.5"
         const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
         const val rx2 = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$version"
         const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
@@ -92,7 +92,7 @@ object Libs {
         const val palette = "androidx.palette:palette:1.0.0"
         const val recyclerview = "androidx.recyclerview:recyclerview:1.1.0"
         const val emoji = "androidx.emoji:emoji:1.0.0"
-        const val swiperefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha03"
+        const val swiperefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-beta01"
 
         object Navigation {
             private const val version = "2.2.1"
@@ -102,7 +102,7 @@ object Libs {
         }
 
         object Fragment {
-            private const val version = "1.2.2"
+            private const val version = "1.2.3"
             const val fragment = "androidx.fragment:fragment:$version"
             const val fragmentKtx = "androidx.fragment:fragment-ktx:$version"
         }
@@ -119,7 +119,7 @@ object Libs {
         const val archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
 
         object Paging {
-            private const val version = "2.1.1"
+            private const val version = "2.1.2"
             const val common = "androidx.paging:paging-common-ktx:$version"
             const val runtime = "androidx.paging:paging-runtime-ktx:$version"
         }
@@ -137,7 +137,7 @@ object Libs {
         }
 
         object Room {
-            private const val version = "2.2.4"
+            private const val version = "2.2.5"
             const val common = "androidx.room:room-common:$version"
             const val runtime = "androidx.room:room-runtime:$version"
             const val compiler = "androidx.room:room-compiler:$version"
@@ -146,7 +146,7 @@ object Libs {
         }
 
         object Work {
-            private const val version = "2.3.2"
+            private const val version = "2.3.4"
             const val runtimeKtx = "androidx.work:work-runtime-ktx:$version"
         }
 
@@ -163,13 +163,8 @@ object Libs {
         }
     }
 
-    object RxJava {
-        const val rxJava = "io.reactivex.rxjava2:rxjava:2.2.11"
-        const val rxAndroid = "io.reactivex.rxjava2:rxandroid:2.1.1"
-    }
-
     object Dagger {
-        private const val version = "2.26"
+        private const val version = "2.27"
         const val dagger = "com.google.dagger:dagger:$version"
         const val androidSupport = "com.google.dagger:dagger-android-support:$version"
         const val compiler = "com.google.dagger:dagger-compiler:$version"
@@ -177,7 +172,7 @@ object Libs {
     }
 
     object Retrofit {
-        private const val version = "2.7.1"
+        private const val version = "2.8.1"
         const val retrofit = "com.squareup.retrofit2:retrofit:$version"
         const val retrofit_rxjava_adapter = "com.squareup.retrofit2:adapter-rxjava2:$version"
         const val gsonConverter = "com.squareup.retrofit2:converter-gson:$version"

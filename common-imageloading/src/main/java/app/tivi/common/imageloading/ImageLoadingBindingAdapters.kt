@@ -78,7 +78,7 @@ fun ImageView.loadLogo(
     "imageCornerRadius",
     requireAll = false
 )
-@UseExperimental(ExperimentalCoil::class)
+@OptIn(ExperimentalCoil::class)
 fun ImageView.loadImage(
     oldImage: TmdbImageEntity?,
     oldSaturateOnLoad: Boolean?,
