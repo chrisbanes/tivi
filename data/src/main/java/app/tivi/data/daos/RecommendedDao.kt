@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 abstract class RecommendedDao : PaginatedEntryDao<RecommendedShowEntry, RecommendedEntryWithShow>() {
+    @Transaction
     @Query("SELECT * FROM recommended_entries WHERE page = :page ORDER BY id ASC")
     abstract fun entriesForPage(page: Int): Flow<List<RecommendedShowEntry>>
 
