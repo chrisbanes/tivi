@@ -18,6 +18,8 @@ package app.tivi.data.daos
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.RoomWarnings
+import androidx.room.Transaction
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.resultentities.EpisodeWithSeason
@@ -46,6 +48,7 @@ abstract class EpisodesDao : EntityDao<Episode>() {
     @Query("SELECT id from episodes WHERE trakt_id = :traktId")
     abstract suspend fun episodeIdWithTraktId(traktId: Int): Long?
 
+    @Transaction
     @Query("SELECT * from episodes WHERE id = :id")
     abstract fun episodeWithIdObservable(id: Long): Flow<EpisodeWithSeason>
 
@@ -55,9 +58,13 @@ abstract class EpisodesDao : EntityDao<Episode>() {
         " WHERE eps.id = :episodeId")
     abstract suspend fun showIdForEpisodeId(episodeId: Long): Long
 
+    @Transaction
+    @Suppress(RoomWarnings.CURSOR_MISMATCH)
     @Query(latestWatchedEpisodeForShowId)
     abstract fun observeLatestWatchedEpisodeForShowId(showId: Long): Flow<EpisodeWithSeason?>
 
+    @Transaction
+    @Suppress(RoomWarnings.CURSOR_MISMATCH)
     @Query(nextEpisodeForShowIdAfter)
     abstract fun observeNextEpisodeForShowAfter(
         showId: Long,
@@ -65,6 +72,8 @@ abstract class EpisodesDao : EntityDao<Episode>() {
         episodeNumber: Int
     ): Flow<EpisodeWithSeason?>
 
+    @Transaction
+    @Suppress(RoomWarnings.CURSOR_MISMATCH)
     @Query(nextAiredEpisodeForShowIdAfter)
     abstract fun observeNextAiredEpisodeForShowAfter(
         showId: Long,

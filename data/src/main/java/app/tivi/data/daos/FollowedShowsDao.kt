@@ -64,6 +64,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     @Query(ENTRY_QUERY_ORDER_ADDED_FILTER)
     internal abstract fun pagedListAddedFilter(filter: String): DataSource.Factory<Int, FollowedShowEntryWithShow>
 
+    @Transaction
     @Query("""
         SELECT myshows_entries.* FROM myshows_entries
             INNER JOIN seasons AS s ON s.show_id = myshows_entries.show_id
@@ -92,6 +93,7 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     @Query("SELECT COUNT(*) FROM myshows_entries WHERE show_id = :showId")
     abstract suspend fun entryCountWithShowId(showId: Long): Int
 
+    @Transaction
     @Query("""
         SELECT stats.* FROM FollowedShowsWatchStats as stats
         INNER JOIN myshows_entries ON stats.id = myshows_entries.id
