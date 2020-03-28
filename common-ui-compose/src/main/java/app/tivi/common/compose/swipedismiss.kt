@@ -24,23 +24,26 @@ import androidx.ui.animation.animatedFloat
 import androidx.ui.core.DensityAmbient
 import androidx.ui.core.LayoutDirection
 import androidx.ui.core.LayoutDirectionAmbient
-import androidx.ui.core.OnPositioned
+import androidx.ui.core.Modifier
+import androidx.ui.core.onPositioned
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.gestures.DragDirection
-import androidx.ui.foundation.gestures.Draggable
-import androidx.ui.layout.Container
-import androidx.ui.layout.LayoutOffset
+import androidx.ui.foundation.gestures.draggable
 import androidx.ui.layout.Stack
+import androidx.ui.layout.offset
+import androidx.ui.layout.preferredSize
 import androidx.ui.unit.IntPx
 import androidx.ui.unit.IntPxSize
 import androidx.ui.unit.dp
+import app.tivi.common.compose.SwipeDirection.END
+import app.tivi.common.compose.SwipeDirection.START
 import kotlin.math.absoluteValue
 
 enum class SwipeDirection {
     START, END
 }
 
-private val defaultDirections = listOf(SwipeDirection.START, SwipeDirection.END)
+private val defaultDirections = listOf(START, END)
 
 @Composable
 fun SwipeToDismiss(
@@ -59,38 +62,16 @@ fun SwipeToDismiss(
 
     val layoutDir = LayoutDirectionAmbient.current
 
-    OnPositioned { coordinates ->
-        size = coordinates.size
-
-        when {
-            SwipeDirection.START in swipeDirections && SwipeDirection.END in swipeDirections -> {
-                position.setBounds(
-                    -coordinates.size.width.value.toFloat(),
-                    coordinates.size.width.value.toFloat()
-                )
-            }
-            SwipeDirection.START in swipeDirections && layoutDir == LayoutDirection.Ltr ||
-                SwipeDirection.END in swipeDirections && layoutDir == LayoutDirection.Rtl -> {
-                position.setBounds(-coordinates.size.width.value.toFloat(), 0f)
-            }
-            SwipeDirection.END in swipeDirections && layoutDir == LayoutDirection.Ltr ||
-                SwipeDirection.START in swipeDirections && layoutDir == LayoutDirection.Rtl -> {
-                position.setBounds(0f, coordinates.size.width.value.toFloat())
-            }
-        }
-    }
-
     if (position.value != 0f) {
         with(DensityAmbient.current) {
-            Container(width = size.width.toDp(), height = size.height.toDp()) {
+            Box(modifier = Modifier.preferredSize(size.width.toDp(), size.height.toDp())) {
                 backgroundChildren(progress, progress.absoluteValue >= swipeCompletePercentage)
             }
         }
     }
 
-    Draggable(
+    val draggable = Modifier.draggable(
         dragDirection = DragDirection.Horizontal,
-        dragValue = position,
         onDragStopped = {
             when {
                 position.max > 0f && position.value / position.max >= swipeCompletePercentage -> {
@@ -98,8 +79,8 @@ fun SwipeToDismiss(
                         if (endReason != AnimationEndReason.Interrupted) {
                             onSwipeComplete(
                                 when (layoutDir) {
-                                    LayoutDirection.Ltr -> SwipeDirection.END
-                                    LayoutDirection.Rtl -> SwipeDirection.START
+                                    LayoutDirection.Ltr -> END
+                                    LayoutDirection.Rtl -> START
                                 }
                             )
                         }
@@ -110,8 +91,8 @@ fun SwipeToDismiss(
                         if (endReason != AnimationEndReason.Interrupted) {
                             onSwipeComplete(
                                 when (layoutDir) {
-                                    LayoutDirection.Ltr -> SwipeDirection.START
-                                    LayoutDirection.Rtl -> SwipeDirection.END
+                                    LayoutDirection.Ltr -> START
+                                    LayoutDirection.Rtl -> END
                                 }
                             )
                         }
@@ -119,24 +100,45 @@ fun SwipeToDismiss(
                 }
                 else -> position.animateTo(0f)
             }
-        },
-        onDragValueChangeRequested = { position.snapTo(it) }
-    ) {
-        onCommit(position.value) {
-            // When the position changes, update the progress and call onSwipe
-            progress = when {
-                position.value < 0f && position.min < 0f -> position.value / position.min
-                position.value > 0f && position.max > 0f -> position.value / position.max
-                else -> 0f
-            }
-            // If we have an onSwipe callback, invoke it
-            onSwipe?.invoke(progress)
         }
+    ) { delta ->
+        position.snapTo(position.value + delta)
 
-        with(DensityAmbient.current) {
-            Box(modifier = LayoutOffset(x = position.value.toDp(), y = 0.dp)) {
-                swipeChildren(progress, progress.absoluteValue >= swipeCompletePercentage)
+        progress = when {
+            position.value < 0f && position.min < 0f -> position.value / position.min
+            position.value > 0f && position.max > 0f -> position.value / position.max
+            else -> 0f
+        }
+        // If we have an onSwipe callback, invoke it
+        onSwipe?.invoke(progress)
+
+        position.value
+    }
+
+    onCommit(size) {
+        // When the size changes, update the drag bounds
+        when {
+            START in swipeDirections && END in swipeDirections -> {
+                position.setBounds(-size.width.value.toFloat(), size.width.value.toFloat())
             }
+            START in swipeDirections && layoutDir == LayoutDirection.Ltr ||
+                END in swipeDirections && layoutDir == LayoutDirection.Rtl -> {
+                position.setBounds(-size.width.value.toFloat(), 0f)
+            }
+            END in swipeDirections && layoutDir == LayoutDirection.Ltr ||
+                START in swipeDirections && layoutDir == LayoutDirection.Rtl -> {
+                position.setBounds(0f, size.width.value.toFloat())
+            }
+        }
+    }
+
+    with(DensityAmbient.current) {
+        Box(
+            modifier = Modifier.onPositioned { size = it.size }
+                .plus(draggable)
+                .offset(x = position.value.toDp(), y = 0.dp)
+        ) {
+            swipeChildren(progress, progress.absoluteValue >= swipeCompletePercentage)
         }
     }
 }

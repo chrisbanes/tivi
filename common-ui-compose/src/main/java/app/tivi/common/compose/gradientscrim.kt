@@ -18,8 +18,8 @@ package app.tivi.common.compose
 
 import androidx.compose.Composable
 import androidx.compose.remember
-import androidx.ui.core.DrawModifier
-import androidx.ui.core.draw
+import androidx.ui.core.Modifier
+import androidx.ui.core.drawBehind
 import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.LinearGradientShader
@@ -28,10 +28,9 @@ import androidx.ui.unit.toRect
 import kotlin.math.pow
 
 @Composable
-fun gradientScrimDrawModifier(baseColor: Color, numStops: Int = 16): DrawModifier {
+fun Modifier.gradientScrim(baseColor: Color, numStops: Int = 16): Modifier {
     val paint = remember { Paint() }
-
-    return draw { canvas, parentSize ->
+    return Modifier.drawBehind { canvas, parentSize ->
         val alpha = baseColor.alpha
         val colors = List(numStops) { i ->
             val x = i * 1f / (numStops - 1)

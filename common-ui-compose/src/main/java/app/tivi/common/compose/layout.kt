@@ -17,6 +17,9 @@
 package app.tivi.common.compose
 
 import androidx.ui.core.LayoutCoordinates
+import androidx.ui.core.Modifier
+import androidx.ui.layout.absolutePadding
+import androidx.ui.unit.Dp
 import androidx.ui.unit.PxBounds
 import androidx.ui.unit.PxPosition
 import androidx.ui.unit.toPxSize
@@ -29,3 +32,7 @@ inline val LayoutCoordinates.positionInParent: PxPosition
 
 inline val LayoutCoordinates.boundsInParent: PxBounds
     get() = PxBounds(positionInParent, size.toPxSize())
+
+fun Modifier.padding(horizontal: Dp, vertical: Dp): Modifier {
+    return absolutePadding(left = horizontal, top = vertical, right = horizontal, bottom = vertical)
+}
