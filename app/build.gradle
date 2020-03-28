@@ -248,16 +248,7 @@ android.applicationVariants.all { variant ->
     }
 }
 
-def getGitHash() {
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'rev-parse', '--short', 'HEAD'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
-}
-
 if (file("google-services.json").exists()) {
     apply plugin: 'com.google.gms.google-services'
-    apply plugin: 'io.fabric'
+    //apply plugin: 'io.fabric'
 }
