@@ -310,8 +310,7 @@ private fun Summary(episode: Episode) {
                         maxLines = if (expanded) Int.MAX_VALUE else 4
                     ) {
                         if (!expanded) {
-                            // TODO: this is currently always false /shruggie
-                            // canExpand = it.hasVisualOverflow
+                            canExpand = it.hasVisualOverflow
                         }
                     }
                 }
