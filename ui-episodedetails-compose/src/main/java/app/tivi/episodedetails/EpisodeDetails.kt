@@ -74,7 +74,6 @@ import androidx.ui.unit.dp
 import androidx.ui.unit.toOffset
 import androidx.ui.unit.toRect
 import app.tivi.animation.invoke
-import app.tivi.common.compose.gradientScrimDrawModifier
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.InsetsHolder
 import app.tivi.common.compose.LoadNetworkImageWithCrossfade
@@ -87,6 +86,7 @@ import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.WrapWithAmbients
 import app.tivi.common.compose.boundsInParent
 import app.tivi.common.compose.center
+import app.tivi.common.compose.gradientScrimDrawModifier
 import app.tivi.common.compose.observe
 import app.tivi.common.compose.observeInsets
 import app.tivi.common.compose.setContentWithLifecycle
