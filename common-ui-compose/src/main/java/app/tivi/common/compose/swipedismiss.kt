@@ -25,12 +25,15 @@ import androidx.ui.core.DensityAmbient
 import androidx.ui.core.LayoutDirection
 import androidx.ui.core.LayoutDirectionAmbient
 import androidx.ui.core.OnPositioned
+import androidx.ui.foundation.Box
 import androidx.ui.foundation.gestures.DragDirection
 import androidx.ui.foundation.gestures.Draggable
 import androidx.ui.layout.Container
+import androidx.ui.layout.LayoutOffset
 import androidx.ui.layout.Stack
 import androidx.ui.unit.IntPx
 import androidx.ui.unit.IntPxSize
+import androidx.ui.unit.dp
 import kotlin.math.absoluteValue
 
 enum class SwipeDirection {
@@ -130,8 +133,10 @@ fun SwipeToDismiss(
             onSwipe?.invoke(progress)
         }
 
-        WithOffset(xOffset = position) {
-            swipeChildren(progress, progress.absoluteValue >= swipeCompletePercentage)
+        with(DensityAmbient.current) {
+            Box(modifier = LayoutOffset(x = position.value.toDp(), y = 0.dp)) {
+                swipeChildren(progress, progress.absoluteValue >= swipeCompletePercentage)
+            }
         }
     }
 }

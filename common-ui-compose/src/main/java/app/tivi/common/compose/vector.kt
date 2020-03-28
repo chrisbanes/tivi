@@ -19,21 +19,29 @@ package app.tivi.common.compose
 import androidx.annotation.DrawableRes
 import androidx.compose.Composable
 import androidx.ui.core.Modifier
+import androidx.ui.foundation.Box
 import androidx.ui.foundation.contentColor
 import androidx.ui.graphics.Color
-import androidx.ui.graphics.vector.DrawVector
-import androidx.ui.layout.Container
+import androidx.ui.graphics.vector.drawVector
 import androidx.ui.layout.LayoutSize
 import androidx.ui.res.vectorResource
 
 @Composable
 fun VectorImage(
-    modifier: Modifier = Modifier.None,
     @DrawableRes id: Int,
-    tint: Color = contentColor()
+    modifier: Modifier = Modifier.None,
+    tintColor: Color = contentColor()
 ) {
     val vector = vectorResource(id)
-    Container(modifier = modifier + LayoutSize(vector.defaultWidth, vector.defaultHeight)) {
-        DrawVector(vector, tint)
-    }
+    Box(
+        modifier = modifier +
+            LayoutSize(vector.defaultWidth, vector.defaultHeight) +
+            drawVector(vectorImage = vector, tintColor = tintColor)
+    )
 }
+
+@Composable
+fun drawVectorResource(
+    @DrawableRes id: Int,
+    tintColor: Color = contentColor()
+) = drawVector(vectorImage = vectorResource(id), tintColor = tintColor)

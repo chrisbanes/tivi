@@ -28,12 +28,13 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.ui.animation.Transition
 import androidx.ui.core.Modifier
 import androidx.ui.core.OnChildPositioned
-import androidx.ui.core.toModifier
+import androidx.ui.core.asModifier
 import androidx.ui.foundation.Box
 import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Canvas
-import androidx.ui.graphics.Image
+import androidx.ui.graphics.ImageAsset
 import androidx.ui.graphics.Paint
+import androidx.ui.graphics.asImageAsset
 import androidx.ui.graphics.painter.ImagePainter
 import androidx.ui.graphics.painter.Painter
 import androidx.ui.unit.IntPx
@@ -120,7 +121,7 @@ fun LoadNetworkImageWithCrossfade(
                 // Unfortunately ColorMatrixColorFilter is not mutable so we have to create a new
                 // one every time
                 val cf = ColorMatrixColorFilter(matrix)
-                Box(modifier = modifier + AndroidColorMatrixImagePainter(image, cf).toModifier())
+                Box(modifier = modifier + AndroidColorMatrixImagePainter(image, cf).asModifier())
             } else {
                 Box(modifier = modifier)
             }
@@ -145,7 +146,7 @@ fun LoadNetworkImage(
         } else null
 
         Box(modifier = modifier +
-            if (image != null) ImagePainter(image).toModifier() else Modifier.None)
+            if (image != null) ImagePainter(image).asModifier() else Modifier.None)
     }
 }
 
@@ -154,7 +155,7 @@ fun LoadNetworkImage(
  * [android.graphics.ColorFilter].
  */
 internal class AndroidColorMatrixImagePainter(
-    private val image: Image,
+    private val image: ImageAsset,
     colorFilter: android.graphics.ColorFilter
 ) : Painter() {
     private val paint = Paint()
@@ -184,7 +185,7 @@ fun loadImage(
     data: Any,
     pxSize: IntPxSize,
     onLoad: () -> Unit = {}
-): Image? {
+): ImageAsset? {
     val request = remember(data, pxSize) {
         Coil.loader().newGetBuilder()
             .data(data)
@@ -197,14 +198,14 @@ fun loadImage(
             .build()
     }
 
-    var image by stateFor<Image?>(request) { null }
+    var image by stateFor<ImageAsset?>(request) { null }
 
     // Execute the following code whenever the request changes.
     onCommit(request) {
         val job = CoroutineScope(Dispatchers.Main.immediate).launch {
             // Start loading the image and await the result.
             val drawable = Coil.loader().get(request)
-            image = AndroidImage(drawable.toBitmap())
+            image = drawable.toBitmap().asImageAsset()
             onLoad()
         }
 

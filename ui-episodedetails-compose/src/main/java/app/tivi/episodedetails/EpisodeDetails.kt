@@ -55,14 +55,13 @@ import androidx.ui.layout.LayoutSize
 import androidx.ui.layout.Row
 import androidx.ui.layout.Spacer
 import androidx.ui.layout.Stack
-import androidx.ui.material.EmphasisLevels
 import androidx.ui.material.FloatingActionButton
 import androidx.ui.material.IconButton
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.OutlinedButton
 import androidx.ui.material.ProvideEmphasis
+import androidx.ui.material.Surface
 import androidx.ui.material.ripple.Ripple
-import androidx.ui.material.surface.Surface
 import androidx.ui.res.stringResource
 import androidx.ui.text.style.TextOverflow
 import androidx.ui.tooling.preview.Preview
@@ -86,6 +85,7 @@ import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.WrapWithAmbients
 import app.tivi.common.compose.boundsInParent
 import app.tivi.common.compose.center
+import app.tivi.common.compose.drawVectorResource
 import app.tivi.common.compose.gradientScrimDrawModifier
 import app.tivi.common.compose.observe
 import app.tivi.common.compose.observeInsets
@@ -222,7 +222,7 @@ private fun Backdrop(season: Season, episode: Episode) {
 
                 ProvideContentColor(color = Color.White) {
                     if (seasonNumber != null && epNumber != null) {
-                        ProvideEmphasis(emphasis = EmphasisLevels().medium) {
+                        ProvideEmphasis(emphasis = MaterialTheme.emphasisLevels().medium) {
                             Text(
                                 text = stringResource(R.string.season_episode_number,
                                     seasonNumber, epNumber).toUpperCase(),
@@ -232,7 +232,7 @@ private fun Backdrop(season: Season, episode: Episode) {
                         Spacer(modifier = LayoutHeight(4.dp))
                     }
 
-                    ProvideEmphasis(emphasis = EmphasisLevels().high) {
+                    ProvideEmphasis(emphasis = MaterialTheme.emphasisLevels().high) {
                         Text(
                             text = episode.title ?: "No title",
                             style = type.h6.copy(color = contentColor())
@@ -249,7 +249,7 @@ private fun InfoPanes(episode: Episode) {
     Row {
         episode.traktRating?.let { rating ->
             InfoPane(
-                modifier = LayoutFlexible(1f),
+                modifier = LayoutWeight(1f),
                 iconResId = R.drawable.ic_details_rating,
                 label = stringResource(R.string.trakt_rating_text, rating * 10f)
             )
@@ -258,7 +258,7 @@ private fun InfoPanes(episode: Episode) {
         episode.firstAired?.let { firstAired ->
             val formatter = TiviDateFormatterAmbient.current
             InfoPane(
-                modifier = LayoutFlexible(1f),
+                modifier = LayoutWeight(1f),
                 iconResId = R.drawable.ic_details_date,
                 label = formatter.formatShortRelativeTime(firstAired)
             )
@@ -273,7 +273,7 @@ private fun InfoPane(
     label: String
 ) {
     Column(modifier = modifier + LayoutPadding(all = 16.dp)) {
-        ProvideEmphasis(emphasis = EmphasisLevels().medium) {
+        ProvideEmphasis(emphasis = MaterialTheme.emphasisLevels().medium) {
             VectorImage(
                 modifier = LayoutGravity.Center,
                 id = iconResId
@@ -282,7 +282,7 @@ private fun InfoPane(
 
         Spacer(modifier = LayoutHeight(4.dp))
 
-        ProvideEmphasis(emphasis = EmphasisLevels().high) {
+        ProvideEmphasis(emphasis = MaterialTheme.emphasisLevels().high) {
             Text(
                 modifier = LayoutGravity.Center,
                 text = label,
@@ -301,7 +301,7 @@ private fun Summary(episode: Episode) {
             var expanded by state { false }
 
             Clickable(onClick = { expanded = !expanded }) {
-                ProvideEmphasis(emphasis = EmphasisLevels().high) {
+                ProvideEmphasis(emphasis = MaterialTheme.emphasisLevels().high) {
                     Text(
                         modifier = LayoutPadding(16.dp),
                         text = episode.summary ?: "No summary",
@@ -323,11 +323,11 @@ private fun Summary(episode: Episode) {
 @Composable
 private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
     Row {
-        ProvideEmphasis(emphasis = EmphasisLevels().high) {
+        ProvideEmphasis(emphasis = MaterialTheme.emphasisLevels().high) {
             Text(
                 modifier = LayoutPadding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp) +
                     LayoutGravity.Center +
-                    LayoutFlexible(flex = 1f),
+                    LayoutWeight(1f),
                 text = stringResource(R.string.episode_watches),
                 style = MaterialTheme.typography().subtitle1
             )
@@ -348,27 +348,31 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
 private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
     Surface {
         Row(modifier = LayoutPadding(16.dp, 8.dp, 16.dp, 8.dp) + LayoutSize.Min(40.dp)) {
-            ProvideEmphasis(emphasis = EmphasisLevels().high) {
+            ProvideEmphasis(emphasis = MaterialTheme.emphasisLevels().high) {
                 val formatter = TiviDateFormatterAmbient.current
                 Text(
-                    modifier = LayoutFlexible(1f) + LayoutGravity.Center,
+                    modifier = LayoutWeight(1f) + LayoutGravity.Center,
                     text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
                     style = MaterialTheme.typography().body2
                 )
             }
 
-            ProvideEmphasis(emphasis = EmphasisLevels().medium) {
+            ProvideEmphasis(emphasis = MaterialTheme.emphasisLevels().medium) {
                 if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
-                    VectorImage(
-                        id = R.drawable.ic_upload_24dp,
-                        modifier = LayoutPadding(start = 8.dp) + LayoutGravity.Center
+                    Box(
+                        modifier = drawVectorResource(R.drawable.ic_upload_24dp) +
+                            LayoutSize(24.dp, 24.dp) +
+                            LayoutPadding(start = 8.dp) +
+                            LayoutGravity.Center
                     )
                 }
 
                 if (episodeWatchEntry.pendingAction == PendingAction.DELETE) {
-                    VectorImage(
-                        id = R.drawable.ic_eye_off_24dp,
-                        modifier = LayoutPadding(start = 8.dp) + LayoutGravity.Center
+                    Box(
+                        modifier = drawVectorResource(R.drawable.ic_eye_off_24dp) +
+                            LayoutSize(24.dp, 24.dp) +
+                            LayoutPadding(start = 8.dp) +
+                            LayoutGravity.Center
                     )
                 } else Unit
             }
@@ -428,7 +432,7 @@ private fun EpisodeWatchSwipeBackground(
             )
 
             OnChildPositioned(onPositioned = { iconCenter = it.boundsInParent.center }) {
-                ProvideEmphasis(emphasis = EmphasisLevels().medium) {
+                ProvideEmphasis(emphasis = MaterialTheme.emphasisLevels().medium) {
                     VectorImage(
                         id = R.drawable.ic_delete_24,
                         modifier = LayoutPadding(end = 16.dp) + LayoutGravity.CenterEnd
@@ -466,7 +470,7 @@ fun MarkWatchedButton(
     modifier: Modifier = Modifier.None,
     actioner: (EpisodeDetailsAction) -> Unit
 ) {
-    ProvideEmphasis(EmphasisLevels().high) {
+    ProvideEmphasis(MaterialTheme.emphasisLevels().high) {
         FloatingActionButton(
             modifier = modifier,
             color = MaterialTheme.colors().secondary,
