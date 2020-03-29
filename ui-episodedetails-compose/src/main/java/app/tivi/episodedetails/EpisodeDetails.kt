@@ -485,6 +485,7 @@ fun MarkWatchedButton(
 ) {
     Button(
         modifier = modifier,
+        elevation = 0.dp, // force 0dp elevation due to b/152696056
         onClick = { actioner(AddEpisodeWatchAction) }
     ) {
         Text(text = stringResource(R.string.episode_mark_watched))
