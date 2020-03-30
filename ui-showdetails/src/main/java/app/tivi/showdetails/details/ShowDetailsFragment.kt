@@ -20,239 +20,42 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
-import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.core.net.toUri
-import androidx.fragment.app.FragmentTransaction
-import androidx.fragment.app.commit
-import androidx.fragment.app.commitNow
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import app.tivi.TiviFragmentWithBinding
-import app.tivi.common.epoxy.syncSpanSizes
-import app.tivi.data.entities.ActionDate
-import app.tivi.data.entities.Episode
-import app.tivi.data.entities.Season
-import app.tivi.data.entities.TiviShow
-import app.tivi.episodedetails.EpisodeDetailsFragment
-import app.tivi.extensions.awaitItemIdExists
-import app.tivi.extensions.awaitLayout
-import app.tivi.extensions.awaitScrollEnd
-import app.tivi.extensions.awaitTransitionComplete
-import app.tivi.extensions.findItemIdPosition
-import app.tivi.extensions.resolveThemeColor
-import app.tivi.extensions.scheduleStartPostponedTransitions
-import app.tivi.extensions.sharedElementHelperOf
-import app.tivi.extensions.smoothScrollToItemPosition
-import app.tivi.extensions.toActivityNavigatorExtras
-import app.tivi.extensions.updateConstraintSets
-import app.tivi.showdetails.details.databinding.FragmentShowDetailsBinding
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.widget.FrameLayout
+import app.tivi.TiviFragment
+import app.tivi.common.compose.observeWindowInsets
+import app.tivi.showdetails.details.view.ShowDetailsTextCreator
+import app.tivi.showdetails.details.view.composeShowDetails
+import app.tivi.util.TiviDateFormatter
 import com.airbnb.mvrx.fragmentViewModel
-import com.airbnb.mvrx.withState
-import dev.chrisbanes.insetter.doOnApplyWindowInsets
 import javax.inject.Inject
-import kotlinx.coroutines.launch
-import me.saket.inboxrecyclerview.dimming.TintPainter
-import me.saket.inboxrecyclerview.page.PageStateChangeCallbacks
 
-class ShowDetailsFragment : TiviFragmentWithBinding<FragmentShowDetailsBinding>() {
+class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.FactoryProvider {
     private val viewModel: ShowDetailsFragmentViewModel by fragmentViewModel()
 
     @Inject internal lateinit var showDetailsViewModelFactory: ShowDetailsFragmentViewModel.Factory
-    @Inject internal lateinit var controller: ShowDetailsEpoxyController
     @Inject internal lateinit var textCreator: ShowDetailsTextCreator
+    @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
 
-    private val backPressedCallback = object : OnBackPressedCallback(false) {
-        override fun handleOnBackPressed() {
-            requireBinding().detailsRv.collapse()
-        }
-    }
-
-    override fun createBinding(
+    override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): FragmentShowDetailsBinding {
-        return FragmentShowDetailsBinding.inflate(inflater, container, false)
-    }
+    ): View? {
+        return FrameLayout(requireContext()).apply {
+            layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
-    override fun onViewCreated(binding: FragmentShowDetailsBinding, savedInstanceState: Bundle?) {
-        binding.textCreator = textCreator
-
-        binding.detailsMotion.doOnApplyWindowInsets { v, insets, _ ->
-            (v as MotionLayout).updateConstraintSets {
-                constrainHeight(R.id.details_status_bar_anchor, insets.systemWindowInsetTop)
-            }
-        }
-
-        binding.detailsFollowFab.setOnClickListener {
-            viewModel.submitAction(FollowShowToggleAction)
-        }
-
-        binding.detailsToolbar.setNavigationOnClickListener {
-            findNavController().navigateUp() || requireActivity().onNavigateUp()
-        }
-
-        binding.detailsToolbar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.menu_refresh -> {
-                    viewModel.submitAction(RefreshAction)
-                    true
-                }
-                else -> false
-            }
-        }
-
-        viewModel.selectSubscribe(
-            viewLifecycleOwner,
-            ShowDetailsViewState::focusedSeason,
-            deliveryMode = uniqueOnly()
-        ) { focusedSeason ->
-            if (focusedSeason != null) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    val seasonItemId = generateSeasonItemId(focusedSeason.seasonId)
-                    val seasonItemPosition = controller.adapter.awaitItemIdExists(seasonItemId)
-                    binding.detailsRv.smoothScrollToItemPosition(seasonItemPosition)
-                }
-                viewModel.clearFocusedSeason()
-            }
-        }
-
-        viewModel.selectSubscribe(
-            viewLifecycleOwner,
-            ShowDetailsViewState::openEpisodeUiEffect,
-            deliveryMode = uniqueOnly()
-        ) { expandedEpisode ->
-            if (expandedEpisode is ExecutableOpenEpisodeUiEffect) {
-                // We can add the fragment to the pane now while waiting for any animations/
-                // scrolling to happen
-                val episodeFragment = EpisodeDetailsFragment.create(expandedEpisode.episodeId)
-                childFragmentManager.commitNow {
-                    setTransition(FragmentTransaction.TRANSIT_NONE)
-                    replace(R.id.details_expanded_pane, episodeFragment)
-                }
-
-                viewLifecycleOwner.lifecycleScope.launch {
-                    val seasonItemId = generateSeasonItemId(expandedEpisode.seasonId)
-                    val episodeItemId = generateEpisodeItemId(expandedEpisode.episodeId)
-
-                    binding.detailsMotion.transitionToState(R.id.show_details_closed)
-                    binding.detailsMotion.awaitTransitionComplete(R.id.show_details_closed)
-
-                    controller.adapter.awaitItemIdExists(episodeItemId)
-                    val seasonItemPosition = controller.adapter.findItemIdPosition(seasonItemId)
-
-                    binding.detailsRv.smoothScrollToItemPosition(seasonItemPosition)
-                    binding.detailsRv.awaitScrollEnd()
-
-                    episodeFragment.requireView().awaitLayout()
-                    binding.detailsRv.expandItem(episodeItemId)
-                }
-
-                viewModel.clearExpandedEpisode()
-            }
-        }
-
-        controller.callbacks = object : ShowDetailsEpoxyController.Callbacks {
-            override fun onRelatedShowClicked(show: TiviShow, itemView: View) {
-                findNavController().navigate(
-                    "app.tivi://show/${show.id}".toUri(),
-                    null,
-                    sharedElementHelperOf(itemView to "poster")
-                        .toActivityNavigatorExtras(requireActivity()))
-            }
-
-            override fun onEpisodeClicked(episode: Episode, itemView: View) {
-                viewModel.submitAction(OpenEpisodeDetails(episode.id))
-            }
-
-            override fun onMarkSeasonUnwatched(season: Season) {
-                viewModel.submitAction(MarkSeasonUnwatchedAction(season.id))
-            }
-
-            override fun onMarkSeasonWatched(season: Season, onlyAired: Boolean, date: ActionDate) {
-                viewModel.submitAction(MarkSeasonWatchedAction(season.id, onlyAired, date))
-            }
-
-            override fun onExpandSeason(season: Season, itemView: View) {
-                viewModel.submitAction(ChangeSeasonExpandedAction(season.id, true))
-            }
-
-            override fun onCollapseSeason(season: Season, itemView: View) {
-                viewModel.submitAction(ChangeSeasonExpandedAction(season.id, false))
-            }
-
-            override fun onMarkSeasonFollowed(season: Season) {
-                viewModel.submitAction(ChangeSeasonFollowedAction(season.id, true))
-            }
-
-            override fun onMarkSeasonIgnored(season: Season) {
-                viewModel.submitAction(ChangeSeasonFollowedAction(season.id, false))
-            }
-
-            override fun onMarkPreviousSeasonsIgnored(season: Season) {
-                viewModel.submitAction(UnfollowPreviousSeasonsFollowedAction(season.id))
-            }
-        }
-
-        binding.detailsRv.apply {
-            adapter = controller.adapter
-            syncSpanSizes(controller)
-            setHasFixedSize(true)
-
-            tintPainter = TintPainter.completeList(
-                context.resolveThemeColor(R.attr.colorSurface),
-                opacity = 0.7f
+            composeShowDetails(
+                viewLifecycleOwner,
+                viewModel.observeAsLiveData(),
+                observeWindowInsets(),
+                viewModel::submitAction,
+                tiviDateFormatter
             )
-            expandablePage = binding.detailsExpandedPane
         }
-
-        // Add a listener to enabled/disable the back press callback, depending on the expanded
-        // pane state
-        binding.detailsExpandedPane.addStateChangeCallbacks(object : PageStateChangeCallbacks {
-            override fun onPageAboutToCollapse(collapseAnimDuration: Long) {}
-
-            override fun onPageAboutToExpand(expandAnimDuration: Long) {}
-
-            override fun onPageCollapsed() {
-                backPressedCallback.isEnabled = false
-
-                // Remove the episode details fragment to free-up resources
-                val episodeFrag = childFragmentManager.findFragmentById(R.id.details_expanded_pane)
-                if (episodeFrag != null) {
-                    childFragmentManager.commit {
-                        setTransition(FragmentTransaction.TRANSIT_NONE)
-                        remove(episodeFrag)
-                    }
-                }
-
-                // Re-enable MotionLayout's motion handling
-                binding.detailsMotion.isInteractionEnabled = true
-            }
-
-            override fun onPageExpanded() {
-                backPressedCallback.isEnabled = true
-                // Disable MotionLayout's motion handling while the pane is expanded
-                binding.detailsMotion.isInteractionEnabled = false
-                binding.detailsMotion.requestLayout()
-            }
-        })
-
-        requireActivity().onBackPressedDispatcher
-            .addCallback(viewLifecycleOwner, backPressedCallback)
     }
 
-    override fun invalidate(binding: FragmentShowDetailsBinding) = withState(viewModel) { state ->
-        if (binding.state == null) {
-            // First time we've had state, start any postponed transitions
-            scheduleStartPostponedTransitions()
-        }
-        binding.state = state
-        controller.state = state
-    }
+    override fun invalidate() = Unit
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        controller.clear()
-    }
+    override fun provideFactory(): ShowDetailsFragmentViewModel.Factory = showDetailsViewModelFactory
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails.details
+package app.tivi.showdetails.details.view
 
 import android.content.Context
 import android.graphics.Color
@@ -39,7 +39,7 @@ import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.TextStyle
 
-internal class ShowDetailsTextCreator @Inject constructor(
+class ShowDetailsTextCreator @Inject constructor(
     @PerActivity private val context: Context,
     private val tiviDateFormatter: TiviDateFormatter
 ) {
@@ -53,15 +53,11 @@ internal class ShowDetailsTextCreator @Inject constructor(
             text.append(context.getString(R.string.season_summary_watched, watched))
         }
         if (toWatch > 0) {
-            if (text.isNotEmpty()) {
-                text.append(" \u2022 ")
-            }
+            if (text.isNotEmpty()) text.append(" \u2022 ")
             text.append(context.getString(R.string.season_summary_to_watch, toWatch))
         }
         if (toAir > 0) {
-            if (text.isNotEmpty()) {
-                text.append(" \u2022 ")
-            }
+            if (text.isNotEmpty()) text.append(" \u2022 ")
             text.append(context.getString(R.string.season_summary_to_air, toAir))
 
             val nextToAir = season.nextToAir

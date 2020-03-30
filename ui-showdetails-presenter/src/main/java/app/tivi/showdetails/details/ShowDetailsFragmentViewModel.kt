@@ -16,6 +16,7 @@
 
 package app.tivi.showdetails.details
 
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewModelScope
 import app.tivi.TiviMvRxViewModel
 import app.tivi.domain.interactors.ChangeSeasonFollowStatus
@@ -50,7 +51,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
-internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
+class ShowDetailsFragmentViewModel @AssistedInject constructor(
     @Assisted initialState: ShowDetailsViewState,
     private val updateShowDetails: UpdateShowDetails,
     observeShowDetails: ObserveShowDetails,
@@ -248,14 +249,18 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
         fun create(initialState: ShowDetailsViewState): ShowDetailsFragmentViewModel
     }
 
+    interface FactoryProvider {
+        fun provideFactory(): Factory
+    }
+
     companion object : MvRxViewModelFactory<ShowDetailsFragmentViewModel, ShowDetailsViewState> {
         override fun create(
             viewModelContext: ViewModelContext,
             state: ShowDetailsViewState
         ): ShowDetailsFragmentViewModel? {
-            val f: ShowDetailsFragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return f.showDetailsViewModelFactory.create(state).apply {
-                val args = f.requireArguments()
+            val fragment: Fragment = (viewModelContext as FragmentViewModelContext).fragment()
+            return (fragment as FactoryProvider).provideFactory().create(state).apply {
+                val args = fragment.requireArguments()
 
                 // If the fragment arguments contain an episode id, deep link into it
                 if (args.containsKey("episode_id")) {
@@ -267,7 +272,7 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
         override fun initialState(
             viewModelContext: ViewModelContext
         ): ShowDetailsViewState? {
-            val f: ShowDetailsFragment = (viewModelContext as FragmentViewModelContext).fragment()
+            val f: Fragment = (viewModelContext as FragmentViewModelContext).fragment()
             val args = f.requireArguments()
             return ShowDetailsViewState(showId = args.getLong("show_id"))
         }

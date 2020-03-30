@@ -43,13 +43,13 @@ abstract class TiviMvRxViewModel<S : MvRxState>(
 
     private val liveData by lazy(LazyThreadSafetyMode.NONE) { MvRxStateLiveData() }
 
-    protected suspend inline fun <T> Flow<T>.execute(
-        crossinline stateReducer: S.(Async<T>) -> S
+    protected suspend fun <T> Flow<T>.execute(
+        stateReducer: S.(Async<T>) -> S
     ) = execute({ it }, stateReducer)
 
-    protected suspend inline fun <T, V> Flow<T>.execute(
-        crossinline mapper: (T) -> V,
-        crossinline stateReducer: S.(Async<V>) -> S
+    protected suspend fun <T, V> Flow<T>.execute(
+        mapper: (T) -> V,
+        stateReducer: S.(Async<V>) -> S
     ) {
         setState { stateReducer(Loading()) }
 

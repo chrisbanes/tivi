@@ -22,7 +22,7 @@
     <data>
         <variable
             name="textCreator"
-            type="app.tivi.showdetails.details.ShowDetailsTextCreator" />
+            type="app.tivi.showdetails.details.view.ShowDetailsTextCreator" />
 
         <variable
             name="state"

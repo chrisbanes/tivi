@@ -43,37 +43,21 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    buildFeatures {
-        dataBinding true
-    }
 }
 
 dependencies {
     implementation project(':base')
     implementation project(':base-android')
-    implementation project(':data')
-
+    implementation project(':domain')
     implementation project(':common-ui-view')
+    implementation project(':common-databinding')
 
-    implementation project(':ui-showdetails-view')
-    api project(':ui-showdetails-presenter')
-
-    implementation project(':ui-episodedetails')
-
-    implementation Libs.AndroidX.Lifecycle.extensions
+    api Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.viewmodelKtx
 
-    implementation Libs.AndroidX.appcompat
+    implementation Libs.AndroidX.Paging.runtime
+
     implementation Libs.AndroidX.coreKtx
-    implementation Libs.AndroidX.emoji
-    implementation Libs.AndroidX.Fragment.fragment
-    implementation Libs.AndroidX.Fragment.fragmentKtx
-    implementation Libs.AndroidX.Navigation.fragment
-
-    implementation Libs.Insetter.ktx
-
-    implementation Libs.Google.material
 
     implementation Libs.Dagger.androidSupport
     kapt Libs.Dagger.compiler

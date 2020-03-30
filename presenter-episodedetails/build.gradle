@@ -51,7 +51,7 @@ dependencies {
     implementation project(':domain')
     implementation project(':common-ui-view')
 
-    implementation Libs.AndroidX.Lifecycle.extensions
+    api Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.viewmodelKtx
 
     implementation Libs.Dagger.dagger
