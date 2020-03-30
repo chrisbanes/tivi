@@ -28,22 +28,29 @@ import androidx.ui.unit.toRect
 import kotlin.math.pow
 
 @Composable
-fun Modifier.gradientScrim(baseColor: Color, numStops: Int = 16): Modifier {
-    val paint = remember { Paint() }
-    return Modifier.drawBehind { canvas, parentSize ->
-        val alpha = baseColor.alpha
+fun Modifier.gradientScrim(
+    color: Color,
+    numStops: Int = 16
+): Modifier {
+    val paint = remember {
+        Paint().apply {
+            isAntiAlias = true
+        }
+    }
+    return Modifier.drawBehind { canvas, size ->
+        val baseAlpha = color.alpha
         val colors = List(numStops) { i ->
             val x = i * 1f / (numStops - 1)
-            val opacity = x.toDouble().pow(3.0).toFloat()
-            baseColor.copy(alpha = alpha * opacity)
+            val opacity = x.pow(3.0f)
+            color.copy(alpha = baseAlpha * opacity)
         }
 
         paint.shader = LinearGradientShader(
             Offset.zero,
-            Offset(0f, parentSize.height.value),
+            Offset(0f, size.height.value),
             colors
         )
 
-        canvas.drawRect(parentSize.toRect(), paint)
+        canvas.drawRect(size.toRect(), paint)
     }
 }

@@ -31,6 +31,7 @@ import androidx.lifecycle.LiveData
 import androidx.ui.animation.ColorPropKey
 import androidx.ui.animation.Transition
 import androidx.ui.core.Alignment
+import androidx.ui.core.ConfigurationAmbient
 import androidx.ui.core.DensityAmbient
 import androidx.ui.core.DrawModifier
 import androidx.ui.core.Modifier
@@ -43,6 +44,7 @@ import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.contentColor
 import androidx.ui.foundation.drawBackground
 import androidx.ui.foundation.shape.RectangleShape
+import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Canvas
 import androidx.ui.graphics.Color
@@ -90,7 +92,6 @@ import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.WrapWithAmbients
 import app.tivi.common.compose.boundsInParent
 import app.tivi.common.compose.center
-import app.tivi.common.compose.gradientScrim
 import app.tivi.common.compose.observe
 import app.tivi.common.compose.observeInsets
 import app.tivi.common.compose.padding
@@ -102,8 +103,8 @@ import app.tivi.data.entities.Season
 import app.tivi.episodedetails.compose.R
 import app.tivi.ui.animations.lerp
 import app.tivi.util.TiviDateFormatter
-import kotlin.math.hypot
 import org.threeten.bp.OffsetDateTime
+import kotlin.math.hypot
 
 /**
  * This is a bit of hack. I can't make `ui-episodedetails` depend on any of the compose libraries,
@@ -227,10 +228,13 @@ private fun Backdrop(season: Season, episode: Episode) {
                 )
             }
 
-            Box(modifier = Modifier.matchParent().gradientScrim(baseColor = Color.Black))
-
             Column(
-                modifier = Modifier.padding(all = 16.dp).gravity(Alignment.BottomStart)
+                modifier = Modifier.gravity(Alignment.BottomStart)
+                    .drawBackground(
+                        color = Color.Black.copy(alpha = 0.65f),
+                        shape = RoundedCornerShape(topRight = 8.dp)
+                    )
+                    .padding(all = 16.dp)
             ) {
                 val type = MaterialTheme.typography
                 val epNumber = episode.number
@@ -239,9 +243,11 @@ private fun Backdrop(season: Season, episode: Episode) {
                 ProvideContentColor(color = Color.White) {
                     if (seasonNumber != null && epNumber != null) {
                         ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
+                            @Suppress("DEPRECATION")
+                            val locale = ConfigurationAmbient.current.locale
                             Text(
                                 text = stringResource(R.string.season_episode_number,
-                                    seasonNumber, epNumber).toUpperCase(),
+                                    seasonNumber, epNumber).toUpperCase(locale),
                                 style = MaterialTheme.typography.overline
                                     .copy(color = contentColor())
                             )
