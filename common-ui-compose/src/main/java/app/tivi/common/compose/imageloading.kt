@@ -45,10 +45,10 @@ import app.tivi.ui.graphics.ImageLoadingColorMatrix
 import coil.Coil
 import coil.api.newGetBuilder
 import coil.size.Scale
+import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 private enum class ImageLoadState {
     Loaded,

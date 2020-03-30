@@ -101,8 +101,8 @@ import app.tivi.data.entities.Season
 import app.tivi.episodedetails.compose.R
 import app.tivi.ui.animations.lerp
 import app.tivi.util.TiviDateFormatter
-import org.threeten.bp.OffsetDateTime
 import kotlin.math.hypot
+import org.threeten.bp.OffsetDateTime
 
 /**
  * This is a bit of hack. I can't make `ui-episodedetails` depend on any of the compose libraries,
