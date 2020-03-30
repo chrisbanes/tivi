@@ -16,6 +16,7 @@
 
 package app.tivi.episodedetails
 
+import android.os.Build
 import android.view.ViewGroup
 import androidx.animation.transitionDefinition
 import androidx.annotation.DrawableRes
@@ -484,7 +485,7 @@ fun MarkWatchedButton(
 ) {
     Button(
         modifier = modifier,
-        elevation = 0.dp, // force 0dp elevation due to b/152696056
+        elevation = if (Build.VERSION.SDK_INT != 28) 2.dp else 0.dp, // b/152696056
         onClick = { actioner(AddEpisodeWatchAction) }
     ) {
         Text(text = stringResource(R.string.episode_mark_watched))
