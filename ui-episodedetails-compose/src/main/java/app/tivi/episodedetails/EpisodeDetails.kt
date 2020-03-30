@@ -103,8 +103,8 @@ import app.tivi.data.entities.Season
 import app.tivi.episodedetails.compose.R
 import app.tivi.ui.animations.lerp
 import app.tivi.util.TiviDateFormatter
-import org.threeten.bp.OffsetDateTime
 import kotlin.math.hypot
+import org.threeten.bp.OffsetDateTime
 
 /**
  * This is a bit of hack. I can't make `ui-episodedetails` depend on any of the compose libraries,
@@ -494,7 +494,12 @@ fun MarkWatchedButton(
         elevation = if (Build.VERSION.SDK_INT != 28) 2.dp else 0.dp, // b/152696056
         onClick = { actioner(AddEpisodeWatchAction) }
     ) {
-        Text(text = stringResource(R.string.episode_mark_watched))
+        ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
+            Text(
+                text = stringResource(R.string.episode_mark_watched),
+                style = MaterialTheme.typography.button.copy(color = contentColor())
+            )
+        }
     }
 }
 
@@ -507,7 +512,12 @@ fun AddWatchButton(
         modifier = modifier,
         onClick = { actioner(AddEpisodeWatchAction) }
     ) {
-        Text(text = stringResource(R.string.episode_add_watch))
+        ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
+            Text(
+                text = stringResource(R.string.episode_add_watch),
+                style = MaterialTheme.typography.button.copy(color = contentColor())
+            )
+        }
     }
 }
 
