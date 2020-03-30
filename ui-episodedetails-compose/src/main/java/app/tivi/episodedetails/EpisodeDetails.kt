@@ -16,6 +16,7 @@
 
 package app.tivi.episodedetails
 
+import android.os.Build
 import android.view.ViewGroup
 import androidx.animation.transitionDefinition
 import androidx.annotation.DrawableRes
@@ -29,40 +30,45 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.ui.animation.ColorPropKey
 import androidx.ui.animation.Transition
+import androidx.ui.core.Alignment
+import androidx.ui.core.ConfigurationAmbient
 import androidx.ui.core.DensityAmbient
 import androidx.ui.core.DrawModifier
 import androidx.ui.core.Modifier
-import androidx.ui.core.OnChildPositioned
-import androidx.ui.core.Text
+import androidx.ui.core.onPositioned
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.Clickable
-import androidx.ui.foundation.DrawBackground
 import androidx.ui.foundation.ProvideContentColor
+import androidx.ui.foundation.Text
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.contentColor
+import androidx.ui.foundation.drawBackground
+import androidx.ui.foundation.shape.RectangleShape
+import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Canvas
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.Paint
 import androidx.ui.graphics.withSave
 import androidx.ui.layout.Column
-import androidx.ui.layout.Container
-import androidx.ui.layout.LayoutAspectRatio
-import androidx.ui.layout.LayoutGravity
-import androidx.ui.layout.LayoutHeight
-import androidx.ui.layout.LayoutPadding
-import androidx.ui.layout.LayoutSize
+import androidx.ui.layout.ColumnAlign
 import androidx.ui.layout.Row
+import androidx.ui.layout.RowAlign
 import androidx.ui.layout.Spacer
 import androidx.ui.layout.Stack
-import androidx.ui.material.EmphasisLevels
-import androidx.ui.material.FloatingActionButton
+import androidx.ui.layout.aspectRatio
+import androidx.ui.layout.fillMaxSize
+import androidx.ui.layout.padding
+import androidx.ui.layout.preferredHeight
+import androidx.ui.layout.preferredSizeIn
+import androidx.ui.material.Button
+import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.IconButton
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.OutlinedButton
 import androidx.ui.material.ProvideEmphasis
-import androidx.ui.material.ripple.Ripple
-import androidx.ui.material.surface.Surface
+import androidx.ui.material.Surface
+import androidx.ui.material.ripple.ripple
 import androidx.ui.res.stringResource
 import androidx.ui.text.style.TextOverflow
 import androidx.ui.tooling.preview.Preview
@@ -86,9 +92,9 @@ import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.WrapWithAmbients
 import app.tivi.common.compose.boundsInParent
 import app.tivi.common.compose.center
-import app.tivi.common.compose.gradientScrimDrawModifier
 import app.tivi.common.compose.observe
 import app.tivi.common.compose.observeInsets
+import app.tivi.common.compose.padding
 import app.tivi.common.compose.setContentWithLifecycle
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
@@ -147,16 +153,22 @@ private fun EpisodeDetails(
                     val watches = viewState.watches
 
                     if (viewState.canAddEpisodeWatch) {
-                        Spacer(modifier = LayoutHeight(8.dp))
+                        Spacer(modifier = Modifier.preferredHeight(8.dp))
 
                         if (watches.isEmpty()) {
-                            MarkWatchedButton(modifier = LayoutGravity.Center, actioner = actioner)
+                            MarkWatchedButton(
+                                modifier = Modifier.gravity(ColumnAlign.Center),
+                                actioner = actioner
+                            )
                         } else {
-                            AddWatchButton(modifier = LayoutGravity.Center, actioner = actioner)
+                            AddWatchButton(
+                                modifier = Modifier.gravity(ColumnAlign.Center),
+                                actioner = actioner
+                            )
                         }
                     }
 
-                    Spacer(modifier = LayoutHeight(8.dp))
+                    Spacer(modifier = Modifier.preferredHeight(16.dp))
 
                     if (watches.isNotEmpty()) {
                         var openDialog by state { false }
@@ -180,7 +192,6 @@ private fun EpisodeDetails(
 
                     watches.forEach { watch ->
                         SwipeToDismiss(
-                            // TODO: this should change to START eventually
                             swipeDirections = listOf(SwipeDirection.START),
                             onSwipeComplete = {
                                 actioner(RemoveEpisodeWatchAction(watch.id))
@@ -196,7 +207,9 @@ private fun EpisodeDetails(
                     }
 
                     with(DensityAmbient.current) {
-                        Spacer(modifier = LayoutHeight(InsetsAmbient.current.bottom.toDp()))
+                        Spacer(
+                            modifier = Modifier.preferredHeight(InsetsAmbient.current.bottom.toDp())
+                        )
                     }
                 }
             }
@@ -206,33 +219,43 @@ private fun EpisodeDetails(
 
 @Composable
 private fun Backdrop(season: Season, episode: Episode) {
-    Surface(modifier = LayoutAspectRatio(16f / 10)) {
+    Surface(modifier = Modifier.aspectRatio(16f / 10)) {
         Stack {
             if (episode.tmdbBackdropPath != null) {
-                LoadNetworkImageWithCrossfade(modifier = LayoutGravity.Stretch, data = episode)
+                LoadNetworkImageWithCrossfade(
+                    modifier = Modifier.matchParent(),
+                    data = episode
+                )
             }
 
-            Box(modifier = LayoutGravity.Stretch +
-                gradientScrimDrawModifier(baseColor = Color.Black))
-
-            Column(modifier = LayoutPadding(all = 16.dp) + LayoutGravity.BottomStart) {
-                val type = MaterialTheme.typography()
+            Column(
+                modifier = Modifier.gravity(Alignment.BottomStart)
+                    .drawBackground(
+                        color = Color.Black.copy(alpha = 0.65f),
+                        shape = RoundedCornerShape(topRight = 8.dp)
+                    )
+                    .padding(all = 16.dp)
+            ) {
+                val type = MaterialTheme.typography
                 val epNumber = episode.number
                 val seasonNumber = season.number
 
                 ProvideContentColor(color = Color.White) {
                     if (seasonNumber != null && epNumber != null) {
-                        ProvideEmphasis(emphasis = EmphasisLevels().medium) {
+                        ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
+                            @Suppress("DEPRECATION")
+                            val locale = ConfigurationAmbient.current.locale
                             Text(
                                 text = stringResource(R.string.season_episode_number,
-                                    seasonNumber, epNumber).toUpperCase(),
-                                style = MaterialTheme.typography().overline.copy(color = contentColor())
+                                    seasonNumber, epNumber).toUpperCase(locale),
+                                style = MaterialTheme.typography.overline
+                                    .copy(color = contentColor())
                             )
                         }
-                        Spacer(modifier = LayoutHeight(4.dp))
+                        Spacer(modifier = Modifier.preferredHeight(4.dp))
                     }
 
-                    ProvideEmphasis(emphasis = EmphasisLevels().high) {
+                    ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
                         Text(
                             text = episode.title ?: "No title",
                             style = type.h6.copy(color = contentColor())
@@ -249,7 +272,7 @@ private fun InfoPanes(episode: Episode) {
     Row {
         episode.traktRating?.let { rating ->
             InfoPane(
-                modifier = LayoutFlexible(1f),
+                modifier = Modifier.weight(1f),
                 iconResId = R.drawable.ic_details_rating,
                 label = stringResource(R.string.trakt_rating_text, rating * 10f)
             )
@@ -258,7 +281,7 @@ private fun InfoPanes(episode: Episode) {
         episode.firstAired?.let { firstAired ->
             val formatter = TiviDateFormatterAmbient.current
             InfoPane(
-                modifier = LayoutFlexible(1f),
+                modifier = Modifier.weight(1f),
                 iconResId = R.drawable.ic_details_date,
                 label = formatter.formatShortRelativeTime(firstAired)
             )
@@ -272,21 +295,21 @@ private fun InfoPane(
     @DrawableRes iconResId: Int,
     label: String
 ) {
-    Column(modifier = modifier + LayoutPadding(all = 16.dp)) {
-        ProvideEmphasis(emphasis = EmphasisLevels().medium) {
+    Column(modifier = modifier.padding(all = 16.dp)) {
+        ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
             VectorImage(
-                modifier = LayoutGravity.Center,
+                modifier = Modifier.gravity(ColumnAlign.Center),
                 id = iconResId
             )
         }
 
-        Spacer(modifier = LayoutHeight(4.dp))
+        Spacer(modifier = Modifier.preferredHeight(4.dp))
 
-        ProvideEmphasis(emphasis = EmphasisLevels().high) {
+        ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
             Text(
-                modifier = LayoutGravity.Center,
+                modifier = Modifier.gravity(ColumnAlign.Center),
                 text = label,
-                style = MaterialTheme.typography().body1
+                style = MaterialTheme.typography.body1
             )
         }
     }
@@ -296,23 +319,20 @@ private fun InfoPane(
 private fun Summary(episode: Episode) {
     var canExpand by stateFor(episode) { true }
 
-    Ripple(bounded = true, enabled = canExpand) {
-        Container {
-            var expanded by state { false }
+    Box(modifier = Modifier.ripple(bounded = true, enabled = canExpand)) {
+        var expanded by state { false }
 
-            Clickable(onClick = { expanded = !expanded }) {
-                ProvideEmphasis(emphasis = EmphasisLevels().high) {
-                    Text(
-                        modifier = LayoutPadding(16.dp),
-                        text = episode.summary ?: "No summary",
-                        style = MaterialTheme.typography().body2,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = if (expanded) Int.MAX_VALUE else 4
-                    ) {
-                        if (!expanded) {
-                            // TODO: this is currently always false /shruggie
-                            // canExpand = it.hasVisualOverflow
-                        }
+        Clickable(onClick = { expanded = !expanded }) {
+            ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
+                Text(
+                    modifier = Modifier.padding(16.dp),
+                    text = episode.summary ?: "No summary",
+                    style = MaterialTheme.typography.body2,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = if (expanded) Int.MAX_VALUE else 4
+                ) {
+                    if (!expanded) {
+                        canExpand = it.hasVisualOverflow
                     }
                 }
             }
@@ -323,19 +343,19 @@ private fun Summary(episode: Episode) {
 @Composable
 private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
     Row {
-        ProvideEmphasis(emphasis = EmphasisLevels().high) {
+        ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
             Text(
-                modifier = LayoutPadding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp) +
-                    LayoutGravity.Center +
-                    LayoutFlexible(flex = 1f),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    .gravity(RowAlign.Center)
+                    .weight(1f),
                 text = stringResource(R.string.episode_watches),
-                style = MaterialTheme.typography().subtitle1
+                style = MaterialTheme.typography.subtitle1
             )
         }
 
-        ProvideEmphasis(MaterialTheme.emphasisLevels().disabled) {
+        ProvideEmphasis(EmphasisAmbient.current.disabled) {
             IconButton(
-                modifier = LayoutPadding(end = 4.dp),
+                modifier = Modifier.padding(end = 4.dp),
                 onClick = { onSweepWatchesClick() }
             ) {
                 VectorImage(id = R.drawable.ic_delete_sweep_24)
@@ -347,30 +367,33 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
 @Composable
 private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
     Surface {
-        Row(modifier = LayoutPadding(16.dp, 8.dp, 16.dp, 8.dp) + LayoutSize.Min(40.dp)) {
-            ProvideEmphasis(emphasis = EmphasisLevels().high) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                .preferredSizeIn(minWidth = 40.dp, minHeight = 40.dp)
+        ) {
+            ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
                 val formatter = TiviDateFormatterAmbient.current
                 Text(
-                    modifier = LayoutFlexible(1f) + LayoutGravity.Center,
+                    modifier = Modifier.weight(1f).gravity(RowAlign.Center),
                     text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
-                    style = MaterialTheme.typography().body2
+                    style = MaterialTheme.typography.body2
                 )
             }
 
-            ProvideEmphasis(emphasis = EmphasisLevels().medium) {
+            ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
                 if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
                     VectorImage(
-                        id = R.drawable.ic_upload_24dp,
-                        modifier = LayoutPadding(start = 8.dp) + LayoutGravity.Center
+                        R.drawable.ic_upload_24dp,
+                        modifier = Modifier.padding(start = 8.dp).gravity(RowAlign.Center)
                     )
                 }
 
                 if (episodeWatchEntry.pendingAction == PendingAction.DELETE) {
                     VectorImage(
-                        id = R.drawable.ic_eye_off_24dp,
-                        modifier = LayoutPadding(start = 8.dp) + LayoutGravity.Center
+                        R.drawable.ic_eye_off_24dp,
+                        modifier = Modifier.padding(start = 8.dp).gravity(RowAlign.Center)
                     )
-                } else Unit
+                }
             }
         }
     }
@@ -391,8 +414,8 @@ private fun EpisodeWatchSwipeBackground(
 
     // Note: can't reference these directly in transitionDefinition {} as
     // it's not @Composable
-    val secondary = MaterialTheme.colors().error.copy(alpha = 0.5f)
-    val default = MaterialTheme.colors().onSurface.copy(alpha = 0.2f)
+    val secondary = MaterialTheme.colors.error.copy(alpha = 0.5f)
+    val default = MaterialTheme.colors.onSurface.copy(alpha = 0.2f)
 
     val transition = remember(secondary, default) {
         transitionDefinition {
@@ -414,12 +437,12 @@ private fun EpisodeWatchSwipeBackground(
         toState = wouldCompleteOnRelease
     ) { transitionState ->
         Stack(
-            modifier = LayoutSize.Fill +
-                DrawBackground(MaterialTheme.colors().onSurface.copy(alpha = 0.2f))
+            Modifier.fillMaxSize()
+                .drawBackground(MaterialTheme.colors.onSurface.copy(alpha = 0.2f), RectangleShape)
         ) {
             // A simple box to draw the growing circle, which emanates from behind the icon
             Box(
-                modifier = LayoutSize.Fill +
+                modifier = Modifier.fillMaxSize() +
                     CircleGrowDrawModifier(
                         transitionState[color],
                         iconCenter.toOffset(),
@@ -427,13 +450,13 @@ private fun EpisodeWatchSwipeBackground(
                     )
             )
 
-            OnChildPositioned(onPositioned = { iconCenter = it.boundsInParent.center }) {
-                ProvideEmphasis(emphasis = EmphasisLevels().medium) {
-                    VectorImage(
-                        id = R.drawable.ic_delete_24,
-                        modifier = LayoutPadding(end = 16.dp) + LayoutGravity.CenterEnd
-                    )
-                }
+            ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
+                VectorImage(
+                    id = R.drawable.ic_delete_24,
+                    modifier = Modifier.onPositioned { iconCenter = it.boundsInParent.center }
+                        .padding(0.dp, 0.dp, end = 16.dp, bottom = 0.dp)
+                        .gravity(Alignment.CenterEnd)
+                )
             }
         }
     }
@@ -466,15 +489,17 @@ fun MarkWatchedButton(
     modifier: Modifier = Modifier.None,
     actioner: (EpisodeDetailsAction) -> Unit
 ) {
-    ProvideEmphasis(EmphasisLevels().high) {
-        FloatingActionButton(
-            modifier = modifier,
-            color = MaterialTheme.colors().secondary,
-            text = stringResource(R.string.episode_mark_watched),
-            textStyle = MaterialTheme.typography().button
-                .copy(color = MaterialTheme.colors().onSecondary),
-            onClick = { actioner(AddEpisodeWatchAction) }
-        )
+    Button(
+        modifier = modifier,
+        elevation = if (Build.VERSION.SDK_INT != 28) 2.dp else 0.dp, // b/152696056
+        onClick = { actioner(AddEpisodeWatchAction) }
+    ) {
+        ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
+            Text(
+                text = stringResource(R.string.episode_mark_watched),
+                style = MaterialTheme.typography.button.copy(color = contentColor())
+            )
+        }
     }
 }
 
@@ -487,7 +512,12 @@ fun AddWatchButton(
         modifier = modifier,
         onClick = { actioner(AddEpisodeWatchAction) }
     ) {
-        Text(text = stringResource(R.string.episode_add_watch))
+        ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
+            Text(
+                text = stringResource(R.string.episode_add_watch),
+                style = MaterialTheme.typography.button.copy(color = contentColor())
+            )
+        }
     }
 }
 

@@ -27,13 +27,15 @@ import androidx.compose.stateFor
 import androidx.core.graphics.drawable.toBitmap
 import androidx.ui.animation.Transition
 import androidx.ui.core.Modifier
-import androidx.ui.core.OnChildPositioned
-import androidx.ui.core.toModifier
+import androidx.ui.core.onChildPositioned
+import androidx.ui.core.onPositioned
+import androidx.ui.core.paint
 import androidx.ui.foundation.Box
 import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Canvas
-import androidx.ui.graphics.Image
+import androidx.ui.graphics.ImageAsset
 import androidx.ui.graphics.Paint
+import androidx.ui.graphics.asImageAsset
 import androidx.ui.graphics.painter.ImagePainter
 import androidx.ui.graphics.painter.Painter
 import androidx.ui.unit.IntPx
@@ -94,37 +96,36 @@ fun LoadNetworkImageWithCrossfade(
     data: Any
 ) {
     var childSize by state { IntPxSize(IntPx.Zero, IntPx.Zero) }
+    var imgLoadState by stateFor(data, childSize) { ImageLoadState.Empty }
 
-    OnChildPositioned(onPositioned = { childSize = it.size }) {
-        var imgLoadState by stateFor(data, childSize) { ImageLoadState.Empty }
-
-        Transition(
-            definition = imageSaturationTransitionDef,
-            toState = imgLoadState
-        ) { transitionState ->
-            val image = if (childSize.width > IntPx.Zero && childSize.height > IntPx.Zero) {
-                // If we have a size, we can now load the image using those bounds...
-                loadImage(data, childSize) {
-                    // Once loaded, update the load state
-                    imgLoadState = ImageLoadState.Loaded
-                }
-            } else null
-
-            if (image != null) {
-                // Create and update the ImageLoadingColorMatrix from the transition state
-                val matrix = remember(image) { ImageLoadingColorMatrix() }
-                matrix.saturationFraction = transitionState[saturation]
-                matrix.alphaFraction = transitionState[alpha]
-                matrix.brightnessFraction = transitionState[brightness]
-
-                // Unfortunately ColorMatrixColorFilter is not mutable so we have to create a new
-                // one every time
-                val cf = ColorMatrixColorFilter(matrix)
-                Box(modifier = modifier + AndroidColorMatrixImagePainter(image, cf).toModifier())
-            } else {
-                Box(modifier = modifier)
+    Transition(
+        definition = imageSaturationTransitionDef,
+        toState = imgLoadState
+    ) { transitionState ->
+        val image = if (childSize.width > IntPx.Zero && childSize.height > IntPx.Zero) {
+            // If we have a size, we can now load the image using those bounds...
+            loadImage(data, childSize) {
+                // Once loaded, update the load state
+                imgLoadState = ImageLoadState.Loaded
             }
+        } else null
+
+        var childModifier = modifier.onPositioned { childSize = it.size }
+
+        if (image != null) {
+            // Create and update the ImageLoadingColorMatrix from the transition state
+            val matrix = remember(image) { ImageLoadingColorMatrix() }
+            matrix.saturationFraction = transitionState[saturation]
+            matrix.alphaFraction = transitionState[alpha]
+            matrix.brightnessFraction = transitionState[brightness]
+
+            // Unfortunately ColorMatrixColorFilter is not mutable so we have to create a new
+            // instance every time
+            val cf = ColorMatrixColorFilter(matrix)
+            childModifier = childModifier.paint(AndroidColorMatrixImagePainter(image, cf))
         }
+
+        Box(modifier = childModifier)
     }
 }
 
@@ -138,15 +139,13 @@ fun LoadNetworkImage(
 ) {
     var childSize by state { IntPxSize(IntPx.Zero, IntPx.Zero) }
 
-    OnChildPositioned(onPositioned = { childSize = it.size }) {
-        val image = if (childSize.width > IntPx.Zero && childSize.height > IntPx.Zero) {
-            // If we have a size, we can now load the image using those bounds...
-            loadImage(data, childSize)
-        } else null
+    val image = if (childSize.width > IntPx.Zero && childSize.height > IntPx.Zero) {
+        // If we have a size, we can now load the image using those bounds...
+        loadImage(data, childSize)
+    } else null
 
-        Box(modifier = modifier +
-            if (image != null) ImagePainter(image).toModifier() else Modifier.None)
-    }
+    Box(modifier = modifier.onChildPositioned { childSize = it.size }
+        .plus(if (image != null) Modifier.paint(ImagePainter(image)) else Modifier.None))
 }
 
 /**
@@ -154,7 +153,7 @@ fun LoadNetworkImage(
  * [android.graphics.ColorFilter].
  */
 internal class AndroidColorMatrixImagePainter(
-    private val image: Image,
+    private val image: ImageAsset,
     colorFilter: android.graphics.ColorFilter
 ) : Painter() {
     private val paint = Paint()
@@ -184,7 +183,7 @@ fun loadImage(
     data: Any,
     pxSize: IntPxSize,
     onLoad: () -> Unit = {}
-): Image? {
+): ImageAsset? {
     val request = remember(data, pxSize) {
         Coil.loader().newGetBuilder()
             .data(data)
@@ -197,14 +196,14 @@ fun loadImage(
             .build()
     }
 
-    var image by stateFor<Image?>(request) { null }
+    var image by stateFor<ImageAsset?>(request) { null }
 
     // Execute the following code whenever the request changes.
     onCommit(request) {
         val job = CoroutineScope(Dispatchers.Main.immediate).launch {
             // Start loading the image and await the result.
             val drawable = Coil.loader().get(request)
-            image = AndroidImage(drawable.toBitmap())
+            image = drawable.toBitmap().asImageAsset()
             onLoad()
         }
 
