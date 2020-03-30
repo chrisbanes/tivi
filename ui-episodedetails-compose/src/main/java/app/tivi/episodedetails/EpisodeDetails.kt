@@ -49,7 +49,6 @@ import androidx.ui.graphics.Paint
 import androidx.ui.graphics.withSave
 import androidx.ui.layout.Column
 import androidx.ui.layout.ColumnAlign
-import androidx.ui.layout.ColumnScope.gravity
 import androidx.ui.layout.Row
 import androidx.ui.layout.RowAlign
 import androidx.ui.layout.Spacer
@@ -102,8 +101,8 @@ import app.tivi.data.entities.Season
 import app.tivi.episodedetails.compose.R
 import app.tivi.ui.animations.lerp
 import app.tivi.util.TiviDateFormatter
-import kotlin.math.hypot
 import org.threeten.bp.OffsetDateTime
+import kotlin.math.hypot
 
 /**
  * This is a bit of hack. I can't make `ui-episodedetails` depend on any of the compose libraries,
@@ -313,23 +312,23 @@ private fun InfoPane(
 private fun Summary(episode: Episode) {
     var canExpand by stateFor(episode) { true }
 
-        Box(modifier = Modifier.ripple(bounded = true, enabled = canExpand)) {
-            var expanded by state { false }
+    Box(modifier = Modifier.ripple(bounded = true, enabled = canExpand)) {
+        var expanded by state { false }
 
-            Clickable(onClick = { expanded = !expanded }) {
-                ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-                    Text(
-                        modifier = Modifier.padding(16.dp),
-                        text = episode.summary ?: "No summary",
-                        style = MaterialTheme.typography.body2,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = if (expanded) Int.MAX_VALUE else 4
-                    ) {
-                        if (!expanded) {
-                            canExpand = it.hasVisualOverflow
-                        }
+        Clickable(onClick = { expanded = !expanded }) {
+            ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
+                Text(
+                    modifier = Modifier.padding(16.dp),
+                    text = episode.summary ?: "No summary",
+                    style = MaterialTheme.typography.body2,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = if (expanded) Int.MAX_VALUE else 4
+                ) {
+                    if (!expanded) {
+                        canExpand = it.hasVisualOverflow
                     }
                 }
+            }
         }
     }
 }
@@ -444,14 +443,14 @@ private fun EpisodeWatchSwipeBackground(
                     )
             )
 
-                ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
-                    VectorImage(
-                        id = R.drawable.ic_delete_24,
-                        modifier = Modifier.onPositioned { iconCenter = it.boundsInParent.center }
-                            .padding(0.dp, 0.dp, end = 16.dp, bottom = 0.dp)
-                            .gravity(Alignment.CenterEnd)
-                    )
-                }
+            ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
+                VectorImage(
+                    id = R.drawable.ic_delete_24,
+                    modifier = Modifier.onPositioned { iconCenter = it.boundsInParent.center }
+                        .padding(0.dp, 0.dp, end = 16.dp, bottom = 0.dp)
+                        .gravity(Alignment.CenterEnd)
+                )
+            }
         }
     }
 }

@@ -45,10 +45,10 @@ import app.tivi.ui.graphics.ImageLoadingColorMatrix
 import coil.Coil
 import coil.api.newGetBuilder
 import coil.size.Scale
-import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 private enum class ImageLoadState {
     Loaded,
@@ -96,39 +96,37 @@ fun LoadNetworkImageWithCrossfade(
     data: Any
 ) {
     var childSize by state { IntPxSize(IntPx.Zero, IntPx.Zero) }
+    var imgLoadState by stateFor(data, childSize) { ImageLoadState.Empty }
 
-        var imgLoadState by stateFor(data, childSize) { ImageLoadState.Empty }
-
-        Transition(
-            definition = imageSaturationTransitionDef,
-            toState = imgLoadState
-        ) { transitionState ->
-            val image = if (childSize.width > IntPx.Zero && childSize.height > IntPx.Zero) {
-                // If we have a size, we can now load the image using those bounds...
-                loadImage(data, childSize) {
-                    // Once loaded, update the load state
-                    imgLoadState = ImageLoadState.Loaded
-                }
-            } else null
-
-            if (image != null) {
-                // Create and update the ImageLoadingColorMatrix from the transition state
-                val matrix = remember(image) { ImageLoadingColorMatrix() }
-                matrix.saturationFraction = transitionState[saturation]
-                matrix.alphaFraction = transitionState[alpha]
-                matrix.brightnessFraction = transitionState[brightness]
-
-                // Unfortunately ColorMatrixColorFilter is not mutable so we have to create a new
-                // one every time
-                val cf = ColorMatrixColorFilter(matrix)
-                Box(
-                    modifier = modifier.onPositioned { childSize = it.size }
-                        .paint(AndroidColorMatrixImagePainter(image, cf))
-                )
-            } else {
-                Box(modifier = modifier.onPositioned { childSize = it.size })
+    Transition(
+        definition = imageSaturationTransitionDef,
+        toState = imgLoadState
+    ) { transitionState ->
+        val image = if (childSize.width > IntPx.Zero && childSize.height > IntPx.Zero) {
+            // If we have a size, we can now load the image using those bounds...
+            loadImage(data, childSize) {
+                // Once loaded, update the load state
+                imgLoadState = ImageLoadState.Loaded
             }
+        } else null
+
+        var childModifier = modifier.onPositioned { childSize = it.size }
+
+        if (image != null) {
+            // Create and update the ImageLoadingColorMatrix from the transition state
+            val matrix = remember(image) { ImageLoadingColorMatrix() }
+            matrix.saturationFraction = transitionState[saturation]
+            matrix.alphaFraction = transitionState[alpha]
+            matrix.brightnessFraction = transitionState[brightness]
+
+            // Unfortunately ColorMatrixColorFilter is not mutable so we have to create a new
+            // instance every time
+            val cf = ColorMatrixColorFilter(matrix)
+            childModifier = childModifier.paint(AndroidColorMatrixImagePainter(image, cf))
         }
+
+        Box(modifier = childModifier)
+    }
 }
 
 /**
@@ -141,13 +139,13 @@ fun LoadNetworkImage(
 ) {
     var childSize by state { IntPxSize(IntPx.Zero, IntPx.Zero) }
 
-        val image = if (childSize.width > IntPx.Zero && childSize.height > IntPx.Zero) {
-            // If we have a size, we can now load the image using those bounds...
-            loadImage(data, childSize)
-        } else null
+    val image = if (childSize.width > IntPx.Zero && childSize.height > IntPx.Zero) {
+        // If we have a size, we can now load the image using those bounds...
+        loadImage(data, childSize)
+    } else null
 
-        Box(modifier = modifier.onChildPositioned { childSize = it.size }
-            .plus(if (image != null) Modifier.paint(ImagePainter(image)) else Modifier.None))
+    Box(modifier = modifier.onChildPositioned { childSize = it.size }
+        .plus(if (image != null) Modifier.paint(ImagePainter(image)) else Modifier.None))
 }
 
 /**
