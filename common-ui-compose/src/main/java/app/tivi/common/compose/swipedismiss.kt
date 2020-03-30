@@ -18,22 +18,18 @@ package app.tivi.common.compose
 
 import androidx.animation.AnimationEndReason
 import androidx.compose.Composable
-import androidx.compose.onCommit
 import androidx.compose.state
 import androidx.ui.animation.animatedFloat
 import androidx.ui.core.DensityAmbient
 import androidx.ui.core.LayoutDirection
 import androidx.ui.core.LayoutDirectionAmbient
 import androidx.ui.core.Modifier
-import androidx.ui.core.onPositioned
+import androidx.ui.core.WithConstraints
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.gestures.DragDirection
 import androidx.ui.foundation.gestures.draggable
 import androidx.ui.layout.Stack
 import androidx.ui.layout.offset
-import androidx.ui.layout.preferredSize
-import androidx.ui.unit.IntPx
-import androidx.ui.unit.IntPxSize
 import androidx.ui.unit.dp
 import app.tivi.common.compose.SwipeDirection.END
 import app.tivi.common.compose.SwipeDirection.START
@@ -54,91 +50,75 @@ fun SwipeToDismiss(
     backgroundChildren: @Composable() (swipeProgress: Float, wouldCompleteOnRelease: Boolean) -> Unit,
     swipeChildren: @Composable() (swipeProgress: Float, wouldCompleteOnRelease: Boolean) -> Unit
 ) = Stack {
-    val position = animatedFloat(initVal = 0f).apply {
-        setBounds(0f, 0f)
-    }
-    var size by state { IntPxSize(IntPx.Zero, IntPx.Zero) }
+    val position = animatedFloat(initVal = 0f).apply { setBounds(0f, 0f) }
     var progress by state { 0f }
+
+    Box(modifier = Modifier.matchParent()) {
+        backgroundChildren(progress, progress.absoluteValue >= swipeCompletePercentage)
+    }
 
     val layoutDir = LayoutDirectionAmbient.current
 
-    if (position.value != 0f) {
-        with(DensityAmbient.current) {
-            Box(modifier = Modifier.preferredSize(size.width.toDp(), size.height.toDp())) {
-                backgroundChildren(progress, progress.absoluteValue >= swipeCompletePercentage)
-            }
-        }
-    }
-
     val draggable = Modifier.draggable(
         dragDirection = DragDirection.Horizontal,
-        onDragStopped = {
-            when {
-                position.max > 0f && position.value / position.max >= swipeCompletePercentage -> {
-                    position.animateTo(position.max, onEnd = { endReason, _ ->
+        onDragStopped = { _ ->
+            // TODO: look at using fling and velocity here
+            if (position.max > 0f && position.value / position.max >= swipeCompletePercentage) {
+                position.animateTo(
+                    position.max,
+                    onEnd = { endReason, _ ->
                         if (endReason != AnimationEndReason.Interrupted) {
-                            onSwipeComplete(
-                                when (layoutDir) {
-                                    LayoutDirection.Ltr -> END
-                                    LayoutDirection.Rtl -> START
-                                }
-                            )
+                            onSwipeComplete(if (layoutDir == LayoutDirection.Ltr) END else START)
                         }
-                    })
-                }
-                position.min < 0f && position.value / position.min >= swipeCompletePercentage -> {
-                    position.animateTo(position.min, onEnd = { endReason, _ ->
+                    }
+                )
+            } else if (position.min < 0f && position.value / position.min >= swipeCompletePercentage) {
+                position.animateTo(
+                    position.min,
+                    onEnd = { endReason, _ ->
                         if (endReason != AnimationEndReason.Interrupted) {
-                            onSwipeComplete(
-                                when (layoutDir) {
-                                    LayoutDirection.Ltr -> START
-                                    LayoutDirection.Rtl -> END
-                                }
-                            )
+                            onSwipeComplete(if (layoutDir == LayoutDirection.Ltr) START else END)
                         }
-                    })
-                }
-                else -> position.animateTo(0f)
-            }
+                    }
+                )
+            } else position.animateTo(0f)
         }
     ) { delta ->
-        position.snapTo(position.value + delta)
+        val oldPosition = position.value
+        position.snapTo(oldPosition + delta)
+        val newPosition = position.value
 
         progress = when {
-            position.value < 0f && position.min < 0f -> position.value / position.min
-            position.value > 0f && position.max > 0f -> position.value / position.max
+            newPosition < 0f && position.min < 0f -> newPosition / position.min
+            newPosition > 0f && position.max > 0f -> newPosition / position.max
             else -> 0f
         }
         // If we have an onSwipe callback, invoke it
         onSwipe?.invoke(progress)
 
-        position.value
+        // Return the difference in position (delta)
+        newPosition - oldPosition
     }
 
-    onCommit(size) {
-        // When the size changes, update the drag bounds
-        when {
-            START in swipeDirections && END in swipeDirections -> {
-                position.setBounds(-size.width.value.toFloat(), size.width.value.toFloat())
-            }
-            START in swipeDirections && layoutDir == LayoutDirection.Ltr ||
-                END in swipeDirections && layoutDir == LayoutDirection.Rtl -> {
-                position.setBounds(-size.width.value.toFloat(), 0f)
-            }
-            END in swipeDirections && layoutDir == LayoutDirection.Ltr ||
-                START in swipeDirections && layoutDir == LayoutDirection.Rtl -> {
-                position.setBounds(0f, size.width.value.toFloat())
-            }
+    WithConstraints { constraints, layoutDirection ->
+        // Update the drag bounds depending on the size
+        if (START in swipeDirections && END in swipeDirections) {
+            position.setBounds(
+                -constraints.maxWidth.value.toFloat(),
+                constraints.maxWidth.value.toFloat()
+            )
+        } else if (START in swipeDirections && layoutDirection == LayoutDirection.Ltr ||
+            END in swipeDirections && layoutDirection == LayoutDirection.Rtl) {
+            position.setBounds(-constraints.maxWidth.value.toFloat(), 0f)
+        } else if (END in swipeDirections && layoutDirection == LayoutDirection.Ltr ||
+            START in swipeDirections && layoutDirection == LayoutDirection.Rtl) {
+            position.setBounds(0f, constraints.maxWidth.value.toFloat())
         }
-    }
 
-    with(DensityAmbient.current) {
+        val xOffset = with(DensityAmbient.current) { position.value.toDp() }
         Box(
-            modifier = Modifier.onPositioned { size = it.size }
-                .plus(draggable)
-                .offset(x = position.value.toDp(), y = 0.dp)
-        ) {
-            swipeChildren(progress, progress.absoluteValue >= swipeCompletePercentage)
-        }
+            modifier = Modifier.plus(draggable).offset(x = xOffset, y = 0.dp),
+            children = { swipeChildren(progress, progress.absoluteValue >= swipeCompletePercentage) }
+        )
     }
 }
