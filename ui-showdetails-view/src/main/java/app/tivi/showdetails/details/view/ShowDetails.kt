@@ -51,6 +51,7 @@ import androidx.ui.unit.dp
 import app.tivi.common.compose.InsetsHolder
 import app.tivi.common.compose.LoadNetworkImageWithCrossfade
 import app.tivi.common.compose.MaterialThemeFromAndroidTheme
+import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.WrapWithAmbients
 import app.tivi.common.compose.observe
 import app.tivi.common.compose.observeInsets
@@ -141,7 +142,9 @@ fun ShowDetails(
                                 mainAxisSpacing = 8.dp,
                                 crossAxisSpacing = 8.dp
                             ) {
-                                TraktNetworkInfoPanel(viewState.show)
+                                TraktRatingInfoPanel(viewState.show)
+
+                                NetworkInfoPanel(viewState.show)
 
                                 CertificateInfoPanel(viewState.show)
 
@@ -160,7 +163,7 @@ fun ShowDetails(
 }
 
 @Composable
-private fun TraktNetworkInfoPanel(
+private fun NetworkInfoPanel(
     show: TiviShow,
     modifier: Modifier = Modifier.None
 ) {
@@ -256,6 +259,46 @@ private fun CertificateInfoPanel(
                     shape = RoundedCornerShape(2.dp)
                 ).paddingHV(horizontal = 4.dp, vertical = 2.dp)
             )
+        }
+    }
+}
+
+@Composable
+private fun TraktRatingInfoPanel(
+    show: TiviShow,
+    modifier: Modifier = Modifier.None
+) {
+    Column(modifier) {
+        Text(
+            text = stringResource(R.string.trakt_rating_title),
+            style = MaterialTheme.typography.subtitle2
+        )
+
+        Spacer(Modifier.preferredHeight(4.dp))
+
+        Row {
+            VectorImage(
+                modifier = Modifier.preferredSize(32.dp),
+                id = R.drawable.ic_star_black_24dp,
+                tintColor = MaterialTheme.colors.secondaryVariant,
+                scaleFit = ScaleFit.FillMinDimension
+            )
+
+            Spacer(Modifier.preferredWidth(4.dp))
+
+            Column {
+                Text(
+                    text = stringResource(R.string.trakt_rating_text,
+                        (show.traktRating ?: 0f) * 10f),
+                    style = MaterialTheme.typography.body2
+                )
+
+                Text(
+                    text = stringResource(R.string.trakt_rating_votes,
+                        (show.traktVotes ?: 0) / 1000f),
+                    style = MaterialTheme.typography.caption
+                )
+            }
         }
     }
 }

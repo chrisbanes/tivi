@@ -18,12 +18,14 @@ package app.tivi.common.compose
 
 import androidx.annotation.DrawableRes
 import androidx.compose.Composable
+import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.core.paint
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.contentColor
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.ColorFilter
+import androidx.ui.graphics.ScaleFit
 import androidx.ui.graphics.vector.VectorPainter
 import androidx.ui.layout.preferredSize
 import androidx.ui.res.vectorResource
@@ -32,11 +34,18 @@ import androidx.ui.res.vectorResource
 fun VectorImage(
     @DrawableRes id: Int,
     modifier: Modifier = Modifier.None,
+    alignment: Alignment = Alignment.Center,
+    scaleFit: ScaleFit = ScaleFit.Fit,
     tintColor: Color = contentColor()
 ) {
     val vector = vectorResource(id)
     Box(
         modifier = modifier.preferredSize(vector.defaultWidth, vector.defaultHeight)
-            .paint(VectorPainter(vector), colorFilter = ColorFilter.tint(tintColor))
+            .paint(
+                painter = VectorPainter(vector),
+                alignment = alignment,
+                scaleFit = scaleFit,
+                colorFilter = ColorFilter.tint(tintColor)
+            )
     )
 }
