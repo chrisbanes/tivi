@@ -49,6 +49,7 @@ import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Canvas
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.Paint
+import androidx.ui.graphics.ScaleFit
 import androidx.ui.graphics.withSave
 import androidx.ui.layout.Column
 import androidx.ui.layout.ColumnAlign
@@ -94,7 +95,7 @@ import app.tivi.common.compose.boundsInParent
 import app.tivi.common.compose.center
 import app.tivi.common.compose.observe
 import app.tivi.common.compose.observeInsets
-import app.tivi.common.compose.padding
+import app.tivi.common.compose.paddingHV
 import app.tivi.common.compose.setContentWithLifecycle
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
@@ -224,7 +225,8 @@ private fun Backdrop(season: Season, episode: Episode) {
             if (episode.tmdbBackdropPath != null) {
                 LoadNetworkImageWithCrossfade(
                     modifier = Modifier.matchParent(),
-                    data = episode
+                    data = episode,
+                    scaleFit = ScaleFit.FillMaxDimension
                 )
             }
 
@@ -345,7 +347,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
     Row {
         ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
             Text(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
                     .gravity(RowAlign.Center)
                     .weight(1f),
                 text = stringResource(R.string.episode_watches),
@@ -368,7 +370,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
 private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
     Surface {
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
                 .preferredSizeIn(minWidth = 40.dp, minHeight = 40.dp)
         ) {
             ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {

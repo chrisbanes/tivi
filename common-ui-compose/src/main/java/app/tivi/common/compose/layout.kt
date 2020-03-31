@@ -22,6 +22,7 @@ import androidx.ui.layout.absolutePadding
 import androidx.ui.unit.Dp
 import androidx.ui.unit.PxBounds
 import androidx.ui.unit.PxPosition
+import androidx.ui.unit.dp
 import androidx.ui.unit.toPxSize
 
 inline val PxBounds.center: PxPosition
@@ -33,6 +34,6 @@ inline val LayoutCoordinates.positionInParent: PxPosition
 inline val LayoutCoordinates.boundsInParent: PxBounds
     get() = PxBounds(positionInParent, size.toPxSize())
 
-fun Modifier.padding(horizontal: Dp, vertical: Dp): Modifier {
+fun Modifier.paddingHV(horizontal: Dp = 0.dp, vertical: Dp = 0.dp): Modifier {
     return absolutePadding(left = horizontal, top = vertical, right = horizontal, bottom = vertical)
 }

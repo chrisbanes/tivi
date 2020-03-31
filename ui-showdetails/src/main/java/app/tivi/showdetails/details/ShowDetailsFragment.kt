@@ -24,6 +24,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import app.tivi.TiviFragment
 import app.tivi.common.compose.observeWindowInsets
+import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.showdetails.details.view.ShowDetailsTextCreator
 import app.tivi.showdetails.details.view.composeShowDetails
 import app.tivi.util.TiviDateFormatter
@@ -50,9 +51,16 @@ class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.Factory
                 viewModel.observeAsLiveData(),
                 observeWindowInsets(),
                 viewModel::submitAction,
-                tiviDateFormatter
+                tiviDateFormatter,
+                textCreator
             )
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // TODO move this once we know how to handle transitions in Compose
+        scheduleStartPostponedTransitions()
     }
 
     override fun invalidate() = Unit

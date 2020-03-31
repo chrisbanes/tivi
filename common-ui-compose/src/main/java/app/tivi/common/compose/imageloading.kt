@@ -26,6 +26,7 @@ import androidx.compose.state
 import androidx.compose.stateFor
 import androidx.core.graphics.drawable.toBitmap
 import androidx.ui.animation.Transition
+import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.core.onChildPositioned
 import androidx.ui.core.onPositioned
@@ -35,6 +36,7 @@ import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Canvas
 import androidx.ui.graphics.ImageAsset
 import androidx.ui.graphics.Paint
+import androidx.ui.graphics.ScaleFit
 import androidx.ui.graphics.asImageAsset
 import androidx.ui.graphics.painter.ImagePainter
 import androidx.ui.graphics.painter.Painter
@@ -93,7 +95,9 @@ private val imageSaturationTransitionDef = transitionDefinition {
 @Composable
 fun LoadNetworkImageWithCrossfade(
     modifier: Modifier = Modifier.None,
-    data: Any
+    data: Any,
+    alignment: Alignment = Alignment.Center,
+    scaleFit: ScaleFit = ScaleFit.Fit
 ) {
     var childSize by state { IntPxSize(IntPx.Zero, IntPx.Zero) }
     var imgLoadState by stateFor(data, childSize) { ImageLoadState.Empty }
@@ -122,7 +126,11 @@ fun LoadNetworkImageWithCrossfade(
             // Unfortunately ColorMatrixColorFilter is not mutable so we have to create a new
             // instance every time
             val cf = ColorMatrixColorFilter(matrix)
-            childModifier = childModifier.paint(AndroidColorMatrixImagePainter(image, cf))
+            childModifier = childModifier.paint(
+                painter = AndroidColorMatrixImagePainter(image, cf),
+                scaleFit = scaleFit,
+                alignment = alignment
+            )
         }
 
         Box(modifier = childModifier)
