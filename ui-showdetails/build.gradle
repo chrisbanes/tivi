@@ -56,7 +56,7 @@ dependencies {
 
     implementation project(':common-ui-view')
 
-    implementation project(':ui-showdetails-view')
+    api project(':ui-showdetails-view')
     api project(':ui-showdetails-presenter')
 
     implementation project(':ui-episodedetails')
@@ -78,9 +78,6 @@ dependencies {
     implementation Libs.Dagger.androidSupport
     kapt Libs.Dagger.compiler
     kapt Libs.Dagger.androidProcessor
-
-    compileOnly Libs.AssistedInject.annotationDagger2
-    kapt Libs.AssistedInject.processorDagger2
 
     implementation Libs.mvRx
 }

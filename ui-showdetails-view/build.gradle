@@ -31,18 +31,29 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion Libs.AndroidX.UI.version
+    }
 }
 
 dependencies {
     implementation project(':data')
     implementation project(':base')
     implementation project(':base-android')
-
     api project(':common-ui-compose')
+
+    // TODO remove this dep
+    implementation project(':common-ui-view')
 
     implementation project(':ui-showdetails-presenter')
 
     implementation Libs.AndroidX.coreKtx
+    implementation Libs.AndroidX.emoji
 
     implementation Libs.AndroidX.UI.composeRuntime
     implementation Libs.AndroidX.UI.foundation

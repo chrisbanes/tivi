@@ -55,16 +55,13 @@ dependencies {
     api Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.viewmodelKtx
 
-    implementation Libs.AndroidX.Paging.runtime
-
     implementation Libs.AndroidX.coreKtx
 
-    implementation Libs.Dagger.androidSupport
+    implementation Libs.Dagger.dagger
     kapt Libs.Dagger.compiler
-    kapt Libs.Dagger.androidProcessor
 
     compileOnly Libs.AssistedInject.annotationDagger2
     kapt Libs.AssistedInject.processorDagger2
 
-    implementation Libs.mvRx
+    api Libs.mvRx
 }
