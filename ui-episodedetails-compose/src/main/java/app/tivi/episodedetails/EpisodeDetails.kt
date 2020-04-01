@@ -23,7 +23,6 @@ import androidx.annotation.DrawableRes
 import androidx.compose.Composable
 import androidx.compose.remember
 import androidx.compose.state
-import androidx.compose.stateFor
 import androidx.core.view.WindowInsetsCompat
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.lifecycle.LifecycleOwner
@@ -37,7 +36,6 @@ import androidx.ui.core.DrawModifier
 import androidx.ui.core.Modifier
 import androidx.ui.core.onPositioned
 import androidx.ui.foundation.Box
-import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.ProvideContentColor
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.VerticalScroller
@@ -69,9 +67,7 @@ import androidx.ui.material.MaterialTheme
 import androidx.ui.material.OutlinedButton
 import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.Surface
-import androidx.ui.material.ripple.ripple
 import androidx.ui.res.stringResource
-import androidx.ui.text.style.TextOverflow
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.Density
 import androidx.ui.unit.Px
@@ -81,6 +77,7 @@ import androidx.ui.unit.dp
 import androidx.ui.unit.toOffset
 import androidx.ui.unit.toRect
 import app.tivi.animation.invoke
+import app.tivi.common.compose.ExpandingSummary
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.InsetsHolder
 import app.tivi.common.compose.LoadNetworkImageWithCrossfade
@@ -148,7 +145,10 @@ private fun EpisodeDetails(
                     val episode = viewState.episode
                     if (episode != null) {
                         InfoPanes(episode)
-                        Summary(episode)
+                        ExpandingSummary(
+                            episode.summary ?: "No summary",
+                            modifier = Modifier.padding(16.dp)
+                        )
                     }
 
                     val watches = viewState.watches
@@ -313,31 +313,6 @@ private fun InfoPane(
                 text = label,
                 style = MaterialTheme.typography.body1
             )
-        }
-    }
-}
-
-@Composable
-private fun Summary(episode: Episode) {
-    var canExpand by stateFor(episode) { true }
-
-    Box(modifier = Modifier.ripple(bounded = true, enabled = canExpand)) {
-        var expanded by state { false }
-
-        Clickable(onClick = { expanded = !expanded }) {
-            ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-                Text(
-                    modifier = Modifier.padding(16.dp),
-                    text = episode.summary ?: "No summary",
-                    style = MaterialTheme.typography.body2,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = if (expanded) Int.MAX_VALUE else 4
-                ) {
-                    if (!expanded) {
-                        canExpand = it.hasVisualOverflow
-                    }
-                }
-            }
         }
     }
 }

@@ -51,6 +51,8 @@ import androidx.ui.material.MaterialTheme
 import androidx.ui.material.Surface
 import androidx.ui.res.stringResource
 import androidx.ui.unit.dp
+import app.tivi.common.compose.ExpandingSummary
+import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.InsetsHolder
 import app.tivi.common.compose.LoadNetworkImageWithCrossfade
 import app.tivi.common.compose.MaterialThemeFromAndroidTheme
@@ -178,6 +180,25 @@ fun ShowDetails(
                     }
 
                     Spacer(modifier = Modifier.preferredHeight(16.dp))
+
+                    if (viewState.show.summary != null) {
+                        Text(
+                            text = stringResource(id = R.string.details_about),
+                            style = MaterialTheme.typography.subtitle1,
+                            modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
+                        )
+
+                        ExpandingSummary(
+                            viewState.show.summary ?: "No summary",
+                            modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
+
+                    // Spacer to push up the content from under the navigation bar
+                    val insets = InsetsAmbient.current
+                    with(DensityAmbient.current) {
+                        Spacer(Modifier.preferredHeight(insets.bottom.toDp()))
+                    }
                 }
             }
         }
