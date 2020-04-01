@@ -47,7 +47,9 @@ import androidx.ui.layout.preferredSize
 import androidx.ui.layout.preferredSizeIn
 import androidx.ui.layout.preferredWidth
 import androidx.ui.layout.wrapContentHeight
+import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.MaterialTheme
+import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.Surface
 import androidx.ui.res.stringResource
 import androidx.ui.unit.dp
@@ -156,22 +158,24 @@ fun ShowDetails(
                                 mainAxisSpacing = 8.dp,
                                 crossAxisSpacing = 8.dp
                             ) {
-                                val show = viewState.show
-                                if (show.traktRating != null) {
-                                    TraktRatingInfoPanel(show)
-                                }
-                                if (show.network != null || show.networkLogoPath != null) {
-                                    NetworkInfoPanel(viewState.show)
-                                }
-                                if (show.certification != null) {
-                                    CertificateInfoPanel(viewState.show)
-                                }
-                                if (show.runtime != null) {
-                                    RuntimeInfoPanel(viewState.show)
-                                }
-                                if (show.airsDay != null && show.airsTime != null &&
-                                    show.airsTimeZone != null) {
-                                    AirsInfoPanel(viewState.show)
+                                ProvideEmphasis(EmphasisAmbient.current.high) {
+                                    val show = viewState.show
+                                    if (show.traktRating != null) {
+                                        TraktRatingInfoPanel(show)
+                                    }
+                                    if (show.network != null || show.networkLogoPath != null) {
+                                        NetworkInfoPanel(viewState.show)
+                                    }
+                                    if (show.certification != null) {
+                                        CertificateInfoPanel(viewState.show)
+                                    }
+                                    if (show.runtime != null) {
+                                        RuntimeInfoPanel(viewState.show)
+                                    }
+                                    if (show.airsDay != null && show.airsTime != null &&
+                                        show.airsTimeZone != null) {
+                                        AirsInfoPanel(viewState.show)
+                                    }
                                 }
                             }
                         }
@@ -181,17 +185,25 @@ fun ShowDetails(
 
                     Spacer(modifier = Modifier.preferredHeight(16.dp))
 
-                    if (viewState.show.summary != null) {
-                        Text(
-                            text = stringResource(id = R.string.details_about),
-                            style = MaterialTheme.typography.subtitle1,
-                            modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
-                        )
+                    Header(stringResource(R.string.details_about))
 
+                    if (viewState.show.summary != null) {
                         ExpandingSummary(
-                            viewState.show.summary ?: "No summary",
+                            viewState.show.summary!!,
                             modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
                         )
+                    }
+
+                    val genres = viewState.show.genres
+                    if (genres.isNotEmpty()) {
+                        ProvideEmphasis(EmphasisAmbient.current.high) {
+                            val textCreator = ShowDetailsTextCreatorAmbient.current
+                            Text(
+                                textCreator.genreString(genres).toString(),
+                                style = MaterialTheme.typography.body2,
+                                modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
+                            )
+                        }
                     }
 
                     // Spacer to push up the content from under the navigation bar
@@ -349,4 +361,13 @@ private fun TraktRatingInfoPanel(
             }
         }
     }
+}
+
+@Composable
+private fun Header(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.subtitle1,
+        modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
+    )
 }
