@@ -22,15 +22,17 @@ import androidx.animation.transitionDefinition
 import androidx.compose.Composable
 import androidx.compose.onCommit
 import androidx.compose.remember
-import androidx.compose.state
 import androidx.compose.stateFor
 import androidx.core.graphics.drawable.toBitmap
 import androidx.ui.animation.Transition
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
+import androidx.ui.core.WithConstraints
 import androidx.ui.core.clipToBounds
-import androidx.ui.core.onChildPositioned
-import androidx.ui.core.onPositioned
+import androidx.ui.core.hasBoundedHeight
+import androidx.ui.core.hasBoundedWidth
+import androidx.ui.core.hasFixedHeight
+import androidx.ui.core.hasFixedWidth
 import androidx.ui.core.paint
 import androidx.ui.foundation.Box
 import androidx.ui.geometry.Offset
@@ -42,7 +44,6 @@ import androidx.ui.graphics.asImageAsset
 import androidx.ui.graphics.painter.ImagePainter
 import androidx.ui.graphics.painter.Painter
 import androidx.ui.unit.IntPx
-import androidx.ui.unit.IntPxSize
 import androidx.ui.unit.PxSize
 import app.tivi.ui.graphics.ImageLoadingColorMatrix
 import coil.Coil
@@ -101,23 +102,32 @@ fun LoadNetworkImageWithCrossfade(
     alignment: Alignment = Alignment.Center,
     scaleFit: ScaleFit = ScaleFit.Fit,
     modifier: Modifier = Modifier.None
-) {
-    var childSize by state { IntPxSize(IntPx.Zero, IntPx.Zero) }
-    var imgLoadState by stateFor(data, childSize) { ImageLoadState.Empty }
+) = WithConstraints(modifier) { constraints, _ ->
+    var imgLoadState by stateFor(data) { ImageLoadState.Empty }
 
     Transition(
         definition = imageSaturationTransitionDef,
         toState = imgLoadState
     ) { transitionState ->
-        val image = if (childSize.width > IntPx.Zero && childSize.height > IntPx.Zero) {
-            // If we have a size, we can now load the image using those bounds...
-            loadImage(data, childSize, transformations) {
-                // Once loaded, update the load state
-                imgLoadState = ImageLoadState.Loaded
-            }
-        } else null
 
-        var childModifier = modifier.onPositioned { childSize = it.size }
+        val width = when {
+            constraints.hasFixedWidth -> constraints.maxWidth
+            constraints.hasBoundedWidth -> constraints.maxWidth
+            else -> constraints.minWidth
+        }
+
+        val height = when {
+            constraints.hasFixedHeight -> constraints.maxHeight
+            constraints.hasBoundedHeight -> constraints.maxHeight
+            else -> constraints.minHeight
+        }
+
+        val image = loadImage(data, width.value, height.value, transformations) {
+            // Once loaded, update the load state
+            imgLoadState = ImageLoadState.Loaded
+        }
+
+        var childModifier = modifier
 
         if (image != null) {
             // Create and update the ImageLoadingColorMatrix from the transition state
@@ -148,20 +158,24 @@ fun LoadNetworkImage(
     data: Any,
     transformations: List<Transformation> = emptyList(),
     modifier: Modifier = Modifier.None
-) {
-    var childSize by state { IntPxSize(IntPx.Zero, IntPx.Zero) }
+) = WithConstraints(modifier) { constraints, _ ->
+    val width = when {
+        constraints.hasFixedWidth -> constraints.maxWidth
+        constraints.hasBoundedWidth -> constraints.maxWidth
+        else -> constraints.minWidth
+    }
 
-    val image = if (childSize.width > IntPx.Zero && childSize.height > IntPx.Zero) {
-        // If we have a size, we can now load the image using those bounds...
-        loadImage(data, childSize, transformations)
-    } else null
+    val height = when {
+        constraints.hasFixedHeight -> constraints.maxHeight
+        constraints.hasBoundedHeight -> constraints.maxHeight
+        else -> constraints.minHeight
+    }
 
-    Box(modifier = modifier.onChildPositioned { childSize = it.size }
-        .plus(if (image != null) {
-            Modifier.clipToBounds().paint(ImagePainter(image))
-        } else {
-            Modifier.None
-        })
+    val image = loadImage(data, width.value, height.value, transformations)
+
+    Box(
+        modifier.plus(
+            image?.let { Modifier.clipToBounds().paint(ImagePainter(image)) } ?: Modifier.None)
     )
 }
 
@@ -198,17 +212,18 @@ internal class AndroidColorMatrixImagePainter(
 @Composable
 fun loadImage(
     data: Any,
-    pxSize: IntPxSize,
+    width: Int,
+    height: Int,
     transformations: List<Transformation> = emptyList(),
     onLoad: () -> Unit = {}
 ): ImageAsset? {
-    val request = remember(data, pxSize) {
+    val request = remember(data, width, height) {
         Coil.loader().newGetBuilder()
             .data(data)
             .apply {
-                if (pxSize.width > IntPx.Zero && pxSize.height > IntPx.Zero) {
-                    size(pxSize.width.value, pxSize.height.value)
-                    scale(Scale.FILL)
+                if (width > 0 && height > 0) {
+                    size(width, height)
+                    scale(Scale.FIT)
                 }
             }
             .transformations(transformations)

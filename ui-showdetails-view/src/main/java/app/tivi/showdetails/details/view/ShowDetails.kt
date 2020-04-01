@@ -44,6 +44,7 @@ import androidx.ui.layout.fillMaxWidth
 import androidx.ui.layout.padding
 import androidx.ui.layout.preferredHeight
 import androidx.ui.layout.preferredSize
+import androidx.ui.layout.preferredSizeIn
 import androidx.ui.layout.preferredWidth
 import androidx.ui.layout.wrapContentHeight
 import androidx.ui.material.MaterialTheme
@@ -98,6 +99,8 @@ fun ShowDetails(
     viewState: ShowDetailsViewState,
     actioner: (ShowDetailsAction) -> Unit
 ) {
+    // TODO: Status bar scrim
+
     VerticalScroller {
         Column {
             val backdropImage = viewState.backdropImage
@@ -125,10 +128,10 @@ fun ShowDetails(
                     )
 
                     Row {
-                        Spacer(modifier = Modifier.preferredWidth(16.dp))
-
                         val poster = viewState.posterImage
                         if (poster != null) {
+                            Spacer(modifier = Modifier.preferredWidth(16.dp))
+
                             val cornerRadius = with(DensityAmbient.current) { 4.dp.toPx() }
                             val transforms = remember {
                                 listOf(RoundedCornersTransformation(cornerRadius.value))
@@ -205,14 +208,12 @@ private fun NetworkInfoPanel(
                 listOf(TrimTransparentEdgesTransformation)
             }
 
-            // TODO: need to think of a way to make this wrap height, while still giving
-            // Coil a size to target
             LoadNetworkImageWithCrossfade(
                 tmdbImage,
                 transformations = transforms,
                 scaleFit = ScaleFit.FillMaxDimension,
                 alignment = Alignment.TopStart,
-                modifier = Modifier.preferredWidth(72.dp).aspectRatio(16 / 7f)
+                modifier = Modifier.preferredSizeIn(maxWidth = 72.dp, maxHeight = 32.dp)
             )
         } else if (networkName != null) {
             Text(
