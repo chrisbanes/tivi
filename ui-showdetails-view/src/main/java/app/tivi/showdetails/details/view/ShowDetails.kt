@@ -28,6 +28,8 @@ import androidx.ui.core.Alignment
 import androidx.ui.core.DensityAmbient
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.Box
+import androidx.ui.foundation.Clickable
+import androidx.ui.foundation.HorizontalScroller
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.drawBorder
@@ -47,10 +49,12 @@ import androidx.ui.layout.preferredSize
 import androidx.ui.layout.preferredSizeIn
 import androidx.ui.layout.preferredWidth
 import androidx.ui.layout.wrapContentHeight
+import androidx.ui.material.Card
 import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.Surface
+import androidx.ui.material.ripple.ripple
 import androidx.ui.res.stringResource
 import androidx.ui.unit.dp
 import app.tivi.common.compose.ExpandingSummary
@@ -68,6 +72,9 @@ import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.entities.findHighestRatedPoster
+import app.tivi.data.resultentities.RelatedShowEntryWithShow
+import app.tivi.showdetails.details.OpenShowDetails
 import app.tivi.showdetails.details.ShowDetailsAction
 import app.tivi.showdetails.details.ShowDetailsViewState
 import app.tivi.util.TiviDateFormatter
@@ -97,7 +104,6 @@ fun ViewGroup.composeShowDetails(
     }
 }
 
-@Suppress("UNUSED_PARAMETER")
 @Composable
 fun ShowDetails(
     viewState: ShowDetailsViewState,
@@ -206,11 +212,16 @@ fun ShowDetails(
                         }
                     }
 
+                    val relatedShows = viewState.relatedShows() ?: emptyList()
+                    if (relatedShows.isNotEmpty()) {
+                        Header(stringResource(R.string.details_related))
+                        RelatedShows(relatedShows, actioner)
+                    }
+
                     // Spacer to push up the content from under the navigation bar
                     val insets = InsetsAmbient.current
-                    with(DensityAmbient.current) {
-                        Spacer(Modifier.preferredHeight(insets.bottom.toDp()))
-                    }
+                    val spacerHeight = with(DensityAmbient.current) { 8.dp + insets.bottom.toDp() }
+                    Spacer(Modifier.preferredHeight(spacerHeight))
                 }
             }
         }
@@ -370,4 +381,43 @@ private fun Header(title: String) {
         style = MaterialTheme.typography.subtitle1,
         modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
     )
+}
+
+@Composable
+private fun RelatedShows(
+    related: List<RelatedShowEntryWithShow>,
+    actioner: (ShowDetailsAction) -> Unit,
+    modifier: Modifier = Modifier.None
+) {
+    // TODO: ideally we would use AdapterList here, but it only works for vertical lists, not
+    //       horizontal :phelps_mum:
+
+    HorizontalScroller(modifier = modifier) {
+        Row {
+            Spacer(modifier = Modifier.preferredWidth(16.dp))
+
+            related.forEachIndexed { index, relatedEntry ->
+                val poster = relatedEntry.images.findHighestRatedPoster()
+                if (poster != null) {
+                    Card {
+                        Clickable(
+                            onClick = { actioner(OpenShowDetails(relatedEntry.show.id)) },
+                            modifier = Modifier.ripple()
+                        ) {
+                            LoadNetworkImageWithCrossfade(
+                                poster,
+                                modifier = Modifier.aspectRatio(2 / 3f).preferredWidth(64.dp)
+                            )
+                        }
+                    }
+                    if (index + 1 < related.size) {
+                        // Add a spacer if there are still more items to add
+                        Spacer(modifier = Modifier.preferredWidth(4.dp))
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.preferredWidth(16.dp))
+        }
+    }
 }

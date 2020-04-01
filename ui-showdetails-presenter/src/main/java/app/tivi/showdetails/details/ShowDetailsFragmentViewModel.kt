@@ -131,6 +131,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
                 is ChangeSeasonExpandedAction -> onChangeSeasonExpandState(action)
                 is UnfollowPreviousSeasonsFollowedAction -> onUnfollowPreviousSeasonsFollowState(action)
                 is OpenEpisodeDetails -> openEpisodeDetails(action)
+                is OpenShowDetails -> openShowDetails(action)
             }
         }
 
@@ -143,8 +144,8 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
             observeNextEpisodeToWatch(ObserveShowNextEpisodeToWatch.Params(state.showId))
             observeShowViewStats(ObserveShowViewStats.Params(state.showId))
 
-            if (state.openEpisodeUiEffect is PendingOpenEpisodeUiEffect) {
-                openEpisodeDetails(OpenEpisodeDetails(state.openEpisodeUiEffect.episodeId))
+            if (state.pendingUiEffect is PendingOpenEpisodeUiEffect) {
+                openEpisodeDetails(OpenEpisodeDetails(state.pendingUiEffect.episodeId))
             }
         }
 
@@ -186,20 +187,26 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         }
     }
 
+    private fun openShowDetails(action: OpenShowDetails) = setState {
+        copy(pendingUiEffect = ExecutableOpenShowUiEffect(action.showId))
+    }
+
     private fun openEpisodeDetails(action: OpenEpisodeDetails) {
         viewModelScope.launch {
             val episode = getEpisode(GetEpisodeDetails.Params(action.episodeId))
             if (episode != null) {
                 setState {
-                    copy(expandedSeasonIds = expandedSeasonIds + episode.seasonId,
-                        openEpisodeUiEffect = ExecutableOpenEpisodeUiEffect(action.episodeId, episode.seasonId))
+                    copy(
+                        expandedSeasonIds = expandedSeasonIds + episode.seasonId,
+                        pendingUiEffect = ExecutableOpenEpisodeUiEffect(action.episodeId, episode.seasonId)
+                    )
                 }
             }
         }
     }
 
-    fun clearExpandedEpisode() {
-        setState { copy(openEpisodeUiEffect = null) }
+    fun clearPendingUiEffect() {
+        setState { copy(pendingUiEffect = null) }
     }
 
     private fun onMarkSeasonWatched(action: MarkSeasonWatchedAction) {

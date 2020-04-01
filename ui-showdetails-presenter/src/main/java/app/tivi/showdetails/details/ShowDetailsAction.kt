@@ -39,4 +39,6 @@ data class ChangeSeasonExpandedAction(
     val expanded: Boolean
 ) : ShowDetailsAction()
 
+data class OpenShowDetails(val showId: Long) : ShowDetailsAction()
+
 data class OpenEpisodeDetails(val episodeId: Long) : ShowDetailsAction()

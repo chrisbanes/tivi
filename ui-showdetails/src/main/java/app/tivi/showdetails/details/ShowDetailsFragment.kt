@@ -22,6 +22,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
+import androidx.core.net.toUri
+import androidx.navigation.fragment.findNavController
 import app.tivi.TiviFragment
 import app.tivi.common.compose.observeWindowInsets
 import app.tivi.extensions.scheduleStartPostponedTransitions
@@ -29,6 +31,7 @@ import app.tivi.showdetails.details.view.ShowDetailsTextCreator
 import app.tivi.showdetails.details.view.composeShowDetails
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.mvrx.fragmentViewModel
+import com.airbnb.mvrx.withState
 import javax.inject.Inject
 
 class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.FactoryProvider {
@@ -50,7 +53,9 @@ class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.Factory
                 viewLifecycleOwner,
                 viewModel.observeAsLiveData(),
                 observeWindowInsets(),
-                viewModel::submitAction,
+                {
+                    viewModel.submitAction(it)
+                },
                 tiviDateFormatter,
                 textCreator
             )
@@ -63,7 +68,17 @@ class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.Factory
         scheduleStartPostponedTransitions()
     }
 
-    override fun invalidate() = Unit
+    override fun invalidate() = withState(viewModel) { state ->
+        when (val effect = state.pendingUiEffect) {
+            is ExecutableOpenShowUiEffect -> {
+                findNavController().navigate(
+                    "app.tivi://show/${effect.showId}".toUri()
+                )
+                viewModel.clearPendingUiEffect()
+            }
+            // is ExecutableOpenEpisodeUiEffect -> TODO
+        }
+    }
 
     override fun provideFactory(): ShowDetailsFragmentViewModel.Factory = showDetailsViewModelFactory
 }
