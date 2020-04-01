@@ -19,11 +19,13 @@ package app.tivi.showdetails.details.view
 import android.view.ViewGroup
 import androidx.compose.Composable
 import androidx.compose.Providers
+import androidx.compose.remember
 import androidx.compose.staticAmbientOf
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.ui.core.Alignment
+import androidx.ui.core.DensityAmbient
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.Text
@@ -57,12 +59,14 @@ import app.tivi.common.compose.observe
 import app.tivi.common.compose.observeInsets
 import app.tivi.common.compose.paddingHV
 import app.tivi.common.compose.setContentWithLifecycle
+import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.showdetails.details.ShowDetailsAction
 import app.tivi.showdetails.details.ShowDetailsViewState
 import app.tivi.util.TiviDateFormatter
+import coil.transform.RoundedCornersTransformation
 
 val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
 
@@ -101,9 +105,9 @@ fun ShowDetails(
                 Stack {
                     if (backdropImage != null) {
                         LoadNetworkImageWithCrossfade(
-                            modifier = Modifier.matchParent(),
-                            data = backdropImage,
-                            scaleFit = ScaleFit.FillMinDimension
+                            backdropImage,
+                            scaleFit = ScaleFit.FillMinDimension,
+                            modifier = Modifier.matchParent()
                         )
                     }
                 }
@@ -125,12 +129,17 @@ fun ShowDetails(
 
                         val poster = viewState.posterImage
                         if (poster != null) {
+                            val cornerRadius = with(DensityAmbient.current) { 4.dp.toPx() }
+                            val transforms = remember {
+                                listOf(RoundedCornersTransformation(cornerRadius.value))
+                            }
+
                             LoadNetworkImageWithCrossfade(
+                                poster,
+                                transformations = transforms,
+                                alignment = Alignment.TopStart,
                                 modifier = Modifier.weight(1f, fill = false)
-                                    .aspectRatio(2 / 3f),
-                                data = poster,
-                                scaleFit = ScaleFit.FillMinDimension,
-                                alignment = Alignment.TopStart
+                                    .aspectRatio(2 / 3f)
                             )
                         }
 
@@ -142,20 +151,30 @@ fun ShowDetails(
                                 mainAxisSpacing = 8.dp,
                                 crossAxisSpacing = 8.dp
                             ) {
-                                TraktRatingInfoPanel(viewState.show)
-
-                                NetworkInfoPanel(viewState.show)
-
-                                CertificateInfoPanel(viewState.show)
-
-                                RuntimeInfoPanel(viewState.show)
-
-                                AirsInfoPanel(viewState.show)
+                                val show = viewState.show
+                                if (show.traktRating != null) {
+                                    TraktRatingInfoPanel(show)
+                                }
+                                if (show.network != null || show.networkLogoPath != null) {
+                                    NetworkInfoPanel(viewState.show)
+                                }
+                                if (show.certification != null) {
+                                    CertificateInfoPanel(viewState.show)
+                                }
+                                if (show.runtime != null) {
+                                    RuntimeInfoPanel(viewState.show)
+                                }
+                                if (show.airsDay != null && show.airsTime != null &&
+                                    show.airsTimeZone != null) {
+                                    AirsInfoPanel(viewState.show)
+                                }
                             }
                         }
 
                         Spacer(modifier = Modifier.preferredWidth(16.dp))
                     }
+
+                    Spacer(modifier = Modifier.preferredHeight(16.dp))
                 }
             }
         }
@@ -175,20 +194,31 @@ private fun NetworkInfoPanel(
 
         Spacer(Modifier.preferredHeight(4.dp))
 
-        val networkLogo = show.networkLogoPath
-        if (!networkLogo.isNullOrEmpty()) {
-            LoadNetworkImageWithCrossfade(
-                modifier = Modifier.preferredSize(72.dp, 32.dp),
-                data = ShowTmdbImage(path = networkLogo, type = ImageType.LOGO, showId = 0)
-            )
-        } else {
-            val network = show.network
-            if (network != null) {
-                Text(
-                    text = network,
-                    style = MaterialTheme.typography.body2
-                )
+        val networkLogoPath = show.networkLogoPath
+        val networkName = show.network
+
+        if (networkLogoPath != null) {
+            val tmdbImage = remember(networkLogoPath) {
+                ShowTmdbImage(path = networkLogoPath, type = ImageType.LOGO, showId = 0)
             }
+            val transforms = remember {
+                listOf(TrimTransparentEdgesTransformation)
+            }
+
+            // TODO: need to think of a way to make this wrap height, while still giving
+            // Coil a size to target
+            LoadNetworkImageWithCrossfade(
+                tmdbImage,
+                transformations = transforms,
+                scaleFit = ScaleFit.FillMaxDimension,
+                alignment = Alignment.TopStart,
+                modifier = Modifier.preferredWidth(72.dp).aspectRatio(16 / 7f)
+            )
+        } else if (networkName != null) {
+            Text(
+                text = networkName,
+                style = MaterialTheme.typography.body2
+            )
         }
     }
 }
@@ -218,20 +248,19 @@ private fun AirsInfoPanel(
     show: TiviShow,
     modifier: Modifier = Modifier.None
 ) {
-    val textCreator = ShowDetailsTextCreatorAmbient.current
-    val text = textCreator.airsText(show)?.toString()
+    Column(modifier) {
+        Text(
+            text = stringResource(R.string.airs_title),
+            style = MaterialTheme.typography.subtitle2
+        )
 
-    if (!text.isNullOrEmpty()) {
-        Column(modifier) {
-            Text(
-                text = stringResource(R.string.airs_title),
-                style = MaterialTheme.typography.subtitle2
-            )
+        Spacer(Modifier.preferredHeight(4.dp))
 
-            Spacer(Modifier.preferredHeight(4.dp))
-
-            Text(text = text, style = MaterialTheme.typography.body2)
-        }
+        val textCreator = ShowDetailsTextCreatorAmbient.current
+        Text(
+            text = textCreator.airsText(show)?.toString() ?: "No air date",
+            style = MaterialTheme.typography.body2
+        )
     }
 }
 
@@ -240,26 +269,23 @@ private fun CertificateInfoPanel(
     show: TiviShow,
     modifier: Modifier = Modifier.None
 ) {
-    val cert = show.certification
-    if (!cert.isNullOrEmpty()) {
-        Column(modifier) {
-            Text(
-                text = stringResource(R.string.certificate_title),
-                style = MaterialTheme.typography.subtitle2
-            )
+    Column(modifier) {
+        Text(
+            text = stringResource(R.string.certificate_title),
+            style = MaterialTheme.typography.subtitle2
+        )
 
-            Spacer(Modifier.preferredHeight(4.dp))
+        Spacer(Modifier.preferredHeight(4.dp))
 
-            Text(
-                text = cert,
-                style = MaterialTheme.typography.body2,
-                modifier = Modifier.drawBorder(
-                    size = 1.dp,
-                    color = MaterialTheme.colors.onSurface,
-                    shape = RoundedCornerShape(2.dp)
-                ).paddingHV(horizontal = 4.dp, vertical = 2.dp)
-            )
-        }
+        Text(
+            text = show.certification ?: "No certificate",
+            style = MaterialTheme.typography.body2,
+            modifier = Modifier.drawBorder(
+                size = 1.dp,
+                color = MaterialTheme.colors.onSurface,
+                shape = RoundedCornerShape(2.dp)
+            ).paddingHV(horizontal = 4.dp, vertical = 2.dp)
+        )
     }
 }
 

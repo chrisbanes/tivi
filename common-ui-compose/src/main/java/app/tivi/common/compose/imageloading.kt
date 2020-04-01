@@ -28,6 +28,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.ui.animation.Transition
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
+import androidx.ui.core.clipToBounds
 import androidx.ui.core.onChildPositioned
 import androidx.ui.core.onPositioned
 import androidx.ui.core.paint
@@ -47,6 +48,7 @@ import app.tivi.ui.graphics.ImageLoadingColorMatrix
 import coil.Coil
 import coil.api.newGetBuilder
 import coil.size.Scale
+import coil.transform.Transformation
 import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -94,10 +96,11 @@ private val imageSaturationTransitionDef = transitionDefinition {
  */
 @Composable
 fun LoadNetworkImageWithCrossfade(
-    modifier: Modifier = Modifier.None,
     data: Any,
+    transformations: List<Transformation> = emptyList(),
     alignment: Alignment = Alignment.Center,
-    scaleFit: ScaleFit = ScaleFit.Fit
+    scaleFit: ScaleFit = ScaleFit.Fit,
+    modifier: Modifier = Modifier.None
 ) {
     var childSize by state { IntPxSize(IntPx.Zero, IntPx.Zero) }
     var imgLoadState by stateFor(data, childSize) { ImageLoadState.Empty }
@@ -108,7 +111,7 @@ fun LoadNetworkImageWithCrossfade(
     ) { transitionState ->
         val image = if (childSize.width > IntPx.Zero && childSize.height > IntPx.Zero) {
             // If we have a size, we can now load the image using those bounds...
-            loadImage(data, childSize) {
+            loadImage(data, childSize, transformations) {
                 // Once loaded, update the load state
                 imgLoadState = ImageLoadState.Loaded
             }
@@ -126,7 +129,7 @@ fun LoadNetworkImageWithCrossfade(
             // Unfortunately ColorMatrixColorFilter is not mutable so we have to create a new
             // instance every time
             val cf = ColorMatrixColorFilter(matrix)
-            childModifier = childModifier.paint(
+            childModifier = childModifier.clipToBounds().paint(
                 painter = AndroidColorMatrixImagePainter(image, cf),
                 scaleFit = scaleFit,
                 alignment = alignment
@@ -142,18 +145,24 @@ fun LoadNetworkImageWithCrossfade(
  */
 @Composable
 fun LoadNetworkImage(
-    modifier: Modifier = Modifier.None,
-    data: Any
+    data: Any,
+    transformations: List<Transformation> = emptyList(),
+    modifier: Modifier = Modifier.None
 ) {
     var childSize by state { IntPxSize(IntPx.Zero, IntPx.Zero) }
 
     val image = if (childSize.width > IntPx.Zero && childSize.height > IntPx.Zero) {
         // If we have a size, we can now load the image using those bounds...
-        loadImage(data, childSize)
+        loadImage(data, childSize, transformations)
     } else null
 
     Box(modifier = modifier.onChildPositioned { childSize = it.size }
-        .plus(if (image != null) Modifier.paint(ImagePainter(image)) else Modifier.None))
+        .plus(if (image != null) {
+            Modifier.clipToBounds().paint(ImagePainter(image))
+        } else {
+            Modifier.None
+        })
+    )
 }
 
 /**
@@ -190,6 +199,7 @@ internal class AndroidColorMatrixImagePainter(
 fun loadImage(
     data: Any,
     pxSize: IntPxSize,
+    transformations: List<Transformation> = emptyList(),
     onLoad: () -> Unit = {}
 ): ImageAsset? {
     val request = remember(data, pxSize) {
@@ -201,6 +211,7 @@ fun loadImage(
                     scale(Scale.FILL)
                 }
             }
+            .transformations(transformations)
             .build()
     }
 

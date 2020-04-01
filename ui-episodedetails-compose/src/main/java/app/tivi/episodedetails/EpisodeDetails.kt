@@ -224,9 +224,9 @@ private fun Backdrop(season: Season, episode: Episode) {
         Stack {
             if (episode.tmdbBackdropPath != null) {
                 LoadNetworkImageWithCrossfade(
-                    modifier = Modifier.matchParent(),
-                    data = episode,
-                    scaleFit = ScaleFit.FillMaxDimension
+                    episode,
+                    scaleFit = ScaleFit.FillMaxDimension,
+                    modifier = Modifier.matchParent()
                 )
             }
 
