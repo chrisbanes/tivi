@@ -53,6 +53,7 @@ import androidx.ui.layout.wrapContentHeight
 import androidx.ui.layout.wrapContentSize
 import androidx.ui.material.Card
 import androidx.ui.material.EmphasisAmbient
+import androidx.ui.material.LinearProgressIndicator
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.Surface
@@ -78,6 +79,7 @@ import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
+import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.showdetails.details.OpenEpisodeDetails
 import app.tivi.showdetails.details.OpenShowDetails
 import app.tivi.showdetails.details.ShowDetailsAction
@@ -236,9 +238,15 @@ fun ShowDetails(
                     val relatedShows = viewState.relatedShows() ?: emptyList()
                     if (relatedShows.isNotEmpty()) {
                         Spacer(modifier = Modifier.preferredHeight(8.dp))
-
                         Header(stringResource(R.string.details_related))
                         RelatedShows(relatedShows, actioner)
+                    }
+
+                    val viewStats = viewState.viewStats()
+                    if (viewStats != null) {
+                        Spacer(modifier = Modifier.preferredHeight(8.dp))
+                        Header(stringResource(R.string.details_view_stats))
+                        WatchStats(viewStats)
                     }
 
                     // Spacer to push up the content from under the navigation bar
@@ -415,10 +423,8 @@ private fun RelatedShows(
     // TODO: ideally we would use AdapterList here, but it only works for vertical lists, not
     //       horizontal :phelps_mum:
 
-    HorizontalScroller(modifier = modifier) {
-        Row {
-            Spacer(modifier = Modifier.preferredWidth(16.dp))
-
+    HorizontalScroller(modifier = modifier.paddingHV(vertical = 8.dp)) {
+        Row(modifier.paddingHV(horizontal = 16.dp)) {
             related.forEachIndexed { index, relatedEntry ->
                 val poster = relatedEntry.images.findHighestRatedPoster()
                 if (poster != null) {
@@ -439,8 +445,6 @@ private fun RelatedShows(
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.preferredWidth(16.dp))
         }
     }
 }
@@ -472,5 +476,28 @@ private fun NextEpisodeToWatch(
                 style = MaterialTheme.typography.body1
             )
         }
+    }
+}
+
+@Composable
+private fun WatchStats(stats: FollowedShowsWatchStats) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+            .padding(start = 16.dp, top = 4.dp, end = 16.dp, bottom = 8.dp)
+    ) {
+        LinearProgressIndicator(
+            modifier = Modifier.fillMaxWidth(),
+            progress = stats.watchedEpisodeCount / stats.episodeCount.toFloat()
+        )
+
+        Spacer(modifier = Modifier.preferredHeight(8.dp))
+
+        val textCreator = ShowDetailsTextCreatorAmbient.current
+
+        // TODO: Do something better with CharSequences containing markup/spans
+        Text(
+            text = textCreator.followedShowEpisodeWatchStatus(stats).toString(),
+            style = MaterialTheme.typography.body2
+        )
     }
 }
