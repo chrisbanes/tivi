@@ -45,10 +45,12 @@ import androidx.ui.layout.aspectRatio
 import androidx.ui.layout.fillMaxWidth
 import androidx.ui.layout.padding
 import androidx.ui.layout.preferredHeight
+import androidx.ui.layout.preferredHeightIn
 import androidx.ui.layout.preferredSize
 import androidx.ui.layout.preferredSizeIn
 import androidx.ui.layout.preferredWidth
 import androidx.ui.layout.wrapContentHeight
+import androidx.ui.layout.wrapContentSize
 import androidx.ui.material.Card
 import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.MaterialTheme
@@ -69,11 +71,14 @@ import app.tivi.common.compose.observeInsets
 import app.tivi.common.compose.paddingHV
 import app.tivi.common.compose.setContentWithLifecycle
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
+import app.tivi.data.entities.Episode
 import app.tivi.data.entities.ImageType
+import app.tivi.data.entities.Season
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
+import app.tivi.showdetails.details.OpenEpisodeDetails
 import app.tivi.showdetails.details.OpenShowDetails
 import app.tivi.showdetails.details.ShowDetailsAction
 import app.tivi.showdetails.details.ShowDetailsViewState
@@ -208,12 +213,30 @@ fun ShowDetails(
                                 textCreator.genreString(genres).toString(),
                                 style = MaterialTheme.typography.body2,
                                 modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
+                                    .fillMaxWidth()
                             )
                         }
                     }
 
+                    val nextEpisodeToWatch = viewState.nextEpisodeToWatch()
+                    if (nextEpisodeToWatch?.episode != null && nextEpisodeToWatch.season != null) {
+                        Spacer(modifier = Modifier.preferredHeight(8.dp))
+
+                        Header(stringResource(id = R.string.details_next_episode_to_watch))
+
+                        NextEpisodeToWatch(
+                            season = nextEpisodeToWatch.season!!,
+                            episode = nextEpisodeToWatch.episode!!,
+                            onClick = {
+                                actioner(OpenEpisodeDetails(nextEpisodeToWatch.episode!!.id))
+                            }
+                        )
+                    }
+
                     val relatedShows = viewState.relatedShows() ?: emptyList()
                     if (relatedShows.isNotEmpty()) {
+                        Spacer(modifier = Modifier.preferredHeight(8.dp))
+
                         Header(stringResource(R.string.details_related))
                         RelatedShows(relatedShows, actioner)
                     }
@@ -418,6 +441,36 @@ private fun RelatedShows(
             }
 
             Spacer(modifier = Modifier.preferredWidth(16.dp))
+        }
+    }
+}
+
+@Composable
+private fun NextEpisodeToWatch(
+    season: Season,
+    episode: Episode,
+    onClick: () -> Unit
+) {
+    Clickable(onClick = onClick, modifier = Modifier.ripple()) {
+        Column(
+            modifier = Modifier.paddingHV(16.dp, 8.dp)
+                .fillMaxWidth()
+                .preferredHeightIn(minHeight = 48.dp)
+                .wrapContentSize(Alignment.CenterStart)
+        ) {
+            val textCreator = ShowDetailsTextCreatorAmbient.current
+
+            Text(
+                textCreator.seasonEpisodeTitleText(season, episode),
+                style = MaterialTheme.typography.caption
+            )
+
+            Spacer(modifier = Modifier.preferredHeight(4.dp))
+
+            Text(
+                episode.title ?: stringResource(R.string.episode_title_fallback, episode.number!!),
+                style = MaterialTheme.typography.body1
+            )
         }
     }
 }

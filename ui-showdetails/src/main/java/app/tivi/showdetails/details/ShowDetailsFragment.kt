@@ -22,6 +22,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.navigation.fragment.findNavController
 import app.tivi.TiviFragment
@@ -76,7 +77,16 @@ class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.Factory
                 )
                 viewModel.clearPendingUiEffect()
             }
-            // is ExecutableOpenEpisodeUiEffect -> TODO
+            is ExecutableOpenEpisodeUiEffect -> {
+                // TODO fix this
+                Toast.makeText(
+                    requireContext(),
+                    "Open episode requested: ${effect.episodeId}",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                viewModel.clearPendingUiEffect()
+            }
         }
     }
 
