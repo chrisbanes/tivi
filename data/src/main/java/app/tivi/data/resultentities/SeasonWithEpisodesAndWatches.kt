@@ -17,7 +17,6 @@
 package app.tivi.data.resultentities
 
 import androidx.room.Embedded
-import androidx.room.Ignore
 import androidx.room.Relation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -36,38 +35,22 @@ class SeasonWithEpisodesAndWatches {
         else -> false
     }
 
-    @delegate:Ignore
-    val numberAiredToWatch by lazy(LazyThreadSafetyMode.NONE) {
-        episodes.count { !it.isWatched() && it.episode?.isAired() == true }
-    }
-
-    @delegate:Ignore
-    val numberWatched by lazy(LazyThreadSafetyMode.NONE) {
-        episodes.count { it.isWatched() }
-    }
-
-    @delegate:Ignore
-    val numberToAir by lazy(LazyThreadSafetyMode.NONE) {
-        numberEpisodes - numberAired
-    }
-
-    @delegate:Ignore
-    val numberAired by lazy(LazyThreadSafetyMode.NONE) {
-        episodes.count { it.episode?.isAired() == true }
-    }
-
-    @delegate:Ignore
-    val numberEpisodes by lazy(LazyThreadSafetyMode.NONE) {
-        episodes.size
-    }
-
-    @delegate:Ignore
-    val nextToAir by lazy(LazyThreadSafetyMode.NONE) {
-        episodes.firstOrNull {
-            val ep = it.episode!!
-            !ep.isAired() && ep.firstAired != null
-        }?.let { it.episode }
-    }
-
     override fun hashCode(): Int = Objects.hash(season, episodes)
 }
+
+val List<EpisodeWithWatches>.numberAiredToWatch: Int
+    get() = count { !it.isWatched() && it.episode?.isAired() == true }
+
+val List<EpisodeWithWatches>.numberWatched: Int
+    get() = count { it.isWatched() }
+
+val List<EpisodeWithWatches>.numberToAir: Int
+    get() = size - numberAired
+
+val List<EpisodeWithWatches>.numberAired: Int
+    get() = count { it.episode?.isAired() == true }
+
+val List<EpisodeWithWatches>.nextToAir: Episode?
+    get() = firstOrNull {
+        it.episode?.let { ep -> !ep.isAired() && ep.firstAired != null } ?: false
+    }?.episode

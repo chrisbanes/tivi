@@ -38,6 +38,7 @@ import androidx.ui.graphics.ScaleFit
 import androidx.ui.layout.Column
 import androidx.ui.layout.FlowRow
 import androidx.ui.layout.Row
+import androidx.ui.layout.RowScope.weight
 import androidx.ui.layout.SizeMode
 import androidx.ui.layout.Spacer
 import androidx.ui.layout.Stack
@@ -73,13 +74,17 @@ import app.tivi.common.compose.paddingHV
 import app.tivi.common.compose.setContentWithLifecycle
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
+import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.findHighestRatedPoster
+import app.tivi.data.resultentities.EpisodeWithWatches
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
+import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.views.FollowedShowsWatchStats
+import app.tivi.showdetails.details.ChangeSeasonExpandedAction
 import app.tivi.showdetails.details.OpenEpisodeDetails
 import app.tivi.showdetails.details.OpenShowDetails
 import app.tivi.showdetails.details.ShowDetailsAction
@@ -247,6 +252,13 @@ fun ShowDetails(
                         Spacer(modifier = Modifier.preferredHeight(8.dp))
                         Header(stringResource(R.string.details_view_stats))
                         WatchStats(viewStats)
+                    }
+
+                    val seasons = viewState.seasons()
+                    if (seasons != null && seasons.isNotEmpty()) {
+                        Spacer(modifier = Modifier.preferredHeight(8.dp))
+                        Header(stringResource(R.string.show_details_seasons))
+                        Seasons(seasons, viewState.expandedSeasonIds, actioner)
                     }
 
                     // Spacer to push up the content from under the navigation bar
@@ -499,5 +511,150 @@ private fun WatchStats(stats: FollowedShowsWatchStats) {
             text = textCreator.followedShowEpisodeWatchStatus(stats).toString(),
             style = MaterialTheme.typography.body2
         )
+    }
+}
+
+@Composable
+private fun Seasons(
+    seasons: List<SeasonWithEpisodesAndWatches>,
+    expandedSeasonIds: Set<Long>,
+    actioner: (ShowDetailsAction) -> Unit
+) {
+    val onSeasonClicked = { season: Season ->
+        actioner(ChangeSeasonExpandedAction(season.id, season.id !in expandedSeasonIds))
+    }
+    val onEpisodeClicked = { episode: Episode ->
+        actioner(OpenEpisodeDetails(episode.id))
+    }
+
+    seasons.forEach {
+        SeasonWithEpisodesRow(
+            it.season,
+            it.episodes,
+            it.season.id in expandedSeasonIds,
+            onSeasonClicked,
+            onEpisodeClicked,
+            Modifier.fillMaxWidth()
+        )
+    }
+}
+
+@Composable
+private fun SeasonWithEpisodesRow(
+    season: Season,
+    episodes: List<EpisodeWithWatches>,
+    expanded: Boolean,
+    onSeasonClicked: (Season) -> Unit,
+    onEpisodeClicked: (Episode) -> Unit,
+    modifier: Modifier = Modifier.None
+) {
+    Surface(
+        elevation = if (expanded) 2.dp else 0.dp,
+        modifier = modifier
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Clickable(
+                onClick = { onSeasonClicked(season) },
+                modifier = Modifier.ripple()
+            ) {
+                SeasonRow(
+                    season,
+                    episodes,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            if (expanded) {
+                episodes.forEach { episodeEntry ->
+                    Clickable(
+                        onClick = { onEpisodeClicked(episodeEntry.episode!!) },
+                        modifier = Modifier.ripple()
+                    ) {
+                        EpisodeWithWatchesRow(
+                            episodeEntry.episode!!,
+                            episodeEntry.watches,
+                            Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SeasonRow(
+    season: Season,
+    episodesWithWatches: List<EpisodeWithWatches>,
+    modifier: Modifier = Modifier.None
+) {
+    Row(
+        modifier = modifier.preferredHeightIn(minHeight = 48.dp)
+            .wrapContentHeight(Alignment.CenterStart)
+            .paddingHV(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            val textCreator = ShowDetailsTextCreatorAmbient.current
+
+            val emphasis = when {
+                season.ignored -> EmphasisAmbient.current.disabled
+                else -> EmphasisAmbient.current.high
+            }
+            ProvideEmphasis(emphasis) {
+                Text(
+                    text = season.title
+                        ?: stringResource(R.string.season_title_fallback, season.number!!),
+                    style = MaterialTheme.typography.body1
+                )
+
+                Spacer(Modifier.preferredHeight(4.dp))
+
+                Text(
+                    text = textCreator.seasonSummaryText(episodesWithWatches).toString(),
+                    style = MaterialTheme.typography.caption
+                )
+
+                // TODO progress bar
+            }
+        }
+
+        // TODO overflow popup menu
+    }
+}
+
+@Composable
+private fun EpisodeWithWatchesRow(
+    episode: Episode,
+    watches: List<EpisodeWatchEntry>,
+    modifier: Modifier = Modifier.None
+) {
+    Row(
+        modifier = modifier.preferredHeightIn(minHeight = 48.dp)
+            .wrapContentHeight(Alignment.CenterStart)
+            .paddingHV(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            val textCreator = ShowDetailsTextCreatorAmbient.current
+
+            ProvideEmphasis(EmphasisAmbient.current.high) {
+                Text(
+                    text = textCreator.episodeNumberText(episode).toString(),
+                    style = MaterialTheme.typography.caption
+                )
+
+                Spacer(Modifier.preferredHeight(2.dp))
+
+                Text(
+                    text = episode.title
+                        ?: stringResource(R.string.episode_title_fallback, episode.number!!),
+                    style = MaterialTheme.typography.body2
+                )
+            }
+        }
+
+        // TODO icons
+        watches.size
     }
 }

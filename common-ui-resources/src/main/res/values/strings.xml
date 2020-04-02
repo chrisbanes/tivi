@@ -136,6 +136,7 @@
 
     <string name="season_episode_number">Season %1$d - Episode %2$d</string>
 
+    <string name="season_title_fallback">Season %1$d</string>
     <string name="episode_title_fallback">Episode %1$d</string>
 
     <plurals name="header_show_count_filtered">
