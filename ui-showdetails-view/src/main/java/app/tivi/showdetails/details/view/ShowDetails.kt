@@ -32,12 +32,15 @@ import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.HorizontalScroller
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.VerticalScroller
+import androidx.ui.foundation.contentColor
+import androidx.ui.foundation.drawBackground
 import androidx.ui.foundation.drawBorder
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.graphics.ScaleFit
 import androidx.ui.layout.Column
 import androidx.ui.layout.FlowRow
 import androidx.ui.layout.Row
+import androidx.ui.layout.RowAlign
 import androidx.ui.layout.RowScope.weight
 import androidx.ui.layout.SizeMode
 import androidx.ui.layout.Spacer
@@ -60,6 +63,7 @@ import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.Surface
 import androidx.ui.material.ripple.ripple
 import androidx.ui.res.stringResource
+import androidx.ui.unit.Dp
 import androidx.ui.unit.dp
 import app.tivi.common.compose.ExpandingSummary
 import app.tivi.common.compose.InsetsAmbient
@@ -74,7 +78,6 @@ import app.tivi.common.compose.paddingHV
 import app.tivi.common.compose.setContentWithLifecycle
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
-import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.ShowTmdbImage
@@ -553,6 +556,8 @@ private fun SeasonWithEpisodesRow(
         modifier = modifier
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
+            if (expanded) VerticalDivider()
+
             Clickable(
                 onClick = { onSeasonClicked(season) },
                 modifier = Modifier.ripple()
@@ -571,8 +576,7 @@ private fun SeasonWithEpisodesRow(
                         modifier = Modifier.ripple()
                     ) {
                         EpisodeWithWatchesRow(
-                            episodeEntry.episode!!,
-                            episodeEntry.watches,
+                            episodeEntry,
                             Modifier.fillMaxWidth()
                         )
                     }
@@ -626,10 +630,11 @@ private fun SeasonRow(
 
 @Composable
 private fun EpisodeWithWatchesRow(
-    episode: Episode,
-    watches: List<EpisodeWatchEntry>,
+    episodeWithWatches: EpisodeWithWatches,
     modifier: Modifier = Modifier.None
 ) {
+    val episode = episodeWithWatches.episode!!
+
     Row(
         modifier = modifier.preferredHeightIn(minHeight = 48.dp)
             .wrapContentHeight(Alignment.CenterStart)
@@ -654,7 +659,36 @@ private fun EpisodeWithWatchesRow(
             }
         }
 
-        // TODO icons
-        watches.size
+        ProvideEmphasis(EmphasisAmbient.current.medium) {
+            var needSpacer = false
+            if (episodeWithWatches.hasPending()) {
+                VectorImage(
+                    R.drawable.ic_upload_24dp,
+                    Modifier.gravity(RowAlign.Center)
+                )
+                needSpacer = true
+            }
+            if (episodeWithWatches.isWatched()) {
+                if (needSpacer) {
+                    Spacer(Modifier.preferredWidth(4.dp))
+                }
+                VectorImage(
+                    id = when {
+                        episodeWithWatches.onlyPendingDeletes() -> R.drawable.ic_eye_off_24dp
+                        else -> R.drawable.ic_eye_24dp
+                    },
+                    modifier = Modifier.gravity(RowAlign.Center)
+                )
+            }
+        }
     }
+}
+
+@Composable
+private fun VerticalDivider(
+    modifier: Modifier = Modifier.None
+) {
+    Box(modifier = modifier.preferredHeight(Dp.Hairline)
+        .fillMaxWidth()
+        .drawBackground(contentColor().copy(alpha = 0.15f)))
 }
