@@ -132,6 +132,8 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
                 is UnfollowPreviousSeasonsFollowedAction -> onUnfollowPreviousSeasonsFollowState(action)
                 is OpenEpisodeDetails -> openEpisodeDetails(action)
                 is OpenShowDetails -> openShowDetails(action)
+                is ClearPendingFocusSeasonEffect -> clearFocusedSeason()
+                is ClearPendingUiEffect -> clearPendingUiEffect()
             }
         }
 
@@ -220,8 +222,10 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     private fun onChangeSeasonExpandState(action: ChangeSeasonExpandedAction) {
         if (action.expanded) {
             setState {
-                copy(focusedSeason = FocusSeasonUiEffect(action.seasonId),
-                    expandedSeasonIds = expandedSeasonIds + action.seasonId)
+                copy(
+                    focusedSeason = FocusSeasonUiEffect(action.seasonId),
+                    expandedSeasonIds = expandedSeasonIds + action.seasonId
+                )
             }
         } else {
             setState {

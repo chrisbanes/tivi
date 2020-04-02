@@ -27,9 +27,12 @@ import androidx.lifecycle.LiveData
 import androidx.ui.core.Alignment
 import androidx.ui.core.DensityAmbient
 import androidx.ui.core.Modifier
+import androidx.ui.core.onPositioned
+import androidx.ui.core.positionInRoot
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.HorizontalScroller
+import androidx.ui.foundation.ScrollerPosition
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.contentColor
@@ -41,7 +44,6 @@ import androidx.ui.layout.Column
 import androidx.ui.layout.FlowRow
 import androidx.ui.layout.Row
 import androidx.ui.layout.RowAlign
-import androidx.ui.layout.RowScope.weight
 import androidx.ui.layout.SizeMode
 import androidx.ui.layout.Spacer
 import androidx.ui.layout.Stack
@@ -89,6 +91,8 @@ import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.showdetails.details.ChangeSeasonExpandedAction
+import app.tivi.showdetails.details.ClearPendingFocusSeasonEffect
+import app.tivi.showdetails.details.FocusSeasonUiEffect
 import app.tivi.showdetails.details.OpenEpisodeDetails
 import app.tivi.showdetails.details.OpenShowDetails
 import app.tivi.showdetails.details.ShowDetailsAction
@@ -127,7 +131,11 @@ fun ShowDetails(
 ) {
     // TODO: Status bar scrim
 
-    VerticalScroller {
+    val scrollerPosition = ScrollerPosition()
+
+    VerticalScroller(
+        scrollerPosition = scrollerPosition
+    ) {
         Column {
             val backdropImage = viewState.backdropImage
             Surface(modifier = Modifier.aspectRatio(16f / 10)) {
@@ -135,7 +143,7 @@ fun ShowDetails(
                     if (backdropImage != null) {
                         LoadNetworkImageWithCrossfade(
                             backdropImage,
-                            scaleFit = ScaleFit.FillMinDimension,
+                            scaleFit = ScaleFit.FillMaxDimension,
                             modifier = Modifier.matchParent()
                         )
                     }
@@ -262,7 +270,13 @@ fun ShowDetails(
                     if (seasons != null && seasons.isNotEmpty()) {
                         Spacer(modifier = Modifier.preferredHeight(8.dp))
                         Header(stringResource(R.string.show_details_seasons))
-                        Seasons(seasons, viewState.expandedSeasonIds, actioner)
+                        Seasons(
+                            seasons,
+                            viewState.expandedSeasonIds,
+                            actioner,
+                            scrollerPosition,
+                            viewState.focusedSeason
+                        )
                     }
 
                     // Spacer to push up the content from under the navigation bar
@@ -522,7 +536,9 @@ private fun WatchStats(stats: FollowedShowsWatchStats) {
 private fun Seasons(
     seasons: List<SeasonWithEpisodesAndWatches>,
     expandedSeasonIds: Set<Long>,
-    actioner: (ShowDetailsAction) -> Unit
+    actioner: (ShowDetailsAction) -> Unit,
+    scrollerPosition: ScrollerPosition,
+    pendingFocusSeasonUiEffect: FocusSeasonUiEffect? = null
 ) {
     val onSeasonClicked = { season: Season ->
         actioner(ChangeSeasonExpandedAction(season.id, season.id !in expandedSeasonIds))
@@ -532,13 +548,32 @@ private fun Seasons(
     }
 
     seasons.forEach {
+
+        val mod = if (pendingFocusSeasonUiEffect != null &&
+            pendingFocusSeasonUiEffect.seasonId == it.season.id) {
+
+            // Offset, to not scroll the item under the status bar, and leave a gap
+            val offset = InsetsAmbient.current.top +
+                with(DensityAmbient.current) { 16.dp.toIntPx() }
+
+            Modifier.onPositioned { coords ->
+                val targetY = coords.positionInRoot.y.value +
+                    scrollerPosition.value -
+                    offset.value
+
+                scrollerPosition.smoothScrollTo(targetY) { _, _ ->
+                    actioner(ClearPendingFocusSeasonEffect)
+                }
+            }
+        } else Modifier.None
+
         SeasonWithEpisodesRow(
             it.season,
             it.episodes,
             it.season.id in expandedSeasonIds,
             onSeasonClicked,
             onEpisodeClicked,
-            Modifier.fillMaxWidth()
+            mod.fillMaxWidth()
         )
     }
 }
