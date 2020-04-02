@@ -20,8 +20,10 @@ import android.graphics.ColorMatrixColorFilter
 import androidx.animation.FloatPropKey
 import androidx.animation.transitionDefinition
 import androidx.compose.Composable
+import androidx.compose.getValue
 import androidx.compose.onCommit
 import androidx.compose.remember
+import androidx.compose.setValue
 import androidx.compose.stateFor
 import androidx.core.graphics.drawable.toBitmap
 import androidx.ui.animation.Transition

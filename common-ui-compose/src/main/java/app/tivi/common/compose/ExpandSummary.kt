@@ -17,6 +17,8 @@
 package app.tivi.common.compose
 
 import androidx.compose.Composable
+import androidx.compose.getValue
+import androidx.compose.setValue
 import androidx.compose.state
 import androidx.compose.stateFor
 import androidx.ui.core.Modifier

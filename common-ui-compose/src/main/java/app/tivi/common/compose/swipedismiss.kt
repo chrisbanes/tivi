@@ -18,6 +18,8 @@ package app.tivi.common.compose
 
 import androidx.animation.AnimationEndReason
 import androidx.compose.Composable
+import androidx.compose.getValue
+import androidx.compose.setValue
 import androidx.compose.state
 import androidx.ui.animation.animatedFloat
 import androidx.ui.core.DensityAmbient

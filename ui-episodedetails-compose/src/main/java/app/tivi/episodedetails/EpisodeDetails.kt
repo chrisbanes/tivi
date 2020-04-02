@@ -21,7 +21,9 @@ import android.view.ViewGroup
 import androidx.animation.transitionDefinition
 import androidx.annotation.DrawableRes
 import androidx.compose.Composable
+import androidx.compose.getValue
 import androidx.compose.remember
+import androidx.compose.setValue
 import androidx.compose.state
 import androidx.core.view.WindowInsetsCompat
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
