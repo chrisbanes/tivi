@@ -86,6 +86,7 @@ import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.EpisodeWithWatches
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
+import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.showdetails.details.ChangeSeasonExpandedAction
 import app.tivi.showdetails.details.OpenEpisodeDetails
@@ -595,7 +596,7 @@ private fun SeasonRow(
     Row(
         modifier = modifier.preferredHeightIn(minHeight = 48.dp)
             .wrapContentHeight(Alignment.CenterStart)
-            .paddingHV(horizontal = 16.dp, vertical = 8.dp)
+            .paddingHV(horizontal = 16.dp, vertical = 12.dp)
     ) {
         Column(
             modifier = Modifier.weight(1f)
@@ -619,8 +620,15 @@ private fun SeasonRow(
                     text = textCreator.seasonSummaryText(episodesWithWatches).toString(),
                     style = MaterialTheme.typography.caption
                 )
+            }
 
-                // TODO progress bar
+            if (!season.ignored) {
+                Spacer(Modifier.preferredHeight(4.dp))
+
+                LinearProgressIndicator(
+                    episodesWithWatches.numberWatched / episodesWithWatches.size.toFloat(),
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
 
