@@ -17,17 +17,20 @@
 package app.tivi
 
 import android.util.Log
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import app.tivi.common.ui.BuildConfig
 import com.airbnb.mvrx.Async
 import com.airbnb.mvrx.BaseMvRxViewModel
+import com.airbnb.mvrx.DeliveryMode
 import com.airbnb.mvrx.Fail
 import com.airbnb.mvrx.Loading
 import com.airbnb.mvrx.MvRxState
 import com.airbnb.mvrx.Success
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import kotlin.reflect.KProperty1
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -41,7 +44,11 @@ abstract class TiviMvRxViewModel<S : MvRxState>(
     initialState: S
 ) : BaseMvRxViewModel<S>(initialState, debugMode = BuildConfig.DEBUG) {
 
-    private val liveData by lazy(LazyThreadSafetyMode.NONE) { MvRxStateLiveData() }
+    private val liveData by lazy(LazyThreadSafetyMode.NONE) {
+        MvRxStateLiveData<S> {
+            subscribe { value = it }
+        }
+    }
 
     protected suspend fun <T> Flow<T>.execute(
         stateReducer: S.(Async<T>) -> S
@@ -67,11 +74,21 @@ abstract class TiviMvRxViewModel<S : MvRxState>(
 
     fun observeAsLiveData(): LiveData<S> = liveData
 
-    private inner class MvRxStateLiveData : MutableLiveData<S>() {
+    fun <A> selectObserve(
+        owner: LifecycleOwner,
+        prop1: KProperty1<S, A>,
+        deliveryMode: DeliveryMode
+    ): LiveData<A> = MvRxStateLiveData {
+        selectSubscribe(owner, prop1, deliveryMode) { value = it }
+    }
+
+    private class MvRxStateLiveData<T>(
+        private val subscribe: MvRxStateLiveData<T>.() -> Disposable
+    ) : MutableLiveData<T>() {
         private var disposable: Disposable? = null
 
         override fun onActive() {
-            disposable = subscribe { value = it }
+            disposable = subscribe()
         }
 
         override fun onInactive() {

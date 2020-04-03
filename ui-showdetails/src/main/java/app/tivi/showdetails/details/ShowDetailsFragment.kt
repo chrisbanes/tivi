@@ -22,7 +22,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.navigation.fragment.findNavController
 import app.tivi.TiviFragment
@@ -53,10 +52,13 @@ class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.Factory
             composeShowDetails(
                 viewLifecycleOwner,
                 viewModel.observeAsLiveData(),
+                viewModel.selectObserve(
+                    viewLifecycleOwner,
+                    ShowDetailsViewState::pendingUiEffects,
+                    uniqueOnly()
+                ),
                 observeWindowInsets(),
-                {
-                    viewModel.submitAction(it)
-                },
+                viewModel::submitAction,
                 tiviDateFormatter,
                 textCreator
             )
@@ -70,22 +72,12 @@ class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.Factory
     }
 
     override fun invalidate() = withState(viewModel) { state ->
-        when (val effect = state.pendingUiEffect) {
-            is ExecutableOpenShowUiEffect -> {
+        state.pendingUiEffects.forEach { effect ->
+            if (effect is ExecutableOpenShowUiEffect) {
                 findNavController().navigate(
                     "app.tivi://show/${effect.showId}".toUri()
                 )
-                viewModel.clearPendingUiEffect()
-            }
-            is ExecutableOpenEpisodeUiEffect -> {
-                // TODO fix this
-                Toast.makeText(
-                    requireContext(),
-                    "Open episode requested: ${effect.episodeId}",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                viewModel.clearPendingUiEffect()
+                viewModel.submitAction(ClearPendingUiEffect(effect))
             }
         }
     }

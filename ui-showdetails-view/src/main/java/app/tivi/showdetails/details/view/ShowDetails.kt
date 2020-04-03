@@ -91,12 +91,13 @@ import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.showdetails.details.ChangeSeasonExpandedAction
-import app.tivi.showdetails.details.ClearPendingFocusSeasonEffect
+import app.tivi.showdetails.details.ClearPendingUiEffect
 import app.tivi.showdetails.details.FocusSeasonUiEffect
 import app.tivi.showdetails.details.OpenEpisodeDetails
 import app.tivi.showdetails.details.OpenShowDetails
 import app.tivi.showdetails.details.ShowDetailsAction
 import app.tivi.showdetails.details.ShowDetailsViewState
+import app.tivi.showdetails.details.UiEffect
 import app.tivi.util.TiviDateFormatter
 import coil.transform.RoundedCornersTransformation
 
@@ -105,6 +106,7 @@ val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
 fun ViewGroup.composeShowDetails(
     lifecycleOwner: LifecycleOwner,
     state: LiveData<ShowDetailsViewState>,
+    pendingUiEffects: LiveData<List<UiEffect>>,
     insets: LiveData<WindowInsetsCompat>,
     actioner: (ShowDetailsAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter,
@@ -115,9 +117,10 @@ fun ViewGroup.composeShowDetails(
             observeInsets(insets)
 
             val viewState = observe(state)
+            val uiEffects = observe(pendingUiEffects) ?: emptyList()
             if (viewState != null) {
                 MaterialThemeFromAndroidTheme(context) {
-                    ShowDetails(viewState, actioner)
+                    ShowDetails(viewState, uiEffects, actioner)
                 }
             }
         }
@@ -127,6 +130,7 @@ fun ViewGroup.composeShowDetails(
 @Composable
 fun ShowDetails(
     viewState: ShowDetailsViewState,
+    uiEffects: List<UiEffect>,
     actioner: (ShowDetailsAction) -> Unit
 ) {
     // TODO: Status bar scrim
@@ -275,7 +279,7 @@ fun ShowDetails(
                             viewState.expandedSeasonIds,
                             actioner,
                             scrollerPosition,
-                            viewState.focusedSeason
+                            uiEffects.firstOrNull { it is FocusSeasonUiEffect } as? FocusSeasonUiEffect
                         )
                     }
 
@@ -548,9 +552,9 @@ private fun Seasons(
     }
 
     seasons.forEach {
-
         val mod = if (pendingFocusSeasonUiEffect != null &&
-            pendingFocusSeasonUiEffect.seasonId == it.season.id) {
+            pendingFocusSeasonUiEffect.seasonId == it.season.id &&
+            !scrollerPosition.isAnimating) {
 
             // Offset, to not scroll the item under the status bar, and leave a gap
             val offset = InsetsAmbient.current.top +
@@ -562,7 +566,7 @@ private fun Seasons(
                     offset.value
 
                 scrollerPosition.smoothScrollTo(targetY) { _, _ ->
-                    actioner(ClearPendingFocusSeasonEffect)
+                    actioner(ClearPendingUiEffect(pendingFocusSeasonUiEffect))
                 }
             }
         } else Modifier.None

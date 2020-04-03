@@ -132,8 +132,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
                 is UnfollowPreviousSeasonsFollowedAction -> onUnfollowPreviousSeasonsFollowState(action)
                 is OpenEpisodeDetails -> openEpisodeDetails(action)
                 is OpenShowDetails -> openShowDetails(action)
-                is ClearPendingFocusSeasonEffect -> clearFocusedSeason()
-                is ClearPendingUiEffect -> clearPendingUiEffect()
+                is ClearPendingUiEffect -> clearPendingUiEffect(action)
             }
         }
 
@@ -146,8 +145,10 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
             observeNextEpisodeToWatch(ObserveShowNextEpisodeToWatch.Params(state.showId))
             observeShowViewStats(ObserveShowViewStats.Params(state.showId))
 
-            if (state.pendingUiEffect is PendingOpenEpisodeUiEffect) {
-                openEpisodeDetails(OpenEpisodeDetails(state.pendingUiEffect.episodeId))
+            val pendingOpenEpisode = state.pendingUiEffects
+                .firstOrNull { it is PendingOpenEpisodeUiEffect }
+            if (pendingOpenEpisode is PendingOpenEpisodeUiEffect) {
+                openEpisodeDetails(OpenEpisodeDetails(pendingOpenEpisode.episodeId))
             }
         }
 
@@ -190,7 +191,9 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     private fun openShowDetails(action: OpenShowDetails) = setState {
-        copy(pendingUiEffect = ExecutableOpenShowUiEffect(action.showId))
+        val pending = ArrayList(pendingUiEffects)
+        pending.removeAll { it is ExecutableOpenShowUiEffect }
+        copy(pendingUiEffects = pending + ExecutableOpenShowUiEffect(action.showId))
     }
 
     private fun openEpisodeDetails(action: OpenEpisodeDetails) {
@@ -198,17 +201,22 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
             val episode = getEpisode(GetEpisodeDetails.Params(action.episodeId))
             if (episode != null) {
                 setState {
+                    val pending = ArrayList(pendingUiEffects)
+                    pending.removeAll {
+                        it is ExecutableOpenEpisodeUiEffect || it is PendingOpenEpisodeUiEffect
+                    }
                     copy(
                         expandedSeasonIds = expandedSeasonIds + episode.seasonId,
-                        pendingUiEffect = ExecutableOpenEpisodeUiEffect(action.episodeId, episode.seasonId)
+                        pendingUiEffects = pending +
+                            ExecutableOpenEpisodeUiEffect(action.episodeId, episode.seasonId)
                     )
                 }
             }
         }
     }
 
-    fun clearPendingUiEffect() {
-        setState { copy(pendingUiEffect = null) }
+    private fun clearPendingUiEffect(action: ClearPendingUiEffect) {
+        setState { copy(pendingUiEffects = pendingUiEffects - action.effect) }
     }
 
     private fun onMarkSeasonWatched(action: MarkSeasonWatchedAction) {
@@ -219,23 +227,18 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         changeSeasonWatchedStatus(Params(action.seasonId, Action.UNWATCH))
     }
 
-    private fun onChangeSeasonExpandState(action: ChangeSeasonExpandedAction) {
-        if (action.expanded) {
-            setState {
-                copy(
-                    focusedSeason = FocusSeasonUiEffect(action.seasonId),
-                    expandedSeasonIds = expandedSeasonIds + action.seasonId
-                )
-            }
-        } else {
-            setState {
-                copy(expandedSeasonIds = expandedSeasonIds - action.seasonId)
-            }
-        }
-    }
+    private fun onChangeSeasonExpandState(action: ChangeSeasonExpandedAction) = setState {
+        val pending = ArrayList(pendingUiEffects)
+        pending.removeAll { it is FocusSeasonUiEffect }
 
-    fun clearFocusedSeason() {
-        setState { copy(focusedSeason = null) }
+        if (action.expanded) {
+            copy(
+                pendingUiEffects = pending + FocusSeasonUiEffect(action.seasonId),
+                expandedSeasonIds = expandedSeasonIds + action.seasonId
+            )
+        } else {
+            copy(expandedSeasonIds = expandedSeasonIds - action.seasonId)
+        }
     }
 
     private fun onChangeSeasonFollowState(action: ChangeSeasonFollowedAction) {
