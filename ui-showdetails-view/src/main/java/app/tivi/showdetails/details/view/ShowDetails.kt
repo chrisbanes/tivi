@@ -18,8 +18,10 @@ package app.tivi.showdetails.details.view
 
 import android.view.ViewGroup
 import androidx.compose.Composable
+import androidx.compose.MutableState
 import androidx.compose.Providers
 import androidx.compose.remember
+import androidx.compose.state
 import androidx.compose.staticAmbientOf
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LifecycleOwner
@@ -27,6 +29,7 @@ import androidx.lifecycle.LiveData
 import androidx.ui.core.Alignment
 import androidx.ui.core.DensityAmbient
 import androidx.ui.core.Modifier
+import androidx.ui.core.PopupProperties
 import androidx.ui.core.onPositioned
 import androidx.ui.core.positionInRoot
 import androidx.ui.foundation.Box
@@ -64,6 +67,7 @@ import androidx.ui.material.MaterialTheme
 import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.Surface
 import androidx.ui.material.icons.Icons
+import androidx.ui.material.icons.filled.MoreVert
 import androidx.ui.material.icons.filled.Star
 import androidx.ui.material.ripple.ripple
 import androidx.ui.res.stringResource
@@ -74,6 +78,8 @@ import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.InsetsHolder
 import app.tivi.common.compose.LoadNetworkImageWithCrossfade
 import app.tivi.common.compose.MaterialThemeFromAndroidTheme
+import app.tivi.common.compose.PopupMenu
+import app.tivi.common.compose.PopupMenuItem
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.WrapWithAmbients
 import app.tivi.common.compose.observe
@@ -90,6 +96,7 @@ import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.EpisodeWithWatches
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
+import app.tivi.data.resultentities.numberAired
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.showdetails.details.ChangeSeasonExpandedAction
@@ -637,7 +644,7 @@ private fun SeasonRow(
     Row(
         modifier = modifier.preferredHeightIn(minHeight = 48.dp)
             .wrapContentHeight(Alignment.CenterStart)
-            .paddingHV(horizontal = 16.dp, vertical = 12.dp)
+            .padding(start = 16.dp, top = 12.dp, bottom = 12.dp)
     ) {
         Column(
             modifier = Modifier.weight(1f)
@@ -673,7 +680,20 @@ private fun SeasonRow(
             }
         }
 
-        // TODO overflow popup menu
+        val showPopup = state { false }
+        SeasonRowOverflowMenu(season, episodesWithWatches, showPopup)
+
+        Clickable(
+            onClick = { showPopup.value = true },
+            modifier = Modifier.ripple()
+        ) {
+            VectorImage(
+                vector = Icons.Default.MoreVert,
+                scaleFit = ScaleFit.Fit,
+                alignment = Alignment.Center,
+                modifier = Modifier.preferredSize(48.dp)
+            )
+        }
     }
 }
 
@@ -740,4 +760,55 @@ private fun VerticalDivider(
     Box(modifier = modifier.preferredHeight(Dp.Hairline)
         .fillMaxWidth()
         .drawBackground(contentColor().copy(alpha = 0.15f)))
+}
+
+@Composable
+private fun SeasonRowOverflowMenu(
+    season: Season,
+    episodesWithWatches: List<EpisodeWithWatches>,
+    popupVisible: MutableState<Boolean>
+) {
+    val items = ArrayList<PopupMenuItem>()
+
+    items += if (season.ignored) {
+        PopupMenuItem(
+            title = stringResource(id = R.string.popup_season_follow)
+        )
+    } else {
+        PopupMenuItem(
+            title = stringResource(id = R.string.popup_season_ignore)
+        )
+    }
+
+    // Season number starts from 1, rather than 0
+    if (season.number ?: -100 >= 2) {
+        items += PopupMenuItem(
+            title = stringResource(id = R.string.popup_season_ignore_previous)
+        )
+    }
+
+    if (episodesWithWatches.numberWatched > 0) {
+        items += PopupMenuItem(
+            title = stringResource(id = R.string.popup_season_mark_all_unwatched)
+        )
+    }
+
+    if (episodesWithWatches.numberWatched < episodesWithWatches.size) {
+        items += PopupMenuItem(
+            title = stringResource(id = R.string.popup_season_mark_watched_all)
+        )
+    }
+
+    if (episodesWithWatches.numberWatched < episodesWithWatches.numberAired
+        && episodesWithWatches.numberAired < episodesWithWatches.size) {
+        items += PopupMenuItem(
+            title = stringResource(id = R.string.popup_season_mark_watched_aired)
+        )
+    }
+
+    PopupMenu(
+        items = items,
+        visible = popupVisible,
+        alignment = Alignment.CenterEnd
+    )
 }
