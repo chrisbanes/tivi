@@ -63,6 +63,8 @@ import androidx.ui.material.LinearProgressIndicator
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.Surface
+import androidx.ui.material.icons.Icons
+import androidx.ui.material.icons.filled.Star
 import androidx.ui.material.ripple.ripple
 import androidx.ui.res.stringResource
 import androidx.ui.unit.Dp
@@ -414,10 +416,10 @@ private fun TraktRatingInfoPanel(
 
         Row {
             VectorImage(
-                modifier = Modifier.preferredSize(32.dp),
-                id = R.drawable.ic_star_black_24dp,
+                vector = Icons.Default.Star,
+                scaleFit = ScaleFit.FillMinDimension,
                 tintColor = MaterialTheme.colors.secondaryVariant,
-                scaleFit = ScaleFit.FillMinDimension
+                modifier = Modifier.preferredSize(32.dp)
             )
 
             Spacer(Modifier.preferredWidth(4.dp))
@@ -710,8 +712,8 @@ private fun EpisodeWithWatchesRow(
             var needSpacer = false
             if (episodeWithWatches.hasPending()) {
                 VectorImage(
-                    R.drawable.ic_upload_24dp,
-                    Modifier.gravity(RowAlign.Center)
+                    Icons.Default.Star,
+                    modifier = Modifier.gravity(RowAlign.Center)
                 )
                 needSpacer = true
             }
