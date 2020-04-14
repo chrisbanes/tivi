@@ -19,6 +19,7 @@ package app.tivi.common.compose
 import androidx.annotation.DrawableRes
 import androidx.compose.Composable
 import androidx.ui.core.Alignment
+import androidx.ui.core.ContentScale
 import androidx.ui.core.Modifier
 import androidx.ui.core.clipToBounds
 import androidx.ui.core.paint
@@ -26,7 +27,6 @@ import androidx.ui.foundation.Box
 import androidx.ui.foundation.contentColor
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.ColorFilter
-import androidx.ui.graphics.ScaleFit
 import androidx.ui.graphics.vector.VectorAsset
 import androidx.ui.graphics.vector.VectorPainter
 import androidx.ui.layout.wrapContentSize
@@ -36,14 +36,14 @@ import androidx.ui.res.vectorResource
 fun VectorImage(
     @DrawableRes id: Int,
     alignment: Alignment = Alignment.Center,
-    scaleFit: ScaleFit = ScaleFit.Fit,
+    contentScale: ContentScale = ContentScale.Fit,
     tintColor: Color = contentColor(),
     modifier: Modifier = Modifier.wrapContentSize(align = alignment)
 ) {
     VectorImage(
         vector = vectorResource(id = id),
         alignment = alignment,
-        scaleFit = scaleFit,
+        contentScale = contentScale,
         tintColor = tintColor,
         modifier = modifier
     )
@@ -53,7 +53,7 @@ fun VectorImage(
 fun VectorImage(
     vector: VectorAsset,
     alignment: Alignment = Alignment.Center,
-    scaleFit: ScaleFit = ScaleFit.Fit,
+    contentScale: ContentScale = ContentScale.Fit,
     tintColor: Color = contentColor(),
     modifier: Modifier = Modifier.wrapContentSize(align = alignment)
 ) {
@@ -61,7 +61,7 @@ fun VectorImage(
         modifier = modifier.clipToBounds().paint(
             painter = VectorPainter(vector),
             alignment = alignment,
-            scaleFit = scaleFit,
+            contentScale = contentScale,
             colorFilter = ColorFilter.tint(tintColor)
         )
     )

@@ -153,7 +153,7 @@ object Libs {
         object UI {
             const val version = "0.1.0-SNAPSHOT"
 
-            const val composeRuntime = "androidx.compose:compose-runtime:${version}"
+            const val composeRuntime = "androidx.compose:compose-runtime:$version"
             const val framework = "androidx.ui:ui-framework:$version"
             const val layout = "androidx.ui:ui-layout:$version"
             const val material = "androidx.ui:ui-material:$version"

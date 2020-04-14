@@ -19,12 +19,12 @@ package app.tivi.common.compose
 import androidx.animation.AnimationEndReason
 import androidx.compose.Composable
 import androidx.compose.getValue
+import androidx.compose.remember
 import androidx.compose.setValue
 import androidx.compose.state
 import androidx.ui.animation.animatedFloat
 import androidx.ui.core.DensityAmbient
 import androidx.ui.core.LayoutDirection
-import androidx.ui.core.LayoutDirectionAmbient
 import androidx.ui.core.Modifier
 import androidx.ui.core.WithConstraints
 import androidx.ui.foundation.Box
@@ -52,54 +52,13 @@ fun SwipeToDismiss(
     backgroundChildren: @Composable() (swipeProgress: Float, wouldCompleteOnRelease: Boolean) -> Unit,
     swipeChildren: @Composable() (swipeProgress: Float, wouldCompleteOnRelease: Boolean) -> Unit
 ) = Stack {
-    val position = animatedFloat(initVal = 0f).apply { setBounds(0f, 0f) }
+    val position = remember {
+        animatedFloat(initVal = 0f).apply { setBounds(0f, 0f) }
+    }
     var progress by state { 0f }
 
-    Box(modifier = Modifier.matchParent()) {
+    Box(modifier = Modifier.matchParentSize()) {
         backgroundChildren(progress, progress.absoluteValue >= swipeCompletePercentage)
-    }
-
-    val layoutDir = LayoutDirectionAmbient.current
-
-    val draggable = Modifier.draggable(
-        dragDirection = DragDirection.Horizontal,
-        onDragStopped = { _ ->
-            // TODO: look at using fling and velocity here
-            if (position.max > 0f && position.value / position.max >= swipeCompletePercentage) {
-                position.animateTo(
-                    position.max,
-                    onEnd = { endReason, _ ->
-                        if (endReason != AnimationEndReason.Interrupted) {
-                            onSwipeComplete(if (layoutDir == LayoutDirection.Ltr) END else START)
-                        }
-                    }
-                )
-            } else if (position.min < 0f && position.value / position.min >= swipeCompletePercentage) {
-                position.animateTo(
-                    position.min,
-                    onEnd = { endReason, _ ->
-                        if (endReason != AnimationEndReason.Interrupted) {
-                            onSwipeComplete(if (layoutDir == LayoutDirection.Ltr) START else END)
-                        }
-                    }
-                )
-            } else position.animateTo(0f)
-        }
-    ) { delta ->
-        val oldPosition = position.value
-        position.snapTo(oldPosition + delta)
-        val newPosition = position.value
-
-        progress = when {
-            newPosition < 0f && position.min < 0f -> newPosition / position.min
-            newPosition > 0f && position.max > 0f -> newPosition / position.max
-            else -> 0f
-        }
-        // If we have an onSwipe callback, invoke it
-        onSwipe?.invoke(progress)
-
-        // Return the difference in position (delta)
-        newPosition - oldPosition
     }
 
     WithConstraints { constraints, layoutDirection ->
@@ -117,10 +76,53 @@ fun SwipeToDismiss(
             position.setBounds(0f, constraints.maxWidth.value.toFloat())
         }
 
+        val draggable = Modifier.draggable(
+            dragDirection = DragDirection.Horizontal,
+            onDragStopped = { _ ->
+                // TODO: look at using fling and velocity here
+                if (position.max > 0f && position.value / position.max >= swipeCompletePercentage) {
+                    position.animateTo(
+                        position.max,
+                        onEnd = { endReason, _ ->
+                            if (endReason != AnimationEndReason.Interrupted) {
+                                onSwipeComplete(if (layoutDirection == LayoutDirection.Ltr) END else START)
+                            }
+                        }
+                    )
+                } else if (position.min < 0f && position.value / position.min >= swipeCompletePercentage) {
+                    position.animateTo(
+                        position.min,
+                        onEnd = { endReason, _ ->
+                            if (endReason != AnimationEndReason.Interrupted) {
+                                onSwipeComplete(if (layoutDirection == LayoutDirection.Ltr) START else END)
+                            }
+                        }
+                    )
+                } else position.animateTo(0f)
+            }
+        ) { delta ->
+            val oldPosition = position.value
+            position.snapTo(oldPosition + delta)
+            val newPosition = position.value
+
+            progress = when {
+                newPosition < 0f && position.min < 0f -> newPosition / position.min
+                newPosition > 0f && position.max > 0f -> newPosition / position.max
+                else -> 0f
+            }
+            // If we have an onSwipe callback, invoke it
+            onSwipe?.invoke(progress)
+
+            // Return the difference in position (delta)
+            newPosition - oldPosition
+        }
+
         val xOffset = with(DensityAmbient.current) { position.value.toDp() }
         Box(
             modifier = Modifier.plus(draggable).offset(x = xOffset, y = 0.dp),
-            children = { swipeChildren(progress, progress.absoluteValue >= swipeCompletePercentage) }
+            children = {
+                swipeChildren(progress, progress.absoluteValue >= swipeCompletePercentage)
+            }
         )
     }
 }

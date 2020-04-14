@@ -27,9 +27,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.ui.core.Alignment
+import androidx.ui.core.ContentScale
 import androidx.ui.core.DensityAmbient
 import androidx.ui.core.Modifier
-import androidx.ui.core.PopupProperties
 import androidx.ui.core.onPositioned
 import androidx.ui.core.positionInRoot
 import androidx.ui.foundation.Box
@@ -42,11 +42,9 @@ import androidx.ui.foundation.contentColor
 import androidx.ui.foundation.drawBackground
 import androidx.ui.foundation.drawBorder
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
-import androidx.ui.graphics.ScaleFit
 import androidx.ui.layout.Column
 import androidx.ui.layout.FlowRow
 import androidx.ui.layout.Row
-import androidx.ui.layout.RowAlign
 import androidx.ui.layout.SizeMode
 import androidx.ui.layout.Spacer
 import androidx.ui.layout.Stack
@@ -156,15 +154,15 @@ fun ShowDetails(
                     if (backdropImage != null) {
                         LoadNetworkImageWithCrossfade(
                             backdropImage,
-                            scaleFit = ScaleFit.FillMaxDimension,
-                            modifier = Modifier.matchParent()
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.matchParentSize()
                         )
                     }
                 }
             }
 
             Surface(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(Alignment.TopStart),
+                modifier = Modifier.fillMaxWidth().wrapContentHeight(Alignment.Top),
                 elevation = 2.dp
             ) {
                 Column {
@@ -305,11 +303,11 @@ fun ShowDetails(
 @Composable
 private fun NetworkInfoPanel(
     show: TiviShow,
-    modifier: Modifier = Modifier.None
+    modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         Text(
-            text = stringResource(id = R.string.network_title),
+            text = stringResource(R.string.network_title),
             style = MaterialTheme.typography.subtitle2
         )
 
@@ -329,7 +327,7 @@ private fun NetworkInfoPanel(
             LoadNetworkImageWithCrossfade(
                 tmdbImage,
                 transformations = transforms,
-                scaleFit = ScaleFit.FillMaxDimension,
+                contentScale = ContentScale.Fit,
                 alignment = Alignment.TopStart,
                 modifier = Modifier.preferredSizeIn(maxWidth = 72.dp, maxHeight = 32.dp)
             )
@@ -345,7 +343,7 @@ private fun NetworkInfoPanel(
 @Composable
 private fun RuntimeInfoPanel(
     show: TiviShow,
-    modifier: Modifier = Modifier.None
+    modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         Text(
@@ -365,7 +363,7 @@ private fun RuntimeInfoPanel(
 @Composable
 private fun AirsInfoPanel(
     show: TiviShow,
-    modifier: Modifier = Modifier.None
+    modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         Text(
@@ -386,7 +384,7 @@ private fun AirsInfoPanel(
 @Composable
 private fun CertificateInfoPanel(
     show: TiviShow,
-    modifier: Modifier = Modifier.None
+    modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         Text(
@@ -411,7 +409,7 @@ private fun CertificateInfoPanel(
 @Composable
 private fun TraktRatingInfoPanel(
     show: TiviShow,
-    modifier: Modifier = Modifier.None
+    modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         Text(
@@ -424,7 +422,7 @@ private fun TraktRatingInfoPanel(
         Row {
             VectorImage(
                 vector = Icons.Default.Star,
-                scaleFit = ScaleFit.FillMinDimension,
+                contentScale = ContentScale.Inside,
                 tintColor = MaterialTheme.colors.secondaryVariant,
                 modifier = Modifier.preferredSize(32.dp)
             )
@@ -461,10 +459,10 @@ private fun Header(title: String) {
 private fun RelatedShows(
     related: List<RelatedShowEntryWithShow>,
     actioner: (ShowDetailsAction) -> Unit,
-    modifier: Modifier = Modifier.None
+    modifier: Modifier = Modifier
 ) {
     // TODO: ideally we would use AdapterList here, but it only works for vertical lists, not
-    //       horizontal :phelps_mum:
+    // horizontal
 
     HorizontalScroller(modifier = modifier.paddingHV(vertical = 8.dp)) {
         Row(modifier.paddingHV(horizontal = 16.dp)) {
@@ -578,7 +576,7 @@ private fun Seasons(
                     actioner(ClearPendingUiEffect(pendingFocusSeasonUiEffect))
                 }
             }
-        } else Modifier.None
+        } else Modifier
 
         SeasonWithEpisodesRow(
             it.season,
@@ -598,7 +596,7 @@ private fun SeasonWithEpisodesRow(
     expanded: Boolean,
     onSeasonClicked: (Season) -> Unit,
     onEpisodeClicked: (Episode) -> Unit,
-    modifier: Modifier = Modifier.None
+    modifier: Modifier = Modifier
 ) {
     Surface(
         elevation = if (expanded) 2.dp else 0.dp,
@@ -639,11 +637,11 @@ private fun SeasonWithEpisodesRow(
 private fun SeasonRow(
     season: Season,
     episodesWithWatches: List<EpisodeWithWatches>,
-    modifier: Modifier = Modifier.None
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier.preferredHeightIn(minHeight = 48.dp)
-            .wrapContentHeight(Alignment.CenterStart)
+            .wrapContentHeight(Alignment.CenterVertically)
             .padding(start = 16.dp, top = 12.dp, bottom = 12.dp)
     ) {
         Column(
@@ -689,7 +687,7 @@ private fun SeasonRow(
         ) {
             VectorImage(
                 vector = Icons.Default.MoreVert,
-                scaleFit = ScaleFit.Fit,
+                contentScale = ContentScale.Inside,
                 alignment = Alignment.Center,
                 modifier = Modifier.preferredSize(48.dp)
             )
@@ -700,13 +698,13 @@ private fun SeasonRow(
 @Composable
 private fun EpisodeWithWatchesRow(
     episodeWithWatches: EpisodeWithWatches,
-    modifier: Modifier = Modifier.None
+    modifier: Modifier = Modifier
 ) {
     val episode = episodeWithWatches.episode!!
 
     Row(
         modifier = modifier.preferredHeightIn(minHeight = 48.dp)
-            .wrapContentHeight(Alignment.CenterStart)
+            .wrapContentHeight(Alignment.CenterVertically)
             .paddingHV(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -733,7 +731,7 @@ private fun EpisodeWithWatchesRow(
             if (episodeWithWatches.hasPending()) {
                 VectorImage(
                     Icons.Default.Star,
-                    modifier = Modifier.gravity(RowAlign.Center)
+                    modifier = Modifier.gravity(Alignment.CenterVertically)
                 )
                 needSpacer = true
             }
@@ -746,7 +744,7 @@ private fun EpisodeWithWatchesRow(
                         episodeWithWatches.onlyPendingDeletes() -> R.drawable.ic_eye_off_24dp
                         else -> R.drawable.ic_eye_24dp
                     },
-                    modifier = Modifier.gravity(RowAlign.Center)
+                    modifier = Modifier.gravity(Alignment.CenterVertically)
                 )
             }
         }
@@ -755,7 +753,7 @@ private fun EpisodeWithWatchesRow(
 
 @Composable
 private fun VerticalDivider(
-    modifier: Modifier = Modifier.None
+    modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.preferredHeight(Dp.Hairline)
         .fillMaxWidth()
@@ -799,8 +797,8 @@ private fun SeasonRowOverflowMenu(
         )
     }
 
-    if (episodesWithWatches.numberWatched < episodesWithWatches.numberAired
-        && episodesWithWatches.numberAired < episodesWithWatches.size) {
+    if (episodesWithWatches.numberWatched < episodesWithWatches.numberAired &&
+        episodesWithWatches.numberAired < episodesWithWatches.size) {
         items += PopupMenuItem(
             title = stringResource(id = R.string.popup_season_mark_watched_aired)
         )

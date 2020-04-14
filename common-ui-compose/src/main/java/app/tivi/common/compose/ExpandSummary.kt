@@ -38,7 +38,7 @@ fun ExpandingSummary(
     textStyle: TextStyle = MaterialTheme.typography.body2,
     collapsedMaxLines: Int = 4,
     expandedMaxLines: Int = Int.MAX_VALUE,
-    modifier: Modifier = Modifier.None
+    modifier: Modifier = Modifier
 ) {
     var canExpand by stateFor(text) { true }
 

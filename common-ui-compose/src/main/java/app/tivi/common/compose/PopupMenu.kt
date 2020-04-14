@@ -60,8 +60,8 @@ fun PopupMenu(
                 elevation = 2.dp
             ) {
                 Column(
-                    Modifier.wrapContentWidth(align = Alignment.TopStart)
-                        .wrapContentHeight(align = Alignment.TopStart)
+                    Modifier.wrapContentWidth(align = Alignment.Start)
+                        .wrapContentHeight(align = Alignment.Top)
                         .preferredSizeIn(minWidth = 96.dp, maxWidth = 192.dp)
                 ) {
                     items.forEach { item ->

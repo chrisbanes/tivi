@@ -28,6 +28,7 @@ import androidx.compose.stateFor
 import androidx.core.graphics.drawable.toBitmap
 import androidx.ui.animation.Transition
 import androidx.ui.core.Alignment
+import androidx.ui.core.ContentScale
 import androidx.ui.core.Modifier
 import androidx.ui.core.WithConstraints
 import androidx.ui.core.clipToBounds
@@ -41,7 +42,6 @@ import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Canvas
 import androidx.ui.graphics.ImageAsset
 import androidx.ui.graphics.Paint
-import androidx.ui.graphics.ScaleFit
 import androidx.ui.graphics.asImageAsset
 import androidx.ui.graphics.painter.ImagePainter
 import androidx.ui.graphics.painter.Painter
@@ -102,8 +102,8 @@ fun LoadNetworkImageWithCrossfade(
     data: Any,
     transformations: List<Transformation> = emptyList(),
     alignment: Alignment = Alignment.Center,
-    scaleFit: ScaleFit = ScaleFit.Fit,
-    modifier: Modifier = Modifier.None
+    contentScale: ContentScale = ContentScale.Fit,
+    modifier: Modifier = Modifier
 ) = WithConstraints(modifier) { constraints, _ ->
     var imgLoadState by stateFor(data) { ImageLoadState.Empty }
 
@@ -143,7 +143,7 @@ fun LoadNetworkImageWithCrossfade(
             val cf = ColorMatrixColorFilter(matrix)
             childModifier = childModifier.clipToBounds().paint(
                 painter = AndroidColorMatrixImagePainter(image, cf),
-                scaleFit = scaleFit,
+                contentScale = contentScale,
                 alignment = alignment
             )
         }
@@ -159,7 +159,7 @@ fun LoadNetworkImageWithCrossfade(
 fun LoadNetworkImage(
     data: Any,
     transformations: List<Transformation> = emptyList(),
-    modifier: Modifier = Modifier.None
+    modifier: Modifier = Modifier
 ) = WithConstraints(modifier) { constraints, _ ->
     val width = when {
         constraints.hasFixedWidth -> constraints.maxWidth
@@ -177,7 +177,7 @@ fun LoadNetworkImage(
 
     Box(
         modifier.plus(
-            image?.let { Modifier.clipToBounds().paint(ImagePainter(image)) } ?: Modifier.None)
+            image?.let { Modifier.clipToBounds().paint(ImagePainter(image)) } ?: Modifier)
     )
 }
 

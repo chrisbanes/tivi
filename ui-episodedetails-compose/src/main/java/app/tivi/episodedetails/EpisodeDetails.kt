@@ -21,6 +21,7 @@ import android.view.ViewGroup
 import androidx.animation.transitionDefinition
 import androidx.annotation.DrawableRes
 import androidx.compose.Composable
+import androidx.compose.Providers
 import androidx.compose.getValue
 import androidx.compose.remember
 import androidx.compose.setValue
@@ -33,12 +34,14 @@ import androidx.ui.animation.ColorPropKey
 import androidx.ui.animation.Transition
 import androidx.ui.core.Alignment
 import androidx.ui.core.ConfigurationAmbient
+import androidx.ui.core.ContentDrawScope
+import androidx.ui.core.ContentScale
 import androidx.ui.core.DensityAmbient
 import androidx.ui.core.DrawModifier
 import androidx.ui.core.Modifier
 import androidx.ui.core.onPositioned
 import androidx.ui.foundation.Box
-import androidx.ui.foundation.ProvideContentColor
+import androidx.ui.foundation.ContentColorAmbient
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.contentColor
@@ -46,15 +49,11 @@ import androidx.ui.foundation.drawBackground
 import androidx.ui.foundation.shape.RectangleShape
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.geometry.Offset
-import androidx.ui.graphics.Canvas
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.Paint
-import androidx.ui.graphics.ScaleFit
 import androidx.ui.graphics.withSave
 import androidx.ui.layout.Column
-import androidx.ui.layout.ColumnAlign
 import androidx.ui.layout.Row
-import androidx.ui.layout.RowAlign
 import androidx.ui.layout.Spacer
 import androidx.ui.layout.Stack
 import androidx.ui.layout.aspectRatio
@@ -71,10 +70,8 @@ import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.Surface
 import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
-import androidx.ui.unit.Density
 import androidx.ui.unit.Px
 import androidx.ui.unit.PxPosition
-import androidx.ui.unit.PxSize
 import androidx.ui.unit.dp
 import androidx.ui.unit.toOffset
 import androidx.ui.unit.toRect
@@ -160,12 +157,12 @@ private fun EpisodeDetails(
 
                         if (watches.isEmpty()) {
                             MarkWatchedButton(
-                                modifier = Modifier.gravity(ColumnAlign.Center),
+                                modifier = Modifier.gravity(Alignment.CenterHorizontally),
                                 actioner = actioner
                             )
                         } else {
                             AddWatchButton(
-                                modifier = Modifier.gravity(ColumnAlign.Center),
+                                modifier = Modifier.gravity(Alignment.CenterHorizontally),
                                 actioner = actioner
                             )
                         }
@@ -227,8 +224,8 @@ private fun Backdrop(season: Season, episode: Episode) {
             if (episode.tmdbBackdropPath != null) {
                 LoadNetworkImageWithCrossfade(
                     episode,
-                    scaleFit = ScaleFit.FillMaxDimension,
-                    modifier = Modifier.matchParent()
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.matchParentSize()
                 )
             }
 
@@ -244,7 +241,7 @@ private fun Backdrop(season: Season, episode: Episode) {
                 val epNumber = episode.number
                 val seasonNumber = season.number
 
-                ProvideContentColor(color = Color.White) {
+                Providers(ContentColorAmbient provides Color.White) {
                     if (seasonNumber != null && epNumber != null) {
                         ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
                             @Suppress("DEPRECATION")
@@ -295,14 +292,14 @@ private fun InfoPanes(episode: Episode) {
 
 @Composable
 private fun InfoPane(
-    modifier: Modifier = Modifier.None,
+    modifier: Modifier = Modifier,
     @DrawableRes iconResId: Int,
     label: String
 ) {
     Column(modifier = modifier.padding(all = 16.dp)) {
         ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
             VectorImage(
-                modifier = Modifier.gravity(ColumnAlign.Center),
+                modifier = Modifier.gravity(Alignment.CenterHorizontally),
                 id = iconResId
             )
         }
@@ -311,7 +308,7 @@ private fun InfoPane(
 
         ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
             Text(
-                modifier = Modifier.gravity(ColumnAlign.Center),
+                modifier = Modifier.gravity(Alignment.CenterHorizontally),
                 text = label,
                 style = MaterialTheme.typography.body1
             )
@@ -325,7 +322,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
         ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
             Text(
                 modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
-                    .gravity(RowAlign.Center)
+                    .gravity(Alignment.CenterVertically)
                     .weight(1f),
                 text = stringResource(R.string.episode_watches),
                 style = MaterialTheme.typography.subtitle1
@@ -353,7 +350,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
             ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
                 val formatter = TiviDateFormatterAmbient.current
                 Text(
-                    modifier = Modifier.weight(1f).gravity(RowAlign.Center),
+                    modifier = Modifier.weight(1f).gravity(Alignment.CenterVertically),
                     text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
                     style = MaterialTheme.typography.body2
                 )
@@ -363,14 +360,14 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
                 if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
                     VectorImage(
                         R.drawable.ic_upload_24dp,
-                        modifier = Modifier.padding(start = 8.dp).gravity(RowAlign.Center)
+                        modifier = Modifier.padding(start = 8.dp).gravity(Alignment.CenterVertically)
                     )
                 }
 
                 if (episodeWatchEntry.pendingAction == PendingAction.DELETE) {
                     VectorImage(
                         R.drawable.ic_eye_off_24dp,
-                        modifier = Modifier.padding(start = 8.dp).gravity(RowAlign.Center)
+                        modifier = Modifier.padding(start = 8.dp).gravity(Alignment.CenterVertically)
                     )
                 }
             }
@@ -421,8 +418,7 @@ private fun EpisodeWatchSwipeBackground(
         ) {
             // A simple box to draw the growing circle, which emanates from behind the icon
             Box(
-                modifier = Modifier.fillMaxSize() +
-                    CircleGrowDrawModifier(
+                modifier = Modifier.fillMaxSize().drawGrowingCircle(
                         transitionState[color],
                         iconCenter.toOffset(),
                         lerp(0f, maxRadius.toFloat(), fastOutLinearIn(swipeProgress))
@@ -441,7 +437,7 @@ private fun EpisodeWatchSwipeBackground(
     }
 }
 
-private fun CircleGrowDrawModifier(
+private fun Modifier.drawGrowingCircle(
     color: Color,
     centerPoint: Offset,
     radius: Float
@@ -453,19 +449,19 @@ private fun CircleGrowDrawModifier(
         paint.color = color
     }
 
-    override fun draw(density: Density, drawContent: () -> Unit, canvas: Canvas, size: PxSize) {
+    override fun ContentDrawScope.draw() {
         drawContent()
 
-        canvas.withSave {
-            canvas.clipRect(size.toRect())
-            canvas.drawCircle(centerPoint, radius, paint)
+        withSave {
+            clipRect(size.toRect())
+            drawCircle(centerPoint, radius, paint)
         }
     }
 }
 
 @Composable
 fun MarkWatchedButton(
-    modifier: Modifier = Modifier.None,
+    modifier: Modifier = Modifier,
     actioner: (EpisodeDetailsAction) -> Unit
 ) {
     Button(
@@ -484,7 +480,7 @@ fun MarkWatchedButton(
 
 @Composable
 fun AddWatchButton(
-    modifier: Modifier = Modifier.None,
+    modifier: Modifier = Modifier,
     actioner: (EpisodeDetailsAction) -> Unit
 ) {
     OutlinedButton(
