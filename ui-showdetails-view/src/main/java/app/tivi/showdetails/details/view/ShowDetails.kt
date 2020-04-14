@@ -70,6 +70,7 @@ import androidx.ui.material.icons.filled.Star
 import androidx.ui.material.ripple.ripple
 import androidx.ui.res.stringResource
 import androidx.ui.unit.Dp
+import androidx.ui.unit.IntPx
 import androidx.ui.unit.dp
 import app.tivi.common.compose.ExpandingSummary
 import app.tivi.common.compose.InsetsAmbient
@@ -139,14 +140,10 @@ fun ShowDetails(
     viewState: ShowDetailsViewState,
     uiEffects: List<UiEffect>,
     actioner: (ShowDetailsAction) -> Unit
-) {
-    // TODO: Status bar scrim
-
+) = Stack {
     val scrollerPosition = ScrollerPosition()
 
-    VerticalScroller(
-        scrollerPosition = scrollerPosition
-    ) {
+    VerticalScroller(scrollerPosition = scrollerPosition) {
         Column {
             val backdropImage = viewState.backdropImage
             Surface(modifier = Modifier.aspectRatio(16f / 10)) {
@@ -297,6 +294,17 @@ fun ShowDetails(
                 }
             }
         }
+    }
+
+    val insets = InsetsAmbient.current
+    if (insets.top > IntPx.Zero) {
+        val topInset = with(DensityAmbient.current) { insets.top.toDp() }
+        Box(
+            Modifier.preferredHeight(topInset)
+                .fillMaxWidth()
+                .gravity(Alignment.TopStart)
+                .drawBackground(color = MaterialTheme.colors.background.copy(alpha = 0.4f))
+        )
     }
 }
 
