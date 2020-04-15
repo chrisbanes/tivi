@@ -17,24 +17,30 @@
 package app.tivi.showdetails.details.view
 
 import android.view.ViewGroup
+import androidx.animation.transitionDefinition
 import androidx.compose.Composable
 import androidx.compose.MutableState
 import androidx.compose.Providers
+import androidx.compose.mutableStateOf
 import androidx.compose.remember
 import androidx.compose.state
 import androidx.compose.staticAmbientOf
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.ui.animation.DpPropKey
+import androidx.ui.animation.Transition
 import androidx.ui.core.Alignment
 import androidx.ui.core.ContentScale
 import androidx.ui.core.DensityAmbient
 import androidx.ui.core.Modifier
+import androidx.ui.core.drawOpacity
 import androidx.ui.core.onPositioned
 import androidx.ui.core.positionInRoot
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.HorizontalScroller
+import androidx.ui.foundation.Icon
 import androidx.ui.foundation.ScrollerPosition
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.VerticalScroller
@@ -42,6 +48,7 @@ import androidx.ui.foundation.contentColor
 import androidx.ui.foundation.drawBackground
 import androidx.ui.foundation.drawBorder
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
+import androidx.ui.graphics.Color
 import androidx.ui.layout.Column
 import androidx.ui.layout.FlowRow
 import androidx.ui.layout.Row
@@ -60,11 +67,14 @@ import androidx.ui.layout.wrapContentHeight
 import androidx.ui.layout.wrapContentSize
 import androidx.ui.material.Card
 import androidx.ui.material.EmphasisAmbient
+import androidx.ui.material.IconButton
 import androidx.ui.material.LinearProgressIndicator
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.Surface
+import androidx.ui.material.TopAppBar
 import androidx.ui.material.icons.Icons
+import androidx.ui.material.icons.filled.ArrowBack
 import androidx.ui.material.icons.filled.MoreVert
 import androidx.ui.material.icons.filled.Star
 import androidx.ui.material.ripple.ripple
@@ -106,6 +116,7 @@ import app.tivi.showdetails.details.OpenShowDetails
 import app.tivi.showdetails.details.ShowDetailsAction
 import app.tivi.showdetails.details.ShowDetailsViewState
 import app.tivi.showdetails.details.UiEffect
+import app.tivi.ui.animations.lerp
 import app.tivi.util.TiviDateFormatter
 import coil.transform.RoundedCornersTransformation
 
@@ -142,11 +153,15 @@ fun ShowDetails(
     actioner: (ShowDetailsAction) -> Unit
 ) = Stack {
     val scrollerPosition = ScrollerPosition()
+    val backdropHeight = mutableStateOf(IntPx.Zero)
 
     VerticalScroller(scrollerPosition = scrollerPosition) {
         Column {
             val backdropImage = viewState.backdropImage
-            Surface(modifier = Modifier.aspectRatio(16f / 10)) {
+            Surface(
+                modifier = Modifier.aspectRatio(16f / 10)
+                    .onPositioned { backdropHeight.value = it.size.height }
+            ) {
                 Stack {
                     if (backdropImage != null) {
                         LoadNetworkImageWithCrossfade(
@@ -163,10 +178,10 @@ fun ShowDetails(
                 elevation = 2.dp
             ) {
                 Column {
-                    Text(
-                        modifier = Modifier.padding(16.dp),
-                        text = viewState.show.title ?: "Show",
-                        style = MaterialTheme.typography.h6
+                    ShowDetailsAppBar(
+                        show = viewState.show,
+                        elevation = 0.dp,
+                        backgroundColor = Color.Transparent
                     )
 
                     Row {
@@ -296,17 +311,66 @@ fun ShowDetails(
         }
     }
 
-    val insets = InsetsAmbient.current
-    if (insets.top > IntPx.Zero) {
-        val topInset = with(DensityAmbient.current) { insets.top.toDp() }
-        Box(
-            Modifier.preferredHeight(topInset)
-                .fillMaxWidth()
-                .gravity(Alignment.TopStart)
-                .drawBackground(color = MaterialTheme.colors.background.copy(alpha = 0.4f))
-        )
+    Column(
+        modifier = Modifier.fillMaxWidth().gravity(Alignment.TopStart)
+    ) {
+        val insets = InsetsAmbient.current
+
+        val trigger = (backdropHeight.value - insets.top).coerceAtLeast(IntPx.Zero).value
+
+        if (insets.top > IntPx.Zero) {
+            val topInset = with(DensityAmbient.current) { insets.top.toDp() }
+
+            val alpha = lerp(
+                startValue = 0.5f,
+                endValue = 1f,
+                fraction = if (trigger > 0) {
+                    (scrollerPosition.value / trigger).coerceIn(0f, 1f)
+                } else 0f
+            )
+            Box(
+                Modifier.preferredHeight(topInset)
+                    .fillMaxWidth()
+                    .drawBackground(color = MaterialTheme.colors.background.copy(alpha = alpha))
+            )
+        }
+
+        val showOverlayAppBar = mutableStateOf(true)
+
+        showOverlayAppBar.value = scrollerPosition.value > trigger
+
+        val transition = remember {
+            transitionDefinition {
+                state(true) {
+                    this[elevationPropKey] = 4.dp
+                }
+                state(false) {
+                    this[elevationPropKey] = 2.dp
+                }
+
+                transition {
+                    elevationPropKey using tween { duration = 200 }
+                }
+            }
+        }
+
+        Transition(
+            definition = transition,
+            toState = showOverlayAppBar.value
+        ) { transitionState ->
+            if (showOverlayAppBar.value) {
+                ShowDetailsAppBar(
+                    show = viewState.show,
+                    elevation = transitionState[elevationPropKey],
+                    backgroundColor = MaterialTheme.colors.surface,
+                    modifier = Modifier.drawOpacity(if (showOverlayAppBar.value) 1f else 0f)
+                )
+            }
+        }
     }
 }
+
+private val elevationPropKey = DpPropKey()
 
 @Composable
 private fun NetworkInfoPanel(
@@ -573,7 +637,7 @@ private fun Seasons(
 
             // Offset, to not scroll the item under the status bar, and leave a gap
             val offset = InsetsAmbient.current.top +
-                with(DensityAmbient.current) { 16.dp.toIntPx() }
+                with(DensityAmbient.current) { 56.dp.toIntPx() }
 
             Modifier.onPositioned { coords ->
                 val targetY = coords.positionInRoot.y.value +
@@ -689,16 +753,8 @@ private fun SeasonRow(
         val showPopup = state { false }
         SeasonRowOverflowMenu(season, episodesWithWatches, showPopup)
 
-        Clickable(
-            onClick = { showPopup.value = true },
-            modifier = Modifier.ripple()
-        ) {
-            VectorImage(
-                vector = Icons.Default.MoreVert,
-                contentScale = ContentScale.Inside,
-                alignment = Alignment.Center,
-                modifier = Modifier.preferredSize(48.dp)
-            )
+        IconButton(onClick = { showPopup.value = true }) {
+            Icon(Icons.Default.MoreVert)
         }
     }
 }
@@ -816,5 +872,27 @@ private fun SeasonRowOverflowMenu(
         items = items,
         visible = popupVisible,
         alignment = Alignment.CenterEnd
+    )
+}
+
+@Composable
+private fun ShowDetailsAppBar(
+    show: TiviShow,
+    elevation: Dp,
+    backgroundColor: Color,
+    modifier: Modifier = Modifier
+) {
+    TopAppBar(
+        title = {
+            Text(text = show.title ?: "")
+        },
+        navigationIcon = {
+            IconButton(onClick = { /* TODO */ }) {
+                Icon(Icons.Default.ArrowBack)
+            }
+        },
+        elevation = elevation,
+        backgroundColor = backgroundColor,
+        modifier = modifier
     )
 }

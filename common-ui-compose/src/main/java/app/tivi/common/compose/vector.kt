@@ -36,7 +36,7 @@ import androidx.ui.res.vectorResource
 fun VectorImage(
     @DrawableRes id: Int,
     alignment: Alignment = Alignment.Center,
-    contentScale: ContentScale = ContentScale.Fit,
+    contentScale: ContentScale = ContentScale.Inside,
     tintColor: Color = contentColor(),
     modifier: Modifier = Modifier.wrapContentSize(align = alignment)
 ) {
@@ -53,7 +53,7 @@ fun VectorImage(
 fun VectorImage(
     vector: VectorAsset,
     alignment: Alignment = Alignment.Center,
-    contentScale: ContentScale = ContentScale.Fit,
+    contentScale: ContentScale = ContentScale.Inside,
     tintColor: Color = contentColor(),
     modifier: Modifier = Modifier.wrapContentSize(align = alignment)
 ) {
