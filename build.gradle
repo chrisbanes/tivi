@@ -69,9 +69,12 @@ subprojects {
     apply plugin: 'com.diffplug.gradle.spotless'
     spotless {
         kotlin {
-            target "**/*.kt"
+            target '**/*.kt'
+            targetExclude("$buildDir/**/*.kt")
+            targetExclude('bin/**/*.kt')
+
             ktlint(Versions.ktlint)
-            licenseHeaderFile project.rootProject.file('spotless/copyright.kt')
+            licenseHeaderFile rootProject.file('spotless/copyright.kt')
         }
     }
 
