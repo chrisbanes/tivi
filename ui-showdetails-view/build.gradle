@@ -62,4 +62,5 @@ dependencies {
     implementation Libs.AndroidX.UI.material
     implementation Libs.AndroidX.UI.animation
     implementation Libs.AndroidX.UI.tooling
+    implementation Libs.AndroidX.UI.livedata
 }

@@ -50,7 +50,6 @@ class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.Factory
             layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
             composeShowDetails(
-                viewLifecycleOwner,
                 viewModel.observeAsLiveData(),
                 viewModel.selectObserve(
                     viewLifecycleOwner,

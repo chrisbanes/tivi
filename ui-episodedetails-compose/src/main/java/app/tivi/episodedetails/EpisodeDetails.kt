@@ -28,7 +28,6 @@ import androidx.compose.setValue
 import androidx.compose.state
 import androidx.core.view.WindowInsetsCompat
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.ui.animation.ColorPropKey
 import androidx.ui.animation.Transition
@@ -40,6 +39,7 @@ import androidx.ui.core.DensityAmbient
 import androidx.ui.core.DrawModifier
 import androidx.ui.core.Modifier
 import androidx.ui.core.onPositioned
+import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.ContentColorAmbient
 import androidx.ui.foundation.Text
@@ -61,6 +61,7 @@ import androidx.ui.layout.fillMaxSize
 import androidx.ui.layout.padding
 import androidx.ui.layout.preferredHeight
 import androidx.ui.layout.preferredSizeIn
+import androidx.ui.livedata.observeAsState
 import androidx.ui.material.Button
 import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.IconButton
@@ -89,10 +90,8 @@ import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.WrapWithAmbients
 import app.tivi.common.compose.boundsInParent
 import app.tivi.common.compose.center
-import app.tivi.common.compose.observe
 import app.tivi.common.compose.observeInsets
 import app.tivi.common.compose.paddingHV
-import app.tivi.common.compose.setContentWithLifecycle
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
@@ -111,19 +110,18 @@ import org.threeten.bp.OffsetDateTime
  * on Compose
  */
 fun ViewGroup.composeEpisodeDetails(
-    lifecycleOwner: LifecycleOwner,
     state: LiveData<EpisodeDetailsViewState>,
     insets: LiveData<WindowInsetsCompat>,
     actioner: (EpisodeDetailsAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter
-): Any = setContentWithLifecycle(lifecycleOwner) {
+): Any = setContent {
     WrapWithAmbients(tiviDateFormatter, InsetsHolder()) {
         observeInsets(insets)
 
-        val viewState = observe(state)
+        val viewState by state.observeAsState()
         if (viewState != null) {
             MaterialThemeFromAndroidTheme(context) {
-                EpisodeDetails(viewState, actioner)
+                EpisodeDetails(viewState!!, actioner)
             }
         }
     }

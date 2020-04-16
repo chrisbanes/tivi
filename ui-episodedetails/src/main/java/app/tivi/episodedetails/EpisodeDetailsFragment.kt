@@ -54,7 +54,6 @@ class EpisodeDetailsFragment : TiviFragment(), EpisodeDetailsViewModel.FactoryPr
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
 
             composeEpisodeDetails(
-                viewLifecycleOwner,
                 viewModel.observeAsLiveData(),
                 observeWindowInsets(),
                 viewModel::submitAction,

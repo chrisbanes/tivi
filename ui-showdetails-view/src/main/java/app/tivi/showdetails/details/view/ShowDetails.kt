@@ -21,12 +21,12 @@ import androidx.animation.transitionDefinition
 import androidx.compose.Composable
 import androidx.compose.MutableState
 import androidx.compose.Providers
+import androidx.compose.getValue
 import androidx.compose.mutableStateOf
 import androidx.compose.remember
 import androidx.compose.state
 import androidx.compose.staticAmbientOf
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.ui.animation.DpPropKey
 import androidx.ui.animation.Transition
@@ -37,6 +37,7 @@ import androidx.ui.core.Modifier
 import androidx.ui.core.drawOpacity
 import androidx.ui.core.onPositioned
 import androidx.ui.core.positionInRoot
+import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.HorizontalScroller
@@ -65,6 +66,7 @@ import androidx.ui.layout.preferredSizeIn
 import androidx.ui.layout.preferredWidth
 import androidx.ui.layout.wrapContentHeight
 import androidx.ui.layout.wrapContentSize
+import androidx.ui.livedata.observeAsState
 import androidx.ui.material.Card
 import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.IconButton
@@ -91,10 +93,8 @@ import app.tivi.common.compose.PopupMenu
 import app.tivi.common.compose.PopupMenuItem
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.WrapWithAmbients
-import app.tivi.common.compose.observe
 import app.tivi.common.compose.observeInsets
 import app.tivi.common.compose.paddingHV
-import app.tivi.common.compose.setContentWithLifecycle
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.ImageType
@@ -123,23 +123,22 @@ import coil.transform.RoundedCornersTransformation
 val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
 
 fun ViewGroup.composeShowDetails(
-    lifecycleOwner: LifecycleOwner,
     state: LiveData<ShowDetailsViewState>,
     pendingUiEffects: LiveData<List<UiEffect>>,
     insets: LiveData<WindowInsetsCompat>,
     actioner: (ShowDetailsAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter,
     textCreator: ShowDetailsTextCreator
-): Any = setContentWithLifecycle(lifecycleOwner) {
+): Any = setContent {
     WrapWithAmbients(tiviDateFormatter, InsetsHolder()) {
         Providers(ShowDetailsTextCreatorAmbient provides textCreator) {
             observeInsets(insets)
 
-            val viewState = observe(state)
-            val uiEffects = observe(pendingUiEffects) ?: emptyList()
+            val viewState by state.observeAsState()
+            val uiEffects by pendingUiEffects.observeAsState(emptyList())
             if (viewState != null) {
                 MaterialThemeFromAndroidTheme(context) {
-                    ShowDetails(viewState, uiEffects, actioner)
+                    ShowDetails(viewState!!, uiEffects, actioner)
                 }
             }
         }

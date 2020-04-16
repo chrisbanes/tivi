@@ -160,6 +160,7 @@ object Libs {
             const val foundation = "androidx.ui:ui-foundation:$version"
             const val animation = "androidx.ui:ui-animation:$version"
             const val tooling = "androidx.ui:ui-tooling:$version"
+            const val livedata = "androidx.ui:ui-livedata:$version"
         }
     }
 
