@@ -204,11 +204,12 @@ private fun EpisodeDetails(
                         )
                     }
 
-                    with(DensityAmbient.current) {
-                        Spacer(
-                            modifier = Modifier.preferredHeight(InsetsAmbient.current.bottom.toDp())
-                        )
+                    val bottomInset = with(DensityAmbient.current) {
+                        InsetsAmbient.current.bottom.toDp()
                     }
+                    Spacer(
+                        modifier = Modifier.preferredHeight(bottomInset + 8.dp)
+                    )
                 }
             }
         }

@@ -19,7 +19,6 @@ package app.tivi.common.compose
 import androidx.animation.AnimationEndReason
 import androidx.compose.Composable
 import androidx.compose.getValue
-import androidx.compose.remember
 import androidx.compose.setValue
 import androidx.compose.state
 import androidx.ui.animation.animatedFloat
@@ -52,9 +51,7 @@ fun SwipeToDismiss(
     backgroundChildren: @Composable() (swipeProgress: Float, wouldCompleteOnRelease: Boolean) -> Unit,
     swipeChildren: @Composable() (swipeProgress: Float, wouldCompleteOnRelease: Boolean) -> Unit
 ) = Stack {
-    val position = remember {
-        animatedFloat(initVal = 0f).apply { setBounds(0f, 0f) }
-    }
+    val position = animatedFloat(initVal = 0f).apply { setBounds(0f, 0f) }
     var progress by state { 0f }
 
     Box(modifier = Modifier.matchParentSize()) {

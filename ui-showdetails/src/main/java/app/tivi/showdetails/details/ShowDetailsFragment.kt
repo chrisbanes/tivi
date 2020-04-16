@@ -26,6 +26,7 @@ import androidx.core.net.toUri
 import androidx.navigation.fragment.findNavController
 import app.tivi.TiviFragment
 import app.tivi.common.compose.observeWindowInsets
+import app.tivi.episodedetails.EpisodeDetailsFragment
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.showdetails.details.view.ShowDetailsTextCreator
 import app.tivi.showdetails.details.view.composeShowDetails
@@ -72,11 +73,18 @@ class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.Factory
 
     override fun invalidate() = withState(viewModel) { state ->
         state.pendingUiEffects.forEach { effect ->
-            if (effect is ExecutableOpenShowUiEffect) {
-                findNavController().navigate(
-                    "app.tivi://show/${effect.showId}".toUri()
-                )
-                viewModel.submitAction(ClearPendingUiEffect(effect))
+            when (effect) {
+                is ExecutableOpenShowUiEffect -> {
+                    findNavController().navigate(
+                        "app.tivi://show/${effect.showId}".toUri()
+                    )
+                    viewModel.submitAction(ClearPendingUiEffect(effect))
+                }
+                is ExecutableOpenEpisodeUiEffect -> {
+                    EpisodeDetailsFragment.create(effect.episodeId)
+                        .show(childFragmentManager, "episode")
+                    viewModel.submitAction(ClearPendingUiEffect(effect))
+                }
             }
         }
     }
