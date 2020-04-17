@@ -19,6 +19,7 @@ package app.tivi.common.compose
 import androidx.compose.Composable
 import androidx.compose.MutableState
 import androidx.compose.state
+import androidx.ui.animation.Crossfade
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.core.Popup
@@ -55,34 +56,36 @@ fun PopupMenu(
                 onDismissRequest = { visible.value = false }
             )
         ) {
-            Surface(
-                shape = MaterialTheme.shapes.medium,
-                elevation = 2.dp
-            ) {
-                Column(
-                    Modifier.wrapContentWidth(align = Alignment.Start)
-                        .wrapContentHeight(align = Alignment.Top)
-                        .preferredSizeIn(minWidth = 96.dp, maxWidth = 192.dp)
+            Crossfade(current = visible.value) {
+                Surface(
+                    shape = MaterialTheme.shapes.medium,
+                    elevation = 2.dp
                 ) {
-                    items.forEach { item ->
-                        Clickable(
-                            onClick = {
-                                item.onClick?.invoke()
-                                visible.value = false
-                            },
-                            enabled = item.enabled,
-                            modifier = Modifier.ripple(enabled = item.enabled)
-                        ) {
-                            val emphasis = when {
-                                item.enabled -> EmphasisAmbient.current.high
-                                else -> EmphasisAmbient.current.disabled
-                            }
-                            ProvideEmphasis(emphasis) {
-                                Text(
-                                    text = item.title,
-                                    style = MaterialTheme.typography.body1,
-                                    modifier = Modifier.padding(16.dp)
-                                )
+                    Column(
+                        Modifier.wrapContentWidth(align = Alignment.Start)
+                            .wrapContentHeight(align = Alignment.Top)
+                            .preferredSizeIn(minWidth = 96.dp, maxWidth = 192.dp)
+                    ) {
+                        items.forEach { item ->
+                            Clickable(
+                                onClick = {
+                                    item.onClick?.invoke()
+                                    visible.value = false
+                                },
+                                enabled = item.enabled,
+                                modifier = Modifier.ripple(enabled = item.enabled)
+                            ) {
+                                val emphasis = when {
+                                    item.enabled -> EmphasisAmbient.current.high
+                                    else -> EmphasisAmbient.current.disabled
+                                }
+                                ProvideEmphasis(emphasis) {
+                                    Text(
+                                        text = item.title,
+                                        style = MaterialTheme.typography.body1,
+                                        modifier = Modifier.padding(16.dp)
+                                    )
+                                }
                             }
                         }
                     }
