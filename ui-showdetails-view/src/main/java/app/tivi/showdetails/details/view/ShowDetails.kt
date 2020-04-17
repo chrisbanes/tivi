@@ -109,13 +109,17 @@ import app.tivi.data.resultentities.numberAired
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.showdetails.details.ChangeSeasonExpandedAction
+import app.tivi.showdetails.details.ChangeSeasonFollowedAction
 import app.tivi.showdetails.details.ClearPendingUiEffect
 import app.tivi.showdetails.details.FocusSeasonUiEffect
+import app.tivi.showdetails.details.MarkSeasonUnwatchedAction
+import app.tivi.showdetails.details.MarkSeasonWatchedAction
 import app.tivi.showdetails.details.OpenEpisodeDetails
 import app.tivi.showdetails.details.OpenShowDetails
 import app.tivi.showdetails.details.ShowDetailsAction
 import app.tivi.showdetails.details.ShowDetailsViewState
 import app.tivi.showdetails.details.UiEffect
+import app.tivi.showdetails.details.UnfollowPreviousSeasonsFollowedAction
 import app.tivi.ui.animations.lerp
 import app.tivi.util.TiviDateFormatter
 import coil.transform.RoundedCornersTransformation
@@ -622,13 +626,6 @@ private fun Seasons(
     scrollerPosition: ScrollerPosition,
     pendingFocusSeasonUiEffect: FocusSeasonUiEffect? = null
 ) {
-    val onSeasonClicked = { season: Season ->
-        actioner(ChangeSeasonExpandedAction(season.id, season.id !in expandedSeasonIds))
-    }
-    val onEpisodeClicked = { episode: Episode ->
-        actioner(OpenEpisodeDetails(episode.id))
-    }
-
     seasons.forEach {
         val mod = if (pendingFocusSeasonUiEffect != null &&
             pendingFocusSeasonUiEffect.seasonId == it.season.id &&
@@ -650,12 +647,11 @@ private fun Seasons(
         } else Modifier
 
         SeasonWithEpisodesRow(
-            it.season,
-            it.episodes,
-            it.season.id in expandedSeasonIds,
-            onSeasonClicked,
-            onEpisodeClicked,
-            mod.fillMaxWidth()
+            season = it.season,
+            episodes = it.episodes,
+            expanded = it.season.id in expandedSeasonIds,
+            actioner = actioner,
+            modifier = mod.fillMaxWidth()
         )
     }
 }
@@ -665,8 +661,7 @@ private fun SeasonWithEpisodesRow(
     season: Season,
     episodes: List<EpisodeWithWatches>,
     expanded: Boolean,
-    onSeasonClicked: (Season) -> Unit,
-    onEpisodeClicked: (Episode) -> Unit,
+    actioner: (ShowDetailsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -677,12 +672,13 @@ private fun SeasonWithEpisodesRow(
             if (expanded) VerticalDivider()
 
             Clickable(
-                onClick = { onSeasonClicked(season) },
+                onClick = { actioner(ChangeSeasonExpandedAction(season.id, !expanded)) },
                 modifier = Modifier.ripple()
             ) {
                 SeasonRow(
                     season,
                     episodes,
+                    actioner,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -690,7 +686,7 @@ private fun SeasonWithEpisodesRow(
             if (expanded) {
                 episodes.forEach { episodeEntry ->
                     Clickable(
-                        onClick = { onEpisodeClicked(episodeEntry.episode!!) },
+                        onClick = { actioner(OpenEpisodeDetails(episodeEntry.episode!!.id)) },
                         modifier = Modifier.ripple()
                     ) {
                         EpisodeWithWatchesRow(
@@ -708,6 +704,7 @@ private fun SeasonWithEpisodesRow(
 private fun SeasonRow(
     season: Season,
     episodesWithWatches: List<EpisodeWithWatches>,
+    actioner: (ShowDetailsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -750,7 +747,12 @@ private fun SeasonRow(
         }
 
         val showPopup = state { false }
-        SeasonRowOverflowMenu(season, episodesWithWatches, showPopup)
+        SeasonRowOverflowMenu(
+            season = season,
+            episodesWithWatches = episodesWithWatches,
+            popupVisible = showPopup,
+            actioner = actioner
+        )
 
         IconButton(onClick = { showPopup.value = true }) {
             Icon(Icons.Default.MoreVert)
@@ -827,43 +829,50 @@ private fun VerticalDivider(
 private fun SeasonRowOverflowMenu(
     season: Season,
     episodesWithWatches: List<EpisodeWithWatches>,
-    popupVisible: MutableState<Boolean>
+    popupVisible: MutableState<Boolean>,
+    actioner: (ShowDetailsAction) -> Unit
 ) {
     val items = ArrayList<PopupMenuItem>()
 
     items += if (season.ignored) {
         PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_follow)
+            title = stringResource(id = R.string.popup_season_follow),
+            onClick = { actioner(ChangeSeasonFollowedAction(season.id, true)) }
         )
     } else {
         PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_ignore)
+            title = stringResource(id = R.string.popup_season_ignore),
+            onClick = { actioner(ChangeSeasonFollowedAction(season.id, false)) }
         )
     }
 
     // Season number starts from 1, rather than 0
     if (season.number ?: -100 >= 2) {
         items += PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_ignore_previous)
+            title = stringResource(id = R.string.popup_season_ignore_previous),
+            onClick = { actioner(UnfollowPreviousSeasonsFollowedAction(season.id)) }
         )
     }
 
     if (episodesWithWatches.numberWatched > 0) {
         items += PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_mark_all_unwatched)
+            title = stringResource(id = R.string.popup_season_mark_all_unwatched),
+            onClick = { actioner(MarkSeasonUnwatchedAction(season.id)) }
         )
     }
 
     if (episodesWithWatches.numberWatched < episodesWithWatches.size) {
         items += PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_mark_watched_all)
+            title = stringResource(id = R.string.popup_season_mark_watched_all),
+            onClick = { actioner(MarkSeasonWatchedAction(season.id)) }
         )
     }
 
     if (episodesWithWatches.numberWatched < episodesWithWatches.numberAired &&
         episodesWithWatches.numberAired < episodesWithWatches.size) {
         items += PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_mark_watched_aired)
+            title = stringResource(id = R.string.popup_season_mark_watched_aired),
+            onClick = { actioner(MarkSeasonWatchedAction(season.id, onlyAired = true)) }
         )
     }
 

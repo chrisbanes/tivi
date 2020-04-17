@@ -21,10 +21,11 @@ import app.tivi.data.entities.ActionDate
 sealed class ShowDetailsAction
 object RefreshAction : ShowDetailsAction()
 object FollowShowToggleAction : ShowDetailsAction()
+
 data class MarkSeasonWatchedAction(
     val seasonId: Long,
-    val onlyAired: Boolean,
-    val date: ActionDate
+    val onlyAired: Boolean = false,
+    val date: ActionDate = ActionDate.NOW
 ) : ShowDetailsAction()
 
 data class MarkSeasonUnwatchedAction(val seasonId: Long) : ShowDetailsAction()
@@ -34,6 +35,7 @@ data class ChangeSeasonFollowedAction(
 ) : ShowDetailsAction()
 
 data class UnfollowPreviousSeasonsFollowedAction(val seasonId: Long) : ShowDetailsAction()
+
 data class ChangeSeasonExpandedAction(
     val seasonId: Long,
     val expanded: Boolean
