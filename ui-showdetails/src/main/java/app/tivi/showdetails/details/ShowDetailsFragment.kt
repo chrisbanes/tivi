@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import androidx.core.net.toUri
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.TiviFragment
 import app.tivi.common.compose.observeWindowInsets
@@ -34,6 +35,9 @@ import app.tivi.util.TiviDateFormatter
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
 import javax.inject.Inject
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.launch
 
 class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.FactoryProvider {
     private val viewModel: ShowDetailsFragmentViewModel by fragmentViewModel()
@@ -41,6 +45,8 @@ class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.Factory
     @Inject internal lateinit var showDetailsViewModelFactory: ShowDetailsFragmentViewModel.Factory
     @Inject internal lateinit var textCreator: ShowDetailsTextCreator
     @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
+
+    private val pendingActions = Channel<ShowDetailsAction>(Channel.BUFFERED)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,7 +64,7 @@ class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.Factory
                     uniqueOnly()
                 ),
                 observeWindowInsets(),
-                viewModel::submitAction,
+                { pendingActions.sendBlocking(it) },
                 tiviDateFormatter,
                 textCreator
             )
@@ -69,6 +75,12 @@ class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.Factory
         super.onStart()
         // TODO move this once we know how to handle transitions in Compose
         scheduleStartPostponedTransitions()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            for (action in pendingActions) {
+                viewModel.submitAction(action)
+            }
+        }
     }
 
     override fun invalidate() = withState(viewModel) { state ->

@@ -23,11 +23,15 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import android.widget.FrameLayout
 import androidx.core.os.bundleOf
+import androidx.lifecycle.lifecycleScope
 import app.tivi.TiviBottomSheetFragment
 import app.tivi.common.compose.observeWindowInsets
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.mvrx.fragmentViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.launch
 
 class EpisodeDetailsFragment : TiviBottomSheetFragment(), EpisodeDetailsViewModel.FactoryProvider {
     companion object {
@@ -45,6 +49,8 @@ class EpisodeDetailsFragment : TiviBottomSheetFragment(), EpisodeDetailsViewMode
     @Inject internal lateinit var episodeDetailsViewModelFactory: EpisodeDetailsViewModel.Factory
     @Inject internal lateinit var textCreator: EpisodeDetailsTextCreator
 
+    private val pendingActions = Channel<EpisodeDetailsAction>(Channel.BUFFERED)
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -56,15 +62,21 @@ class EpisodeDetailsFragment : TiviBottomSheetFragment(), EpisodeDetailsViewMode
             composeEpisodeDetails(
                 viewModel.observeAsLiveData(),
                 observeWindowInsets(),
-                viewModel::submitAction,
+                { pendingActions.sendBlocking(it) },
                 tiviDateFormatter
             )
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onStart() {
+        super.onStart()
         (requireDialog().findViewById(R.id.container) as View).fitsSystemWindows = false
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            for (action in pendingActions) {
+                viewModel.submitAction(action)
+            }
+        }
     }
 
     override fun invalidate() = Unit
