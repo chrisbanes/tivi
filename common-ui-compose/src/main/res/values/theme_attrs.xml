@@ -49,6 +49,8 @@
         <attr name="shapeAppearanceSmallComponent" />
         <attr name="shapeAppearanceMediumComponent" />
         <attr name="shapeAppearanceLargeComponent" />
+
+        <attr name="isLightTheme" />
     </declare-styleable>
 
     <declare-styleable name="ComposeTextAppearance">

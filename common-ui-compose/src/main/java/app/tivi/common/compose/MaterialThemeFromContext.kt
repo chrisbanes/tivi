@@ -17,20 +17,19 @@
 package app.tivi.common.compose
 
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Typeface
 import androidx.annotation.StyleRes
 import androidx.compose.Composable
 import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.content.res.use
 import androidx.ui.core.DensityAmbient
+import androidx.ui.foundation.isSystemInDarkTheme
 import androidx.ui.foundation.shape.corner.CornerBasedShape
 import androidx.ui.foundation.shape.corner.CornerSize
 import androidx.ui.foundation.shape.corner.CutCornerShape
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Shadow
-import androidx.ui.graphics.luminance
 import androidx.ui.material.ColorPalette
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.Shapes
@@ -119,7 +118,7 @@ fun generateMaterialThemeFromContext(
             val surface = ta.getComposeColor(R.styleable.ComposeTheme_colorSurface)
             val onSurface = ta.getComposeColor(R.styleable.ComposeTheme_colorOnSurface)
 
-            val isLightTheme = background.luminance() > 0.5f
+            val isLightTheme = ta.getBoolean(R.styleable.ComposeTheme_isLightTheme, true)
 
             if (isLightTheme) {
                 lightColorPalette(
@@ -148,10 +147,7 @@ fun generateMaterialThemeFromContext(
             }
         } else {
             // Else we create an empty color palette based on the configuration's uiMode
-            when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-                Configuration.UI_MODE_NIGHT_YES -> darkColorPalette()
-                else -> lightColorPalette()
-            }
+            if (isSystemInDarkTheme()) darkColorPalette() else lightColorPalette()
         }
 
         /**
