@@ -793,7 +793,7 @@ private fun EpisodeWithWatchesRow(
             var needSpacer = false
             if (episodeWithWatches.hasPending()) {
                 VectorImage(
-                    Icons.Default.Star,
+                    R.drawable.ic_upload_24dp,
                     modifier = Modifier.gravity(Alignment.CenterVertically)
                 )
                 needSpacer = true
