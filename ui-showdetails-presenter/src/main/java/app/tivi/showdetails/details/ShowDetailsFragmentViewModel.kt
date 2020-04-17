@@ -128,7 +128,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
                 is MarkSeasonWatchedAction -> onMarkSeasonWatched(action)
                 is MarkSeasonUnwatchedAction -> onMarkSeasonUnwatched(action)
                 is ChangeSeasonFollowedAction -> onChangeSeasonFollowState(action)
-                is ChangeSeasonExpandedAction -> onChangeSeasonExpandState(action)
+                is ChangeSeasonExpandedAction -> onChangeSeasonExpandState(action.seasonId, action.expanded)
                 is UnfollowPreviousSeasonsFollowedAction -> onUnfollowPreviousSeasonsFollowState(action)
                 is OpenEpisodeDetails -> openEpisodeDetails(action)
                 is OpenShowDetails -> openShowDetails(action)
@@ -227,28 +227,33 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         changeSeasonWatchedStatus(Params(action.seasonId, Action.UNWATCH))
     }
 
-    private fun onChangeSeasonExpandState(action: ChangeSeasonExpandedAction) = setState {
+    private fun onChangeSeasonExpandState(seasonId: Long, expanded: Boolean) = setState {
         val pending = ArrayList(pendingUiEffects)
         pending.removeAll { it is FocusSeasonUiEffect }
 
-        if (action.expanded) {
+        if (expanded) {
             copy(
-                pendingUiEffects = pending + FocusSeasonUiEffect(action.seasonId),
-                expandedSeasonIds = expandedSeasonIds + action.seasonId
+                pendingUiEffects = pending + FocusSeasonUiEffect(seasonId),
+                expandedSeasonIds = expandedSeasonIds + seasonId
             )
         } else {
-            copy(expandedSeasonIds = expandedSeasonIds - action.seasonId)
+            copy(expandedSeasonIds = expandedSeasonIds - seasonId)
         }
     }
 
     private fun onChangeSeasonFollowState(action: ChangeSeasonFollowedAction) {
-        changeSeasonFollowStatus(ChangeSeasonFollowStatus.Params(
-            action.seasonId,
-            when {
-                action.followed -> ChangeSeasonFollowStatus.Action.FOLLOW
-                else -> ChangeSeasonFollowStatus.Action.IGNORE
-            }
-        ))
+        // Make sure we collapse the season if it is expanded
+        onChangeSeasonExpandState(action.seasonId, false)
+
+        changeSeasonFollowStatus(
+            ChangeSeasonFollowStatus.Params(
+                action.seasonId,
+                when {
+                    action.followed -> ChangeSeasonFollowStatus.Action.FOLLOW
+                    else -> ChangeSeasonFollowStatus.Action.IGNORE
+                }
+            )
+        )
     }
 
     private fun onUnfollowPreviousSeasonsFollowState(action: UnfollowPreviousSeasonsFollowedAction) {
