@@ -81,6 +81,7 @@ import androidx.ui.material.icons.filled.MoreVert
 import androidx.ui.material.icons.filled.Star
 import androidx.ui.material.ripple.ripple
 import androidx.ui.res.stringResource
+import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.Dp
 import androidx.ui.unit.IntPx
 import androidx.ui.unit.dp
@@ -673,7 +674,8 @@ private fun SeasonWithEpisodesRow(
 
             Clickable(
                 onClick = { actioner(ChangeSeasonExpandedAction(season.id, !expanded)) },
-                modifier = Modifier.ripple()
+                enabled = !season.ignored,
+                modifier = Modifier.ripple(enabled = !season.ignored)
             ) {
                 SeasonRow(
                     season,
@@ -713,7 +715,7 @@ private fun SeasonRow(
             .padding(start = 16.dp, top = 12.dp, bottom = 12.dp)
     ) {
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f).gravity(Alignment.CenterVertically)
         ) {
             val textCreator = ShowDetailsTextCreatorAmbient.current
 
@@ -754,8 +756,10 @@ private fun SeasonRow(
             actioner = actioner
         )
 
-        IconButton(onClick = { showPopup.value = true }) {
-            Icon(Icons.Default.MoreVert)
+        ProvideEmphasis(EmphasisAmbient.current.medium) {
+            IconButton(onClick = { showPopup.value = true }) {
+                Icon(Icons.Default.MoreVert)
+            }
         }
     }
 }
@@ -902,5 +906,16 @@ private fun ShowDetailsAppBar(
         elevation = elevation,
         backgroundColor = backgroundColor,
         modifier = modifier
+    )
+}
+
+@Preview
+@Composable
+private fun PreviewSeasonRow() {
+    SeasonRowOverflowMenu(
+        season = Season(showId = 0, number = 1, ignored = false),
+        episodesWithWatches = emptyList(),
+        popupVisible = mutableStateOf(false),
+        actioner = {}
     )
 }
