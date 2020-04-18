@@ -296,15 +296,15 @@ private fun textStyleFromTextAppearance(
             },
             fontStyle = if ((textStyle and Typeface.ITALIC) != 0) FontStyle.Italic else FontStyle.Normal,
             fontWeight = when {
-                textFontWeight in 0..199 -> FontWeight.W100
-                textFontWeight in 200..299 -> FontWeight.W200
-                textFontWeight in 300..399 -> FontWeight.W300
-                textFontWeight in 400..499 -> FontWeight.W400
-                textFontWeight in 500..599 -> FontWeight.W500
-                textFontWeight in 600..699 -> FontWeight.W600
-                textFontWeight in 700..799 -> FontWeight.W700
-                textFontWeight in 800..899 -> FontWeight.W800
-                textFontWeight in 900..999 -> FontWeight.W900
+                textFontWeight in 0..149 -> FontWeight.W100
+                textFontWeight in 150..249 -> FontWeight.W200
+                textFontWeight in 250..349 -> FontWeight.W300
+                textFontWeight in 350..449 -> FontWeight.W400
+                textFontWeight in 450..549 -> FontWeight.W500
+                textFontWeight in 550..649 -> FontWeight.W600
+                textFontWeight in 650..749 -> FontWeight.W700
+                textFontWeight in 750..849 -> FontWeight.W800
+                textFontWeight in 850..999 -> FontWeight.W900
                 // else, check the text style
                 (textStyle and Typeface.BOLD) != 0 -> FontWeight.Bold
                 else -> null
