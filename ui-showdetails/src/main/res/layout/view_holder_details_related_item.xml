@@ -60,10 +60,6 @@
             android:padding="@dimen/spacing_small"
             android:text="@{tiviShow.title}"
             android:textAppearance="?attr/textAppearanceBody2"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             tools:text="@sample/shows.txt" />
 
         <app.tivi.ui.widget.TwoThreeImageView
