@@ -44,7 +44,7 @@ android {
 
 dependencies {
     implementation project(':base-android')
-    implementation project(':common-imageloading')
+    api project(':common-imageloading')
 
     implementation Libs.AndroidX.coreKtx
 
@@ -55,8 +55,11 @@ dependencies {
     implementation Libs.AndroidX.UI.material
     implementation Libs.AndroidX.UI.animation
     implementation Libs.AndroidX.UI.tooling
+    implementation Libs.AndroidX.UI.livedata
 
     implementation Libs.Google.material
 
     implementation Libs.Kotlin.stdlib
+
+
 }

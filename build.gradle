@@ -59,7 +59,7 @@ allprojects {
         mavenCentral()
         jcenter()
         maven { url 'https://jitpack.io' }
-        maven { url 'https://androidx-dev-prod.appspot.com/snapshots/builds/6342451/artifacts/ui/repository/' }
+        maven { url 'https://androidx-dev-prod.appspot.com/snapshots/builds/6379686/artifacts/ui/repository/' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
         mavenLocal()
     }

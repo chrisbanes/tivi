@@ -45,6 +45,12 @@
         <attr name="textAppearanceOverline"/>
         <attr name="textAppearanceSubtitle1"/>
         <attr name="textAppearanceSubtitle2"/>
+
+        <attr name="shapeAppearanceSmallComponent" />
+        <attr name="shapeAppearanceMediumComponent" />
+        <attr name="shapeAppearanceLargeComponent" />
+
+        <attr name="isLightTheme" />
     </declare-styleable>
 
     <declare-styleable name="ComposeTextAppearance">
@@ -70,6 +76,16 @@
 
         <!-- TODOs below -->
         <attr name="android:fontVariationSettings"/>
+    </declare-styleable>
+
+    <declare-styleable name="ComposeShapeAppearance">
+        <attr name="cornerSize" />
+        <attr name="cornerSizeTopLeft" />
+        <attr name="cornerSizeTopRight" />
+        <attr name="cornerSizeBottomRight" />
+        <attr name="cornerSizeBottomLeft" />
+
+        <attr name="cornerFamily" />
     </declare-styleable>
 
 </resources>

@@ -37,7 +37,7 @@ fun Modifier.gradientScrim(
             isAntiAlias = true
         }
     }
-    return Modifier.drawBehind { canvas, size ->
+    return Modifier.drawBehind {
         val baseAlpha = color.alpha
         val colors = List(numStops) { i ->
             val x = i * 1f / (numStops - 1)
@@ -51,6 +51,6 @@ fun Modifier.gradientScrim(
             colors
         )
 
-        canvas.drawRect(size.toRect(), paint)
+        drawRect(size.toRect(), paint)
     }
 }

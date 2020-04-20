@@ -18,19 +18,7 @@
 import app.tivi.buildsrc.Libs
 
 apply plugin: 'com.android.library'
-
 apply plugin: 'kotlin-android'
-
-apply plugin: 'kotlin-kapt'
-kapt {
-    correctErrorTypes = true
-    useBuildCache = true
-}
-
-apply plugin: 'kotlin-android-extensions'
-androidExtensions {
-    experimental = true
-}
 
 android {
     compileSdkVersion buildConfig.compileSdk
@@ -45,39 +33,34 @@ android {
     }
 
     buildFeatures {
-        dataBinding true
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion Libs.AndroidX.UI.version
     }
 }
 
 dependencies {
+    implementation project(':data')
     implementation project(':base')
     implementation project(':base-android')
-    implementation project(':data')
+    api project(':common-ui-compose')
 
+    // TODO remove this dep
     implementation project(':common-ui-view')
 
-    api project(':ui-showdetails-view')
-    api project(':ui-showdetails-presenter')
+    implementation project(':ui-showdetails-presenter')
 
-    implementation project(':ui-episodedetails')
-
-    implementation Libs.AndroidX.Lifecycle.extensions
-    implementation Libs.AndroidX.Lifecycle.viewmodelKtx
-
-    implementation Libs.AndroidX.appcompat
     implementation Libs.AndroidX.coreKtx
     implementation Libs.AndroidX.emoji
-    implementation Libs.AndroidX.Fragment.fragment
-    implementation Libs.AndroidX.Fragment.fragmentKtx
-    implementation Libs.AndroidX.Navigation.fragment
 
-    implementation Libs.Insetter.ktx
-
-    implementation Libs.Google.material
-
-    implementation Libs.Dagger.androidSupport
-    kapt Libs.Dagger.compiler
-    kapt Libs.Dagger.androidProcessor
-
-    implementation Libs.mvRx
+    implementation Libs.AndroidX.UI.composeRuntime
+    implementation Libs.AndroidX.UI.foundation
+    implementation Libs.AndroidX.UI.framework
+    implementation Libs.AndroidX.UI.layout
+    implementation Libs.AndroidX.UI.material
+    implementation Libs.AndroidX.UI.animation
+    implementation Libs.AndroidX.UI.tooling
+    implementation Libs.AndroidX.UI.livedata
 }

@@ -21,7 +21,7 @@ object Versions {
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:4.1.0-alpha04"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:4.1.0-alpha05"
     const val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:1.0.2"
     const val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.7.3"
 
@@ -153,13 +153,14 @@ object Libs {
         object UI {
             const val version = "0.1.0-SNAPSHOT"
 
-            const val composeRuntime = "androidx.compose:compose-runtime:${version}"
+            const val composeRuntime = "androidx.compose:compose-runtime:$version"
             const val framework = "androidx.ui:ui-framework:$version"
             const val layout = "androidx.ui:ui-layout:$version"
             const val material = "androidx.ui:ui-material:$version"
             const val foundation = "androidx.ui:ui-foundation:$version"
             const val animation = "androidx.ui:ui-animation:$version"
             const val tooling = "androidx.ui:ui-tooling:$version"
+            const val livedata = "androidx.ui:ui-livedata:$version"
         }
     }
 
