@@ -164,8 +164,8 @@ fun ShowDetails(
     actioner: (ShowDetailsAction) -> Unit
 ) = Stack {
     val scrollerPosition = ScrollerPosition()
-    val backdropHeight = mutableStateOf(IntPx.Zero)
-    val fabHeight = mutableStateOf(IntPx.Zero)
+    val backdropHeight = state { IntPx.Zero }
+    val fabHeight = state { IntPx.Zero }
 
     VerticalScroller(scrollerPosition = scrollerPosition) {
         Column {
@@ -313,7 +313,7 @@ fun ShowDetails(
             )
         }
 
-        val showOverlayAppBar = mutableStateOf(true)
+        val showOverlayAppBar = state { true }
 
         showOverlayAppBar.value = scrollerPosition.value > trigger
 
