@@ -36,16 +36,17 @@ import androidx.ui.text.style.TextOverflow
 fun ExpandingSummary(
     text: String,
     textStyle: TextStyle = MaterialTheme.typography.body2,
+    expandable: Boolean = true,
     collapsedMaxLines: Int = 4,
     expandedMaxLines: Int = Int.MAX_VALUE,
     modifier: Modifier = Modifier
 ) {
-    var canExpand by stateFor(text) { true }
+    var canTextExpand by stateFor(text) { true }
 
-    Box(modifier = Modifier.ripple(bounded = true, enabled = canExpand)) {
+    Box(modifier = Modifier.ripple(bounded = true, enabled = expandable && canTextExpand)) {
         var expanded by state { false }
 
-        Clickable(onClick = { expanded = !expanded }, enabled = canExpand) {
+        Clickable(onClick = { expanded = !expanded }, enabled = expandable && canTextExpand) {
             ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
                 Text(
                     text = text,
@@ -55,7 +56,8 @@ fun ExpandingSummary(
                     modifier = modifier
                 ) {
                     if (!expanded) {
-                        // canExpand = it.hasVisualOverflow
+                        // Disabled due to https://issuetracker.google.com/issues/154481514
+                        // canTextExpand = it.hasVisualOverflow
                     }
                 }
             }
