@@ -162,6 +162,7 @@ fun ShowDetails(
 ) = Stack {
     val scrollerPosition = ScrollerPosition()
     val backdropHeight = mutableStateOf(IntPx.Zero)
+    val fabHeight = mutableStateOf(IntPx.Zero)
 
     VerticalScroller(scrollerPosition = scrollerPosition) {
         Column {
@@ -312,7 +313,9 @@ fun ShowDetails(
 
                     // Spacer to push up the content from under the navigation bar
                     val insets = InsetsAmbient.current
-                    val spacerHeight = with(DensityAmbient.current) { 8.dp + insets.bottom.toDp() }
+                    val spacerHeight = with(DensityAmbient.current) {
+                        8.dp + insets.bottom.toDp() + fabHeight.value.toDp() + 16.dp
+                    }
                     Spacer(Modifier.preferredHeight(spacerHeight))
                 }
             }
@@ -385,6 +388,9 @@ fun ShowDetails(
         onClick = { actioner(FollowShowToggleAction) },
         modifier = Modifier.gravity(Alignment.BottomEnd)
             .padding(end = 16.dp, bottom = 16.dp + bottomInset)
+            .onPositioned {
+                fabHeight.value = it.size.height
+            }
     )
 }
 
