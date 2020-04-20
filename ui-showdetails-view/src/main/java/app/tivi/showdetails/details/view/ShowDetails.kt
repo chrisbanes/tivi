@@ -171,14 +171,12 @@ fun ShowDetails(
                 modifier = Modifier.aspectRatio(16f / 10)
                     .onPositioned { backdropHeight.value = it.size.height }
             ) {
-                Stack {
-                    if (backdropImage != null) {
-                        LoadNetworkImageWithCrossfade(
-                            backdropImage,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.matchParentSize()
-                        )
-                    }
+                if (backdropImage != null) {
+                    LoadNetworkImageWithCrossfade(
+                        backdropImage,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.weight(weight = 1f, fill = true)
+                    )
                 }
             }
 
@@ -215,31 +213,7 @@ fun ShowDetails(
                         Spacer(modifier = Modifier.preferredWidth(16.dp))
 
                         Box(Modifier.weight(1f, fill = false)) {
-                            FlowRow(
-                                mainAxisSize = SizeMode.Expand,
-                                mainAxisSpacing = 8.dp,
-                                crossAxisSpacing = 8.dp
-                            ) {
-                                ProvideEmphasis(EmphasisAmbient.current.high) {
-                                    val show = viewState.show
-                                    if (show.traktRating != null) {
-                                        TraktRatingInfoPanel(show)
-                                    }
-                                    if (show.network != null || show.networkLogoPath != null) {
-                                        NetworkInfoPanel(viewState.show)
-                                    }
-                                    if (show.certification != null) {
-                                        CertificateInfoPanel(viewState.show)
-                                    }
-                                    if (show.runtime != null) {
-                                        RuntimeInfoPanel(viewState.show)
-                                    }
-                                    if (show.airsDay != null && show.airsTime != null &&
-                                        show.airsTimeZone != null) {
-                                        AirsInfoPanel(viewState.show)
-                                    }
-                                }
-                            }
+                            InfoPanels(viewState.show)
                         }
 
                         Spacer(modifier = Modifier.preferredWidth(16.dp))
@@ -258,23 +232,13 @@ fun ShowDetails(
 
                     val genres = viewState.show.genres
                     if (genres.isNotEmpty()) {
-                        ProvideEmphasis(EmphasisAmbient.current.high) {
-                            val textCreator = ShowDetailsTextCreatorAmbient.current
-                            Text(
-                                textCreator.genreString(genres).toString(),
-                                style = MaterialTheme.typography.body2,
-                                modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
-                                    .fillMaxWidth()
-                            )
-                        }
+                        Genres(viewState.show)
                     }
 
                     val nextEpisodeToWatch = viewState.nextEpisodeToWatch()
                     if (nextEpisodeToWatch?.episode != null && nextEpisodeToWatch.season != null) {
                         Spacer(modifier = Modifier.preferredHeight(8.dp))
-
                         Header(stringResource(id = R.string.details_next_episode_to_watch))
-
                         NextEpisodeToWatch(
                             season = nextEpisodeToWatch.season!!,
                             episode = nextEpisodeToWatch.episode!!,
@@ -552,6 +516,19 @@ private fun Header(title: String) {
 }
 
 @Composable
+private fun Genres(show: TiviShow) {
+    ProvideEmphasis(EmphasisAmbient.current.high) {
+        val textCreator = ShowDetailsTextCreatorAmbient.current
+        Text(
+            textCreator.genreString(show.genres).toString(),
+            style = MaterialTheme.typography.body2,
+            modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
+                .fillMaxWidth()
+        )
+    }
+}
+
+@Composable
 private fun RelatedShows(
     related: List<RelatedShowEntryWithShow>,
     actioner: (ShowDetailsAction) -> Unit,
@@ -612,6 +589,34 @@ private fun NextEpisodeToWatch(
                 episode.title ?: stringResource(R.string.episode_title_fallback, episode.number!!),
                 style = MaterialTheme.typography.body1
             )
+        }
+    }
+}
+
+@Composable
+private fun InfoPanels(show: TiviShow) {
+    FlowRow(
+        mainAxisSize = SizeMode.Expand,
+        mainAxisSpacing = 8.dp,
+        crossAxisSpacing = 8.dp
+    ) {
+        ProvideEmphasis(EmphasisAmbient.current.high) {
+            if (show.traktRating != null) {
+                TraktRatingInfoPanel(show)
+            }
+            if (show.network != null || show.networkLogoPath != null) {
+                NetworkInfoPanel(show)
+            }
+            if (show.certification != null) {
+                CertificateInfoPanel(show)
+            }
+            if (show.runtime != null) {
+                RuntimeInfoPanel(show)
+            }
+            if (show.airsDay != null && show.airsTime != null &&
+                show.airsTimeZone != null) {
+                AirsInfoPanel(show)
+            }
         }
     }
 }
