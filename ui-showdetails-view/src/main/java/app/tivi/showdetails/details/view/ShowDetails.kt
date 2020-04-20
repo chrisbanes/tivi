@@ -69,6 +69,7 @@ import androidx.ui.layout.wrapContentSize
 import androidx.ui.livedata.observeAsState
 import androidx.ui.material.Card
 import androidx.ui.material.EmphasisAmbient
+import androidx.ui.material.ExtendedFloatingActionButton
 import androidx.ui.material.IconButton
 import androidx.ui.material.LinearProgressIndicator
 import androidx.ui.material.MaterialTheme
@@ -77,6 +78,8 @@ import androidx.ui.material.Surface
 import androidx.ui.material.TopAppBar
 import androidx.ui.material.icons.Icons
 import androidx.ui.material.icons.filled.ArrowBack
+import androidx.ui.material.icons.filled.Favorite
+import androidx.ui.material.icons.filled.FavoriteBorder
 import androidx.ui.material.icons.filled.MoreVert
 import androidx.ui.material.icons.filled.Star
 import androidx.ui.material.ripple.ripple
@@ -113,6 +116,7 @@ import app.tivi.showdetails.details.ChangeSeasonExpandedAction
 import app.tivi.showdetails.details.ChangeSeasonFollowedAction
 import app.tivi.showdetails.details.ClearPendingUiEffect
 import app.tivi.showdetails.details.FocusSeasonUiEffect
+import app.tivi.showdetails.details.FollowShowToggleAction
 import app.tivi.showdetails.details.MarkSeasonUnwatchedAction
 import app.tivi.showdetails.details.MarkSeasonWatchedAction
 import app.tivi.showdetails.details.OpenEpisodeDetails
@@ -372,6 +376,16 @@ fun ShowDetails(
             }
         }
     }
+
+    val insets = InsetsAmbient.current
+    val bottomInset = with(DensityAmbient.current) { insets.bottom.toDp() }
+
+    ToggleShowFollowFloatingActionButton(
+        isFollowed = viewState.isFollowed,
+        onClick = { actioner(FollowShowToggleAction) },
+        modifier = Modifier.gravity(Alignment.BottomEnd)
+            .padding(end = 16.dp, bottom = 16.dp + bottomInset)
+    )
 }
 
 private val elevationPropKey = DpPropKey()
@@ -905,6 +919,38 @@ private fun ShowDetailsAppBar(
         },
         elevation = elevation,
         backgroundColor = backgroundColor,
+        modifier = modifier
+    )
+}
+
+@Composable
+private fun ToggleShowFollowFloatingActionButton(
+    isFollowed: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    ExtendedFloatingActionButton(
+        onClick = onClick,
+        icon = {
+            Icon(
+                when {
+                    isFollowed -> Icons.Filled.FavoriteBorder
+                    else -> Icons.Filled.Favorite
+                }
+            )
+        },
+        text = {
+            Text(
+                when {
+                    isFollowed -> stringResource(R.string.follow_show_remove)
+                    else -> stringResource(R.string.follow_show_add)
+                }
+            )
+        },
+        backgroundColor = when {
+            isFollowed -> MaterialTheme.colors.surface
+            else -> MaterialTheme.colors.primary
+        },
         modifier = modifier
     )
 }
