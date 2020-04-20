@@ -48,8 +48,10 @@ import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.contentColor
 import androidx.ui.foundation.drawBackground
 import androidx.ui.foundation.drawBorder
+import androidx.ui.foundation.isSystemInDarkTheme
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.graphics.Color
+import androidx.ui.graphics.ColorFilter
 import androidx.ui.layout.Column
 import androidx.ui.layout.FlowRow
 import androidx.ui.layout.Row
@@ -91,6 +93,7 @@ import androidx.ui.unit.dp
 import app.tivi.common.compose.ExpandingSummary
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.InsetsHolder
+import app.tivi.common.compose.LoadNetworkImage
 import app.tivi.common.compose.LoadNetworkImageWithCrossfade
 import app.tivi.common.compose.MaterialThemeFromAndroidTheme
 import app.tivi.common.compose.PopupMenu
@@ -384,11 +387,12 @@ private fun NetworkInfoPanel(
                 listOf(TrimTransparentEdgesTransformation)
             }
 
-            LoadNetworkImageWithCrossfade(
+            LoadNetworkImage(
                 tmdbImage,
                 transformations = transforms,
                 contentScale = ContentScale.Fit,
                 alignment = Alignment.TopStart,
+                colorFilter = if (isSystemInDarkTheme()) ColorFilter.tint(contentColor()) else null,
                 modifier = Modifier.preferredSizeIn(maxWidth = 72.dp, maxHeight = 32.dp)
             )
         } else if (networkName != null) {

@@ -40,6 +40,7 @@ import androidx.ui.core.paint
 import androidx.ui.foundation.Box
 import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Canvas
+import androidx.ui.graphics.ColorFilter
 import androidx.ui.graphics.ImageAsset
 import androidx.ui.graphics.Paint
 import androidx.ui.graphics.asImageAsset
@@ -159,6 +160,9 @@ fun LoadNetworkImageWithCrossfade(
 fun LoadNetworkImage(
     data: Any,
     transformations: List<Transformation> = emptyList(),
+    alignment: Alignment = Alignment.Center,
+    contentScale: ContentScale = ContentScale.Fit,
+    colorFilter: ColorFilter? = null,
     modifier: Modifier = Modifier
 ) = WithConstraints(modifier) { constraints, _ ->
     val width = when {
@@ -175,10 +179,16 @@ fun LoadNetworkImage(
 
     val image = loadImage(data, width.value, height.value, transformations)
 
-    Box(
-        modifier.plus(
-            image?.let { Modifier.clipToBounds().paint(ImagePainter(image)) } ?: Modifier)
-    )
+    val mod = if (image != null) {
+        Modifier.clipToBounds().paint(
+            painter = ImagePainter(image),
+            contentScale = contentScale,
+            alignment = alignment,
+            colorFilter = colorFilter
+        )
+    } else Modifier
+
+    Box(modifier.plus(mod))
 }
 
 /**
