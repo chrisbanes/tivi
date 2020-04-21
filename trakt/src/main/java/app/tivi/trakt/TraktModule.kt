@@ -34,18 +34,18 @@ class TraktModule {
     fun provideTrakt(
         @Named("cache") cacheDir: File,
         interceptor: HttpLoggingInterceptor,
-        @Named("trakt-client-id") clientId: String
-    ): TraktV2 {
-        return object : TraktV2(clientId) {
-            override fun setOkHttpClientDefaults(builder: OkHttpClient.Builder) {
-                super.setOkHttpClientDefaults(builder)
-                builder.apply {
-                    addInterceptor(interceptor)
-                    cache(Cache(File(cacheDir, "trakt_cache"), 10 * 1024 * 1024))
-                    connectTimeout(20, TimeUnit.SECONDS)
-                    readTimeout(20, TimeUnit.SECONDS)
-                    writeTimeout(20, TimeUnit.SECONDS)
-                }
+        @Named("trakt-client-id") clientId: String,
+        @Named("trakt-client-secret") clientSecret: String,
+        @Named("trakt-auth-redirect-uri") redirectUri: String
+    ): TraktV2 = object : TraktV2(clientId, clientSecret, redirectUri) {
+        override fun setOkHttpClientDefaults(builder: OkHttpClient.Builder) {
+            super.setOkHttpClientDefaults(builder)
+            builder.apply {
+                addInterceptor(interceptor)
+                cache(Cache(File(cacheDir, "trakt_cache"), 10 * 1024 * 1024))
+                connectTimeout(20, TimeUnit.SECONDS)
+                readTimeout(20, TimeUnit.SECONDS)
+                writeTimeout(20, TimeUnit.SECONDS)
             }
         }
     }
