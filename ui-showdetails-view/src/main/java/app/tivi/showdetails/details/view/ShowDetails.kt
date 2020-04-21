@@ -29,6 +29,7 @@ import androidx.compose.state
 import androidx.compose.staticAmbientOf
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LiveData
+import androidx.ui.animation.Crossfade
 import androidx.ui.animation.DpPropKey
 import androidx.ui.animation.Transition
 import androidx.ui.core.Alignment
@@ -62,6 +63,7 @@ import androidx.ui.layout.Stack
 import androidx.ui.layout.aspectRatio
 import androidx.ui.layout.fillMaxHeight
 import androidx.ui.layout.fillMaxWidth
+import androidx.ui.layout.height
 import androidx.ui.layout.padding
 import androidx.ui.layout.preferredHeight
 import androidx.ui.layout.preferredHeightIn
@@ -79,6 +81,7 @@ import androidx.ui.material.IconButton
 import androidx.ui.material.LinearProgressIndicator
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.ProvideEmphasis
+import androidx.ui.material.Snackbar
 import androidx.ui.material.Surface
 import androidx.ui.material.TopAppBar
 import androidx.ui.material.icons.Icons
@@ -123,6 +126,7 @@ import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.showdetails.details.ChangeSeasonExpandedAction
 import app.tivi.showdetails.details.ChangeSeasonFollowedAction
+import app.tivi.showdetails.details.ClearError
 import app.tivi.showdetails.details.ClearPendingUiEffect
 import app.tivi.showdetails.details.FocusSeasonUiEffect
 import app.tivi.showdetails.details.FollowShowToggleAction
@@ -363,15 +367,31 @@ fun ShowDetails(
     val insets = InsetsAmbient.current
     val bottomInset = with(DensityAmbient.current) { insets.bottom.toDp() }
 
-    ToggleShowFollowFloatingActionButton(
-        isFollowed = viewState.isFollowed,
-        onClick = { actioner(FollowShowToggleAction) },
-        modifier = Modifier.gravity(Alignment.BottomEnd)
-            .padding(end = 16.dp, bottom = 16.dp + bottomInset)
-            .onPositioned {
-                fabHeight.value = it.size.height
+    Column(
+        modifier = Modifier.fillMaxWidth()
+            .wrapContentHeight(Alignment.Bottom)
+            .gravity(Alignment.BottomEnd)
+    ) {
+        Crossfade(current = viewState.refreshError) { error ->
+            if (error != null) {
+                // TODO: Convert this to swipe-to-dismiss
+                Clickable(onClick = { actioner(ClearError) }) {
+                    Snackbar(
+                        text = { Text(error.message) },
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                    )
+                }
             }
-    )
+        }
+
+        ToggleShowFollowFloatingActionButton(
+            isFollowed = viewState.isFollowed,
+            onClick = { actioner(FollowShowToggleAction) },
+            modifier = Modifier.padding(end = 16.dp, bottom = 16.dp + bottomInset)
+                .gravity(Alignment.End)
+                .onPositioned { fabHeight.value = it.size.height }
+        )
+    }
 }
 
 private val elevationPropKey = DpPropKey()

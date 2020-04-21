@@ -20,7 +20,6 @@ import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
 import app.tivi.base.InvokeSuccess
-import app.tivi.base.InvokeTimeout
 import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.sendBlocking
@@ -49,7 +48,7 @@ suspend fun ObservableLoadingCounter.collectFrom(statuses: Flow<InvokeStatus>) {
     statuses.collect {
         if (it == InvokeStarted) {
             addLoader()
-        } else if (it == InvokeSuccess || it == InvokeTimeout || it is InvokeError) {
+        } else if (it == InvokeSuccess || it is InvokeError) {
             removeLoader()
         }
     }
