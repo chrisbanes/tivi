@@ -91,10 +91,16 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
         episodeId: Long,
         since: OffsetDateTime?
     ): Result<List<EpisodeWatchEntry>> {
-        return usersService.get().history(UserSlug.ME, HistoryType.EPISODES, episodeIdToTraktIdMapper.map(episodeId),
-            0, 10000, Extended.NOSEASONS, since, null)
-            .executeWithRetry()
-            .toResult(historyItemMapper.forLists())
+        return usersService.get().history(
+            UserSlug.ME,
+            HistoryType.EPISODES,
+            episodeIdToTraktIdMapper.map(episodeId),
+            0, // page
+            10000, // limit
+            Extended.NOSEASONS, // extended info
+            since, // since date
+            null // end date
+        ).executeWithRetry().toResult(historyItemMapper.forLists())
     }
 
     override suspend fun addEpisodeWatches(watches: List<EpisodeWatchEntry>): Result<Unit> {
@@ -112,7 +118,8 @@ class TraktSeasonsEpisodesDataSource @Inject constructor(
     override suspend fun removeEpisodeWatches(watches: List<EpisodeWatchEntry>): Result<Unit> {
         val items = SyncItems()
         items.ids = watches.mapNotNull { it.traktId }
-        return syncService.get().deleteItemsFromWatchedHistory(items).executeWithRetry()
+        return syncService.get().deleteItemsFromWatchedHistory(items)
+            .executeWithRetry()
             .toResultUnit()
     }
 }

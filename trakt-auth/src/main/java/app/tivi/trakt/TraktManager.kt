@@ -77,9 +77,7 @@ class TraktManager @Inject constructor(
 
         // Read the auth state from prefs
         processScope.launch {
-            val state = withContext(dispatchers.io) {
-                readAuthState()
-            }
+            val state = withContext(dispatchers.io) { readAuthState() }
             authState.send(state)
         }
     }
@@ -134,7 +132,7 @@ class TraktManager @Inject constructor(
     }
 
     private fun persistAuthState(state: AuthState) {
-        authPrefs.edit {
+        authPrefs.edit(commit = true) {
             putString("stateJson", state.jsonSerializeString())
         }
     }
