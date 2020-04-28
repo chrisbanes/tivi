@@ -20,23 +20,27 @@ import android.content.Context
 import android.view.MenuItem
 import app.tivi.extensions.resolveThemeDimensionPixelSize
 import coil.Coil
-import coil.api.load
+import coil.request.LoadRequest
 import coil.size.PixelSize
 import coil.size.Size
 import coil.size.SizeResolver
 import coil.transform.CircleCropTransformation
 
 fun MenuItem.loadImageUrl(context: Context, url: String, circleCrop: Boolean = true) {
-    Coil.load(context, url) {
-        if (circleCrop) {
-            transformations(CircleCropTransformation())
-        }
-        size(object : SizeResolver {
+    val request = LoadRequest.Builder(context)
+        .data(url)
+        .size(object : SizeResolver {
             override suspend fun size(): Size {
                 val height = context.resolveThemeDimensionPixelSize(android.R.attr.actionBarSize)
                 return PixelSize(height, height)
             }
         })
-        target { icon = it }
-    }
+        .target { icon = it }
+        .apply {
+            if (circleCrop) {
+                transformations(CircleCropTransformation())
+            }
+        }
+        .build()
+    Coil.execute(request)
 }

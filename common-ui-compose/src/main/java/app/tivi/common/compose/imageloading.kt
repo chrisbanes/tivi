@@ -29,6 +29,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.ui.animation.Transition
 import androidx.ui.core.Alignment
 import androidx.ui.core.ContentScale
+import androidx.ui.core.ContextAmbient
 import androidx.ui.core.Modifier
 import androidx.ui.core.WithConstraints
 import androidx.ui.core.clipToBounds
@@ -50,7 +51,9 @@ import androidx.ui.unit.IntPx
 import androidx.ui.unit.PxSize
 import app.tivi.ui.graphics.ImageLoadingColorMatrix
 import coil.Coil
-import coil.api.newGetBuilder
+import coil.request.ErrorResult
+import coil.request.GetRequest
+import coil.request.SuccessResult
 import coil.size.Scale
 import coil.transform.Transformation
 import kotlin.math.roundToInt
@@ -229,8 +232,10 @@ fun loadImage(
     transformations: List<Transformation> = emptyList(),
     onLoad: () -> Unit = {}
 ): ImageAsset? {
+    val context = ContextAmbient.current
+
     val request = remember(data, width, height) {
-        Coil.loader().newGetBuilder()
+        GetRequest.Builder(context)
             .data(data)
             .apply {
                 if (width > 0 && height > 0) {
@@ -248,8 +253,13 @@ fun loadImage(
     onCommit(request) {
         val job = CoroutineScope(Dispatchers.Main.immediate).launch {
             // Start loading the image and await the result.
-            val drawable = Coil.loader().get(request)
-            image = drawable.toBitmap().asImageAsset()
+            val result = Coil.imageLoader(context).execute(request)
+            image = when (result) {
+                is SuccessResult -> result.drawable.toBitmap().asImageAsset()
+                is ErrorResult -> {
+                    result.drawable?.toBitmap()?.asImageAsset() ?: throw result.throwable
+                }
+            }
             onLoad()
         }
 

@@ -21,15 +21,15 @@ object Versions {
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:4.1.0-alpha05"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:4.1.0-alpha07"
     const val dexcountGradlePlugin = "com.getkeepsafe.dexcount:dexcount-gradle-plugin:1.0.2"
-    const val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.7.3"
+    const val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.7.5"
 
     const val mvRx = "com.airbnb.android:mvrx:1.3.0"
 
-    const val threeTenBp = "org.threeten:threetenbp:1.4.2"
+    const val threeTenBp = "org.threeten:threetenbp:1.4.4"
     const val threeTenBpNoTzdb = "$threeTenBp:no-tzdb"
-    const val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.2.3"
+    const val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.2.4"
 
     const val gravitySnapHelper = "com.github.rubensousa:gravitysnaphelper:2.2.0"
 
@@ -42,27 +42,23 @@ object Libs {
 
     const val junit = "junit:junit:4.13"
     const val robolectric = "org.robolectric:robolectric:4.3.1"
-    const val mockK = "io.mockk:mockk:1.9.3"
-
-    const val inboxRecyclerView = "me.saket:inboxrecyclerview:2.0.0-beta3"
+    const val mockK = "io.mockk:mockk:1.10.0"
 
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.2"
 
-    const val flexbox = "com.google.android:flexbox:2.0.1"
-
-    const val store = "com.dropbox.mobile.store:store4:4.0.0-alpha03"
+    const val store = "com.dropbox.mobile.store:store4:4.0.0-alpha05"
 
     object Insetter {
-        private const val version = "0.2.1"
+        private const val version = "0.2.2"
         const val dbx = "dev.chrisbanes:insetter-dbx:$version"
         const val ktx = "dev.chrisbanes:insetter-ktx:$version"
     }
 
     object Google {
         const val material = "com.google.android.material:material:1.1.0"
-        const val firebaseCore = "com.google.firebase:firebase-core:17.2.3"
+        const val firebaseCore = "com.google.firebase:firebase-core:17.4.0"
         const val crashlytics = "com.google.firebase:firebase-crashlytics:17.0.0-beta02"
-        const val crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.0.0-beta03"
+        const val crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.0.0"
         const val gmsGoogleServices = "com.google.gms:google-services:4.3.3"
 
         const val openSourceLicensesPlugin = "com.google.android.gms:oss-licenses-plugin:0.10.2"
@@ -70,7 +66,7 @@ object Libs {
     }
 
     object Kotlin {
-        private const val version = "1.3.71"
+        private const val version = "1.3.72"
         const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         const val reflect = "org.jetbrains.kotlin:kotlin-reflect:$version"
         const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
@@ -80,7 +76,6 @@ object Libs {
     object Coroutines {
         private const val version = "1.3.5"
         const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
-        const val rx2 = "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$version"
         const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
         const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$version"
     }
@@ -91,8 +86,8 @@ object Libs {
         const val collection = "androidx.collection:collection-ktx:1.1.0"
         const val palette = "androidx.palette:palette:1.0.0"
         const val recyclerview = "androidx.recyclerview:recyclerview:1.1.0"
-        const val emoji = "androidx.emoji:emoji:1.0.0"
-        const val swiperefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-beta01"
+        const val emoji = "androidx.emoji:emoji:1.1.0-beta01"
+        const val swiperefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-rc01"
 
         object Navigation {
             private const val version = "2.2.1"
@@ -128,7 +123,7 @@ object Libs {
 
         const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.0-beta4"
 
-        const val coreKtx = "androidx.core:core-ktx:1.2.0-rc01"
+        const val coreKtx = "androidx.core:core-ktx:1.3.0-rc01"
 
         object Lifecycle {
             private const val version = "2.2.0"
@@ -151,7 +146,7 @@ object Libs {
         }
 
         object UI {
-            const val version = "0.1.0-SNAPSHOT"
+            const val version = "0.1.0-dev09"
 
             const val composeRuntime = "androidx.compose:compose-runtime:$version"
             const val framework = "androidx.ui:ui-framework:$version"
@@ -180,7 +175,7 @@ object Libs {
     }
 
     object OkHttp {
-        private const val version = "4.4.0"
+        private const val version = "4.5.0"
         const val okhttp = "com.squareup.okhttp3:okhttp:$version"
         const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$version"
     }
@@ -194,7 +189,7 @@ object Libs {
     }
 
     object Coil {
-        private const val version = "0.9.5"
+        private const val version = "0.10.0"
         const val coil = "io.coil-kt:coil:$version"
     }
 
