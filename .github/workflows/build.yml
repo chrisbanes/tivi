@@ -42,6 +42,7 @@ jobs:
 
       - uses: actions/cache@v1
         timeout-minutes: 5
+        continue-on-error: true # continue if the cache restore/upload fails
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
