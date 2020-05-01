@@ -1,6 +1,10 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 
 jobs:
   build:
@@ -42,6 +46,7 @@ jobs:
 
       - uses: actions/cache@v1
         timeout-minutes: 5
+        continue-on-error: true # continue if the cache restore/upload fails
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}

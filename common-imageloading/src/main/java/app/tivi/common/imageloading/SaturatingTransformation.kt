@@ -19,14 +19,17 @@ package app.tivi.common.imageloading
 import androidx.core.animation.doOnEnd
 import app.tivi.ui.animations.SATURATION_ANIMATION_DURATION
 import app.tivi.ui.animations.saturateDrawableAnimator
-import coil.annotation.ExperimentalCoil
+import coil.annotation.ExperimentalCoilApi
+import coil.decode.DataSource
+import coil.request.ErrorResult
+import coil.request.RequestResult
+import coil.request.SuccessResult
 import coil.transition.Transition
-import coil.transition.TransitionResult
 import coil.transition.TransitionTarget
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 /** A [Transition] that saturates and fades in the new drawable on load */
-@ExperimentalCoil
+@ExperimentalCoilApi
 class SaturatingTransformation(
     private val durationMillis: Long = SATURATION_ANIMATION_DURATION
 ) : Transition {
@@ -36,10 +39,10 @@ class SaturatingTransformation(
 
     override suspend fun transition(
         target: TransitionTarget<*>,
-        result: TransitionResult
+        result: RequestResult
     ) {
         // Don't animate if the request was fulfilled by the memory cache.
-        if (result is TransitionResult.Success && result.isMemoryCache) {
+        if (result is SuccessResult && result.source == DataSource.MEMORY_CACHE) {
             target.onSuccess(result.drawable)
             return
         }
@@ -47,7 +50,7 @@ class SaturatingTransformation(
         // Animate the drawable and suspend until the animation is completes.
         suspendCancellableCoroutine<Unit> { continuation ->
             when (result) {
-                is TransitionResult.Success -> {
+                is SuccessResult -> {
                     val animator = saturateDrawableAnimator(result.drawable,
                         durationMillis, target.view)
                     animator.doOnEnd {
@@ -58,7 +61,7 @@ class SaturatingTransformation(
                     continuation.invokeOnCancellation { animator.cancel() }
                     target.onSuccess(result.drawable)
                 }
-                is TransitionResult.Error -> target.onError(result.drawable)
+                is ErrorResult -> target.onError(result.drawable)
             }
         }
     }
