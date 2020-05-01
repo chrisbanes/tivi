@@ -946,7 +946,9 @@ private fun ShowDetailsAppBar(
         },
         actions = {
             if (isRefreshing) {
-                CircularProgressIndicator(Modifier.padding(16.dp).aspectRatio(1f).fillMaxHeight())
+                CircularProgressIndicator(
+                    Modifier.padding(14.dp).aspectRatio(1f).fillMaxHeight()
+                )
             } else {
                 IconButton(onClick = { actioner(RefreshAction) }) {
                     Icon(Icons.Default.Refresh)
