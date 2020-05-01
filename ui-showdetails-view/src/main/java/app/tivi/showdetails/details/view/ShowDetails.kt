@@ -60,6 +60,7 @@ import androidx.ui.layout.SizeMode
 import androidx.ui.layout.Spacer
 import androidx.ui.layout.Stack
 import androidx.ui.layout.aspectRatio
+import androidx.ui.layout.fillMaxHeight
 import androidx.ui.layout.fillMaxWidth
 import androidx.ui.layout.padding
 import androidx.ui.layout.preferredHeight
@@ -71,6 +72,7 @@ import androidx.ui.layout.wrapContentHeight
 import androidx.ui.layout.wrapContentSize
 import androidx.ui.livedata.observeAsState
 import androidx.ui.material.Card
+import androidx.ui.material.CircularProgressIndicator
 import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.ExtendedFloatingActionButton
 import androidx.ui.material.IconButton
@@ -84,6 +86,7 @@ import androidx.ui.material.icons.filled.ArrowBack
 import androidx.ui.material.icons.filled.Favorite
 import androidx.ui.material.icons.filled.FavoriteBorder
 import androidx.ui.material.icons.filled.MoreVert
+import androidx.ui.material.icons.filled.Refresh
 import androidx.ui.material.icons.filled.Star
 import androidx.ui.material.ripple.ripple
 import androidx.ui.res.stringResource
@@ -123,8 +126,10 @@ import app.tivi.showdetails.details.FocusSeasonUiEffect
 import app.tivi.showdetails.details.FollowShowToggleAction
 import app.tivi.showdetails.details.MarkSeasonUnwatchedAction
 import app.tivi.showdetails.details.MarkSeasonWatchedAction
+import app.tivi.showdetails.details.NavigateUp
 import app.tivi.showdetails.details.OpenEpisodeDetails
 import app.tivi.showdetails.details.OpenShowDetails
+import app.tivi.showdetails.details.RefreshAction
 import app.tivi.showdetails.details.ShowDetailsAction
 import app.tivi.showdetails.details.ShowDetailsViewState
 import app.tivi.showdetails.details.UiEffect
@@ -192,7 +197,9 @@ fun ShowDetails(
                     ShowDetailsAppBar(
                         show = viewState.show,
                         elevation = 0.dp,
-                        backgroundColor = Color.Transparent
+                        backgroundColor = Color.Transparent,
+                        isRefreshing = viewState.refreshing,
+                        actioner = actioner
                     )
 
                     Row {
@@ -342,7 +349,9 @@ fun ShowDetails(
                     show = viewState.show,
                     elevation = transitionState[elevationPropKey],
                     backgroundColor = MaterialTheme.colors.surface,
-                    modifier = Modifier.drawOpacity(if (showOverlayAppBar.value) 1f else 0f)
+                    modifier = Modifier.drawOpacity(if (showOverlayAppBar.value) 1f else 0f),
+                    isRefreshing = viewState.refreshing,
+                    actioner = actioner
                 )
             }
         }
@@ -922,6 +931,8 @@ private fun ShowDetailsAppBar(
     show: TiviShow,
     elevation: Dp,
     backgroundColor: Color,
+    isRefreshing: Boolean,
+    actioner: (ShowDetailsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
@@ -929,8 +940,17 @@ private fun ShowDetailsAppBar(
             Text(text = show.title ?: "")
         },
         navigationIcon = {
-            IconButton(onClick = { /* TODO */ }) {
+            IconButton(onClick = { actioner(NavigateUp) }) {
                 Icon(Icons.Default.ArrowBack)
+            }
+        },
+        actions = {
+            if (isRefreshing) {
+                CircularProgressIndicator(Modifier.padding(16.dp).aspectRatio(1f).fillMaxHeight())
+            } else {
+                IconButton(onClick = { actioner(RefreshAction) }) {
+                    Icon(Icons.Default.Refresh)
+                }
             }
         },
         elevation = elevation,
@@ -971,6 +991,8 @@ private fun ToggleShowFollowFloatingActionButton(
     )
 }
 
+private val previewShow = TiviShow(title = "Detective Penny")
+
 @Preview
 @Composable
 private fun PreviewSeasonRow() {
@@ -978,6 +1000,18 @@ private fun PreviewSeasonRow() {
         season = Season(showId = 0, number = 1, ignored = false),
         episodesWithWatches = emptyList(),
         popupVisible = mutableStateOf(false),
+        actioner = {}
+    )
+}
+
+@Preview
+@Composable
+private fun PreviewTopAppBar() {
+    ShowDetailsAppBar(
+        show = previewShow,
+        elevation = 1.dp,
+        backgroundColor = MaterialTheme.colors.surface,
+        isRefreshing = true,
         actioner = {}
     )
 }
