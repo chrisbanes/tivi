@@ -78,7 +78,12 @@ class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.Factory
 
         viewLifecycleOwner.lifecycleScope.launch {
             for (action in pendingActions) {
-                viewModel.submitAction(action)
+                when (action) {
+                    NavigateUp -> {
+                        findNavController().navigateUp() || requireActivity().onNavigateUp()
+                    }
+                    else -> viewModel.submitAction(action)
+                }
             }
         }
     }

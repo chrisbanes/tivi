@@ -123,6 +123,7 @@ import app.tivi.showdetails.details.FocusSeasonUiEffect
 import app.tivi.showdetails.details.FollowShowToggleAction
 import app.tivi.showdetails.details.MarkSeasonUnwatchedAction
 import app.tivi.showdetails.details.MarkSeasonWatchedAction
+import app.tivi.showdetails.details.NavigateUp
 import app.tivi.showdetails.details.OpenEpisodeDetails
 import app.tivi.showdetails.details.OpenShowDetails
 import app.tivi.showdetails.details.ShowDetailsAction
@@ -192,7 +193,8 @@ fun ShowDetails(
                     ShowDetailsAppBar(
                         show = viewState.show,
                         elevation = 0.dp,
-                        backgroundColor = Color.Transparent
+                        backgroundColor = Color.Transparent,
+                        actioner = actioner
                     )
 
                     Row {
@@ -342,7 +344,8 @@ fun ShowDetails(
                     show = viewState.show,
                     elevation = transitionState[elevationPropKey],
                     backgroundColor = MaterialTheme.colors.surface,
-                    modifier = Modifier.drawOpacity(if (showOverlayAppBar.value) 1f else 0f)
+                    modifier = Modifier.drawOpacity(if (showOverlayAppBar.value) 1f else 0f),
+                    actioner = actioner
                 )
             }
         }
@@ -922,6 +925,7 @@ private fun ShowDetailsAppBar(
     show: TiviShow,
     elevation: Dp,
     backgroundColor: Color,
+    actioner: (ShowDetailsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
@@ -929,7 +933,7 @@ private fun ShowDetailsAppBar(
             Text(text = show.title ?: "")
         },
         navigationIcon = {
-            IconButton(onClick = { /* TODO */ }) {
+            IconButton(onClick = { actioner(NavigateUp) }) {
                 Icon(Icons.Default.ArrowBack)
             }
         },

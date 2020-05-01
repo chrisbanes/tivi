@@ -44,3 +44,4 @@ data class ChangeSeasonExpandedAction(
 data class OpenShowDetails(val showId: Long) : ShowDetailsAction()
 data class OpenEpisodeDetails(val episodeId: Long) : ShowDetailsAction()
 data class ClearPendingUiEffect(val effect: UiEffect) : ShowDetailsAction()
+object NavigateUp : ShowDetailsAction()
