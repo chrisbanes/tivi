@@ -28,6 +28,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
         jcenter()
     }
 
@@ -59,6 +60,7 @@ allprojects {
         mavenCentral()
         jcenter()
         maven { url 'https://jitpack.io' }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
         // maven { url 'https://androidx-dev-prod.appspot.com/snapshots/builds/6379686/artifacts/ui/repository/' }
         mavenLocal()
     }
@@ -87,6 +89,13 @@ subprojects {
             freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.FlowPreview"
             freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.FlowPreview"
             freeCompilerArgs += "-Xopt-in=kotlin.Experimental"
+
+            // Compose is now based on the Kotlin 1.4 compiler, but we need to use the 1.3.x Kotlin
+            // library due to library compatibility, etc. Therefore we explicit set our apiVersion
+            // to 1.3 to fix any warnings. Binary dependencies (such as Compose) can continue to
+            // use 1.4 if built with that library.
+            // TODO: remove this once we move to Kotlin 1.4
+            apiVersion = "1.3"
 
             // Set JVM target to 1.8
             jvmTarget = "1.8"

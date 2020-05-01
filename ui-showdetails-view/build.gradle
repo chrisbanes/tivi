@@ -37,6 +37,7 @@ android {
     }
 
     composeOptions {
+        kotlinCompilerVersion Libs.AndroidX.UI.kotlinCompilerVersion
         kotlinCompilerExtensionVersion Libs.AndroidX.UI.version
     }
 }

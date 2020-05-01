@@ -22,6 +22,7 @@ import androidx.animation.transitionDefinition
 import androidx.annotation.DrawableRes
 import androidx.compose.Composable
 import androidx.compose.Providers
+import androidx.compose.Recomposer
 import androidx.compose.getValue
 import androidx.compose.remember
 import androidx.compose.setValue
@@ -46,11 +47,11 @@ import androidx.ui.foundation.Text
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.contentColor
 import androidx.ui.foundation.drawBackground
-import androidx.ui.foundation.shape.RectangleShape
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.Paint
+import androidx.ui.graphics.RectangleShape
 import androidx.ui.graphics.withSave
 import androidx.ui.layout.Column
 import androidx.ui.layout.Row
@@ -114,7 +115,7 @@ fun ViewGroup.composeEpisodeDetails(
     insets: LiveData<WindowInsetsCompat>,
     actioner: (EpisodeDetailsAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter
-): Any = setContent {
+): Any = setContent(Recomposer.current()) {
     WrapWithAmbients(tiviDateFormatter, InsetsHolder()) {
         observeInsets(insets)
 
