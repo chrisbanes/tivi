@@ -120,7 +120,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         copy(watches = watches)
     }
 
-    fun submitAction(action: EpisodeDetailsAction) {
+    internal fun submitAction(action: EpisodeDetailsAction) {
         viewModelScope.launch { pendingActions.send(action) }
     }
 
