@@ -44,6 +44,8 @@ dependencies {
     api project(':base')
     implementation project(':data')
 
+    implementation Libs.Google.crashlytics
+
     implementation Libs.AndroidX.Fragment.fragment
     implementation Libs.AndroidX.coreKtx
 

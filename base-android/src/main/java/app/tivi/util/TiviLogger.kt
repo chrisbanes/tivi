@@ -18,15 +18,14 @@ package app.tivi.util
 
 import android.os.Build
 import android.util.Log
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import java.util.regex.Pattern
 import javax.inject.Inject
 import timber.log.Timber
 
 class TiviLogger @Inject constructor() : Logger {
     fun setup(debugMode: Boolean) {
-        if (debugMode) {
-            Timber.plant(TiviDebugTree())
-        }
+        if (debugMode) Timber.plant(TiviDebugTree())
         Timber.plant(CrashlyticsTree())
     }
 
@@ -124,15 +123,16 @@ private class TiviDebugTree : Timber.DebugTree() {
         }
         tag = tag.substring(tag.lastIndexOf('.') + 1)
         // Tag length limit was removed in API 24.
-        return if (tag.length <= MAX_TAG_LENGTH || Build.VERSION.SDK_INT >= 24) {
-            tag
-        } else tag.substring(0, MAX_TAG_LENGTH)
+        return when {
+            Build.VERSION.SDK_INT >= 24 || tag.length <= MAX_TAG_LENGTH -> tag
+            else -> tag.substring(0, MAX_TAG_LENGTH)
+        }
     }
 
     companion object {
         private const val MAX_TAG_LENGTH = 23
         private const val CALL_STACK_INDEX = 7
-        private val ANONYMOUS_CLASS = Pattern.compile("(\\$\\d+)+$")
+        private val ANONYMOUS_CLASS by lazy { Pattern.compile("(\\$\\d+)+$") }
     }
 }
 
@@ -142,6 +142,6 @@ private class CrashlyticsTree : Timber.Tree() {
     }
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        // Crashlytics.log(message)
+        FirebaseCrashlytics.getInstance().log(message)
     }
 }
