@@ -32,21 +32,12 @@ import androidx.ui.unit.px
 import androidx.ui.unit.sp
 import kotlin.concurrent.getOrSet
 
-private const val DEFAULT_COLOR_RGB = android.graphics.Color.MAGENTA
-private val DEFAULT_COLOR = Color(DEFAULT_COLOR_RGB)
-
 private val tempTypedValue = ThreadLocal<TypedValue>()
 
 fun TypedArray.getComposeColor(
     index: Int,
-    fallbackColor: Color = DEFAULT_COLOR
-): Color {
-    return getComposeColorOrNull(index) ?: fallbackColor
-}
-
-fun TypedArray.getComposeColorOrNull(index: Int): Color? {
-    return if (hasValue(index)) Color(getColorOrThrow(index)) else null
-}
+    fallbackColor: Color = Color.Unset
+): Color = if (hasValue(index)) Color(getColorOrThrow(index)) else fallbackColor
 
 fun TypedArray.getFontFamily(index: Int, fallback: FontFamily): FontFamily {
     return getFontFamilyOrNull(index) ?: fallback
@@ -64,9 +55,7 @@ fun TypedArray.getTextUnit(
     density: Density,
     index: Int,
     fallback: TextUnit = TextUnit.Inherit
-): TextUnit {
-    return getTextUnitOrNull(density, index) ?: fallback
-}
+): TextUnit = getTextUnitOrNull(density, index) ?: fallback
 
 fun TypedArray.getTextUnitOrNull(
     density: Density,
@@ -90,9 +79,9 @@ fun TypedArray.getTextUnitOrNull(
 fun TypedArray.getCornerSizeOrNull(index: Int): CornerSize? {
     val tv = tempTypedValue.getOrSet { TypedValue() }
     if (getValue(index, tv)) {
-        when (tv.type) {
+        return when (tv.type) {
             TypedValue.TYPE_DIMENSION -> {
-                return when (tv.complexUnit) {
+                when (tv.complexUnit) {
                     // For DIP and PX values, we convert the value to the equivalent
                     TypedValue.COMPLEX_UNIT_DIP -> CornerSize(TypedValue.complexToFloat(tv.data).dp)
                     TypedValue.COMPLEX_UNIT_PX -> CornerSize(TypedValue.complexToFloat(tv.data).px)
@@ -101,6 +90,7 @@ fun TypedArray.getCornerSizeOrNull(index: Int): CornerSize? {
                 }
             }
             TypedValue.TYPE_FRACTION -> CornerSize(tv.getFraction(1f, 1f))
+            else -> null
         }
     }
     return null

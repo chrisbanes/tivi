@@ -29,6 +29,7 @@ import androidx.ui.foundation.shape.corner.CornerSize
 import androidx.ui.foundation.shape.corner.CutCornerShape
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.geometry.Offset
+import androidx.ui.graphics.Color
 import androidx.ui.graphics.Shadow
 import androidx.ui.material.ColorPalette
 import androidx.ui.material.MaterialTheme
@@ -276,8 +277,8 @@ private fun textStyleFromTextAppearance(
 
         TextStyle(
             color = if (useTextColor) {
-                a.getComposeColorOrNull(R.styleable.ComposeTextAppearance_android_textColor)
-            } else null,
+                a.getComposeColor(R.styleable.ComposeTextAppearance_android_textColor)
+            } else Color.Unset,
             fontSize = a.getTextUnit(density, R.styleable.ComposeTextAppearance_android_textSize),
             lineHeight = a.getTextUnit(density, R.styleable.ComposeTextAppearance_android_lineHeight),
             fontFamily = when {
@@ -311,8 +312,8 @@ private fun textStyleFromTextAppearance(
             },
             fontFeatureSettings = a.getString(R.styleable.ComposeTextAppearance_android_fontFeatureSettings),
             shadow = run {
-                val shadowColor = a.getComposeColorOrNull(R.styleable.ComposeTextAppearance_android_shadowColor)
-                if (shadowColor != null) {
+                val shadowColor = a.getComposeColor(R.styleable.ComposeTextAppearance_android_shadowColor)
+                if (shadowColor != Color.Unset) {
                     val shadowDx = a.getFloat(R.styleable.ComposeTextAppearance_android_shadowDx, 0f)
                     val shadowDy = a.getFloat(R.styleable.ComposeTextAppearance_android_shadowDy, 0f)
                     val shadowRadius = a.getFloat(R.styleable.ComposeTextAppearance_android_shadowRadius, 0f)

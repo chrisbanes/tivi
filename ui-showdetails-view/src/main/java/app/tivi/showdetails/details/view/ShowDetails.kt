@@ -21,6 +21,7 @@ import androidx.animation.transitionDefinition
 import androidx.compose.Composable
 import androidx.compose.MutableState
 import androidx.compose.Providers
+import androidx.compose.Recomposer
 import androidx.compose.getValue
 import androidx.compose.mutableStateOf
 import androidx.compose.remember
@@ -141,7 +142,7 @@ fun ViewGroup.composeShowDetails(
     actioner: (ShowDetailsAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter,
     textCreator: ShowDetailsTextCreator
-): Any = setContent {
+): Any = setContent(Recomposer.current()) {
     WrapWithAmbients(tiviDateFormatter, InsetsHolder()) {
         Providers(ShowDetailsTextCreatorAmbient provides textCreator) {
             observeInsets(insets)
