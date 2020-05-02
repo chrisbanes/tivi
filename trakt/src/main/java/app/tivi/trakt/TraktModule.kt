@@ -19,11 +19,10 @@ package app.tivi.trakt
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Module
 import dagger.Provides
+import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
 
 @Module(includes = [TraktServiceModule::class])
 class TraktModule {
@@ -35,15 +34,13 @@ class TraktModule {
         @Named("trakt-client-secret") clientSecret: String,
         @Named("trakt-auth-redirect-uri") redirectUri: String
     ): TraktV2 = object : TraktV2(clientId, clientSecret, redirectUri) {
-        override fun retrofitBuilder(): Retrofit.Builder {
-            val traktClient = client.newBuilder().apply {
+        override fun okHttpClient(): OkHttpClient {
+            return client.newBuilder().apply {
                 setOkHttpClientDefaults(this)
                 connectTimeout(20, TimeUnit.SECONDS)
                 readTimeout(20, TimeUnit.SECONDS)
                 writeTimeout(20, TimeUnit.SECONDS)
             }.build()
-
-            return super.retrofitBuilder().client(traktClient)
         }
     }
 }

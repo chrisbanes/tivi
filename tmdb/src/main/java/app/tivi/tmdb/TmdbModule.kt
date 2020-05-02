@@ -19,11 +19,10 @@ package app.tivi.tmdb
 import com.uwetrottmann.tmdb2.Tmdb
 import dagger.Module
 import dagger.Provides
+import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
 
 @Module
 class TmdbModule {
@@ -39,15 +38,13 @@ class TmdbModule {
         @Named("tmdb-api") apiKey: String
     ): Tmdb {
         return object : Tmdb(apiKey) {
-            override fun retrofitBuilder(): Retrofit.Builder {
-                val tmdbClient = client.newBuilder().apply {
+            override fun okHttpClient(): OkHttpClient {
+                return client.newBuilder().apply {
                     setOkHttpClientDefaults(this)
                     connectTimeout(20, TimeUnit.SECONDS)
                     readTimeout(20, TimeUnit.SECONDS)
                     writeTimeout(20, TimeUnit.SECONDS)
                 }.build()
-
-                return super.retrofitBuilder().client(tmdbClient)
             }
         }
     }
