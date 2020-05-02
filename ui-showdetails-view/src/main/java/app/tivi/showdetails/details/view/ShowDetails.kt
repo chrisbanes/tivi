@@ -335,7 +335,7 @@ fun ShowDetails(
                 }
 
                 transition {
-                    elevationPropKey using tween { duration = 200 }
+                    elevationPropKey using tween<Dp> { duration = 200 }
                 }
             }
         }

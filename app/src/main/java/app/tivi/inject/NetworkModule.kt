@@ -16,21 +16,64 @@
 
 package app.tivi.inject
 
+import android.content.Context
 import app.tivi.BuildConfig
+import coil.util.CoilUtils
 import dagger.Module
 import dagger.Provides
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+import okhttp3.ConnectionPool
+import okhttp3.Dispatcher
+import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import okhttp3.logging.LoggingEventListener
 
 @Module
 class NetworkModule {
     @Singleton
     @Provides
-    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
-        return HttpLoggingInterceptor().apply {
-            if (BuildConfig.DEBUG) {
-                level = HttpLoggingInterceptor.Level.HEADERS
-            }
+    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor? {
+        if (!BuildConfig.DEBUG) {
+            return null
         }
+
+        return HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.HEADERS
+        }
+    }
+
+    @Singleton
+    @Provides
+    fun provideHttpEventListener(): LoggingEventListener.Factory? {
+        if (!BuildConfig.DEBUG) {
+            return null
+        }
+
+        return LoggingEventListener.Factory()
+    }
+
+    @Singleton
+    @Provides
+    fun provideOkHttpClient(
+        httpLoggingInterceptor: HttpLoggingInterceptor?,
+        loggingEventListener: LoggingEventListener.Factory?,
+        applicationContext: Context
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .apply {
+                if (httpLoggingInterceptor != null) {
+                    addInterceptor(httpLoggingInterceptor)
+                }
+                if (loggingEventListener != null) {
+                    eventListenerFactory(loggingEventListener)
+                }
+            }
+            .cache(CoilUtils.createDefaultCache(applicationContext))
+            .connectionPool(ConnectionPool(10, 2, TimeUnit.MINUTES))
+            .dispatcher(Dispatcher().apply {
+                maxRequestsPerHost = 15
+            })
+            .build()
     }
 }

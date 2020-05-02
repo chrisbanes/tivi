@@ -85,13 +85,13 @@ private val imageSaturationTransitionDef = transitionDefinition {
     }
 
     transition {
-        alpha using tween {
+        alpha using tween<Float> {
             duration = transitionDuration / 2
         }
-        brightness using tween {
+        brightness using tween<Float> {
             duration = (transitionDuration * 0.75f).roundToInt()
         }
-        saturation using tween {
+        saturation using tween<Float> {
             duration = transitionDuration
         }
     }

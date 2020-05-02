@@ -22,10 +22,12 @@ import coil.Coil
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import javax.inject.Inject
+import okhttp3.OkHttpClient
 
 class CoilAppInitializer @Inject constructor(
     private val tmdbImageEntityMapper: TmdbImageEntityCoilMapper,
-    private val episodeEntityMapper: EpisodeCoilMapper
+    private val episodeEntityMapper: EpisodeCoilMapper,
+    private val okHttpClient: OkHttpClient
 ) : AppInitializer {
     override fun init(application: Application) {
         Coil.setImageLoader(object : ImageLoaderFactory {
@@ -39,6 +41,7 @@ class CoilAppInitializer @Inject constructor(
                     add(tmdbImageEntityMapper)
                     add(episodeEntityMapper)
                 }
+                .okHttpClient(okHttpClient)
                 .build()
         })
     }
