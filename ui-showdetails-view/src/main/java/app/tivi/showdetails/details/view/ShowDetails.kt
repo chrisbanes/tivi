@@ -99,7 +99,7 @@ import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.InsetsHolder
 import app.tivi.common.compose.LoadNetworkImage
 import app.tivi.common.compose.LoadNetworkImageWithCrossfade
-import app.tivi.common.compose.MaterialThemeFromAndroidTheme
+import app.tivi.common.compose.MaterialThemeFromAndroidMdcTheme
 import app.tivi.common.compose.PopupMenu
 import app.tivi.common.compose.PopupMenuItem
 import app.tivi.common.compose.VectorImage
@@ -155,7 +155,7 @@ fun ViewGroup.composeShowDetails(
             val viewState by state.observeAsState()
             val uiEffects by pendingUiEffects.observeAsState(emptyList())
             if (viewState != null) {
-                MaterialThemeFromAndroidTheme(context) {
+                MaterialThemeFromAndroidMdcTheme {
                     ShowDetails(viewState!!, uiEffects, actioner)
                 }
             }

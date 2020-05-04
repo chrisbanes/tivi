@@ -82,7 +82,7 @@ import app.tivi.common.compose.ExpandingSummary
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.InsetsHolder
 import app.tivi.common.compose.LoadNetworkImageWithCrossfade
-import app.tivi.common.compose.MaterialThemeFromAndroidTheme
+import app.tivi.common.compose.MaterialThemeFromAndroidMdcTheme
 import app.tivi.common.compose.SwipeDirection
 import app.tivi.common.compose.SwipeToDismiss
 import app.tivi.common.compose.TiviAlertDialog
@@ -121,7 +121,7 @@ fun ViewGroup.composeEpisodeDetails(
 
         val viewState by state.observeAsState()
         if (viewState != null) {
-            MaterialThemeFromAndroidTheme(context) {
+            MaterialThemeFromAndroidMdcTheme {
                 EpisodeDetails(viewState!!, actioner)
             }
         }

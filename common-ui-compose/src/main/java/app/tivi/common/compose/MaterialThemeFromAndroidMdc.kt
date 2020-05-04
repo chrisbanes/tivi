@@ -17,11 +17,15 @@
 package app.tivi.common.compose
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.Typeface
+import android.util.TypedValue
 import androidx.annotation.StyleRes
 import androidx.compose.Composable
+import androidx.core.content.res.getColorOrThrow
 import androidx.core.content.res.getResourceIdOrThrow
 import androidx.core.content.res.use
+import androidx.ui.core.ContextAmbient
 import androidx.ui.core.DensityAmbient
 import androidx.ui.foundation.isSystemInDarkTheme
 import androidx.ui.foundation.shape.corner.CornerBasedShape
@@ -41,10 +45,15 @@ import androidx.ui.text.TextStyle
 import androidx.ui.text.font.FontFamily
 import androidx.ui.text.font.FontStyle
 import androidx.ui.text.font.FontWeight
+import androidx.ui.text.font.asFontFamily
+import androidx.ui.text.font.font
+import androidx.ui.unit.Density
 import androidx.ui.unit.TextUnit
 import androidx.ui.unit.dp
 import androidx.ui.unit.em
 import androidx.ui.unit.px
+import androidx.ui.unit.sp
+import kotlin.concurrent.getOrSet
 
 /**
  * A [MaterialTheme] which reads the corresponding values from an
@@ -56,19 +65,22 @@ import androidx.ui.unit.px
  * You can customize this through the [useTextColors] parameter.
  *
  * @param context The context to read the theme from
+ * @param readColors whether the read the MDC color palette from the context's theme
+ * @param readTypography whether the read the MDC typography text appearances from the context's theme
+ * @param readShapes whether the read the MDC shape appearances from the context's theme
  * @param useTextColors whether to read the colors from the `TextAppearance`s associated from the
  * theme. Defaults to `false`
  */
 @Composable
-fun MaterialThemeFromAndroidTheme(
-    context: Context,
+fun MaterialThemeFromAndroidMdcTheme(
+    context: Context = ContextAmbient.current,
     readColors: Boolean = true,
     readTypography: Boolean = true,
     readShapes: Boolean = true,
     useTextColors: Boolean = false,
     children: @Composable() () -> Unit
 ) {
-    val (colors, type, shapes) = generateMaterialThemeFromContext(
+    val (colors, type, shapes) = generateMaterialThemeFromAndroidMdcTheme(
         context,
         readColors,
         readTypography,
@@ -94,12 +106,16 @@ fun MaterialThemeFromAndroidTheme(
  * You can customize this through the [useTextColors] parameter.
  *
  * @param context The context to read the theme from
+ * @param readColors whether the read the MDC color palette from the context's theme
+ * @param readTypography whether the read the MDC typography text appearances from the context's theme
+ * @param readShapes whether the read the MDC shape appearances from the context's theme
+ * @param useTextColors whether to read the colors from the `TextAppearance`s associated from the
  * @param useTextColors whether to read the colors from the `TextAppearance`s associated from the
  * theme. Defaults to `false`
  */
 @Composable
-fun generateMaterialThemeFromContext(
-    context: Context,
+fun generateMaterialThemeFromAndroidMdcTheme(
+    context: Context = ContextAmbient.current,
     readColors: Boolean = true,
     readTypography: Boolean = true,
     readShapes: Boolean = true,
@@ -279,8 +295,8 @@ private fun textStyleFromTextAppearance(
             color = if (useTextColor) {
                 a.getComposeColor(R.styleable.ComposeTextAppearance_android_textColor)
             } else Color.Unset,
-            fontSize = a.getTextUnit(density, R.styleable.ComposeTextAppearance_android_textSize),
-            lineHeight = a.getTextUnit(density, R.styleable.ComposeTextAppearance_android_lineHeight),
+            fontSize = a.getTextUnit(R.styleable.ComposeTextAppearance_android_textSize, density),
+            lineHeight = a.getTextUnit(R.styleable.ComposeTextAppearance_android_lineHeight, density),
             fontFamily = when {
                 // FYI, this only works with static font files in assets
                 a.hasValue(R.styleable.ComposeTextAppearance_android_fontFamily) -> {
@@ -314,14 +330,10 @@ private fun textStyleFromTextAppearance(
             shadow = run {
                 val shadowColor = a.getComposeColor(R.styleable.ComposeTextAppearance_android_shadowColor)
                 if (shadowColor != Color.Unset) {
-                    val shadowDx = a.getFloat(R.styleable.ComposeTextAppearance_android_shadowDx, 0f)
-                    val shadowDy = a.getFloat(R.styleable.ComposeTextAppearance_android_shadowDy, 0f)
-                    val shadowRadius = a.getFloat(R.styleable.ComposeTextAppearance_android_shadowRadius, 0f)
-                    Shadow(
-                        color = shadowColor,
-                        offset = Offset(shadowDx, shadowDy),
-                        blurRadius = shadowRadius.px
-                    )
+                    val dx = a.getFloat(R.styleable.ComposeTextAppearance_android_shadowDx, 0f)
+                    val dy = a.getFloat(R.styleable.ComposeTextAppearance_android_shadowDy, 0f)
+                    val rad = a.getFloat(R.styleable.ComposeTextAppearance_android_shadowRadius, 0f)
+                    Shadow(color = shadowColor, offset = Offset(dx, dy), blurRadius = rad.px)
                 } else null
             },
             letterSpacing = when {
@@ -342,9 +354,7 @@ private fun readShapeAppearance(
 ): CornerBasedShape {
     return context.obtainStyledAttributes(id, R.styleable.ComposeShapeAppearance).use { a ->
         val defaultCornerSize = a.getCornerSize(
-            R.styleable.ComposeShapeAppearance_cornerSize,
-            fallbackSize
-        )
+            R.styleable.ComposeShapeAppearance_cornerSize, fallbackSize)
         val cornerSizeTL = a.getCornerSizeOrNull(
             R.styleable.ComposeShapeAppearance_cornerSizeTopLeft)
         val cornerSizeTR = a.getCornerSizeOrNull(
@@ -409,3 +419,106 @@ private fun Typography.merge(
     caption = caption.merge(caption),
     overline = overline.merge(overline)
 )
+
+private val tempTypedValue = ThreadLocal<TypedValue>()
+
+fun TypedArray.getComposeColor(
+    index: Int,
+    fallbackColor: Color = Color.Unset
+): Color = if (hasValue(index)) Color(getColorOrThrow(index)) else fallbackColor
+
+/**
+ * Returns the given index as a [FontFamily], or [fallback] if the value can not be coerced to a [FontFamily].
+ *
+ * @param index index of attribute to retrieve.
+ * @param fallback Value to return if the attribute is not defined or cannot be coerced to an [FontFamily].
+ */
+fun TypedArray.getFontFamily(index: Int, fallback: FontFamily): FontFamily {
+    return getFontFamilyOrNull(index) ?: fallback
+}
+
+/**
+ * Returns the given index as a [FontFamily], or `null` if the value can not be coerced to a [FontFamily].
+ *
+ * @param index index of attribute to retrieve.
+ */
+fun TypedArray.getFontFamilyOrNull(index: Int): FontFamily? {
+    val tv = tempTypedValue.getOrSet { TypedValue() }
+    if (getValue(index, tv) && tv.type == TypedValue.TYPE_STRING) {
+        return font(tv.resourceId).asFontFamily()
+    }
+    return null
+}
+
+/**
+ * Returns the given index as a [TextUnit], or [fallback] if the value can not be coerced to a [TextUnit].
+ *
+ * @param index index of attribute to retrieve.
+ * @param density the current display density.
+ * @param fallback Value to return if the attribute is not defined or cannot be coerced to an [TextUnit].
+ */
+fun TypedArray.getTextUnit(
+    index: Int,
+    density: Density,
+    fallback: TextUnit = TextUnit.Inherit
+): TextUnit = getTextUnitOrNull(index, density) ?: fallback
+
+/**
+ * Returns the given index as a [TextUnit], or `null` if the value can not be coerced to a [TextUnit].
+ *
+ * @param index index of attribute to retrieve.
+ * @param density the current display density.
+ */
+fun TypedArray.getTextUnitOrNull(
+    index: Int,
+    density: Density
+): TextUnit? {
+    val tv = tempTypedValue.getOrSet { TypedValue() }
+    if (getValue(index, tv) && tv.type == TypedValue.TYPE_DIMENSION) {
+        return when (tv.complexUnit) {
+            // For SP values, we convert the value directly to an TextUnit.Sp
+            TypedValue.COMPLEX_UNIT_SP -> TypedValue.complexToFloat(tv.data).sp
+            // For DIP values, we convert the value to an TextUnit.Em (roughly equivalent)
+            TypedValue.COMPLEX_UNIT_DIP -> TypedValue.complexToFloat(tv.data).em
+            // For another other types, we let the TypedArray flatten to a px value, and
+            // we convert it to an Sp based on the current density
+            else -> with(density) { getDimension(index, 0f).toSp() }
+        }
+    }
+    return null
+}
+
+/**
+ * Returns the given index as a [CornerSize], or `null` if the value can not be coerced to a [CornerSize].
+ *
+ * @param index index of attribute to retrieve.
+ */
+fun TypedArray.getCornerSizeOrNull(index: Int): CornerSize? {
+    val tv = tempTypedValue.getOrSet { TypedValue() }
+    if (getValue(index, tv)) {
+        return when (tv.type) {
+            TypedValue.TYPE_DIMENSION -> {
+                when (tv.complexUnit) {
+                    // For DIP and PX values, we convert the value to the equivalent
+                    TypedValue.COMPLEX_UNIT_DIP -> CornerSize(TypedValue.complexToFloat(tv.data).dp)
+                    TypedValue.COMPLEX_UNIT_PX -> CornerSize(TypedValue.complexToFloat(tv.data).px)
+                    // For another other dim types, we let the TypedArray flatten to a px value
+                    else -> CornerSize(getDimensionPixelSize(index, 0).px)
+                }
+            }
+            TypedValue.TYPE_FRACTION -> CornerSize(tv.getFraction(1f, 1f))
+            else -> null
+        }
+    }
+    return null
+}
+
+/**
+ * Returns the given index as a [CornerSize], or [fallback] if the value can not be coerced to a [CornerSize].
+ *
+ * @param index index of attribute to retrieve.
+ * @param fallback Value to return if the attribute is not defined or cannot be coerced to an [CornerSize].
+ */
+fun TypedArray.getCornerSize(index: Int, fallback: CornerSize): CornerSize {
+    return getCornerSizeOrNull(index) ?: fallback
+}
