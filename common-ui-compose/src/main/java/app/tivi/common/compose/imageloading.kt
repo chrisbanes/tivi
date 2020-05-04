@@ -256,9 +256,7 @@ fun loadImage(
             val result = Coil.imageLoader(context).execute(request)
             image = when (result) {
                 is SuccessResult -> result.drawable.toBitmap().asImageAsset()
-                is ErrorResult -> {
-                    result.drawable?.toBitmap()?.asImageAsset() ?: throw result.throwable
-                }
+                else -> null
             }
             onLoad()
         }
