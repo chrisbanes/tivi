@@ -51,7 +51,6 @@ import androidx.ui.unit.IntPx
 import androidx.ui.unit.PxSize
 import app.tivi.ui.graphics.ImageLoadingColorMatrix
 import coil.Coil
-import coil.request.ErrorResult
 import coil.request.GetRequest
 import coil.request.SuccessResult
 import coil.size.Scale
@@ -256,9 +255,7 @@ fun loadImage(
             val result = Coil.imageLoader(context).execute(request)
             image = when (result) {
                 is SuccessResult -> result.drawable.toBitmap().asImageAsset()
-                is ErrorResult -> {
-                    result.drawable?.toBitmap()?.asImageAsset() ?: throw result.throwable
-                }
+                else -> null
             }
             onLoad()
         }
