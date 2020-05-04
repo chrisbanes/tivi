@@ -51,7 +51,6 @@ import androidx.ui.unit.IntPx
 import androidx.ui.unit.PxSize
 import app.tivi.ui.graphics.ImageLoadingColorMatrix
 import coil.Coil
-import coil.request.ErrorResult
 import coil.request.GetRequest
 import coil.request.SuccessResult
 import coil.size.Scale
