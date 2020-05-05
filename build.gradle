@@ -62,6 +62,7 @@ allprojects {
         maven { url 'https://jitpack.io' }
         maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
         // maven { url 'https://androidx-dev-prod.appspot.com/snapshots/builds/6379686/artifacts/ui/repository/' }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
         mavenLocal()
     }
 }

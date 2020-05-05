@@ -82,7 +82,6 @@ import app.tivi.common.compose.ExpandingSummary
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.InsetsHolder
 import app.tivi.common.compose.LoadNetworkImageWithCrossfade
-import app.tivi.common.compose.MaterialThemeFromAndroidTheme
 import app.tivi.common.compose.SwipeDirection
 import app.tivi.common.compose.SwipeToDismiss
 import app.tivi.common.compose.TiviAlertDialog
@@ -100,6 +99,7 @@ import app.tivi.data.entities.Season
 import app.tivi.episodedetails.compose.R
 import app.tivi.ui.animations.lerp
 import app.tivi.util.TiviDateFormatter
+import dev.chrisbanes.accompanist.mdctheme.MaterialThemeFromMdcTheme
 import kotlin.math.hypot
 import org.threeten.bp.OffsetDateTime
 
@@ -117,11 +117,11 @@ fun ViewGroup.composeEpisodeDetails(
     tiviDateFormatter: TiviDateFormatter
 ): Any = setContent(Recomposer.current()) {
     WrapWithAmbients(tiviDateFormatter, InsetsHolder()) {
-        observeInsets(insets)
+        MaterialThemeFromMdcTheme {
+            observeInsets(insets)
 
-        val viewState by state.observeAsState()
-        if (viewState != null) {
-            MaterialThemeFromAndroidTheme(context) {
+            val viewState by state.observeAsState()
+            if (viewState != null) {
                 EpisodeDetails(viewState!!, actioner)
             }
         }
