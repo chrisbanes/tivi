@@ -164,6 +164,7 @@ object Libs {
             const val animation = "androidx.ui:ui-animation:$version"
             const val tooling = "androidx.ui:ui-tooling:$version"
             const val livedata = "androidx.ui:ui-livedata:$version"
+            const val iconsExtended = "androidx.ui:ui-material-icons-extended:$version"
         }
     }
 
