@@ -54,8 +54,9 @@ object Libs {
     }
 
     object Accompanist {
-        private const val version = "0.1.0-SNAPSHOT"
+        private const val version = "0.1.0"
         const val mdcTheme = "dev.chrisbanes.accompanist:accompanist-mdc-theme:$version"
+        const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
     }
 
     object Google {

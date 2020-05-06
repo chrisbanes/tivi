@@ -54,7 +54,6 @@ import androidx.ui.unit.dp
 import app.tivi.account.view.R
 import app.tivi.common.compose.HorizontalDivider
 import app.tivi.common.compose.InsetsHolder
-import app.tivi.common.compose.LoadNetworkImage
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.WrapWithAmbients
 import app.tivi.common.compose.observeInsets
@@ -62,6 +61,7 @@ import app.tivi.common.compose.paddingHV
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.TiviDateFormatter
+import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
 import dev.chrisbanes.accompanist.mdctheme.MaterialThemeFromMdcTheme
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
@@ -147,7 +147,7 @@ private fun UserRow(
     ) {
         val avatarUrl = user.avatarUrl
         if (avatarUrl != null) {
-            LoadNetworkImage(
+            CoilImageWithCrossfade(
                 data = avatarUrl,
                 modifier = Modifier.preferredSize(40.dp)
                     .clip(RoundedCornerShape(50))
