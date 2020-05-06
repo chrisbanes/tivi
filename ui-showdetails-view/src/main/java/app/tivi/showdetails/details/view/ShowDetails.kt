@@ -89,6 +89,7 @@ import androidx.ui.material.icons.filled.FavoriteBorder
 import androidx.ui.material.icons.filled.MoreVert
 import androidx.ui.material.icons.filled.Refresh
 import androidx.ui.material.icons.filled.Star
+import androidx.ui.material.icons.filled.Visibility
 import androidx.ui.material.icons.filled.VisibilityOff
 import androidx.ui.material.ripple.ripple
 import androidx.ui.res.stringResource
@@ -974,8 +975,8 @@ private fun ToggleShowFollowFloatingActionButton(
         icon = {
             Icon(
                 when {
-                    isFollowed -> Icons.Filled.FavoriteBorder
-                    else -> Icons.Filled.Favorite
+                    isFollowed -> Icons.Default.FavoriteBorder
+                    else -> Icons.Default.Favorite
                 }
             )
         },
