@@ -83,11 +83,14 @@ import androidx.ui.material.Surface
 import androidx.ui.material.TopAppBar
 import androidx.ui.material.icons.Icons
 import androidx.ui.material.icons.filled.ArrowBack
+import androidx.ui.material.icons.filled.CloudUpload
 import androidx.ui.material.icons.filled.Favorite
 import androidx.ui.material.icons.filled.FavoriteBorder
 import androidx.ui.material.icons.filled.MoreVert
 import androidx.ui.material.icons.filled.Refresh
 import androidx.ui.material.icons.filled.Star
+import androidx.ui.material.icons.filled.Visibility
+import androidx.ui.material.icons.filled.VisibilityOff
 import androidx.ui.material.ripple.ripple
 import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
@@ -837,8 +840,8 @@ private fun EpisodeWithWatchesRow(
         ProvideEmphasis(EmphasisAmbient.current.medium) {
             var needSpacer = false
             if (episodeWithWatches.hasPending()) {
-                VectorImage(
-                    R.drawable.ic_upload_24dp,
+                Icon(
+                    asset = Icons.Default.CloudUpload,
                     modifier = Modifier.gravity(Alignment.CenterVertically)
                 )
                 needSpacer = true
@@ -847,10 +850,10 @@ private fun EpisodeWithWatchesRow(
                 if (needSpacer) {
                     Spacer(Modifier.preferredWidth(4.dp))
                 }
-                VectorImage(
-                    id = when {
-                        episodeWithWatches.onlyPendingDeletes() -> R.drawable.ic_eye_off_24dp
-                        else -> R.drawable.ic_eye_24dp
+                Icon(
+                    asset = when {
+                        episodeWithWatches.onlyPendingDeletes() -> Icons.Default.VisibilityOff
+                        else -> Icons.Default.Visibility
                     },
                     modifier = Modifier.gravity(Alignment.CenterVertically)
                 )
@@ -972,8 +975,8 @@ private fun ToggleShowFollowFloatingActionButton(
         icon = {
             Icon(
                 when {
-                    isFollowed -> Icons.Filled.FavoriteBorder
-                    else -> Icons.Filled.Favorite
+                    isFollowed -> Icons.Default.FavoriteBorder
+                    else -> Icons.Default.Favorite
                 }
             )
         },
