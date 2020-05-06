@@ -99,7 +99,6 @@ import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.InsetsHolder
 import app.tivi.common.compose.LoadNetworkImage
 import app.tivi.common.compose.LoadNetworkImageWithCrossfade
-import app.tivi.common.compose.MaterialThemeFromAndroidTheme
 import app.tivi.common.compose.PopupMenu
 import app.tivi.common.compose.PopupMenuItem
 import app.tivi.common.compose.VectorImage
@@ -137,6 +136,7 @@ import app.tivi.showdetails.details.UnfollowPreviousSeasonsFollowedAction
 import app.tivi.ui.animations.lerp
 import app.tivi.util.TiviDateFormatter
 import coil.transform.RoundedCornersTransformation
+import dev.chrisbanes.accompanist.mdctheme.MaterialThemeFromMdcTheme
 
 val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
 
@@ -150,12 +150,12 @@ fun ViewGroup.composeShowDetails(
 ): Any = setContent(Recomposer.current()) {
     WrapWithAmbients(tiviDateFormatter, InsetsHolder()) {
         Providers(ShowDetailsTextCreatorAmbient provides textCreator) {
-            observeInsets(insets)
+            MaterialThemeFromMdcTheme {
+                observeInsets(insets)
 
-            val viewState by state.observeAsState()
-            val uiEffects by pendingUiEffects.observeAsState(emptyList())
-            if (viewState != null) {
-                MaterialThemeFromAndroidTheme(context) {
+                val viewState by state.observeAsState()
+                val uiEffects by pendingUiEffects.observeAsState(emptyList())
+                if (viewState != null) {
                     ShowDetails(viewState!!, uiEffects, actioner)
                 }
             }

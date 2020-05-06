@@ -62,4 +62,6 @@ dependencies {
     implementation Libs.AndroidX.UI.animation
     implementation Libs.AndroidX.UI.tooling
     implementation Libs.AndroidX.UI.livedata
+
+    implementation Libs.Accompanist.mdcTheme
 }

@@ -54,6 +54,11 @@ object Libs {
         const val ktx = "dev.chrisbanes:insetter-ktx:$version"
     }
 
+    object Accompanist {
+        private const val version = "0.1.0-SNAPSHOT"
+        const val mdcTheme = "dev.chrisbanes.accompanist:accompanist-mdc-theme:$version"
+    }
+
     object Google {
         const val material = "com.google.android.material:material:1.1.0"
         const val firebaseCore = "com.google.firebase:firebase-core:17.4.0"
