@@ -17,19 +17,25 @@
 package app.tivi.common.imageloading
 
 import android.app.Application
+import android.content.Context
 import app.tivi.appinitializers.AppInitializer
 import coil.Coil
 import coil.ImageLoader
 import coil.ImageLoaderFactory
+import coil.util.CoilUtils
 import javax.inject.Inject
 import okhttp3.OkHttpClient
 
 class CoilAppInitializer @Inject constructor(
     private val tmdbImageEntityMapper: TmdbImageEntityCoilMapper,
     private val episodeEntityMapper: EpisodeCoilMapper,
-    private val okHttpClient: OkHttpClient
+    private val okHttpClient: OkHttpClient,
+    private val applicationContext: Context
 ) : AppInitializer {
     override fun init(application: Application) {
+        val coilOkHttpClient = okHttpClient.newBuilder()
+            .cache(CoilUtils.createDefaultCache(applicationContext))
+            .build()
         Coil.setImageLoader(object : ImageLoaderFactory {
             override fun newImageLoader(): ImageLoader = ImageLoader.Builder(application)
                 // Hardware bitmaps break with our transitions, disable them for now
@@ -41,7 +47,7 @@ class CoilAppInitializer @Inject constructor(
                     add(tmdbImageEntityMapper)
                     add(episodeEntityMapper)
                 }
-                .okHttpClient(okHttpClient)
+                .okHttpClient(coilOkHttpClient)
                 .build()
         })
     }
