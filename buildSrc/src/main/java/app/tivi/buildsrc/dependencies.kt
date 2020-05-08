@@ -184,7 +184,7 @@ object Libs {
     }
 
     object OkHttp {
-        private const val version = "4.5.0"
+        private const val version = "4.6.0"
         const val okhttp = "com.squareup.okhttp3:okhttp:$version"
         const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$version"
     }
@@ -198,7 +198,7 @@ object Libs {
     }
 
     object Coil {
-        private const val version = "0.10.0"
+        private const val version = "0.10.1"
         const val coil = "io.coil-kt:coil:$version"
     }
 

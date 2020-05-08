@@ -410,7 +410,7 @@ private fun EpisodeWatchSwipeBackground(
             }
 
             transition {
-                color using tween { duration = 200 }
+                color using tween<Color> { duration = 200 }
             }
         }
     }
