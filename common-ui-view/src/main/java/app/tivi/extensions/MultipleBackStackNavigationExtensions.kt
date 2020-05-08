@@ -37,7 +37,7 @@ fun BottomNavigationView.setupWithNavController(
     navGraphIds: List<Int>,
     fragmentManager: FragmentManager,
     containerId: Int,
-    intent: Intent? = null
+    intent: Intent
 ): LiveData<NavController> {
 
     // Map of tags
@@ -103,8 +103,12 @@ fun BottomNavigationView.setupWithNavController(
                     // Commit a transaction that cleans the back stack and adds the first fragment
                     // to it, creating the fixed started destination.
                     fragmentManager.beginTransaction()
-                        .setCustomAnimations(R.anim.tivi_enter_anim, R.anim.tivi_exit_anim,
-                            R.anim.tivi_pop_enter_anim, R.anim.tivi_pop_exit_anim)
+                        .setCustomAnimations(
+                            R.anim.tivi_enter_anim,
+                            R.anim.tivi_exit_anim,
+                            R.anim.tivi_pop_enter_anim,
+                            R.anim.tivi_pop_exit_anim
+                        )
                         .attach(selectedFragment)
                         .setPrimaryNavigationFragment(selectedFragment)
                         .apply {
@@ -133,9 +137,7 @@ fun BottomNavigationView.setupWithNavController(
     setupItemReselected(graphIdToTagMap, fragmentManager)
 
     // Handle deep link
-    if (intent != null) {
-        setupDeepLinks(navGraphIds, fragmentManager, containerId, intent)
-    }
+    setupDeepLinks(navGraphIds, fragmentManager, containerId, intent)
 
     // Finally, ensure that we update our BottomNavigationView when the back stack changes
     fragmentManager.addOnBackStackChangedListener {
@@ -171,9 +173,9 @@ private fun BottomNavigationView.setupDeepLinks(
             containerId
         )
         // Handle Intent
-        if (selectedItemId != navHostFragment.navController.graph.id &&
-            navHostFragment.navController.handleDeepLink(intent)) {
-            selectedItemId = navHostFragment.navController.graph.id
+        if (navHostFragment.navController.handleDeepLink(intent) &&
+            selectedItemId != navHostFragment.navController.graph.id) {
+            this.selectedItemId = navHostFragment.navController.graph.id
         }
     }
 }

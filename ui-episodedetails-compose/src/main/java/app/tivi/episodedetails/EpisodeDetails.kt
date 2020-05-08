@@ -19,7 +19,6 @@ package app.tivi.episodedetails
 import android.os.Build
 import android.view.ViewGroup
 import androidx.animation.transitionDefinition
-import androidx.annotation.DrawableRes
 import androidx.compose.Composable
 import androidx.compose.Providers
 import androidx.compose.Recomposer
@@ -43,6 +42,7 @@ import androidx.ui.core.onPositioned
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.ContentColorAmbient
+import androidx.ui.foundation.Icon
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.contentColor
@@ -52,6 +52,7 @@ import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.Paint
 import androidx.ui.graphics.RectangleShape
+import androidx.ui.graphics.vector.VectorAsset
 import androidx.ui.graphics.withSave
 import androidx.ui.layout.Column
 import androidx.ui.layout.Row
@@ -70,6 +71,13 @@ import androidx.ui.material.MaterialTheme
 import androidx.ui.material.OutlinedButton
 import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.Surface
+import androidx.ui.material.icons.Icons
+import androidx.ui.material.icons.filled.CalendarToday
+import androidx.ui.material.icons.filled.Delete
+import androidx.ui.material.icons.filled.DeleteSweep
+import androidx.ui.material.icons.filled.Publish
+import androidx.ui.material.icons.filled.Star
+import androidx.ui.material.icons.filled.VisibilityOff
 import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.Px
@@ -82,12 +90,10 @@ import app.tivi.common.compose.ExpandingSummary
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.InsetsHolder
 import app.tivi.common.compose.LoadNetworkImageWithCrossfade
-import app.tivi.common.compose.MaterialThemeFromAndroidTheme
 import app.tivi.common.compose.SwipeDirection
 import app.tivi.common.compose.SwipeToDismiss
 import app.tivi.common.compose.TiviAlertDialog
 import app.tivi.common.compose.TiviDateFormatterAmbient
-import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.WrapWithAmbients
 import app.tivi.common.compose.boundsInParent
 import app.tivi.common.compose.center
@@ -100,6 +106,7 @@ import app.tivi.data.entities.Season
 import app.tivi.episodedetails.compose.R
 import app.tivi.ui.animations.lerp
 import app.tivi.util.TiviDateFormatter
+import dev.chrisbanes.accompanist.mdctheme.MaterialThemeFromMdcTheme
 import kotlin.math.hypot
 import org.threeten.bp.OffsetDateTime
 
@@ -117,11 +124,11 @@ fun ViewGroup.composeEpisodeDetails(
     tiviDateFormatter: TiviDateFormatter
 ): Any = setContent(Recomposer.current()) {
     WrapWithAmbients(tiviDateFormatter, InsetsHolder()) {
-        observeInsets(insets)
+        MaterialThemeFromMdcTheme {
+            observeInsets(insets)
 
-        val viewState by state.observeAsState()
-        if (viewState != null) {
-            MaterialThemeFromAndroidTheme(context) {
+            val viewState by state.observeAsState()
+            if (viewState != null) {
                 EpisodeDetails(viewState!!, actioner)
             }
         }
@@ -273,18 +280,18 @@ private fun InfoPanes(episode: Episode) {
     Row {
         episode.traktRating?.let { rating ->
             InfoPane(
-                modifier = Modifier.weight(1f),
-                iconResId = R.drawable.ic_details_rating,
-                label = stringResource(R.string.trakt_rating_text, rating * 10f)
+                icon = Icons.Default.Star,
+                label = stringResource(R.string.trakt_rating_text, rating * 10f),
+                modifier = Modifier.weight(1f)
             )
         }
 
         episode.firstAired?.let { firstAired ->
             val formatter = TiviDateFormatterAmbient.current
             InfoPane(
-                modifier = Modifier.weight(1f),
-                iconResId = R.drawable.ic_details_date,
-                label = formatter.formatShortRelativeTime(firstAired)
+                icon = Icons.Default.CalendarToday,
+                label = formatter.formatShortRelativeTime(firstAired),
+                modifier = Modifier.weight(1f)
             )
         }
     }
@@ -293,14 +300,14 @@ private fun InfoPanes(episode: Episode) {
 @Composable
 private fun InfoPane(
     modifier: Modifier = Modifier,
-    @DrawableRes iconResId: Int,
+    icon: VectorAsset,
     label: String
 ) {
     Column(modifier = modifier.padding(all = 16.dp)) {
         ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
-            VectorImage(
-                modifier = Modifier.gravity(Alignment.CenterHorizontally),
-                id = iconResId
+            Icon(
+                asset = icon,
+                modifier = Modifier.gravity(Alignment.CenterHorizontally)
             )
         }
 
@@ -334,7 +341,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
                 modifier = Modifier.padding(end = 4.dp),
                 onClick = { onSweepWatchesClick() }
             ) {
-                VectorImage(id = R.drawable.ic_delete_sweep_24)
+                Icon(asset = Icons.Default.DeleteSweep)
             }
         }
     }
@@ -358,15 +365,15 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
 
             ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
                 if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
-                    VectorImage(
-                        R.drawable.ic_upload_24dp,
+                    Icon(
+                        asset = Icons.Filled.Publish,
                         modifier = Modifier.padding(start = 8.dp).gravity(Alignment.CenterVertically)
                     )
                 }
 
                 if (episodeWatchEntry.pendingAction == PendingAction.DELETE) {
-                    VectorImage(
-                        R.drawable.ic_eye_off_24dp,
+                    Icon(
+                        asset = Icons.Filled.VisibilityOff,
                         modifier = Modifier.padding(start = 8.dp).gravity(Alignment.CenterVertically)
                     )
                 }
@@ -426,8 +433,8 @@ private fun EpisodeWatchSwipeBackground(
             )
 
             ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
-                VectorImage(
-                    id = R.drawable.ic_delete_24,
+                Icon(
+                    asset = Icons.Default.Delete,
                     modifier = Modifier.onPositioned { iconCenter = it.boundsInParent.center }
                         .padding(0.dp, 0.dp, end = 16.dp, bottom = 0.dp)
                         .gravity(Alignment.CenterEnd)
