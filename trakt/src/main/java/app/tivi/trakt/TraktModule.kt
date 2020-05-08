@@ -19,10 +19,10 @@ package app.tivi.trakt
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Module
 import dagger.Provides
-import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
+import okhttp3.OkHttpClient
 
 @Module(includes = [TraktServiceModule::class])
 class TraktModule {

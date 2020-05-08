@@ -20,15 +20,15 @@ import android.content.Context
 import app.tivi.BuildConfig
 import dagger.Module
 import dagger.Provides
+import java.io.File
+import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 import okhttp3.Cache
 import okhttp3.ConnectionPool
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.LoggingEventListener
-import java.io.File
-import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
 
 @Module
 class NetworkModule {
