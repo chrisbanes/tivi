@@ -49,7 +49,7 @@ class SnackbarManager {
 
     fun sendError(error: UiError) = pendingErrors.offer(error)
 
-    fun onErrorRemovedByUser() {
+    fun removeCurrentError() {
         removeErrorSignal.offer(Unit)
     }
 

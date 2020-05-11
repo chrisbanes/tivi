@@ -77,9 +77,9 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
 ) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
 
     private val loadingState = ObservableLoadingCounter()
-    private val pendingActions = Channel<ShowDetailsAction>(Channel.BUFFERED)
-
     private val snackbarManager = SnackbarManager()
+
+    private val pendingActions = Channel<ShowDetailsAction>(Channel.BUFFERED)
 
     init {
         viewModelScope.launchObserve(observeShowFollowStatus) { flow ->
@@ -140,7 +140,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
                 is OpenEpisodeDetails -> openEpisodeDetails(action)
                 is OpenShowDetails -> openShowDetails(action)
                 is ClearPendingUiEffect -> clearPendingUiEffect(action)
-                is ClearError -> snackbarManager.onErrorRemovedByUser()
+                is ClearError -> snackbarManager.removeCurrentError()
             }
         }
 

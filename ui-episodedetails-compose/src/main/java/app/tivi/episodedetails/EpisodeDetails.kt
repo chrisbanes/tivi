@@ -30,6 +30,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.lifecycle.LiveData
 import androidx.ui.animation.ColorPropKey
+import androidx.ui.animation.Crossfade
 import androidx.ui.animation.Transition
 import androidx.ui.core.Alignment
 import androidx.ui.core.ConfigurationAmbient
@@ -41,6 +42,7 @@ import androidx.ui.core.Modifier
 import androidx.ui.core.onPositioned
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
+import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.ContentColorAmbient
 import androidx.ui.foundation.Icon
 import androidx.ui.foundation.Text
@@ -70,6 +72,7 @@ import androidx.ui.material.IconButton
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.OutlinedButton
 import androidx.ui.material.ProvideEmphasis
+import androidx.ui.material.Snackbar
 import androidx.ui.material.Surface
 import androidx.ui.material.icons.Icons
 import androidx.ui.material.icons.filled.CalendarToday
@@ -140,84 +143,102 @@ private fun EpisodeDetails(
     viewState: EpisodeDetailsViewState,
     actioner: (EpisodeDetailsAction) -> Unit
 ) {
-    Column {
-        if (viewState.episode != null && viewState.season != null) {
-            Backdrop(season = viewState.season!!, episode = viewState.episode!!)
-        }
-        VerticalScroller {
-            Surface(elevation = 2.dp) {
-                Column {
-                    val episode = viewState.episode
-                    if (episode != null) {
-                        InfoPanes(episode)
-                        ExpandingSummary(
-                            episode.summary ?: "No summary",
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-
-                    val watches = viewState.watches
-
-                    if (viewState.canAddEpisodeWatch) {
-                        Spacer(modifier = Modifier.preferredHeight(8.dp))
-
-                        if (watches.isEmpty()) {
-                            MarkWatchedButton(
-                                modifier = Modifier.gravity(Alignment.CenterHorizontally),
-                                actioner = actioner
-                            )
-                        } else {
-                            AddWatchButton(
-                                modifier = Modifier.gravity(Alignment.CenterHorizontally),
-                                actioner = actioner
+    Stack {
+        Column {
+            if (viewState.episode != null && viewState.season != null) {
+                Backdrop(season = viewState.season!!, episode = viewState.episode!!)
+            }
+            VerticalScroller {
+                Surface(elevation = 2.dp) {
+                    Column {
+                        val episode = viewState.episode
+                        if (episode != null) {
+                            InfoPanes(episode)
+                            ExpandingSummary(
+                                episode.summary ?: "No summary",
+                                modifier = Modifier.padding(16.dp)
                             )
                         }
-                    }
 
-                    Spacer(modifier = Modifier.preferredHeight(16.dp))
+                        val watches = viewState.watches
 
-                    if (watches.isNotEmpty()) {
-                        var openDialog by state { false }
+                        if (viewState.canAddEpisodeWatch) {
+                            Spacer(modifier = Modifier.preferredHeight(8.dp))
 
-                        EpisodeWatchesHeader(onSweepWatchesClick = { openDialog = true })
-
-                        if (openDialog) {
-                            TiviAlertDialog(
-                                title = stringResource(R.string.episode_remove_watches_dialog_title),
-                                message = stringResource(R.string.episode_remove_watches_dialog_message),
-                                confirmText = stringResource(R.string.episode_remove_watches_dialog_confirm),
-                                onConfirm = {
-                                    actioner(RemoveAllEpisodeWatchesAction)
-                                    openDialog = false
-                                },
-                                dismissText = stringResource(R.string.dialog_dismiss),
-                                onDismiss = { openDialog = false }
-                            )
-                        }
-                    }
-
-                    watches.forEach { watch ->
-                        SwipeToDismiss(
-                            swipeDirections = listOf(SwipeDirection.START),
-                            onSwipeComplete = {
-                                actioner(RemoveEpisodeWatchAction(watch.id))
-                            },
-                            swipeChildren = { _, _ -> EpisodeWatch(episodeWatchEntry = watch) },
-                            backgroundChildren = { swipeProgress, completeOnRelease ->
-                                EpisodeWatchSwipeBackground(
-                                    swipeProgress = swipeProgress,
-                                    wouldCompleteOnRelease = completeOnRelease
+                            if (watches.isEmpty()) {
+                                MarkWatchedButton(
+                                    modifier = Modifier.gravity(Alignment.CenterHorizontally),
+                                    actioner = actioner
+                                )
+                            } else {
+                                AddWatchButton(
+                                    modifier = Modifier.gravity(Alignment.CenterHorizontally),
+                                    actioner = actioner
                                 )
                             }
+                        }
+
+                        Spacer(modifier = Modifier.preferredHeight(16.dp))
+
+                        if (watches.isNotEmpty()) {
+                            var openDialog by state { false }
+
+                            EpisodeWatchesHeader(
+                                onSweepWatchesClick = { openDialog = true }
+                            )
+
+                            if (openDialog) {
+                                RemoveAllWatchesDialog(
+                                    actioner = actioner,
+                                    onDialogClosed = { openDialog = false }
+                                )
+                            }
+                        }
+
+                        watches.forEach { watch ->
+                            SwipeToDismiss(
+                                swipeDirections = listOf(SwipeDirection.START),
+                                onSwipeComplete = {
+                                    actioner(RemoveEpisodeWatchAction(watch.id))
+                                },
+                                swipeChildren = { _, _ -> EpisodeWatch(episodeWatchEntry = watch) },
+                                backgroundChildren = { swipeProgress, completeOnRelease ->
+                                    EpisodeWatchSwipeBackground(
+                                        swipeProgress = swipeProgress,
+                                        wouldCompleteOnRelease = completeOnRelease
+                                    )
+                                }
+                            )
+                        }
+
+                        val bottomInset = with(DensityAmbient.current) {
+                            InsetsAmbient.current.bottom.toDp()
+                        }
+                        Spacer(
+                            modifier = Modifier.preferredHeight(bottomInset + 8.dp)
                         )
                     }
+                }
+            }
+        }
 
-                    val bottomInset = with(DensityAmbient.current) {
-                        InsetsAmbient.current.bottom.toDp()
+        val bottomInset = with(DensityAmbient.current) {
+            InsetsAmbient.current.bottom.toDp()
+        }
+
+        Column(
+            modifier = Modifier.gravity(Alignment.BottomCenter)
+                .padding(bottom = 16.dp + bottomInset)
+        ) {
+            Crossfade(current = viewState.error) { error ->
+                if (error != null) {
+                    // TODO: Convert this to swipe-to-dismiss
+                    Clickable(onClick = { actioner(ClearError) }) {
+                        Snackbar(
+                            text = { Text(error.message) },
+                            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        )
                     }
-                    Spacer(
-                        modifier = Modifier.preferredHeight(bottomInset + 8.dp)
-                    )
                 }
             }
         }
@@ -501,6 +522,24 @@ fun AddWatchButton(
             )
         }
     }
+}
+
+@Composable
+private fun RemoveAllWatchesDialog(
+    actioner: (EpisodeDetailsAction) -> Unit,
+    onDialogClosed: () -> Unit
+) {
+    TiviAlertDialog(
+        title = stringResource(R.string.episode_remove_watches_dialog_title),
+        message = stringResource(R.string.episode_remove_watches_dialog_message),
+        confirmText = stringResource(R.string.episode_remove_watches_dialog_confirm),
+        onConfirm = {
+            actioner(RemoveAllEpisodeWatchesAction)
+            onDialogClosed()
+        },
+        dismissText = stringResource(R.string.dialog_dismiss),
+        onDismiss = { onDialogClosed() }
+    )
 }
 
 @Preview
