@@ -25,6 +25,7 @@ import app.tivi.base.InvokeSuccess
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.Flow
@@ -44,10 +45,14 @@ abstract class Interactor<in P> {
             try {
                 withTimeout(timeoutMs) {
                     channel.send(InvokeStarted)
-                    doWork(params)
-                    channel.send(InvokeSuccess)
+                    try {
+                        doWork(params)
+                        channel.send(InvokeSuccess)
+                    } catch (t: Throwable) {
+                        channel.send(InvokeError(t))
+                    }
                 }
-            } catch (t: Throwable) {
+            } catch (t: TimeoutCancellationException) {
                 channel.send(InvokeError(t))
             }
         }

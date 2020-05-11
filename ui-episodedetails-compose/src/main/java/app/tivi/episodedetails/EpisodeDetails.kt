@@ -61,12 +61,14 @@ import androidx.ui.layout.Row
 import androidx.ui.layout.Spacer
 import androidx.ui.layout.Stack
 import androidx.ui.layout.aspectRatio
+import androidx.ui.layout.fillMaxHeight
 import androidx.ui.layout.fillMaxSize
 import androidx.ui.layout.padding
 import androidx.ui.layout.preferredHeight
 import androidx.ui.layout.preferredSizeIn
 import androidx.ui.livedata.observeAsState
 import androidx.ui.material.Button
+import androidx.ui.material.CircularProgressIndicator
 import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.IconButton
 import androidx.ui.material.MaterialTheme
@@ -74,15 +76,19 @@ import androidx.ui.material.OutlinedButton
 import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.Snackbar
 import androidx.ui.material.Surface
+import androidx.ui.material.TopAppBar
 import androidx.ui.material.icons.Icons
 import androidx.ui.material.icons.filled.CalendarToday
+import androidx.ui.material.icons.filled.Close
 import androidx.ui.material.icons.filled.Delete
 import androidx.ui.material.icons.filled.DeleteSweep
 import androidx.ui.material.icons.filled.Publish
+import androidx.ui.material.icons.filled.Refresh
 import androidx.ui.material.icons.filled.Star
 import androidx.ui.material.icons.filled.VisibilityOff
 import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
+import androidx.ui.unit.Dp
 import androidx.ui.unit.Px
 import androidx.ui.unit.PxPosition
 import androidx.ui.unit.dp
@@ -126,8 +132,8 @@ fun ViewGroup.composeEpisodeDetails(
     actioner: (EpisodeDetailsAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter
 ): Any = setContent(Recomposer.current()) {
-    WrapWithAmbients(tiviDateFormatter, InsetsHolder()) {
-        MaterialThemeFromMdcTheme {
+    MaterialThemeFromMdcTheme {
+        WrapWithAmbients(tiviDateFormatter, InsetsHolder()) {
             observeInsets(insets)
 
             val viewState by state.observeAsState()
@@ -145,8 +151,16 @@ private fun EpisodeDetails(
 ) {
     Stack {
         Column {
-            if (viewState.episode != null && viewState.season != null) {
-                Backdrop(season = viewState.season!!, episode = viewState.episode!!)
+            Stack {
+                if (viewState.episode != null && viewState.season != null) {
+                    Backdrop(season = viewState.season!!, episode = viewState.episode!!)
+                }
+                EpisodeDetailsAppBar(
+                    backgroundColor = Color.Transparent,
+                    isRefreshing = viewState.refreshing,
+                    actioner = actioner,
+                    elevation = 0.dp
+                )
             }
             VerticalScroller {
                 Surface(elevation = 2.dp) {
@@ -539,6 +553,38 @@ private fun RemoveAllWatchesDialog(
         },
         dismissText = stringResource(R.string.dialog_dismiss),
         onDismiss = { onDialogClosed() }
+    )
+}
+
+@Composable
+private fun EpisodeDetailsAppBar(
+    backgroundColor: Color,
+    isRefreshing: Boolean,
+    actioner: (EpisodeDetailsAction) -> Unit,
+    elevation: Dp,
+    modifier: Modifier = Modifier
+) {
+    TopAppBar(
+        title = {},
+        navigationIcon = {
+            IconButton(onClick = { actioner(Close) }) {
+                Icon(Icons.Default.Close)
+            }
+        },
+        actions = {
+            if (isRefreshing) {
+                CircularProgressIndicator(
+                    Modifier.padding(14.dp).aspectRatio(1f).fillMaxHeight()
+                )
+            } else {
+                IconButton(onClick = { actioner(RefreshAction) }) {
+                    Icon(Icons.Default.Refresh)
+                }
+            }
+        },
+        elevation = elevation,
+        backgroundColor = backgroundColor,
+        modifier = modifier
     )
 }
 

@@ -26,6 +26,7 @@ import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 class ObservableLoadingCounter {
@@ -33,7 +34,9 @@ class ObservableLoadingCounter {
     private val loadingState = ConflatedBroadcastChannel(count.get())
 
     val observable: Flow<Boolean>
-        get() = loadingState.asFlow().map { it > 0 }
+        get() = loadingState.asFlow()
+            .map { it > 0 }
+            .distinctUntilChanged()
 
     fun addLoader() {
         loadingState.sendBlocking(count.incrementAndGet())

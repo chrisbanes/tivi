@@ -75,7 +75,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
 
         viewModelScope.launch {
             for (action in pendingActions) when (action) {
-                RefreshAction -> refresh()
+                RefreshAction -> refresh(true)
                 AddEpisodeWatchAction -> markWatched()
                 RemoveAllEpisodeWatchesAction -> markUnwatched()
                 is RemoveEpisodeWatchAction -> removeWatchEntry(action)
@@ -92,7 +92,9 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         }
 
         viewModelScope.launch {
-            loadingState.observable.collect { setState { copy(refreshing = it) } }
+            loadingState.observable.collect {
+                setState { copy(refreshing = it) }
+            }
         }
 
         withState {
@@ -100,7 +102,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
             observeEpisodeWatches(ObserveEpisodeWatches.Params(it.episodeId))
         }
 
-        refresh()
+        refresh(false)
     }
 
     private fun updateFromEpisodeDetails(episodeWithSeason: EpisodeWithSeason) = setState {
@@ -120,8 +122,10 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         viewModelScope.launch { pendingActions.send(action) }
     }
 
-    private fun refresh() = withState {
-        updateEpisodeDetails(UpdateEpisodeDetails.Params(it.episodeId, true)).watchStatus()
+    private fun refresh(fromUserInteraction: Boolean) = withState {
+        updateEpisodeDetails(
+            UpdateEpisodeDetails.Params(it.episodeId, fromUserInteraction)
+        ).watchStatus()
     }
 
     private fun removeWatchEntry(action: RemoveEpisodeWatchAction) {

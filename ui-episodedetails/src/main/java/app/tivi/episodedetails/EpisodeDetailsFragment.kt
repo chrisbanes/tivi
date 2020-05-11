@@ -74,7 +74,10 @@ class EpisodeDetailsFragment : TiviBottomSheetFragment(), EpisodeDetailsViewMode
 
         viewLifecycleOwner.lifecycleScope.launch {
             for (action in pendingActions) {
-                viewModel.submitAction(action)
+                when (action) {
+                    is Close -> requireView().post { dismiss() }
+                    else -> viewModel.submitAction(action)
+                }
             }
         }
     }
