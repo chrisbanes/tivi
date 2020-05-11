@@ -22,7 +22,6 @@ import app.tivi.base.InvokeIdle
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
 import app.tivi.base.InvokeSuccess
-import app.tivi.base.InvokeTimeout
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -54,7 +53,7 @@ abstract class Interactor<in P> {
                     }
                 }
             } catch (t: TimeoutCancellationException) {
-                channel.send(InvokeTimeout)
+                channel.send(InvokeError(t))
             }
         }
         return channel.asFlow()

@@ -48,6 +48,7 @@ dependencies {
     implementation project(':base')
     implementation project(':base-android')
 
+    implementation project(':common-ui-view')
     api project(':common-ui-compose')
 
     implementation project(':presenter-episodedetails')

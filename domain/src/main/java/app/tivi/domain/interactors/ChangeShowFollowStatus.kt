@@ -42,31 +42,16 @@ class ChangeShowFollowStatus @Inject constructor(
     override val scope: CoroutineScope = processScope + dispatchers.io
 
     override suspend fun doWork(params: Params) {
-        suspend fun unfollow(showId: Long) {
-            followedShowsRepository.removeFollowedShow(showId)
-            // Remove seasons, episodes and watches
-            seasonsEpisodesRepository.removeShowSeasonData(showId)
-        }
-
-        suspend fun follow(showId: Long) {
-            followedShowsRepository.addFollowedShow(showId)
-            // Update seasons, episodes and watches
-            if (!params.deferDataFetch) {
-                seasonsEpisodesRepository.updateSeasonsEpisodes(showId)
-                seasonsEpisodesRepository.updateShowEpisodeWatches(showId, forceRefresh = true)
-            }
-        }
-
-        for (showId in params.showIds) {
+        params.showIds.forEach { showId ->
             when (params.action) {
                 Action.TOGGLE -> {
                     if (followedShowsRepository.isShowFollowed(showId)) {
                         unfollow(showId)
                     } else {
-                        follow(showId)
+                        follow(showId, params.deferDataFetch)
                     }
                 }
-                Action.FOLLOW -> follow(showId)
+                Action.FOLLOW -> follow(showId, params.deferDataFetch)
                 Action.UNFOLLOW -> unfollow(showId)
             }
         }
@@ -80,6 +65,21 @@ class ChangeShowFollowStatus @Inject constructor(
 
         if (params.deferDataFetch) {
             showTasks.syncFollowedShows()
+        }
+    }
+
+    private suspend fun unfollow(showId: Long) {
+        followedShowsRepository.removeFollowedShow(showId)
+        // Remove seasons, episodes and watches
+        seasonsEpisodesRepository.removeShowSeasonData(showId)
+    }
+
+    private suspend fun follow(showId: Long, deferDataFetch: Boolean) {
+        followedShowsRepository.addFollowedShow(showId)
+        // Update seasons, episodes and watches now if we're not deferring the fetch
+        if (!deferDataFetch) {
+            seasonsEpisodesRepository.updateSeasonsEpisodes(showId)
+            seasonsEpisodesRepository.updateShowEpisodeWatches(showId, forceRefresh = true)
         }
     }
 

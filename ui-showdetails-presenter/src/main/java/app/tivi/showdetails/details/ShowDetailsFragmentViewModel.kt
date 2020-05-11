@@ -19,6 +19,11 @@ package app.tivi.showdetails.details
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewModelScope
 import app.tivi.TiviMvRxViewModel
+import app.tivi.api.UiError
+import app.tivi.base.InvokeError
+import app.tivi.base.InvokeIdle
+import app.tivi.base.InvokeStarted
+import app.tivi.base.InvokeStatus
 import app.tivi.domain.interactors.ChangeSeasonFollowStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Action
@@ -38,8 +43,8 @@ import app.tivi.domain.observers.ObserveShowImages
 import app.tivi.domain.observers.ObserveShowNextEpisodeToWatch
 import app.tivi.domain.observers.ObserveShowSeasonData
 import app.tivi.domain.observers.ObserveShowViewStats
+import app.tivi.ui.SnackbarManager
 import app.tivi.util.ObservableLoadingCounter
-import app.tivi.util.collectFrom
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.Success
@@ -47,6 +52,7 @@ import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -71,6 +77,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
 ) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
 
     private val loadingState = ObservableLoadingCounter()
+    private val snackbarManager = SnackbarManager()
 
     private val pendingActions = Channel<ShowDetailsAction>(Channel.BUFFERED)
 
@@ -133,6 +140,15 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
                 is OpenEpisodeDetails -> openEpisodeDetails(action)
                 is OpenShowDetails -> openShowDetails(action)
                 is ClearPendingUiEffect -> clearPendingUiEffect(action)
+                is ClearError -> snackbarManager.removeCurrentError()
+            }
+        }
+
+        viewModelScope.launch {
+            snackbarManager.launch { uiError, visible ->
+                setState {
+                    copy(refreshError = if (visible) uiError else null)
+                }
             }
         }
 
@@ -155,62 +171,56 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         refresh(false)
     }
 
-    private fun refresh(fromUserInteraction: Boolean) = withState {
-        updateShowDetails(UpdateShowDetails.Params(it.showId, fromUserInteraction)).also {
-            viewModelScope.launch {
-                loadingState.collectFrom(it)
+    private fun refresh(fromUser: Boolean) = withState { state ->
+        updateShowDetails(UpdateShowDetails.Params(state.showId, fromUser)).watchStatus()
+        updateShowImages(UpdateShowImages.Params(state.showId, fromUser)).watchStatus()
+        updateRelatedShows(UpdateRelatedShows.Params(state.showId, fromUser)).watchStatus()
+        updateShowSeasons(UpdateShowSeasonData.Params(state.showId, fromUser)).watchStatus()
+    }
+
+    private fun Flow<InvokeStatus>.watchStatus() = viewModelScope.launch { collectStatus() }
+
+    private suspend fun Flow<InvokeStatus>.collectStatus() = collect { status ->
+        when (status) {
+            is InvokeIdle -> Unit
+            is InvokeStarted -> loadingState.addLoader()
+            is InvokeError -> {
+                snackbarManager.sendError(UiError(status.throwable))
+                loadingState.removeLoader()
             }
-        }
-        updateShowImages(UpdateShowImages.Params(it.showId, fromUserInteraction)).also {
-            viewModelScope.launch {
-                loadingState.collectFrom(it)
-            }
-        }
-        updateRelatedShows(UpdateRelatedShows.Params(it.showId, fromUserInteraction)).also {
-            viewModelScope.launch {
-                loadingState.collectFrom(it)
-            }
-        }
-        updateShowSeasons(UpdateShowSeasonData.Params(it.showId, fromUserInteraction)).also {
-            viewModelScope.launch {
-                loadingState.collectFrom(it)
-            }
+            else -> loadingState.removeLoader()
         }
     }
 
-    fun submitAction(action: ShowDetailsAction) {
-        viewModelScope.launch { pendingActions.send(action) }
+    fun submitAction(action: ShowDetailsAction) = viewModelScope.launch {
+        pendingActions.send(action)
     }
 
     private fun onToggleMyShowsButtonClicked() = withState {
-        changeShowFollowStatus(ChangeShowFollowStatus.Params(it.showId, TOGGLE)).also {
-            viewModelScope.launch {
-                loadingState.collectFrom(it)
-            }
-        }
+        changeShowFollowStatus(ChangeShowFollowStatus.Params(it.showId, TOGGLE)).watchStatus()
     }
 
     private fun openShowDetails(action: OpenShowDetails) = setState {
-        val pending = ArrayList(pendingUiEffects)
-        pending.removeAll { it is ExecutableOpenShowUiEffect }
+        val pending = pendingUiEffects.filter { it !is ExecutableOpenShowUiEffect }
         copy(pendingUiEffects = pending + ExecutableOpenShowUiEffect(action.showId))
     }
 
-    private fun openEpisodeDetails(action: OpenEpisodeDetails) {
-        viewModelScope.launch {
-            val episode = getEpisode(GetEpisodeDetails.Params(action.episodeId))
-            if (episode != null) {
-                setState {
-                    val pending = ArrayList(pendingUiEffects)
-                    pending.removeAll {
-                        it is ExecutableOpenEpisodeUiEffect || it is PendingOpenEpisodeUiEffect
+    private fun openEpisodeDetails(action: OpenEpisodeDetails) = viewModelScope.launch {
+        val episode = getEpisode(GetEpisodeDetails.Params(action.episodeId))
+        if (episode != null) {
+            setState {
+                val pending = pendingUiEffects.filter {
+                    when (it) {
+                        is PendingOpenEpisodeUiEffect,
+                        is ExecutableOpenEpisodeUiEffect -> false
+                        else -> true
                     }
-                    copy(
-                        expandedSeasonIds = expandedSeasonIds + episode.seasonId,
-                        pendingUiEffects = pending +
-                            ExecutableOpenEpisodeUiEffect(action.episodeId, episode.seasonId)
-                    )
                 }
+                copy(
+                    expandedSeasonIds = expandedSeasonIds + episode.seasonId,
+                    pendingUiEffects = pending +
+                        ExecutableOpenEpisodeUiEffect(action.episodeId, episode.seasonId)
+                )
             }
         }
     }
@@ -221,10 +231,12 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
 
     private fun onMarkSeasonWatched(action: MarkSeasonWatchedAction) {
         changeSeasonWatchedStatus(Params(action.seasonId, Action.WATCHED, action.onlyAired, action.date))
+            .watchStatus()
     }
 
     private fun onMarkSeasonUnwatched(action: MarkSeasonUnwatchedAction) {
         changeSeasonWatchedStatus(Params(action.seasonId, Action.UNWATCH))
+            .watchStatus()
     }
 
     private fun onChangeSeasonExpandState(seasonId: Long, expanded: Boolean) = setState {
@@ -253,14 +265,20 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
                     else -> ChangeSeasonFollowStatus.Action.IGNORE
                 }
             )
-        )
+        ).watchStatus()
     }
 
     private fun onUnfollowPreviousSeasonsFollowState(action: UnfollowPreviousSeasonsFollowedAction) {
         changeSeasonFollowStatus(
             ChangeSeasonFollowStatus.Params(action.seasonId,
                 ChangeSeasonFollowStatus.Action.IGNORE_PREVIOUS)
-        )
+        ).watchStatus()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        pendingActions.cancel()
+        snackbarManager.close()
     }
 
     @AssistedInject.Factory

@@ -16,6 +16,7 @@
 
 package app.tivi.showdetails.details
 
+import app.tivi.api.UiError
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.EpisodeWithSeason
@@ -38,7 +39,8 @@ data class ShowDetailsViewState(
     val seasons: Async<List<SeasonWithEpisodesAndWatches>> = Uninitialized,
     val expandedSeasonIds: Set<Long> = emptySet(),
     val pendingUiEffects: List<UiEffect> = emptyList(), // TODO this should really be a queue
-    val refreshing: Boolean = false
+    val refreshing: Boolean = false,
+    val refreshError: UiError? = null
 ) : MvRxState
 
 sealed class UiEffect

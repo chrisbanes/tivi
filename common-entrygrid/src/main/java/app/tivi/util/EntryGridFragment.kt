@@ -114,11 +114,7 @@ abstract class EntryGridFragment<LI, VM> : TiviFragmentWithBinding<FragmentEntry
         when (val status = state.status) {
             is UiError -> {
                 swipeRefreshLatch.refreshing = false
-                Snackbar.make(requireView(),
-                    status.exception?.localizedMessage
-                        ?: getString(R.string.error_generic),
-                    Snackbar.LENGTH_SHORT
-                ).show()
+                Snackbar.make(requireView(), status.message, Snackbar.LENGTH_SHORT).show()
             }
             is UiLoading -> swipeRefreshLatch.refreshing = status.fullRefresh
             else -> swipeRefreshLatch.refreshing = false

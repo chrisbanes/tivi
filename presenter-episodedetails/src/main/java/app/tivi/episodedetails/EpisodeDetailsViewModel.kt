@@ -19,6 +19,11 @@ package app.tivi.episodedetails
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewModelScope
 import app.tivi.TiviMvRxViewModel
+import app.tivi.api.UiError
+import app.tivi.base.InvokeError
+import app.tivi.base.InvokeIdle
+import app.tivi.base.InvokeStarted
+import app.tivi.base.InvokeStatus
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.domain.interactors.AddEpisodeWatch
@@ -28,12 +33,15 @@ import app.tivi.domain.interactors.UpdateEpisodeDetails
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeWatches
+import app.tivi.ui.SnackbarManager
+import app.tivi.util.ObservableLoadingCounter
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
@@ -48,6 +56,9 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch
 ) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
+
+    private val loadingState = ObservableLoadingCounter()
+    private val snackbarManager = SnackbarManager()
 
     private val pendingActions = Channel<EpisodeDetailsAction>(Channel.BUFFERED)
 
@@ -64,10 +75,25 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
 
         viewModelScope.launch {
             for (action in pendingActions) when (action) {
-                RefreshAction -> refresh()
+                RefreshAction -> refresh(true)
                 AddEpisodeWatchAction -> markWatched()
                 RemoveAllEpisodeWatchesAction -> markUnwatched()
                 is RemoveEpisodeWatchAction -> removeWatchEntry(action)
+                ClearError -> snackbarManager.removeCurrentError()
+            }
+        }
+
+        viewModelScope.launch {
+            snackbarManager.launch { uiError, visible ->
+                setState {
+                    copy(error = if (visible) uiError else null)
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            loadingState.observable.collect {
+                setState { copy(refreshing = it) }
             }
         }
 
@@ -76,7 +102,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
             observeEpisodeWatches(ObserveEpisodeWatches.Params(it.episodeId))
         }
 
-        refresh()
+        refresh(false)
     }
 
     private fun updateFromEpisodeDetails(episodeWithSeason: EpisodeWithSeason) = setState {
@@ -96,20 +122,36 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         viewModelScope.launch { pendingActions.send(action) }
     }
 
-    private fun refresh() = withState {
-        updateEpisodeDetails(UpdateEpisodeDetails.Params(it.episodeId, true))
+    private fun refresh(fromUserInteraction: Boolean) = withState {
+        updateEpisodeDetails(
+            UpdateEpisodeDetails.Params(it.episodeId, fromUserInteraction)
+        ).watchStatus()
     }
 
     private fun removeWatchEntry(action: RemoveEpisodeWatchAction) {
-        removeEpisodeWatch(RemoveEpisodeWatch.Params(action.watchId))
+        removeEpisodeWatch(RemoveEpisodeWatch.Params(action.watchId)).watchStatus()
     }
 
     private fun markWatched() = withState {
-        addEpisodeWatch(AddEpisodeWatch.Params(it.episodeId, OffsetDateTime.now()))
+        addEpisodeWatch(AddEpisodeWatch.Params(it.episodeId, OffsetDateTime.now())).watchStatus()
     }
 
     private fun markUnwatched() = withState {
-        removeEpisodeWatches(RemoveEpisodeWatches.Params(it.episodeId))
+        removeEpisodeWatches(RemoveEpisodeWatches.Params(it.episodeId)).watchStatus()
+    }
+
+    private fun Flow<InvokeStatus>.watchStatus() = viewModelScope.launch { collectStatus() }
+
+    private suspend fun Flow<InvokeStatus>.collectStatus() = collect { status ->
+        when (status) {
+            is InvokeIdle -> Unit
+            is InvokeStarted -> loadingState.addLoader()
+            is InvokeError -> {
+                snackbarManager.sendError(UiError(status.throwable))
+                loadingState.removeLoader()
+            }
+            else -> loadingState.removeLoader()
+        }
     }
 
     @AssistedInject.Factory
