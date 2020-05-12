@@ -85,9 +85,9 @@ class HomeActivity : TiviActivityMvRxView() {
 
     internal fun openAccount() {
         AccountUiFragment().show(supportFragmentManager, "account")
-
-        // viewModel.onLoginItemClicked(authService)
     }
+
+    internal fun login() = viewModel.onLoginItemClicked(authService)
 
     private fun setupBottomNavigationBar() {
         binding.homeBottomNavigation.setupWithNavController(

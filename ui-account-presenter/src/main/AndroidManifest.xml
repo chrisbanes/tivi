@@ -15,4 +15,4 @@
   ~ limitations under the License.
   -->
 
-<manifest package="app.tivi.account" />
+<manifest package="app.tivi.account.presenter" />

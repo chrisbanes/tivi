@@ -46,6 +46,8 @@
     <string name="watched_shows_title">Watched</string>
 
     <string name="login">Login</string>
+    <string name="refresh_credentials">Refresh credentials</string>
+    <string name="logout">Logout</string>
 
     <string name="showdetails_navigation_title">Show details</string>
 

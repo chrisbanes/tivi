@@ -118,8 +118,4 @@ operator fun <T> SubjectInteractor<Unit, T>.invoke() = invoke(Unit)
 fun <I : ObservableInteractor<T>, T> CoroutineScope.launchObserve(
     interactor: I,
     f: suspend (Flow<T>) -> Unit
-) {
-    launch(interactor.dispatcher) {
-        f(interactor.observe())
-    }
-}
+) = launch(interactor.dispatcher) { f(interactor.observe()) }

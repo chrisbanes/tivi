@@ -18,25 +18,66 @@ package app.tivi.account
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewModelScope
+import app.tivi.AppNavigator
 import app.tivi.TiviMvRxViewModel
+import app.tivi.domain.invoke
 import app.tivi.domain.launchObserve
+import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
+import app.tivi.trakt.TraktAuthState
+import app.tivi.trakt.TraktManager
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import javax.inject.Provider
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 
 class AccountUiViewModel @AssistedInject constructor(
     @Assisted initialState: AccountUiViewState,
-    observeUserDetails: ObserveUserDetails
+    private val traktManager: TraktManager,
+    observeTraktAuthState: ObserveTraktAuthState,
+    observeUserDetails: ObserveUserDetails,
+    private val appNavigator: Provider<AppNavigator>
 ) : TiviMvRxViewModel<AccountUiViewState>(initialState) {
+    private val pendingActions = Channel<AccountUiAction>(Channel.BUFFERED)
 
     init {
-        viewModelScope.launchObserve(observeUserDetails) {
-            it.execute { copy(user = it()) }
+        viewModelScope.launchObserve(observeUserDetails) { flow ->
+            flow.execute { copy(user = it()) }
         }
         observeUserDetails(ObserveUserDetails.Params("me"))
+
+        viewModelScope.launchObserve(observeTraktAuthState) { flow ->
+            flow.distinctUntilChanged().execute {
+                copy(authState = it() ?: TraktAuthState.LOGGED_OUT)
+            }
+        }
+        observeTraktAuthState()
+
+        viewModelScope.launch {
+            for (action in pendingActions) {
+                when (action) {
+                    Login -> appNavigator.get().login()
+                    Logout -> logout()
+                }
+            }
+        }
+    }
+
+    fun submitAction(action: AccountUiAction) {
+        viewModelScope.launch {
+            pendingActions.send(action)
+        }
+    }
+
+    private fun logout() {
+        viewModelScope.launch {
+            traktManager.clearAuth()
+        }
     }
 
     @AssistedInject.Factory

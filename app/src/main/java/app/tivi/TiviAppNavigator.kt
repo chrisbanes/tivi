@@ -33,7 +33,11 @@ open class TiviAppNavigator @Inject constructor(
         return PendingIntent.getActivity(context, requestCode, intent, 0)
     }
 
-    override fun openAccount() {
+    override fun login() {
         throw IllegalArgumentException("This app navigator can't handle login calls")
+    }
+
+    override fun openAccount() {
+        throw IllegalArgumentException("This app navigator can't handle account calls")
     }
 }

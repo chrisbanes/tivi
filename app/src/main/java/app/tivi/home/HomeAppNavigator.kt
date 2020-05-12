@@ -21,7 +21,7 @@ import app.tivi.TiviAppNavigator
 internal class HomeAppNavigator(
     private val activity: HomeActivity
 ) : TiviAppNavigator(activity) {
-    override fun openAccount() {
-        activity.openAccount()
-    }
+    override fun login() = activity.login()
+
+    override fun openAccount() = activity.openAccount()
 }
