@@ -23,10 +23,18 @@ import java.util.regex.Pattern
 import javax.inject.Inject
 import timber.log.Timber
 
-class TiviLogger @Inject constructor() : Logger {
+class TiviLogger @Inject constructor(
+    private val firebaseCrashlytics: FirebaseCrashlytics
+) : Logger {
     fun setup(debugMode: Boolean) {
-        if (debugMode) Timber.plant(TiviDebugTree())
-        Timber.plant(CrashlyticsTree())
+        if (debugMode) {
+            Timber.plant(TiviDebugTree())
+        }
+        Timber.plant(CrashlyticsTree(firebaseCrashlytics))
+    }
+
+    override fun setUserId(id: String) {
+        firebaseCrashlytics.setUserId(id)
     }
 
     override fun v(message: String, vararg args: Any?) {
@@ -136,12 +144,17 @@ private class TiviDebugTree : Timber.DebugTree() {
     }
 }
 
-private class CrashlyticsTree : Timber.Tree() {
+private class CrashlyticsTree(
+    private val firebaseCrashlytics: FirebaseCrashlytics
+) : Timber.Tree() {
     override fun isLoggable(tag: String?, priority: Int): Boolean {
-        return priority >= Log.DEBUG
+        return priority >= Log.INFO
     }
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        FirebaseCrashlytics.getInstance().log(message)
+        if (t != null) {
+            firebaseCrashlytics.recordException(t)
+        }
+        firebaseCrashlytics.log(message)
     }
 }

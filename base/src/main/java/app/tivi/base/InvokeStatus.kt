@@ -17,7 +17,6 @@
 package app.tivi.base
 
 sealed class InvokeStatus
-
 object InvokeIdle : InvokeStatus()
 object InvokeStarted : InvokeStatus()
 object InvokeSuccess : InvokeStatus()
