@@ -29,6 +29,7 @@ import app.tivi.TiviApplication
 import app.tivi.extensions.toThreeTenDateTimeFormatter
 import app.tivi.home.followed.R
 import app.tivi.util.AppCoroutineDispatchers
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.Module
 import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
@@ -157,4 +158,8 @@ class AppModule {
         R.id.navigation_discover,
         R.id.navigation_search
     ).build()
+
+    @Provides
+    @Singleton
+    fun provideFirebaseCrashlytics(): FirebaseCrashlytics = FirebaseCrashlytics.getInstance()
 }

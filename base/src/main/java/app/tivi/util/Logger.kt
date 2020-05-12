@@ -17,6 +17,9 @@
 package app.tivi.util
 
 interface Logger {
+
+    fun setUserId(id: String)
+
     /** Log a verbose message with optional format args.  */
     fun v(message: String, vararg args: Any?)
 

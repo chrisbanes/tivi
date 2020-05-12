@@ -21,9 +21,9 @@ import androidx.lifecycle.viewModelScope
 import app.tivi.TiviMvRxViewModel
 import app.tivi.api.UiError
 import app.tivi.base.InvokeError
-import app.tivi.base.InvokeIdle
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
+import app.tivi.base.InvokeSuccess
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.domain.interactors.AddEpisodeWatch
@@ -34,6 +34,7 @@ import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeWatches
 import app.tivi.ui.SnackbarManager
+import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
@@ -54,7 +55,8 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     private val observeEpisodeWatches: ObserveEpisodeWatches,
     private val addEpisodeWatch: AddEpisodeWatch,
     private val removeEpisodeWatches: RemoveEpisodeWatches,
-    private val removeEpisodeWatch: RemoveEpisodeWatch
+    private val removeEpisodeWatch: RemoveEpisodeWatch,
+    private val logger: Logger
 ) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
 
     private val loadingState = ObservableLoadingCounter()
@@ -144,13 +146,13 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
 
     private suspend fun Flow<InvokeStatus>.collectStatus() = collect { status ->
         when (status) {
-            is InvokeIdle -> Unit
-            is InvokeStarted -> loadingState.addLoader()
+            InvokeStarted -> loadingState.addLoader()
+            InvokeSuccess -> loadingState.removeLoader()
             is InvokeError -> {
+                logger.i(status.throwable)
                 snackbarManager.sendError(UiError(status.throwable))
                 loadingState.removeLoader()
             }
-            else -> loadingState.removeLoader()
         }
     }
 

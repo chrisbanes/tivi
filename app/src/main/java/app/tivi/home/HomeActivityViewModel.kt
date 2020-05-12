@@ -25,6 +25,7 @@ import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
+import app.tivi.util.Logger
 import com.airbnb.mvrx.MvRxViewModelFactory
 import com.airbnb.mvrx.ViewModelContext
 import com.squareup.inject.assisted.Assisted
@@ -40,13 +41,15 @@ class HomeActivityViewModel @AssistedInject constructor(
     observeTraktAuthState: ObserveTraktAuthState,
     private val traktManager: TraktManager,
     private val updateUserDetails: UpdateUserDetails,
-    observeUserDetails: ObserveUserDetails
+    observeUserDetails: ObserveUserDetails,
+    private val logger: Logger
 ) : TiviMvRxViewModel<HomeActivityViewState>(initialState) {
     init {
         viewModelScope.launchObserve(observeUserDetails) {
-            it.execute { copy(user = it()) }
+            it.execute {
+                copy(user = it())
+            }
         }
-
         observeUserDetails(ObserveUserDetails.Params("me"))
 
         viewModelScope.launchObserve(observeTraktAuthState) { flow ->
@@ -57,6 +60,12 @@ class HomeActivityViewModel @AssistedInject constructor(
             }.execute { copy(authState = it() ?: TraktAuthState.LOGGED_OUT) }
         }
         observeTraktAuthState()
+
+        selectSubscribe(HomeActivityViewState::user) { user ->
+            if (user != null) {
+                logger.setUserId(user.username)
+            }
+        }
     }
 
     fun onAuthResponse(

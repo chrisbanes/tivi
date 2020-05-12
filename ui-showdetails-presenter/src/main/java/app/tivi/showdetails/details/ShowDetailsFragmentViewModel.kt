@@ -21,9 +21,9 @@ import androidx.lifecycle.viewModelScope
 import app.tivi.TiviMvRxViewModel
 import app.tivi.api.UiError
 import app.tivi.base.InvokeError
-import app.tivi.base.InvokeIdle
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
+import app.tivi.base.InvokeSuccess
 import app.tivi.domain.interactors.ChangeSeasonFollowStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Action
@@ -44,6 +44,7 @@ import app.tivi.domain.observers.ObserveShowNextEpisodeToWatch
 import app.tivi.domain.observers.ObserveShowSeasonData
 import app.tivi.domain.observers.ObserveShowViewStats
 import app.tivi.ui.SnackbarManager
+import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import com.airbnb.mvrx.FragmentViewModelContext
 import com.airbnb.mvrx.MvRxViewModelFactory
@@ -73,7 +74,8 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     observeShowViewStats: ObserveShowViewStats,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val changeSeasonFollowStatus: ChangeSeasonFollowStatus,
-    private val getEpisode: GetEpisodeDetails
+    private val getEpisode: GetEpisodeDetails,
+    private val logger: Logger
 ) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
 
     private val loadingState = ObservableLoadingCounter()
@@ -182,13 +184,13 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
 
     private suspend fun Flow<InvokeStatus>.collectStatus() = collect { status ->
         when (status) {
-            is InvokeIdle -> Unit
-            is InvokeStarted -> loadingState.addLoader()
+            InvokeStarted -> loadingState.addLoader()
+            InvokeSuccess -> loadingState.removeLoader()
             is InvokeError -> {
+                logger.i(status.throwable)
                 snackbarManager.sendError(UiError(status.throwable))
                 loadingState.removeLoader()
             }
-            else -> loadingState.removeLoader()
         }
     }
 
