@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google, Inc.
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 import app.tivi.buildsrc.Libs
@@ -25,11 +24,6 @@ apply plugin: 'kotlin-kapt'
 kapt {
     correctErrorTypes = true
     useBuildCache = true
-}
-
-apply plugin: 'kotlin-android-extensions'
-androidExtensions {
-    experimental = true
 }
 
 android {
@@ -51,16 +45,25 @@ dependencies {
     implementation project(':domain')
     implementation project(':common-ui-view')
 
-    api Libs.AndroidX.Lifecycle.extensions
+    implementation project(':ui-account-view')
+    api project(':ui-account-presenter')
+
+    implementation Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.viewmodelKtx
 
     implementation Libs.AndroidX.coreKtx
+    implementation Libs.AndroidX.Fragment.fragment
+    implementation Libs.AndroidX.Fragment.fragmentKtx
+    implementation Libs.AndroidX.Navigation.fragment
 
-    implementation Libs.Dagger.dagger
+    implementation Libs.Google.material
+
+    implementation Libs.Kotlin.stdlib
+
+    implementation Libs.Dagger.androidSupport
     kapt Libs.Dagger.compiler
+    kapt Libs.Dagger.androidProcessor
 
     compileOnly Libs.AssistedInject.annotationDagger2
     kapt Libs.AssistedInject.processorDagger2
-
-    api Libs.mvRx
 }

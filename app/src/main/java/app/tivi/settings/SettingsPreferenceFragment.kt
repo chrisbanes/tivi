@@ -49,9 +49,7 @@ internal class SettingsPreferenceFragment : PreferenceFragmentCompat(), HasAndro
         super.onAttach(context)
     }
 
-    override fun androidInjector(): AndroidInjector<Any> {
-        return androidInjector
-    }
+    override fun androidInjector(): AndroidInjector<Any> = androidInjector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -46,10 +46,14 @@
     <string name="watched_shows_title">Watched</string>
 
     <string name="login">Login</string>
+    <string name="refresh_credentials">Refresh credentials</string>
+    <string name="logout">Logout</string>
 
     <string name="showdetails_navigation_title">Show details</string>
 
     <string name="search_navigation_title">Search</string>
+
+    <string name="account_title">Trakt Account</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_ui_category_title">User Interface</string>

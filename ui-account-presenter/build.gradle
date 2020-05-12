@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google, Inc.
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 import app.tivi.buildsrc.Libs
@@ -25,11 +24,6 @@ apply plugin: 'kotlin-kapt'
 kapt {
     correctErrorTypes = true
     useBuildCache = true
-}
-
-apply plugin: 'kotlin-android-extensions'
-androidExtensions {
-    experimental = true
 }
 
 android {
@@ -50,6 +44,7 @@ dependencies {
     implementation project(':base-android')
     implementation project(':domain')
     implementation project(':common-ui-view')
+    implementation project(':trakt-auth')
 
     api Libs.AndroidX.Lifecycle.extensions
     implementation Libs.AndroidX.Lifecycle.viewmodelKtx

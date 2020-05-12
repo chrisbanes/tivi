@@ -144,8 +144,8 @@ internal class WatchedViewModel @AssistedInject constructor(
         }
     }
 
-    fun onLoginClicked() {
-        appNavigator.startLogin()
+    fun onAccountClicked() {
+        appNavigator.openAccount()
     }
 
     fun setFilter(filter: String) {

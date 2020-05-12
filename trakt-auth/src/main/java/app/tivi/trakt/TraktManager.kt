@@ -97,6 +97,11 @@ class TraktManager @Inject constructor(
         )
     }
 
+    suspend fun clearAuth() {
+        authState.send(AuthState())
+        clearPersistedAuthState()
+    }
+
     fun onAuthResponse(authService: AuthorizationService, response: AuthorizationResponse) {
         authService.performTokenRequest(
             response.createTokenExchangeRequest(),
@@ -134,6 +139,12 @@ class TraktManager @Inject constructor(
     private fun persistAuthState(state: AuthState) {
         authPrefs.edit(commit = true) {
             putString("stateJson", state.jsonSerializeString())
+        }
+    }
+
+    private fun clearPersistedAuthState() {
+        authPrefs.edit(commit = true) {
+            remove("stateJson")
         }
     }
 }

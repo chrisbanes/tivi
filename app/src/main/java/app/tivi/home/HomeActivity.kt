@@ -23,6 +23,7 @@ import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import app.tivi.R
 import app.tivi.TiviActivityMvRxView
+import app.tivi.account.AccountUiFragment
 import app.tivi.databinding.ActivityHomeBinding
 import app.tivi.extensions.hideSoftInput
 import app.tivi.extensions.setupWithNavController
@@ -34,7 +35,9 @@ import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
 
 class HomeActivity : TiviActivityMvRxView() {
-    private val authService by lazy(LazyThreadSafetyMode.NONE) { AuthorizationService(this) }
+    private val authService by lazy(LazyThreadSafetyMode.NONE) {
+        AuthorizationService(this)
+    }
 
     private val viewModel: HomeActivityViewModel by viewModel()
 
@@ -80,14 +83,20 @@ class HomeActivity : TiviActivityMvRxView() {
         }
     }
 
-    internal fun startLogin() {
-        viewModel.onLoginItemClicked(authService)
+    internal fun openAccount() {
+        AccountUiFragment().show(supportFragmentManager, "account")
     }
+
+    internal fun login() = viewModel.onLoginItemClicked(authService)
 
     private fun setupBottomNavigationBar() {
         binding.homeBottomNavigation.setupWithNavController(
-            listOf(R.navigation.discover_nav_graph, R.navigation.watched_nav_graph,
-                R.navigation.following_nav_graph, R.navigation.search_nav_graph),
+            listOf(
+                R.navigation.discover_nav_graph,
+                R.navigation.watched_nav_graph,
+                R.navigation.following_nav_graph,
+                R.navigation.search_nav_graph
+            ),
             supportFragmentManager,
             R.id.home_nav_container,
             intent

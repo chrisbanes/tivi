@@ -31,7 +31,6 @@ import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.extensions.doOnSizeChange
-import app.tivi.extensions.navigateToNavDestination
 import app.tivi.extensions.postponeEnterTransitionWithTimeout
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.toActivityNavigatorExtras
@@ -75,11 +74,8 @@ class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
 
         binding.followedToolbar.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.home_menu_user_login -> {
-                    viewModel.onLoginClicked()
-                }
-                R.id.home_menu_user_avatar -> {
-                    findNavController().navigateToNavDestination(R.id.navigation_settings)
+                R.id.home_menu_user_login, R.id.home_menu_user_avatar -> {
+                    viewModel.onAccountClicked()
                 }
             }
             true

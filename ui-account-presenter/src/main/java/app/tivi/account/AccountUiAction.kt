@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-package app.tivi.home
+package app.tivi.account
 
-import app.tivi.TiviAppNavigator
-
-internal class HomeAppNavigator(
-    private val activity: HomeActivity
-) : TiviAppNavigator(activity) {
-    override fun login() = activity.login()
-
-    override fun openAccount() = activity.openAccount()
-}
+sealed class AccountUiAction
+object Login : AccountUiAction()
+object Logout : AccountUiAction()
+object Close : AccountUiAction()
+object OpenSettings : AccountUiAction()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google, Inc.
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 import app.tivi.buildsrc.Libs
@@ -20,17 +19,6 @@ import app.tivi.buildsrc.Libs
 apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
-
-apply plugin: 'kotlin-kapt'
-kapt {
-    correctErrorTypes = true
-    useBuildCache = true
-}
-
-apply plugin: 'kotlin-android-extensions'
-androidExtensions {
-    experimental = true
-}
 
 android {
     compileSdkVersion buildConfig.compileSdk
@@ -43,24 +31,38 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerVersion Libs.AndroidX.UI.kotlinCompilerVersion
+        kotlinCompilerExtensionVersion Libs.AndroidX.UI.version
+    }
 }
 
 dependencies {
+    implementation project(':data')
     implementation project(':base')
     implementation project(':base-android')
-    implementation project(':domain')
-    implementation project(':common-ui-view')
 
-    api Libs.AndroidX.Lifecycle.extensions
-    implementation Libs.AndroidX.Lifecycle.viewmodelKtx
+    implementation project(':common-ui-view')
+    api project(':common-ui-compose')
+
+    implementation project(':ui-account-presenter')
 
     implementation Libs.AndroidX.coreKtx
 
-    implementation Libs.Dagger.dagger
-    kapt Libs.Dagger.compiler
+    implementation Libs.AndroidX.UI.composeRuntime
+    implementation Libs.AndroidX.UI.foundation
+    implementation Libs.AndroidX.UI.framework
+    implementation Libs.AndroidX.UI.layout
+    implementation Libs.AndroidX.UI.material
+    implementation Libs.AndroidX.UI.animation
+    implementation Libs.AndroidX.UI.tooling
+    implementation Libs.AndroidX.UI.livedata
+    implementation Libs.AndroidX.UI.iconsExtended
 
-    compileOnly Libs.AssistedInject.annotationDagger2
-    kapt Libs.AssistedInject.processorDagger2
-
-    api Libs.mvRx
+    implementation Libs.Accompanist.mdcTheme
 }
