@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package app.tivi.home
+package app.tivi.account
 
-import app.tivi.TiviAppNavigator
+import app.tivi.data.entities.TraktUser
+import com.airbnb.mvrx.MvRxState
 
-internal class HomeAppNavigator(
-    private val activity: HomeActivity
-) : TiviAppNavigator(activity) {
-    override fun openAccount() {
-        activity.openAccount()
-    }
-}
+data class AccountUiViewState(
+    val user: TraktUser? = null
+) : MvRxState

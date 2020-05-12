@@ -127,8 +127,8 @@ internal class DiscoverViewModel @AssistedInject constructor(
         refresh(false)
     }
 
-    fun onLoginClicked() {
-        appNavigator.get().startLogin()
+    fun onAccountClicked() {
+        appNavigator.get().openAccount()
     }
 
     fun refresh() = refresh(true)

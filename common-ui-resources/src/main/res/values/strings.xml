@@ -51,6 +51,8 @@
 
     <string name="search_navigation_title">Search</string>
 
+    <string name="account_title">Trakt Account</string>
+
     <string name="settings_title">Settings</string>
     <string name="settings_ui_category_title">User Interface</string>
     <string name="settings_theme_title">Theme</string>

@@ -18,6 +18,7 @@ package app.tivi.home
 
 import android.content.Context
 import app.tivi.AppNavigator
+import app.tivi.account.AccountUiBuilder
 import app.tivi.home.discover.DiscoverBuilder
 import app.tivi.home.followed.FollowedBuilder
 import app.tivi.home.popular.PopularBuilder
@@ -41,7 +42,8 @@ internal abstract class HomeBuilder {
         PopularBuilder::class,
         WatchedBuilder::class,
         FollowedBuilder::class,
-        RecommendedBuilder::class
+        RecommendedBuilder::class,
+        AccountUiBuilder::class
     ])
     internal abstract fun homeActivity(): HomeActivity
 }

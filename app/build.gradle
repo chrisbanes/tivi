@@ -178,6 +178,7 @@ dependencies {
     implementation project(':domain')
     implementation project(':tasks')
 
+    implementation project(':ui-account')
     implementation project(':ui-discover')
     implementation project(':ui-showdetails')
     implementation project(':ui-episodedetails')

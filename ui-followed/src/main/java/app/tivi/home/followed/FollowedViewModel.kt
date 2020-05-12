@@ -180,8 +180,8 @@ internal class FollowedViewModel @AssistedInject constructor(
         showSelection.clearSelection()
     }
 
-    fun onLoginClicked() {
-        appNavigator.startLogin()
+    fun onAccountClicked() {
+        appNavigator.openAccount()
     }
 
     private fun refreshFollowed(fromInteraction: Boolean) {

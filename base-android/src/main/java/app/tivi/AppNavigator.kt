@@ -20,5 +20,5 @@ import android.app.PendingIntent
 
 interface AppNavigator {
     fun provideAuthHandleResponseIntent(requestCode: Int): PendingIntent
-    fun startLogin()
+    fun openAccount()
 }
