@@ -23,12 +23,11 @@ import app.tivi.util.TiviDateFormatter
 
 val TiviDateFormatterAmbient = staticAmbientOf<TiviDateFormatter>()
 
-@Suppress("MoveLambdaOutsideParentheses")
 @Composable
 fun WrapWithAmbients(
     tiviDateFormatter: TiviDateFormatter,
     insetsHolder: InsetsHolder,
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) = Providers(
     TiviDateFormatterAmbient provides tiviDateFormatter,
     InsetsAmbient provides insetsHolder,

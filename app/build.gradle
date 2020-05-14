@@ -36,12 +36,6 @@ androidExtensions {
     experimental = true
 }
 
-apply plugin: 'com.getkeepsafe.dexcount'
-dexcount {
-    // Only run the method counter on CI
-    enabled = ci
-}
-
 apply plugin: 'com.github.triplet.play'
 play {
     track = 'internal'
