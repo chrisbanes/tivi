@@ -63,8 +63,8 @@ import androidx.ui.layout.Spacer
 import androidx.ui.layout.Stack
 import androidx.ui.layout.aspectRatio
 import androidx.ui.layout.fillMaxHeight
+import androidx.ui.layout.fillMaxSize
 import androidx.ui.layout.fillMaxWidth
-import androidx.ui.layout.height
 import androidx.ui.layout.padding
 import androidx.ui.layout.preferredHeight
 import androidx.ui.layout.preferredHeightIn
@@ -177,32 +177,41 @@ fun ShowDetails(
     viewState: ShowDetailsViewState,
     uiEffects: List<UiEffect>,
     actioner: (ShowDetailsAction) -> Unit
-) = Stack {
+) = Stack(
+    modifier = Modifier.fillMaxSize()
+) {
     val scrollerPosition = ScrollerPosition()
     val backdropHeight = state { IntPx.Zero }
     val fabHeight = state { IntPx.Zero }
 
-    VerticalScroller(scrollerPosition = scrollerPosition) {
-        Column {
+    VerticalScroller(
+        scrollerPosition = scrollerPosition,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
             val backdropImage = viewState.backdropImage
             Surface(
-                modifier = Modifier.aspectRatio(16f / 10)
+                modifier = Modifier.fillMaxWidth()
+                    .aspectRatio(16f / 10)
                     .onPositioned { backdropHeight.value = it.size.height }
             ) {
                 if (backdropImage != null) {
                     CoilImageWithCrossfade(
                         data = backdropImage,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.weight(weight = 1f, fill = true)
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
             }
 
             Surface(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(Alignment.Top),
+                modifier = Modifier.fillMaxWidth()
+                    .wrapContentHeight(Alignment.Top),
                 elevation = 2.dp
             ) {
-                Column {
+                Column(Modifier.fillMaxWidth()) {
                     ShowDetailsAppBar(
                         show = viewState.show,
                         elevation = 0.dp,
@@ -211,7 +220,7 @@ fun ShowDetails(
                         actioner = actioner
                     )
 
-                    Row {
+                    Row(Modifier.fillMaxWidth()) {
                         val poster = viewState.posterImage
                         if (poster != null) {
                             Spacer(modifier = Modifier.preferredWidth(16.dp))
@@ -248,7 +257,8 @@ fun ShowDetails(
                     if (viewState.show.summary != null) {
                         ExpandingSummary(
                             viewState.show.summary!!,
-                            modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
+                            modifier = Modifier.fillMaxWidth()
+                                .paddingHV(horizontal = 16.dp, vertical = 8.dp)
                         )
                     }
 
@@ -274,7 +284,11 @@ fun ShowDetails(
                     if (relatedShows.isNotEmpty()) {
                         Spacer(modifier = Modifier.preferredHeight(8.dp))
                         Header(stringResource(R.string.details_related))
-                        RelatedShows(relatedShows, actioner)
+                        RelatedShows(
+                            relatedShows,
+                            actioner,
+                            Modifier.fillMaxWidth()
+                        )
                     }
 
                     val viewStats = viewState.viewStats()
@@ -551,7 +565,8 @@ private fun Header(title: String) {
     Text(
         text = title,
         style = MaterialTheme.typography.subtitle1,
-        modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
+        modifier = Modifier.fillMaxWidth()
+            .paddingHV(horizontal = 16.dp, vertical = 8.dp)
     )
 }
 
@@ -562,8 +577,8 @@ private fun Genres(show: TiviShow) {
         Text(
             textCreator.genreString(show.genres).toString(),
             style = MaterialTheme.typography.body2,
-            modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
+                .paddingHV(horizontal = 16.dp, vertical = 8.dp)
         )
     }
 }
