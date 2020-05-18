@@ -34,6 +34,7 @@ import androidx.ui.animation.DpPropKey
 import androidx.ui.animation.Transition
 import androidx.ui.core.Alignment
 import androidx.ui.core.ContentScale
+import androidx.ui.core.ContextAmbient
 import androidx.ui.core.DensityAmbient
 import androidx.ui.core.Modifier
 import androidx.ui.core.drawOpacity
@@ -103,8 +104,6 @@ import androidx.ui.unit.dp
 import app.tivi.common.compose.ExpandingSummary
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.InsetsHolder
-import app.tivi.common.compose.LoadNetworkImage
-import app.tivi.common.compose.LoadNetworkImageWithCrossfade
 import app.tivi.common.compose.PopupMenu
 import app.tivi.common.compose.PopupMenuItem
 import app.tivi.common.compose.VectorImage
@@ -142,7 +141,10 @@ import app.tivi.showdetails.details.UiEffect
 import app.tivi.showdetails.details.UnfollowPreviousSeasonsFollowedAction
 import app.tivi.ui.animations.lerp
 import app.tivi.util.TiviDateFormatter
+import coil.request.GetRequest
 import coil.transform.RoundedCornersTransformation
+import dev.chrisbanes.accompanist.coil.CoilImage
+import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
 import dev.chrisbanes.accompanist.mdctheme.MaterialThemeFromMdcTheme
 
 val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
@@ -188,8 +190,8 @@ fun ShowDetails(
                     .onPositioned { backdropHeight.value = it.size.height }
             ) {
                 if (backdropImage != null) {
-                    LoadNetworkImageWithCrossfade(
-                        backdropImage,
+                    CoilImageWithCrossfade(
+                        data = backdropImage,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.weight(weight = 1f, fill = true)
                     )
@@ -219,9 +221,11 @@ fun ShowDetails(
                                 listOf(RoundedCornersTransformation(cornerRadius.value))
                             }
 
-                            LoadNetworkImageWithCrossfade(
-                                poster,
-                                transformations = transforms,
+                            CoilImageWithCrossfade(
+                                request = GetRequest.Builder(ContextAmbient.current)
+                                    .data(poster)
+                                    .transformations(transforms)
+                                    .build(),
                                 alignment = Alignment.TopStart,
                                 modifier = Modifier.weight(1f, fill = false)
                                     .aspectRatio(2 / 3f)
@@ -416,13 +420,12 @@ private fun NetworkInfoPanel(
             val tmdbImage = remember(networkLogoPath) {
                 ShowTmdbImage(path = networkLogoPath, type = ImageType.LOGO, showId = 0)
             }
-            val transforms = remember {
-                listOf(TrimTransparentEdgesTransformation)
-            }
 
-            LoadNetworkImage(
-                tmdbImage,
-                transformations = transforms,
+            CoilImage(
+                request = GetRequest.Builder(ContextAmbient.current)
+                    .data(tmdbImage)
+                    .transformations(TrimTransparentEdgesTransformation)
+                    .build(),
                 contentScale = ContentScale.Fit,
                 alignment = Alignment.TopStart,
                 colorFilter = if (isSystemInDarkTheme()) ColorFilter.tint(contentColor()) else null,
@@ -584,7 +587,7 @@ private fun RelatedShows(
                             onClick = { actioner(OpenShowDetails(relatedEntry.show.id)) },
                             modifier = Modifier.ripple()
                         ) {
-                            LoadNetworkImageWithCrossfade(
+                            CoilImageWithCrossfade(
                                 poster,
                                 modifier = Modifier.aspectRatio(2 / 3f).preferredWidth(64.dp)
                             )

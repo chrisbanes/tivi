@@ -65,4 +65,5 @@ dependencies {
     implementation Libs.AndroidX.UI.iconsExtended
 
     implementation Libs.Accompanist.mdcTheme
+    implementation Libs.Accompanist.coil
 }
