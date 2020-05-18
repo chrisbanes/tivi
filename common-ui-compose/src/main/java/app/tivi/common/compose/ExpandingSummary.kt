@@ -53,13 +53,13 @@ fun ExpandingSummary(
                     style = textStyle,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = if (expanded) expandedMaxLines else collapsedMaxLines,
-                    modifier = modifier
-                ) {
-                    if (!expanded) {
-                        // Disabled due to https://issuetracker.google.com/issues/154481514
-                        // canTextExpand = it.hasVisualOverflow
+                    modifier = modifier,
+                    onTextLayout = {
+                        if (!expanded) {
+                            canTextExpand = it.hasVisualOverflow
+                        }
                     }
-                }
+                )
             }
         }
     }

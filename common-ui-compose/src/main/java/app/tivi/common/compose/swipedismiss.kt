@@ -58,7 +58,7 @@ fun SwipeToDismiss(
         backgroundChildren(progress, progress.absoluteValue >= swipeCompletePercentage)
     }
 
-    WithConstraints { constraints, layoutDirection ->
+    WithConstraints {
         // Update the drag bounds depending on the size
         if (START in swipeDirections && END in swipeDirections) {
             position.setBounds(

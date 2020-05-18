@@ -38,8 +38,8 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerVersion Libs.AndroidX.UI.kotlinCompilerVersion
-        kotlinCompilerExtensionVersion Libs.AndroidX.UI.version
+        kotlinCompilerVersion Libs.AndroidX.Compose.kotlinCompilerVersion
+        kotlinCompilerExtensionVersion Libs.AndroidX.Compose.version
     }
 }
 
@@ -55,9 +55,9 @@ dependencies {
 
     implementation Libs.AndroidX.coreKtx
 
-    implementation Libs.AndroidX.UI.composeRuntime
+    implementation Libs.AndroidX.Compose.runtime
     implementation Libs.AndroidX.UI.foundation
-    implementation Libs.AndroidX.UI.framework
+    implementation Libs.AndroidX.UI.core
     implementation Libs.AndroidX.UI.layout
     implementation Libs.AndroidX.UI.material
     implementation Libs.AndroidX.UI.animation

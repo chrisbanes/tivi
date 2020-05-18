@@ -34,11 +34,10 @@ import androidx.ui.animation.Crossfade
 import androidx.ui.animation.Transition
 import androidx.ui.core.Alignment
 import androidx.ui.core.ConfigurationAmbient
-import androidx.ui.core.ContentDrawScope
 import androidx.ui.core.ContentScale
 import androidx.ui.core.DensityAmbient
-import androidx.ui.core.DrawModifier
 import androidx.ui.core.Modifier
+import androidx.ui.core.drawWithContent
 import androidx.ui.core.onPositioned
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
@@ -52,10 +51,9 @@ import androidx.ui.foundation.drawBackground
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Color
-import androidx.ui.graphics.Paint
 import androidx.ui.graphics.RectangleShape
+import androidx.ui.graphics.painter.clipRect
 import androidx.ui.graphics.vector.VectorAsset
-import androidx.ui.graphics.withSave
 import androidx.ui.layout.Column
 import androidx.ui.layout.Row
 import androidx.ui.layout.Spacer
@@ -63,6 +61,7 @@ import androidx.ui.layout.Stack
 import androidx.ui.layout.aspectRatio
 import androidx.ui.layout.fillMaxHeight
 import androidx.ui.layout.fillMaxSize
+import androidx.ui.layout.fillMaxWidth
 import androidx.ui.layout.padding
 import androidx.ui.layout.preferredHeight
 import androidx.ui.layout.preferredSizeIn
@@ -93,7 +92,6 @@ import androidx.ui.unit.Px
 import androidx.ui.unit.PxPosition
 import androidx.ui.unit.dp
 import androidx.ui.unit.toOffset
-import androidx.ui.unit.toRect
 import app.tivi.animation.invoke
 import app.tivi.common.compose.ExpandingSummary
 import app.tivi.common.compose.InsetsAmbient
@@ -153,7 +151,11 @@ private fun EpisodeDetails(
         Column {
             Stack {
                 if (viewState.episode != null && viewState.season != null) {
-                    Backdrop(season = viewState.season!!, episode = viewState.episode!!)
+                    Backdrop(
+                        season = viewState.season!!,
+                        episode = viewState.episode!!,
+                        modifier = Modifier.aspectRatio(16 / 10f)
+                    )
                 }
                 EpisodeDetailsAppBar(
                     backgroundColor = Color.Transparent,
@@ -241,7 +243,8 @@ private fun EpisodeDetails(
         }
 
         Column(
-            modifier = Modifier.gravity(Alignment.BottomCenter)
+            modifier = Modifier.fillMaxWidth()
+                .gravity(Alignment.BottomCenter)
                 .padding(bottom = 16.dp + bottomInset)
         ) {
             Crossfade(current = viewState.error) { error ->
@@ -260,14 +263,18 @@ private fun EpisodeDetails(
 }
 
 @Composable
-private fun Backdrop(season: Season, episode: Episode) {
-    Surface(modifier = Modifier.aspectRatio(16f / 10)) {
-        Stack {
+private fun Backdrop(
+    season: Season,
+    episode: Episode,
+    modifier: Modifier
+) {
+    Surface(modifier = modifier) {
+        Stack(Modifier.fillMaxSize()) {
             if (episode.tmdbBackdropPath != null) {
                 CoilImageWithCrossfade(
                     data = episode,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.matchParentSize()
+                    modifier = Modifier.fillMaxSize()
                 )
             }
 
@@ -481,23 +488,17 @@ private fun EpisodeWatchSwipeBackground(
 
 private fun Modifier.drawGrowingCircle(
     color: Color,
-    centerPoint: Offset,
+    center: Offset,
     radius: Float
-) = object : DrawModifier {
-    private val paint = Paint()
+) = drawWithContent {
+    drawContent()
 
-    init {
-        paint.isAntiAlias = true
-        paint.color = color
-    }
-
-    override fun ContentDrawScope.draw() {
-        drawContent()
-
-        withSave {
-            clipRect(size.toRect())
-            drawCircle(centerPoint, radius, paint)
-        }
+    clipRect {
+        drawCircle(
+            color = color,
+            radius = radius,
+            center = center
+        )
     }
 }
 
