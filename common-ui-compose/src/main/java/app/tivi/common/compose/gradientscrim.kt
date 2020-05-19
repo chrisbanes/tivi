@@ -56,7 +56,7 @@ fun Modifier.gradientScrim(
 
     var height by state { 0f }
 
-    val shader = remember(height) {
+    val shader = remember(colors, height) {
         VerticalGradient(
             colors = colors,
             startY = Px.Zero,
