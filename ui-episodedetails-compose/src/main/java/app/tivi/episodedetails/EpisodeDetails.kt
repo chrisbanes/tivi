@@ -67,7 +67,6 @@ import androidx.ui.layout.preferredHeight
 import androidx.ui.layout.preferredSizeIn
 import androidx.ui.livedata.observeAsState
 import androidx.ui.material.Button
-import androidx.ui.material.CircularProgressIndicator
 import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.IconButton
 import androidx.ui.material.MaterialTheme
@@ -93,6 +92,7 @@ import androidx.ui.unit.PxPosition
 import androidx.ui.unit.dp
 import androidx.ui.unit.toOffset
 import app.tivi.animation.invoke
+import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingSummary
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.InsetsHolder
@@ -574,8 +574,10 @@ private fun EpisodeDetailsAppBar(
         },
         actions = {
             if (isRefreshing) {
-                CircularProgressIndicator(
-                    Modifier.padding(14.dp).aspectRatio(1f).fillMaxHeight()
+                AutoSizedCircularProgressIndicator(
+                    modifier = Modifier.aspectRatio(1f)
+                        .fillMaxHeight()
+                        .padding(14.dp)
                 )
             } else {
                 IconButton(onClick = { actioner(RefreshAction) }) {
