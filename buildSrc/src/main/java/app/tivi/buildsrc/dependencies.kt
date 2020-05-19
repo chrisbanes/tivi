@@ -54,7 +54,7 @@ object Libs {
     }
 
     object Accompanist {
-        private const val version = "0.1.0"
+        private const val version = "0.1.2"
         const val mdcTheme = "dev.chrisbanes.accompanist:accompanist-mdc-theme:$version"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
     }
@@ -152,12 +152,17 @@ object Libs {
             const val runtimeKtx = "androidx.work:work-runtime-ktx:$version"
         }
 
-        object UI {
+        object Compose {
+            const val version = "0.1.0-dev11"
             const val kotlinCompilerVersion = "1.3.70-dev-withExperimentalGoogleExtensions-20200424"
-            const val version = "0.1.0-dev10"
 
-            const val composeRuntime = "androidx.compose:compose-runtime:$version"
-            const val framework = "androidx.ui:ui-framework:$version"
+            const val runtime = "androidx.compose:compose-runtime:$version"
+        }
+
+        object UI {
+            private const val version = Compose.version
+
+            const val core = "androidx.ui:ui-core:$version"
             const val layout = "androidx.ui:ui-layout:$version"
             const val material = "androidx.ui:ui-material:$version"
             const val foundation = "androidx.ui:ui-foundation:$version"
