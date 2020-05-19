@@ -17,46 +17,56 @@
 package app.tivi.common.compose
 
 import androidx.compose.Composable
+import androidx.compose.getValue
 import androidx.compose.remember
+import androidx.compose.setValue
+import androidx.compose.state
 import androidx.ui.core.Modifier
 import androidx.ui.core.composed
 import androidx.ui.core.drawWithContent
-import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Color
-import androidx.ui.graphics.LinearGradientShader
-import androidx.ui.graphics.Paint
-import androidx.ui.graphics.painter.drawCanvas
+import androidx.ui.graphics.VerticalGradient
+import androidx.ui.unit.Px
+import androidx.ui.unit.px
 import kotlin.math.pow
 
+/**
+ * Draws a vertical gradient scrim in the foreground.
+ *
+ * @param color The color of the gradient scrim.
+ * @param decay The exponential decay to apply to the gradient. Defaults to `3.0f` which is
+ * a cubic decay.
+ * @param numStops The number of color stops to draw in the gradient. Higher numbers result in
+ * the higher visual quality at the cost of draw performance. Defaults to `16`.
+ */
 @Composable
 fun Modifier.gradientScrim(
     color: Color,
+    decay: Float = 3.0f,
     numStops: Int = 16
 ): Modifier = composed {
-    val paint = remember {
-        Paint().apply {
-            isAntiAlias = true
-        }
-    }
     val colors = remember(color, numStops) {
         val baseAlpha = color.alpha
         List(numStops) { i ->
             val x = i * 1f / (numStops - 1)
-            val opacity = x.pow(3.0f)
+            val opacity = x.pow(decay)
             color.copy(alpha = baseAlpha * opacity)
         }
     }
 
-    drawWithContent {
-        drawContent()
+    var height by state { 0f }
 
-        drawCanvas { canvas, pxSize ->
-            paint.shader = LinearGradientShader(
-                Offset.zero,
-                Offset(0f, pxSize.height.value),
-                colors
-            )
-            canvas.drawRect(0f, 0f, pxSize.width.value, pxSize.height.value, paint)
-        }
+    val shader = remember(colors, height) {
+        VerticalGradient(
+            colors = colors,
+            startY = Px.Zero,
+            endY = height.px
+        )
+    }
+
+    drawWithContent {
+        height = size.height
+        drawContent()
+        drawRect(brush = shader)
     }
 }

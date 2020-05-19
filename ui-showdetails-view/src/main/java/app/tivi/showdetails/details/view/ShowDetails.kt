@@ -75,7 +75,6 @@ import androidx.ui.layout.wrapContentHeight
 import androidx.ui.layout.wrapContentSize
 import androidx.ui.livedata.observeAsState
 import androidx.ui.material.Card
-import androidx.ui.material.CircularProgressIndicator
 import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.ExtendedFloatingActionButton
 import androidx.ui.material.IconButton
@@ -101,6 +100,7 @@ import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.Dp
 import androidx.ui.unit.IntPx
 import androidx.ui.unit.dp
+import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingSummary
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.InsetsHolder
@@ -987,8 +987,10 @@ private fun ShowDetailsAppBar(
         },
         actions = {
             if (isRefreshing) {
-                CircularProgressIndicator(
-                    Modifier.padding(14.dp).aspectRatio(1f).fillMaxHeight()
+                AutoSizedCircularProgressIndicator(
+                    modifier = Modifier.aspectRatio(1f)
+                        .fillMaxHeight()
+                        .padding(14.dp)
                 )
             } else {
                 IconButton(onClick = { actioner(RefreshAction) }) {
