@@ -37,24 +37,25 @@ fun AutoSizedCircularProgressIndicator(
 ) {
     WithConstraints(modifier) {
         val diameter = with(DensityAmbient.current) {
-            min(constraints.maxWidth, constraints.maxHeight).toDp() - defaultPadding
+            // We need to minus the padding added within CircularProgressIndicator
+            min(constraints.maxWidth, constraints.maxHeight).toDp() - InternalPadding
         }
 
         CircularProgressIndicator(
-            strokeWidth = (diameter * strokePerDiameterDp).coerceAtLeast(1.dp),
+            strokeWidth = (diameter * StrokeDiameterFraction).coerceAtLeast(1.dp),
             color = color
         )
     }
 }
 
 // Default stroke size
-private val defaultStrokeWidth = 4.dp
+private val DefaultStrokeWidth = 4.dp
 // Preferred diameter for CircularProgressIndicator
-private val defaultDiameter = 40.dp
-// Default padding added by CircularProgressIndicator
-private val defaultPadding = 4.dp
+private val DefaultDiameter = 40.dp
+// Internal padding added by CircularProgressIndicator
+private val InternalPadding = 4.dp
 
-private val strokePerDiameterDp = defaultStrokeWidth / defaultDiameter
+private val StrokeDiameterFraction = DefaultStrokeWidth / DefaultDiameter
 
 @Preview
 @Composable
