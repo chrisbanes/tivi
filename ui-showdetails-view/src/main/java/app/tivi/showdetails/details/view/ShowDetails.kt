@@ -585,26 +585,36 @@ private fun RelatedShows(
 ) {
     // TODO: ideally we would use AdapterList here, but it only works for vertical lists, not
     // horizontal
-
     HorizontalScroller(modifier = modifier.padding(vertical = 8.dp)) {
         Row(modifier.padding(horizontal = 16.dp)) {
             related.forEachIndexed { index, relatedEntry ->
-                val poster = relatedEntry.images.findHighestRatedPoster()
-                if (poster != null) {
-                    Card {
-                        CoilImageWithCrossfade(
-                            poster,
-                            modifier = Modifier.aspectRatio(2 / 3f)
-                                .preferredWidth(64.dp)
-                                .clickable(
-                                    onClick = { actioner(OpenShowDetails(relatedEntry.show.id)) }
-                                )
-                        )
+                Card(
+                    Modifier.aspectRatio(2 / 3f)
+                        .preferredWidth(64.dp)
+                        .clickable { actioner(OpenShowDetails(relatedEntry.show.id)) }
+                ) {
+                    Stack {
+                        ProvideEmphasis(EmphasisAmbient.current.medium) {
+                            Text(
+                                text = relatedEntry.show.title ?: "No title",
+                                style = MaterialTheme.typography.caption,
+                                modifier = Modifier.padding(4.dp)
+                                    .gravity(Alignment.CenterStart)
+                            )
+                        }
+                        val poster = relatedEntry.images.findHighestRatedPoster()
+                        if (poster != null) {
+                            CoilImageWithCrossfade(
+                                poster,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
                     }
-                    if (index + 1 < related.size) {
-                        // Add a spacer if there are still more items to add
-                        Spacer(modifier = Modifier.preferredWidth(4.dp))
-                    }
+                }
+
+                if (index + 1 < related.size) {
+                    // Add a spacer if there are still more items to add
+                    Spacer(modifier = Modifier.preferredWidth(4.dp))
                 }
             }
         }

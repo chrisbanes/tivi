@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
+
 package app.tivi.extensions
 
 import app.tivi.data.entities.ErrorResult
@@ -25,12 +27,12 @@ import retrofit2.Call
 import retrofit2.HttpException
 import retrofit2.Response
 
-fun <T> Response<T>.bodyOrThrow(): T {
+inline fun <T> Response<T>.bodyOrThrow(): T {
     if (!isSuccessful) throw HttpException(this)
     return body()!!
 }
 
-fun <T> Response<T>.toException() = HttpException(this)
+inline fun <T> Response<T>.toException() = HttpException(this)
 
 suspend inline fun <T> Call<T>.executeWithRetry(
     defaultDelay: Long = 100,
@@ -78,35 +80,47 @@ suspend inline fun <T> Call<T>.fetchBodyWithRetry(
     shouldRetry: (Exception) -> Boolean = ::defaultShouldRetry
 ) = executeWithRetry(firstDelay, maxAttempts, shouldRetry).bodyOrThrow()
 
-fun defaultShouldRetry(exception: Exception) = when (exception) {
+inline fun defaultShouldRetry(exception: Exception) = when (exception) {
     is HttpException -> exception.code() == 429
     is IOException -> true
     else -> false
 }
 
-fun <T> Response<T>.isFromNetwork(): Boolean {
+inline fun <T> Response<T>.isFromNetwork(): Boolean {
     return raw().cacheResponse == null
 }
 
-fun <T> Response<T>.isFromCache(): Boolean {
+inline fun <T> Response<T>.isFromCache(): Boolean {
     return raw().cacheResponse != null
 }
 
-@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
-suspend fun <T> Response<T>.toResultUnit(): Result<Unit> = toResult { Unit }
-
-@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
-suspend fun <T> Response<T>.toResult(): Result<T> = toResult { it }
-
-@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
-suspend fun <T, E> Response<T>.toResult(mapper: suspend (T) -> E): Result<E> {
-    return try {
-        if (isSuccessful) {
-            Success(data = mapper(bodyOrThrow()), responseModified = isFromNetwork())
-        } else {
-            ErrorResult(toException())
-        }
-    } catch (e: Exception) {
-        ErrorResult(e)
+inline fun <T> Response<T>.toResultUnit(): Result<Unit> = try {
+    if (isSuccessful) {
+        Success(data = Unit, responseModified = isFromNetwork())
+    } else {
+        ErrorResult(toException())
     }
+} catch (e: Exception) {
+    ErrorResult(e)
+}
+
+inline fun <T> Response<T>.toResult(): Result<T> = try {
+    if (isSuccessful) {
+        Success(data = bodyOrThrow(), responseModified = isFromNetwork())
+    } else {
+        ErrorResult(toException())
+    }
+} catch (e: Exception) {
+    ErrorResult(e)
+}
+
+@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
+suspend fun <T, E> Response<T>.toResult(mapper: suspend (T) -> E): Result<E> = try {
+    if (isSuccessful) {
+        Success(data = mapper(bodyOrThrow()), responseModified = isFromNetwork())
+    } else {
+        ErrorResult(toException())
+    }
+} catch (e: Exception) {
+    ErrorResult(e)
 }
