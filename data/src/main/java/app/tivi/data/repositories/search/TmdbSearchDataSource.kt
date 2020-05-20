@@ -21,7 +21,6 @@ import app.tivi.data.entities.Result
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TmdbShowResultsPageToTiviShows
-import app.tivi.data.mappers.toLambda
 import app.tivi.extensions.executeWithRetry
 import app.tivi.extensions.toResult
 import com.uwetrottmann.tmdb2.Tmdb
@@ -34,7 +33,7 @@ class TmdbSearchDataSource @Inject constructor(
     override suspend fun search(query: String): Result<List<Pair<TiviShow, List<ShowTmdbImage>>>> = try {
         tmdb.searchService().tv(query, 1, null, null)
             .executeWithRetry()
-            .toResult(mapper.toLambda())
+            .toResult(mapper::map)
     } catch (t: Throwable) {
         ErrorResult(t)
     }

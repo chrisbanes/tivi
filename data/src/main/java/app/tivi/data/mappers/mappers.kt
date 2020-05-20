@@ -47,8 +47,6 @@ internal inline fun <F, T1, T2> pairMapperOf(
     }
 }
 
-internal inline fun <F, T> Mapper<F, T>.toLambda(): suspend (F) -> T = { map(it) }
-
 internal inline fun <T> unwrapTmdbShowResults(
     crossinline f: suspend (List<BaseTvShow>) -> List<T>
 ): suspend (TvShowResultsPage) -> List<T> = {
