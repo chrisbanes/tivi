@@ -21,8 +21,7 @@ object Versions {
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:4.1.0-alpha09"
-    const val playPublisherPlugin = "com.github.triplet.gradle:play-publisher:2.7.5"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:4.1.0-alpha10"
 
     const val mvRx = "com.airbnb.android:mvrx:1.3.0"
 
