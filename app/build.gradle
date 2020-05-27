@@ -17,11 +17,17 @@
 
 import app.tivi.buildsrc.Libs
 
-ext {
-    ci = System.getenv("CI") == "true"
+plugins {
+    id 'com.android.application'
+    // id 'com.github.triplet.play' version '2.7.5'
 }
 
-apply plugin: 'com.android.application'
+// Disabled due to https://github.com/Triple-T/gradle-play-publisher/issues/813
+//play {
+//    track = 'internal'
+//    defaultToAppBundles = true
+//    serviceAccountCredentials = rootProject.file('release/play-account.json')
+//}
 
 apply plugin: 'kotlin-android'
 
@@ -36,13 +42,6 @@ androidExtensions {
     experimental = true
 }
 
-apply plugin: 'com.github.triplet.play'
-play {
-    track = 'internal'
-    defaultToAppBundles = true
-    serviceAccountCredentials = rootProject.file('release/play-account.json')
-}
-
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 
 apply plugin: "androidx.navigation.safeargs.kotlin"
@@ -51,6 +50,10 @@ def appVersionCode = propOrDef("tivi.versioncode", 17) as Integer
 println("APK version code: " + appVersionCode)
 
 def useReleaseKeystore = rootProject.file("release/app-release.jks").exists()
+
+ext {
+    ci = System.getenv("CI") == "true"
+}
 
 android {
     compileSdkVersion buildConfig.compileSdk
