@@ -390,8 +390,8 @@ fun ShowDetails(
                 // TODO: Convert this to swipe-to-dismiss
                 Snackbar(
                     text = { Text(error.message) },
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                        .clickable(onClick = { actioner(ClearError) })
+                    modifier = Modifier.clickable(onClick = { actioner(ClearError) })
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                 )
             }
         }
@@ -618,11 +618,11 @@ private fun NextEpisodeToWatch(
     onClick: () -> Unit
 ) {
     Column(
-        modifier = Modifier.padding(16.dp, 8.dp)
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
             .preferredHeightIn(minHeight = 48.dp)
             .wrapContentSize(Alignment.CenterStart)
             .clickable(onClick = onClick)
+            .padding(16.dp, 8.dp)
     ) {
         val textCreator = ShowDetailsTextCreatorAmbient.current
 

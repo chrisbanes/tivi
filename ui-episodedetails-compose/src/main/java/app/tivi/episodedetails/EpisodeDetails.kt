@@ -252,8 +252,8 @@ private fun EpisodeDetails(
                     // TODO: Convert this to swipe-to-dismiss
                     Snackbar(
                         text = { Text(error.message) },
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                            .clickable(onClick = { actioner(ClearError) })
+                        modifier = Modifier.clickable(onClick = { actioner(ClearError) })
+                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                     )
                 }
             }
