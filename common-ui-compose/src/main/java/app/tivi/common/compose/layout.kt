@@ -21,11 +21,9 @@ import androidx.ui.core.LayoutCoordinates
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.drawBackground
-import androidx.ui.layout.absolutePadding
 import androidx.ui.layout.fillMaxWidth
 import androidx.ui.layout.preferredHeight
 import androidx.ui.material.MaterialTheme
-import androidx.ui.unit.Dp
 import androidx.ui.unit.PxBounds
 import androidx.ui.unit.PxPosition
 import androidx.ui.unit.dp
@@ -39,10 +37,6 @@ inline val LayoutCoordinates.positionInParent: PxPosition
 
 inline val LayoutCoordinates.boundsInParent: PxBounds
     get() = PxBounds(positionInParent, size.toPxSize())
-
-fun Modifier.paddingHV(horizontal: Dp = 0.dp, vertical: Dp = 0.dp): Modifier {
-    return absolutePadding(left = horizontal, top = vertical, right = horizontal, bottom = vertical)
-}
 
 @Composable
 fun HorizontalDivider() {

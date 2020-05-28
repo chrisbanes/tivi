@@ -102,7 +102,6 @@ import app.tivi.common.compose.TiviAlertDialog
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.boundsInParent
 import app.tivi.common.compose.center
-import app.tivi.common.compose.paddingHV
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
@@ -370,7 +369,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
     Row {
         ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
             Text(
-                modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                     .gravity(Alignment.CenterVertically)
                     .weight(1f),
                 text = stringResource(R.string.episode_watches),
@@ -393,7 +392,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
 private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
     Surface {
         Row(
-            modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 .preferredSizeIn(minWidth = 40.dp, minHeight = 40.dp)
         ) {
             ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {

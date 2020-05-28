@@ -108,7 +108,6 @@ import app.tivi.common.compose.PopupMenuItem
 import app.tivi.common.compose.ProvideInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
-import app.tivi.common.compose.paddingHV
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.ImageType
@@ -253,7 +252,7 @@ fun ShowDetails(
                             ExpandingText(
                                 viewState.show.summary!!,
                                 modifier = Modifier.fillMaxWidth()
-                                    .paddingHV(horizontal = 16.dp, vertical = 8.dp)
+                                    .padding(horizontal = 16.dp, vertical = 8.dp)
                             )
                         }
                     }
@@ -510,7 +509,7 @@ private fun CertificateInfoPanel(
                 size = 1.dp,
                 color = MaterialTheme.colors.onSurface,
                 shape = RoundedCornerShape(2.dp)
-            ).paddingHV(horizontal = 4.dp, vertical = 2.dp)
+            ).padding(horizontal = 4.dp, vertical = 2.dp)
         )
     }
 }
@@ -561,7 +560,7 @@ private fun Header(title: String) {
         text = title,
         style = MaterialTheme.typography.subtitle1,
         modifier = Modifier.fillMaxWidth()
-            .paddingHV(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
     )
 }
 
@@ -573,7 +572,7 @@ private fun Genres(show: TiviShow) {
             textCreator.genreString(show.genres).toString(),
             style = MaterialTheme.typography.body2,
             modifier = Modifier.fillMaxWidth()
-                .paddingHV(horizontal = 16.dp, vertical = 8.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
         )
     }
 }
@@ -587,8 +586,8 @@ private fun RelatedShows(
     // TODO: ideally we would use AdapterList here, but it only works for vertical lists, not
     // horizontal
 
-    HorizontalScroller(modifier = modifier.paddingHV(vertical = 8.dp)) {
-        Row(modifier.paddingHV(horizontal = 16.dp)) {
+    HorizontalScroller(modifier = modifier.padding(vertical = 8.dp)) {
+        Row(modifier.padding(horizontal = 16.dp)) {
             related.forEachIndexed { index, relatedEntry ->
                 val poster = relatedEntry.images.findHighestRatedPoster()
                 if (poster != null) {
@@ -619,7 +618,7 @@ private fun NextEpisodeToWatch(
     onClick: () -> Unit
 ) {
     Column(
-        modifier = Modifier.paddingHV(16.dp, 8.dp)
+        modifier = Modifier.padding(16.dp, 8.dp)
             .fillMaxWidth()
             .preferredHeightIn(minHeight = 48.dp)
             .wrapContentSize(Alignment.CenterStart)
@@ -845,7 +844,7 @@ private fun EpisodeWithWatchesRow(
     Row(
         modifier = modifier.preferredHeightIn(minHeight = 48.dp)
             .wrapContentHeight(Alignment.CenterVertically)
-            .paddingHV(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Column(modifier = Modifier.weight(1f)) {
             val textCreator = ShowDetailsTextCreatorAmbient.current

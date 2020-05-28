@@ -56,7 +56,6 @@ import app.tivi.common.compose.HorizontalDivider
 import app.tivi.common.compose.ProvideInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
-import app.tivi.common.compose.paddingHV
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.TiviDateFormatter
@@ -99,7 +98,7 @@ fun AccountUi(
 
         Row(
             modifier = Modifier.gravity(Alignment.End)
-                .paddingHV(horizontal = 16.dp)
+                .padding(horizontal = 16.dp)
         ) {
             if (viewState.authState == TraktAuthState.LOGGED_OUT) {
                 OutlinedButton(
@@ -185,7 +184,7 @@ private fun AppAction(
         modifier = modifier.fillMaxWidth()
             .preferredSizeIn(minHeight = 48.dp)
             .clickable(onClick = onClick)
-            .paddingHV(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         ProvideEmphasis(EmphasisAmbient.current.high) {
             Spacer(modifier = Modifier.preferredWidth(8.dp))
