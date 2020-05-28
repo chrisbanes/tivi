@@ -46,8 +46,8 @@ dependencies {
     implementation project(':common-ui-view')
     implementation project(':trakt-auth')
 
-    api Libs.AndroidX.Lifecycle.extensions
-    implementation Libs.AndroidX.Lifecycle.viewmodelKtx
+    api Libs.AndroidX.Lifecycle.livedata
+    implementation Libs.AndroidX.Lifecycle.viewmodel
 
     implementation Libs.AndroidX.coreKtx
 

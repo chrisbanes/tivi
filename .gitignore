@@ -29,3 +29,9 @@ play-account.json
 
 # Do not commit firebase config
 google-services.json
+
+# VS Code config
+org.eclipse.buildship.core.prefs
+.classpath
+.project
+bin/

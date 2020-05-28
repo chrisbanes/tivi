@@ -51,8 +51,8 @@ dependencies {
     implementation project(':domain')
     implementation project(':common-ui-view')
 
-    api Libs.AndroidX.Lifecycle.extensions
-    implementation Libs.AndroidX.Lifecycle.viewmodelKtx
+    api Libs.AndroidX.Lifecycle.livedata
+    implementation Libs.AndroidX.Lifecycle.viewmodel
 
     implementation Libs.AndroidX.coreKtx
 

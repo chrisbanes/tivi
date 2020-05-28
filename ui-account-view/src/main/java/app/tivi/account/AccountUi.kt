@@ -18,6 +18,7 @@ package app.tivi.account
 
 import android.view.ViewGroup
 import androidx.compose.Composable
+import androidx.compose.Providers
 import androidx.compose.Recomposer
 import androidx.compose.getValue
 import androidx.core.view.WindowInsetsCompat
@@ -26,8 +27,8 @@ import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.core.clip
 import androidx.ui.core.setContent
-import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.Text
+import androidx.ui.foundation.clickable
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.graphics.vector.VectorAsset
 import androidx.ui.layout.Column
@@ -47,16 +48,14 @@ import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.TextButton
 import androidx.ui.material.icons.Icons
 import androidx.ui.material.icons.filled.Settings
-import androidx.ui.material.ripple.ripple
 import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
 import app.tivi.account.view.R
 import app.tivi.common.compose.HorizontalDivider
-import app.tivi.common.compose.InsetsHolder
+import app.tivi.common.compose.ProvideInsets
+import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
-import app.tivi.common.compose.WrapWithAmbients
-import app.tivi.common.compose.observeInsets
 import app.tivi.common.compose.paddingHV
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
@@ -74,12 +73,12 @@ fun composeAccountUi(
     tiviDateFormatter: TiviDateFormatter
 ): Any = viewGroup.setContent(Recomposer.current()) {
     MaterialThemeFromMdcTheme {
-        WrapWithAmbients(tiviDateFormatter, InsetsHolder()) {
-            observeInsets(insets)
-
-            val viewState by state.observeAsState()
-            if (viewState != null) {
-                AccountUi(viewState!!, actioner)
+        Providers(TiviDateFormatterAmbient provides tiviDateFormatter) {
+            ProvideInsets(insets) {
+                val viewState by state.observeAsState()
+                if (viewState != null) {
+                    AccountUi(viewState!!, actioner)
+                }
             }
         }
     }
@@ -181,29 +180,25 @@ private fun AppAction(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Clickable(
-        onClick = onClick,
-        modifier = Modifier.ripple()
+    Row(
+        verticalGravity = Alignment.CenterVertically,
+        modifier = modifier.fillMaxWidth()
+            .preferredSizeIn(minHeight = 48.dp)
+            .clickable(onClick = onClick)
+            .paddingHV(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        Row(
-            verticalGravity = Alignment.CenterVertically,
-            modifier = modifier.fillMaxWidth()
-                .preferredSizeIn(minHeight = 48.dp)
-                .paddingHV(horizontal = 16.dp, vertical = 8.dp)
-        ) {
+        ProvideEmphasis(EmphasisAmbient.current.high) {
+            Spacer(modifier = Modifier.preferredWidth(8.dp))
+
+            VectorImage(vector = icon)
+
+            Spacer(modifier = Modifier.preferredWidth(16.dp))
+
             ProvideEmphasis(EmphasisAmbient.current.high) {
-                Spacer(modifier = Modifier.preferredWidth(8.dp))
-
-                VectorImage(vector = icon)
-
-                Spacer(modifier = Modifier.preferredWidth(16.dp))
-
-                ProvideEmphasis(EmphasisAmbient.current.high) {
-                    Text(
-                        text = label,
-                        style = MaterialTheme.typography.body2
-                    )
-                }
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.body2
+                )
             }
         }
     }

@@ -44,8 +44,8 @@ dependencies {
     implementation project(':data')
     implementation project(':base-android')
 
-    implementation Libs.AndroidX.Lifecycle.extensions
-    implementation Libs.AndroidX.Lifecycle.viewmodelKtx
+    implementation Libs.AndroidX.Lifecycle.livedata
+    implementation Libs.AndroidX.Lifecycle.viewmodel
 
     api Libs.AndroidX.appcompat
     api Libs.Google.material

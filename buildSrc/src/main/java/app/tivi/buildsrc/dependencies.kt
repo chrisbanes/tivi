@@ -53,7 +53,7 @@ object Libs {
     }
 
     object Accompanist {
-        private const val version = "0.1.2"
+        private const val version = "0.1.3-SNAPSHOT"
         const val mdcTheme = "dev.chrisbanes.accompanist:accompanist-mdc-theme:$version"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
     }
@@ -134,7 +134,8 @@ object Libs {
         object Lifecycle {
             private const val version = "2.2.0"
             const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
-            const val viewmodelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
+            const val livedata = "androidx.lifecycle:lifecycle-livedata-ktx:$version"
+            const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
         }
 
         object Room {
@@ -152,7 +153,7 @@ object Libs {
         }
 
         object Compose {
-            const val version = "0.1.0-dev11"
+            const val version = "0.1.0-dev12"
             const val kotlinCompilerVersion = "1.3.70-dev-withExperimentalGoogleExtensions-20200424"
 
             const val runtime = "androidx.compose:compose-runtime:$version"

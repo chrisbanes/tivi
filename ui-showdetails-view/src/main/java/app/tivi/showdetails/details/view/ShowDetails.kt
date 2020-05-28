@@ -37,17 +37,18 @@ import androidx.ui.core.ContentScale
 import androidx.ui.core.ContextAmbient
 import androidx.ui.core.DensityAmbient
 import androidx.ui.core.Modifier
+import androidx.ui.core.clip
 import androidx.ui.core.drawOpacity
 import androidx.ui.core.onPositioned
 import androidx.ui.core.positionInRoot
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
-import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.HorizontalScroller
 import androidx.ui.foundation.Icon
 import androidx.ui.foundation.ScrollerPosition
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.VerticalScroller
+import androidx.ui.foundation.clickable
 import androidx.ui.foundation.contentColor
 import androidx.ui.foundation.drawBackground
 import androidx.ui.foundation.drawBorder
@@ -94,21 +95,19 @@ import androidx.ui.material.icons.filled.Refresh
 import androidx.ui.material.icons.filled.Star
 import androidx.ui.material.icons.filled.Visibility
 import androidx.ui.material.icons.filled.VisibilityOff
-import androidx.ui.material.ripple.ripple
 import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.Dp
 import androidx.ui.unit.IntPx
 import androidx.ui.unit.dp
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
-import app.tivi.common.compose.ExpandingSummary
+import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.InsetsAmbient
-import app.tivi.common.compose.InsetsHolder
 import app.tivi.common.compose.PopupMenu
 import app.tivi.common.compose.PopupMenuItem
+import app.tivi.common.compose.ProvideInsets
+import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
-import app.tivi.common.compose.WrapWithAmbients
-import app.tivi.common.compose.observeInsets
 import app.tivi.common.compose.paddingHV
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
@@ -142,7 +141,6 @@ import app.tivi.showdetails.details.UnfollowPreviousSeasonsFollowedAction
 import app.tivi.ui.animations.lerp
 import app.tivi.util.TiviDateFormatter
 import coil.request.GetRequest
-import coil.transform.RoundedCornersTransformation
 import dev.chrisbanes.accompanist.coil.CoilImage
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
 import dev.chrisbanes.accompanist.mdctheme.MaterialThemeFromMdcTheme
@@ -157,11 +155,12 @@ fun ViewGroup.composeShowDetails(
     tiviDateFormatter: TiviDateFormatter,
     textCreator: ShowDetailsTextCreator
 ): Any = setContent(Recomposer.current()) {
-    WrapWithAmbients(tiviDateFormatter, InsetsHolder()) {
-        Providers(ShowDetailsTextCreatorAmbient provides textCreator) {
-            MaterialThemeFromMdcTheme {
-                observeInsets(insets)
-
+    Providers(
+        TiviDateFormatterAmbient provides tiviDateFormatter,
+        ShowDetailsTextCreatorAmbient provides textCreator
+    ) {
+        MaterialThemeFromMdcTheme {
+            ProvideInsets(insets) {
                 val viewState by state.observeAsState()
                 val uiEffects by pendingUiEffects.observeAsState(emptyList())
                 if (viewState != null) {
@@ -225,19 +224,14 @@ fun ShowDetails(
                         if (poster != null) {
                             Spacer(modifier = Modifier.preferredWidth(16.dp))
 
-                            val cornerRadius = with(DensityAmbient.current) { 4.dp.toPx() }
-                            val transforms = remember {
-                                listOf(RoundedCornersTransformation(cornerRadius.value))
-                            }
-
                             CoilImageWithCrossfade(
                                 request = GetRequest.Builder(ContextAmbient.current)
                                     .data(poster)
-                                    .transformations(transforms)
                                     .build(),
                                 alignment = Alignment.TopStart,
                                 modifier = Modifier.weight(1f, fill = false)
                                     .aspectRatio(2 / 3f)
+                                    .clip(MaterialTheme.shapes.medium)
                             )
                         }
 
@@ -255,11 +249,13 @@ fun ShowDetails(
                     Header(stringResource(R.string.details_about))
 
                     if (viewState.show.summary != null) {
-                        ExpandingSummary(
-                            viewState.show.summary!!,
-                            modifier = Modifier.fillMaxWidth()
-                                .paddingHV(horizontal = 16.dp, vertical = 8.dp)
-                        )
+                        ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
+                            ExpandingText(
+                                viewState.show.summary!!,
+                                modifier = Modifier.fillMaxWidth()
+                                    .paddingHV(horizontal = 16.dp, vertical = 8.dp)
+                            )
+                        }
                     }
 
                     val genres = viewState.show.genres
@@ -393,12 +389,11 @@ fun ShowDetails(
         Crossfade(current = viewState.refreshError) { error ->
             if (error != null) {
                 // TODO: Convert this to swipe-to-dismiss
-                Clickable(onClick = { actioner(ClearError) }) {
-                    Snackbar(
-                        text = { Text(error.message) },
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                    )
-                }
+                Snackbar(
+                    text = { Text(error.message) },
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        .clickable(onClick = { actioner(ClearError) })
+                )
             }
         }
 
@@ -598,15 +593,14 @@ private fun RelatedShows(
                 val poster = relatedEntry.images.findHighestRatedPoster()
                 if (poster != null) {
                     Card {
-                        Clickable(
-                            onClick = { actioner(OpenShowDetails(relatedEntry.show.id)) },
-                            modifier = Modifier.ripple()
-                        ) {
-                            CoilImageWithCrossfade(
-                                poster,
-                                modifier = Modifier.aspectRatio(2 / 3f).preferredWidth(64.dp)
-                            )
-                        }
+                        CoilImageWithCrossfade(
+                            poster,
+                            modifier = Modifier.aspectRatio(2 / 3f)
+                                .preferredWidth(64.dp)
+                                .clickable(
+                                    onClick = { actioner(OpenShowDetails(relatedEntry.show.id)) }
+                                )
+                        )
                     }
                     if (index + 1 < related.size) {
                         // Add a spacer if there are still more items to add
@@ -624,27 +618,26 @@ private fun NextEpisodeToWatch(
     episode: Episode,
     onClick: () -> Unit
 ) {
-    Clickable(onClick = onClick, modifier = Modifier.ripple()) {
-        Column(
-            modifier = Modifier.paddingHV(16.dp, 8.dp)
-                .fillMaxWidth()
-                .preferredHeightIn(minHeight = 48.dp)
-                .wrapContentSize(Alignment.CenterStart)
-        ) {
-            val textCreator = ShowDetailsTextCreatorAmbient.current
+    Column(
+        modifier = Modifier.paddingHV(16.dp, 8.dp)
+            .fillMaxWidth()
+            .preferredHeightIn(minHeight = 48.dp)
+            .wrapContentSize(Alignment.CenterStart)
+            .clickable(onClick = onClick)
+    ) {
+        val textCreator = ShowDetailsTextCreatorAmbient.current
 
-            Text(
-                textCreator.seasonEpisodeTitleText(season, episode),
-                style = MaterialTheme.typography.caption
-            )
+        Text(
+            textCreator.seasonEpisodeTitleText(season, episode),
+            style = MaterialTheme.typography.caption
+        )
 
-            Spacer(modifier = Modifier.preferredHeight(4.dp))
+        Spacer(modifier = Modifier.preferredHeight(4.dp))
 
-            Text(
-                episode.title ?: stringResource(R.string.episode_title_fallback, episode.number!!),
-                style = MaterialTheme.typography.body1
-            )
-        }
+        Text(
+            episode.title ?: stringResource(R.string.episode_title_fallback, episode.number!!),
+            style = MaterialTheme.typography.body1
+        )
     }
 }
 
@@ -752,30 +745,28 @@ private fun SeasonWithEpisodesRow(
         Column(modifier = Modifier.fillMaxWidth()) {
             if (expanded) VerticalDivider()
 
-            Clickable(
-                onClick = { actioner(ChangeSeasonExpandedAction(season.id, !expanded)) },
-                enabled = !season.ignored,
-                modifier = Modifier.ripple(enabled = !season.ignored)
-            ) {
-                SeasonRow(
-                    season,
-                    episodes,
-                    actioner,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+            SeasonRow(
+                season,
+                episodes,
+                actioner,
+                modifier = Modifier.fillMaxWidth()
+                    .clickable(
+                        onClick = { actioner(ChangeSeasonExpandedAction(season.id, !expanded)) },
+                        enabled = !season.ignored
+                    )
+            )
 
             if (expanded) {
                 episodes.forEach { episodeEntry ->
-                    Clickable(
-                        onClick = { actioner(OpenEpisodeDetails(episodeEntry.episode!!.id)) },
-                        modifier = Modifier.ripple()
-                    ) {
-                        EpisodeWithWatchesRow(
-                            episodeEntry,
-                            Modifier.fillMaxWidth()
-                        )
-                    }
+                    EpisodeWithWatchesRow(
+                        episodeEntry,
+                        modifier = Modifier.fillMaxWidth()
+                            .clickable(
+                                onClick = {
+                                    actioner(OpenEpisodeDetails(episodeEntry.episode!!.id))
+                                }
+                            )
+                    )
                 }
             }
         }
