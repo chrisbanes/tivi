@@ -53,9 +53,9 @@ jobs:
       - name: Build and check
         run: ./gradlew spotlessCheck assembleDebug assembleRelease bundleRelease app:lintDebug testDebug -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
 
-      - name: Publish to Play Store
-        if: github.ref == 'refs/heads/master'
-        run: ./gradlew publishRelease -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
+#      - name: Publish to Play Store
+#        if: github.ref == 'refs/heads/master'
+#        run: ./gradlew publishRelease -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1
