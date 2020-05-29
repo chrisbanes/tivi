@@ -41,18 +41,18 @@ import androidx.ui.core.drawWithContent
 import androidx.ui.core.onPositioned
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
-import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.ContentColorAmbient
 import androidx.ui.foundation.Icon
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.VerticalScroller
+import androidx.ui.foundation.clickable
 import androidx.ui.foundation.contentColor
 import androidx.ui.foundation.drawBackground
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.RectangleShape
-import androidx.ui.graphics.painter.clipRect
+import androidx.ui.graphics.drawscope.clipRect
 import androidx.ui.graphics.vector.VectorAsset
 import androidx.ui.layout.Column
 import androidx.ui.layout.Row
@@ -93,18 +93,15 @@ import androidx.ui.unit.dp
 import androidx.ui.unit.toOffset
 import app.tivi.animation.invoke
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
-import app.tivi.common.compose.ExpandingSummary
+import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.InsetsAmbient
-import app.tivi.common.compose.InsetsHolder
+import app.tivi.common.compose.ProvideInsets
 import app.tivi.common.compose.SwipeDirection
 import app.tivi.common.compose.SwipeToDismiss
 import app.tivi.common.compose.TiviAlertDialog
 import app.tivi.common.compose.TiviDateFormatterAmbient
-import app.tivi.common.compose.WrapWithAmbients
 import app.tivi.common.compose.boundsInParent
 import app.tivi.common.compose.center
-import app.tivi.common.compose.observeInsets
-import app.tivi.common.compose.paddingHV
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
@@ -131,12 +128,12 @@ fun ViewGroup.composeEpisodeDetails(
     tiviDateFormatter: TiviDateFormatter
 ): Any = setContent(Recomposer.current()) {
     MaterialThemeFromMdcTheme {
-        WrapWithAmbients(tiviDateFormatter, InsetsHolder()) {
-            observeInsets(insets)
-
-            val viewState by state.observeAsState()
-            if (viewState != null) {
-                EpisodeDetails(viewState!!, actioner)
+        Providers(TiviDateFormatterAmbient provides tiviDateFormatter) {
+            ProvideInsets(insets) {
+                val viewState by state.observeAsState()
+                if (viewState != null) {
+                    EpisodeDetails(viewState!!, actioner)
+                }
             }
         }
     }
@@ -170,10 +167,13 @@ private fun EpisodeDetails(
                         val episode = viewState.episode
                         if (episode != null) {
                             InfoPanes(episode)
-                            ExpandingSummary(
-                                episode.summary ?: "No summary",
-                                modifier = Modifier.padding(16.dp)
-                            )
+
+                            ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
+                                ExpandingText(
+                                    episode.summary ?: "No summary",
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                            }
                         }
 
                         val watches = viewState.watches
@@ -250,12 +250,11 @@ private fun EpisodeDetails(
             Crossfade(current = viewState.error) { error ->
                 if (error != null) {
                     // TODO: Convert this to swipe-to-dismiss
-                    Clickable(onClick = { actioner(ClearError) }) {
-                        Snackbar(
-                            text = { Text(error.message) },
-                            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                        )
-                    }
+                    Snackbar(
+                        text = { Text(error.message) },
+                        modifier = Modifier.clickable(onClick = { actioner(ClearError) })
+                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                    )
                 }
             }
         }
@@ -370,7 +369,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
     Row {
         ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
             Text(
-                modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                     .gravity(Alignment.CenterVertically)
                     .weight(1f),
                 text = stringResource(R.string.episode_watches),
@@ -393,7 +392,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
 private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
     Surface {
         Row(
-            modifier = Modifier.paddingHV(horizontal = 16.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 .preferredSizeIn(minWidth = 40.dp, minHeight = 40.dp)
         ) {
             ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {

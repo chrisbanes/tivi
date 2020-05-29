@@ -23,7 +23,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import app.tivi.TiviDialogFragment
+import app.tivi.TiviBottomSheetFragment
 import app.tivi.common.compose.observeWindowInsets
 import app.tivi.extensions.navigateToNavDestination
 import app.tivi.util.TiviDateFormatter
@@ -33,7 +33,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.launch
 
-class AccountUiFragment : TiviDialogFragment(), AccountUiViewModel.FactoryProvider {
+class AccountUiFragment : TiviBottomSheetFragment(), AccountUiViewModel.FactoryProvider {
     private val pendingActions = Channel<AccountUiAction>()
     private val viewModel: AccountUiViewModel by fragmentViewModel()
 

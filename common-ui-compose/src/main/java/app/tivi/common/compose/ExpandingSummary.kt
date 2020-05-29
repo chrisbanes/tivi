@@ -22,18 +22,14 @@ import androidx.compose.setValue
 import androidx.compose.state
 import androidx.compose.stateFor
 import androidx.ui.core.Modifier
-import androidx.ui.foundation.Box
-import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.Text
-import androidx.ui.material.EmphasisAmbient
+import androidx.ui.foundation.clickable
 import androidx.ui.material.MaterialTheme
-import androidx.ui.material.ProvideEmphasis
-import androidx.ui.material.ripple.ripple
 import androidx.ui.text.TextStyle
 import androidx.ui.text.style.TextOverflow
 
 @Composable
-fun ExpandingSummary(
+fun ExpandingText(
     text: String,
     textStyle: TextStyle = MaterialTheme.typography.body2,
     expandable: Boolean = true,
@@ -42,25 +38,21 @@ fun ExpandingSummary(
     modifier: Modifier = Modifier
 ) {
     var canTextExpand by stateFor(text) { true }
+    var expanded by state { false }
 
-    Box(modifier = Modifier.ripple(bounded = true, enabled = expandable && canTextExpand)) {
-        var expanded by state { false }
-
-        Clickable(onClick = { expanded = !expanded }, enabled = expandable && canTextExpand) {
-            ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-                Text(
-                    text = text,
-                    style = textStyle,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = if (expanded) expandedMaxLines else collapsedMaxLines,
-                    modifier = modifier,
-                    onTextLayout = {
-                        if (!expanded) {
-                            canTextExpand = it.hasVisualOverflow
-                        }
-                    }
-                )
+    Text(
+        text = text,
+        style = textStyle,
+        overflow = TextOverflow.Ellipsis,
+        maxLines = if (expanded) expandedMaxLines else collapsedMaxLines,
+        modifier = Modifier.clickable(
+            onClick = { expanded = !expanded },
+            enabled = expandable && canTextExpand
+        ).plus(modifier),
+        onTextLayout = {
+            if (!expanded) {
+                canTextExpand = it.hasVisualOverflow
             }
         }
-    }
+    )
 }

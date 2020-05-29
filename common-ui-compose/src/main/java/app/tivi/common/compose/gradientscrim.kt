@@ -26,8 +26,6 @@ import androidx.ui.core.composed
 import androidx.ui.core.drawWithContent
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.VerticalGradient
-import androidx.ui.unit.Px
-import androidx.ui.unit.px
 import kotlin.math.pow
 
 /**
@@ -59,8 +57,8 @@ fun Modifier.gradientScrim(
     val shader = remember(colors, height) {
         VerticalGradient(
             colors = colors,
-            startY = Px.Zero,
-            endY = height.px
+            startY = 0f,
+            endY = height
         )
     }
 

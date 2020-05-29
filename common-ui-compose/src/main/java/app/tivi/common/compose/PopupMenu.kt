@@ -23,9 +23,8 @@ import androidx.ui.animation.Crossfade
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.core.Popup
-import androidx.ui.core.PopupProperties
-import androidx.ui.foundation.Clickable
 import androidx.ui.foundation.Text
+import androidx.ui.foundation.clickable
 import androidx.ui.layout.Column
 import androidx.ui.layout.padding
 import androidx.ui.layout.preferredSizeIn
@@ -35,7 +34,6 @@ import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.Surface
-import androidx.ui.material.ripple.ripple
 import androidx.ui.unit.IntPx
 import androidx.ui.unit.IntPxPosition
 import androidx.ui.unit.dp
@@ -51,10 +49,8 @@ fun PopupMenu(
         Popup(
             alignment = alignment,
             offset = offset,
-            popupProperties = PopupProperties(
-                isFocusable = true,
-                onDismissRequest = { visible.value = false }
-            )
+            isFocusable = true,
+            onDismissRequest = { visible.value = false }
         ) {
             Crossfade(current = visible.value) {
                 Surface(
@@ -67,25 +63,23 @@ fun PopupMenu(
                             .preferredSizeIn(minWidth = 96.dp, maxWidth = 192.dp)
                     ) {
                         items.forEach { item ->
-                            Clickable(
-                                onClick = {
-                                    item.onClick?.invoke()
-                                    visible.value = false
-                                },
-                                enabled = item.enabled,
-                                modifier = Modifier.ripple(enabled = item.enabled)
-                            ) {
-                                val emphasis = when {
-                                    item.enabled -> EmphasisAmbient.current.high
-                                    else -> EmphasisAmbient.current.disabled
-                                }
-                                ProvideEmphasis(emphasis) {
-                                    Text(
-                                        text = item.title,
-                                        style = MaterialTheme.typography.body1,
-                                        modifier = Modifier.padding(16.dp)
-                                    )
-                                }
+                            val emphasis = when {
+                                item.enabled -> EmphasisAmbient.current.high
+                                else -> EmphasisAmbient.current.disabled
+                            }
+                            ProvideEmphasis(emphasis) {
+                                Text(
+                                    text = item.title,
+                                    style = MaterialTheme.typography.body1,
+                                    modifier = Modifier.clickable(
+                                            onClick = {
+                                                item.onClick?.invoke()
+                                                visible.value = false
+                                            },
+                                            enabled = item.enabled
+                                        )
+                                        .padding(16.dp)
+                                )
                             }
                         }
                     }
