@@ -53,7 +53,7 @@ object Libs {
     }
 
     object Accompanist {
-        private const val version = "0.1.3-SNAPSHOT"
+        private const val version = "0.1.3"
         const val mdcTheme = "dev.chrisbanes.accompanist:accompanist-mdc-theme:$version"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
     }
@@ -152,15 +152,9 @@ object Libs {
             const val runtimeKtx = "androidx.work:work-runtime-ktx:$version"
         }
 
-        object Compose {
-            const val version = "0.1.0-dev12"
-            const val kotlinCompilerVersion = "1.3.70-dev-withExperimentalGoogleExtensions-20200424"
-
-            const val runtime = "androidx.compose:compose-runtime:$version"
-        }
-
         object UI {
-            private const val version = Compose.version
+            const val snapshot = "6543212"
+            const val version = "0.1.0-SNAPSHOT"
 
             const val core = "androidx.ui:ui-core:$version"
             const val layout = "androidx.ui:ui-layout:$version"
@@ -170,6 +164,13 @@ object Libs {
             const val tooling = "androidx.ui:ui-tooling:$version"
             const val livedata = "androidx.ui:ui-livedata:$version"
             const val iconsExtended = "androidx.ui:ui-material-icons-extended:$version"
+        }
+
+        object Compose {
+            const val version = UI.version
+            const val kotlinCompilerVersion = "1.3.70-dev-withExperimentalGoogleExtensions-20200424"
+
+            const val runtime = "androidx.compose:compose-runtime:$version"
         }
     }
 

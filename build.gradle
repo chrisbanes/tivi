@@ -56,9 +56,16 @@ allprojects {
         google()
         mavenCentral()
         jcenter()
+
         maven { url 'https://jitpack.io' }
         maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
-        // maven { url 'https://androidx-dev-prod.appspot.com/snapshots/builds/6379686/artifacts/ui/repository/' }
+
+        if (Libs.AndroidX.UI.version.endsWith("SNAPSHOT")) {
+            maven {
+                url "https://androidx.dev/snapshots/builds/${Libs.AndroidX.UI.snapshot}/artifacts/ui/repository/"
+            }
+        }
+
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 }
