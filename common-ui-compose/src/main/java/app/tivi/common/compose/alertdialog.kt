@@ -17,7 +17,6 @@
 package app.tivi.common.compose
 
 import androidx.compose.Composable
-import androidx.ui.foundation.Text
 import androidx.ui.material.AlertDialog
 import androidx.ui.material.OutlinedButton
 import androidx.ui.material.TextButton
@@ -32,16 +31,16 @@ fun TiviAlertDialog(
     onDismiss: () -> Unit
 ) {
     AlertDialog(
-        title = { Text(text = title) },
-        text = { Text(text = message) },
+        title = { TextWithEmphasis(text = title) },
+        text = { TextWithEmphasis(text = message) },
         confirmButton = {
             OutlinedButton(onClick = { onConfirm() }) {
-                Text(text = confirmText)
+                TextWithEmphasis(text = confirmText)
             }
         },
         dismissButton = {
             TextButton(onClick = { onDismiss() }) {
-                Text(text = dismissText)
+                TextWithEmphasis(text = dismissText)
             }
         },
         onCloseRequest = { onDismiss() }

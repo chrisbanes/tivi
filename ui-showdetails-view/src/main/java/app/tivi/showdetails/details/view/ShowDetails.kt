@@ -45,7 +45,6 @@ import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.Icon
 import androidx.ui.foundation.ScrollerPosition
-import androidx.ui.foundation.Text
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.clickable
 import androidx.ui.foundation.contentColor
@@ -106,6 +105,7 @@ import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.PopupMenu
 import app.tivi.common.compose.PopupMenuItem
 import app.tivi.common.compose.ProvideInsets
+import app.tivi.common.compose.TextWithEmphasis
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
@@ -248,13 +248,11 @@ fun ShowDetails(
                     Header(stringResource(R.string.details_about))
 
                     if (viewState.show.summary != null) {
-                        ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-                            ExpandingText(
-                                viewState.show.summary!!,
-                                modifier = Modifier.fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                            )
-                        }
+                        ExpandingText(
+                            viewState.show.summary!!,
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
                     }
 
                     val genres = viewState.show.genres
@@ -389,7 +387,7 @@ fun ShowDetails(
             if (error != null) {
                 // TODO: Convert this to swipe-to-dismiss
                 Snackbar(
-                    text = { Text(error.message) },
+                    text = { TextWithEmphasis(error.message) },
                     modifier = Modifier.clickable(onClick = { actioner(ClearError) })
                         .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                 )
@@ -414,7 +412,7 @@ private fun NetworkInfoPanel(
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        Text(
+        TextWithEmphasis(
             text = stringResource(R.string.network_title),
             style = MaterialTheme.typography.subtitle2
         )
@@ -440,7 +438,7 @@ private fun NetworkInfoPanel(
                 modifier = Modifier.preferredSizeIn(maxWidth = 72.dp, maxHeight = 32.dp)
             )
         } else if (networkName != null) {
-            Text(
+            TextWithEmphasis(
                 text = networkName,
                 style = MaterialTheme.typography.body2
             )
@@ -454,14 +452,14 @@ private fun RuntimeInfoPanel(
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        Text(
+        TextWithEmphasis(
             text = stringResource(R.string.runtime_title),
             style = MaterialTheme.typography.subtitle2
         )
 
         Spacer(Modifier.preferredHeight(4.dp))
 
-        Text(
+        TextWithEmphasis(
             text = stringResource(R.string.minutes_format, show.runtime ?: 0),
             style = MaterialTheme.typography.body2
         )
@@ -474,7 +472,7 @@ private fun AirsInfoPanel(
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        Text(
+        TextWithEmphasis(
             text = stringResource(R.string.airs_title),
             style = MaterialTheme.typography.subtitle2
         )
@@ -482,7 +480,7 @@ private fun AirsInfoPanel(
         Spacer(Modifier.preferredHeight(4.dp))
 
         val textCreator = ShowDetailsTextCreatorAmbient.current
-        Text(
+        TextWithEmphasis(
             text = textCreator.airsText(show)?.toString() ?: "No air date",
             style = MaterialTheme.typography.body2
         )
@@ -495,14 +493,14 @@ private fun CertificateInfoPanel(
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        Text(
+        TextWithEmphasis(
             text = stringResource(R.string.certificate_title),
             style = MaterialTheme.typography.subtitle2
         )
 
         Spacer(Modifier.preferredHeight(4.dp))
 
-        Text(
+        TextWithEmphasis(
             text = show.certification ?: "No certificate",
             style = MaterialTheme.typography.body2,
             modifier = Modifier.drawBorder(
@@ -520,7 +518,7 @@ private fun TraktRatingInfoPanel(
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        Text(
+        TextWithEmphasis(
             text = stringResource(R.string.trakt_rating_title),
             style = MaterialTheme.typography.subtitle2
         )
@@ -538,15 +536,16 @@ private fun TraktRatingInfoPanel(
             Spacer(Modifier.preferredWidth(4.dp))
 
             Column {
-                Text(
+                TextWithEmphasis(
                     text = stringResource(R.string.trakt_rating_text,
                         (show.traktRating ?: 0f) * 10f),
                     style = MaterialTheme.typography.body2
                 )
 
-                Text(
+                TextWithEmphasis(
                     text = stringResource(R.string.trakt_rating_votes,
                         (show.traktVotes ?: 0) / 1000f),
+                    emphasis = EmphasisAmbient.current.medium,
                     style = MaterialTheme.typography.caption
                 )
             }
@@ -556,7 +555,7 @@ private fun TraktRatingInfoPanel(
 
 @Composable
 private fun Header(title: String) {
-    Text(
+    TextWithEmphasis(
         text = title,
         style = MaterialTheme.typography.subtitle1,
         modifier = Modifier.fillMaxWidth()
@@ -566,15 +565,13 @@ private fun Header(title: String) {
 
 @Composable
 private fun Genres(show: TiviShow) {
-    ProvideEmphasis(EmphasisAmbient.current.high) {
-        val textCreator = ShowDetailsTextCreatorAmbient.current
-        Text(
-            textCreator.genreString(show.genres).toString(),
-            style = MaterialTheme.typography.body2,
-            modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        )
-    }
+    val textCreator = ShowDetailsTextCreatorAmbient.current
+    TextWithEmphasis(
+        textCreator.genreString(show.genres).toString(),
+        style = MaterialTheme.typography.body2,
+        modifier = Modifier.fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    )
 }
 
 @Composable
@@ -597,14 +594,14 @@ private fun RelatedShows(
             Stack(
                 Modifier.clickable { actioner(OpenShowDetails(item.show.id)) }
             ) {
-                ProvideEmphasis(EmphasisAmbient.current.medium) {
-                    Text(
-                        text = item.show.title ?: "No title",
-                        style = MaterialTheme.typography.caption,
-                        modifier = Modifier.padding(4.dp)
-                            .gravity(Alignment.CenterStart)
-                    )
-                }
+                TextWithEmphasis(
+                    text = item.show.title ?: "No title",
+                    emphasis = EmphasisAmbient.current.medium,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.padding(4.dp)
+                        .gravity(Alignment.CenterStart)
+                )
+
                 val poster = item.images.findHighestRatedPoster()
                 if (poster != null) {
                     CoilImageWithCrossfade(
@@ -632,14 +629,15 @@ private fun NextEpisodeToWatch(
     ) {
         val textCreator = ShowDetailsTextCreatorAmbient.current
 
-        Text(
+        TextWithEmphasis(
             textCreator.seasonEpisodeTitleText(season, episode),
+            emphasis = EmphasisAmbient.current.medium,
             style = MaterialTheme.typography.caption
         )
 
         Spacer(modifier = Modifier.preferredHeight(4.dp))
 
-        Text(
+        TextWithEmphasis(
             episode.title ?: stringResource(R.string.episode_title_fallback, episode.number!!),
             style = MaterialTheme.typography.body1
         )
@@ -653,23 +651,21 @@ private fun InfoPanels(show: TiviShow) {
         mainAxisSpacing = 8.dp,
         crossAxisSpacing = 8.dp
     ) {
-        ProvideEmphasis(EmphasisAmbient.current.high) {
-            if (show.traktRating != null) {
-                TraktRatingInfoPanel(show)
-            }
-            if (show.network != null || show.networkLogoPath != null) {
-                NetworkInfoPanel(show)
-            }
-            if (show.certification != null) {
-                CertificateInfoPanel(show)
-            }
-            if (show.runtime != null) {
-                RuntimeInfoPanel(show)
-            }
-            if (show.airsDay != null && show.airsTime != null &&
-                show.airsTimeZone != null) {
-                AirsInfoPanel(show)
-            }
+        if (show.traktRating != null) {
+            TraktRatingInfoPanel(show)
+        }
+        if (show.network != null || show.networkLogoPath != null) {
+            NetworkInfoPanel(show)
+        }
+        if (show.certification != null) {
+            CertificateInfoPanel(show)
+        }
+        if (show.runtime != null) {
+            RuntimeInfoPanel(show)
+        }
+        if (show.airsDay != null && show.airsTime != null &&
+            show.airsTimeZone != null) {
+            AirsInfoPanel(show)
         }
     }
 }
@@ -690,7 +686,7 @@ private fun WatchStats(stats: FollowedShowsWatchStats) {
         val textCreator = ShowDetailsTextCreatorAmbient.current
 
         // TODO: Do something better with CharSequences containing markup/spans
-        Text(
+        TextWithEmphasis(
             text = textCreator.followedShowEpisodeWatchStatus(stats).toString(),
             style = MaterialTheme.typography.body2
         )
@@ -795,24 +791,26 @@ private fun SeasonRow(
         ) {
             val textCreator = ShowDetailsTextCreatorAmbient.current
 
-            val emphasis = when {
-                season.ignored -> EmphasisAmbient.current.disabled
-                else -> EmphasisAmbient.current.high
-            }
-            ProvideEmphasis(emphasis) {
-                Text(
-                    text = season.title
-                        ?: stringResource(R.string.season_title_fallback, season.number!!),
-                    style = MaterialTheme.typography.body1
-                )
+            TextWithEmphasis(
+                text = season.title
+                    ?: stringResource(R.string.season_title_fallback, season.number!!),
+                emphasis = when {
+                    season.ignored -> EmphasisAmbient.current.disabled
+                    else -> EmphasisAmbient.current.high
+                },
+                style = MaterialTheme.typography.body1
+            )
 
-                Spacer(Modifier.preferredHeight(4.dp))
+            Spacer(Modifier.preferredHeight(4.dp))
 
-                Text(
-                    text = textCreator.seasonSummaryText(episodesWithWatches).toString(),
-                    style = MaterialTheme.typography.caption
-                )
-            }
+            TextWithEmphasis(
+                text = textCreator.seasonSummaryText(episodesWithWatches).toString(),
+                emphasis = when {
+                    season.ignored -> EmphasisAmbient.current.disabled
+                    else -> EmphasisAmbient.current.high
+                },
+                style = MaterialTheme.typography.caption
+            )
 
             if (!season.ignored) {
                 Spacer(Modifier.preferredHeight(4.dp))
@@ -855,20 +853,19 @@ private fun EpisodeWithWatchesRow(
         Column(modifier = Modifier.weight(1f)) {
             val textCreator = ShowDetailsTextCreatorAmbient.current
 
-            ProvideEmphasis(EmphasisAmbient.current.high) {
-                Text(
-                    text = textCreator.episodeNumberText(episode).toString(),
-                    style = MaterialTheme.typography.caption
-                )
+            TextWithEmphasis(
+                text = textCreator.episodeNumberText(episode).toString(),
+                emphasis = EmphasisAmbient.current.medium,
+                style = MaterialTheme.typography.caption
+            )
 
-                Spacer(Modifier.preferredHeight(2.dp))
+            Spacer(Modifier.preferredHeight(2.dp))
 
-                Text(
-                    text = episode.title
-                        ?: stringResource(R.string.episode_title_fallback, episode.number!!),
-                    style = MaterialTheme.typography.body2
-                )
-            }
+            TextWithEmphasis(
+                text = episode.title
+                    ?: stringResource(R.string.episode_title_fallback, episode.number!!),
+                style = MaterialTheme.typography.body2
+            )
         }
 
         ProvideEmphasis(EmphasisAmbient.current.medium) {
@@ -973,9 +970,7 @@ private fun ShowDetailsAppBar(
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
-        title = {
-            Text(text = show.title ?: "")
-        },
+        title = { TextWithEmphasis(text = show.title ?: "") },
         navigationIcon = {
             IconButton(onClick = { actioner(NavigateUp) }) {
                 Icon(Icons.Default.ArrowBack)
@@ -1017,7 +1012,7 @@ private fun ToggleShowFollowFloatingActionButton(
             )
         },
         text = {
-            Text(
+            TextWithEmphasis(
                 when {
                     isFollowed -> stringResource(R.string.follow_show_remove)
                     else -> stringResource(R.string.follow_show_add)

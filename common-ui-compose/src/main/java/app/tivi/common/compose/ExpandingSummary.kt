@@ -22,8 +22,9 @@ import androidx.compose.setValue
 import androidx.compose.state
 import androidx.compose.stateFor
 import androidx.ui.core.Modifier
-import androidx.ui.foundation.Text
 import androidx.ui.foundation.clickable
+import androidx.ui.material.Emphasis
+import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.MaterialTheme
 import androidx.ui.text.TextStyle
 import androidx.ui.text.style.TextOverflow
@@ -31,6 +32,7 @@ import androidx.ui.text.style.TextOverflow
 @Composable
 fun ExpandingText(
     text: String,
+    emphasis: Emphasis = EmphasisAmbient.current.high,
     textStyle: TextStyle = MaterialTheme.typography.body2,
     expandable: Boolean = true,
     collapsedMaxLines: Int = 4,
@@ -40,8 +42,9 @@ fun ExpandingText(
     var canTextExpand by stateFor(text) { true }
     var expanded by state { false }
 
-    Text(
+    TextWithEmphasis(
         text = text,
+        emphasis = emphasis,
         style = textStyle,
         overflow = TextOverflow.Ellipsis,
         maxLines = if (expanded) expandedMaxLines else collapsedMaxLines,

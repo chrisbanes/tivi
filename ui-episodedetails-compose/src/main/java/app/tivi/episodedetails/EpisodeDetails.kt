@@ -16,7 +16,6 @@
 
 package app.tivi.episodedetails
 
-import android.os.Build
 import android.view.ViewGroup
 import androidx.animation.transitionDefinition
 import androidx.compose.Composable
@@ -43,7 +42,6 @@ import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.ContentColorAmbient
 import androidx.ui.foundation.Icon
-import androidx.ui.foundation.Text
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.clickable
 import androidx.ui.foundation.contentColor
@@ -98,6 +96,7 @@ import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.ProvideInsets
 import app.tivi.common.compose.SwipeDirection
 import app.tivi.common.compose.SwipeToDismiss
+import app.tivi.common.compose.TextWithEmphasis
 import app.tivi.common.compose.TiviAlertDialog
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.boundsInParent
@@ -251,7 +250,7 @@ private fun EpisodeDetails(
                 if (error != null) {
                     // TODO: Convert this to swipe-to-dismiss
                     Snackbar(
-                        text = { Text(error.message) },
+                        text = { TextWithEmphasis(error.message) },
                         modifier = Modifier.clickable(onClick = { actioner(ClearError) })
                             .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                     )
@@ -291,25 +290,22 @@ private fun Backdrop(
 
                 Providers(ContentColorAmbient provides Color.White) {
                     if (seasonNumber != null && epNumber != null) {
-                        ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
-                            @Suppress("DEPRECATION")
-                            val locale = ConfigurationAmbient.current.locale
-                            Text(
-                                text = stringResource(R.string.season_episode_number,
-                                    seasonNumber, epNumber).toUpperCase(locale),
-                                style = MaterialTheme.typography.overline
-                                    .copy(color = contentColor())
-                            )
-                        }
+                        @Suppress("DEPRECATION")
+                        val locale = ConfigurationAmbient.current.locale
+                        TextWithEmphasis(
+                            text = stringResource(R.string.season_episode_number,
+                                seasonNumber, epNumber).toUpperCase(locale),
+                            emphasis = EmphasisAmbient.current.medium,
+                            style = MaterialTheme.typography.overline
+                                .copy(color = contentColor())
+                        )
                         Spacer(modifier = Modifier.preferredHeight(4.dp))
                     }
 
-                    ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-                        Text(
-                            text = episode.title ?: "No title",
-                            style = type.h6.copy(color = contentColor())
-                        )
-                    }
+                    TextWithEmphasis(
+                        text = episode.title ?: "No title",
+                        style = type.h6.copy(color = contentColor())
+                    )
                 }
             }
         }
@@ -354,28 +350,25 @@ private fun InfoPane(
 
         Spacer(modifier = Modifier.preferredHeight(4.dp))
 
-        ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-            Text(
-                modifier = Modifier.gravity(Alignment.CenterHorizontally),
-                text = label,
-                style = MaterialTheme.typography.body1
-            )
-        }
+        TextWithEmphasis(
+            modifier = Modifier.gravity(Alignment.CenterHorizontally),
+            text = label,
+            style = MaterialTheme.typography.body1
+        )
     }
 }
 
 @Composable
 private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
     Row {
-        ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                    .gravity(Alignment.CenterVertically)
-                    .weight(1f),
-                text = stringResource(R.string.episode_watches),
-                style = MaterialTheme.typography.subtitle1
-            )
-        }
+
+        TextWithEmphasis(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                .gravity(Alignment.CenterVertically)
+                .weight(1f),
+            text = stringResource(R.string.episode_watches),
+            style = MaterialTheme.typography.subtitle1
+        )
 
         ProvideEmphasis(EmphasisAmbient.current.disabled) {
             IconButton(
@@ -395,14 +388,12 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 .preferredSizeIn(minWidth = 40.dp, minHeight = 40.dp)
         ) {
-            ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-                val formatter = TiviDateFormatterAmbient.current
-                Text(
-                    modifier = Modifier.weight(1f).gravity(Alignment.CenterVertically),
-                    text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
-                    style = MaterialTheme.typography.body2
-                )
-            }
+            val formatter = TiviDateFormatterAmbient.current
+            TextWithEmphasis(
+                modifier = Modifier.weight(1f).gravity(Alignment.CenterVertically),
+                text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
+                style = MaterialTheme.typography.body2
+            )
 
             ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
                 if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
@@ -508,15 +499,13 @@ fun MarkWatchedButton(
 ) {
     Button(
         modifier = modifier,
-        elevation = if (Build.VERSION.SDK_INT != 28) 2.dp else 0.dp, // b/152696056
+        elevation = 2.dp,
         onClick = { actioner(AddEpisodeWatchAction) }
     ) {
-        ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-            Text(
-                text = stringResource(R.string.episode_mark_watched),
-                style = MaterialTheme.typography.button.copy(color = contentColor())
-            )
-        }
+        TextWithEmphasis(
+            text = stringResource(R.string.episode_mark_watched),
+            style = MaterialTheme.typography.button.copy(color = contentColor())
+        )
     }
 }
 
@@ -529,12 +518,10 @@ fun AddWatchButton(
         modifier = modifier,
         onClick = { actioner(AddEpisodeWatchAction) }
     ) {
-        ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-            Text(
-                text = stringResource(R.string.episode_add_watch),
-                style = MaterialTheme.typography.button.copy(color = contentColor())
-            )
-        }
+        TextWithEmphasis(
+            text = stringResource(R.string.episode_add_watch),
+            style = MaterialTheme.typography.button.copy(color = contentColor())
+        )
     }
 }
 
