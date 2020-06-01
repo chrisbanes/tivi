@@ -43,7 +43,6 @@ import androidx.ui.core.onPositioned
 import androidx.ui.core.positionInRoot
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
-import androidx.ui.foundation.HorizontalScroller
 import androidx.ui.foundation.Icon
 import androidx.ui.foundation.ScrollerPosition
 import androidx.ui.foundation.Text
@@ -102,6 +101,7 @@ import androidx.ui.unit.IntPx
 import androidx.ui.unit.dp
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
+import app.tivi.common.compose.HorizontalCollectionScroller
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.PopupMenu
 import app.tivi.common.compose.PopupMenuItem
@@ -585,36 +585,32 @@ private fun RelatedShows(
 ) {
     // TODO: ideally we would use AdapterList here, but it only works for vertical lists, not
     // horizontal
-    HorizontalScroller(modifier = modifier.padding(vertical = 8.dp)) {
-        Row(modifier.padding(horizontal = 16.dp)) {
-            related.forEachIndexed { index, relatedEntry ->
-                Card(
-                    Modifier.aspectRatio(2 / 3f)
-                        .preferredWidth(64.dp)
-                        .clickable { actioner(OpenShowDetails(relatedEntry.show.id)) }
-                ) {
-                    Stack {
-                        ProvideEmphasis(EmphasisAmbient.current.medium) {
-                            Text(
-                                text = relatedEntry.show.title ?: "No title",
-                                style = MaterialTheme.typography.caption,
-                                modifier = Modifier.padding(4.dp)
-                                    .gravity(Alignment.CenterStart)
-                            )
-                        }
-                        val poster = relatedEntry.images.findHighestRatedPoster()
-                        if (poster != null) {
-                            CoilImageWithCrossfade(
-                                poster,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-                    }
+    HorizontalCollectionScroller(
+        items = related,
+        modifier = modifier
+    ) { item ->
+        Card(
+            modifier = Modifier.padding(vertical = 8.dp)
+                .preferredWidth(64.dp)
+                .aspectRatio(2 / 3f)
+        ) {
+            Stack(
+                Modifier.clickable { actioner(OpenShowDetails(item.show.id)) }
+            ) {
+                ProvideEmphasis(EmphasisAmbient.current.medium) {
+                    Text(
+                        text = item.show.title ?: "No title",
+                        style = MaterialTheme.typography.caption,
+                        modifier = Modifier.padding(4.dp)
+                            .gravity(Alignment.CenterStart)
+                    )
                 }
-
-                if (index + 1 < related.size) {
-                    // Add a spacer if there are still more items to add
-                    Spacer(modifier = Modifier.preferredWidth(4.dp))
+                val poster = item.images.findHighestRatedPoster()
+                if (poster != null) {
+                    CoilImageWithCrossfade(
+                        poster,
+                        modifier = Modifier.fillMaxSize()
+                    )
                 }
             }
         }
