@@ -16,7 +16,6 @@
 
 package app.tivi.episodedetails
 
-import android.os.Build
 import android.view.ViewGroup
 import androidx.animation.transitionDefinition
 import androidx.compose.Composable
@@ -42,11 +41,8 @@ import androidx.ui.core.onPositioned
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.ContentColorAmbient
-import androidx.ui.foundation.Icon
-import androidx.ui.foundation.Text
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.clickable
-import androidx.ui.foundation.contentColor
 import androidx.ui.foundation.drawBackground
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.geometry.Offset
@@ -71,7 +67,6 @@ import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.IconButton
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.OutlinedButton
-import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.Snackbar
 import androidx.ui.material.Surface
 import androidx.ui.material.TopAppBar
@@ -93,15 +88,20 @@ import androidx.ui.unit.dp
 import androidx.ui.unit.toOffset
 import app.tivi.animation.invoke
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
+import app.tivi.common.compose.ContentColorTransformationAmbient
 import app.tivi.common.compose.ExpandingText
+import app.tivi.common.compose.Icon
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.ProvideInsets
 import app.tivi.common.compose.SwipeDirection
 import app.tivi.common.compose.SwipeToDismiss
+import app.tivi.common.compose.Text
 import app.tivi.common.compose.TiviAlertDialog
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.boundsInParent
 import app.tivi.common.compose.center
+import app.tivi.common.compose.contentColor
+import app.tivi.common.compose.toTransform
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
@@ -168,12 +168,10 @@ private fun EpisodeDetails(
                         if (episode != null) {
                             InfoPanes(episode)
 
-                            ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-                                ExpandingText(
-                                    episode.summary ?: "No summary",
-                                    modifier = Modifier.padding(16.dp)
-                                )
-                            }
+                            ExpandingText(
+                                episode.summary ?: "No summary",
+                                modifier = Modifier.padding(16.dp)
+                            )
                         }
 
                         val watches = viewState.watches
@@ -291,25 +289,21 @@ private fun Backdrop(
 
                 Providers(ContentColorAmbient provides Color.White) {
                     if (seasonNumber != null && epNumber != null) {
-                        ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
-                            @Suppress("DEPRECATION")
-                            val locale = ConfigurationAmbient.current.locale
-                            Text(
-                                text = stringResource(R.string.season_episode_number,
-                                    seasonNumber, epNumber).toUpperCase(locale),
-                                style = MaterialTheme.typography.overline
-                                    .copy(color = contentColor())
-                            )
-                        }
+                        @Suppress("DEPRECATION")
+                        val locale = ConfigurationAmbient.current.locale
+                        Text(
+                            text = stringResource(R.string.season_episode_number,
+                                seasonNumber, epNumber).toUpperCase(locale),
+                            color = contentColor(EmphasisAmbient.current.medium.toTransform()),
+                            style = MaterialTheme.typography.overline
+                        )
                         Spacer(modifier = Modifier.preferredHeight(4.dp))
                     }
 
-                    ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-                        Text(
-                            text = episode.title ?: "No title",
-                            style = type.h6.copy(color = contentColor())
-                        )
-                    }
+                    Text(
+                        text = episode.title ?: "No title",
+                        style = type.h6.copy(color = contentColor())
+                    )
                 }
             }
         }
@@ -345,45 +339,42 @@ private fun InfoPane(
     label: String
 ) {
     Column(modifier = modifier.padding(all = 16.dp)) {
-        ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
-            Icon(
-                asset = icon,
-                modifier = Modifier.gravity(Alignment.CenterHorizontally)
-            )
-        }
+        Icon(
+            asset = icon,
+            modifier = Modifier.gravity(Alignment.CenterHorizontally),
+            tint = contentColor(EmphasisAmbient.current.medium.toTransform())
+        )
 
         Spacer(modifier = Modifier.preferredHeight(4.dp))
 
-        ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-            Text(
-                modifier = Modifier.gravity(Alignment.CenterHorizontally),
-                text = label,
-                style = MaterialTheme.typography.body1
-            )
-        }
+        Text(
+            modifier = Modifier.gravity(Alignment.CenterHorizontally),
+            text = label,
+            style = MaterialTheme.typography.body1
+        )
     }
 }
 
 @Composable
 private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
     Row {
-        ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                    .gravity(Alignment.CenterVertically)
-                    .weight(1f),
-                text = stringResource(R.string.episode_watches),
-                style = MaterialTheme.typography.subtitle1
-            )
-        }
 
-        ProvideEmphasis(EmphasisAmbient.current.disabled) {
-            IconButton(
-                modifier = Modifier.padding(end = 4.dp),
-                onClick = { onSweepWatchesClick() }
-            ) {
-                Icon(asset = Icons.Default.DeleteSweep)
-            }
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                .gravity(Alignment.CenterVertically)
+                .weight(1f),
+            text = stringResource(R.string.episode_watches),
+            style = MaterialTheme.typography.subtitle1
+        )
+
+        IconButton(
+            modifier = Modifier.padding(end = 4.dp),
+            onClick = { onSweepWatchesClick() }
+        ) {
+            Icon(
+                asset = Icons.Default.DeleteSweep,
+                tint = contentColor(EmphasisAmbient.current.medium.toTransform())
+            )
         }
     }
 }
@@ -395,27 +386,26 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 .preferredSizeIn(minWidth = 40.dp, minHeight = 40.dp)
         ) {
-            ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-                val formatter = TiviDateFormatterAmbient.current
-                Text(
-                    modifier = Modifier.weight(1f).gravity(Alignment.CenterVertically),
-                    text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
-                    style = MaterialTheme.typography.body2
-                )
-            }
+            val formatter = TiviDateFormatterAmbient.current
+            Text(
+                modifier = Modifier.weight(1f).gravity(Alignment.CenterVertically),
+                text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
+                style = MaterialTheme.typography.body2
+            )
 
-            ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
-                if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
+            if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
+                // Just to show how you can see an emphasis over a subtree
+                Providers(ContentColorTransformationAmbient provides EmphasisAmbient.current.medium.toTransform()) {
                     Icon(
                         asset = Icons.Filled.Publish,
-                        modifier = Modifier.padding(start = 8.dp).gravity(Alignment.CenterVertically)
+                        modifier = Modifier.padding(start = 8.dp)
+                            .gravity(Alignment.CenterVertically)
                     )
-                }
 
-                if (episodeWatchEntry.pendingAction == PendingAction.DELETE) {
                     Icon(
                         asset = Icons.Filled.VisibilityOff,
-                        modifier = Modifier.padding(start = 8.dp).gravity(Alignment.CenterVertically)
+                        modifier = Modifier.padding(start = 8.dp)
+                            .gravity(Alignment.CenterVertically)
                     )
                 }
             }
@@ -473,14 +463,13 @@ private fun EpisodeWatchSwipeBackground(
                 )
             )
 
-            ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
-                Icon(
-                    asset = Icons.Default.Delete,
-                    modifier = Modifier.onPositioned { iconCenter = it.boundsInParent.center }
-                        .padding(0.dp, 0.dp, end = 16.dp, bottom = 0.dp)
-                        .gravity(Alignment.CenterEnd)
-                )
-            }
+            Icon(
+                asset = Icons.Default.Delete,
+                modifier = Modifier.onPositioned { iconCenter = it.boundsInParent.center }
+                    .padding(0.dp, 0.dp, end = 16.dp, bottom = 0.dp)
+                    .gravity(Alignment.CenterEnd),
+                tint = contentColor(EmphasisAmbient.current.medium.toTransform())
+            )
         }
     }
 }
@@ -508,15 +497,13 @@ fun MarkWatchedButton(
 ) {
     Button(
         modifier = modifier,
-        elevation = if (Build.VERSION.SDK_INT != 28) 2.dp else 0.dp, // b/152696056
+        elevation = 2.dp,
         onClick = { actioner(AddEpisodeWatchAction) }
     ) {
-        ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-            Text(
-                text = stringResource(R.string.episode_mark_watched),
-                style = MaterialTheme.typography.button.copy(color = contentColor())
-            )
-        }
+        Text(
+            text = stringResource(R.string.episode_mark_watched),
+            style = MaterialTheme.typography.button.copy(color = contentColor())
+        )
     }
 }
 
@@ -529,12 +516,10 @@ fun AddWatchButton(
         modifier = modifier,
         onClick = { actioner(AddEpisodeWatchAction) }
     ) {
-        ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-            Text(
-                text = stringResource(R.string.episode_add_watch),
-                style = MaterialTheme.typography.button.copy(color = contentColor())
-            )
-        }
+        Text(
+            text = stringResource(R.string.episode_add_watch),
+            style = MaterialTheme.typography.button.copy(color = contentColor())
+        )
     }
 }
 

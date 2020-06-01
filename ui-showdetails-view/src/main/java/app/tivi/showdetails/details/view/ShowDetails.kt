@@ -43,12 +43,9 @@ import androidx.ui.core.onPositioned
 import androidx.ui.core.positionInRoot
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
-import androidx.ui.foundation.Icon
 import androidx.ui.foundation.ScrollerPosition
-import androidx.ui.foundation.Text
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.clickable
-import androidx.ui.foundation.contentColor
 import androidx.ui.foundation.drawBackground
 import androidx.ui.foundation.drawBorder
 import androidx.ui.foundation.isSystemInDarkTheme
@@ -80,7 +77,6 @@ import androidx.ui.material.ExtendedFloatingActionButton
 import androidx.ui.material.IconButton
 import androidx.ui.material.LinearProgressIndicator
 import androidx.ui.material.MaterialTheme
-import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.Snackbar
 import androidx.ui.material.Surface
 import androidx.ui.material.TopAppBar
@@ -100,14 +96,19 @@ import androidx.ui.unit.Dp
 import androidx.ui.unit.IntPx
 import androidx.ui.unit.dp
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
+import app.tivi.common.compose.ContentColorTransformationAmbient
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.HorizontalCollectionScroller
+import app.tivi.common.compose.Icon
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.PopupMenu
 import app.tivi.common.compose.PopupMenuItem
 import app.tivi.common.compose.ProvideInsets
+import app.tivi.common.compose.Text
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
+import app.tivi.common.compose.contentColor
+import app.tivi.common.compose.toTransform
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.ImageType
@@ -156,7 +157,9 @@ fun ViewGroup.composeShowDetails(
 ): Any = setContent(Recomposer.current()) {
     Providers(
         TiviDateFormatterAmbient provides tiviDateFormatter,
-        ShowDetailsTextCreatorAmbient provides textCreator
+        ShowDetailsTextCreatorAmbient provides textCreator,
+        // This would be done in MaterialTheme
+        ContentColorTransformationAmbient provides EmphasisAmbient.current.high.toTransform()
     ) {
         MaterialThemeFromMdcTheme {
             ProvideInsets(insets) {
@@ -248,13 +251,11 @@ fun ShowDetails(
                     Header(stringResource(R.string.details_about))
 
                     if (viewState.show.summary != null) {
-                        ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-                            ExpandingText(
-                                viewState.show.summary!!,
-                                modifier = Modifier.fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                            )
-                        }
+                        ExpandingText(
+                            viewState.show.summary!!,
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
                     }
 
                     val genres = viewState.show.genres
@@ -547,6 +548,7 @@ private fun TraktRatingInfoPanel(
                 Text(
                     text = stringResource(R.string.trakt_rating_votes,
                         (show.traktVotes ?: 0) / 1000f),
+                    color = contentColor(EmphasisAmbient.current.medium.toTransform()),
                     style = MaterialTheme.typography.caption
                 )
             }
@@ -566,15 +568,13 @@ private fun Header(title: String) {
 
 @Composable
 private fun Genres(show: TiviShow) {
-    ProvideEmphasis(EmphasisAmbient.current.high) {
-        val textCreator = ShowDetailsTextCreatorAmbient.current
-        Text(
-            textCreator.genreString(show.genres).toString(),
-            style = MaterialTheme.typography.body2,
-            modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        )
-    }
+    val textCreator = ShowDetailsTextCreatorAmbient.current
+    Text(
+        textCreator.genreString(show.genres).toString(),
+        style = MaterialTheme.typography.body2,
+        modifier = Modifier.fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    )
 }
 
 @Composable
@@ -597,14 +597,14 @@ private fun RelatedShows(
             Stack(
                 Modifier.clickable { actioner(OpenShowDetails(item.show.id)) }
             ) {
-                ProvideEmphasis(EmphasisAmbient.current.medium) {
-                    Text(
-                        text = item.show.title ?: "No title",
-                        style = MaterialTheme.typography.caption,
-                        modifier = Modifier.padding(4.dp)
-                            .gravity(Alignment.CenterStart)
-                    )
-                }
+                Text(
+                    text = item.show.title ?: "No title",
+                    color = contentColor(EmphasisAmbient.current.medium.toTransform()),
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.padding(4.dp)
+                        .gravity(Alignment.CenterStart)
+                )
+
                 val poster = item.images.findHighestRatedPoster()
                 if (poster != null) {
                     CoilImageWithCrossfade(
@@ -634,6 +634,7 @@ private fun NextEpisodeToWatch(
 
         Text(
             textCreator.seasonEpisodeTitleText(season, episode),
+            color = contentColor(EmphasisAmbient.current.medium.toTransform()),
             style = MaterialTheme.typography.caption
         )
 
@@ -653,23 +654,21 @@ private fun InfoPanels(show: TiviShow) {
         mainAxisSpacing = 8.dp,
         crossAxisSpacing = 8.dp
     ) {
-        ProvideEmphasis(EmphasisAmbient.current.high) {
-            if (show.traktRating != null) {
-                TraktRatingInfoPanel(show)
-            }
-            if (show.network != null || show.networkLogoPath != null) {
-                NetworkInfoPanel(show)
-            }
-            if (show.certification != null) {
-                CertificateInfoPanel(show)
-            }
-            if (show.runtime != null) {
-                RuntimeInfoPanel(show)
-            }
-            if (show.airsDay != null && show.airsTime != null &&
-                show.airsTimeZone != null) {
-                AirsInfoPanel(show)
-            }
+        if (show.traktRating != null) {
+            TraktRatingInfoPanel(show)
+        }
+        if (show.network != null || show.networkLogoPath != null) {
+            NetworkInfoPanel(show)
+        }
+        if (show.certification != null) {
+            CertificateInfoPanel(show)
+        }
+        if (show.runtime != null) {
+            RuntimeInfoPanel(show)
+        }
+        if (show.airsDay != null && show.airsTime != null &&
+            show.airsTimeZone != null) {
+            AirsInfoPanel(show)
         }
     }
 }
@@ -795,24 +794,26 @@ private fun SeasonRow(
         ) {
             val textCreator = ShowDetailsTextCreatorAmbient.current
 
-            val emphasis = when {
-                season.ignored -> EmphasisAmbient.current.disabled
-                else -> EmphasisAmbient.current.high
-            }
-            ProvideEmphasis(emphasis) {
-                Text(
-                    text = season.title
-                        ?: stringResource(R.string.season_title_fallback, season.number!!),
-                    style = MaterialTheme.typography.body1
-                )
+            Text(
+                text = season.title
+                    ?: stringResource(R.string.season_title_fallback, season.number!!),
+                color = when {
+                    season.ignored -> contentColor(EmphasisAmbient.current.disabled.toTransform())
+                    else -> contentColor()
+                },
+                style = MaterialTheme.typography.body1
+            )
 
-                Spacer(Modifier.preferredHeight(4.dp))
+            Spacer(Modifier.preferredHeight(4.dp))
 
-                Text(
-                    text = textCreator.seasonSummaryText(episodesWithWatches).toString(),
-                    style = MaterialTheme.typography.caption
-                )
-            }
+            Text(
+                text = textCreator.seasonSummaryText(episodesWithWatches).toString(),
+                color = when {
+                    season.ignored -> contentColor(EmphasisAmbient.current.disabled.toTransform())
+                    else -> contentColor()
+                },
+                style = MaterialTheme.typography.caption
+            )
 
             if (!season.ignored) {
                 Spacer(Modifier.preferredHeight(4.dp))
@@ -832,10 +833,11 @@ private fun SeasonRow(
             actioner = actioner
         )
 
-        ProvideEmphasis(EmphasisAmbient.current.medium) {
-            IconButton(onClick = { showPopup.value = true }) {
-                Icon(Icons.Default.MoreVert)
-            }
+        IconButton(onClick = { showPopup.value = true }) {
+            Icon(
+                asset = Icons.Default.MoreVert,
+                tint = contentColor(EmphasisAmbient.current.medium.toTransform())
+            )
         }
     }
 }
@@ -855,43 +857,42 @@ private fun EpisodeWithWatchesRow(
         Column(modifier = Modifier.weight(1f)) {
             val textCreator = ShowDetailsTextCreatorAmbient.current
 
-            ProvideEmphasis(EmphasisAmbient.current.high) {
-                Text(
-                    text = textCreator.episodeNumberText(episode).toString(),
-                    style = MaterialTheme.typography.caption
-                )
+            Text(
+                text = textCreator.episodeNumberText(episode).toString(),
+                color = contentColor(EmphasisAmbient.current.medium.toTransform()),
+                style = MaterialTheme.typography.caption
+            )
 
-                Spacer(Modifier.preferredHeight(2.dp))
+            Spacer(Modifier.preferredHeight(2.dp))
 
-                Text(
-                    text = episode.title
-                        ?: stringResource(R.string.episode_title_fallback, episode.number!!),
-                    style = MaterialTheme.typography.body2
-                )
-            }
+            Text(
+                text = episode.title
+                    ?: stringResource(R.string.episode_title_fallback, episode.number!!),
+                style = MaterialTheme.typography.body2
+            )
         }
 
-        ProvideEmphasis(EmphasisAmbient.current.medium) {
-            var needSpacer = false
-            if (episodeWithWatches.hasPending()) {
-                Icon(
-                    asset = Icons.Default.CloudUpload,
-                    modifier = Modifier.gravity(Alignment.CenterVertically)
-                )
-                needSpacer = true
+        var needSpacer = false
+        if (episodeWithWatches.hasPending()) {
+            Icon(
+                asset = Icons.Default.CloudUpload,
+                modifier = Modifier.gravity(Alignment.CenterVertically),
+                tint = contentColor(EmphasisAmbient.current.medium.toTransform())
+            )
+            needSpacer = true
+        }
+        if (episodeWithWatches.isWatched()) {
+            if (needSpacer) {
+                Spacer(Modifier.preferredWidth(4.dp))
             }
-            if (episodeWithWatches.isWatched()) {
-                if (needSpacer) {
-                    Spacer(Modifier.preferredWidth(4.dp))
-                }
-                Icon(
-                    asset = when {
-                        episodeWithWatches.onlyPendingDeletes() -> Icons.Default.VisibilityOff
-                        else -> Icons.Default.Visibility
-                    },
-                    modifier = Modifier.gravity(Alignment.CenterVertically)
-                )
-            }
+            Icon(
+                asset = when {
+                    episodeWithWatches.onlyPendingDeletes() -> Icons.Default.VisibilityOff
+                    else -> Icons.Default.Visibility
+                },
+                modifier = Modifier.gravity(Alignment.CenterVertically),
+                tint = contentColor(EmphasisAmbient.current.medium.toTransform())
+            )
         }
     }
 }
@@ -973,9 +974,7 @@ private fun ShowDetailsAppBar(
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
-        title = {
-            Text(text = show.title ?: "")
-        },
+        title = { Text(text = show.title ?: "") },
         navigationIcon = {
             IconButton(onClick = { actioner(NavigateUp) }) {
                 Icon(Icons.Default.ArrowBack)
