@@ -21,7 +21,6 @@ import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.Result
 import app.tivi.data.mappers.ShowIdToTraktIdMapper
 import app.tivi.data.mappers.TraktEpisodeToEpisode
-import app.tivi.data.mappers.toLambda
 import app.tivi.extensions.executeWithRetry
 import app.tivi.extensions.toResult
 import com.uwetrottmann.trakt5.enums.Extended
@@ -44,6 +43,6 @@ class TraktEpisodeDataSource @Inject constructor(
 
         return service.get().summary(traktId.toString(), seasonNumber, episodeNumber, Extended.FULL)
             .executeWithRetry()
-            .toResult(episodeMapper.toLambda())
+            .toResult(episodeMapper::map)
     }
 }

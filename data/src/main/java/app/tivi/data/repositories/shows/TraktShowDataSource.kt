@@ -21,7 +21,6 @@ import app.tivi.data.entities.Result
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TraktShowToTiviShow
-import app.tivi.data.mappers.toLambda
 import app.tivi.extensions.toResult
 import com.uwetrottmann.trakt5.enums.Extended
 import com.uwetrottmann.trakt5.enums.IdType
@@ -69,7 +68,7 @@ internal class TraktShowDataSource @Inject constructor(
         return if (traktId != null) {
             showService.get().summary(traktId.toString(), Extended.FULL)
                 .execute()
-                .toResult(mapper.toLambda())
+                .toResult(mapper::map)
         } else {
             ErrorResult(IllegalArgumentException("Trakt ID for show does not exist: [$show]"))
         }

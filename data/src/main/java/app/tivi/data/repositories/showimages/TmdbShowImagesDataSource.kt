@@ -21,7 +21,6 @@ import app.tivi.data.entities.Result
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.mappers.TmdbImagesToShowImages
-import app.tivi.data.mappers.toLambda
 import app.tivi.extensions.executeWithRetry
 import app.tivi.extensions.toResult
 import com.uwetrottmann.tmdb2.Tmdb
@@ -38,7 +37,7 @@ internal class TmdbShowImagesDataSource @Inject constructor(
         return if (tmdbId != null) {
             tmdb.tvService().tv(tmdbId, null, AppendToResponse(AppendToResponseItem.IMAGES))
                 .executeWithRetry()
-                .toResult(mapper.toLambda())
+                .toResult(mapper::map)
         } else {
             ErrorResult(IllegalArgumentException("TmdbId for show does not exist [$show]"))
         }

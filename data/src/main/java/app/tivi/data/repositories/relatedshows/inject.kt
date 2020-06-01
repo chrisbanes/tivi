@@ -35,14 +35,14 @@ internal class RelatedShowsModule {
     @Provides
     @Singleton
     fun provideRelatedShowsStore(
-        traktRelatedShows: TraktRelatedShowsDataSource,
+        tmdbRelatedShows: TmdbRelatedShowsDataSource,
         relatedShowsDao: RelatedShowsDao,
         showDao: TiviShowDao,
         lastRequestStore: RelatedShowsLastRequestStore,
         @ForStore scope: CoroutineScope
     ): RelatedShowsStore {
         return StoreBuilder.fromNonFlow { showId: Long ->
-            val response = traktRelatedShows(showId)
+            val response = tmdbRelatedShows(showId)
             if (response is Success) {
                 lastRequestStore.updateLastRequest(showId)
             }
