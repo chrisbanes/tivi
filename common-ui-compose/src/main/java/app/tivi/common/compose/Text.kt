@@ -18,13 +18,18 @@ package app.tivi.common.compose
 
 import androidx.compose.Composable
 import androidx.ui.core.Modifier
+import androidx.ui.foundation.Icon
 import androidx.ui.foundation.Text
 import androidx.ui.foundation.contentColor
 import androidx.ui.foundation.currentTextStyle
 import androidx.ui.graphics.Color
+import androidx.ui.graphics.ImageAsset
+import androidx.ui.graphics.painter.Painter
 import androidx.ui.graphics.useOrElse
+import androidx.ui.graphics.vector.VectorAsset
 import androidx.ui.material.Emphasis
 import androidx.ui.material.EmphasisAmbient
+import androidx.ui.text.AnnotatedString
 import androidx.ui.text.InlineTextContent
 import androidx.ui.text.TextLayoutResult
 import androidx.ui.text.TextStyle
@@ -55,30 +60,100 @@ fun TextWithEmphasis(
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = currentTextStyle()
 ) {
-    val textColor = color.useOrElse { style.color.useOrElse { contentColor() } }.let {
-        when {
-            // If the color is opaque (or near opaque), we should emphasize it
-            it.alpha >= 0.99f -> emphasis.applyEmphasis(it)
-            else -> it
-        }
-    }
-
     Text(
-        text,
-        modifier,
-        textColor,
-        fontSize,
-        fontStyle,
-        fontFamily,
-        letterSpacing,
-        textDecoration,
-        textAlign,
-        lineHeight,
-        overflow,
-        softWrap,
-        maxLines,
-        inlineContent,
-        onTextLayout,
-        style
+        text = text,
+        modifier = modifier,
+        color = color.useOrElse { style.color.useOrElse { contentColor() } }
+            .emphasizeIfOpaque(emphasis),
+        fontSize = fontSize,
+        fontStyle = fontStyle,
+        fontFamily = fontFamily,
+        letterSpacing = letterSpacing,
+        textDecoration = textDecoration,
+        textAlign = textAlign,
+        lineHeight = lineHeight,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        inlineContent = inlineContent,
+        onTextLayout = onTextLayout,
+        style = style
     )
+}
+
+@Composable
+fun TextWithEmphasis(
+    text: AnnotatedString,
+    emphasis: Emphasis = EmphasisAmbient.current.high,
+    modifier: Modifier = Modifier,
+    color: Color = Color.Unset,
+    fontSize: TextUnit = TextUnit.Inherit,
+    fontStyle: FontStyle? = null,
+    fontFamily: FontFamily? = null,
+    letterSpacing: TextUnit = TextUnit.Inherit,
+    textDecoration: TextDecoration? = null,
+    textAlign: TextAlign? = null,
+    lineHeight: TextUnit = TextUnit.Inherit,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    inlineContent: Map<String, InlineTextContent> = mapOf(),
+    onTextLayout: (TextLayoutResult) -> Unit = {},
+    style: TextStyle = currentTextStyle()
+) {
+    Text(
+        text = text,
+        modifier = modifier,
+        color = color.useOrElse { style.color.useOrElse { contentColor() } }
+            .emphasizeIfOpaque(emphasis),
+        fontSize = fontSize,
+        fontStyle = fontStyle,
+        fontFamily = fontFamily,
+        letterSpacing = letterSpacing,
+        textDecoration = textDecoration,
+        textAlign = textAlign,
+        lineHeight = lineHeight,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        inlineContent = inlineContent,
+        onTextLayout = onTextLayout,
+        style = style
+    )
+}
+
+@Composable
+fun IconWithEmphasis(
+    asset: VectorAsset,
+    modifier: Modifier = Modifier,
+    tint: Color = contentColor(),
+    emphasis: Emphasis = EmphasisAmbient.current.high
+) {
+    Icon(asset, modifier, tint.emphasizeIfOpaque(emphasis))
+}
+
+@Composable
+fun IconWithEmphasis(
+    asset: ImageAsset,
+    modifier: Modifier = Modifier,
+    tint: Color = contentColor(),
+    emphasis: Emphasis = EmphasisAmbient.current.high
+) {
+    Icon(asset, modifier, tint.emphasizeIfOpaque(emphasis))
+}
+
+@Composable
+fun IconWithEmphasis(
+    painter: Painter,
+    modifier: Modifier = Modifier,
+    tint: Color = contentColor(),
+    emphasis: Emphasis = EmphasisAmbient.current.high
+) {
+    Icon(painter, modifier, tint.emphasizeIfOpaque(emphasis))
+}
+
+private fun Color.emphasizeIfOpaque(emphasis: Emphasis) = when {
+    // If the color is opaque (or near opaque), we should emphasize it
+    alpha >= 0.99f -> emphasis.applyEmphasis(this)
+    else -> this
 }

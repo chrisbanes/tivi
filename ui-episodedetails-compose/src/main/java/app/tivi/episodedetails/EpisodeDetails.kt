@@ -41,7 +41,6 @@ import androidx.ui.core.onPositioned
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.ContentColorAmbient
-import androidx.ui.foundation.Icon
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.clickable
 import androidx.ui.foundation.contentColor
@@ -69,7 +68,6 @@ import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.IconButton
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.OutlinedButton
-import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.Snackbar
 import androidx.ui.material.Surface
 import androidx.ui.material.TopAppBar
@@ -92,6 +90,7 @@ import androidx.ui.unit.toOffset
 import app.tivi.animation.invoke
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
+import app.tivi.common.compose.IconWithEmphasis
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.ProvideInsets
 import app.tivi.common.compose.SwipeDirection
@@ -167,12 +166,10 @@ private fun EpisodeDetails(
                         if (episode != null) {
                             InfoPanes(episode)
 
-                            ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-                                ExpandingText(
-                                    episode.summary ?: "No summary",
-                                    modifier = Modifier.padding(16.dp)
-                                )
-                            }
+                            ExpandingText(
+                                episode.summary ?: "No summary",
+                                modifier = Modifier.padding(16.dp)
+                            )
                         }
 
                         val watches = viewState.watches
@@ -341,12 +338,11 @@ private fun InfoPane(
     label: String
 ) {
     Column(modifier = modifier.padding(all = 16.dp)) {
-        ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
-            Icon(
-                asset = icon,
-                modifier = Modifier.gravity(Alignment.CenterHorizontally)
-            )
-        }
+        IconWithEmphasis(
+            asset = icon,
+            modifier = Modifier.gravity(Alignment.CenterHorizontally),
+            emphasis = EmphasisAmbient.current.medium
+        )
 
         Spacer(modifier = Modifier.preferredHeight(4.dp))
 
@@ -370,13 +366,14 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
             style = MaterialTheme.typography.subtitle1
         )
 
-        ProvideEmphasis(EmphasisAmbient.current.disabled) {
-            IconButton(
-                modifier = Modifier.padding(end = 4.dp),
-                onClick = { onSweepWatchesClick() }
-            ) {
-                Icon(asset = Icons.Default.DeleteSweep)
-            }
+        IconButton(
+            modifier = Modifier.padding(end = 4.dp),
+            onClick = { onSweepWatchesClick() }
+        ) {
+            IconWithEmphasis(
+                asset = Icons.Default.DeleteSweep,
+                emphasis = EmphasisAmbient.current.disabled
+            )
         }
     }
 }
@@ -395,20 +392,20 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
                 style = MaterialTheme.typography.body2
             )
 
-            ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
-                if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
-                    Icon(
-                        asset = Icons.Filled.Publish,
-                        modifier = Modifier.padding(start = 8.dp).gravity(Alignment.CenterVertically)
-                    )
-                }
+            if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
+                IconWithEmphasis(
+                    asset = Icons.Filled.Publish,
+                    modifier = Modifier.padding(start = 8.dp)
+                        .gravity(Alignment.CenterVertically),
+                    emphasis = EmphasisAmbient.current.medium
+                )
 
-                if (episodeWatchEntry.pendingAction == PendingAction.DELETE) {
-                    Icon(
-                        asset = Icons.Filled.VisibilityOff,
-                        modifier = Modifier.padding(start = 8.dp).gravity(Alignment.CenterVertically)
-                    )
-                }
+                IconWithEmphasis(
+                    asset = Icons.Filled.VisibilityOff,
+                    modifier = Modifier.padding(start = 8.dp)
+                        .gravity(Alignment.CenterVertically),
+                    emphasis = EmphasisAmbient.current.medium
+                )
             }
         }
     }
@@ -464,14 +461,13 @@ private fun EpisodeWatchSwipeBackground(
                 )
             )
 
-            ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
-                Icon(
-                    asset = Icons.Default.Delete,
-                    modifier = Modifier.onPositioned { iconCenter = it.boundsInParent.center }
-                        .padding(0.dp, 0.dp, end = 16.dp, bottom = 0.dp)
-                        .gravity(Alignment.CenterEnd)
-                )
-            }
+            IconWithEmphasis(
+                asset = Icons.Default.Delete,
+                modifier = Modifier.onPositioned { iconCenter = it.boundsInParent.center }
+                    .padding(0.dp, 0.dp, end = 16.dp, bottom = 0.dp)
+                    .gravity(Alignment.CenterEnd),
+                emphasis = EmphasisAmbient.current.medium
+            )
         }
     }
 }
@@ -555,7 +551,7 @@ private fun EpisodeDetailsAppBar(
         title = {},
         navigationIcon = {
             IconButton(onClick = { actioner(Close) }) {
-                Icon(Icons.Default.Close)
+                IconWithEmphasis(Icons.Default.Close)
             }
         },
         actions = {
@@ -567,7 +563,7 @@ private fun EpisodeDetailsAppBar(
                 )
             } else {
                 IconButton(onClick = { actioner(RefreshAction) }) {
-                    Icon(Icons.Default.Refresh)
+                    IconWithEmphasis(Icons.Default.Refresh)
                 }
             }
         },

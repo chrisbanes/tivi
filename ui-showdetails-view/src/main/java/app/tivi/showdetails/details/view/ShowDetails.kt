@@ -79,7 +79,6 @@ import androidx.ui.material.ExtendedFloatingActionButton
 import androidx.ui.material.IconButton
 import androidx.ui.material.LinearProgressIndicator
 import androidx.ui.material.MaterialTheme
-import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.Snackbar
 import androidx.ui.material.Surface
 import androidx.ui.material.TopAppBar
@@ -101,6 +100,7 @@ import androidx.ui.unit.dp
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.HorizontalCollectionScroller
+import app.tivi.common.compose.IconWithEmphasis
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.PopupMenu
 import app.tivi.common.compose.PopupMenuItem
@@ -830,10 +830,11 @@ private fun SeasonRow(
             actioner = actioner
         )
 
-        ProvideEmphasis(EmphasisAmbient.current.medium) {
-            IconButton(onClick = { showPopup.value = true }) {
-                Icon(Icons.Default.MoreVert)
-            }
+        IconButton(onClick = { showPopup.value = true }) {
+            IconWithEmphasis(
+                asset = Icons.Default.MoreVert,
+                emphasis = EmphasisAmbient.current.medium
+            )
         }
     }
 }
@@ -868,27 +869,27 @@ private fun EpisodeWithWatchesRow(
             )
         }
 
-        ProvideEmphasis(EmphasisAmbient.current.medium) {
-            var needSpacer = false
-            if (episodeWithWatches.hasPending()) {
-                Icon(
-                    asset = Icons.Default.CloudUpload,
-                    modifier = Modifier.gravity(Alignment.CenterVertically)
-                )
-                needSpacer = true
+        var needSpacer = false
+        if (episodeWithWatches.hasPending()) {
+            IconWithEmphasis(
+                asset = Icons.Default.CloudUpload,
+                modifier = Modifier.gravity(Alignment.CenterVertically),
+                emphasis = EmphasisAmbient.current.medium
+            )
+            needSpacer = true
+        }
+        if (episodeWithWatches.isWatched()) {
+            if (needSpacer) {
+                Spacer(Modifier.preferredWidth(4.dp))
             }
-            if (episodeWithWatches.isWatched()) {
-                if (needSpacer) {
-                    Spacer(Modifier.preferredWidth(4.dp))
-                }
-                Icon(
-                    asset = when {
-                        episodeWithWatches.onlyPendingDeletes() -> Icons.Default.VisibilityOff
-                        else -> Icons.Default.Visibility
-                    },
-                    modifier = Modifier.gravity(Alignment.CenterVertically)
-                )
-            }
+            IconWithEmphasis(
+                asset = when {
+                    episodeWithWatches.onlyPendingDeletes() -> Icons.Default.VisibilityOff
+                    else -> Icons.Default.Visibility
+                },
+                modifier = Modifier.gravity(Alignment.CenterVertically),
+                emphasis = EmphasisAmbient.current.medium
+            )
         }
     }
 }
