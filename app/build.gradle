@@ -22,12 +22,12 @@ plugins {
     // id 'com.github.triplet.play' version '2.7.5'
 }
 
-// Disabled due to https://github.com/Triple-T/gradle-play-publisher/issues/813
-//play {
-//    track = 'internal'
-//    defaultToAppBundles = true
-//    serviceAccountCredentials = rootProject.file('release/play-account.json')
-//}
+apply plugin: 'com.github.triplet.play'
+play {
+   track = 'internal'
+   defaultToAppBundles = true
+   serviceAccountCredentials = rootProject.file('release/play-account.json')
+}
 
 apply plugin: 'kotlin-android'
 
