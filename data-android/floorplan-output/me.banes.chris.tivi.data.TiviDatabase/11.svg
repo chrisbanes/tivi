@@ -1,0 +1,350 @@
+<svg width="928px" height="1228px"
+ viewBox="0.00 0.00 928.32 1228.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1.0 1.0) rotate(0) translate(36 1192)">
+<polygon fill="white" stroke="transparent" points="-36,36 -36,-1192 892.32,-1192 892.32,36 -36,36"/>
+<!-- shows -->
+<g id="node1" class="node">
+<title>shows</title>
+<polygon fill="#caff70" stroke="transparent" points="688.32,-732 688.32,-754 856.32,-754 856.32,-732 688.32,-732"/>
+<polygon fill="none" stroke="black" points="688.32,-732 688.32,-754 856.32,-754 856.32,-732 688.32,-732"/>
+<text text-anchor="start" x="754.82" y="-739.4" font-family="Times,serif" font-weight="bold" font-size="14.00">shows</text>
+<polygon fill="none" stroke="black" points="688.32,-710 688.32,-732 856.32,-732 856.32,-710 688.32,-710"/>
+<text text-anchor="start" x="733.25" y="-717.4" font-family="Times,serif" font-weight="bold" font-size="14.00">id: </text>
+<text text-anchor="start" x="751.53" y="-717.4" font-family="Times,serif" font-weight="bold" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="688.32,-688 688.32,-710 856.32,-710 856.32,-688 688.32,-688"/>
+<text text-anchor="start" x="739.86" y="-695.4" font-family="Times,serif" font-size="14.00">title: </text>
+<text text-anchor="start" x="769.02" y="-695.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="688.32,-666 688.32,-688 856.32,-688 856.32,-666 688.32,-666"/>
+<text text-anchor="start" x="714.58" y="-673.4" font-family="Times,serif" font-size="14.00">original_title: </text>
+<text text-anchor="start" x="794.3" y="-673.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="688.32,-644 688.32,-666 856.32,-666 856.32,-644 688.32,-644"/>
+<text text-anchor="start" x="716.92" y="-651.4" font-family="Times,serif" font-size="14.00">trakt_id: </text>
+<text text-anchor="start" x="767.86" y="-651.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="688.32,-622 688.32,-644 856.32,-644 856.32,-622 688.32,-622"/>
+<text text-anchor="start" x="715.36" y="-629.4" font-family="Times,serif" font-size="14.00">tmdb_id: </text>
+<text text-anchor="start" x="769.42" y="-629.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="688.32,-600 688.32,-622 856.32,-622 856.32,-600 688.32,-600"/>
+<text text-anchor="start" x="700.2" y="-607.4" font-family="Times,serif" font-size="14.00">tmdb_poster_path: </text>
+<text text-anchor="start" x="808.68" y="-607.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="688.32,-578 688.32,-600 856.32,-600 856.32,-578 688.32,-578"/>
+<text text-anchor="start" x="691.26" y="-585.4" font-family="Times,serif" font-size="14.00">tmdb_backdrop_path: </text>
+<text text-anchor="start" x="817.62" y="-585.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="688.32,-556 688.32,-578 856.32,-578 856.32,-556 688.32,-556"/>
+<text text-anchor="start" x="712.26" y="-563.4" font-family="Times,serif" font-size="14.00">trakt_updated: </text>
+<text text-anchor="start" x="796.62" y="-563.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="688.32,-534 688.32,-556 856.32,-556 856.32,-534 688.32,-534"/>
+<text text-anchor="start" x="710.69" y="-541.4" font-family="Times,serif" font-size="14.00">tmdb_updated: </text>
+<text text-anchor="start" x="798.18" y="-541.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="688.32,-512 688.32,-534 856.32,-534 856.32,-512 688.32,-512"/>
+<text text-anchor="start" x="724.7" y="-519.4" font-family="Times,serif" font-size="14.00">overview: </text>
+<text text-anchor="start" x="784.18" y="-519.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="688.32,-490 688.32,-512 856.32,-512 856.32,-490 688.32,-490"/>
+<text text-anchor="start" x="721.98" y="-497.4" font-family="Times,serif" font-size="14.00">homepage: </text>
+<text text-anchor="start" x="786.9" y="-497.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="688.32,-468 688.32,-490 856.32,-490 856.32,-468 688.32,-468"/>
+<text text-anchor="start" x="734.02" y="-475.4" font-family="Times,serif" font-size="14.00">rating: </text>
+<text text-anchor="start" x="774.07" y="-475.4" font-family="Times,serif" font-style="italic" font-size="14.00">REAL</text>
+<polygon fill="none" stroke="black" points="688.32,-446 688.32,-468 856.32,-468 856.32,-446 688.32,-446"/>
+<text text-anchor="start" x="716.93" y="-453.4" font-family="Times,serif" font-size="14.00">certification: </text>
+<text text-anchor="start" x="791.95" y="-453.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="688.32,-424 688.32,-446 856.32,-446 856.32,-424 688.32,-424"/>
+<text text-anchor="start" x="729.36" y="-431.4" font-family="Times,serif" font-size="14.00">country: </text>
+<text text-anchor="start" x="779.52" y="-431.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="688.32,-402 688.32,-424 856.32,-424 856.32,-402 688.32,-402"/>
+<text text-anchor="start" x="727.81" y="-409.4" font-family="Times,serif" font-size="14.00">network: </text>
+<text text-anchor="start" x="781.07" y="-409.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="688.32,-380 688.32,-402 856.32,-402 856.32,-380 688.32,-380"/>
+<text text-anchor="start" x="716.92" y="-387.4" font-family="Times,serif" font-size="14.00">runtime: </text>
+<text text-anchor="start" x="767.86" y="-387.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="688.32,-358 688.32,-380 856.32,-380 856.32,-358 688.32,-358"/>
+<text text-anchor="start" x="732.48" y="-365.4" font-family="Times,serif" font-size="14.00">genres: </text>
+<text text-anchor="start" x="776.4" y="-365.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="#c1cdcd" stroke="transparent" points="688.32,-336 688.32,-358 856.32,-358 856.32,-336 688.32,-336"/>
+<polygon fill="none" stroke="black" points="688.32,-336 688.32,-358 856.32,-358 856.32,-336 688.32,-336"/>
+<text text-anchor="start" x="752.11" y="-343.4" font-family="Times,serif" font-style="italic" font-size="14.00">Indices</text>
+<polygon fill="none" stroke="black" points="688.32,-314 688.32,-336 856.32,-336 856.32,-314 688.32,-314"/>
+<text text-anchor="start" x="710.5" y="-320.4" font-family="Times,serif" font-size="14.00">index_shows_trakt_id</text>
+<polygon fill="none" stroke="black" points="688.32,-292 688.32,-314 856.32,-314 856.32,-292 688.32,-292"/>
+<text text-anchor="start" x="708.93" y="-298.4" font-family="Times,serif" font-size="14.00">index_shows_tmdb_id</text>
+</g>
+<!-- trending_shows -->
+<g id="node2" class="node">
+<title>trending_shows</title>
+<polygon fill="#caff70" stroke="transparent" points="335.16,-1134 335.16,-1156 522.16,-1156 522.16,-1134 335.16,-1134"/>
+<polygon fill="none" stroke="black" points="335.16,-1134 335.16,-1156 522.16,-1156 522.16,-1134 335.16,-1134"/>
+<text text-anchor="start" x="384.33" y="-1141.4" font-family="Times,serif" font-weight="bold" font-size="14.00">trending_shows</text>
+<polygon fill="none" stroke="black" points="335.16,-1112 335.16,-1134 522.16,-1134 522.16,-1112 335.16,-1112"/>
+<text text-anchor="start" x="389.59" y="-1119.4" font-family="Times,serif" font-weight="bold" font-size="14.00">id: </text>
+<text text-anchor="start" x="407.87" y="-1119.4" font-family="Times,serif" font-weight="bold" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="335.16,-1090 335.16,-1112 522.16,-1112 522.16,-1090 335.16,-1090"/>
+<text text-anchor="start" x="371.31" y="-1097.4" font-family="Times,serif" font-size="14.00">show_id: </text>
+<text text-anchor="start" x="426.14" y="-1097.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="335.16,-1068 335.16,-1090 522.16,-1090 522.16,-1068 335.16,-1068"/>
+<text text-anchor="start" x="381.82" y="-1075.4" font-family="Times,serif" font-size="14.00">page: </text>
+<text text-anchor="start" x="415.64" y="-1075.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="335.16,-1046 335.16,-1068 522.16,-1068 522.16,-1046 335.16,-1046"/>
+<text text-anchor="start" x="370.16" y="-1053.4" font-family="Times,serif" font-size="14.00">watchers: </text>
+<text text-anchor="start" x="427.29" y="-1053.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="#c1cdcd" stroke="transparent" points="335.16,-1024 335.16,-1046 522.16,-1046 522.16,-1024 335.16,-1024"/>
+<polygon fill="none" stroke="black" points="335.16,-1024 335.16,-1046 522.16,-1046 522.16,-1024 335.16,-1024"/>
+<text text-anchor="start" x="408.45" y="-1031.4" font-family="Times,serif" font-style="italic" font-size="14.00">Indices</text>
+<polygon fill="none" stroke="black" points="335.16,-1002 335.16,-1024 522.16,-1024 522.16,-1002 335.16,-1002"/>
+<text text-anchor="start" x="338.06" y="-1008.4" font-family="Times,serif" font-size="14.00">index_trending_shows_show_id</text>
+</g>
+<!-- trending_shows&#45;&gt;shows -->
+<g id="edge1" class="edge">
+<title>trending_shows:show_id&#45;&gt;shows:id</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M523.16,-1101C566.23,-1101 632.97,-768.41 679.1,-725.53"/>
+<polygon fill="black" stroke="black" points="680.89,-728.55 688.32,-721 677.8,-722.27 680.89,-728.55"/>
+<text text-anchor="middle" x="606.99" y="-937.2" font-family="Times,serif" font-size="14.00">1&#45;1</text>
+</g>
+<!-- popular_shows -->
+<g id="node3" class="node">
+<title>popular_shows</title>
+<polygon fill="#caff70" stroke="transparent" points="337.16,-944 337.16,-966 520.16,-966 520.16,-944 337.16,-944"/>
+<polygon fill="none" stroke="black" points="337.16,-944 337.16,-966 520.16,-966 520.16,-944 337.16,-944"/>
+<text text-anchor="start" x="386.28" y="-951.4" font-family="Times,serif" font-weight="bold" font-size="14.00">popular_shows</text>
+<polygon fill="none" stroke="black" points="337.16,-922 337.16,-944 520.16,-944 520.16,-922 337.16,-922"/>
+<text text-anchor="start" x="389.59" y="-929.4" font-family="Times,serif" font-weight="bold" font-size="14.00">id: </text>
+<text text-anchor="start" x="407.87" y="-929.4" font-family="Times,serif" font-weight="bold" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="337.16,-900 337.16,-922 520.16,-922 520.16,-900 337.16,-900"/>
+<text text-anchor="start" x="371.31" y="-907.4" font-family="Times,serif" font-size="14.00">show_id: </text>
+<text text-anchor="start" x="426.14" y="-907.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="337.16,-878 337.16,-900 520.16,-900 520.16,-878 337.16,-878"/>
+<text text-anchor="start" x="381.82" y="-885.4" font-family="Times,serif" font-size="14.00">page: </text>
+<text text-anchor="start" x="415.64" y="-885.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="337.16,-856 337.16,-878 520.16,-878 520.16,-856 337.16,-856"/>
+<text text-anchor="start" x="363.55" y="-863.4" font-family="Times,serif" font-size="14.00">page_order: </text>
+<text text-anchor="start" x="433.9" y="-863.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="#c1cdcd" stroke="transparent" points="337.16,-834 337.16,-856 520.16,-856 520.16,-834 337.16,-834"/>
+<polygon fill="none" stroke="black" points="337.16,-834 337.16,-856 520.16,-856 520.16,-834 337.16,-834"/>
+<text text-anchor="start" x="408.45" y="-841.4" font-family="Times,serif" font-style="italic" font-size="14.00">Indices</text>
+<polygon fill="none" stroke="black" points="337.16,-812 337.16,-834 520.16,-834 520.16,-812 337.16,-812"/>
+<text text-anchor="start" x="340.01" y="-818.4" font-family="Times,serif" font-size="14.00">index_popular_shows_show_id</text>
+</g>
+<!-- popular_shows&#45;&gt;shows -->
+<g id="edge2" class="edge">
+<title>popular_shows:show_id&#45;&gt;shows:id</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M521.16,-911C630.12,-911 579.29,-732.69 678.27,-721.55"/>
+<polygon fill="black" stroke="black" points="678.53,-725.04 688.32,-721 678.15,-718.05 678.53,-725.04"/>
+<text text-anchor="middle" x="606.99" y="-842.2" font-family="Times,serif" font-size="14.00">1&#45;1</text>
+</g>
+<!-- users -->
+<g id="node4" class="node">
+<title>users</title>
+<polygon fill="#caff70" stroke="transparent" points="27,-674 27,-696 141,-696 141,-674 27,-674"/>
+<polygon fill="none" stroke="black" points="27,-674 27,-696 141,-696 141,-674 27,-674"/>
+<text text-anchor="start" x="69.62" y="-681.4" font-family="Times,serif" font-weight="bold" font-size="14.00">users</text>
+<polygon fill="none" stroke="black" points="27,-652 27,-674 141,-674 141,-652 27,-652"/>
+<text text-anchor="start" x="44.93" y="-659.4" font-family="Times,serif" font-weight="bold" font-size="14.00">id: </text>
+<text text-anchor="start" x="63.21" y="-659.4" font-family="Times,serif" font-weight="bold" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="27,-630 27,-652 141,-652 141,-630 27,-630"/>
+<text text-anchor="start" x="35.6" y="-637.4" font-family="Times,serif" font-size="14.00">username: </text>
+<text text-anchor="start" x="96.63" y="-637.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="27,-608 27,-630 141,-630 141,-608 27,-608"/>
+<text text-anchor="start" x="47.26" y="-615.4" font-family="Times,serif" font-size="14.00">name: </text>
+<text text-anchor="start" x="84.97" y="-615.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="27,-586 27,-608 141,-608 141,-586 27,-586"/>
+<text text-anchor="start" x="29.76" y="-593.4" font-family="Times,serif" font-size="14.00">joined_date: </text>
+<text text-anchor="start" x="102.47" y="-593.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="27,-564 27,-586 141,-586 141,-564 27,-564"/>
+<text text-anchor="start" x="39.87" y="-571.4" font-family="Times,serif" font-size="14.00">location: </text>
+<text text-anchor="start" x="92.36" y="-571.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="27,-542 27,-564 141,-564 141,-542 27,-542"/>
+<text text-anchor="start" x="46.87" y="-549.4" font-family="Times,serif" font-size="14.00">about: </text>
+<text text-anchor="start" x="85.37" y="-549.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="27,-520 27,-542 141,-542 141,-520 27,-520"/>
+<text text-anchor="start" x="34.05" y="-527.4" font-family="Times,serif" font-size="14.00">avatar_url: </text>
+<text text-anchor="start" x="98.19" y="-527.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+</g>
+<!-- watched_entries -->
+<g id="node5" class="node">
+<title>watched_entries</title>
+<polygon fill="#caff70" stroke="transparent" points="334.16,-754 334.16,-776 523.16,-776 523.16,-754 334.16,-754"/>
+<polygon fill="none" stroke="black" points="334.16,-754 334.16,-776 523.16,-776 523.16,-754 334.16,-754"/>
+<text text-anchor="start" x="383.18" y="-761.4" font-family="Times,serif" font-weight="bold" font-size="14.00">watched_entries</text>
+<polygon fill="none" stroke="black" points="334.16,-732 334.16,-754 523.16,-754 523.16,-732 334.16,-732"/>
+<text text-anchor="start" x="389.59" y="-739.4" font-family="Times,serif" font-weight="bold" font-size="14.00">id: </text>
+<text text-anchor="start" x="407.87" y="-739.4" font-family="Times,serif" font-weight="bold" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="334.16,-710 334.16,-732 523.16,-732 523.16,-710 334.16,-710"/>
+<text text-anchor="start" x="371.31" y="-717.4" font-family="Times,serif" font-size="14.00">show_id: </text>
+<text text-anchor="start" x="426.14" y="-717.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="334.16,-688 334.16,-710 523.16,-710 523.16,-688 334.16,-688"/>
+<text text-anchor="start" x="370.54" y="-695.4" font-family="Times,serif" font-size="14.00">last_watched: </text>
+<text text-anchor="start" x="451.01" y="-695.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="#c1cdcd" stroke="transparent" points="334.16,-666 334.16,-688 523.16,-688 523.16,-666 334.16,-666"/>
+<polygon fill="none" stroke="black" points="334.16,-666 334.16,-688 523.16,-688 523.16,-666 334.16,-666"/>
+<text text-anchor="start" x="408.45" y="-673.4" font-family="Times,serif" font-style="italic" font-size="14.00">Indices</text>
+<polygon fill="none" stroke="black" points="334.16,-644 334.16,-666 523.16,-666 523.16,-644 334.16,-644"/>
+<text text-anchor="start" x="336.91" y="-650.4" font-family="Times,serif" font-size="14.00">index_watched_entries_show_id</text>
+</g>
+<!-- watched_entries&#45;&gt;shows -->
+<g id="edge3" class="edge">
+<title>watched_entries:show_id&#45;&gt;shows:id</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M524.16,-721C593.56,-721 613.45,-721 678.01,-721"/>
+<polygon fill="black" stroke="black" points="678.32,-724.5 688.32,-721 678.32,-717.5 678.32,-724.5"/>
+<text text-anchor="middle" x="606.99" y="-725.2" font-family="Times,serif" font-size="14.00">1&#45;1</text>
+</g>
+<!-- myshows_entries -->
+<g id="node6" class="node">
+<title>myshows_entries</title>
+<polygon fill="#caff70" stroke="transparent" points="331.16,-586 331.16,-608 526.16,-608 526.16,-586 331.16,-586"/>
+<polygon fill="none" stroke="black" points="331.16,-586 331.16,-608 526.16,-608 526.16,-586 331.16,-586"/>
+<text text-anchor="start" x="380.06" y="-593.4" font-family="Times,serif" font-weight="bold" font-size="14.00">myshows_entries</text>
+<polygon fill="none" stroke="black" points="331.16,-564 331.16,-586 526.16,-586 526.16,-564 331.16,-564"/>
+<text text-anchor="start" x="389.59" y="-571.4" font-family="Times,serif" font-weight="bold" font-size="14.00">id: </text>
+<text text-anchor="start" x="407.87" y="-571.4" font-family="Times,serif" font-weight="bold" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="331.16,-542 331.16,-564 526.16,-564 526.16,-542 331.16,-542"/>
+<text text-anchor="start" x="371.31" y="-549.4" font-family="Times,serif" font-size="14.00">show_id: </text>
+<text text-anchor="start" x="426.14" y="-549.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="#c1cdcd" stroke="transparent" points="331.16,-520 331.16,-542 526.16,-542 526.16,-520 331.16,-520"/>
+<polygon fill="none" stroke="black" points="331.16,-520 331.16,-542 526.16,-542 526.16,-520 331.16,-520"/>
+<text text-anchor="start" x="408.45" y="-527.4" font-family="Times,serif" font-style="italic" font-size="14.00">Indices</text>
+<polygon fill="none" stroke="black" points="331.16,-498 331.16,-520 526.16,-520 526.16,-498 331.16,-498"/>
+<text text-anchor="start" x="333.79" y="-504.4" font-family="Times,serif" font-size="14.00">index_myshows_entries_show_id</text>
+</g>
+<!-- myshows_entries&#45;&gt;shows -->
+<g id="edge4" class="edge">
+<title>myshows_entries:show_id&#45;&gt;shows:id</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M525.66,-553C574.28,-553 628.81,-700.04 678.19,-719"/>
+<polygon fill="black" stroke="black" points="677.83,-722.49 688.32,-721 679.19,-715.63 677.83,-722.49"/>
+<text text-anchor="middle" x="606.99" y="-651.2" font-family="Times,serif" font-size="14.00">1&#45;1</text>
+</g>
+<!-- seasons -->
+<g id="node7" class="node">
+<title>seasons</title>
+<polygon fill="#caff70" stroke="transparent" points="344.16,-440 344.16,-462 512.16,-462 512.16,-440 344.16,-440"/>
+<polygon fill="none" stroke="black" points="344.16,-440 344.16,-462 512.16,-462 512.16,-440 344.16,-440"/>
+<text text-anchor="start" x="406.78" y="-447.4" font-family="Times,serif" font-weight="bold" font-size="14.00">seasons</text>
+<polygon fill="none" stroke="black" points="344.16,-418 344.16,-440 512.16,-440 512.16,-418 344.16,-418"/>
+<text text-anchor="start" x="389.09" y="-425.4" font-family="Times,serif" font-weight="bold" font-size="14.00">id: </text>
+<text text-anchor="start" x="407.37" y="-425.4" font-family="Times,serif" font-weight="bold" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="344.16,-396 344.16,-418 512.16,-418 512.16,-396 344.16,-396"/>
+<text text-anchor="start" x="370.81" y="-403.4" font-family="Times,serif" font-size="14.00">show_id: </text>
+<text text-anchor="start" x="425.64" y="-403.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="344.16,-374 344.16,-396 512.16,-396 512.16,-374 344.16,-374"/>
+<text text-anchor="start" x="372.76" y="-381.4" font-family="Times,serif" font-size="14.00">trakt_id: </text>
+<text text-anchor="start" x="423.7" y="-381.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="344.16,-352 344.16,-374 512.16,-374 512.16,-352 344.16,-352"/>
+<text text-anchor="start" x="371.2" y="-359.4" font-family="Times,serif" font-size="14.00">tmdb_id: </text>
+<text text-anchor="start" x="425.26" y="-359.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="344.16,-330 344.16,-352 512.16,-352 512.16,-330 344.16,-330"/>
+<text text-anchor="start" x="395.69" y="-337.4" font-family="Times,serif" font-size="14.00">title: </text>
+<text text-anchor="start" x="424.86" y="-337.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="344.16,-308 344.16,-330 512.16,-330 512.16,-308 344.16,-308"/>
+<text text-anchor="start" x="380.54" y="-315.4" font-family="Times,serif" font-size="14.00">overview: </text>
+<text text-anchor="start" x="440.02" y="-315.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="344.16,-286 344.16,-308 512.16,-308 512.16,-286 344.16,-286"/>
+<text text-anchor="start" x="373.15" y="-293.4" font-family="Times,serif" font-size="14.00">number: </text>
+<text text-anchor="start" x="423.3" y="-293.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="344.16,-264 344.16,-286 512.16,-286 512.16,-264 344.16,-264"/>
+<text text-anchor="start" x="368.87" y="-271.4" font-family="Times,serif" font-size="14.00">ep_count: </text>
+<text text-anchor="start" x="427.58" y="-271.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="344.16,-242 344.16,-264 512.16,-264 512.16,-242 344.16,-242"/>
+<text text-anchor="start" x="370.43" y="-249.4" font-family="Times,serif" font-size="14.00">ep_aired: </text>
+<text text-anchor="start" x="426.02" y="-249.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="344.16,-220 344.16,-242 512.16,-242 512.16,-220 344.16,-220"/>
+<text text-anchor="start" x="389.86" y="-227.4" font-family="Times,serif" font-size="14.00">rating: </text>
+<text text-anchor="start" x="429.91" y="-227.4" font-family="Times,serif" font-style="italic" font-size="14.00">REAL</text>
+<polygon fill="none" stroke="black" points="344.16,-198 344.16,-220 512.16,-220 512.16,-198 344.16,-198"/>
+<text text-anchor="start" x="383.65" y="-205.4" font-family="Times,serif" font-size="14.00">network: </text>
+<text text-anchor="start" x="436.91" y="-205.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="344.16,-176 344.16,-198 512.16,-198 512.16,-176 344.16,-176"/>
+<text text-anchor="start" x="379.76" y="-183.4" font-family="Times,serif" font-size="14.00">votes: </text>
+<text text-anchor="start" x="416.7" y="-183.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="344.16,-154 344.16,-176 512.16,-176 512.16,-154 344.16,-154"/>
+<text text-anchor="start" x="356.03" y="-161.4" font-family="Times,serif" font-size="14.00">tmdb_poster_path: </text>
+<text text-anchor="start" x="464.52" y="-161.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="344.16,-132 344.16,-154 512.16,-154 512.16,-132 344.16,-132"/>
+<text text-anchor="start" x="347.09" y="-139.4" font-family="Times,serif" font-size="14.00">tmdb_backdrop_path: </text>
+<text text-anchor="start" x="473.46" y="-139.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="344.16,-110 344.16,-132 512.16,-132 512.16,-110 344.16,-110"/>
+<text text-anchor="start" x="368.09" y="-117.4" font-family="Times,serif" font-size="14.00">trakt_updated: </text>
+<text text-anchor="start" x="452.46" y="-117.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="344.16,-88 344.16,-110 512.16,-110 512.16,-88 344.16,-88"/>
+<text text-anchor="start" x="366.53" y="-95.4" font-family="Times,serif" font-size="14.00">tmdb_updated: </text>
+<text text-anchor="start" x="454.02" y="-95.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="#c1cdcd" stroke="transparent" points="344.16,-66 344.16,-88 512.16,-88 512.16,-66 344.16,-66"/>
+<polygon fill="none" stroke="black" points="344.16,-66 344.16,-88 512.16,-88 512.16,-66 344.16,-66"/>
+<text text-anchor="start" x="407.95" y="-73.4" font-family="Times,serif" font-style="italic" font-size="14.00">Indices</text>
+<polygon fill="none" stroke="black" points="344.16,-44 344.16,-66 512.16,-66 512.16,-44 344.16,-44"/>
+<text text-anchor="start" x="360.51" y="-50.4" font-family="Times,serif" font-size="14.00">index_seasons_show_id</text>
+<polygon fill="none" stroke="black" points="344.16,-22 344.16,-44 512.16,-44 512.16,-22 344.16,-22"/>
+<text text-anchor="start" x="362.45" y="-28.4" font-family="Times,serif" font-size="14.00">index_seasons_trakt_id</text>
+<polygon fill="none" stroke="black" points="344.16,0 344.16,-22 512.16,-22 512.16,0 344.16,0"/>
+<text text-anchor="start" x="360.89" y="-6.4" font-family="Times,serif" font-size="14.00">index_seasons_tmdb_id</text>
+</g>
+<!-- seasons&#45;&gt;shows -->
+<g id="edge5" class="edge">
+<title>seasons:show_id&#45;&gt;shows:id</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M513.16,-407C550.3,-407 635.25,-678.4 679.11,-716.56"/>
+<polygon fill="black" stroke="black" points="677.79,-719.81 688.32,-721 680.83,-713.51 677.79,-719.81"/>
+<text text-anchor="middle" x="606.99" y="-596.2" font-family="Times,serif" font-size="14.00">1&#45;1</text>
+</g>
+<!-- episodes -->
+<g id="node8" class="node">
+<title>episodes</title>
+<polygon fill="#caff70" stroke="transparent" points="0,-462 0,-484 168,-484 168,-462 0,-462"/>
+<polygon fill="none" stroke="black" points="0,-462 0,-484 168,-484 168,-462 0,-462"/>
+<text text-anchor="start" x="59.9" y="-469.4" font-family="Times,serif" font-weight="bold" font-size="14.00">episodes</text>
+<polygon fill="none" stroke="black" points="0,-440 0,-462 168,-462 168,-440 0,-440"/>
+<text text-anchor="start" x="44.93" y="-447.4" font-family="Times,serif" font-weight="bold" font-size="14.00">id: </text>
+<text text-anchor="start" x="63.21" y="-447.4" font-family="Times,serif" font-weight="bold" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="0,-418 0,-440 168,-440 168,-418 0,-418"/>
+<text text-anchor="start" x="22.77" y="-425.4" font-family="Times,serif" font-size="14.00">season_id: </text>
+<text text-anchor="start" x="85.37" y="-425.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="0,-396 0,-418 168,-418 168,-396 0,-396"/>
+<text text-anchor="start" x="28.6" y="-403.4" font-family="Times,serif" font-size="14.00">trakt_id: </text>
+<text text-anchor="start" x="79.53" y="-403.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="0,-374 0,-396 168,-396 168,-374 0,-374"/>
+<text text-anchor="start" x="27.03" y="-381.4" font-family="Times,serif" font-size="14.00">tmdb_id: </text>
+<text text-anchor="start" x="81.1" y="-381.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="0,-352 0,-374 168,-374 168,-352 0,-352"/>
+<text text-anchor="start" x="51.53" y="-359.4" font-family="Times,serif" font-size="14.00">title: </text>
+<text text-anchor="start" x="80.7" y="-359.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="0,-330 0,-352 168,-352 168,-330 0,-330"/>
+<text text-anchor="start" x="36.38" y="-337.4" font-family="Times,serif" font-size="14.00">overview: </text>
+<text text-anchor="start" x="95.86" y="-337.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="0,-308 0,-330 168,-330 168,-308 0,-308"/>
+<text text-anchor="start" x="31.71" y="-315.4" font-family="Times,serif" font-size="14.00">season: </text>
+<text text-anchor="start" x="76.42" y="-315.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="0,-286 0,-308 168,-308 168,-286 0,-286"/>
+<text text-anchor="start" x="33.66" y="-293.4" font-family="Times,serif" font-size="14.00">first_aired: </text>
+<text text-anchor="start" x="98.58" y="-293.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="0,-264 0,-286 168,-286 168,-264 0,-264"/>
+<text text-anchor="start" x="45.7" y="-271.4" font-family="Times,serif" font-size="14.00">rating: </text>
+<text text-anchor="start" x="85.75" y="-271.4" font-family="Times,serif" font-style="italic" font-size="14.00">REAL</text>
+<polygon fill="none" stroke="black" points="0,-242 0,-264 168,-264 168,-242 0,-242"/>
+<text text-anchor="start" x="35.6" y="-249.4" font-family="Times,serif" font-size="14.00">votes: </text>
+<text text-anchor="start" x="72.54" y="-249.4" font-family="Times,serif" font-style="italic" font-size="14.00">INTEGER</text>
+<polygon fill="none" stroke="black" points="0,-220 0,-242 168,-242 168,-220 0,-220"/>
+<text text-anchor="start" x="11.87" y="-227.4" font-family="Times,serif" font-size="14.00">tmdb_poster_path: </text>
+<text text-anchor="start" x="120.36" y="-227.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="0,-198 0,-220 168,-220 168,-198 0,-198"/>
+<text text-anchor="start" x="2.93" y="-205.4" font-family="Times,serif" font-size="14.00">tmdb_backdrop_path: </text>
+<text text-anchor="start" x="129.3" y="-205.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="0,-176 0,-198 168,-198 168,-176 0,-176"/>
+<text text-anchor="start" x="23.93" y="-183.4" font-family="Times,serif" font-size="14.00">trakt_updated: </text>
+<text text-anchor="start" x="108.3" y="-183.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="none" stroke="black" points="0,-154 0,-176 168,-176 168,-154 0,-154"/>
+<text text-anchor="start" x="22.37" y="-161.4" font-family="Times,serif" font-size="14.00">tmdb_updated: </text>
+<text text-anchor="start" x="109.86" y="-161.4" font-family="Times,serif" font-style="italic" font-size="14.00">TEXT</text>
+<polygon fill="#c1cdcd" stroke="transparent" points="0,-132 0,-154 168,-154 168,-132 0,-132"/>
+<polygon fill="none" stroke="black" points="0,-132 0,-154 168,-154 168,-132 0,-132"/>
+<text text-anchor="start" x="63.79" y="-139.4" font-family="Times,serif" font-style="italic" font-size="14.00">Indices</text>
+<polygon fill="none" stroke="black" points="0,-110 0,-132 168,-132 168,-110 0,-110"/>
+<text text-anchor="start" x="9.74" y="-116.4" font-family="Times,serif" font-size="14.00">index_episodes_season_id</text>
+<polygon fill="none" stroke="black" points="0,-88 0,-110 168,-110 168,-88 0,-88"/>
+<text text-anchor="start" x="15.57" y="-94.4" font-family="Times,serif" font-size="14.00">index_episodes_trakt_id</text>
+<polygon fill="none" stroke="black" points="0,-66 0,-88 168,-88 168,-66 0,-66"/>
+<text text-anchor="start" x="14.01" y="-72.4" font-family="Times,serif" font-size="14.00">index_episodes_tmdb_id</text>
+</g>
+<!-- episodes&#45;&gt;seasons -->
+<g id="edge6" class="edge">
+<title>episodes:season_id&#45;&gt;seasons:id</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M168,-429C242.35,-429 263.45,-429 333.01,-429"/>
+<polygon fill="black" stroke="black" points="333.16,-432.5 343.16,-429 333.16,-425.5 333.16,-432.5"/>
+<text text-anchor="middle" x="249.33" y="-433.2" font-family="Times,serif" font-size="14.00">1&#45;1</text>
+</g>
+</g>
+</svg>
