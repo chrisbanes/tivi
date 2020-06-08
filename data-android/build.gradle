@@ -18,6 +18,7 @@
 import app.tivi.buildsrc.Libs
 
 apply plugin: 'com.android.library'
+apply plugin: 'com.juliozynger.floorplan'
 
 apply plugin: 'kotlin-android'
 
@@ -58,6 +59,16 @@ android {
                 minHeapSize = "64m"
                 maxHeapSize = "128m"
             }
+        }
+    }
+}
+
+floorPlan {
+    schemaLocation = "$projectDir/schemas".toString()
+    outputLocation = "$projectDir/floorplan-output".toString()
+    outputFormat {
+        svg {
+            enabled = true
         }
     }
 }

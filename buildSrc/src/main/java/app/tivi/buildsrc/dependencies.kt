@@ -219,4 +219,9 @@ object Libs {
         const val library = "com.github.MatrixDev.Roomigrant:RoomigrantLib:$version"
         const val compiler = "com.github.MatrixDev.Roomigrant:RoomigrantCompiler:$version"
     }
+
+    object FloorPlan {
+        private const val version = "0.1"
+        const val plugin = "com.juliozynger.floorplan:floorplan-gradle-plugin:$version"
+    }
 }
