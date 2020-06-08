@@ -21,8 +21,10 @@ import dagger.android.ContributesAndroidInjector
 
 @Module
 abstract class ShowDetailsFragmentBuilder {
-    @ContributesAndroidInjector(modules = [
-        ShowDetailsPresenterAssistedModule::class
-    ])
+    @ContributesAndroidInjector(
+        modules = [
+            ShowDetailsPresenterAssistedModule::class
+        ]
+    )
     abstract fun showDetailsFragment(): ShowDetailsFragment
 }

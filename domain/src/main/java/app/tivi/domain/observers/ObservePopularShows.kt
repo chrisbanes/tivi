@@ -20,9 +20,9 @@ import app.tivi.data.daos.PopularDao
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.domain.SubjectInteractor
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 class ObservePopularShows @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,

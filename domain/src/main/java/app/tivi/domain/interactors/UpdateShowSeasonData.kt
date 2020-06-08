@@ -22,9 +22,9 @@ import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateShowSeasonData.Params
 import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
+import javax.inject.Inject
 
 class UpdateShowSeasonData @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,

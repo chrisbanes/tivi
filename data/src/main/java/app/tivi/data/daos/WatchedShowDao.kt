@@ -83,25 +83,29 @@ abstract class WatchedShowDao : EntryDao<WatchedShowEntry, WatchedShowEntryWithS
     abstract override suspend fun deleteAll()
 
     companion object {
-        private const val ENTRY_QUERY_ORDER_LAST_WATCHED = """
+        private const val ENTRY_QUERY_ORDER_LAST_WATCHED =
+            """
             SELECT we.* FROM watched_entries as we
             ORDER BY datetime(last_watched) DESC
         """
 
-        private const val ENTRY_QUERY_ORDER_LAST_WATCHED_FILTER = """
+        private const val ENTRY_QUERY_ORDER_LAST_WATCHED_FILTER =
+            """
             SELECT we.* FROM watched_entries as we
             INNER JOIN shows_fts AS fts ON we.show_id = fts.docid
             WHERE fts.title MATCH :filter
             ORDER BY datetime(last_watched) DESC
         """
 
-        private const val ENTRY_QUERY_ORDER_ALPHA = """
+        private const val ENTRY_QUERY_ORDER_ALPHA =
+            """
             SELECT we.* FROM watched_entries as we
             INNER JOIN shows_fts AS fts ON we.show_id = fts.docid
             ORDER BY title ASC
         """
 
-        private const val ENTRY_QUERY_ORDER_ALPHA_FILTER = """
+        private const val ENTRY_QUERY_ORDER_ALPHA_FILTER =
+            """
             SELECT we.* FROM watched_entries as we
             INNER JOIN shows_fts AS fts ON we.show_id = fts.docid
             WHERE title MATCH :filter

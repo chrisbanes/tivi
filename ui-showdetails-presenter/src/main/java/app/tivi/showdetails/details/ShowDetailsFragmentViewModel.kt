@@ -272,8 +272,10 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
 
     private fun onUnfollowPreviousSeasonsFollowState(action: UnfollowPreviousSeasonsFollowedAction) {
         changeSeasonFollowStatus(
-            ChangeSeasonFollowStatus.Params(action.seasonId,
-                ChangeSeasonFollowStatus.Action.IGNORE_PREVIOUS)
+            ChangeSeasonFollowStatus.Params(
+                action.seasonId,
+                ChangeSeasonFollowStatus.Action.IGNORE_PREVIOUS
+            )
         ).watchStatus()
     }
 

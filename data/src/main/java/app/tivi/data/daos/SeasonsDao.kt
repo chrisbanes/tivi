@@ -48,12 +48,14 @@ abstract class SeasonsDao : EntityDao<Season>() {
     @Query("SELECT * FROM seasons WHERE trakt_id = :traktId")
     abstract suspend fun seasonWithTraktId(traktId: Int): Season?
 
-    @Query("""
+    @Query(
+        """
         SELECT id from seasons WHERE 
           show_id = (SELECT show_id from SEASONS WHERE id = :seasonId)
           AND number != $NUMBER_SPECIALS
           AND number < (SELECT number from SEASONS WHERE id = :seasonId)
-    """)
+    """
+    )
     abstract suspend fun showPreviousSeasonIds(seasonId: Long): LongArray
 
     @Query("UPDATE seasons SET ignored = :ignored WHERE id = :seasonId")

@@ -30,7 +30,6 @@ import app.tivi.utils.s1e1
 import app.tivi.utils.s1e2
 import app.tivi.utils.s1e3
 import app.tivi.utils.showId
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
@@ -44,6 +43,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
 @RunWith(RobolectricTestRunner::class)
 class EpisodesTest {
@@ -109,17 +109,29 @@ class EpisodesTest {
     fun nextAiredEpisodeAfter() = testScope.runBlockingTest {
         episodeDao.insertAll(s1_episodes)
 
-        assertThat(episodeDao.observeNextEpisodeForShowAfter(showId, 0, 0)
-            .first()?.episode, `is`(s1e1))
+        assertThat(
+            episodeDao.observeNextEpisodeForShowAfter(showId, 0, 0)
+                .first()?.episode,
+            `is`(s1e1)
+        )
 
-        assertThat(episodeDao.observeNextEpisodeForShowAfter(showId, 1, 0)
-            .first()?.episode, `is`(s1e2))
+        assertThat(
+            episodeDao.observeNextEpisodeForShowAfter(showId, 1, 0)
+                .first()?.episode,
+            `is`(s1e2)
+        )
 
-        assertThat(episodeDao.observeNextEpisodeForShowAfter(showId, 1, 1)
-            .first()?.episode, `is`(s1e3))
+        assertThat(
+            episodeDao.observeNextEpisodeForShowAfter(showId, 1, 1)
+                .first()?.episode,
+            `is`(s1e3)
+        )
 
-        assertThat(episodeDao.observeNextEpisodeForShowAfter(showId, 1, 2)
-            .first()?.episode, nullValue())
+        assertThat(
+            episodeDao.observeNextEpisodeForShowAfter(showId, 1, 2)
+                .first()?.episode,
+            nullValue()
+        )
     }
 
     @After

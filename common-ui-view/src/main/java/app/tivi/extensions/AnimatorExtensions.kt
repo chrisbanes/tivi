@@ -19,8 +19,8 @@ package app.tivi.extensions
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
-import kotlin.coroutines.resume
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 fun animatorSetOf(vararg animators: Animator, playTogether: Boolean = true) = AnimatorSet().apply {
     if (playTogether) {

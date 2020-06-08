@@ -23,12 +23,14 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import app.tivi.data.PaginatedEntry
 
-@Entity(tableName = "trending_shows",
+@Entity(
+    tableName = "trending_shows",
     indices = [
         Index(value = ["show_id"], unique = true)
     ],
     foreignKeys = [
-        ForeignKey(entity = TiviShow::class,
+        ForeignKey(
+            entity = TiviShow::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("show_id"),
             onUpdate = ForeignKey.CASCADE,

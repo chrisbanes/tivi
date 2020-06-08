@@ -22,9 +22,11 @@ import dagger.android.ContributesAndroidInjector
 
 @Module
 abstract class RecommendedBuilder {
-    @ContributesAndroidInjector(modules = [
-        RecommendedAssistedModule::class
-    ])
+    @ContributesAndroidInjector(
+        modules = [
+            RecommendedAssistedModule::class
+        ]
+    )
     internal abstract fun RecommendedShowsFragment(): RecommendedShowsFragment
 }
 

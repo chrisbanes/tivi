@@ -73,8 +73,10 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
 
         binding.followedAppBar.doOnSizeChange {
             binding.summaryRv.updatePadding(top = it.height)
-            binding.summarySwipeRefresh.setProgressViewOffset(true, 0,
-                it.height + binding.summarySwipeRefresh.progressCircleDiameter / 2)
+            binding.summarySwipeRefresh.setProgressViewOffset(
+                true, 0,
+                it.height + binding.summarySwipeRefresh.progressCircleDiameter / 2
+            )
             true
         }
 
@@ -102,7 +104,8 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
                         R.id.navigation_trending,
                         null,
                         null,
-                        extras.toFragmentNavigatorExtras())
+                        extras.toFragmentNavigatorExtras()
+                    )
                 }
             }
 
@@ -114,7 +117,8 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
                         R.id.navigation_popular,
                         null,
                         null,
-                        extras.toFragmentNavigatorExtras())
+                        extras.toFragmentNavigatorExtras()
+                    )
                 }
             }
 
@@ -126,7 +130,8 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
                         R.id.navigation_recommended,
                         null,
                         null,
-                        extras.toFragmentNavigatorExtras())
+                        extras.toFragmentNavigatorExtras()
+                    )
                 }
             }
 

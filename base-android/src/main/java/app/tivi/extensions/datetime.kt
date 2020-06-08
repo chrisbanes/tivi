@@ -16,8 +16,8 @@
 
 package app.tivi.extensions
 
-import java.text.SimpleDateFormat
 import org.threeten.bp.format.DateTimeFormatter
+import java.text.SimpleDateFormat
 
 fun SimpleDateFormat.toThreeTenDateTimeFormatter(): DateTimeFormatter {
     return DateTimeFormatter.ofPattern(toPattern())

@@ -104,8 +104,10 @@ class TraktFollowedShowsDataSource @Inject constructor(
         }
 
         return try {
-            usersService.get().createList(UserSlug.ME,
-                TraktList().name(LIST_NAME).privacy(ListPrivacy.PRIVATE))
+            usersService.get().createList(
+                UserSlug.ME,
+                TraktList().name(LIST_NAME).privacy(ListPrivacy.PRIVATE)
+            )
                 .executeWithRetry()
                 .bodyOrThrow()
                 .let { Success(it.ids.trakt) }

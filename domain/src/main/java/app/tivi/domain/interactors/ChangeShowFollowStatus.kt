@@ -26,9 +26,9 @@ import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
+import javax.inject.Inject
 
 class ChangeShowFollowStatus @Inject constructor(
     private val followedShowsRepository: FollowedShowsRepository,

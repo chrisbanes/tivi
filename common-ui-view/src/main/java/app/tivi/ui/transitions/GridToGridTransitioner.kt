@@ -50,16 +50,20 @@ object GridToGridTransitioner {
      */
     fun setupFirstFragment(fragment: Fragment, vararg contentFadeElementIds: Int) {
         fragment.exitTransition = TransitionSet().apply {
-            addTransition(Fade().apply {
-                contentFadeElementIds.forEach { excludeTarget(it, true) }
-                interpolator = LINEAR_INTERPOLATOR
-                duration = CONTENT_TRANSITION_DURATION / 2
-            })
-            addTransition(Fade().apply {
-                contentFadeElementIds.forEach { addTarget(it) }
-                interpolator = LINEAR_INTERPOLATOR
-                duration = CONTENT_TRANSITION_DURATION
-            })
+            addTransition(
+                Fade().apply {
+                    contentFadeElementIds.forEach { excludeTarget(it, true) }
+                    interpolator = LINEAR_INTERPOLATOR
+                    duration = CONTENT_TRANSITION_DURATION / 2
+                }
+            )
+            addTransition(
+                Fade().apply {
+                    contentFadeElementIds.forEach { addTarget(it) }
+                    interpolator = LINEAR_INTERPOLATOR
+                    duration = CONTENT_TRANSITION_DURATION
+                }
+            )
         }
         fragment.reenterTransition = Fade().apply {
             interpolator = LINEAR_INTERPOLATOR
@@ -87,14 +91,18 @@ object GridToGridTransitioner {
             duration = GRID_SHARED_ELEMENT_RETURN_DURATION
         }
         fragment.enterTransition = TransitionSet().apply {
-            addTransition(Fade().apply {
-                fadeElementIds.forEach { addTarget(it) }
-                interpolator = LINEAR_INTERPOLATOR
-            })
-            addTransition(BabySlide().apply {
-                fadeElementIds.forEach { excludeTarget(it, true) }
-                interpolator = LINEAR_OUT_SLOW_IN_INTERPOLATOR
-            })
+            addTransition(
+                Fade().apply {
+                    fadeElementIds.forEach { addTarget(it) }
+                    interpolator = LINEAR_INTERPOLATOR
+                }
+            )
+            addTransition(
+                BabySlide().apply {
+                    fadeElementIds.forEach { excludeTarget(it, true) }
+                    interpolator = LINEAR_OUT_SLOW_IN_INTERPOLATOR
+                }
+            )
             duration = CONTENT_TRANSITION_DURATION
             // We want this to end at the same time as the shared element transition so we delay it
             startDelay = GRID_SHARED_ELEMENT_ENTER_DURATION - CONTENT_TRANSITION_DURATION
@@ -106,14 +114,18 @@ object GridToGridTransitioner {
             })
         }
         fragment.returnTransition = TransitionSet().apply {
-            addTransition(Fade().apply {
-                fadeElementIds.forEach { addTarget(it) }
-                interpolator = LINEAR_INTERPOLATOR
-            })
-            addTransition(BabySlide().apply {
-                fadeElementIds.forEach { excludeTarget(it, true) }
-                interpolator = FAST_OUT_LINEAR_IN_INTERPOLATOR
-            })
+            addTransition(
+                Fade().apply {
+                    fadeElementIds.forEach { addTarget(it) }
+                    interpolator = LINEAR_INTERPOLATOR
+                }
+            )
+            addTransition(
+                BabySlide().apply {
+                    fadeElementIds.forEach { excludeTarget(it, true) }
+                    interpolator = FAST_OUT_LINEAR_IN_INTERPOLATOR
+                }
+            )
             duration = (CONTENT_TRANSITION_DURATION * RETURN_TRANSITION_FRACTION).toLong()
         }
     }

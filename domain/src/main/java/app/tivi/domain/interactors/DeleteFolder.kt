@@ -19,10 +19,10 @@ package app.tivi.domain.interactors
 import app.tivi.domain.Interactor
 import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import java.io.File
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
+import java.io.File
+import javax.inject.Inject
 
 class DeleteFolder @Inject constructor(
     dispatchers: AppCoroutineDispatchers,

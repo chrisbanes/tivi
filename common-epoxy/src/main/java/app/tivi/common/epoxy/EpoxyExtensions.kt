@@ -38,7 +38,8 @@ fun RecyclerView.syncSpanSizes(controller: EpoxyController) {
     val layout = layoutManager
     if (layout is GridLayoutManager) {
         if (controller.spanCount != layout.spanCount ||
-            layout.spanSizeLookup !== controller.spanSizeLookup) {
+            layout.spanSizeLookup !== controller.spanSizeLookup
+        ) {
             controller.spanCount = layout.spanCount
             layout.spanSizeLookup = controller.spanSizeLookup
         }

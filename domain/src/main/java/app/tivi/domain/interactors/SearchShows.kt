@@ -21,8 +21,8 @@ import app.tivi.data.entities.SearchResults
 import app.tivi.data.repositories.search.SearchRepository
 import app.tivi.domain.SuspendingWorkInteractor
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import javax.inject.Inject
 
 class SearchShows @Inject constructor(
     private val searchRepository: SearchRepository,
@@ -35,10 +35,13 @@ class SearchShows @Inject constructor(
         val remoteResults = searchRepository.search(params.query)
         return when {
             remoteResults.isNotEmpty() -> SearchResults(params.query, remoteResults)
-            else -> SearchResults(params.query, when {
-                params.query.isNotBlank() -> showFtsDao.search("*$params.query*")
-                else -> emptyList()
-            })
+            else -> SearchResults(
+                params.query,
+                when {
+                    params.query.isNotBlank() -> showFtsDao.search("*$params.query*")
+                    else -> emptyList()
+                }
+            )
         }
     }
 

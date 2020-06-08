@@ -33,7 +33,6 @@ import app.tivi.utils.s1e1
 import app.tivi.utils.s1e1w
 import app.tivi.utils.s1e1w_id
 import app.tivi.utils.showId
-import javax.inject.Inject
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
@@ -45,6 +44,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
 @RunWith(RobolectricTestRunner::class)
 class EpisodeWatchEntryTest {
@@ -90,7 +90,8 @@ class EpisodeWatchEntryTest {
     @Test
     fun fetchEntries_WithPendingSendAction() = testScope.runBlockingTest {
         episodeWatchEntryDao.insertAll(s1e1w, episodeWatch2PendingSend)
-        assertThat(episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId),
+        assertThat(
+            episodeWatchEntryDao.entriesForShowIdWithSendPendingActions(showId),
             `is`(listOf(episodeWatch2PendingSend))
         )
     }
@@ -98,7 +99,8 @@ class EpisodeWatchEntryTest {
     @Test
     fun fetchEntries_WithPendingDeleteAction() = testScope.runBlockingTest {
         episodeWatchEntryDao.insertAll(s1e1w, episodeWatch2PendingDelete)
-        assertThat(episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId),
+        assertThat(
+            episodeWatchEntryDao.entriesForShowIdWithDeletePendingActions(showId),
             `is`(listOf(episodeWatch2PendingDelete))
         )
     }

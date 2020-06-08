@@ -81,8 +81,6 @@ subprojects {
             targetExclude('bin/**/*.kt')
 
             ktlint(Versions.ktlint)
-                    // Disable paren-spacing rule for NonParenthesizedAnnotationsOnFunctionalTypes
-                    .userData(["disabled_rules": "paren-spacing"])
             licenseHeaderFile rootProject.file('spotless/copyright.kt')
         }
     }

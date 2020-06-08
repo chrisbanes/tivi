@@ -65,7 +65,8 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     internal abstract fun pagedListAddedFilter(filter: String): DataSource.Factory<Int, FollowedShowEntryWithShow>
 
     @Transaction
-    @Query("""
+    @Query(
+        """
         SELECT myshows_entries.* FROM myshows_entries
             INNER JOIN seasons AS s ON s.show_id = myshows_entries.show_id
 			INNER JOIN followed_next_to_watch AS next ON next.id = myshows_entries.id
@@ -74,7 +75,8 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             WHERE s.number != ${Season.NUMBER_SPECIALS} AND s.ignored = 0
 			ORDER BY datetime(ew.watched_at) DESC
 			LIMIT 1
-    """)
+    """
+    )
     abstract fun observeNextShowToWatch(): Flow<FollowedShowEntryWithShow?>
 
     @Query("DELETE FROM myshows_entries")
@@ -94,11 +96,13 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     abstract suspend fun entryCountWithShowId(showId: Long): Int
 
     @Transaction
-    @Query("""
+    @Query(
+        """
         SELECT stats.* FROM FollowedShowsWatchStats as stats
         INNER JOIN myshows_entries ON stats.id = myshows_entries.id
         WHERE show_id = :showId
-    """)
+    """
+    )
     abstract fun entryShowViewStats(showId: Long): Flow<FollowedShowsWatchStats>
 
     suspend fun entriesWithNoPendingAction() = entriesWithPendingAction(PendingAction.NOTHING.value)
@@ -117,7 +121,8 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
     abstract suspend fun deleteWithIds(ids: List<Long>): Int
 
     companion object {
-        private const val ENTRY_QUERY_SUPER_SORT = """
+        private const val ENTRY_QUERY_SUPER_SORT =
+            """
             SELECT fs.* FROM myshows_entries as fs
             INNER JOIN seasons AS s ON fs.show_id = s.show_id
             INNER JOIN episodes AS eps ON eps.season_id = s.id
@@ -137,7 +142,8 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
                 ) DESC
         """
 
-        private const val ENTRY_QUERY_SUPER_SORT_FILTER = """
+        private const val ENTRY_QUERY_SUPER_SORT_FILTER =
+            """
             SELECT fs.* FROM myshows_entries as fs
             INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid
             INNER JOIN seasons AS s ON fs.show_id = s.show_id
@@ -159,7 +165,8 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
                 ) DESC
         """
 
-        private const val ENTRY_QUERY_ORDER_LAST_WATCHED = """
+        private const val ENTRY_QUERY_ORDER_LAST_WATCHED =
+            """
             SELECT fs.* FROM myshows_entries as fs
             INNER JOIN seasons AS s ON fs.show_id = s.show_id
             INNER JOIN episodes AS eps ON eps.season_id = s.id
@@ -168,7 +175,8 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             ORDER BY MAX(datetime(ew.watched_at)) DESC
         """
 
-        private const val ENTRY_QUERY_ORDER_LAST_WATCHED_FILTER = """
+        private const val ENTRY_QUERY_ORDER_LAST_WATCHED_FILTER =
+            """
             SELECT fs.* FROM myshows_entries as fs
             INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid
             INNER JOIN seasons AS s ON fs.show_id = s.show_id
@@ -179,25 +187,29 @@ abstract class FollowedShowsDao : EntryDao<FollowedShowEntry, FollowedShowEntryW
             ORDER BY MAX(datetime(ew.watched_at)) DESC
         """
 
-        private const val ENTRY_QUERY_ORDER_ALPHA = """
+        private const val ENTRY_QUERY_ORDER_ALPHA =
+            """
             SELECT fs.* FROM myshows_entries as fs
             INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid
             ORDER BY title ASC
         """
 
-        private const val ENTRY_QUERY_ORDER_ALPHA_FILTER = """
+        private const val ENTRY_QUERY_ORDER_ALPHA_FILTER =
+            """
             SELECT fs.* FROM myshows_entries as fs
             INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid
             WHERE s_fts.title MATCH :filter
             ORDER BY title ASC
         """
 
-        private const val ENTRY_QUERY_ORDER_ADDED = """
+        private const val ENTRY_QUERY_ORDER_ADDED =
+            """
             SELECT * FROM myshows_entries
             ORDER BY datetime(followed_at) DESC
         """
 
-        private const val ENTRY_QUERY_ORDER_ADDED_FILTER = """
+        private const val ENTRY_QUERY_ORDER_ADDED_FILTER =
+            """
             SELECT fs.* FROM myshows_entries as fs
             INNER JOIN shows_fts AS s_fts ON fs.show_id = s_fts.docid
             WHERE s_fts.title MATCH :filter

@@ -28,10 +28,10 @@ import com.dropbox.android.external.store4.StoreBuilder
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import javax.inject.Singleton
 
 @Module(includes = [ShowsModuleBinds::class, ShowStoreModule::class])
 class ShowsModule

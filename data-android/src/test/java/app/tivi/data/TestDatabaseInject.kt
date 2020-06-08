@@ -44,14 +44,16 @@ import dagger.Component
 import dagger.Module
 import dagger.Provides
 import io.mockk.mockk
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
+import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [
-    TestDataSourceModule::class,
-    TestDatabaseModule::class
-])
+@Component(
+    modules = [
+        TestDataSourceModule::class,
+        TestDatabaseModule::class
+    ]
+)
 interface TestComponent {
     fun inject(test: SeasonsEpisodesRepositoryTest)
     fun inject(test: FollowedShowRepositoryTest)
@@ -102,13 +104,15 @@ class TestDataSourceModule(
     fun provideStoreCoroutineScope(): CoroutineScope = storeScope
 }
 
-@Module(includes = [
-    TestRoomDatabaseModule::class,
-    DatabaseDaoModule::class,
-    TraktServiceModule::class,
-    ShowStoreModule::class,
-    ShowImagesStoreModule::class
-])
+@Module(
+    includes = [
+        TestRoomDatabaseModule::class,
+        DatabaseDaoModule::class,
+        TraktServiceModule::class,
+        ShowStoreModule::class,
+        ShowImagesStoreModule::class
+    ]
+)
 class TestDatabaseModule {
     @Provides
     fun provideTrakt(): TraktV2 = TraktV2("fakefakefake")

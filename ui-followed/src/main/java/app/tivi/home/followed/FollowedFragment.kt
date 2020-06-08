@@ -42,8 +42,8 @@ import app.tivi.ui.createSharedElementHelperForItem
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collect
+import javax.inject.Inject
 
 class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
     private val viewModel: FollowedViewModel by fragmentViewModel()
@@ -83,8 +83,10 @@ class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
 
         binding.followedAppBar.doOnSizeChange {
             binding.followedRv.updatePadding(top = it.height)
-            binding.followedSwipeRefresh.setProgressViewOffset(true, 0,
-                it.height + binding.followedSwipeRefresh.progressCircleDiameter / 2)
+            binding.followedSwipeRefresh.setProgressViewOffset(
+                true, 0,
+                it.height + binding.followedSwipeRefresh.progressCircleDiameter / 2
+            )
             true
         }
 

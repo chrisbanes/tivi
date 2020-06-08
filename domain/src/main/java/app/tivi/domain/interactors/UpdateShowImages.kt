@@ -22,10 +22,10 @@ import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.domain.Interactor
 import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
 import org.threeten.bp.Period
+import javax.inject.Inject
 
 class UpdateShowImages @Inject constructor(
     private val showImagesStore: ShowImagesStore,

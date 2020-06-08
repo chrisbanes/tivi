@@ -28,8 +28,8 @@ import com.dropbox.android.external.store4.StoreBuilder
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
+import javax.inject.Singleton
 
 @Module(includes = [ShowImagesModuleBinds::class, ShowImagesStoreModule::class])
 class ShowsImagesModule

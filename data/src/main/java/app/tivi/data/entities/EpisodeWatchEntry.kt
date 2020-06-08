@@ -23,7 +23,8 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import org.threeten.bp.OffsetDateTime
 
-@Entity(tableName = "episode_watch_entries",
+@Entity(
+    tableName = "episode_watch_entries",
     indices = [
         Index(value = ["episode_id"]),
         Index(value = ["trakt_id"], unique = true)

@@ -20,7 +20,9 @@ import androidx.room.DatabaseView
 import app.tivi.data.entities.Season
 import org.threeten.bp.OffsetDateTime
 
-@DatabaseView(value = """
+@DatabaseView(
+    value =
+        """
 SELECT
   fs.id,
   MAX(datetime(eps.first_aired)) as last_watched_air_date
@@ -34,7 +36,9 @@ WHERE
   AND s.ignored = 0
 GROUP BY
   fs.id
-""", viewName = "followed_last_watched_airdate")
+""",
+    viewName = "followed_last_watched_airdate"
+)
 data class FollowedShowsLastWatched(
     val id: Long,
     val lastWatchedEpisodeAirDate: OffsetDateTime?

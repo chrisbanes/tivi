@@ -26,7 +26,8 @@ import org.threeten.bp.LocalTime
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneId
 
-@Entity(tableName = "shows",
+@Entity(
+    tableName = "shows",
     indices = [
         Index(value = ["trakt_id"], unique = true),
         Index(value = ["tmdb_id"])

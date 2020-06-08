@@ -27,8 +27,10 @@ private var sSuppressLayoutMethodFetched: Boolean = false
 fun ViewGroup.suppressLayoutInternal(suppress: Boolean) {
     if (!sSuppressLayoutMethodFetched) {
         try {
-            sSuppressLayoutMethod = ViewGroup::class.java.getDeclaredMethod("suppressLayout",
-                Boolean::class.javaPrimitiveType)
+            sSuppressLayoutMethod = ViewGroup::class.java.getDeclaredMethod(
+                "suppressLayout",
+                Boolean::class.javaPrimitiveType
+            )
             sSuppressLayoutMethod!!.isAccessible = true
         } catch (e: NoSuchMethodException) {
             Log.i("ViewGroupTivi", "Failed to retrieve suppressLayout method", e)

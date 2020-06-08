@@ -20,11 +20,11 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.motion.widget.TransitionAdapter
 import androidx.constraintlayout.widget.ConstraintSet
 import app.tivi.ui.widget.TiviMotionLayout
-import kotlin.coroutines.resume
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
+import kotlin.coroutines.resume
 
 /**
  * Applies the given function over each [ConstraintSet]
@@ -71,7 +71,10 @@ suspend fun TiviMotionLayout.awaitTransitionComplete(transitionId: Int, timeout:
         // Transition didn't happen in time. Remove our listener and throw a cancellation
         // exception to let the coroutine know
         listener?.let(::removeTransitionListener)
-        throw CancellationException("Transition to state with id: $transitionId did not" +
-            " complete in timeout.", tex)
+        throw CancellationException(
+            "Transition to state with id: $transitionId did not" +
+                " complete in timeout.",
+            tex
+        )
     }
 }

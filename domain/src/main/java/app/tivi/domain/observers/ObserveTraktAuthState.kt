@@ -20,9 +20,9 @@ import app.tivi.domain.SubjectInteractor
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 class ObserveTraktAuthState @Inject constructor(
     dispatchers: AppCoroutineDispatchers,

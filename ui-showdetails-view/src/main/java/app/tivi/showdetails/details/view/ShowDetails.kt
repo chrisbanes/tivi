@@ -539,14 +539,18 @@ private fun TraktRatingInfoPanel(
 
             Column {
                 Text(
-                    text = stringResource(R.string.trakt_rating_text,
-                        (show.traktRating ?: 0f) * 10f),
+                    text = stringResource(
+                        R.string.trakt_rating_text,
+                        (show.traktRating ?: 0f) * 10f
+                    ),
                     style = MaterialTheme.typography.body2
                 )
 
                 Text(
-                    text = stringResource(R.string.trakt_rating_votes,
-                        (show.traktVotes ?: 0) / 1000f),
+                    text = stringResource(
+                        R.string.trakt_rating_votes,
+                        (show.traktVotes ?: 0) / 1000f
+                    ),
                     style = MaterialTheme.typography.caption
                 )
             }
@@ -667,8 +671,7 @@ private fun InfoPanels(show: TiviShow) {
             if (show.runtime != null) {
                 RuntimeInfoPanel(show)
             }
-            if (show.airsDay != null && show.airsTime != null &&
-                show.airsTimeZone != null) {
+            if (show.airsDay != null && show.airsTime != null && show.airsTimeZone != null) {
                 AirsInfoPanel(show)
             }
         }
@@ -709,7 +712,8 @@ private fun Seasons(
     seasons.forEach {
         val mod = if (pendingFocusSeasonUiEffect != null &&
             pendingFocusSeasonUiEffect.seasonId == it.season.id &&
-            !scrollerPosition.isAnimating) {
+            !scrollerPosition.isAnimating
+        ) {
 
             // Offset, to not scroll the item under the status bar, and leave a gap
             val offset = InsetsAmbient.current.top +
@@ -899,9 +903,11 @@ private fun EpisodeWithWatchesRow(
 private fun VerticalDivider(
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier.preferredHeight(Dp.Hairline)
-        .fillMaxWidth()
-        .drawBackground(contentColor().copy(alpha = 0.15f)))
+    Box(
+        modifier = modifier.preferredHeight(Dp.Hairline)
+            .fillMaxWidth()
+            .drawBackground(contentColor().copy(alpha = 0.15f))
+    )
 }
 
 @Composable
@@ -948,7 +954,8 @@ private fun SeasonRowOverflowMenu(
     }
 
     if (episodesWithWatches.numberWatched < episodesWithWatches.numberAired &&
-        episodesWithWatches.numberAired < episodesWithWatches.size) {
+        episodesWithWatches.numberAired < episodesWithWatches.size
+    ) {
         items += PopupMenuItem(
             title = stringResource(id = R.string.popup_season_mark_watched_aired),
             onClick = { actioner(MarkSeasonWatchedAction(season.id, onlyAired = true)) }

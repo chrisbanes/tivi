@@ -27,20 +27,22 @@ import app.tivi.data.repositories.watchedshows.WatchedShowsModule
 import app.tivi.inject.ForStore
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 import kotlin.coroutines.EmptyCoroutineContext
-import kotlinx.coroutines.CoroutineScope
 
-@Module(includes = [
-    EpisodesModule::class,
-    ShowsModule::class,
-    ShowsImagesModule::class,
-    TrendingShowsModule::class,
-    WatchedShowsModule::class,
-    RecommendedShowsModule::class,
-    RelatedShowsModule::class,
-    PopularShowsModule::class
-])
+@Module(
+    includes = [
+        EpisodesModule::class,
+        ShowsModule::class,
+        ShowsImagesModule::class,
+        TrendingShowsModule::class,
+        WatchedShowsModule::class,
+        RecommendedShowsModule::class,
+        RelatedShowsModule::class,
+        PopularShowsModule::class
+    ]
+)
 class DataModule {
     @ForStore
     @Singleton

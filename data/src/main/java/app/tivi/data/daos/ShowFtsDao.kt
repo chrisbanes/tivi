@@ -24,7 +24,8 @@ import app.tivi.data.resultentities.ShowDetailed
 @Dao
 abstract class ShowFtsDao {
     @Transaction
-    @Query("""
+    @Query(
+        """
         SELECT s.* FROM shows as s
         INNER JOIN shows_fts AS fts ON s.id = fts.docid
         WHERE fts.title MATCH :filter

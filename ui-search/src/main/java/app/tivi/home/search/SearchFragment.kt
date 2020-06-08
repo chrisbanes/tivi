@@ -91,7 +91,8 @@ internal class SearchFragment : TiviFragmentWithBinding<FragmentSearchBinding>()
                 findNavController().navigate(
                     "app.tivi://show/${show.id}".toUri(),
                     null,
-                    extras.toActivityNavigatorExtras(requireActivity()))
+                    extras.toActivityNavigatorExtras(requireActivity())
+                )
             }
         }
     }

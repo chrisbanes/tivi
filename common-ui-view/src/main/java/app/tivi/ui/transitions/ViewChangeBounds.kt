@@ -129,7 +129,8 @@ open class ViewChangeBounds : Transition() {
             null,
             pathMotion.getPath(
                 startBounds.left.toFloat(), startBounds.top.toFloat(),
-                endBounds.left.toFloat(), endBounds.top.toFloat())
+                endBounds.left.toFloat(), endBounds.top.toFloat()
+            )
         )
 
         val outBottomRightPropVal = PropertyValuesHolder.ofObject<PointF>(
@@ -137,7 +138,8 @@ open class ViewChangeBounds : Transition() {
             null,
             pathMotion.getPath(
                 startBounds.right.toFloat(), startBounds.bottom.toFloat(),
-                endBounds.right.toFloat(), endBounds.bottom.toFloat())
+                endBounds.right.toFloat(), endBounds.bottom.toFloat()
+            )
         )
 
         val alphaPropVal = PropertyValuesHolder.ofFloat(ALPHA_PROPERTY, startAlpha, endAlpha)
@@ -146,7 +148,8 @@ open class ViewChangeBounds : Transition() {
 
         bounds.setLeftTopRightBottom(startBounds.left, startBounds.top, startBounds.right, startBounds.bottom)
 
-        return ObjectAnimator.ofPropertyValuesHolder(bounds,
+        return ObjectAnimator.ofPropertyValuesHolder(
+            bounds,
             outTopLeftPropVal,
             outBottomRightPropVal,
             alphaPropVal

@@ -22,9 +22,11 @@ import dagger.android.ContributesAndroidInjector
 
 @Module
 abstract class WatchedBuilder {
-    @ContributesAndroidInjector(modules = [
-        WatchedAssistedModule::class
-    ])
+    @ContributesAndroidInjector(
+        modules = [
+            WatchedAssistedModule::class
+        ]
+    )
     abstract fun fragment(): WatchedFragment
 }
 
