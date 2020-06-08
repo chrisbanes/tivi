@@ -23,10 +23,12 @@ import dagger.android.ContributesAndroidInjector
 
 @Module
 internal abstract class ShowDetailsBuilder {
-    @ContributesAndroidInjector(modules = [
-        ShowDetailsModule::class,
-        ShowDetailsFragmentBuilder::class,
-        EpisodeDetailsFragmentBuilder::class
-    ])
+    @ContributesAndroidInjector(
+        modules = [
+            ShowDetailsModule::class,
+            ShowDetailsFragmentBuilder::class,
+            EpisodeDetailsFragmentBuilder::class
+        ]
+    )
     internal abstract fun bindDetailsActivity(): ShowDetailsActivity
 }

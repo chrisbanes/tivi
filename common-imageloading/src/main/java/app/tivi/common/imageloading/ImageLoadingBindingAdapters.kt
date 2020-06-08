@@ -89,7 +89,8 @@ fun ImageView.loadImage(
 ) {
     if (oldImage == image &&
         oldSaturateOnLoad == saturateOnLoad &&
-        oldCornerRadius == cornerRadius) return
+        oldCornerRadius == cornerRadius
+    ) return
 
     loadAny(image) {
         transition(SaturatingTransformation())

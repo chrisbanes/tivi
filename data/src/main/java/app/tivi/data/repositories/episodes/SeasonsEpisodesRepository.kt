@@ -30,12 +30,12 @@ import app.tivi.extensions.asyncOrAwait
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
 import kotlinx.coroutines.async
 import org.threeten.bp.Instant
 import org.threeten.bp.OffsetDateTime
+import javax.inject.Inject
+import javax.inject.Provider
+import javax.inject.Singleton
 
 @Singleton
 class SeasonsEpisodesRepository @Inject constructor(
@@ -253,7 +253,8 @@ class SeasonsEpisodesRepository @Inject constructor(
         if (watchesForEpisode.isNotEmpty()) {
             // First mark them as pending deletion
             episodeWatchStore.updateEntriesWithAction(
-                watchesForEpisode.map { it.id }, PendingAction.DELETE)
+                watchesForEpisode.map { it.id }, PendingAction.DELETE
+            )
             syncEpisodeWatches(episodeId)
         }
     }

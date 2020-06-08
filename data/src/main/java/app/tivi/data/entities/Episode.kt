@@ -30,11 +30,13 @@ import org.threeten.bp.OffsetDateTime
         Index(value = ["season_id"])
     ],
     foreignKeys = [
-        ForeignKey(entity = Season::class,
+        ForeignKey(
+            entity = Season::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("season_id"),
             onUpdate = ForeignKey.CASCADE,
-            onDelete = ForeignKey.CASCADE)
+            onDelete = ForeignKey.CASCADE
+        )
     ]
 )
 data class Episode(

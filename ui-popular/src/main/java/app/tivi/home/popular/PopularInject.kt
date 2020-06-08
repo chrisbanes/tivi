@@ -22,9 +22,11 @@ import dagger.android.ContributesAndroidInjector
 
 @Module
 abstract class PopularBuilder {
-    @ContributesAndroidInjector(modules = [
-        PopularAssistedModule::class
-    ])
+    @ContributesAndroidInjector(
+        modules = [
+            PopularAssistedModule::class
+        ]
+    )
     internal abstract fun popularShowsFragment(): PopularShowsFragment
 }
 

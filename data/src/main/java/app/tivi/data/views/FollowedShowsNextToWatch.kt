@@ -20,7 +20,9 @@ import androidx.room.DatabaseView
 import app.tivi.data.entities.Season
 import org.threeten.bp.OffsetDateTime
 
-@DatabaseView(value = """
+@DatabaseView(
+    value =
+        """
 SELECT
   fs.id,
   MIN(datetime(eps.first_aired)) AS next_ep_to_watch_air_date
@@ -38,7 +40,9 @@ WHERE
   AND datetime(first_aired) > datetime(last_watched_air_date)
 GROUP BY
   fs.id
-""", viewName = "followed_next_to_watch")
+""",
+    viewName = "followed_next_to_watch"
+)
 data class FollowedShowsNextToWatch(
     val id: Long,
     val nextEpisodeToWatchAirDate: OffsetDateTime?

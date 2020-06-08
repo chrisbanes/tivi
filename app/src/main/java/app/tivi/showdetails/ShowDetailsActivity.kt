@@ -49,8 +49,10 @@ class ShowDetailsActivity : TiviActivity() {
 
     override fun handleIntent(intent: Intent) {
         supportFragmentManager.commit {
-            replace(R.id.details_content,
-                NavHostFragment.create(R.navigation.show_details_nav_graph, intent.extras))
+            replace(
+                R.id.details_content,
+                NavHostFragment.create(R.navigation.show_details_nav_graph, intent.extras)
+            )
         }
     }
 }

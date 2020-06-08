@@ -38,7 +38,6 @@ import app.tivi.utils.insertShow
 import app.tivi.utils.show
 import app.tivi.utils.show2
 import io.mockk.coEvery
-import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
@@ -50,6 +49,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
 @RunWith(RobolectricTestRunner::class)
 class FollowedShowRepositoryTest {
@@ -90,8 +90,10 @@ class FollowedShowRepositoryTest {
 
         repository.syncFollowedShows()
 
-        assertThat(repository.getFollowedShows(),
-            `is`(listOf(followedShow1Local)))
+        assertThat(
+            repository.getFollowedShows(),
+            `is`(listOf(followedShow1Local))
+        )
     }
 
     @Test
@@ -103,8 +105,10 @@ class FollowedShowRepositoryTest {
 
         repository.syncFollowedShows()
 
-        assertThat(repository.getFollowedShows(),
-            `is`(emptyList()))
+        assertThat(
+            repository.getFollowedShows(),
+            `is`(emptyList())
+        )
     }
 
     @Test
@@ -116,8 +120,10 @@ class FollowedShowRepositoryTest {
 
         repository.syncFollowedShows()
 
-        assertThat(repository.getFollowedShows(),
-            `is`(listOf(followedShow2Local)))
+        assertThat(
+            repository.getFollowedShows(),
+            `is`(listOf(followedShow2Local))
+        )
     }
 
     @Test
@@ -129,8 +135,10 @@ class FollowedShowRepositoryTest {
 
         repository.syncFollowedShows()
 
-        assertThat(repository.getFollowedShows(),
-            `is`(emptyList()))
+        assertThat(
+            repository.getFollowedShows(),
+            `is`(emptyList())
+        )
     }
 
     @Test
@@ -142,8 +150,10 @@ class FollowedShowRepositoryTest {
 
         repository.syncFollowedShows()
 
-        assertThat(repository.getFollowedShows(),
-            `is`(listOf(followedShow1Local)))
+        assertThat(
+            repository.getFollowedShows(),
+            `is`(listOf(followedShow1Local))
+        )
     }
 
     @After

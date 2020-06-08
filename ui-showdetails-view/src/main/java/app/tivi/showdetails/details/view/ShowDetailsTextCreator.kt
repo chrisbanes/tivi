@@ -36,12 +36,12 @@ import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.inject.PerActivity
 import app.tivi.ui.GenreStringer
 import app.tivi.util.TiviDateFormatter
-import java.util.Locale
-import javax.inject.Inject
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.TextStyle
+import java.util.Locale
+import javax.inject.Inject
 
 class ShowDetailsTextCreator @Inject constructor(
     @PerActivity private val context: Context,
@@ -67,10 +67,12 @@ class ShowDetailsTextCreator @Inject constructor(
             val nextToAir = watches.nextToAir
             if (nextToAir?.firstAired != null) {
                 text.append(". ")
-                text.append(context.getString(
-                    R.string.next_prefix,
-                    tiviDateFormatter.formatShortRelativeTime(nextToAir.firstAired!!)
-                ))
+                text.append(
+                    context.getString(
+                        R.string.next_prefix,
+                        tiviDateFormatter.formatShortRelativeTime(nextToAir.firstAired!!)
+                    )
+                )
             }
         }
         return text
@@ -119,8 +121,10 @@ class ShowDetailsTextCreator @Inject constructor(
 
     fun followedShowEpisodeWatchStatus(stats: FollowedShowsWatchStats?): CharSequence {
         return if (stats != null && stats.watchedEpisodeCount < stats.episodeCount) {
-            context.getString(R.string.followed_watch_stats_to_watch,
-                stats.episodeCount - stats.watchedEpisodeCount).parseAsHtml()
+            context.getString(
+                R.string.followed_watch_stats_to_watch,
+                stats.episodeCount - stats.watchedEpisodeCount
+            ).parseAsHtml()
         } else if (stats != null && stats.watchedEpisodeCount > 0) {
             context.getString(R.string.followed_watch_stats_complete)
         } else {

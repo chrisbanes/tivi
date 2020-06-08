@@ -23,8 +23,6 @@ import androidx.core.net.toUri
 import app.tivi.inject.ApplicationId
 import dagger.Module
 import dagger.Provides
-import javax.inject.Named
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import net.openid.appauth.AuthorizationRequest
@@ -32,6 +30,8 @@ import net.openid.appauth.AuthorizationServiceConfiguration
 import net.openid.appauth.ClientAuthentication
 import net.openid.appauth.ClientSecretBasic
 import net.openid.appauth.ResponseTypeValues
+import javax.inject.Named
+import javax.inject.Singleton
 
 @Module
 class TraktAuthModule {
@@ -41,7 +41,8 @@ class TraktAuthModule {
         return AuthorizationServiceConfiguration(
             Uri.parse("https://trakt.tv/oauth/authorize"),
             Uri.parse("https://trakt.tv/oauth/token"),
-            null)
+            null
+        )
     }
 
     @Provides

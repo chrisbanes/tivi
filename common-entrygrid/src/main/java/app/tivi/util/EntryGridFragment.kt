@@ -41,8 +41,8 @@ import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.transitions.GridToGridTransitioner
 import com.airbnb.mvrx.withState
 import com.google.android.material.snackbar.Snackbar
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collect
+import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
 abstract class EntryGridFragment<LI, VM> : TiviFragmentWithBinding<FragmentEntryGridBinding>()
@@ -87,8 +87,10 @@ abstract class EntryGridFragment<LI, VM> : TiviFragmentWithBinding<FragmentEntry
 
         binding.gridAppbar.doOnSizeChange {
             binding.gridRecyclerview.updatePadding(top = it.height)
-            binding.gridSwipeRefresh.setProgressViewOffset(true, 0,
-                it.height + binding.gridSwipeRefresh.progressCircleDiameter / 2)
+            binding.gridSwipeRefresh.setProgressViewOffset(
+                true, 0,
+                it.height + binding.gridSwipeRefresh.progressCircleDiameter / 2
+            )
             true
         }
 
@@ -128,8 +130,10 @@ abstract class EntryGridFragment<LI, VM> : TiviFragmentWithBinding<FragmentEntry
         }
 
         if (currentActionMode != null) {
-            currentActionMode?.title = getString(R.string.selection_title,
-                state.selectedShowIds.size)
+            currentActionMode?.title = getString(
+                R.string.selection_title,
+                state.selectedShowIds.size
+            )
         }
 
         if (state.isLoaded) {

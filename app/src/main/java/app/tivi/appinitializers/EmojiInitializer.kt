@@ -29,7 +29,8 @@ class EmojiInitializer @Inject constructor() : AppInitializer {
             "com.google.android.gms.fonts",
             "com.google.android.gms",
             "Noto Color Emoji Compat",
-            R.array.com_google_android_gms_fonts_certs)
+            R.array.com_google_android_gms_fonts_certs
+        )
 
         val config = FontRequestEmojiCompatConfig(application, fontRequest)
             .setReplaceAll(true)

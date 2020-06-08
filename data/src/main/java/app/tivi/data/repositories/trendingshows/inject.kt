@@ -25,8 +25,8 @@ import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
+import javax.inject.Singleton
 
 typealias TrendingShowsStore = Store<Int, List<TrendingShowEntry>>
 

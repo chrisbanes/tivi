@@ -22,8 +22,8 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.syncers.syncerForEntity
 import app.tivi.util.Logger
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 class EpisodeWatchStore @Inject constructor(
     private val transactionRunner: DatabaseTransactionRunner,

@@ -173,7 +173,8 @@ internal class WatchedViewModel @AssistedInject constructor(
             ChangeShowFollowStatus.Params(
                 showSelection.getSelectedShowIds(),
                 ChangeShowFollowStatus.Action.FOLLOW,
-                deferDataFetch = true)
+                deferDataFetch = true
+            )
         )
         showSelection.clearSelection()
     }
@@ -182,7 +183,8 @@ internal class WatchedViewModel @AssistedInject constructor(
         changeShowFollowStatus(
             ChangeShowFollowStatus.Params(
                 showSelection.getSelectedShowIds(),
-                ChangeShowFollowStatus.Action.UNFOLLOW)
+                ChangeShowFollowStatus.Action.UNFOLLOW
+            )
         )
         showSelection.clearSelection()
     }

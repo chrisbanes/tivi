@@ -19,7 +19,6 @@ package app.tivi.inject
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
-import android.text.format.DateFormat as AndroidDateFormat
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.ui.AppBarConfiguration
@@ -33,16 +32,17 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.Module
 import dagger.Provides
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import org.threeten.bp.ZoneId
+import org.threeten.bp.format.DateTimeFormatter
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import javax.inject.Named
 import javax.inject.Singleton
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import org.threeten.bp.ZoneId
-import org.threeten.bp.format.DateTimeFormatter
+import android.text.format.DateFormat as AndroidDateFormat
 
 @Module(includes = [AppModuleBinds::class])
 class AppModule {

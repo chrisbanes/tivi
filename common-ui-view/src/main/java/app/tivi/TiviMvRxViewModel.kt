@@ -30,11 +30,11 @@ import com.airbnb.mvrx.MvRxState
 import com.airbnb.mvrx.Success
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import kotlin.reflect.KProperty1
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
+import kotlin.reflect.KProperty1
 
 /**
  * Simple ViewModel which exposes a [CompositeDisposable] which is automatically cleared/stopped when
@@ -64,8 +64,10 @@ abstract class TiviMvRxViewModel<S : MvRxState>(
         return map { Success(mapper(it)) as Async<V> }
             .catch {
                 if (BuildConfig.DEBUG) {
-                    Log.e(this@TiviMvRxViewModel::class.java.simpleName,
-                        "Exception during observe", it)
+                    Log.e(
+                        this@TiviMvRxViewModel::class.java.simpleName,
+                        "Exception during observe", it
+                    )
                 }
                 emit(Fail(it))
             }

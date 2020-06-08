@@ -20,9 +20,9 @@ import app.tivi.data.entities.TraktUser
 import app.tivi.data.repositories.traktusers.TraktUsersRepository
 import app.tivi.domain.SubjectInteractor
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 class ObserveUserDetails @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,

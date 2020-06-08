@@ -29,7 +29,6 @@ import app.tivi.utils.s1
 import app.tivi.utils.s1_id
 import app.tivi.utils.s2
 import app.tivi.utils.showId
-import javax.inject.Inject
 import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
@@ -41,6 +40,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
 @RunWith(RobolectricTestRunner::class)
 class SeasonsTest {
@@ -89,7 +89,8 @@ class SeasonsTest {
         seasonsDao.insert(s2)
 
         // Specials should always be last
-        assertThat(seasonsDao.seasonsForShowId(showId),
+        assertThat(
+            seasonsDao.seasonsForShowId(showId),
             `is`(listOf(s1, s2, s0))
         )
     }

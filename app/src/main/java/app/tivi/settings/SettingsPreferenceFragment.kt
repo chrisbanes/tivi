@@ -35,9 +35,9 @@ import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import dagger.android.support.AndroidSupportInjection
-import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.collect
+import javax.inject.Inject
 
 internal class SettingsPreferenceFragment : PreferenceFragmentCompat(), HasAndroidInjector {
     @Inject lateinit var androidInjector: DispatchingAndroidInjector<Any>
@@ -85,8 +85,10 @@ internal class SettingsPreferenceFragment : PreferenceFragmentCompat(), HasAndro
         }
 
         findPreference<Preference>("version")?.apply {
-            summary = getString(R.string.settings_app_version_summary,
-                BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
+            summary = getString(
+                R.string.settings_app_version_summary,
+                BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE
+            )
         }
     }
 }

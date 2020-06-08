@@ -34,17 +34,19 @@ import dagger.android.ContributesAndroidInjector
 
 @Module
 internal abstract class HomeBuilder {
-    @ContributesAndroidInjector(modules = [
-        HomeModule::class,
-        SearchBuilder::class,
-        DiscoverBuilder::class,
-        TrendingBuilder::class,
-        PopularBuilder::class,
-        WatchedBuilder::class,
-        FollowedBuilder::class,
-        RecommendedBuilder::class,
-        AccountUiBuilder::class
-    ])
+    @ContributesAndroidInjector(
+        modules = [
+            HomeModule::class,
+            SearchBuilder::class,
+            DiscoverBuilder::class,
+            TrendingBuilder::class,
+            PopularBuilder::class,
+            WatchedBuilder::class,
+            FollowedBuilder::class,
+            RecommendedBuilder::class,
+            AccountUiBuilder::class
+        ]
+    )
     internal abstract fun homeActivity(): HomeActivity
 }
 

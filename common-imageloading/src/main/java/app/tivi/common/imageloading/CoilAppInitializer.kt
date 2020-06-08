@@ -23,8 +23,8 @@ import coil.Coil
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.util.CoilUtils
-import javax.inject.Inject
 import okhttp3.OkHttpClient
+import javax.inject.Inject
 
 class CoilAppInitializer @Inject constructor(
     private val tmdbImageEntityMapper: TmdbImageEntityCoilMapper,

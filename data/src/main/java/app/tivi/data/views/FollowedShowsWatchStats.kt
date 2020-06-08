@@ -19,7 +19,8 @@ package app.tivi.data.views
 import androidx.room.DatabaseView
 import app.tivi.data.entities.Season
 
-@DatabaseView("""
+@DatabaseView(
+    """
     SELECT fs.id, COUNT(*) as episodeCount, COUNT(ew.watched_at) as watchedEpisodeCount
     FROM myshows_entries as fs
     INNER JOIN seasons AS s ON fs.show_id = s.show_id
@@ -30,7 +31,8 @@ import app.tivi.data.entities.Season
         AND s.number != ${Season.NUMBER_SPECIALS}
         AND s.ignored = 0
     GROUP BY fs.id
-""")
+"""
+)
 data class FollowedShowsWatchStats(
     val id: Long,
     val episodeCount: Int,

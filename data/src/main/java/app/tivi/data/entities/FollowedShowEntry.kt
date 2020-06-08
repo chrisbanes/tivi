@@ -24,7 +24,8 @@ import androidx.room.PrimaryKey
 import app.tivi.data.Entry
 import org.threeten.bp.OffsetDateTime
 
-@Entity(tableName = "myshows_entries",
+@Entity(
+    tableName = "myshows_entries",
     indices = [
         Index(value = ["show_id"], unique = true)
     ],

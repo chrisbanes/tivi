@@ -24,12 +24,12 @@ import android.os.PowerManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
 import app.tivi.settings.TiviPreferences
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onStart
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 internal class AndroidPowerController @Inject constructor(

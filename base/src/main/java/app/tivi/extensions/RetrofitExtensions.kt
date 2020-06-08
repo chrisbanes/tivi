@@ -21,11 +21,11 @@ package app.tivi.extensions
 import app.tivi.data.entities.ErrorResult
 import app.tivi.data.entities.Result
 import app.tivi.data.entities.Success
-import java.io.IOException
 import kotlinx.coroutines.delay
 import retrofit2.Call
 import retrofit2.HttpException
 import retrofit2.Response
+import java.io.IOException
 
 inline fun <T> Response<T>.bodyOrThrow(): T {
     if (!isSuccessful) throw HttpException(this)

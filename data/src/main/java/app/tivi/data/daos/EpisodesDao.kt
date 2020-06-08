@@ -52,10 +52,12 @@ abstract class EpisodesDao : EntityDao<Episode>() {
     @Query("SELECT * from episodes WHERE id = :id")
     abstract fun episodeWithIdObservable(id: Long): Flow<EpisodeWithSeason>
 
-    @Query("SELECT shows.id FROM shows" +
-        " INNER JOIN seasons AS s ON s.show_id = shows.id" +
-        " INNER JOIN episodes AS eps ON eps.season_id = s.id" +
-        " WHERE eps.id = :episodeId")
+    @Query(
+        "SELECT shows.id FROM shows" +
+            " INNER JOIN seasons AS s ON s.show_id = shows.id" +
+            " INNER JOIN episodes AS eps ON eps.season_id = s.id" +
+            " WHERE eps.id = :episodeId"
+    )
     abstract suspend fun showIdForEpisodeId(episodeId: Long): Long
 
     @Transaction
@@ -82,7 +84,8 @@ abstract class EpisodesDao : EntityDao<Episode>() {
     ): Flow<EpisodeWithSeason?>
 
     companion object {
-        const val latestWatchedEpisodeForShowId = """
+        const val latestWatchedEpisodeForShowId =
+            """
             SELECT eps.*, (100 * s.number) + eps.number AS computed_abs_number
             FROM shows
             INNER JOIN seasons AS s ON shows.id = s.show_id
@@ -95,7 +98,8 @@ abstract class EpisodesDao : EntityDao<Episode>() {
             LIMIT 1
             """
 
-        const val nextEpisodeForShowIdAfter = """
+        const val nextEpisodeForShowIdAfter =
+            """
             SELECT eps.*, (1000 * s.number) + eps.number AS computed_abs_number
             FROM shows
             INNER JOIN seasons AS s ON shows.id = s.show_id
@@ -108,7 +112,8 @@ abstract class EpisodesDao : EntityDao<Episode>() {
             LIMIT 1
         """
 
-        const val nextAiredEpisodeForShowIdAfter = """
+        const val nextAiredEpisodeForShowIdAfter =
+            """
             SELECT eps.*, (1000 * s.number) + eps.number AS computed_abs_number
             FROM shows
             INNER JOIN seasons AS s ON shows.id = s.show_id

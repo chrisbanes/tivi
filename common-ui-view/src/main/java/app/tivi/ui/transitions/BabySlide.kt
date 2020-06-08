@@ -39,10 +39,12 @@ class BabySlide(
         setupTranslation(view)
         view.alpha = 0f
 
-        return ObjectAnimator.ofPropertyValuesHolder(view,
+        return ObjectAnimator.ofPropertyValuesHolder(
+            view,
             PropertyValuesHolder.ofFloat(View.TRANSLATION_X, 0f),
             PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 0f),
-            PropertyValuesHolder.ofFloat(View.ALPHA, 1f))
+            PropertyValuesHolder.ofFloat(View.ALPHA, 1f)
+        )
     }
 
     override fun onDisappear(
@@ -51,9 +53,11 @@ class BabySlide(
         startValues: TransitionValues?,
         endValues: TransitionValues?
     ): Animator {
-        return ObjectAnimator.ofPropertyValuesHolder(view,
+        return ObjectAnimator.ofPropertyValuesHolder(
+            view,
             translatePropValForGravity(view),
-            PropertyValuesHolder.ofFloat(View.ALPHA, 0f))
+            PropertyValuesHolder.ofFloat(View.ALPHA, 0f)
+        )
     }
 
     private fun translatePropValForGravity(view: View): PropertyValuesHolder =

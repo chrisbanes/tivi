@@ -22,9 +22,11 @@ import dagger.android.ContributesAndroidInjector
 
 @Module
 abstract class FollowedBuilder {
-    @ContributesAndroidInjector(modules = [
-        FollowedAssistedModule::class
-    ])
+    @ContributesAndroidInjector(
+        modules = [
+            FollowedAssistedModule::class
+        ]
+    )
     abstract fun followedFragment(): FollowedFragment
 }
 

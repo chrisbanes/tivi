@@ -22,9 +22,11 @@ import dagger.android.ContributesAndroidInjector
 
 @Module
 abstract class TrendingBuilder {
-    @ContributesAndroidInjector(modules = [
-        TrendingAssistedModule::class
-    ])
+    @ContributesAndroidInjector(
+        modules = [
+            TrendingAssistedModule::class
+        ]
+    )
     internal abstract fun trendingShowsFragment(): TrendingShowsFragment
 }
 

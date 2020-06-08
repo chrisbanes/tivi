@@ -48,8 +48,8 @@ fun SwipeToDismiss(
     onSwipeComplete: (SwipeDirection) -> Unit,
     swipeDirections: List<SwipeDirection> = defaultDirections,
     swipeCompletePercentage: Float = 0.6f,
-    backgroundChildren: @Composable() (swipeProgress: Float, wouldCompleteOnRelease: Boolean) -> Unit,
-    swipeChildren: @Composable() (swipeProgress: Float, wouldCompleteOnRelease: Boolean) -> Unit
+    backgroundChildren: @Composable (swipeProgress: Float, wouldCompleteOnRelease: Boolean) -> Unit,
+    swipeChildren: @Composable (swipeProgress: Float, wouldCompleteOnRelease: Boolean) -> Unit
 ) = Stack {
     val position = animatedFloat(initVal = 0f).apply { setBounds(0f, 0f) }
     var progress by state { 0f }
@@ -60,19 +60,23 @@ fun SwipeToDismiss(
 
     WithConstraints {
         // Update the drag bounds depending on the size
-        if (START in swipeDirections && END in swipeDirections) {
-            position.setBounds(-constraints.maxWidth.toFloat(), constraints.maxWidth.toFloat())
-        } else if (START in swipeDirections && layoutDirection == LayoutDirection.Ltr ||
-            END in swipeDirections && layoutDirection == LayoutDirection.Rtl) {
-            position.setBounds(-constraints.maxWidth.toFloat(), 0f)
-        } else if (END in swipeDirections && layoutDirection == LayoutDirection.Ltr ||
-            START in swipeDirections && layoutDirection == LayoutDirection.Rtl) {
-            position.setBounds(0f, constraints.maxWidth.toFloat())
+        when {
+            START in swipeDirections && END in swipeDirections -> {
+                position.setBounds(-constraints.maxWidth.toFloat(), constraints.maxWidth.toFloat())
+            }
+            layoutDirection == LayoutDirection.Ltr && START in swipeDirections
+                || layoutDirection == LayoutDirection.Rtl && END in swipeDirections -> {
+                position.setBounds(-constraints.maxWidth.toFloat(), 0f)
+            }
+            layoutDirection == LayoutDirection.Ltr && END in swipeDirections
+                || layoutDirection == LayoutDirection.Rtl && START in swipeDirections -> {
+                position.setBounds(0f, constraints.maxWidth.toFloat())
+            }
         }
 
         val draggable = Modifier.draggable(
             dragDirection = DragDirection.Horizontal,
-            onDragStopped = { _ ->
+            onDragStopped = {
                 // TODO: look at using fling and velocity here
                 if (position.max > 0f && position.value / position.max >= swipeCompletePercentage) {
                     position.animateTo(

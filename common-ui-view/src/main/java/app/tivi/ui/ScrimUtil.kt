@@ -65,8 +65,10 @@ object ScrimUtil {
         for (i in 0 until numStops) {
             val x = i * 1f / (numStops - 1)
             val opacity = x.toDouble().pow(3.0).toFloat()
-            stopColors[i] = ColorUtils.setAlphaComponent(baseColor,
-                (alpha * opacity).roundToInt().coerceIn(0, 255))
+            stopColors[i] = ColorUtils.setAlphaComponent(
+                baseColor,
+                (alpha * opacity).roundToInt().coerceIn(0, 255)
+            )
         }
 
         val x0: Float
@@ -111,7 +113,8 @@ object ScrimUtil {
                     height * y1,
                     stopColors,
                     null,
-                    Shader.TileMode.CLAMP)
+                    Shader.TileMode.CLAMP
+                )
             }
         }
         cache.put(cacheKeyHash, paintDrawable)

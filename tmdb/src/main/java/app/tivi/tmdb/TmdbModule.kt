@@ -19,10 +19,10 @@ package app.tivi.tmdb
 import com.uwetrottmann.tmdb2.Tmdb
 import dagger.Module
 import dagger.Provides
+import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
-import okhttp3.OkHttpClient
 
 @Module
 class TmdbModule {

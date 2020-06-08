@@ -69,15 +69,19 @@ class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShow
                     .tiviShow(item.show)
                     .transitionName(item.show.homepage)
                     .selected(item.show.id in state.selectedShowIds)
-                    .clickListener(View.OnClickListener {
-                        if (viewModel.onItemClick(item.show)) {
-                            return@OnClickListener
+                    .clickListener(
+                        View.OnClickListener {
+                            if (viewModel.onItemClick(item.show)) {
+                                return@OnClickListener
+                            }
+                            onItemClicked(item)
                         }
-                        onItemClicked(item)
-                    })
-                    .longClickListener(View.OnLongClickListener {
-                        viewModel.onItemLongClick(item.show)
-                    })
+                    )
+                    .longClickListener(
+                        View.OnLongClickListener {
+                            viewModel.onItemLongClick(item.show)
+                        }
+                    )
             }
         }
     }

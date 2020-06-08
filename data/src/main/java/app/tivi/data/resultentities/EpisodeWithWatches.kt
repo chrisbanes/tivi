@@ -21,8 +21,8 @@ import androidx.room.Relation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
-import java.util.Objects
 import org.threeten.bp.OffsetDateTime
+import java.util.Objects
 
 class EpisodeWithWatches {
     @Embedded

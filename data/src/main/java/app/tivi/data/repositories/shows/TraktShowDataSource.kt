@@ -40,8 +40,10 @@ internal class TraktShowDataSource @Inject constructor(
 
         if (traktId == null && show.tmdbId != null) {
             // We need to fetch the search for the trakt id
-            val response = searchService.get().idLookup(IdType.TMDB, show.tmdbId.toString(),
-                Type.SHOW, Extended.NOSEASONS, 1, 1)
+            val response = searchService.get().idLookup(
+                IdType.TMDB, show.tmdbId.toString(),
+                Type.SHOW, Extended.NOSEASONS, 1, 1
+            )
                 .execute()
                 .toResult { it[0].show?.ids?.trakt }
             if (response is Success) {
@@ -52,10 +54,12 @@ internal class TraktShowDataSource @Inject constructor(
         }
 
         if (traktId == null) {
-            val response = searchService.get().textQueryShow(show.title, null /* years */, null /* genres */,
+            val response = searchService.get().textQueryShow(
+                show.title, null /* years */, null /* genres */,
                 null /* lang */, show.country /* countries */, null /* runtime */, null /* ratings */,
                 null /* certs */, show.network /* networks */, null /* status */,
-                Extended.NOSEASONS, 1, 1)
+                Extended.NOSEASONS, 1, 1
+            )
                 .execute()
                 .toResult { it[0].show?.ids?.trakt }
             if (response is Success) {

@@ -22,9 +22,11 @@ import dagger.android.ContributesAndroidInjector
 
 @Module
 abstract class SearchBuilder {
-    @ContributesAndroidInjector(modules = [
-        SearchAssistedModule::class
-    ])
+    @ContributesAndroidInjector(
+        modules = [
+            SearchAssistedModule::class
+        ]
+    )
     internal abstract fun searchFragment(): SearchFragment
 }
 

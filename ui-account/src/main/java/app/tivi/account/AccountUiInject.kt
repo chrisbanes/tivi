@@ -21,8 +21,10 @@ import dagger.android.ContributesAndroidInjector
 
 @Module
 abstract class AccountUiBuilder {
-    @ContributesAndroidInjector(modules = [
-        AccountUiPresenterAssistedModule::class
-    ])
+    @ContributesAndroidInjector(
+        modules = [
+            AccountUiPresenterAssistedModule::class
+        ]
+    )
     abstract fun accountUiFragment(): AccountUiFragment
 }

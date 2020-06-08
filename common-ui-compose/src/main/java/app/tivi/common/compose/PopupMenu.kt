@@ -71,12 +71,12 @@ fun PopupMenu(
                                     text = item.title,
                                     style = MaterialTheme.typography.body1,
                                     modifier = Modifier.clickable(
-                                            onClick = {
-                                                item.onClick?.invoke()
-                                                visible.value = false
-                                            },
-                                            enabled = item.enabled
-                                        )
+                                        onClick = {
+                                            item.onClick?.invoke()
+                                            visible.value = false
+                                        },
+                                        enabled = item.enabled
+                                    )
                                         .padding(16.dp)
                                 )
                             }

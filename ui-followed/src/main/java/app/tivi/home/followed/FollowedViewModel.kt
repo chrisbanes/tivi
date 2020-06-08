@@ -115,12 +115,14 @@ internal class FollowedViewModel @AssistedInject constructor(
 
         // Set the available sorting options
         setState {
-            copy(availableSorts = listOf(
-                SortOption.SUPER_SORT,
-                SortOption.LAST_WATCHED,
-                SortOption.ALPHABETICAL,
-                SortOption.DATE_ADDED
-            ))
+            copy(
+                availableSorts = listOf(
+                    SortOption.SUPER_SORT,
+                    SortOption.LAST_WATCHED,
+                    SortOption.ALPHABETICAL,
+                    SortOption.DATE_ADDED
+                )
+            )
         }
 
         // Subscribe to state changes, so update the observed data source
@@ -175,7 +177,8 @@ internal class FollowedViewModel @AssistedInject constructor(
         changeShowFollowStatus(
             ChangeShowFollowStatus.Params(
                 showSelection.getSelectedShowIds(),
-                ChangeShowFollowStatus.Action.UNFOLLOW)
+                ChangeShowFollowStatus.Action.UNFOLLOW
+            )
         )
         showSelection.clearSelection()
     }

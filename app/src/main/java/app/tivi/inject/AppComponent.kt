@@ -35,23 +35,25 @@ import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [
-    AndroidSupportInjectionModule::class,
-    AppModule::class,
-    TasksModule::class,
-    AppAssistedModule::class,
-    DatabaseModule::class,
-    DataModule::class,
-    HomeBuilder::class,
-    ShowDetailsBuilder::class,
-    TraktModule::class,
-    TraktAuthModule::class,
-    TmdbModule::class,
-    NetworkModule::class,
-    ImageLoadingModule::class,
-    EpoxyModule::class,
-    SettingsPreferenceFragmentBuilder::class
-])
+@Component(
+    modules = [
+        AndroidSupportInjectionModule::class,
+        AppModule::class,
+        TasksModule::class,
+        AppAssistedModule::class,
+        DatabaseModule::class,
+        DataModule::class,
+        HomeBuilder::class,
+        ShowDetailsBuilder::class,
+        TraktModule::class,
+        TraktAuthModule::class,
+        TmdbModule::class,
+        NetworkModule::class,
+        ImageLoadingModule::class,
+        EpoxyModule::class,
+        SettingsPreferenceFragmentBuilder::class
+    ]
+)
 interface AppComponent : AndroidInjector<TiviApplication> {
     @Component.Factory
     interface Factory {

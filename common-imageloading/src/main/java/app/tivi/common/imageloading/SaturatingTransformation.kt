@@ -51,8 +51,10 @@ class SaturatingTransformation(
         suspendCancellableCoroutine<Unit> { continuation ->
             when (result) {
                 is SuccessResult -> {
-                    val animator = saturateDrawableAnimator(result.drawable,
-                        durationMillis, target.view)
+                    val animator = saturateDrawableAnimator(
+                        result.drawable,
+                        durationMillis, target.view
+                    )
                     animator.doOnEnd {
                         continuation.resume(Unit) { animator.cancel() }
                     }

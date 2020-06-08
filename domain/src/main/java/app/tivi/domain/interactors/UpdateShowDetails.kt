@@ -23,10 +23,10 @@ import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateShowDetails.Params
 import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
 import org.threeten.bp.Period
+import javax.inject.Inject
 
 class UpdateShowDetails @Inject constructor(
     private val showStore: ShowStore,

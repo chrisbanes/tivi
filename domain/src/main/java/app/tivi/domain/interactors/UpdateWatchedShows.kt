@@ -26,10 +26,10 @@ import app.tivi.domain.Interactor
 import app.tivi.extensions.parallelForEach
 import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
 import org.threeten.bp.Duration
+import javax.inject.Inject
 
 class UpdateWatchedShows @Inject constructor(
     private val watchedShowsStore: WatchedShowsStore,

@@ -21,12 +21,12 @@ import app.tivi.inject.MediumDate
 import app.tivi.inject.MediumDateTime
 import app.tivi.inject.ShortDate
 import app.tivi.inject.ShortTime
-import javax.inject.Inject
-import javax.inject.Singleton
 import org.threeten.bp.LocalTime
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.Temporal
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class TiviDateFormatter @Inject constructor(
@@ -53,7 +53,8 @@ class TiviDateFormatter @Inject constructor(
                     dateTime.toInstant().toEpochMilli(),
                     System.currentTimeMillis(),
                     DateUtils.MINUTE_IN_MILLIS,
-                    DateUtils.FORMAT_SHOW_DATE).toString()
+                    DateUtils.FORMAT_SHOW_DATE
+                ).toString()
             } else {
                 // More than 7 days ago
                 formatShortDate(dateTime)
@@ -65,7 +66,8 @@ class TiviDateFormatter @Inject constructor(
                     dateTime.toInstant().toEpochMilli(),
                     System.currentTimeMillis(),
                     DateUtils.MINUTE_IN_MILLIS,
-                    DateUtils.FORMAT_SHOW_DATE).toString()
+                    DateUtils.FORMAT_SHOW_DATE
+                ).toString()
             } else {
                 // In the far future
                 formatShortDate(dateTime)
