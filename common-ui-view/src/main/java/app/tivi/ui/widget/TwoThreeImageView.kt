@@ -22,7 +22,7 @@ import android.view.View.MeasureSpec.EXACTLY
 import androidx.appcompat.widget.AppCompatImageView
 
 class TwoThreeImageView(
-    context: Context?,
+    context: Context,
     attrs: AttributeSet?
 ) : AppCompatImageView(context, attrs) {
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
