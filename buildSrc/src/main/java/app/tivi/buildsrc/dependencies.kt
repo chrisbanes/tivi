@@ -153,7 +153,7 @@ object Libs {
         }
 
         object UI {
-            const val snapshot = "6543212"
+            const val snapshot = "6571972"
             const val version = "0.1.0-SNAPSHOT"
 
             const val core = "androidx.ui:ui-core:$version"

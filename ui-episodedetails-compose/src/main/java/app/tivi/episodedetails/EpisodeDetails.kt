@@ -15,7 +15,6 @@
  */
 
 package app.tivi.episodedetails
-
 import android.os.Build
 import android.view.ViewGroup
 import androidx.animation.transitionDefinition
@@ -87,10 +86,7 @@ import androidx.ui.material.icons.filled.VisibilityOff
 import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.Dp
-import androidx.ui.unit.Px
-import androidx.ui.unit.PxPosition
 import androidx.ui.unit.dp
-import androidx.ui.unit.toOffset
 import app.tivi.animation.invoke
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
@@ -430,10 +426,10 @@ private fun EpisodeWatchSwipeBackground(
     swipeProgress: Float,
     wouldCompleteOnRelease: Boolean = false
 ) {
-    var iconCenter by state { PxPosition(Px.Zero, Px.Zero) }
+    var iconCenter by state { Offset(0f, 0f) }
 
     val maxRadius = remember(iconCenter) {
-        hypot(iconCenter.x.value.toDouble(), iconCenter.y.value.toDouble())
+        hypot(iconCenter.x.toDouble(), iconCenter.y.toDouble())
     }
 
     // Note: can't reference these directly in transitionDefinition {} as
@@ -468,7 +464,7 @@ private fun EpisodeWatchSwipeBackground(
             Box(
                 modifier = Modifier.fillMaxSize().drawGrowingCircle(
                     transitionState[color],
-                    iconCenter.toOffset(),
+                    iconCenter,
                     lerp(0f, maxRadius.toFloat(), fastOutLinearIn(swipeProgress))
                 )
             )

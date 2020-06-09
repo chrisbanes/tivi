@@ -56,6 +56,7 @@ import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.ColorFilter
 import androidx.ui.layout.Column
+import androidx.ui.layout.ExperimentalLayout
 import androidx.ui.layout.FlowRow
 import androidx.ui.layout.Row
 import androidx.ui.layout.SizeMode
@@ -646,6 +647,7 @@ private fun NextEpisodeToWatch(
     }
 }
 
+@OptIn(ExperimentalLayout::class)
 @Composable
 private fun InfoPanels(show: TiviShow) {
     FlowRow(
@@ -715,7 +717,7 @@ private fun Seasons(
                 with(DensityAmbient.current) { 56.dp.toIntPx() }
 
             Modifier.onPositioned { coords ->
-                val targetY = coords.positionInRoot.y.value +
+                val targetY = coords.positionInRoot.y +
                     scrollerPosition.value -
                     offset.value
 
