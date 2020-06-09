@@ -29,7 +29,7 @@ object Libs {
     const val threeTenBpNoTzdb = "$threeTenBp:no-tzdb"
     const val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.2.4"
 
-    const val gravitySnapHelper = "com.github.rubensousa:gravitysnaphelper:2.2.0"
+    const val gravitySnapHelper = "com.github.rubensousa:gravitysnaphelper:2.2.1"
 
     const val timber = "com.jakewharton.timber:timber:4.7.1"
 
@@ -42,7 +42,7 @@ object Libs {
     const val robolectric = "org.robolectric:robolectric:4.3.1"
     const val mockK = "io.mockk:mockk:1.10.0"
 
-    const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.2"
+    const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.3"
 
     const val store = "com.dropbox.mobile.store:store4:4.0.0-alpha05"
 
@@ -60,10 +60,10 @@ object Libs {
 
     object Google {
         const val material = "com.google.android.material:material:1.1.0"
-        const val firebaseCore = "com.google.firebase:firebase-core:17.4.0"
+        const val firebaseCore = "com.google.firebase:firebase-core:17.4.3"
 
-        const val crashlytics = "com.google.firebase:firebase-crashlytics:17.0.0"
-        const val crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.0.0"
+        const val crashlytics = "com.google.firebase:firebase-crashlytics:17.0.1"
+        const val crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.1.1"
 
         const val gmsGoogleServices = "com.google.gms:google-services:4.3.3"
 
@@ -87,16 +87,16 @@ object Libs {
     }
 
     object AndroidX {
-        const val appcompat = "androidx.appcompat:appcompat:1.1.0"
+        const val appcompat = "androidx.appcompat:appcompat:1.2.0-rc01"
         const val browser = "androidx.browser:browser:1.0.0"
         const val collection = "androidx.collection:collection-ktx:1.1.0"
         const val palette = "androidx.palette:palette:1.0.0"
         const val recyclerview = "androidx.recyclerview:recyclerview:1.1.0"
-        const val emoji = "androidx.emoji:emoji:1.1.0-beta01"
+        const val emoji = "androidx.emoji:emoji:1.1.0-rc01"
         const val swiperefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-rc01"
 
         object Navigation {
-            private const val version = "2.2.1"
+            private const val version = "2.2.2"
             const val fragment = "androidx.navigation:navigation-fragment-ktx:$version"
             const val ui = "androidx.navigation:navigation-ui-ktx:$version"
             const val safeArgs = "androidx.navigation:navigation-safe-args-gradle-plugin:$version"
@@ -125,9 +125,9 @@ object Libs {
             const val runtime = "androidx.paging:paging-runtime-ktx:$version"
         }
 
-        const val preference = "androidx.preference:preference:1.1.0"
+        const val preference = "androidx.preference:preference:1.1.1"
 
-        const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.0-beta4"
+        const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.0-beta6"
 
         const val coreKtx = "androidx.core:core-ktx:1.3.0-rc01"
 
@@ -175,7 +175,7 @@ object Libs {
     }
 
     object Dagger {
-        private const val version = "2.27"
+        private const val version = "2.28"
         const val dagger = "com.google.dagger:dagger:$version"
         const val androidSupport = "com.google.dagger:dagger-android-support:$version"
         const val compiler = "com.google.dagger:dagger-compiler:$version"
@@ -190,7 +190,7 @@ object Libs {
     }
 
     object OkHttp {
-        private const val version = "4.6.0"
+        private const val version = "4.7.2"
         const val okhttp = "com.squareup.okhttp3:okhttp:$version"
         const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$version"
     }
@@ -204,7 +204,7 @@ object Libs {
     }
 
     object Coil {
-        private const val version = "0.10.1"
+        private const val version = "0.11.0"
         const val coil = "io.coil-kt:coil:$version"
     }
 
