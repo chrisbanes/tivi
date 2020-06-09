@@ -19,10 +19,9 @@ import app.tivi.buildsrc.Libs
 
 plugins {
     id 'com.android.application'
-    // id 'com.github.triplet.play' version '2.7.5'
+    id 'com.github.triplet.play' version '2.8.0'
 }
 
-apply plugin: 'com.github.triplet.play'
 play {
    track = 'internal'
    defaultToAppBundles = true

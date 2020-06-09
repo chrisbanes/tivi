@@ -45,8 +45,6 @@ buildscript {
         classpath Libs.Google.openSourceLicensesPlugin
 
         classpath Libs.AndroidX.Navigation.safeArgs
-
-        classpath "com.github.triplet.gradle:play-publisher:2.8.0-SNAPSHOT"
     }
 }
 
