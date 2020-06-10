@@ -61,16 +61,13 @@ fun SwipeToDismiss(
     WithConstraints {
         // Update the drag bounds depending on the size
         if (START in swipeDirections && END in swipeDirections) {
-            position.setBounds(
-                -constraints.maxWidth.value.toFloat(),
-                constraints.maxWidth.value.toFloat()
-            )
+            position.setBounds(-constraints.maxWidth.toFloat(), constraints.maxWidth.toFloat())
         } else if (START in swipeDirections && layoutDirection == LayoutDirection.Ltr ||
             END in swipeDirections && layoutDirection == LayoutDirection.Rtl) {
-            position.setBounds(-constraints.maxWidth.value.toFloat(), 0f)
+            position.setBounds(-constraints.maxWidth.toFloat(), 0f)
         } else if (END in swipeDirections && layoutDirection == LayoutDirection.Ltr ||
             START in swipeDirections && layoutDirection == LayoutDirection.Rtl) {
-            position.setBounds(0f, constraints.maxWidth.value.toFloat())
+            position.setBounds(0f, constraints.maxWidth.toFloat())
         }
 
         val draggable = Modifier.draggable(
