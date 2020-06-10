@@ -34,8 +34,7 @@ import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.ProvideEmphasis
 import androidx.ui.material.Surface
-import androidx.ui.unit.IntPx
-import androidx.ui.unit.IntPxPosition
+import androidx.ui.unit.IntOffset
 import androidx.ui.unit.dp
 
 @Composable
@@ -43,7 +42,7 @@ fun PopupMenu(
     items: List<PopupMenuItem>,
     visible: MutableState<Boolean> = state { true },
     alignment: Alignment = Alignment.TopStart,
-    offset: IntPxPosition = IntPxPosition(IntPx.Zero, IntPx.Zero)
+    offset: IntOffset = IntOffset(0, 0)
 ) {
     if (visible.value) {
         Popup(

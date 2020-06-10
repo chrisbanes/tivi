@@ -21,22 +21,22 @@ import androidx.ui.core.LayoutCoordinates
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.drawBackground
+import androidx.ui.geometry.Offset
 import androidx.ui.layout.fillMaxWidth
 import androidx.ui.layout.preferredHeight
 import androidx.ui.material.MaterialTheme
 import androidx.ui.unit.PxBounds
-import androidx.ui.unit.PxPosition
 import androidx.ui.unit.dp
-import androidx.ui.unit.toPxSize
+import androidx.ui.unit.toSize
 
-inline val PxBounds.center: PxPosition
-    get() = PxPosition((left + right) / 2, (top + bottom) / 2)
+inline val PxBounds.center: Offset
+    get() = Offset((left + right) / 2, (top + bottom) / 2)
 
-inline val LayoutCoordinates.positionInParent: PxPosition
-    get() = parentCoordinates?.childToLocal(this, PxPosition.Origin) ?: PxPosition.Origin
+inline val LayoutCoordinates.positionInParent: Offset
+    get() = parentCoordinates?.childToLocal(this, Offset.Zero) ?: Offset.Zero
 
 inline val LayoutCoordinates.boundsInParent: PxBounds
-    get() = PxBounds(positionInParent, size.toPxSize())
+    get() = PxBounds(positionInParent, size.toSize())
 
 @Composable
 fun HorizontalDivider() {

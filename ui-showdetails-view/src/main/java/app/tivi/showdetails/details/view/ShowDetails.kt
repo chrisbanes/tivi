@@ -25,6 +25,7 @@ import androidx.compose.Recomposer
 import androidx.compose.getValue
 import androidx.compose.mutableStateOf
 import androidx.compose.remember
+import androidx.compose.setValue
 import androidx.compose.state
 import androidx.compose.staticAmbientOf
 import androidx.core.view.WindowInsetsCompat
@@ -56,6 +57,7 @@ import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.ColorFilter
 import androidx.ui.layout.Column
+import androidx.ui.layout.ExperimentalLayout
 import androidx.ui.layout.FlowRow
 import androidx.ui.layout.Row
 import androidx.ui.layout.SizeMode
@@ -97,7 +99,6 @@ import androidx.ui.material.icons.filled.VisibilityOff
 import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.Dp
-import androidx.ui.unit.IntPx
 import androidx.ui.unit.dp
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
@@ -179,8 +180,8 @@ fun ShowDetails(
     modifier = Modifier.fillMaxSize()
 ) {
     val scrollerPosition = ScrollerPosition()
-    val backdropHeight = state { IntPx.Zero }
-    val fabHeight = state { IntPx.Zero }
+    var backdropHeight by state { 0 }
+    var fabHeight by state { 0 }
 
     VerticalScroller(
         scrollerPosition = scrollerPosition,
@@ -193,7 +194,7 @@ fun ShowDetails(
             Surface(
                 modifier = Modifier.fillMaxWidth()
                     .aspectRatio(16f / 10)
-                    .onPositioned { backdropHeight.value = it.size.height }
+                    .onPositioned { backdropHeight = it.size.height }
             ) {
                 if (backdropImage != null) {
                     CoilImageWithCrossfade(
@@ -309,7 +310,7 @@ fun ShowDetails(
                     // Spacer to push up the content from under the navigation bar
                     val insets = InsetsAmbient.current
                     val spacerHeight = with(DensityAmbient.current) {
-                        8.dp + insets.bottom.toDp() + fabHeight.value.toDp() + 16.dp
+                        8.dp + insets.bottom.toDp() + fabHeight.toDp() + 16.dp
                     }
                     Spacer(Modifier.preferredHeight(spacerHeight))
                 }
@@ -322,11 +323,9 @@ fun ShowDetails(
     ) {
         val insets = InsetsAmbient.current
 
-        val trigger = (backdropHeight.value - insets.top).coerceAtLeast(IntPx.Zero).value
+        val trigger = (backdropHeight - insets.top).coerceAtLeast(0)
 
-        if (insets.top > IntPx.Zero) {
-            val topInset = with(DensityAmbient.current) { insets.top.toDp() }
-
+        if (insets.top > 0) {
             val alpha = lerp(
                 startValue = 0.5f,
                 endValue = 1f,
@@ -334,6 +333,7 @@ fun ShowDetails(
                     (scrollerPosition.value / trigger).coerceIn(0f, 1f)
                 } else 0f
             )
+            val topInset = with(DensityAmbient.current) { insets.top.toDp() }
             Box(
                 Modifier.preferredHeight(topInset)
                     .fillMaxWidth()
@@ -341,9 +341,9 @@ fun ShowDetails(
             )
         }
 
-        val showOverlayAppBar = state { true }
+        var showOverlayAppBar by state { true }
 
-        showOverlayAppBar.value = scrollerPosition.value > trigger
+        showOverlayAppBar = scrollerPosition.value > trigger
 
         val transition = remember {
             transitionDefinition {
@@ -362,14 +362,14 @@ fun ShowDetails(
 
         Transition(
             definition = transition,
-            toState = showOverlayAppBar.value
+            toState = showOverlayAppBar
         ) { transitionState ->
-            if (showOverlayAppBar.value) {
+            if (showOverlayAppBar) {
                 ShowDetailsAppBar(
                     show = viewState.show,
                     elevation = transitionState[elevationPropKey],
                     backgroundColor = MaterialTheme.colors.surface,
-                    modifier = Modifier.drawOpacity(if (showOverlayAppBar.value) 1f else 0f),
+                    modifier = Modifier.drawOpacity(if (showOverlayAppBar) 1f else 0f),
                     isRefreshing = viewState.refreshing,
                     actioner = actioner
                 )
@@ -401,7 +401,7 @@ fun ShowDetails(
             onClick = { actioner(FollowShowToggleAction) },
             modifier = Modifier.padding(end = 16.dp, bottom = 16.dp + bottomInset)
                 .gravity(Alignment.End)
-                .onPositioned { fabHeight.value = it.size.height }
+                .onPositioned { fabHeight = it.size.height }
         )
     }
 }
@@ -646,6 +646,7 @@ private fun NextEpisodeToWatch(
     }
 }
 
+@OptIn(ExperimentalLayout::class)
 @Composable
 private fun InfoPanels(show: TiviShow) {
     FlowRow(
@@ -715,9 +716,7 @@ private fun Seasons(
                 with(DensityAmbient.current) { 56.dp.toIntPx() }
 
             Modifier.onPositioned { coords ->
-                val targetY = coords.positionInRoot.y.value +
-                    scrollerPosition.value -
-                    offset.value
+                val targetY = coords.positionInRoot.y + scrollerPosition.value - offset
 
                 scrollerPosition.smoothScrollTo(targetY) { _, _ ->
                     actioner(ClearPendingUiEffect(pendingFocusSeasonUiEffect))

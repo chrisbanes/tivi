@@ -28,20 +28,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.ui.livedata.observeAsState
-import androidx.ui.unit.IntPx
-import androidx.ui.unit.ipx
 
 data class InsetsHolder(
-    val left: IntPx = IntPx.Zero,
-    val top: IntPx = IntPx.Zero,
-    val right: IntPx = IntPx.Zero,
-    val bottom: IntPx = IntPx.Zero
+    val left: Int = 0,
+    val top: Int = 0,
+    val right: Int = 0,
+    val bottom: Int = 0
 ) {
     constructor(insets: WindowInsetsCompat) : this(
-        insets.systemWindowInsetLeft.ipx,
-        insets.systemWindowInsetTop.ipx,
-        insets.systemWindowInsetRight.ipx,
-        insets.systemWindowInsetBottom.ipx
+        insets.systemWindowInsetLeft,
+        insets.systemWindowInsetTop,
+        insets.systemWindowInsetRight,
+        insets.systemWindowInsetBottom
     )
 
     val horizontal get() = right + left
