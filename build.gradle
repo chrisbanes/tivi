@@ -85,22 +85,6 @@ subprojects {
         }
     }
 
-    // Accompanist depends on tagged versions of the UI + Compose libraries, but we might be using
-    // a different version (i.e. SNAPSHOT). So that everything stays in sync, we need to force
-    // our specified version.
-    configurations.all {
-        resolutionStrategy.eachDependency { details ->
-            switch (details.requested.group) {
-                case 'androidx.ui':
-                    details.useVersion Libs.AndroidX.UI.version
-                    break
-                case 'androidx.compose':
-                    details.useVersion Libs.AndroidX.Compose.version
-                    break
-            }
-        }
-    }
-
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         kotlinOptions {
             // Treat all Kotlin warnings as errors
