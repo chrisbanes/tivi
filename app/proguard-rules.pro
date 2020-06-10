@@ -1,11 +1,8 @@
-# This is a configuration file for ProGuard.
-# http://proguard.sourceforge.net/index.html#manual/usage.html
--dontusemixedcaseclassnames
--dontskipnonpubliclibraryclasses
+# This is a configuration file for R8
+
 -verbose
--dontpreverify
 -allowaccessmodification
--repackageclasses ''
+-repackageclasses 'tivi'
 
 # Note that you cannot just include these flags in your own
 # configuration file; if you are including this file, optimization
@@ -20,10 +17,7 @@
 -keep public class * extends android.content.ContentProvider
 -keep public class * extends android.app.backup.BackupAgent
 -keep public class * extends android.preference.Preference
--keep public class * extends android.support.v4.app.Fragment
 -keep public class * extends androidx.fragment.app.Fragment
--keep public class * extends android.app.Fragment
--keep public class com.android.vending.licensing.ILicensingService
 
 # For native methods, see http://proguard.sourceforge.net/manual/examples.html#native
 -keepclasseswithmembernames class * {
@@ -71,31 +65,17 @@
 -keepattributes *Annotation*
 -renamesourcefileattribute SourceFile
 
-# Fabric/Crashlytics
--keep class com.crashlytics.** { *; }
--dontwarn com.crashlytics.**
-
 -dontwarn org.conscrypt.**
 
 # Dagger
 -dontwarn com.google.errorprone.annotations.*
 
-# Keep Trakt-java Entity names (for GSON)
--keepclassmembers class com.uwetrottmann.trakt5.entities.** {
+# Keep trakt-java and tmdb-java entity names (for GSON)
+-keepclassmembers class com.uwetrottmann.*.entities.** {
     <fields>;
     <init>(...);
 }
--keepclassmembers class com.uwetrottmann.trakt5.enums.** {
-    <fields>;
-    <init>(...);
-}
-
-# Keep TMDb Entity names (for GSON)
--keepclassmembers class com.uwetrottmann.tmdb2.entities.** {
-    <fields>;
-    <init>(...);
-}
--keepclassmembers class com.uwetrottmann.tmdb2.enums.** {
+-keepclassmembers class com.uwetrottmann.*.enums.** {
     <fields>;
     <init>(...);
 }
