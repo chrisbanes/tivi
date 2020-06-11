@@ -67,7 +67,7 @@ class EpisodeWatchEntryTest {
 
         runBlockingTest {
             // We'll assume that there's a show, season and s1_episodes in the db
-            insertShow(database)
+            insertShow(database!!)
             seasonsDao!!.insert(s1)
             episodesDao!!.insertAll(s1_episodes)
         }

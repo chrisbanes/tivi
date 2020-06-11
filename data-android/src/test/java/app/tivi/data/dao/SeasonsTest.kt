@@ -61,7 +61,7 @@ class SeasonsTest {
 
         runBlockingTest {
             // We'll assume that there's a show in the db
-            insertShow(database)
+            insertShow(database!!)
         }
     }
 
@@ -107,7 +107,7 @@ class SeasonsTest {
     fun deleteShow_deletesSeason() = testScope.runBlockingTest {
         seasonsDao!!.insert(s1)
         // Now delete show
-        deleteShow(database)
+        deleteShow(database!!)
 
         assertThat(seasonsDao!!.seasonWithId(s1_id), `is`(nullValue()))
     }
