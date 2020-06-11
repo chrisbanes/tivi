@@ -34,7 +34,7 @@ jobs:
           java-version: 8
 
       - name: Decrypt secrets
-        run: release/signing-setup.sh $ENCRYPT_KEY
+        run: ./release/decrypt-secrets.sh
         env:
           ENCRYPT_KEY: ${{ secrets.ENCRYPT_KEY }}
 
@@ -69,7 +69,7 @@ jobs:
 
       - name: Clean secrets
         if: always()
-        run: release/signing-cleanup.sh
+        run: ./release/clean-secrets.sh
 
       - name: Upload build outputs
         if: always()
