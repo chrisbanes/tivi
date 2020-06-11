@@ -212,7 +212,7 @@ internal class FollowedViewModel @AssistedInject constructor(
             state: FollowedViewState
         ): FollowedViewModel? {
             val fragment: FollowedFragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return fragment.followedViewModelFactory.create(state)
+            return fragment.followedViewModelFactory!!.create(state)
         }
     }
 }

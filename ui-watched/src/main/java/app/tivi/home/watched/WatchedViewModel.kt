@@ -214,7 +214,7 @@ internal class WatchedViewModel @AssistedInject constructor(
             state: WatchedViewState
         ): WatchedViewModel? {
             val fragment: WatchedFragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return fragment.watchedViewModelFactory.create(state)
+            return fragment.watchedViewModelFactory!!.create(state)
         }
     }
 }

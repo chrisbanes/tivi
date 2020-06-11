@@ -48,8 +48,8 @@ import javax.inject.Inject
 class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
     private val viewModel: FollowedViewModel by fragmentViewModel()
 
-    @Inject internal lateinit var followedViewModelFactory: FollowedViewModel.Factory
-    @Inject internal lateinit var controller: FollowedEpoxyController
+    @Inject @JvmField internal var followedViewModelFactory: FollowedViewModel.Factory? = null
+    @Inject @JvmField internal var controller: FollowedEpoxyController? = null
 
     private var currentActionMode: ActionMode? = null
 
@@ -90,7 +90,7 @@ class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
             true
         }
 
-        controller.callbacks = object : FollowedEpoxyController.Callbacks {
+        controller!!.callbacks = object : FollowedEpoxyController.Callbacks {
             override fun onItemClicked(item: FollowedShowEntryWithShow) {
                 // Let the ViewModel have the first go
                 if (viewModel.onItemClick(item.show)) {
@@ -120,14 +120,14 @@ class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
         binding.followedRv.apply {
             addItemDecoration(SpacingItemDecorator(paddingLeft))
             addOnScrollListener(HideImeOnScrollListener())
-            setController(controller)
+            setController(controller!!)
         }
 
         binding.followedSwipeRefresh.setOnRefreshListener(viewModel::refresh)
 
         lifecycleScope.launchWhenStarted {
             viewModel.pagedList.collect {
-                controller.submitList(it)
+                controller?.submitList(it)
             }
         }
     }
@@ -149,13 +149,13 @@ class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
         authStateMenuItemBinder?.bind(state.authState, state.user)
 
         binding.state = state
-        controller.state = state
+        controller!!.state = state
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         currentActionMode?.finish()
-        controller.clear()
+        controller?.clear()
         authStateMenuItemBinder = null
     }
 
