@@ -86,6 +86,7 @@ import androidx.ui.material.icons.filled.VisibilityOff
 import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.Dp
+import androidx.ui.unit.center
 import androidx.ui.unit.dp
 import app.tivi.animation.invoke
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
@@ -97,7 +98,6 @@ import app.tivi.common.compose.SwipeToDismiss
 import app.tivi.common.compose.TiviAlertDialog
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.boundsInParent
-import app.tivi.common.compose.center
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
@@ -473,7 +473,7 @@ private fun EpisodeWatchSwipeBackground(
             ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
                 Icon(
                     asset = Icons.Default.Delete,
-                    modifier = Modifier.onPositioned { iconCenter = it.boundsInParent.center }
+                    modifier = Modifier.onPositioned { iconCenter = it.boundsInParent.center() }
                         .padding(0.dp, 0.dp, end = 16.dp, bottom = 0.dp)
                         .gravity(Alignment.CenterEnd)
                 )

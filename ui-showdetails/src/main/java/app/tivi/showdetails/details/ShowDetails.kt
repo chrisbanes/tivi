@@ -109,6 +109,7 @@ import app.tivi.common.compose.PopupMenuItem
 import app.tivi.common.compose.ProvideInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
+import app.tivi.common.compose.onSizeChanged
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.ImageType
@@ -178,7 +179,7 @@ fun ShowDetails(
             Surface(
                 modifier = Modifier.fillMaxWidth()
                     .aspectRatio(16f / 10)
-                    .onPositioned { backdropHeight = it.size.height }
+                    .onSizeChanged { backdropHeight = it.height }
             ) {
                 if (backdropImage != null) {
                     CoilImageWithCrossfade(
@@ -325,33 +326,16 @@ fun ShowDetails(
             )
         }
 
-        var showOverlayAppBar by state { true }
-
-        showOverlayAppBar = scrollerPosition.value > trigger
-
-        val transition = remember {
-            transitionDefinition {
-                state(true) {
-                    this[elevationPropKey] = 4.dp
-                }
-                state(false) {
-                    this[elevationPropKey] = 2.dp
-                }
-
-                transition {
-                    elevationPropKey using tween<Dp> { duration = 200 }
-                }
-            }
-        }
+        val showOverlayAppBar = scrollerPosition.value > trigger
 
         Transition(
-            definition = transition,
+            definition = appBarFadeTransitionDef,
             toState = showOverlayAppBar
         ) { transitionState ->
             if (showOverlayAppBar) {
                 ShowDetailsAppBar(
                     show = viewState.show,
-                    elevation = transitionState[elevationPropKey],
+                    elevation = transitionState[appBarElevationPropKey],
                     backgroundColor = MaterialTheme.colors.surface,
                     modifier = Modifier.drawOpacity(if (showOverlayAppBar) 1f else 0f),
                     isRefreshing = viewState.refreshing,
@@ -385,12 +369,25 @@ fun ShowDetails(
             onClick = { actioner(FollowShowToggleAction) },
             modifier = Modifier.padding(end = 16.dp, bottom = 16.dp + bottomInset)
                 .gravity(Alignment.End)
-                .onPositioned { fabHeight = it.size.height }
+                .onSizeChanged { fabHeight = it.height }
         )
     }
 }
 
-private val elevationPropKey = DpPropKey()
+private val appBarElevationPropKey = DpPropKey()
+
+private val appBarFadeTransitionDef = transitionDefinition {
+    state(true) {
+        this[appBarElevationPropKey] = 4.dp
+    }
+    state(false) {
+        this[appBarElevationPropKey] = 2.dp
+    }
+
+    transition {
+        appBarElevationPropKey using tween<Dp> { duration = 200 }
+    }
+}
 
 @Composable
 private fun NetworkInfoPanel(
@@ -698,7 +695,6 @@ private fun Seasons(
             pendingFocusSeasonUiEffect.seasonId == it.season.id &&
             !scrollerPosition.isAnimating
         ) {
-
             // Offset, to not scroll the item under the status bar, and leave a gap
             val offset = InsetsAmbient.current.top +
                 with(DensityAmbient.current) { 56.dp.toIntPx() }
