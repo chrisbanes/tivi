@@ -24,10 +24,11 @@ import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateRelatedShows.Params
-import app.tivi.extensions.parallelForEach
 import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.plus
 import org.threeten.bp.Period
 import javax.inject.Inject
@@ -46,7 +47,7 @@ class UpdateRelatedShows @Inject constructor(
         relatedShowsStore.fetchCollection(params.showId, forceFresh = params.forceLoad) {
             // Refresh if our local data is over 28 days old
             lastRequestStore.isRequestExpired(params.showId, Period.ofDays(28))
-        }.parallelForEach {
+        }.asFlow().collect {
             showsStore.fetch(it.showId)
             showImagesStore.fetchCollection(it.showId)
         }

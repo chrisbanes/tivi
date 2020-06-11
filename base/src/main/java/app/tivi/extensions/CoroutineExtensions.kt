@@ -20,8 +20,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -30,33 +28,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.supervisorScope
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
-
-suspend fun <A, B> Collection<A>.parallelMap(
-    concurrency: Int = defaultConcurrency,
-    block: suspend (A) -> B
-): List<B> = supervisorScope {
-    val semaphore = Channel<Unit>(concurrency)
-    map { item ->
-        async {
-            semaphore.send(Unit) // Acquire concurrency permit
-            try {
-                block(item)
-            } finally {
-                semaphore.receive() // Release concurrency permit
-            }
-        }
-    }.awaitAll()
-}
-
-suspend fun <A> Collection<A>.parallelForEach(
-    concurrency: Int = defaultConcurrency,
-    block: suspend (A) -> Unit
-) {
-    parallelMap(concurrency) { block(it) }
-}
 
 fun <T, R> Flow<T?>.flatMapLatestNullable(transform: suspend (value: T) -> Flow<R>): Flow<R?> {
     return flatMapLatest { if (it != null) transform(it) else flowOf(null) }
@@ -64,10 +37,6 @@ fun <T, R> Flow<T?>.flatMapLatestNullable(transform: suspend (value: T) -> Flow<
 
 fun <T, R> Flow<T?>.mapNullable(transform: suspend (value: T) -> R): Flow<R?> {
     return map { if (it != null) transform(it) else null }
-}
-
-private val defaultConcurrency by lazy(LazyThreadSafetyMode.NONE) {
-    Runtime.getRuntime().availableProcessors().coerceAtLeast(3)
 }
 
 val deferreds = ConcurrentHashMap<Any, Deferred<*>>()
