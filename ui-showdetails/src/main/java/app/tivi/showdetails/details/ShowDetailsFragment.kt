@@ -29,8 +29,6 @@ import app.tivi.TiviFragment
 import app.tivi.common.compose.observeWindowInsets
 import app.tivi.episodedetails.EpisodeDetailsFragment
 import app.tivi.extensions.scheduleStartPostponedTransitions
-import app.tivi.showdetails.details.view.ShowDetailsTextCreator
-import app.tivi.showdetails.details.view.composeShowDetails
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
@@ -42,9 +40,9 @@ import javax.inject.Inject
 class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.FactoryProvider {
     private val viewModel: ShowDetailsFragmentViewModel by fragmentViewModel()
 
-    @Inject internal lateinit var showDetailsViewModelFactory: ShowDetailsFragmentViewModel.Factory
-    @Inject internal lateinit var textCreator: ShowDetailsTextCreator
-    @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
+    @Inject @JvmField internal var showDetailsViewModelFactory: ShowDetailsFragmentViewModel.Factory? = null
+    @Inject @JvmField internal var textCreator: ShowDetailsTextCreator? = null
+    @Inject @JvmField internal var tiviDateFormatter: TiviDateFormatter? = null
 
     private val pendingActions = Channel<ShowDetailsAction>(Channel.BUFFERED)
 
@@ -65,8 +63,8 @@ class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.Factory
                 ),
                 observeWindowInsets(),
                 { pendingActions.sendBlocking(it) },
-                tiviDateFormatter,
-                textCreator
+                tiviDateFormatter!!,
+                textCreator!!
             )
         }
     }
@@ -106,5 +104,7 @@ class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.Factory
         }
     }
 
-    override fun provideFactory(): ShowDetailsFragmentViewModel.Factory = showDetailsViewModelFactory
+    override fun provideFactory(): ShowDetailsFragmentViewModel.Factory {
+        return showDetailsViewModelFactory!!
+    }
 }

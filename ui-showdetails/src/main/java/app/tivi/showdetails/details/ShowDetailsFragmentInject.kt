@@ -16,6 +16,7 @@
 
 package app.tivi.showdetails.details
 
+import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -23,8 +24,12 @@ import dagger.android.ContributesAndroidInjector
 abstract class ShowDetailsFragmentBuilder {
     @ContributesAndroidInjector(
         modules = [
-            ShowDetailsPresenterAssistedModule::class
+            ShowDetailsAssistedModule::class
         ]
     )
     abstract fun showDetailsFragment(): ShowDetailsFragment
 }
+
+@Module(includes = [AssistedInject_ShowDetailsAssistedModule::class])
+@AssistedModule
+interface ShowDetailsAssistedModule
