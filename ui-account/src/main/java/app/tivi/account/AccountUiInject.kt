@@ -16,6 +16,7 @@
 
 package app.tivi.account
 
+import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -23,8 +24,12 @@ import dagger.android.ContributesAndroidInjector
 abstract class AccountUiBuilder {
     @ContributesAndroidInjector(
         modules = [
-            AccountUiPresenterAssistedModule::class
+            AccountAssistedModule::class
         ]
     )
     abstract fun accountUiFragment(): AccountUiFragment
 }
+
+@Module(includes = [AssistedInject_AccountAssistedModule::class])
+@AssistedModule
+interface AccountAssistedModule
