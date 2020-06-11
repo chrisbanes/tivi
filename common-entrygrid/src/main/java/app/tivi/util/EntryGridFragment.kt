@@ -24,7 +24,6 @@ import android.view.ViewGroup
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
 import androidx.recyclerview.widget.DefaultItemAnimator
 import app.tivi.TiviFragmentWithBinding
 import app.tivi.api.UiError
@@ -42,7 +41,6 @@ import app.tivi.ui.transitions.GridToGridTransitioner
 import com.airbnb.mvrx.withState
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collect
-import javax.inject.Inject
 
 @SuppressLint("ValidFragment")
 abstract class EntryGridFragment<LI, VM> : TiviFragmentWithBinding<FragmentEntryGridBinding>()
@@ -51,8 +49,6 @@ abstract class EntryGridFragment<LI, VM> : TiviFragmentWithBinding<FragmentEntry
 
     private lateinit var swipeRefreshLatch: ProgressTimeLatch
     private lateinit var controller: EntryGridEpoxyController<LI>
-
-    @Inject lateinit var appBarConfiguration: AppBarConfiguration
 
     private var currentActionMode: ActionMode? = null
 

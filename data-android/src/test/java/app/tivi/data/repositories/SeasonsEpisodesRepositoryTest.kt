@@ -65,13 +65,13 @@ class SeasonsEpisodesRepositoryTest {
 
     private val testScope = TestCoroutineScope()
 
-    @Inject lateinit var database: TiviDatabase
-    @Inject lateinit var episodeWatchDao: EpisodeWatchEntryDao
-    @Inject lateinit var seasonsDao: SeasonsDao
-    @Inject lateinit var episodesDao: EpisodesDao
-    @Inject lateinit var watchStore: EpisodeWatchStore
-    @Inject lateinit var repository: SeasonsEpisodesRepository
-    @Inject lateinit var seasonsDataSource: SeasonsEpisodesDataSource
+    @Inject @JvmField var database: TiviDatabase? = null
+    @Inject @JvmField var episodeWatchDao: EpisodeWatchEntryDao? = null
+    @Inject @JvmField var seasonsDao: SeasonsDao? = null
+    @Inject @JvmField var episodesDao: EpisodesDao? = null
+    @Inject @JvmField var watchStore: EpisodeWatchStore? = null
+    @Inject @JvmField var repository: SeasonsEpisodesRepository? = null
+    @Inject @JvmField var seasonsDataSource: SeasonsEpisodesDataSource? = null
 
     @Before
     fun setup() {
@@ -82,153 +82,153 @@ class SeasonsEpisodesRepositoryTest {
 
         runBlocking {
             // We'll assume that there's a show in the db
-            insertShow(database)
+            insertShow(database!!)
         }
     }
 
     @Test
     fun testSyncEpisodeWatches() = testScope.runBlockingTest {
-        seasonsDao.insert(s1)
-        episodesDao.insertAll(s1_episodes)
+        seasonsDao!!.insert(s1)
+        episodesDao!!.insertAll(s1_episodes)
 
         // Return a response with 2 items
-        coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
+        coEvery { seasonsDataSource!!.getShowEpisodeWatches(showId) } returns
             Success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
         // Sync
-        repository.syncEpisodeWatchesForShow(showId)
+        repository!!.syncEpisodeWatchesForShow(showId)
         // Assert that both are in the db
-        assertThat(watchStore.getEpisodeWatchesForShow(showId), `is`(listOf(s1e1w, s1e1w2)))
+        assertThat(watchStore!!.getEpisodeWatchesForShow(showId), `is`(listOf(s1e1w, s1e1w2)))
     }
 
     @Test
     fun testEpisodeWatches_sameEntries() = testScope.runBlockingTest {
-        seasonsDao.insert(s1)
-        episodesDao.insertAll(s1_episodes)
+        seasonsDao!!.insert(s1)
+        episodesDao!!.insertAll(s1_episodes)
 
         // Insert both the watches
-        episodeWatchDao.insertAll(s1e1w, s1e1w2)
+        episodeWatchDao!!.insertAll(s1e1w, s1e1w2)
         // Return a response with the same items
-        coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
+        coEvery { seasonsDataSource!!.getShowEpisodeWatches(showId) } returns
             Success(listOf(s1e1 to s1e1w, s1e1 to s1e1w2))
         // Now re-sync with the same response
-        repository.syncEpisodeWatchesForShow(showId)
+        repository!!.syncEpisodeWatchesForShow(showId)
         // Assert that both are in the db
-        assertThat(watchStore.getEpisodeWatchesForShow(showId), `is`(listOf(s1e1w, s1e1w2)))
+        assertThat(watchStore!!.getEpisodeWatchesForShow(showId), `is`(listOf(s1e1w, s1e1w2)))
     }
 
     @Test
     fun testEpisodeWatches_deletesMissing() = testScope.runBlockingTest {
-        seasonsDao.insert(s1)
-        episodesDao.insertAll(s1_episodes)
+        seasonsDao!!.insert(s1)
+        episodesDao!!.insertAll(s1_episodes)
 
         // Insert both the watches
-        episodeWatchDao.insertAll(s1e1w, s1e1w2)
+        episodeWatchDao!!.insertAll(s1e1w, s1e1w2)
         // Return a response with just the second item
-        coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
+        coEvery { seasonsDataSource!!.getShowEpisodeWatches(showId) } returns
             Success(listOf(s1e1 to s1e1w2))
         // Now re-sync
-        repository.syncEpisodeWatchesForShow(showId)
+        repository!!.syncEpisodeWatchesForShow(showId)
         // Assert that only the second is in the db
-        assertThat(watchStore.getEpisodeWatchesForShow(showId), `is`(listOf(s1e1w2)))
+        assertThat(watchStore!!.getEpisodeWatchesForShow(showId), `is`(listOf(s1e1w2)))
     }
 
     @Test
     fun testEpisodeWatches_emptyResponse() = testScope.runBlockingTest {
-        seasonsDao.insert(s1)
-        episodesDao.insertAll(s1_episodes)
+        seasonsDao!!.insert(s1)
+        episodesDao!!.insertAll(s1_episodes)
 
         // Insert both the watches
-        episodeWatchDao.insertAll(s1e1w, s1e1w2)
+        episodeWatchDao!!.insertAll(s1e1w, s1e1w2)
         // Return a empty response
-        coEvery { seasonsDataSource.getShowEpisodeWatches(showId) } returns
+        coEvery { seasonsDataSource!!.getShowEpisodeWatches(showId) } returns
             Success(emptyList())
         // Now re-sync
-        repository.syncEpisodeWatchesForShow(showId)
+        repository!!.syncEpisodeWatchesForShow(showId)
         // Assert that the database is empty
-        assertThat(watchStore.getEpisodeWatchesForShow(showId), `is`(emptyList()))
+        assertThat(watchStore!!.getEpisodeWatchesForShow(showId), `is`(emptyList()))
     }
 
     @Test
     fun testSyncSeasonsEpisodes() = testScope.runBlockingTest {
         // Return a response with 2 items
-        coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns
+        coEvery { seasonsDataSource!!.getSeasonsEpisodes(showId) } returns
             Success(listOf(s1 to s1_episodes))
-        repository.updateSeasonsEpisodes(showId)
+        repository!!.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
-        assertThat(seasonsDao.seasonsForShowId(showId), `is`(listOf(s1)))
-        assertThat(episodesDao.episodesWithSeasonId(s1_id), `is`(s1_episodes))
+        assertThat(seasonsDao!!.seasonsForShowId(showId), `is`(listOf(s1)))
+        assertThat(episodesDao!!.episodesWithSeasonId(s1_id), `is`(s1_episodes))
     }
 
     @Test
     fun testSyncSeasonsEpisodes_sameEntries() = testScope.runBlockingTest {
-        seasonsDao.insert(s1)
-        episodesDao.insertAll(s1_episodes)
+        seasonsDao!!.insert(s1)
+        episodesDao!!.insertAll(s1_episodes)
 
         // Return a response with the same items
-        coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns
+        coEvery { seasonsDataSource!!.getSeasonsEpisodes(showId) } returns
             Success(listOf(s1 to s1_episodes))
-        repository.updateSeasonsEpisodes(showId)
+        repository!!.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
-        assertThat(seasonsDao.seasonsForShowId(showId), `is`(listOf(s1)))
-        assertThat(episodesDao.episodesWithSeasonId(s1_id), `is`(s1_episodes))
+        assertThat(seasonsDao!!.seasonsForShowId(showId), `is`(listOf(s1)))
+        assertThat(episodesDao!!.episodesWithSeasonId(s1_id), `is`(s1_episodes))
     }
 
     @Test
     fun testSyncSeasonsEpisodes_emptyResponse() = testScope.runBlockingTest {
-        seasonsDao.insert(s1)
-        episodesDao.insertAll(s1_episodes)
+        seasonsDao!!.insert(s1)
+        episodesDao!!.insertAll(s1_episodes)
 
         // Return an empty response
-        coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns
+        coEvery { seasonsDataSource!!.getSeasonsEpisodes(showId) } returns
             Success(emptyList())
-        repository.updateSeasonsEpisodes(showId)
+        repository!!.updateSeasonsEpisodes(showId)
 
         // Assert the database is empty
-        assertThat(seasonsDao.seasonsForShowId(showId), `is`(emptyList()))
-        assertThat(episodesDao.episodesWithSeasonId(s1_id), `is`(emptyList()))
+        assertThat(seasonsDao!!.seasonsForShowId(showId), `is`(emptyList()))
+        assertThat(episodesDao!!.episodesWithSeasonId(s1_id), `is`(emptyList()))
     }
 
     @Test
     fun testSyncSeasonsEpisodes_deletesMissingSeasons() = testScope.runBlockingTest {
-        seasonsDao.insertAll(s1, s2)
-        episodesDao.insertAll(s1_episodes)
-        episodesDao.insertAll(s2_episodes)
+        seasonsDao!!.insertAll(s1, s2)
+        episodesDao!!.insertAll(s1_episodes)
+        episodesDao!!.insertAll(s2_episodes)
 
         // Return a response with just the first season
-        coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns
+        coEvery { seasonsDataSource!!.getSeasonsEpisodes(showId) } returns
             Success(listOf(s1 to s1_episodes))
-        repository.updateSeasonsEpisodes(showId)
+        repository!!.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
-        assertThat(seasonsDao.seasonsForShowId(showId), `is`(listOf(s1)))
-        assertThat(episodesDao.episodesWithSeasonId(s1_id), `is`(s1_episodes))
+        assertThat(seasonsDao!!.seasonsForShowId(showId), `is`(listOf(s1)))
+        assertThat(episodesDao!!.episodesWithSeasonId(s1_id), `is`(s1_episodes))
     }
 
     @Test
     fun testSyncSeasonsEpisodes_deletesMissingEpisodes() = testScope.runBlockingTest {
-        seasonsDao.insertAll(s1, s2)
-        episodesDao.insertAll(s1_episodes)
-        episodesDao.insertAll(s2_episodes)
+        seasonsDao!!.insertAll(s1, s2)
+        episodesDao!!.insertAll(s1_episodes)
+        episodesDao!!.insertAll(s2_episodes)
 
         // Return a response with both seasons, but just a single episodes in each
-        coEvery { seasonsDataSource.getSeasonsEpisodes(showId) } returns
+        coEvery { seasonsDataSource!!.getSeasonsEpisodes(showId) } returns
             Success(listOf(s1 to listOf(s1e1), s2 to listOf(s2e1)))
-        repository.updateSeasonsEpisodes(showId)
+        repository!!.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
-        assertThat(seasonsDao.seasonsForShowId(showId), `is`(listOf(s1, s2)))
-        assertThat(episodesDao.episodesWithSeasonId(s1_id), `is`(listOf(s1e1)))
-        assertThat(episodesDao.episodesWithSeasonId(s2_id), `is`(listOf(s2e1)))
+        assertThat(seasonsDao!!.seasonsForShowId(showId), `is`(listOf(s1, s2)))
+        assertThat(episodesDao!!.episodesWithSeasonId(s1_id), `is`(listOf(s1e1)))
+        assertThat(episodesDao!!.episodesWithSeasonId(s2_id), `is`(listOf(s2e1)))
     }
 
     @Test
     fun testObserveNextEpisodeToWatch_singleFlow() = testScope.runBlockingTest {
-        seasonsDao.insertAll(s1)
-        episodesDao.insertAll(s1_episodes)
+        seasonsDao!!.insertAll(s1)
+        episodesDao!!.insertAll(s1_episodes)
 
-        val results = repository.observeNextEpisodeToWatch(showId).produceIn(this)
+        val results = repository!!.observeNextEpisodeToWatch(showId).produceIn(this)
 
         // Receive the first emission
         withTimeout(10_000) {
@@ -236,9 +236,9 @@ class SeasonsEpisodesRepositoryTest {
         }
 
         // Now mark s1e1 as watched
-        coEvery { seasonsDataSource.addEpisodeWatches(any()) } returns Success(Unit)
-        coEvery { seasonsDataSource.getEpisodeWatches(s1e1.id, any()) } returns Success(listOf(s1e1w))
-        repository.addEpisodeWatch(s1e1.id, OffsetDateTime.now())
+        coEvery { seasonsDataSource!!.addEpisodeWatches(any()) } returns Success(Unit)
+        coEvery { seasonsDataSource!!.getEpisodeWatches(s1e1.id, any()) } returns Success(listOf(s1e1w))
+        repository!!.addEpisodeWatch(s1e1.id, OffsetDateTime.now())
 
         // Receive the second emission
         withTimeout(10_000) {

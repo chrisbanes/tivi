@@ -49,8 +49,8 @@ class SeasonsTest {
 
     private val testScope = TestCoroutineScope()
 
-    @Inject lateinit var database: TiviDatabase
-    @Inject lateinit var seasonsDao: SeasonsDao
+    @Inject @JvmField var database: TiviDatabase? = null
+    @Inject @JvmField var seasonsDao: SeasonsDao? = null
 
     @Before
     fun setup() {
@@ -61,55 +61,55 @@ class SeasonsTest {
 
         runBlockingTest {
             // We'll assume that there's a show in the db
-            insertShow(database)
+            insertShow(database!!)
         }
     }
 
     @Test
     fun insertSeason() = testScope.runBlockingTest {
-        seasonsDao.insert(s1)
+        seasonsDao!!.insert(s1)
 
-        assertThat(seasonsDao.seasonWithId(s1_id), `is`(s1))
+        assertThat(seasonsDao!!.seasonWithId(s1_id), `is`(s1))
     }
 
     @Test(expected = SQLiteConstraintException::class)
     fun insert_withSameTraktId() = testScope.runBlockingTest {
-        seasonsDao.insert(s1)
+        seasonsDao!!.insert(s1)
 
         // Make a copy with a 0 id
         val copy = s1.copy(id = 0)
 
-        seasonsDao.insert(copy)
+        seasonsDao!!.insert(copy)
     }
 
     @Test
     fun specialsOrder() = testScope.runBlockingTest {
-        seasonsDao.insert(s0)
-        seasonsDao.insert(s1)
-        seasonsDao.insert(s2)
+        seasonsDao!!.insert(s0)
+        seasonsDao!!.insert(s1)
+        seasonsDao!!.insert(s2)
 
         // Specials should always be last
         assertThat(
-            seasonsDao.seasonsForShowId(showId),
+            seasonsDao!!.seasonsForShowId(showId),
             `is`(listOf(s1, s2, s0))
         )
     }
 
     @Test
     fun deleteSeason() = testScope.runBlockingTest {
-        seasonsDao.insert(s1)
-        seasonsDao.deleteEntity(s1)
+        seasonsDao!!.insert(s1)
+        seasonsDao!!.deleteEntity(s1)
 
-        assertThat(seasonsDao.seasonWithId(s1_id), `is`(nullValue()))
+        assertThat(seasonsDao!!.seasonWithId(s1_id), `is`(nullValue()))
     }
 
     @Test
     fun deleteShow_deletesSeason() = testScope.runBlockingTest {
-        seasonsDao.insert(s1)
+        seasonsDao!!.insert(s1)
         // Now delete show
-        deleteShow(database)
+        deleteShow(database!!)
 
-        assertThat(seasonsDao.seasonWithId(s1_id), `is`(nullValue()))
+        assertThat(seasonsDao!!.seasonWithId(s1_id), `is`(nullValue()))
     }
 
     @After

@@ -82,7 +82,7 @@ internal class SearchViewModel @AssistedInject constructor(
             state: SearchViewState
         ): SearchViewModel? {
             val fragment: SearchFragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return fragment.searchViewModelFactory.create(state)
+            return fragment.searchViewModelFactory!!.create(state)
         }
     }
 }

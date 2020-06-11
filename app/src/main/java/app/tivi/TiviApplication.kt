@@ -24,17 +24,17 @@ import dagger.android.DaggerApplication
 import javax.inject.Inject
 
 class TiviApplication : DaggerApplication(), Configuration.Provider {
-    @Inject lateinit var workConfiguration: Configuration
-    @Inject lateinit var initializers: AppInitializers
+    @Inject @JvmField var workConfiguration: Configuration? = null
+    @Inject @JvmField var initializers: AppInitializers? = null
 
     override fun onCreate() {
         super.onCreate()
-        initializers.init(this)
+        initializers!!.init(this)
     }
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
         return DaggerAppComponent.factory().create(this)
     }
 
-    override fun getWorkManagerConfiguration(): Configuration = workConfiguration
+    override fun getWorkManagerConfiguration(): Configuration = workConfiguration!!
 }

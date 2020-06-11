@@ -35,7 +35,7 @@ import javax.inject.Inject
  */
 abstract class TiviDialogFragment : DialogFragment(), MvRxView, HasAndroidInjector {
 
-    @Inject lateinit var androidInjector: DispatchingAndroidInjector<Any>
+    @Inject @JvmField var androidInjector: DispatchingAndroidInjector<Any>? = null
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -43,7 +43,7 @@ abstract class TiviDialogFragment : DialogFragment(), MvRxView, HasAndroidInject
     }
 
     override fun androidInjector(): AndroidInjector<Any> {
-        return androidInjector
+        return androidInjector!!
     }
 
     private val mvrxViewIdProperty = MvRxViewId()

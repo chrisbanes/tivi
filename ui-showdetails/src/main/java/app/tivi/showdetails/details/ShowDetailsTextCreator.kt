@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails.details.view
+package app.tivi.showdetails.details
 
 import android.content.Context
 import android.graphics.Color

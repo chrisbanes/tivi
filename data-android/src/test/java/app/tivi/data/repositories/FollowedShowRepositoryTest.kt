@@ -58,10 +58,10 @@ class FollowedShowRepositoryTest {
 
     private val testScope = TestCoroutineScope()
 
-    @Inject lateinit var followShowsDao: FollowedShowsDao
-    @Inject lateinit var repository: FollowedShowsRepository
-    @Inject lateinit var database: TiviDatabase
-    @Inject lateinit var traktDataSource: TraktFollowedShowsDataSource
+    @Inject @JvmField var followShowsDao: FollowedShowsDao? = null
+    @Inject @JvmField var repository: FollowedShowsRepository? = null
+    @Inject @JvmField var database: TiviDatabase? = null
+    @Inject @JvmField var traktDataSource: TraktFollowedShowsDataSource? = null
 
     @Before
     fun setup() {
@@ -79,79 +79,79 @@ class FollowedShowRepositoryTest {
 
         runBlocking {
             // We'll assume that there's a show in the db
-            insertShow(database)
+            insertShow(database!!)
         }
     }
 
     @Test
     fun testSync() = testScope.runBlockingTest {
-        coEvery { traktDataSource.getFollowedListId() } returns Success(0)
-        coEvery { traktDataSource.getListShows(0) } returns Success(listOf(followedShow1Network to show))
+        coEvery { traktDataSource!!.getFollowedListId() } returns Success(0)
+        coEvery { traktDataSource!!.getListShows(0) } returns Success(listOf(followedShow1Network to show))
 
-        repository.syncFollowedShows()
+        repository!!.syncFollowedShows()
 
         assertThat(
-            repository.getFollowedShows(),
+            repository!!.getFollowedShows(),
             `is`(listOf(followedShow1Local))
         )
     }
 
     @Test
     fun testSync_emptyResponse() = testScope.runBlockingTest {
-        insertFollowedShow(database)
+        insertFollowedShow(database!!)
 
-        coEvery { traktDataSource.getFollowedListId() } returns Success(0)
-        coEvery { traktDataSource.getListShows(0) } returns Success(emptyList())
+        coEvery { traktDataSource!!.getFollowedListId() } returns Success(0)
+        coEvery { traktDataSource!!.getListShows(0) } returns Success(emptyList())
 
-        repository.syncFollowedShows()
+        repository!!.syncFollowedShows()
 
         assertThat(
-            repository.getFollowedShows(),
+            repository!!.getFollowedShows(),
             `is`(emptyList())
         )
     }
 
     @Test
     fun testSync_responseDifferentShow() = testScope.runBlockingTest {
-        insertFollowedShow(database)
+        insertFollowedShow(database!!)
 
-        coEvery { traktDataSource.getFollowedListId() } returns Success(0)
-        coEvery { traktDataSource.getListShows(0) } returns Success(listOf(followedShow2Network to show2))
+        coEvery { traktDataSource!!.getFollowedListId() } returns Success(0)
+        coEvery { traktDataSource!!.getListShows(0) } returns Success(listOf(followedShow2Network to show2))
 
-        repository.syncFollowedShows()
+        repository!!.syncFollowedShows()
 
         assertThat(
-            repository.getFollowedShows(),
+            repository!!.getFollowedShows(),
             `is`(listOf(followedShow2Local))
         )
     }
 
     @Test
     fun testSync_pendingDelete() = testScope.runBlockingTest {
-        followShowsDao.insert(followedShow1PendingDelete)
+        followShowsDao!!.insert(followedShow1PendingDelete)
 
         // Return error for the list ID so that we disable syncing
-        coEvery { traktDataSource.getFollowedListId() } returns ErrorResult(IllegalArgumentException())
+        coEvery { traktDataSource!!.getFollowedListId() } returns ErrorResult(IllegalArgumentException())
 
-        repository.syncFollowedShows()
+        repository!!.syncFollowedShows()
 
         assertThat(
-            repository.getFollowedShows(),
+            repository!!.getFollowedShows(),
             `is`(emptyList())
         )
     }
 
     @Test
     fun testSync_pendingAdd() = testScope.runBlockingTest {
-        followShowsDao.insert(followedShow1PendingUpload)
+        followShowsDao!!.insert(followedShow1PendingUpload)
 
         // Return an error for the list ID so that we disable syncing
-        coEvery { traktDataSource.getFollowedListId() } returns ErrorResult(IllegalArgumentException())
+        coEvery { traktDataSource!!.getFollowedListId() } returns ErrorResult(IllegalArgumentException())
 
-        repository.syncFollowedShows()
+        repository!!.syncFollowedShows()
 
         assertThat(
-            repository.getFollowedShows(),
+            repository!!.getFollowedShows(),
             `is`(listOf(followedShow1Local))
         )
     }

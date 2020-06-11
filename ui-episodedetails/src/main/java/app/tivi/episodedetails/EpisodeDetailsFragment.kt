@@ -45,9 +45,9 @@ class EpisodeDetailsFragment : TiviBottomSheetFragment(), EpisodeDetailsViewMode
 
     private val viewModel: EpisodeDetailsViewModel by fragmentViewModel()
 
-    @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
-    @Inject internal lateinit var episodeDetailsViewModelFactory: EpisodeDetailsViewModel.Factory
-    @Inject internal lateinit var textCreator: EpisodeDetailsTextCreator
+    @Inject @JvmField internal var tiviDateFormatter: TiviDateFormatter? = null
+    @Inject @JvmField internal var episodeDetailsViewModelFactory: EpisodeDetailsViewModel.Factory? = null
+    @Inject @JvmField internal var textCreator: EpisodeDetailsTextCreator? = null
 
     private val pendingActions = Channel<EpisodeDetailsAction>(Channel.BUFFERED)
 
@@ -63,7 +63,7 @@ class EpisodeDetailsFragment : TiviBottomSheetFragment(), EpisodeDetailsViewMode
                 viewModel.observeAsLiveData(),
                 observeWindowInsets(),
                 { pendingActions.sendBlocking(it) },
-                tiviDateFormatter
+                tiviDateFormatter!!
             )
         }
     }
@@ -84,5 +84,7 @@ class EpisodeDetailsFragment : TiviBottomSheetFragment(), EpisodeDetailsViewMode
 
     override fun invalidate() = Unit
 
-    override fun provideFactory(): EpisodeDetailsViewModel.Factory = episodeDetailsViewModelFactory
+    override fun provideFactory(): EpisodeDetailsViewModel.Factory {
+        return episodeDetailsViewModelFactory!!
+    }
 }

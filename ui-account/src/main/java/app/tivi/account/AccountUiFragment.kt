@@ -37,8 +37,8 @@ class AccountUiFragment : TiviBottomSheetFragment(), AccountUiViewModel.FactoryP
     private val pendingActions = Channel<AccountUiAction>()
     private val viewModel: AccountUiViewModel by fragmentViewModel()
 
-    @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
-    @Inject internal lateinit var viewModelFactory: AccountUiViewModel.Factory
+    @Inject @JvmField internal var tiviDateFormatter: TiviDateFormatter? = null
+    @Inject @JvmField internal var viewModelFactory: AccountUiViewModel.Factory? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,7 +55,7 @@ class AccountUiFragment : TiviBottomSheetFragment(), AccountUiViewModel.FactoryP
             viewModel.observeAsLiveData(),
             observeWindowInsets(),
             { pendingActions.sendBlocking(it) },
-            tiviDateFormatter
+            tiviDateFormatter!!
         )
     }
 
@@ -78,5 +78,5 @@ class AccountUiFragment : TiviBottomSheetFragment(), AccountUiViewModel.FactoryP
 
     override fun invalidate() = Unit
 
-    override fun provideFactory(): AccountUiViewModel.Factory = viewModelFactory
+    override fun provideFactory(): AccountUiViewModel.Factory = viewModelFactory!!
 }

@@ -27,11 +27,6 @@ kapt {
     useBuildCache = true
 }
 
-apply plugin: 'kotlin-android-extensions'
-androidExtensions {
-    experimental = true
-}
-
 android {
     compileSdkVersion buildConfig.compileSdk
 
@@ -45,7 +40,12 @@ android {
     }
 
     buildFeatures {
-        dataBinding true
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerVersion Libs.AndroidX.Compose.kotlinCompilerVersion
+        kotlinCompilerExtensionVersion Libs.AndroidX.Compose.version
     }
 }
 
@@ -53,11 +53,9 @@ dependencies {
     implementation project(':base')
     implementation project(':base-android')
     implementation project(':data')
-
+    implementation project(':domain')
     implementation project(':common-ui-view')
-
-    api project(':ui-showdetails-view')
-    api project(':ui-showdetails-presenter')
+    implementation project(':common-ui-compose')
 
     implementation project(':ui-episodedetails')
 
@@ -73,11 +71,27 @@ dependencies {
 
     implementation Libs.Insetter.ktx
 
+    implementation Libs.AndroidX.Compose.runtime
+    implementation Libs.AndroidX.UI.foundation
+    implementation Libs.AndroidX.UI.core
+    implementation Libs.AndroidX.UI.layout
+    implementation Libs.AndroidX.UI.material
+    implementation Libs.AndroidX.UI.animation
+    implementation Libs.AndroidX.UI.tooling
+    implementation Libs.AndroidX.UI.livedata
+    implementation Libs.AndroidX.UI.iconsExtended
+
+    implementation Libs.Accompanist.mdcTheme
+    implementation Libs.Accompanist.coil
+
     implementation Libs.Google.material
 
     implementation Libs.Dagger.androidSupport
     kapt Libs.Dagger.compiler
     kapt Libs.Dagger.androidProcessor
 
-    implementation Libs.mvRx
+    compileOnly Libs.AssistedInject.annotationDagger2
+    kapt Libs.AssistedInject.processorDagger2
+
+    api Libs.mvRx
 }

@@ -102,7 +102,6 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
-import app.tivi.episodedetails.compose.R
 import app.tivi.ui.animations.lerp
 import app.tivi.util.TiviDateFormatter
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
@@ -145,8 +144,8 @@ private fun EpisodeDetails(
             Stack {
                 if (viewState.episode != null && viewState.season != null) {
                     Backdrop(
-                        season = viewState.season!!,
-                        episode = viewState.episode!!,
+                        season = viewState.season,
+                        episode = viewState.episode,
                         modifier = Modifier.aspectRatio(16 / 10f)
                     )
                 }

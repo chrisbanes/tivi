@@ -37,7 +37,7 @@ import javax.inject.Inject
 
 class RecommendedShowsFragment : EntryGridFragment<RecommendedEntryWithShow, RecommendedShowsViewModel>() {
     override val viewModel: RecommendedShowsViewModel by fragmentViewModel()
-    @Inject lateinit var recommendedShowsViewModelFactory: RecommendedShowsViewModel.Factory
+    @Inject @JvmField var recommendedShowsViewModelFactory: RecommendedShowsViewModel.Factory? = null
 
     override fun onViewCreated(binding: FragmentEntryGridBinding, savedInstanceState: Bundle?) {
         super.onViewCreated(binding, savedInstanceState)

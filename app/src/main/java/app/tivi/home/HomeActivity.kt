@@ -41,7 +41,7 @@ class HomeActivity : TiviActivityMvRxView() {
 
     private val viewModel: HomeActivityViewModel by viewModel()
 
-    @Inject lateinit var homeNavigationViewModelFactory: HomeActivityViewModel.Factory
+    @Inject @JvmField var homeNavigationViewModelFactory: HomeActivityViewModel.Factory? = null
 
     private lateinit var binding: ActivityHomeBinding
 

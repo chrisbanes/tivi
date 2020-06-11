@@ -58,7 +58,7 @@ abstract class BaseMvRxBottomSheetFragment : BottomSheetDialogFragment(), MvRxVi
 }
 
 abstract class TiviBottomSheetFragment : BaseMvRxBottomSheetFragment(), HasAndroidInjector {
-    @Inject lateinit var androidInjector: DispatchingAndroidInjector<Any>
+    @Inject @JvmField var androidInjector: DispatchingAndroidInjector<Any>? = null
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -66,6 +66,6 @@ abstract class TiviBottomSheetFragment : BaseMvRxBottomSheetFragment(), HasAndro
     }
 
     override fun androidInjector(): AndroidInjector<Any> {
-        return androidInjector
+        return androidInjector!!
     }
 }

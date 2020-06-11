@@ -94,7 +94,7 @@ class HomeActivityViewModel @AssistedInject constructor(
             state: HomeActivityViewState
         ): HomeActivityViewModel? {
             val fragment: HomeActivity = viewModelContext.activity()
-            return fragment.homeNavigationViewModelFactory.create(state)
+            return fragment.homeNavigationViewModelFactory!!.create(state)
         }
     }
 }

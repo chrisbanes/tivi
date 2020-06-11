@@ -44,8 +44,8 @@ import javax.inject.Inject
 class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
     private val viewModel: DiscoverViewModel by fragmentViewModel()
 
-    @Inject internal lateinit var discoverViewModelFactory: DiscoverViewModel.Factory
-    @Inject internal lateinit var controller: DiscoverEpoxyController
+    @Inject @JvmField internal var discoverViewModelFactory: DiscoverViewModel.Factory? = null
+    @Inject @JvmField internal var controller: DiscoverEpoxyController? = null
 
     private var authStateMenuItemBinder: AuthStateMenuItemBinder? = null
 
@@ -67,7 +67,7 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
         // postponeEnterTransitionWithTimeout()
 
         binding.summaryRv.apply {
-            setController(controller)
+            setController(controller!!)
             addItemDecoration(SpacingItemDecorator(paddingLeft))
         }
 
@@ -95,7 +95,7 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
             true
         }
 
-        controller.callbacks = object : DiscoverEpoxyController.Callbacks {
+        controller!!.callbacks = object : DiscoverEpoxyController.Callbacks {
             override fun onTrendingHeaderClicked() {
                 withState(viewModel) { state ->
                     val extras = binding.summaryRv.createSharedElementHelperForItems(state.trendingItems)
@@ -175,12 +175,12 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
         authStateMenuItemBinder?.bind(state.authState, state.user)
 
         binding.state = state
-        controller.state = state
+        controller!!.state = state
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        controller.clear()
+        controller?.clear()
         authStateMenuItemBinder = null
     }
 }

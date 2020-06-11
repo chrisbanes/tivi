@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.showdetails.details.view
+package app.tivi.showdetails.details
 
 import android.view.ViewGroup
 import androidx.animation.transitionDefinition
@@ -122,22 +122,6 @@ import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.resultentities.numberAired
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
-import app.tivi.showdetails.details.ChangeSeasonExpandedAction
-import app.tivi.showdetails.details.ChangeSeasonFollowedAction
-import app.tivi.showdetails.details.ClearError
-import app.tivi.showdetails.details.ClearPendingUiEffect
-import app.tivi.showdetails.details.FocusSeasonUiEffect
-import app.tivi.showdetails.details.FollowShowToggleAction
-import app.tivi.showdetails.details.MarkSeasonUnwatchedAction
-import app.tivi.showdetails.details.MarkSeasonWatchedAction
-import app.tivi.showdetails.details.NavigateUp
-import app.tivi.showdetails.details.OpenEpisodeDetails
-import app.tivi.showdetails.details.OpenShowDetails
-import app.tivi.showdetails.details.RefreshAction
-import app.tivi.showdetails.details.ShowDetailsAction
-import app.tivi.showdetails.details.ShowDetailsViewState
-import app.tivi.showdetails.details.UiEffect
-import app.tivi.showdetails.details.UnfollowPreviousSeasonsFollowedAction
 import app.tivi.ui.animations.lerp
 import app.tivi.util.TiviDateFormatter
 import coil.request.GetRequest

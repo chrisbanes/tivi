@@ -67,7 +67,7 @@ class PopularShowsViewModel @AssistedInject constructor(
             state: EntryViewState
         ): PopularShowsViewModel? {
             val fragment: PopularShowsFragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return fragment.popularShowsViewModelFactory.create(state)
+            return fragment.popularShowsViewModelFactory!!.create(state)
         }
     }
 }

@@ -51,7 +51,6 @@ import androidx.ui.material.icons.filled.Settings
 import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
-import app.tivi.account.view.R
 import app.tivi.common.compose.HorizontalDivider
 import app.tivi.common.compose.ProvideInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient
@@ -91,7 +90,7 @@ fun AccountUi(
     Column {
         if (viewState.user != null) {
             UserRow(
-                user = viewState.user!!,
+                user = viewState.user,
                 modifier = Modifier.padding(16.dp)
             )
         }

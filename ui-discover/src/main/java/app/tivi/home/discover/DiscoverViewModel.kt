@@ -162,7 +162,7 @@ internal class DiscoverViewModel @AssistedInject constructor(
             state: DiscoverViewState
         ): DiscoverViewModel? {
             val fragment: DiscoverFragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return fragment.discoverViewModelFactory.create(state)
+            return fragment.discoverViewModelFactory!!.create(state)
         }
     }
 }
