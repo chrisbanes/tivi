@@ -63,7 +63,7 @@ class TrendingShowsViewModel @AssistedInject constructor(
             state: EntryViewState
         ): TrendingShowsViewModel? {
             val fragment: TrendingShowsFragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return fragment.trendingShowsViewModelFactory.create(state)
+            return fragment.trendingShowsViewModelFactory!!.create(state)
         }
     }
 }

@@ -37,7 +37,7 @@ import javax.inject.Inject
 
 class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingShowsViewModel>() {
     override val viewModel: TrendingShowsViewModel by fragmentViewModel()
-    @Inject lateinit var trendingShowsViewModelFactory: TrendingShowsViewModel.Factory
+    @Inject @JvmField var trendingShowsViewModelFactory: TrendingShowsViewModel.Factory? = null
 
     override fun onViewCreated(binding: FragmentEntryGridBinding, savedInstanceState: Bundle?) {
         super.onViewCreated(binding, savedInstanceState)

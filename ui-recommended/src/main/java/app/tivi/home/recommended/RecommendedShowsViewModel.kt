@@ -63,7 +63,7 @@ class RecommendedShowsViewModel @AssistedInject constructor(
             state: EntryViewState
         ): RecommendedShowsViewModel? {
             val fragment: RecommendedShowsFragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return fragment.recommendedShowsViewModelFactory.create(state)
+            return fragment.recommendedShowsViewModelFactory!!.create(state)
         }
     }
 }

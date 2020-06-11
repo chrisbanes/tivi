@@ -58,10 +58,10 @@ class FollowedShowRepositoryTest {
 
     private val testScope = TestCoroutineScope()
 
-    @Inject lateinit var followShowsDao: FollowedShowsDao
-    @Inject lateinit var repository: FollowedShowsRepository
-    @Inject lateinit var database: TiviDatabase
-    @Inject lateinit var traktDataSource: TraktFollowedShowsDataSource
+    @Inject @JvmField var followShowsDao: FollowedShowsDao? = null
+    @Inject @JvmField var repository: FollowedShowsRepository? = null
+    @Inject @JvmField var database: TiviDatabase? = null
+    @Inject @JvmField var traktDataSource: TraktFollowedShowsDataSource? = null
 
     @Before
     fun setup() {
@@ -128,7 +128,7 @@ class FollowedShowRepositoryTest {
 
     @Test
     fun testSync_pendingDelete() = testScope.runBlockingTest {
-        followShowsDao.insert(followedShow1PendingDelete)
+        followShowsDao!!.insert(followedShow1PendingDelete)
 
         // Return error for the list ID so that we disable syncing
         coEvery { traktDataSource.getFollowedListId() } returns ErrorResult(IllegalArgumentException())
@@ -143,7 +143,7 @@ class FollowedShowRepositoryTest {
 
     @Test
     fun testSync_pendingAdd() = testScope.runBlockingTest {
-        followShowsDao.insert(followedShow1PendingUpload)
+        followShowsDao!!.insert(followedShow1PendingUpload)
 
         // Return an error for the list ID so that we disable syncing
         coEvery { traktDataSource.getFollowedListId() } returns ErrorResult(IllegalArgumentException())

@@ -52,9 +52,9 @@ class EpisodesTest {
 
     private val testScope = TestCoroutineScope()
 
-    @Inject lateinit var database: TiviDatabase
-    @Inject lateinit var episodeDao: EpisodesDao
-    @Inject lateinit var seasonsDao: SeasonsDao
+    @Inject @JvmField var database: TiviDatabase? = null
+    @Inject @JvmField var episodeDao: EpisodesDao? = null
+    @Inject @JvmField var seasonsDao: SeasonsDao? = null
 
     @Before
     fun setup() {
@@ -65,70 +65,70 @@ class EpisodesTest {
 
         runBlocking {
             // We'll assume that there's a show and season in the db
-            insertShow(database)
-            seasonsDao.insert(s1)
+            insertShow(database!!)
+            seasonsDao!!.insert(s1)
         }
     }
 
     @Test
     fun insert() = testScope.runBlockingTest {
-        episodeDao.insert(s1e1)
-        assertThat(episodeDao.episodeWithId(s1e1.id), `is`(s1e1))
+        episodeDao!!.insert(s1e1)
+        assertThat(episodeDao!!.episodeWithId(s1e1.id), `is`(s1e1))
     }
 
     @Test(expected = SQLiteConstraintException::class)
     fun insert_withSameTraktId() = testScope.runBlockingTest {
-        episodeDao.insert(s1e1)
+        episodeDao!!.insert(s1e1)
         // Make a copy with a 0 id
         val copy = s1e1.copy(id = 0)
-        episodeDao.insert(copy)
+        episodeDao!!.insert(copy)
     }
 
     @Test
     fun delete() = testScope.runBlockingTest {
-        episodeDao.insert(s1e1)
-        episodeDao.deleteEntity(s1e1)
-        assertThat(episodeDao.episodeWithId(s1e1.id), `is`(nullValue()))
+        episodeDao!!.insert(s1e1)
+        episodeDao!!.deleteEntity(s1e1)
+        assertThat(episodeDao!!.episodeWithId(s1e1.id), `is`(nullValue()))
     }
 
     @Test
     fun deleteSeason_deletesEpisode() = testScope.runBlockingTest {
-        episodeDao.insert(s1e1)
+        episodeDao!!.insert(s1e1)
         // Now delete season
-        seasonsDao.deleteEntity(s1)
-        assertThat(episodeDao.episodeWithId(s1e1.id), `is`(nullValue()))
+        seasonsDao!!.deleteEntity(s1)
+        assertThat(episodeDao!!.episodeWithId(s1e1.id), `is`(nullValue()))
     }
 
     @Test
     fun showIdForEpisodeId() = testScope.runBlockingTest {
-        episodeDao.insert(s1e1)
-        assertThat(episodeDao.showIdForEpisodeId(s1e1.id), `is`(showId))
+        episodeDao!!.insert(s1e1)
+        assertThat(episodeDao!!.showIdForEpisodeId(s1e1.id), `is`(showId))
     }
 
     @Test
     fun nextAiredEpisodeAfter() = testScope.runBlockingTest {
-        episodeDao.insertAll(s1_episodes)
+        episodeDao!!.insertAll(s1_episodes)
 
         assertThat(
-            episodeDao.observeNextEpisodeForShowAfter(showId, 0, 0)
+            episodeDao!!.observeNextEpisodeForShowAfter(showId, 0, 0)
                 .first()?.episode,
             `is`(s1e1)
         )
 
         assertThat(
-            episodeDao.observeNextEpisodeForShowAfter(showId, 1, 0)
+            episodeDao!!.observeNextEpisodeForShowAfter(showId, 1, 0)
                 .first()?.episode,
             `is`(s1e2)
         )
 
         assertThat(
-            episodeDao.observeNextEpisodeForShowAfter(showId, 1, 1)
+            episodeDao!!.observeNextEpisodeForShowAfter(showId, 1, 1)
                 .first()?.episode,
             `is`(s1e3)
         )
 
         assertThat(
-            episodeDao.observeNextEpisodeForShowAfter(showId, 1, 2)
+            episodeDao!!.observeNextEpisodeForShowAfter(showId, 1, 2)
                 .first()?.episode,
             nullValue()
         )

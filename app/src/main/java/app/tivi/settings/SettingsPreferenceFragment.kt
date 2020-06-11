@@ -40,22 +40,22 @@ import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 internal class SettingsPreferenceFragment : PreferenceFragmentCompat(), HasAndroidInjector {
-    @Inject lateinit var androidInjector: DispatchingAndroidInjector<Any>
+    @Inject @JvmField var androidInjector: DispatchingAndroidInjector<Any>? = null
 
-    @Inject lateinit var powerController: PowerController
+    @Inject @JvmField var powerController: PowerController? = null
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
     }
 
-    override fun androidInjector(): AndroidInjector<Any> = androidInjector
+    override fun androidInjector(): AndroidInjector<Any> = androidInjector!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launchWhenStarted {
-            powerController.observeShouldSaveData(ignorePreference = true).collect { saveData ->
+            powerController!!.observeShouldSaveData(ignorePreference = true).collect { saveData ->
                 val pref = findPreference<Preference>("pref_data_saver")
                     ?: throw CancellationException()
                 val prefDisabled = findPreference<Preference>("pref_data_saver_disabled")
