@@ -38,13 +38,6 @@ android {
     defaultConfig {
         minSdkVersion buildConfig.minSdk
         manifestPlaceholders += ['appAuthRedirectScheme': 'empty']
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                // Enable Epoxy parallel processing
-                arguments = [ enableParallelEpoxyProcessing: "true" ]
-            }
-        }
     }
 
     compileOptions {

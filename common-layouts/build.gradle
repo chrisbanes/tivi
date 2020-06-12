@@ -32,13 +32,6 @@ android {
 
     defaultConfig {
         minSdkVersion buildConfig.minSdk
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                // Enable Epoxy parallel processing
-                arguments = [ enableParallelEpoxyProcessing: "true" ]
-            }
-        }
     }
 
     compileOptions {
