@@ -21,7 +21,7 @@ object Versions {
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:4.1.0-alpha10"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:4.2.0-alpha01"
 
     const val mvRx = "com.airbnb.android:mvrx:1.3.0"
 
