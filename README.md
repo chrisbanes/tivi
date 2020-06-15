@@ -1,4 +1,4 @@
-![Tivi](https://raw.githubusercontent.com/chrisbanes/tivi/master/art/banner.png)
+![Tivi](/art/banner.png)
 
 # Tivi 📺 (work-in-progress 👷🔧️👷‍♀️⛏)
 
