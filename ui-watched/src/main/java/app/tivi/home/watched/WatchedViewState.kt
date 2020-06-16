@@ -19,7 +19,6 @@ package app.tivi.home.watched
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
-import com.airbnb.mvrx.MvRxState
 
 data class WatchedViewState(
     val user: TraktUser? = null,
@@ -32,4 +31,4 @@ data class WatchedViewState(
     val filter: String? = null,
     val availableSorts: List<SortOption> = emptyList(),
     val sort: SortOption = SortOption.LAST_WATCHED
-) : MvRxState
+)

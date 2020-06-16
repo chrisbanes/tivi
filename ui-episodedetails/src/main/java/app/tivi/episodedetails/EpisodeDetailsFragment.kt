@@ -23,11 +23,11 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import android.widget.FrameLayout
 import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import app.tivi.TiviBottomSheetFragment
 import app.tivi.common.compose.observeWindowInsets
 import app.tivi.util.TiviDateFormatter
-import com.airbnb.mvrx.fragmentViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.sendBlocking
@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class EpisodeDetailsFragment : TiviBottomSheetFragment(), EpisodeDetailsViewModel.FactoryProvider {
+class EpisodeDetailsFragment : BottomSheetDialogFragment() {
     companion object {
         @JvmStatic
         fun create(id: Long): EpisodeDetailsFragment {
@@ -45,10 +45,9 @@ class EpisodeDetailsFragment : TiviBottomSheetFragment(), EpisodeDetailsViewMode
         }
     }
 
-    private val viewModel: EpisodeDetailsViewModel by fragmentViewModel()
+    private val viewModel: EpisodeDetailsViewModel by viewModels()
 
     @Inject @JvmField internal var tiviDateFormatter: TiviDateFormatter? = null
-    @Inject @JvmField internal var episodeDetailsViewModelFactory: EpisodeDetailsViewModel.Factory? = null
     @Inject @JvmField internal var textCreator: EpisodeDetailsTextCreator? = null
 
     private val pendingActions = Channel<EpisodeDetailsAction>(Channel.BUFFERED)
@@ -82,11 +81,5 @@ class EpisodeDetailsFragment : TiviBottomSheetFragment(), EpisodeDetailsViewMode
                 }
             }
         }
-    }
-
-    override fun invalidate() = Unit
-
-    override fun provideFactory(): EpisodeDetailsViewModel.Factory {
-        return episodeDetailsViewModelFactory!!
     }
 }

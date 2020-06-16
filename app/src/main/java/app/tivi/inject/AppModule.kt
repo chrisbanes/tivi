@@ -16,7 +16,6 @@
 
 package app.tivi.inject
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -35,7 +34,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.threeten.bp.ZoneId
@@ -56,9 +54,6 @@ import android.text.format.DateFormat as AndroidDateFormat
     ]
 )
 class AppModule {
-    @Provides
-    fun provideContext(application: TiviApplication): Context = application.applicationContext
-
     @ApplicationId
     @Provides
     fun provideApplicationId(application: TiviApplication): String = application.packageName
@@ -106,9 +101,6 @@ class AppModule {
     @Provides
     @Named("trakt-client-secret")
     fun provideTraktClientSecret(): String = BuildConfig.TRAKT_CLIENT_SECRET
-
-    @Provides
-    fun provideCompositeDisposable() = CompositeDisposable()
 
     @Singleton
     @Provides

@@ -47,8 +47,6 @@ dependencies {
     implementation project(':trakt-auth')
     implementation project(':tmdb')
 
-    kapt Libs.Dagger.compiler
-
     implementation Libs.Hilt.library
     kapt Libs.Hilt.compiler
 

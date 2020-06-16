@@ -58,12 +58,4 @@ dependencies {
     implementation Libs.AndroidX.Navigation.ui
 
     api Libs.Google.material
-
-    implementation Libs.Kotlin.reflect
-
-    api Libs.Dagger.androidSupport
-    kapt Libs.Dagger.compiler
-    kapt Libs.Dagger.androidProcessor
-
-    api Libs.mvRx
 }

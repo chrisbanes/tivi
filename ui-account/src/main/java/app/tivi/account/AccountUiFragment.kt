@@ -21,13 +21,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import app.tivi.TiviBottomSheetFragment
 import app.tivi.common.compose.observeWindowInsets
 import app.tivi.extensions.navigateToNavDestination
 import app.tivi.util.TiviDateFormatter
-import com.airbnb.mvrx.fragmentViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.sendBlocking
@@ -35,12 +35,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AccountUiFragment : TiviBottomSheetFragment(), AccountUiViewModel.FactoryProvider {
+class AccountUiFragment : BottomSheetDialogFragment() {
     private val pendingActions = Channel<AccountUiAction>()
-    private val viewModel: AccountUiViewModel by fragmentViewModel()
+    private val viewModel: AccountUiViewModel by viewModels()
 
     @Inject @JvmField internal var tiviDateFormatter: TiviDateFormatter? = null
-    @Inject @JvmField internal var viewModelFactory: AccountUiViewModel.Factory? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,8 +76,4 @@ class AccountUiFragment : TiviBottomSheetFragment(), AccountUiViewModel.FactoryP
             }
         }
     }
-
-    override fun invalidate() = Unit
-
-    override fun provideFactory(): AccountUiViewModel.Factory = viewModelFactory!!
 }

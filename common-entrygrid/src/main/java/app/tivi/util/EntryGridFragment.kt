@@ -23,6 +23,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import app.tivi.TiviFragmentWithBinding
@@ -38,7 +39,6 @@ import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.ui.ProgressTimeLatch
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.transitions.GridToGridTransitioner
-import com.airbnb.mvrx.withState
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collect
 
@@ -104,9 +104,11 @@ abstract class EntryGridFragment<LI, VM> : TiviFragmentWithBinding<FragmentEntry
         lifecycleScope.launchWhenStarted {
             viewModel.pagedList.collect { controller.submitList(it) }
         }
+
+        viewModel.liveData.observe(viewLifecycleOwner, ::render)
     }
 
-    override fun invalidate(binding: FragmentEntryGridBinding) = withState(viewModel) { state ->
+    private fun render(state: EntryViewState) {
         controller.state = state
 
         when (val status = state.status) {

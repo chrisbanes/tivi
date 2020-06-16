@@ -18,7 +18,7 @@ package app.tivi.home.discover
 
 import androidx.lifecycle.viewModelScope
 import app.tivi.AppNavigator
-import app.tivi.TiviMvRxViewModel
+import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.interactors.UpdateRecommendedShows
 import app.tivi.domain.interactors.UpdateTrendingShows
@@ -33,19 +33,14 @@ import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectFrom
-import com.airbnb.mvrx.FragmentViewModelContext
-import com.airbnb.mvrx.MvRxViewModelFactory
-import com.airbnb.mvrx.ViewModelContext
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import javax.inject.Provider
 
-internal class DiscoverViewModel @AssistedInject constructor(
-    @Assisted initialState: DiscoverViewState,
+internal class DiscoverViewModel @Inject constructor(
     private val updatePopularShows: UpdatePopularShows,
     observePopularShows: ObservePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,
@@ -56,7 +51,7 @@ internal class DiscoverViewModel @AssistedInject constructor(
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
     private val appNavigator: Provider<AppNavigator>
-) : TiviMvRxViewModel<DiscoverViewState>(initialState) {
+) : ReduxViewModel<DiscoverViewState>() {
     private val trendingLoadingState = ObservableLoadingCounter()
     private val popularLoadingState = ObservableLoadingCounter()
     private val recommendedLoadingState = ObservableLoadingCounter()
@@ -151,18 +146,7 @@ internal class DiscoverViewModel @AssistedInject constructor(
         }
     }
 
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(initialState: DiscoverViewState): DiscoverViewModel
-    }
-
-    companion object : MvRxViewModelFactory<DiscoverViewModel, DiscoverViewState> {
-        override fun create(
-            viewModelContext: ViewModelContext,
-            state: DiscoverViewState
-        ): DiscoverViewModel? {
-            val fragment: DiscoverFragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return fragment.discoverViewModelFactory!!.create(state)
-        }
+    override fun createInitialState(): DiscoverViewState {
+        return DiscoverViewState()
     }
 }

@@ -189,6 +189,7 @@ dependencies {
 
     implementation Libs.AndroidX.Lifecycle.livedata
     implementation Libs.AndroidX.Lifecycle.viewmodel
+    implementation Libs.AndroidX.Lifecycle.process
 
     implementation Libs.AndroidX.appcompat
     implementation Libs.AndroidX.browser
@@ -207,25 +208,15 @@ dependencies {
     implementation Libs.timber
 
     implementation Libs.Kotlin.stdlib
-    implementation Libs.Kotlin.reflect
 
     implementation Libs.Coroutines.core
     implementation Libs.Coroutines.android
-
-    implementation Libs.Dagger.androidSupport
-    kapt Libs.Dagger.compiler
-    kapt Libs.Dagger.androidProcessor
-
-    compileOnly Libs.AssistedInject.annotationDagger2
-    kapt Libs.AssistedInject.processorDagger2
 
     implementation Libs.Hilt.library
     kapt Libs.Hilt.compiler
 
     implementation Libs.AndroidX.Hilt.work
     kapt Libs.AndroidX.Hilt.compiler
-
-    implementation Libs.mvRx
 
     implementation Libs.Google.firebaseCore
     implementation Libs.Google.crashlytics

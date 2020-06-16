@@ -24,22 +24,16 @@ import app.tivi.domain.interactors.UpdateRecommendedShows.Page.REFRESH
 import app.tivi.domain.observers.ObservePagedRecommendedShows
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.EntryViewModel
-import app.tivi.util.EntryViewState
 import app.tivi.util.Logger
-import com.airbnb.mvrx.FragmentViewModelContext
-import com.airbnb.mvrx.MvRxViewModelFactory
-import com.airbnb.mvrx.ViewModelContext
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
+import javax.inject.Inject
 
-class RecommendedShowsViewModel @AssistedInject constructor(
-    @Assisted initialState: EntryViewState,
+class RecommendedShowsViewModel @Inject constructor(
     override val dispatchers: AppCoroutineDispatchers,
     override val pagingInteractor: ObservePagedRecommendedShows,
     private val interactor: UpdateRecommendedShows,
     override val logger: Logger,
     override val changeShowFollowStatus: ChangeShowFollowStatus
-) : EntryViewModel<RecommendedEntryWithShow, ObservePagedRecommendedShows>(initialState) {
+) : EntryViewModel<RecommendedEntryWithShow, ObservePagedRecommendedShows>() {
     init {
         pagingInteractor(ObservePagedRecommendedShows.Params(pageListConfig, boundaryCallback))
 
@@ -51,19 +45,4 @@ class RecommendedShowsViewModel @AssistedInject constructor(
     override fun callLoadMore() = interactor(UpdateRecommendedShows.Params(NEXT_PAGE, true))
 
     override fun callRefresh(fromUser: Boolean) = interactor(UpdateRecommendedShows.Params(REFRESH, fromUser))
-
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(initialState: EntryViewState): RecommendedShowsViewModel
-    }
-
-    companion object : MvRxViewModelFactory<RecommendedShowsViewModel, EntryViewState> {
-        override fun create(
-            viewModelContext: ViewModelContext,
-            state: EntryViewState
-        ): RecommendedShowsViewModel? {
-            val fragment: RecommendedShowsFragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return fragment.recommendedShowsViewModelFactory!!.create(state)
-        }
-    }
 }

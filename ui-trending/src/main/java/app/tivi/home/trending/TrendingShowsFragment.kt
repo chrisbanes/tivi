@@ -22,6 +22,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.core.net.toUri
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import app.tivi.SharedElementHelper
 import app.tivi.common.entrygrid.databinding.FragmentEntryGridBinding
@@ -32,14 +33,11 @@ import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.util.EntryGridEpoxyController
 import app.tivi.util.EntryGridFragment
 import com.airbnb.epoxy.EpoxyModel
-import com.airbnb.mvrx.fragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingShowsViewModel>() {
-    override val viewModel: TrendingShowsViewModel by fragmentViewModel()
-    @Inject @JvmField var trendingShowsViewModelFactory: TrendingShowsViewModel.Factory? = null
+    override val viewModel: TrendingShowsViewModel by viewModels()
 
     override fun onViewCreated(binding: FragmentEntryGridBinding, savedInstanceState: Bundle?) {
         super.onViewCreated(binding, savedInstanceState)

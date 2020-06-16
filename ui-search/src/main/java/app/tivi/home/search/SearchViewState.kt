@@ -17,9 +17,8 @@
 package app.tivi.home.search
 
 import app.tivi.data.entities.SearchResults
-import com.airbnb.mvrx.MvRxState
 
 data class SearchViewState(
     val searchResults: SearchResults? = null,
     val refreshing: Boolean = false
-) : MvRxState
+)

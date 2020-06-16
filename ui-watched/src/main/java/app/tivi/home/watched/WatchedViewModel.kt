@@ -19,7 +19,7 @@ package app.tivi.home.watched
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import app.tivi.AppNavigator
-import app.tivi.TiviMvRxViewModel
+import app.tivi.ReduxViewModel
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
@@ -34,11 +34,6 @@ import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.ShowStateSelector
 import app.tivi.util.collectFrom
-import com.airbnb.mvrx.FragmentViewModelContext
-import com.airbnb.mvrx.MvRxViewModelFactory
-import com.airbnb.mvrx.ViewModelContext
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
@@ -46,16 +41,16 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-internal class WatchedViewModel @AssistedInject constructor(
-    @Assisted initialState: WatchedViewState,
+internal class WatchedViewModel @Inject constructor(
     private val updateWatchedShows: UpdateWatchedShows,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val observePagedWatchedShows: ObservePagedWatchedShows,
     private val observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
     private val appNavigator: AppNavigator
-) : TiviMvRxViewModel<WatchedViewState>(initialState) {
+) : ReduxViewModel<WatchedViewState>() {
     private val boundaryCallback = object : PagedList.BoundaryCallback<WatchedShowEntryWithShow>() {
         override fun onZeroItemsLoaded() {
             setState { copy(isEmpty = filter.isNullOrEmpty()) }
@@ -197,24 +192,15 @@ internal class WatchedViewModel @AssistedInject constructor(
         }
     }
 
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(initialState: WatchedViewState): WatchedViewModel
+    override fun createInitialState(): WatchedViewState {
+        return WatchedViewState()
     }
 
-    companion object : MvRxViewModelFactory<WatchedViewModel, WatchedViewState> {
+    companion object {
         private val PAGING_CONFIG = PagedList.Config.Builder()
             .setPageSize(60)
             .setPrefetchDistance(20)
             .setEnablePlaceholders(false)
             .build()
-
-        override fun create(
-            viewModelContext: ViewModelContext,
-            state: WatchedViewState
-        ): WatchedViewModel? {
-            val fragment: WatchedFragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return fragment.watchedViewModelFactory!!.create(state)
-        }
     }
 }

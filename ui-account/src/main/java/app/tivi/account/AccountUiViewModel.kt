@@ -16,33 +16,27 @@
 
 package app.tivi.account
 
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewModelScope
 import app.tivi.AppNavigator
-import app.tivi.TiviMvRxViewModel
+import app.tivi.ReduxViewModel
 import app.tivi.domain.invoke
 import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
-import com.airbnb.mvrx.FragmentViewModelContext
-import com.airbnb.mvrx.MvRxViewModelFactory
-import com.airbnb.mvrx.ViewModelContext
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import javax.inject.Provider
 
-class AccountUiViewModel @AssistedInject constructor(
-    @Assisted initialState: AccountUiViewState,
+class AccountUiViewModel @Inject constructor(
     private val traktManager: TraktManager,
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
     private val appNavigator: Provider<AppNavigator>
-) : TiviMvRxViewModel<AccountUiViewState>(initialState) {
+) : ReduxViewModel<AccountUiViewState>() {
     private val pendingActions = Channel<AccountUiAction>(Channel.BUFFERED)
 
     init {
@@ -80,22 +74,7 @@ class AccountUiViewModel @AssistedInject constructor(
         }
     }
 
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(initialState: AccountUiViewState): AccountUiViewModel
-    }
-
-    interface FactoryProvider {
-        fun provideFactory(): Factory
-    }
-
-    companion object : MvRxViewModelFactory<AccountUiViewModel, AccountUiViewState> {
-        override fun create(
-            viewModelContext: ViewModelContext,
-            state: AccountUiViewState
-        ): AccountUiViewModel? {
-            val fragment: Fragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return (fragment as FactoryProvider).provideFactory().create(state)
-        }
+    override fun createInitialState(): AccountUiViewState {
+        return AccountUiViewState()
     }
 }

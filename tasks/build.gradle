@@ -47,9 +47,6 @@ dependencies {
 
     api Libs.AndroidX.Work.runtimeKtx
 
-    implementation Libs.Dagger.dagger
-    kapt Libs.Dagger.compiler
-
     implementation Libs.Hilt.library
     kapt Libs.Hilt.compiler
 

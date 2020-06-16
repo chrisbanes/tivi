@@ -79,8 +79,6 @@ dependencies {
     implementation Libs.Hilt.library
     kapt Libs.Hilt.compiler
 
-    kapt Libs.Dagger.compiler
-
     testImplementation Libs.junit
     testImplementation Libs.robolectric
     testImplementation Libs.mockK

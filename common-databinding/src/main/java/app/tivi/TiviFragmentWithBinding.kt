@@ -31,9 +31,7 @@ abstract class TiviFragmentWithBinding<V : ViewDataBinding> : TiviFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return createBinding(inflater, container, savedInstanceState)
-            .also { binding = it }
-            .root
+        return createBinding(inflater, container, savedInstanceState).also { binding = it }.root
     }
 
     final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,10 +42,6 @@ abstract class TiviFragmentWithBinding<V : ViewDataBinding> : TiviFragment() {
     abstract fun onViewCreated(binding: V, savedInstanceState: Bundle?)
 
     protected fun requireBinding(): V = requireNotNull(binding)
-
-    final override fun invalidate() = invalidate(requireBinding())
-
-    protected abstract fun invalidate(binding: V)
 
     protected abstract fun createBinding(
         inflater: LayoutInflater,

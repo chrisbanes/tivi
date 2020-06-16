@@ -16,41 +16,14 @@
 
 package app.tivi.home
 
-import android.app.Activity
 import app.tivi.AppNavigator
-import app.tivi.account.AccountUiBuilder
-import app.tivi.home.discover.DiscoverBuilder
-import app.tivi.home.followed.FollowedBuilder
-import app.tivi.home.popular.PopularBuilder
-import app.tivi.home.recommended.RecommendedBuilder
-import app.tivi.home.search.SearchBuilder
-import app.tivi.home.trending.TrendingBuilder
-import app.tivi.home.watched.WatchedBuilder
-import app.tivi.settings.SettingsPreferenceFragmentBuilder
 import dagger.Module
 import dagger.Provides
-import dagger.android.ContributesAndroidInjector
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.components.ApplicationComponent
-
-@InstallIn(ApplicationComponent::class)
-@Module
-internal abstract class HomeBuilder {
-    @ContributesAndroidInjector(
-        modules = [
-            HomeModule::class,
-            PopularBuilder::class,
-            WatchedBuilder::class,
-            FollowedBuilder::class,
-            RecommendedBuilder::class,
-            AccountUiBuilder::class
-        ]
-    )
-    internal abstract fun homeActivity(): HomeActivity
-}
 
 @InstallIn(ActivityComponent::class)
+@Module
 class HomeModule {
     @Provides
     fun provideAppNavigator(activity: HomeActivity): AppNavigator = HomeAppNavigator(activity)

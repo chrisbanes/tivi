@@ -19,7 +19,6 @@ package app.tivi.home.followed
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
-import com.airbnb.mvrx.MvRxState
 
 data class FollowedViewState(
     val user: TraktUser? = null,
@@ -32,4 +31,4 @@ data class FollowedViewState(
     val filter: String? = null,
     val availableSorts: List<SortOption> = emptyList(),
     val sort: SortOption = SortOption.SUPER_SORT
-) : MvRxState
+)

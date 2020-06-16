@@ -16,6 +16,6 @@
 
 package app.tivi
 
-import com.airbnb.mvrx.BaseMvRxFragment
+import androidx.fragment.app.Fragment
 
-abstract class TiviFragment : BaseMvRxFragment()
+abstract class TiviFragment : Fragment()

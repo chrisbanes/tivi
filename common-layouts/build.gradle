@@ -54,8 +54,6 @@ dependencies {
 
     implementation Libs.AndroidX.coreKtx
     implementation Libs.AndroidX.constraintlayout
-    implementation Libs.Dagger.androidSupport
-    implementation Libs.mvRx
 
     implementation Libs.Epoxy.epoxy
     implementation Libs.Epoxy.paging

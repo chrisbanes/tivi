@@ -17,7 +17,7 @@
 package app.tivi.home
 
 import androidx.lifecycle.viewModelScope
-import app.tivi.TiviMvRxViewModel
+import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.UpdateUserDetails
 import app.tivi.domain.invoke
 import app.tivi.domain.launchObserve
@@ -26,24 +26,22 @@ import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.Logger
-import com.airbnb.mvrx.MvRxViewModelFactory
-import com.airbnb.mvrx.ViewModelContext
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
+import javax.inject.Inject
 
-class HomeActivityViewModel @AssistedInject constructor(
-    @Assisted initialState: HomeActivityViewState,
+class HomeActivityViewModel @Inject constructor(
     observeTraktAuthState: ObserveTraktAuthState,
     private val traktManager: TraktManager,
     private val updateUserDetails: UpdateUserDetails,
     observeUserDetails: ObserveUserDetails,
     private val logger: Logger
-) : TiviMvRxViewModel<HomeActivityViewState>(initialState) {
+) : ReduxViewModel<HomeActivityViewState>() {
     init {
         viewModelScope.launchObserve(observeUserDetails) {
             it.execute {
@@ -61,9 +59,9 @@ class HomeActivityViewModel @AssistedInject constructor(
         }
         observeTraktAuthState()
 
-        selectSubscribe(HomeActivityViewState::user) { user ->
-            if (user != null) {
-                logger.setUserId(user.username)
+        viewModelScope.launch {
+            selectSubscribe(HomeActivityViewState::user).collect { user ->
+                logger.setUserId(user?.username ?: "")
             }
         }
     }
@@ -83,18 +81,7 @@ class HomeActivityViewModel @AssistedInject constructor(
         traktManager.startAuth(0, authService)
     }
 
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(initialState: HomeActivityViewState): HomeActivityViewModel
-    }
-
-    companion object : MvRxViewModelFactory<HomeActivityViewModel, HomeActivityViewState> {
-        override fun create(
-            viewModelContext: ViewModelContext,
-            state: HomeActivityViewState
-        ): HomeActivityViewModel? {
-            val fragment: HomeActivity = viewModelContext.activity()
-            return fragment.homeNavigationViewModelFactory!!.create(state)
-        }
+    override fun createInitialState(): HomeActivityViewState {
+        return HomeActivityViewState()
     }
 }

@@ -24,7 +24,9 @@ import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.core.view.updatePadding
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import app.tivi.TiviFragmentWithBinding
 import app.tivi.common.imageloading.loadImageUrl
@@ -40,17 +42,14 @@ import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.authStateToolbarMenuBinder
 import app.tivi.ui.createSharedElementHelperForItem
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
-import com.airbnb.mvrx.fragmentViewModel
-import com.airbnb.mvrx.withState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
-    private val viewModel: FollowedViewModel by fragmentViewModel()
+    private val viewModel: FollowedViewModel by viewModels()
 
-    @Inject @JvmField internal var followedViewModelFactory: FollowedViewModel.Factory? = null
     @Inject @JvmField internal var controller: FollowedEpoxyController? = null
 
     private var currentActionMode: ActionMode? = null
@@ -114,9 +113,13 @@ class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
                 return viewModel.onItemLongClick(item.show)
             }
 
-            override fun onFilterChanged(filter: String) = viewModel.setFilter(filter)
+            override fun onFilterChanged(filter: String) {
+                viewModel.setFilter(filter)
+            }
 
-            override fun onSortSelected(sort: SortOption) = viewModel.setSort(sort)
+            override fun onSortSelected(sort: SortOption) {
+                viewModel.setSort(sort)
+            }
         }
 
         binding.followedRv.apply {
@@ -132,9 +135,12 @@ class FollowedFragment : TiviFragmentWithBinding<FragmentFollowedBinding>() {
                 controller?.submitList(it)
             }
         }
+
+        viewModel.liveData.observe(viewLifecycleOwner, ::render)
     }
 
-    override fun invalidate(binding: FragmentFollowedBinding) = withState(viewModel) { state ->
+    private fun render(state: FollowedViewState) {
+        val binding = requireBinding()
         if (binding.state == null) {
             // First time we've had state, start any postponed transitions
             scheduleStartPostponedTransitions()

@@ -31,9 +31,7 @@ import app.tivi.util.PowerController
 import app.tivi.util.SaveData
 import app.tivi.util.SaveDataReason
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
-import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
 import dagger.android.support.AndroidSupportInjection
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException

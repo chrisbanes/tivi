@@ -21,6 +21,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.core.view.updatePadding
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import app.tivi.TiviFragmentWithBinding
 import app.tivi.common.imageloading.loadImageUrl
@@ -37,16 +39,14 @@ import app.tivi.ui.authStateToolbarMenuBinder
 import app.tivi.ui.createSharedElementHelperForItemId
 import app.tivi.ui.createSharedElementHelperForItems
 import app.tivi.ui.transitions.GridToGridTransitioner
-import com.airbnb.mvrx.fragmentViewModel
-import com.airbnb.mvrx.withState
+import app.tivi.withState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
-    private val viewModel: DiscoverViewModel by fragmentViewModel()
+    private val viewModel: DiscoverViewModel by viewModels()
 
-    @Inject @JvmField internal var discoverViewModelFactory: DiscoverViewModel.Factory? = null
     @Inject @JvmField internal var controller: DiscoverEpoxyController? = null
 
     private var authStateMenuItemBinder: AuthStateMenuItemBinder? = null
@@ -166,9 +166,12 @@ class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
                 binding.summarySwipeRefresh.isRefreshing = false
             }
         }
+
+        viewModel.liveData.observe(viewLifecycleOwner, ::render)
     }
 
-    override fun invalidate(binding: FragmentDiscoverBinding) = withState(viewModel) { state ->
+    private fun render(state: DiscoverViewState) {
+        val binding = requireBinding()
         if (binding.state == null) {
             // First time we've had state, start any postponed transitions
             scheduleStartPostponedTransitions()

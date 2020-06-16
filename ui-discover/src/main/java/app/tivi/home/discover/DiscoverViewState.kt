@@ -22,7 +22,6 @@ import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.trakt.TraktAuthState
-import com.airbnb.mvrx.MvRxState
 
 data class DiscoverViewState(
     val user: TraktUser? = null,
@@ -34,4 +33,4 @@ data class DiscoverViewState(
     val recommendedItems: List<RecommendedEntryWithShow> = emptyList(),
     val recommendedRefreshing: Boolean = false,
     val nextEpisodeWithShowToWatched: EpisodeWithSeasonWithShow? = null
-) : MvRxState
+)

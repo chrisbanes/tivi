@@ -16,9 +16,9 @@
 
 package app.tivi.showdetails.details
 
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewModelScope
-import app.tivi.TiviMvRxViewModel
+import app.tivi.ReduxViewModel
+import app.tivi.Success
 import app.tivi.api.UiError
 import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
@@ -46,21 +46,15 @@ import app.tivi.domain.observers.ObserveShowViewStats
 import app.tivi.ui.SnackbarManager
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
-import com.airbnb.mvrx.FragmentViewModelContext
-import com.airbnb.mvrx.MvRxViewModelFactory
-import com.airbnb.mvrx.Success
-import com.airbnb.mvrx.ViewModelContext
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ShowDetailsFragmentViewModel @AssistedInject constructor(
-    @Assisted initialState: ShowDetailsViewState,
+class ShowDetailsFragmentViewModel @Inject constructor(
     private val updateShowDetails: UpdateShowDetails,
     observeShowDetails: ObserveShowDetails,
     observeShowImages: ObserveShowImages,
@@ -77,7 +71,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     private val changeSeasonFollowStatus: ChangeSeasonFollowStatus,
     private val getEpisode: GetEpisodeDetails,
     private val logger: Logger
-) : TiviMvRxViewModel<ShowDetailsViewState>(initialState) {
+) : ReduxViewModel<ShowDetailsViewState>() {
 
     private val loadingState = ObservableLoadingCounter()
     private val snackbarManager = SnackbarManager()
@@ -286,37 +280,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
         snackbarManager.close()
     }
 
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(initialState: ShowDetailsViewState): ShowDetailsFragmentViewModel
-    }
-
-    interface FactoryProvider {
-        fun provideFactory(): Factory
-    }
-
-    companion object : MvRxViewModelFactory<ShowDetailsFragmentViewModel, ShowDetailsViewState> {
-        override fun create(
-            viewModelContext: ViewModelContext,
-            state: ShowDetailsViewState
-        ): ShowDetailsFragmentViewModel? {
-            val fragment: Fragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return (fragment as FactoryProvider).provideFactory().create(state).apply {
-                val args = fragment.requireArguments()
-
-                // If the fragment arguments contain an episode id, deep link into it
-                if (args.containsKey("episode_id")) {
-                    submitAction(OpenEpisodeDetails(args.getLong("episode_id")))
-                }
-            }
-        }
-
-        override fun initialState(
-            viewModelContext: ViewModelContext
-        ): ShowDetailsViewState? {
-            val f: Fragment = (viewModelContext as FragmentViewModelContext).fragment()
-            val args = f.requireArguments()
-            return ShowDetailsViewState(showId = args.getLong("show_id"))
-        }
+    override fun createInitialState(): ShowDetailsViewState {
+        return ShowDetailsViewState()
     }
 }

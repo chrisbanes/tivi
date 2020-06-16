@@ -16,9 +16,8 @@
 
 package app.tivi.episodedetails
 
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewModelScope
-import app.tivi.TiviMvRxViewModel
+import app.tivi.ReduxViewModel
 import app.tivi.api.UiError
 import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
@@ -36,20 +35,15 @@ import app.tivi.domain.observers.ObserveEpisodeWatches
 import app.tivi.ui.SnackbarManager
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
-import com.airbnb.mvrx.FragmentViewModelContext
-import com.airbnb.mvrx.MvRxViewModelFactory
-import com.airbnb.mvrx.ViewModelContext
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
+import javax.inject.Inject
 
-class EpisodeDetailsViewModel @AssistedInject constructor(
-    @Assisted initialState: EpisodeDetailsViewState,
+class EpisodeDetailsViewModel @Inject constructor(
     private val updateEpisodeDetails: UpdateEpisodeDetails,
     observeEpisodeDetails: ObserveEpisodeDetails,
     private val observeEpisodeWatches: ObserveEpisodeWatches,
@@ -57,7 +51,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch,
     private val logger: Logger
-) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
+) : ReduxViewModel<EpisodeDetailsViewState>() {
 
     private val loadingState = ObservableLoadingCounter()
     private val snackbarManager = SnackbarManager()
@@ -156,31 +150,8 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         }
     }
 
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(initialState: EpisodeDetailsViewState): EpisodeDetailsViewModel
-    }
-
-    interface FactoryProvider {
-        fun provideFactory(): Factory
-    }
-
-    companion object : MvRxViewModelFactory<EpisodeDetailsViewModel, EpisodeDetailsViewState> {
-        override fun create(
-            viewModelContext: ViewModelContext,
-            state: EpisodeDetailsViewState
-        ): EpisodeDetailsViewModel? {
-            val fvmc = viewModelContext as FragmentViewModelContext
-            val f: FactoryProvider = (fvmc.fragment<Fragment>()) as FactoryProvider
-            return f.provideFactory().create(state)
-        }
-
-        override fun initialState(
-            viewModelContext: ViewModelContext
-        ): EpisodeDetailsViewState? {
-            val f: Fragment = (viewModelContext as FragmentViewModelContext).fragment()
-            val args = f.requireArguments()
-            return EpisodeDetailsViewState(episodeId = args.getLong("episode_id"))
-        }
+    override fun createInitialState(): EpisodeDetailsViewState {
+        // TODO
+        return EpisodeDetailsViewState(episodeId = -1L)
     }
 }
