@@ -22,17 +22,22 @@ import androidx.room.Room
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import javax.inject.Singleton
 
+@InstallIn(ApplicationComponent::class)
 @Module(
     includes = [
         RoomDatabaseModule::class,
         DatabaseModuleBinds::class,
-        DatabaseDaoModule::class
+        DatabaseDaoModule::class,
+        DataModule::class
     ]
 )
 class DatabaseModule
 
+@InstallIn(ApplicationComponent::class)
 @Module
 class RoomDatabaseModule {
     @Singleton
@@ -48,6 +53,7 @@ class RoomDatabaseModule {
     }
 }
 
+@InstallIn(ApplicationComponent::class)
 @Module
 class DatabaseDaoModule {
     @Provides
@@ -93,6 +99,7 @@ class DatabaseDaoModule {
     fun provideRecommendedShowsDao(db: TiviDatabase) = db.recommendedShowsDao()
 }
 
+@InstallIn(ApplicationComponent::class)
 @Module
 abstract class DatabaseModuleBinds {
     @Binds

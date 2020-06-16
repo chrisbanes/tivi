@@ -49,6 +49,9 @@ dependencies {
 
     kapt Libs.Dagger.compiler
 
+    implementation Libs.Hilt.library
+    kapt Libs.Hilt.compiler
+
     api Libs.AndroidX.Paging.common
     implementation Libs.AndroidX.Paging.runtime
 }

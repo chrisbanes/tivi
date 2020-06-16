@@ -17,16 +17,15 @@
 package app.tivi.tasks
 
 import android.content.Context
+import androidx.hilt.Assisted
+import androidx.hilt.work.WorkerInject
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import app.tivi.data.entities.RefreshType
 import app.tivi.domain.interactors.UpdateFollowedShows
-import app.tivi.tasks.inject.ChildWorkerFactory
 import app.tivi.util.Logger
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 
-class SyncAllFollowedShows @AssistedInject constructor(
+class SyncAllFollowedShows @WorkerInject constructor(
     @Assisted params: WorkerParameters,
     @Assisted context: Context,
     private val updateFollowedShows: UpdateFollowedShows,
@@ -42,7 +41,4 @@ class SyncAllFollowedShows @AssistedInject constructor(
         updateFollowedShows.executeSync(UpdateFollowedShows.Params(true, RefreshType.FULL))
         return Result.success()
     }
-
-    @AssistedInject.Factory
-    interface Factory : ChildWorkerFactory
 }

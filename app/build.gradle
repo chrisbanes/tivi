@@ -22,6 +22,8 @@ plugins {
     id 'com.github.triplet.play' version '2.8.0'
 }
 
+apply plugin: 'dagger.hilt.android.plugin'
+
 play {
    track = 'internal'
    defaultToAppBundles = true
@@ -216,6 +218,12 @@ dependencies {
 
     compileOnly Libs.AssistedInject.annotationDagger2
     kapt Libs.AssistedInject.processorDagger2
+
+    implementation Libs.Hilt.library
+    kapt Libs.Hilt.compiler
+
+    implementation Libs.AndroidX.Hilt.work
+    kapt Libs.AndroidX.Hilt.compiler
 
     implementation Libs.mvRx
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google, Inc.
+ * Copyright 2018 Google LLC.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,9 @@ dependencies {
     implementation Libs.Dagger.dagger
     kapt Libs.Dagger.compiler
 
-    compileOnly Libs.AssistedInject.annotationDagger2
-    kapt Libs.AssistedInject.processorDagger2
+    implementation Libs.Hilt.library
+    kapt Libs.Hilt.compiler
+
+    implementation Libs.AndroidX.Hilt.work
+    kapt Libs.AndroidX.Hilt.compiler
 }

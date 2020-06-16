@@ -33,8 +33,10 @@ import app.tivi.util.EntryGridEpoxyController
 import app.tivi.util.EntryGridFragment
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.mvrx.fragmentViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShowsViewModel>() {
     override val viewModel: PopularShowsViewModel by fragmentViewModel()
     @Inject @JvmField var popularShowsViewModelFactory: PopularShowsViewModel.Factory? = null

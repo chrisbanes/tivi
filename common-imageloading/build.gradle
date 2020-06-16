@@ -53,5 +53,8 @@ dependencies {
 
     implementation Libs.AndroidX.coreKtx
 
+    implementation Libs.Hilt.library
+    kapt Libs.Hilt.compiler
+
     api Libs.Coil.coil
 }

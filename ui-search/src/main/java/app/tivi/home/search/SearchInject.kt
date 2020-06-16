@@ -19,17 +19,10 @@ package app.tivi.home.search
 import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 
-@Module
-abstract class SearchBuilder {
-    @ContributesAndroidInjector(
-        modules = [
-            SearchAssistedModule::class
-        ]
-    )
-    internal abstract fun searchFragment(): SearchFragment
-}
-
+@InstallIn(ActivityComponent::class)
 @Module(includes = [AssistedInject_SearchAssistedModule::class])
 @AssistedModule
 interface SearchAssistedModule

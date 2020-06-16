@@ -45,6 +45,8 @@ buildscript {
         classpath Libs.Google.openSourceLicensesPlugin
 
         classpath Libs.AndroidX.Navigation.safeArgs
+
+        classpath Libs.Hilt.gradlePlugin
     }
 }
 

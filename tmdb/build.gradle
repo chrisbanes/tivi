@@ -28,8 +28,6 @@ kapt {
 dependencies {
     implementation project(':base')
 
-    kapt Libs.Dagger.compiler
-
     api (Libs.tmdbJava) {
         exclude group: 'org.threeten', module: 'threetenbp'
     }

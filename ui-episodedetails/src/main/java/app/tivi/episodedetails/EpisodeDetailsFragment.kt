@@ -28,11 +28,13 @@ import app.tivi.TiviBottomSheetFragment
 import app.tivi.common.compose.observeWindowInsets
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.mvrx.fragmentViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class EpisodeDetailsFragment : TiviBottomSheetFragment(), EpisodeDetailsViewModel.FactoryProvider {
     companion object {
         @JvmStatic

@@ -33,8 +33,10 @@ import app.tivi.util.EntryGridEpoxyController
 import app.tivi.util.EntryGridFragment
 import com.airbnb.epoxy.EpoxyModel
 import com.airbnb.mvrx.fragmentViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class RecommendedShowsFragment : EntryGridFragment<RecommendedEntryWithShow, RecommendedShowsViewModel>() {
     override val viewModel: RecommendedShowsViewModel by fragmentViewModel()
     @Inject @JvmField var recommendedShowsViewModelFactory: RecommendedShowsViewModel.Factory? = null

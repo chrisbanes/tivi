@@ -20,7 +20,10 @@ import app.tivi.episodedetails.EpisodeDetailsFragmentBuilder
 import app.tivi.showdetails.details.ShowDetailsFragmentBuilder
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 
+@InstallIn(ApplicationComponent::class)
 @Module
 internal abstract class ShowDetailsBuilder {
     @ContributesAndroidInjector(

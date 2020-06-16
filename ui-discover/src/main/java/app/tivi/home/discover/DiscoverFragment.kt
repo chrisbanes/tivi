@@ -39,8 +39,10 @@ import app.tivi.ui.createSharedElementHelperForItems
 import app.tivi.ui.transitions.GridToGridTransitioner
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
     private val viewModel: DiscoverViewModel by fragmentViewModel()
 

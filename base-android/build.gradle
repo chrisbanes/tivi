@@ -53,4 +53,7 @@ dependencies {
     implementation Libs.threeTenAbp
 
     kapt Libs.Dagger.compiler
+
+    implementation Libs.Hilt.library
+    kapt Libs.Hilt.compiler
 }

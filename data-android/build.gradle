@@ -76,6 +76,9 @@ dependencies {
 
     implementation Libs.AndroidX.Paging.runtime
 
+    implementation Libs.Hilt.library
+    kapt Libs.Hilt.compiler
+
     kapt Libs.Dagger.compiler
 
     testImplementation Libs.junit

@@ -16,23 +16,6 @@
 
 package app.tivi
 
-import android.content.Context
 import com.airbnb.mvrx.BaseMvRxFragment
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
-import dagger.android.support.AndroidSupportInjection
-import javax.inject.Inject
 
-abstract class TiviFragment : BaseMvRxFragment(), HasAndroidInjector {
-    @JvmField @Inject var androidInjector: DispatchingAndroidInjector<Any>? = null
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
-
-    override fun androidInjector(): AndroidInjector<Any> {
-        return androidInjector!!
-    }
-}
+abstract class TiviFragment : BaseMvRxFragment()

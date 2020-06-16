@@ -64,5 +64,8 @@ dependencies {
     kapt Libs.Dagger.compiler
     kapt Libs.Dagger.androidProcessor
 
+    implementation Libs.Hilt.library
+    kapt Libs.Hilt.compiler
+
     api Libs.mvRx
 }

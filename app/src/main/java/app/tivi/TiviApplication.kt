@@ -16,25 +16,25 @@
 
 package app.tivi
 
+import android.app.Application
+import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import app.tivi.appinitializers.AppInitializers
-import app.tivi.inject.DaggerAppComponent
-import dagger.android.AndroidInjector
-import dagger.android.DaggerApplication
 import javax.inject.Inject
 
-class TiviApplication : DaggerApplication(), Configuration.Provider {
-    @Inject @JvmField var workConfiguration: Configuration? = null
+class TiviApplication : Application(), Configuration.Provider {
     @Inject @JvmField var initializers: AppInitializers? = null
+
+    @Inject lateinit var workerFactory: HiltWorkerFactory
 
     override fun onCreate() {
         super.onCreate()
         initializers!!.init(this)
     }
 
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        return DaggerAppComponent.factory().create(this)
+    override fun getWorkManagerConfiguration(): Configuration {
+        return Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .build()
     }
-
-    override fun getWorkManagerConfiguration(): Configuration = workConfiguration!!
 }

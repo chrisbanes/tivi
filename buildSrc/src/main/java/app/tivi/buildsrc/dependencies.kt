@@ -172,6 +172,12 @@ object Libs {
 
             const val runtime = "androidx.compose:compose-runtime:$version"
         }
+
+        object Hilt {
+            private const val version = "1.0.0-alpha01"
+            const val work = "androidx.hilt:hilt-work:$version"
+            const val compiler = "androidx.hilt:hilt-compiler:$version"
+        }
     }
 
     object Dagger {
@@ -180,6 +186,13 @@ object Libs {
         const val androidSupport = "com.google.dagger:dagger-android-support:$version"
         const val compiler = "com.google.dagger:dagger-compiler:$version"
         const val androidProcessor = "com.google.dagger:dagger-android-processor:$version"
+    }
+
+    object Hilt {
+        private const val version = "2.28-alpha"
+        const val library = "com.google.dagger:hilt-android:$version"
+        const val compiler = "com.google.dagger:hilt-android-compiler:$version"
+        const val gradlePlugin = "com.google.dagger:hilt-android-gradle-plugin:$version"
     }
 
     object Retrofit {

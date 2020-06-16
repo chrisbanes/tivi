@@ -35,8 +35,10 @@ import app.tivi.ui.recyclerview.HideImeOnScrollListener
 import app.tivi.ui.transitions.GridToGridTransitioner
 import com.airbnb.mvrx.fragmentViewModel
 import com.airbnb.mvrx.withState
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 internal class SearchFragment : TiviFragmentWithBinding<FragmentSearchBinding>() {
     private val viewModel: SearchViewModel by fragmentViewModel()
 

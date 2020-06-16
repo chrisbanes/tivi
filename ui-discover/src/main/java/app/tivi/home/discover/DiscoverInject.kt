@@ -19,13 +19,10 @@ package app.tivi.home.discover
 import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 
-@Module
-abstract class DiscoverBuilder {
-    @ContributesAndroidInjector(modules = [DiscoverAssistedModule::class])
-    abstract fun discoverFragment(): DiscoverFragment
-}
-
+@InstallIn(ActivityComponent::class)
 @Module(includes = [AssistedInject_DiscoverAssistedModule::class])
 @AssistedModule
 interface DiscoverAssistedModule

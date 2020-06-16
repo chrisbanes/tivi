@@ -18,18 +18,10 @@ package app.tivi.home.trending
 
 import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
-import dagger.android.ContributesAndroidInjector
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 
-@Module
-abstract class TrendingBuilder {
-    @ContributesAndroidInjector(
-        modules = [
-            TrendingAssistedModule::class
-        ]
-    )
-    internal abstract fun trendingShowsFragment(): TrendingShowsFragment
-}
-
+@InstallIn(ActivityComponent::class)
 @Module(includes = [AssistedInject_TrendingAssistedModule::class])
 @AssistedModule
 interface TrendingAssistedModule

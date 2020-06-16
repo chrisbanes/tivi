@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package app.tivi.appinitializers
+package app.tivi.tasks
 
 import android.app.Application
 import app.tivi.actions.ShowTasks
+import app.tivi.appinitializers.AppInitializer
 import dagger.Lazy
 import javax.inject.Inject
 

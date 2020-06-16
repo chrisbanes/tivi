@@ -35,11 +35,13 @@ import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import dagger.android.support.AndroidSupportInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
-internal class SettingsPreferenceFragment : PreferenceFragmentCompat(), HasAndroidInjector {
+@AndroidEntryPoint
+internal class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     @Inject @JvmField var androidInjector: DispatchingAndroidInjector<Any>? = null
 
     @Inject @JvmField var powerController: PowerController? = null
@@ -48,8 +50,6 @@ internal class SettingsPreferenceFragment : PreferenceFragmentCompat(), HasAndro
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
     }
-
-    override fun androidInjector(): AndroidInjector<Any> = androidInjector!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

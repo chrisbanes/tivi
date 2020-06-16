@@ -77,6 +77,9 @@ dependencies {
     kapt Libs.Dagger.compiler
     kapt Libs.Dagger.androidProcessor
 
+    implementation Libs.Hilt.library
+    kapt Libs.Hilt.compiler
+
     compileOnly Libs.AssistedInject.annotationDagger2
     kapt Libs.AssistedInject.processorDagger2
 

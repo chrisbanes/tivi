@@ -38,6 +38,4 @@ dependencies {
     api Libs.AndroidX.Paging.common
 
     api Libs.threeTenBpNoTzdb
-
-    kapt Libs.Dagger.compiler
 }

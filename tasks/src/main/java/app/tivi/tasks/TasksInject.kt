@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,36 @@
  * limitations under the License.
  */
 
-package app.tivi.tasks.inject
+package app.tivi.tasks
 
 import android.content.Context
-import androidx.work.Configuration
 import androidx.work.WorkManager
+import app.tivi.actions.ShowTasks
+import app.tivi.appinitializers.AppInitializer
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
+import dagger.multibindings.IntoSet
 import javax.inject.Singleton
 
-@Module(includes = [TasksModuleBinds::class, TasksAssistedModule::class])
+@InstallIn(ApplicationComponent::class)
+@Module
 class TasksModule {
     @Provides
     @Singleton
     fun provideWorkManager(context: Context): WorkManager = WorkManager.getInstance(context)
+}
 
-    @Provides
-    fun provideWorkConfiguration(workerFactory: TiviWorkerFactory): Configuration {
-        return Configuration.Builder()
-            .setWorkerFactory(workerFactory)
-            .build()
-    }
+@InstallIn(ApplicationComponent::class)
+@Module
+abstract class TasksModuleBinds {
+    @Binds
+    @IntoSet
+    abstract fun provideShowTasksInitializer(bind: ShowTasksInitializer): AppInitializer
+
+    @Binds
+    @Singleton
+    abstract fun provideTiviActions(bind: ShowTasksImpl): ShowTasks
 }

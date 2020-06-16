@@ -27,10 +27,14 @@ import app.tivi.BuildConfig
 import app.tivi.TiviApplication
 import app.tivi.extensions.toThreeTenDateTimeFormatter
 import app.tivi.home.followed.R
+import app.tivi.tmdb.TmdbModule
+import app.tivi.trakt.TraktModule
 import app.tivi.util.AppCoroutineDispatchers
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,7 +48,13 @@ import javax.inject.Named
 import javax.inject.Singleton
 import android.text.format.DateFormat as AndroidDateFormat
 
-@Module(includes = [AppModuleBinds::class])
+@InstallIn(ApplicationComponent::class)
+@Module(
+    includes = [
+        TraktModule::class,
+        TmdbModule::class
+    ]
+)
 class AppModule {
     @Provides
     fun provideContext(application: TiviApplication): Context = application.applicationContext

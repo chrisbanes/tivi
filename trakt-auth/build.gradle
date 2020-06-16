@@ -49,6 +49,9 @@ dependencies {
 
     kapt Libs.Dagger.compiler
 
+    implementation Libs.Hilt.library
+    kapt Libs.Hilt.compiler
+
     implementation Libs.AndroidX.browser
     implementation Libs.AndroidX.coreKtx
 

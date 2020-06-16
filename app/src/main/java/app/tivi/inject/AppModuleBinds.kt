@@ -36,10 +36,13 @@ import app.tivi.util.PowerController
 import app.tivi.util.TiviLogger
 import dagger.Binds
 import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import dagger.multibindings.IntoSet
 import javax.inject.Named
 import javax.inject.Singleton
 
+@InstallIn(ApplicationComponent::class)
 @Module
 abstract class AppModuleBinds {
     @Binds
