@@ -56,6 +56,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class ShowDetailsFragmentViewModel @AssistedInject constructor(
@@ -208,7 +209,7 @@ class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     private fun openEpisodeDetails(action: OpenEpisodeDetails) = viewModelScope.launch {
-        val episode = getEpisode(GetEpisodeDetails.Params(action.episodeId))
+        val episode = getEpisode(GetEpisodeDetails.Params(action.episodeId)).first()
         if (episode != null) {
             setState {
                 val pending = pendingUiEffects.filter {
