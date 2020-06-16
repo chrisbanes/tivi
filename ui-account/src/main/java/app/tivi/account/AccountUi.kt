@@ -41,6 +41,7 @@ import androidx.ui.layout.preferredSize
 import androidx.ui.layout.preferredSizeIn
 import androidx.ui.layout.preferredWidth
 import androidx.ui.livedata.observeAsState
+import androidx.ui.material.Divider
 import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.MaterialTheme
 import androidx.ui.material.OutlinedButton
@@ -51,7 +52,6 @@ import androidx.ui.material.icons.filled.Settings
 import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
-import app.tivi.common.compose.HorizontalDivider
 import app.tivi.common.compose.ProvideInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
@@ -121,7 +121,7 @@ fun AccountUi(
 
         Spacer(modifier = Modifier.preferredHeight(8.dp).fillMaxWidth())
 
-        HorizontalDivider()
+        Divider()
 
         AppAction(
             label = stringResource(id = R.string.settings_title),

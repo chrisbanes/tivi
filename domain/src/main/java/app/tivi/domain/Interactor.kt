@@ -31,6 +31,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
@@ -71,8 +73,8 @@ abstract class Interactor<in P> {
 abstract class ResultInteractor<in P, R> {
     abstract val dispatcher: CoroutineDispatcher
 
-    suspend operator fun invoke(params: P): R {
-        return withContext(dispatcher) { doWork(params) }
+    operator fun invoke(params: P): Flow<R> {
+        return flow { emit(doWork(params)) }.flowOn(dispatcher)
     }
 
     protected abstract suspend fun doWork(params: P): R

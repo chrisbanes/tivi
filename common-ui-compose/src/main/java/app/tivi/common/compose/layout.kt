@@ -16,21 +16,13 @@
 
 package app.tivi.common.compose
 
-import androidx.compose.Composable
 import androidx.ui.core.LayoutCoordinates
 import androidx.ui.core.Modifier
-import androidx.ui.foundation.Box
-import androidx.ui.foundation.drawBackground
+import androidx.ui.core.OnPositionedModifier
 import androidx.ui.geometry.Offset
-import androidx.ui.layout.fillMaxWidth
-import androidx.ui.layout.preferredHeight
-import androidx.ui.material.MaterialTheme
+import androidx.ui.unit.IntSize
 import androidx.ui.unit.PxBounds
-import androidx.ui.unit.dp
 import androidx.ui.unit.toSize
-
-inline val PxBounds.center: Offset
-    get() = Offset((left + right) / 2, (top + bottom) / 2)
 
 inline val LayoutCoordinates.positionInParent: Offset
     get() = parentCoordinates?.childToLocal(this, Offset.Zero) ?: Offset.Zero
@@ -38,11 +30,15 @@ inline val LayoutCoordinates.positionInParent: Offset
 inline val LayoutCoordinates.boundsInParent: PxBounds
     get() = PxBounds(positionInParent, size.toSize())
 
-@Composable
-fun HorizontalDivider() {
-    Box(
-        Modifier.preferredHeight(1.dp)
-            .fillMaxWidth()
-            .drawBackground(color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f))
-    )
+fun Modifier.onSizeChanged(
+    onSizeChanged: (IntSize) -> Unit
+) = this + object : OnPositionedModifier {
+    private var lastSize: IntSize? = null
+
+    override fun onPositioned(coordinates: LayoutCoordinates) {
+        if (coordinates.size != lastSize) {
+            lastSize = coordinates.size
+            onSizeChanged(coordinates.size)
+        }
+    }
 }
