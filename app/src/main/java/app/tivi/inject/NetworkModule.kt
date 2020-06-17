@@ -20,6 +20,9 @@ import android.content.Context
 import app.tivi.BuildConfig
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.Cache
 import okhttp3.ConnectionPool
 import okhttp3.Dispatcher
@@ -30,8 +33,9 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
+@InstallIn(ApplicationComponent::class)
 @Module
-class NetworkModule {
+object NetworkModule {
     @Singleton
     @Provides
     fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor? {
@@ -59,7 +63,7 @@ class NetworkModule {
     fun provideOkHttpClient(
         httpLoggingInterceptor: HttpLoggingInterceptor?,
         loggingEventListener: LoggingEventListener.Factory?,
-        applicationContext: Context
+        @ApplicationContext context: Context
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .apply {
@@ -71,7 +75,7 @@ class NetworkModule {
                 }
             }
             // Around 4¢ worth of storage in 2020
-            .cache(Cache(File(applicationContext.cacheDir, "api_cache"), 50 * 1024 * 1024))
+            .cache(Cache(File(context.cacheDir, "api_cache"), 50 * 1024 * 1024))
             // Adjust the Connection pool to account for historical use of 3 separate clients
             // but reduce the keepAlive to 2 minutes to avoid keeping radio open.
             .connectionPool(ConnectionPool(10, 2, TimeUnit.MINUTES))

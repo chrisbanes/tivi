@@ -23,17 +23,19 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import android.widget.FrameLayout
 import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import app.tivi.TiviBottomSheetFragment
 import app.tivi.common.compose.observeWindowInsets
 import app.tivi.util.TiviDateFormatter
-import com.airbnb.mvrx.fragmentViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class EpisodeDetailsFragment : TiviBottomSheetFragment(), EpisodeDetailsViewModel.FactoryProvider {
+@AndroidEntryPoint
+class EpisodeDetailsFragment : BottomSheetDialogFragment() {
     companion object {
         @JvmStatic
         fun create(id: Long): EpisodeDetailsFragment {
@@ -43,13 +45,19 @@ class EpisodeDetailsFragment : TiviBottomSheetFragment(), EpisodeDetailsViewMode
         }
     }
 
-    private val viewModel: EpisodeDetailsViewModel by fragmentViewModel()
+    private val viewModel: EpisodeDetailsViewModel by viewModels()
 
     @Inject @JvmField internal var tiviDateFormatter: TiviDateFormatter? = null
-    @Inject @JvmField internal var episodeDetailsViewModelFactory: EpisodeDetailsViewModel.Factory? = null
     @Inject @JvmField internal var textCreator: EpisodeDetailsTextCreator? = null
 
     private val pendingActions = Channel<EpisodeDetailsAction>(Channel.BUFFERED)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val args = requireArguments()
+        viewModel.setEpisodeId(args.getLong("episode_id"))
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,7 +68,7 @@ class EpisodeDetailsFragment : TiviBottomSheetFragment(), EpisodeDetailsViewMode
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
 
             composeEpisodeDetails(
-                viewModel.observeAsLiveData(),
+                viewModel.liveData,
                 observeWindowInsets(),
                 { pendingActions.sendBlocking(it) },
                 tiviDateFormatter!!
@@ -80,11 +88,5 @@ class EpisodeDetailsFragment : TiviBottomSheetFragment(), EpisodeDetailsViewMode
                 }
             }
         }
-    }
-
-    override fun invalidate() = Unit
-
-    override fun provideFactory(): EpisodeDetailsViewModel.Factory {
-        return episodeDetailsViewModelFactory!!
     }
 }

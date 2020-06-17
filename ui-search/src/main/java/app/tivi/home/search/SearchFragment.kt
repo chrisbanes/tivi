@@ -23,8 +23,10 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.net.toUri
 import androidx.core.view.marginBottom
 import androidx.core.view.updatePadding
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
-import app.tivi.TiviFragmentWithBinding
+import app.tivi.FragmentWithBinding
 import app.tivi.data.entities.TiviShow
 import app.tivi.extensions.doOnLayouts
 import app.tivi.extensions.hideSoftInput
@@ -33,14 +35,13 @@ import app.tivi.home.search.databinding.FragmentSearchBinding
 import app.tivi.ui.createSharedElementHelperForItemId
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
 import app.tivi.ui.transitions.GridToGridTransitioner
-import com.airbnb.mvrx.fragmentViewModel
-import com.airbnb.mvrx.withState
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-internal class SearchFragment : TiviFragmentWithBinding<FragmentSearchBinding>() {
-    private val viewModel: SearchViewModel by fragmentViewModel()
+@AndroidEntryPoint
+internal class SearchFragment : FragmentWithBinding<FragmentSearchBinding>() {
+    private val viewModel: SearchViewModel by viewModels()
 
-    @Inject @JvmField internal var searchViewModelFactory: SearchViewModel.Factory? = null
     @Inject @JvmField internal var controller: SearchEpoxyController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,9 +96,12 @@ internal class SearchFragment : TiviFragmentWithBinding<FragmentSearchBinding>()
                 )
             }
         }
+
+        viewModel.liveData.observe(viewLifecycleOwner, ::render)
     }
 
-    override fun invalidate(binding: FragmentSearchBinding) = withState(viewModel) { state ->
+    private fun render(state: SearchViewState) {
+        val binding = requireBinding()
         binding.state = state
         controller!!.state = state
     }

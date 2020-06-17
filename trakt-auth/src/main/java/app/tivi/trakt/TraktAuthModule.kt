@@ -23,6 +23,9 @@ import androidx.core.net.toUri
 import app.tivi.inject.ApplicationId
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import net.openid.appauth.AuthorizationRequest
@@ -33,8 +36,9 @@ import net.openid.appauth.ResponseTypeValues
 import javax.inject.Named
 import javax.inject.Singleton
 
+@InstallIn(ApplicationComponent::class)
 @Module
-class TraktAuthModule {
+object TraktAuthModule {
     @Singleton
     @Provides
     fun provideAuthConfig(): AuthorizationServiceConfiguration {
@@ -82,7 +86,9 @@ class TraktAuthModule {
     @Singleton
     @Provides
     @Named("auth")
-    fun provideAuthSharedPrefs(context: Context): SharedPreferences {
+    fun provideAuthSharedPrefs(
+        @ApplicationContext context: Context
+    ): SharedPreferences {
         return context.getSharedPreferences("trakt_auth", Context.MODE_PRIVATE)
     }
 }

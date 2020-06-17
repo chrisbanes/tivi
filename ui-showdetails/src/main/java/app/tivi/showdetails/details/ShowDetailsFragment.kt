@@ -23,28 +23,40 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
-import app.tivi.TiviFragment
 import app.tivi.common.compose.observeWindowInsets
 import app.tivi.episodedetails.EpisodeDetailsFragment
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.util.TiviDateFormatter
-import com.airbnb.mvrx.fragmentViewModel
-import com.airbnb.mvrx.withState
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.FactoryProvider {
-    private val viewModel: ShowDetailsFragmentViewModel by fragmentViewModel()
+@AndroidEntryPoint
+class ShowDetailsFragment : Fragment() {
+    private val viewModel: ShowDetailsFragmentViewModel by viewModels()
 
-    @Inject @JvmField internal var showDetailsViewModelFactory: ShowDetailsFragmentViewModel.Factory? = null
     @Inject @JvmField internal var textCreator: ShowDetailsTextCreator? = null
     @Inject @JvmField internal var tiviDateFormatter: TiviDateFormatter? = null
 
     private val pendingActions = Channel<ShowDetailsAction>(Channel.BUFFERED)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val args = requireArguments()
+        viewModel.setShowId(args.getLong("show_id"))
+
+        if (args.containsKey("episode_id")) {
+            viewModel.submitAction(OpenEpisodeDetails(args.getLong("episode_id")))
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,12 +67,8 @@ class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.Factory
             layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
             composeShowDetails(
-                viewModel.observeAsLiveData(),
-                viewModel.selectObserve(
-                    viewLifecycleOwner,
-                    ShowDetailsViewState::pendingUiEffects,
-                    uniqueOnly()
-                ),
+                viewModel.liveData,
+                viewModel.selectObserve(ShowDetailsViewState::pendingUiEffects),
                 observeWindowInsets(),
                 { pendingActions.sendBlocking(it) },
                 tiviDateFormatter!!,
@@ -74,6 +82,8 @@ class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.Factory
         // TODO move this once we know how to handle transitions in Compose
         scheduleStartPostponedTransitions()
 
+        viewModel.liveData.observe(this, ::render)
+
         viewLifecycleOwner.lifecycleScope.launch {
             for (action in pendingActions) {
                 when (action) {
@@ -86,25 +96,19 @@ class ShowDetailsFragment : TiviFragment(), ShowDetailsFragmentViewModel.Factory
         }
     }
 
-    override fun invalidate() = withState(viewModel) { state ->
+    private fun render(state: ShowDetailsViewState) {
         state.pendingUiEffects.forEach { effect ->
             when (effect) {
-                is ExecutableOpenShowUiEffect -> {
-                    findNavController().navigate(
-                        "app.tivi://show/${effect.showId}".toUri()
-                    )
+                is OpenShowUiEffect -> {
+                    findNavController().navigate("app.tivi://show/${effect.showId}".toUri())
                     viewModel.submitAction(ClearPendingUiEffect(effect))
                 }
-                is ExecutableOpenEpisodeUiEffect -> {
+                is OpenEpisodeUiEffect -> {
                     EpisodeDetailsFragment.create(effect.episodeId)
                         .show(childFragmentManager, "episode")
                     viewModel.submitAction(ClearPendingUiEffect(effect))
                 }
             }
         }
-    }
-
-    override fun provideFactory(): ShowDetailsFragmentViewModel.Factory {
-        return showDetailsViewModelFactory!!
     }
 }

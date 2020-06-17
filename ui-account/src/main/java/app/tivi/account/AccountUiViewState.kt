@@ -18,9 +18,8 @@ package app.tivi.account
 
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
-import com.airbnb.mvrx.MvRxState
 
 data class AccountUiViewState(
     val user: TraktUser? = null,
     val authState: TraktAuthState = TraktAuthState.LOGGED_OUT
-) : MvRxState
+)

@@ -24,6 +24,7 @@ import android.os.PowerManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.getSystemService
 import app.tivi.settings.TiviPreferences
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
@@ -33,7 +34,7 @@ import javax.inject.Singleton
 
 @Singleton
 internal class AndroidPowerController @Inject constructor(
-    private val context: Context,
+    @ApplicationContext private val context: Context,
     private val preferences: TiviPreferences
 ) : PowerController {
     private val powerManager: PowerManager = context.getSystemService()!!

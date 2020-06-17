@@ -19,12 +19,6 @@ import app.tivi.buildsrc.Libs
 
 apply plugin: 'kotlin'
 
-apply plugin: 'kotlin-kapt'
-kapt {
-    correctErrorTypes = true
-    useBuildCache = true
-}
-
 dependencies {
     api project(':base')
     api project(':trakt')
@@ -38,6 +32,4 @@ dependencies {
     api Libs.AndroidX.Paging.common
 
     api Libs.threeTenBpNoTzdb
-
-    kapt Libs.Dagger.compiler
 }

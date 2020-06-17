@@ -16,9 +16,9 @@
 
 package app.tivi.episodedetails
 
-import androidx.fragment.app.Fragment
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
-import app.tivi.TiviMvRxViewModel
+import app.tivi.ReduxViewModel
 import app.tivi.api.UiError
 import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
@@ -36,11 +36,6 @@ import app.tivi.domain.observers.ObserveEpisodeWatches
 import app.tivi.ui.SnackbarManager
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
-import com.airbnb.mvrx.FragmentViewModelContext
-import com.airbnb.mvrx.MvRxViewModelFactory
-import com.airbnb.mvrx.ViewModelContext
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -48,8 +43,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
-class EpisodeDetailsViewModel @AssistedInject constructor(
-    @Assisted initialState: EpisodeDetailsViewState,
+class EpisodeDetailsViewModel @ViewModelInject constructor(
     private val updateEpisodeDetails: UpdateEpisodeDetails,
     observeEpisodeDetails: ObserveEpisodeDetails,
     private val observeEpisodeWatches: ObserveEpisodeWatches,
@@ -57,7 +51,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch,
     private val logger: Logger
-) : TiviMvRxViewModel<EpisodeDetailsViewState>(initialState) {
+) : ReduxViewModel<EpisodeDetailsViewState>() {
 
     private val loadingState = ObservableLoadingCounter()
     private val snackbarManager = SnackbarManager()
@@ -99,12 +93,14 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
             }
         }
 
-        withState {
-            observeEpisodeDetails(ObserveEpisodeDetails.Params(it.episodeId))
-            observeEpisodeWatches(ObserveEpisodeWatches.Params(it.episodeId))
-        }
+        selectSubscribe(EpisodeDetailsViewState::episodeId) { episodeId ->
+            episodeId?.also {
+                observeEpisodeDetails(ObserveEpisodeDetails.Params(episodeId))
+                observeEpisodeWatches(ObserveEpisodeWatches.Params(episodeId))
 
-        refresh(false)
+                refresh(false)
+            }
+        }
     }
 
     private fun updateFromEpisodeDetails(episodeWithSeason: EpisodeWithSeason) = setState {
@@ -124,22 +120,28 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         viewModelScope.launch { pendingActions.send(action) }
     }
 
-    private fun refresh(fromUserInteraction: Boolean) = withState {
-        updateEpisodeDetails(
-            UpdateEpisodeDetails.Params(it.episodeId, fromUserInteraction)
-        ).watchStatus()
+    private fun refresh(fromUserInteraction: Boolean) = withState { state ->
+        state.episodeId?.also { episodeId ->
+            updateEpisodeDetails(
+                UpdateEpisodeDetails.Params(episodeId, fromUserInteraction)
+            ).watchStatus()
+        }
     }
 
     private fun removeWatchEntry(action: RemoveEpisodeWatchAction) {
         removeEpisodeWatch(RemoveEpisodeWatch.Params(action.watchId)).watchStatus()
     }
 
-    private fun markWatched() = withState {
-        addEpisodeWatch(AddEpisodeWatch.Params(it.episodeId, OffsetDateTime.now())).watchStatus()
+    private fun markWatched() = withState { state ->
+        state.episodeId?.also { episodeId ->
+            addEpisodeWatch(AddEpisodeWatch.Params(episodeId, OffsetDateTime.now())).watchStatus()
+        }
     }
 
-    private fun markUnwatched() = withState {
-        removeEpisodeWatches(RemoveEpisodeWatches.Params(it.episodeId)).watchStatus()
+    private fun markUnwatched() = withState { state ->
+        state.episodeId?.also { episodeId ->
+            removeEpisodeWatches(RemoveEpisodeWatches.Params(episodeId)).watchStatus()
+        }
     }
 
     private fun Flow<InvokeStatus>.watchStatus() = viewModelScope.launch { collectStatus() }
@@ -156,31 +158,9 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         }
     }
 
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(initialState: EpisodeDetailsViewState): EpisodeDetailsViewModel
+    override fun createInitialState(): EpisodeDetailsViewState {
+        return EpisodeDetailsViewState()
     }
 
-    interface FactoryProvider {
-        fun provideFactory(): Factory
-    }
-
-    companion object : MvRxViewModelFactory<EpisodeDetailsViewModel, EpisodeDetailsViewState> {
-        override fun create(
-            viewModelContext: ViewModelContext,
-            state: EpisodeDetailsViewState
-        ): EpisodeDetailsViewModel? {
-            val fvmc = viewModelContext as FragmentViewModelContext
-            val f: FactoryProvider = (fvmc.fragment<Fragment>()) as FactoryProvider
-            return f.provideFactory().create(state)
-        }
-
-        override fun initialState(
-            viewModelContext: ViewModelContext
-        ): EpisodeDetailsViewState? {
-            val f: Fragment = (viewModelContext as FragmentViewModelContext).fragment()
-            val args = f.requireArguments()
-            return EpisodeDetailsViewState(episodeId = args.getLong("episode_id"))
-        }
-    }
+    fun setEpisodeId(id: Long) = setState { copy(episodeId = id) }
 }

@@ -23,8 +23,6 @@ object Versions {
 object Libs {
     const val androidGradlePlugin = "com.android.tools.build:gradle:4.1.0-alpha10"
 
-    const val mvRx = "com.airbnb.android:mvrx:1.3.0"
-
     const val threeTenBp = "org.threeten:threetenbp:1.4.4"
     const val threeTenBpNoTzdb = "$threeTenBp:no-tzdb"
     const val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.2.4"
@@ -74,7 +72,6 @@ object Libs {
     object Kotlin {
         private const val version = "1.3.72"
         const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
-        const val reflect = "org.jetbrains.kotlin:kotlin-reflect:$version"
         const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
         const val extensions = "org.jetbrains.kotlin:kotlin-android-extensions:$version"
     }
@@ -111,8 +108,12 @@ object Libs {
         object Test {
             private const val version = "1.2.0"
             const val core = "androidx.test:core:$version"
-            const val runner = "androidx.test:runner:$version"
             const val rules = "androidx.test:rules:$version"
+
+            object Ext {
+                private const val version = "1.1.2-rc01"
+                const val junit = "androidx.test.ext:junit-ktx:$version"
+            }
 
             const val espressoCore = "androidx.test.espresso:espresso-core:3.2.0"
         }
@@ -135,6 +136,7 @@ object Libs {
             private const val version = "2.2.0"
             const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
             const val livedata = "androidx.lifecycle:lifecycle-livedata-ktx:$version"
+            const val process = "androidx.lifecycle:lifecycle-process:$version"
             const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
         }
 
@@ -172,20 +174,32 @@ object Libs {
 
             const val runtime = "androidx.compose:compose-runtime:$version"
         }
+
+        object Hilt {
+            private const val version = "1.0.0-alpha01"
+            const val work = "androidx.hilt:hilt-work:$version"
+            const val viewmodel = "androidx.hilt:hilt-lifecycle-viewmodel:$version"
+            const val compiler = "androidx.hilt:hilt-compiler:$version"
+        }
     }
 
     object Dagger {
         private const val version = "2.28"
         const val dagger = "com.google.dagger:dagger:$version"
-        const val androidSupport = "com.google.dagger:dagger-android-support:$version"
         const val compiler = "com.google.dagger:dagger-compiler:$version"
-        const val androidProcessor = "com.google.dagger:dagger-android-processor:$version"
+    }
+
+    object Hilt {
+        private const val version = "2.28-alpha"
+        const val library = "com.google.dagger:hilt-android:$version"
+        const val compiler = "com.google.dagger:hilt-android-compiler:$version"
+        const val testing = "com.google.dagger:hilt-android-testing:$version"
+        const val gradlePlugin = "com.google.dagger:hilt-android-gradle-plugin:$version"
     }
 
     object Retrofit {
         private const val version = "2.8.1"
         const val retrofit = "com.squareup.retrofit2:retrofit:$version"
-        const val retrofit_rxjava_adapter = "com.squareup.retrofit2:adapter-rxjava2:$version"
         const val gsonConverter = "com.squareup.retrofit2:converter-gson:$version"
     }
 
@@ -206,12 +220,6 @@ object Libs {
     object Coil {
         private const val version = "0.11.0"
         const val coil = "io.coil-kt:coil:$version"
-    }
-
-    object AssistedInject {
-        private const val version = "0.5.2"
-        const val annotationDagger2 = "com.squareup.inject:assisted-inject-annotations-dagger2:$version"
-        const val processorDagger2 = "com.squareup.inject:assisted-inject-processor-dagger2:$version"
     }
 
     object Roomigrant {

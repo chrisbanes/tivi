@@ -18,7 +18,7 @@ package app.tivi.util
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
-import app.tivi.TiviMvRxViewModel
+import app.tivi.ReduxViewModel
 import app.tivi.api.UiError
 import app.tivi.api.UiIdle
 import app.tivi.api.UiLoading
@@ -42,9 +42,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteractor<*, LI>>(
-    initialState: EntryViewState,
     private val pageSize: Int = 21
-) : TiviMvRxViewModel<EntryViewState>(initialState) {
+) : ReduxViewModel<EntryViewState>() {
     protected abstract val dispatchers: AppCoroutineDispatchers
     protected abstract val pagingInteractor: PI
     protected abstract val logger: Logger
@@ -163,6 +162,10 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
                 }
             }
         }
+    }
+
+    override fun createInitialState(): EntryViewState {
+        return EntryViewState()
     }
 
     protected abstract fun callRefresh(fromUser: Boolean): Flow<InvokeStatus>

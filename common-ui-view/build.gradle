@@ -57,13 +57,7 @@ dependencies {
     implementation Libs.AndroidX.Navigation.fragment
     implementation Libs.AndroidX.Navigation.ui
 
+    implementation Libs.Hilt.library
+
     api Libs.Google.material
-
-    implementation Libs.Kotlin.reflect
-
-    api Libs.Dagger.androidSupport
-    kapt Libs.Dagger.compiler
-    kapt Libs.Dagger.androidProcessor
-
-    api Libs.mvRx
 }

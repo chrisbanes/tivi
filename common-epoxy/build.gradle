@@ -49,7 +49,8 @@ dependencies {
 
     implementation Libs.gravitySnapHelper
 
-    kapt Libs.Dagger.compiler
+    implementation Libs.Hilt.library
+    kapt Libs.Hilt.compiler
 
     api Libs.Epoxy.epoxy
     api Libs.Epoxy.dataBinding

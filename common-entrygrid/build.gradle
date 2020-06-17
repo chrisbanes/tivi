@@ -65,5 +65,6 @@ dependencies {
     implementation Libs.AndroidX.Navigation.fragment
     api Libs.AndroidX.Navigation.ui
 
-    kapt Libs.Dagger.compiler
+    implementation Libs.Hilt.library
+    kapt Libs.Hilt.compiler
 }

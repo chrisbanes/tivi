@@ -16,7 +16,6 @@
 
 package app.tivi.settings
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.browser.customtabs.CustomTabsIntent
@@ -31,25 +30,14 @@ import app.tivi.util.PowerController
 import app.tivi.util.SaveData
 import app.tivi.util.SaveDataReason
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
-import dagger.android.support.AndroidSupportInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
-internal class SettingsPreferenceFragment : PreferenceFragmentCompat(), HasAndroidInjector {
-    @Inject @JvmField var androidInjector: DispatchingAndroidInjector<Any>? = null
-
+@AndroidEntryPoint
+internal class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     @Inject @JvmField var powerController: PowerController? = null
-
-    override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
-        super.onAttach(context)
-    }
-
-    override fun androidInjector(): AndroidInjector<Any> = androidInjector!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

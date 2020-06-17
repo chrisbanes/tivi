@@ -24,9 +24,11 @@ import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.core.view.updatePadding
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
-import app.tivi.TiviFragmentWithBinding
+import app.tivi.FragmentWithBinding
 import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
@@ -40,15 +42,14 @@ import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.authStateToolbarMenuBinder
 import app.tivi.ui.createSharedElementHelperForItem
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
-import com.airbnb.mvrx.fragmentViewModel
-import com.airbnb.mvrx.withState
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
-class WatchedFragment : TiviFragmentWithBinding<FragmentWatchedBinding>() {
-    private val viewModel: WatchedViewModel by fragmentViewModel()
+@AndroidEntryPoint
+class WatchedFragment : FragmentWithBinding<FragmentWatchedBinding>() {
+    private val viewModel: WatchedViewModel by viewModels()
 
-    @Inject @JvmField internal var watchedViewModelFactory: WatchedViewModel.Factory? = null
     @Inject @JvmField internal var controller: WatchedEpoxyController? = null
 
     private var authStateMenuItemBinder: AuthStateMenuItemBinder? = null
@@ -133,9 +134,12 @@ class WatchedFragment : TiviFragmentWithBinding<FragmentWatchedBinding>() {
                 controller!!.submitList(it)
             }
         }
+
+        viewModel.liveData.observe(viewLifecycleOwner, ::render)
     }
 
-    override fun invalidate(binding: FragmentWatchedBinding) = withState(viewModel) { state ->
+    private fun render(state: WatchedViewState) {
+        val binding = requireBinding()
         if (binding.state == null) {
             // First time we've had state, start any postponed transitions
             scheduleStartPostponedTransitions()

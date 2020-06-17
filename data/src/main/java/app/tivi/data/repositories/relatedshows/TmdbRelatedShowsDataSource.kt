@@ -30,7 +30,7 @@ import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.BaseTvShow
 import javax.inject.Inject
 
-internal class TmdbRelatedShowsDataSource @Inject constructor(
+class TmdbRelatedShowsDataSource @Inject constructor(
     private val tmdbIdMapper: ShowIdToTmdbIdMapper,
     private val tmdb: Tmdb,
     showMapper: TmdbBaseShowToTiviShow

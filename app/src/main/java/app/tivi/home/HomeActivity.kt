@@ -18,34 +18,29 @@ package app.tivi.home
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.observe
 import androidx.navigation.NavController
+import app.tivi.AppNavigator
 import app.tivi.R
-import app.tivi.TiviActivityMvRxView
-import app.tivi.account.AccountUiFragment
+import app.tivi.TiviActivity
 import app.tivi.databinding.ActivityHomeBinding
 import app.tivi.extensions.hideSoftInput
 import app.tivi.extensions.setupWithNavController
 import app.tivi.trakt.TraktConstants
-import com.airbnb.mvrx.viewModel
-import net.openid.appauth.AuthorizationException
-import net.openid.appauth.AuthorizationResponse
-import net.openid.appauth.AuthorizationService
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-class HomeActivity : TiviActivityMvRxView() {
-    private val authService by lazy(LazyThreadSafetyMode.NONE) {
-        AuthorizationService(this)
-    }
-
-    private val viewModel: HomeActivityViewModel by viewModel()
-
-    @Inject @JvmField var homeNavigationViewModelFactory: HomeActivityViewModel.Factory? = null
+@AndroidEntryPoint
+class HomeActivity : TiviActivity() {
+    private val viewModel: HomeActivityViewModel by viewModels()
 
     private lateinit var binding: ActivityHomeBinding
 
     private var currentNavController: NavController? = null
+
+    @Inject @JvmField var navigator: AppNavigator? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +54,7 @@ class HomeActivity : TiviActivityMvRxView() {
 
     override fun onStart() {
         super.onStart()
-        viewModel.subscribe(this) { postInvalidate() }
+        viewModel.liveData.observe(this) { invalidate() }
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -70,24 +65,16 @@ class HomeActivity : TiviActivityMvRxView() {
         setupBottomNavigationBar()
     }
 
-    override fun invalidate() {
+    fun invalidate() {
     }
 
     override fun handleIntent(intent: Intent) {
         when (intent.action) {
             TraktConstants.INTENT_ACTION_HANDLE_AUTH_RESPONSE -> {
-                val response = AuthorizationResponse.fromIntent(intent)
-                val error = AuthorizationException.fromIntent(intent)
-                viewModel.onAuthResponse(authService, response, error)
+                navigator!!.onAuthResponse(intent)
             }
         }
     }
-
-    internal fun openAccount() {
-        AccountUiFragment().show(supportFragmentManager, "account")
-    }
-
-    internal fun login() = viewModel.onLoginItemClicked(authService)
 
     private fun setupBottomNavigationBar() {
         binding.homeBottomNavigation.setupWithNavController(

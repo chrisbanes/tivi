@@ -52,5 +52,6 @@ dependencies {
     implementation Libs.timber
     implementation Libs.threeTenAbp
 
-    kapt Libs.Dagger.compiler
+    implementation Libs.Hilt.library
+    kapt Libs.Hilt.compiler
 }

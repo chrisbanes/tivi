@@ -19,11 +19,11 @@ package app.tivi.home.discover
 import android.content.Context
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
-import app.tivi.inject.PerActivity
+import dagger.hilt.android.qualifiers.ActivityContext
 import javax.inject.Inject
 
 internal class DiscoverTextCreator @Inject constructor(
-    @PerActivity private val context: Context
+    @ActivityContext private val context: Context
 ) {
     fun seasonEpisodeTitleText(season: Season, episode: Episode): String {
         return context.getString(R.string.season_episode_number, season.number, episode.number)

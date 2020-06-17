@@ -30,7 +30,7 @@ import com.uwetrottmann.trakt5.services.Shows
 import javax.inject.Inject
 import javax.inject.Provider
 
-internal class TraktPopularShowsDataSource @Inject constructor(
+class TraktPopularShowsDataSource @Inject constructor(
     private val showService: Provider<Shows>,
     private val showMapper: TraktShowToTiviShow
 ) {

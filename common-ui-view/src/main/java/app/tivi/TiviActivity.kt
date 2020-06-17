@@ -19,10 +19,10 @@ package app.tivi
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
-import dagger.android.support.DaggerAppCompatActivity
 
-abstract class TiviActivity : DaggerAppCompatActivity() {
+abstract class TiviActivity : AppCompatActivity() {
     private var postponedTransition = false
 
     override fun onPostCreate(savedInstanceState: Bundle?) {

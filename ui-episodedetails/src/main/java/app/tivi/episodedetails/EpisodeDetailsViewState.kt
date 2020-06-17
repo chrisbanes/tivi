@@ -20,14 +20,13 @@ import app.tivi.api.UiError
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.Season
-import com.airbnb.mvrx.MvRxState
 
 data class EpisodeDetailsViewState(
-    val episodeId: Long,
+    val episodeId: Long? = null,
     val season: Season? = null,
     val episode: Episode? = null,
     val watches: List<EpisodeWatchEntry> = emptyList(),
     val canAddEpisodeWatch: Boolean = false,
     val refreshing: Boolean = false,
     val error: UiError? = null
-) : MvRxState
+)

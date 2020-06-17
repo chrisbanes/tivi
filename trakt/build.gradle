@@ -33,9 +33,9 @@ dependencies {
 
     implementation project(':base')
 
-    kapt Libs.Dagger.compiler
-
     implementation Libs.OkHttp.okhttp
     implementation Libs.Retrofit.retrofit
     implementation Libs.Retrofit.gsonConverter
+
+    kapt Libs.Dagger.compiler
 }

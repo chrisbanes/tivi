@@ -27,6 +27,8 @@ kapt {
     useBuildCache = true
 }
 
+apply plugin: 'dagger.hilt.android.plugin'
+
 android {
     compileSdkVersion buildConfig.compileSdk
 
@@ -86,12 +88,9 @@ dependencies {
 
     implementation Libs.Google.material
 
-    implementation Libs.Dagger.androidSupport
-    kapt Libs.Dagger.compiler
-    kapt Libs.Dagger.androidProcessor
+    implementation Libs.Hilt.library
+    kapt Libs.Hilt.compiler
 
-    compileOnly Libs.AssistedInject.annotationDagger2
-    kapt Libs.AssistedInject.processorDagger2
-
-    api Libs.mvRx
+    implementation Libs.AndroidX.Hilt.viewmodel
+    kapt Libs.AndroidX.Hilt.compiler
 }

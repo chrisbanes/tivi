@@ -18,11 +18,10 @@ package app.tivi.util
 
 import app.tivi.api.UiIdle
 import app.tivi.api.UiStatus
-import com.airbnb.mvrx.MvRxState
 
 data class EntryViewState(
     val status: UiStatus = UiIdle,
     val isLoaded: Boolean = false,
     val selectionOpen: Boolean = false,
     val selectedShowIds: Set<Long> = emptySet()
-) : MvRxState
+)

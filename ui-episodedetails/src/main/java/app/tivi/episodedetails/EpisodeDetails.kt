@@ -15,6 +15,7 @@
  */
 
 package app.tivi.episodedetails
+
 import android.os.Build
 import android.view.ViewGroup
 import androidx.animation.transitionDefinition

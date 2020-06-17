@@ -16,16 +16,12 @@
 
 package app.tivi.home.search
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
-import app.tivi.TiviMvRxViewModel
+import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.SearchShows
 import app.tivi.domain.launchObserve
 import app.tivi.util.ObservableLoadingCounter
-import com.airbnb.mvrx.FragmentViewModelContext
-import com.airbnb.mvrx.MvRxViewModelFactory
-import com.airbnb.mvrx.ViewModelContext
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.channels.sendBlocking
@@ -35,10 +31,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 
-internal class SearchViewModel @AssistedInject constructor(
-    @Assisted initialState: SearchViewState,
+internal class SearchViewModel @ViewModelInject constructor(
     private val searchShows: SearchShows
-) : TiviMvRxViewModel<SearchViewState>(initialState) {
+) : ReduxViewModel<SearchViewState>() {
     private val searchQuery = ConflatedBroadcastChannel<String>()
     private val loadingState = ObservableLoadingCounter()
 
@@ -71,18 +66,7 @@ internal class SearchViewModel @AssistedInject constructor(
 
     fun clearQuery() = setSearchQuery("")
 
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(initialState: SearchViewState): SearchViewModel
-    }
-
-    companion object : MvRxViewModelFactory<SearchViewModel, SearchViewState> {
-        override fun create(
-            viewModelContext: ViewModelContext,
-            state: SearchViewState
-        ): SearchViewModel? {
-            val fragment: SearchFragment = (viewModelContext as FragmentViewModelContext).fragment()
-            return fragment.searchViewModelFactory!!.create(state)
-        }
+    override fun createInitialState(): SearchViewState {
+        return SearchViewState()
     }
 }

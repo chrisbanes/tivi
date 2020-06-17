@@ -19,25 +19,40 @@ package app.tivi.data
 import android.content.Context
 import android.os.Debug
 import androidx.room.Room
+import app.tivi.inject.ForStore
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
+import kotlin.coroutines.EmptyCoroutineContext
 
-@Module(
-    includes = [
-        RoomDatabaseModule::class,
-        DatabaseModuleBinds::class,
-        DatabaseDaoModule::class
-    ]
-)
-class DatabaseModule
-
+/**
+ * Dummy modules which includes [DataModule]. We can't `@InstallIn` that module
+ * directly because it is not an Android module.
+ */
+@InstallIn(ApplicationComponent::class)
 @Module
-class RoomDatabaseModule {
+object DataModule {
+    @ForStore
     @Singleton
     @Provides
-    fun provideDatabase(context: Context): TiviRoomDatabase {
+    fun providesStoreDispatcher(): CoroutineScope {
+        return CoroutineScope(EmptyCoroutineContext)
+    }
+}
+
+@InstallIn(ApplicationComponent::class)
+@Module
+object RoomDatabaseModule {
+    @Singleton
+    @Provides
+    fun provideDatabase(
+        @ApplicationContext context: Context
+    ): TiviRoomDatabase {
         val builder = Room.databaseBuilder(context, TiviRoomDatabase::class.java, "shows.db")
             .addMigrations(*TiviRoomDatabase_Migrations.build())
             .fallbackToDestructiveMigration()
@@ -48,8 +63,9 @@ class RoomDatabaseModule {
     }
 }
 
+@InstallIn(ApplicationComponent::class)
 @Module
-class DatabaseDaoModule {
+object DatabaseDaoModule {
     @Provides
     fun provideTiviShowDao(db: TiviDatabase) = db.showDao()
 
@@ -93,10 +109,11 @@ class DatabaseDaoModule {
     fun provideRecommendedShowsDao(db: TiviDatabase) = db.recommendedShowsDao()
 }
 
+@InstallIn(ApplicationComponent::class)
 @Module
 abstract class DatabaseModuleBinds {
     @Binds
-    abstract fun bindTiviDatabase(context: TiviRoomDatabase): TiviDatabase
+    abstract fun bindTiviDatabase(db: TiviRoomDatabase): TiviDatabase
 
     @Singleton
     @Binds

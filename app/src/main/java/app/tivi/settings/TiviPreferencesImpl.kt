@@ -22,11 +22,12 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import app.tivi.R
 import app.tivi.settings.TiviPreferences.Theme
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Named
 
 class TiviPreferencesImpl @Inject constructor(
-    private val context: Context,
+    @ApplicationContext private val context: Context,
     @Named("app") private val sharedPreferences: SharedPreferences
 ) : TiviPreferences {
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->

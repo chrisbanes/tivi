@@ -76,7 +76,8 @@ dependencies {
 
     implementation Libs.AndroidX.Paging.runtime
 
-    kapt Libs.Dagger.compiler
+    implementation Libs.Hilt.library
+    kapt Libs.Hilt.compiler
 
     testImplementation Libs.junit
     testImplementation Libs.robolectric
@@ -84,10 +85,13 @@ dependencies {
 
     testImplementation Libs.AndroidX.archCoreTesting
     testImplementation Libs.AndroidX.Test.core
+    testImplementation Libs.AndroidX.Test.Ext.junit
     testImplementation Libs.AndroidX.Room.testing
     testImplementation Libs.Coroutines.test
+    testImplementation Libs.Hilt.testing
+
     kaptTest Libs.AndroidX.Room.compiler
-    kaptTest Libs.Dagger.compiler
+    kaptTest Libs.Hilt.compiler
 
     // Needed for Tzdb
     testImplementation Libs.threeTenBp

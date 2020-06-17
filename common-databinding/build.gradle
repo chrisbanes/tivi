@@ -54,5 +54,6 @@ dependencies {
     implementation Libs.AndroidX.swiperefresh
     implementation Libs.AndroidX.coreKtx
 
-    kapt Libs.Dagger.compiler
+    implementation Libs.Hilt.library
+    kapt Libs.Hilt.compiler
 }

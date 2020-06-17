@@ -17,18 +17,18 @@
 package app.tivi.tasks
 
 import android.content.Context
+import androidx.hilt.Assisted
+import androidx.hilt.work.WorkerInject
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import app.tivi.domain.interactors.UpdateShowSeasonData
-import app.tivi.tasks.inject.ChildWorkerFactory
 import app.tivi.util.Logger
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
+import dagger.hilt.android.qualifiers.ApplicationContext
 
-class SyncShowWatchedProgress @AssistedInject constructor(
+class SyncShowWatchedProgress @WorkerInject constructor(
     @Assisted params: WorkerParameters,
-    @Assisted context: Context,
+    @Assisted @ApplicationContext context: Context,
     private val updateShowSeasonData: UpdateShowSeasonData,
     private val logger: Logger
 ) : CoroutineWorker(context, params) {
@@ -49,7 +49,4 @@ class SyncShowWatchedProgress @AssistedInject constructor(
 
         return Result.success()
     }
-
-    @AssistedInject.Factory
-    interface Factory : ChildWorkerFactory
 }

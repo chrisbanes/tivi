@@ -24,8 +24,10 @@ import androidx.fragment.app.commit
 import androidx.navigation.fragment.NavHostFragment
 import app.tivi.R
 import app.tivi.TiviActivity
+import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.insetter.doOnApplyWindowInsets
 
+@AndroidEntryPoint
 class ShowDetailsActivity : TiviActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

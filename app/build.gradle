@@ -22,6 +22,8 @@ plugins {
     id 'com.github.triplet.play' version '2.8.0'
 }
 
+apply plugin: 'dagger.hilt.android.plugin'
+
 play {
    track = 'internal'
    defaultToAppBundles = true
@@ -187,6 +189,7 @@ dependencies {
 
     implementation Libs.AndroidX.Lifecycle.livedata
     implementation Libs.AndroidX.Lifecycle.viewmodel
+    implementation Libs.AndroidX.Lifecycle.process
 
     implementation Libs.AndroidX.appcompat
     implementation Libs.AndroidX.browser
@@ -205,19 +208,16 @@ dependencies {
     implementation Libs.timber
 
     implementation Libs.Kotlin.stdlib
-    implementation Libs.Kotlin.reflect
 
     implementation Libs.Coroutines.core
     implementation Libs.Coroutines.android
 
-    implementation Libs.Dagger.androidSupport
-    kapt Libs.Dagger.compiler
-    kapt Libs.Dagger.androidProcessor
+    implementation Libs.Hilt.library
+    kapt Libs.Hilt.compiler
 
-    compileOnly Libs.AssistedInject.annotationDagger2
-    kapt Libs.AssistedInject.processorDagger2
-
-    implementation Libs.mvRx
+    implementation Libs.AndroidX.Hilt.work
+    implementation Libs.AndroidX.Hilt.viewmodel
+    kapt Libs.AndroidX.Hilt.compiler
 
     implementation Libs.Google.firebaseCore
     implementation Libs.Google.crashlytics
@@ -228,7 +228,6 @@ dependencies {
     testImplementation Libs.junit
     testImplementation Libs.robolectric
     testImplementation Libs.AndroidX.Test.core
-    testImplementation Libs.AndroidX.Test.runner
     testImplementation Libs.AndroidX.Test.rules
     testImplementation Libs.AndroidX.Test.espressoCore
 }
