@@ -25,11 +25,14 @@ import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 typealias RelatedShowsStore = Store<Long, List<RelatedShowEntry>>
 
+@InstallIn(ApplicationComponent::class)
 @Module
 internal class RelatedShowsModule {
     @Provides

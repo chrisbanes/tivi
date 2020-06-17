@@ -16,7 +16,6 @@
 
 package app.tivi.data.repositories.showimages
 
-import androidx.annotation.VisibleForTesting
 import app.tivi.data.daos.ShowImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.ShowTmdbImage
@@ -28,23 +27,23 @@ import com.dropbox.android.external.store4.StoreBuilder
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
-@Module(includes = [ShowImagesModuleBinds::class, ShowImagesStoreModule::class])
-class ShowsImagesModule
-
 typealias ShowImagesStore = Store<Long, List<ShowTmdbImage>>
 
+@InstallIn(ApplicationComponent::class)
 @Module
-internal abstract class ShowImagesModuleBinds {
+internal abstract class ShowDataSourceBinds {
     @Binds
     @Tmdb
     abstract fun bindTmdbShowImagesDataSource(source: TmdbShowImagesDataSource): ShowImagesDataSource
 }
 
+@InstallIn(ApplicationComponent::class)
 @Module
-@VisibleForTesting
 class ShowImagesStoreModule {
     @Provides
     @Singleton

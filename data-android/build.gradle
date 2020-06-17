@@ -87,8 +87,10 @@ dependencies {
     testImplementation Libs.AndroidX.Test.core
     testImplementation Libs.AndroidX.Room.testing
     testImplementation Libs.Coroutines.test
+    testImplementation Libs.Hilt.testing
+
     kaptTest Libs.AndroidX.Room.compiler
-    kaptTest Libs.Dagger.compiler
+    kaptTest Libs.Hilt.compiler
 
     // Needed for Tzdb
     testImplementation Libs.threeTenBp

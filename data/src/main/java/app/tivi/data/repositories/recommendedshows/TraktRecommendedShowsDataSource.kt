@@ -26,7 +26,7 @@ import com.uwetrottmann.trakt5.services.Recommendations
 import javax.inject.Inject
 import javax.inject.Provider
 
-internal class TraktRecommendedShowsDataSource @Inject constructor(
+class TraktRecommendedShowsDataSource @Inject constructor(
     private val recommendationsService: Provider<Recommendations>,
     private val showMapper: TraktShowToTiviShow
 ) {

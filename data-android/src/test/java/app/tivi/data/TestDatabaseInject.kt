@@ -18,60 +18,38 @@ package app.tivi.data
 
 import android.content.Context
 import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
-import app.tivi.data.dao.EpisodeWatchEntryTest
-import app.tivi.data.dao.EpisodesTest
-import app.tivi.data.dao.SeasonsTest
-import app.tivi.data.repositories.FollowedShowRepositoryTest
-import app.tivi.data.repositories.SeasonsEpisodesRepositoryTest
 import app.tivi.data.repositories.episodes.EpisodeDataSource
 import app.tivi.data.repositories.episodes.SeasonsEpisodesDataSource
 import app.tivi.data.repositories.followedshows.TraktFollowedShowsDataSource
 import app.tivi.data.repositories.showimages.ShowImagesDataSource
-import app.tivi.data.repositories.showimages.ShowImagesStoreModule
 import app.tivi.data.repositories.shows.ShowDataSource
-import app.tivi.data.repositories.shows.ShowStoreModule
-import app.tivi.inject.ForStore
 import app.tivi.inject.Trakt
 import app.tivi.trakt.TraktAuthState
-import app.tivi.trakt.TraktServiceModule
 import app.tivi.util.Logger
+import app.tivi.utils.SuccessFakeShowDataSource
+import app.tivi.utils.SuccessFakeShowImagesDataSource
 import app.tivi.utils.TestTransactionRunner
 import app.tivi.utils.TiviTestDatabase
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.trakt5.TraktV2
-import dagger.Component
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.mockk.mockk
-import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
-@Singleton
-@Component(
-    modules = [
-        TestDataSourceModule::class,
-        TestDatabaseModule::class
-    ]
-)
-interface TestComponent {
-    fun inject(test: SeasonsEpisodesRepositoryTest)
-    fun inject(test: FollowedShowRepositoryTest)
-    fun inject(test: EpisodesTest)
-    fun inject(test: EpisodeWatchEntryTest)
-    fun inject(test: SeasonsTest)
-}
-
+@InstallIn(ApplicationComponent::class)
 @Module
 class TestDataSourceModule(
     private val traktFollowedShowsDataSource: TraktFollowedShowsDataSource = mockk(),
     private val traktEpisodeDataSource: EpisodeDataSource = mockk(),
     private val tmdbEpisodeDataSource: EpisodeDataSource = mockk(),
     private val seasonsDataSource: SeasonsEpisodesDataSource = mockk(),
-    private val traktShowDataSource: ShowDataSource = mockk(),
-    private val tmdbShowDataSource: ShowDataSource = mockk(),
-    private val tmdbShowImagesDataSource: ShowImagesDataSource = mockk(),
-    private val storeScope: CoroutineScope
+    private val traktShowDataSource: ShowDataSource = SuccessFakeShowDataSource,
+    private val tmdbShowDataSource: ShowDataSource = SuccessFakeShowDataSource,
+    private val tmdbShowImagesDataSource: ShowImagesDataSource = SuccessFakeShowImagesDataSource
 ) {
     @Provides
     fun provideTraktFollowedShowsDataSource() = traktFollowedShowsDataSource
@@ -98,21 +76,10 @@ class TestDataSourceModule(
     @Provides
     @app.tivi.inject.Tmdb
     fun provideTmdbShowImagesDataSource(): ShowImagesDataSource = tmdbShowImagesDataSource
-
-    @Provides
-    @ForStore
-    fun provideStoreCoroutineScope(): CoroutineScope = storeScope
 }
 
-@Module(
-    includes = [
-        TestRoomDatabaseModule::class,
-        DatabaseDaoModule::class,
-        TraktServiceModule::class,
-        ShowStoreModule::class,
-        ShowImagesStoreModule::class
-    ]
-)
+@InstallIn(ApplicationComponent::class)
+@Module
 class TestDatabaseModule {
     @Provides
     fun provideTrakt(): TraktV2 = TraktV2("fakefakefake")
@@ -123,19 +90,17 @@ class TestDatabaseModule {
     @Provides
     fun provideTraktAuthState() = TraktAuthState.LOGGED_IN
 
-    @Provides
-    fun provideContext(): Context = ApplicationProvider.getApplicationContext()
-
     @Singleton
     @Provides
     fun provideLogger(): Logger = mockk(relaxUnitFun = true)
 }
 
+@InstallIn(ApplicationComponent::class)
 @Module
 class TestRoomDatabaseModule {
     @Singleton
     @Provides
-    fun provideDatabase(context: Context): TiviDatabase {
+    fun provideDatabase(@ApplicationContext context: Context): TiviDatabase {
         return Room.inMemoryDatabaseBuilder(context, TiviTestDatabase::class.java)
             .allowMainThreadQueries()
             .build()

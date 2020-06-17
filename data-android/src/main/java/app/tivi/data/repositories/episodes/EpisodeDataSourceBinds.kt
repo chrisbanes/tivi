@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,12 @@ import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import dagger.Binds
 import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 
+@InstallIn(ApplicationComponent::class)
 @Module
-abstract class EpisodesModule {
+abstract class EpisodeDataSourceBinds {
     @Binds
     @Trakt
     abstract fun bindTraktEpisodeDataSource(source: TraktEpisodeDataSource): EpisodeDataSource

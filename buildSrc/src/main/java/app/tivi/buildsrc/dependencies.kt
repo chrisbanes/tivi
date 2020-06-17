@@ -189,6 +189,7 @@ object Libs {
         private const val version = "2.28-alpha"
         const val library = "com.google.dagger:hilt-android:$version"
         const val compiler = "com.google.dagger:hilt-android-compiler:$version"
+        const val testing = "com.google.dagger:hilt-android-testing:$version"
         const val gradlePlugin = "com.google.dagger:hilt-android-gradle-plugin:$version"
     }
 

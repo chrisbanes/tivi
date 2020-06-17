@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package app.tivi.data.repositories.shows
 
-import androidx.annotation.VisibleForTesting
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
@@ -28,16 +27,16 @@ import com.dropbox.android.external.store4.StoreBuilder
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Singleton
 
-@Module(includes = [ShowsModuleBinds::class, ShowStoreModule::class])
-class ShowsModule
-
+@InstallIn(ApplicationComponent::class)
 @Module
-internal abstract class ShowsModuleBinds {
+internal abstract class ShowDataSourceBinds {
     @Binds
     @Trakt
     abstract fun bindTraktShowDataSource(source: TraktShowDataSource): ShowDataSource
@@ -49,10 +48,10 @@ internal abstract class ShowsModuleBinds {
 
 typealias ShowStore = Store<Long, TiviShow>
 
+@InstallIn(ApplicationComponent::class)
 @Module
-@VisibleForTesting
 class ShowStoreModule {
-    private inner class ShowStoreFetcherResponse(val trakt: TiviShow, val tmdb: TiviShow)
+    private class ShowStoreFetcherResponse(val trakt: TiviShow, val tmdb: TiviShow)
 
     @Provides
     @Singleton

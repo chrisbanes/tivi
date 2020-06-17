@@ -14,58 +14,60 @@
  * limitations under the License.
  */
 
-package app.tivi.data.repositories.recommendedshows
+package app.tivi.data.repositories.trendingshows
 
-import app.tivi.data.daos.RecommendedDao
 import app.tivi.data.daos.TiviShowDao
-import app.tivi.data.entities.RecommendedShowEntry
+import app.tivi.data.daos.TrendingDao
 import app.tivi.data.entities.Success
+import app.tivi.data.entities.TrendingShowEntry
 import app.tivi.inject.ForStore
 import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
-typealias RecommendedShowsStore = Store<Int, List<RecommendedShowEntry>>
+typealias TrendingShowsStore = Store<Int, List<TrendingShowEntry>>
 
+@InstallIn(ApplicationComponent::class)
 @Module
-internal class RecommendedShowsModule {
+class TrendingShowsModule {
     @Provides
     @Singleton
-    fun provideRecommendedShowsStore(
-        traktRecommendedShows: TraktRecommendedShowsDataSource,
-        recommendedDao: RecommendedDao,
+    fun provideTrendingShowsStore(
+        traktTrendingShows: TraktTrendingShowsDataSource,
+        trendingShowsDao: TrendingDao,
         showDao: TiviShowDao,
-        lastRequestStore: RecommendedShowsLastRequestStore,
+        lastRequestStore: TrendingShowsLastRequestStore,
         @ForStore scope: CoroutineScope
-    ): RecommendedShowsStore {
+    ): TrendingShowsStore {
         return StoreBuilder.fromNonFlow { page: Int ->
-            val response = traktRecommendedShows(page, 20)
+            val response = traktTrendingShows(page, 20)
             if (page == 0 && response is Success) {
                 lastRequestStore.updateLastRequest()
             }
             response.getOrThrow()
         }.persister(
-            reader = recommendedDao::entriesForPage,
+            reader = trendingShowsDao::entriesObservable,
             writer = { page, response ->
-                recommendedDao.withTransaction {
-                    val entries = response.map { show ->
-                        val showId = showDao.getIdOrSavePlaceholder(show)
-                        RecommendedShowEntry(showId = showId, page = page)
+                trendingShowsDao.withTransaction {
+                    val entries = response.map { (show, entry) ->
+                        entry.copy(showId = showDao.getIdOrSavePlaceholder(show), page = page)
                     }
                     if (page == 0) {
                         // If we've requested page 0, remove any existing entries first
-                        recommendedDao.deleteAll()
-                        recommendedDao.insertAll(entries)
+                        trendingShowsDao.deleteAll()
+                        trendingShowsDao.insertAll(entries)
                     } else {
-                        recommendedDao.updatePage(page, entries)
+                        trendingShowsDao.updatePage(page, entries)
                     }
                 }
             },
-            delete = recommendedDao::deletePage,
-            deleteAll = recommendedDao::deleteAll
+            delete = trendingShowsDao::deletePage,
+            deleteAll = trendingShowsDao::deleteAll
         ).scope(scope).build()
     }
 }
