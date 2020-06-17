@@ -34,7 +34,7 @@ typealias PopularShowsStore = Store<Int, List<PopularShowEntry>>
 
 @InstallIn(ApplicationComponent::class)
 @Module
-internal class PopularShowsModule {
+internal object PopularShowsModule {
     @Provides
     @Singleton
     fun providePopularShowsStore(

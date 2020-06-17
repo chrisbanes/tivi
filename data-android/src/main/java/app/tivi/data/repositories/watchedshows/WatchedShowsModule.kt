@@ -34,7 +34,7 @@ typealias WatchedShowsStore = Store<Unit, List<WatchedShowEntry>>
 
 @InstallIn(ApplicationComponent::class)
 @Module
-internal class WatchedShowsModule {
+internal object WatchedShowsModule {
     @Provides
     @Singleton
     fun provideWatchedShowsStore(

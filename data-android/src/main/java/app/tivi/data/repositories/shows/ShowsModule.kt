@@ -50,7 +50,7 @@ typealias ShowStore = Store<Long, TiviShow>
 
 @InstallIn(ApplicationComponent::class)
 @Module
-class ShowStoreModule {
+object ShowStoreModule {
     private class ShowStoreFetcherResponse(val trakt: TiviShow, val tmdb: TiviShow)
 
     @Provides

@@ -25,7 +25,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Module(includes = [TraktServiceModule::class])
-class TraktModule {
+object TraktModule {
     @Provides
     @Singleton
     fun provideTrakt(
@@ -46,7 +46,7 @@ class TraktModule {
 }
 
 @Module
-class TraktServiceModule {
+object TraktServiceModule {
     @Provides
     fun provideTraktUsersService(traktV2: TraktV2) = traktV2.users()
 

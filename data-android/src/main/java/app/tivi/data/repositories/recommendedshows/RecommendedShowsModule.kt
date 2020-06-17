@@ -34,7 +34,7 @@ typealias RecommendedShowsStore = Store<Int, List<RecommendedShowEntry>>
 
 @InstallIn(ApplicationComponent::class)
 @Module
-internal class RecommendedShowsModule {
+internal object RecommendedShowsModule {
     @Provides
     @Singleton
     fun provideRecommendedShowsStore(

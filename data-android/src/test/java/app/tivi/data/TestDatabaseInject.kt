@@ -80,7 +80,7 @@ class TestDataSourceModule(
 
 @InstallIn(ApplicationComponent::class)
 @Module
-class TestDatabaseModule {
+object TestDatabaseModule {
     @Provides
     fun provideTrakt(): TraktV2 = TraktV2("fakefakefake")
 
@@ -97,7 +97,7 @@ class TestDatabaseModule {
 
 @InstallIn(ApplicationComponent::class)
 @Module
-class TestRoomDatabaseModule {
+object TestRoomDatabaseModule {
     @Singleton
     @Provides
     fun provideDatabase(@ApplicationContext context: Context): TiviDatabase {

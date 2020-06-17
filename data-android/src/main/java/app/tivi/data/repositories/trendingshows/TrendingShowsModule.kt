@@ -34,7 +34,7 @@ typealias TrendingShowsStore = Store<Int, List<TrendingShowEntry>>
 
 @InstallIn(ApplicationComponent::class)
 @Module
-class TrendingShowsModule {
+object TrendingShowsModule {
     @Provides
     @Singleton
     fun provideTrendingShowsStore(

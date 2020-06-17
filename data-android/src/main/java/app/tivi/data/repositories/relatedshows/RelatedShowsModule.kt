@@ -34,7 +34,7 @@ typealias RelatedShowsStore = Store<Long, List<RelatedShowEntry>>
 
 @InstallIn(ApplicationComponent::class)
 @Module
-internal class RelatedShowsModule {
+internal object RelatedShowsModule {
     @Provides
     @Singleton
     fun provideRelatedShowsStore(

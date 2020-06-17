@@ -44,7 +44,7 @@ internal abstract class ShowDataSourceBinds {
 
 @InstallIn(ApplicationComponent::class)
 @Module
-class ShowImagesStoreModule {
+object ShowImagesStoreModule {
     @Provides
     @Singleton
     fun provideTmdbShowImagesStore(

@@ -36,7 +36,7 @@ import kotlin.coroutines.EmptyCoroutineContext
  */
 @InstallIn(ApplicationComponent::class)
 @Module
-class HiltDataModule {
+object DataModule {
     @ForStore
     @Singleton
     @Provides
@@ -47,7 +47,7 @@ class HiltDataModule {
 
 @InstallIn(ApplicationComponent::class)
 @Module
-class RoomDatabaseModule {
+object RoomDatabaseModule {
     @Singleton
     @Provides
     fun provideDatabase(
@@ -65,7 +65,7 @@ class RoomDatabaseModule {
 
 @InstallIn(ApplicationComponent::class)
 @Module
-class DatabaseDaoModule {
+object DatabaseDaoModule {
     @Provides
     fun provideTiviShowDao(db: TiviDatabase) = db.showDao()
 

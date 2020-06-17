@@ -53,7 +53,7 @@ import javax.inject.Singleton
         TmdbModule::class
     ]
 )
-class AppModule {
+object AppModule {
     @ApplicationId
     @Provides
     fun provideApplicationId(application: Application): String = application.packageName

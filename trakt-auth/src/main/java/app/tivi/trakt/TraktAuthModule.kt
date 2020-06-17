@@ -38,7 +38,7 @@ import javax.inject.Singleton
 
 @InstallIn(ApplicationComponent::class)
 @Module
-class TraktAuthModule {
+object TraktAuthModule {
     @Singleton
     @Provides
     fun provideAuthConfig(): AuthorizationServiceConfiguration {

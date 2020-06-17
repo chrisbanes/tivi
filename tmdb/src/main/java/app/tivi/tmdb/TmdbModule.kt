@@ -25,7 +25,7 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
-class TmdbModule {
+object TmdbModule {
     @Provides
     fun provideTmdbImageUrlProvider(tmdbManager: TmdbManager): TmdbImageUrlProvider {
         return tmdbManager.getLatestImageProvider()
