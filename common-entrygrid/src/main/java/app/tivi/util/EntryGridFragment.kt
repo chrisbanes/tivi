@@ -26,7 +26,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
-import app.tivi.TiviFragmentWithBinding
+import app.tivi.FragmentWithBinding
 import app.tivi.api.UiError
 import app.tivi.api.UiLoading
 import app.tivi.common.entrygrid.R
@@ -43,7 +43,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collect
 
 @SuppressLint("ValidFragment")
-abstract class EntryGridFragment<LI, VM> : TiviFragmentWithBinding<FragmentEntryGridBinding>()
+abstract class EntryGridFragment<LI, VM> : FragmentWithBinding<FragmentEntryGridBinding>()
     where LI : EntryWithShow<out Entry>, VM : EntryViewModel<LI, *> {
     protected abstract val viewModel: VM
 

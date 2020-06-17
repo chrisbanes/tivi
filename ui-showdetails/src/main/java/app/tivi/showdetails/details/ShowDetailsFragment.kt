@@ -23,11 +23,11 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
-import app.tivi.TiviFragment
 import app.tivi.common.compose.observeWindowInsets
 import app.tivi.episodedetails.EpisodeDetailsFragment
 import app.tivi.extensions.scheduleStartPostponedTransitions
@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ShowDetailsFragment : TiviFragment() {
+class ShowDetailsFragment : Fragment() {
     private val viewModel: ShowDetailsFragmentViewModel by viewModels()
 
     @Inject @JvmField internal var textCreator: ShowDetailsTextCreator? = null

@@ -26,7 +26,7 @@ import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
-import app.tivi.TiviFragmentWithBinding
+import app.tivi.FragmentWithBinding
 import app.tivi.data.entities.TiviShow
 import app.tivi.extensions.doOnLayouts
 import app.tivi.extensions.hideSoftInput
@@ -39,7 +39,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-internal class SearchFragment : TiviFragmentWithBinding<FragmentSearchBinding>() {
+internal class SearchFragment : FragmentWithBinding<FragmentSearchBinding>() {
     private val viewModel: SearchViewModel by viewModels()
 
     @Inject @JvmField internal var controller: SearchEpoxyController? = null

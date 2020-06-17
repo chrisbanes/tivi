@@ -21,8 +21,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
+import androidx.fragment.app.Fragment
 
-abstract class TiviFragmentWithBinding<V : ViewDataBinding> : TiviFragment() {
+abstract class FragmentWithBinding<V : ViewDataBinding> : Fragment() {
     var binding: V? = null
         private set
 

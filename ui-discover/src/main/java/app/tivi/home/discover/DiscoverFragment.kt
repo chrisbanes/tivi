@@ -24,7 +24,7 @@ import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
-import app.tivi.TiviFragmentWithBinding
+import app.tivi.FragmentWithBinding
 import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
@@ -44,7 +44,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class DiscoverFragment : TiviFragmentWithBinding<FragmentDiscoverBinding>() {
+class DiscoverFragment : FragmentWithBinding<FragmentDiscoverBinding>() {
     private val viewModel: DiscoverViewModel by viewModels()
 
     @Inject @JvmField internal var controller: DiscoverEpoxyController? = null

@@ -28,7 +28,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
-import app.tivi.TiviFragmentWithBinding
+import app.tivi.FragmentWithBinding
 import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
@@ -47,7 +47,7 @@ import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class WatchedFragment : TiviFragmentWithBinding<FragmentWatchedBinding>() {
+class WatchedFragment : FragmentWithBinding<FragmentWatchedBinding>() {
     private val viewModel: WatchedViewModel by viewModels()
 
     @Inject @JvmField internal var controller: WatchedEpoxyController? = null
