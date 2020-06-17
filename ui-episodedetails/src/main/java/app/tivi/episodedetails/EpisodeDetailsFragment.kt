@@ -52,6 +52,13 @@ class EpisodeDetailsFragment : BottomSheetDialogFragment() {
 
     private val pendingActions = Channel<EpisodeDetailsAction>(Channel.BUFFERED)
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val args = requireArguments()
+        viewModel.setEpisodeId(args.getLong("episode_id"))
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

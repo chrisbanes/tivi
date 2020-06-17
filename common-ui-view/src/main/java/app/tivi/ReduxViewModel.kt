@@ -81,13 +81,19 @@ abstract class ReduxViewModel<S> : ViewModel() {
         }
     }
 
-    protected fun <A> selectSubscribe(prop1: KProperty1<S, A>): Flow<A> {
+    protected fun <A> selectSubscribe(prop1: KProperty1<S, A>, block: (A) -> Unit) {
+        viewModelScope.launch {
+            selectSubscribe(prop1).collect { block(it) }
+        }
+    }
+
+    private fun <A> selectSubscribe(prop1: KProperty1<S, A>): Flow<A> {
         return stateChannel.asFlow()
             .map { prop1.get(it) }
             .distinctUntilChanged()
     }
 
-    protected suspend fun setStateSuspend(reducer: S.() -> S) {
+    protected suspend fun setStateMutexed(reducer: S.() -> S) {
         stateMutex.withLock {
             state = reducer(state)
             stateChannel.offer(state)
@@ -95,15 +101,15 @@ abstract class ReduxViewModel<S> : ViewModel() {
     }
 
     protected fun setState(reducer: S.() -> S) {
-        viewModelScope.launch { setStateSuspend(reducer) }
+        viewModelScope.launch { setStateMutexed(reducer) }
     }
 
-    protected suspend fun withStateSuspend(block: (S) -> Unit) {
+    protected suspend fun withStateMutexed(block: (S) -> Unit) {
         stateMutex.withLock { block(state) }
     }
 
     protected fun withState(block: (S) -> Unit) {
-        viewModelScope.launch { withStateSuspend(block) }
+        viewModelScope.launch { withStateMutexed(block) }
     }
 
     protected abstract fun createInitialState(): S

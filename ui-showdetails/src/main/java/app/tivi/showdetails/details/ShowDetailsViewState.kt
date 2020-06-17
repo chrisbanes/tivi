@@ -27,7 +27,7 @@ import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.views.FollowedShowsWatchStats
 
 data class ShowDetailsViewState(
-    val showId: Long = 0,
+    val showId: Long? = null,
     val isFollowed: Boolean = false,
     val show: TiviShow = TiviShow.EMPTY_SHOW,
     val posterImage: ShowTmdbImage? = null,
@@ -43,7 +43,6 @@ data class ShowDetailsViewState(
 )
 
 sealed class UiEffect
-data class PendingOpenEpisodeUiEffect(val episodeId: Long) : UiEffect()
-data class ExecutableOpenEpisodeUiEffect(val episodeId: Long, val seasonId: Long) : UiEffect()
-data class ExecutableOpenShowUiEffect(val showId: Long) : UiEffect()
+data class OpenEpisodeUiEffect(val episodeId: Long, val seasonId: Long) : UiEffect()
+data class OpenShowUiEffect(val showId: Long) : UiEffect()
 data class FocusSeasonUiEffect(val seasonId: Long) : UiEffect()

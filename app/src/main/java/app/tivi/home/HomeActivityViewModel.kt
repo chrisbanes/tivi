@@ -26,10 +26,8 @@ import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 
 class HomeActivityViewModel @ViewModelInject constructor(
     observeTraktAuthState: ObserveTraktAuthState,
@@ -54,10 +52,8 @@ class HomeActivityViewModel @ViewModelInject constructor(
         }
         observeTraktAuthState()
 
-        viewModelScope.launch {
-            selectSubscribe(HomeActivityViewState::user).collect { user ->
-                logger.setUserId(user?.username ?: "")
-            }
+        selectSubscribe(HomeActivityViewState::user) { user ->
+            logger.setUserId(user?.username ?: "")
         }
     }
 

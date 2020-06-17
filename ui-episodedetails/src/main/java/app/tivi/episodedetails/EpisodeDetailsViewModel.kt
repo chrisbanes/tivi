@@ -93,12 +93,14 @@ class EpisodeDetailsViewModel @ViewModelInject constructor(
             }
         }
 
-        withState {
-            observeEpisodeDetails(ObserveEpisodeDetails.Params(it.episodeId))
-            observeEpisodeWatches(ObserveEpisodeWatches.Params(it.episodeId))
-        }
+        selectSubscribe(EpisodeDetailsViewState::episodeId) { episodeId ->
+            episodeId?.also {
+                observeEpisodeDetails(ObserveEpisodeDetails.Params(episodeId))
+                observeEpisodeWatches(ObserveEpisodeWatches.Params(episodeId))
 
-        refresh(false)
+                refresh(false)
+            }
+        }
     }
 
     private fun updateFromEpisodeDetails(episodeWithSeason: EpisodeWithSeason) = setState {
@@ -118,22 +120,28 @@ class EpisodeDetailsViewModel @ViewModelInject constructor(
         viewModelScope.launch { pendingActions.send(action) }
     }
 
-    private fun refresh(fromUserInteraction: Boolean) = withState {
-        updateEpisodeDetails(
-            UpdateEpisodeDetails.Params(it.episodeId, fromUserInteraction)
-        ).watchStatus()
+    private fun refresh(fromUserInteraction: Boolean) = withState { state ->
+        state.episodeId?.also { episodeId ->
+            updateEpisodeDetails(
+                UpdateEpisodeDetails.Params(episodeId, fromUserInteraction)
+            ).watchStatus()
+        }
     }
 
     private fun removeWatchEntry(action: RemoveEpisodeWatchAction) {
         removeEpisodeWatch(RemoveEpisodeWatch.Params(action.watchId)).watchStatus()
     }
 
-    private fun markWatched() = withState {
-        addEpisodeWatch(AddEpisodeWatch.Params(it.episodeId, OffsetDateTime.now())).watchStatus()
+    private fun markWatched() = withState { state ->
+        state.episodeId?.also { episodeId ->
+            addEpisodeWatch(AddEpisodeWatch.Params(episodeId, OffsetDateTime.now())).watchStatus()
+        }
     }
 
-    private fun markUnwatched() = withState {
-        removeEpisodeWatches(RemoveEpisodeWatches.Params(it.episodeId)).watchStatus()
+    private fun markUnwatched() = withState { state ->
+        state.episodeId?.also { episodeId ->
+            removeEpisodeWatches(RemoveEpisodeWatches.Params(episodeId)).watchStatus()
+        }
     }
 
     private fun Flow<InvokeStatus>.watchStatus() = viewModelScope.launch { collectStatus() }
@@ -151,7 +159,8 @@ class EpisodeDetailsViewModel @ViewModelInject constructor(
     }
 
     override fun createInitialState(): EpisodeDetailsViewState {
-        // TODO
-        return EpisodeDetailsViewState(episodeId = -1L)
+        return EpisodeDetailsViewState()
     }
+
+    fun setEpisodeId(id: Long) = setState { copy(episodeId = id) }
 }

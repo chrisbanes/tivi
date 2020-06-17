@@ -47,6 +47,17 @@ class ShowDetailsFragment : TiviFragment() {
 
     private val pendingActions = Channel<ShowDetailsAction>(Channel.BUFFERED)
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val args = requireArguments()
+        viewModel.setShowId(args.getLong("show_id"))
+
+        if (args.containsKey("episode_id")) {
+            viewModel.submitAction(OpenEpisodeDetails(args.getLong("episode_id")))
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -88,11 +99,11 @@ class ShowDetailsFragment : TiviFragment() {
     private fun render(state: ShowDetailsViewState) {
         state.pendingUiEffects.forEach { effect ->
             when (effect) {
-                is ExecutableOpenShowUiEffect -> {
+                is OpenShowUiEffect -> {
                     findNavController().navigate("app.tivi://show/${effect.showId}".toUri())
                     viewModel.submitAction(ClearPendingUiEffect(effect))
                 }
-                is ExecutableOpenEpisodeUiEffect -> {
+                is OpenEpisodeUiEffect -> {
                     EpisodeDetailsFragment.create(effect.episodeId)
                         .show(childFragmentManager, "episode")
                     viewModel.submitAction(ClearPendingUiEffect(effect))

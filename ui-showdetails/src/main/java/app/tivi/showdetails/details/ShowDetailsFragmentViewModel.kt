@@ -149,30 +149,28 @@ class ShowDetailsFragmentViewModel @ViewModelInject constructor(
             }
         }
 
-        withState { state ->
-            observeShowFollowStatus(ObserveShowFollowStatus.Params(state.showId))
-            observeShowDetails(ObserveShowDetails.Params(state.showId))
-            observeShowImages(ObserveShowImages.Params(state.showId))
-            observeRelatedShows(ObserveRelatedShows.Params(state.showId))
-            observeShowSeasons(ObserveShowSeasonData.Params(state.showId))
-            observeNextEpisodeToWatch(ObserveShowNextEpisodeToWatch.Params(state.showId))
-            observeShowViewStats(ObserveShowViewStats.Params(state.showId))
+        selectSubscribe(ShowDetailsViewState::showId) { showId ->
+            if (showId != null) {
+                observeShowFollowStatus(ObserveShowFollowStatus.Params(showId))
+                observeShowDetails(ObserveShowDetails.Params(showId))
+                observeShowImages(ObserveShowImages.Params(showId))
+                observeRelatedShows(ObserveRelatedShows.Params(showId))
+                observeShowSeasons(ObserveShowSeasonData.Params(showId))
+                observeNextEpisodeToWatch(ObserveShowNextEpisodeToWatch.Params(showId))
+                observeShowViewStats(ObserveShowViewStats.Params(showId))
 
-            val pendingOpenEpisode = state.pendingUiEffects
-                .firstOrNull { it is PendingOpenEpisodeUiEffect }
-            if (pendingOpenEpisode is PendingOpenEpisodeUiEffect) {
-                openEpisodeDetails(OpenEpisodeDetails(pendingOpenEpisode.episodeId))
+                refresh(false)
             }
         }
-
-        refresh(false)
     }
 
     private fun refresh(fromUser: Boolean) = withState { state ->
-        updateShowDetails(UpdateShowDetails.Params(state.showId, fromUser)).watchStatus()
-        updateShowImages(UpdateShowImages.Params(state.showId, fromUser)).watchStatus()
-        updateRelatedShows(UpdateRelatedShows.Params(state.showId, fromUser)).watchStatus()
-        updateShowSeasons(UpdateShowSeasonData.Params(state.showId, fromUser)).watchStatus()
+        state.showId?.also { showId ->
+            updateShowDetails(UpdateShowDetails.Params(showId, fromUser)).watchStatus()
+            updateShowImages(UpdateShowImages.Params(showId, fromUser)).watchStatus()
+            updateRelatedShows(UpdateRelatedShows.Params(showId, fromUser)).watchStatus()
+            updateShowSeasons(UpdateShowSeasonData.Params(showId, fromUser)).watchStatus()
+        }
     }
 
     private fun Flow<InvokeStatus>.watchStatus() = viewModelScope.launch { collectStatus() }
@@ -193,30 +191,28 @@ class ShowDetailsFragmentViewModel @ViewModelInject constructor(
         pendingActions.send(action)
     }
 
-    private fun onToggleMyShowsButtonClicked() = withState {
-        changeShowFollowStatus(ChangeShowFollowStatus.Params(it.showId, TOGGLE)).watchStatus()
+    fun setShowId(id: Long) = setState { copy(showId = id) }
+
+    private fun onToggleMyShowsButtonClicked() = withState { state ->
+        state.showId?.also { showId ->
+            changeShowFollowStatus(ChangeShowFollowStatus.Params(showId, TOGGLE)).watchStatus()
+        }
     }
 
     private fun openShowDetails(action: OpenShowDetails) = setState {
-        val pending = pendingUiEffects.filter { it !is ExecutableOpenShowUiEffect }
-        copy(pendingUiEffects = pending + ExecutableOpenShowUiEffect(action.showId))
+        val pending = pendingUiEffects.filter { it !is OpenShowUiEffect }
+        copy(pendingUiEffects = pending + OpenShowUiEffect(action.showId))
     }
 
     private fun openEpisodeDetails(action: OpenEpisodeDetails) = viewModelScope.launch {
         val episode = getEpisode(GetEpisodeDetails.Params(action.episodeId)).first()
         if (episode != null) {
             setState {
-                val pending = pendingUiEffects.filter {
-                    when (it) {
-                        is PendingOpenEpisodeUiEffect,
-                        is ExecutableOpenEpisodeUiEffect -> false
-                        else -> true
-                    }
-                }
+                val pending = pendingUiEffects.filterNot { it is OpenEpisodeUiEffect }
                 copy(
                     expandedSeasonIds = expandedSeasonIds + episode.seasonId,
                     pendingUiEffects = pending +
-                        ExecutableOpenEpisodeUiEffect(action.episodeId, episode.seasonId)
+                        OpenEpisodeUiEffect(action.episodeId, episode.seasonId)
                 )
             }
         }
