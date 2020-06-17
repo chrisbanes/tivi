@@ -18,7 +18,6 @@ package app.tivi
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -40,10 +39,8 @@ abstract class ReduxViewModel<S> : ViewModel() {
     internal var state: S = createInitialState()
     private val stateChannel = ConflatedBroadcastChannel(state)
 
-    private val _liveData = MutableLiveData<S>()
-
     val liveData: LiveData<S>
-        get() = _liveData
+        get() = stateChannel.asFlow().asLiveData()
 
     protected suspend fun <T> Flow<T>.execute(
         reducer: S.(Async<T>) -> S
@@ -69,8 +66,6 @@ abstract class ReduxViewModel<S> : ViewModel() {
             }
             .collect { setState { reducer(it) } }
     }
-
-    fun observeAsLiveData(): LiveData<S> = liveData
 
     fun <A> selectObserve(prop1: KProperty1<S, A>): LiveData<A> {
         return selectSubscribe(prop1).asLiveData()
@@ -112,6 +107,10 @@ abstract class ReduxViewModel<S> : ViewModel() {
     }
 
     protected abstract fun createInitialState(): S
+
+    override fun onCleared() {
+        stateChannel.close()
+    }
 }
 
 fun <VM : ReduxViewModel<S>, S> withState(viewModel: VM, block: (S) -> Unit) = block(viewModel.state)

@@ -53,7 +53,7 @@ class AccountUiFragment : BottomSheetDialogFragment() {
 
         composeAccountUi(
             this,
-            viewModel.observeAsLiveData(),
+            viewModel.liveData,
             observeWindowInsets(),
             { pendingActions.sendBlocking(it) },
             tiviDateFormatter!!

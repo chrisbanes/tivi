@@ -21,7 +21,6 @@ import androidx.core.content.edit
 import app.tivi.actions.ShowTasks
 import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.Logger
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
 import kotlinx.coroutines.CoroutineScope
@@ -32,11 +31,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.openid.appauth.AuthState
-import net.openid.appauth.AuthorizationException
-import net.openid.appauth.AuthorizationResponse
-import net.openid.appauth.AuthorizationService
-import net.openid.appauth.ClientAuthentication
-import net.openid.appauth.TokenResponse
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -44,10 +38,8 @@ import javax.inject.Singleton
 @Singleton
 class TraktManager @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
-    private val clientAuth: Lazy<ClientAuthentication>,
     @Named("auth") private val authPrefs: SharedPreferences,
     private val showTasks: ShowTasks,
-    private val logger: Logger,
     private val traktClient: Lazy<TraktV2>,
     @ProcessLifetime val processScope: CoroutineScope
 ) {
@@ -90,20 +82,7 @@ class TraktManager @Inject constructor(
         clearPersistedAuthState()
     }
 
-    fun onAuthResponse(authService: AuthorizationService, response: AuthorizationResponse) {
-        authService.performTokenRequest(
-            response.createTokenExchangeRequest(),
-            clientAuth.get(),
-            ::onTokenExchangeResponse
-        )
-    }
-
-    fun onAuthException(exception: AuthorizationException) {
-        logger.d(exception, "AuthException")
-    }
-
-    private fun onTokenExchangeResponse(response: TokenResponse?, ex: AuthorizationException?) {
-        val newState = AuthState().apply { update(response, ex) }
+    fun onNewAuthState(newState: AuthState) {
         processScope.launch(dispatchers.main) {
             // Update our local state
             authState.send(newState)

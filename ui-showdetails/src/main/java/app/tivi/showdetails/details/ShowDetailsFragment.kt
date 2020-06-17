@@ -56,7 +56,7 @@ class ShowDetailsFragment : TiviFragment() {
             layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
             composeShowDetails(
-                viewModel.observeAsLiveData(),
+                viewModel.liveData,
                 viewModel.selectObserve(ShowDetailsViewState::pendingUiEffects),
                 observeWindowInsets(),
                 { pendingActions.sendBlocking(it) },

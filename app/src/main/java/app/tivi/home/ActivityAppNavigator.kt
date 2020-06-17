@@ -16,29 +16,33 @@
 
 package app.tivi.home
 
+import android.app.Activity
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import androidx.fragment.app.FragmentActivity
 import app.tivi.AppNavigator
 import app.tivi.account.AccountUiFragment
 import app.tivi.trakt.TraktConstants
 import app.tivi.trakt.TraktManager
-import dagger.hilt.android.qualifiers.ActivityContext
+import app.tivi.util.Logger
+import dagger.Lazy
+import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
+import net.openid.appauth.ClientAuthentication
 import javax.inject.Inject
-import javax.inject.Provider
 
 class ActivityAppNavigator @Inject constructor(
-    @ActivityContext private val context: Context,
+    private val activity: Activity,
     private val traktManager: TraktManager,
-    private val requestProvider: Provider<AuthorizationRequest>
+    private val requestProvider: Lazy<AuthorizationRequest>,
+    private val clientAuth: Lazy<ClientAuthentication>,
+    private val logger: Logger
 ) : AppNavigator {
     private val authService by lazy(LazyThreadSafetyMode.NONE) {
-        AuthorizationService(context)
+        AuthorizationService(activity)
     }
 
     override fun login() {
@@ -50,7 +54,7 @@ class ActivityAppNavigator @Inject constructor(
 
     override fun openAccount() {
         // TODO: Move this to use navigation
-        AccountUiFragment().show((context as FragmentActivity).supportFragmentManager, "account")
+        AccountUiFragment().show((activity as FragmentActivity).supportFragmentManager, "account")
     }
 
     override fun onAuthResponse(intent: Intent) {
@@ -58,18 +62,22 @@ class ActivityAppNavigator @Inject constructor(
         val error = AuthorizationException.fromIntent(intent)
         when {
             response != null -> {
-                traktManager.onAuthResponse(authService, response)
+                authService.performTokenRequest(
+                    response.createTokenExchangeRequest(),
+                    clientAuth.get()
+                ) { tokenResponse, ex ->
+                    val state = AuthState().apply { update(tokenResponse, ex) }
+                    traktManager.onNewAuthState(state)
+                }
             }
-            error != null -> {
-                traktManager.onAuthException(error)
-            }
+            error != null -> logger.d(error, "AuthException")
         }
     }
 
-    override fun provideAuthHandleResponseIntent(requestCode: Int): PendingIntent {
-        val intent = Intent(context, HomeActivity::class.java).apply {
+    private fun provideAuthHandleResponseIntent(requestCode: Int): PendingIntent {
+        val intent = Intent(activity, HomeActivity::class.java).apply {
             action = TraktConstants.INTENT_ACTION_HANDLE_AUTH_RESPONSE
         }
-        return PendingIntent.getActivity(context, requestCode, intent, 0)
+        return PendingIntent.getActivity(activity, requestCode, intent, 0)
     }
 }

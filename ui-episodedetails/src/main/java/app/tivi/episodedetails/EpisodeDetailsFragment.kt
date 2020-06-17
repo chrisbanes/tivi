@@ -61,7 +61,7 @@ class EpisodeDetailsFragment : BottomSheetDialogFragment() {
             layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
 
             composeEpisodeDetails(
-                viewModel.observeAsLiveData(),
+                viewModel.liveData,
                 observeWindowInsets(),
                 { pendingActions.sendBlocking(it) },
                 tiviDateFormatter!!
