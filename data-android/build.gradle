@@ -85,6 +85,7 @@ dependencies {
 
     testImplementation Libs.AndroidX.archCoreTesting
     testImplementation Libs.AndroidX.Test.core
+    testImplementation Libs.AndroidX.Test.Ext.junit
     testImplementation Libs.AndroidX.Room.testing
     testImplementation Libs.Coroutines.test
     testImplementation Libs.Hilt.testing
