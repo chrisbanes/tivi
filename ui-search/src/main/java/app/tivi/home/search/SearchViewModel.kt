@@ -16,6 +16,7 @@
 
 package app.tivi.home.search
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.SearchShows
@@ -29,9 +30,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-internal class SearchViewModel @Inject constructor(
+internal class SearchViewModel @ViewModelInject constructor(
     private val searchShows: SearchShows
 ) : ReduxViewModel<SearchViewState>() {
     private val searchQuery = ConflatedBroadcastChannel<String>()

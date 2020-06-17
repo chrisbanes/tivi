@@ -16,6 +16,7 @@
 
 package app.tivi.home.followed
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import app.tivi.AppNavigator
@@ -42,9 +43,8 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-internal class FollowedViewModel @Inject constructor(
+internal class FollowedViewModel @ViewModelInject constructor(
     private val updateFollowedShows: UpdateFollowedShows,
     private val observePagedFollowedShows: ObservePagedFollowedShows,
     private val observeTraktAuthState: ObserveTraktAuthState,

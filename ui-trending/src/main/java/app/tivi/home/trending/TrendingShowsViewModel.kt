@@ -16,6 +16,7 @@
 
 package app.tivi.home.trending
 
+import androidx.hilt.lifecycle.ViewModelInject
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.UpdateTrendingShows
@@ -25,9 +26,8 @@ import app.tivi.domain.observers.ObservePagedTrendingShows
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
-import javax.inject.Inject
 
-class TrendingShowsViewModel @Inject constructor(
+class TrendingShowsViewModel @ViewModelInject constructor(
     override val dispatchers: AppCoroutineDispatchers,
     override val pagingInteractor: ObservePagedTrendingShows,
     private val interactor: UpdateTrendingShows,

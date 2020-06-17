@@ -16,6 +16,7 @@
 
 package app.tivi.showdetails.details
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import app.tivi.ReduxViewModel
 import app.tivi.Success
@@ -52,9 +53,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-class ShowDetailsFragmentViewModel @Inject constructor(
+class ShowDetailsFragmentViewModel @ViewModelInject constructor(
     private val updateShowDetails: UpdateShowDetails,
     observeShowDetails: ObserveShowDetails,
     observeShowImages: ObserveShowImages,

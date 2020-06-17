@@ -26,13 +26,13 @@ import androidx.core.text.parseAsHtml
 import app.tivi.common.ui.R
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.views.FollowedShowsWatchStats
-import app.tivi.inject.PerActivity
 import app.tivi.ui.text.TypefaceSpan
 import app.tivi.ui.text.textAppearanceSpanForAttribute
+import dagger.hilt.android.qualifiers.ActivityContext
 import javax.inject.Inject
 
 class HomeTextCreator @Inject constructor(
-    @PerActivity private val context: Context
+    @ActivityContext private val context: Context
 ) {
     private var bodyTypeface: Typeface = Typeface.DEFAULT
         get() {

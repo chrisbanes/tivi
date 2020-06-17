@@ -16,6 +16,7 @@
 
 package app.tivi.home.discover
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import app.tivi.AppNavigator
 import app.tivi.ReduxViewModel
@@ -37,10 +38,9 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import javax.inject.Provider
 
-internal class DiscoverViewModel @Inject constructor(
+internal class DiscoverViewModel @ViewModelInject constructor(
     private val updatePopularShows: UpdatePopularShows,
     observePopularShows: ObservePopularShows,
     private val updateTrendingShows: UpdateTrendingShows,

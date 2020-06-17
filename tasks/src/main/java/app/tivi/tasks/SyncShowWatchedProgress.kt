@@ -24,10 +24,11 @@ import androidx.work.Data
 import androidx.work.WorkerParameters
 import app.tivi.domain.interactors.UpdateShowSeasonData
 import app.tivi.util.Logger
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 class SyncShowWatchedProgress @WorkerInject constructor(
     @Assisted params: WorkerParameters,
-    @Assisted context: Context,
+    @Assisted @ApplicationContext context: Context,
     private val updateShowSeasonData: UpdateShowSeasonData,
     private val logger: Logger
 ) : CoroutineWorker(context, params) {

@@ -23,6 +23,7 @@ import coil.Coil
 import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.util.CoilUtils
+import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
@@ -30,11 +31,11 @@ class CoilAppInitializer @Inject constructor(
     private val tmdbImageEntityMapper: TmdbImageEntityCoilMapper,
     private val episodeEntityMapper: EpisodeCoilMapper,
     private val okHttpClient: OkHttpClient,
-    private val applicationContext: Context
+    @ApplicationContext private val context: Context
 ) : AppInitializer {
     override fun init(application: Application) {
         val coilOkHttpClient = okHttpClient.newBuilder()
-            .cache(CoilUtils.createDefaultCache(applicationContext))
+            .cache(CoilUtils.createDefaultCache(context))
             .build()
         Coil.setImageLoader(object : ImageLoaderFactory {
             override fun newImageLoader(): ImageLoader = ImageLoader.Builder(application)

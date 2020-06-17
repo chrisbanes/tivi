@@ -216,6 +216,7 @@ dependencies {
     kapt Libs.Hilt.compiler
 
     implementation Libs.AndroidX.Hilt.work
+    implementation Libs.AndroidX.Hilt.viewmodel
     kapt Libs.AndroidX.Hilt.compiler
 
     implementation Libs.Google.firebaseCore

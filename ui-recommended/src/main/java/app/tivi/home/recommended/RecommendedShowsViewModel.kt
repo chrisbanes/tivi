@@ -16,6 +16,7 @@
 
 package app.tivi.home.recommended
 
+import androidx.hilt.lifecycle.ViewModelInject
 import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.UpdateRecommendedShows
@@ -25,9 +26,8 @@ import app.tivi.domain.observers.ObservePagedRecommendedShows
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
-import javax.inject.Inject
 
-class RecommendedShowsViewModel @Inject constructor(
+class RecommendedShowsViewModel @ViewModelInject constructor(
     override val dispatchers: AppCoroutineDispatchers,
     override val pagingInteractor: ObservePagedRecommendedShows,
     private val interactor: UpdateRecommendedShows,

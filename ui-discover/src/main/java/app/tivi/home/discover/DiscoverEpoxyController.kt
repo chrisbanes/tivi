@@ -30,10 +30,11 @@ import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.extensions.observable
 import com.airbnb.epoxy.Carousel
 import com.airbnb.epoxy.EpoxyController
+import dagger.hilt.android.qualifiers.ActivityContext
 import javax.inject.Inject
 
 internal class DiscoverEpoxyController @Inject constructor(
-    private val context: Context,
+    @ActivityContext private val context: Context,
     private val textCreator: DiscoverTextCreator
 ) : EpoxyController() {
     var callbacks: Callbacks? by observable(null, ::requestModelBuild)

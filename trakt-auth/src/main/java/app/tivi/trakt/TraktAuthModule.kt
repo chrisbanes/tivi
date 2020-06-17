@@ -25,6 +25,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import net.openid.appauth.AuthorizationRequest
@@ -85,7 +86,9 @@ class TraktAuthModule {
     @Singleton
     @Provides
     @Named("auth")
-    fun provideAuthSharedPrefs(context: Context): SharedPreferences {
+    fun provideAuthSharedPrefs(
+        @ApplicationContext context: Context
+    ): SharedPreferences {
         return context.getSharedPreferences("trakt_auth", Context.MODE_PRIVATE)
     }
 }

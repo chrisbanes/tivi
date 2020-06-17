@@ -20,12 +20,13 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import app.tivi.appinitializers.AppInitializers
+import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
+@HiltAndroidApp
 class TiviApplication : Application(), Configuration.Provider {
     @Inject @JvmField var initializers: AppInitializers? = null
-
-    @Inject lateinit var workerFactory: HiltWorkerFactory
+    @Inject @JvmField var workerFactory: HiltWorkerFactory? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -34,7 +35,7 @@ class TiviApplication : Application(), Configuration.Provider {
 
     override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder()
-            .setWorkerFactory(workerFactory)
+            .setWorkerFactory(workerFactory!!)
             .build()
     }
 }

@@ -16,6 +16,7 @@
 
 package app.tivi.episodedetails
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import app.tivi.ReduxViewModel
 import app.tivi.api.UiError
@@ -41,9 +42,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
-import javax.inject.Inject
 
-class EpisodeDetailsViewModel @Inject constructor(
+class EpisodeDetailsViewModel @ViewModelInject constructor(
     private val updateEpisodeDetails: UpdateEpisodeDetails,
     observeEpisodeDetails: ObserveEpisodeDetails,
     private val observeEpisodeWatches: ObserveEpisodeWatches,

@@ -84,5 +84,6 @@ dependencies {
     implementation Libs.Kotlin.stdlib
 
     implementation Libs.Hilt.library
+    implementation Libs.AndroidX.Hilt.viewmodel
     kapt Libs.Hilt.compiler
 }

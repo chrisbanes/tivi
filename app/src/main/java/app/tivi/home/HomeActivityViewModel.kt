@@ -16,6 +16,7 @@
 
 package app.tivi.home
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.UpdateUserDetails
@@ -33,9 +34,8 @@ import kotlinx.coroutines.launch
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
-import javax.inject.Inject
 
-class HomeActivityViewModel @Inject constructor(
+class HomeActivityViewModel @ViewModelInject constructor(
     observeTraktAuthState: ObserveTraktAuthState,
     private val traktManager: TraktManager,
     private val updateUserDetails: UpdateUserDetails,

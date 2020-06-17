@@ -25,6 +25,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.multibindings.IntoSet
 import javax.inject.Singleton
 
@@ -33,7 +34,9 @@ import javax.inject.Singleton
 class TasksModule {
     @Provides
     @Singleton
-    fun provideWorkManager(context: Context): WorkManager = WorkManager.getInstance(context)
+    fun provideWorkManager(
+        @ApplicationContext context: Context
+    ): WorkManager = WorkManager.getInstance(context)
 }
 
 @InstallIn(ApplicationComponent::class)

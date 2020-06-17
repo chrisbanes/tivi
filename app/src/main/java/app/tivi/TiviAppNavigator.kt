@@ -21,10 +21,11 @@ import android.content.Context
 import android.content.Intent
 import app.tivi.home.HomeActivity
 import app.tivi.trakt.TraktConstants
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 open class TiviAppNavigator @Inject constructor(
-    private val context: Context
+    @ApplicationContext private val context: Context
 ) : AppNavigator {
     override fun provideAuthHandleResponseIntent(requestCode: Int): PendingIntent {
         val intent = Intent(context, HomeActivity::class.java).apply {

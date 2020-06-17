@@ -24,6 +24,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Singleton
 
 @InstallIn(ApplicationComponent::class)
@@ -42,7 +43,9 @@ class DatabaseModule
 class RoomDatabaseModule {
     @Singleton
     @Provides
-    fun provideDatabase(context: Context): TiviRoomDatabase {
+    fun provideDatabase(
+        @ApplicationContext context: Context
+    ): TiviRoomDatabase {
         val builder = Room.databaseBuilder(context, TiviRoomDatabase::class.java, "shows.db")
             .addMigrations(*TiviRoomDatabase_Migrations.build())
             .fallbackToDestructiveMigration()

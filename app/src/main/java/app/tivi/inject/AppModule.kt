@@ -16,6 +16,8 @@
 
 package app.tivi.inject
 
+import android.app.Application
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -23,7 +25,6 @@ import androidx.lifecycle.coroutineScope
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.preference.PreferenceManager
 import app.tivi.BuildConfig
-import app.tivi.TiviApplication
 import app.tivi.extensions.toThreeTenDateTimeFormatter
 import app.tivi.home.followed.R
 import app.tivi.tmdb.TmdbModule
@@ -34,6 +35,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.threeten.bp.ZoneId
@@ -56,7 +58,7 @@ import android.text.format.DateFormat as AndroidDateFormat
 class AppModule {
     @ApplicationId
     @Provides
-    fun provideApplicationId(application: TiviApplication): String = application.packageName
+    fun provideApplicationId(application: Application): String = application.packageName
 
     @Singleton
     @Provides
@@ -81,14 +83,18 @@ class AppModule {
     @Named("app")
     @Provides
     @Singleton
-    fun provideAppPreferences(application: TiviApplication): SharedPreferences {
-        return PreferenceManager.getDefaultSharedPreferences(application)
+    fun provideAppPreferences(
+        @ApplicationContext context: Context
+    ): SharedPreferences {
+        return PreferenceManager.getDefaultSharedPreferences(context)
     }
 
     @Provides
     @Singleton
     @Named("cache")
-    fun provideCacheDir(application: TiviApplication): File = application.cacheDir
+    fun provideCacheDir(
+        @ApplicationContext context: Context
+    ): File = context.cacheDir
 
     @Provides
     @Named("tmdb-api")
@@ -105,44 +111,52 @@ class AppModule {
     @Singleton
     @Provides
     @MediumDate
-    fun provideMediumDateFormatter(application: TiviApplication): DateTimeFormatter {
+    fun provideMediumDateFormatter(
+        @ApplicationContext context: Context
+    ): DateTimeFormatter {
         @Suppress("DEPRECATION")
-        return (AndroidDateFormat.getMediumDateFormat(application) as SimpleDateFormat)
+        return (AndroidDateFormat.getMediumDateFormat(context) as SimpleDateFormat)
             .toThreeTenDateTimeFormatter()
-            .withLocale(application.resources.configuration.locale)
+            .withLocale(context.resources.configuration.locale)
             .withZone(ZoneId.systemDefault())
     }
 
     @Singleton
     @Provides
     @MediumDateTime
-    fun provideDateTimeFormatter(application: TiviApplication): DateTimeFormatter {
-        val dateF = AndroidDateFormat.getMediumDateFormat(application) as SimpleDateFormat
-        val timeF = AndroidDateFormat.getTimeFormat(application) as SimpleDateFormat
+    fun provideDateTimeFormatter(
+        @ApplicationContext context: Context
+    ): DateTimeFormatter {
+        val dateF = AndroidDateFormat.getMediumDateFormat(context) as SimpleDateFormat
+        val timeF = AndroidDateFormat.getTimeFormat(context) as SimpleDateFormat
 
         @Suppress("DEPRECATION")
         return DateTimeFormatter.ofPattern("${dateF.toPattern()} ${timeF.toPattern()}")
-            .withLocale(application.resources.configuration.locale)
+            .withLocale(context.resources.configuration.locale)
             .withZone(ZoneId.systemDefault())
     }
 
     @Singleton
     @Provides
     @ShortDate
-    fun provideShortDateFormatter(application: TiviApplication): DateTimeFormatter {
+    fun provideShortDateFormatter(
+        @ApplicationContext context: Context
+    ): DateTimeFormatter {
         @Suppress("DEPRECATION")
         return (AndroidDateFormat.getDateFormat(application) as SimpleDateFormat)
             .toThreeTenDateTimeFormatter()
-            .withLocale(application.resources.configuration.locale)
+            .withLocale(context.resources.configuration.locale)
             .withZone(ZoneId.systemDefault())
     }
 
     @Singleton
     @Provides
     @ShortTime
-    fun provideShortTimeFormatter(application: TiviApplication): DateTimeFormatter {
+    fun provideShortTimeFormatter(
+        @ApplicationContext context: Context
+    ): DateTimeFormatter {
         @Suppress("DEPRECATION")
-        return (AndroidDateFormat.getTimeFormat(application) as SimpleDateFormat)
+        return (AndroidDateFormat.getTimeFormat(context) as SimpleDateFormat)
             .toThreeTenDateTimeFormatter()
     }
 

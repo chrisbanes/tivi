@@ -24,10 +24,11 @@ import androidx.work.WorkerParameters
 import app.tivi.data.entities.RefreshType
 import app.tivi.domain.interactors.UpdateFollowedShows
 import app.tivi.util.Logger
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 class SyncAllFollowedShows @WorkerInject constructor(
     @Assisted params: WorkerParameters,
-    @Assisted context: Context,
+    @Assisted @ApplicationContext context: Context,
     private val updateFollowedShows: UpdateFollowedShows,
     private val logger: Logger
 ) : CoroutineWorker(context, params) {

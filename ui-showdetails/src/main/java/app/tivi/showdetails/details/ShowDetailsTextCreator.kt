@@ -33,9 +33,9 @@ import app.tivi.data.resultentities.numberAiredToWatch
 import app.tivi.data.resultentities.numberToAir
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
-import app.tivi.inject.PerActivity
 import app.tivi.ui.GenreStringer
 import app.tivi.util.TiviDateFormatter
+import dagger.hilt.android.qualifiers.ActivityContext
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
@@ -44,7 +44,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 class ShowDetailsTextCreator @Inject constructor(
-    @PerActivity private val context: Context,
+    @ActivityContext private val context: Context,
     private val tiviDateFormatter: TiviDateFormatter
 ) {
     fun seasonSummaryText(watches: List<EpisodeWithWatches>): CharSequence {
