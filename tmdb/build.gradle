@@ -34,4 +34,6 @@ dependencies {
     api Libs.threeTenBpNoTzdb
 
     implementation Libs.OkHttp.okhttp
+
+    kapt Libs.Dagger.compiler
 }

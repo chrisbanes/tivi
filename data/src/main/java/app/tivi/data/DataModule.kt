@@ -47,5 +47,7 @@ class DataModule {
     @ForStore
     @Singleton
     @Provides
-    fun providesStoreDispatcher(): CoroutineScope = CoroutineScope(EmptyCoroutineContext)
+    fun providesStoreDispatcher(): CoroutineScope {
+        return CoroutineScope(EmptyCoroutineContext)
+    }
 }

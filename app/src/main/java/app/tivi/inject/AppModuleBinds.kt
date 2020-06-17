@@ -16,8 +16,6 @@
 
 package app.tivi.inject
 
-import app.tivi.AppNavigator
-import app.tivi.TiviAppNavigator
 import app.tivi.appinitializers.AppInitializer
 import app.tivi.appinitializers.ArchTaskExecutorInitializer
 import app.tivi.appinitializers.ClearGlideCacheInitializer
@@ -37,7 +35,6 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.multibindings.IntoSet
-import javax.inject.Named
 import javax.inject.Singleton
 
 @InstallIn(ApplicationComponent::class)
@@ -45,11 +42,6 @@ import javax.inject.Singleton
 abstract class AppModuleBinds {
     @Binds
     internal abstract fun providePowerController(bind: AndroidPowerController): PowerController
-
-    @Singleton
-    @Named("app")
-    @Binds
-    abstract fun provideAppNavigator(bind: TiviAppNavigator): AppNavigator
 
     @Singleton
     @Binds

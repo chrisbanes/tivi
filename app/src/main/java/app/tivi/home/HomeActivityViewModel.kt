@@ -25,19 +25,14 @@ import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
-import app.tivi.trakt.TraktManager
 import app.tivi.util.Logger
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import net.openid.appauth.AuthorizationException
-import net.openid.appauth.AuthorizationResponse
-import net.openid.appauth.AuthorizationService
 
 class HomeActivityViewModel @ViewModelInject constructor(
     observeTraktAuthState: ObserveTraktAuthState,
-    private val traktManager: TraktManager,
     private val updateUserDetails: UpdateUserDetails,
     observeUserDetails: ObserveUserDetails,
     private val logger: Logger
@@ -64,21 +59,6 @@ class HomeActivityViewModel @ViewModelInject constructor(
                 logger.setUserId(user?.username ?: "")
             }
         }
-    }
-
-    fun onAuthResponse(
-        authService: AuthorizationService,
-        response: AuthorizationResponse?,
-        ex: AuthorizationException?
-    ) {
-        when {
-            response != null -> traktManager.onAuthResponse(authService, response)
-            ex != null -> traktManager.onAuthException(ex)
-        }
-    }
-
-    fun onLoginItemClicked(authService: AuthorizationService) {
-        traktManager.startAuth(0, authService)
     }
 
     override fun createInitialState(): HomeActivityViewState {

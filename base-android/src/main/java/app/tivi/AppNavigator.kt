@@ -17,9 +17,11 @@
 package app.tivi
 
 import android.app.PendingIntent
+import android.content.Intent
 
 interface AppNavigator {
     fun provideAuthHandleResponseIntent(requestCode: Int): PendingIntent
     fun login()
     fun openAccount()
+    fun onAuthResponse(intent: Intent)
 }

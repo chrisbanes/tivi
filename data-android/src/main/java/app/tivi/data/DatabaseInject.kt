@@ -27,16 +27,13 @@ import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Singleton
 
+/**
+ * Dummy modules which includes [DataModule]. We can't `@InstallIn` that module
+ * directly because it is not an Android module.
+ */
 @InstallIn(ApplicationComponent::class)
-@Module(
-    includes = [
-        RoomDatabaseModule::class,
-        DatabaseModuleBinds::class,
-        DatabaseDaoModule::class,
-        DataModule::class
-    ]
-)
-class DatabaseModule
+@Module(includes = [DataModule::class])
+class HiltDataModule
 
 @InstallIn(ApplicationComponent::class)
 @Module
@@ -106,7 +103,7 @@ class DatabaseDaoModule {
 @Module
 abstract class DatabaseModuleBinds {
     @Binds
-    abstract fun bindTiviDatabase(context: TiviRoomDatabase): TiviDatabase
+    abstract fun bindTiviDatabase(db: TiviRoomDatabase): TiviDatabase
 
     @Singleton
     @Binds

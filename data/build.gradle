@@ -33,6 +33,8 @@ dependencies {
     api Libs.AndroidX.Room.common
     implementation Libs.AndroidX.collection
 
+    kapt Libs.Dagger.compiler
+
     api Libs.store
 
     api Libs.AndroidX.Paging.common

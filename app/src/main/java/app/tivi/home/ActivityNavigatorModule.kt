@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2017 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,17 @@
 
 package app.tivi.home
 
-import app.tivi.TiviAppNavigator
+import app.tivi.AppNavigator
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.scopes.ActivityScoped
 
-internal class HomeAppNavigator(
-    private val activity: HomeActivity
-) : TiviAppNavigator(activity) {
-    override fun login() = activity.login()
-
-    override fun openAccount() = activity.openAccount()
+@InstallIn(ActivityComponent::class)
+@Module
+abstract class ActivityNavigatorModule {
+    @Binds
+    @ActivityScoped
+    abstract fun provideAppNavigator(activityNavigator: ActivityAppNavigator): AppNavigator
 }

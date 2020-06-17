@@ -36,4 +36,6 @@ dependencies {
     implementation Libs.OkHttp.okhttp
     implementation Libs.Retrofit.retrofit
     implementation Libs.Retrofit.gsonConverter
+
+    kapt Libs.Dagger.compiler
 }

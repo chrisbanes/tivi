@@ -25,7 +25,7 @@ import androidx.lifecycle.coroutineScope
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.preference.PreferenceManager
 import app.tivi.BuildConfig
-import app.tivi.extensions.toThreeTenDateTimeFormatter
+import app.tivi.extensions.withLocale
 import app.tivi.home.followed.R
 import app.tivi.tmdb.TmdbModule
 import app.tivi.trakt.TraktModule
@@ -38,15 +38,13 @@ import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
+import org.threeten.bp.format.FormatStyle
 import java.io.File
-import java.text.SimpleDateFormat
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import javax.inject.Named
 import javax.inject.Singleton
-import android.text.format.DateFormat as AndroidDateFormat
 
 @InstallIn(ApplicationComponent::class)
 @Module(
@@ -114,11 +112,7 @@ class AppModule {
     fun provideMediumDateFormatter(
         @ApplicationContext context: Context
     ): DateTimeFormatter {
-        @Suppress("DEPRECATION")
-        return (AndroidDateFormat.getMediumDateFormat(context) as SimpleDateFormat)
-            .toThreeTenDateTimeFormatter()
-            .withLocale(context.resources.configuration.locale)
-            .withZone(ZoneId.systemDefault())
+        return DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(context)
     }
 
     @Singleton
@@ -127,13 +121,7 @@ class AppModule {
     fun provideDateTimeFormatter(
         @ApplicationContext context: Context
     ): DateTimeFormatter {
-        val dateF = AndroidDateFormat.getMediumDateFormat(context) as SimpleDateFormat
-        val timeF = AndroidDateFormat.getTimeFormat(context) as SimpleDateFormat
-
-        @Suppress("DEPRECATION")
-        return DateTimeFormatter.ofPattern("${dateF.toPattern()} ${timeF.toPattern()}")
-            .withLocale(context.resources.configuration.locale)
-            .withZone(ZoneId.systemDefault())
+        return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(context)
     }
 
     @Singleton
@@ -142,11 +130,7 @@ class AppModule {
     fun provideShortDateFormatter(
         @ApplicationContext context: Context
     ): DateTimeFormatter {
-        @Suppress("DEPRECATION")
-        return (AndroidDateFormat.getDateFormat(application) as SimpleDateFormat)
-            .toThreeTenDateTimeFormatter()
-            .withLocale(context.resources.configuration.locale)
-            .withZone(ZoneId.systemDefault())
+        return DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(context)
     }
 
     @Singleton
@@ -155,9 +139,7 @@ class AppModule {
     fun provideShortTimeFormatter(
         @ApplicationContext context: Context
     ): DateTimeFormatter {
-        @Suppress("DEPRECATION")
-        return (AndroidDateFormat.getTimeFormat(context) as SimpleDateFormat)
-            .toThreeTenDateTimeFormatter()
+        return DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(context)
     }
 
     @Provides
