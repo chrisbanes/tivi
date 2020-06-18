@@ -51,7 +51,7 @@ object Libs {
     }
 
     object Accompanist {
-        private const val version = "0.1.5.ui-6574163-SNAPSHOT"
+        private const val version = "0.1.6.ui-6602655-SNAPSHOT"
         const val mdcTheme = "dev.chrisbanes.accompanist:accompanist-mdc-theme:$version"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
     }
@@ -155,7 +155,7 @@ object Libs {
         }
 
         object UI {
-            const val snapshot = "6574163"
+            const val snapshot = "6602655"
             const val version = "0.1.0-SNAPSHOT"
 
             const val core = "androidx.ui:ui-core:$version"
