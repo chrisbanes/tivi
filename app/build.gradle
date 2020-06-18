@@ -19,15 +19,10 @@ import app.tivi.buildsrc.Libs
 
 plugins {
     id 'com.android.application'
-    id 'dagger.hilt.android.plugin'
-    id 'com.github.triplet.play'
-
-    id 'kotlin-android'
-    id 'kotlin-kapt'
-
-    id 'com.google.android.gms.oss-licenses-plugin'
-    id 'androidx.navigation.safeargs.kotlin'
+    id 'com.github.triplet.play' version '2.8.0'
 }
+
+apply plugin: 'dagger.hilt.android.plugin'
 
 play {
    track = 'internal'
@@ -35,10 +30,22 @@ play {
    serviceAccountCredentials = rootProject.file('release/play-account.json')
 }
 
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-kapt'
 kapt {
     correctErrorTypes = true
     useBuildCache = true
 }
+
+apply plugin: 'kotlin-android-extensions'
+androidExtensions {
+    experimental = true
+}
+
+apply plugin: 'com.google.android.gms.oss-licenses-plugin'
+
+apply plugin: "androidx.navigation.safeargs.kotlin"
 
 def appVersionCode = propOrDef("tivi.versioncode", 17) as Integer
 println("APK version code: " + appVersionCode)
