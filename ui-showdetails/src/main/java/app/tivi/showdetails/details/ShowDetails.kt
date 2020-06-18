@@ -53,6 +53,7 @@ import androidx.ui.foundation.contentColor
 import androidx.ui.foundation.drawBackground
 import androidx.ui.foundation.drawBorder
 import androidx.ui.foundation.isSystemInDarkTheme
+import androidx.ui.foundation.lazy.LazyRowItems
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.ColorFilter
@@ -102,7 +103,6 @@ import androidx.ui.unit.Dp
 import androidx.ui.unit.dp
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
-import app.tivi.common.compose.HorizontalCollectionScroller
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.PopupMenu
 import app.tivi.common.compose.PopupMenuItem
@@ -268,7 +268,7 @@ fun ShowDetails(
                         RelatedShows(
                             relatedShows,
                             actioner,
-                            Modifier.fillMaxWidth()
+                            Modifier.fillMaxWidth().preferredHeight(112.dp)
                         )
                     }
 
@@ -568,15 +568,15 @@ private fun RelatedShows(
     actioner: (ShowDetailsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // TODO: ideally we would use AdapterList here, but it only works for vertical lists, not
-    // horizontal
-    HorizontalCollectionScroller(
+    LazyRowItems(
         items = related,
         modifier = modifier
+            // TODO: this should be 0.dp and have an initial/last padding
+            .padding(horizontal = 14.dp)
     ) { item ->
         Card(
-            modifier = Modifier.padding(vertical = 8.dp)
-                .preferredWidth(64.dp)
+            modifier = Modifier.padding(vertical = 8.dp, horizontal = 2.dp)
+                .fillMaxHeight()
                 .aspectRatio(2 / 3f)
         ) {
             Stack(
