@@ -16,9 +16,13 @@
 
 package app.tivi.common.compose
 
+import androidx.compose.getValue
+import androidx.compose.setValue
+import androidx.compose.state
 import androidx.ui.core.LayoutCoordinates
 import androidx.ui.core.Modifier
 import androidx.ui.core.OnPositionedModifier
+import androidx.ui.core.composed
 import androidx.ui.geometry.Offset
 import androidx.ui.unit.IntSize
 import androidx.ui.unit.PxBounds
@@ -32,13 +36,15 @@ inline val LayoutCoordinates.boundsInParent: PxBounds
 
 fun Modifier.onSizeChanged(
     onSizeChanged: (IntSize) -> Unit
-) = this + object : OnPositionedModifier {
-    private var lastSize: IntSize? = null
+) = composed {
+    var lastSize by state<IntSize?> { null }
 
-    override fun onPositioned(coordinates: LayoutCoordinates) {
-        if (coordinates.size != lastSize) {
-            lastSize = coordinates.size
-            onSizeChanged(coordinates.size)
+    object : OnPositionedModifier {
+        override fun onPositioned(coordinates: LayoutCoordinates) {
+            if (coordinates.size != lastSize) {
+                lastSize = coordinates.size
+                onSizeChanged(coordinates.size)
+            }
         }
     }
 }
