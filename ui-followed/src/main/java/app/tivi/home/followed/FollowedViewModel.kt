@@ -35,7 +35,7 @@ import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.ShowStateSelector
-import app.tivi.util.collectFrom
+import app.tivi.util.collectInto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
@@ -171,12 +171,14 @@ internal class FollowedViewModel @ViewModelInject constructor(
     }
 
     fun unfollowSelectedShows() {
-        changeShowFollowStatus(
-            ChangeShowFollowStatus.Params(
-                showSelection.getSelectedShowIds(),
-                ChangeShowFollowStatus.Action.UNFOLLOW
+        viewModelScope.launch {
+            changeShowFollowStatus.executeSync(
+                ChangeShowFollowStatus.Params(
+                    showSelection.getSelectedShowIds(),
+                    ChangeShowFollowStatus.Action.UNFOLLOW
+                )
             )
-        )
+        }
         showSelection.clearSelection()
     }
 
@@ -185,10 +187,9 @@ internal class FollowedViewModel @ViewModelInject constructor(
     }
 
     private fun refreshFollowed(fromInteraction: Boolean) {
-        updateFollowedShows(UpdateFollowedShows.Params(fromInteraction, RefreshType.QUICK)).also {
-            viewModelScope.launch {
-                loadingState.collectFrom(it)
-            }
+        viewModelScope.launch {
+            updateFollowedShows(UpdateFollowedShows.Params(fromInteraction, RefreshType.QUICK))
+                .collectInto(loadingState)
         }
     }
 

@@ -221,8 +221,7 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     private fun onMarkSeasonUnwatched(action: MarkSeasonUnwatchedAction) {
-        changeSeasonWatchedStatus(Params(action.seasonId, Action.UNWATCH))
-            .watchStatus()
+        changeSeasonWatchedStatus(Params(action.seasonId, Action.UNWATCH)).watchStatus()
     }
 
     private fun onChangeSeasonExpandState(seasonId: Long, expanded: Boolean) = setState {

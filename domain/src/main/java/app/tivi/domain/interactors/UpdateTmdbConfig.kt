@@ -17,21 +17,19 @@
 package app.tivi.domain.interactors
 
 import app.tivi.domain.Interactor
-import app.tivi.inject.ProcessLifetime
 import app.tivi.tmdb.TmdbManager
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UpdateTmdbConfig @Inject constructor(
     private val tmdbManager: TmdbManager,
-    dispatchers: AppCoroutineDispatchers,
-    @ProcessLifetime val processScope: CoroutineScope
+    private val dispatchers: AppCoroutineDispatchers
 ) : Interactor<Unit>() {
-    override val scope: CoroutineScope = processScope + dispatchers.io
-
     override suspend fun doWork(params: Unit) {
-        tmdbManager.refreshConfiguration()
+        withContext(dispatchers.io) {
+            tmdbManager.refreshConfiguration()
+        }
     }
 }

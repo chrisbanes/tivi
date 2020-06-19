@@ -25,12 +25,11 @@ import app.tivi.data.repositories.trendingshows.TrendingShowsLastRequestStore
 import app.tivi.data.repositories.trendingshows.TrendingShowsStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateTrendingShows.Params
-import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
 import org.threeten.bp.Duration
 import javax.inject.Inject
 
@@ -40,24 +39,23 @@ class UpdateTrendingShows @Inject constructor(
     private val lastRequestStore: TrendingShowsLastRequestStore,
     private val showsStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
-    dispatchers: AppCoroutineDispatchers,
-    @ProcessLifetime val processScope: CoroutineScope
+    private val dispatchers: AppCoroutineDispatchers
 ) : Interactor<Params>() {
-    override val scope: CoroutineScope = processScope + dispatchers.io
-
     override suspend fun doWork(params: Params) {
-        val lastPage = trendingShowsDao.getLastPage()
-        val page = when {
-            lastPage != null && params.page == Page.NEXT_PAGE -> lastPage + 1
-            else -> 0
-        }
+        withContext(dispatchers.io) {
+            val lastPage = trendingShowsDao.getLastPage()
+            val page = when {
+                lastPage != null && params.page == Page.NEXT_PAGE -> lastPage + 1
+                else -> 0
+            }
 
-        trendingShowsStore.fetchCollection(page, forceFresh = params.forceRefresh) {
-            // Refresh if our local data is over 3 hours old
-            page == 0 && lastRequestStore.isRequestExpired(Duration.ofHours(3))
-        }.asFlow().collect {
-            showsStore.fetch(it.showId)
-            showImagesStore.fetchCollection(it.showId)
+            trendingShowsStore.fetchCollection(page, forceFresh = params.forceRefresh) {
+                // Refresh if our local data is over 3 hours old
+                page == 0 && lastRequestStore.isRequestExpired(Duration.ofHours(3))
+            }.asFlow().collect {
+                showsStore.fetch(it.showId)
+                showImagesStore.fetchCollection(it.showId)
+            }
         }
     }
 

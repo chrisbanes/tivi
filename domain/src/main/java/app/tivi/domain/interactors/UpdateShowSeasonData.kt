@@ -20,32 +20,30 @@ import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateShowSeasonData.Params
-import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UpdateShowSeasonData @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     private val followedShowsRepository: FollowedShowsRepository,
-    dispatchers: AppCoroutineDispatchers,
-    @ProcessLifetime val processScope: CoroutineScope
+    private val dispatchers: AppCoroutineDispatchers
 ) : Interactor<Params>() {
-    override val scope: CoroutineScope = processScope + dispatchers.io
-
     override suspend fun doWork(params: Params) {
-        if (followedShowsRepository.isShowFollowed(params.showId)) {
-            // Then update the seasons/episodes
-            if (params.forceRefresh || seasonsEpisodesRepository.needShowSeasonsUpdate(params.showId)) {
-                seasonsEpisodesRepository.updateSeasonsEpisodes(params.showId)
+        withContext(dispatchers.io) {
+            if (followedShowsRepository.isShowFollowed(params.showId)) {
+                // Then update the seasons/episodes
+                if (params.forceRefresh || seasonsEpisodesRepository.needShowSeasonsUpdate(params.showId)) {
+                    seasonsEpisodesRepository.updateSeasonsEpisodes(params.showId)
+                }
+                // Finally update any watched progress
+                if (params.forceRefresh || seasonsEpisodesRepository.needShowEpisodeWatchesSync(params.showId)) {
+                    seasonsEpisodesRepository.syncEpisodeWatchesForShow(params.showId)
+                }
+            } else {
+                seasonsEpisodesRepository.removeShowSeasonData(params.showId)
             }
-            // Finally update any watched progress
-            if (params.forceRefresh || seasonsEpisodesRepository.needShowEpisodeWatchesSync(params.showId)) {
-                seasonsEpisodesRepository.syncEpisodeWatchesForShow(params.showId)
-            }
-        } else {
-            seasonsEpisodesRepository.removeShowSeasonData(params.showId)
         }
     }
 

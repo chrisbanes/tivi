@@ -20,8 +20,6 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
-import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.lifecycle.coroutineScope
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.preference.PreferenceManager
 import app.tivi.BuildConfig
@@ -36,7 +34,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
@@ -140,12 +137,6 @@ object AppModule {
         @ApplicationContext context: Context
     ): DateTimeFormatter {
         return DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(context)
-    }
-
-    @Provides
-    @ProcessLifetime
-    fun provideLongLifetimeScope(): CoroutineScope {
-        return ProcessLifecycleOwner.get().lifecycle.coroutineScope
     }
 
     @Provides

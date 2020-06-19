@@ -25,12 +25,11 @@ import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdatePopularShows.Params
-import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
 import org.threeten.bp.Period
 import javax.inject.Inject
 
@@ -40,24 +39,23 @@ class UpdatePopularShows @Inject constructor(
     private val lastRequestStore: PopularShowsLastRequestStore,
     private val showsStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
-    dispatchers: AppCoroutineDispatchers,
-    @ProcessLifetime val processScope: CoroutineScope
+    private val dispatchers: AppCoroutineDispatchers
 ) : Interactor<Params>() {
-    override val scope: CoroutineScope = processScope + dispatchers.io
-
     override suspend fun doWork(params: Params) {
-        val lastPage = popularDao.getLastPage()
-        val page = when {
-            lastPage != null && params.page == Page.NEXT_PAGE -> lastPage + 1
-            else -> 0
-        }
+        withContext(dispatchers.io) {
+            val lastPage = popularDao.getLastPage()
+            val page = when {
+                lastPage != null && params.page == Page.NEXT_PAGE -> lastPage + 1
+                else -> 0
+            }
 
-        popularShowStore.fetchCollection(page, forceFresh = params.forceRefresh) {
-            // Refresh if our local data is over 7 days old
-            page == 0 && lastRequestStore.isRequestExpired(Period.ofDays(7))
-        }.asFlow().collect {
-            showsStore.fetch(it.showId)
-            showImagesStore.fetchCollection(it.showId)
+            popularShowStore.fetchCollection(page, forceFresh = params.forceRefresh) {
+                // Refresh if our local data is over 7 days old
+                page == 0 && lastRequestStore.isRequestExpired(Period.ofDays(7))
+            }.asFlow().collect {
+                showsStore.fetch(it.showId)
+                showImagesStore.fetchCollection(it.showId)
+            }
         }
     }
 

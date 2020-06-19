@@ -20,18 +20,15 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.domain.ResultInteractor
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class GetEpisodeDetails @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     private val dispatchers: AppCoroutineDispatchers
 ) : ResultInteractor<GetEpisodeDetails.Params, Episode?>() {
-    override val dispatcher: CoroutineDispatcher
-        get() = dispatchers.io
-
-    override suspend fun doWork(params: Params): Episode? {
-        return seasonsEpisodesRepository.getEpisode(params.episodeId)
+    override suspend fun doWork(params: Params): Episode? = withContext(dispatchers.io) {
+        seasonsEpisodesRepository.getEpisode(params.episodeId)
     }
 
     data class Params(val episodeId: Long)

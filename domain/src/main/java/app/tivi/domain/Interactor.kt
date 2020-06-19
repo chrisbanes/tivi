@@ -18,7 +18,6 @@ package app.tivi.domain
 
 import androidx.paging.PagedList
 import app.tivi.base.InvokeError
-import app.tivi.base.InvokeIdle
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
 import app.tivi.base.InvokeSuccess
@@ -32,36 +31,30 @@ import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import java.util.concurrent.TimeUnit
 
 abstract class Interactor<in P> {
-    protected abstract val scope: CoroutineScope
-
     operator fun invoke(params: P, timeoutMs: Long = defaultTimeoutMs): Flow<InvokeStatus> {
-        val channel = ConflatedBroadcastChannel<InvokeStatus>(InvokeIdle)
-        scope.launch {
+        return flow {
             try {
                 withTimeout(timeoutMs) {
-                    channel.send(InvokeStarted)
+                    emit(InvokeStarted)
                     try {
                         doWork(params)
-                        channel.send(InvokeSuccess)
+                        emit(InvokeSuccess)
                     } catch (t: Throwable) {
-                        channel.send(InvokeError(t))
+                        emit(InvokeError(t))
                     }
                 }
             } catch (t: TimeoutCancellationException) {
-                channel.send(InvokeError(t))
+                emit(InvokeError(t))
             }
         }
-        return channel.asFlow()
     }
 
-    suspend fun executeSync(params: P) = withContext(scope.coroutineContext) { doWork(params) }
+    suspend fun executeSync(params: P) = doWork(params)
 
     protected abstract suspend fun doWork(params: P)
 
@@ -71,10 +64,10 @@ abstract class Interactor<in P> {
 }
 
 abstract class ResultInteractor<in P, R> {
-    abstract val dispatcher: CoroutineDispatcher
-
     operator fun invoke(params: P): Flow<R> {
-        return flow { emit(doWork(params)) }.flowOn(dispatcher)
+        return flow {
+            emit(doWork(params))
+        }
     }
 
     protected abstract suspend fun doWork(params: P): R

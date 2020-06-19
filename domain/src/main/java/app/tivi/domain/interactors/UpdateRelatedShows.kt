@@ -24,12 +24,11 @@ import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateRelatedShows.Params
-import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
 import org.threeten.bp.Period
 import javax.inject.Inject
 
@@ -38,18 +37,17 @@ class UpdateRelatedShows @Inject constructor(
     private val lastRequestStore: RelatedShowsLastRequestStore,
     private val showsStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
-    dispatchers: AppCoroutineDispatchers,
-    @ProcessLifetime val processScope: CoroutineScope
+    private val dispatchers: AppCoroutineDispatchers
 ) : Interactor<Params>() {
-    override val scope: CoroutineScope = processScope + dispatchers.io
-
     override suspend fun doWork(params: Params) {
-        relatedShowsStore.fetchCollection(params.showId, forceFresh = params.forceLoad) {
-            // Refresh if our local data is over 28 days old
-            lastRequestStore.isRequestExpired(params.showId, Period.ofDays(28))
-        }.asFlow().collect {
-            showsStore.fetch(it.showId)
-            showImagesStore.fetchCollection(it.showId)
+        withContext(dispatchers.io) {
+            relatedShowsStore.fetchCollection(params.showId, forceFresh = params.forceLoad) {
+                // Refresh if our local data is over 28 days old
+                lastRequestStore.isRequestExpired(params.showId, Period.ofDays(28))
+            }.asFlow().collect {
+                showsStore.fetch(it.showId)
+                showImagesStore.fetchCollection(it.showId)
+            }
         }
     }
 

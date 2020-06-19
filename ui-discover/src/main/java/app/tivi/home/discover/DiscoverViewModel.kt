@@ -33,7 +33,7 @@ import app.tivi.domain.observers.ObserveTrendingShows
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
-import app.tivi.util.collectFrom
+import app.tivi.util.collectInto
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
@@ -131,20 +131,17 @@ internal class DiscoverViewModel @ViewModelInject constructor(
     fun refresh() = refresh(true)
 
     private fun refresh(fromUser: Boolean) {
-        updatePopularShows(UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH, fromUser)).also {
-            viewModelScope.launch {
-                popularLoadingState.collectFrom(it)
-            }
+        viewModelScope.launch {
+            updatePopularShows(UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH, fromUser))
+                .collectInto(popularLoadingState)
         }
-        updateTrendingShows(UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH, fromUser)).also {
-            viewModelScope.launch {
-                trendingLoadingState.collectFrom(it)
-            }
+        viewModelScope.launch {
+            updateTrendingShows(UpdateTrendingShows.Params(UpdateTrendingShows.Page.REFRESH, fromUser))
+                .collectInto(trendingLoadingState)
         }
-        updateRecommendedShows(UpdateRecommendedShows.Params(UpdateRecommendedShows.Page.REFRESH, fromUser)).also {
-            viewModelScope.launch {
-                recommendedLoadingState.collectFrom(it)
-            }
+        viewModelScope.launch {
+            updateRecommendedShows(UpdateRecommendedShows.Params(UpdateRecommendedShows.Page.REFRESH, fromUser))
+                .collectInto(recommendedLoadingState)
         }
     }
 }

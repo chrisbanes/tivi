@@ -18,22 +18,21 @@ package app.tivi.domain.interactors
 
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.domain.Interactor
-import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
 import org.threeten.bp.OffsetDateTime
 import javax.inject.Inject
 
 class AddEpisodeWatch @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
-    dispatchers: AppCoroutineDispatchers,
-    @ProcessLifetime val processScope: CoroutineScope
-) : Interactor<AddEpisodeWatch.Params>() {
-    override val scope: CoroutineScope = processScope + dispatchers.io
+    private val dispatchers: AppCoroutineDispatchers
 
+) : Interactor<AddEpisodeWatch.Params>() {
     override suspend fun doWork(params: Params) {
-        seasonsEpisodesRepository.addEpisodeWatch(params.episodeId, params.timestamp)
+        withContext(dispatchers.io) {
+            seasonsEpisodesRepository.addEpisodeWatch(params.episodeId, params.timestamp)
+        }
     }
 
     data class Params(val episodeId: Long, val timestamp: OffsetDateTime)

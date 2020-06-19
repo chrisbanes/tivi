@@ -24,10 +24,9 @@ import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
-import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ChangeShowFollowStatus @Inject constructor(
@@ -35,13 +34,10 @@ class ChangeShowFollowStatus @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
     private val showStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
-    dispatchers: AppCoroutineDispatchers,
-    private val showTasks: ShowTasks,
-    @ProcessLifetime val processScope: CoroutineScope
+    private val dispatchers: AppCoroutineDispatchers,
+    private val showTasks: ShowTasks
 ) : Interactor<ChangeShowFollowStatus.Params>() {
-    override val scope: CoroutineScope = processScope + dispatchers.io
-
-    override suspend fun doWork(params: Params) {
+    override suspend fun doWork(params: Params) = withContext(dispatchers.io) {
         params.showIds.forEach { showId ->
             when (params.action) {
                 Action.TOGGLE -> {

@@ -28,6 +28,7 @@ import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 class HomeActivityViewModel @ViewModelInject constructor(
     observeTraktAuthState: ObserveTraktAuthState,
@@ -46,16 +47,26 @@ class HomeActivityViewModel @ViewModelInject constructor(
         observeUserDetails(ObserveUserDetails.Params("me"))
 
         viewModelScope.launchObserve(observeTraktAuthState) { flow ->
-            flow.distinctUntilChanged().onEach {
-                if (it == TraktAuthState.LOGGED_IN) {
-                    updateUserDetails(UpdateUserDetails.Params("me", false))
+            flow.distinctUntilChanged()
+                .onEach {
+                    if (it == TraktAuthState.LOGGED_IN) {
+                        refreshMe()
+                    }
                 }
-            }.execute { copy(authState = it() ?: TraktAuthState.LOGGED_OUT) }
+                .execute {
+                    copy(authState = it() ?: TraktAuthState.LOGGED_OUT)
+                }
         }
         observeTraktAuthState()
 
         selectSubscribe(HomeActivityViewState::user) { user ->
             logger.setUserId(user?.username ?: "")
+        }
+    }
+
+    private fun refreshMe() {
+        viewModelScope.launch {
+            updateUserDetails.executeSync(UpdateUserDetails.Params("me", false))
         }
     }
 }
