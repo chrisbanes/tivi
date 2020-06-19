@@ -18,14 +18,20 @@ package app.tivi.appinitializers
 
 import android.app.Application
 import app.tivi.domain.interactors.DeleteFolder
+import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
 class ClearGlideCacheInitializer @Inject constructor(
-    private val deleteFolder: DeleteFolder
+    private val deleteFolder: DeleteFolder,
+    private val dispatchers: AppCoroutineDispatchers
 ) : AppInitializer {
     override fun init(application: Application) {
-        val dir = File(application.cacheDir, "image_manager_disk_cache")
-        deleteFolder(DeleteFolder.Params(dir))
+        GlobalScope.launch(dispatchers.main) {
+            val dir = File(application.cacheDir, "image_manager_disk_cache")
+            deleteFolder.executeSync(DeleteFolder.Params(dir))
+        }
     }
 }
