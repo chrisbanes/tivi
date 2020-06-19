@@ -39,7 +39,6 @@ import app.tivi.ui.authStateToolbarMenuBinder
 import app.tivi.ui.createSharedElementHelperForItemId
 import app.tivi.ui.createSharedElementHelperForItems
 import app.tivi.ui.transitions.GridToGridTransitioner
-import app.tivi.withState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -99,8 +98,8 @@ class DiscoverFragment : FragmentWithBinding<FragmentDiscoverBinding>() {
 
         controller!!.callbacks = object : DiscoverEpoxyController.Callbacks {
             override fun onTrendingHeaderClicked() {
-                withState(viewModel) { state ->
-                    val extras = binding.summaryRv.createSharedElementHelperForItems(state.trendingItems)
+                with(viewModel.currentState()) {
+                    val extras = binding.summaryRv.createSharedElementHelperForItems(trendingItems)
 
                     findNavController().navigate(
                         R.id.navigation_trending,
@@ -112,8 +111,8 @@ class DiscoverFragment : FragmentWithBinding<FragmentDiscoverBinding>() {
             }
 
             override fun onPopularHeaderClicked() {
-                withState(viewModel) { state ->
-                    val extras = binding.summaryRv.createSharedElementHelperForItems(state.popularItems)
+                with(viewModel.currentState()) {
+                    val extras = binding.summaryRv.createSharedElementHelperForItems(popularItems)
 
                     findNavController().navigate(
                         R.id.navigation_popular,
@@ -125,8 +124,8 @@ class DiscoverFragment : FragmentWithBinding<FragmentDiscoverBinding>() {
             }
 
             override fun onRecommendedHeaderClicked() {
-                withState(viewModel) { state ->
-                    val extras = binding.summaryRv.createSharedElementHelperForItems(state.recommendedItems)
+                with(viewModel.currentState()) {
+                    val extras = binding.summaryRv.createSharedElementHelperForItems(recommendedItems)
 
                     findNavController().navigate(
                         R.id.navigation_recommended,
@@ -149,10 +148,10 @@ class DiscoverFragment : FragmentWithBinding<FragmentDiscoverBinding>() {
             }
 
             override fun onNextEpisodeToWatchClicked() {
-                withState(viewModel) {
-                    checkNotNull(it.nextEpisodeWithShowToWatched)
-                    val show = it.nextEpisodeWithShowToWatched.show
-                    val episode = it.nextEpisodeWithShowToWatched.episode
+                with(viewModel.currentState()) {
+                    checkNotNull(nextEpisodeWithShowToWatched)
+                    val show = nextEpisodeWithShowToWatched.show
+                    val episode = nextEpisodeWithShowToWatched.episode
                     findNavController().navigate(
                         "app.tivi://show/${show.id}/episode/${episode.id}".toUri()
                     )

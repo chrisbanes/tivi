@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import app.tivi.common.ui.BuildConfig
+import app.tivi.extensions.observable
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
@@ -40,11 +41,14 @@ abstract class ReduxViewModel<S>(
     private val stateChannel = ConflatedBroadcastChannel(initialState)
 
     private val stateMutex = Mutex()
-    internal var state: S = initialState
-        set(value) {
-            field = value
-            stateChannel.offer(value)
-        }
+    private var state: S by observable(initialState) {
+        stateChannel.offer(state)
+    }
+
+    /**
+     * Returns a snapshot of the current state.
+     */
+    fun currentState(): S = state
 
     val liveData: LiveData<S>
         get() = stateChannel.asFlow().asLiveData()
@@ -122,5 +126,3 @@ abstract class ReduxViewModel<S>(
         stateChannel.close()
     }
 }
-
-fun <VM : ReduxViewModel<S>, S> withState(viewModel: VM, block: (S) -> Unit) = block(viewModel.state)
