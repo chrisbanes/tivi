@@ -19,11 +19,10 @@ package app.tivi.trakt
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import app.tivi.actions.ShowTasks
-import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
@@ -40,8 +39,7 @@ class TraktManager @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     @Named("auth") private val authPrefs: SharedPreferences,
     private val showTasks: ShowTasks,
-    private val traktClient: Lazy<TraktV2>,
-    @ProcessLifetime val processScope: CoroutineScope
+    private val traktClient: Lazy<TraktV2>
 ) {
     private val authState = ConflatedBroadcastChannel<AuthState>()
 
@@ -51,7 +49,7 @@ class TraktManager @Inject constructor(
 
     init {
         // Observer which updates local state
-        processScope.launch {
+        GlobalScope.launch(dispatchers.io) {
             authState.asFlow().collect { authState ->
                 updateAuthState(authState)
 
@@ -63,7 +61,7 @@ class TraktManager @Inject constructor(
         }
 
         // Read the auth state from prefs
-        processScope.launch {
+        GlobalScope.launch(dispatchers.main) {
             val state = withContext(dispatchers.io) { readAuthState() }
             authState.send(state)
         }
@@ -83,11 +81,11 @@ class TraktManager @Inject constructor(
     }
 
     fun onNewAuthState(newState: AuthState) {
-        processScope.launch(dispatchers.main) {
+        GlobalScope.launch(dispatchers.main) {
             // Update our local state
             authState.send(newState)
         }
-        processScope.launch(dispatchers.io) {
+        GlobalScope.launch(dispatchers.io) {
             // Persist auth state
             persistAuthState(newState)
         }

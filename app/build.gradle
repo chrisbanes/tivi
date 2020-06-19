@@ -189,7 +189,6 @@ dependencies {
 
     implementation Libs.AndroidX.Lifecycle.livedata
     implementation Libs.AndroidX.Lifecycle.viewmodel
-    implementation Libs.AndroidX.Lifecycle.process
 
     implementation Libs.AndroidX.appcompat
     implementation Libs.AndroidX.browser
