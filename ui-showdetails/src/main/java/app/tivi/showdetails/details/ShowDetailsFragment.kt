@@ -31,6 +31,7 @@ import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.observeWindowInsets
 import app.tivi.episodedetails.EpisodeDetailsFragment
 import app.tivi.extensions.scheduleStartPostponedTransitions
+import app.tivi.extensions.viewModelProviderFactoryOf
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
@@ -40,21 +41,22 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShowDetailsFragment : Fragment() {
-    private val viewModel: ShowDetailsFragmentViewModel by viewModels()
-
+    @Inject @JvmField internal var vmFactory: ShowDetailsFragmentViewModel.Factory? = null
     @Inject @JvmField internal var textCreator: ShowDetailsTextCreator? = null
     @Inject @JvmField internal var tiviDateFormatter: TiviDateFormatter? = null
 
     private val pendingActions = Channel<ShowDetailsAction>(Channel.BUFFERED)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val args = requireArguments()
-        viewModel.setShowId(args.getLong("show_id"))
-
-        if (args.containsKey("episode_id")) {
-            viewModel.submitAction(OpenEpisodeDetails(args.getLong("episode_id")))
+    private val viewModel: ShowDetailsFragmentViewModel by viewModels {
+        viewModelProviderFactoryOf {
+            val args = requireArguments()
+            vmFactory!!.create(
+                showId = args.getLong("show_id"),
+                pendingEpisodeId = when {
+                    args.containsKey("episode_id") -> args.getLong("episode_id")
+                    else -> null
+                }
+            )
         }
     }
 

@@ -222,6 +222,12 @@ object Libs {
         const val coil = "io.coil-kt:coil:$version"
     }
 
+    object AssistedInject {
+        private const val version = "0.5.2"
+        const val annotationDagger2 = "com.squareup.inject:assisted-inject-annotations-dagger2:$version"
+        const val processorDagger2 = "com.squareup.inject:assisted-inject-processor-dagger2:$version"
+    }
+
     object Roomigrant {
         private const val version = "0.1.7"
         const val library = "com.github.MatrixDev.Roomigrant:RoomigrantLib:$version"
