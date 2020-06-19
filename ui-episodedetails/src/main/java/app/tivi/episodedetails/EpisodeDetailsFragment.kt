@@ -26,6 +26,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import app.tivi.common.compose.observeWindowInsets
+import app.tivi.extensions.viewModelProviderFactoryOf
 import app.tivi.util.TiviDateFormatter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,28 +37,29 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class EpisodeDetailsFragment : BottomSheetDialogFragment() {
+    @Inject @JvmField internal var vmFactory: EpisodeDetailsViewModel.Factory? = null
+
     companion object {
+        private const val ARG_KEY_ID = "episode_id"
+
         @JvmStatic
         fun create(id: Long): EpisodeDetailsFragment {
             return EpisodeDetailsFragment().apply {
-                arguments = bundleOf("episode_id" to id)
+                arguments = bundleOf(ARG_KEY_ID to id)
             }
         }
     }
 
-    private val viewModel: EpisodeDetailsViewModel by viewModels()
+    private val viewModel: EpisodeDetailsViewModel by viewModels {
+        viewModelProviderFactoryOf {
+            vmFactory!!.create(requireArguments().getLong(ARG_KEY_ID))
+        }
+    }
 
     @Inject @JvmField internal var tiviDateFormatter: TiviDateFormatter? = null
     @Inject @JvmField internal var textCreator: EpisodeDetailsTextCreator? = null
 
     private val pendingActions = Channel<EpisodeDetailsAction>(Channel.BUFFERED)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val args = requireArguments()
-        viewModel.setEpisodeId(args.getLong("episode_id"))
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

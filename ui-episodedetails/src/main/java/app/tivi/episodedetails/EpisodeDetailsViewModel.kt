@@ -16,7 +16,6 @@
 
 package app.tivi.episodedetails
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import app.tivi.ReduxViewModel
 import app.tivi.api.UiError
@@ -36,6 +35,8 @@ import app.tivi.domain.observers.ObserveEpisodeWatches
 import app.tivi.ui.SnackbarManager
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -43,7 +44,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
-class EpisodeDetailsViewModel @ViewModelInject constructor(
+class EpisodeDetailsViewModel @AssistedInject constructor(
+    @Assisted initialState: EpisodeDetailsViewState,
     private val updateEpisodeDetails: UpdateEpisodeDetails,
     observeEpisodeDetails: ObserveEpisodeDetails,
     private val observeEpisodeWatches: ObserveEpisodeWatches,
@@ -51,9 +53,7 @@ class EpisodeDetailsViewModel @ViewModelInject constructor(
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch,
     private val logger: Logger
-) : ReduxViewModel<EpisodeDetailsViewState>(
-    EpisodeDetailsViewState()
-) {
+) : ReduxViewModel<EpisodeDetailsViewState>(initialState) {
 
     private val loadingState = ObservableLoadingCounter()
     private val snackbarManager = SnackbarManager()
@@ -96,12 +96,10 @@ class EpisodeDetailsViewModel @ViewModelInject constructor(
         }
 
         selectSubscribe(EpisodeDetailsViewState::episodeId) { episodeId ->
-            episodeId?.also {
-                observeEpisodeDetails(ObserveEpisodeDetails.Params(episodeId))
-                observeEpisodeWatches(ObserveEpisodeWatches.Params(episodeId))
+            observeEpisodeDetails(ObserveEpisodeDetails.Params(episodeId))
+            observeEpisodeWatches(ObserveEpisodeWatches.Params(episodeId))
 
-                refresh(false)
-            }
+            refresh(false)
         }
     }
 
@@ -123,11 +121,9 @@ class EpisodeDetailsViewModel @ViewModelInject constructor(
     }
 
     private fun refresh(fromUserInteraction: Boolean) = withState { state ->
-        state.episodeId?.also { episodeId ->
-            updateEpisodeDetails(
-                UpdateEpisodeDetails.Params(episodeId, fromUserInteraction)
-            ).watchStatus()
-        }
+        updateEpisodeDetails(
+            UpdateEpisodeDetails.Params(state.episodeId, fromUserInteraction)
+        ).watchStatus()
     }
 
     private fun removeWatchEntry(action: RemoveEpisodeWatchAction) {
@@ -135,15 +131,11 @@ class EpisodeDetailsViewModel @ViewModelInject constructor(
     }
 
     private fun markWatched() = withState { state ->
-        state.episodeId?.also { episodeId ->
-            addEpisodeWatch(AddEpisodeWatch.Params(episodeId, OffsetDateTime.now())).watchStatus()
-        }
+        addEpisodeWatch(AddEpisodeWatch.Params(state.episodeId, OffsetDateTime.now())).watchStatus()
     }
 
     private fun markUnwatched() = withState { state ->
-        state.episodeId?.also { episodeId ->
-            removeEpisodeWatches(RemoveEpisodeWatches.Params(episodeId)).watchStatus()
-        }
+        removeEpisodeWatches(RemoveEpisodeWatches.Params(state.episodeId)).watchStatus()
     }
 
     private fun Flow<InvokeStatus>.watchStatus() = viewModelScope.launch { collectStatus() }
@@ -160,5 +152,14 @@ class EpisodeDetailsViewModel @ViewModelInject constructor(
         }
     }
 
-    fun setEpisodeId(id: Long) = setState { copy(episodeId = id) }
+    @AssistedInject.Factory
+    internal interface Factory {
+        fun create(initialState: EpisodeDetailsViewState): EpisodeDetailsViewModel
+    }
+}
+
+internal fun EpisodeDetailsViewModel.Factory.create(
+    episodeId: Long
+): EpisodeDetailsViewModel {
+    return create(EpisodeDetailsViewState(episodeId = episodeId))
 }
