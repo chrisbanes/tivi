@@ -22,7 +22,7 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.Season
 
 data class EpisodeDetailsViewState(
-    val episodeId: Long? = null,
+    val episodeId: Long,
     val season: Season? = null,
     val episode: Episode? = null,
     val watches: List<EpisodeWatchEntry> = emptyList(),

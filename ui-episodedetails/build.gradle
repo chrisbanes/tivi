@@ -34,6 +34,13 @@ android {
 
     defaultConfig {
         minSdkVersion buildConfig.minSdk
+
+        // Needed because we're using AssistedInject to inject our ViewModel
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments["dagger.hilt.disableModulesHaveInstallInCheck"] = "true"
+            }
+        }
     }
 
     compileOptions {
@@ -85,6 +92,9 @@ dependencies {
 
     implementation Libs.Hilt.library
     kapt Libs.Hilt.compiler
+
+    compileOnly Libs.AssistedInject.annotationDagger2
+    kapt Libs.AssistedInject.processorDagger2
 
     implementation Libs.AndroidX.Hilt.viewmodel
     kapt Libs.AndroidX.Hilt.compiler

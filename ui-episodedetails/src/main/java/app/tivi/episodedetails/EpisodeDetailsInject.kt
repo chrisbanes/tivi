@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,12 @@
 
 package app.tivi.episodedetails
 
-enum class Action {
-    WATCH,
-    UNWATCH
-}
+import com.squareup.inject.assisted.dagger2.AssistedModule
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.FragmentComponent
+
+@InstallIn(FragmentComponent::class)
+@Module(includes = [AssistedInject_EpisodeDetailsAssistedModule::class])
+@AssistedModule
+internal object EpisodeDetailsAssistedModule
