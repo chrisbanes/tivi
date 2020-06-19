@@ -36,7 +36,9 @@ class AccountUiViewModel @ViewModelInject constructor(
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
     private val appNavigator: Provider<AppNavigator>
-) : ReduxViewModel<AccountUiViewState>() {
+) : ReduxViewModel<AccountUiViewState>(
+    AccountUiViewState()
+) {
     private val pendingActions = Channel<AccountUiAction>(Channel.BUFFERED)
 
     init {
@@ -72,9 +74,5 @@ class AccountUiViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             traktManager.clearAuth()
         }
-    }
-
-    override fun createInitialState(): AccountUiViewState {
-        return AccountUiViewState()
     }
 }

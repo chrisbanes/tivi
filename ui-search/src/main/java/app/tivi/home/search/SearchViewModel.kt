@@ -33,7 +33,9 @@ import kotlinx.coroutines.launch
 
 internal class SearchViewModel @ViewModelInject constructor(
     private val searchShows: SearchShows
-) : ReduxViewModel<SearchViewState>() {
+) : ReduxViewModel<SearchViewState>(
+    SearchViewState()
+) {
     private val searchQuery = ConflatedBroadcastChannel<String>()
     private val loadingState = ObservableLoadingCounter()
 
@@ -65,8 +67,4 @@ internal class SearchViewModel @ViewModelInject constructor(
     }
 
     fun clearQuery() = setSearchQuery("")
-
-    override fun createInitialState(): SearchViewState {
-        return SearchViewState()
-    }
 }

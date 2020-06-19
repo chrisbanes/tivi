@@ -51,7 +51,9 @@ class EpisodeDetailsViewModel @ViewModelInject constructor(
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch,
     private val logger: Logger
-) : ReduxViewModel<EpisodeDetailsViewState>() {
+) : ReduxViewModel<EpisodeDetailsViewState>(
+    EpisodeDetailsViewState()
+) {
 
     private val loadingState = ObservableLoadingCounter()
     private val snackbarManager = SnackbarManager()
@@ -156,10 +158,6 @@ class EpisodeDetailsViewModel @ViewModelInject constructor(
                 loadingState.removeLoader()
             }
         }
-    }
-
-    override fun createInitialState(): EpisodeDetailsViewState {
-        return EpisodeDetailsViewState()
     }
 
     fun setEpisodeId(id: Long) = setState { copy(episodeId = id) }

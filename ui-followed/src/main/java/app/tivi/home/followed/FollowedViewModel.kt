@@ -51,7 +51,9 @@ internal class FollowedViewModel @ViewModelInject constructor(
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val observeUserDetails: ObserveUserDetails,
     private val appNavigator: AppNavigator
-) : ReduxViewModel<FollowedViewState>() {
+) : ReduxViewModel<FollowedViewState>(
+    FollowedViewState()
+) {
     private val boundaryCallback = object : PagedList.BoundaryCallback<FollowedShowEntryWithShow>() {
         override fun onZeroItemsLoaded() {
             setState { copy(isEmpty = filter.isNullOrEmpty()) }
@@ -188,10 +190,6 @@ internal class FollowedViewModel @ViewModelInject constructor(
                 loadingState.collectFrom(it)
             }
         }
-    }
-
-    override fun createInitialState(): FollowedViewState {
-        return FollowedViewState()
     }
 
     companion object {
