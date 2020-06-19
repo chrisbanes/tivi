@@ -105,21 +105,18 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
     }
 
     fun onListScrolledToEnd() {
-        callLoadMore().also {
-            viewModelScope.launch {
-                it.catch {
-                    messages.send(UiError(it))
-                }.map {
+        viewModelScope.launch {
+            callLoadMore()
+                .catch { messages.send(UiError(it)) }
+                .map {
                     when (it) {
                         InvokeSuccess -> UiSuccess
                         InvokeStarted -> UiLoading(false)
                         is InvokeError -> UiError(it.throwable)
                         else -> UiIdle
                     }
-                }.collect {
-                    messages.send(it)
                 }
-            }
+                .collect { messages.send(it) }
         }
     }
 
@@ -138,31 +135,30 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
     }
 
     fun followSelectedShows() {
-        changeShowFollowStatus(
-            ChangeShowFollowStatus.Params(
-                showSelection.getSelectedShowIds(),
-                ChangeShowFollowStatus.Action.FOLLOW,
-                deferDataFetch = true
+        viewModelScope.launch {
+            changeShowFollowStatus.executeSync(
+                ChangeShowFollowStatus.Params(
+                    showSelection.getSelectedShowIds(),
+                    ChangeShowFollowStatus.Action.FOLLOW,
+                    deferDataFetch = true
+                )
             )
-        )
+        }
         showSelection.clearSelection()
     }
 
     protected fun refresh(fromUser: Boolean) {
-        callRefresh(fromUser).also {
-            viewModelScope.launch {
-                it.catch {
-                    messages.send(UiError(it))
-                }.map {
+        viewModelScope.launch {
+            callRefresh(fromUser)
+                .catch { messages.send(UiError(it)) }
+                .map {
                     when (it) {
                         InvokeSuccess -> UiSuccess
                         InvokeStarted -> UiLoading(true)
                         else -> UiIdle
                     }
-                }.collect {
-                    messages.send(it)
                 }
-            }
+                .collect { messages.send(it) }
         }
     }
 

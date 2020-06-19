@@ -16,7 +16,6 @@
 
 package app.tivi.domain.interactors
 
-import app.tivi.data.entities.TiviShow
 import app.tivi.data.fetch
 import app.tivi.data.repositories.shows.ShowLastRequestStore
 import app.tivi.data.repositories.shows.ShowStore
@@ -33,8 +32,8 @@ class UpdateShowDetails @Inject constructor(
     private val lastRequestStore: ShowLastRequestStore,
     private val dispatchers: AppCoroutineDispatchers
 ) : Interactor<Params>() {
-    override suspend fun doWork(params: Params): TiviShow {
-        return withContext(dispatchers.io) {
+    override suspend fun doWork(params: Params) {
+        withContext(dispatchers.io) {
             showStore.fetch(params.showId, params.forceLoad) {
                 // Refresh if our cached data is over 14 days old
                 lastRequestStore.isRequestExpired(params.showId, Period.ofDays(14))
