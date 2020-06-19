@@ -18,28 +18,28 @@ package app.tivi.domain.interactors
 
 import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.domain.Interactor
-import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ChangeSeasonFollowStatus @Inject constructor(
     private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
-    dispatchers: AppCoroutineDispatchers,
-    @ProcessLifetime val processScope: CoroutineScope
+    private val dispatchers: AppCoroutineDispatchers
 ) : Interactor<ChangeSeasonFollowStatus.Params>() {
-    override val scope: CoroutineScope = processScope + dispatchers.io
-
-    override suspend fun doWork(params: Params) = when (params.action) {
-        Action.FOLLOW -> {
-            seasonsEpisodesRepository.markSeasonFollowed(params.seasonId)
-        }
-        Action.IGNORE -> {
-            seasonsEpisodesRepository.markSeasonIgnored(params.seasonId)
-        }
-        Action.IGNORE_PREVIOUS -> {
-            seasonsEpisodesRepository.markPreviousSeasonsIgnored(params.seasonId)
+    override suspend fun doWork(params: Params) {
+        return withContext(dispatchers.io) {
+            when (params.action) {
+                Action.FOLLOW -> {
+                    seasonsEpisodesRepository.markSeasonFollowed(params.seasonId)
+                }
+                Action.IGNORE -> {
+                    seasonsEpisodesRepository.markSeasonIgnored(params.seasonId)
+                }
+                Action.IGNORE_PREVIOUS -> {
+                    seasonsEpisodesRepository.markPreviousSeasonsIgnored(params.seasonId)
+                }
+            }
         }
     }
 

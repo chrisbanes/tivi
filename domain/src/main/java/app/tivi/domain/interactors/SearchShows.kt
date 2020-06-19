@@ -27,7 +27,7 @@ import javax.inject.Inject
 class SearchShows @Inject constructor(
     private val searchRepository: SearchRepository,
     private val showFtsDao: ShowFtsDao,
-    dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers
 ) : SuspendingWorkInteractor<SearchShows.Params, SearchResults>() {
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 

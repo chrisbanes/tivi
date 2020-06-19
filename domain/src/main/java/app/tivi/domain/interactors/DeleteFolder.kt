@@ -17,22 +17,20 @@
 package app.tivi.domain.interactors
 
 import app.tivi.domain.Interactor
-import app.tivi.inject.ProcessLifetime
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
 class DeleteFolder @Inject constructor(
-    dispatchers: AppCoroutineDispatchers,
-    @ProcessLifetime val processScope: CoroutineScope
+    private val dispatchers: AppCoroutineDispatchers
 ) : Interactor<DeleteFolder.Params>() {
-    override val scope: CoroutineScope = processScope + dispatchers.io
-
     override suspend fun doWork(params: Params) {
-        if (params.directory.exists()) {
-            params.directory.deleteRecursively()
+        withContext(dispatchers.io) {
+            if (params.directory.exists()) {
+                params.directory.deleteRecursively()
+            }
         }
     }
 
