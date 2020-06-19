@@ -34,10 +34,17 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.reflect.KProperty1
 
-abstract class ReduxViewModel<S> : ViewModel() {
+abstract class ReduxViewModel<S>(
+    initialState: S
+) : ViewModel() {
+    private val stateChannel = ConflatedBroadcastChannel(initialState)
+
     private val stateMutex = Mutex()
-    internal var state: S = createInitialState()
-    private val stateChannel = ConflatedBroadcastChannel(state)
+    internal var state: S = initialState
+        set(value) {
+            field = value
+            stateChannel.offer(value)
+        }
 
     val liveData: LiveData<S>
         get() = stateChannel.asFlow().asLiveData()
@@ -96,7 +103,6 @@ abstract class ReduxViewModel<S> : ViewModel() {
     protected suspend fun setStateMutexed(reducer: S.() -> S) {
         stateMutex.withLock {
             state = reducer(state)
-            stateChannel.offer(state)
         }
     }
 
@@ -111,8 +117,6 @@ abstract class ReduxViewModel<S> : ViewModel() {
     protected fun withState(block: (S) -> Unit) {
         viewModelScope.launch { withStateMutexed(block) }
     }
-
-    protected abstract fun createInitialState(): S
 
     override fun onCleared() {
         stateChannel.close()

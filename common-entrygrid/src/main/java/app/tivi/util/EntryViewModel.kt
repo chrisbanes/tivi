@@ -43,7 +43,9 @@ import kotlinx.coroutines.launch
 
 abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteractor<*, LI>>(
     private val pageSize: Int = 21
-) : ReduxViewModel<EntryViewState>() {
+) : ReduxViewModel<EntryViewState>(
+    EntryViewState()
+) {
     protected abstract val dispatchers: AppCoroutineDispatchers
     protected abstract val pagingInteractor: PI
     protected abstract val logger: Logger
@@ -162,10 +164,6 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
                 }
             }
         }
-    }
-
-    override fun createInitialState(): EntryViewState {
-        return EntryViewState()
     }
 
     protected abstract fun callRefresh(fromUser: Boolean): Flow<InvokeStatus>

@@ -34,7 +34,9 @@ class HomeActivityViewModel @ViewModelInject constructor(
     private val updateUserDetails: UpdateUserDetails,
     observeUserDetails: ObserveUserDetails,
     private val logger: Logger
-) : ReduxViewModel<HomeActivityViewState>() {
+) : ReduxViewModel<HomeActivityViewState>(
+    HomeActivityViewState()
+) {
     init {
         viewModelScope.launchObserve(observeUserDetails) {
             it.execute {
@@ -55,9 +57,5 @@ class HomeActivityViewModel @ViewModelInject constructor(
         selectSubscribe(HomeActivityViewState::user) { user ->
             logger.setUserId(user?.username ?: "")
         }
-    }
-
-    override fun createInitialState(): HomeActivityViewState {
-        return HomeActivityViewState()
     }
 }

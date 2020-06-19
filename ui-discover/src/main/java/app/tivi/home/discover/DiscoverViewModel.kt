@@ -51,7 +51,9 @@ internal class DiscoverViewModel @ViewModelInject constructor(
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
     private val appNavigator: Provider<AppNavigator>
-) : ReduxViewModel<DiscoverViewState>() {
+) : ReduxViewModel<DiscoverViewState>(
+    DiscoverViewState()
+) {
     private val trendingLoadingState = ObservableLoadingCounter()
     private val popularLoadingState = ObservableLoadingCounter()
     private val recommendedLoadingState = ObservableLoadingCounter()
@@ -144,9 +146,5 @@ internal class DiscoverViewModel @ViewModelInject constructor(
                 recommendedLoadingState.collectFrom(it)
             }
         }
-    }
-
-    override fun createInitialState(): DiscoverViewState {
-        return DiscoverViewState()
     }
 }

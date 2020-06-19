@@ -71,7 +71,9 @@ class ShowDetailsFragmentViewModel @ViewModelInject constructor(
     private val changeSeasonFollowStatus: ChangeSeasonFollowStatus,
     private val getEpisode: GetEpisodeDetails,
     private val logger: Logger
-) : ReduxViewModel<ShowDetailsViewState>() {
+) : ReduxViewModel<ShowDetailsViewState>(
+    ShowDetailsViewState()
+) {
 
     private val loadingState = ObservableLoadingCounter()
     private val snackbarManager = SnackbarManager()
@@ -274,9 +276,5 @@ class ShowDetailsFragmentViewModel @ViewModelInject constructor(
         super.onCleared()
         pendingActions.cancel()
         snackbarManager.close()
-    }
-
-    override fun createInitialState(): ShowDetailsViewState {
-        return ShowDetailsViewState()
     }
 }

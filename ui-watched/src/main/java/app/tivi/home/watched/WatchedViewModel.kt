@@ -50,7 +50,9 @@ internal class WatchedViewModel @ViewModelInject constructor(
     private val observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
     private val appNavigator: AppNavigator
-) : ReduxViewModel<WatchedViewState>() {
+) : ReduxViewModel<WatchedViewState>(
+    WatchedViewState()
+) {
     private val boundaryCallback = object : PagedList.BoundaryCallback<WatchedShowEntryWithShow>() {
         override fun onZeroItemsLoaded() {
             setState { copy(isEmpty = filter.isNullOrEmpty()) }
@@ -190,10 +192,6 @@ internal class WatchedViewModel @ViewModelInject constructor(
                 loadingState.collectFrom(it)
             }
         }
-    }
-
-    override fun createInitialState(): WatchedViewState {
-        return WatchedViewState()
     }
 
     companion object {
