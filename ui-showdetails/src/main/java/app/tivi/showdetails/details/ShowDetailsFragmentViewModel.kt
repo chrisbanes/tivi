@@ -16,7 +16,6 @@
 
 package app.tivi.showdetails.details
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import app.tivi.ReduxViewModel
 import app.tivi.Success
@@ -47,6 +46,8 @@ import app.tivi.domain.observers.ObserveShowViewStats
 import app.tivi.ui.SnackbarManager
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -54,7 +55,8 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class ShowDetailsFragmentViewModel @ViewModelInject constructor(
+internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
+    @Assisted initialState: ShowDetailsViewState,
     private val updateShowDetails: UpdateShowDetails,
     observeShowDetails: ObserveShowDetails,
     observeShowImages: ObserveShowImages,
@@ -71,10 +73,7 @@ class ShowDetailsFragmentViewModel @ViewModelInject constructor(
     private val changeSeasonFollowStatus: ChangeSeasonFollowStatus,
     private val getEpisode: GetEpisodeDetails,
     private val logger: Logger
-) : ReduxViewModel<ShowDetailsViewState>(
-    ShowDetailsViewState()
-) {
-
+) : ReduxViewModel<ShowDetailsViewState>(initialState) {
     private val loadingState = ObservableLoadingCounter()
     private val snackbarManager = SnackbarManager()
 
@@ -152,27 +151,23 @@ class ShowDetailsFragmentViewModel @ViewModelInject constructor(
         }
 
         selectSubscribe(ShowDetailsViewState::showId) { showId ->
-            if (showId != null) {
-                observeShowFollowStatus(ObserveShowFollowStatus.Params(showId))
-                observeShowDetails(ObserveShowDetails.Params(showId))
-                observeShowImages(ObserveShowImages.Params(showId))
-                observeRelatedShows(ObserveRelatedShows.Params(showId))
-                observeShowSeasons(ObserveShowSeasonData.Params(showId))
-                observeNextEpisodeToWatch(ObserveShowNextEpisodeToWatch.Params(showId))
-                observeShowViewStats(ObserveShowViewStats.Params(showId))
+            observeShowFollowStatus(ObserveShowFollowStatus.Params(showId))
+            observeShowDetails(ObserveShowDetails.Params(showId))
+            observeShowImages(ObserveShowImages.Params(showId))
+            observeRelatedShows(ObserveRelatedShows.Params(showId))
+            observeShowSeasons(ObserveShowSeasonData.Params(showId))
+            observeNextEpisodeToWatch(ObserveShowNextEpisodeToWatch.Params(showId))
+            observeShowViewStats(ObserveShowViewStats.Params(showId))
 
-                refresh(false)
-            }
+            refresh(false)
         }
     }
 
     private fun refresh(fromUser: Boolean) = withState { state ->
-        state.showId?.also { showId ->
-            updateShowDetails(UpdateShowDetails.Params(showId, fromUser)).watchStatus()
-            updateShowImages(UpdateShowImages.Params(showId, fromUser)).watchStatus()
-            updateRelatedShows(UpdateRelatedShows.Params(showId, fromUser)).watchStatus()
-            updateShowSeasons(UpdateShowSeasonData.Params(showId, fromUser)).watchStatus()
-        }
+        updateShowDetails(UpdateShowDetails.Params(state.showId, fromUser)).watchStatus()
+        updateShowImages(UpdateShowImages.Params(state.showId, fromUser)).watchStatus()
+        updateRelatedShows(UpdateRelatedShows.Params(state.showId, fromUser)).watchStatus()
+        updateShowSeasons(UpdateShowSeasonData.Params(state.showId, fromUser)).watchStatus()
     }
 
     private fun Flow<InvokeStatus>.watchStatus() = viewModelScope.launch { collectStatus() }
@@ -193,12 +188,8 @@ class ShowDetailsFragmentViewModel @ViewModelInject constructor(
         pendingActions.send(action)
     }
 
-    fun setShowId(id: Long) = setState { copy(showId = id) }
-
     private fun onToggleMyShowsButtonClicked() = withState { state ->
-        state.showId?.also { showId ->
-            changeShowFollowStatus(ChangeShowFollowStatus.Params(showId, TOGGLE)).watchStatus()
-        }
+        changeShowFollowStatus(ChangeShowFollowStatus.Params(state.showId, TOGGLE)).watchStatus()
     }
 
     private fun openShowDetails(action: OpenShowDetails) = setState {
@@ -276,5 +267,25 @@ class ShowDetailsFragmentViewModel @ViewModelInject constructor(
         super.onCleared()
         pendingActions.cancel()
         snackbarManager.close()
+    }
+
+    /**
+     * Factory to allow assisted injection of [ShowDetailsFragmentViewModel] with an initial state.
+     */
+    @AssistedInject.Factory
+    internal interface Factory {
+        fun create(initialState: ShowDetailsViewState): ShowDetailsFragmentViewModel
+    }
+}
+
+internal fun ShowDetailsFragmentViewModel.Factory.create(
+    showId: Long,
+    pendingEpisodeId: Long? = null
+): ShowDetailsFragmentViewModel {
+    val initialState = ShowDetailsViewState(showId = showId)
+    return create(initialState).apply {
+        if (pendingEpisodeId != null) {
+            submitAction(OpenEpisodeDetails(pendingEpisodeId))
+        }
     }
 }
