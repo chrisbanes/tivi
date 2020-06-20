@@ -22,6 +22,7 @@ import app.tivi.data.repositories.search.SearchRepository
 import app.tivi.domain.SuspendingWorkInteractor
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SearchShows @Inject constructor(
@@ -32,16 +33,17 @@ class SearchShows @Inject constructor(
     override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override suspend fun doWork(params: Params): SearchResults {
-        val remoteResults = searchRepository.search(params.query)
-        return when {
-            remoteResults.isNotEmpty() -> SearchResults(params.query, remoteResults)
-            else -> SearchResults(
-                params.query,
-                when {
+        return withContext(dispatchers.io) {
+            val remoteResults = searchRepository.search(params.query)
+            if (remoteResults.isNotEmpty()) {
+                SearchResults(params.query, remoteResults)
+            } else {
+                val results = when {
                     params.query.isNotBlank() -> showFtsDao.search("*$params.query*")
                     else -> emptyList()
                 }
-            )
+                SearchResults(params.query, results)
+            }
         }
     }
 

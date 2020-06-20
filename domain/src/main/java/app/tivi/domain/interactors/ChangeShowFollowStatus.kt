@@ -37,30 +37,32 @@ class ChangeShowFollowStatus @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val showTasks: ShowTasks
 ) : Interactor<ChangeShowFollowStatus.Params>() {
-    override suspend fun doWork(params: Params) = withContext(dispatchers.io) {
-        params.showIds.forEach { showId ->
-            when (params.action) {
-                Action.TOGGLE -> {
-                    if (followedShowsRepository.isShowFollowed(showId)) {
-                        unfollow(showId)
-                    } else {
-                        follow(showId, params.deferDataFetch)
+    override suspend fun doWork(params: Params) {
+        withContext(dispatchers.io) {
+            params.showIds.forEach { showId ->
+                when (params.action) {
+                    Action.TOGGLE -> {
+                        if (followedShowsRepository.isShowFollowed(showId)) {
+                            unfollow(showId)
+                        } else {
+                            follow(showId, params.deferDataFetch)
+                        }
                     }
+                    Action.FOLLOW -> follow(showId, params.deferDataFetch)
+                    Action.UNFOLLOW -> unfollow(showId)
                 }
-                Action.FOLLOW -> follow(showId, params.deferDataFetch)
-                Action.UNFOLLOW -> unfollow(showId)
             }
-        }
-        // Finally, sync the changes to Trakt
-        val result = followedShowsRepository.syncFollowedShows()
+            // Finally, sync the changes to Trakt
+            val result = followedShowsRepository.syncFollowedShows()
 
-        result.added.forEach {
-            showStore.fetch(it.showId)
-            showImagesStore.fetchCollection(it.showId)
-        }
+            result.added.forEach {
+                showStore.fetch(it.showId)
+                showImagesStore.fetchCollection(it.showId)
+            }
 
-        if (params.deferDataFetch) {
-            showTasks.syncFollowedShows()
+            if (params.deferDataFetch) {
+                showTasks.syncFollowedShows()
+            }
         }
     }
 
