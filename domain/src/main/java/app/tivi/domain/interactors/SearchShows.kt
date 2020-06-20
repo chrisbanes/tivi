@@ -21,7 +21,6 @@ import app.tivi.data.entities.SearchResults
 import app.tivi.data.repositories.search.SearchRepository
 import app.tivi.domain.SuspendingWorkInteractor
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -30,8 +29,6 @@ class SearchShows @Inject constructor(
     private val showFtsDao: ShowFtsDao,
     private val dispatchers: AppCoroutineDispatchers
 ) : SuspendingWorkInteractor<SearchShows.Params, SearchResults>() {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
-
     override suspend fun doWork(params: Params): SearchResults {
         return withContext(dispatchers.io) {
             val remoteResults = searchRepository.search(params.query)

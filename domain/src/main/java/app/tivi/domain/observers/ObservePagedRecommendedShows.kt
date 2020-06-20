@@ -21,16 +21,12 @@ import app.tivi.data.FlowPagedListBuilder
 import app.tivi.data.daos.RecommendedDao
 import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.domain.PagingInteractor
-import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ObservePagedRecommendedShows @Inject constructor(
-    dispatchers: AppCoroutineDispatchers,
     private val recommendedDao: RecommendedDao
 ) : PagingInteractor<ObservePagedRecommendedShows.Params, RecommendedEntryWithShow>() {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override fun createObservable(params: Params): Flow<PagedList<RecommendedEntryWithShow>> {
         return FlowPagedListBuilder(

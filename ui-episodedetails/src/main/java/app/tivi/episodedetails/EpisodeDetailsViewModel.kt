@@ -29,7 +29,6 @@ import app.tivi.domain.interactors.AddEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatch
 import app.tivi.domain.interactors.RemoveEpisodeWatches
 import app.tivi.domain.interactors.UpdateEpisodeDetails
-import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObserveEpisodeDetails
 import app.tivi.domain.observers.ObserveEpisodeWatches
 import app.tivi.ui.SnackbarManager
@@ -61,14 +60,15 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     private val pendingActions = Channel<EpisodeDetailsAction>(Channel.BUFFERED)
 
     init {
-        viewModelScope.launchObserve(observeEpisodeDetails) {
-            it.collect { result -> updateFromEpisodeDetails(result) }
+        viewModelScope.launch {
+            observeEpisodeDetails.observe()
+                .collect { updateFromEpisodeDetails(it) }
         }
 
-        viewModelScope.launchObserve(observeEpisodeWatches) {
-            it.onStart {
-                emit(emptyList())
-            }.collect { result -> updateFromEpisodeWatches(result) }
+        viewModelScope.launch {
+            observeEpisodeWatches.observe()
+                .onStart { emit(emptyList()) }
+                .collect { updateFromEpisodeWatches(it) }
         }
 
         viewModelScope.launch {

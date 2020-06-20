@@ -19,17 +19,12 @@ package app.tivi.domain.observers
 import app.tivi.domain.SubjectInteractor
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
-import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ObserveTraktAuthState @Inject constructor(
-    dispatchers: AppCoroutineDispatchers,
     private val traktManager: TraktManager
 ) : SubjectInteractor<Unit, TraktAuthState>() {
-    override val dispatcher: CoroutineDispatcher = dispatchers.main
-
     override fun createObservable(params: Unit): Flow<TraktAuthState> {
         return traktManager.state
     }

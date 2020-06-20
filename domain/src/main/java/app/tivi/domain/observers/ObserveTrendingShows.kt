@@ -19,16 +19,12 @@ package app.tivi.domain.observers
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.domain.SubjectInteractor
-import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ObserveTrendingShows @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
     private val trendingShowsDao: TrendingDao
 ) : SubjectInteractor<ObserveTrendingShows.Params, List<TrendingEntryWithShow>>() {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override fun createObservable(params: Params): Flow<List<TrendingEntryWithShow>> {
         return trendingShowsDao.entriesObservable(params.count, 0)

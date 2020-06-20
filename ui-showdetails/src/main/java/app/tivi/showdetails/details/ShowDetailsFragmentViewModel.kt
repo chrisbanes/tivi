@@ -35,7 +35,6 @@ import app.tivi.domain.interactors.UpdateRelatedShows
 import app.tivi.domain.interactors.UpdateShowDetails
 import app.tivi.domain.interactors.UpdateShowImages
 import app.tivi.domain.interactors.UpdateShowSeasonData
-import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObserveRelatedShows
 import app.tivi.domain.observers.ObserveShowDetails
 import app.tivi.domain.observers.ObserveShowFollowStatus
@@ -80,50 +79,59 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
     private val pendingActions = Channel<ShowDetailsAction>(Channel.BUFFERED)
 
     init {
-        viewModelScope.launchObserve(observeShowFollowStatus) { flow ->
-            flow.distinctUntilChanged().execute {
-                copy(isFollowed = if (it is Success) it() else false)
-            }
-        }
-
-        viewModelScope.launchObserve(observeShowDetails) { flow ->
-            flow.distinctUntilChanged().execute {
-                if (it is Success) {
-                    copy(show = it())
-                } else {
-                    this
-                }
-            }
-        }
-
-        viewModelScope.launchObserve(observeShowImages) { flow ->
-            flow.distinctUntilChanged().execute { images ->
-                if (images is Success) {
-                    copy(backdropImage = images().backdrop, posterImage = images().poster)
-                } else {
-                    this
-                }
-            }
+        viewModelScope.launch {
+            observeShowFollowStatus.observe()
+                .distinctUntilChanged()
+                .execute { copy(isFollowed = if (it is Success) it() else false) }
         }
 
         viewModelScope.launch {
-            loadingState.observable.collect { setState { copy(refreshing = it) } }
+            observeShowDetails.observe()
+                .distinctUntilChanged()
+                .execute {
+                    if (it is Success) {
+                        copy(show = it())
+                    } else this
+                }
         }
 
-        viewModelScope.launchObserve(observeRelatedShows) { flow ->
-            flow.distinctUntilChanged().execute { copy(relatedShows = it) }
+        viewModelScope.launch {
+            observeShowImages.observe()
+                .distinctUntilChanged()
+                .execute { images ->
+                    if (images is Success) {
+                        copy(backdropImage = images().backdrop, posterImage = images().poster)
+                    } else this
+                }
         }
 
-        viewModelScope.launchObserve(observeNextEpisodeToWatch) { flow ->
-            flow.distinctUntilChanged().execute { copy(nextEpisodeToWatch = it) }
+        viewModelScope.launch {
+            loadingState.observable
+                .collect { setState { copy(refreshing = it) } }
         }
 
-        viewModelScope.launchObserve(observeShowSeasons) { flow ->
-            flow.distinctUntilChanged().execute { copy(seasons = it) }
+        viewModelScope.launch {
+            observeRelatedShows.observe()
+                .distinctUntilChanged()
+                .execute { copy(relatedShows = it) }
         }
 
-        viewModelScope.launchObserve(observeShowViewStats) { flow ->
-            flow.distinctUntilChanged().execute { copy(viewStats = it) }
+        viewModelScope.launch {
+            observeNextEpisodeToWatch.observe()
+                .distinctUntilChanged()
+                .execute { copy(nextEpisodeToWatch = it) }
+        }
+
+        viewModelScope.launch {
+            observeShowSeasons.observe()
+                .distinctUntilChanged()
+                .execute { copy(seasons = it) }
+        }
+
+        viewModelScope.launch {
+            observeShowViewStats.observe()
+                .distinctUntilChanged()
+                .execute { copy(viewStats = it) }
         }
 
         viewModelScope.launch {

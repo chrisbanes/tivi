@@ -19,18 +19,14 @@ package app.tivi.domain.observers
 import app.tivi.data.entities.ShowImages
 import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.domain.SubjectInteractor
-import app.tivi.util.AppCoroutineDispatchers
 import com.dropbox.android.external.store4.StoreRequest
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class ObserveShowImages @Inject constructor(
-    private val store: ShowImagesStore,
-    dispatchers: AppCoroutineDispatchers
+    private val store: ShowImagesStore
 ) : SubjectInteractor<ObserveShowImages.Params, ShowImages>() {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override fun createObservable(params: Params): Flow<ShowImages> {
         return store.stream(StoreRequest.cached(params.showId, refresh = false))
