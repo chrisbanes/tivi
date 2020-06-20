@@ -23,6 +23,7 @@ import androidx.ui.core.LayoutCoordinates
 import androidx.ui.core.Modifier
 import androidx.ui.core.OnPositionedModifier
 import androidx.ui.core.composed
+import androidx.ui.core.positionInRoot
 import androidx.ui.geometry.Offset
 import androidx.ui.unit.IntSize
 import androidx.ui.unit.PxBounds
@@ -35,7 +36,7 @@ inline val LayoutCoordinates.boundsInParent: PxBounds
     get() = PxBounds(positionInParent, size.toSize())
 
 fun Modifier.onSizeChanged(
-    onSizeChanged: (IntSize) -> Unit
+    onChange: (IntSize) -> Unit
 ) = composed {
     var lastSize by state<IntSize?> { null }
 
@@ -43,7 +44,37 @@ fun Modifier.onSizeChanged(
         override fun onPositioned(coordinates: LayoutCoordinates) {
             if (coordinates.size != lastSize) {
                 lastSize = coordinates.size
-                onSizeChanged(coordinates.size)
+                onChange(coordinates.size)
+            }
+        }
+    }
+}
+
+fun Modifier.onPositionInParentChanged(
+    onChange: (LayoutCoordinates) -> Unit
+) = composed {
+    var lastPosition by state<Offset?> { null }
+
+    object : OnPositionedModifier {
+        override fun onPositioned(coordinates: LayoutCoordinates) {
+            if (coordinates.positionInParent != lastPosition) {
+                lastPosition = coordinates.positionInParent
+                onChange(coordinates)
+            }
+        }
+    }
+}
+
+fun Modifier.onPositionInRootChanged(
+    onChange: (LayoutCoordinates) -> Unit
+) = composed {
+    var lastPosition by state<Offset?> { null }
+
+    object : OnPositionedModifier {
+        override fun onPositioned(coordinates: LayoutCoordinates) {
+            if (coordinates.positionInRoot != lastPosition) {
+                lastPosition = coordinates.positionInRoot
+                onChange(coordinates)
             }
         }
     }

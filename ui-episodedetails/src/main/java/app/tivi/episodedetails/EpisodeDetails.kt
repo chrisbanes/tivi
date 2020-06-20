@@ -38,7 +38,6 @@ import androidx.ui.core.ContentScale
 import androidx.ui.core.DensityAmbient
 import androidx.ui.core.Modifier
 import androidx.ui.core.drawWithContent
-import androidx.ui.core.onPositioned
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.ContentColorAmbient
@@ -99,6 +98,7 @@ import app.tivi.common.compose.SwipeToDismiss
 import app.tivi.common.compose.TiviAlertDialog
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.boundsInParent
+import app.tivi.common.compose.onPositionInParentChanged
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
@@ -464,17 +464,19 @@ private fun EpisodeWatchSwipeBackground(
         ) {
             // A simple box to draw the growing circle, which emanates from behind the icon
             Box(
-                modifier = Modifier.fillMaxSize().drawGrowingCircle(
-                    transitionState[color],
-                    iconCenter,
-                    lerp(0f, maxRadius.toFloat(), fastOutLinearIn(swipeProgress))
-                )
+                modifier = Modifier.fillMaxSize()
+                    .drawGrowingCircle(
+                        transitionState[color],
+                        iconCenter,
+                        lerp(0f, maxRadius.toFloat(), fastOutLinearIn(swipeProgress))
+                    )
             )
 
             ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
                 Icon(
                     asset = Icons.Default.Delete,
-                    modifier = Modifier.onPositioned { iconCenter = it.boundsInParent.center() }
+                    modifier = Modifier
+                        .onPositionInParentChanged { iconCenter = it.boundsInParent.center() }
                         .padding(0.dp, 0.dp, end = 16.dp, bottom = 0.dp)
                         .gravity(Alignment.CenterEnd)
                 )

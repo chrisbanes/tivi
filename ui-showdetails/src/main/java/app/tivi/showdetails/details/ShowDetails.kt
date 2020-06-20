@@ -17,7 +17,6 @@
 package app.tivi.showdetails.details
 
 import android.view.ViewGroup
-import androidx.animation.transitionDefinition
 import androidx.compose.Composable
 import androidx.compose.MutableState
 import androidx.compose.Providers
@@ -31,16 +30,12 @@ import androidx.compose.staticAmbientOf
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LiveData
 import androidx.ui.animation.Crossfade
-import androidx.ui.animation.DpPropKey
-import androidx.ui.animation.Transition
 import androidx.ui.core.Alignment
 import androidx.ui.core.ContentScale
 import androidx.ui.core.ContextAmbient
 import androidx.ui.core.DensityAmbient
 import androidx.ui.core.Modifier
 import androidx.ui.core.clip
-import androidx.ui.core.drawOpacity
-import androidx.ui.core.onPositioned
 import androidx.ui.core.positionInRoot
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
@@ -109,6 +104,7 @@ import app.tivi.common.compose.PopupMenuItem
 import app.tivi.common.compose.ProvideInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
+import app.tivi.common.compose.onPositionInRootChanged
 import app.tivi.common.compose.onSizeChanged
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
@@ -302,41 +298,32 @@ fun ShowDetails(
         }
     }
 
-    Column(
-        modifier = Modifier.fillMaxWidth().gravity(Alignment.TopStart)
+    val insets = InsetsAmbient.current
+    val trigger = (backdropHeight - insets.top).coerceAtLeast(0)
+
+    val alpha = lerp(
+        startValue = 0.5f,
+        endValue = 1f,
+        fraction = if (trigger > 0) (scrollerPosition.value / trigger).coerceIn(0f, 1f) else 0f
+    )
+
+    Surface(
+        color = MaterialTheme.colors.surface.copy(alpha = alpha),
+        modifier = Modifier.fillMaxWidth().gravity(Alignment.TopStart),
+        elevation = if (scrollerPosition.value >= trigger) 2.dp else 0.dp
     ) {
-        val insets = InsetsAmbient.current
-
-        val trigger = (backdropHeight - insets.top).coerceAtLeast(0)
-
-        if (insets.top > 0) {
-            val alpha = lerp(
-                startValue = 0.5f,
-                endValue = 1f,
-                fraction = if (trigger > 0) {
-                    (scrollerPosition.value / trigger).coerceIn(0f, 1f)
-                } else 0f
-            )
-            val topInset = with(DensityAmbient.current) { insets.top.toDp() }
-            Box(
-                Modifier.preferredHeight(topInset)
-                    .fillMaxWidth()
-                    .drawBackground(color = MaterialTheme.colors.background.copy(alpha = alpha))
-            )
-        }
-
-        val showOverlayAppBar = scrollerPosition.value > trigger
-
-        Transition(
-            definition = appBarFadeTransitionDef,
-            toState = showOverlayAppBar
-        ) { transitionState ->
-            if (showOverlayAppBar) {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            if (insets.top > 0) {
+                val topInset = with(DensityAmbient.current) { insets.top.toDp() }
+                Spacer(Modifier.preferredHeight(topInset).fillMaxWidth())
+            }
+            if (scrollerPosition.value >= trigger) {
                 ShowDetailsAppBar(
                     show = viewState.show,
-                    elevation = transitionState[appBarElevationPropKey],
-                    backgroundColor = MaterialTheme.colors.surface,
-                    modifier = Modifier.drawOpacity(if (showOverlayAppBar) 1f else 0f),
+                    backgroundColor = Color.Transparent,
+                    elevation = 0.dp,
                     isRefreshing = viewState.refreshing,
                     actioner = actioner
                 )
@@ -344,7 +331,6 @@ fun ShowDetails(
         }
     }
 
-    val insets = InsetsAmbient.current
     val bottomInset = with(DensityAmbient.current) { insets.bottom.toDp() }
 
     Column(
@@ -370,21 +356,6 @@ fun ShowDetails(
                 .gravity(Alignment.End)
                 .onSizeChanged { fabHeight = it.height }
         )
-    }
-}
-
-private val appBarElevationPropKey = DpPropKey()
-
-private val appBarFadeTransitionDef = transitionDefinition {
-    state(true) {
-        this[appBarElevationPropKey] = 4.dp
-    }
-    state(false) {
-        this[appBarElevationPropKey] = 2.dp
-    }
-
-    transition {
-        appBarElevationPropKey using tween<Dp> { duration = 200 }
     }
 }
 
@@ -698,7 +669,7 @@ private fun Seasons(
             val offset = InsetsAmbient.current.top +
                 with(DensityAmbient.current) { 56.dp.toIntPx() }
 
-            Modifier.onPositioned { coords ->
+            Modifier.onPositionInRootChanged { coords ->
                 val targetY = coords.positionInRoot.y + scrollerPosition.value - offset
 
                 scrollerPosition.smoothScrollTo(targetY) { _, _ ->
