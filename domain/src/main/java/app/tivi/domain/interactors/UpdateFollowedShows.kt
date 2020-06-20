@@ -26,10 +26,10 @@ import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 import javax.inject.Inject
 
 class UpdateFollowedShows @Inject constructor(
@@ -47,15 +47,22 @@ class UpdateFollowedShows @Inject constructor(
             }
 
             // Finally sync the seasons/episodes and watches
-            followedShowsRepository.getFollowedShows().asFlow().collect {
+            followedShowsRepository.getFollowedShows().forEach {
+                // yield here to to let other calls potentially run
+                yield()
+
                 showStore.fetch(it.showId)
+
+                ensureActive()
                 showImagesStore.fetchCollection(it.showId)
 
+                ensureActive()
                 // Download the seasons + episodes
                 if (params.forceRefresh || seasonEpisodeRepository.needShowSeasonsUpdate(it.showId)) {
                     seasonEpisodeRepository.updateSeasonsEpisodes(it.showId)
                 }
 
+                ensureActive()
                 seasonEpisodeRepository.updateShowEpisodeWatches(
                     it.showId,
                     params.type,
