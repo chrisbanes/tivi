@@ -79,7 +79,3 @@
     <fields>;
     <init>(...);
 }
-
-# For kotlin-reflect
--dontwarn org.jetbrains.annotations.**
--keep class kotlin.Metadata { *; }
