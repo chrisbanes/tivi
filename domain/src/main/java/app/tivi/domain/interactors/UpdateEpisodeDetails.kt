@@ -20,6 +20,7 @@ import app.tivi.data.repositories.episodes.SeasonsEpisodesRepository
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UpdateEpisodeDetails @Inject constructor(
@@ -29,7 +30,9 @@ class UpdateEpisodeDetails @Inject constructor(
 ) : Interactor<UpdateEpisodeDetails.Params>() {
 
     override suspend fun doWork(params: Params) {
-        seasonsEpisodesRepository.updateEpisode(params.episodeId)
+        withContext(dispatchers.io) {
+            seasonsEpisodesRepository.updateEpisode(params.episodeId)
+        }
     }
 
     data class Params(val episodeId: Long, val forceLoad: Boolean)

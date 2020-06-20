@@ -28,7 +28,7 @@ class ChangeSeasonFollowStatus @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers
 ) : Interactor<ChangeSeasonFollowStatus.Params>() {
     override suspend fun doWork(params: Params) {
-        return withContext(dispatchers.io) {
+        withContext(dispatchers.io) {
             when (params.action) {
                 Action.FOLLOW -> {
                     seasonsEpisodesRepository.markSeasonFollowed(params.seasonId)
