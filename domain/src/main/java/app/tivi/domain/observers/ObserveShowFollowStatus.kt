@@ -18,16 +18,12 @@ package app.tivi.domain.observers
 
 import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.domain.SubjectInteractor
-import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ObserveShowFollowStatus @Inject constructor(
-    private val dispatchers: AppCoroutineDispatchers,
     private val followedShowsRepository: FollowedShowsRepository
 ) : SubjectInteractor<ObserveShowFollowStatus.Params, Boolean>() {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override fun createObservable(params: Params): Flow<Boolean> {
         return followedShowsRepository.observeIsShowFollowed(params.showId)

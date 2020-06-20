@@ -21,7 +21,6 @@ import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
 import app.tivi.base.InvokeSuccess
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
@@ -39,11 +38,11 @@ class ObservableLoadingCounter {
             .distinctUntilChanged()
 
     fun addLoader() {
-        loadingState.sendBlocking(count.incrementAndGet())
+        loadingState.offer(count.incrementAndGet())
     }
 
     fun removeLoader() {
-        loadingState.sendBlocking(count.decrementAndGet())
+        loadingState.offer(count.decrementAndGet())
     }
 }
 

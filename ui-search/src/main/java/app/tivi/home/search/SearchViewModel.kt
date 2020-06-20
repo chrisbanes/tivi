@@ -20,11 +20,8 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.SearchShows
-import app.tivi.domain.launchObserve
 import app.tivi.util.ObservableLoadingCounter
-import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -44,12 +41,12 @@ internal class SearchViewModel @ViewModelInject constructor(
             searchQuery.asFlow()
                 .debounce(300)
                 .collectLatest { query ->
-                    loadingState.addLoader()
-                    val job = async(searchShows.dispatcher) {
+                    val job = launch {
+                        loadingState.addLoader()
                         searchShows(SearchShows.Params(query))
                     }
                     job.invokeOnCompletion { loadingState.removeLoader() }
-                    job.await()
+                    job.join()
                 }
         }
 
@@ -57,13 +54,14 @@ internal class SearchViewModel @ViewModelInject constructor(
             loadingState.observable.collect { setState { copy(refreshing = it) } }
         }
 
-        viewModelScope.launchObserve(searchShows) {
-            it.execute { copy(searchResults = it()) }
+        viewModelScope.launch {
+            searchShows.observe()
+                .execute { copy(searchResults = it()) }
         }
     }
 
     fun setSearchQuery(query: String) {
-        searchQuery.sendBlocking(query)
+        searchQuery.offer(query)
     }
 
     fun clearQuery() = setSearchQuery("")

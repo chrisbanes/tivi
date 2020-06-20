@@ -21,7 +21,6 @@ import androidx.lifecycle.viewModelScope
 import app.tivi.AppNavigator
 import app.tivi.ReduxViewModel
 import app.tivi.domain.invoke
-import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
@@ -42,17 +41,18 @@ class AccountUiViewModel @ViewModelInject constructor(
     private val pendingActions = Channel<AccountUiAction>(Channel.BUFFERED)
 
     init {
-        viewModelScope.launchObserve(observeUserDetails) { flow ->
-            flow.execute { copy(user = it()) }
-        }
-        observeUserDetails(ObserveUserDetails.Params("me"))
-
-        viewModelScope.launchObserve(observeTraktAuthState) { flow ->
-            flow.distinctUntilChanged().execute {
-                copy(authState = it() ?: TraktAuthState.LOGGED_OUT)
-            }
+        viewModelScope.launch {
+            observeTraktAuthState.observe()
+                .distinctUntilChanged()
+                .execute { copy(authState = it() ?: TraktAuthState.LOGGED_OUT) }
         }
         observeTraktAuthState()
+
+        viewModelScope.launch {
+            observeUserDetails.observe()
+                .execute { copy(user = it()) }
+        }
+        observeUserDetails(ObserveUserDetails.Params("me"))
 
         viewModelScope.launch {
             for (action in pendingActions) {

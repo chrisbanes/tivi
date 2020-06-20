@@ -24,7 +24,6 @@ import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.interactors.UpdateRecommendedShows
 import app.tivi.domain.interactors.UpdateTrendingShows
 import app.tivi.domain.invoke
-import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObserveNextShowEpisodeToWatch
 import app.tivi.domain.observers.ObservePopularShows
 import app.tivi.domain.observers.ObserveRecommendedShows
@@ -77,47 +76,47 @@ internal class DiscoverViewModel @ViewModelInject constructor(
             }
         }
 
-        viewModelScope.launchObserve(observeTrendingShows) {
-            it.distinctUntilChanged().execute {
-                copy(trendingItems = it() ?: emptyList())
-            }
+        viewModelScope.launch {
+            observeTrendingShows.observe()
+                .distinctUntilChanged()
+                .execute { copy(trendingItems = it() ?: emptyList()) }
         }
         observeTrendingShows(ObserveTrendingShows.Params(15))
 
-        viewModelScope.launchObserve(observePopularShows) {
-            it.distinctUntilChanged().execute {
-                copy(popularItems = it() ?: emptyList())
-            }
+        viewModelScope.launch {
+            observePopularShows.observe()
+                .distinctUntilChanged()
+                .execute {
+                    copy(popularItems = it() ?: emptyList())
+                }
         }
         observePopularShows()
 
-        viewModelScope.launchObserve(observeRecommendedShows) {
-            it.distinctUntilChanged().execute {
-                copy(recommendedItems = it() ?: emptyList())
-            }
+        viewModelScope.launch {
+            observeRecommendedShows.observe()
+                .distinctUntilChanged()
+                .execute { copy(recommendedItems = it() ?: emptyList()) }
         }
         observeRecommendedShows()
 
-        viewModelScope.launchObserve(observeNextShowEpisodeToWatch) {
-            it.distinctUntilChanged().execute {
-                copy(nextEpisodeWithShowToWatched = it())
-            }
+        viewModelScope.launch {
+            observeNextShowEpisodeToWatch.observe()
+                .distinctUntilChanged()
+                .execute { copy(nextEpisodeWithShowToWatched = it()) }
         }
         observeNextShowEpisodeToWatch()
 
-        viewModelScope.launchObserve(observeTraktAuthState) { flow ->
-            flow.distinctUntilChanged().onEach {
-                if (it == TraktAuthState.LOGGED_IN) {
-                    refresh(false)
-                }
-            }.execute {
-                copy(authState = it() ?: TraktAuthState.LOGGED_OUT)
-            }
+        viewModelScope.launch {
+            observeTraktAuthState.observe()
+                .distinctUntilChanged()
+                .onEach { if (it == TraktAuthState.LOGGED_IN) refresh(false) }
+                .execute { copy(authState = it() ?: TraktAuthState.LOGGED_OUT) }
         }
         observeTraktAuthState()
 
-        viewModelScope.launchObserve(observeUserDetails) {
-            it.execute { copy(user = it()) }
+        viewModelScope.launch {
+            observeUserDetails.observe()
+                .execute { copy(user = it()) }
         }
         observeUserDetails(ObserveUserDetails.Params("me"))
 

@@ -22,17 +22,13 @@ import app.tivi.data.resultentities.EpisodeWithSeasonWithShow
 import app.tivi.domain.SubjectInteractor
 import app.tivi.extensions.flatMapLatestNullable
 import app.tivi.extensions.mapNullable
-import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ObserveNextShowEpisodeToWatch @Inject constructor(
     private val followedShowsRepository: FollowedShowsRepository,
-    private val seasonsEpisodesRepository: SeasonsEpisodesRepository,
-    dispatchers: AppCoroutineDispatchers
+    private val seasonsEpisodesRepository: SeasonsEpisodesRepository
 ) : SubjectInteractor<Unit, EpisodeWithSeasonWithShow?>() {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override fun createObservable(params: Unit): Flow<EpisodeWithSeasonWithShow?> {
         return followedShowsRepository.observeNextShowToWatch().flatMapLatestNullable { nextShow ->

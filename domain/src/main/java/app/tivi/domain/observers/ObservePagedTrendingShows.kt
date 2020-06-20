@@ -21,16 +21,12 @@ import app.tivi.data.FlowPagedListBuilder
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.domain.PagingInteractor
-import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ObservePagedTrendingShows @Inject constructor(
-    dispatchers: AppCoroutineDispatchers,
     private val trendingShowsDao: TrendingDao
 ) : PagingInteractor<ObservePagedTrendingShows.Params, TrendingEntryWithShow>() {
-    override val dispatcher: CoroutineDispatcher = dispatchers.io
 
     override fun createObservable(params: Params): Flow<PagedList<TrendingEntryWithShow>> {
         return FlowPagedListBuilder(

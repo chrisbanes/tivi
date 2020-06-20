@@ -28,7 +28,6 @@ import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.UpdateFollowedShows
 import app.tivi.domain.invoke
-import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObservePagedFollowedShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
@@ -96,17 +95,17 @@ internal class FollowedViewModel @ViewModelInject constructor(
             }
         }
 
-        viewModelScope.launchObserve(observeTraktAuthState) { flow ->
-            flow.distinctUntilChanged().onEach {
-                if (it == TraktAuthState.LOGGED_IN) {
-                    refreshFollowed(false)
-                }
-            }.execute { copy(authState = it() ?: TraktAuthState.LOGGED_OUT) }
+        viewModelScope.launch {
+            observeTraktAuthState.observe()
+                .distinctUntilChanged()
+                .onEach { if (it == TraktAuthState.LOGGED_IN) refresh(false) }
+                .execute { copy(authState = it() ?: TraktAuthState.LOGGED_OUT) }
         }
         observeTraktAuthState()
 
-        viewModelScope.launchObserve(observeUserDetails) {
-            it.execute { copy(user = it()) }
+        viewModelScope.launch {
+            observeUserDetails.observe()
+                .execute { copy(user = it()) }
         }
         observeUserDetails(ObserveUserDetails.Params("me"))
 

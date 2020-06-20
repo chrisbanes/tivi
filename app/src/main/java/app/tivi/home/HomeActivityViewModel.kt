@@ -21,7 +21,6 @@ import androidx.lifecycle.viewModelScope
 import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.UpdateUserDetails
 import app.tivi.domain.invoke
-import app.tivi.domain.launchObserve
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
@@ -39,15 +38,16 @@ class HomeActivityViewModel @ViewModelInject constructor(
     HomeActivityViewState()
 ) {
     init {
-        viewModelScope.launchObserve(observeUserDetails) {
-            it.execute {
+        viewModelScope.launch {
+            observeUserDetails.observe().execute {
                 copy(user = it())
             }
         }
         observeUserDetails(ObserveUserDetails.Params("me"))
 
-        viewModelScope.launchObserve(observeTraktAuthState) { flow ->
-            flow.distinctUntilChanged()
+        viewModelScope.launch {
+            observeTraktAuthState.observe()
+                .distinctUntilChanged()
                 .onEach {
                     if (it == TraktAuthState.LOGGED_IN) {
                         refreshMe()
