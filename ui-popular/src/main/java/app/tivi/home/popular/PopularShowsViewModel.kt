@@ -16,6 +16,7 @@
 
 package app.tivi.home.popular
 
+import androidx.hilt.lifecycle.ViewModelInject
 import app.tivi.base.InvokeStatus
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.domain.interactors.ChangeShowFollowStatus
@@ -26,7 +27,7 @@ import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
 import kotlinx.coroutines.flow.Flow
 
-class PopularShowsViewModel constructor(
+class PopularShowsViewModel @ViewModelInject constructor(
     override val dispatchers: AppCoroutineDispatchers,
     override val pagingInteractor: ObservePagedPopularShows,
     private val interactor: UpdatePopularShows,
