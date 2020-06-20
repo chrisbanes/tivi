@@ -21,6 +21,7 @@ import app.tivi.data.repositories.followedshows.FollowedShowsRepository
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateShowSeasonData.Params
 import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -37,6 +38,8 @@ class UpdateShowSeasonData @Inject constructor(
                 if (params.forceRefresh || seasonsEpisodesRepository.needShowSeasonsUpdate(params.showId)) {
                     seasonsEpisodesRepository.updateSeasonsEpisodes(params.showId)
                 }
+
+                ensureActive()
                 // Finally update any watched progress
                 if (params.forceRefresh || seasonsEpisodesRepository.needShowEpisodeWatchesSync(params.showId)) {
                     seasonsEpisodesRepository.syncEpisodeWatchesForShow(params.showId)

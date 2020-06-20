@@ -24,10 +24,9 @@ import app.tivi.data.repositories.watchedshows.WatchedShowsLastRequestStore
 import app.tivi.data.repositories.watchedshows.WatchedShowsStore
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 import org.threeten.bp.Duration
 import javax.inject.Inject
 
@@ -43,7 +42,10 @@ class UpdateWatchedShows @Inject constructor(
             watchedShowsStore.fetchCollection(Unit, forceFresh = params.forceRefresh) {
                 // Refresh if our local data is over 12 hours old
                 lastRequestStore.isRequestExpired(Duration.ofHours(12))
-            }.asFlow().collect {
+            }.forEach {
+                // yield here to to let other calls potentially run
+                yield()
+
                 showsStore.fetch(it.showId)
                 showImagesStore.fetchCollection(it.showId)
             }
