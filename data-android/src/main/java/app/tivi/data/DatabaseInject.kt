@@ -19,31 +19,13 @@ package app.tivi.data
 import android.content.Context
 import android.os.Debug
 import androidx.room.Room
-import app.tivi.inject.ForStore
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
-import kotlin.coroutines.EmptyCoroutineContext
-
-/**
- * Dummy modules which includes [DataModule]. We can't `@InstallIn` that module
- * directly because it is not an Android module.
- */
-@InstallIn(ApplicationComponent::class)
-@Module
-object DataModule {
-    @ForStore
-    @Singleton
-    @Provides
-    fun providesStoreDispatcher(): CoroutineScope {
-        return CoroutineScope(EmptyCoroutineContext)
-    }
-}
 
 @InstallIn(ApplicationComponent::class)
 @Module

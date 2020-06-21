@@ -20,14 +20,12 @@ import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.Success
-import app.tivi.inject.ForStore
 import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
-import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 typealias RelatedShowsStore = Store<Long, List<RelatedShowEntry>>
@@ -41,8 +39,7 @@ internal object RelatedShowsModule {
         tmdbRelatedShows: TmdbRelatedShowsDataSource,
         relatedShowsDao: RelatedShowsDao,
         showDao: TiviShowDao,
-        lastRequestStore: RelatedShowsLastRequestStore,
-        @ForStore scope: CoroutineScope
+        lastRequestStore: RelatedShowsLastRequestStore
     ): RelatedShowsStore {
         return StoreBuilder.fromNonFlow { showId: Long ->
             val response = tmdbRelatedShows(showId)
@@ -66,6 +63,6 @@ internal object RelatedShowsModule {
             },
             delete = relatedShowsDao::deleteWithShowId,
             deleteAll = relatedShowsDao::deleteAll
-        ).scope(scope).build()
+        ).build()
     }
 }
