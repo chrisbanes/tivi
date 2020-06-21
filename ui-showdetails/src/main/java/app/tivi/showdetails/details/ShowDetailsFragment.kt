@@ -35,7 +35,8 @@ import app.tivi.extensions.viewModelProviderFactoryOf
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -72,7 +73,7 @@ class ShowDetailsFragment : Fragment() {
                 viewModel.liveData,
                 viewModel.selectObserve(ShowDetailsViewState::pendingUiEffects),
                 observeWindowInsets(),
-                { pendingActions.sendBlocking(it) },
+                { pendingActions.offer(it) },
                 tiviDateFormatter!!,
                 textCreator!!
             )
@@ -86,8 +87,8 @@ class ShowDetailsFragment : Fragment() {
 
         viewModel.liveData.observe(this, ::render)
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            for (action in pendingActions) {
+        lifecycleScope.launch {
+            pendingActions.consumeAsFlow().collect { action ->
                 when (action) {
                     NavigateUp -> {
                         findNavController().navigateUp() || requireActivity().onNavigateUp()

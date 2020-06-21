@@ -30,7 +30,8 @@ import app.tivi.util.TiviDateFormatter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -55,7 +56,7 @@ class AccountUiFragment : BottomSheetDialogFragment() {
             this,
             viewModel.liveData,
             observeWindowInsets(),
-            { pendingActions.sendBlocking(it) },
+            { pendingActions.offer(it) },
             tiviDateFormatter!!
         )
     }
@@ -63,8 +64,8 @@ class AccountUiFragment : BottomSheetDialogFragment() {
     override fun onStart() {
         super.onStart()
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            for (action in pendingActions) {
+        lifecycleScope.launch {
+            pendingActions.consumeAsFlow().collect { action ->
                 when (action) {
                     is Close -> requireView().post(::dismiss)
                     is OpenSettings -> {

@@ -20,9 +20,8 @@ import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
 import app.tivi.base.InvokeSuccess
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -30,19 +29,17 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class ObservableLoadingCounter {
     private val count = AtomicInteger()
-    private val loadingState = ConflatedBroadcastChannel(count.get())
+    private val loadingState = MutableStateFlow(count.get())
 
     val observable: Flow<Boolean>
-        get() = loadingState.asFlow()
-            .map { it > 0 }
-            .distinctUntilChanged()
+        get() = loadingState.map { it > 0 }.distinctUntilChanged()
 
     fun addLoader() {
-        loadingState.offer(count.incrementAndGet())
+        loadingState.value = count.incrementAndGet()
     }
 
     fun removeLoader() {
-        loadingState.offer(count.decrementAndGet())
+        loadingState.value = count.decrementAndGet()
     }
 }
 

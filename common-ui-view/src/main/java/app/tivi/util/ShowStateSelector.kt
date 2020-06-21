@@ -17,62 +17,46 @@
 package app.tivi.util
 
 import app.tivi.data.entities.TiviShow
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.channels.sendBlocking
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class ShowStateSelector {
-    private var selectedShowIds: Set<Long> = emptySet()
-    private val selectedShowIdsChannel = ConflatedBroadcastChannel(selectedShowIds)
+    private val selectedShowIds = MutableStateFlow<Set<Long>>(emptySet())
+    private val isSelectionOpen = MutableStateFlow(false)
 
-    private var isSelectionOpen = false
-    private val isSelectionOpenChannel = ConflatedBroadcastChannel(isSelectionOpen)
+    fun observeSelectedShowIds() = selectedShowIds
 
-    fun observeSelectedShowIds() = selectedShowIdsChannel.asFlow()
+    fun observeIsSelectionOpen() = isSelectionOpen
 
-    fun observeIsSelectionOpen() = isSelectionOpenChannel.asFlow()
-
-    fun getSelectedShowIds() = selectedShowIdsChannel.value
+    fun getSelectedShowIds() = selectedShowIds.value
 
     fun onItemClick(show: TiviShow): Boolean {
-        if (isSelectionOpen) {
-            val currentSelection = when {
-                show.id in selectedShowIds -> selectedShowIds.minus(show.id)
-                else -> selectedShowIds.plus(show.id)
+        if (isSelectionOpen.value) {
+            val selectedIds = selectedShowIds.value
+            val newSelection = when (show.id) {
+                in selectedIds -> selectedIds - show.id
+                else -> selectedIds + show.id
             }
-            isSelectionOpen = currentSelection.isNotEmpty()
-            selectedShowIds = currentSelection
-            dispatch()
+            isSelectionOpen.value = newSelection.isNotEmpty()
+            selectedShowIds.value = newSelection
             return true
         }
         return false
     }
 
     fun onItemLongClick(show: TiviShow): Boolean {
-        if (!isSelectionOpen) {
-            isSelectionOpen = true
+        if (!isSelectionOpen.value) {
+            isSelectionOpen.value = true
 
-            var currentSelection = selectedShowIds
-            if (show.id !in currentSelection) {
-                currentSelection = currentSelection.plus(show.id)
-            }
-
-            isSelectionOpen = currentSelection.isNotEmpty()
-            selectedShowIds = currentSelection
-            dispatch()
+            val newSelection = selectedShowIds.value + show.id
+            isSelectionOpen.value = newSelection.isNotEmpty()
+            selectedShowIds.value = newSelection
             return true
         }
         return false
     }
 
     fun clearSelection() {
-        selectedShowIds = emptySet()
-        isSelectionOpen = false
-        dispatch()
-    }
-
-    private fun dispatch() {
-        selectedShowIdsChannel.sendBlocking(selectedShowIds)
-        isSelectionOpenChannel.sendBlocking(isSelectionOpen)
+        selectedShowIds.value = emptySet()
+        isSelectionOpen.value = false
     }
 }

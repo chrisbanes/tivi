@@ -20,9 +20,7 @@ import app.tivi.extensions.fetchBodyWithRetry
 import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.tmdb2.Tmdb
 import com.uwetrottmann.tmdb2.entities.Configuration
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -32,10 +30,9 @@ class TmdbManager @Inject constructor(
     private val dispatchers: AppCoroutineDispatchers,
     private val tmdbClient: Tmdb
 ) {
-    private val imageProviderSubject = ConflatedBroadcastChannel(TmdbImageUrlProvider())
-    val imageProviderFlow: Flow<TmdbImageUrlProvider> = imageProviderSubject.asFlow()
+    private val imageProvider = MutableStateFlow(TmdbImageUrlProvider())
 
-    fun getLatestImageProvider() = imageProviderSubject.value
+    fun getLatestImageProvider() = imageProvider.value
 
     suspend fun refreshConfiguration() {
         try {
@@ -56,7 +53,7 @@ class TmdbManager @Inject constructor(
                 images.backdrop_sizes ?: emptyList(),
                 images.logo_sizes ?: emptyList()
             )
-            imageProviderSubject.offer(newProvider)
+            imageProvider.value = newProvider
         }
     }
 }

@@ -48,6 +48,8 @@ dependencies {
     api Libs.AndroidX.Lifecycle.livedata
     implementation Libs.AndroidX.Lifecycle.viewmodel
 
+    implementation Libs.Coroutines.core
+
     api Libs.AndroidX.appcompat
     implementation Libs.AndroidX.recyclerview
     implementation Libs.AndroidX.constraintlayout

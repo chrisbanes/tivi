@@ -20,23 +20,20 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 
 fun Context.flowBroadcasts(intentFilter: IntentFilter): Flow<Intent> {
-    val resultChannel = ConflatedBroadcastChannel<Intent>()
+    val resultChannel = MutableStateFlow(Intent())
 
     val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            resultChannel.offer(intent)
+            resultChannel.value = intent
         }
     }
 
-    resultChannel.invokeOnClose {
-        unregisterReceiver(receiver)
-    }
-
-    registerReceiver(receiver, intentFilter)
-    return resultChannel.asFlow()
+    return resultChannel.onStart { registerReceiver(receiver, intentFilter) }
+        .onCompletion { unregisterReceiver(receiver) }
 }

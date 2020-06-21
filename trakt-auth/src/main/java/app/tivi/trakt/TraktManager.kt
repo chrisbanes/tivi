@@ -23,9 +23,8 @@ import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -41,16 +40,16 @@ class TraktManager @Inject constructor(
     private val showTasks: ShowTasks,
     private val traktClient: Lazy<TraktV2>
 ) {
-    private val authState = ConflatedBroadcastChannel<AuthState>()
+    private val authState = MutableStateFlow(EmptyAuthState)
 
-    private val _state = ConflatedBroadcastChannel(TraktAuthState.LOGGED_OUT)
+    private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
     val state: Flow<TraktAuthState>
-        get() = _state.asFlow()
+        get() = _state
 
     init {
         // Observer which updates local state
         GlobalScope.launch(dispatchers.io) {
-            authState.asFlow().collect { authState ->
+            authState.collect { authState ->
                 updateAuthState(authState)
 
                 traktClient.get().apply {
@@ -63,27 +62,33 @@ class TraktManager @Inject constructor(
         // Read the auth state from prefs
         GlobalScope.launch(dispatchers.main) {
             val state = withContext(dispatchers.io) { readAuthState() }
-            authState.send(state)
+            authState.value = state
+        }
+
+        // Read the auth state from prefs
+        GlobalScope.launch(dispatchers.main) {
+            val state = withContext(dispatchers.io) { readAuthState() }
+            authState.value = state
         }
     }
 
-    private suspend fun updateAuthState(authState: AuthState) {
+    private fun updateAuthState(authState: AuthState) {
         if (authState.isAuthorized) {
-            _state.send(TraktAuthState.LOGGED_IN)
+            _state.value = TraktAuthState.LOGGED_IN
         } else {
-            _state.send(TraktAuthState.LOGGED_OUT)
+            _state.value = TraktAuthState.LOGGED_OUT
         }
     }
 
-    suspend fun clearAuth() {
-        authState.send(AuthState())
+    fun clearAuth() {
+        authState.value = EmptyAuthState
         clearPersistedAuthState()
     }
 
     fun onNewAuthState(newState: AuthState) {
         GlobalScope.launch(dispatchers.main) {
             // Update our local state
-            authState.send(newState)
+            authState.value = newState
         }
         GlobalScope.launch(dispatchers.io) {
             // Persist auth state
@@ -94,7 +99,7 @@ class TraktManager @Inject constructor(
     }
 
     private fun readAuthState(): AuthState {
-        val stateJson = authPrefs.getString("stateJson", null)
+        val stateJson = authPrefs.getString(PreferenceAuthKey, null)
         return when {
             stateJson != null -> AuthState.jsonDeserialize(stateJson)
             else -> AuthState()
@@ -103,13 +108,18 @@ class TraktManager @Inject constructor(
 
     private fun persistAuthState(state: AuthState) {
         authPrefs.edit(commit = true) {
-            putString("stateJson", state.jsonSerializeString())
+            putString(PreferenceAuthKey, state.jsonSerializeString())
         }
     }
 
     private fun clearPersistedAuthState() {
         authPrefs.edit(commit = true) {
-            remove("stateJson")
+            remove(PreferenceAuthKey)
         }
+    }
+
+    companion object {
+        private val EmptyAuthState = AuthState()
+        private const val PreferenceAuthKey = "stateJson"
     }
 }

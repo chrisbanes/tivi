@@ -22,13 +22,12 @@ import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
 import app.tivi.base.InvokeSuccess
 import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.withTimeout
 import java.util.concurrent.TimeUnit
 
@@ -86,13 +85,13 @@ abstract class SuspendingWorkInteractor<P : Any, T> : SubjectInteractor<P, T>() 
 }
 
 abstract class SubjectInteractor<P : Any, T> {
-    private val channel = ConflatedBroadcastChannel<P>()
+    private val channel = Channel<P>(Channel.CONFLATED)
 
-    operator fun invoke(params: P) = channel.sendBlocking(params)
+    operator fun invoke(params: P) = channel.offer(params)
 
     protected abstract fun createObservable(params: P): Flow<T>
 
-    fun observe(): Flow<T> = channel.asFlow()
+    fun observe(): Flow<T> = channel.receiveAsFlow()
         .distinctUntilChanged()
         .flatMapLatest { createObservable(it) }
 }

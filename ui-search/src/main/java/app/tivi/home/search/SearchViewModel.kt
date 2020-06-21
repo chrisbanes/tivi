@@ -21,8 +21,7 @@ import androidx.lifecycle.viewModelScope
 import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.SearchShows
 import app.tivi.util.ObservableLoadingCounter
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
@@ -33,13 +32,12 @@ internal class SearchViewModel @ViewModelInject constructor(
 ) : ReduxViewModel<SearchViewState>(
     SearchViewState()
 ) {
-    private val searchQuery = ConflatedBroadcastChannel<String>()
+    private val searchQuery = MutableStateFlow("")
     private val loadingState = ObservableLoadingCounter()
 
     init {
         viewModelScope.launch {
-            searchQuery.asFlow()
-                .debounce(300)
+            searchQuery.debounce(300)
                 .collectLatest { query ->
                     val job = launch {
                         loadingState.addLoader()
@@ -61,7 +59,7 @@ internal class SearchViewModel @ViewModelInject constructor(
     }
 
     fun setSearchQuery(query: String) {
-        searchQuery.offer(query)
+        searchQuery.value = query
     }
 
     fun clearQuery() = setSearchQuery("")
