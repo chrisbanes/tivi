@@ -26,6 +26,8 @@ import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Provider
@@ -55,7 +57,7 @@ class AccountUiViewModel @ViewModelInject constructor(
         observeUserDetails(ObserveUserDetails.Params("me"))
 
         viewModelScope.launch {
-            for (action in pendingActions) {
+            pendingActions.consumeAsFlow().collect { action ->
                 when (action) {
                     Login -> appNavigator.get().login()
                     Logout -> logout()
@@ -66,7 +68,9 @@ class AccountUiViewModel @ViewModelInject constructor(
 
     fun submitAction(action: AccountUiAction) {
         viewModelScope.launch {
-            pendingActions.send(action)
+            if (!pendingActions.isClosedForSend) {
+                pendingActions.send(action)
+            }
         }
     }
 

@@ -33,9 +33,8 @@ import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.domain.PagingInteractor
 import app.tivi.domain.interactors.ChangeShowFollowStatus
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
@@ -51,8 +50,8 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
     protected abstract val logger: Logger
     protected abstract val changeShowFollowStatus: ChangeShowFollowStatus
 
-    private val messages = ConflatedBroadcastChannel<UiStatus>(UiIdle)
-    private val loaded = ConflatedBroadcastChannel(false)
+    private val messages = MutableStateFlow<UiStatus>(UiIdle)
+    private val loaded = MutableStateFlow(false)
 
     val pagedList: Flow<PagedList<LI>>
         get() = pagingInteractor.observe()
@@ -70,23 +69,23 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
         override fun onItemAtEndLoaded(itemAtEnd: LI) = onListScrolledToEnd()
 
         override fun onItemAtFrontLoaded(itemAtFront: LI) {
-            loaded.offer(true)
+            loaded.value = true
         }
 
         override fun onZeroItemsLoaded() {
-            loaded.offer(true)
+            loaded.value = true
         }
     }
 
     protected fun launchObserves() {
         viewModelScope.launch {
-            messages.asFlow().execute {
+            messages.execute {
                 copy(status = it() ?: UiSuccess)
             }
         }
 
         viewModelScope.launch {
-            loaded.asFlow().execute {
+            loaded.execute {
                 copy(isLoaded = it() ?: false)
             }
         }
@@ -107,7 +106,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
     fun onListScrolledToEnd() {
         viewModelScope.launch {
             callLoadMore()
-                .catch { messages.send(UiError(it)) }
+                .catch { messages.value = UiError(it) }
                 .map {
                     when (it) {
                         InvokeSuccess -> UiSuccess
@@ -116,7 +115,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
                         else -> UiIdle
                     }
                 }
-                .collect { messages.send(it) }
+                .collect { messages.value = it }
         }
     }
 
@@ -150,7 +149,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
     protected fun refresh(fromUser: Boolean) {
         viewModelScope.launch {
             callRefresh(fromUser)
-                .catch { messages.send(UiError(it)) }
+                .catch { messages.value = UiError(it) }
                 .map {
                     when (it) {
                         InvokeSuccess -> UiSuccess
@@ -158,7 +157,7 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
                         else -> UiIdle
                     }
                 }
-                .collect { messages.send(it) }
+                .collect { messages.value = it }
         }
     }
 

@@ -22,13 +22,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import app.tivi.common.ui.BuildConfig
-import app.tivi.extensions.observable
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -38,40 +36,25 @@ import kotlin.reflect.KProperty1
 abstract class ReduxViewModel<S>(
     initialState: S
 ) : ViewModel() {
-    private val stateChannel = ConflatedBroadcastChannel(initialState)
-
+    private val state = MutableStateFlow(initialState)
     private val stateMutex = Mutex()
-    private var state: S by observable(initialState) {
-        stateChannel.offer(state)
-    }
 
     /**
      * Returns a snapshot of the current state.
      */
-    fun currentState(): S = state
+    fun currentState(): S = state.value
 
     val liveData: LiveData<S>
-        get() = stateChannel.asFlow().asLiveData()
+        get() = state.asLiveData()
 
-    protected suspend fun <T> Flow<T>.execute(
-        reducer: S.(Async<T>) -> S
-    ) = execute({ it }, reducer)
-
-    protected suspend fun <T, V> Flow<T>.execute(
-        mapper: (T) -> V,
-        reducer: S.(Async<V>) -> S
-    ) {
+    protected suspend fun <T> Flow<T>.execute(reducer: S.(Async<T>) -> S) {
         setState { reducer(Loading()) }
 
         @Suppress("USELESS_CAST")
-        return map { Success(mapper(it)) as Async<V> }
+        return map { Success(it) as Async<T> }
             .catch { e ->
                 if (BuildConfig.DEBUG) {
-                    Log.e(
-                        this@ReduxViewModel::class.java.simpleName,
-                        "Exception during observe",
-                        e
-                    )
+                    Log.e(this@ReduxViewModel::class.java.simpleName, "Exception during execute", e)
                 }
                 emit(Fail(e))
             }
@@ -82,13 +65,9 @@ abstract class ReduxViewModel<S>(
         return selectSubscribe(prop1).asLiveData()
     }
 
-    protected fun subscribe(): Flow<S> {
-        return stateChannel.asFlow().distinctUntilChanged()
-    }
-
     protected fun subscribe(block: (S) -> Unit) {
         viewModelScope.launch {
-            subscribe().collect { block(it) }
+            state.collect { block(it) }
         }
     }
 
@@ -99,30 +78,26 @@ abstract class ReduxViewModel<S>(
     }
 
     private fun <A> selectSubscribe(prop1: KProperty1<S, A>): Flow<A> {
-        return stateChannel.asFlow()
-            .map { prop1.get(it) }
-            .distinctUntilChanged()
+        return state.map { prop1.get(it) }
     }
 
-    protected suspend fun setStateMutexed(reducer: S.() -> S) {
+    protected suspend fun setState(reducer: S.() -> S) {
         stateMutex.withLock {
-            state = reducer(state)
+            state.value = reducer(state.value)
         }
     }
 
-    protected fun setState(reducer: S.() -> S) {
-        viewModelScope.launch { setStateMutexed(reducer) }
+    protected fun CoroutineScope.setState(reducer: S.() -> S) {
+        launch { this@ReduxViewModel.setState(reducer) }
     }
 
-    protected suspend fun withStateMutexed(block: (S) -> Unit) {
-        stateMutex.withLock { block(state) }
+    protected suspend fun withState(block: (S) -> Unit) {
+        stateMutex.withLock {
+            block(state.value)
+        }
     }
 
-    protected fun withState(block: (S) -> Unit) {
-        viewModelScope.launch { withStateMutexed(block) }
-    }
-
-    override fun onCleared() {
-        stateChannel.close()
+    protected fun CoroutineScope.withState(block: (S) -> Unit) {
+        launch { this@ReduxViewModel.withState(block) }
     }
 }

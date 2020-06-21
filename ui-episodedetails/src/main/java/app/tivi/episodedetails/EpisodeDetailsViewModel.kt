@@ -39,6 +39,7 @@ import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
@@ -51,11 +52,11 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     private val addEpisodeWatch: AddEpisodeWatch,
     private val removeEpisodeWatches: RemoveEpisodeWatches,
     private val removeEpisodeWatch: RemoveEpisodeWatch,
-    private val logger: Logger
+    private val logger: Logger,
+    private val snackbarManager: SnackbarManager
 ) : ReduxViewModel<EpisodeDetailsViewState>(initialState) {
 
     private val loadingState = ObservableLoadingCounter()
-    private val snackbarManager = SnackbarManager()
 
     private val pendingActions = Channel<EpisodeDetailsAction>(Channel.BUFFERED)
 
@@ -72,20 +73,20 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         }
 
         viewModelScope.launch {
-            for (action in pendingActions) when (action) {
-                RefreshAction -> refresh(true)
-                AddEpisodeWatchAction -> markWatched()
-                RemoveAllEpisodeWatchesAction -> markUnwatched()
-                is RemoveEpisodeWatchAction -> removeWatchEntry(action)
-                ClearError -> snackbarManager.removeCurrentError()
+            pendingActions.consumeAsFlow().collect { action ->
+                when (action) {
+                    RefreshAction -> refresh(true)
+                    AddEpisodeWatchAction -> markWatched()
+                    RemoveAllEpisodeWatchesAction -> markUnwatched()
+                    is RemoveEpisodeWatchAction -> removeWatchEntry(action)
+                    ClearError -> snackbarManager.removeCurrentError()
+                }
             }
         }
 
-        viewModelScope.launch {
-            snackbarManager.launch { uiError, visible ->
-                setState {
-                    copy(error = if (visible) uiError else null)
-                }
+        snackbarManager.launchInScope(viewModelScope) { uiError, visible ->
+            viewModelScope.setState {
+                copy(error = if (visible) uiError else null)
             }
         }
 
@@ -103,24 +104,32 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         }
     }
 
-    private fun updateFromEpisodeDetails(episodeWithSeason: EpisodeWithSeason) = setState {
-        val firstAired = episodeWithSeason.episode?.firstAired
-        copy(
-            episode = episodeWithSeason.episode,
-            season = episodeWithSeason.season,
-            canAddEpisodeWatch = firstAired?.isBefore(OffsetDateTime.now()) == true
-        )
+    private fun updateFromEpisodeDetails(episodeWithSeason: EpisodeWithSeason) {
+        viewModelScope.setState {
+            val firstAired = episodeWithSeason.episode?.firstAired
+            copy(
+                episode = episodeWithSeason.episode,
+                season = episodeWithSeason.season,
+                canAddEpisodeWatch = firstAired?.isBefore(OffsetDateTime.now()) == true
+            )
+        }
     }
 
-    private fun updateFromEpisodeWatches(watches: List<EpisodeWatchEntry>) = setState {
-        copy(watches = watches)
+    private fun updateFromEpisodeWatches(watches: List<EpisodeWatchEntry>) {
+        viewModelScope.setState {
+            copy(watches = watches)
+        }
     }
 
     internal fun submitAction(action: EpisodeDetailsAction) {
-        viewModelScope.launch { pendingActions.send(action) }
+        viewModelScope.launch {
+            if (!pendingActions.isClosedForSend) {
+                pendingActions.send(action)
+            }
+        }
     }
 
-    private fun refresh(fromUserInteraction: Boolean) = withState { state ->
+    private fun refresh(fromUserInteraction: Boolean) = viewModelScope.withState { state ->
         updateEpisodeDetails(
             UpdateEpisodeDetails.Params(state.episodeId, fromUserInteraction)
         ).watchStatus()
@@ -130,11 +139,11 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         removeEpisodeWatch(RemoveEpisodeWatch.Params(action.watchId)).watchStatus()
     }
 
-    private fun markWatched() = withState { state ->
+    private fun markWatched() = viewModelScope.withState { state ->
         addEpisodeWatch(AddEpisodeWatch.Params(state.episodeId, OffsetDateTime.now())).watchStatus()
     }
 
-    private fun markUnwatched() = withState { state ->
+    private fun markUnwatched() = viewModelScope.withState { state ->
         removeEpisodeWatches(RemoveEpisodeWatches.Params(state.episodeId)).watchStatus()
     }
 
