@@ -24,8 +24,6 @@ import app.tivi.data.mappers.TmdbImagesToShowImages
 import app.tivi.extensions.executeWithRetry
 import app.tivi.extensions.toResult
 import com.uwetrottmann.tmdb2.Tmdb
-import com.uwetrottmann.tmdb2.entities.AppendToResponse
-import com.uwetrottmann.tmdb2.enumerations.AppendToResponseItem
 import javax.inject.Inject
 
 class TmdbShowImagesDataSource @Inject constructor(
@@ -35,7 +33,7 @@ class TmdbShowImagesDataSource @Inject constructor(
     override suspend fun getShowImages(show: TiviShow): Result<List<ShowTmdbImage>> {
         val tmdbId = show.tmdbId
         return if (tmdbId != null) {
-            tmdb.tvService().tv(tmdbId, null, AppendToResponse(AppendToResponseItem.IMAGES))
+            tmdb.tvService().tv(tmdbId, null)
                 .executeWithRetry()
                 .toResult(mapper::map)
         } else {
