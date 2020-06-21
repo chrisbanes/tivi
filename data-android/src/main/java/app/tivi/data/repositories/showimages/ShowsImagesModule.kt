@@ -20,7 +20,6 @@ import app.tivi.data.daos.ShowImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.Success
-import app.tivi.inject.ForStore
 import app.tivi.inject.Tmdb
 import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
@@ -29,7 +28,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
-import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 typealias ShowImagesStore = Store<Long, List<ShowTmdbImage>>
@@ -51,8 +49,7 @@ object ShowImagesStoreModule {
         showImagesDao: ShowImagesDao,
         showDao: TiviShowDao,
         lastRequestStore: ShowImagesLastRequestStore,
-        @Tmdb tmdbShowImagesDataSource: ShowImagesDataSource,
-        @ForStore scope: CoroutineScope
+        @Tmdb tmdbShowImagesDataSource: ShowImagesDataSource
     ): ShowImagesStore {
         return StoreBuilder.fromNonFlow { showId: Long ->
             val show = showDao.getShowWithId(showId)
@@ -71,6 +68,6 @@ object ShowImagesStoreModule {
             writer = showImagesDao::saveImages,
             delete = showImagesDao::deleteForShowId,
             deleteAll = showImagesDao::deleteAll
-        ).scope(scope).build()
+        ).build()
     }
 }

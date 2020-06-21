@@ -31,11 +31,6 @@ annotation class Tmdb
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier
 @MustBeDocumented
-annotation class ForStore
-
-@Retention(AnnotationRetention.RUNTIME)
-@Qualifier
-@MustBeDocumented
 annotation class MediumDate
 
 @Retention(AnnotationRetention.RUNTIME)

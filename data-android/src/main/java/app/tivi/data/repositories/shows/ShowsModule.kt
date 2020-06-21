@@ -19,7 +19,6 @@ package app.tivi.data.repositories.shows
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
-import app.tivi.inject.ForStore
 import app.tivi.inject.Tmdb
 import app.tivi.inject.Trakt
 import com.dropbox.android.external.store4.Store
@@ -29,7 +28,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Singleton
@@ -59,8 +57,7 @@ object ShowStoreModule {
         showDao: TiviShowDao,
         lastRequestStore: ShowLastRequestStore,
         @Trakt traktShowDataSource: ShowDataSource,
-        @Tmdb tmdbShowDataSource: ShowDataSource,
-        @ForStore scope: CoroutineScope
+        @Tmdb tmdbShowDataSource: ShowDataSource
     ): ShowStore {
         return StoreBuilder.fromNonFlow { showId: Long ->
             val localShow = showDao.getShowWithId(showId)
@@ -94,6 +91,6 @@ object ShowStoreModule {
             },
             delete = showDao::delete,
             deleteAll = showDao::deleteAll
-        ).scope(scope).build()
+        ).build()
     }
 }

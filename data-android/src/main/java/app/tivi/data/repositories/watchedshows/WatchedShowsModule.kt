@@ -20,14 +20,12 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.WatchedShowEntry
-import app.tivi.inject.ForStore
 import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
-import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 typealias WatchedShowsStore = Store<Unit, List<WatchedShowEntry>>
@@ -41,8 +39,7 @@ internal object WatchedShowsModule {
         traktWatchedShows: TraktWatchedShowsDataSource,
         watchedShowsDao: WatchedShowDao,
         showDao: TiviShowDao,
-        lastRequestStore: WatchedShowsLastRequestStore,
-        @ForStore scope: CoroutineScope
+        lastRequestStore: WatchedShowsLastRequestStore
     ): WatchedShowsStore {
         return StoreBuilder.fromNonFlow { _: Unit ->
             traktWatchedShows().also {
@@ -66,6 +63,6 @@ internal object WatchedShowsModule {
                 watchedShowsDao.deleteAll()
             },
             deleteAll = watchedShowsDao::deleteAll
-        ).scope(scope).build()
+        ).build()
     }
 }

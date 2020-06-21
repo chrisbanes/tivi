@@ -20,14 +20,12 @@ import app.tivi.data.daos.RecommendedDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.RecommendedShowEntry
 import app.tivi.data.entities.Success
-import app.tivi.inject.ForStore
 import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
-import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 typealias RecommendedShowsStore = Store<Int, List<RecommendedShowEntry>>
@@ -41,8 +39,7 @@ internal object RecommendedShowsModule {
         traktRecommendedShows: TraktRecommendedShowsDataSource,
         recommendedDao: RecommendedDao,
         showDao: TiviShowDao,
-        lastRequestStore: RecommendedShowsLastRequestStore,
-        @ForStore scope: CoroutineScope
+        lastRequestStore: RecommendedShowsLastRequestStore
     ): RecommendedShowsStore {
         return StoreBuilder.fromNonFlow { page: Int ->
             val response = traktRecommendedShows(page, 20)
@@ -69,6 +66,6 @@ internal object RecommendedShowsModule {
             },
             delete = recommendedDao::deletePage,
             deleteAll = recommendedDao::deleteAll
-        ).scope(scope).build()
+        ).build()
     }
 }
