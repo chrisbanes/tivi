@@ -25,7 +25,7 @@ import app.tivi.data.daos.RecommendedDao
 import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.SeasonsDao
 import app.tivi.data.daos.ShowFtsDao
-import app.tivi.data.daos.ShowImagesDao
+import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.daos.UserDao
@@ -34,7 +34,7 @@ import app.tivi.data.daos.WatchedShowDao
 interface TiviDatabase {
     fun showDao(): TiviShowDao
     fun showFtsDao(): ShowFtsDao
-    fun showImagesDao(): ShowImagesDao
+    fun showImagesDao(): ShowTmdbImagesDao
     fun trendingDao(): TrendingDao
     fun popularDao(): PopularDao
     fun userDao(): UserDao

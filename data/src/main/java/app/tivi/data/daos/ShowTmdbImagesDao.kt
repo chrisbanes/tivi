@@ -23,7 +23,7 @@ import app.tivi.data.entities.ShowTmdbImage
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-abstract class ShowImagesDao : EntityDao<ShowTmdbImage>() {
+abstract class ShowTmdbImagesDao : EntityDao<ShowTmdbImage>() {
     @Query("DELETE FROM show_images WHERE show_id = :showId")
     abstract suspend fun deleteForShowId(showId: Long)
 
