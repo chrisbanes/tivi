@@ -26,24 +26,48 @@ import javax.inject.Singleton
 @Singleton
 class TmdbImagesToShowImages @Inject constructor() : Mapper<TvShow, List<ShowTmdbImage>> {
     override suspend fun map(from: TvShow): List<ShowTmdbImage> {
-        fun mapImage(image: Image, type: ImageType): ShowTmdbImage {
-            return ShowTmdbImage(
-                showId = 0,
-                path = image.file_path!!,
-                type = type,
-                language = image.iso_639_1,
-                rating = image.vote_average?.toFloat() ?: 0f,
-                isPrimary = when (type) {
-                    ImageType.BACKDROP -> image.file_path == from.backdrop_path
-                    ImageType.POSTER -> image.file_path == from.poster_path
-                    else -> false
-                }
-            )
+        val results = ArrayList<ShowTmdbImage>()
+        from.images?.posters?.mapTo(results) { image ->
+            from.mapImage(image, ImageType.POSTER)
+        }
+        from.images?.backdrops?.mapTo(results) { image ->
+            from.mapImage(image, ImageType.BACKDROP)
         }
 
-        val result = mutableListOf<ShowTmdbImage>()
-        from.images?.posters?.mapTo(result) { mapImage(it, ImageType.POSTER) }
-        from.images?.backdrops?.mapTo(result) { mapImage(it, ImageType.BACKDROP) }
-        return result
+        if (results.isEmpty()) {
+            // If we have no images, we haven't been passed a result which has images. We'll
+            // synthesize some from the TvShow properties
+            from.poster_path?.also { path ->
+                results += ShowTmdbImage(
+                    showId = 0,
+                    path = path,
+                    type = ImageType.POSTER,
+                    isPrimary = true
+                )
+            }
+            from.backdrop_path?.also { path ->
+                results += ShowTmdbImage(
+                    showId = 0,
+                    path = path,
+                    type = ImageType.BACKDROP,
+                    isPrimary = true
+                )
+            }
+        }
+
+        return results
     }
+
+    private fun TvShow.mapImage(image: Image, type: ImageType) = ShowTmdbImage(
+        showId = 0,
+        path = image.file_path!!,
+        type = type,
+        language = image.iso_639_1,
+        rating = image.vote_average?.toFloat() ?: 0f,
+        isPrimary = when (type) {
+            ImageType.BACKDROP -> image.file_path == backdrop_path
+            ImageType.POSTER -> image.file_path == poster_path
+            else -> false
+        }
+    )
 }
