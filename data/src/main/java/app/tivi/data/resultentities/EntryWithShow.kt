@@ -28,9 +28,11 @@ interface EntryWithShow<ET : Entry> {
 
     val show: TiviShow
         get() {
-            assert(relations.size == 1)
+            check(relations.size == 1)
             return relations[0]
         }
+
+    val poster: ShowTmdbImage?
 
     fun generateStableId(): Long {
         return Objects.hash(entry::class.java.name, entry.showId).toLong()
