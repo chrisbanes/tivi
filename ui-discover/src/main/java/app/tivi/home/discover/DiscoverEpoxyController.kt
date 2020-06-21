@@ -25,7 +25,6 @@ import app.tivi.common.layouts.emptyState
 import app.tivi.common.layouts.header
 import app.tivi.common.layouts.vertSpacerNormal
 import app.tivi.data.Entry
-import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.extensions.observable
 import com.airbnb.epoxy.Carousel
@@ -69,7 +68,7 @@ internal class DiscoverEpoxyController @Inject constructor(
                 episode(nextEpisodeToWatch.episode)
                 season(nextEpisodeToWatch.season)
                 tiviShow(nextEpisodeToWatch.show)
-                posterImage(nextEpisodeToWatch.images.findHighestRatedPoster())
+                posterImage(nextEpisodeToWatch.poster)
                 textCreator(textCreator)
                 clickListener { _ -> callbacks?.onNextEpisodeToWatchClicked() }
             }
@@ -102,7 +101,7 @@ internal class DiscoverEpoxyController @Inject constructor(
                     PosterCardItemBindingModel_().apply {
                         id(item.generateStableId())
                         tiviShow(item.show)
-                        posterImage(item.images.findHighestRatedPoster())
+                        posterImage(item.poster)
                         transitionName("trending_${item.show.homepage}")
                         clickListener { model, _, _, _ ->
                             callbacks?.onItemClicked(model.id(), item)
@@ -142,7 +141,7 @@ internal class DiscoverEpoxyController @Inject constructor(
                     PosterCardItemBindingModel_().apply {
                         id(item.generateStableId())
                         tiviShow(item.show)
-                        posterImage(item.images.findHighestRatedPoster())
+                        posterImage(item.poster)
                         transitionName("recommended_${item.show.homepage}")
                         clickListener { model, _, _, _ ->
                             callbacks?.onItemClicked(model.id(), item)
@@ -176,7 +175,7 @@ internal class DiscoverEpoxyController @Inject constructor(
                 withModelsFrom(popularShows) { item ->
                     PosterCardItemBindingModel_().apply {
                         id(item.generateStableId())
-                        posterImage(item.images.findHighestRatedPoster())
+                        posterImage(item.poster)
                         tiviShow(item.show)
                         transitionName("popular_${item.show.homepage}")
                         clickListener { model, _, _, _ ->

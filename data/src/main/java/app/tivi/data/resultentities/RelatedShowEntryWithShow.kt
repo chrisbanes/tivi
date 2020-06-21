@@ -17,10 +17,13 @@
 package app.tivi.data.resultentities
 
 import androidx.room.Embedded
+import androidx.room.Ignore
 import androidx.room.Relation
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.entities.findHighestRatedBackdrop
+import app.tivi.data.entities.findHighestRatedPoster
 import java.util.Objects
 
 class RelatedShowEntryWithShow : EntryWithShow<RelatedShowEntry> {
@@ -28,10 +31,20 @@ class RelatedShowEntryWithShow : EntryWithShow<RelatedShowEntry> {
     override lateinit var entry: RelatedShowEntry
 
     @Relation(parentColumn = "other_show_id", entityColumn = "id")
-    override var relations: List<TiviShow> = emptyList()
+    override lateinit var relations: List<TiviShow>
 
     @Relation(parentColumn = "other_show_id", entityColumn = "show_id")
-    override var images: List<ShowTmdbImage> = emptyList()
+    override lateinit var images: List<ShowTmdbImage>
+
+    @delegate:Ignore
+    val backdrop by lazy(LazyThreadSafetyMode.NONE) {
+        images.findHighestRatedBackdrop()
+    }
+
+    @delegate:Ignore
+    override val poster by lazy(LazyThreadSafetyMode.NONE) {
+        images.findHighestRatedPoster()
+    }
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true

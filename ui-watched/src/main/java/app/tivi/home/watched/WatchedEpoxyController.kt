@@ -23,7 +23,6 @@ import app.tivi.common.layouts.emptyState
 import app.tivi.common.layouts.filter
 import app.tivi.common.layouts.vertSpacerNormal
 import app.tivi.data.entities.SortOption
-import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.extensions.observable
 import app.tivi.home.HomeTextCreator
@@ -103,7 +102,7 @@ internal class WatchedEpoxyController @Inject constructor(
             if (item != null) {
                 id(item.generateStableId())
                 tiviShow(item.show)
-                posterImage(item.images.findHighestRatedPoster())
+                posterImage(item.poster)
                 posterTransitionName("show_${item.show.homepage}")
                 selected(item.show.id in state.selectedShowIds)
                 clickListener { _ -> callbacks?.onItemClicked(item) }

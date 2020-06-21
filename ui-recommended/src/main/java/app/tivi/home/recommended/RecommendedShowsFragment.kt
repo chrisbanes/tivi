@@ -27,7 +27,6 @@ import androidx.navigation.fragment.findNavController
 import app.tivi.SharedElementHelper
 import app.tivi.common.entrygrid.databinding.FragmentEntryGridBinding
 import app.tivi.common.layouts.PosterGridItemBindingModel_
-import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.util.EntryGridEpoxyController
@@ -52,7 +51,7 @@ class RecommendedShowsFragment : EntryGridFragment<RecommendedEntryWithShow, Rec
             override fun buildItemModel(item: RecommendedEntryWithShow): EpoxyModel<*> {
                 return PosterGridItemBindingModel_()
                     .id(item.generateStableId())
-                    .posterImage(item.images.findHighestRatedPoster())
+                    .posterImage(item.poster)
                     .tiviShow(item.show)
                     .transitionName(item.show.homepage)
                     .selected(item.show.id in state.selectedShowIds)

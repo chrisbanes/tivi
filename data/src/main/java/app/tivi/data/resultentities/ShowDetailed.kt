@@ -27,18 +27,20 @@ import java.util.Objects
 
 class ShowDetailed {
     @Embedded
-    var show: TiviShow = TiviShow.EMPTY_SHOW
+    lateinit var show: TiviShow
 
     @Relation(parentColumn = "id", entityColumn = "show_id")
-    var images: List<ShowTmdbImage> = emptyList()
+    lateinit var images: List<ShowTmdbImage>
 
-    @get:Ignore
-    val backdrop: ShowTmdbImage?
-        get() = images.findHighestRatedBackdrop()
+    @delegate:Ignore
+    val backdrop by lazy(LazyThreadSafetyMode.NONE) {
+        images.findHighestRatedBackdrop()
+    }
 
-    @get:Ignore
-    val poster: ShowTmdbImage?
-        get() = images.findHighestRatedPoster()
+    @delegate:Ignore
+    val poster by lazy(LazyThreadSafetyMode.NONE) {
+        images.findHighestRatedPoster()
+    }
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true

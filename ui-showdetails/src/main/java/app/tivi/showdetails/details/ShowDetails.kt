@@ -116,7 +116,6 @@ import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.resultentities.EpisodeWithWatches
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
@@ -590,7 +589,7 @@ private fun RelatedShows(
                             .gravity(Alignment.CenterStart)
                     )
                 }
-                val poster = item.images.findHighestRatedPoster()
+                val poster = item.poster
                 if (poster != null) {
                     CoilImageWithCrossfade(
                         poster,

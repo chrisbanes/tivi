@@ -17,10 +17,13 @@
 package app.tivi.data.resultentities
 
 import androidx.room.Embedded
+import androidx.room.Ignore
 import androidx.room.Relation
 import app.tivi.data.entities.FollowedShowEntry
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.entities.findHighestRatedBackdrop
+import app.tivi.data.entities.findHighestRatedPoster
 import app.tivi.data.views.FollowedShowsWatchStats
 import java.util.Objects
 
@@ -29,16 +32,26 @@ class FollowedShowEntryWithShow : EntryWithShow<FollowedShowEntry> {
     override lateinit var entry: FollowedShowEntry
 
     @Relation(parentColumn = "show_id", entityColumn = "id")
-    override var relations: List<TiviShow> = emptyList()
+    override lateinit var relations: List<TiviShow>
 
     @Relation(parentColumn = "show_id", entityColumn = "show_id")
-    override var images: List<ShowTmdbImage> = emptyList()
+    override lateinit var images: List<ShowTmdbImage>
 
     @Relation(parentColumn = "id", entityColumn = "id")
-    var _stats: List<FollowedShowsWatchStats> = emptyList()
+    lateinit var _stats: List<FollowedShowsWatchStats>
 
     val stats: FollowedShowsWatchStats?
-        get() = _stats.getOrNull(0)
+        get() = _stats.firstOrNull()
+
+    @delegate:Ignore
+    val backdrop: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) {
+        images.findHighestRatedBackdrop()
+    }
+
+    @delegate:Ignore
+    override val poster: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) {
+        images.findHighestRatedPoster()
+    }
 
     override fun equals(other: Any?): Boolean = when {
         other === this -> true
