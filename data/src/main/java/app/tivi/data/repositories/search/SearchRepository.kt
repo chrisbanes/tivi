@@ -16,7 +16,7 @@
 
 package app.tivi.data.repositories.search
 
-import app.tivi.data.daos.ShowImagesDao
+import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.Success
 import app.tivi.data.resultentities.ShowDetailed
@@ -26,7 +26,7 @@ import javax.inject.Singleton
 @Singleton
 class SearchRepository @Inject constructor(
     private val searchStore: SearchStore,
-    private val showImagesDao: ShowImagesDao,
+    private val showTmdbImagesDao: ShowTmdbImagesDao,
     private val showDao: TiviShowDao,
     private val tmdbDataSource: TmdbSearchDataSource
 ) {
@@ -46,7 +46,7 @@ class SearchRepository @Inject constructor(
                 tmdbResult.data.map { (show, images) ->
                     val showId = showDao.getIdOrSavePlaceholder(show)
                     if (images.isNotEmpty()) {
-                        showImagesDao.saveImagesIfEmpty(showId, images.map { it.copy(showId = showId) })
+                        showTmdbImagesDao.saveImagesIfEmpty(showId, images.map { it.copy(showId = showId) })
                     }
                     showId
                 }.also { results ->

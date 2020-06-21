@@ -19,11 +19,8 @@ package app.tivi.data.repositories.shows
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
-import app.tivi.inject.Tmdb
-import app.tivi.inject.Trakt
 import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,32 +29,17 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Singleton
 
-@InstallIn(ApplicationComponent::class)
-@Module
-internal abstract class ShowDataSourceBinds {
-    @Binds
-    @Trakt
-    abstract fun bindTraktShowDataSource(source: TraktShowDataSource): ShowDataSource
-
-    @Binds
-    @Tmdb
-    abstract fun bindTmdbShowDataSource(source: TmdbShowDataSource): ShowDataSource
-}
-
 typealias ShowStore = Store<Long, TiviShow>
 
 @InstallIn(ApplicationComponent::class)
 @Module
 object ShowStoreModule {
-    private class ShowStoreFetcherResponse(val trakt: TiviShow, val tmdb: TiviShow)
-
     @Provides
     @Singleton
     fun provideShowStore(
         showDao: TiviShowDao,
         lastRequestStore: ShowLastRequestStore,
-        @Trakt traktShowDataSource: ShowDataSource,
-        @Tmdb tmdbShowDataSource: ShowDataSource
+        traktShowDataSource: TraktShowDataSource
     ): ShowStore {
         return StoreBuilder.fromNonFlow { showId: Long ->
             val localShow = showDao.getShowWithId(showId)
@@ -67,26 +49,20 @@ object ShowStoreModule {
                 val traktResult = async {
                     traktShowDataSource.getShow(localShow)
                 }
-                val tmdbResult = async {
-                    tmdbShowDataSource.getShow(localShow)
-                }
 
                 // Update our last request timestamp
-                if (traktResult is Success<*> && tmdbResult is Success<*>) {
+                if (traktResult is Success<*>) {
                     lastRequestStore.updateLastRequest(showId)
                 }
 
-                ShowStoreFetcherResponse(
-                    trakt = traktResult.await().get() ?: TiviShow.EMPTY_SHOW,
-                    tmdb = tmdbResult.await().get() ?: TiviShow.EMPTY_SHOW
-                )
+                traktResult.await().get() ?: TiviShow.EMPTY_SHOW
             }
         }.persister(
             reader = showDao::getShowWithIdFlow,
             writer = { id, response ->
                 showDao.withTransaction {
                     val local = showDao.getShowWithId(id) ?: TiviShow.EMPTY_SHOW
-                    showDao.insertOrUpdate(mergeShows(local, response.trakt, response.tmdb))
+                    showDao.insertOrUpdate(mergeShows(local = local, trakt = response))
                 }
             },
             delete = showDao::delete,

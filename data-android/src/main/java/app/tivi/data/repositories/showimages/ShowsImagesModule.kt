@@ -16,7 +16,7 @@
 
 package app.tivi.data.repositories.showimages
 
-import app.tivi.data.daos.ShowImagesDao
+import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.Success
@@ -46,7 +46,7 @@ object ShowImagesStoreModule {
     @Provides
     @Singleton
     fun provideTmdbShowImagesStore(
-        showImagesDao: ShowImagesDao,
+        showTmdbImagesDao: ShowTmdbImagesDao,
         showDao: TiviShowDao,
         lastRequestStore: ShowImagesLastRequestStore,
         @Tmdb tmdbShowImagesDataSource: ShowImagesDataSource
@@ -64,10 +64,10 @@ object ShowImagesStoreModule {
                 it.copy(showId = showId)
             }
         }.persister(
-            reader = showImagesDao::getImagesForShowId,
-            writer = showImagesDao::saveImages,
-            delete = showImagesDao::deleteForShowId,
-            deleteAll = showImagesDao::deleteAll
+            reader = showTmdbImagesDao::getImagesForShowId,
+            writer = showTmdbImagesDao::saveImages,
+            delete = showTmdbImagesDao::deleteForShowId,
+            deleteAll = showTmdbImagesDao::deleteAll
         ).build()
     }
 }
