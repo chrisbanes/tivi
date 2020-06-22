@@ -26,9 +26,10 @@ import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdatePopularShows.Params
 import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.yield
 import org.threeten.bp.Period
 import javax.inject.Inject
 
@@ -51,10 +52,7 @@ class UpdatePopularShows @Inject constructor(
             popularShowStore.fetchCollection(page, forceFresh = params.forceRefresh) {
                 // Refresh if our local data is over 7 days old
                 page == 0 && lastRequestStore.isRequestExpired(Period.ofDays(7))
-            }.forEach {
-                // yield here to to let other calls potentially run
-                yield()
-
+            }.asFlow().collect {
                 showsStore.fetch(it.showId)
                 showImagesStore.fetchCollection(it.showId)
             }

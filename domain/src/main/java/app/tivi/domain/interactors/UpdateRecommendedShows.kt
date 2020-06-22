@@ -26,10 +26,11 @@ import app.tivi.domain.Interactor
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.yield
 import org.threeten.bp.Duration
 import javax.inject.Inject
 
@@ -51,10 +52,7 @@ class UpdateRecommendedShows @Inject constructor(
             recommendedShowsStore.fetchCollection(0, forceFresh = params.forceRefresh) {
                 // Refresh if our local data is over 3 hours old
                 lastRequestStore.isRequestExpired(Duration.ofHours(3))
-            }.forEach {
-                // yield here to to let other calls potentially run
-                yield()
-
+            }.asFlow().collect {
                 showsStore.fetch(it.showId)
                 showImagesStore.fetchCollection(it.showId)
             }
