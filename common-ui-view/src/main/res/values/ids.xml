@@ -28,6 +28,7 @@
     <id name="navigation_settings" />
     <id name="navigation_licences" />
     <id name="navigation_show_details" />
+    <id name="navigation_episode_details" />
 
     <id name="activity_show_details" />
 

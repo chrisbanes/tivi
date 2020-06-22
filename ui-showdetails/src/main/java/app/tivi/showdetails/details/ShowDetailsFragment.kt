@@ -29,7 +29,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.observeWindowInsets
-import app.tivi.episodedetails.EpisodeDetailsFragment
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.viewModelProviderFactoryOf
 import app.tivi.util.TiviDateFormatter
@@ -90,9 +89,7 @@ class ShowDetailsFragment : Fragment() {
         lifecycleScope.launch {
             pendingActions.consumeAsFlow().collect { action ->
                 when (action) {
-                    NavigateUp -> {
-                        findNavController().navigateUp() || requireActivity().onNavigateUp()
-                    }
+                    NavigateUp -> findNavController().navigateUp()
                     else -> viewModel.submitAction(action)
                 }
             }
@@ -107,8 +104,7 @@ class ShowDetailsFragment : Fragment() {
                     viewModel.submitAction(ClearPendingUiEffect(effect))
                 }
                 is OpenEpisodeUiEffect -> {
-                    EpisodeDetailsFragment.create(effect.episodeId)
-                        .show(childFragmentManager, "episode")
+                    findNavController().navigate("app.tivi://episode/${effect.episodeId}".toUri())
                     viewModel.submitAction(ClearPendingUiEffect(effect))
                 }
             }

@@ -50,6 +50,7 @@
     <string name="logout">Logout</string>
 
     <string name="showdetails_navigation_title">Show details</string>
+    <string name="episode_navigation_title">Episode details</string>
 
     <string name="search_navigation_title">Search</string>
 

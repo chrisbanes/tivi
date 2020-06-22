@@ -31,22 +31,13 @@
         android:theme="@style/Theme.Tivi">
 
         <activity
-            android:name=".home.HomeActivity"
+            android:name=".home.MainActivity"
             android:launchMode="singleTask"
             android:theme="@style/Theme.Tivi.Home">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".showdetails.ShowDetailsActivity"
-            android:parentActivityName=".home.HomeActivity"
-            android:theme="@style/Theme.Tivi.ShowDetails">
-
-            <nav-graph android:value="@navigation/show_details_nav_graph" />
-
         </activity>
 
         <activity
