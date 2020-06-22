@@ -92,8 +92,8 @@ class FollowedShowsRepository @Inject constructor(
 
     suspend fun syncFollowedShows(): ItemSyncerResult<FollowedShowEntry> {
         return asyncOrAwait("sync_followed_shows") {
-            val listId = when (TraktAuthState.LOGGED_IN) {
-                traktAuthState.get() -> getFollowedTraktListId()
+            val listId = when (traktAuthState.get()) {
+                TraktAuthState.LOGGED_IN -> getFollowedTraktListId()
                 else -> null
             }
 

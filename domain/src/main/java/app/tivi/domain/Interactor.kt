@@ -22,12 +22,11 @@ import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
 import app.tivi.base.InvokeSuccess
 import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.withTimeout
 import java.util.concurrent.TimeUnit
 
@@ -85,15 +84,15 @@ abstract class SuspendingWorkInteractor<P : Any, T> : SubjectInteractor<P, T>() 
 }
 
 abstract class SubjectInteractor<P : Any, T> {
-    private val channel = Channel<P>(Channel.CONFLATED)
+    private val paramState = MutableStateFlow<P?>(null)
 
-    operator fun invoke(params: P) = channel.offer(params)
+    operator fun invoke(params: P) {
+        paramState.value = params
+    }
 
     protected abstract fun createObservable(params: P): Flow<T>
 
-    fun observe(): Flow<T> = channel.receiveAsFlow()
-        .distinctUntilChanged()
-        .flatMapLatest { createObservable(it) }
+    fun observe(): Flow<T> = paramState.filterNotNull().flatMapLatest { createObservable(it) }
 }
 
 operator fun Interactor<Unit>.invoke() = invoke(Unit)

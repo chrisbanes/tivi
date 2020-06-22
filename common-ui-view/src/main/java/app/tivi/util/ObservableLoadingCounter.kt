@@ -43,12 +43,9 @@ class ObservableLoadingCounter {
     }
 }
 
-suspend fun Flow<InvokeStatus>.collectInto(counter: ObservableLoadingCounter) {
-    collect {
-        if (it == InvokeStarted) {
-            counter.addLoader()
-        } else if (it == InvokeSuccess || it is InvokeError) {
-            counter.removeLoader()
-        }
+suspend fun Flow<InvokeStatus>.collectInto(counter: ObservableLoadingCounter) = collect {
+    when (it) {
+        InvokeStarted -> counter.addLoader()
+        InvokeSuccess, is InvokeError -> counter.removeLoader()
     }
 }

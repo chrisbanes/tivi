@@ -76,7 +76,7 @@ class WatchedFragment : FragmentWithBinding<FragmentWatchedBinding>() {
         binding.watchedToolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.home_menu_user_login, R.id.home_menu_user_avatar -> {
-                    viewModel.onAccountClicked()
+                    findNavController().navigate(R.id.navigation_account)
                 }
             }
             true
