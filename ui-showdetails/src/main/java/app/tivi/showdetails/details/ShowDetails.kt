@@ -53,6 +53,7 @@ import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.ColorFilter
 import androidx.ui.layout.Column
+import androidx.ui.layout.ConstraintLayout
 import androidx.ui.layout.ExperimentalLayout
 import androidx.ui.layout.FlowRow
 import androidx.ui.layout.Row
@@ -69,6 +70,7 @@ import androidx.ui.layout.preferredHeightIn
 import androidx.ui.layout.preferredSize
 import androidx.ui.layout.preferredSizeIn
 import androidx.ui.layout.preferredWidth
+import androidx.ui.layout.preferredWidthIn
 import androidx.ui.layout.wrapContentHeight
 import androidx.ui.layout.wrapContentSize
 import androidx.ui.livedata.observeAsState
@@ -156,16 +158,18 @@ fun ShowDetails(
     viewState: ShowDetailsViewState,
     uiEffects: List<UiEffect>,
     actioner: (ShowDetailsAction) -> Unit
-) = Stack(
+) = ConstraintLayout(
     modifier = Modifier.fillMaxSize()
 ) {
+    val (appbar, fab, snackbar) = createRefs()
+
     val scrollerPosition = ScrollerPosition()
     var backdropHeight by state { 0 }
     var fabHeight by state { 0 }
 
     VerticalScroller(
         scrollerPosition = scrollerPosition,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxHeight()
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -309,8 +313,10 @@ fun ShowDetails(
 
     Surface(
         color = MaterialTheme.colors.surface.copy(alpha = alpha),
-        modifier = Modifier.fillMaxWidth().gravity(Alignment.TopStart),
-        elevation = if (scrollerPosition.value >= trigger) 2.dp else 0.dp
+        elevation = if (scrollerPosition.value >= trigger) 2.dp else 0.dp,
+        modifier = Modifier.fillMaxWidth().constrainAs(appbar) {
+            top.linkTo(parent.top)
+        }
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -331,32 +337,35 @@ fun ShowDetails(
         }
     }
 
-    val bottomInset = with(DensityAmbient.current) { insets.bottom.toDp() }
-
-    Column(
-        modifier = Modifier.fillMaxWidth()
-            .wrapContentHeight(Alignment.Bottom)
-            .gravity(Alignment.BottomEnd)
-    ) {
-        Crossfade(current = viewState.refreshError) { error ->
-            if (error != null) {
-                // TODO: Convert this to swipe-to-dismiss
-                Snackbar(
-                    text = { Text(error.message) },
-                    modifier = Modifier.clickable(onClick = { actioner(ClearError) })
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                )
-            }
+    Crossfade(current = viewState.refreshError) { error ->
+        if (error != null) {
+            // TODO: Convert this to swipe-to-dismiss
+            Snackbar(
+                text = { Text(error.message) },
+                modifier = Modifier
+                    .preferredWidthIn(maxWidth = 320.dp)
+                    .clickable(onClick = { actioner(ClearError) })
+                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                    .constrainAs(snackbar) {
+                        bottom.linkTo(fab.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+            )
         }
-
-        ToggleShowFollowFloatingActionButton(
-            isFollowed = viewState.isFollowed,
-            onClick = { actioner(FollowShowToggleAction) },
-            modifier = Modifier.padding(end = 16.dp, bottom = 16.dp + bottomInset)
-                .gravity(Alignment.End)
-                .onSizeChanged { fabHeight = it.height }
-        )
     }
+
+    val bottomInset = with(DensityAmbient.current) { insets.bottom.toDp() }
+    ToggleShowFollowFloatingActionButton(
+        isFollowed = viewState.isFollowed,
+        onClick = { actioner(FollowShowToggleAction) },
+        modifier = Modifier.padding(end = 16.dp, bottom = 16.dp + bottomInset)
+            .onSizeChanged { fabHeight = it.height }
+            .constrainAs(fab) {
+                end.linkTo(parent.end)
+                bottom.linkTo(parent.bottom)
+            }
+    )
 }
 
 @Composable
