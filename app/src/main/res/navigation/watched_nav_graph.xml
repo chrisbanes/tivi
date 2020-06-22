@@ -33,4 +33,9 @@
 
     <include app:graph="@navigation/show_details_nav_graph" />
 
+    <activity
+        android:id="@id/navigation_licences"
+        android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
+        android:label="@string/oss_license_title" />
+
 </navigation>

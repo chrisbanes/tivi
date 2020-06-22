@@ -16,20 +16,19 @@
 
 package app.tivi.settings
 
-import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import app.tivi.BuildConfig
-import app.tivi.R
 import app.tivi.extensions.resolveThemeColor
 import app.tivi.util.PowerController
 import app.tivi.util.SaveData
 import app.tivi.util.SaveDataReason
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.collect
@@ -68,14 +67,17 @@ internal class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         }
 
         findPreference<Preference>("open_source")?.setOnPreferenceClickListener {
-            startActivity(Intent(requireContext(), OssLicensesMenuActivity::class.java))
+            findNavController().navigate(R.id.navigation_licences)
             true
         }
 
         findPreference<Preference>("version")?.apply {
+            val pkgManager: PackageManager = requireContext().packageManager
+            val pkgInfo = pkgManager.getPackageInfo(requireContext().packageName, 0)
             summary = getString(
                 R.string.settings_app_version_summary,
-                BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE
+                pkgInfo.versionName,
+                PackageInfoCompat.getLongVersionCode(pkgInfo)
             )
         }
     }

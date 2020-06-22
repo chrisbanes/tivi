@@ -23,8 +23,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commitNow
 import androidx.navigation.fragment.findNavController
-import app.tivi.R
-import app.tivi.databinding.FragmentSettingsBinding
+import app.tivi.settings.databinding.FragmentSettingsBinding
 
 class SettingsFragment : Fragment() {
     private lateinit var binding: FragmentSettingsBinding
