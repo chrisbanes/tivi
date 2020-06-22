@@ -18,10 +18,7 @@ package app.tivi.inject
 
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
-import android.os.Build
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.preference.PreferenceManager
 import app.tivi.BuildConfig
 import app.tivi.extensions.withLocale
 import app.tivi.home.followed.R
@@ -38,8 +35,6 @@ import kotlinx.coroutines.Dispatchers
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
 import java.io.File
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -62,27 +57,6 @@ object AppModule {
         computation = Dispatchers.Default,
         main = Dispatchers.Main
     )
-
-    @Singleton
-    @Provides
-    fun provideBackgroundExecutor(): Executor {
-        val parallelism = (Runtime.getRuntime().availableProcessors() * 2)
-            .coerceIn(4, 32)
-        return if (Build.VERSION.SDK_INT < 24) {
-            Executors.newFixedThreadPool(parallelism)
-        } else {
-            Executors.newWorkStealingPool(parallelism)
-        }
-    }
-
-    @Named("app")
-    @Provides
-    @Singleton
-    fun provideAppPreferences(
-        @ApplicationContext context: Context
-    ): SharedPreferences {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-    }
 
     @Provides
     @Singleton

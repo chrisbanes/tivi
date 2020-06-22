@@ -186,14 +186,13 @@ dependencies {
     implementation project(':ui-trending')
     implementation project(':ui-recommended')
     implementation project(':ui-search')
+    implementation project(':ui-settings')
 
     implementation Libs.AndroidX.Lifecycle.livedata
     implementation Libs.AndroidX.Lifecycle.viewmodel
 
     implementation Libs.AndroidX.appcompat
-    implementation Libs.AndroidX.browser
     implementation Libs.AndroidX.emoji
-    implementation Libs.AndroidX.preference
     implementation Libs.AndroidX.Fragment.fragmentKtx
     implementation Libs.AndroidX.Navigation.fragment
     implementation Libs.AndroidX.Navigation.ui

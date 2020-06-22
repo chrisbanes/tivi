@@ -20,7 +20,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
-import app.tivi.R
 import app.tivi.settings.TiviPreferences.Theme
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
