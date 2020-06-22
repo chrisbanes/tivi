@@ -132,14 +132,12 @@ internal class WatchedViewModel @ViewModelInject constructor(
 
     private fun refresh(fromUser: Boolean) {
         viewModelScope.launch {
-            observeTraktAuthState.observe()
-                .first { it == TraktAuthState.LOGGED_IN }
-                .also { refreshWatched(fromUser) }
+            observeTraktAuthState.observe().first().also { authState ->
+                if (authState == TraktAuthState.LOGGED_IN) {
+                    refreshWatched(fromUser)
+                }
+            }
         }
-    }
-
-    fun onAccountClicked() {
-        appNavigator.openAccount()
     }
 
     fun setFilter(filter: String) {
