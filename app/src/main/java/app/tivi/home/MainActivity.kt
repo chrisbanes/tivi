@@ -52,12 +52,12 @@ class MainActivity : TiviActivity() {
 
         Insetter.builder()
             .applySystemWindowInsetsToPadding(Side.LEFT or Side.RIGHT)
+            .consumeSystemWindowInsets(Insetter.CONSUME_AUTO)
             .applyToView(binding.root)
 
         Insetter.builder()
             .applySystemWindowInsetsToPadding(Side.BOTTOM)
-            // TODO: enable selective consumption when insetter has it
-            // .consumeSystemWindowInsets(true)
+            .consumeSystemWindowInsets(Insetter.CONSUME_AUTO)
             .applyToView(binding.homeBottomNavigation)
 
         Insetter.setEdgeToEdgeSystemUiFlags(binding.homeRoot, true)
