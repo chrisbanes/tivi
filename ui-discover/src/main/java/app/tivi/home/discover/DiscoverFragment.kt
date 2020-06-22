@@ -90,10 +90,11 @@ class DiscoverFragment : FragmentWithBinding<FragmentDiscoverBinding>() {
         binding.discoverToolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.home_menu_user_login, R.id.home_menu_user_avatar -> {
-                    viewModel.onAccountClicked()
+                    findNavController().navigate(R.id.navigation_account)
+                    true
                 }
+                else -> false
             }
-            true
         }
 
         controller!!.callbacks = object : DiscoverEpoxyController.Callbacks {

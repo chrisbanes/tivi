@@ -123,10 +123,6 @@ internal class DiscoverViewModel @ViewModelInject constructor(
         refresh(false)
     }
 
-    fun onAccountClicked() {
-        appNavigator.get().openAccount()
-    }
-
     fun refresh() = refresh(true)
 
     private fun refresh(fromUser: Boolean) {

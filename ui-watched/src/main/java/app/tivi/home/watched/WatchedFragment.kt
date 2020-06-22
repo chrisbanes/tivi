@@ -77,9 +77,10 @@ class WatchedFragment : FragmentWithBinding<FragmentWatchedBinding>() {
             when (it.itemId) {
                 R.id.home_menu_user_login, R.id.home_menu_user_avatar -> {
                     findNavController().navigate(R.id.navigation_account)
+                    true
                 }
+                else -> false
             }
-            true
         }
         binding.watchedToolbar.setNavigationOnClickListener {
             findNavController().navigateUp()

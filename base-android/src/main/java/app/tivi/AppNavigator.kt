@@ -20,6 +20,5 @@ import android.content.Intent
 
 interface AppNavigator {
     fun login()
-    fun openAccount()
     fun onAuthResponse(intent: Intent)
 }
