@@ -183,10 +183,6 @@ internal class FollowedViewModel @ViewModelInject constructor(
         showSelection.clearSelection()
     }
 
-    fun onAccountClicked() {
-        appNavigator.openAccount()
-    }
-
     private fun refreshFollowed(fromInteraction: Boolean) {
         viewModelScope.launch {
             updateFollowedShows(UpdateFollowedShows.Params(fromInteraction, RefreshType.QUICK))

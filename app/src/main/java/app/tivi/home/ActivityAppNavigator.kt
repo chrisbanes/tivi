@@ -20,7 +20,6 @@ import android.app.Activity
 import android.app.PendingIntent
 import android.content.Intent
 import app.tivi.AppNavigator
-import app.tivi.R
 import app.tivi.trakt.TraktConstants
 import app.tivi.trakt.TraktManager
 import app.tivi.util.Logger
@@ -49,11 +48,6 @@ class ActivityAppNavigator @Inject constructor(
             requestProvider.get(),
             provideAuthHandleResponseIntent(0)
         )
-    }
-
-    override fun openAccount() {
-        check(activity is MainActivity)
-        activity.currentNavController?.navigate(R.id.navigation_account)
     }
 
     override fun onAuthResponse(intent: Intent) {
