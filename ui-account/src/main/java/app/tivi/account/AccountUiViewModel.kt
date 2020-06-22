@@ -20,6 +20,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import app.tivi.AppNavigator
 import app.tivi.ReduxViewModel
+import app.tivi.domain.interactors.ClearUserDetails
 import app.tivi.domain.invoke
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
@@ -36,6 +37,7 @@ class AccountUiViewModel @ViewModelInject constructor(
     private val traktManager: TraktManager,
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
+    private val clearUserDetails: ClearUserDetails,
     private val appNavigator: Provider<AppNavigator>
 ) : ReduxViewModel<AccountUiViewState>(
     AccountUiViewState()
@@ -77,6 +79,7 @@ class AccountUiViewModel @ViewModelInject constructor(
     private fun logout() {
         viewModelScope.launch {
             traktManager.clearAuth()
+            clearUserDetails(ClearUserDetails.Params("me")).collect()
         }
     }
 }

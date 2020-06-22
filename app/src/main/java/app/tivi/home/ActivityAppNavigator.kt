@@ -19,9 +19,8 @@ package app.tivi.home
 import android.app.Activity
 import android.app.PendingIntent
 import android.content.Intent
-import androidx.fragment.app.FragmentActivity
 import app.tivi.AppNavigator
-import app.tivi.account.AccountUiFragment
+import app.tivi.R
 import app.tivi.trakt.TraktConstants
 import app.tivi.trakt.TraktManager
 import app.tivi.util.Logger
@@ -53,8 +52,8 @@ class ActivityAppNavigator @Inject constructor(
     }
 
     override fun openAccount() {
-        // TODO: Move this to use navigation
-        AccountUiFragment().show((activity as FragmentActivity).supportFragmentManager, "account")
+        check(activity is MainActivity)
+        activity.currentNavController?.navigate(R.id.navigation_account)
     }
 
     override fun onAuthResponse(intent: Intent) {

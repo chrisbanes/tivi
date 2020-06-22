@@ -43,6 +43,12 @@ abstract class UserDao : EntityDao<TraktUser>() {
     @Query("SELECT id FROM users WHERE is_me != 0")
     abstract suspend fun getIdForMe(): Long?
 
+    @Query("DELETE FROM users WHERE username = :username")
+    abstract suspend fun deleteWithUsername(username: String)
+
+    @Query("DELETE FROM users WHERE is_me != 0")
+    abstract suspend fun deleteMe()
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract override suspend fun insert(entity: TraktUser): Long
 
