@@ -49,6 +49,11 @@ abstract class TiviShowDao : EntityDao<TiviShow>() {
     @Query("SELECT * FROM shows WHERE id = :id")
     abstract suspend fun getShowWithId(id: Long): TiviShow?
 
+    suspend fun getShowWithIdOrThrow(id: Long): TiviShow {
+        return getShowWithId(id)
+            ?: throw IllegalArgumentException("No show with id $id in database")
+    }
+
     @Query("SELECT trakt_id FROM shows WHERE id = :id")
     abstract suspend fun getTraktIdForShowId(id: Long): Int?
 
@@ -76,8 +81,8 @@ abstract class TiviShowDao : EntityDao<TiviShow>() {
                 // Great, the entities are matching
                 idForTraktId
             } else {
-                val showForTmdbId = getShowWithId(idForTmdbId)!!
-                val showForTraktId = getShowWithId(idForTraktId)!!
+                val showForTmdbId = getShowWithIdOrThrow(idForTmdbId)
+                val showForTraktId = getShowWithIdOrThrow(idForTraktId)
                 deleteEntity(showForTmdbId)
                 return insertOrUpdate(mergeShows(showForTraktId, showForTraktId, showForTmdbId))
             }

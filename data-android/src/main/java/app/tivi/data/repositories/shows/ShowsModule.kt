@@ -25,8 +25,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import javax.inject.Singleton
 
 typealias ShowStore = Store<Long, TiviShow>
@@ -41,28 +39,17 @@ object ShowStoreModule {
         lastRequestStore: ShowLastRequestStore,
         traktShowDataSource: TraktShowDataSource
     ): ShowStore {
-        return StoreBuilder.fromNonFlow { showId: Long ->
-            val localShow = showDao.getShowWithId(showId)
-                ?: throw IllegalArgumentException("No show with id $showId in database")
-
-            coroutineScope {
-                val traktResult = async {
-                    traktShowDataSource.getShow(localShow)
-                }
-
-                // Update our last request timestamp
-                if (traktResult is Success<*>) {
-                    lastRequestStore.updateLastRequest(showId)
-                }
-
-                traktResult.await().get() ?: TiviShow.EMPTY_SHOW
-            }
+        return StoreBuilder.fromNonFlow { id: Long ->
+            traktShowDataSource.getShow(showDao.getShowWithIdOrThrow(id))
+                .also { if (it is Success<*>) lastRequestStore.updateLastRequest(id) }
+                .getOrThrow()
         }.persister(
             reader = showDao::getShowWithIdFlow,
             writer = { id, response ->
                 showDao.withTransaction {
-                    val local = showDao.getShowWithId(id) ?: TiviShow.EMPTY_SHOW
-                    showDao.insertOrUpdate(mergeShows(local = local, trakt = response))
+                    showDao.insertOrUpdate(
+                        mergeShows(local = showDao.getShowWithIdOrThrow(id), trakt = response)
+                    )
                 }
             },
             delete = showDao::delete,
