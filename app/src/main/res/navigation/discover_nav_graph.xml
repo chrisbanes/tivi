@@ -17,7 +17,6 @@
 
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@id/navigation_discover"
     app:startDestination="@id/navigation_discover">
 
@@ -41,16 +40,8 @@
         android:name="app.tivi.home.recommended.RecommendedShowsFragment"
         android:label="@string/discover_recommended_title" />
 
-    <fragment
-        android:id="@id/navigation_settings"
-        android:name="app.tivi.settings.SettingsFragment"
-        android:label="@string/settings_title" />
-
     <include app:graph="@navigation/show_details_nav_graph" />
 
-    <activity
-        android:id="@id/navigation_licences"
-        android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
-        android:label="@string/oss_license_title" />
+    <include app:graph="@navigation/account_settings_nav_graph" />
 
 </navigation>

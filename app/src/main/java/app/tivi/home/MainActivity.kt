@@ -39,7 +39,8 @@ class MainActivity : TiviActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private var currentNavController: NavController? = null
+    var currentNavController: NavController? = null
+        private set
 
     @Inject @JvmField var navigator: AppNavigator? = null
 

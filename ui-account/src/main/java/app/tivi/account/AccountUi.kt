@@ -88,11 +88,14 @@ fun AccountUi(
     actioner: (AccountUiAction) -> Unit
 ) {
     Column {
+        Spacer(modifier = Modifier.preferredHeight(16.dp))
+
         if (viewState.user != null) {
             UserRow(
                 user = viewState.user,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
+            Spacer(modifier = Modifier.preferredHeight(16.dp))
         }
 
         Row(
@@ -119,7 +122,7 @@ fun AccountUi(
             }
         }
 
-        Spacer(modifier = Modifier.preferredHeight(8.dp).fillMaxWidth())
+        Spacer(modifier = Modifier.preferredHeight(16.dp).fillMaxWidth())
 
         Divider()
 
