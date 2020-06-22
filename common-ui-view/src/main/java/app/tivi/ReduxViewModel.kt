@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -78,7 +79,7 @@ abstract class ReduxViewModel<S>(
     }
 
     private fun <A> selectSubscribe(prop1: KProperty1<S, A>): Flow<A> {
-        return state.map { prop1.get(it) }
+        return state.map { prop1.get(it) }.distinctUntilChanged()
     }
 
     protected suspend fun setState(reducer: S.() -> S) {

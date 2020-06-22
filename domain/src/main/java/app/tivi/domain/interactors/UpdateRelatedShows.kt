@@ -40,15 +40,15 @@ class UpdateRelatedShows @Inject constructor(
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
-            relatedShowsStore.fetchCollection(params.showId, forceFresh = params.forceLoad) {
+            relatedShowsStore.fetchCollection(params.showId, params.forceLoad) {
                 // Refresh if our local data is over 28 days old
                 lastRequestStore.isRequestExpired(params.showId, Period.ofDays(28))
-            }.forEach {
+            }.forEach { relatedShow ->
                 // yield here to to let other calls potentially run
                 yield()
 
-                showsStore.fetch(it.showId)
-                showImagesStore.fetchCollection(it.showId)
+                showsStore.fetch(relatedShow.otherShowId)
+                showImagesStore.fetchCollection(relatedShow.otherShowId)
             }
         }
     }
