@@ -19,24 +19,25 @@ package app.tivi.home
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import app.tivi.AppNavigator
 import app.tivi.R
 import app.tivi.TiviActivity
-import app.tivi.databinding.ActivityHomeBinding
+import app.tivi.databinding.ActivityMainBinding
 import app.tivi.extensions.hideSoftInput
 import app.tivi.extensions.setupWithNavController
 import app.tivi.trakt.TraktConstants
 import dagger.hilt.android.AndroidEntryPoint
+import dev.chrisbanes.insetter.Insetter
+import dev.chrisbanes.insetter.Side
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeActivity : TiviActivity() {
+class MainActivity : TiviActivity() {
     private val viewModel: HomeActivityViewModel by viewModels()
 
-    private lateinit var binding: ActivityHomeBinding
+    private lateinit var binding: ActivityMainBinding
 
     private var currentNavController: NavController? = null
 
@@ -45,7 +46,20 @@ class HomeActivity : TiviActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        Insetter.builder()
+            .applySystemWindowInsetsToPadding(Side.LEFT or Side.RIGHT)
+            .applyToView(binding.root)
+
+        Insetter.builder()
+            .applySystemWindowInsetsToPadding(Side.BOTTOM)
+            // TODO: enable selective consumption when insetter has it
+            // .consumeSystemWindowInsets(true)
+            .applyToView(binding.homeBottomNavigation)
+
+        Insetter.setEdgeToEdgeSystemUiFlags(binding.homeRoot, true)
 
         if (savedInstanceState == null) {
             setupBottomNavigationBar()

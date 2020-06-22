@@ -17,25 +17,12 @@
 
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@id/navigation_show_details"
     app:startDestination="@id/navigation_show_details">
 
     <fragment android:id="@id/navigation_show_details"
         android:name="app.tivi.showdetails.details.ShowDetailsFragment"
         android:label="@string/showdetails_navigation_title">
-
-        <argument
-            android:name="show_id"
-            app:argType="long" />
-
-    </fragment>
-
-    <activity
-        android:id="@id/activity_show_details"
-        android:name="app.tivi.showdetails.ShowDetailsActivity"
-        android:label="activity_show_details"
-        tools:layout="@layout/activity_show_details">
 
         <argument
             android:name="show_id"
@@ -51,6 +38,20 @@
         <deepLink
             app:uri="app.tivi://show/{show_id}/episode/{episode_id}" />
 
-    </activity>
+    </fragment>
+
+    <dialog
+        android:id="@id/navigation_episode_details"
+        android:name="app.tivi.episodedetails.EpisodeDetailsFragment"
+        android:label="@string/episode_navigation_title">
+
+        <argument
+            android:name="episode_id"
+            app:argType="long" />
+
+        <deepLink
+            app:uri="app.tivi://episode/{episode_id}" />
+
+    </dialog>
 
 </navigation>

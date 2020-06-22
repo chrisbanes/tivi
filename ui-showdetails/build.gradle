@@ -66,8 +66,6 @@ dependencies {
     implementation project(':common-ui-view')
     implementation project(':common-ui-compose')
 
-    implementation project(':ui-episodedetails')
-
     implementation Libs.AndroidX.Lifecycle.livedata
     implementation Libs.AndroidX.Lifecycle.viewmodel
 

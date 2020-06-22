@@ -45,7 +45,7 @@ object Libs {
     const val store = "com.dropbox.mobile.store:store4:4.0.0-alpha05"
 
     object Insetter {
-        private const val version = "0.2.2"
+        private const val version = "0.3.0"
         const val dbx = "dev.chrisbanes:insetter-dbx:$version"
         const val ktx = "dev.chrisbanes:insetter-ktx:$version"
     }

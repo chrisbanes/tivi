@@ -119,7 +119,10 @@ android {
     }
 
     buildFeatures {
+        // We need to keep this enabled because submodules use it
         dataBinding true
+
+        viewBinding true
     }
 
     testOptions {
@@ -211,6 +214,7 @@ dependencies {
     implementation Libs.Coroutines.android
 
     implementation Libs.Hilt.library
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     kapt Libs.Hilt.compiler
 
     implementation Libs.AndroidX.Hilt.work

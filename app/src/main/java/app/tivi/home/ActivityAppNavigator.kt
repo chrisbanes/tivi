@@ -75,7 +75,7 @@ class ActivityAppNavigator @Inject constructor(
     }
 
     private fun provideAuthHandleResponseIntent(requestCode: Int): PendingIntent {
-        val intent = Intent(activity, HomeActivity::class.java).apply {
+        val intent = Intent(activity, MainActivity::class.java).apply {
             action = TraktConstants.INTENT_ACTION_HANDLE_AUTH_RESPONSE
         }
         return PendingIntent.getActivity(activity, requestCode, intent, 0)
