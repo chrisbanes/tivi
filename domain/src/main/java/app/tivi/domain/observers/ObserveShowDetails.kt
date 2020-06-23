@@ -19,18 +19,22 @@ package app.tivi.domain.observers
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.SubjectInteractor
+import app.tivi.util.AppCoroutineDispatchers
 import com.dropbox.android.external.store4.StoreRequest
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class ObserveShowDetails @Inject constructor(
-    private val showStore: ShowStore
+    private val showStore: ShowStore,
+    private val dispatchers: AppCoroutineDispatchers
 ) : SubjectInteractor<ObserveShowDetails.Params, TiviShow>() {
 
     override fun createObservable(params: Params): Flow<TiviShow> {
         return showStore.stream(StoreRequest.cached(params.showId, refresh = false))
             .map { it.requireData() }
+            .flowOn(dispatchers.computation)
     }
 
     data class Params(val showId: Long)
