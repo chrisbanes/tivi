@@ -20,8 +20,11 @@ import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.Success
+import app.tivi.data.toFetchResult
+import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
+import com.dropbox.android.external.store4.nonFlowFetcher
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,14 +43,17 @@ internal object RelatedShowsModule {
         relatedShowsDao: RelatedShowsDao,
         showDao: TiviShowDao,
         lastRequestStore: RelatedShowsLastRequestStore
-    ): RelatedShowsStore {
-        return StoreBuilder.fromNonFlow { showId: Long ->
-            val response = tmdbRelatedShows(showId)
-            if (response is Success) {
-                lastRequestStore.updateLastRequest(showId)
-            }
-            response.getOrThrow()
-        }.persister(
+    ): RelatedShowsStore = StoreBuilder.from(
+        fetcher = nonFlowFetcher { showId: Long ->
+            tmdbRelatedShows(showId)
+                .also {
+                    if (it is Success) {
+                        lastRequestStore.updateLastRequest(showId)
+                    }
+                }
+                .toFetchResult()
+        },
+        sourceOfTruth = SourceOfTruth.from(
             reader = relatedShowsDao::entriesObservable,
             writer = { showId, response ->
                 relatedShowsDao.withTransaction {
@@ -63,6 +69,6 @@ internal object RelatedShowsModule {
             },
             delete = relatedShowsDao::deleteWithShowId,
             deleteAll = relatedShowsDao::deleteAll
-        ).build()
-    }
+        )
+    ).build()
 }

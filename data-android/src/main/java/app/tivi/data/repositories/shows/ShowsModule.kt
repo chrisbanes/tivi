@@ -19,8 +19,11 @@ package app.tivi.data.repositories.shows
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.toFetchResult
+import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
+import com.dropbox.android.external.store4.nonFlowFetcher
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,12 +41,17 @@ object ShowStoreModule {
         showDao: TiviShowDao,
         lastRequestStore: ShowLastRequestStore,
         traktShowDataSource: TraktShowDataSource
-    ): ShowStore {
-        return StoreBuilder.fromNonFlow { id: Long ->
+    ): ShowStore = StoreBuilder.from(
+        fetcher = nonFlowFetcher { id: Long ->
             traktShowDataSource.getShow(showDao.getShowWithIdOrThrow(id))
-                .also { if (it is Success<*>) lastRequestStore.updateLastRequest(id) }
-                .getOrThrow()
-        }.persister(
+                .also {
+                    if (it is Success<*>) {
+                        lastRequestStore.updateLastRequest(id)
+                    }
+                }
+                .toFetchResult()
+        },
+        sourceOfTruth = SourceOfTruth.from(
             reader = showDao::getShowWithIdFlow,
             writer = { id, response ->
                 showDao.withTransaction {
@@ -54,6 +62,6 @@ object ShowStoreModule {
             },
             delete = showDao::delete,
             deleteAll = showDao::deleteAll
-        ).build()
-    }
+        )
+    ).build()
 }
