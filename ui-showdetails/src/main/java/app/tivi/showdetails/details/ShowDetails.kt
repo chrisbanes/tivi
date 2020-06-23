@@ -49,6 +49,7 @@ import androidx.ui.foundation.drawBorder
 import androidx.ui.foundation.isSystemInDarkTheme
 import androidx.ui.foundation.lazy.LazyRowItems
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
+import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.ColorFilter
 import androidx.ui.layout.Column
@@ -105,6 +106,7 @@ import app.tivi.common.compose.PopupMenuItem
 import app.tivi.common.compose.ProvideInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
+import app.tivi.common.compose.offset
 import app.tivi.common.compose.onPositionInRootChanged
 import app.tivi.common.compose.onSizeChanged
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
@@ -184,6 +186,13 @@ fun ShowDetails(
                         data = backdropImage,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
+                            .offset { size ->
+                                Offset(
+                                    x = 0f,
+                                    y = (scrollerPosition.value / 2)
+                                        .coerceIn(-size.height.toFloat(), size.height.toFloat())
+                                )
+                            }
                     )
                 }
             }
@@ -301,40 +310,23 @@ fun ShowDetails(
         }
     }
 
-    val insets = InsetsAmbient.current
-    val trigger = (backdropHeight - insets.top).coerceAtLeast(0)
-
-    val alpha = lerp(
-        startValue = 0.5f,
-        endValue = 1f,
-        fraction = if (trigger > 0) (scrollerPosition.value / trigger).coerceIn(0f, 1f) else 0f
+    OverlaidStatusBarAppBar(
+        scrollerPosition = scrollerPosition,
+        backdropHeight = backdropHeight,
+        appBar = {
+            ShowDetailsAppBar(
+                show = viewState.show,
+                backgroundColor = Color.Transparent,
+                elevation = 0.dp,
+                isRefreshing = viewState.refreshing,
+                actioner = actioner
+            )
+        },
+        modifier = Modifier.fillMaxWidth()
+            .constrainAs(appbar) {
+                top.linkTo(parent.top)
+            }
     )
-
-    Surface(
-        color = MaterialTheme.colors.surface.copy(alpha = alpha),
-        elevation = if (scrollerPosition.value >= trigger) 2.dp else 0.dp,
-        modifier = Modifier.fillMaxWidth().constrainAs(appbar) {
-            top.linkTo(parent.top)
-        }
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            if (insets.top > 0) {
-                val topInset = with(DensityAmbient.current) { insets.top.toDp() }
-                Spacer(Modifier.preferredHeight(topInset).fillMaxWidth())
-            }
-            if (scrollerPosition.value >= trigger) {
-                ShowDetailsAppBar(
-                    show = viewState.show,
-                    backgroundColor = Color.Transparent,
-                    elevation = 0.dp,
-                    isRefreshing = viewState.refreshing,
-                    actioner = actioner
-                )
-            }
-        }
-    }
 
     if (viewState.refreshError != null) {
         // TODO: Convert this to swipe-to-dismiss
@@ -352,6 +344,7 @@ fun ShowDetails(
         )
     }
 
+    val insets = InsetsAmbient.current
     val bottomInset = with(DensityAmbient.current) { insets.bottom.toDp() }
     ToggleShowFollowFloatingActionButton(
         isFollowed = viewState.isFollowed,
@@ -363,6 +356,39 @@ fun ShowDetails(
                 bottom.linkTo(parent.bottom)
             }
     )
+}
+
+@Composable
+private fun OverlaidStatusBarAppBar(
+    scrollerPosition: ScrollerPosition,
+    backdropHeight: Int,
+    modifier: Modifier = Modifier,
+    appBar: @Composable () -> Unit
+) {
+    val insets = InsetsAmbient.current
+    val trigger = (backdropHeight - insets.top).coerceAtLeast(0)
+
+    val alpha = lerp(
+        startValue = 0.5f,
+        endValue = 1f,
+        fraction = if (trigger > 0) (scrollerPosition.value / trigger).coerceIn(0f, 1f) else 0f
+    )
+
+    Surface(
+        color = MaterialTheme.colors.surface.copy(alpha = alpha),
+        elevation = if (scrollerPosition.value >= trigger) 2.dp else 0.dp,
+        modifier = modifier
+    ) {
+        Column(Modifier.fillMaxWidth()) {
+            if (insets.top > 0) {
+                val topInset = with(DensityAmbient.current) { insets.top.toDp() }
+                Spacer(Modifier.preferredHeight(topInset))
+            }
+            if (scrollerPosition.value >= trigger) {
+                appBar()
+            }
+        }
+    }
 }
 
 @Composable
