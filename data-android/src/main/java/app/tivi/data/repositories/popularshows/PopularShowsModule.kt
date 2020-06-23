@@ -20,8 +20,11 @@ import app.tivi.data.daos.PopularDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.PopularShowEntry
 import app.tivi.data.entities.Success
+import app.tivi.data.toFetchResult
+import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
+import com.dropbox.android.external.store4.nonFlowFetcher
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,14 +43,17 @@ internal object PopularShowsModule {
         popularShowsDao: PopularDao,
         showDao: TiviShowDao,
         lastRequestStore: PopularShowsLastRequestStore
-    ): PopularShowsStore {
-        return StoreBuilder.fromNonFlow { page: Int ->
-            val response = traktPopularShows(page, 20)
-            if (page == 0 && response is Success) {
-                lastRequestStore.updateLastRequest()
-            }
-            response.getOrThrow()
-        }.persister(
+    ): PopularShowsStore = StoreBuilder.from(
+        fetcher = nonFlowFetcher { page: Int ->
+            traktPopularShows(page, 20)
+                .also {
+                    if (page == 0 && it is Success) {
+                        lastRequestStore.updateLastRequest()
+                    }
+                }
+                .toFetchResult()
+        },
+        sourceOfTruth = SourceOfTruth.from(
             reader = popularShowsDao::entriesObservable,
             writer = { page, response ->
                 popularShowsDao.withTransaction {
@@ -65,6 +71,6 @@ internal object PopularShowsModule {
             },
             delete = popularShowsDao::deletePage,
             deleteAll = popularShowsDao::deleteAll
-        ).build()
-    }
+        )
+    ).build()
 }

@@ -16,6 +16,10 @@
 
 package app.tivi.data
 
+import app.tivi.data.entities.ErrorResult
+import app.tivi.data.entities.Result
+import app.tivi.data.entities.Success
+import com.dropbox.android.external.store4.FetcherResult
 import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreRequest
 import com.dropbox.android.external.store4.StoreResponse
@@ -78,4 +82,16 @@ suspend inline fun <Key : Any, Output : Any> Store<Key, Output>.cachedOnly(key: 
         .filterNot { it is StoreResponse.Loading }
         .first()
         .dataOrNull()
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <T : Any> Result<T>.toFetchResult(): FetcherResult<T> = when (this) {
+    is Success<*> -> FetcherResult.Data(getOrThrow())
+    is ErrorResult<*> -> FetcherResult.Error.Exception(throwable)
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <T : Any, D : Any> Result<T>.toFetchResult(mapper: (T) -> D): FetcherResult<D> = when (this) {
+    is Success<*> -> FetcherResult.Data(mapper(getOrThrow()))
+    is ErrorResult<*> -> FetcherResult.Error.Exception(throwable)
 }

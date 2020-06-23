@@ -20,8 +20,11 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.WatchedShowEntry
+import app.tivi.data.toFetchResult
+import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
+import com.dropbox.android.external.store4.nonFlowFetcher
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,16 +43,19 @@ internal object WatchedShowsModule {
         watchedShowsDao: WatchedShowDao,
         showDao: TiviShowDao,
         lastRequestStore: WatchedShowsLastRequestStore
-    ): WatchedShowsStore {
-        return StoreBuilder.fromNonFlow { _: Unit ->
-            traktWatchedShows().also {
-                if (it is Success) {
-                    lastRequestStore.updateLastRequest()
+    ): WatchedShowsStore = StoreBuilder.from(
+        fetcher = nonFlowFetcher { _: Unit ->
+            traktWatchedShows()
+                .also {
+                    if (it is Success) {
+                        lastRequestStore.updateLastRequest()
+                    }
                 }
-            }.getOrThrow()
-        }.persister(
+                .toFetchResult()
+        },
+        sourceOfTruth = SourceOfTruth.from(
             reader = { watchedShowsDao.entriesObservable() },
-            writer = { _, response ->
+            writer = { _: Unit, response ->
                 watchedShowsDao.withTransaction {
                     val entries = response.map { (show, entry) ->
                         entry.copy(showId = showDao.getIdOrSavePlaceholder(show))
@@ -63,6 +69,6 @@ internal object WatchedShowsModule {
                 watchedShowsDao.deleteAll()
             },
             deleteAll = watchedShowsDao::deleteAll
-        ).build()
-    }
+        )
+    ).build()
 }
