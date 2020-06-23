@@ -29,7 +29,6 @@ import androidx.compose.state
 import androidx.compose.staticAmbientOf
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LiveData
-import androidx.ui.animation.Crossfade
 import androidx.ui.core.Alignment
 import androidx.ui.core.ContentScale
 import androidx.ui.core.ContextAmbient
@@ -174,12 +173,12 @@ fun ShowDetails(
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
-            val backdropImage = viewState.backdropImage
             Surface(
                 modifier = Modifier.fillMaxWidth()
                     .aspectRatio(16f / 10)
                     .onSizeChanged { backdropHeight = it.height }
             ) {
+                val backdropImage = viewState.backdropImage
                 if (backdropImage != null) {
                     CoilImageWithCrossfade(
                         data = backdropImage,
@@ -337,22 +336,20 @@ fun ShowDetails(
         }
     }
 
-    Crossfade(current = viewState.refreshError) { error ->
-        if (error != null) {
-            // TODO: Convert this to swipe-to-dismiss
-            Snackbar(
-                text = { Text(error.message) },
-                modifier = Modifier
-                    .preferredWidthIn(maxWidth = 320.dp)
-                    .clickable(onClick = { actioner(ClearError) })
-                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                    .constrainAs(snackbar) {
-                        bottom.linkTo(fab.top)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-            )
-        }
+    if (viewState.refreshError != null) {
+        // TODO: Convert this to swipe-to-dismiss
+        Snackbar(
+            text = { Text(viewState.refreshError.message) },
+            modifier = Modifier
+                .preferredWidthIn(maxWidth = 540.dp)
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                .clickable(onClick = { actioner(ClearError) })
+                .constrainAs(snackbar) {
+                    bottom.linkTo(fab.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+        )
     }
 
     val bottomInset = with(DensityAmbient.current) { insets.bottom.toDp() }

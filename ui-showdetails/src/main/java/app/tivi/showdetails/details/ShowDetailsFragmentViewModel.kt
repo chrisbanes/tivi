@@ -29,6 +29,7 @@ import app.tivi.domain.interactors.ChangeSeasonWatchedStatus
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Action
 import app.tivi.domain.interactors.ChangeSeasonWatchedStatus.Params
 import app.tivi.domain.interactors.ChangeShowFollowStatus
+import app.tivi.domain.interactors.ChangeShowFollowStatus.Action.TOGGLE
 import app.tivi.domain.interactors.GetEpisodeDetails
 import app.tivi.domain.interactors.UpdateRelatedShows
 import app.tivi.domain.interactors.UpdateShowDetails
@@ -203,9 +204,8 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     private fun onToggleMyShowsButtonClicked() {
-        viewModelScope.setState {
-            copy(refreshError = UiError(IllegalArgumentException("Error to show a Snackbar")))
-            // changeShowFollowStatus(ChangeShowFollowStatus.Params(state.showId, TOGGLE)).watchStatus()
+        viewModelScope.withState { state ->
+            changeShowFollowStatus(ChangeShowFollowStatus.Params(state.showId, TOGGLE)).watchStatus()
         }
     }
 
