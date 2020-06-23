@@ -40,6 +40,8 @@ buildscript {
         classpath Libs.Kotlin.gradlePlugin
         classpath Libs.Kotlin.extensions
 
+        classpath Libs.gradlePlayPublisher
+
         classpath Libs.Google.gmsGoogleServices
         classpath Libs.Google.crashlyticsGradle
         classpath Libs.Google.openSourceLicensesPlugin
