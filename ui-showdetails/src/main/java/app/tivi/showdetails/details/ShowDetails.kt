@@ -17,7 +17,6 @@
 package app.tivi.showdetails.details
 
 import android.view.ViewGroup
-import androidx.animation.transitionDefinition
 import androidx.compose.Composable
 import androidx.compose.MutableState
 import androidx.compose.Providers
@@ -30,17 +29,12 @@ import androidx.compose.state
 import androidx.compose.staticAmbientOf
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LiveData
-import androidx.ui.animation.Crossfade
-import androidx.ui.animation.DpPropKey
-import androidx.ui.animation.Transition
 import androidx.ui.core.Alignment
 import androidx.ui.core.ContentScale
 import androidx.ui.core.ContextAmbient
 import androidx.ui.core.DensityAmbient
 import androidx.ui.core.Modifier
 import androidx.ui.core.clip
-import androidx.ui.core.drawOpacity
-import androidx.ui.core.onPositioned
 import androidx.ui.core.positionInRoot
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
@@ -55,9 +49,11 @@ import androidx.ui.foundation.drawBorder
 import androidx.ui.foundation.isSystemInDarkTheme
 import androidx.ui.foundation.lazy.LazyRowItems
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
+import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.ColorFilter
 import androidx.ui.layout.Column
+import androidx.ui.layout.ConstraintLayout
 import androidx.ui.layout.ExperimentalLayout
 import androidx.ui.layout.FlowRow
 import androidx.ui.layout.Row
@@ -74,6 +70,7 @@ import androidx.ui.layout.preferredHeightIn
 import androidx.ui.layout.preferredSize
 import androidx.ui.layout.preferredSizeIn
 import androidx.ui.layout.preferredWidth
+import androidx.ui.layout.preferredWidthIn
 import androidx.ui.layout.wrapContentHeight
 import androidx.ui.layout.wrapContentSize
 import androidx.ui.livedata.observeAsState
@@ -109,6 +106,8 @@ import app.tivi.common.compose.PopupMenuItem
 import app.tivi.common.compose.ProvideInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
+import app.tivi.common.compose.offset
+import app.tivi.common.compose.onPositionInRootChanged
 import app.tivi.common.compose.onSizeChanged
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
@@ -160,31 +159,40 @@ fun ShowDetails(
     viewState: ShowDetailsViewState,
     uiEffects: List<UiEffect>,
     actioner: (ShowDetailsAction) -> Unit
-) = Stack(
+) = ConstraintLayout(
     modifier = Modifier.fillMaxSize()
 ) {
+    val (appbar, fab, snackbar) = createRefs()
+
     val scrollerPosition = ScrollerPosition()
     var backdropHeight by state { 0 }
     var fabHeight by state { 0 }
 
     VerticalScroller(
         scrollerPosition = scrollerPosition,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxHeight()
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
-            val backdropImage = viewState.backdropImage
             Surface(
                 modifier = Modifier.fillMaxWidth()
                     .aspectRatio(16f / 10)
                     .onSizeChanged { backdropHeight = it.height }
             ) {
+                val backdropImage = viewState.backdropImage
                 if (backdropImage != null) {
                     CoilImageWithCrossfade(
                         data = backdropImage,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
+                            .offset { size ->
+                                Offset(
+                                    x = 0f,
+                                    y = (scrollerPosition.value / 2)
+                                        .coerceIn(-size.height.toFloat(), size.height.toFloat())
+                                )
+                            }
                     )
                 }
             }
@@ -302,89 +310,84 @@ fun ShowDetails(
         }
     }
 
-    Column(
-        modifier = Modifier.fillMaxWidth().gravity(Alignment.TopStart)
-    ) {
-        val insets = InsetsAmbient.current
-
-        val trigger = (backdropHeight - insets.top).coerceAtLeast(0)
-
-        if (insets.top > 0) {
-            val alpha = lerp(
-                startValue = 0.5f,
-                endValue = 1f,
-                fraction = if (trigger > 0) {
-                    (scrollerPosition.value / trigger).coerceIn(0f, 1f)
-                } else 0f
+    OverlaidStatusBarAppBar(
+        scrollerPosition = scrollerPosition,
+        backdropHeight = backdropHeight,
+        appBar = {
+            ShowDetailsAppBar(
+                show = viewState.show,
+                backgroundColor = Color.Transparent,
+                elevation = 0.dp,
+                isRefreshing = viewState.refreshing,
+                actioner = actioner
             )
-            val topInset = with(DensityAmbient.current) { insets.top.toDp() }
-            Box(
-                Modifier.preferredHeight(topInset)
-                    .fillMaxWidth()
-                    .drawBackground(color = MaterialTheme.colors.background.copy(alpha = alpha))
-            )
-        }
-
-        val showOverlayAppBar = scrollerPosition.value > trigger
-
-        Transition(
-            definition = appBarFadeTransitionDef,
-            toState = showOverlayAppBar
-        ) { transitionState ->
-            if (showOverlayAppBar) {
-                ShowDetailsAppBar(
-                    show = viewState.show,
-                    elevation = transitionState[appBarElevationPropKey],
-                    backgroundColor = MaterialTheme.colors.surface,
-                    modifier = Modifier.drawOpacity(if (showOverlayAppBar) 1f else 0f),
-                    isRefreshing = viewState.refreshing,
-                    actioner = actioner
-                )
+        },
+        modifier = Modifier.fillMaxWidth()
+            .constrainAs(appbar) {
+                top.linkTo(parent.top)
             }
-        }
+    )
+
+    if (viewState.refreshError != null) {
+        // TODO: Convert this to swipe-to-dismiss
+        Snackbar(
+            text = { Text(viewState.refreshError.message) },
+            modifier = Modifier
+                .preferredWidthIn(maxWidth = 540.dp)
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                .clickable(onClick = { actioner(ClearError) })
+                .constrainAs(snackbar) {
+                    bottom.linkTo(fab.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+        )
     }
 
     val insets = InsetsAmbient.current
     val bottomInset = with(DensityAmbient.current) { insets.bottom.toDp() }
-
-    Column(
-        modifier = Modifier.fillMaxWidth()
-            .wrapContentHeight(Alignment.Bottom)
-            .gravity(Alignment.BottomEnd)
-    ) {
-        Crossfade(current = viewState.refreshError) { error ->
-            if (error != null) {
-                // TODO: Convert this to swipe-to-dismiss
-                Snackbar(
-                    text = { Text(error.message) },
-                    modifier = Modifier.clickable(onClick = { actioner(ClearError) })
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                )
+    ToggleShowFollowFloatingActionButton(
+        isFollowed = viewState.isFollowed,
+        onClick = { actioner(FollowShowToggleAction) },
+        modifier = Modifier.padding(end = 16.dp, bottom = 16.dp + bottomInset)
+            .onSizeChanged { fabHeight = it.height }
+            .constrainAs(fab) {
+                end.linkTo(parent.end)
+                bottom.linkTo(parent.bottom)
             }
-        }
-
-        ToggleShowFollowFloatingActionButton(
-            isFollowed = viewState.isFollowed,
-            onClick = { actioner(FollowShowToggleAction) },
-            modifier = Modifier.padding(end = 16.dp, bottom = 16.dp + bottomInset)
-                .gravity(Alignment.End)
-                .onSizeChanged { fabHeight = it.height }
-        )
-    }
+    )
 }
 
-private val appBarElevationPropKey = DpPropKey()
+@Composable
+private fun OverlaidStatusBarAppBar(
+    scrollerPosition: ScrollerPosition,
+    backdropHeight: Int,
+    modifier: Modifier = Modifier,
+    appBar: @Composable () -> Unit
+) {
+    val insets = InsetsAmbient.current
+    val trigger = (backdropHeight - insets.top).coerceAtLeast(0)
 
-private val appBarFadeTransitionDef = transitionDefinition {
-    state(true) {
-        this[appBarElevationPropKey] = 4.dp
-    }
-    state(false) {
-        this[appBarElevationPropKey] = 2.dp
-    }
+    val alpha = lerp(
+        startValue = 0.5f,
+        endValue = 1f,
+        fraction = if (trigger > 0) (scrollerPosition.value / trigger).coerceIn(0f, 1f) else 0f
+    )
 
-    transition {
-        appBarElevationPropKey using tween<Dp> { duration = 200 }
+    Surface(
+        color = MaterialTheme.colors.surface.copy(alpha = alpha),
+        elevation = if (scrollerPosition.value >= trigger) 2.dp else 0.dp,
+        modifier = modifier
+    ) {
+        Column(Modifier.fillMaxWidth()) {
+            if (insets.top > 0) {
+                val topInset = with(DensityAmbient.current) { insets.top.toDp() }
+                Spacer(Modifier.preferredHeight(topInset))
+            }
+            if (scrollerPosition.value >= trigger) {
+                appBar()
+            }
+        }
     }
 }
 
@@ -698,7 +701,7 @@ private fun Seasons(
             val offset = InsetsAmbient.current.top +
                 with(DensityAmbient.current) { 56.dp.toIntPx() }
 
-            Modifier.onPositioned { coords ->
+            Modifier.onPositionInRootChanged { coords ->
                 val targetY = coords.positionInRoot.y + scrollerPosition.value - offset
 
                 scrollerPosition.smoothScrollTo(targetY) { _, _ ->
