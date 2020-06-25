@@ -70,7 +70,6 @@ class ShowDetailsFragment : Fragment() {
 
             composeShowDetails(
                 viewModel.liveData,
-                viewModel.selectObserve(ShowDetailsViewState::pendingUiEffects),
                 observeWindowInsets(),
                 { pendingActions.offer(it) },
                 tiviDateFormatter!!,
