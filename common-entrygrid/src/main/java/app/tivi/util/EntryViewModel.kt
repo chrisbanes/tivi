@@ -79,27 +79,21 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
 
     protected fun launchObserves() {
         viewModelScope.launch {
-            messages.execute {
-                copy(status = it() ?: UiSuccess)
-            }
+            messages.collectAndSetState { copy(status = it) }
         }
 
         viewModelScope.launch {
-            loaded.execute {
-                copy(isLoaded = it() ?: false)
-            }
+            loaded.collectAndSetState { copy(isLoaded = it) }
         }
 
         viewModelScope.launch {
-            showSelection.observeIsSelectionOpen().execute {
-                copy(selectionOpen = it() ?: false)
-            }
+            showSelection.observeIsSelectionOpen()
+                .collectAndSetState { copy(selectionOpen = it) }
         }
 
         viewModelScope.launch {
-            showSelection.observeSelectedShowIds().execute {
-                copy(selectedShowIds = it() ?: emptySet())
-            }
+            showSelection.observeSelectedShowIds()
+                .collectAndSetState { copy(selectedShowIds = it) }
         }
     }
 

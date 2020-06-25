@@ -16,16 +16,13 @@
 
 package app.tivi
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import app.tivi.common.ui.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -48,18 +45,8 @@ abstract class ReduxViewModel<S>(
     val liveData: LiveData<S>
         get() = state.asLiveData()
 
-    protected suspend fun <T> Flow<T>.execute(reducer: S.(Async<T>) -> S) {
-        setState { reducer(Loading()) }
-
-        @Suppress("USELESS_CAST")
-        return map { Success(it) as Async<T> }
-            .catch { e ->
-                if (BuildConfig.DEBUG) {
-                    Log.e(this@ReduxViewModel::class.java.simpleName, "Exception during execute", e)
-                }
-                emit(Fail(e))
-            }
-            .collect { setState { reducer(it) } }
+    protected suspend fun <T> Flow<T>.collectAndSetState(reducer: S.(T) -> S) {
+        return collect { item -> setState { reducer(item) } }
     }
 
     fun <A> selectObserve(prop1: KProperty1<S, A>): LiveData<A> {

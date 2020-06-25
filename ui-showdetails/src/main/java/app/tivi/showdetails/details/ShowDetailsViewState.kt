@@ -16,8 +16,6 @@
 
 package app.tivi.showdetails.details
 
-import app.tivi.Async
-import app.tivi.Uninitialized
 import app.tivi.api.UiError
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
@@ -32,10 +30,10 @@ data class ShowDetailsViewState(
     val show: TiviShow = TiviShow.EMPTY_SHOW,
     val posterImage: ShowTmdbImage? = null,
     val backdropImage: ShowTmdbImage? = null,
-    val relatedShows: Async<List<RelatedShowEntryWithShow>> = Uninitialized,
-    val nextEpisodeToWatch: Async<EpisodeWithSeason?> = Uninitialized,
-    val viewStats: Async<FollowedShowsWatchStats> = Uninitialized,
-    val seasons: Async<List<SeasonWithEpisodesAndWatches>> = Uninitialized,
+    val relatedShows: List<RelatedShowEntryWithShow> = emptyList(),
+    val nextEpisodeToWatch: EpisodeWithSeason? = null,
+    val watchStats: FollowedShowsWatchStats? = null,
+    val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
     val expandedSeasonIds: Set<Long> = emptySet(),
     val pendingUiEffects: List<UiEffect> = emptyList(), // TODO this should really be a queue
     val refreshing: Boolean = false,

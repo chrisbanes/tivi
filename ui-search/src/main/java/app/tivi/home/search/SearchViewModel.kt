@@ -22,7 +22,6 @@ import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.SearchShows
 import app.tivi.util.ObservableLoadingCounter
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
@@ -49,12 +48,11 @@ internal class SearchViewModel @ViewModelInject constructor(
         }
 
         viewModelScope.launch {
-            loadingState.observable.collect { setState { copy(refreshing = it) } }
+            loadingState.observable.collectAndSetState { copy(refreshing = it) }
         }
 
         viewModelScope.launch {
-            searchShows.observe()
-                .execute { copy(searchResults = it()) }
+            searchShows.observe().collectAndSetState { copy(searchResults = it) }
         }
     }
 
