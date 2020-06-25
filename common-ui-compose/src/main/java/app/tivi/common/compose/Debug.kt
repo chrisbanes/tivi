@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("NOTHING_TO_INLINE")
-
 package app.tivi.common.compose
 
 import android.util.Log
@@ -23,18 +21,21 @@ import androidx.compose.Composable
 import androidx.compose.onCommit
 import androidx.compose.remember
 
-class Ref(var value: Int)
+private class Ref(var value: Int)
 
-@Composable
-inline fun trackCompositions(): Int {
-    val ref = remember { Ref(0) }
-    onCommit { ref.value++ }
-    return ref.value
-}
+private const val EnableDebugCompositionLogs = false
 
+/**
+ * An effect which longs the number compositions at the invoked point of the slot table.
+ * Thanks to [objcode](https://github.com/objcode) for this code.
+ *
+ * @param tag Log tag used for [Log.d]
+ */
 @Composable
-inline fun LogCompositions(tag: String) {
-    if (BuildConfig.DEBUG) {
-        Log.d(tag, "Compositions: ${trackCompositions()}")
+fun LogCompositions(tag: String) {
+    if (EnableDebugCompositionLogs && BuildConfig.DEBUG) {
+        val ref = remember { Ref(0) }
+        onCommit { ref.value++ }
+        Log.d(tag, "Compositions: ${ref.value}")
     }
 }

@@ -66,7 +66,7 @@ import org.threeten.bp.ZoneOffset
 fun composeAccountUi(
     viewGroup: ViewGroup,
     state: LiveData<AccountUiViewState>,
-    insets: LiveData<WindowInsetsCompat>,
+    insets: LiveData<WindowInsetsCompat?>,
     actioner: (AccountUiAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter
 ): Any = viewGroup.setContent(Recomposer.current()) {

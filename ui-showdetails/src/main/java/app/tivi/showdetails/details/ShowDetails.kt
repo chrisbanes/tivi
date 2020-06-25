@@ -134,7 +134,7 @@ val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
 
 fun ViewGroup.composeShowDetails(
     state: LiveData<ShowDetailsViewState>,
-    insets: LiveData<WindowInsetsCompat>,
+    insets: LiveData<WindowInsetsCompat?>,
     actioner: (ShowDetailsAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter,
     textCreator: ShowDetailsTextCreator
@@ -144,9 +144,13 @@ fun ViewGroup.composeShowDetails(
         ShowDetailsTextCreatorAmbient provides textCreator
     ) {
         MaterialThemeFromMdcTheme {
+            LogCompositions("MaterialThemeFromMdcTheme")
+
             ProvideInsets(insets) {
+                LogCompositions("ProvideInsets")
                 val viewState by state.observeAsState()
                 if (viewState != null) {
+                    LogCompositions("ViewState observeAsState")
                     ShowDetails(viewState!!, actioner)
                 }
             }
