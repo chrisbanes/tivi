@@ -19,7 +19,8 @@ package app.tivi.common.compose
 import android.view.View
 import androidx.compose.Composable
 import androidx.compose.Providers
-import androidx.compose.staticAmbientOf
+import androidx.compose.ambientOf
+import androidx.compose.remember
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnAttach
@@ -47,17 +48,17 @@ data class InsetsHolder(
     val vertical get() = top + bottom
 }
 
-val InsetsAmbient = staticAmbientOf { InsetsHolder() }
+val InsetsAmbient = ambientOf { InsetsHolder() }
 
 @Composable
 fun ProvideInsets(
     liveData: LiveData<WindowInsetsCompat?>,
     children: @Composable () -> Unit
 ) {
-    val currentInsets = liveData
-        .map { if (it != null) InsetsHolder(it) else InsetsHolder() }
-        .distinctUntilChanged()
-        .observeAsState(InsetsHolder())
+    val currentInsets = remember(liveData) {
+        liveData.map { if (it != null) InsetsHolder(it) else InsetsHolder() }
+            .distinctUntilChanged()
+    }.observeAsState(InsetsHolder())
 
     Providers(InsetsAmbient provides currentInsets.value) {
         children()

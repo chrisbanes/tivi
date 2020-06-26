@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
+
 package app.tivi.common.compose
 
 import android.util.Log
@@ -21,18 +23,21 @@ import androidx.compose.Composable
 import androidx.compose.onCommit
 import androidx.compose.remember
 
-private class Ref(var value: Int)
+class Ref(var value: Int)
 
-private const val EnableDebugCompositionLogs = false
+const val EnableDebugCompositionLogs = false
 
 /**
  * An effect which longs the number compositions at the invoked point of the slot table.
  * Thanks to [objcode](https://github.com/objcode) for this code.
  *
+ * This is an inline function to act as like a C-style #include to the host composable function.
+ * That way we track it's compositions, not this function's compositions.
+ *
  * @param tag Log tag used for [Log.d]
  */
 @Composable
-fun LogCompositions(tag: String) {
+inline fun LogCompositions(tag: String) {
     if (EnableDebugCompositionLogs && BuildConfig.DEBUG) {
         val ref = remember { Ref(0) }
         onCommit { ref.value++ }
