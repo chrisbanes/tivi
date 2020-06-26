@@ -106,7 +106,7 @@ class FollowedShowsStore @Inject constructor(
         return followedShowsDao.observeNextShowToWatch()
     }
 
-    fun observeShowViewStats(showId: Long): Flow<FollowedShowsWatchStats> {
+    fun observeShowViewStats(showId: Long): Flow<FollowedShowsWatchStats?> {
         return followedShowsDao.entryShowViewStats(showId)
     }
 

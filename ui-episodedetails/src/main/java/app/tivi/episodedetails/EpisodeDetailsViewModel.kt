@@ -91,9 +91,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         }
 
         viewModelScope.launch {
-            loadingState.observable.collect {
-                setState { copy(refreshing = it) }
-            }
+            loadingState.observable.collectAndSetState { copy(refreshing = it) }
         }
 
         selectSubscribe(EpisodeDetailsViewState::episodeId) { episodeId ->

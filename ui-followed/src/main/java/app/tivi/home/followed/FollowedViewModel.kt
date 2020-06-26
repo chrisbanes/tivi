@@ -19,7 +19,6 @@ package app.tivi.home.followed
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
-import app.tivi.AppNavigator
 import app.tivi.ReduxViewModel
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
@@ -36,7 +35,6 @@ import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.ShowStateSelector
 import app.tivi.util.collectInto
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -48,8 +46,7 @@ internal class FollowedViewModel @ViewModelInject constructor(
     private val observePagedFollowedShows: ObservePagedFollowedShows,
     private val observeTraktAuthState: ObserveTraktAuthState,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
-    private val observeUserDetails: ObserveUserDetails,
-    private val appNavigator: AppNavigator
+    private val observeUserDetails: ObserveUserDetails
 ) : ReduxViewModel<FollowedViewState>(
     FollowedViewState()
 ) {
@@ -78,34 +75,30 @@ internal class FollowedViewModel @ViewModelInject constructor(
             loadingState.observable
                 .distinctUntilChanged()
                 .debounce(2000)
-                .execute {
-                    copy(isLoading = it() ?: false)
-                }
+                .collectAndSetState { copy(isLoading = it) }
         }
 
         viewModelScope.launch {
-            showSelection.observeSelectedShowIds().collect {
-                setState { copy(selectedShowIds = it) }
-            }
+            showSelection.observeSelectedShowIds()
+                .collectAndSetState { copy(selectedShowIds = it) }
         }
 
         viewModelScope.launch {
-            showSelection.observeIsSelectionOpen().collect {
-                setState { copy(selectionOpen = it) }
-            }
+            showSelection.observeIsSelectionOpen()
+                .collectAndSetState { copy(selectionOpen = it) }
         }
 
         viewModelScope.launch {
             observeTraktAuthState.observe()
                 .distinctUntilChanged()
                 .onEach { if (it == TraktAuthState.LOGGED_IN) refresh(false) }
-                .execute { copy(authState = it() ?: TraktAuthState.LOGGED_OUT) }
+                .collectAndSetState { copy(authState = it) }
         }
         observeTraktAuthState()
 
         viewModelScope.launch {
             observeUserDetails.observe()
-                .execute { copy(user = it()) }
+                .collectAndSetState { copy(user = it) }
         }
         observeUserDetails(ObserveUserDetails.Params("me"))
 

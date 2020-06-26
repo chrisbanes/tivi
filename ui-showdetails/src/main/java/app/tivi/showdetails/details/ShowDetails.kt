@@ -35,7 +35,6 @@ import androidx.ui.core.ContextAmbient
 import androidx.ui.core.DensityAmbient
 import androidx.ui.core.Modifier
 import androidx.ui.core.clip
-import androidx.ui.core.positionInRoot
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.Icon
@@ -44,7 +43,6 @@ import androidx.ui.foundation.Text
 import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.clickable
 import androidx.ui.foundation.contentColor
-import androidx.ui.foundation.drawBackground
 import androidx.ui.foundation.drawBorder
 import androidx.ui.foundation.isSystemInDarkTheme
 import androidx.ui.foundation.lazy.LazyRowItems
@@ -75,6 +73,7 @@ import androidx.ui.layout.wrapContentHeight
 import androidx.ui.layout.wrapContentSize
 import androidx.ui.livedata.observeAsState
 import androidx.ui.material.Card
+import androidx.ui.material.Divider
 import androidx.ui.material.EmphasisAmbient
 import androidx.ui.material.ExtendedFloatingActionButton
 import androidx.ui.material.IconButton
@@ -97,17 +96,18 @@ import androidx.ui.material.icons.filled.VisibilityOff
 import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.Dp
+import androidx.ui.unit.IntSize
 import androidx.ui.unit.dp
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.InsetsAmbient
+import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PopupMenu
 import app.tivi.common.compose.PopupMenuItem
 import app.tivi.common.compose.ProvideInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.offset
-import app.tivi.common.compose.onPositionInRootChanged
 import app.tivi.common.compose.onSizeChanged
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
@@ -115,6 +115,8 @@ import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.entities.TmdbImageEntity
+import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.data.resultentities.EpisodeWithWatches
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
@@ -132,8 +134,7 @@ val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
 
 fun ViewGroup.composeShowDetails(
     state: LiveData<ShowDetailsViewState>,
-    pendingUiEffects: LiveData<List<UiEffect>>,
-    insets: LiveData<WindowInsetsCompat>,
+    insets: LiveData<WindowInsetsCompat?>,
     actioner: (ShowDetailsAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter,
     textCreator: ShowDetailsTextCreator
@@ -143,11 +144,14 @@ fun ViewGroup.composeShowDetails(
         ShowDetailsTextCreatorAmbient provides textCreator
     ) {
         MaterialThemeFromMdcTheme {
+            LogCompositions("MaterialThemeFromMdcTheme")
+
             ProvideInsets(insets) {
+                LogCompositions("ProvideInsets")
                 val viewState by state.observeAsState()
-                val uiEffects by pendingUiEffects.observeAsState(emptyList())
                 if (viewState != null) {
-                    ShowDetails(viewState!!, uiEffects, actioner)
+                    LogCompositions("ViewState observeAsState")
+                    ShowDetails(viewState!!, actioner)
                 }
             }
         }
@@ -157,161 +161,39 @@ fun ViewGroup.composeShowDetails(
 @Composable
 fun ShowDetails(
     viewState: ShowDetailsViewState,
-    uiEffects: List<UiEffect>,
     actioner: (ShowDetailsAction) -> Unit
 ) = ConstraintLayout(
     modifier = Modifier.fillMaxSize()
 ) {
+    LogCompositions("ShowDetails")
+
     val (appbar, fab, snackbar) = createRefs()
 
     val scrollerPosition = ScrollerPosition()
     var backdropHeight by state { 0 }
-    var fabHeight by state { 0 }
 
     VerticalScroller(
         scrollerPosition = scrollerPosition,
         modifier = Modifier.fillMaxHeight()
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Surface(
-                modifier = Modifier.fillMaxWidth()
-                    .aspectRatio(16f / 10)
-                    .onSizeChanged { backdropHeight = it.height }
-            ) {
-                val backdropImage = viewState.backdropImage
-                if (backdropImage != null) {
-                    CoilImageWithCrossfade(
-                        data = backdropImage,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                            .offset { size ->
-                                Offset(
-                                    x = 0f,
-                                    y = (scrollerPosition.value / 2)
-                                        .coerceIn(-size.height.toFloat(), size.height.toFloat())
-                                )
-                            }
-                    )
-                }
-            }
-
-            Surface(
-                modifier = Modifier.fillMaxWidth()
-                    .wrapContentHeight(Alignment.Top),
-                elevation = 2.dp
-            ) {
-                Column(Modifier.fillMaxWidth()) {
-                    ShowDetailsAppBar(
-                        show = viewState.show,
-                        elevation = 0.dp,
-                        backgroundColor = Color.Transparent,
-                        isRefreshing = viewState.refreshing,
-                        actioner = actioner
-                    )
-
-                    Row(Modifier.fillMaxWidth()) {
-                        val poster = viewState.posterImage
-                        if (poster != null) {
-                            Spacer(modifier = Modifier.preferredWidth(16.dp))
-
-                            CoilImageWithCrossfade(
-                                request = GetRequest.Builder(ContextAmbient.current)
-                                    .data(poster)
-                                    .build(),
-                                alignment = Alignment.TopStart,
-                                modifier = Modifier.weight(1f, fill = false)
-                                    .aspectRatio(2 / 3f)
-                                    .clip(MaterialTheme.shapes.medium)
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.preferredWidth(16.dp))
-
-                        Box(Modifier.weight(1f, fill = false)) {
-                            InfoPanels(viewState.show)
-                        }
-
-                        Spacer(modifier = Modifier.preferredWidth(16.dp))
-                    }
-
-                    Spacer(modifier = Modifier.preferredHeight(16.dp))
-
-                    Header(stringResource(R.string.details_about))
-
-                    if (viewState.show.summary != null) {
-                        ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
-                            ExpandingText(
-                                viewState.show.summary!!,
-                                modifier = Modifier.fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                            )
-                        }
-                    }
-
-                    val genres = viewState.show.genres
-                    if (genres.isNotEmpty()) {
-                        Genres(viewState.show)
-                    }
-
-                    val nextEpisodeToWatch = viewState.nextEpisodeToWatch()
-                    if (nextEpisodeToWatch?.episode != null && nextEpisodeToWatch.season != null) {
-                        Spacer(modifier = Modifier.preferredHeight(8.dp))
-                        Header(stringResource(id = R.string.details_next_episode_to_watch))
-                        NextEpisodeToWatch(
-                            season = nextEpisodeToWatch.season!!,
-                            episode = nextEpisodeToWatch.episode!!,
-                            onClick = {
-                                actioner(OpenEpisodeDetails(nextEpisodeToWatch.episode!!.id))
-                            }
-                        )
-                    }
-
-                    val relatedShows = viewState.relatedShows() ?: emptyList()
-                    if (relatedShows.isNotEmpty()) {
-                        Spacer(modifier = Modifier.preferredHeight(8.dp))
-                        Header(stringResource(R.string.details_related))
-                        RelatedShows(
-                            relatedShows,
-                            actioner,
-                            Modifier.fillMaxWidth().preferredHeight(112.dp)
-                        )
-                    }
-
-                    val viewStats = viewState.viewStats()
-                    if (viewStats != null) {
-                        Spacer(modifier = Modifier.preferredHeight(8.dp))
-                        Header(stringResource(R.string.details_view_stats))
-                        WatchStats(viewStats)
-                    }
-
-                    val seasons = viewState.seasons()
-                    if (seasons != null && seasons.isNotEmpty()) {
-                        Spacer(modifier = Modifier.preferredHeight(8.dp))
-                        Header(stringResource(R.string.show_details_seasons))
-                        Seasons(
-                            seasons,
-                            viewState.expandedSeasonIds,
-                            actioner,
-                            scrollerPosition,
-                            uiEffects.firstOrNull { it is FocusSeasonUiEffect } as? FocusSeasonUiEffect
-                        )
-                    }
-
-                    // Spacer to push up the content from under the navigation bar
-                    val insets = InsetsAmbient.current
-                    val spacerHeight = with(DensityAmbient.current) {
-                        8.dp + insets.bottom.toDp() + fabHeight.toDp() + 16.dp
-                    }
-                    Spacer(Modifier.preferredHeight(spacerHeight))
-                }
-            }
-        }
+        ShowDetailsScrollingContent(
+            show = viewState.show,
+            posterImage = viewState.posterImage,
+            backdropImage = viewState.backdropImage,
+            relatedShows = viewState.relatedShows,
+            nextEpisodeToWatch = viewState.nextEpisodeToWatch,
+            seasons = viewState.seasons,
+            expandedSeasonIds = viewState.expandedSeasonIds,
+            watchStats = viewState.watchStats,
+            showRefreshing = viewState.refreshing,
+            scrollerPosition = scrollerPosition,
+            actioner = actioner,
+            onBackdropSizeChanged = { backdropHeight = it.height }
+        )
     }
 
     OverlaidStatusBarAppBar(
-        scrollerPosition = scrollerPosition,
+        scrollerPosition = scrollerPosition.value,
         backdropHeight = backdropHeight,
         appBar = {
             ShowDetailsAppBar(
@@ -350,7 +232,6 @@ fun ShowDetails(
         isFollowed = viewState.isFollowed,
         onClick = { actioner(FollowShowToggleAction) },
         modifier = Modifier.padding(end = 16.dp, bottom = 16.dp + bottomInset)
-            .onSizeChanged { fabHeight = it.height }
             .constrainAs(fab) {
                 end.linkTo(parent.end)
                 bottom.linkTo(parent.bottom)
@@ -359,24 +240,162 @@ fun ShowDetails(
 }
 
 @Composable
-private fun OverlaidStatusBarAppBar(
+private fun ShowDetailsScrollingContent(
+    show: TiviShow,
+    posterImage: TmdbImageEntity?,
+    backdropImage: TmdbImageEntity?,
+    relatedShows: List<RelatedShowEntryWithShow>,
+    nextEpisodeToWatch: EpisodeWithSeason?,
+    seasons: List<SeasonWithEpisodesAndWatches>,
+    expandedSeasonIds: Set<Long>,
+    watchStats: FollowedShowsWatchStats?,
+    showRefreshing: Boolean,
     scrollerPosition: ScrollerPosition,
+    actioner: (ShowDetailsAction) -> Unit,
+    onBackdropSizeChanged: (IntSize) -> Unit
+) {
+    LogCompositions("ShowDetailsScrollingContent")
+
+    Column(Modifier.fillMaxWidth()) {
+        Surface(
+            modifier = Modifier.fillMaxWidth()
+                .aspectRatio(16f / 10)
+                .onSizeChanged(onBackdropSizeChanged)
+        ) {
+            if (backdropImage != null) {
+                CoilImageWithCrossfade(
+                    data = backdropImage,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize().offset { size ->
+                        Offset(
+                            x = 0f,
+                            y = (scrollerPosition.value / 2)
+                                .coerceIn(-size.height.toFloat(), size.height.toFloat())
+                        )
+                    }
+                )
+            }
+        }
+
+        Surface(
+            modifier = Modifier.fillMaxWidth().wrapContentHeight(Alignment.Top),
+            elevation = 2.dp
+        ) {
+            Column(Modifier.fillMaxWidth()) {
+                ShowDetailsAppBar(
+                    show = show,
+                    elevation = 0.dp,
+                    backgroundColor = Color.Transparent,
+                    isRefreshing = showRefreshing,
+                    actioner = actioner
+                )
+
+                Row(Modifier.fillMaxWidth()) {
+                    if (posterImage != null) {
+                        Spacer(modifier = Modifier.preferredWidth(16.dp))
+
+                        CoilImageWithCrossfade(
+                            data = posterImage,
+                            alignment = Alignment.TopStart,
+                            modifier = Modifier.weight(1f, fill = false)
+                                .aspectRatio(2 / 3f)
+                                .clip(MaterialTheme.shapes.medium)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.preferredWidth(16.dp))
+
+                    Box(Modifier.weight(1f, fill = false)) {
+                        InfoPanels(show)
+                    }
+
+                    Spacer(modifier = Modifier.preferredWidth(16.dp))
+                }
+
+                Spacer(modifier = Modifier.preferredHeight(16.dp))
+
+                Header(stringResource(R.string.details_about))
+
+                if (show.summary != null) {
+                    ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
+                        ExpandingText(
+                            show.summary!!,
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
+                }
+
+                if (show.genres.isNotEmpty()) {
+                    Genres(show)
+                }
+
+                if (nextEpisodeToWatch?.episode != null && nextEpisodeToWatch.season != null) {
+                    Spacer(modifier = Modifier.preferredHeight(8.dp))
+                    Header(stringResource(id = R.string.details_next_episode_to_watch))
+                    NextEpisodeToWatch(
+                        season = nextEpisodeToWatch.season!!,
+                        episode = nextEpisodeToWatch.episode!!,
+                        onClick = {
+                            actioner(OpenEpisodeDetails(nextEpisodeToWatch.episode!!.id))
+                        }
+                    )
+                }
+
+                if (relatedShows.isNotEmpty()) {
+                    Spacer(modifier = Modifier.preferredHeight(8.dp))
+                    Header(stringResource(R.string.details_related))
+                    RelatedShows(
+                        relatedShows,
+                        actioner,
+                        Modifier.fillMaxWidth().preferredHeight(112.dp)
+                    )
+                }
+
+                if (watchStats != null) {
+                    Spacer(modifier = Modifier.preferredHeight(8.dp))
+                    Header(stringResource(R.string.details_view_stats))
+                    WatchStats(watchStats)
+                }
+
+                if (seasons.isNotEmpty()) {
+                    Spacer(modifier = Modifier.preferredHeight(8.dp))
+                    Header(stringResource(R.string.show_details_seasons))
+                    Seasons(seasons, expandedSeasonIds, actioner)
+                }
+
+                // Spacer to push up the content from under the navigation bar
+                val insets = InsetsAmbient.current
+                val spacerHeight = with(DensityAmbient.current) {
+                    8.dp + insets.bottom.toDp() + 56.dp + 16.dp
+                }
+                Spacer(Modifier.preferredHeight(spacerHeight))
+            }
+        }
+    }
+}
+
+@Composable
+private fun OverlaidStatusBarAppBar(
+    scrollerPosition: Float,
     backdropHeight: Int,
     modifier: Modifier = Modifier,
     appBar: @Composable () -> Unit
 ) {
+    LogCompositions("OverlaidStatusBarAppBar")
+
     val insets = InsetsAmbient.current
     val trigger = (backdropHeight - insets.top).coerceAtLeast(0)
 
     val alpha = lerp(
         startValue = 0.5f,
         endValue = 1f,
-        fraction = if (trigger > 0) (scrollerPosition.value / trigger).coerceIn(0f, 1f) else 0f
+        fraction = if (trigger > 0) (scrollerPosition / trigger).coerceIn(0f, 1f) else 0f
     )
 
     Surface(
         color = MaterialTheme.colors.surface.copy(alpha = alpha),
-        elevation = if (scrollerPosition.value >= trigger) 2.dp else 0.dp,
+        elevation = if (scrollerPosition >= trigger) 2.dp else 0.dp,
         modifier = modifier
     ) {
         Column(Modifier.fillMaxWidth()) {
@@ -384,7 +403,7 @@ private fun OverlaidStatusBarAppBar(
                 val topInset = with(DensityAmbient.current) { insets.top.toDp() }
                 Spacer(Modifier.preferredHeight(topInset))
             }
-            if (scrollerPosition.value >= trigger) {
+            if (scrollerPosition >= trigger) {
                 appBar()
             }
         }
@@ -570,6 +589,8 @@ private fun RelatedShows(
     actioner: (ShowDetailsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    LogCompositions("RelatedShows")
+
     LazyRowItems(
         items = related,
         modifier = modifier
@@ -688,34 +709,17 @@ private fun WatchStats(stats: FollowedShowsWatchStats) {
 private fun Seasons(
     seasons: List<SeasonWithEpisodesAndWatches>,
     expandedSeasonIds: Set<Long>,
-    actioner: (ShowDetailsAction) -> Unit,
-    scrollerPosition: ScrollerPosition,
-    pendingFocusSeasonUiEffect: FocusSeasonUiEffect? = null
+    actioner: (ShowDetailsAction) -> Unit
 ) {
+    LogCompositions("Seasons")
+
     seasons.forEach {
-        val mod = if (pendingFocusSeasonUiEffect != null &&
-            pendingFocusSeasonUiEffect.seasonId == it.season.id &&
-            !scrollerPosition.isAnimating
-        ) {
-            // Offset, to not scroll the item under the status bar, and leave a gap
-            val offset = InsetsAmbient.current.top +
-                with(DensityAmbient.current) { 56.dp.toIntPx() }
-
-            Modifier.onPositionInRootChanged { coords ->
-                val targetY = coords.positionInRoot.y + scrollerPosition.value - offset
-
-                scrollerPosition.smoothScrollTo(targetY) { _, _ ->
-                    actioner(ClearPendingUiEffect(pendingFocusSeasonUiEffect))
-                }
-            }
-        } else Modifier
-
         SeasonWithEpisodesRow(
             season = it.season,
             episodes = it.episodes,
             expanded = it.season.id in expandedSeasonIds,
             actioner = actioner,
-            modifier = mod.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -733,7 +737,7 @@ private fun SeasonWithEpisodesRow(
         modifier = modifier
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            if (expanded) VerticalDivider()
+            if (expanded) Divider()
 
             SeasonRow(
                 season,
@@ -882,23 +886,14 @@ private fun EpisodeWithWatchesRow(
 }
 
 @Composable
-private fun VerticalDivider(
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier.preferredHeight(Dp.Hairline)
-            .fillMaxWidth()
-            .drawBackground(contentColor().copy(alpha = 0.15f))
-    )
-}
-
-@Composable
 private fun SeasonRowOverflowMenu(
     season: Season,
     episodesWithWatches: List<EpisodeWithWatches>,
     popupVisible: MutableState<Boolean>,
     actioner: (ShowDetailsAction) -> Unit
 ) {
+    LogCompositions("SeasonRowOverflowMenu")
+
     val items = ArrayList<PopupMenuItem>()
 
     items += if (season.ignored) {
@@ -960,6 +955,8 @@ private fun ShowDetailsAppBar(
     actioner: (ShowDetailsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    LogCompositions("ShowDetailsAppBar")
+
     TopAppBar(
         title = {
             Text(text = show.title ?: "")
@@ -994,6 +991,8 @@ private fun ToggleShowFollowFloatingActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    LogCompositions("ToggleShowFollowFloatingActionButton")
+
     ExtendedFloatingActionButton(
         onClick = onClick,
         icon = {

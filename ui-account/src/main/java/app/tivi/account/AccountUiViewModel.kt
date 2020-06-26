@@ -24,7 +24,6 @@ import app.tivi.domain.interactors.ClearUserDetails
 import app.tivi.domain.invoke
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
-import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
@@ -48,13 +47,13 @@ class AccountUiViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             observeTraktAuthState.observe()
                 .distinctUntilChanged()
-                .execute { copy(authState = it() ?: TraktAuthState.LOGGED_OUT) }
+                .collectAndSetState { copy(authState = it) }
         }
         observeTraktAuthState()
 
         viewModelScope.launch {
             observeUserDetails.observe()
-                .execute { copy(user = it()) }
+                .collectAndSetState { copy(user = it) }
         }
         observeUserDetails(ObserveUserDetails.Params("me"))
 

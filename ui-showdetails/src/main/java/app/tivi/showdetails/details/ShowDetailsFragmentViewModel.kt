@@ -18,7 +18,6 @@ package app.tivi.showdetails.details
 
 import androidx.lifecycle.viewModelScope
 import app.tivi.ReduxViewModel
-import app.tivi.Success
 import app.tivi.api.UiError
 import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
@@ -83,56 +82,48 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
         viewModelScope.launch {
             observeShowFollowStatus.observe()
                 .distinctUntilChanged()
-                .execute { copy(isFollowed = if (it is Success) it() else false) }
+                .collectAndSetState { copy(isFollowed = it) }
         }
 
         viewModelScope.launch {
             observeShowDetails.observe()
                 .distinctUntilChanged()
-                .execute {
-                    if (it is Success) {
-                        copy(show = it())
-                    } else this
-                }
+                .collectAndSetState { copy(show = it) }
         }
 
         viewModelScope.launch {
             observeShowImages.observe()
                 .distinctUntilChanged()
-                .execute { images ->
-                    if (images is Success) {
-                        copy(backdropImage = images().backdrop, posterImage = images().poster)
-                    } else this
-                }
+                .collectAndSetState { copy(backdropImage = it.backdrop, posterImage = it.poster) }
         }
 
         viewModelScope.launch {
             loadingState.observable
-                .collect { setState { copy(refreshing = it) } }
+                .collectAndSetState { copy(refreshing = it) }
         }
 
         viewModelScope.launch {
             observeRelatedShows.observe()
                 .distinctUntilChanged()
-                .execute { copy(relatedShows = it) }
+                .collectAndSetState { copy(relatedShows = it) }
         }
 
         viewModelScope.launch {
             observeNextEpisodeToWatch.observe()
                 .distinctUntilChanged()
-                .execute { copy(nextEpisodeToWatch = it) }
+                .collectAndSetState { copy(nextEpisodeToWatch = it) }
         }
 
         viewModelScope.launch {
             observeShowSeasons.observe()
                 .distinctUntilChanged()
-                .execute { copy(seasons = it) }
+                .collectAndSetState { copy(seasons = it) }
         }
 
         viewModelScope.launch {
             observeShowViewStats.observe()
                 .distinctUntilChanged()
-                .execute { copy(viewStats = it) }
+                .collectAndSetState { copy(watchStats = it) }
         }
 
         viewModelScope.launch {

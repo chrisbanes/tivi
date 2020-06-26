@@ -119,7 +119,7 @@ import kotlin.math.hypot
  */
 fun ViewGroup.composeEpisodeDetails(
     state: LiveData<EpisodeDetailsViewState>,
-    insets: LiveData<WindowInsetsCompat>,
+    insets: LiveData<WindowInsetsCompat?>,
     actioner: (EpisodeDetailsAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter
 ): Any = setContent(Recomposer.current()) {

@@ -24,9 +24,9 @@ import javax.inject.Inject
 
 class ObserveShowViewStats @Inject constructor(
     private val repository: FollowedShowsRepository
-) : SubjectInteractor<ObserveShowViewStats.Params, FollowedShowsWatchStats>() {
+) : SubjectInteractor<ObserveShowViewStats.Params, FollowedShowsWatchStats?>() {
 
-    override fun createObservable(params: Params): Flow<FollowedShowsWatchStats> {
+    override fun createObservable(params: Params): Flow<FollowedShowsWatchStats?> {
         return repository.observeShowViewStats(params.showId)
     }
 

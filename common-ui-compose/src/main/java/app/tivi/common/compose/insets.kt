@@ -20,13 +20,15 @@ import android.view.View
 import androidx.compose.Composable
 import androidx.compose.Providers
 import androidx.compose.ambientOf
+import androidx.compose.remember
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnAttach
 import androidx.core.view.doOnDetach
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.map
 import androidx.ui.livedata.observeAsState
 
 data class InsetsHolder(
@@ -50,11 +52,12 @@ val InsetsAmbient = ambientOf { InsetsHolder() }
 
 @Composable
 fun ProvideInsets(
-    liveData: LiveData<WindowInsetsCompat>,
+    liveData: LiveData<WindowInsetsCompat?>,
     children: @Composable () -> Unit
 ) {
-    val currentInsets = Transformations.map(liveData) {
-        it?.let(::InsetsHolder) ?: InsetsHolder()
+    val currentInsets = remember(liveData) {
+        liveData.map { if (it != null) InsetsHolder(it) else InsetsHolder() }
+            .distinctUntilChanged()
     }.observeAsState(InsetsHolder())
 
     Providers(InsetsAmbient provides currentInsets.value) {
@@ -62,8 +65,8 @@ fun ProvideInsets(
     }
 }
 
-fun View.observeWindowInsets(): LiveData<WindowInsetsCompat> {
-    val data = MutableLiveData<WindowInsetsCompat>()
+fun View.observeWindowInsets(): LiveData<WindowInsetsCompat?> {
+    val data = MutableLiveData<WindowInsetsCompat?>()
     ViewCompat.setOnApplyWindowInsetsListener(this) { _, insets ->
         data.value = insets
         insets

@@ -79,30 +79,28 @@ internal class DiscoverViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             observeTrendingShows.observe()
                 .distinctUntilChanged()
-                .execute { copy(trendingItems = it() ?: emptyList()) }
+                .collectAndSetState { copy(trendingItems = it) }
         }
         observeTrendingShows(ObserveTrendingShows.Params(15))
 
         viewModelScope.launch {
             observePopularShows.observe()
                 .distinctUntilChanged()
-                .execute {
-                    copy(popularItems = it() ?: emptyList())
-                }
+                .collectAndSetState { copy(popularItems = it) }
         }
         observePopularShows()
 
         viewModelScope.launch {
             observeRecommendedShows.observe()
                 .distinctUntilChanged()
-                .execute { copy(recommendedItems = it() ?: emptyList()) }
+                .collectAndSetState { copy(recommendedItems = it) }
         }
         observeRecommendedShows()
 
         viewModelScope.launch {
             observeNextShowEpisodeToWatch.observe()
                 .distinctUntilChanged()
-                .execute { copy(nextEpisodeWithShowToWatched = it()) }
+                .collectAndSetState { copy(nextEpisodeWithShowToWatched = it) }
         }
         observeNextShowEpisodeToWatch()
 
@@ -110,13 +108,12 @@ internal class DiscoverViewModel @ViewModelInject constructor(
             observeTraktAuthState.observe()
                 .distinctUntilChanged()
                 .onEach { if (it == TraktAuthState.LOGGED_IN) refresh(false) }
-                .execute { copy(authState = it() ?: TraktAuthState.LOGGED_OUT) }
+                .collectAndSetState { copy(authState = it) }
         }
         observeTraktAuthState()
 
         viewModelScope.launch {
-            observeUserDetails.observe()
-                .execute { copy(user = it()) }
+            observeUserDetails.observe().collectAndSetState { copy(user = it) }
         }
         observeUserDetails(ObserveUserDetails.Params("me"))
 

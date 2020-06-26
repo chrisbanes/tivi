@@ -39,9 +39,7 @@ class HomeActivityViewModel @ViewModelInject constructor(
 ) {
     init {
         viewModelScope.launch {
-            observeUserDetails.observe().execute {
-                copy(user = it())
-            }
+            observeUserDetails.observe().collectAndSetState { copy(user = it) }
         }
         observeUserDetails(ObserveUserDetails.Params("me"))
 
@@ -53,9 +51,7 @@ class HomeActivityViewModel @ViewModelInject constructor(
                         refreshMe()
                     }
                 }
-                .execute {
-                    copy(authState = it() ?: TraktAuthState.LOGGED_OUT)
-                }
+                .collectAndSetState { copy(authState = it) }
         }
         observeTraktAuthState()
 
