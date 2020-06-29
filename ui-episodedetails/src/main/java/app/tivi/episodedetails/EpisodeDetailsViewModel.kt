@@ -85,7 +85,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         }
 
         snackbarManager.launchInScope(viewModelScope) { uiError, visible ->
-            viewModelScope.setState {
+            viewModelScope.launchSetState {
                 copy(error = if (visible) uiError else null)
             }
         }
@@ -103,7 +103,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     }
 
     private fun updateFromEpisodeDetails(episodeWithSeason: EpisodeWithSeason) {
-        viewModelScope.setState {
+        viewModelScope.launchSetState {
             val firstAired = episodeWithSeason.episode?.firstAired
             copy(
                 episode = episodeWithSeason.episode,
@@ -114,7 +114,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
     }
 
     private fun updateFromEpisodeWatches(watches: List<EpisodeWatchEntry>) {
-        viewModelScope.setState {
+        viewModelScope.launchSetState {
             copy(watches = watches)
         }
     }

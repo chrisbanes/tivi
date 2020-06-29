@@ -145,7 +145,7 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
         }
 
         snackbarManager.launchInScope(viewModelScope) { uiError, visible ->
-            viewModelScope.setState {
+            viewModelScope.launchSetState {
                 copy(refreshError = if (visible) uiError else null)
             }
         }
@@ -201,7 +201,7 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     private fun openShowDetails(action: OpenShowDetails) {
-        viewModelScope.setState {
+        viewModelScope.launchSetState {
             val pending = pendingUiEffects.filter { it !is OpenShowUiEffect }
             copy(pendingUiEffects = pending + OpenShowUiEffect(action.showId))
         }
@@ -222,7 +222,7 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     private fun clearPendingUiEffect(action: ClearPendingUiEffect) {
-        viewModelScope.setState {
+        viewModelScope.launchSetState {
             copy(pendingUiEffects = pendingUiEffects - action.effect)
         }
     }
@@ -237,7 +237,7 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     private fun onChangeSeasonExpandState(seasonId: Long, expanded: Boolean) {
-        viewModelScope.setState {
+        viewModelScope.launchSetState {
             val pending = ArrayList(pendingUiEffects)
             pending.removeAll { it is FocusSeasonUiEffect }
 

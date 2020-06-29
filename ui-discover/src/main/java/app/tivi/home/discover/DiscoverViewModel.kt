@@ -33,7 +33,6 @@ import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectInto
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -59,21 +58,18 @@ internal class DiscoverViewModel @ViewModelInject constructor(
 
     init {
         viewModelScope.launch {
-            trendingLoadingState.observable.collect { active ->
-                setState { copy(trendingRefreshing = active) }
-            }
+            trendingLoadingState.observable
+                .collectAndSetState { copy(trendingRefreshing = it) }
         }
 
         viewModelScope.launch {
-            popularLoadingState.observable.collect { active ->
-                setState { copy(popularRefreshing = active) }
-            }
+            popularLoadingState.observable
+                .collectAndSetState { copy(popularRefreshing = it) }
         }
 
         viewModelScope.launch {
-            recommendedLoadingState.observable.collect { active ->
-                setState { copy(recommendedRefreshing = active) }
-            }
+            recommendedLoadingState.observable
+                .collectAndSetState { copy(recommendedRefreshing = it) }
         }
 
         viewModelScope.launch {

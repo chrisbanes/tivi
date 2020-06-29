@@ -24,9 +24,9 @@ import javax.inject.Inject
 
 class ObserveUserDetails @Inject constructor(
     private val repository: TraktUsersRepository
-) : SubjectInteractor<ObserveUserDetails.Params, TraktUser>() {
+) : SubjectInteractor<ObserveUserDetails.Params, TraktUser?>() {
 
-    override fun createObservable(params: Params): Flow<TraktUser> {
+    override fun createObservable(params: Params): Flow<TraktUser?> {
         return repository.observeUser(params.username)
     }
 

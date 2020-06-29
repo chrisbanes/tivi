@@ -75,7 +75,7 @@ abstract class ReduxViewModel<S>(
         }
     }
 
-    protected fun CoroutineScope.setState(reducer: S.() -> S) {
+    protected fun CoroutineScope.launchSetState(reducer: S.() -> S) {
         launch { this@ReduxViewModel.setState(reducer) }
     }
 
