@@ -52,15 +52,15 @@ internal class FollowedViewModel @ViewModelInject constructor(
 ) {
     private val boundaryCallback = object : PagedList.BoundaryCallback<FollowedShowEntryWithShow>() {
         override fun onZeroItemsLoaded() {
-            viewModelScope.setState { copy(isEmpty = filter.isNullOrEmpty()) }
+            viewModelScope.launchSetState { copy(isEmpty = filter.isNullOrEmpty()) }
         }
 
         override fun onItemAtEndLoaded(itemAtEnd: FollowedShowEntryWithShow) {
-            viewModelScope.setState { copy(isEmpty = false) }
+            viewModelScope.launchSetState { copy(isEmpty = false) }
         }
 
         override fun onItemAtFrontLoaded(itemAtFront: FollowedShowEntryWithShow) {
-            viewModelScope.setState { copy(isEmpty = false) }
+            viewModelScope.launchSetState { copy(isEmpty = false) }
         }
     }
 
@@ -103,7 +103,7 @@ internal class FollowedViewModel @ViewModelInject constructor(
         observeUserDetails(ObserveUserDetails.Params("me"))
 
         // Set the available sorting options
-        viewModelScope.setState {
+        viewModelScope.launchSetState {
             copy(
                 availableSorts = listOf(
                     SortOption.SUPER_SORT,
@@ -144,10 +144,10 @@ internal class FollowedViewModel @ViewModelInject constructor(
     }
 
     fun setFilter(filter: String) {
-        viewModelScope.setState { copy(filter = filter, filterActive = filter.isNotEmpty()) }
+        viewModelScope.launchSetState { copy(filter = filter, filterActive = filter.isNotEmpty()) }
     }
 
-    fun setSort(sort: SortOption) = viewModelScope.setState {
+    fun setSort(sort: SortOption) = viewModelScope.launchSetState {
         require(availableSorts.contains(sort))
         copy(sort = sort)
     }

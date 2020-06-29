@@ -53,15 +53,15 @@ internal class WatchedViewModel @ViewModelInject constructor(
 ) {
     private val boundaryCallback = object : PagedList.BoundaryCallback<WatchedShowEntryWithShow>() {
         override fun onZeroItemsLoaded() {
-            viewModelScope.setState { copy(isEmpty = filter.isNullOrEmpty()) }
+            viewModelScope.launchSetState { copy(isEmpty = filter.isNullOrEmpty()) }
         }
 
         override fun onItemAtEndLoaded(itemAtEnd: WatchedShowEntryWithShow) {
-            viewModelScope.setState { copy(isEmpty = false) }
+            viewModelScope.launchSetState { copy(isEmpty = false) }
         }
 
         override fun onItemAtFrontLoaded(itemAtFront: WatchedShowEntryWithShow) {
-            viewModelScope.setState { copy(isEmpty = false) }
+            viewModelScope.launchSetState { copy(isEmpty = false) }
         }
     }
 
@@ -101,7 +101,7 @@ internal class WatchedViewModel @ViewModelInject constructor(
         observeUserDetails(ObserveUserDetails.Params("me"))
 
         // Set the available sorting options
-        viewModelScope.setState {
+        viewModelScope.launchSetState {
             copy(availableSorts = listOf(SortOption.LAST_WATCHED, SortOption.ALPHABETICAL))
         }
 
@@ -135,13 +135,13 @@ internal class WatchedViewModel @ViewModelInject constructor(
     }
 
     fun setFilter(filter: String) {
-        viewModelScope.setState {
+        viewModelScope.launchSetState {
             copy(filter = filter, filterActive = filter.isNotEmpty())
         }
     }
 
     fun setSort(sort: SortOption) {
-        viewModelScope.setState { copy(sort = sort) }
+        viewModelScope.launchSetState { copy(sort = sort) }
     }
 
     fun clearSelection() {
