@@ -111,6 +111,7 @@ import app.tivi.common.compose.offset
 import app.tivi.common.compose.onSizeChanged
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
+import app.tivi.data.entities.Genre
 import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.ShowTmdbImage
@@ -120,7 +121,10 @@ import app.tivi.data.resultentities.EpisodeWithSeason
 import app.tivi.data.resultentities.EpisodeWithWatches
 import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
+import app.tivi.data.resultentities.nextToAir
 import app.tivi.data.resultentities.numberAired
+import app.tivi.data.resultentities.numberAiredToWatch
+import app.tivi.data.resultentities.numberToAir
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.ui.animations.lerp
@@ -129,6 +133,7 @@ import coil.request.GetRequest
 import dev.chrisbanes.accompanist.coil.CoilImage
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
 import dev.chrisbanes.accompanist.mdctheme.MaterialThemeFromMdcTheme
+import org.threeten.bp.OffsetDateTime
 
 val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
 
@@ -197,7 +202,7 @@ fun ShowDetails(
         backdropHeight = backdropHeight,
         appBar = {
             ShowDetailsAppBar(
-                show = viewState.show,
+                title = viewState.show.title ?: "",
                 backgroundColor = Color.Transparent,
                 elevation = 0.dp,
                 isRefreshing = viewState.refreshing,
@@ -283,7 +288,7 @@ private fun ShowDetailsScrollingContent(
         ) {
             Column(Modifier.fillMaxWidth()) {
                 ShowDetailsAppBar(
-                    show = show,
+                    title = show.title ?: "",
                     elevation = 0.dp,
                     backgroundColor = Color.Transparent,
                     isRefreshing = showRefreshing,
@@ -327,7 +332,7 @@ private fun ShowDetailsScrollingContent(
                 }
 
                 if (show.genres.isNotEmpty()) {
-                    Genres(show)
+                    Genres(show.genres)
                 }
 
                 if (nextEpisodeToWatch?.episode != null && nextEpisodeToWatch.season != null) {
@@ -355,7 +360,7 @@ private fun ShowDetailsScrollingContent(
                 if (watchStats != null) {
                     Spacer(modifier = Modifier.preferredHeight(8.dp))
                     Header(stringResource(R.string.details_view_stats))
-                    WatchStats(watchStats)
+                    WatchStats(watchStats.watchedEpisodeCount, watchStats.episodeCount)
                 }
 
                 if (seasons.isNotEmpty()) {
@@ -412,7 +417,8 @@ private fun OverlaidStatusBarAppBar(
 
 @Composable
 private fun NetworkInfoPanel(
-    show: TiviShow,
+    networkName: String,
+    networkLogoPath: String? = null,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
@@ -422,9 +428,6 @@ private fun NetworkInfoPanel(
         )
 
         Spacer(Modifier.preferredHeight(4.dp))
-
-        val networkLogoPath = show.networkLogoPath
-        val networkName = show.network
 
         if (networkLogoPath != null) {
             val tmdbImage = remember(networkLogoPath) {
@@ -441,7 +444,7 @@ private fun NetworkInfoPanel(
                 colorFilter = if (isSystemInDarkTheme()) ColorFilter.tint(contentColor()) else null,
                 modifier = Modifier.preferredSizeIn(maxWidth = 72.dp, maxHeight = 32.dp)
             )
-        } else if (networkName != null) {
+        } else {
             Text(
                 text = networkName,
                 style = MaterialTheme.typography.body2
@@ -452,7 +455,7 @@ private fun NetworkInfoPanel(
 
 @Composable
 private fun RuntimeInfoPanel(
-    show: TiviShow,
+    runtime: Int,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
@@ -464,7 +467,7 @@ private fun RuntimeInfoPanel(
         Spacer(Modifier.preferredHeight(4.dp))
 
         Text(
-            text = stringResource(R.string.minutes_format, show.runtime ?: 0),
+            text = stringResource(R.string.minutes_format, runtime),
             style = MaterialTheme.typography.body2
         )
     }
@@ -493,7 +496,7 @@ private fun AirsInfoPanel(
 
 @Composable
 private fun CertificateInfoPanel(
-    show: TiviShow,
+    certification: String,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
@@ -505,7 +508,7 @@ private fun CertificateInfoPanel(
         Spacer(Modifier.preferredHeight(4.dp))
 
         Text(
-            text = show.certification ?: "No certificate",
+            text = certification,
             style = MaterialTheme.typography.body2,
             modifier = Modifier.drawBorder(
                 size = 1.dp,
@@ -518,7 +521,8 @@ private fun CertificateInfoPanel(
 
 @Composable
 private fun TraktRatingInfoPanel(
-    show: TiviShow,
+    rating: Float,
+    votes: Int,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
@@ -543,7 +547,7 @@ private fun TraktRatingInfoPanel(
                 Text(
                     text = stringResource(
                         R.string.trakt_rating_text,
-                        (show.traktRating ?: 0f) * 10f
+                        rating * 10f
                     ),
                     style = MaterialTheme.typography.body2
                 )
@@ -551,7 +555,7 @@ private fun TraktRatingInfoPanel(
                 Text(
                     text = stringResource(
                         R.string.trakt_rating_votes,
-                        (show.traktVotes ?: 0) / 1000f
+                        votes / 1000f
                     ),
                     style = MaterialTheme.typography.caption
                 )
@@ -571,11 +575,11 @@ private fun Header(title: String) {
 }
 
 @Composable
-private fun Genres(show: TiviShow) {
+private fun Genres(genres: List<Genre>) {
     ProvideEmphasis(EmphasisAmbient.current.high) {
         val textCreator = ShowDetailsTextCreatorAmbient.current
         Text(
-            textCreator.genreString(show.genres).toString(),
+            textCreator.genreString(genres).toString(),
             style = MaterialTheme.typography.body2,
             modifier = Modifier.fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -664,16 +668,16 @@ private fun InfoPanels(show: TiviShow) {
     ) {
         ProvideEmphasis(EmphasisAmbient.current.high) {
             if (show.traktRating != null) {
-                TraktRatingInfoPanel(show)
+                TraktRatingInfoPanel(show.traktRating!!, show.traktVotes ?: 0)
             }
-            if (show.network != null || show.networkLogoPath != null) {
-                NetworkInfoPanel(show)
+            if (show.network != null) {
+                NetworkInfoPanel(show.network!!, show.networkLogoPath)
             }
             if (show.certification != null) {
-                CertificateInfoPanel(show)
+                CertificateInfoPanel(show.certification!!)
             }
             if (show.runtime != null) {
-                RuntimeInfoPanel(show)
+                RuntimeInfoPanel(show.runtime!!)
             }
             if (show.airsDay != null && show.airsTime != null && show.airsTimeZone != null) {
                 AirsInfoPanel(show)
@@ -683,14 +687,17 @@ private fun InfoPanels(show: TiviShow) {
 }
 
 @Composable
-private fun WatchStats(stats: FollowedShowsWatchStats) {
+private fun WatchStats(
+    watchedEpisodeCount: Int,
+    episodeCount: Int
+) {
     Column(
         modifier = Modifier.fillMaxWidth()
             .padding(start = 16.dp, top = 4.dp, end = 16.dp, bottom = 8.dp)
     ) {
         LinearProgressIndicator(
             modifier = Modifier.fillMaxWidth(),
-            progress = stats.watchedEpisodeCount / stats.episodeCount.toFloat()
+            progress = watchedEpisodeCount / episodeCount.toFloat()
         )
 
         Spacer(modifier = Modifier.preferredHeight(8.dp))
@@ -699,7 +706,7 @@ private fun WatchStats(stats: FollowedShowsWatchStats) {
 
         // TODO: Do something better with CharSequences containing markup/spans
         Text(
-            text = textCreator.followedShowEpisodeWatchStatus(stats).toString(),
+            text = "${textCreator.followedShowEpisodeWatchStatus(watchedEpisodeCount, episodeCount)}",
             style = MaterialTheme.typography.body2
         )
     }
@@ -741,7 +748,11 @@ private fun SeasonWithEpisodesRow(
 
             SeasonRow(
                 season,
-                episodes,
+                episodes.numberAired,
+                episodes.numberWatched,
+                episodes.numberAiredToWatch,
+                episodes.numberToAir,
+                episodes.nextToAir?.firstAired,
                 actioner,
                 modifier = Modifier.fillMaxWidth()
                     .clickable(
@@ -753,13 +764,14 @@ private fun SeasonWithEpisodesRow(
             if (expanded) {
                 episodes.forEach { episodeEntry ->
                     EpisodeWithWatchesRow(
-                        episodeEntry,
+                        episodeEntry.episode,
+                        episodeEntry.isWatched,
+                        episodeEntry.hasPending,
+                        episodeEntry.onlyPendingDeletes,
                         modifier = Modifier.fillMaxWidth()
-                            .clickable(
-                                onClick = {
-                                    actioner(OpenEpisodeDetails(episodeEntry.episode!!.id))
-                                }
-                            )
+                            .clickable {
+                                actioner(OpenEpisodeDetails(episodeEntry.episode.id))
+                            }
                     )
                 }
             }
@@ -770,7 +782,11 @@ private fun SeasonWithEpisodesRow(
 @Composable
 private fun SeasonRow(
     season: Season,
-    episodesWithWatches: List<EpisodeWithWatches>,
+    episodeAired: Int,
+    episodesWatched: Int,
+    episodesToWatch: Int,
+    episodesToAir: Int,
+    nextToAirDate: OffsetDateTime? = null,
     actioner: (ShowDetailsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -798,7 +814,12 @@ private fun SeasonRow(
                 Spacer(Modifier.preferredHeight(4.dp))
 
                 Text(
-                    text = textCreator.seasonSummaryText(episodesWithWatches).toString(),
+                    text = textCreator.seasonSummaryText(
+                        episodesWatched,
+                        episodesToWatch,
+                        episodesToAir,
+                        nextToAirDate
+                    ).toString(),
                     style = MaterialTheme.typography.caption
                 )
             }
@@ -807,7 +828,7 @@ private fun SeasonRow(
                 Spacer(Modifier.preferredHeight(4.dp))
 
                 LinearProgressIndicator(
-                    episodesWithWatches.numberWatched / episodesWithWatches.size.toFloat(),
+                    episodesWatched / episodeAired.toFloat(),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -816,7 +837,9 @@ private fun SeasonRow(
         val showPopup = state { false }
         SeasonRowOverflowMenu(
             season = season,
-            episodesWithWatches = episodesWithWatches,
+            episodesAired = episodeAired,
+            episodesWatched = episodesWatched,
+            episodesToAir = episodesToAir,
             popupVisible = showPopup,
             actioner = actioner
         )
@@ -831,11 +854,12 @@ private fun SeasonRow(
 
 @Composable
 private fun EpisodeWithWatchesRow(
-    episodeWithWatches: EpisodeWithWatches,
+    episode: Episode,
+    isWatched: Boolean,
+    hasPending: Boolean,
+    onlyPendingDeletes: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val episode = episodeWithWatches.episode!!
-
     Row(
         modifier = modifier.preferredHeightIn(minHeight = 48.dp)
             .wrapContentHeight(Alignment.CenterVertically)
@@ -862,20 +886,20 @@ private fun EpisodeWithWatchesRow(
 
         ProvideEmphasis(EmphasisAmbient.current.medium) {
             var needSpacer = false
-            if (episodeWithWatches.hasPending()) {
+            if (hasPending) {
                 Icon(
                     asset = Icons.Default.CloudUpload,
                     modifier = Modifier.gravity(Alignment.CenterVertically)
                 )
                 needSpacer = true
             }
-            if (episodeWithWatches.isWatched()) {
+            if (isWatched) {
                 if (needSpacer) {
                     Spacer(Modifier.preferredWidth(4.dp))
                 }
                 Icon(
                     asset = when {
-                        episodeWithWatches.onlyPendingDeletes() -> Icons.Default.VisibilityOff
+                        onlyPendingDeletes -> Icons.Default.VisibilityOff
                         else -> Icons.Default.Visibility
                     },
                     modifier = Modifier.gravity(Alignment.CenterVertically)
@@ -888,7 +912,9 @@ private fun EpisodeWithWatchesRow(
 @Composable
 private fun SeasonRowOverflowMenu(
     season: Season,
-    episodesWithWatches: List<EpisodeWithWatches>,
+    episodesAired: Int,
+    episodesWatched: Int,
+    episodesToAir: Int,
     popupVisible: MutableState<Boolean>,
     actioner: (ShowDetailsAction) -> Unit
 ) {
@@ -916,27 +942,25 @@ private fun SeasonRowOverflowMenu(
         )
     }
 
-    if (episodesWithWatches.numberWatched > 0) {
+    if (episodesWatched > 0) {
         items += PopupMenuItem(
             title = stringResource(id = R.string.popup_season_mark_all_unwatched),
             onClick = { actioner(MarkSeasonUnwatchedAction(season.id)) }
         )
     }
 
-    if (episodesWithWatches.numberWatched < episodesWithWatches.size) {
-        items += PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_mark_watched_all),
-            onClick = { actioner(MarkSeasonWatchedAction(season.id)) }
-        )
-    }
-
-    if (episodesWithWatches.numberWatched < episodesWithWatches.numberAired &&
-        episodesWithWatches.numberAired < episodesWithWatches.size
-    ) {
-        items += PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_mark_watched_aired),
-            onClick = { actioner(MarkSeasonWatchedAction(season.id, onlyAired = true)) }
-        )
+    if (episodesWatched < episodesAired) {
+        items += if (episodesToAir == 0) {
+            PopupMenuItem(
+                title = stringResource(id = R.string.popup_season_mark_watched_all),
+                onClick = { actioner(MarkSeasonWatchedAction(season.id)) }
+            )
+        } else {
+            PopupMenuItem(
+                title = stringResource(id = R.string.popup_season_mark_watched_aired),
+                onClick = { actioner(MarkSeasonWatchedAction(season.id, onlyAired = true)) }
+            )
+        }
     }
 
     PopupMenu(
@@ -948,7 +972,7 @@ private fun SeasonRowOverflowMenu(
 
 @Composable
 private fun ShowDetailsAppBar(
-    show: TiviShow,
+    title: String,
     elevation: Dp,
     backgroundColor: Color,
     isRefreshing: Boolean,
@@ -958,9 +982,7 @@ private fun ShowDetailsAppBar(
     LogCompositions("ShowDetailsAppBar")
 
     TopAppBar(
-        title = {
-            Text(text = show.title ?: "")
-        },
+        title = { Text(text = title) },
         navigationIcon = {
             IconButton(onClick = { actioner(NavigateUp) }) {
                 Icon(Icons.Default.ArrowBack)
@@ -1026,7 +1048,9 @@ private val previewShow = TiviShow(title = "Detective Penny")
 private fun PreviewSeasonRow() {
     SeasonRowOverflowMenu(
         season = Season(showId = 0, number = 1, ignored = false),
-        episodesWithWatches = emptyList(),
+        episodesAired = 10,
+        episodesToAir = 2,
+        episodesWatched = 3,
         popupVisible = mutableStateOf(false),
         actioner = {}
     )
@@ -1036,7 +1060,7 @@ private fun PreviewSeasonRow() {
 @Composable
 private fun PreviewTopAppBar() {
     ShowDetailsAppBar(
-        show = previewShow,
+        title = previewShow.title ?: "",
         elevation = 1.dp,
         backgroundColor = MaterialTheme.colors.surface,
         isRefreshing = true,

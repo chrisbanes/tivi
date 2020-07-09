@@ -39,18 +39,18 @@ class SeasonWithEpisodesAndWatches {
 }
 
 val List<EpisodeWithWatches>.numberAiredToWatch: Int
-    get() = count { !it.isWatched() && it.episode?.isAired() == true }
+    get() = count { !it.isWatched && it.episode.isAired }
 
 val List<EpisodeWithWatches>.numberWatched: Int
-    get() = count { it.isWatched() }
+    get() = count { it.isWatched }
 
 val List<EpisodeWithWatches>.numberToAir: Int
     get() = size - numberAired
 
 val List<EpisodeWithWatches>.numberAired: Int
-    get() = count { it.episode?.isAired() == true }
+    get() = count { it.episode.isAired }
 
 val List<EpisodeWithWatches>.nextToAir: Episode?
-    get() = firstOrNull {
-        it.episode?.let { ep -> !ep.isAired() && ep.firstAired != null } ?: false
-    }?.episode
+    get() = first {
+        it.episode.let { ep -> !ep.isAired && ep.firstAired != null }
+    }.episode
