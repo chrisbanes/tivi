@@ -103,22 +103,19 @@ fun AccountUi(
                 .padding(horizontal = 16.dp)
         ) {
             if (viewState.authState == TraktAuthState.LOGGED_OUT) {
-                OutlinedButton(
-                    onClick = { actioner(Login) },
-                    text = { Text(text = stringResource(R.string.login)) }
-                )
+                OutlinedButton(onClick = { actioner(Login) }) {
+                    Text(text = stringResource(R.string.login))
+                }
             } else {
-                TextButton(
-                    onClick = { actioner(Login) },
-                    text = { Text(text = stringResource(R.string.refresh_credentials)) }
-                )
+                TextButton(onClick = { actioner(Login) }) {
+                    Text(text = stringResource(R.string.refresh_credentials))
+                }
 
                 Spacer(modifier = Modifier.preferredWidth(8.dp))
 
-                OutlinedButton(
-                    onClick = { actioner(Logout) },
-                    text = { Text(text = stringResource(R.string.logout)) }
-                )
+                OutlinedButton(onClick = { actioner(Logout) }) {
+                    Text(text = stringResource(R.string.logout))
+                }
             }
         }
 

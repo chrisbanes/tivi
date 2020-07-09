@@ -19,6 +19,7 @@ package app.tivi.episodedetails
 import android.os.Build
 import android.view.ViewGroup
 import androidx.animation.transitionDefinition
+import androidx.animation.tween
 import androidx.compose.Composable
 import androidx.compose.Providers
 import androidx.compose.Recomposer
@@ -449,7 +450,7 @@ private fun EpisodeWatchSwipeBackground(
             }
 
             transition {
-                color using tween<Color> { duration = 200 }
+                color using tween(durationMillis = 200)
             }
         }
     }
