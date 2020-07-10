@@ -21,9 +21,9 @@ import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
 import app.tivi.base.InvokeSuccess
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
@@ -33,19 +33,13 @@ import java.util.concurrent.TimeUnit
 abstract class Interactor<in P> {
     operator fun invoke(params: P, timeoutMs: Long = defaultTimeoutMs): Flow<InvokeStatus> {
         return flow {
-            try {
-                withTimeout(timeoutMs) {
-                    emit(InvokeStarted)
-                    try {
-                        doWork(params)
-                        emit(InvokeSuccess)
-                    } catch (t: Throwable) {
-                        emit(InvokeError(t))
-                    }
-                }
-            } catch (t: TimeoutCancellationException) {
-                emit(InvokeError(t))
+            withTimeout(timeoutMs) {
+                emit(InvokeStarted)
+                doWork(params)
+                emit(InvokeSuccess)
             }
+        }.catch { t ->
+            emit(InvokeError(t))
         }
     }
 
