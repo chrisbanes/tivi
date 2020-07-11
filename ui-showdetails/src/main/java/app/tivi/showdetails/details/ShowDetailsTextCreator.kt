@@ -27,12 +27,6 @@ import app.tivi.data.entities.Genre
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.ShowStatus
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.resultentities.EpisodeWithWatches
-import app.tivi.data.resultentities.nextToAir
-import app.tivi.data.resultentities.numberAiredToWatch
-import app.tivi.data.resultentities.numberToAir
-import app.tivi.data.resultentities.numberWatched
-import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.ui.GenreStringer
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.qualifiers.ActivityContext
@@ -47,11 +41,12 @@ class ShowDetailsTextCreator @Inject constructor(
     @ActivityContext private val context: Context,
     private val tiviDateFormatter: TiviDateFormatter
 ) {
-    fun seasonSummaryText(watches: List<EpisodeWithWatches>): CharSequence {
-        val toWatch = watches.numberAiredToWatch
-        val toAir = watches.numberToAir
-        val watched = watches.numberWatched
-
+    fun seasonSummaryText(
+        watched: Int,
+        toWatch: Int,
+        toAir: Int,
+        nextToAirDate: OffsetDateTime? = null
+    ): CharSequence {
         val text = StringBuilder()
         if (watched > 0) {
             text.append(context.getString(R.string.season_summary_watched, watched))
@@ -64,13 +59,12 @@ class ShowDetailsTextCreator @Inject constructor(
             if (text.isNotEmpty()) text.append(" \u2022 ")
             text.append(context.getString(R.string.season_summary_to_air, toAir))
 
-            val nextToAir = watches.nextToAir
-            if (nextToAir?.firstAired != null) {
+            if (nextToAirDate != null) {
                 text.append(". ")
                 text.append(
                     context.getString(
                         R.string.next_prefix,
-                        tiviDateFormatter.formatShortRelativeTime(nextToAir.firstAired!!)
+                        tiviDateFormatter.formatShortRelativeTime(nextToAirDate)
                     )
                 )
             }
@@ -119,17 +113,18 @@ class ShowDetailsTextCreator @Inject constructor(
         return genres?.joinToString(", ") { context.getString(GenreStringer.getLabel(it)) }
     }
 
-    fun followedShowEpisodeWatchStatus(stats: FollowedShowsWatchStats?): CharSequence {
-        return if (stats != null && stats.watchedEpisodeCount < stats.episodeCount) {
+    fun followedShowEpisodeWatchStatus(
+        watchedEpisodeCount: Int,
+        episodeCount: Int
+    ): CharSequence = when {
+        watchedEpisodeCount < episodeCount -> {
             context.getString(
                 R.string.followed_watch_stats_to_watch,
-                stats.episodeCount - stats.watchedEpisodeCount
+                episodeCount - watchedEpisodeCount
             ).parseAsHtml()
-        } else if (stats != null && stats.watchedEpisodeCount > 0) {
-            context.getString(R.string.followed_watch_stats_complete)
-        } else {
-            return ""
         }
+        watchedEpisodeCount > 0 -> context.getString(R.string.followed_watch_stats_complete)
+        else -> ""
     }
 
     fun airsText(show: TiviShow): CharSequence? {
