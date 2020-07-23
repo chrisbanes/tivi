@@ -18,12 +18,18 @@ package app.tivi.appinitializers
 
 import android.app.Application
 import app.tivi.domain.interactors.UpdateTmdbConfig
+import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class TmdbInitializer @Inject constructor(
-    private val updateTmdbConfig: UpdateTmdbConfig
+    private val updateTmdbConfig: UpdateTmdbConfig,
+    private val dispatchers: AppCoroutineDispatchers
 ) : AppInitializer {
     override fun init(application: Application) {
-        updateTmdbConfig(Unit)
+        GlobalScope.launch(dispatchers.main) {
+            updateTmdbConfig.executeSync(Unit)
+        }
     }
 }

@@ -158,7 +158,7 @@ internal class WatchedViewModel @ViewModelInject constructor(
 
     fun followSelectedShows() {
         viewModelScope.launch {
-            changeShowFollowStatus(
+            changeShowFollowStatus.executeSync(
                 ChangeShowFollowStatus.Params(
                     showSelection.getSelectedShowIds(),
                     ChangeShowFollowStatus.Action.FOLLOW,
@@ -171,7 +171,8 @@ internal class WatchedViewModel @ViewModelInject constructor(
 
     private fun refreshWatched(fromUser: Boolean) {
         viewModelScope.launch {
-            updateWatchedShows(UpdateWatchedShows.Params(fromUser)).collectInto(loadingState)
+            updateWatchedShows(UpdateWatchedShows.Params(fromUser))
+                .collectInto(loadingState)
         }
     }
 
