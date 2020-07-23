@@ -40,7 +40,6 @@ import androidx.ui.core.DensityAmbient
 import androidx.ui.core.Modifier
 import androidx.ui.core.drawWithContent
 import androidx.ui.core.setContent
-import androidx.ui.foundation.Box
 import androidx.ui.foundation.ContentColorAmbient
 import androidx.ui.foundation.Icon
 import androidx.ui.foundation.ScrollableColumn
@@ -478,7 +477,7 @@ private fun EpisodeWatchSwipeBackground(
                 asset = Icons.Default.Delete,
                 modifier = Modifier
                     .onPositionInParentChanged { iconCenter = it.boundsInParent.center() }
-                    .padding(0.dp, 0.dp, end = 16.dp, bottom = 0.dp)
+                    .padding(start = 0.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
                     .gravity(Alignment.CenterEnd)
             )
         }
