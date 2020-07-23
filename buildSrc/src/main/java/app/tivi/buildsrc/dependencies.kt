@@ -156,8 +156,8 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = "6695716"
-            const val version = "0.1.0-SNAPSHOT"
+            const val snapshot = ""
+            const val version = "0.1.0-dev15"
 
             const val kotlinCompilerVersion = "1.4.0-dev-withExperimentalGoogleExtensions-20200720"
 
@@ -178,7 +178,7 @@ object Libs {
         }
 
         object Hilt {
-            private const val version = "1.0.0-alpha01"
+            private const val version = "1.0.0-alpha02"
             const val work = "androidx.hilt:hilt-work:$version"
             const val viewmodel = "androidx.hilt:hilt-lifecycle-viewmodel:$version"
             const val compiler = "androidx.hilt:hilt-compiler:$version"
@@ -186,13 +186,13 @@ object Libs {
     }
 
     object Dagger {
-        private const val version = "2.28"
+        private const val version = "2.28.3"
         const val dagger = "com.google.dagger:dagger:$version"
         const val compiler = "com.google.dagger:dagger-compiler:$version"
     }
 
     object Hilt {
-        private const val version = "2.28-alpha"
+        private const val version = "2.28.3-alpha"
         const val library = "com.google.dagger:hilt-android:$version"
         const val compiler = "com.google.dagger:hilt-android-compiler:$version"
         const val testing = "com.google.dagger:hilt-android-testing:$version"
