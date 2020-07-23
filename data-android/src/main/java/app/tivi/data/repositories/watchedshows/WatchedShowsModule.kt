@@ -20,11 +20,10 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.WatchedShowDao
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.WatchedShowEntry
-import app.tivi.data.toFetchResult
+import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
-import com.dropbox.android.external.store4.nonFlowFetcher
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,16 +43,15 @@ internal object WatchedShowsModule {
         showDao: TiviShowDao,
         lastRequestStore: WatchedShowsLastRequestStore
     ): WatchedShowsStore = StoreBuilder.from(
-        fetcher = nonFlowFetcher { _: Unit ->
+        fetcher = Fetcher.of { _: Unit ->
             traktWatchedShows()
                 .also {
                     if (it is Success) {
                         lastRequestStore.updateLastRequest()
                     }
-                }
-                .toFetchResult()
+                }.getOrThrow()
         },
-        sourceOfTruth = SourceOfTruth.from(
+        sourceOfTruth = SourceOfTruth.of(
             reader = { watchedShowsDao.entriesObservable() },
             writer = { _: Unit, response ->
                 watchedShowsDao.withTransaction {

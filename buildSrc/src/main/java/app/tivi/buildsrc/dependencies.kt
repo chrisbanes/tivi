@@ -44,10 +44,11 @@ object Libs {
 
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.3"
 
-    const val store = "com.dropbox.mobile.store:store4:4.0.0-alpha06"
+    // Move back to Store when alpha07 is out
+    const val store = "com.dropbox.mobile.store:store4:4.0.0-SNAPSHOT"
 
     object Insetter {
-        private const val version = "0.3.1-SNAPSHOT"
+        private const val version = "0.3.1"
         const val dbx = "dev.chrisbanes:insetter-dbx:$version"
         const val ktx = "dev.chrisbanes:insetter-ktx:$version"
     }

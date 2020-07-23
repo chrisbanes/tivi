@@ -20,11 +20,10 @@ import app.tivi.data.daos.RelatedShowsDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.RelatedShowEntry
 import app.tivi.data.entities.Success
-import app.tivi.data.toFetchResult
+import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
-import com.dropbox.android.external.store4.nonFlowFetcher
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,16 +43,15 @@ internal object RelatedShowsModule {
         showDao: TiviShowDao,
         lastRequestStore: RelatedShowsLastRequestStore
     ): RelatedShowsStore = StoreBuilder.from(
-        fetcher = nonFlowFetcher { showId: Long ->
+        fetcher = Fetcher.of { showId: Long ->
             tmdbRelatedShows(showId)
                 .also {
                     if (it is Success) {
                         lastRequestStore.updateLastRequest(showId)
                     }
-                }
-                .toFetchResult()
+                }.getOrThrow()
         },
-        sourceOfTruth = SourceOfTruth.from(
+        sourceOfTruth = SourceOfTruth.of(
             reader = relatedShowsDao::entriesObservable,
             writer = { showId, response ->
                 relatedShowsDao.withTransaction {
