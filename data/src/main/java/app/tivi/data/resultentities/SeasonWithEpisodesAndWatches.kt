@@ -51,6 +51,6 @@ val List<EpisodeWithWatches>.numberAired: Int
     get() = count { it.episode.isAired }
 
 val List<EpisodeWithWatches>.nextToAir: Episode?
-    get() = first {
+    get() = firstOrNull {
         it.episode.let { ep -> !ep.isAired && ep.firstAired != null }
-    }.episode
+    }?.episode
