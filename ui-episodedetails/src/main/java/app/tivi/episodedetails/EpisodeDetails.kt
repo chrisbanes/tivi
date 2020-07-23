@@ -464,7 +464,7 @@ private fun EpisodeWatchSwipeBackground(
             .drawBackground(MaterialTheme.colors.onSurface.copy(alpha = 0.2f), RectangleShape)
     ) {
         // A simple box to draw the growing circle, which emanates from behind the icon
-        Box(
+        Spacer(
             modifier = Modifier.fillMaxSize()
                 .drawGrowingCircle(
                     color = transitionState[color],
