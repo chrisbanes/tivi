@@ -21,7 +21,7 @@ object Versions {
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:4.2.0-alpha04"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:4.2.0-alpha05"
 
     const val gradlePlayPublisher = "com.github.triplet.gradle:play-publisher:3.0.0-SNAPSHOT"
 
