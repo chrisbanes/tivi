@@ -72,14 +72,14 @@ object Libs {
     }
 
     object Kotlin {
-        private const val version = "1.3.72"
+        private const val version = "1.4-M3"
         const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
         const val extensions = "org.jetbrains.kotlin:kotlin-android-extensions:$version"
     }
 
     object Coroutines {
-        private const val version = "1.3.7"
+        private const val version = "1.3.7-1.4-M3"
         const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
         const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
         const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$version"
@@ -156,24 +156,25 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = "6658828"
+            const val snapshot = "6695716"
             const val version = "0.1.0-SNAPSHOT"
 
-            const val kotlinCompilerVersion = "1.3.70-dev-withExperimentalGoogleExtensions-20200424"
+            const val kotlinCompilerVersion = "1.4.0-dev-withExperimentalGoogleExtensions-20200720"
 
-            const val runtime = "androidx.compose:compose-runtime:$version"
+            const val runtime = "androidx.compose.runtime:runtime:$version"
+            const val livedata = "androidx.compose.runtime:runtime-livedata:${version}"
+
             const val foundation = "androidx.compose.foundation:foundation:${version}"
+            const val layout = "androidx.compose.foundation:foundation-layout:${version}"
 
-            const val animation = "androidx.compose.animation:animation:${version}"
+            const val ui = "androidx.compose.ui:ui:${version}"
             const val material = "androidx.compose.material:material:${version}"
             const val iconsExtended = "androidx.compose.material:material-icons-extended:${version}"
 
-            const val core = "androidx.ui:ui-core:${version}"
-            const val livedata = "androidx.ui:ui-livedata:${version}"
-            const val layout = "androidx.ui:ui-layout:${version}"
+            const val animation = "androidx.compose.animation:animation:${version}"
 
-            const val tooling = "androidx.compose.tooling:tooling:${version}"
-            const val test = "androidx.compose.test:test-core:${version}"
+            const val tooling = "androidx.ui:ui-tooling:${version}"
+            const val test = "androidx.ui:ui-test:${version}"
         }
 
         object Hilt {
