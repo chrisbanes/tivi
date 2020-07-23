@@ -18,6 +18,7 @@ package app.tivi.episodedetails
 
 import android.os.Build
 import android.view.ViewGroup
+import androidx.animation.FastOutSlowInEasing
 import androidx.animation.transitionDefinition
 import androidx.animation.tween
 import androidx.compose.Composable
@@ -28,11 +29,10 @@ import androidx.compose.remember
 import androidx.compose.setValue
 import androidx.compose.state
 import androidx.core.view.WindowInsetsCompat
-import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.lifecycle.LiveData
 import androidx.ui.animation.ColorPropKey
 import androidx.ui.animation.Crossfade
-import androidx.ui.animation.Transition
+import androidx.ui.animation.transition
 import androidx.ui.core.Alignment
 import androidx.ui.core.ConfigurationAmbient
 import androidx.ui.core.ContentScale
@@ -43,8 +43,8 @@ import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.ContentColorAmbient
 import androidx.ui.foundation.Icon
+import androidx.ui.foundation.ScrollableColumn
 import androidx.ui.foundation.Text
-import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.clickable
 import androidx.ui.foundation.contentColor
 import androidx.ui.foundation.drawBackground
@@ -89,7 +89,6 @@ import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.Dp
 import androidx.ui.unit.center
 import androidx.ui.unit.dp
-import app.tivi.animation.invoke
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.InsetsAmbient
@@ -158,7 +157,7 @@ private fun EpisodeDetails(
                     elevation = 0.dp
                 )
             }
-            VerticalScroller {
+            ScrollableColumn {
                 Surface(elevation = 2.dp) {
                     Column {
                         val episode = viewState.episode
@@ -455,33 +454,33 @@ private fun EpisodeWatchSwipeBackground(
         }
     }
 
-    Transition(
+    val transitionState = transition(
         definition = transition,
         toState = wouldCompleteOnRelease
-    ) { transitionState ->
-        Stack(
-            Modifier.fillMaxSize()
-                .drawBackground(MaterialTheme.colors.onSurface.copy(alpha = 0.2f), RectangleShape)
-        ) {
-            // A simple box to draw the growing circle, which emanates from behind the icon
-            Box(
-                modifier = Modifier.fillMaxSize()
-                    .drawGrowingCircle(
-                        transitionState[color],
-                        iconCenter,
-                        lerp(0f, maxRadius.toFloat(), fastOutLinearIn(swipeProgress))
-                    )
-            )
+    )
 
-            ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
-                Icon(
-                    asset = Icons.Default.Delete,
-                    modifier = Modifier
-                        .onPositionInParentChanged { iconCenter = it.boundsInParent.center() }
-                        .padding(0.dp, 0.dp, end = 16.dp, bottom = 0.dp)
-                        .gravity(Alignment.CenterEnd)
+    Stack(
+        Modifier.fillMaxSize()
+            .drawBackground(MaterialTheme.colors.onSurface.copy(alpha = 0.2f), RectangleShape)
+    ) {
+        // A simple box to draw the growing circle, which emanates from behind the icon
+        Box(
+            modifier = Modifier.fillMaxSize()
+                .drawGrowingCircle(
+                    color = transitionState[color],
+                    center = iconCenter,
+                    radius = lerp(0f, maxRadius.toFloat(), FastOutSlowInEasing(swipeProgress))
                 )
-            }
+        )
+
+        ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
+            Icon(
+                asset = Icons.Default.Delete,
+                modifier = Modifier
+                    .onPositionInParentChanged { iconCenter = it.boundsInParent.center() }
+                    .padding(0.dp, 0.dp, end = 16.dp, bottom = 0.dp)
+                    .gravity(Alignment.CenterEnd)
+            )
         }
     }
 }
@@ -618,5 +617,3 @@ fun previewEpisodeDetails() = EpisodeDetails(
     ),
     actioner = {}
 )
-
-private val fastOutLinearIn = FastOutLinearInInterpolator()

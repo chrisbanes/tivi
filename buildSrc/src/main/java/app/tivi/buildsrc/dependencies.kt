@@ -53,7 +53,7 @@ object Libs {
     }
 
     object Accompanist {
-        private const val version = "0.1.7.ui-${AndroidX.Compose.snapshot}-SNAPSHOT"
+        private const val version = "0.1.7"
         const val mdcTheme = "dev.chrisbanes.accompanist:accompanist-mdc-theme:$version"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
     }

@@ -26,8 +26,8 @@ import androidx.ui.core.DensityAmbient
 import androidx.ui.core.LayoutDirection
 import androidx.ui.core.Modifier
 import androidx.ui.core.WithConstraints
+import androidx.ui.core.gesture.scrollorientationlocking.Orientation
 import androidx.ui.foundation.Box
-import androidx.ui.foundation.gestures.DragDirection
 import androidx.ui.foundation.gestures.draggable
 import androidx.ui.layout.Stack
 import androidx.ui.layout.offset
@@ -51,7 +51,7 @@ fun SwipeToDismiss(
     backgroundChildren: @Composable (swipeProgress: Float, wouldCompleteOnRelease: Boolean) -> Unit,
     swipeChildren: @Composable (swipeProgress: Float, wouldCompleteOnRelease: Boolean) -> Unit
 ) = Stack {
-    val position = animatedFloat(initVal = 0f).apply { setBounds(0f, 0f) }
+    val position = animatedFloat(initVal = 0f)
     var progress by state { 0f }
 
     Box(modifier = Modifier.matchParentSize()) {
@@ -75,7 +75,7 @@ fun SwipeToDismiss(
         }
 
         val draggable = Modifier.draggable(
-            dragDirection = DragDirection.Horizontal,
+            orientation = Orientation.Horizontal,
             onDragStopped = {
                 // TODO: look at using fling and velocity here
                 if (position.max > 0f && position.value / position.max >= swipeCompletePercentage) {
