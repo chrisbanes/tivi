@@ -17,6 +17,8 @@
 package app.tivi.common.compose
 
 import androidx.compose.Composable
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.getValue
@@ -45,10 +47,13 @@ fun ExpandingText(
         style = textStyle,
         overflow = TextOverflow.Ellipsis,
         maxLines = if (expanded) expandedMaxLines else collapsedMaxLines,
-        modifier = Modifier.clickable(
-            onClick = { expanded = !expanded },
-            enabled = expandable && canTextExpand
-        ).then(modifier),
+        modifier = Modifier
+            .clickable(
+                enabled = expandable && canTextExpand,
+                onClick = { expanded = !expanded }
+            )
+            .animateContentSize(animSpec = spring())
+            .then(modifier),
         onTextLayout = {
             if (!expanded) {
                 canTextExpand = it.hasVisualOverflow
