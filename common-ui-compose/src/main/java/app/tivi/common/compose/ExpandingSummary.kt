@@ -17,16 +17,16 @@
 package app.tivi.common.compose
 
 import androidx.compose.Composable
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.clickable
 import androidx.compose.getValue
+import androidx.compose.material.MaterialTheme
 import androidx.compose.setValue
 import androidx.compose.state
 import androidx.compose.stateFor
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.ui.core.Modifier
-import androidx.ui.foundation.Text
-import androidx.ui.foundation.clickable
-import androidx.ui.material.MaterialTheme
-import androidx.ui.text.TextStyle
-import androidx.ui.text.style.TextOverflow
 
 @Composable
 fun ExpandingText(
@@ -48,7 +48,7 @@ fun ExpandingText(
         modifier = Modifier.clickable(
             onClick = { expanded = !expanded },
             enabled = expandable && canTextExpand
-        ).plus(modifier),
+        ).then(modifier),
         onTextLayout = {
             if (!expanded) {
                 canTextExpand = it.hasVisualOverflow

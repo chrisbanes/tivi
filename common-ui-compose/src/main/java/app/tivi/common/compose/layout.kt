@@ -19,9 +19,13 @@ package app.tivi.common.compose
 import androidx.compose.getValue
 import androidx.compose.setValue
 import androidx.compose.state
-import androidx.ui.core.Constraints
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.PxBounds
+import androidx.compose.ui.unit.toSize
 import androidx.ui.core.LayoutCoordinates
-import androidx.ui.core.LayoutDirection
 import androidx.ui.core.LayoutModifier
 import androidx.ui.core.Measurable
 import androidx.ui.core.MeasureScope
@@ -29,10 +33,6 @@ import androidx.ui.core.Modifier
 import androidx.ui.core.OnPositionedModifier
 import androidx.ui.core.composed
 import androidx.ui.core.positionInRoot
-import androidx.ui.geometry.Offset
-import androidx.ui.unit.IntSize
-import androidx.ui.unit.PxBounds
-import androidx.ui.unit.toSize
 import kotlin.math.roundToInt
 
 inline val LayoutCoordinates.positionInParent: Offset
@@ -86,7 +86,7 @@ fun Modifier.onPositionInRootChanged(
     }
 }
 
-fun Modifier.offset(getOffset: (IntSize) -> Offset) = this + OffsetModifier(getOffset)
+fun Modifier.offset(getOffset: (IntSize) -> Offset) = then(OffsetModifier(getOffset))
 
 private data class OffsetModifier(
     private val getOffset: (IntSize) -> Offset

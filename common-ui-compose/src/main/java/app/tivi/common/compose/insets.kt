@@ -21,6 +21,7 @@ import androidx.compose.Composable
 import androidx.compose.Providers
 import androidx.compose.ambientOf
 import androidx.compose.remember
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnAttach
@@ -29,7 +30,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.map
-import androidx.ui.livedata.observeAsState
 
 data class InsetsHolder(
     val left: Int = 0,

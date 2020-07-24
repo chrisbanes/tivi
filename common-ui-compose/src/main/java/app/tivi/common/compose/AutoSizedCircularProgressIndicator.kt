@@ -17,18 +17,19 @@
 package app.tivi.common.compose
 
 import androidx.compose.Composable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.coerceAtLeast
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.ui.core.DensityAmbient
 import androidx.ui.core.Modifier
 import androidx.ui.core.WithConstraints
-import androidx.ui.graphics.Color
-import androidx.ui.layout.Column
-import androidx.ui.layout.size
-import androidx.ui.material.CircularProgressIndicator
-import androidx.ui.material.MaterialTheme
-import androidx.ui.material.Surface
 import androidx.ui.tooling.preview.Preview
-import androidx.ui.unit.dp
-import androidx.ui.unit.min
 
 @Composable
 fun AutoSizedCircularProgressIndicator(
