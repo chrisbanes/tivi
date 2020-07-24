@@ -21,11 +21,11 @@ import androidx.compose.getValue
 import androidx.compose.remember
 import androidx.compose.setValue
 import androidx.compose.state
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.VerticalGradient
 import androidx.ui.core.Modifier
 import androidx.ui.core.composed
 import androidx.ui.core.drawWithContent
-import androidx.ui.graphics.Color
-import androidx.ui.graphics.VerticalGradient
 import kotlin.math.pow
 
 /**

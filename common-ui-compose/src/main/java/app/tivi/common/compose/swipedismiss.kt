@@ -16,22 +16,22 @@
 
 package app.tivi.common.compose
 
-import androidx.animation.AnimationEndReason
 import androidx.compose.Composable
+import androidx.compose.animation.animatedFloat
+import androidx.compose.animation.core.AnimationEndReason
+import androidx.compose.foundation.Box
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.layout.Stack
+import androidx.compose.foundation.layout.offset
 import androidx.compose.getValue
 import androidx.compose.setValue
 import androidx.compose.state
-import androidx.ui.animation.animatedFloat
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.ui.core.DensityAmbient
-import androidx.ui.core.LayoutDirection
 import androidx.ui.core.Modifier
 import androidx.ui.core.WithConstraints
 import androidx.ui.core.gesture.scrollorientationlocking.Orientation
-import androidx.ui.foundation.Box
-import androidx.ui.foundation.gestures.draggable
-import androidx.ui.layout.Stack
-import androidx.ui.layout.offset
-import androidx.ui.unit.dp
 import app.tivi.common.compose.SwipeDirection.END
 import app.tivi.common.compose.SwipeDirection.START
 import kotlin.math.absoluteValue
@@ -117,7 +117,7 @@ fun SwipeToDismiss(
 
         val xOffset = with(DensityAmbient.current) { position.value.toDp() }
         Box(
-            modifier = Modifier.plus(draggable).offset(x = xOffset, y = 0.dp),
+            modifier = draggable.offset(x = xOffset, y = 0.dp),
             children = {
                 swipeChildren(progress, progress.absoluteValue >= swipeCompletePercentage)
             }

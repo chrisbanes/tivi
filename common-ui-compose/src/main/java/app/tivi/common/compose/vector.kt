@@ -18,18 +18,18 @@ package app.tivi.common.compose
 
 import androidx.annotation.DrawableRes
 import androidx.compose.Composable
+import androidx.compose.foundation.Box
+import androidx.compose.foundation.contentColor
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.VectorAsset
+import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.ui.core.Alignment
 import androidx.ui.core.ContentScale
 import androidx.ui.core.Modifier
 import androidx.ui.core.clipToBounds
 import androidx.ui.core.paint
-import androidx.ui.foundation.Box
-import androidx.ui.foundation.contentColor
-import androidx.ui.graphics.Color
-import androidx.ui.graphics.ColorFilter
-import androidx.ui.graphics.vector.VectorAsset
-import androidx.ui.graphics.vector.VectorPainter
-import androidx.ui.layout.wrapContentSize
 import androidx.ui.res.vectorResource
 
 @Composable

@@ -18,24 +18,24 @@ package app.tivi.common.compose
 
 import androidx.compose.Composable
 import androidx.compose.MutableState
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.preferredSizeIn
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material.EmphasisAmbient
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ProvideEmphasis
+import androidx.compose.material.Surface
 import androidx.compose.state
-import androidx.ui.animation.Crossfade
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
 import androidx.ui.core.Popup
-import androidx.ui.foundation.Text
-import androidx.ui.foundation.clickable
-import androidx.ui.layout.Column
-import androidx.ui.layout.padding
-import androidx.ui.layout.preferredSizeIn
-import androidx.ui.layout.wrapContentHeight
-import androidx.ui.layout.wrapContentWidth
-import androidx.ui.material.EmphasisAmbient
-import androidx.ui.material.MaterialTheme
-import androidx.ui.material.ProvideEmphasis
-import androidx.ui.material.Surface
-import androidx.ui.unit.IntOffset
-import androidx.ui.unit.dp
 
 @Composable
 fun PopupMenu(

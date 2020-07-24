@@ -18,21 +18,67 @@ package app.tivi.episodedetails
 
 import android.os.Build
 import android.view.ViewGroup
-import androidx.animation.FastOutSlowInEasing
-import androidx.animation.transitionDefinition
-import androidx.animation.tween
 import androidx.compose.Composable
 import androidx.compose.Providers
 import androidx.compose.Recomposer
+import androidx.compose.animation.ColorPropKey
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.transitionDefinition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.transition
+import androidx.compose.foundation.ContentColorAmbient
+import androidx.compose.foundation.Icon
+import androidx.compose.foundation.ScrollableColumn
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.contentColor
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Stack
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.preferredHeight
+import androidx.compose.foundation.layout.preferredSizeIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.getValue
+import androidx.compose.material.Button
+import androidx.compose.material.EmphasisAmbient
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.ProvideEmphasis
+import androidx.compose.material.Snackbar
+import androidx.compose.material.Surface
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.Publish
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.remember
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.setValue
 import androidx.compose.state
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.vector.VectorAsset
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.center
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LiveData
-import androidx.ui.animation.ColorPropKey
-import androidx.ui.animation.Crossfade
-import androidx.ui.animation.transition
 import androidx.ui.core.Alignment
 import androidx.ui.core.ConfigurationAmbient
 import androidx.ui.core.ContentScale
@@ -40,54 +86,8 @@ import androidx.ui.core.DensityAmbient
 import androidx.ui.core.Modifier
 import androidx.ui.core.drawWithContent
 import androidx.ui.core.setContent
-import androidx.ui.foundation.ContentColorAmbient
-import androidx.ui.foundation.Icon
-import androidx.ui.foundation.ScrollableColumn
-import androidx.ui.foundation.Text
-import androidx.ui.foundation.clickable
-import androidx.ui.foundation.contentColor
-import androidx.ui.foundation.drawBackground
-import androidx.ui.foundation.shape.corner.RoundedCornerShape
-import androidx.ui.geometry.Offset
-import androidx.ui.graphics.Color
-import androidx.ui.graphics.RectangleShape
-import androidx.ui.graphics.drawscope.clipRect
-import androidx.ui.graphics.vector.VectorAsset
-import androidx.ui.layout.Column
-import androidx.ui.layout.Row
-import androidx.ui.layout.Spacer
-import androidx.ui.layout.Stack
-import androidx.ui.layout.aspectRatio
-import androidx.ui.layout.fillMaxHeight
-import androidx.ui.layout.fillMaxSize
-import androidx.ui.layout.fillMaxWidth
-import androidx.ui.layout.padding
-import androidx.ui.layout.preferredHeight
-import androidx.ui.layout.preferredSizeIn
-import androidx.ui.livedata.observeAsState
-import androidx.ui.material.Button
-import androidx.ui.material.EmphasisAmbient
-import androidx.ui.material.IconButton
-import androidx.ui.material.MaterialTheme
-import androidx.ui.material.OutlinedButton
-import androidx.ui.material.ProvideEmphasis
-import androidx.ui.material.Snackbar
-import androidx.ui.material.Surface
-import androidx.ui.material.TopAppBar
-import androidx.ui.material.icons.Icons
-import androidx.ui.material.icons.filled.CalendarToday
-import androidx.ui.material.icons.filled.Close
-import androidx.ui.material.icons.filled.Delete
-import androidx.ui.material.icons.filled.DeleteSweep
-import androidx.ui.material.icons.filled.Publish
-import androidx.ui.material.icons.filled.Refresh
-import androidx.ui.material.icons.filled.Star
-import androidx.ui.material.icons.filled.VisibilityOff
 import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
-import androidx.ui.unit.Dp
-import androidx.ui.unit.center
-import androidx.ui.unit.dp
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.InsetsAmbient
@@ -274,7 +274,7 @@ private fun Backdrop(
 
             Column(
                 modifier = Modifier.gravity(Alignment.BottomStart)
-                    .drawBackground(
+                    .background(
                         color = Color.Black.copy(alpha = 0.65f),
                         shape = RoundedCornerShape(topRight = 8.dp)
                     )
@@ -460,7 +460,7 @@ private fun EpisodeWatchSwipeBackground(
 
     Stack(
         Modifier.fillMaxSize()
-            .drawBackground(MaterialTheme.colors.onSurface.copy(alpha = 0.2f), RectangleShape)
+            .background(MaterialTheme.colors.onSurface.copy(alpha = 0.2f), RectangleShape)
     ) {
         // A simple box to draw the growing circle, which emanates from behind the icon
         Spacer(

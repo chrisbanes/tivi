@@ -29,6 +29,7 @@ buildscript {
         google()
         mavenCentral()
         maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
         jcenter()
 
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
@@ -63,8 +64,8 @@ allprojects {
         mavenCentral()
         jcenter()
 
-        maven { url 'https://jitpack.io' }
         maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
 
         if (Libs.AndroidX.Compose.version.endsWith("SNAPSHOT")) {
             maven {
@@ -73,10 +74,30 @@ allprojects {
         }
 
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+
+        maven { url 'https://jitpack.io' }
     }
 }
 
 subprojects {
+    // Compose SNAPSHOTs currently depend on Kotlin 1.4.0 (which doesn't exist yet). We need to
+    // force a version which does exist.
+    configurations.configureEach {
+        resolutionStrategy {
+            eachDependency { DependencyResolveDetails details ->
+                if (details.requested.group == 'org.jetbrains.kotlin') {
+                    // kotlin-stdlib-jre7 no longer exists in 1.4, so we force the
+                    // kotlin-stdlib module instead
+                    if (details.requested.module.name == 'kotlin-stdlib-jre7') {
+                        details.useTarget Libs.Kotlin.stdlib
+                    } else {
+                        details.useVersion Libs.Kotlin.version
+                    }
+                }
+            }
+        }
+    }
+
     apply plugin: 'com.diffplug.gradle.spotless'
     spotless {
         kotlin {
