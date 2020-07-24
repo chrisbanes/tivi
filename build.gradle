@@ -107,10 +107,6 @@ subprojects {
 
             // Set JVM target to 1.8
             jvmTarget = "1.8"
-
-            // Need to keep the API version to 1.3 for certain dependencies:
-            // Store: https://github.com/dropbox/Store/issues/188
-            apiVersion = "1.3"
         }
     }
 }
