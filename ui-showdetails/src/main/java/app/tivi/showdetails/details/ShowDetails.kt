@@ -58,7 +58,6 @@ import androidx.compose.getValue
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.EmphasisAmbient
-import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
@@ -100,6 +99,7 @@ import androidx.ui.core.setContent
 import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
+import app.tivi.common.compose.ExpandableFloatingActionButton
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.LogCompositions
@@ -236,6 +236,7 @@ fun ShowDetails(
     val bottomInset = with(DensityAmbient.current) { insets.bottom.toDp() }
     ToggleShowFollowFloatingActionButton(
         isFollowed = viewState.isFollowed,
+        expanded = scrollState.value < backdropHeight,
         onClick = { actioner(FollowShowToggleAction) },
         modifier = Modifier.padding(end = 16.dp, bottom = 16.dp + bottomInset)
             .constrainAs(fab) {
@@ -1012,11 +1013,12 @@ private fun ShowDetailsAppBar(
 private fun ToggleShowFollowFloatingActionButton(
     isFollowed: Boolean,
     onClick: () -> Unit,
+    expanded: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     LogCompositions("ToggleShowFollowFloatingActionButton")
 
-    ExtendedFloatingActionButton(
+    ExpandableFloatingActionButton(
         onClick = onClick,
         icon = {
             Icon(
@@ -1038,6 +1040,7 @@ private fun ToggleShowFollowFloatingActionButton(
             isFollowed -> MaterialTheme.colors.surface
             else -> MaterialTheme.colors.primary
         },
+        expanded = expanded,
         modifier = modifier
     )
 }
