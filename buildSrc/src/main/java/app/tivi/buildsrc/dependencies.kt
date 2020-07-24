@@ -44,16 +44,17 @@ object Libs {
 
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.3"
 
-    const val store = "com.dropbox.mobile.store:store4:4.0.0-alpha06"
+    // Move back to Store when alpha07 is out
+    const val store = "com.dropbox.mobile.store:store4:4.0.0-SNAPSHOT"
 
     object Insetter {
-        private const val version = "0.3.1-SNAPSHOT"
+        private const val version = "0.3.1"
         const val dbx = "dev.chrisbanes:insetter-dbx:$version"
         const val ktx = "dev.chrisbanes:insetter-ktx:$version"
     }
 
     object Accompanist {
-        private const val version = "0.1.7.ui-${AndroidX.Compose.snapshot}-SNAPSHOT"
+        private const val version = "0.1.7"
         const val mdcTheme = "dev.chrisbanes.accompanist:accompanist-mdc-theme:$version"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
     }
@@ -72,14 +73,14 @@ object Libs {
     }
 
     object Kotlin {
-        private const val version = "1.3.72"
+        private const val version = "1.4-M3"
         const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
         const val extensions = "org.jetbrains.kotlin:kotlin-android-extensions:$version"
     }
 
     object Coroutines {
-        private const val version = "1.3.7"
+        private const val version = "1.3.7-1.4-M3"
         const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
         const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
         const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$version"
@@ -156,28 +157,29 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = "6658828"
-            const val version = "0.1.0-SNAPSHOT"
+            const val snapshot = ""
+            const val version = "0.1.0-dev15"
 
-            const val kotlinCompilerVersion = "1.3.70-dev-withExperimentalGoogleExtensions-20200424"
+            const val kotlinCompilerVersion = "1.4.0-dev-withExperimentalGoogleExtensions-20200720"
 
-            const val runtime = "androidx.compose:compose-runtime:$version"
+            const val runtime = "androidx.compose.runtime:runtime:$version"
+            const val livedata = "androidx.compose.runtime:runtime-livedata:${version}"
+
             const val foundation = "androidx.compose.foundation:foundation:${version}"
+            const val layout = "androidx.compose.foundation:foundation-layout:${version}"
 
-            const val animation = "androidx.compose.animation:animation:${version}"
+            const val ui = "androidx.compose.ui:ui:${version}"
             const val material = "androidx.compose.material:material:${version}"
             const val iconsExtended = "androidx.compose.material:material-icons-extended:${version}"
 
-            const val core = "androidx.ui:ui-core:${version}"
-            const val livedata = "androidx.ui:ui-livedata:${version}"
-            const val layout = "androidx.ui:ui-layout:${version}"
+            const val animation = "androidx.compose.animation:animation:${version}"
 
-            const val tooling = "androidx.compose.tooling:tooling:${version}"
-            const val test = "androidx.compose.test:test-core:${version}"
+            const val tooling = "androidx.ui:ui-tooling:${version}"
+            const val test = "androidx.ui:ui-test:${version}"
         }
 
         object Hilt {
-            private const val version = "1.0.0-alpha01"
+            private const val version = "1.0.0-alpha02"
             const val work = "androidx.hilt:hilt-work:$version"
             const val viewmodel = "androidx.hilt:hilt-lifecycle-viewmodel:$version"
             const val compiler = "androidx.hilt:hilt-compiler:$version"
@@ -185,13 +187,13 @@ object Libs {
     }
 
     object Dagger {
-        private const val version = "2.28"
+        private const val version = "2.28.3"
         const val dagger = "com.google.dagger:dagger:$version"
         const val compiler = "com.google.dagger:dagger-compiler:$version"
     }
 
     object Hilt {
-        private const val version = "2.28-alpha"
+        private const val version = "2.28.3-alpha"
         const val library = "com.google.dagger:hilt-android:$version"
         const val compiler = "com.google.dagger:hilt-android-compiler:$version"
         const val testing = "com.google.dagger:hilt-android-testing:$version"

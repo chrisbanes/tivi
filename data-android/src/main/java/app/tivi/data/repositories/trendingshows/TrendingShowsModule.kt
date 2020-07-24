@@ -20,11 +20,10 @@ import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.entities.Success
 import app.tivi.data.entities.TrendingShowEntry
-import app.tivi.data.toFetchResult
+import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
-import com.dropbox.android.external.store4.nonFlowFetcher
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,15 +43,15 @@ object TrendingShowsModule {
         showDao: TiviShowDao,
         lastRequestStore: TrendingShowsLastRequestStore
     ): TrendingShowsStore = StoreBuilder.from(
-        fetcher = nonFlowFetcher { page: Int ->
+        fetcher = Fetcher.of { page: Int ->
             traktTrendingShows(page, 20)
                 .also {
                     if (page == 0 && it is Success) {
                         lastRequestStore.updateLastRequest()
                     }
-                }.toFetchResult()
+                }.getOrThrow()
         },
-        sourceOfTruth = SourceOfTruth.from(
+        sourceOfTruth = SourceOfTruth.of(
             reader = trendingShowsDao::entriesObservable,
             writer = { page, response ->
                 trendingShowsDao.withTransaction {

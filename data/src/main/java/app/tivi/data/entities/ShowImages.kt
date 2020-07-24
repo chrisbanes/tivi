@@ -27,6 +27,7 @@ data class ShowImages(val images: List<ShowTmdbImage>) {
     }
 
     private fun findHighestRatedForType(type: ImageType): ShowTmdbImage? {
+        @Suppress("DEPRECATION") // Can't use maxByOrNull until we're API version 1.4
         return images.filter { it.type == type }
             .maxBy { it.rating + (if (it.isPrimary) 10f else 0f) }
     }

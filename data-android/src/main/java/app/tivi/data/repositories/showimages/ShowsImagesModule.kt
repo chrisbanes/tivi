@@ -20,12 +20,11 @@ import app.tivi.data.daos.ShowTmdbImagesDao
 import app.tivi.data.daos.TiviShowDao
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.Success
-import app.tivi.data.toFetchResult
 import app.tivi.inject.Tmdb
+import com.dropbox.android.external.store4.Fetcher
 import com.dropbox.android.external.store4.SourceOfTruth
 import com.dropbox.android.external.store4.Store
 import com.dropbox.android.external.store4.StoreBuilder
-import com.dropbox.android.external.store4.nonFlowFetcher
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -54,7 +53,7 @@ object ShowImagesStoreModule {
         lastRequestStore: ShowImagesLastRequestStore,
         @Tmdb tmdbShowImagesDataSource: ShowImagesDataSource
     ): ShowImagesStore = StoreBuilder.from(
-        fetcher = nonFlowFetcher { showId: Long ->
+        fetcher = Fetcher.of { showId: Long ->
             val show = showDao.getShowWithId(showId)
                 ?: throw IllegalArgumentException("Show with ID $showId does not exist")
             val result = tmdbShowImagesDataSource.getShowImages(show)
@@ -63,11 +62,11 @@ object ShowImagesStoreModule {
                 lastRequestStore.updateLastRequest(showId)
             }
 
-            result.toFetchResult { list ->
-                list.map { it.copy(showId = showId) }
+            result.getOrThrow().map {
+                it.copy(showId = showId)
             }
         },
-        sourceOfTruth = SourceOfTruth.from(
+        sourceOfTruth = SourceOfTruth.of(
             reader = showTmdbImagesDao::getImagesForShowId,
             writer = showTmdbImagesDao::saveImages,
             delete = showTmdbImagesDao::deleteForShowId,

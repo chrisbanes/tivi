@@ -42,15 +42,15 @@ import javax.inject.Singleton
 
 @InstallIn(ApplicationComponent::class)
 @Module
-class TestDataSourceModule(
-    private val traktFollowedShowsDataSource: TraktFollowedShowsDataSource = mockk(),
-    private val traktEpisodeDataSource: EpisodeDataSource = mockk(),
-    private val tmdbEpisodeDataSource: EpisodeDataSource = mockk(),
-    private val seasonsDataSource: SeasonsEpisodesDataSource = mockk(),
-    private val traktShowDataSource: ShowDataSource = SuccessFakeShowDataSource,
-    private val tmdbShowDataSource: ShowDataSource = SuccessFakeShowDataSource,
+class TestDataSourceModule {
+    private val traktFollowedShowsDataSource: TraktFollowedShowsDataSource = mockk()
+    private val traktEpisodeDataSource: EpisodeDataSource = mockk()
+    private val tmdbEpisodeDataSource: EpisodeDataSource = mockk()
+    private val seasonsDataSource: SeasonsEpisodesDataSource = mockk()
+    private val traktShowDataSource: ShowDataSource = SuccessFakeShowDataSource
+    private val tmdbShowDataSource: ShowDataSource = SuccessFakeShowDataSource
     private val tmdbShowImagesDataSource: ShowImagesDataSource = SuccessFakeShowImagesDataSource
-) {
+
     @Provides
     fun provideTraktFollowedShowsDataSource() = traktFollowedShowsDataSource
 

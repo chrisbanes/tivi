@@ -38,14 +38,15 @@ import androidx.ui.core.clip
 import androidx.ui.core.setContent
 import androidx.ui.foundation.Box
 import androidx.ui.foundation.Icon
-import androidx.ui.foundation.ScrollerPosition
+import androidx.ui.foundation.ScrollState
+import androidx.ui.foundation.ScrollableColumn
 import androidx.ui.foundation.Text
-import androidx.ui.foundation.VerticalScroller
 import androidx.ui.foundation.clickable
 import androidx.ui.foundation.contentColor
 import androidx.ui.foundation.drawBorder
 import androidx.ui.foundation.isSystemInDarkTheme
 import androidx.ui.foundation.lazy.LazyRowItems
+import androidx.ui.foundation.rememberScrollState
 import androidx.ui.foundation.shape.corner.RoundedCornerShape
 import androidx.ui.geometry.Offset
 import androidx.ui.graphics.Color
@@ -174,11 +175,11 @@ fun ShowDetails(
 
     val (appbar, fab, snackbar) = createRefs()
 
-    val scrollerPosition = ScrollerPosition()
+    val scrollState = rememberScrollState()
     var backdropHeight by state { 0 }
 
-    VerticalScroller(
-        scrollerPosition = scrollerPosition,
+    ScrollableColumn(
+        scrollState = scrollState,
         modifier = Modifier.fillMaxHeight()
     ) {
         ShowDetailsScrollingContent(
@@ -191,14 +192,14 @@ fun ShowDetails(
             expandedSeasonIds = viewState.expandedSeasonIds,
             watchStats = viewState.watchStats,
             showRefreshing = viewState.refreshing,
-            scrollerPosition = scrollerPosition,
+            scrollState = scrollState,
             actioner = actioner,
             onBackdropSizeChanged = { backdropHeight = it.height }
         )
     }
 
     OverlaidStatusBarAppBar(
-        scrollerPosition = scrollerPosition.value,
+        scrollState = scrollState.value,
         backdropHeight = backdropHeight,
         appBar = {
             ShowDetailsAppBar(
@@ -255,7 +256,7 @@ private fun ShowDetailsScrollingContent(
     expandedSeasonIds: Set<Long>,
     watchStats: FollowedShowsWatchStats?,
     showRefreshing: Boolean,
-    scrollerPosition: ScrollerPosition,
+    scrollState: ScrollState,
     actioner: (ShowDetailsAction) -> Unit,
     onBackdropSizeChanged: (IntSize) -> Unit
 ) {
@@ -274,7 +275,7 @@ private fun ShowDetailsScrollingContent(
                     modifier = Modifier.fillMaxSize().offset { size ->
                         Offset(
                             x = 0f,
-                            y = (scrollerPosition.value / 2)
+                            y = (scrollState.value / 2)
                                 .coerceIn(-size.height.toFloat(), size.height.toFloat())
                         )
                     }
@@ -382,7 +383,7 @@ private fun ShowDetailsScrollingContent(
 
 @Composable
 private fun OverlaidStatusBarAppBar(
-    scrollerPosition: Float,
+    scrollState: Float,
     backdropHeight: Int,
     modifier: Modifier = Modifier,
     appBar: @Composable () -> Unit
@@ -395,12 +396,12 @@ private fun OverlaidStatusBarAppBar(
     val alpha = lerp(
         startValue = 0.5f,
         endValue = 1f,
-        fraction = if (trigger > 0) (scrollerPosition / trigger).coerceIn(0f, 1f) else 0f
+        fraction = if (trigger > 0) (scrollState / trigger).coerceIn(0f, 1f) else 0f
     )
 
     Surface(
         color = MaterialTheme.colors.surface.copy(alpha = alpha),
-        elevation = if (scrollerPosition >= trigger) 2.dp else 0.dp,
+        elevation = if (scrollState >= trigger) 2.dp else 0.dp,
         modifier = modifier
     ) {
         Column(Modifier.fillMaxWidth()) {
@@ -408,7 +409,7 @@ private fun OverlaidStatusBarAppBar(
                 val topInset = with(DensityAmbient.current) { insets.top.toDp() }
                 Spacer(Modifier.preferredHeight(topInset))
             }
-            if (scrollerPosition >= trigger) {
+            if (scrollState >= trigger) {
                 appBar()
             }
         }
