@@ -1,26 +1,25 @@
-![Tivi](/art/banner.png)
+![Tivi](art/banner.png)
 
 # Tivi 📺 (work-in-progress 👷🔧️👷‍♀️⛏)
 
 **This is not an official Google product**
 
 Tivi is a **work-in-progress** TV show tracking Android app, which connects to
-[Trakt.tv](https://www.trakt.tv). It is still in its early stages of development and currently
-only contains two pieces of UI. It is under heavy development.
+[Trakt.tv](https://www.trakt.tv).
 
 ## Android development
 
 Tivi is an app which attempts to use the latest cutting edge libraries and tools. As a summary:
 
  * Entirely written in [Kotlin](https://kotlinlang.org/)
- * Uses [Kotlin Coroutines](https://kotlinlang.org/docs/reference/coroutines/coroutines-guide.html)
- * Uses many of the [Architecture Components](https://developer.android.com/topic/libraries/architecture/): Room, LiveData and Lifecycle, Navigation
- * Uses [dagger-android](https://google.github.io/dagger/android.html) for dependency injection
+ * Uses [Kotlin Coroutines](https://kotlinlang.org/docs/reference/coroutines/coroutines-guide.html) throughout.
+ * Uses many of the [Architecture Components](https://developer.android.com/topic/libraries/architecture/): Room Lifecycle, Navigation
+ * Uses [Hilt](https://dagger.dev/hilt/) for dependency injection
  * Slowly being migrated to use [Jetpack Compose](https://developer.android.com/jetpack/compose)
 
 ## Development setup
 
-First off, you require the latest Android Studio 4.1 Canary to be able to build the app. This is due to the project implementing some pieces of UI in [Jetpack Compose](https://developer.android.com/jetpack/compose).
+First off, you require the latest Android Studio 4.2 Canary to be able to build the app. This is because the project contians some pieces of UI which are written in [Jetpack Compose](https://developer.android.com/jetpack/compose) (more on that below).
 
 ### Code style
 
@@ -33,14 +32,16 @@ easily fix it by running: `./gradlew spotlessApply`, or running IntelliJ/Android
 ### API keys
 
 You need to supply API / client keys for the various services the
-app uses. That is currently [Trakt.tv](http://docs.trakt.apiary.io/),
-[TMDb](https://developers.themoviedb.org/4/getting-started) and [Fabric](https://fabric.io) (for Crashlytics). You can find information about
-how to gain access via the relevant links.
+app uses:
 
-For Trakt.tv, set the redirect uri to `app.tivi.debug://auth/oauth2callback` for debug build types, or `app.tivi://auth/oauth2callback` for release build types.
+- [Trakt.tv](https://trakt.docs.apiary.io)
+- [TMDb](https://developers.themoviedb.org)
 
-When you obtain the keys, you can provide them to the app by putting the following in the
-`gradle.properties` file in your user home:
+You can find information about how to gain access via the relevant links.
+
+When creating a Trakt API project, you need to set the OAuth redirect uri to `app.tivi.debug://auth/oauth2callback` for debug build types, or `app.tivi://auth/oauth2callback` for release build types.
+
+Once you obtain the keys, you can set them in your `~/.gradle/gradle.properties`:
 
 ```
 # Get these from Trakt.tv
@@ -51,7 +52,23 @@ TIVI_TRAKT_CLIENT_SECRET=<insert>
 TIVI_TMDB_API_KEY=<insert>
 ```
 
-On Linux/Mac that file is typically found at `~/.gradle/gradle.properties` or in the project directory `tivi/gradle.properties`
+## Jetpack Compose
+As mentioned above, this project is slowly being migrated away from views to [Jetpack Compose](https://developer.android.com/jetpack/compose). There are currently 3 pieces of UI written in Compose:
+
+### Show details
+[[source](/ui-showdetails)]
+
+![Show Details demo](art/show-details.gif)
+
+### Episode details
+[[source](/ui-episodedetails)]
+
+![Show Details demo](art/episode-details.gif)
+
+### Account
+[[source](/ui-account)]
+
+![Show Details demo](art/account.png)
 
 ## Contributions
 
