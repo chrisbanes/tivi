@@ -17,7 +17,7 @@
 package app.tivi.buildsrc
 
 object Versions {
-    const val ktlint = "0.37.0"
+    const val ktlint = "0.37.2"
 }
 
 object Libs {
@@ -157,10 +157,8 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = "6704997"
+            const val snapshot = "6721902"
             const val version = "0.1.0-SNAPSHOT"
-
-            const val kotlinCompilerVersion = "1.4.0-dev-withExperimentalGoogleExtensions-20200720"
 
             const val runtime = "androidx.compose.runtime:runtime:$version"
             const val livedata = "androidx.compose.runtime:runtime-livedata:${version}"

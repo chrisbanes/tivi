@@ -16,23 +16,22 @@
 
 package app.tivi.common.compose
 
-import androidx.compose.getValue
-import androidx.compose.setValue
-import androidx.compose.state
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.state
+import androidx.compose.ui.LayoutModifier
+import androidx.compose.ui.Measurable
+import androidx.compose.ui.MeasureScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.OnPositionedModifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.PxBounds
 import androidx.compose.ui.unit.toSize
-import androidx.ui.core.LayoutCoordinates
-import androidx.ui.core.LayoutModifier
-import androidx.ui.core.Measurable
-import androidx.ui.core.MeasureScope
-import androidx.ui.core.Modifier
-import androidx.ui.core.OnPositionedModifier
-import androidx.ui.core.composed
-import androidx.ui.core.positionInRoot
 import kotlin.math.roundToInt
 
 inline val LayoutCoordinates.positionInParent: Offset
@@ -93,8 +92,7 @@ private data class OffsetModifier(
 ) : LayoutModifier {
     override fun MeasureScope.measure(
         measurable: Measurable,
-        constraints: Constraints,
-        layoutDirection: LayoutDirection
+        constraints: Constraints
     ): MeasureScope.MeasureResult {
         val placeable = measurable.measure(constraints)
         return layout(placeable.width, placeable.height) {

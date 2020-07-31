@@ -19,9 +19,9 @@
 package app.tivi.common.compose
 
 import android.util.Log
-import androidx.compose.Composable
-import androidx.compose.onCommit
-import androidx.compose.remember
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.onCommit
+import androidx.compose.runtime.remember
 
 class Ref(var value: Int)
 

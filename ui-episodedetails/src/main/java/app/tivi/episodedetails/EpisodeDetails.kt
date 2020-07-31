@@ -18,9 +18,6 @@ package app.tivi.episodedetails
 
 import android.os.Build
 import android.view.ViewGroup
-import androidx.compose.Composable
-import androidx.compose.Providers
-import androidx.compose.Recomposer
 import androidx.compose.animation.ColorPropKey
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -46,7 +43,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredSizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.getValue
 import androidx.compose.material.Button
 import androidx.compose.material.EmphasisAmbient
 import androidx.compose.material.IconButton
@@ -65,28 +61,32 @@ import androidx.compose.material.icons.filled.Publish
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.remember
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Providers
+import androidx.compose.runtime.Recomposer
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.setValue
-import androidx.compose.state
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.state
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.vector.VectorAsset
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ConfigurationAmbient
+import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.platform.setContent
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LiveData
-import androidx.ui.core.Alignment
-import androidx.ui.core.ConfigurationAmbient
-import androidx.ui.core.ContentScale
-import androidx.ui.core.DensityAmbient
-import androidx.ui.core.Modifier
-import androidx.ui.core.drawWithContent
-import androidx.ui.core.setContent
-import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
@@ -439,7 +439,7 @@ private fun EpisodeWatchSwipeBackground(
     val default = MaterialTheme.colors.onSurface.copy(alpha = 0.2f)
 
     val transition = remember(secondary, default) {
-        transitionDefinition {
+        transitionDefinition<Boolean> {
             state(true) {
                 this[color] = secondary
             }

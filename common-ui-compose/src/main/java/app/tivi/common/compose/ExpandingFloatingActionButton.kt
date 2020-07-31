@@ -16,7 +16,6 @@
 
 package app.tivi.common.compose
 
-import androidx.compose.Composable
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.spring
@@ -28,12 +27,13 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.contentColorFor
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.ui.core.Modifier
 
 @Composable
 fun ExpandableFloatingActionButton(

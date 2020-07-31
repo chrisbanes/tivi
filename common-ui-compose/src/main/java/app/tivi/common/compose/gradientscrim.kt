@@ -16,16 +16,16 @@
 
 package app.tivi.common.compose
 
-import androidx.compose.Composable
-import androidx.compose.getValue
-import androidx.compose.remember
-import androidx.compose.setValue
-import androidx.compose.state
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.state
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.VerticalGradient
-import androidx.ui.core.Modifier
-import androidx.ui.core.composed
-import androidx.ui.core.drawWithContent
 import kotlin.math.pow
 
 /**

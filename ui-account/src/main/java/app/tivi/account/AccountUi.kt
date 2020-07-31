@@ -17,9 +17,6 @@
 package app.tivi.account
 
 import android.view.ViewGroup
-import androidx.compose.Composable
-import androidx.compose.Providers
-import androidx.compose.Recomposer
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -32,7 +29,6 @@ import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.preferredSizeIn
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.getValue
 import androidx.compose.material.Divider
 import androidx.compose.material.EmphasisAmbient
 import androidx.compose.material.MaterialTheme
@@ -41,16 +37,20 @@ import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Providers
+import androidx.compose.runtime.Recomposer
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.VectorAsset
+import androidx.compose.ui.platform.setContent
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LiveData
-import androidx.ui.core.Alignment
-import androidx.ui.core.Modifier
-import androidx.ui.core.clip
-import androidx.ui.core.setContent
-import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.ProvideInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient

@@ -16,7 +16,7 @@
 
 package app.tivi.common.compose
 
-import androidx.compose.staticAmbientOf
+import androidx.compose.runtime.staticAmbientOf
 import app.tivi.util.TiviDateFormatter
 
 val TiviDateFormatterAmbient = staticAmbientOf<TiviDateFormatter>()
