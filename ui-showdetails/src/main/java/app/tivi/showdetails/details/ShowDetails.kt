@@ -17,10 +17,6 @@
 package app.tivi.showdetails.details
 
 import android.view.ViewGroup
-import androidx.compose.Composable
-import androidx.compose.MutableState
-import androidx.compose.Providers
-import androidx.compose.Recomposer
 import androidx.compose.foundation.Box
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.ScrollState
@@ -34,6 +30,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ConstraintLayout
 import androidx.compose.foundation.layout.ExperimentalLayout
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.InnerPadding
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.SizeMode
 import androidx.compose.foundation.layout.Spacer
@@ -51,10 +48,9 @@ import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.layout.preferredWidthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyRowItems
+import androidx.compose.foundation.lazy.LazyRowFor
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.getValue
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.EmphasisAmbient
@@ -75,28 +71,31 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.mutableStateOf
-import androidx.compose.remember
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Providers
+import androidx.compose.runtime.Recomposer
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.setValue
-import androidx.compose.state
-import androidx.compose.staticAmbientOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.state
+import androidx.compose.runtime.staticAmbientOf
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ContextAmbient
+import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.platform.setContent
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LiveData
-import androidx.ui.core.Alignment
-import androidx.ui.core.ContentScale
-import androidx.ui.core.ContextAmbient
-import androidx.ui.core.DensityAmbient
-import androidx.ui.core.Modifier
-import androidx.ui.core.clip
-import androidx.ui.core.setContent
-import androidx.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandableFloatingActionButton
@@ -597,15 +596,15 @@ private fun RelatedShows(
 ) {
     LogCompositions("RelatedShows")
 
-    LazyRowItems(
+    LazyRowFor(
         items = related,
+        contentPadding = InnerPadding(start = 14.dp, end = 14.dp),
         modifier = modifier
-            // TODO: this should be 0.dp and have an initial/last padding
-            .padding(horizontal = 14.dp)
     ) { item ->
         Card(
-            modifier = Modifier.padding(vertical = 8.dp, horizontal = 2.dp)
-                .fillMaxHeight()
+            modifier = Modifier
+                .padding(vertical = 8.dp, horizontal = 2.dp)
+                .fillParentMaxHeight()
                 .aspectRatio(2 / 3f)
         ) {
             Stack(
@@ -623,7 +622,7 @@ private fun RelatedShows(
                 if (poster != null) {
                     CoilImageWithCrossfade(
                         poster,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.matchParentSize()
                     )
                 }
             }
@@ -836,18 +835,21 @@ private fun SeasonRow(
             }
         }
 
-        val showPopup = state { false }
-        SeasonRowOverflowMenu(
-            season = season,
-            episodesAired = episodeAired,
-            episodesWatched = episodesWatched,
-            episodesToAir = episodesToAir,
-            popupVisible = showPopup,
-            actioner = actioner
-        )
+        var showPopup by state { false }
+
+        if (showPopup) {
+            SeasonRowOverflowMenu(
+                season = season,
+                episodesAired = episodeAired,
+                episodesWatched = episodesWatched,
+                episodesToAir = episodesToAir,
+                onDismiss = { showPopup = false },
+                actioner = actioner
+            )
+        }
 
         ProvideEmphasis(EmphasisAmbient.current.medium) {
-            IconButton(onClick = { showPopup.value = true }) {
+            IconButton(onClick = { showPopup = true }) {
                 Icon(Icons.Default.MoreVert)
             }
         }
@@ -917,7 +919,7 @@ private fun SeasonRowOverflowMenu(
     episodesAired: Int,
     episodesWatched: Int,
     episodesToAir: Int,
-    popupVisible: MutableState<Boolean>,
+    onDismiss: () -> Unit,
     actioner: (ShowDetailsAction) -> Unit
 ) {
     LogCompositions("SeasonRowOverflowMenu")
@@ -967,7 +969,7 @@ private fun SeasonRowOverflowMenu(
 
     PopupMenu(
         items = items,
-        visible = popupVisible,
+        onDismiss = onDismiss,
         alignment = Alignment.CenterEnd
     )
 }
@@ -1055,7 +1057,7 @@ private fun PreviewSeasonRow() {
         episodesAired = 10,
         episodesToAir = 2,
         episodesWatched = 3,
-        popupVisible = mutableStateOf(false),
+        onDismiss = {},
         actioner = {}
     )
 }

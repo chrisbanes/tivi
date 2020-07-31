@@ -16,19 +16,19 @@
 
 package app.tivi.common.compose
 
-import androidx.compose.Composable
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
-import androidx.compose.getValue
 import androidx.compose.material.MaterialTheme
-import androidx.compose.setValue
-import androidx.compose.state
-import androidx.compose.stateFor
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.state
+import androidx.compose.runtime.stateFor
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.ui.core.Modifier
 
 @Composable
 fun ExpandingText(

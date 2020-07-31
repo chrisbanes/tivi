@@ -16,9 +16,6 @@
 
 package app.tivi.common.compose
 
-import androidx.compose.Composable
-import androidx.compose.MutableState
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -30,57 +27,53 @@ import androidx.compose.material.EmphasisAmbient
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.Surface
-import androidx.compose.state
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.ui.core.Alignment
-import androidx.ui.core.Modifier
-import androidx.ui.core.Popup
+import androidx.compose.ui.window.Popup
 
 @Composable
 fun PopupMenu(
     items: List<PopupMenuItem>,
-    visible: MutableState<Boolean> = state { true },
+    onDismiss: () -> Unit,
     alignment: Alignment = Alignment.TopStart,
     offset: IntOffset = IntOffset(0, 0)
 ) {
-    if (visible.value) {
-        Popup(
-            alignment = alignment,
-            offset = offset,
-            isFocusable = true,
-            onDismissRequest = { visible.value = false }
+    Popup(
+        alignment = alignment,
+        offset = offset,
+        isFocusable = true,
+        onDismissRequest = onDismiss
+    ) {
+        Surface(
+            shape = MaterialTheme.shapes.medium,
+            elevation = 2.dp
         ) {
-            Crossfade(current = visible.value) {
-                Surface(
-                    shape = MaterialTheme.shapes.medium,
-                    elevation = 2.dp
-                ) {
-                    Column(
-                        Modifier.wrapContentWidth(align = Alignment.Start)
-                            .wrapContentHeight(align = Alignment.Top)
-                            .preferredSizeIn(minWidth = 96.dp, maxWidth = 192.dp)
-                    ) {
-                        items.forEach { item ->
-                            val emphasis = when {
-                                item.enabled -> EmphasisAmbient.current.high
-                                else -> EmphasisAmbient.current.disabled
-                            }
-                            ProvideEmphasis(emphasis) {
-                                Text(
-                                    text = item.title,
-                                    style = MaterialTheme.typography.body1,
-                                    modifier = Modifier.clickable(
-                                        onClick = {
-                                            item.onClick?.invoke()
-                                            visible.value = false
-                                        },
-                                        enabled = item.enabled
-                                    )
-                                        .padding(16.dp)
-                                )
-                            }
-                        }
+            Column(
+                Modifier.wrapContentWidth(align = Alignment.Start)
+                    .wrapContentHeight(align = Alignment.Top)
+                    .preferredSizeIn(minWidth = 96.dp, maxWidth = 192.dp)
+            ) {
+                items.forEach { item ->
+                    val emphasis = when {
+                        item.enabled -> EmphasisAmbient.current.high
+                        else -> EmphasisAmbient.current.disabled
+                    }
+                    ProvideEmphasis(emphasis) {
+                        Text(
+                            text = item.title,
+                            style = MaterialTheme.typography.body1,
+                            modifier = Modifier.clickable(
+                                onClick = {
+                                    item.onClick?.invoke()
+                                    onDismiss()
+                                },
+                                enabled = item.enabled
+                            )
+                                .padding(16.dp)
+                        )
                     }
                 }
             }

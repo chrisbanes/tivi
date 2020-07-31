@@ -16,22 +16,23 @@
 
 package app.tivi.common.compose
 
-import androidx.compose.Composable
 import androidx.compose.animation.animatedFloat
 import androidx.compose.animation.core.AnimationEndReason
 import androidx.compose.foundation.Box
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.offset
-import androidx.compose.getValue
-import androidx.compose.setValue
-import androidx.compose.state
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.state
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.WithConstraints
+import androidx.compose.ui.gesture.scrollorientationlocking.Orientation
+import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.platform.LayoutDirectionAmbient
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.ui.core.DensityAmbient
-import androidx.ui.core.Modifier
-import androidx.ui.core.WithConstraints
-import androidx.ui.core.gesture.scrollorientationlocking.Orientation
 import app.tivi.common.compose.SwipeDirection.END
 import app.tivi.common.compose.SwipeDirection.START
 import kotlin.math.absoluteValue
@@ -59,6 +60,7 @@ fun SwipeToDismiss(
     }
 
     WithConstraints {
+        val layoutDirection = LayoutDirectionAmbient.current
         // Update the drag bounds depending on the size
         when {
             START in swipeDirections && END in swipeDirections -> {
