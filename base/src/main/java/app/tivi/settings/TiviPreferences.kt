@@ -26,7 +26,6 @@ interface TiviPreferences {
     enum class Theme {
         LIGHT,
         DARK,
-        BATTERY_SAVER_ONLY,
         SYSTEM
     }
 }
