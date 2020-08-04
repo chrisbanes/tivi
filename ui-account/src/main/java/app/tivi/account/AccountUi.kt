@@ -34,6 +34,7 @@ import androidx.compose.material.EmphasisAmbient
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.ProvideEmphasis
+import androidx.compose.material.Surface
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -87,49 +88,51 @@ fun AccountUi(
     viewState: AccountUiViewState,
     actioner: (AccountUiAction) -> Unit
 ) {
-    Column {
-        Spacer(modifier = Modifier.preferredHeight(16.dp))
-
-        if (viewState.user != null) {
-            UserRow(
-                user = viewState.user,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+    Surface {
+        Column {
             Spacer(modifier = Modifier.preferredHeight(16.dp))
-        }
 
-        Row(
-            modifier = Modifier.gravity(Alignment.End)
-                .padding(horizontal = 16.dp)
-        ) {
-            if (viewState.authState == TraktAuthState.LOGGED_OUT) {
-                OutlinedButton(onClick = { actioner(Login) }) {
-                    Text(text = stringResource(R.string.login))
-                }
-            } else {
-                TextButton(onClick = { actioner(Login) }) {
-                    Text(text = stringResource(R.string.refresh_credentials))
-                }
+            if (viewState.user != null) {
+                UserRow(
+                    user = viewState.user,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+                Spacer(modifier = Modifier.preferredHeight(16.dp))
+            }
 
-                Spacer(modifier = Modifier.preferredWidth(8.dp))
+            Row(
+                modifier = Modifier.gravity(Alignment.End)
+                    .padding(horizontal = 16.dp)
+            ) {
+                if (viewState.authState == TraktAuthState.LOGGED_OUT) {
+                    OutlinedButton(onClick = { actioner(Login) }) {
+                        Text(text = stringResource(R.string.login))
+                    }
+                } else {
+                    TextButton(onClick = { actioner(Login) }) {
+                        Text(text = stringResource(R.string.refresh_credentials))
+                    }
 
-                OutlinedButton(onClick = { actioner(Logout) }) {
-                    Text(text = stringResource(R.string.logout))
+                    Spacer(modifier = Modifier.preferredWidth(8.dp))
+
+                    OutlinedButton(onClick = { actioner(Logout) }) {
+                        Text(text = stringResource(R.string.logout))
+                    }
                 }
             }
+
+            Spacer(modifier = Modifier.preferredHeight(16.dp).fillMaxWidth())
+
+            Divider()
+
+            AppAction(
+                label = stringResource(id = R.string.settings_title),
+                icon = Icons.Default.Settings,
+                onClick = { actioner(OpenSettings) }
+            )
+
+            Spacer(modifier = Modifier.preferredHeight(8.dp).fillMaxWidth())
         }
-
-        Spacer(modifier = Modifier.preferredHeight(16.dp).fillMaxWidth())
-
-        Divider()
-
-        AppAction(
-            label = stringResource(id = R.string.settings_title),
-            icon = Icons.Default.Settings,
-            onClick = { actioner(OpenSettings) }
-        )
-
-        Spacer(modifier = Modifier.preferredHeight(8.dp).fillMaxWidth())
     }
 }
 
