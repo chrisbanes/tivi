@@ -15,7 +15,6 @@
  */
 
 package app.tivi.showdetails.details
-
 import android.view.ViewGroup
 import androidx.compose.foundation.Box
 import androidx.compose.foundation.Icon
@@ -88,27 +87,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ContextAmbient
-import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LiveData
 import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
+import app.tivi.common.compose.DisplayInsetsAmbient
 import app.tivi.common.compose.ExpandableFloatingActionButton
 import app.tivi.common.compose.ExpandingText
-import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PopupMenu
 import app.tivi.common.compose.PopupMenuItem
-import app.tivi.common.compose.ProvideInsets
+import app.tivi.common.compose.ProvideDisplayInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
+import app.tivi.common.compose.navigationBarHeight
 import app.tivi.common.compose.offset
 import app.tivi.common.compose.onSizeChanged
+import app.tivi.common.compose.statusBarHeight
+import app.tivi.common.compose.systemBarsPadding
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
@@ -139,7 +139,6 @@ val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
 
 fun ViewGroup.composeShowDetails(
     state: LiveData<ShowDetailsViewState>,
-    insets: LiveData<WindowInsetsCompat?>,
     actioner: (ShowDetailsAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter,
     textCreator: ShowDetailsTextCreator
@@ -151,7 +150,7 @@ fun ViewGroup.composeShowDetails(
         MaterialThemeFromMdcTheme {
             LogCompositions("MaterialThemeFromMdcTheme")
 
-            ProvideInsets(insets) {
+            ProvideDisplayInsets {
                 LogCompositions("ProvideInsets")
                 val viewState by state.observeAsState()
                 if (viewState != null) {
@@ -231,13 +230,13 @@ fun ShowDetails(
         )
     }
 
-    val insets = InsetsAmbient.current
-    val bottomInset = with(DensityAmbient.current) { insets.bottom.toDp() }
     ToggleShowFollowFloatingActionButton(
         isFollowed = viewState.isFollowed,
         expanded = scrollState.value < backdropHeight,
         onClick = { actioner(FollowShowToggleAction) },
-        modifier = Modifier.padding(end = 16.dp, bottom = 16.dp + bottomInset)
+        modifier = Modifier
+            .padding(16.dp)
+            .systemBarsPadding()
             .constrainAs(fab) {
                 end.linkTo(parent.end)
                 bottom.linkTo(parent.bottom)
@@ -370,12 +369,10 @@ private fun ShowDetailsScrollingContent(
                     Seasons(seasons, expandedSeasonIds, actioner)
                 }
 
+                // Spacer to push up content from under the FloatingActionButton
+                Spacer(Modifier.preferredHeight(8.dp + 56.dp + 16.dp))
                 // Spacer to push up the content from under the navigation bar
-                val insets = InsetsAmbient.current
-                val spacerHeight = with(DensityAmbient.current) {
-                    8.dp + insets.bottom.toDp() + 56.dp + 16.dp
-                }
-                Spacer(Modifier.preferredHeight(spacerHeight))
+                Spacer(Modifier.navigationBarHeight())
             }
         }
     }
@@ -390,8 +387,8 @@ private fun OverlaidStatusBarAppBar(
 ) {
     LogCompositions("OverlaidStatusBarAppBar")
 
-    val insets = InsetsAmbient.current
-    val trigger = (backdropHeight - insets.top).coerceAtLeast(0)
+    val insets = DisplayInsetsAmbient.current
+    val trigger = (backdropHeight - insets.systemBars.top).coerceAtLeast(0)
 
     val alpha = lerp(
         startValue = 0.5f,
@@ -405,10 +402,7 @@ private fun OverlaidStatusBarAppBar(
         modifier = modifier
     ) {
         Column(Modifier.fillMaxWidth()) {
-            if (insets.top > 0) {
-                val topInset = with(DensityAmbient.current) { insets.top.toDp() }
-                Spacer(Modifier.preferredHeight(topInset))
-            }
+            Spacer(Modifier.statusBarHeight())
             if (scrollState >= trigger) {
                 appBar()
             }

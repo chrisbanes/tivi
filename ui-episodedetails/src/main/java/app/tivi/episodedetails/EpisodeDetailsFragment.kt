@@ -25,7 +25,6 @@ import android.widget.FrameLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import app.tivi.common.compose.observeWindowInsets
 import app.tivi.extensions.viewModelProviderFactoryOf
 import app.tivi.util.TiviDateFormatter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -72,7 +71,6 @@ class EpisodeDetailsFragment : BottomSheetDialogFragment() {
 
             composeEpisodeDetails(
                 viewModel.liveData,
-                observeWindowInsets(),
                 { pendingActions.offer(it) },
                 tiviDateFormatter
             )

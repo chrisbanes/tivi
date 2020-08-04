@@ -24,7 +24,6 @@ import android.widget.FrameLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import app.tivi.common.compose.observeWindowInsets
 import app.tivi.extensions.navigateToNavDestination
 import app.tivi.util.TiviDateFormatter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -55,7 +54,6 @@ class AccountUiFragment : BottomSheetDialogFragment() {
         composeAccountUi(
             this,
             viewModel.liveData,
-            observeWindowInsets(),
             { pendingActions.offer(it) },
             tiviDateFormatter
         )
