@@ -38,7 +38,7 @@ fun RecyclerView.scrollToItemId(itemId: Long, animatedScroll: Boolean = false): 
         if (animatedScroll) {
             smoothScrollToViewHolder(vh)
         } else {
-            scrollToPosition(vh.adapterPosition)
+            scrollToPosition(vh.bindingAdapterPosition)
         }
         return true
     }
@@ -50,7 +50,7 @@ fun RecyclerView.smoothScrollToViewHolder(vh: RecyclerView.ViewHolder) = TiviLin
     snapPreference = LinearSmoothScroller.SNAP_TO_START,
     scrollMsPerInch = 60f
 ).apply {
-    targetPosition = vh.adapterPosition
+    targetPosition = vh.bindingAdapterPosition
     targetOffset = vh.itemView.height / 3
 }.also {
     layoutManager!!.startSmoothScroll(it)

@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-@EpoxyDataBindingPattern(rClass = R.class, layoutPrefix = "view_holder")
-package app.tivi.home.watched;
+package app.tivi.common.layouts
 
-import com.airbnb.epoxy.EpoxyDataBindingPattern;
+import com.airbnb.epoxy.EpoxyDataBindingPattern
+
+@EpoxyDataBindingPattern(rClass = R::class, layoutPrefix = "view_holder")
+internal object EpoxyDataBindingConfig
