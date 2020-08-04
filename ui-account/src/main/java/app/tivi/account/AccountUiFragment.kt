@@ -67,10 +67,11 @@ class AccountUiFragment : BottomSheetDialogFragment() {
         lifecycleScope.launch {
             pendingActions.consumeAsFlow().collect { action ->
                 when (action) {
-                    is Close -> requireView().post(::dismiss)
+                    is Close -> view?.post(::dismiss)
                     is OpenSettings -> {
-                        findNavController().navigateToNavDestination(R.id.navigation_settings)
-                        requireView().post(::dismiss)
+                        view?.post {
+                            findNavController().navigateToNavDestination(R.id.navigation_settings)
+                        }
                     }
                     else -> viewModel.submitAction(action)
                 }
