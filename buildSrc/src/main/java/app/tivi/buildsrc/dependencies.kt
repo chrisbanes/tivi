@@ -34,7 +34,7 @@ object Libs {
     const val timber = "com.jakewharton.timber:timber:4.7.1"
 
     const val tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.2.0"
-    const val traktJava = "com.uwetrottmann.trakt5:trakt-java:6.5.0"
+    const val traktJava = "com.uwetrottmann.trakt5:trakt-java:6.6.0"
 
     const val appauth = "net.openid:appauth:0.7.1"
 
@@ -42,7 +42,7 @@ object Libs {
     const val robolectric = "org.robolectric:robolectric:4.3.1"
     const val mockK = "io.mockk:mockk:1.10.0"
 
-    const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.3"
+    const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.4"
 
     // Move back to Store when alpha07 is out
     const val store = "com.dropbox.mobile.store:store4:4.0.0-SNAPSHOT"
@@ -80,30 +80,30 @@ object Libs {
     }
 
     object Coroutines {
-        private const val version = "1.3.8-1.4-rc-154"
+        private const val version = "1.3.8-1.4.0-rc"
         const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
         const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
         const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$version"
     }
 
     object AndroidX {
-        const val appcompat = "androidx.appcompat:appcompat:1.2.0-rc01"
+        const val appcompat = "androidx.appcompat:appcompat:1.3.0-alpha01"
         const val browser = "androidx.browser:browser:1.0.0"
         const val collection = "androidx.collection:collection-ktx:1.1.0"
         const val palette = "androidx.palette:palette:1.0.0"
-        const val recyclerview = "androidx.recyclerview:recyclerview:1.1.0"
-        const val emoji = "androidx.emoji:emoji:1.1.0-rc01"
+        const val recyclerview = "androidx.recyclerview:recyclerview:1.2.0-alpha05"
+        const val emoji = "androidx.emoji:emoji:1.1.0"
         const val swiperefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-rc01"
 
         object Navigation {
-            private const val version = "2.2.2"
+            private const val version = "2.3.0"
             const val fragment = "androidx.navigation:navigation-fragment-ktx:$version"
             const val ui = "androidx.navigation:navigation-ui-ktx:$version"
             const val safeArgs = "androidx.navigation:navigation-safe-args-gradle-plugin:$version"
         }
 
         object Fragment {
-            private const val version = "1.2.3"
+            private const val version = "1.3.0-alpha07"
             const val fragment = "androidx.fragment:fragment:$version"
             const val fragmentKtx = "androidx.fragment:fragment-ktx:$version"
         }
@@ -131,19 +131,19 @@ object Libs {
 
         const val preference = "androidx.preference:preference:1.1.1"
 
-        const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.0-beta6"
+        const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.0-rc1"
 
-        const val coreKtx = "androidx.core:core-ktx:1.3.0-rc01"
+        const val coreKtx = "androidx.core:core-ktx:1.3.1"
 
         object Lifecycle {
-            private const val version = "2.2.0"
+            private const val version = "2.3.0-alpha06"
             const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
             const val livedata = "androidx.lifecycle:lifecycle-livedata-ktx:$version"
             const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
         }
 
         object Room {
-            private const val version = "2.2.5"
+            private const val version = "2.3.0-alpha02"
             const val common = "androidx.room:room-common:$version"
             const val runtime = "androidx.room:room-runtime:$version"
             const val compiler = "androidx.room:room-compiler:$version"
@@ -152,13 +152,17 @@ object Libs {
         }
 
         object Work {
-            private const val version = "2.3.4"
+            private const val version = "2.4.0"
             const val runtimeKtx = "androidx.work:work-runtime-ktx:$version"
         }
 
         object Compose {
             const val snapshot = "6721902"
             const val version = "0.1.0-SNAPSHOT"
+
+            @get:JvmStatic
+            val snapshotUrl: String
+                get() = "https://androidx.dev/snapshots/builds/$snapshot/artifacts/ui/repository/"
 
             const val runtime = "androidx.compose.runtime:runtime:$version"
             const val livedata = "androidx.compose.runtime:runtime-livedata:${version}"
@@ -199,19 +203,19 @@ object Libs {
     }
 
     object Retrofit {
-        private const val version = "2.8.1"
+        private const val version = "2.9.0"
         const val retrofit = "com.squareup.retrofit2:retrofit:$version"
         const val gsonConverter = "com.squareup.retrofit2:converter-gson:$version"
     }
 
     object OkHttp {
-        private const val version = "4.7.2"
+        private const val version = "4.8.0"
         const val okhttp = "com.squareup.okhttp3:okhttp:$version"
         const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$version"
     }
 
     object Epoxy {
-        private const val version = "3.11.0"
+        private const val version = "4.0.0-beta6"
         const val epoxy = "com.airbnb.android:epoxy:$version"
         const val paging = "com.airbnb.android:epoxy-paging:$version"
         const val dataBinding = "com.airbnb.android:epoxy-databinding:$version"
