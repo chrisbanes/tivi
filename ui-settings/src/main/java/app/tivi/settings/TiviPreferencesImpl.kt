@@ -50,7 +50,7 @@ class TiviPreferencesImpl @Inject constructor(
     override var themePreference: Theme
         get() = getThemeForStorageValue(sharedPreferences.getString(KEY_THEME, defaultThemeValue)!!)
         set(value) = sharedPreferences.edit {
-            putString(KEY_THEME, getStorageKeyForTheme(value))
+            putString(KEY_THEME, value.storageKey)
         }
 
     override var useLessData: Boolean
@@ -59,25 +59,22 @@ class TiviPreferencesImpl @Inject constructor(
             putBoolean(KEY_DATA_SAVER, value)
         }
 
-    private fun getStorageKeyForTheme(theme: Theme) = when (theme) {
-        Theme.LIGHT -> context.getString(R.string.pref_theme_light_value)
-        Theme.DARK -> context.getString(R.string.pref_theme_dark_value)
-        Theme.BATTERY_SAVER_ONLY -> context.getString(R.string.pref_theme_battery_value)
-        Theme.SYSTEM -> context.getString(R.string.pref_theme_system_value)
-    }
+    val Theme.storageKey: String
+        get() = when (this) {
+            Theme.LIGHT -> context.getString(R.string.pref_theme_light_value)
+            Theme.DARK -> context.getString(R.string.pref_theme_dark_value)
+            Theme.SYSTEM -> context.getString(R.string.pref_theme_system_value)
+        }
 
     private fun getThemeForStorageValue(value: String) = when (value) {
-        context.getString(R.string.pref_theme_system_value) -> Theme.SYSTEM
         context.getString(R.string.pref_theme_light_value) -> Theme.LIGHT
         context.getString(R.string.pref_theme_dark_value) -> Theme.DARK
-        context.getString(R.string.pref_theme_battery_value) -> Theme.BATTERY_SAVER_ONLY
-        else -> throw IllegalArgumentException("Invalid preference value for theme")
+        else -> Theme.SYSTEM
     }
 
     private fun updateUsingThemePreference() = when (themePreference) {
         Theme.DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         Theme.LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         Theme.SYSTEM -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-        Theme.BATTERY_SAVER_ONLY -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
     }
 }
