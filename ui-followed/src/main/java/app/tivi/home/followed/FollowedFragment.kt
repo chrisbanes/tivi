@@ -50,7 +50,7 @@ import javax.inject.Inject
 class FollowedFragment : FragmentWithBinding<FragmentFollowedBinding>() {
     private val viewModel: FollowedViewModel by viewModels()
 
-    @Inject @JvmField internal var controller: FollowedEpoxyController? = null
+    @Inject internal lateinit var controller: FollowedEpoxyController
 
     private var currentActionMode: ActionMode? = null
 
@@ -92,7 +92,7 @@ class FollowedFragment : FragmentWithBinding<FragmentFollowedBinding>() {
             true
         }
 
-        controller!!.callbacks = object : FollowedEpoxyController.Callbacks {
+        controller.callbacks = object : FollowedEpoxyController.Callbacks {
             override fun onItemClicked(item: FollowedShowEntryWithShow) {
                 // Let the ViewModel have the first go
                 if (viewModel.onItemClick(item.show)) {
@@ -126,14 +126,14 @@ class FollowedFragment : FragmentWithBinding<FragmentFollowedBinding>() {
         binding.followedRv.apply {
             addItemDecoration(SpacingItemDecorator(paddingLeft))
             addOnScrollListener(HideImeOnScrollListener())
-            setController(controller!!)
+            setController(controller)
         }
 
         binding.followedSwipeRefresh.setOnRefreshListener(viewModel::refresh)
 
         lifecycleScope.launchWhenStarted {
             viewModel.pagedList.collect {
-                controller?.submitList(it)
+                controller.submitList(it)
             }
         }
 
@@ -158,13 +158,13 @@ class FollowedFragment : FragmentWithBinding<FragmentFollowedBinding>() {
         authStateMenuItemBinder?.bind(state.authState, state.user)
 
         binding.state = state
-        controller!!.state = state
+        controller.state = state
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         currentActionMode?.finish()
-        controller?.clear()
+        controller.clear()
         authStateMenuItemBinder = null
     }
 

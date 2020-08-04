@@ -25,17 +25,17 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 class TiviApplication : Application(), Configuration.Provider {
-    @Inject @JvmField var initializers: AppInitializers? = null
-    @Inject @JvmField var workerFactory: HiltWorkerFactory? = null
+    @Inject lateinit var initializers: AppInitializers
+    @Inject lateinit var workerFactory: HiltWorkerFactory
 
     override fun onCreate() {
         super.onCreate()
-        initializers!!.init(this)
+        initializers.init(this)
     }
 
     override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder()
-            .setWorkerFactory(workerFactory!!)
+            .setWorkerFactory(workerFactory)
             .build()
     }
 }

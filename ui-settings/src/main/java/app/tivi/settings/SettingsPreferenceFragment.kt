@@ -36,13 +36,13 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 internal class SettingsPreferenceFragment : PreferenceFragmentCompat() {
-    @Inject @JvmField var powerController: PowerController? = null
+    @Inject lateinit var powerController: PowerController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launchWhenStarted {
-            powerController!!.observeShouldSaveData(ignorePreference = true).collect { saveData ->
+            powerController.observeShouldSaveData(ignorePreference = true).collect { saveData ->
                 val pref = findPreference<Preference>("pref_data_saver")
                     ?: throw CancellationException()
                 val prefDisabled = findPreference<Preference>("pref_data_saver_disabled")

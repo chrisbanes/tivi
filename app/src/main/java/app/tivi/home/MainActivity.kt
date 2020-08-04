@@ -42,7 +42,7 @@ class MainActivity : TiviActivity() {
     var currentNavController: NavController? = null
         private set
 
-    @Inject @JvmField var navigator: AppNavigator? = null
+    @Inject lateinit var navigator: AppNavigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,7 +86,7 @@ class MainActivity : TiviActivity() {
     override fun handleIntent(intent: Intent) {
         when (intent.action) {
             TraktConstants.INTENT_ACTION_HANDLE_AUTH_RESPONSE -> {
-                navigator!!.onAuthResponse(intent)
+                navigator.onAuthResponse(intent)
             }
         }
     }

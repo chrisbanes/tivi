@@ -46,7 +46,7 @@ import javax.inject.Inject
 class DiscoverFragment : FragmentWithBinding<FragmentDiscoverBinding>() {
     private val viewModel: DiscoverViewModel by viewModels()
 
-    @Inject @JvmField internal var controller: DiscoverEpoxyController? = null
+    @Inject internal lateinit var controller: DiscoverEpoxyController
 
     private var authStateMenuItemBinder: AuthStateMenuItemBinder? = null
 
@@ -68,7 +68,7 @@ class DiscoverFragment : FragmentWithBinding<FragmentDiscoverBinding>() {
         // postponeEnterTransitionWithTimeout()
 
         binding.summaryRv.apply {
-            setController(controller!!)
+            setController(controller)
             addItemDecoration(SpacingItemDecorator(paddingLeft))
         }
 
@@ -97,7 +97,7 @@ class DiscoverFragment : FragmentWithBinding<FragmentDiscoverBinding>() {
             }
         }
 
-        controller!!.callbacks = object : DiscoverEpoxyController.Callbacks {
+        controller.callbacks = object : DiscoverEpoxyController.Callbacks {
             override fun onTrendingHeaderClicked() {
                 with(viewModel.currentState()) {
                     val extras = binding.summaryRv.createSharedElementHelperForItems(trendingItems)
@@ -180,12 +180,12 @@ class DiscoverFragment : FragmentWithBinding<FragmentDiscoverBinding>() {
         authStateMenuItemBinder?.bind(state.authState, state.user)
 
         binding.state = state
-        controller!!.state = state
+        controller.state = state
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        controller?.clear()
+        controller.clear()
         authStateMenuItemBinder = null
     }
 }
