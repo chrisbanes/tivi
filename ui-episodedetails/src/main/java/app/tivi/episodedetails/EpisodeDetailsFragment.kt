@@ -38,7 +38,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class EpisodeDetailsFragment : BottomSheetDialogFragment() {
-    @Inject @JvmField internal var vmFactory: EpisodeDetailsViewModel.Factory? = null
+    @Inject internal lateinit var vmFactory: EpisodeDetailsViewModel.Factory
 
     companion object {
         private const val ARG_KEY_ID = "episode_id"
@@ -53,12 +53,12 @@ class EpisodeDetailsFragment : BottomSheetDialogFragment() {
 
     private val viewModel: EpisodeDetailsViewModel by viewModels {
         viewModelProviderFactoryOf {
-            vmFactory!!.create(requireArguments().getLong(ARG_KEY_ID))
+            vmFactory.create(requireArguments().getLong(ARG_KEY_ID))
         }
     }
 
-    @Inject @JvmField internal var tiviDateFormatter: TiviDateFormatter? = null
-    @Inject @JvmField internal var textCreator: EpisodeDetailsTextCreator? = null
+    @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
+    @Inject internal lateinit var textCreator: EpisodeDetailsTextCreator
 
     private val pendingActions = Channel<EpisodeDetailsAction>(Channel.BUFFERED)
 
@@ -74,7 +74,7 @@ class EpisodeDetailsFragment : BottomSheetDialogFragment() {
                 viewModel.liveData,
                 observeWindowInsets(),
                 { pendingActions.offer(it) },
-                tiviDateFormatter!!
+                tiviDateFormatter
             )
         }
     }

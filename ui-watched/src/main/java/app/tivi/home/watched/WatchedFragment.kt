@@ -50,7 +50,7 @@ import javax.inject.Inject
 class WatchedFragment : FragmentWithBinding<FragmentWatchedBinding>() {
     private val viewModel: WatchedViewModel by viewModels()
 
-    @Inject @JvmField internal var controller: WatchedEpoxyController? = null
+    @Inject internal lateinit var controller: WatchedEpoxyController
 
     private var authStateMenuItemBinder: AuthStateMenuItemBinder? = null
 
@@ -95,7 +95,7 @@ class WatchedFragment : FragmentWithBinding<FragmentWatchedBinding>() {
             true
         }
 
-        controller!!.callbacks = object : WatchedEpoxyController.Callbacks {
+        controller.callbacks = object : WatchedEpoxyController.Callbacks {
             override fun onItemClicked(item: WatchedShowEntryWithShow) {
                 // Let the ViewModel have the first go
                 if (viewModel.onItemClick(item.show)) {
@@ -125,14 +125,14 @@ class WatchedFragment : FragmentWithBinding<FragmentWatchedBinding>() {
         binding.watchedRv.apply {
             addItemDecoration(SpacingItemDecorator(paddingLeft))
             addOnScrollListener(HideImeOnScrollListener())
-            setController(controller!!)
+            setController(controller)
         }
 
         binding.watchedSwipeRefresh.setOnRefreshListener(viewModel::refresh)
 
         lifecycleScope.launchWhenStarted {
             viewModel.pagedList.collect {
-                controller!!.submitList(it)
+                controller.submitList(it)
             }
         }
 
@@ -157,13 +157,13 @@ class WatchedFragment : FragmentWithBinding<FragmentWatchedBinding>() {
         authStateMenuItemBinder?.bind(state.authState, state.user)
 
         binding.state = state
-        controller!!.state = state
+        controller.state = state
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         currentActionMode?.finish()
-        controller?.clear()
+        controller.clear()
         authStateMenuItemBinder = null
     }
 

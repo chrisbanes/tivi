@@ -40,7 +40,7 @@ class AccountUiFragment : BottomSheetDialogFragment() {
     private val pendingActions = Channel<AccountUiAction>()
     private val viewModel: AccountUiViewModel by viewModels()
 
-    @Inject @JvmField internal var tiviDateFormatter: TiviDateFormatter? = null
+    @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,7 +57,7 @@ class AccountUiFragment : BottomSheetDialogFragment() {
             viewModel.liveData,
             observeWindowInsets(),
             { pendingActions.offer(it) },
-            tiviDateFormatter!!
+            tiviDateFormatter
         )
     }
 

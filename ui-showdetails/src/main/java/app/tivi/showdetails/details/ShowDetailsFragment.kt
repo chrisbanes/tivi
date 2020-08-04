@@ -41,16 +41,16 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShowDetailsFragment : Fragment() {
-    @Inject @JvmField internal var vmFactory: ShowDetailsFragmentViewModel.Factory? = null
-    @Inject @JvmField internal var textCreator: ShowDetailsTextCreator? = null
-    @Inject @JvmField internal var tiviDateFormatter: TiviDateFormatter? = null
+    @Inject internal lateinit var vmFactory: ShowDetailsFragmentViewModel.Factory
+    @Inject internal lateinit var textCreator: ShowDetailsTextCreator
+    @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
 
     private val pendingActions = Channel<ShowDetailsAction>(Channel.BUFFERED)
 
     private val viewModel: ShowDetailsFragmentViewModel by viewModels {
         viewModelProviderFactoryOf {
             val args = requireArguments()
-            vmFactory!!.create(
+            vmFactory.create(
                 showId = args.getLong("show_id"),
                 pendingEpisodeId = when {
                     args.containsKey("episode_id") -> args.getLong("episode_id")
@@ -72,8 +72,8 @@ class ShowDetailsFragment : Fragment() {
                 viewModel.liveData,
                 observeWindowInsets(),
                 { pendingActions.offer(it) },
-                tiviDateFormatter!!,
-                textCreator!!
+                tiviDateFormatter,
+                textCreator
             )
         }
     }

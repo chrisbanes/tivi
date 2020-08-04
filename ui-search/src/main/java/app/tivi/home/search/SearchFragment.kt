@@ -42,7 +42,7 @@ import javax.inject.Inject
 internal class SearchFragment : FragmentWithBinding<FragmentSearchBinding>() {
     private val viewModel: SearchViewModel by viewModels()
 
-    @Inject @JvmField internal var controller: SearchEpoxyController? = null
+    @Inject internal lateinit var controller: SearchEpoxyController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +59,7 @@ internal class SearchFragment : FragmentWithBinding<FragmentSearchBinding>() {
 
     override fun onViewCreated(binding: FragmentSearchBinding, savedInstanceState: Bundle?) {
         binding.searchRecyclerview.apply {
-            setController(controller!!)
+            setController(controller)
             addOnScrollListener(HideImeOnScrollListener())
         }
 
@@ -83,7 +83,7 @@ internal class SearchFragment : FragmentWithBinding<FragmentSearchBinding>() {
             })
         }
 
-        controller!!.callbacks = object : SearchEpoxyController.Callbacks {
+        controller.callbacks = object : SearchEpoxyController.Callbacks {
             override fun onSearchItemClicked(show: TiviShow) {
                 // We should really use AndroidX navigation here, but this fragment isn't in the tree
                 val extras = binding.searchRecyclerview.createSharedElementHelperForItemId(show.id, "poster") {
@@ -103,11 +103,11 @@ internal class SearchFragment : FragmentWithBinding<FragmentSearchBinding>() {
     private fun render(state: SearchViewState) {
         val binding = requireBinding()
         binding.state = state
-        controller!!.state = state
+        controller.state = state
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        controller?.clear()
+        controller.clear()
     }
 }
