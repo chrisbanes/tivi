@@ -104,7 +104,6 @@ import app.tivi.common.compose.PopupMenuItem
 import app.tivi.common.compose.ProvideDisplayInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
-import app.tivi.common.compose.navigationBarHeight
 import app.tivi.common.compose.offset
 import app.tivi.common.compose.onSizeChanged
 import app.tivi.common.compose.statusBarHeight
@@ -370,9 +369,7 @@ private fun ShowDetailsScrollingContent(
                 }
 
                 // Spacer to push up content from under the FloatingActionButton
-                Spacer(Modifier.preferredHeight(8.dp + 56.dp + 16.dp))
-                // Spacer to push up the content from under the navigation bar
-                Spacer(Modifier.navigationBarHeight())
+                Spacer(Modifier.preferredHeight(56.dp + 16.dp + 16.dp))
             }
         }
     }

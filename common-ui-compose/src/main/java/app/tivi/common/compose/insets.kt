@@ -35,10 +35,12 @@ import androidx.compose.ui.Measurable
 import androidx.compose.ui.MeasureScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.layout
 import androidx.compose.ui.layout.IntrinsicMeasurable
 import androidx.compose.ui.layout.IntrinsicMeasureScope
 import androidx.compose.ui.platform.ViewAmbient
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.offset
 import androidx.core.view.ViewCompat
 import kotlin.math.min
@@ -127,34 +129,37 @@ fun ProvideDisplayInsets(
 }
 
 /**
- * Selectively apply additional space which matches the width/height of any system bars present
+ * Selectively apply padding which matches the width/height of any system bars present
  * on the respective edges of the screen.
  *
  * @param enabled Whether to apply padding using the system bar dimensions on the respective edges.
  * Defaults to `true`.
  */
-fun Modifier.systemBarsPadding(enabled: Boolean = true) = composed {
-    insetsPadding(
-        insets = DisplayInsetsAmbient.current.systemBars,
-        left = enabled,
-        top = enabled,
-        right = enabled,
-        bottom = enabled
-    )
+fun Modifier.systemBarsPadding(enabled: Boolean = true) = when {
+    enabled -> composed {
+        insetsPadding(
+            insets = DisplayInsetsAmbient.current.systemBars,
+            applyLeft = enabled,
+            applyTop = enabled,
+            applyRight = enabled,
+            applyBottom = enabled
+        )
+    }
+    else -> this
 }
 
 /**
- * Apply additional space which matches the height of the status height along the top edge
+ * Apply padding which matches the height of the status height along the top edge
  * of the content.
  */
 fun Modifier.statusBarPadding() = composed {
-    insetsPadding(insets = DisplayInsetsAmbient.current.systemBars, top = true)
+    insetsPadding(insets = DisplayInsetsAmbient.current.systemBars, applyTop = true)
 }
 
 /**
- * Apply additional space which matches the height of the navigation bar height
- * along the [bottom] edge of the content, and additional space which matches the width of
- * the navigation bar on the respective [left] and [right] edges.
+ * Apply bottom padding which matches the height of the navigation bar if the navigation bar
+ * is along the bottom of the screen, and applies left & right padding matching the navigation
+ * bar width if the navigation bar is along the left or right edge of the screen.
  *
  * @param bottom Whether to apply padding to the bottom edge, which matches the navigation bar
  * height (if present) at the bottom edge of the screen. Defaults to `true`.
@@ -170,9 +175,9 @@ fun Modifier.navigationBarPadding(
 ) = composed {
     insetsPadding(
         insets = DisplayInsetsAmbient.current.systemBars,
-        left = left,
-        right = right,
-        bottom = bottom
+        applyLeft = left,
+        applyRight = right,
+        applyBottom = bottom
     )
 }
 
@@ -203,7 +208,7 @@ private fun Insets.updateFrom(insets: androidx.core.graphics.Insets) {
  * Spacer(
  *     Modifier.statusBarHeight()
  *         .fillMaxWidth()
- *         .drawBackground(MaterialTheme.colors.background.copy(alpha = 0.3f)
+ *         .background(MaterialTheme.colors.background.copy(alpha = 0.3f)
  * )
  * ```
  *
@@ -214,7 +219,10 @@ fun Modifier.statusBarHeight() = composed {
     // TODO: Move to Android 11 WindowInsets APIs when they land in AndroidX.
     // It currently assumes that status bar == top which is probably fine, but doesn't work
     // in multi-window, etc.
-    InsetsSizeModifier(insets = DisplayInsetsAmbient.current.systemBars, heightSide = VerticalSide.Top)
+    InsetsSizeModifier(
+        insets = DisplayInsetsAmbient.current.systemBars,
+        heightSide = VerticalSide.Top
+    )
 }
 
 /**
@@ -233,7 +241,7 @@ fun Modifier.statusBarHeight() = composed {
  * Spacer(
  *     Modifier.navigationBarHeight()
  *         .fillMaxWidth()
- *         .drawBackground(MaterialTheme.colors.background.copy(alpha = 0.3f)
+ *         .background(MaterialTheme.colors.background.copy(alpha = 0.3f)
  * )
  * ```
  *
@@ -244,10 +252,13 @@ fun Modifier.navigationBarHeight() = composed {
     // TODO: Move to Android 11 WindowInsets APIs when they land in AndroidX.
     // It currently assumes that nav bar == bottom, which is wrong in landscape.
     // It also doesn't handle the IME correctly.
-    InsetsSizeModifier(insets = DisplayInsetsAmbient.current.systemBars, heightSide = VerticalSide.Bottom)
+    InsetsSizeModifier(
+        insets = DisplayInsetsAmbient.current.systemBars,
+        heightSide = VerticalSide.Bottom
+    )
 }
 
-enum class HorizontalSide { Left, Right }
+enum class HorizontalSide { Start, End }
 enum class VerticalSide { Top, Bottom }
 
 /**
@@ -258,20 +269,20 @@ enum class VerticalSide { Top, Bottom }
  * navigation bars (typically when the device is in landscape):
  * ```
  * Row {
- *     Spacer(Modifier.navigationBarWidth(HorizontalSide.Left))
+ *     Spacer(Modifier.navigationBarWidth(HorizontalSide.Start))
  *
  *     // Content to be inside the navigation bars (x-axis)
  *
- *     Spacer(Modifier.navigationBarWidth(HorizontalSide.Right))
+ *     Spacer(Modifier.navigationBarWidth(HorizontalSide.End))
  * }
  * ```
  *
  * It's also useful when used to draw a scrim which matches the navigation bar:
  * ```
  * Spacer(
- *     Modifier.navigationBarWidth(HorizontalSide.Left)
+ *     Modifier.navigationBarWidth(HorizontalSide.Start)
  *         .fillMaxHeight()
- *         .drawBackground(MaterialTheme.colors.background.copy(alpha = 0.3f)
+ *         .background(MaterialTheme.colors.background.copy(alpha = 0.3f)
  * )
  * ```
  *
@@ -283,7 +294,10 @@ enum class VerticalSide { Top, Bottom }
 fun Modifier.navigationBarWidth(side: HorizontalSide) = composed {
     // TODO: Move to Android 11 WindowInsets APIs when they land in AndroidX.
     // It currently assumes that nav bar == left/right
-    InsetsSizeModifier(insets = DisplayInsetsAmbient.current.systemBars, widthSide = side)
+    InsetsSizeModifier(
+        insets = DisplayInsetsAmbient.current.systemBars,
+        widthSide = side
+    )
 }
 
 /**
@@ -291,39 +305,26 @@ fun Modifier.navigationBarWidth(side: HorizontalSide) = composed {
  */
 private inline fun Modifier.insetsPadding(
     insets: Insets,
-    left: Boolean = false,
-    top: Boolean = false,
-    right: Boolean = false,
-    bottom: Boolean = false
-) = this then InsetsPaddingModifier(insets, left, top, right, bottom)
+    applyLeft: Boolean = false,
+    applyTop: Boolean = false,
+    applyRight: Boolean = false,
+    applyBottom: Boolean = false
+) = layout { measurable, constraints ->
+    val left = if (applyLeft) insets.left else 0
+    val top = if (applyTop) insets.top else 0
+    val right = if (applyRight) insets.right else 0
+    val bottom = if (applyBottom) insets.bottom else 0
+    val horizontal = left + right
+    val vertical = top + bottom
 
-private data class InsetsPaddingModifier(
-    private val insets: Insets,
-    private val applyLeft: Boolean = false,
-    private val applyTop: Boolean = false,
-    private val applyRight: Boolean = false,
-    private val applyBottom: Boolean = false
-) : LayoutModifier {
-    override fun MeasureScope.measure(
-        measurable: Measurable,
-        constraints: Constraints
-    ): MeasureScope.MeasureResult {
-        val left = if (applyLeft) insets.left else 0
-        val top = if (applyTop) insets.top else 0
-        val right = if (applyRight) insets.right else 0
-        val bottom = if (applyBottom) insets.bottom else 0
-        val horizontal = left + right
-        val vertical = top + bottom
+    val placeable = measurable.measure(constraints.offset(-horizontal, -vertical))
 
-        val placeable = measurable.measure(constraints.offset(-horizontal, -vertical))
-
-        val width = (placeable.width + horizontal)
-            .coerceIn(constraints.minWidth, constraints.maxWidth)
-        val height = (placeable.height + vertical)
-            .coerceIn(constraints.minHeight, constraints.maxHeight)
-        return layout(width, height) {
-            placeable.placeAbsolute(left, top)
-        }
+    val width = (placeable.width + horizontal)
+        .coerceIn(constraints.minWidth, constraints.maxWidth)
+    val height = (placeable.height + vertical)
+        .coerceIn(constraints.minHeight, constraints.maxHeight)
+    layout(width, height) {
+        placeable.placeAbsolute(left, top)
     }
 }
 
@@ -334,21 +335,15 @@ private data class InsetsSizeModifier(
 ) : LayoutModifier {
     private val targetConstraints
         get() = Constraints(
-            minWidth = when (widthSide) {
-                HorizontalSide.Left -> insets.left
-                HorizontalSide.Right -> insets.right
-                null -> 0
-            },
+            // Calculate below since we need to resolve layoutdirection
+            minWidth = 0,
             minHeight = when (heightSide) {
                 VerticalSide.Top -> insets.top
                 VerticalSide.Bottom -> insets.bottom
                 null -> 0
             },
-            maxWidth = when (widthSide) {
-                HorizontalSide.Left -> insets.left
-                HorizontalSide.Right -> insets.right
-                null -> Constraints.Infinity
-            },
+            // Calculated below since we need to resolve layoutdirection
+            maxWidth = Constraints.Infinity,
             maxHeight = when (heightSide) {
                 VerticalSide.Top -> insets.top
                 VerticalSide.Bottom -> insets.bottom
@@ -361,15 +356,13 @@ private data class InsetsSizeModifier(
         constraints: Constraints
     ): MeasureScope.MeasureResult {
         val wrappedConstraints = targetConstraints.let { targetConstraints ->
-            val resolvedMinWidth = if (widthSide != null) {
-                targetConstraints.minWidth
-            } else {
-                min(constraints.minWidth, targetConstraints.maxWidth)
+            val resolvedMinWidth = when {
+                widthSide != null -> resolveInsetWidth(widthSide, layoutDirection)
+                else -> min(constraints.minWidth, targetConstraints.maxWidth)
             }
-            val resolvedMaxWidth = if (widthSide != null) {
-                targetConstraints.maxWidth
-            } else {
-                min(constraints.maxWidth, targetConstraints.minWidth)
+            val resolvedMaxWidth = when {
+                widthSide != null -> resolveInsetWidth(widthSide, layoutDirection)
+                else -> min(constraints.maxWidth, targetConstraints.minWidth)
             }
             val resolvedMinHeight = if (heightSide != null) {
                 targetConstraints.minHeight
@@ -392,17 +385,25 @@ private data class InsetsSizeModifier(
     override fun IntrinsicMeasureScope.minIntrinsicWidth(
         measurable: IntrinsicMeasurable,
         height: Int
-    ) = measurable.minIntrinsicWidth(height).let {
-        val constraints = targetConstraints
-        it.coerceIn(constraints.minWidth, constraints.maxWidth)
+    ) = when {
+        widthSide != null -> resolveInsetWidth(widthSide, layoutDirection)
+        else -> {
+            val constraints = targetConstraints
+            measurable.minIntrinsicWidth(height)
+                .coerceIn(constraints.minWidth, constraints.maxWidth)
+        }
     }
 
     override fun IntrinsicMeasureScope.maxIntrinsicWidth(
         measurable: IntrinsicMeasurable,
         height: Int
-    ) = measurable.maxIntrinsicWidth(height).let {
-        val constraints = targetConstraints
-        it.coerceIn(constraints.minWidth, constraints.maxWidth)
+    ): Int = when {
+        widthSide != null -> resolveInsetWidth(widthSide, layoutDirection)
+        else -> {
+            val constraints = targetConstraints
+            measurable.maxIntrinsicWidth(height)
+                .coerceIn(constraints.minWidth, constraints.maxWidth)
+        }
     }
 
     override fun IntrinsicMeasureScope.minIntrinsicHeight(
@@ -419,5 +420,17 @@ private data class InsetsSizeModifier(
     ) = measurable.maxIntrinsicHeight(width).let {
         val constraints = targetConstraints
         it.coerceIn(constraints.minHeight, constraints.maxHeight)
+    }
+
+    private fun resolveInsetWidth(
+        widthSide: HorizontalSide,
+        layoutDirection: LayoutDirection
+    ): Int = when (layoutDirection) {
+        LayoutDirection.Ltr -> {
+            if (widthSide == HorizontalSide.Start) insets.left else insets.right
+        }
+        LayoutDirection.Rtl -> {
+            if (widthSide == HorizontalSide.Start) insets.right else insets.left
+        }
     }
 }
