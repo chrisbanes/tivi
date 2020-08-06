@@ -1,0 +1,85 @@
+{
+  "project_info": {
+    "project_number": "983475834758375",
+    "firebase_url": "https://fakeapp.firebaseio.com",
+    "project_id": "fake-android-app",
+    "storage_bucket": "fake-android-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "FAKEfakeFAKE",
+        "android_client_info": {
+          "package_name": "app.tivi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "FAKEfakeFAKE",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.tivi",
+            "certificate_hash": "FAKEfakeFAKE"
+          }
+        },
+        {
+          "client_id": "FAKEfakeFAKE",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "FAKEfakeFAKE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "FAKEfakeFAKE",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "FAKEfakeFAKE",
+        "android_client_info": {
+          "package_name": "app.tivi.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "FAKEfakeFAKE",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.tivi.debug",
+            "certificate_hash": "FAKEfakeFAKE"
+          }
+        },
+        {
+          "client_id": "FAKEfakeFAKE",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "FAKEfakeFAKE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "FAKEfakeFAKE",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

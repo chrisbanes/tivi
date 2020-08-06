@@ -17,6 +17,8 @@
 
 import app.tivi.buildsrc.Libs
 
+import java.nio.file.Files
+
 plugins {
     id 'com.android.application'
     id 'dagger.hilt.android.plugin'
@@ -242,7 +244,11 @@ android.applicationVariants.all { variant ->
     }
 }
 
-if (file("google-services.json").exists()) {
-    apply plugin: 'com.google.gms.google-services'
-    apply plugin: 'com.google.firebase.crashlytics'
+def googleServices = file("google-services.json")
+if (!googleServices.exists()) {
+    // If there isn't a google-services.json available, we'll copy our fake version to the
+    // google-services.json
+    Files.copy(file("fake-google-services.json").toPath(), googleServices.toPath())
 }
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
