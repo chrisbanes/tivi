@@ -28,7 +28,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
-import app.tivi.common.compose.observeWindowInsets
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.viewModelProviderFactoryOf
 import app.tivi.util.TiviDateFormatter
@@ -70,7 +69,6 @@ class ShowDetailsFragment : Fragment() {
 
             composeShowDetails(
                 viewModel.liveData,
-                observeWindowInsets(),
                 { pendingActions.offer(it) },
                 tiviDateFormatter,
                 textCreator
