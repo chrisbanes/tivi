@@ -106,6 +106,7 @@ import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.offset
 import app.tivi.common.compose.onSizeChanged
+import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.statusBarHeight
 import app.tivi.common.compose.systemBarsPadding
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
@@ -173,7 +174,7 @@ fun ShowDetails(
     val (appbar, fab, snackbar) = createRefs()
 
     val scrollState = rememberScrollState()
-    var backdropHeight by state { 0 }
+    var backdropHeight by rememberMutableState { 0 }
 
     ScrollableColumn(
         scrollState = scrollState,
@@ -826,7 +827,7 @@ private fun SeasonRow(
             }
         }
 
-        var showPopup by state { false }
+        var showPopup by rememberMutableState { false }
 
         if (showPopup) {
             SeasonRowOverflowMenu(

@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.state
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.drawWithContent
@@ -52,7 +51,7 @@ fun Modifier.gradientScrim(
         }
     }
 
-    var height by state { 0f }
+    var height by rememberMutableState { 0f }
 
     val shader = remember(colors, height) {
         VerticalGradient(

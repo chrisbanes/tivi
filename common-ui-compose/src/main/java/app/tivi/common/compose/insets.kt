@@ -77,7 +77,7 @@ val DisplayInsetsAmbient = staticAmbientOf<DisplayInsets>()
 /**
  * Setup and provide [DisplayInsets] to [DisplayInsetsAmbient].
  *
- * This will automatically listen for [WindowInsetsCompat] on the host view.
+ * This will automatically listen for [androidx.core.view.WindowInsetsCompat] on the host view.
  *
  * @param consumeInsets Whether to consume the insets which are dispatched to the host view.
  */
@@ -324,7 +324,7 @@ private inline fun Modifier.insetsPadding(
     val height = (placeable.height + vertical)
         .coerceIn(constraints.minHeight, constraints.maxHeight)
     layout(width, height) {
-        placeable.placeAbsolute(left, top)
+        placeable.place(left, top)
     }
 }
 
@@ -378,7 +378,7 @@ private data class InsetsSizeModifier(
         }
         val placeable = measurable.measure(wrappedConstraints)
         return layout(placeable.width, placeable.height) {
-            placeable.placeAbsolute(0, 0)
+            placeable.place(0, 0)
         }
     }
 
