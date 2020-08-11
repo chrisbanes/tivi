@@ -16,12 +16,13 @@
 
 package app.tivi.common.compose
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.Box
 import androidx.compose.foundation.ContentGravity
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.FloatingActionButton
@@ -32,9 +33,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ExpandableFloatingActionButton(
     text: @Composable () -> Unit,
@@ -45,8 +46,7 @@ fun ExpandableFloatingActionButton(
     backgroundColor: Color = MaterialTheme.colors.secondary,
     contentColor: Color = contentColorFor(backgroundColor),
     elevation: Dp = 6.dp,
-    expanded: Boolean = true,
-    animSpec: AnimationSpec<IntSize> = spring()
+    expanded: Boolean = true
 ) {
     FloatingActionButton(
         onClick = onClick,
@@ -54,18 +54,20 @@ fun ExpandableFloatingActionButton(
         elevation = elevation,
         contentColor = contentColor,
         shape = shape,
-        modifier = modifier.animateContentSize(animSpec = animSpec, clip = false)
+        modifier = modifier
     ) {
-        if (expanded) {
-            Row(verticalGravity = ContentGravity.CenterVertically) {
-                Spacer(Modifier.preferredWidth(20.dp))
-                icon()
-                Spacer(Modifier.preferredWidth(12.dp))
-                text()
+        Row(verticalGravity = ContentGravity.CenterVertically) {
+            AnimatedVisibility(visible = expanded) {
                 Spacer(Modifier.preferredWidth(20.dp))
             }
-        } else {
+
             icon()
+
+            AnimatedVisibility(visible = expanded) {
+                Box(Modifier.padding(start = 12.dp, end = 20.dp)) {
+                    text()
+                }
+            }
         }
     }
 }
