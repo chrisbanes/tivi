@@ -54,7 +54,7 @@ fun ExpandableFloatingActionButton(
         elevation = elevation,
         contentColor = contentColor,
         shape = shape,
-        modifier = modifier.animateContentSize(animSpec = animSpec)
+        modifier = modifier.animateContentSize(animSpec = animSpec, clip = false)
     ) {
         if (expanded) {
             Row(verticalGravity = ContentGravity.CenterVertically) {
