@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.state
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.WithConstraints
 import androidx.compose.ui.gesture.scrollorientationlocking.Orientation
@@ -53,7 +52,7 @@ fun SwipeToDismiss(
     swipeChildren: @Composable (swipeProgress: Float, wouldCompleteOnRelease: Boolean) -> Unit
 ) = Stack {
     val position = animatedFloat(initVal = 0f)
-    var progress by state { 0f }
+    var progress by rememberMutableState { 0f }
 
     Box(modifier = Modifier.matchParentSize()) {
         backgroundChildren(progress, progress.absoluteValue >= swipeCompletePercentage)

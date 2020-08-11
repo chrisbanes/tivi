@@ -29,7 +29,7 @@ fun TiviAlertDialog(
     confirmText: String,
     onConfirm: () -> Unit,
     dismissText: String,
-    onDismiss: () -> Unit
+    onDismissRequest: () -> Unit
 ) {
     AlertDialog(
         title = { Text(text = title) },
@@ -40,10 +40,10 @@ fun TiviAlertDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = { onDismiss() }) {
+            TextButton(onClick = { onDismissRequest() }) {
                 Text(text = dismissText)
             }
         },
-        onCloseRequest = { onDismiss() }
+        onDismissRequest = onDismissRequest
     )
 }

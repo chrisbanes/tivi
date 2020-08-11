@@ -97,6 +97,7 @@ import app.tivi.common.compose.boundsInParent
 import app.tivi.common.compose.navigationBarHeight
 import app.tivi.common.compose.navigationBarPadding
 import app.tivi.common.compose.onPositionInParentChanged
+import app.tivi.common.compose.rememberMutableState
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
@@ -190,7 +191,7 @@ private fun EpisodeDetails(
                         Spacer(modifier = Modifier.preferredHeight(16.dp))
 
                         if (watches.isNotEmpty()) {
-                            var openDialog by state { false }
+                            var openDialog by rememberMutableState { false }
 
                             EpisodeWatchesHeader(
                                 onSweepWatchesClick = { openDialog = true }
@@ -417,7 +418,7 @@ private fun EpisodeWatchSwipeBackground(
     swipeProgress: Float,
     wouldCompleteOnRelease: Boolean = false
 ) {
-    var iconCenter by state { Offset(0f, 0f) }
+    var iconCenter by rememberMutableState { Offset(0f, 0f) }
 
     val maxRadius = remember(iconCenter) {
         hypot(iconCenter.x.toDouble(), iconCenter.y.toDouble())
@@ -466,7 +467,7 @@ private fun EpisodeWatchSwipeBackground(
             Icon(
                 asset = Icons.Default.Delete,
                 modifier = Modifier
-                    .onPositionInParentChanged { iconCenter = it.boundsInParent.center() }
+                    .onPositionInParentChanged { iconCenter = it.boundsInParent.center }
                     .padding(start = 0.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
                     .gravity(Alignment.CenterEnd)
             )
@@ -541,7 +542,7 @@ private fun RemoveAllWatchesDialog(
             onDialogClosed()
         },
         dismissText = stringResource(R.string.dialog_dismiss),
-        onDismiss = { onDialogClosed() }
+        onDismissRequest = { onDialogClosed() }
     )
 }
 

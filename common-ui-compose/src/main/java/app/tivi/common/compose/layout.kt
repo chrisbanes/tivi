@@ -18,7 +18,6 @@ package app.tivi.common.compose
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.state
 import androidx.compose.ui.LayoutModifier
 import androidx.compose.ui.Measurable
 import androidx.compose.ui.MeasureScope
@@ -26,24 +25,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.OnPositionedModifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.PxBounds
 import androidx.compose.ui.unit.toSize
 import kotlin.math.roundToInt
 
 inline val LayoutCoordinates.positionInParent: Offset
     get() = parentCoordinates?.childToLocal(this, Offset.Zero) ?: Offset.Zero
 
-inline val LayoutCoordinates.boundsInParent: PxBounds
-    get() = PxBounds(positionInParent, size.toSize())
+inline val LayoutCoordinates.boundsInParent: Rect
+    get() = Rect(positionInParent, size.toSize())
 
 fun Modifier.onSizeChanged(
     onChange: (IntSize) -> Unit
 ) = composed {
-    var lastSize by state<IntSize?> { null }
+    var lastSize by rememberMutableState<IntSize?> { null }
 
     object : OnPositionedModifier {
         override fun onPositioned(coordinates: LayoutCoordinates) {
@@ -58,7 +57,7 @@ fun Modifier.onSizeChanged(
 fun Modifier.onPositionInParentChanged(
     onChange: (LayoutCoordinates) -> Unit
 ) = composed {
-    var lastPosition by state<Offset?> { null }
+    var lastPosition by rememberMutableState<Offset?> { null }
 
     object : OnPositionedModifier {
         override fun onPositioned(coordinates: LayoutCoordinates) {
@@ -73,7 +72,7 @@ fun Modifier.onPositionInParentChanged(
 fun Modifier.onPositionInRootChanged(
     onChange: (LayoutCoordinates) -> Unit
 ) = composed {
-    var lastPosition by state<Offset?> { null }
+    var lastPosition by rememberMutableState<Offset?> { null }
 
     object : OnPositionedModifier {
         override fun onPositioned(coordinates: LayoutCoordinates) {
