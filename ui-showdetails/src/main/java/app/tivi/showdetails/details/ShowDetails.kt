@@ -15,7 +15,10 @@
  */
 
 package app.tivi.showdetails.details
+
 import android.view.ViewGroup
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Box
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.ScrollState
@@ -77,7 +80,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.state
 import androidx.compose.runtime.staticAmbientOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -724,6 +726,7 @@ private fun Seasons(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun SeasonWithEpisodesRow(
     season: Season,
@@ -754,8 +757,8 @@ private fun SeasonWithEpisodesRow(
                     )
             )
 
-            if (expanded) {
-                episodes.forEach { episodeEntry ->
+            episodes.forEach { episodeEntry ->
+                AnimatedVisibility(visible = expanded) {
                     EpisodeWithWatchesRow(
                         episodeEntry.episode,
                         episodeEntry.isWatched,
