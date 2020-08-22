@@ -65,14 +65,11 @@ import androidx.compose.material.Surface
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.Recomposer
@@ -99,6 +96,7 @@ import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandableFloatingActionButton
 import app.tivi.common.compose.ExpandingText
+import app.tivi.common.compose.IconResource
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PopupMenu
@@ -886,8 +884,8 @@ private fun EpisodeWithWatchesRow(
         ProvideEmphasis(EmphasisAmbient.current.medium) {
             var needSpacer = false
             if (hasPending) {
-                Icon(
-                    asset = Icons.Default.CloudUpload,
+                IconResource(
+                    resourceId = R.drawable.ic_cloud_upload,
                     modifier = Modifier.gravity(Alignment.CenterVertically)
                 )
                 needSpacer = true
@@ -896,10 +894,10 @@ private fun EpisodeWithWatchesRow(
                 if (needSpacer) {
                     Spacer(Modifier.preferredWidth(4.dp))
                 }
-                Icon(
-                    asset = when {
-                        onlyPendingDeletes -> Icons.Default.VisibilityOff
-                        else -> Icons.Default.Visibility
+                IconResource(
+                    resourceId = when {
+                        onlyPendingDeletes -> R.drawable.ic_visibility_off
+                        else -> R.drawable.ic_visibility
                     },
                     modifier = Modifier.gravity(Alignment.CenterVertically)
                 )

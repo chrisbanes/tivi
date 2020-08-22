@@ -30,7 +30,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.res.loadVectorResource
 
 @Composable
 fun VectorImage(
@@ -40,13 +40,16 @@ fun VectorImage(
     tintColor: Color = contentColor(),
     modifier: Modifier = Modifier.wrapContentSize(align = alignment)
 ) {
-    VectorImage(
-        vector = vectorResource(id = id),
-        alignment = alignment,
-        contentScale = contentScale,
-        tintColor = tintColor,
-        modifier = modifier
-    )
+    val deferred = loadVectorResource(id)
+    deferred.onLoadRun { asset ->
+        VectorImage(
+            vector = asset,
+            alignment = alignment,
+            contentScale = contentScale,
+            tintColor = tintColor,
+            modifier = modifier
+        )
+    }
 }
 
 @Composable

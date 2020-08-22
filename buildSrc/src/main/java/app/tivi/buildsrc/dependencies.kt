@@ -181,7 +181,6 @@ object Libs {
 
             const val ui = "androidx.compose.ui:ui:${version}"
             const val material = "androidx.compose.material:material:${version}"
-            const val iconsExtended = "androidx.compose.material:material-icons-extended:${version}"
 
             const val animation = "androidx.compose.animation:animation:${version}"
 
