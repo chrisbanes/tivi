@@ -63,6 +63,7 @@ dependencies {
     implementation project(':base-android')
     implementation project(':domain')
     implementation project(':common-ui-view')
+    implementation project(':common-ui-view')
     implementation project(':common-ui-compose')
 
     implementation Libs.AndroidX.Lifecycle.livedata
@@ -81,7 +82,6 @@ dependencies {
     implementation Libs.AndroidX.Compose.animation
     implementation Libs.AndroidX.Compose.tooling
     implementation Libs.AndroidX.Compose.livedata
-    implementation Libs.AndroidX.Compose.iconsExtended
 
     implementation Libs.Mdc.material
     implementation Libs.Mdc.composeThemeAdapter

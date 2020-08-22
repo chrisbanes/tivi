@@ -53,14 +53,10 @@ import androidx.compose.material.Snackbar
 import androidx.compose.material.Surface
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.DeleteSweep
-import androidx.compose.material.icons.filled.Publish
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.Recomposer
@@ -68,7 +64,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.state
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.drawWithContent
@@ -81,8 +76,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ConfigurationAmbient
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.ui.tooling.preview.Preview
@@ -318,7 +313,7 @@ private fun InfoPanes(episode: Episode) {
         episode.firstAired?.let { firstAired ->
             val formatter = TiviDateFormatterAmbient.current
             InfoPane(
-                icon = Icons.Default.CalendarToday,
+                icon = vectorResource(R.drawable.ic_calendar_today),
                 label = formatter.formatShortRelativeTime(firstAired),
                 modifier = Modifier.weight(1f)
             )
@@ -370,7 +365,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
                 modifier = Modifier.padding(end = 4.dp),
                 onClick = { onSweepWatchesClick() }
             ) {
-                Icon(asset = Icons.Default.DeleteSweep)
+                Icon(vectorResource(R.drawable.ic_delete_sweep))
             }
         }
     }
@@ -395,14 +390,14 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
             ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
                 if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
                     Icon(
-                        asset = Icons.Filled.Publish,
+                        asset = vectorResource(R.drawable.ic_publish),
                         modifier = Modifier.padding(start = 8.dp).gravity(Alignment.CenterVertically)
                     )
                 }
 
                 if (episodeWatchEntry.pendingAction == PendingAction.DELETE) {
                     Icon(
-                        asset = Icons.Filled.VisibilityOff,
+                        asset = vectorResource(R.drawable.ic_visibility_off),
                         modifier = Modifier.padding(start = 8.dp).gravity(Alignment.CenterVertically)
                     )
                 }

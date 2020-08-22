@@ -86,7 +86,6 @@ dependencies {
     implementation Libs.AndroidX.Compose.animation
     implementation Libs.AndroidX.Compose.tooling
     implementation Libs.AndroidX.Compose.livedata
-    implementation Libs.AndroidX.Compose.iconsExtended
 
     implementation Libs.Mdc.material
     implementation Libs.Mdc.composeThemeAdapter

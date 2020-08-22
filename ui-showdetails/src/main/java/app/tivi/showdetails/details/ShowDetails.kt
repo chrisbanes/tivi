@@ -65,14 +65,11 @@ import androidx.compose.material.Surface
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.Recomposer
@@ -91,6 +88,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -887,7 +885,7 @@ private fun EpisodeWithWatchesRow(
             var needSpacer = false
             if (hasPending) {
                 Icon(
-                    asset = Icons.Default.CloudUpload,
+                    asset = vectorResource(R.drawable.ic_cloud_upload),
                     modifier = Modifier.gravity(Alignment.CenterVertically)
                 )
                 needSpacer = true
@@ -898,8 +896,8 @@ private fun EpisodeWithWatchesRow(
                 }
                 Icon(
                     asset = when {
-                        onlyPendingDeletes -> Icons.Default.VisibilityOff
-                        else -> Icons.Default.Visibility
+                        onlyPendingDeletes -> vectorResource(R.drawable.ic_visibility_off)
+                        else -> vectorResource(R.drawable.ic_visibility)
                     },
                     modifier = Modifier.gravity(Alignment.CenterVertically)
                 )
