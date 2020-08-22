@@ -62,7 +62,7 @@ dependencies {
     implementation Libs.AndroidX.Fragment.fragment
     implementation Libs.AndroidX.Fragment.fragmentKtx
 
-    implementation Libs.Google.material
+    implementation Libs.Mdc.material
 
     implementation Libs.Hilt.library
     kapt Libs.Hilt.compiler

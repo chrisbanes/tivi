@@ -21,15 +21,16 @@ import android.content.Context
 import app.tivi.appinitializers.AppInitializer
 import coil.Coil
 import coil.ImageLoader
-import coil.ImageLoaderFactory
+import coil.annotation.ExperimentalCoilApi
 import coil.util.CoilUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
-class CoilAppInitializer @Inject constructor(
-    private val tmdbImageEntityMapper: TmdbImageEntityCoilMapper,
-    private val episodeEntityMapper: EpisodeCoilMapper,
+class CoilAppInitializer @OptIn(ExperimentalCoilApi::class)
+@Inject constructor(
+    private val tmdbImageEntityInterceptor: TmdbImageEntityCoilInterceptor,
+    private val episodeEntityInterceptor: EpisodeEntityCoilInterceptor,
     private val okHttpClient: OkHttpClient,
     @ApplicationContext private val context: Context
 ) : AppInitializer {
@@ -37,19 +38,19 @@ class CoilAppInitializer @Inject constructor(
         val coilOkHttpClient = okHttpClient.newBuilder()
             .cache(CoilUtils.createDefaultCache(context))
             .build()
-        Coil.setImageLoader(object : ImageLoaderFactory {
-            override fun newImageLoader(): ImageLoader = ImageLoader.Builder(application)
+        Coil.setImageLoader {
+            ImageLoader.Builder(application)
                 // Hardware bitmaps break with our transitions, disable them for now
                 .allowHardware(false)
                 // Since we don't use hardware bitmaps, we can pool bitmaps and use a higher
                 // ratio of memory
                 .bitmapPoolPercentage(0.5)
                 .componentRegistry {
-                    add(tmdbImageEntityMapper)
-                    add(episodeEntityMapper)
+                    add(tmdbImageEntityInterceptor)
+                    add(episodeEntityInterceptor)
                 }
                 .okHttpClient(coilOkHttpClient)
                 .build()
-        })
+        }
     }
 }

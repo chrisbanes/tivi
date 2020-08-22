@@ -61,5 +61,5 @@ dependencies {
 
     implementation Libs.Hilt.library
 
-    api Libs.Google.material
+    api Libs.Mdc.material
 }

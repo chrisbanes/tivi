@@ -18,7 +18,9 @@ package app.tivi.common.imageloading
 
 import app.tivi.data.entities.Episode
 import app.tivi.tmdb.TmdbImageUrlProvider
-import coil.map.MeasuredMapper
+import coil.annotation.ExperimentalCoilApi
+import coil.intercept.Interceptor
+import coil.request.ImageResult
 import coil.size.PixelSize
 import coil.size.Size
 import okhttp3.HttpUrl
@@ -26,13 +28,26 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import javax.inject.Inject
 import javax.inject.Provider
 
-class EpisodeCoilMapper @Inject constructor(
+@ExperimentalCoilApi
+class EpisodeEntityCoilInterceptor @Inject constructor(
     private val tmdbImageUrlProvider: Provider<TmdbImageUrlProvider>
-) : MeasuredMapper<Episode, HttpUrl> {
+) : Interceptor {
+    override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
+        val data = chain.request.data
+        val request = when {
+            data is Episode && handles(data) -> {
+                chain.request.newBuilder()
+                    .data(map(data, chain.size))
+                    .build()
+            }
+            else -> chain.request
+        }
+        return chain.proceed(request)
+    }
 
-    override fun handles(data: Episode): Boolean = data.tmdbBackdropPath != null
+    private fun handles(data: Episode): Boolean = data.tmdbBackdropPath != null
 
-    override fun map(data: Episode, size: Size): HttpUrl {
+    private fun map(data: Episode, size: Size): HttpUrl {
         val width = if (size is PixelSize) size.width else 0
         val urlProvider = tmdbImageUrlProvider.get()
         return urlProvider.getBackdropUrl(data.tmdbBackdropPath!!, width).toHttpUrl()

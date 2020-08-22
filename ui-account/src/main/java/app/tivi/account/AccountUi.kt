@@ -58,8 +58,8 @@ import app.tivi.common.compose.VectorImage
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.TiviDateFormatter
+import com.google.android.material.composethemeadapter.MdcTheme
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
-import dev.chrisbanes.accompanist.mdctheme.MaterialThemeFromMdcTheme
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
 
@@ -69,7 +69,7 @@ fun composeAccountUi(
     actioner: (AccountUiAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter
 ): Any = viewGroup.setContent(Recomposer.current()) {
-    MaterialThemeFromMdcTheme {
+    MdcTheme {
         Providers(TiviDateFormatterAmbient provides tiviDateFormatter) {
             ProvideDisplayInsets {
                 val viewState by state.observeAsState()

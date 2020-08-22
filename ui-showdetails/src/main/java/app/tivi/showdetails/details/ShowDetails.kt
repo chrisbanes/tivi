@@ -24,9 +24,9 @@ import androidx.compose.foundation.Icon
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.contentColor
-import androidx.compose.foundation.drawBorder
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ConstraintLayout
@@ -97,9 +97,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
-import app.tivi.common.compose.DisplayInsetsAmbient
 import app.tivi.common.compose.ExpandableFloatingActionButton
 import app.tivi.common.compose.ExpandingText
+import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PopupMenu
 import app.tivi.common.compose.PopupMenuItem
@@ -109,7 +109,7 @@ import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.offset
 import app.tivi.common.compose.onSizeChanged
 import app.tivi.common.compose.rememberMutableState
-import app.tivi.common.compose.statusBarHeight
+import app.tivi.common.compose.statusBarsHeight
 import app.tivi.common.compose.systemBarsPadding
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
@@ -131,10 +131,10 @@ import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.ui.animations.lerp
 import app.tivi.util.TiviDateFormatter
-import coil.request.GetRequest
+import coil.request.ImageRequest
+import com.google.android.material.composethemeadapter.MdcTheme
 import dev.chrisbanes.accompanist.coil.CoilImage
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
-import dev.chrisbanes.accompanist.mdctheme.MaterialThemeFromMdcTheme
 import org.threeten.bp.OffsetDateTime
 
 val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
@@ -149,8 +149,8 @@ fun ViewGroup.composeShowDetails(
         TiviDateFormatterAmbient provides tiviDateFormatter,
         ShowDetailsTextCreatorAmbient provides textCreator
     ) {
-        MaterialThemeFromMdcTheme {
-            LogCompositions("MaterialThemeFromMdcTheme")
+        MdcTheme {
+            LogCompositions("MdcTheme")
 
             ProvideDisplayInsets {
                 LogCompositions("ProvideInsets")
@@ -199,7 +199,7 @@ fun ShowDetails(
     }
 
     OverlaidStatusBarAppBar(
-        scrollState = scrollState.value,
+        scrollPosition = scrollState.value,
         backdropHeight = backdropHeight,
         appBar = {
             ShowDetailsAppBar(
@@ -380,30 +380,30 @@ private fun ShowDetailsScrollingContent(
 
 @Composable
 private fun OverlaidStatusBarAppBar(
-    scrollState: Float,
+    scrollPosition: Float,
     backdropHeight: Int,
     modifier: Modifier = Modifier,
     appBar: @Composable () -> Unit
 ) {
     LogCompositions("OverlaidStatusBarAppBar")
 
-    val insets = DisplayInsetsAmbient.current
+    val insets = InsetsAmbient.current
     val trigger = (backdropHeight - insets.systemBars.top).coerceAtLeast(0)
 
     val alpha = lerp(
         startValue = 0.5f,
         endValue = 1f,
-        fraction = if (trigger > 0) (scrollState / trigger).coerceIn(0f, 1f) else 0f
+        fraction = if (trigger > 0) (scrollPosition / trigger).coerceIn(0f, 1f) else 0f
     )
 
     Surface(
         color = MaterialTheme.colors.surface.copy(alpha = alpha),
-        elevation = if (scrollState >= trigger) 2.dp else 0.dp,
+        elevation = if (scrollPosition >= trigger) 2.dp else 0.dp,
         modifier = modifier
     ) {
         Column(Modifier.fillMaxWidth()) {
-            Spacer(Modifier.statusBarHeight())
-            if (scrollState >= trigger) {
+            Spacer(Modifier.statusBarsHeight())
+            if (scrollPosition >= trigger) {
                 appBar()
             }
         }
@@ -430,7 +430,7 @@ private fun NetworkInfoPanel(
             }
 
             CoilImage(
-                request = GetRequest.Builder(ContextAmbient.current)
+                request = ImageRequest.Builder(ContextAmbient.current)
                     .data(tmdbImage)
                     .transformations(TrimTransparentEdgesTransformation)
                     .build(),
@@ -505,8 +505,8 @@ private fun CertificateInfoPanel(
         Text(
             text = certification,
             style = MaterialTheme.typography.body2,
-            modifier = Modifier.drawBorder(
-                size = 1.dp,
+            modifier = Modifier.border(
+                width = 1.dp,
                 color = MaterialTheme.colors.onSurface,
                 shape = RoundedCornerShape(2.dp)
             ).padding(horizontal = 4.dp, vertical = 2.dp)

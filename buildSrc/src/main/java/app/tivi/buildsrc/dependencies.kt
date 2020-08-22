@@ -44,8 +44,7 @@ object Libs {
 
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.4"
 
-    // Move back to Store when alpha07 is out
-    const val store = "com.dropbox.mobile.store:store4:4.0.0-SNAPSHOT"
+    const val store = "com.dropbox.mobile.store:store4:4.0.0-alpha07"
 
     object Insetter {
         private const val version = "0.3.1"
@@ -54,13 +53,17 @@ object Libs {
     }
 
     object Accompanist {
-        private const val version = "0.1.8.ui-${AndroidX.Compose.snapshot}-SNAPSHOT"
+        private const val version = "0.1.10.ui-${AndroidX.Compose.snapshot}-SNAPSHOT"
         const val mdcTheme = "dev.chrisbanes.accompanist:accompanist-mdc-theme:$version"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
     }
 
-    object Google {
+    object Mdc {
         const val material = "com.google.android.material:material:1.1.0"
+        const val composeThemeAdapter = "com.google.android.material:compose-theme-adapter:0.1.0-dev17"
+    }
+
+    object Google {
         const val firebaseCore = "com.google.firebase:firebase-core:17.4.3"
 
         const val crashlytics = "com.google.firebase:firebase-crashlytics:17.0.1"
@@ -73,14 +76,14 @@ object Libs {
     }
 
     object Kotlin {
-        private const val version = "1.4.0-rc"
+        private const val version = "1.4.0"
         const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
         const val extensions = "org.jetbrains.kotlin:kotlin-android-extensions:$version"
     }
 
     object Coroutines {
-        private const val version = "1.3.8-1.4.0-rc"
+        private const val version = "1.3.9"
         const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
         const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
         const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$version"
@@ -133,7 +136,7 @@ object Libs {
 
         const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.0-rc1"
 
-        const val coreKtx = "androidx.core:core-ktx:1.3.1"
+        const val coreKtx = "androidx.core:core-ktx:1.5.0-alpha02"
 
         object Lifecycle {
             private const val version = "2.3.0-alpha06"
@@ -157,8 +160,8 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = "6752477"
-            const val version = "0.1.0-SNAPSHOT"
+            const val snapshot = "6765009"
+            const val version = "1.0.0-SNAPSHOT"
 
             @get:JvmStatic
             val snapshotUrl: String
@@ -223,7 +226,7 @@ object Libs {
     }
 
     object Coil {
-        private const val version = "0.11.0"
+        private const val version = "1.0.0-rc1"
         const val coil = "io.coil-kt:coil:$version"
     }
 
