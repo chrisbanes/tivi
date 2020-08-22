@@ -24,7 +24,6 @@ import androidx.core.net.toUri
 import androidx.core.view.marginBottom
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import app.tivi.FragmentWithBinding
 import app.tivi.data.entities.TiviShow

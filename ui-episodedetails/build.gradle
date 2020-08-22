@@ -83,10 +83,10 @@ dependencies {
     implementation Libs.AndroidX.Compose.livedata
     implementation Libs.AndroidX.Compose.iconsExtended
 
-    implementation Libs.Accompanist.mdcTheme
-    implementation Libs.Accompanist.coil
+    implementation Libs.Mdc.material
+    implementation Libs.Mdc.composeThemeAdapter
 
-    implementation Libs.Google.material
+    implementation Libs.Accompanist.coil
 
     implementation Libs.Kotlin.stdlib
 

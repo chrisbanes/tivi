@@ -22,7 +22,7 @@ import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TmdbImageEntity
 import coil.annotation.ExperimentalCoilApi
-import coil.api.loadAny
+import coil.loadAny
 import coil.transform.RoundedCornersTransformation
 import coil.transform.Transformation
 

@@ -73,7 +73,7 @@ dependencies {
     implementation Libs.AndroidX.Navigation.fragment
     implementation Libs.AndroidX.Navigation.ui
 
-    implementation Libs.Google.material
+    implementation Libs.Mdc.material
 
     implementation Libs.Hilt.library
     kapt Libs.Hilt.compiler

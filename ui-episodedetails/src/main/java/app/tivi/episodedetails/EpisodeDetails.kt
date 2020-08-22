@@ -94,8 +94,8 @@ import app.tivi.common.compose.SwipeToDismiss
 import app.tivi.common.compose.TiviAlertDialog
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.boundsInParent
-import app.tivi.common.compose.navigationBarHeight
-import app.tivi.common.compose.navigationBarPadding
+import app.tivi.common.compose.navigationBarsHeight
+import app.tivi.common.compose.navigationBarsPadding
 import app.tivi.common.compose.onPositionInParentChanged
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.data.entities.Episode
@@ -104,8 +104,8 @@ import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.ui.animations.lerp
 import app.tivi.util.TiviDateFormatter
+import com.google.android.material.composethemeadapter.MdcTheme
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
-import dev.chrisbanes.accompanist.mdctheme.MaterialThemeFromMdcTheme
 import org.threeten.bp.OffsetDateTime
 import kotlin.math.hypot
 
@@ -121,7 +121,7 @@ fun ViewGroup.composeEpisodeDetails(
     actioner: (EpisodeDetailsAction) -> Unit,
     tiviDateFormatter: TiviDateFormatter
 ): Any = setContent(Recomposer.current()) {
-    MaterialThemeFromMdcTheme {
+    MdcTheme {
         Providers(TiviDateFormatterAmbient provides tiviDateFormatter) {
             ProvideDisplayInsets {
                 val viewState by state.observeAsState()
@@ -222,7 +222,7 @@ private fun EpisodeDetails(
                         }
 
                         Spacer(Modifier.preferredHeight(8.dp))
-                        Spacer(Modifier.navigationBarHeight())
+                        Spacer(Modifier.navigationBarsHeight())
                     }
                 }
             }
@@ -231,7 +231,7 @@ private fun EpisodeDetails(
         Column(
             modifier = Modifier.fillMaxWidth()
                 .gravity(Alignment.BottomCenter)
-                .navigationBarPadding()
+                .navigationBarsPadding()
         ) {
             Crossfade(current = viewState.error) { error ->
                 if (error != null) {

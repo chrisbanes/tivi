@@ -26,7 +26,6 @@ import androidx.core.net.toUri
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import app.tivi.FragmentWithBinding
 import app.tivi.common.imageloading.loadImageUrl

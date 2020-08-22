@@ -21,7 +21,9 @@ import app.tivi.data.entities.TmdbImageEntity
 import app.tivi.tmdb.TmdbImageUrlProvider
 import app.tivi.util.PowerController
 import app.tivi.util.SaveData
-import coil.map.MeasuredMapper
+import coil.annotation.ExperimentalCoilApi
+import coil.intercept.Interceptor
+import coil.request.ImageResult
 import coil.size.PixelSize
 import coil.size.Size
 import okhttp3.HttpUrl
@@ -29,14 +31,24 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import javax.inject.Inject
 import javax.inject.Provider
 
-class TmdbImageEntityCoilMapper @Inject constructor(
+@ExperimentalCoilApi
+class TmdbImageEntityCoilInterceptor @Inject constructor(
     private val tmdbImageUrlProvider: Provider<TmdbImageUrlProvider>,
     private val powerController: PowerController
-) : MeasuredMapper<TmdbImageEntity, HttpUrl> {
+) : Interceptor {
+    override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
+        val request = when (val data = chain.request.data) {
+            is TmdbImageEntity -> {
+                chain.request.newBuilder()
+                    .data(map(data, chain.size))
+                    .build()
+            }
+            else -> chain.request
+        }
+        return chain.proceed(request)
+    }
 
-    override fun handles(data: TmdbImageEntity): Boolean = true
-
-    override fun map(data: TmdbImageEntity, size: Size): HttpUrl {
+    private fun map(data: TmdbImageEntity, size: Size): HttpUrl {
         val width = if (size is PixelSize) {
             when (powerController.shouldSaveData()) {
                 is SaveData.Disabled -> size.width

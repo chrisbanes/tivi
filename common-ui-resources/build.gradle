@@ -48,7 +48,7 @@ dependencies {
     implementation Libs.AndroidX.Lifecycle.viewmodel
 
     api Libs.AndroidX.appcompat
-    api Libs.Google.material
+    api Libs.Mdc.material
 
     implementation Libs.AndroidX.recyclerview
     implementation Libs.AndroidX.constraintlayout

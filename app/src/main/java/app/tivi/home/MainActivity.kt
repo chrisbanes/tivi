@@ -19,7 +19,6 @@ package app.tivi.home
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import app.tivi.AppNavigator
 import app.tivi.R

@@ -59,9 +59,7 @@ dependencies {
     implementation Libs.AndroidX.Compose.tooling
     implementation Libs.AndroidX.Compose.livedata
 
-    implementation Libs.Google.material
+    implementation Libs.Mdc.material
 
     implementation Libs.Kotlin.stdlib
-
-
 }

@@ -20,9 +20,9 @@ import app.tivi.buildsrc.Versions
 
 buildscript {
     ext.buildConfig = [
-            'compileSdk': 29,
+            'compileSdk': 30,
             'minSdk'    : 23,
-            'targetSdk' : 29,
+            'targetSdk' : 30,
     ]
 
     repositories {
@@ -113,6 +113,8 @@ subprojects {
             freeCompilerArgs += "-Xopt-in=kotlin.Experimental"
 
             freeCompilerArgs += "-Xallow-jvm-ir-dependencies"
+
+            freeCompilerArgs += "-Xjvm-default=all"
 
             // Set JVM target to 1.8
             jvmTarget = "1.8"
