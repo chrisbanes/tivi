@@ -36,7 +36,13 @@ object Libs {
     const val tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.2.0"
     const val traktJava = "com.uwetrottmann.trakt5:trakt-java:6.6.0"
 
-    const val appauth = "net.openid:appauth:0.7.1"
+    /**
+     * Using Jitpack until AndroidX migration is out.
+     * See https://github.com/openid/AppAuth-Android/pull/508
+     *
+     * https://jitpack.io/#openid/AppAuth-Android
+     */
+    const val appauth = "com.github.openid:AppAuth-Android:master-SNAPSHOT"
 
     const val junit = "junit:junit:4.13"
     const val robolectric = "org.robolectric:robolectric:4.3.1"
@@ -237,8 +243,11 @@ object Libs {
     }
 
     object Roomigrant {
-        private const val version = "0.1.7"
-        const val library = "com.github.MatrixDev.Roomigrant:RoomigrantLib:$version"
-        const val compiler = "com.github.MatrixDev.Roomigrant:RoomigrantCompiler:$version"
+        /**
+         * We use a fork which has been migrated to AndroidX Room
+         */
+        private const val version = "master-SNAPSHOT"
+        const val library = "com.github.chrisbanes.Roomigrant:RoomigrantLib:$version"
+        const val compiler = "com.github.chrisbanes.Roomigrant:RoomigrantCompiler:$version"
     }
 }
