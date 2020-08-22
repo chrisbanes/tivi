@@ -63,7 +63,6 @@ dependencies {
     implementation project(':base-android')
     implementation project(':domain')
     implementation project(':common-ui-view')
-    implementation project(':common-ui-view')
     implementation project(':common-ui-compose')
 
     implementation Libs.AndroidX.Lifecycle.livedata
