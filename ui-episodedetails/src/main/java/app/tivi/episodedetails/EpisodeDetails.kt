@@ -75,14 +75,15 @@ import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ConfigurationAmbient
 import androidx.compose.ui.platform.setContent
+import androidx.compose.ui.res.loadVectorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
+import app.tivi.common.compose.IconResource
 import app.tivi.common.compose.ProvideDisplayInsets
 import app.tivi.common.compose.SwipeDirection
 import app.tivi.common.compose.SwipeToDismiss
@@ -91,6 +92,7 @@ import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.boundsInParent
 import app.tivi.common.compose.navigationBarsHeight
 import app.tivi.common.compose.navigationBarsPadding
+import app.tivi.common.compose.onLoadRun
 import app.tivi.common.compose.onPositionInParentChanged
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.data.entities.Episode
@@ -312,11 +314,14 @@ private fun InfoPanes(episode: Episode) {
 
         episode.firstAired?.let { firstAired ->
             val formatter = TiviDateFormatterAmbient.current
-            InfoPane(
-                icon = vectorResource(R.drawable.ic_calendar_today),
-                label = formatter.formatShortRelativeTime(firstAired),
-                modifier = Modifier.weight(1f)
-            )
+            val deferredIcon = loadVectorResource(id = R.drawable.ic_calendar_today)
+            deferredIcon.onLoadRun { asset ->
+                InfoPane(
+                    icon = asset,
+                    label = formatter.formatShortRelativeTime(firstAired),
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 }
@@ -365,7 +370,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
                 modifier = Modifier.padding(end = 4.dp),
                 onClick = { onSweepWatchesClick() }
             ) {
-                Icon(vectorResource(R.drawable.ic_delete_sweep))
+                IconResource(R.drawable.ic_delete_sweep)
             }
         }
     }
@@ -389,16 +394,20 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
 
             ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
                 if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
-                    Icon(
-                        asset = vectorResource(R.drawable.ic_publish),
-                        modifier = Modifier.padding(start = 8.dp).gravity(Alignment.CenterVertically)
+                    IconResource(
+                        resourceId = R.drawable.ic_publish,
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .gravity(Alignment.CenterVertically)
                     )
                 }
 
                 if (episodeWatchEntry.pendingAction == PendingAction.DELETE) {
-                    Icon(
-                        asset = vectorResource(R.drawable.ic_visibility_off),
-                        modifier = Modifier.padding(start = 8.dp).gravity(Alignment.CenterVertically)
+                    IconResource(
+                        resourceId = R.drawable.ic_visibility_off,
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .gravity(Alignment.CenterVertically)
                     )
                 }
             }

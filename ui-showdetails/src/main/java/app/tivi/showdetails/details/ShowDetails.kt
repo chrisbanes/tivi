@@ -88,7 +88,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -97,6 +96,7 @@ import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandableFloatingActionButton
 import app.tivi.common.compose.ExpandingText
+import app.tivi.common.compose.IconResource
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PopupMenu
@@ -884,8 +884,8 @@ private fun EpisodeWithWatchesRow(
         ProvideEmphasis(EmphasisAmbient.current.medium) {
             var needSpacer = false
             if (hasPending) {
-                Icon(
-                    asset = vectorResource(R.drawable.ic_cloud_upload),
+                IconResource(
+                    resourceId = R.drawable.ic_cloud_upload,
                     modifier = Modifier.gravity(Alignment.CenterVertically)
                 )
                 needSpacer = true
@@ -894,10 +894,10 @@ private fun EpisodeWithWatchesRow(
                 if (needSpacer) {
                     Spacer(Modifier.preferredWidth(4.dp))
                 }
-                Icon(
-                    asset = when {
-                        onlyPendingDeletes -> vectorResource(R.drawable.ic_visibility_off)
-                        else -> vectorResource(R.drawable.ic_visibility)
+                IconResource(
+                    resourceId = when {
+                        onlyPendingDeletes -> R.drawable.ic_visibility_off
+                        else -> R.drawable.ic_visibility
                     },
                     modifier = Modifier.gravity(Alignment.CenterVertically)
                 )
