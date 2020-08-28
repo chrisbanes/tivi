@@ -9,7 +9,7 @@ Tivi is a **work-in-progress** TV show tracking Android app, which connects to
 
 ## Android development
 
-Tivi is an app which attempts to use the latest cutting edge libraries and tools. As a summary:
+Tivi is an app that attempts to use the latest cutting edge libraries and tools. As a summary:
 
  * Entirely written in [Kotlin](https://kotlinlang.org/)
  * Uses [Kotlin Coroutines](https://kotlinlang.org/docs/reference/coroutines/coroutines-guide.html) throughout.
@@ -19,7 +19,7 @@ Tivi is an app which attempts to use the latest cutting edge libraries and tools
 
 ## Development setup
 
-First off, you require the latest Android Studio 4.2 Canary to be able to build the app. This is because the project contians some pieces of UI which are written in [Jetpack Compose](https://developer.android.com/jetpack/compose) (more on that below).
+First off, you require the latest Android Studio 4.2 Canary to be able to build the app. This is because the project contains some pieces of UI which are written in [Jetpack Compose](https://developer.android.com/jetpack/compose) (more on that below).
 
 ### Code style
 
@@ -74,7 +74,7 @@ As mentioned above, this project is slowly being migrated away from views to [Je
 
 If you've found an error in this sample, please file an issue.
 
-Patches are encouraged, and may be submitted by forking this project and
+Patches are encouraged and may be submitted by forking this project and
 submitting a pull request. Since this project is still in its very early stages,
 if your change is substantial, please raise an issue first to discuss it.
 
