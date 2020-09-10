@@ -21,7 +21,7 @@ object Versions {
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:4.2.0-alpha07"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:4.2.0-alpha10"
 
     const val gradlePlayPublisher = "com.github.triplet.gradle:play-publisher:3.0.0-SNAPSHOT"
 
@@ -59,14 +59,13 @@ object Libs {
     }
 
     object Accompanist {
-        private const val version = "0.1.10.ui-${AndroidX.Compose.snapshot}-SNAPSHOT"
-        const val mdcTheme = "dev.chrisbanes.accompanist:accompanist-mdc-theme:$version"
+        private const val version = "0.2.0"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
     }
 
     object Mdc {
         const val material = "com.google.android.material:material:1.1.0"
-        const val composeThemeAdapter = "com.google.android.material:compose-theme-adapter:0.1.0-dev17"
+        const val composeThemeAdapter = "com.google.android.material:compose-theme-adapter:1.0.0-alpha01"
     }
 
     object Google {
@@ -166,26 +165,26 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = "6765009"
-            const val version = "1.0.0-SNAPSHOT"
+            const val snapshot = ""
+            const val version = "1.0.0-alpha01"
 
             @get:JvmStatic
             val snapshotUrl: String
                 get() = "https://androidx.dev/snapshots/builds/$snapshot/artifacts/ui/repository/"
 
             const val runtime = "androidx.compose.runtime:runtime:$version"
-            const val livedata = "androidx.compose.runtime:runtime-livedata:${version}"
+            const val livedata = "androidx.compose.runtime:runtime-livedata:$version"
 
-            const val foundation = "androidx.compose.foundation:foundation:${version}"
-            const val layout = "androidx.compose.foundation:foundation-layout:${version}"
+            const val foundation = "androidx.compose.foundation:foundation:$version"
+            const val layout = "androidx.compose.foundation:foundation-layout:$version"
 
-            const val ui = "androidx.compose.ui:ui:${version}"
-            const val material = "androidx.compose.material:material:${version}"
+            const val ui = "androidx.compose.ui:ui:$version"
+            const val material = "androidx.compose.material:material:$version"
 
-            const val animation = "androidx.compose.animation:animation:${version}"
+            const val animation = "androidx.compose.animation:animation:$version"
 
-            const val tooling = "androidx.ui:ui-tooling:${version}"
-            const val test = "androidx.ui:ui-test:${version}"
+            const val tooling = "androidx.ui:ui-tooling:$version"
+            const val test = "androidx.ui:ui-test:$version"
         }
 
         object Hilt {

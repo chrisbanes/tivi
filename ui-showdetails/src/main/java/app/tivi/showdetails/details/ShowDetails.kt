@@ -104,6 +104,7 @@ import app.tivi.common.compose.PopupMenuItem
 import app.tivi.common.compose.ProvideDisplayInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
+import app.tivi.common.compose.navigationBarsPadding
 import app.tivi.common.compose.offset
 import app.tivi.common.compose.onSizeChanged
 import app.tivi.common.compose.rememberMutableState
@@ -236,7 +237,7 @@ fun ShowDetails(
         onClick = { actioner(FollowShowToggleAction) },
         modifier = Modifier
             .padding(16.dp)
-            .systemBarsPadding()
+            .navigationBarsPadding(bottom = false)
             .constrainAs(fab) {
                 end.linkTo(parent.end)
                 bottom.linkTo(parent.bottom)
