@@ -21,9 +21,9 @@ object Versions {
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:4.2.0-alpha07"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:4.2.0-alpha10"
 
-    const val gradlePlayPublisher = "com.github.triplet.gradle:play-publisher:3.0.0-SNAPSHOT"
+    const val gradlePlayPublisher = "com.github.triplet.gradle:play-publisher:3.0.0"
 
     const val threeTenBp = "org.threeten:threetenbp:1.4.4"
     const val threeTenBpNoTzdb = "$threeTenBp:no-tzdb"
@@ -59,21 +59,20 @@ object Libs {
     }
 
     object Accompanist {
-        private const val version = "0.1.10.ui-${AndroidX.Compose.snapshot}-SNAPSHOT"
-        const val mdcTheme = "dev.chrisbanes.accompanist:accompanist-mdc-theme:$version"
+        private const val version = "0.2.0"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
     }
 
     object Mdc {
         const val material = "com.google.android.material:material:1.1.0"
-        const val composeThemeAdapter = "com.google.android.material:compose-theme-adapter:0.1.0-dev17"
+        const val composeThemeAdapter = "com.google.android.material:compose-theme-adapter:1.0.0-alpha01"
     }
 
     object Google {
-        const val firebaseCore = "com.google.firebase:firebase-core:17.4.3"
+        const val firebaseCore = "com.google.firebase:firebase-core:17.5.0"
 
-        const val crashlytics = "com.google.firebase:firebase-crashlytics:17.0.1"
-        const val crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.1.1"
+        const val crashlytics = "com.google.firebase:firebase-crashlytics:17.2.1"
+        const val crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.2.1"
 
         const val gmsGoogleServices = "com.google.gms:google-services:4.3.3"
 
@@ -96,13 +95,13 @@ object Libs {
     }
 
     object AndroidX {
-        const val appcompat = "androidx.appcompat:appcompat:1.3.0-alpha01"
+        const val appcompat = "androidx.appcompat:appcompat:1.3.0-alpha02"
         const val browser = "androidx.browser:browser:1.0.0"
         const val collection = "androidx.collection:collection-ktx:1.1.0"
         const val palette = "androidx.palette:palette:1.0.0"
         const val recyclerview = "androidx.recyclerview:recyclerview:1.2.0-alpha05"
         const val emoji = "androidx.emoji:emoji:1.1.0"
-        const val swiperefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-rc01"
+        const val swiperefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
         object Navigation {
             private const val version = "2.3.0"
@@ -123,7 +122,7 @@ object Libs {
             const val rules = "androidx.test:rules:$version"
 
             object Ext {
-                private const val version = "1.1.2-rc01"
+                private const val version = "1.1.2"
                 const val junit = "androidx.test.ext:junit-ktx:$version"
             }
 
@@ -140,7 +139,7 @@ object Libs {
 
         const val preference = "androidx.preference:preference:1.1.1"
 
-        const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.0-rc1"
+        const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.1"
 
         const val coreKtx = "androidx.core:core-ktx:1.5.0-alpha02"
 
@@ -166,26 +165,26 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = "6765009"
-            const val version = "1.0.0-SNAPSHOT"
+            const val snapshot = ""
+            const val version = "1.0.0-alpha01"
 
             @get:JvmStatic
             val snapshotUrl: String
                 get() = "https://androidx.dev/snapshots/builds/$snapshot/artifacts/ui/repository/"
 
             const val runtime = "androidx.compose.runtime:runtime:$version"
-            const val livedata = "androidx.compose.runtime:runtime-livedata:${version}"
+            const val livedata = "androidx.compose.runtime:runtime-livedata:$version"
 
-            const val foundation = "androidx.compose.foundation:foundation:${version}"
-            const val layout = "androidx.compose.foundation:foundation-layout:${version}"
+            const val foundation = "androidx.compose.foundation:foundation:$version"
+            const val layout = "androidx.compose.foundation:foundation-layout:$version"
 
-            const val ui = "androidx.compose.ui:ui:${version}"
-            const val material = "androidx.compose.material:material:${version}"
+            const val ui = "androidx.compose.ui:ui:$version"
+            const val material = "androidx.compose.material:material:$version"
 
-            const val animation = "androidx.compose.animation:animation:${version}"
+            const val animation = "androidx.compose.animation:animation:$version"
 
-            const val tooling = "androidx.ui:ui-tooling:${version}"
-            const val test = "androidx.ui:ui-test:${version}"
+            const val tooling = "androidx.ui:ui-tooling:$version"
+            const val test = "androidx.ui:ui-test:$version"
         }
 
         object Hilt {
@@ -197,13 +196,13 @@ object Libs {
     }
 
     object Dagger {
-        private const val version = "2.28.3"
+        private const val version = "2.29"
         const val dagger = "com.google.dagger:dagger:$version"
         const val compiler = "com.google.dagger:dagger-compiler:$version"
     }
 
     object Hilt {
-        private const val version = "2.28.3-alpha"
+        private const val version = "2.29-alpha"
         const val library = "com.google.dagger:hilt-android:$version"
         const val compiler = "com.google.dagger:hilt-android-compiler:$version"
         const val testing = "com.google.dagger:hilt-android-testing:$version"
@@ -217,13 +216,13 @@ object Libs {
     }
 
     object OkHttp {
-        private const val version = "4.8.0"
+        private const val version = "4.8.1"
         const val okhttp = "com.squareup.okhttp3:okhttp:$version"
         const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$version"
     }
 
     object Epoxy {
-        private const val version = "4.0.0-beta6"
+        private const val version = "4.0.0"
         const val epoxy = "com.airbnb.android:epoxy:$version"
         const val paging = "com.airbnb.android:epoxy-paging:$version"
         const val dataBinding = "com.airbnb.android:epoxy-databinding:$version"
