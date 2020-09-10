@@ -109,7 +109,6 @@ import app.tivi.common.compose.offset
 import app.tivi.common.compose.onSizeChanged
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.statusBarsHeight
-import app.tivi.common.compose.systemBarsPadding
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
