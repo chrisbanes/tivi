@@ -33,6 +33,9 @@ import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectInto
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -55,6 +58,8 @@ internal class DiscoverViewModel @ViewModelInject constructor(
     private val trendingLoadingState = ObservableLoadingCounter()
     private val popularLoadingState = ObservableLoadingCounter()
     private val recommendedLoadingState = ObservableLoadingCounter()
+
+    private val pendingActions = Channel<DiscoverAction>(Channel.BUFFERED)
 
     init {
         viewModelScope.launch {
@@ -113,6 +118,14 @@ internal class DiscoverViewModel @ViewModelInject constructor(
         }
         observeUserDetails(ObserveUserDetails.Params("me"))
 
+        viewModelScope.launch {
+            pendingActions.consumeAsFlow().collect { action ->
+                when (action) {
+                    RefreshAction -> refresh(true)
+                }
+            }
+        }
+
         refresh(false)
     }
 
@@ -130,6 +143,12 @@ internal class DiscoverViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             updateRecommendedShows(UpdateRecommendedShows.Params(UpdateRecommendedShows.Page.REFRESH, fromUser))
                 .collectInto(recommendedLoadingState)
+        }
+    }
+
+    fun submitAction(action: DiscoverAction) {
+        viewModelScope.launch {
+            if (!pendingActions.isClosedForSend) pendingActions.send(action)
         }
     }
 }

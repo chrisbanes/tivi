@@ -17,10 +17,13 @@
 package app.tivi.home.discover
 
 import android.content.Context
+import androidx.compose.runtime.staticAmbientOf
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import dagger.hilt.android.qualifiers.ActivityContext
 import javax.inject.Inject
+
+internal val DiscoverTextCreatorAmbient = staticAmbientOf<DiscoverTextCreator>()
 
 internal class DiscoverTextCreator @Inject constructor(
     @ActivityContext private val context: Context
