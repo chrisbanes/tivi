@@ -114,6 +114,7 @@ import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
 import app.tivi.data.entities.ImageType
 import app.tivi.data.entities.Season
+import app.tivi.data.entities.ShowStatus
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TmdbImageEntity
@@ -467,6 +468,27 @@ private fun RuntimeInfoPanel(
 }
 
 @Composable
+private fun ShowStatusPanel(
+    showStatus: ShowStatus,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier) {
+        Text(
+            text = stringResource(R.string.status_title),
+            style = MaterialTheme.typography.subtitle2
+        )
+
+        Spacer(Modifier.preferredHeight(4.dp))
+
+        val textCreator = ShowDetailsTextCreatorAmbient.current
+        Text(
+            text = textCreator.showStatusText(showStatus).toString(),
+            style = MaterialTheme.typography.body2
+        )
+    }
+}
+
+@Composable
 private fun AirsInfoPanel(
     show: TiviShow,
     modifier: Modifier = Modifier
@@ -665,6 +687,9 @@ private fun InfoPanels(show: TiviShow) {
             }
             if (show.network != null) {
                 NetworkInfoPanel(show.network!!, show.networkLogoPath)
+            }
+            if (show.status != null) {
+                ShowStatusPanel(show.status!!)
             }
             if (show.certification != null) {
                 CertificateInfoPanel(show.certification!!)
