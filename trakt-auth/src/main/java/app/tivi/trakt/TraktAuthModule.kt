@@ -65,7 +65,10 @@ object TraktAuthModule {
             clientId,
             ResponseTypeValues.CODE,
             redirectUri.toUri()
-        ).build()
+        ).apply {
+            // Disable PKCE since Trakt does not support it
+            setCodeVerifier(null)
+        }.build()
     }
 
     @Singleton
