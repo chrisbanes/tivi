@@ -21,6 +21,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -69,11 +70,14 @@ class DiscoverFragment : Fragment() {
         scheduleStartPostponedTransitions()
 
         lifecycleScope.launch {
-            pendingActions.consumeAsFlow().collect {
-                when (it) {
+            pendingActions.consumeAsFlow().collect { action ->
+                when (action) {
                     LoginAction,
                     OpenUserDetails -> findNavController().navigate(R.id.navigation_account)
-                    else -> viewModel.submitAction(it)
+                    is OpenShowDetails -> {
+                        findNavController().navigate("app.tivi://show/${action.showId}".toUri())
+                    }
+                    else -> viewModel.submitAction(action)
                 }
             }
         }

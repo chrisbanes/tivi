@@ -45,6 +45,7 @@ android {
 
 dependencies {
     implementation project(':base-android')
+    implementation project(':data')
     api project(':common-imageloading')
 
     implementation Libs.AndroidX.coreKtx
@@ -62,4 +63,6 @@ dependencies {
     implementation Libs.Mdc.material
 
     implementation Libs.Kotlin.stdlib
+
+    implementation Libs.Accompanist.coil
 }
