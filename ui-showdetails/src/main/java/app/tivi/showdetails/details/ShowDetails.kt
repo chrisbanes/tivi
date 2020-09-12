@@ -36,7 +36,6 @@ import androidx.compose.foundation.layout.InnerPadding
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.SizeMode
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,10 +49,8 @@ import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.layout.preferredWidthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyRowFor
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.EmphasisAmbient
 import androidx.compose.material.IconButton
@@ -94,6 +91,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
+import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.ExpandableFloatingActionButton
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.IconResource
@@ -101,6 +99,7 @@ import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PopupMenu
 import app.tivi.common.compose.PopupMenuItem
+import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.ProvideDisplayInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
@@ -610,37 +609,21 @@ private fun RelatedShows(
 ) {
     LogCompositions("RelatedShows")
 
-    LazyRowFor(
+    Carousel(
         items = related,
-        contentPadding = InnerPadding(start = 14.dp, end = 14.dp),
+        contentPadding = InnerPadding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+        itemSpacing = 4.dp,
         modifier = modifier
-    ) { item ->
-        Card(
+    ) { item, padding ->
+        PosterCard(
+            show = item.show,
+            poster = item.poster,
+            onClick = { actioner(OpenShowDetails(item.show.id)) },
             modifier = Modifier
-                .padding(vertical = 8.dp, horizontal = 2.dp)
+                .padding(padding)
                 .fillParentMaxHeight()
                 .aspectRatio(2 / 3f)
-        ) {
-            Stack(
-                Modifier.clickable { actioner(OpenShowDetails(item.show.id)) }
-            ) {
-                ProvideEmphasis(EmphasisAmbient.current.medium) {
-                    Text(
-                        text = item.show.title ?: "No title",
-                        style = MaterialTheme.typography.caption,
-                        modifier = Modifier.padding(4.dp)
-                            .gravity(Alignment.CenterStart)
-                    )
-                }
-                val poster = item.poster
-                if (poster != null) {
-                    CoilImageWithCrossfade(
-                        poster,
-                        modifier = Modifier.matchParentSize()
-                    )
-                }
-            }
-        }
+        )
     }
 }
 
