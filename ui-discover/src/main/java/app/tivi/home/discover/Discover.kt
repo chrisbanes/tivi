@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.InnerPadding
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,18 +40,18 @@ import androidx.compose.material.EmphasisAmbient
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideEmphasis
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
-import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.emptyContent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -63,6 +64,8 @@ import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.ProvideDisplayInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient
+import app.tivi.common.compose.onSizeChanged
+import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.statusBarsPadding
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -106,19 +109,14 @@ fun Discover(
     state: DiscoverViewState,
     actioner: (DiscoverAction) -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            DiscoverAppBar(
-                loggedIn = state.authState == TraktAuthState.LOGGED_IN,
-                user = state.user,
-                actioner = actioner,
-                modifier = Modifier.statusBarsPadding().fillMaxWidth()
-            )
-        },
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Stack(Modifier.fillMaxSize()) {
+        var appBarHeight by rememberMutableState { 0 }
+
         LazyColumn(Modifier.fillMaxSize()) {
-            item { Spacer(Modifier.preferredHeight(16.dp)) }
+            item {
+                val height = with(DensityAmbient.current) { appBarHeight.toDp() } + 16.dp
+                Spacer(Modifier.preferredHeight(height))
+            }
 
             state.nextEpisodeWithShowToWatched?.also { nextEpisodeToWatch ->
                 item {
@@ -209,6 +207,15 @@ fun Discover(
 
             item { Spacer(Modifier.preferredHeight(16.dp)) }
         }
+
+        DiscoverAppBar(
+            loggedIn = state.authState == TraktAuthState.LOGGED_IN,
+            user = state.user,
+            actioner = actioner,
+            modifier = Modifier
+                .fillMaxWidth()
+                .onSizeChanged { appBarHeight = it.height }
+        )
     }
 }
 
@@ -230,7 +237,7 @@ private fun NextEpisodeToWatch(
                 )
             }
 
-            Spacer(Modifier.preferredWidth(8.dp))
+            Spacer(Modifier.preferredWidth(16.dp))
 
             Column(Modifier.gravity(Alignment.CenterVertically)) {
                 val textCreator = DiscoverTextCreatorAmbient.current
@@ -315,15 +322,29 @@ private fun DiscoverAppBar(
     actioner: (DiscoverAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    TopAppBar(
-        title = {
+    Surface(
+        color = MaterialTheme.colors.surface.copy(alpha = 0.93f),
+        contentColor = MaterialTheme.colors.onSurface,
+        elevation = 4.dp,
+        modifier = modifier
+    ) {
+        Row(
+            modifier = Modifier
+                .statusBarsPadding()
+                .preferredHeight(56.dp)
+                .padding(start = 16.dp, end = 4.dp)
+        ) {
             Text(
                 text = stringResource(R.string.discover_title),
-                style = MaterialTheme.typography.h6
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.weight(1f, fill = true)
+                    .gravity(Alignment.CenterVertically)
             )
-        },
-        actions = {
-            IconButton(onClick = { actioner(OpenUserDetails) }) {
+
+            IconButton(
+                onClick = { actioner(OpenUserDetails) },
+                modifier = Modifier.gravity(Alignment.CenterVertically)
+            ) {
                 when {
                     loggedIn && user?.avatarUrl != null -> {
                         CoilImage(
@@ -335,10 +356,8 @@ private fun DiscoverAppBar(
                     else -> IconResource(R.drawable.ic_person_outline)
                 }
             }
-        },
-        backgroundColor = MaterialTheme.colors.surface.copy(alpha = 0.93f),
-        modifier = modifier
-    )
+        }
+    }
 }
 
 @Preview
