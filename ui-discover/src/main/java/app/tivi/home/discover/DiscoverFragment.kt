@@ -75,7 +75,11 @@ class DiscoverFragment : Fragment() {
                     LoginAction,
                     OpenUserDetails -> findNavController().navigate(R.id.navigation_account)
                     is OpenShowDetails -> {
-                        findNavController().navigate("app.tivi://show/${action.showId}".toUri())
+                        var uri = "app.tivi://show/${action.showId}"
+                        if (action.episodeId != null) {
+                            uri += "/episode/${action.episodeId}"
+                        }
+                        findNavController().navigate(uri.toUri())
                     }
                     else -> viewModel.submitAction(action)
                 }

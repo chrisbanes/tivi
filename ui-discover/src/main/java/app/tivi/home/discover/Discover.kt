@@ -20,6 +20,8 @@ import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.InnerPadding
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,11 +31,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredSize
+import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.lazy.ExperimentalLazyDsl
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.EmphasisAmbient
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.TopAppBar
@@ -59,7 +64,10 @@ import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.ProvideDisplayInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.statusBarsPadding
+import app.tivi.data.entities.Episode
+import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.entities.TmdbImageEntity
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.trakt.TraktAuthState
@@ -110,8 +118,30 @@ fun Discover(
         modifier = Modifier.fillMaxSize()
     ) {
         LazyColumn(Modifier.fillMaxSize()) {
-            item {
-                Spacer(Modifier.preferredHeight(16.dp))
+            item { Spacer(Modifier.preferredHeight(16.dp)) }
+
+            state.nextEpisodeWithShowToWatched?.also { nextEpisodeToWatch ->
+                item {
+                    Header(title = stringResource(R.string.discover_keep_watching_title))
+                }
+                item {
+                    NextEpisodeToWatch(
+                        show = nextEpisodeToWatch.show,
+                        poster = nextEpisodeToWatch.poster,
+                        season = nextEpisodeToWatch.season,
+                        episode = nextEpisodeToWatch.episode,
+                        modifier = Modifier.fillMaxWidth().clickable {
+                            actioner(
+                                OpenShowDetails(
+                                    showId = nextEpisodeToWatch.show.id,
+                                    episodeId = nextEpisodeToWatch.episode.id
+                                )
+                            )
+                        }
+                    )
+                }
+
+                item { Spacer(Modifier.preferredHeight(16.dp)) }
             }
 
             if (state.trendingRefreshing || state.trendingItems.isNotEmpty()) {
@@ -176,6 +206,50 @@ fun Discover(
             } else {
                 // TODO empty state
             }
+
+            item { Spacer(Modifier.preferredHeight(16.dp)) }
+        }
+    }
+}
+
+@Composable
+private fun NextEpisodeToWatch(
+    show: TiviShow,
+    poster: TmdbImageEntity?,
+    season: Season,
+    episode: Episode,
+    modifier: Modifier = Modifier,
+) {
+    Surface(modifier) {
+        Row(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+            if (poster != null) {
+                PosterCard(
+                    show = show,
+                    poster = poster,
+                    modifier = Modifier.preferredWidth(64.dp).aspectRatio(2 / 3f)
+                )
+            }
+
+            Spacer(Modifier.preferredWidth(8.dp))
+
+            Column(Modifier.gravity(Alignment.CenterVertically)) {
+                val textCreator = DiscoverTextCreatorAmbient.current
+                ProvideEmphasis(EmphasisAmbient.current.disabled) {
+                    Text(
+                        text = textCreator.seasonEpisodeTitleText(season, episode),
+                        style = MaterialTheme.typography.caption
+                    )
+                }
+
+                Spacer(Modifier.preferredHeight(4.dp))
+
+                ProvideEmphasis(EmphasisAmbient.current.high) {
+                    Text(
+                        text = episode.title ?: stringResource(R.string.episode_title_fallback),
+                        style = MaterialTheme.typography.body1
+                    )
+                }
+            }
         }
     }
 }
@@ -213,14 +287,16 @@ private fun Header(
     modifier: Modifier = Modifier
 ) {
     Row(modifier) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.subtitle1,
-            modifier = Modifier
-                .gravity(Alignment.CenterVertically)
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .weight(1f, true)
-        )
+        ProvideEmphasis(EmphasisAmbient.current.high) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.subtitle1,
+                modifier = Modifier
+                    .gravity(Alignment.CenterVertically)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .weight(1f, true)
+            )
+        }
 
         AnimatedVisibility(visible = loading) {
             AutoSizedCircularProgressIndicator(

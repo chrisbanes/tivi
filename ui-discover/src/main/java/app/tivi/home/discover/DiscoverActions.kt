@@ -20,4 +20,4 @@ sealed class DiscoverAction
 object RefreshAction : DiscoverAction()
 object LoginAction : DiscoverAction()
 object OpenUserDetails : DiscoverAction()
-data class OpenShowDetails(val showId: Long) : DiscoverAction()
+data class OpenShowDetails(val showId: Long, val episodeId: Long? = null) : DiscoverAction()
