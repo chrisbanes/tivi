@@ -18,3 +18,5 @@ package app.tivi.home.discover
 
 sealed class DiscoverAction
 object RefreshAction : DiscoverAction()
+object LoginAction : DiscoverAction()
+object OpenUserDetails : DiscoverAction()

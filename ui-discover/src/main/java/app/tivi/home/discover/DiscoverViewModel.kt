@@ -18,7 +18,6 @@ package app.tivi.home.discover
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
-import app.tivi.AppNavigator
 import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.interactors.UpdateRecommendedShows
@@ -39,7 +38,6 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Provider
 
 internal class DiscoverViewModel @ViewModelInject constructor(
     private val updatePopularShows: UpdatePopularShows,
@@ -50,8 +48,7 @@ internal class DiscoverViewModel @ViewModelInject constructor(
     observeRecommendedShows: ObserveRecommendedShows,
     observeNextShowEpisodeToWatch: ObserveNextShowEpisodeToWatch,
     observeTraktAuthState: ObserveTraktAuthState,
-    observeUserDetails: ObserveUserDetails,
-    private val appNavigator: Provider<AppNavigator>
+    observeUserDetails: ObserveUserDetails
 ) : ReduxViewModel<DiscoverViewState>(
     DiscoverViewState()
 ) {
@@ -128,8 +125,6 @@ internal class DiscoverViewModel @ViewModelInject constructor(
 
         refresh(false)
     }
-
-    fun refresh() = refresh(true)
 
     private fun refresh(fromUser: Boolean) {
         viewModelScope.launch {

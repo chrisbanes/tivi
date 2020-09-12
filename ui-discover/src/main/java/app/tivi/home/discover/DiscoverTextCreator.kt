@@ -23,9 +23,9 @@ import app.tivi.data.entities.Season
 import dagger.hilt.android.qualifiers.ActivityContext
 import javax.inject.Inject
 
-internal val DiscoverTextCreatorAmbient = staticAmbientOf<DiscoverTextCreator>()
+val DiscoverTextCreatorAmbient = staticAmbientOf<DiscoverTextCreator>()
 
-internal class DiscoverTextCreator @Inject constructor(
+class DiscoverTextCreator @Inject constructor(
     @ActivityContext private val context: Context
 ) {
     fun seasonEpisodeTitleText(season: Season, episode: Episode): String {
