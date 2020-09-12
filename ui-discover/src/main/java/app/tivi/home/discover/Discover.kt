@@ -24,6 +24,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.InnerPadding
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope.alignWithSiblings
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.aspectRatio
@@ -36,15 +37,16 @@ import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.lazy.ExperimentalLazyDsl
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.FirstBaseline
 import androidx.compose.material.EmphasisAmbient
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.Surface
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.Recomposer
-import androidx.compose.runtime.emptyContent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.setValue
@@ -146,7 +148,15 @@ fun Discover(
                 item {
                     Header(
                         title = stringResource(R.string.discover_trending_title),
-                        loading = state.trendingRefreshing
+                        loading = state.trendingRefreshing,
+                        action = {
+                            TextButton(
+                                onClick = { actioner(OpenTrendingShows) },
+                                modifier = Modifier.alignWithSiblings(FirstBaseline)
+                            ) {
+                                Text(text = stringResource(R.string.header_more))
+                            }
+                        }
                     )
                 }
             }
@@ -168,7 +178,15 @@ fun Discover(
                 item {
                     Header(
                         title = stringResource(R.string.discover_recommended_title),
-                        loading = state.recommendedRefreshing
+                        loading = state.recommendedRefreshing,
+                        action = {
+                            TextButton(
+                                onClick = { actioner(OpenRecommendedShows) },
+                                modifier = Modifier.alignWithSiblings(FirstBaseline)
+                            ) {
+                                Text(text = stringResource(R.string.header_more))
+                            }
+                        }
                     )
                 }
             }
@@ -189,7 +207,15 @@ fun Discover(
                 item {
                     Header(
                         title = stringResource(R.string.discover_popular_title),
-                        loading = state.popularRefreshing
+                        loading = state.popularRefreshing,
+                        action = {
+                            TextButton(
+                                onClick = { actioner(OpenPopularShows) },
+                                modifier = Modifier.alignWithSiblings(FirstBaseline)
+                            ) {
+                                Text(text = stringResource(R.string.header_more))
+                            }
+                        }
                     )
                 }
             }
@@ -252,7 +278,8 @@ private fun NextEpisodeToWatch(
 
                 ProvideEmphasis(EmphasisAmbient.current.high) {
                     Text(
-                        text = episode.title ?: stringResource(R.string.episode_title_fallback),
+                        text = episode.title
+                            ?: stringResource(R.string.episode_title_fallback, episode.number!!),
                         style = MaterialTheme.typography.body1
                     )
                 }
@@ -290,28 +317,32 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
 private fun Header(
     title: String,
     loading: Boolean = false,
-    action: @Composable () -> Unit = emptyContent(),
+    action: (@Composable () -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Row(modifier) {
+        Spacer(Modifier.preferredWidth(16.dp))
+
         ProvideEmphasis(EmphasisAmbient.current.high) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.subtitle1,
                 modifier = Modifier
                     .gravity(Alignment.CenterVertically)
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(vertical = 8.dp)
                     .weight(1f, true)
             )
         }
 
         AnimatedVisibility(visible = loading) {
             AutoSizedCircularProgressIndicator(
-                Modifier.padding(horizontal = 8.dp).preferredSize(32.dp)
+                Modifier.padding(8.dp).preferredSize(32.dp)
             )
         }
 
-        action()
+        if (action != null) action()
+
+        Spacer(Modifier.preferredWidth(16.dp))
     }
 }
 

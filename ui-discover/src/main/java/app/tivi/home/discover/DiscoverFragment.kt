@@ -81,6 +81,9 @@ class DiscoverFragment : Fragment() {
                         }
                         findNavController().navigate(uri.toUri())
                     }
+                    OpenTrendingShows -> findNavController().navigate(R.id.navigation_trending)
+                    OpenPopularShows -> findNavController().navigate(R.id.navigation_popular)
+                    OpenRecommendedShows -> findNavController().navigate(R.id.navigation_recommended)
                     else -> viewModel.submitAction(action)
                 }
             }
