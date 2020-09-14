@@ -152,6 +152,7 @@ fun Discover(
                         action = {
                             TextButton(
                                 onClick = { actioner(OpenTrendingShows) },
+                                contentColor = MaterialTheme.colors.secondary,
                                 modifier = Modifier.alignWithSiblings(FirstBaseline)
                             ) {
                                 Text(text = stringResource(R.string.header_more))
@@ -182,6 +183,7 @@ fun Discover(
                         action = {
                             TextButton(
                                 onClick = { actioner(OpenRecommendedShows) },
+                                contentColor = MaterialTheme.colors.secondary,
                                 modifier = Modifier.alignWithSiblings(FirstBaseline)
                             ) {
                                 Text(text = stringResource(R.string.header_more))
@@ -211,6 +213,7 @@ fun Discover(
                         action = {
                             TextButton(
                                 onClick = { actioner(OpenPopularShows) },
+                                contentColor = MaterialTheme.colors.secondary,
                                 modifier = Modifier.alignWithSiblings(FirstBaseline)
                             ) {
                                 Text(text = stringResource(R.string.header_more))
