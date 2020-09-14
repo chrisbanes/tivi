@@ -185,7 +185,8 @@ fun Discover(
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
                 refreshing = state.refreshing,
-                actioner = actioner,
+                onRefreshActionClick = { actioner(RefreshAction) },
+                onUserActionClick = { actioner(OpenUserDetails) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .onSizeChanged { appBarHeight = it.height }
@@ -341,7 +342,8 @@ private fun DiscoverAppBar(
     loggedIn: Boolean,
     user: TraktUser?,
     refreshing: Boolean,
-    actioner: (DiscoverAction) -> Unit,
+    onRefreshActionClick: () -> Unit,
+    onUserActionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -367,7 +369,7 @@ private fun DiscoverAppBar(
 
             ProvideEmphasis(EmphasisAmbient.current.medium) {
                 IconButton(
-                    onClick = { actioner(RefreshAction) },
+                    onClick = onRefreshActionClick,
                     enabled = !refreshing,
                     modifier = Modifier.gravity(Alignment.CenterVertically)
                 ) {
@@ -379,7 +381,7 @@ private fun DiscoverAppBar(
                 }
 
                 IconButton(
-                    onClick = { actioner(OpenUserDetails) },
+                    onClick = onUserActionClick,
                     modifier = Modifier.gravity(Alignment.CenterVertically)
                 ) {
                     when {
@@ -405,7 +407,8 @@ private fun PreviewDiscoverAppBar() {
         loggedIn = false,
         user = null,
         refreshing = false,
-        actioner = {}
+        onUserActionClick = {},
+        onRefreshActionClick = {}
     )
 }
 
