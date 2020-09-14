@@ -43,6 +43,8 @@ fun PosterCard(
         Stack(
             modifier = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier
         ) {
+            // TODO: remove text if the image has loaded (and animated in).
+            // https://github.com/chrisbanes/accompanist/issues/76
             ProvideEmphasis(EmphasisAmbient.current.medium) {
                 Text(
                     text = show.title ?: "No title",
