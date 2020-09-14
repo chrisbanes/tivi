@@ -79,21 +79,21 @@ internal class DiscoverViewModel @ViewModelInject constructor(
                 .distinctUntilChanged()
                 .collectAndSetState { copy(trendingItems = it) }
         }
-        observeTrendingShows(ObserveTrendingShows.Params(15))
+        observeTrendingShows(ObserveTrendingShows.Params(10))
 
         viewModelScope.launch {
             observePopularShows.observe()
                 .distinctUntilChanged()
                 .collectAndSetState { copy(popularItems = it) }
         }
-        observePopularShows()
+        observePopularShows(ObservePopularShows.Params(10))
 
         viewModelScope.launch {
             observeRecommendedShows.observe()
                 .distinctUntilChanged()
                 .collectAndSetState { copy(recommendedItems = it) }
         }
-        observeRecommendedShows()
+        observeRecommendedShows(ObserveRecommendedShows.Params(10))
 
         viewModelScope.launch {
             observeNextShowEpisodeToWatch.observe()

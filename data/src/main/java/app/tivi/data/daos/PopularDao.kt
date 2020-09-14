@@ -31,8 +31,8 @@ abstract class PopularDao : PaginatedEntryDao<PopularShowEntry, PopularEntryWith
     abstract fun entriesObservable(page: Int): Flow<List<PopularShowEntry>>
 
     @Transaction
-    @Query("SELECT * FROM popular_shows ORDER BY page, page_order")
-    abstract fun entriesObservable(): Flow<List<PopularEntryWithShow>>
+    @Query("SELECT * FROM popular_shows ORDER BY page, page_order LIMIT :count OFFSET :offset")
+    abstract fun entriesObservable(count: Int, offset: Int): Flow<List<PopularEntryWithShow>>
 
     @Transaction
     @Query("SELECT * FROM popular_shows ORDER BY page, page_order")

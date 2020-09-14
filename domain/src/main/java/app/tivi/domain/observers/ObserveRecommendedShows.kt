@@ -24,9 +24,13 @@ import javax.inject.Inject
 
 class ObserveRecommendedShows @Inject constructor(
     private val recommendedDao: RecommendedDao
-) : SubjectInteractor<Unit, List<RecommendedEntryWithShow>>() {
+) : SubjectInteractor<ObserveRecommendedShows.Params, List<RecommendedEntryWithShow>>() {
 
-    override fun createObservable(params: Unit): Flow<List<RecommendedEntryWithShow>> {
-        return recommendedDao.entriesObservable(20, 0)
+    override fun createObservable(
+        params: ObserveRecommendedShows.Params
+    ): Flow<List<RecommendedEntryWithShow>> {
+        return recommendedDao.entriesObservable(params.count, 0)
     }
+
+    data class Params(val count: Int = 20)
 }
