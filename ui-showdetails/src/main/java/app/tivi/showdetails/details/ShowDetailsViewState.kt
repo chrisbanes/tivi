@@ -16,6 +16,7 @@
 
 package app.tivi.showdetails.details
 
+import androidx.compose.runtime.Immutable
 import app.tivi.api.UiError
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
@@ -24,6 +25,7 @@ import app.tivi.data.resultentities.RelatedShowEntryWithShow
 import app.tivi.data.resultentities.SeasonWithEpisodesAndWatches
 import app.tivi.data.views.FollowedShowsWatchStats
 
+@Immutable
 data class ShowDetailsViewState(
     val showId: Long,
     val isFollowed: Boolean = false,

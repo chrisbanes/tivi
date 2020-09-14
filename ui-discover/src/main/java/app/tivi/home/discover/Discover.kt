@@ -19,6 +19,7 @@ package app.tivi.home.discover
 import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -44,6 +45,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.Surface
 import androidx.compose.material.TextButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.Recomposer
@@ -181,6 +184,7 @@ fun Discover(
             DiscoverAppBar(
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
+                refreshing = state.refreshing,
                 actioner = actioner,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -336,6 +340,7 @@ private fun Header(
 private fun DiscoverAppBar(
     loggedIn: Boolean,
     user: TraktUser?,
+    refreshing: Boolean,
     actioner: (DiscoverAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -351,26 +356,42 @@ private fun DiscoverAppBar(
                 .preferredHeight(56.dp)
                 .padding(start = 16.dp, end = 4.dp)
         ) {
-            Text(
-                text = stringResource(R.string.discover_title),
-                style = MaterialTheme.typography.h6,
-                modifier = Modifier.weight(1f, fill = true)
-                    .gravity(Alignment.CenterVertically)
-            )
+            ProvideEmphasis(EmphasisAmbient.current.high) {
+                Text(
+                    text = stringResource(R.string.discover_title),
+                    style = MaterialTheme.typography.h6,
+                    modifier = Modifier.weight(1f, fill = true)
+                        .gravity(Alignment.CenterVertically)
+                )
+            }
 
-            IconButton(
-                onClick = { actioner(OpenUserDetails) },
-                modifier = Modifier.gravity(Alignment.CenterVertically)
-            ) {
-                when {
-                    loggedIn && user?.avatarUrl != null -> {
-                        CoilImage(
-                            data = user.avatarUrl!!,
-                            modifier = Modifier.preferredSize(32.dp).clip(CircleShape)
-                        )
+            ProvideEmphasis(EmphasisAmbient.current.medium) {
+                IconButton(
+                    onClick = { actioner(RefreshAction) },
+                    enabled = !refreshing,
+                    modifier = Modifier.gravity(Alignment.CenterVertically)
+                ) {
+                    if (refreshing) {
+                        AutoSizedCircularProgressIndicator(Modifier.preferredSize(20.dp))
+                    } else {
+                        Icon(Icons.Default.Refresh)
                     }
-                    loggedIn -> IconResource(R.drawable.ic_person)
-                    else -> IconResource(R.drawable.ic_person_outline)
+                }
+
+                IconButton(
+                    onClick = { actioner(OpenUserDetails) },
+                    modifier = Modifier.gravity(Alignment.CenterVertically)
+                ) {
+                    when {
+                        loggedIn && user?.avatarUrl != null -> {
+                            CoilImage(
+                                data = user.avatarUrl!!,
+                                modifier = Modifier.preferredSize(32.dp).clip(CircleShape)
+                            )
+                        }
+                        loggedIn -> IconResource(R.drawable.ic_person)
+                        else -> IconResource(R.drawable.ic_person_outline)
+                    }
                 }
             }
         }
@@ -383,6 +404,7 @@ private fun PreviewDiscoverAppBar() {
     DiscoverAppBar(
         loggedIn = false,
         user = null,
+        refreshing = false,
         actioner = {}
     )
 }

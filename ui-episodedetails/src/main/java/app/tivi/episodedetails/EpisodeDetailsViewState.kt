@@ -16,11 +16,13 @@
 
 package app.tivi.episodedetails
 
+import androidx.compose.runtime.Immutable
 import app.tivi.api.UiError
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.Season
 
+@Immutable
 data class EpisodeDetailsViewState(
     val episodeId: Long,
     val season: Season? = null,
