@@ -88,7 +88,7 @@ fun Discover(
                     Spacer(Modifier.preferredHeight(height))
                 }
 
-                state.nextEpisodeWithShowToWatched?.also { nextEpisodeToWatch ->
+                state.nextEpisodeWithShowToWatched?.let { nextEpisodeToWatch ->
                     item {
                         Header(title = stringResource(R.string.discover_keep_watching_title))
                     }
@@ -175,9 +175,9 @@ private fun NextEpisodeToWatch(
                     poster = poster,
                     modifier = Modifier.preferredWidth(64.dp).aspectRatio(2 / 3f)
                 )
-            }
 
-            Spacer(Modifier.preferredWidth(16.dp))
+                Spacer(Modifier.preferredWidth(16.dp))
+            }
 
             Column(Modifier.gravity(Alignment.CenterVertically)) {
                 val textCreator = DiscoverTextCreatorAmbient.current
@@ -270,9 +270,9 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
 @Composable
 private fun Header(
     title: String,
+    modifier: Modifier = Modifier,
     loading: Boolean = false,
-    action: (@Composable () -> Unit)? = null,
-    modifier: Modifier = Modifier
+    action: (@Composable () -> Unit)? = null
 ) {
     Row(modifier) {
         Spacer(Modifier.preferredWidth(16.dp))
@@ -301,6 +301,8 @@ private fun Header(
     }
 }
 
+private const val TranslucentAppBarAlpha = 0.93f
+
 @Composable
 private fun DiscoverAppBar(
     loggedIn: Boolean,
@@ -311,7 +313,7 @@ private fun DiscoverAppBar(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        color = MaterialTheme.colors.surface.copy(alpha = 0.93f),
+        color = MaterialTheme.colors.surface.copy(alpha = TranslucentAppBarAlpha),
         contentColor = MaterialTheme.colors.onSurface,
         elevation = 4.dp,
         modifier = modifier
