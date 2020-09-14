@@ -111,140 +111,82 @@ fun Discover(
     state: DiscoverViewState,
     actioner: (DiscoverAction) -> Unit
 ) {
-    Stack(Modifier.fillMaxSize()) {
-        var appBarHeight by rememberMutableState { 0 }
+    Surface(Modifier.fillMaxSize()) {
+        Stack(Modifier.fillMaxSize()) {
+            var appBarHeight by rememberMutableState { 0 }
 
-        LazyColumn(Modifier.fillMaxSize()) {
-            item {
-                val height = with(DensityAmbient.current) { appBarHeight.toDp() } + 16.dp
-                Spacer(Modifier.preferredHeight(height))
-            }
-
-            state.nextEpisodeWithShowToWatched?.also { nextEpisodeToWatch ->
+            LazyColumn(Modifier.fillMaxSize()) {
                 item {
-                    Header(title = stringResource(R.string.discover_keep_watching_title))
+                    val height = with(DensityAmbient.current) { appBarHeight.toDp() } + 16.dp
+                    Spacer(Modifier.preferredHeight(height))
                 }
-                item {
-                    NextEpisodeToWatch(
-                        show = nextEpisodeToWatch.show,
-                        poster = nextEpisodeToWatch.poster,
-                        season = nextEpisodeToWatch.season,
-                        episode = nextEpisodeToWatch.episode,
-                        modifier = Modifier.fillMaxWidth().clickable {
-                            actioner(
-                                OpenShowDetails(
-                                    showId = nextEpisodeToWatch.show.id,
-                                    episodeId = nextEpisodeToWatch.episode.id
+
+                state.nextEpisodeWithShowToWatched?.also { nextEpisodeToWatch ->
+                    item {
+                        Header(title = stringResource(R.string.discover_keep_watching_title))
+                    }
+                    item {
+                        NextEpisodeToWatch(
+                            show = nextEpisodeToWatch.show,
+                            poster = nextEpisodeToWatch.poster,
+                            season = nextEpisodeToWatch.season,
+                            episode = nextEpisodeToWatch.episode,
+                            modifier = Modifier.fillMaxWidth().clickable {
+                                actioner(
+                                    OpenShowDetails(
+                                        showId = nextEpisodeToWatch.show.id,
+                                        episodeId = nextEpisodeToWatch.episode.id
+                                    )
                                 )
-                            )
-                        }
-                    )
-                }
-
-                item { Spacer(Modifier.preferredHeight(16.dp)) }
-            }
-
-            if (state.trendingRefreshing || state.trendingItems.isNotEmpty()) {
-                item {
-                    Header(
-                        title = stringResource(R.string.discover_trending_title),
-                        loading = state.trendingRefreshing,
-                        action = {
-                            TextButton(
-                                onClick = { actioner(OpenTrendingShows) },
-                                contentColor = MaterialTheme.colors.secondary,
-                                modifier = Modifier.alignWithSiblings(FirstBaseline)
-                            ) {
-                                Text(text = stringResource(R.string.header_more))
                             }
-                        }
-                    )
+                        )
+                    }
+
+                    item { Spacer(Modifier.preferredHeight(16.dp)) }
                 }
-            }
-            if (state.trendingItems.isNotEmpty()) {
+
                 item {
-                    EntryShowCarousel(
+                    CarouselWithHeader(
                         items = state.trendingItems,
+                        title = stringResource(R.string.discover_trending_title),
+                        refreshing = state.trendingRefreshing,
                         onItemClick = { actioner(OpenShowDetails(it.id)) },
-                        modifier = Modifier.preferredHeight(192.dp).fillMaxWidth()
+                        onMoreClick = { actioner(OpenTrendingShows) }
                     )
                 }
-            } else {
-                // TODO empty state
-            }
-
-            if (state.recommendedRefreshing || state.recommendedItems.isNotEmpty()) {
-                item { Spacer(Modifier.preferredHeight(16.dp)) }
 
                 item {
-                    Header(
-                        title = stringResource(R.string.discover_recommended_title),
-                        loading = state.recommendedRefreshing,
-                        action = {
-                            TextButton(
-                                onClick = { actioner(OpenRecommendedShows) },
-                                contentColor = MaterialTheme.colors.secondary,
-                                modifier = Modifier.alignWithSiblings(FirstBaseline)
-                            ) {
-                                Text(text = stringResource(R.string.header_more))
-                            }
-                        }
-                    )
-                }
-            }
-            if (state.recommendedItems.isNotEmpty()) {
-                item {
-                    EntryShowCarousel(
+                    CarouselWithHeader(
                         items = state.recommendedItems,
+                        title = stringResource(R.string.discover_recommended_title),
+                        refreshing = state.recommendedRefreshing,
                         onItemClick = { actioner(OpenShowDetails(it.id)) },
-                        modifier = Modifier.preferredHeight(192.dp).fillMaxWidth()
+                        onMoreClick = { actioner(OpenRecommendedShows) }
                     )
                 }
-            } else {
-                // TODO empty state
-            }
 
-            if (state.popularRefreshing || state.popularItems.isNotEmpty()) {
-                item { Spacer(Modifier.preferredHeight(16.dp)) }
                 item {
-                    Header(
-                        title = stringResource(R.string.discover_popular_title),
-                        loading = state.popularRefreshing,
-                        action = {
-                            TextButton(
-                                onClick = { actioner(OpenPopularShows) },
-                                contentColor = MaterialTheme.colors.secondary,
-                                modifier = Modifier.alignWithSiblings(FirstBaseline)
-                            ) {
-                                Text(text = stringResource(R.string.header_more))
-                            }
-                        }
-                    )
-                }
-            }
-            if (state.popularItems.isNotEmpty()) {
-                item {
-                    EntryShowCarousel(
+                    CarouselWithHeader(
                         items = state.popularItems,
+                        title = stringResource(R.string.discover_popular_title),
+                        refreshing = state.popularRefreshing,
                         onItemClick = { actioner(OpenShowDetails(it.id)) },
-                        modifier = Modifier.preferredHeight(192.dp).fillMaxWidth()
+                        onMoreClick = { actioner(OpenPopularShows) }
                     )
                 }
-            } else {
-                // TODO empty state
+
+                item { Spacer(Modifier.preferredHeight(16.dp)) }
             }
 
-            item { Spacer(Modifier.preferredHeight(16.dp)) }
+            DiscoverAppBar(
+                loggedIn = state.authState == TraktAuthState.LOGGED_IN,
+                user = state.user,
+                actioner = actioner,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onSizeChanged { appBarHeight = it.height }
+            )
         }
-
-        DiscoverAppBar(
-            loggedIn = state.authState == TraktAuthState.LOGGED_IN,
-            user = state.user,
-            actioner = actioner,
-            modifier = Modifier
-                .fillMaxWidth()
-                .onSizeChanged { appBarHeight = it.height }
-        )
     }
 }
 
@@ -287,6 +229,46 @@ private fun NextEpisodeToWatch(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun <T : EntryWithShow<*>> CarouselWithHeader(
+    items: List<T>,
+    title: String,
+    refreshing: Boolean,
+    onItemClick: (TiviShow) -> Unit,
+    onMoreClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier) {
+        if (refreshing || items.isNotEmpty()) {
+            Spacer(Modifier.preferredHeight(16.dp))
+
+            Header(
+                title = title,
+                loading = refreshing,
+                action = {
+                    TextButton(
+                        onClick = onMoreClick,
+                        contentColor = MaterialTheme.colors.secondary,
+                        modifier = Modifier.alignWithSiblings(FirstBaseline)
+                    ) {
+                        Text(text = stringResource(R.string.header_more))
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+        if (items.isNotEmpty()) {
+            EntryShowCarousel(
+                items = items,
+                onItemClick = onItemClick,
+                modifier = Modifier.preferredHeight(192.dp).fillMaxWidth()
+            )
+        } else {
+            // TODO empty state
         }
     }
 }
@@ -339,7 +321,8 @@ private fun Header(
 
         AnimatedVisibility(visible = loading) {
             AutoSizedCircularProgressIndicator(
-                Modifier.padding(8.dp).preferredSize(32.dp)
+                color = MaterialTheme.colors.secondary,
+                modifier = Modifier.padding(8.dp).preferredSize(16.dp)
             )
         }
 
