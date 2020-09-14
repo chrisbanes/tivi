@@ -16,7 +16,6 @@
 
 package app.tivi.home.discover
 
-import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Icon
@@ -48,27 +47,19 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
-import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.DensityAmbient
-import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
 import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.IconResource
-import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PosterCard
-import app.tivi.common.compose.ProvideDisplayInsets
-import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.onSizeChanged
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.statusBarsPadding
@@ -79,34 +70,7 @@ import app.tivi.data.entities.TmdbImageEntity
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.trakt.TraktAuthState
-import app.tivi.util.TiviDateFormatter
-import com.google.android.material.composethemeadapter.MdcTheme
 import dev.chrisbanes.accompanist.coil.CoilImage
-
-internal fun ViewGroup.composeDiscover(
-    state: LiveData<DiscoverViewState>,
-    actioner: (DiscoverAction) -> Unit,
-    tiviDateFormatter: TiviDateFormatter,
-    textCreator: DiscoverTextCreator
-): Any = setContent(Recomposer.current()) {
-    Providers(
-        TiviDateFormatterAmbient provides tiviDateFormatter,
-        DiscoverTextCreatorAmbient provides textCreator
-    ) {
-        MdcTheme {
-            LogCompositions("MdcTheme")
-
-            ProvideDisplayInsets {
-                LogCompositions("ProvideInsets")
-                val viewState by state.observeAsState()
-                if (viewState != null) {
-                    LogCompositions("ViewState observeAsState")
-                    Discover(viewState!!, actioner)
-                }
-            }
-        }
-    }
-}
 
 @OptIn(ExperimentalLazyDsl::class)
 @Composable
