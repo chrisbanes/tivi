@@ -22,8 +22,9 @@ import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.InnerPadding
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope.align
 import androidx.compose.foundation.layout.RowScope.alignWithSiblings
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Stack
@@ -179,7 +180,7 @@ private fun NextEpisodeToWatch(
                 Spacer(Modifier.preferredWidth(16.dp))
             }
 
-            Column(Modifier.gravity(Alignment.CenterVertically)) {
+            Column(Modifier.align(Alignment.CenterVertically)) {
                 val textCreator = DiscoverTextCreatorAmbient.current
                 ProvideEmphasis(EmphasisAmbient.current.disabled) {
                     Text(
@@ -250,7 +251,7 @@ private fun <T : EntryWithShow<*>> EntryShowCarousel(
 ) {
     Carousel(
         items = items,
-        contentPadding = InnerPadding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+        contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
         itemSpacing = 4.dp,
         modifier = modifier
     ) { item, padding ->
@@ -282,7 +283,7 @@ private fun Header(
                 text = title,
                 style = MaterialTheme.typography.subtitle1,
                 modifier = Modifier
-                    .gravity(Alignment.CenterVertically)
+                    .align(Alignment.CenterVertically)
                     .padding(vertical = 8.dp)
                     .weight(1f, true)
             )
@@ -329,7 +330,7 @@ private fun DiscoverAppBar(
                     text = stringResource(R.string.discover_title),
                     style = MaterialTheme.typography.h6,
                     modifier = Modifier.weight(1f, fill = true)
-                        .gravity(Alignment.CenterVertically)
+                        .align(Alignment.CenterVertically)
                 )
             }
 
@@ -337,7 +338,7 @@ private fun DiscoverAppBar(
                 IconButton(
                     onClick = onRefreshActionClick,
                     enabled = !refreshing,
-                    modifier = Modifier.gravity(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.CenterVertically)
                 ) {
                     if (refreshing) {
                         AutoSizedCircularProgressIndicator(Modifier.preferredSize(20.dp))
@@ -348,7 +349,7 @@ private fun DiscoverAppBar(
 
                 IconButton(
                     onClick = onUserActionClick,
-                    modifier = Modifier.gravity(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.CenterVertically)
                 ) {
                     when {
                         loggedIn && user?.avatarUrl != null -> {

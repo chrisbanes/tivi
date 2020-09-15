@@ -49,7 +49,7 @@ fun PosterCard(
                 Text(
                     text = show.title ?: "No title",
                     style = MaterialTheme.typography.caption,
-                    modifier = Modifier.padding(4.dp).gravity(Alignment.CenterStart)
+                    modifier = Modifier.padding(4.dp).align(Alignment.CenterStart)
                 )
             }
             if (poster != null) {

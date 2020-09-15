@@ -59,13 +59,13 @@ object Libs {
     }
 
     object Accompanist {
-        private const val version = "0.2.0"
+        private const val version = "0.2.2.ui-6824694-SNAPSHOT"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
     }
 
     object Mdc {
         const val material = "com.google.android.material:material:1.1.0"
-        const val composeThemeAdapter = "com.google.android.material:compose-theme-adapter:1.0.0-alpha01"
+        const val composeThemeAdapter = "com.google.android.material:compose-theme-adapter:1.0.0-alpha02"
     }
 
     object Google {
@@ -164,8 +164,8 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = ""
-            const val version = "1.0.0-alpha01"
+            const val snapshot = "6824694"
+            const val version = "1.0.0-SNAPSHOT"
 
             @get:JvmStatic
             val snapshotUrl: String

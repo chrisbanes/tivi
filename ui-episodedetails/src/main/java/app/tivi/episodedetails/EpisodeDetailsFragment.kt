@@ -20,14 +20,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams
-import android.widget.FrameLayout
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import androidx.compose.runtime.Providers
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import app.tivi.common.compose.ProvideDisplayInsets
+import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.extensions.viewModelProviderFactoryOf
 import app.tivi.util.TiviDateFormatter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.composethemeadapter.MdcTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
@@ -65,15 +71,22 @@ class EpisodeDetailsFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return FrameLayout(requireContext()).apply {
-            layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+    ): View? = ComposeView(requireContext()).apply {
+        layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
-            composeEpisodeDetails(
-                viewModel.liveData,
-                { pendingActions.offer(it) },
-                tiviDateFormatter
-            )
+        setContent {
+            MdcTheme {
+                Providers(TiviDateFormatterAmbient provides tiviDateFormatter) {
+                    ProvideDisplayInsets {
+                        val viewState by viewModel.liveData.observeAsState()
+                        if (viewState != null) {
+                            EpisodeDetails(viewState!!) {
+                                pendingActions.offer(it)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

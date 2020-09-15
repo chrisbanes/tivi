@@ -17,10 +17,8 @@
 package app.tivi.episodedetails
 
 import android.os.Build
-import android.view.ViewGroup
 import androidx.compose.animation.ColorPropKey
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.transitionDefinition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.transition
@@ -29,7 +27,6 @@ import androidx.compose.foundation.Icon
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.contentColor
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -44,25 +41,32 @@ import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredSizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissValue
 import androidx.compose.material.EmphasisAmbient
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.ProvideEmphasis
-import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
+import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
-import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.key
+import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,19 +78,15 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ConfigurationAmbient
-import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.loadVectorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
 import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.IconResource
-import app.tivi.common.compose.ProvideDisplayInsets
-import app.tivi.common.compose.SwipeDirection
-import app.tivi.common.compose.SwipeToDismiss
+import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.TiviAlertDialog
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.boundsInParent
@@ -100,38 +100,15 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.ui.animations.lerp
-import app.tivi.util.TiviDateFormatter
-import com.google.android.material.composethemeadapter.MdcTheme
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
+import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
+import kotlin.math.absoluteValue
 import kotlin.math.hypot
 
-/**
- * This is a bit of hack. I can't make `ui-episodedetails` depend on any of the compose libraries,
- * so I wrap `setContext` as my own function, which `ui-episodedetails` can use.
- *
- * We need to return an `Any` since this method will be called from modules which do not depend
- * on Compose
- */
-fun ViewGroup.composeEpisodeDetails(
-    state: LiveData<EpisodeDetailsViewState>,
-    actioner: (EpisodeDetailsAction) -> Unit,
-    tiviDateFormatter: TiviDateFormatter
-): Any = setContent(Recomposer.current()) {
-    MdcTheme {
-        Providers(TiviDateFormatterAmbient provides tiviDateFormatter) {
-            ProvideDisplayInsets {
-                val viewState by state.observeAsState()
-                if (viewState != null) {
-                    EpisodeDetails(viewState!!, actioner)
-                }
-            }
-        }
-    }
-}
-
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun EpisodeDetails(
+fun EpisodeDetails(
     viewState: EpisodeDetailsViewState,
     actioner: (EpisodeDetailsAction) -> Unit
 ) {
@@ -174,12 +151,12 @@ private fun EpisodeDetails(
 
                             if (watches.isEmpty()) {
                                 MarkWatchedButton(
-                                    modifier = Modifier.gravity(Alignment.CenterHorizontally),
+                                    modifier = Modifier.align(Alignment.CenterHorizontally),
                                     actioner = actioner
                                 )
                             } else {
                                 AddWatchButton(
-                                    modifier = Modifier.gravity(Alignment.CenterHorizontally),
+                                    modifier = Modifier.align(Alignment.CenterHorizontally),
                                     actioner = actioner
                                 )
                             }
@@ -203,19 +180,28 @@ private fun EpisodeDetails(
                         }
 
                         watches.forEach { watch ->
-                            SwipeToDismiss(
-                                swipeDirections = listOf(SwipeDirection.START),
-                                onSwipeComplete = {
-                                    actioner(RemoveEpisodeWatchAction(watch.id))
-                                },
-                                swipeChildren = { _, _ -> EpisodeWatch(episodeWatchEntry = watch) },
-                                backgroundChildren = { swipeProgress, completeOnRelease ->
-                                    EpisodeWatchSwipeBackground(
-                                        swipeProgress = swipeProgress,
-                                        wouldCompleteOnRelease = completeOnRelease
-                                    )
+                            key(watch.id) {
+                                val dismissState = rememberDismissState {
+                                    if (it != DismissValue.Default) {
+                                        actioner(RemoveEpisodeWatchAction(watch.id))
+                                    }
+                                    it != DismissValue.DismissedToEnd
                                 }
-                            )
+
+                                SwipeToDismiss(
+                                    state = dismissState,
+                                    modifier = Modifier.padding(vertical = 4.dp),
+                                    directions = setOf(DismissDirection.EndToStart),
+                                    background = {
+                                        val fraction = dismissState.progress.fraction
+                                        EpisodeWatchSwipeBackground(
+                                            swipeProgress = fraction,
+                                            wouldCompleteOnRelease = fraction.absoluteValue >= 0.5f
+                                        )
+                                    },
+                                    dismissContent = { EpisodeWatch(episodeWatchEntry = watch) }
+                                )
+                            }
                         }
 
                         Spacer(Modifier.preferredHeight(8.dp))
@@ -225,19 +211,28 @@ private fun EpisodeDetails(
             }
         }
 
-        Column(
-            modifier = Modifier.fillMaxWidth()
-                .gravity(Alignment.BottomCenter)
+        val snackbarHostState = remember { SnackbarHostState() }
+        val snackbarScope = rememberCoroutineScope()
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            snackbar = {
+                SwipeDismissSnackbar(
+                    data = it,
+                    onDismiss = { actioner(ClearError) }
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
-        ) {
-            Crossfade(current = viewState.error) { error ->
-                if (error != null) {
-                    // TODO: Convert this to swipe-to-dismiss
-                    Snackbar(
-                        text = { Text(error.message) },
-                        modifier = Modifier.clickable(onClick = { actioner(ClearError) })
-                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                    )
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+        )
+
+        onCommit(viewState.error) {
+            viewState.error?.let { error ->
+                snackbarScope.launch {
+                    snackbarHostState.showSnackbar(error.message)
                 }
             }
         }
@@ -261,7 +256,7 @@ private fun Backdrop(
             }
 
             Column(
-                modifier = Modifier.gravity(Alignment.BottomStart)
+                modifier = Modifier.align(Alignment.BottomStart)
                     .background(
                         color = Color.Black.copy(alpha = 0.65f),
                         shape = RoundedCornerShape(topRight = 8.dp)
@@ -336,7 +331,7 @@ private fun InfoPane(
         ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
             Icon(
                 asset = icon,
-                modifier = Modifier.gravity(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
 
@@ -344,7 +339,7 @@ private fun InfoPane(
 
         ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
             Text(
-                modifier = Modifier.gravity(Alignment.CenterHorizontally),
+                modifier = Modifier.align(Alignment.CenterHorizontally),
                 text = label,
                 style = MaterialTheme.typography.body1
             )
@@ -358,7 +353,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
         ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                    .gravity(Alignment.CenterVertically)
+                    .align(Alignment.CenterVertically)
                     .weight(1f),
                 text = stringResource(R.string.episode_watches),
                 style = MaterialTheme.typography.subtitle1
@@ -386,7 +381,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
             ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
                 val formatter = TiviDateFormatterAmbient.current
                 Text(
-                    modifier = Modifier.weight(1f).gravity(Alignment.CenterVertically),
+                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically),
                     text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
                     style = MaterialTheme.typography.body2
                 )
@@ -398,7 +393,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
                         resourceId = R.drawable.ic_publish,
                         modifier = Modifier
                             .padding(start = 8.dp)
-                            .gravity(Alignment.CenterVertically)
+                            .align(Alignment.CenterVertically)
                     )
                 }
 
@@ -407,7 +402,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
                         resourceId = R.drawable.ic_visibility_off,
                         modifier = Modifier
                             .padding(start = 8.dp)
-                            .gravity(Alignment.CenterVertically)
+                            .align(Alignment.CenterVertically)
                     )
                 }
             }
@@ -463,7 +458,7 @@ private fun EpisodeWatchSwipeBackground(
                 .drawGrowingCircle(
                     color = transitionState[color],
                     center = iconCenter,
-                    radius = lerp(0f, maxRadius.toFloat(), FastOutSlowInEasing(swipeProgress))
+                    radius = lerp(0f, maxRadius.toFloat(), FastOutLinearInEasing(swipeProgress))
                 )
         )
 
@@ -473,7 +468,7 @@ private fun EpisodeWatchSwipeBackground(
                 modifier = Modifier
                     .onPositionInParentChanged { iconCenter = it.boundsInParent.center }
                     .padding(start = 0.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
-                    .gravity(Alignment.CenterEnd)
+                    .align(Alignment.CenterEnd)
             )
         }
     }

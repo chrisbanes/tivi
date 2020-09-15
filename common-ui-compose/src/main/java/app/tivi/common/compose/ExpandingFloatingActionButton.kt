@@ -56,7 +56,7 @@ fun ExpandableFloatingActionButton(
         shape = shape,
         modifier = modifier
     ) {
-        Row(verticalGravity = ContentGravity.CenterVertically) {
+        Row(verticalAlignment = ContentGravity.CenterVertically) {
             AnimatedVisibility(visible = expanded) {
                 Spacer(Modifier.preferredWidth(20.dp))
             }

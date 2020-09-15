@@ -21,15 +21,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.widget.FrameLayout
+import androidx.compose.runtime.Providers
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import app.tivi.common.compose.LogCompositions
+import app.tivi.common.compose.ProvideDisplayInsets
+import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.viewModelProviderFactoryOf
 import app.tivi.util.TiviDateFormatter
+import com.google.android.material.composethemeadapter.MdcTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
@@ -62,16 +69,30 @@ class ShowDetailsFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return FrameLayout(requireContext()).apply {
-            layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+    ): View? = ComposeView(requireContext()).apply {
+        layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
-            composeShowDetails(
-                viewModel.liveData,
-                { pendingActions.offer(it) },
-                tiviDateFormatter,
-                textCreator
-            )
+        setContent {
+            Providers(
+                TiviDateFormatterAmbient provides tiviDateFormatter,
+                ShowDetailsTextCreatorAmbient provides textCreator
+            ) {
+                MdcTheme {
+                    LogCompositions("MdcTheme")
+
+                    ProvideDisplayInsets {
+                        LogCompositions("ProvideInsets")
+
+                        val viewState by viewModel.liveData.observeAsState()
+                        if (viewState != null) {
+                            LogCompositions("ViewState observeAsState")
+                            ShowDetails(viewState!!) {
+                                pendingActions.offer(it)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

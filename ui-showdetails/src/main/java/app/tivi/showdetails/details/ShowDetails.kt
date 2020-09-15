@@ -16,7 +16,6 @@
 
 package app.tivi.showdetails.details
 
-import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Box
@@ -32,7 +31,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ConstraintLayout
 import androidx.compose.foundation.layout.ExperimentalLayout
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.InnerPadding
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.SizeMode
 import androidx.compose.foundation.layout.Spacer
@@ -46,18 +45,21 @@ import androidx.compose.foundation.layout.preferredHeightIn
 import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.preferredSizeIn
 import androidx.compose.foundation.layout.preferredWidth
-import androidx.compose.foundation.layout.preferredWidthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.EmphasisAmbient
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideEmphasis
-import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -68,11 +70,10 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
-import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticAmbientOf
 import androidx.compose.ui.Alignment
@@ -83,12 +84,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ContextAmbient
-import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
 import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
@@ -97,11 +96,8 @@ import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.IconResource
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.LogCompositions
-import app.tivi.common.compose.PopupMenu
-import app.tivi.common.compose.PopupMenuItem
 import app.tivi.common.compose.PosterCard
-import app.tivi.common.compose.ProvideDisplayInsets
-import app.tivi.common.compose.TiviDateFormatterAmbient
+import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.navigationBarsPadding
 import app.tivi.common.compose.offset
@@ -128,40 +124,15 @@ import app.tivi.data.resultentities.numberToAir
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.ui.animations.lerp
-import app.tivi.util.TiviDateFormatter
 import coil.request.ImageRequest
-import com.google.android.material.composethemeadapter.MdcTheme
 import dev.chrisbanes.accompanist.coil.CoilImage
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
+import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
 val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
 
-fun ViewGroup.composeShowDetails(
-    state: LiveData<ShowDetailsViewState>,
-    actioner: (ShowDetailsAction) -> Unit,
-    tiviDateFormatter: TiviDateFormatter,
-    textCreator: ShowDetailsTextCreator
-): Any = setContent(Recomposer.current()) {
-    Providers(
-        TiviDateFormatterAmbient provides tiviDateFormatter,
-        ShowDetailsTextCreatorAmbient provides textCreator
-    ) {
-        MdcTheme {
-            LogCompositions("MdcTheme")
-
-            ProvideDisplayInsets {
-                LogCompositions("ProvideInsets")
-                val viewState by state.observeAsState()
-                if (viewState != null) {
-                    LogCompositions("ViewState observeAsState")
-                    ShowDetails(viewState!!, actioner)
-                }
-            }
-        }
-    }
-}
-
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ShowDetails(
     viewState: ShowDetailsViewState,
@@ -214,20 +185,32 @@ fun ShowDetails(
             }
     )
 
-    if (viewState.refreshError != null) {
-        // TODO: Convert this to swipe-to-dismiss
-        Snackbar(
-            text = { Text(viewState.refreshError.message) },
-            modifier = Modifier
-                .preferredWidthIn(maxWidth = 540.dp)
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                .clickable(onClick = { actioner(ClearError) })
-                .constrainAs(snackbar) {
-                    bottom.linkTo(fab.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-        )
+    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarScope = rememberCoroutineScope()
+
+    SnackbarHost(
+        hostState = snackbarHostState,
+        snackbar = {
+            SwipeDismissSnackbar(
+                data = it,
+                onDismiss = { actioner(ClearError) }
+            )
+        },
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .constrainAs(snackbar) {
+                bottom.linkTo(fab.top)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            }
+    )
+
+    onCommit(viewState.refreshError) {
+        viewState.refreshError?.let { error ->
+            snackbarScope.launch {
+                snackbarHostState.showSnackbar(error.message)
+            }
+        }
     }
 
     ToggleShowFollowFloatingActionButton(
@@ -550,7 +533,7 @@ private fun TraktRatingInfoPanel(
         Row {
             VectorImage(
                 vector = Icons.Default.Star,
-                contentScale = ContentScale.Inside,
+                contentScale = ContentScale.Fit,
                 tintColor = MaterialTheme.colors.secondaryVariant,
                 modifier = Modifier.preferredSize(32.dp)
             )
@@ -611,7 +594,7 @@ private fun RelatedShows(
 
     Carousel(
         items = related,
-        contentPadding = InnerPadding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+        contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
         itemSpacing = 4.dp,
         modifier = modifier
     ) { item, padding ->
@@ -635,7 +618,7 @@ private fun NextEpisodeToWatch(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
-            .preferredHeightIn(minHeight = 48.dp)
+            .preferredHeightIn(min = 48.dp)
             .wrapContentSize(Alignment.CenterStart)
             .clickable(onClick = onClick)
             .padding(16.dp, 8.dp)
@@ -781,10 +764,11 @@ private fun SeasonWithEpisodesRow(
     }
 }
 
+@Suppress("UNUSED_PARAMETER")
 @Composable
 private fun SeasonRow(
     season: Season,
-    episodeAired: Int,
+    episodesAired: Int,
     episodesWatched: Int,
     episodesToWatch: Int,
     episodesToAir: Int,
@@ -793,12 +777,12 @@ private fun SeasonRow(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.preferredHeightIn(minHeight = 48.dp)
+        modifier = modifier.preferredHeightIn(min = 48.dp)
             .wrapContentHeight(Alignment.CenterVertically)
             .padding(start = 16.dp, top = 12.dp, bottom = 12.dp)
     ) {
         Column(
-            modifier = Modifier.weight(1f).gravity(Alignment.CenterVertically)
+            modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
         ) {
             val textCreator = ShowDetailsTextCreatorAmbient.current
 
@@ -830,28 +814,70 @@ private fun SeasonRow(
                 Spacer(Modifier.preferredHeight(4.dp))
 
                 LinearProgressIndicator(
-                    episodesWatched / episodeAired.toFloat(),
+                    episodesWatched / episodesAired.toFloat(),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
         }
 
-        var showPopup by rememberMutableState { false }
+        var showMenu by rememberMutableState { false }
 
-        if (showPopup) {
-            SeasonRowOverflowMenu(
-                season = season,
-                episodesAired = episodeAired,
-                episodesWatched = episodesWatched,
-                episodesToAir = episodesToAir,
-                onDismiss = { showPopup = false },
-                actioner = actioner
-            )
-        }
+        DropdownMenu(
+            toggle = {
+                ProvideEmphasis(EmphasisAmbient.current.medium) {
+                    IconButton(onClick = { showMenu = true }) {
+                        Icon(Icons.Default.MoreVert)
+                    }
+                }
+            },
+            expanded = showMenu,
+            onDismissRequest = { showMenu = false }
+        ) {
+            if (season.ignored) {
+                DropdownMenuItem(
+                    onClick = { actioner(ChangeSeasonFollowedAction(season.id, true)) }
+                ) {
+                    Text(text = stringResource(id = R.string.popup_season_follow))
+                }
+            } else {
+                DropdownMenuItem(
+                    onClick = { actioner(ChangeSeasonFollowedAction(season.id, false)) }
+                ) {
+                    Text(text = stringResource(id = R.string.popup_season_ignore))
+                }
+            }
 
-        ProvideEmphasis(EmphasisAmbient.current.medium) {
-            IconButton(onClick = { showPopup = true }) {
-                Icon(Icons.Default.MoreVert)
+            // Season number starts from 1, rather than 0
+            if (season.number ?: -100 >= 2) {
+                DropdownMenuItem(
+                    onClick = { actioner(UnfollowPreviousSeasonsFollowedAction(season.id)) }
+                ) {
+                    Text(text = stringResource(id = R.string.popup_season_ignore_previous))
+                }
+            }
+
+            if (episodesWatched > 0) {
+                DropdownMenuItem(
+                    onClick = { actioner(MarkSeasonUnwatchedAction(season.id)) }
+                ) {
+                    Text(text = stringResource(id = R.string.popup_season_mark_all_unwatched))
+                }
+            }
+
+            if (episodesWatched < episodesAired) {
+                if (episodesToAir == 0) {
+                    DropdownMenuItem(
+                        onClick = { actioner(MarkSeasonWatchedAction(season.id)) }
+                    ) {
+                        Text(text = stringResource(id = R.string.popup_season_mark_watched_all))
+                    }
+                } else {
+                    DropdownMenuItem(
+                        onClick = { actioner(MarkSeasonWatchedAction(season.id, onlyAired = true)) }
+                    ) {
+                        Text(text = stringResource(id = R.string.popup_season_mark_watched_aired))
+                    }
+                }
             }
         }
     }
@@ -866,7 +892,7 @@ private fun EpisodeWithWatchesRow(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.preferredHeightIn(minHeight = 48.dp)
+        modifier = modifier.preferredHeightIn(min = 48.dp)
             .wrapContentHeight(Alignment.CenterVertically)
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
@@ -894,7 +920,7 @@ private fun EpisodeWithWatchesRow(
             if (hasPending) {
                 IconResource(
                     resourceId = R.drawable.ic_cloud_upload,
-                    modifier = Modifier.gravity(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 needSpacer = true
             }
@@ -907,72 +933,11 @@ private fun EpisodeWithWatchesRow(
                         onlyPendingDeletes -> R.drawable.ic_visibility_off
                         else -> R.drawable.ic_visibility
                     },
-                    modifier = Modifier.gravity(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
         }
     }
-}
-
-@Composable
-private fun SeasonRowOverflowMenu(
-    season: Season,
-    episodesAired: Int,
-    episodesWatched: Int,
-    episodesToAir: Int,
-    onDismiss: () -> Unit,
-    actioner: (ShowDetailsAction) -> Unit
-) {
-    LogCompositions("SeasonRowOverflowMenu")
-
-    val items = ArrayList<PopupMenuItem>()
-
-    items += if (season.ignored) {
-        PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_follow),
-            onClick = { actioner(ChangeSeasonFollowedAction(season.id, true)) }
-        )
-    } else {
-        PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_ignore),
-            onClick = { actioner(ChangeSeasonFollowedAction(season.id, false)) }
-        )
-    }
-
-    // Season number starts from 1, rather than 0
-    if (season.number ?: -100 >= 2) {
-        items += PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_ignore_previous),
-            onClick = { actioner(UnfollowPreviousSeasonsFollowedAction(season.id)) }
-        )
-    }
-
-    if (episodesWatched > 0) {
-        items += PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_mark_all_unwatched),
-            onClick = { actioner(MarkSeasonUnwatchedAction(season.id)) }
-        )
-    }
-
-    if (episodesWatched < episodesAired) {
-        items += if (episodesToAir == 0) {
-            PopupMenuItem(
-                title = stringResource(id = R.string.popup_season_mark_watched_all),
-                onClick = { actioner(MarkSeasonWatchedAction(season.id)) }
-            )
-        } else {
-            PopupMenuItem(
-                title = stringResource(id = R.string.popup_season_mark_watched_aired),
-                onClick = { actioner(MarkSeasonWatchedAction(season.id, onlyAired = true)) }
-            )
-        }
-    }
-
-    PopupMenu(
-        items = items,
-        onDismiss = onDismiss,
-        alignment = Alignment.CenterEnd
-    )
 }
 
 @Composable
@@ -1049,19 +1014,6 @@ private fun ToggleShowFollowFloatingActionButton(
 }
 
 private val previewShow = TiviShow(title = "Detective Penny")
-
-@Preview
-@Composable
-private fun PreviewSeasonRow() {
-    SeasonRowOverflowMenu(
-        season = Season(showId = 0, number = 1, ignored = false),
-        episodesAired = 10,
-        episodesToAir = 2,
-        episodesWatched = 3,
-        onDismiss = {},
-        actioner = {}
-    )
-}
 
 @Preview
 @Composable
