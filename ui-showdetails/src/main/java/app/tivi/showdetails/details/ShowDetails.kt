@@ -32,8 +32,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ConstraintLayout
 import androidx.compose.foundation.layout.ExperimentalLayout
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.InnerPadding
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope.align
 import androidx.compose.foundation.layout.SizeMode
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -219,7 +220,7 @@ fun ShowDetails(
         Snackbar(
             text = { Text(viewState.refreshError.message) },
             modifier = Modifier
-                .preferredWidthIn(maxWidth = 540.dp)
+                .preferredWidthIn(max = 540.dp)
                 .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                 .clickable(onClick = { actioner(ClearError) })
                 .constrainAs(snackbar) {
@@ -611,7 +612,7 @@ private fun RelatedShows(
 
     Carousel(
         items = related,
-        contentPadding = InnerPadding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
+        contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
         itemSpacing = 4.dp,
         modifier = modifier
     ) { item, padding ->
@@ -635,7 +636,7 @@ private fun NextEpisodeToWatch(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
-            .preferredHeightIn(minHeight = 48.dp)
+            .preferredHeightIn(min = 48.dp)
             .wrapContentSize(Alignment.CenterStart)
             .clickable(onClick = onClick)
             .padding(16.dp, 8.dp)
@@ -793,12 +794,12 @@ private fun SeasonRow(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.preferredHeightIn(minHeight = 48.dp)
+        modifier = modifier.preferredHeightIn(min = 48.dp)
             .wrapContentHeight(Alignment.CenterVertically)
             .padding(start = 16.dp, top = 12.dp, bottom = 12.dp)
     ) {
         Column(
-            modifier = Modifier.weight(1f).gravity(Alignment.CenterVertically)
+            modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
         ) {
             val textCreator = ShowDetailsTextCreatorAmbient.current
 
@@ -866,7 +867,7 @@ private fun EpisodeWithWatchesRow(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.preferredHeightIn(minHeight = 48.dp)
+        modifier = modifier.preferredHeightIn(min = 48.dp)
             .wrapContentHeight(Alignment.CenterVertically)
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
@@ -894,7 +895,7 @@ private fun EpisodeWithWatchesRow(
             if (hasPending) {
                 IconResource(
                     resourceId = R.drawable.ic_cloud_upload,
-                    modifier = Modifier.gravity(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 needSpacer = true
             }
@@ -907,7 +908,7 @@ private fun EpisodeWithWatchesRow(
                         onlyPendingDeletes -> R.drawable.ic_visibility_off
                         else -> R.drawable.ic_visibility
                     },
-                    modifier = Modifier.gravity(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
         }

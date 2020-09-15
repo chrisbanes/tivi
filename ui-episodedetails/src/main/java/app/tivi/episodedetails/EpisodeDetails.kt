@@ -32,7 +32,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.contentColor
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope.align
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope.align
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.aspectRatio
@@ -174,12 +176,12 @@ private fun EpisodeDetails(
 
                             if (watches.isEmpty()) {
                                 MarkWatchedButton(
-                                    modifier = Modifier.gravity(Alignment.CenterHorizontally),
+                                    modifier = Modifier.align(Alignment.CenterHorizontally),
                                     actioner = actioner
                                 )
                             } else {
                                 AddWatchButton(
-                                    modifier = Modifier.gravity(Alignment.CenterHorizontally),
+                                    modifier = Modifier.align(Alignment.CenterHorizontally),
                                     actioner = actioner
                                 )
                             }
@@ -227,7 +229,7 @@ private fun EpisodeDetails(
 
         Column(
             modifier = Modifier.fillMaxWidth()
-                .gravity(Alignment.BottomCenter)
+                .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
         ) {
             Crossfade(current = viewState.error) { error ->
@@ -261,7 +263,7 @@ private fun Backdrop(
             }
 
             Column(
-                modifier = Modifier.gravity(Alignment.BottomStart)
+                modifier = Modifier.align(Alignment.BottomStart)
                     .background(
                         color = Color.Black.copy(alpha = 0.65f),
                         shape = RoundedCornerShape(topRight = 8.dp)
@@ -336,7 +338,7 @@ private fun InfoPane(
         ProvideEmphasis(emphasis = EmphasisAmbient.current.medium) {
             Icon(
                 asset = icon,
-                modifier = Modifier.gravity(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
 
@@ -344,7 +346,7 @@ private fun InfoPane(
 
         ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
             Text(
-                modifier = Modifier.gravity(Alignment.CenterHorizontally),
+                modifier = Modifier.align(Alignment.CenterHorizontally),
                 text = label,
                 style = MaterialTheme.typography.body1
             )
@@ -358,7 +360,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
         ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                    .gravity(Alignment.CenterVertically)
+                    .align(Alignment.CenterVertically)
                     .weight(1f),
                 text = stringResource(R.string.episode_watches),
                 style = MaterialTheme.typography.subtitle1
@@ -386,7 +388,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
             ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
                 val formatter = TiviDateFormatterAmbient.current
                 Text(
-                    modifier = Modifier.weight(1f).gravity(Alignment.CenterVertically),
+                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically),
                     text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
                     style = MaterialTheme.typography.body2
                 )
@@ -398,7 +400,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
                         resourceId = R.drawable.ic_publish,
                         modifier = Modifier
                             .padding(start = 8.dp)
-                            .gravity(Alignment.CenterVertically)
+                            .align(Alignment.CenterVertically)
                     )
                 }
 
@@ -407,7 +409,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
                         resourceId = R.drawable.ic_visibility_off,
                         modifier = Modifier
                             .padding(start = 8.dp)
-                            .gravity(Alignment.CenterVertically)
+                            .align(Alignment.CenterVertically)
                     )
                 }
             }
@@ -473,7 +475,7 @@ private fun EpisodeWatchSwipeBackground(
                 modifier = Modifier
                     .onPositionInParentChanged { iconCenter = it.boundsInParent.center }
                     .padding(start = 0.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
-                    .gravity(Alignment.CenterEnd)
+                    .align(Alignment.CenterEnd)
             )
         }
     }

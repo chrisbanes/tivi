@@ -20,6 +20,7 @@ import android.view.ViewGroup
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope.align
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -99,7 +100,7 @@ fun AccountUi(
             }
 
             Row(
-                modifier = Modifier.gravity(Alignment.End)
+                modifier = Modifier.align(Alignment.End)
                     .padding(horizontal = 16.dp)
             ) {
                 if (viewState.authState == TraktAuthState.LOGGED_OUT) {
@@ -140,7 +141,7 @@ private fun UserRow(
     modifier: Modifier = Modifier
 ) {
     Row(
-        verticalGravity = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.fillMaxWidth()
     ) {
         val avatarUrl = user.avatarUrl
@@ -180,7 +181,7 @@ private fun AppAction(
     modifier: Modifier = Modifier
 ) {
     Row(
-        verticalGravity = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.fillMaxWidth()
             .preferredSizeIn(minHeight = 48.dp)
             .clickable(onClick = onClick)
