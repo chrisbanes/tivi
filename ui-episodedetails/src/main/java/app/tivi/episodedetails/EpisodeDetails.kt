@@ -275,7 +275,8 @@ private fun Backdrop(
                             Text(
                                 text = stringResource(
                                     R.string.season_episode_number,
-                                    seasonNumber, epNumber
+                                    seasonNumber,
+                                    epNumber
                                 ).toUpperCase(locale),
                                 style = MaterialTheme.typography.overline
                                     .copy(color = contentColor())

@@ -83,7 +83,8 @@ abstract class EntryGridFragment<LI, VM> : FragmentWithBinding<FragmentEntryGrid
         binding.gridAppbar.doOnSizeChange {
             binding.gridRecyclerview.updatePadding(top = it.height)
             binding.gridSwipeRefresh.setProgressViewOffset(
-                true, 0,
+                true,
+                0,
                 it.height + binding.gridSwipeRefresh.progressCircleDiameter / 2
             )
             true

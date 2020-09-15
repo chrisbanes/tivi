@@ -107,11 +107,13 @@ object GridToGridTransitioner {
             // We want this to end at the same time as the shared element transition so we delay it
             startDelay = GRID_SHARED_ELEMENT_ENTER_DURATION - CONTENT_TRANSITION_DURATION
 
-            addListener(object : TransitionListenerAdapter() {
-                override fun onTransitionEnd(transition: Transition) {
-                    onTransitionEnd()
+            addListener(
+                object : TransitionListenerAdapter() {
+                    override fun onTransitionEnd(transition: Transition) {
+                        onTransitionEnd()
+                    }
                 }
-            })
+            )
         }
         fragment.returnTransition = TransitionSet().apply {
             addTransition(

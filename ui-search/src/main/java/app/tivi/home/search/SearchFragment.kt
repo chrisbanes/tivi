@@ -68,18 +68,20 @@ internal class SearchFragment : FragmentWithBinding<FragmentSearchBinding>() {
         }
 
         binding.searchSearchview.apply {
-            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String): Boolean {
-                    viewModel.setSearchQuery(query)
-                    hideSoftInput()
-                    return true
-                }
+            setOnQueryTextListener(
+                object : SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String): Boolean {
+                        viewModel.setSearchQuery(query)
+                        hideSoftInput()
+                        return true
+                    }
 
-                override fun onQueryTextChange(newText: String): Boolean {
-                    viewModel.setSearchQuery(newText)
-                    return true
+                    override fun onQueryTextChange(newText: String): Boolean {
+                        viewModel.setSearchQuery(newText)
+                        return true
+                    }
                 }
-            })
+            )
         }
 
         controller.callbacks = object : SearchEpoxyController.Callbacks {

@@ -79,17 +79,19 @@ suspend fun RecyclerView.awaitScrollEnd() {
             stopScroll()
         }
 
-        addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    // Make sure we remove the listener so we don't keep leak the
-                    // coroutine continuation
-                    recyclerView.removeOnScrollListener(this)
-                    // Finally, resume the coroutine
-                    cont.resume(Unit)
+        addOnScrollListener(
+            object : RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        // Make sure we remove the listener so we don't keep leak the
+                        // coroutine continuation
+                        recyclerView.removeOnScrollListener(this)
+                        // Finally, resume the coroutine
+                        cont.resume(Unit)
+                    }
                 }
             }
-        })
+        )
     }
 }
 

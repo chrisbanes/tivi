@@ -29,12 +29,14 @@ import coil.transform.CircleCropTransformation
 fun MenuItem.loadImageUrl(context: Context, url: String, circleCrop: Boolean = true) {
     val request = ImageRequest.Builder(context)
         .data(url)
-        .size(object : SizeResolver {
-            override suspend fun size(): Size {
-                val height = context.resolveThemeDimensionPixelSize(android.R.attr.actionBarSize)
-                return PixelSize(height, height)
+        .size(
+            object : SizeResolver {
+                override suspend fun size(): Size {
+                    val height = context.resolveThemeDimensionPixelSize(android.R.attr.actionBarSize)
+                    return PixelSize(height, height)
+                }
             }
-        })
+        )
         .target { icon = it }
         .apply {
             if (circleCrop) {

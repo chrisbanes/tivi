@@ -22,6 +22,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.FragmentComponent
 
 @InstallIn(FragmentComponent::class)
-@Module(includes = [AssistedInject_ShowDetailsAssistedModule::class])
+@Module
 @AssistedModule
 internal object ShowDetailsAssistedModule

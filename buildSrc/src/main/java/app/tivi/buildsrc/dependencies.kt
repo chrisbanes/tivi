@@ -17,7 +17,7 @@
 package app.tivi.buildsrc
 
 object Versions {
-    const val ktlint = "0.37.2"
+    const val ktlint = "0.38.1"
 }
 
 object Libs {
@@ -34,7 +34,7 @@ object Libs {
     const val timber = "com.jakewharton.timber:timber:4.7.1"
 
     const val tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.2.0"
-    const val traktJava = "com.uwetrottmann.trakt5:trakt-java:6.6.0"
+    const val traktJava = "com.uwetrottmann.trakt5:trakt-java:6.7.0"
 
     /**
      * Using Jitpack until AndroidX migration is out.
@@ -45,7 +45,7 @@ object Libs {
     const val appauth = "com.github.openid:AppAuth-Android:master-SNAPSHOT"
 
     const val junit = "junit:junit:4.13"
-    const val robolectric = "org.robolectric:robolectric:4.3.1"
+    const val robolectric = "org.robolectric:robolectric:4.4"
     const val mockK = "io.mockk:mockk:1.10.0"
 
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.4"
@@ -195,13 +195,13 @@ object Libs {
     }
 
     object Dagger {
-        private const val version = "2.29"
+        private const val version = "2.29.1"
         const val dagger = "com.google.dagger:dagger:$version"
         const val compiler = "com.google.dagger:dagger-compiler:$version"
     }
 
     object Hilt {
-        private const val version = "2.29-alpha"
+        private const val version = "2.29.1-alpha"
         const val library = "com.google.dagger:hilt-android:$version"
         const val compiler = "com.google.dagger:hilt-android-compiler:$version"
         const val testing = "com.google.dagger:hilt-android-testing:$version"
@@ -215,7 +215,7 @@ object Libs {
     }
 
     object OkHttp {
-        private const val version = "4.8.1"
+        private const val version = "4.9.0"
         const val okhttp = "com.squareup.okhttp3:okhttp:$version"
         const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$version"
     }
@@ -234,7 +234,7 @@ object Libs {
     }
 
     object AssistedInject {
-        private const val version = "0.5.2"
+        private const val version = "0.6.0"
         const val annotationDagger2 = "com.squareup.inject:assisted-inject-annotations-dagger2:$version"
         const val processorDagger2 = "com.squareup.inject:assisted-inject-processor-dagger2:$version"
     }
@@ -247,4 +247,6 @@ object Libs {
         const val library = "com.github.chrisbanes.Roomigrant:RoomigrantLib:$version"
         const val compiler = "com.github.chrisbanes.Roomigrant:RoomigrantCompiler:$version"
     }
+
+    const val truth = "com.google.truth:truth:1.0.1"
 }

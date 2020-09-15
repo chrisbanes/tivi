@@ -55,15 +55,19 @@ class HeaderHolderFrameLayout @JvmOverloads constructor(
 
     init {
         context.obtainStyledAttributes(
-            attrs, R.styleable.HeaderHolderFrameLayout,
-            defStyle, R.style.Widget_Tivi_HeaderHolderFrameLayout
+            attrs,
+            R.styleable.HeaderHolderFrameLayout,
+            defStyle,
+            R.style.Widget_Tivi_HeaderHolderFrameLayout
         ).use {
             dividerDrawable = it.getDrawable(R.styleable.HeaderHolderFrameLayout_dividerDrawable)
             dividerMarginStart = it.getDimensionPixelSize(
-                R.styleable.HeaderHolderFrameLayout_dividerMarginStart, 0
+                R.styleable.HeaderHolderFrameLayout_dividerMarginStart,
+                0
             )
             dividerMarginEnd = it.getDimensionPixelSize(
-                R.styleable.HeaderHolderFrameLayout_dividerMarginEnd, 0
+                R.styleable.HeaderHolderFrameLayout_dividerMarginEnd,
+                0
             )
             background = MaterialShapeDrawable.createWithElevationOverlay(context, elevation).apply {
                 fillColor = it.getColorStateList(R.styleable.HeaderHolderFrameLayout_materialBackgroundColor)

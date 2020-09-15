@@ -40,6 +40,7 @@ import app.tivi.utils.s2_episodes
 import app.tivi.utils.s2_id
 import app.tivi.utils.s2e1
 import app.tivi.utils.showId
+import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import io.mockk.coEvery
@@ -47,8 +48,6 @@ import kotlinx.coroutines.flow.produceIn
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.withTimeout
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.`is`
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -88,7 +87,8 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         // Sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that both are in the db
-        assertThat(watchStore.getEpisodeWatchesForShow(showId), `is`(listOf(s1e1w, s1e1w2)))
+        assertThat(watchStore.getEpisodeWatchesForShow(showId))
+            .containsExactly(s1e1w, s1e1w2)
     }
 
     @Test
@@ -104,7 +104,8 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         // Now re-sync with the same response
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that both are in the db
-        assertThat(watchStore.getEpisodeWatchesForShow(showId), `is`(listOf(s1e1w, s1e1w2)))
+        assertThat(watchStore.getEpisodeWatchesForShow(showId))
+            .containsExactly(s1e1w, s1e1w2)
     }
 
     @Test
@@ -120,7 +121,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that only the second is in the db
-        assertThat(watchStore.getEpisodeWatchesForShow(showId), `is`(listOf(s1e1w2)))
+        assertThat(watchStore.getEpisodeWatchesForShow(showId)).containsExactly(s1e1w2)
     }
 
     @Test
@@ -136,7 +137,7 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         // Now re-sync
         repository.syncEpisodeWatchesForShow(showId)
         // Assert that the database is empty
-        assertThat(watchStore.getEpisodeWatchesForShow(showId), `is`(emptyList()))
+        assertThat(watchStore.getEpisodeWatchesForShow(showId)).isEmpty()
     }
 
     @Test
@@ -147,8 +148,8 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
-        assertThat(seasonsDao.seasonsForShowId(showId), `is`(listOf(s1)))
-        assertThat(episodesDao.episodesWithSeasonId(s1_id), `is`(s1_episodes))
+        assertThat(seasonsDao.seasonsForShowId(showId)).containsExactly(s1)
+        assertThat(episodesDao.episodesWithSeasonId(s1_id)).isEqualTo(s1_episodes)
     }
 
     @Test
@@ -162,8 +163,8 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
-        assertThat(seasonsDao.seasonsForShowId(showId), `is`(listOf(s1)))
-        assertThat(episodesDao.episodesWithSeasonId(s1_id), `is`(s1_episodes))
+        assertThat(seasonsDao.seasonsForShowId(showId)).containsExactly(s1)
+        assertThat(episodesDao.episodesWithSeasonId(s1_id)).isEqualTo(s1_episodes)
     }
 
     @Test
@@ -177,8 +178,8 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         repository.updateSeasonsEpisodes(showId)
 
         // Assert the database is empty
-        assertThat(seasonsDao.seasonsForShowId(showId), `is`(emptyList()))
-        assertThat(episodesDao.episodesWithSeasonId(s1_id), `is`(emptyList()))
+        assertThat(seasonsDao.seasonsForShowId(showId)).isEmpty()
+        assertThat(episodesDao.episodesWithSeasonId(s1_id)).isEmpty()
     }
 
     @Test
@@ -193,8 +194,8 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
-        assertThat(seasonsDao.seasonsForShowId(showId), `is`(listOf(s1)))
-        assertThat(episodesDao.episodesWithSeasonId(s1_id), `is`(s1_episodes))
+        assertThat(seasonsDao.seasonsForShowId(showId)).containsExactly(s1)
+        assertThat(episodesDao.episodesWithSeasonId(s1_id)).isEqualTo(s1_episodes)
     }
 
     @Test
@@ -209,9 +210,9 @@ class SeasonsEpisodesRepositoryTest : DatabaseTest() {
         repository.updateSeasonsEpisodes(showId)
 
         // Assert that both are in the db
-        assertThat(seasonsDao.seasonsForShowId(showId), `is`(listOf(s1, s2)))
-        assertThat(episodesDao.episodesWithSeasonId(s1_id), `is`(listOf(s1e1)))
-        assertThat(episodesDao.episodesWithSeasonId(s2_id), `is`(listOf(s2e1)))
+        assertThat(seasonsDao.seasonsForShowId(showId)).containsExactly(s1, s2)
+        assertThat(episodesDao.episodesWithSeasonId(s1_id)).containsExactly(s1e1)
+        assertThat(episodesDao.episodesWithSeasonId(s2_id)).containsExactly(s2e1)
     }
 
     @Test

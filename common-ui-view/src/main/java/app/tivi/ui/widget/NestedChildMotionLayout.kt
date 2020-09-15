@@ -82,8 +82,11 @@ class NestedChildMotionLayout @JvmOverloads constructor(
             // If there is any dx/dy remaining, let MotionLayout handle it
             val innerConsumed = tmpArray
             super.onNestedPreScroll(
-                target, dx - consumed[0], dy - consumed[1],
-                innerConsumed, type
+                target,
+                dx - consumed[0],
+                dy - consumed[1],
+                innerConsumed,
+                type
             )
             consumed[0] += innerConsumed[0]
             consumed[1] += innerConsumed[1]
@@ -100,16 +103,23 @@ class NestedChildMotionLayout @JvmOverloads constructor(
         consumed: IntArray
     ) {
         super.onNestedScroll(
-            target, dxConsumed, dyConsumed,
-            dxUnconsumed, dyUnconsumed,
-            type, consumed
+            target,
+            dxConsumed,
+            dyConsumed,
+            dxUnconsumed,
+            dyUnconsumed,
+            type,
+            consumed
         )
 
         dispatchNestedScroll(
-            dxConsumed, dyConsumed,
-            dxUnconsumed, dyUnconsumed,
+            dxConsumed,
+            dyConsumed,
+            dxUnconsumed,
+            dyUnconsumed,
             null,
-            type, tmpArray
+            type,
+            tmpArray
         )
     }
 
@@ -168,9 +178,13 @@ class NestedChildMotionLayout @JvmOverloads constructor(
         consumed: IntArray
     ) {
         helper.dispatchNestedScroll(
-            dxConsumed, dyConsumed,
-            dxUnconsumed, dyUnconsumed,
-            offsetInWindow, type, consumed
+            dxConsumed,
+            dyConsumed,
+            dxUnconsumed,
+            dyUnconsumed,
+            offsetInWindow,
+            type,
+            consumed
         )
     }
 
@@ -182,8 +196,12 @@ class NestedChildMotionLayout @JvmOverloads constructor(
         offsetInWindow: IntArray?,
         type: Int
     ) = helper.dispatchNestedScroll(
-        dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
-        offsetInWindow, type
+        dxConsumed,
+        dyConsumed,
+        dxUnconsumed,
+        dyUnconsumed,
+        offsetInWindow,
+        type
     )
 
     override fun dispatchNestedPreFling(

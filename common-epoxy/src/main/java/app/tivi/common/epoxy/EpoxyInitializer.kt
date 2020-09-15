@@ -34,12 +34,14 @@ class EpoxyInitializer @Inject constructor() : AppInitializer {
         EpoxyController.defaultDiffingHandler = asyncHandler
 
         // Also setup Carousel to use a more sane snapping behavior
-        Carousel.setDefaultGlobalSnapHelperFactory(object : Carousel.SnapHelperFactory() {
-            override fun buildSnapHelper(context: Context): SnapHelper {
-                return GravitySnapHelper(Gravity.START).apply {
-                    scrollMsPerInch = 70f
+        Carousel.setDefaultGlobalSnapHelperFactory(
+            object : Carousel.SnapHelperFactory() {
+                override fun buildSnapHelper(context: Context): SnapHelper {
+                    return GravitySnapHelper(Gravity.START).apply {
+                        scrollMsPerInch = 70f
+                    }
                 }
             }
-        })
+        )
     }
 }

@@ -53,7 +53,8 @@ class SaturatingTransformation(
                 is SuccessResult -> {
                     val animator = saturateDrawableAnimator(
                         result.drawable,
-                        durationMillis, target.view
+                        durationMillis,
+                        target.view
                     )
                     animator.doOnEnd {
                         continuation.resume(Unit) { animator.cancel() }
