@@ -45,7 +45,6 @@ import androidx.compose.foundation.layout.preferredHeightIn
 import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.preferredSizeIn
 import androidx.compose.foundation.layout.preferredWidth
-import androidx.compose.foundation.layout.preferredWidthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
@@ -54,11 +53,13 @@ import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.EmphasisAmbient
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideEmphasis
-import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -70,7 +71,9 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticAmbientOf
 import androidx.compose.ui.Alignment
@@ -94,6 +97,7 @@ import app.tivi.common.compose.IconResource
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PosterCard
+import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.navigationBarsPadding
 import app.tivi.common.compose.offset
@@ -123,10 +127,12 @@ import app.tivi.ui.animations.lerp
 import coil.request.ImageRequest
 import dev.chrisbanes.accompanist.coil.CoilImage
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
+import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
 val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ShowDetails(
     viewState: ShowDetailsViewState,
@@ -179,20 +185,32 @@ fun ShowDetails(
             }
     )
 
-    if (viewState.refreshError != null) {
-        // TODO: Convert this to swipe-to-dismiss
-        Snackbar(
-            text = { Text(viewState.refreshError.message) },
-            modifier = Modifier
-                .preferredWidthIn(max = 540.dp)
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                .clickable(onClick = { actioner(ClearError) })
-                .constrainAs(snackbar) {
-                    bottom.linkTo(fab.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-        )
+    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarScope = rememberCoroutineScope()
+
+    SnackbarHost(
+        hostState = snackbarHostState,
+        snackbar = {
+            SwipeDismissSnackbar(
+                data = it,
+                onDismiss = { actioner(ClearError) }
+            )
+        },
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .constrainAs(snackbar) {
+                bottom.linkTo(fab.top)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            }
+    )
+
+    onCommit(viewState.refreshError) {
+        viewState.refreshError?.let { error ->
+            snackbarScope.launch {
+                snackbarHostState.showSnackbar(error.message)
+            }
+        }
     }
 
     ToggleShowFollowFloatingActionButton(

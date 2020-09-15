@@ -18,7 +18,6 @@ package app.tivi.episodedetails
 
 import android.os.Build
 import androidx.compose.animation.ColorPropKey
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.transitionDefinition
 import androidx.compose.animation.core.tween
@@ -28,7 +27,6 @@ import androidx.compose.foundation.Icon
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.contentColor
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,7 +49,8 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.ProvideEmphasis
-import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.TopAppBar
@@ -64,7 +63,9 @@ import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -84,6 +85,7 @@ import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.IconResource
+import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.TiviAlertDialog
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.boundsInParent
@@ -98,6 +100,7 @@ import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.ui.animations.lerp
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
+import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 import kotlin.math.absoluteValue
 import kotlin.math.hypot
@@ -205,19 +208,28 @@ fun EpisodeDetails(
             }
         }
 
-        Column(
-            modifier = Modifier.fillMaxWidth()
+        val snackbarHostState = remember { SnackbarHostState() }
+        val snackbarScope = rememberCoroutineScope()
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            snackbar = {
+                SwipeDismissSnackbar(
+                    data = it,
+                    onDismiss = { actioner(ClearError) }
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
-        ) {
-            Crossfade(current = viewState.error) { error ->
-                if (error != null) {
-                    // TODO: Convert this to swipe-to-dismiss
-                    Snackbar(
-                        text = { Text(error.message) },
-                        modifier = Modifier.clickable(onClick = { actioner(ClearError) })
-                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                    )
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+        )
+
+        onCommit(viewState.error) {
+            viewState.error?.let { error ->
+                snackbarScope.launch {
+                    snackbarHostState.showSnackbar(error.message)
                 }
             }
         }
