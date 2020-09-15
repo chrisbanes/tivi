@@ -19,7 +19,7 @@ package app.tivi.episodedetails
 import android.os.Build
 import androidx.compose.animation.ColorPropKey
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.transitionDefinition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.transition
@@ -31,9 +31,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.contentColor
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope.align
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope.align
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.aspectRatio
@@ -45,19 +43,24 @@ import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredSizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissValue
 import androidx.compose.material.EmphasisAmbient
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.Snackbar
 import androidx.compose.material.Surface
+import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
@@ -81,8 +84,6 @@ import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.IconResource
-import app.tivi.common.compose.SwipeDirection
-import app.tivi.common.compose.SwipeToDismiss
 import app.tivi.common.compose.TiviAlertDialog
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.boundsInParent
@@ -98,8 +99,10 @@ import app.tivi.data.entities.Season
 import app.tivi.ui.animations.lerp
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
 import org.threeten.bp.OffsetDateTime
+import kotlin.math.absoluteValue
 import kotlin.math.hypot
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EpisodeDetails(
     viewState: EpisodeDetailsViewState,
@@ -173,18 +176,25 @@ fun EpisodeDetails(
                         }
 
                         watches.forEach { watch ->
-                            SwipeToDismiss(
-                                swipeDirections = listOf(SwipeDirection.START),
-                                onSwipeComplete = {
+                            val dismissState = rememberDismissState {
+                                if (it != DismissValue.Default) {
                                     actioner(RemoveEpisodeWatchAction(watch.id))
-                                },
-                                swipeChildren = { _, _ -> EpisodeWatch(episodeWatchEntry = watch) },
-                                backgroundChildren = { swipeProgress, completeOnRelease ->
-                                    EpisodeWatchSwipeBackground(
-                                        swipeProgress = swipeProgress,
-                                        wouldCompleteOnRelease = completeOnRelease
-                                    )
                                 }
+                                it != DismissValue.DismissedToEnd
+                            }
+
+                            SwipeToDismiss(
+                                state = dismissState,
+                                modifier = Modifier.padding(vertical = 4.dp),
+                                directions = setOf(DismissDirection.EndToStart),
+                                background = {
+                                    val fraction = dismissState.progress.fraction
+                                    EpisodeWatchSwipeBackground(
+                                        swipeProgress = fraction,
+                                        wouldCompleteOnRelease = fraction.absoluteValue >= 0.5f
+                                    )
+                                },
+                                dismissContent = { EpisodeWatch(episodeWatchEntry = watch) }
                             )
                         }
 
@@ -433,7 +443,7 @@ private fun EpisodeWatchSwipeBackground(
                 .drawGrowingCircle(
                     color = transitionState[color],
                     center = iconCenter,
-                    radius = lerp(0f, maxRadius.toFloat(), FastOutSlowInEasing(swipeProgress))
+                    radius = lerp(0f, maxRadius.toFloat(), FastOutLinearInEasing(swipeProgress))
                 )
         )
 
