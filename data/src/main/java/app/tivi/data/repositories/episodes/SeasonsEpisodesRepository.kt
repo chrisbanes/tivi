@@ -253,7 +253,8 @@ class SeasonsEpisodesRepository @Inject constructor(
         if (watchesForEpisode.isNotEmpty()) {
             // First mark them as pending deletion
             episodeWatchStore.updateEntriesWithAction(
-                watchesForEpisode.map { it.id }, PendingAction.DELETE
+                watchesForEpisode.map { it.id },
+                PendingAction.DELETE
             )
             syncEpisodeWatches(episodeId)
         }

@@ -46,16 +46,18 @@ fun View.doOnAttach(f: (View) -> Unit) {
     if (isAttachedToWindow) {
         f(this)
     } else {
-        addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
-            override fun onViewAttachedToWindow(v: View) {
-                f(v)
-                removeOnAttachStateChangeListener(this)
-            }
+        addOnAttachStateChangeListener(
+            object : View.OnAttachStateChangeListener {
+                override fun onViewAttachedToWindow(v: View) {
+                    f(v)
+                    removeOnAttachStateChangeListener(this)
+                }
 
-            override fun onViewDetachedFromWindow(v: View) {
-                removeOnAttachStateChangeListener(this)
+                override fun onViewDetachedFromWindow(v: View) {
+                    removeOnAttachStateChangeListener(this)
+                }
             }
-        })
+        )
     }
 }
 
@@ -64,24 +66,26 @@ fun View.doOnAttach(f: (View) -> Unit) {
  * attached.
  */
 inline fun <V : View> V.doOnLayouts(crossinline action: (view: V) -> Boolean) {
-    addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
-        @Suppress("UNCHECKED_CAST")
-        override fun onLayoutChange(
-            view: View,
-            left: Int,
-            top: Int,
-            right: Int,
-            bottom: Int,
-            oldLeft: Int,
-            oldTop: Int,
-            oldRight: Int,
-            oldBottom: Int
-        ) {
-            if (!action(view as V)) {
-                view.removeOnLayoutChangeListener(this)
+    addOnLayoutChangeListener(
+        object : View.OnLayoutChangeListener {
+            @Suppress("UNCHECKED_CAST")
+            override fun onLayoutChange(
+                view: View,
+                left: Int,
+                top: Int,
+                right: Int,
+                bottom: Int,
+                oldLeft: Int,
+                oldTop: Int,
+                oldRight: Int,
+                oldBottom: Int
+            ) {
+                if (!action(view as V)) {
+                    view.removeOnLayoutChangeListener(this)
+                }
             }
         }
-    })
+    )
 }
 
 /**
@@ -89,25 +93,27 @@ inline fun <V : View> V.doOnLayouts(crossinline action: (view: V) -> Boolean) {
  * attached.
  */
 inline fun View.doOnSizeChange(crossinline action: (view: View) -> Boolean) {
-    addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
-        override fun onLayoutChange(
-            view: View,
-            left: Int,
-            top: Int,
-            right: Int,
-            bottom: Int,
-            oldLeft: Int,
-            oldTop: Int,
-            oldRight: Int,
-            oldBottom: Int
-        ) {
-            if ((bottom - top) != (oldBottom - oldTop) || (right - left) != (oldRight - oldLeft)) {
-                if (!action(view)) {
-                    view.removeOnLayoutChangeListener(this)
+    addOnLayoutChangeListener(
+        object : View.OnLayoutChangeListener {
+            override fun onLayoutChange(
+                view: View,
+                left: Int,
+                top: Int,
+                right: Int,
+                bottom: Int,
+                oldLeft: Int,
+                oldTop: Int,
+                oldRight: Int,
+                oldBottom: Int
+            ) {
+                if ((bottom - top) != (oldBottom - oldTop) || (right - left) != (oldRight - oldLeft)) {
+                    if (!action(view)) {
+                        view.removeOnLayoutChangeListener(this)
+                    }
                 }
             }
         }
-    })
+    )
 }
 
 suspend fun View.awaitNextLayout() = suspendCancellableCoroutine<Unit> { cont ->

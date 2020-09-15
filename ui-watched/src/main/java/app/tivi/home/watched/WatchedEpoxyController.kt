@@ -55,27 +55,29 @@ internal class WatchedEpoxyController @Inject constructor(
                 id("filters")
                 filter(state.filter)
                 numberShows(models.size)
-                watcher(object : TextWatcher {
-                    override fun afterTextChanged(s: Editable?) {
-                        callbacks?.onFilterChanged(s?.toString() ?: "")
-                    }
+                watcher(
+                    object : TextWatcher {
+                        override fun afterTextChanged(s: Editable?) {
+                            callbacks?.onFilterChanged(s?.toString() ?: "")
+                        }
 
-                    override fun beforeTextChanged(
-                        s: CharSequence?,
-                        start: Int,
-                        count: Int,
-                        after: Int
-                    ) {
-                    }
+                        override fun beforeTextChanged(
+                            s: CharSequence?,
+                            start: Int,
+                            count: Int,
+                            after: Int
+                        ) {
+                        }
 
-                    override fun onTextChanged(
-                        s: CharSequence?,
-                        start: Int,
-                        before: Int,
-                        count: Int
-                    ) {
+                        override fun onTextChanged(
+                            s: CharSequence?,
+                            start: Int,
+                            before: Int,
+                            count: Int
+                        ) {
+                        }
                     }
-                })
+                )
 
                 popupMenuListener(SortPopupMenuListener(state.sort, state.availableSorts))
                 popupMenuClickListener {

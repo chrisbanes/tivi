@@ -84,29 +84,31 @@ open class ViewChangeBounds : Transition() {
         if (parent is ViewGroup) {
             parent.suppressLayoutInternal(true)
 
-            addListener(object : TransitionListenerAdapter() {
-                private var canceled = false
+            addListener(
+                object : TransitionListenerAdapter() {
+                    private var canceled = false
 
-                override fun onTransitionCancel(transition: Transition) {
-                    parent.suppressLayoutInternal(false)
-                    canceled = true
-                }
+                    override fun onTransitionCancel(transition: Transition) {
+                        parent.suppressLayoutInternal(false)
+                        canceled = true
+                    }
 
-                override fun onTransitionEnd(transition: Transition) {
-                    if (!canceled) {
+                    override fun onTransitionEnd(transition: Transition) {
+                        if (!canceled) {
+                            parent.suppressLayoutInternal(false)
+                        }
+                        transition.removeListener(this)
+                    }
+
+                    override fun onTransitionPause(transition: Transition) {
                         parent.suppressLayoutInternal(false)
                     }
-                    transition.removeListener(this)
-                }
 
-                override fun onTransitionPause(transition: Transition) {
-                    parent.suppressLayoutInternal(false)
+                    override fun onTransitionResume(transition: Transition) {
+                        parent.suppressLayoutInternal(false)
+                    }
                 }
-
-                override fun onTransitionResume(transition: Transition) {
-                    parent.suppressLayoutInternal(false)
-                }
-            })
+            )
         }
 
         return anim
@@ -128,8 +130,10 @@ open class ViewChangeBounds : Transition() {
             TOP_LEFT_PROPERTY,
             null,
             pathMotion.getPath(
-                startBounds.left.toFloat(), startBounds.top.toFloat(),
-                endBounds.left.toFloat(), endBounds.top.toFloat()
+                startBounds.left.toFloat(),
+                startBounds.top.toFloat(),
+                endBounds.left.toFloat(),
+                endBounds.top.toFloat()
             )
         )
 
@@ -137,8 +141,10 @@ open class ViewChangeBounds : Transition() {
             BOTTOM_RIGHT_PROPERTY,
             null,
             pathMotion.getPath(
-                startBounds.right.toFloat(), startBounds.bottom.toFloat(),
-                endBounds.right.toFloat(), endBounds.bottom.toFloat()
+                startBounds.right.toFloat(),
+                startBounds.bottom.toFloat(),
+                endBounds.right.toFloat(),
+                endBounds.bottom.toFloat()
             )
         )
 
@@ -272,9 +278,11 @@ open class ViewChangeBounds : Transition() {
             }
 
         val ALPHA_PROPERTY: Property<PointFBounds, Float> =
-            createFloatProperty(object : FloatProp<PointFBounds>("alpha") {
-                override fun set(o: PointFBounds, value: Float) = o.setAlpha(value)
-                override fun get(o: PointFBounds): Float = o.getAlpha()
-            })
+            createFloatProperty(
+                object : FloatProp<PointFBounds>("alpha") {
+                    override fun set(o: PointFBounds, value: Float) = o.setAlpha(value)
+                    override fun get(o: PointFBounds): Float = o.getAlpha()
+                }
+            )
     }
 }

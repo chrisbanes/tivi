@@ -86,24 +86,26 @@ class RecommendedShowsFragment : EntryGridFragment<RecommendedEntryWithShow, Rec
     }
 
     override fun startSelectionActionMode(): ActionMode? {
-        return requireActivity().startActionMode(object : ActionMode.Callback {
-            override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
-                when (item.itemId) {
-                    R.id.menu_follow -> viewModel.followSelectedShows()
+        return requireActivity().startActionMode(
+            object : ActionMode.Callback {
+                override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+                    when (item.itemId) {
+                        R.id.menu_follow -> viewModel.followSelectedShows()
+                    }
+                    return true
                 }
-                return true
-            }
 
-            override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-                mode.menuInflater.inflate(R.menu.action_mode_entry, menu)
-                return true
-            }
+                override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+                    mode.menuInflater.inflate(R.menu.action_mode_entry, menu)
+                    return true
+                }
 
-            override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = true
+                override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = true
 
-            override fun onDestroyActionMode(mode: ActionMode) {
-                viewModel.clearSelection()
+                override fun onDestroyActionMode(mode: ActionMode) {
+                    viewModel.clearSelection()
+                }
             }
-        })
+        )
     }
 }

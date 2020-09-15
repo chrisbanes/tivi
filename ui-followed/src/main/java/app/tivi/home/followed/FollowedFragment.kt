@@ -85,7 +85,8 @@ class FollowedFragment : FragmentWithBinding<FragmentFollowedBinding>() {
         binding.followedAppBar.doOnSizeChange {
             binding.followedRv.updatePadding(top = it.height)
             binding.followedSwipeRefresh.setProgressViewOffset(
-                true, 0,
+                true,
+                0,
                 it.height + binding.followedSwipeRefresh.progressCircleDiameter / 2
             )
             true
@@ -168,28 +169,30 @@ class FollowedFragment : FragmentWithBinding<FragmentFollowedBinding>() {
     }
 
     private fun startSelectionActionMode() {
-        currentActionMode = requireActivity().startActionMode(object : ActionMode.Callback {
-            override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
-                when (item.itemId) {
-                    R.id.menu_unfollow -> viewModel.unfollowSelectedShows()
+        currentActionMode = requireActivity().startActionMode(
+            object : ActionMode.Callback {
+                override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+                    when (item.itemId) {
+                        R.id.menu_unfollow -> viewModel.unfollowSelectedShows()
+                    }
+                    return true
                 }
-                return true
-            }
 
-            override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-                mode.menuInflater.inflate(R.menu.action_mode_followed, menu)
-                return true
-            }
+                override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+                    mode.menuInflater.inflate(R.menu.action_mode_followed, menu)
+                    return true
+                }
 
-            override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = true
+                override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = true
 
-            override fun onDestroyActionMode(mode: ActionMode) {
-                viewModel.clearSelection()
+                override fun onDestroyActionMode(mode: ActionMode) {
+                    viewModel.clearSelection()
 
-                if (mode == currentActionMode) {
-                    currentActionMode = null
+                    if (mode == currentActionMode) {
+                        currentActionMode = null
+                    }
                 }
             }
-        })
+        )
     }
 }

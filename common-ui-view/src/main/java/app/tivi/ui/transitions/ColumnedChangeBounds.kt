@@ -104,29 +104,31 @@ class ColumnedChangeBounds : ViewChangeBounds() {
         if (parent is ViewGroup) {
             parent.suppressLayoutInternal(true)
 
-            addListener(object : TransitionListenerAdapter() {
-                private var canceled = false
+            addListener(
+                object : TransitionListenerAdapter() {
+                    private var canceled = false
 
-                override fun onTransitionCancel(transition: Transition) {
-                    parent.suppressLayoutInternal(false)
-                    canceled = true
-                }
+                    override fun onTransitionCancel(transition: Transition) {
+                        parent.suppressLayoutInternal(false)
+                        canceled = true
+                    }
 
-                override fun onTransitionEnd(transition: Transition) {
-                    if (!canceled) {
+                    override fun onTransitionEnd(transition: Transition) {
+                        if (!canceled) {
+                            parent.suppressLayoutInternal(false)
+                        }
+                        transition.removeListener(this)
+                    }
+
+                    override fun onTransitionPause(transition: Transition) {
                         parent.suppressLayoutInternal(false)
                     }
-                    transition.removeListener(this)
-                }
 
-                override fun onTransitionPause(transition: Transition) {
-                    parent.suppressLayoutInternal(false)
+                    override fun onTransitionResume(transition: Transition) {
+                        parent.suppressLayoutInternal(false)
+                    }
                 }
-
-                override fun onTransitionResume(transition: Transition) {
-                    parent.suppressLayoutInternal(false)
-                }
-            })
+            )
         }
 
         return anim
@@ -162,7 +164,8 @@ class ColumnedChangeBounds : ViewChangeBounds() {
         val newEndLeft = prevEndBounds.right + endBounds.left
         val newEndTop = prevEndBounds.top
         val newEndBounds = Rect(
-            newEndLeft, newEndTop,
+            newEndLeft,
+            newEndTop,
             newEndLeft + endBounds.width(),
             newEndTop + endBounds.height()
         )

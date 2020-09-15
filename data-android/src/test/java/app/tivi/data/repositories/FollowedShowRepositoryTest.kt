@@ -35,13 +35,12 @@ import app.tivi.utils.insertFollowedShow
 import app.tivi.utils.insertShow
 import app.tivi.utils.show
 import app.tivi.utils.show2
+import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import io.mockk.coEvery
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.`is`
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -72,10 +71,8 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
         repository.syncFollowedShows()
 
-        assertThat(
-            repository.getFollowedShows(),
-            `is`(listOf(followedShow1Local))
-        )
+        assertThat(repository.getFollowedShows())
+            .containsExactly(followedShow1Local)
     }
 
     @Test
@@ -87,10 +84,7 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
         repository.syncFollowedShows()
 
-        assertThat(
-            repository.getFollowedShows(),
-            `is`(emptyList())
-        )
+        assertThat(repository.getFollowedShows()).isEmpty()
     }
 
     @Test
@@ -102,10 +96,8 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
         repository.syncFollowedShows()
 
-        assertThat(
-            repository.getFollowedShows(),
-            `is`(listOf(followedShow2Local))
-        )
+        assertThat(repository.getFollowedShows())
+            .containsExactly(followedShow2Local)
     }
 
     @Test
@@ -117,10 +109,8 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
         repository.syncFollowedShows()
 
-        assertThat(
-            repository.getFollowedShows(),
-            `is`(emptyList())
-        )
+        assertThat(repository.getFollowedShows())
+            .isEmpty()
     }
 
     @Test
@@ -132,10 +122,8 @@ class FollowedShowRepositoryTest : DatabaseTest() {
 
         repository.syncFollowedShows()
 
-        assertThat(
-            repository.getFollowedShows(),
-            `is`(listOf(followedShow1Local))
-        )
+        assertThat(repository.getFollowedShows())
+            .containsExactly(followedShow1Local)
     }
 
     @After

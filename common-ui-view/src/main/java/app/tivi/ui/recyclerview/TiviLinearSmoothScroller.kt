@@ -44,8 +44,11 @@ class TiviLinearSmoothScroller(
         snapPreference: Int
     ): Int {
         return targetOffset + super.calculateDtToFit(
-            viewStart, viewEnd,
-            boxStart, boxEnd, snapPreference
+            viewStart,
+            viewEnd,
+            boxStart,
+            boxEnd,
+            snapPreference
         )
     }
 }
