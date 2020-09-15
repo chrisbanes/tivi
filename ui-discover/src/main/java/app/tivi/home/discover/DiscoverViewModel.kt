@@ -18,7 +18,6 @@ package app.tivi.home.discover
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
-import app.tivi.AppNavigator
 import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.interactors.UpdateRecommendedShows
@@ -33,10 +32,12 @@ import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.collectInto
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Provider
 
 internal class DiscoverViewModel @ViewModelInject constructor(
     private val updatePopularShows: UpdatePopularShows,
@@ -47,14 +48,15 @@ internal class DiscoverViewModel @ViewModelInject constructor(
     observeRecommendedShows: ObserveRecommendedShows,
     observeNextShowEpisodeToWatch: ObserveNextShowEpisodeToWatch,
     observeTraktAuthState: ObserveTraktAuthState,
-    observeUserDetails: ObserveUserDetails,
-    private val appNavigator: Provider<AppNavigator>
+    observeUserDetails: ObserveUserDetails
 ) : ReduxViewModel<DiscoverViewState>(
     DiscoverViewState()
 ) {
     private val trendingLoadingState = ObservableLoadingCounter()
     private val popularLoadingState = ObservableLoadingCounter()
     private val recommendedLoadingState = ObservableLoadingCounter()
+
+    private val pendingActions = Channel<DiscoverAction>(Channel.BUFFERED)
 
     init {
         viewModelScope.launch {
@@ -77,21 +79,21 @@ internal class DiscoverViewModel @ViewModelInject constructor(
                 .distinctUntilChanged()
                 .collectAndSetState { copy(trendingItems = it) }
         }
-        observeTrendingShows(ObserveTrendingShows.Params(15))
+        observeTrendingShows(ObserveTrendingShows.Params(10))
 
         viewModelScope.launch {
             observePopularShows.observe()
                 .distinctUntilChanged()
                 .collectAndSetState { copy(popularItems = it) }
         }
-        observePopularShows()
+        observePopularShows(ObservePopularShows.Params(10))
 
         viewModelScope.launch {
             observeRecommendedShows.observe()
                 .distinctUntilChanged()
                 .collectAndSetState { copy(recommendedItems = it) }
         }
-        observeRecommendedShows()
+        observeRecommendedShows(ObserveRecommendedShows.Params(10))
 
         viewModelScope.launch {
             observeNextShowEpisodeToWatch.observe()
@@ -113,10 +115,16 @@ internal class DiscoverViewModel @ViewModelInject constructor(
         }
         observeUserDetails(ObserveUserDetails.Params("me"))
 
+        viewModelScope.launch {
+            pendingActions.consumeAsFlow().collect { action ->
+                when (action) {
+                    RefreshAction -> refresh(true)
+                }
+            }
+        }
+
         refresh(false)
     }
-
-    fun refresh() = refresh(true)
 
     private fun refresh(fromUser: Boolean) {
         viewModelScope.launch {
@@ -130,6 +138,12 @@ internal class DiscoverViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             updateRecommendedShows(UpdateRecommendedShows.Params(UpdateRecommendedShows.Page.REFRESH, fromUser))
                 .collectInto(recommendedLoadingState)
+        }
+    }
+
+    fun submitAction(action: DiscoverAction) {
+        viewModelScope.launch {
+            if (!pendingActions.isClosedForSend) pendingActions.send(action)
         }
     }
 }

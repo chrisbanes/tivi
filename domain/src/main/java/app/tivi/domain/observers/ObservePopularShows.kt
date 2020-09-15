@@ -24,9 +24,13 @@ import javax.inject.Inject
 
 class ObservePopularShows @Inject constructor(
     private val popularShowsRepository: PopularDao
-) : SubjectInteractor<Unit, List<PopularEntryWithShow>>() {
+) : SubjectInteractor<ObservePopularShows.Params, List<PopularEntryWithShow>>() {
 
-    override fun createObservable(params: Unit): Flow<List<PopularEntryWithShow>> {
-        return popularShowsRepository.entriesObservable()
+    override fun createObservable(
+        params: ObservePopularShows.Params
+    ): Flow<List<PopularEntryWithShow>> {
+        return popularShowsRepository.entriesObservable(params.count, 0)
     }
+
+    data class Params(val count: Int = 20)
 }

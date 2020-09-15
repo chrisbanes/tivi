@@ -17,12 +17,15 @@
 package app.tivi.home.discover
 
 import android.content.Context
+import androidx.compose.runtime.staticAmbientOf
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import dagger.hilt.android.qualifiers.ActivityContext
 import javax.inject.Inject
 
-internal class DiscoverTextCreator @Inject constructor(
+val DiscoverTextCreatorAmbient = staticAmbientOf<DiscoverTextCreator>()
+
+class DiscoverTextCreator @Inject constructor(
     @ActivityContext private val context: Context
 ) {
     fun seasonEpisodeTitleText(season: Season, episode: Episode): String {

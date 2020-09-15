@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,11 @@
 
 package app.tivi.home.discover
 
-import com.airbnb.epoxy.EpoxyDataBindingPattern
-
-@EpoxyDataBindingPattern(rClass = R::class, layoutPrefix = "view_holder")
-internal object EpoxyDataBindingConfig
+sealed class DiscoverAction
+object RefreshAction : DiscoverAction()
+object LoginAction : DiscoverAction()
+object OpenUserDetails : DiscoverAction()
+data class OpenShowDetails(val showId: Long, val episodeId: Long? = null) : DiscoverAction()
+object OpenTrendingShows : DiscoverAction()
+object OpenPopularShows : DiscoverAction()
+object OpenRecommendedShows : DiscoverAction()

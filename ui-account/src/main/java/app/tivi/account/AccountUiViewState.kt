@@ -16,9 +16,11 @@
 
 package app.tivi.account
 
+import androidx.compose.runtime.Immutable
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
 
+@Immutable
 data class AccountUiViewState(
     val user: TraktUser? = null,
     val authState: TraktAuthState = TraktAuthState.LOGGED_OUT

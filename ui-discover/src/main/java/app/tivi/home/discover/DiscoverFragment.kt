@@ -18,173 +18,95 @@ package app.tivi.home.discover
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.compose.runtime.Providers
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.net.toUri
-import androidx.core.view.updatePadding
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import app.tivi.FragmentWithBinding
-import app.tivi.common.imageloading.loadImageUrl
-import app.tivi.data.Entry
-import app.tivi.data.resultentities.EntryWithShow
-import app.tivi.extensions.doOnSizeChange
+import app.tivi.common.compose.LogCompositions
+import app.tivi.common.compose.ProvideDisplayInsets
+import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.extensions.scheduleStartPostponedTransitions
-import app.tivi.extensions.toActivityNavigatorExtras
-import app.tivi.extensions.toFragmentNavigatorExtras
-import app.tivi.home.discover.databinding.FragmentDiscoverBinding
-import app.tivi.ui.AuthStateMenuItemBinder
-import app.tivi.ui.SpacingItemDecorator
-import app.tivi.ui.authStateToolbarMenuBinder
-import app.tivi.ui.createSharedElementHelperForItemId
-import app.tivi.ui.createSharedElementHelperForItems
-import app.tivi.ui.transitions.GridToGridTransitioner
+import app.tivi.util.TiviDateFormatter
+import com.google.android.material.composethemeadapter.MdcTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class DiscoverFragment : FragmentWithBinding<FragmentDiscoverBinding>() {
+class DiscoverFragment : Fragment() {
+    @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
+    @Inject internal lateinit var textCreator: DiscoverTextCreator
+
     private val viewModel: DiscoverViewModel by viewModels()
 
-    @Inject internal lateinit var controller: DiscoverEpoxyController
+    private val pendingActions = Channel<DiscoverAction>(Channel.BUFFERED)
 
-    private var authStateMenuItemBinder: AuthStateMenuItemBinder? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        GridToGridTransitioner.setupFirstFragment(this)
-    }
-
-    override fun createBinding(
+    override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): FragmentDiscoverBinding {
-        return FragmentDiscoverBinding.inflate(inflater, container, false)
+    ): View? = ComposeView(requireContext()).apply {
+        layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        setContent {
+            MdcTheme {
+                LogCompositions("MdcTheme")
+
+                Providers(
+                    TiviDateFormatterAmbient provides tiviDateFormatter,
+                    DiscoverTextCreatorAmbient provides textCreator
+                ) {
+                    ProvideDisplayInsets {
+                        LogCompositions("ProvideInsets")
+
+                        val viewState by viewModel.liveData.observeAsState()
+                        if (viewState != null) {
+                            Discover(
+                                state = viewState!!,
+                                actioner = { pendingActions.offer(it) }
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    override fun onViewCreated(binding: FragmentDiscoverBinding, savedInstanceState: Bundle?) {
-        // Disable transition for now due to https://issuetracker.google.com/129035555
-        // postponeEnterTransitionWithTimeout()
+    override fun onStart() {
+        super.onStart()
+        // TODO move this once we know how to handle transitions in Compose
+        scheduleStartPostponedTransitions()
 
-        binding.summaryRv.apply {
-            setController(controller)
-            addItemDecoration(SpacingItemDecorator(paddingLeft))
-        }
-
-        binding.followedAppBar.doOnSizeChange {
-            binding.summaryRv.updatePadding(top = it.height)
-            binding.summarySwipeRefresh.setProgressViewOffset(
-                true, 0,
-                it.height + binding.summarySwipeRefresh.progressCircleDiameter / 2
-            )
-            true
-        }
-
-        authStateMenuItemBinder = authStateToolbarMenuBinder(
-            binding.discoverToolbar,
-            R.id.home_menu_user_avatar,
-            R.id.home_menu_user_login
-        ) { menuItem, url -> menuItem.loadImageUrl(requireContext(), url) }
-
-        binding.discoverToolbar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.home_menu_user_login, R.id.home_menu_user_avatar -> {
-                    findNavController().navigate(R.id.navigation_account)
-                    true
-                }
-                else -> false
-            }
-        }
-
-        controller.callbacks = object : DiscoverEpoxyController.Callbacks {
-            override fun onTrendingHeaderClicked() {
-                with(viewModel.currentState()) {
-                    val extras = binding.summaryRv.createSharedElementHelperForItems(trendingItems)
-
-                    findNavController().navigate(
-                        R.id.navigation_trending,
-                        null,
-                        null,
-                        extras.toFragmentNavigatorExtras()
-                    )
-                }
-            }
-
-            override fun onPopularHeaderClicked() {
-                with(viewModel.currentState()) {
-                    val extras = binding.summaryRv.createSharedElementHelperForItems(popularItems)
-
-                    findNavController().navigate(
-                        R.id.navigation_popular,
-                        null,
-                        null,
-                        extras.toFragmentNavigatorExtras()
-                    )
-                }
-            }
-
-            override fun onRecommendedHeaderClicked() {
-                with(viewModel.currentState()) {
-                    val extras = binding.summaryRv.createSharedElementHelperForItems(recommendedItems)
-
-                    findNavController().navigate(
-                        R.id.navigation_recommended,
-                        null,
-                        null,
-                        extras.toFragmentNavigatorExtras()
-                    )
-                }
-            }
-
-            override fun onItemClicked(viewHolderId: Long, item: EntryWithShow<out Entry>) {
-                val elements = binding.summaryRv.createSharedElementHelperForItemId(viewHolderId, "poster") {
-                    it.findViewById(R.id.show_poster)
-                }
-                findNavController().navigate(
-                    "app.tivi://show/${item.show.id}".toUri(),
-                    null,
-                    elements.toActivityNavigatorExtras(requireActivity())
-                )
-            }
-
-            override fun onNextEpisodeToWatchClicked() {
-                with(viewModel.currentState()) {
-                    checkNotNull(nextEpisodeWithShowToWatched)
-                    val show = nextEpisodeWithShowToWatched.show
-                    val episode = nextEpisodeWithShowToWatched.episode
-                    findNavController().navigate(
-                        "app.tivi://show/${show.id}/episode/${episode.id}".toUri()
-                    )
+        lifecycleScope.launch {
+            pendingActions.consumeAsFlow().collect { action ->
+                when (action) {
+                    LoginAction,
+                    OpenUserDetails -> findNavController().navigate(R.id.navigation_account)
+                    is OpenShowDetails -> {
+                        var uri = "app.tivi://show/${action.showId}"
+                        if (action.episodeId != null) {
+                            uri += "/episode/${action.episodeId}"
+                        }
+                        findNavController().navigate(uri.toUri())
+                    }
+                    OpenTrendingShows -> findNavController().navigate(R.id.navigation_trending)
+                    OpenPopularShows -> findNavController().navigate(R.id.navigation_popular)
+                    OpenRecommendedShows -> findNavController().navigate(R.id.navigation_recommended)
+                    else -> viewModel.submitAction(action)
                 }
             }
         }
-
-        binding.summarySwipeRefresh.setOnRefreshListener {
-            viewModel.refresh()
-            binding.summarySwipeRefresh.postOnAnimation {
-                binding.summarySwipeRefresh.isRefreshing = false
-            }
-        }
-
-        viewModel.liveData.observe(viewLifecycleOwner, ::render)
-    }
-
-    private fun render(state: DiscoverViewState) {
-        val binding = requireBinding()
-        if (binding.state == null) {
-            // First time we've had state, start any postponed transitions
-            scheduleStartPostponedTransitions()
-        }
-
-        authStateMenuItemBinder?.bind(state.authState, state.user)
-
-        binding.state = state
-        controller.state = state
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        controller.clear()
-        authStateMenuItemBinder = null
     }
 }
