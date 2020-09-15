@@ -33,7 +33,6 @@ import androidx.compose.foundation.layout.ExperimentalLayout
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope.align
 import androidx.compose.foundation.layout.SizeMode
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -52,6 +51,8 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.EmphasisAmbient
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
@@ -92,8 +93,6 @@ import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.IconResource
 import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.LogCompositions
-import app.tivi.common.compose.PopupMenu
-import app.tivi.common.compose.PopupMenuItem
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.navigationBarsPadding
@@ -747,10 +746,11 @@ private fun SeasonWithEpisodesRow(
     }
 }
 
+@Suppress("UNUSED_PARAMETER")
 @Composable
 private fun SeasonRow(
     season: Season,
-    episodeAired: Int,
+    episodesAired: Int,
     episodesWatched: Int,
     episodesToWatch: Int,
     episodesToAir: Int,
@@ -796,28 +796,70 @@ private fun SeasonRow(
                 Spacer(Modifier.preferredHeight(4.dp))
 
                 LinearProgressIndicator(
-                    episodesWatched / episodeAired.toFloat(),
+                    episodesWatched / episodesAired.toFloat(),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
         }
 
-        var showPopup by rememberMutableState { false }
+        var showMenu by rememberMutableState { false }
 
-        if (showPopup) {
-            SeasonRowOverflowMenu(
-                season = season,
-                episodesAired = episodeAired,
-                episodesWatched = episodesWatched,
-                episodesToAir = episodesToAir,
-                onDismiss = { showPopup = false },
-                actioner = actioner
-            )
-        }
+        DropdownMenu(
+            toggle = {
+                ProvideEmphasis(EmphasisAmbient.current.medium) {
+                    IconButton(onClick = { showMenu = true }) {
+                        Icon(Icons.Default.MoreVert)
+                    }
+                }
+            },
+            expanded = showMenu,
+            onDismissRequest = { showMenu = false }
+        ) {
+            if (season.ignored) {
+                DropdownMenuItem(
+                    onClick = { actioner(ChangeSeasonFollowedAction(season.id, true)) }
+                ) {
+                    Text(text = stringResource(id = R.string.popup_season_follow))
+                }
+            } else {
+                DropdownMenuItem(
+                    onClick = { actioner(ChangeSeasonFollowedAction(season.id, false)) }
+                ) {
+                    Text(text = stringResource(id = R.string.popup_season_ignore))
+                }
+            }
 
-        ProvideEmphasis(EmphasisAmbient.current.medium) {
-            IconButton(onClick = { showPopup = true }) {
-                Icon(Icons.Default.MoreVert)
+            // Season number starts from 1, rather than 0
+            if (season.number ?: -100 >= 2) {
+                DropdownMenuItem(
+                    onClick = { actioner(UnfollowPreviousSeasonsFollowedAction(season.id)) }
+                ) {
+                    Text(text = stringResource(id = R.string.popup_season_ignore_previous))
+                }
+            }
+
+            if (episodesWatched > 0) {
+                DropdownMenuItem(
+                    onClick = { actioner(MarkSeasonUnwatchedAction(season.id)) }
+                ) {
+                    Text(text = stringResource(id = R.string.popup_season_mark_all_unwatched))
+                }
+            }
+
+            if (episodesWatched < episodesAired) {
+                if (episodesToAir == 0) {
+                    DropdownMenuItem(
+                        onClick = { actioner(MarkSeasonWatchedAction(season.id)) }
+                    ) {
+                        Text(text = stringResource(id = R.string.popup_season_mark_watched_all))
+                    }
+                } else {
+                    DropdownMenuItem(
+                        onClick = { actioner(MarkSeasonWatchedAction(season.id, onlyAired = true)) }
+                    ) {
+                        Text(text = stringResource(id = R.string.popup_season_mark_watched_aired))
+                    }
+                }
             }
         }
     }
@@ -878,67 +920,6 @@ private fun EpisodeWithWatchesRow(
             }
         }
     }
-}
-
-@Composable
-private fun SeasonRowOverflowMenu(
-    season: Season,
-    episodesAired: Int,
-    episodesWatched: Int,
-    episodesToAir: Int,
-    onDismiss: () -> Unit,
-    actioner: (ShowDetailsAction) -> Unit
-) {
-    LogCompositions("SeasonRowOverflowMenu")
-
-    val items = ArrayList<PopupMenuItem>()
-
-    items += if (season.ignored) {
-        PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_follow),
-            onClick = { actioner(ChangeSeasonFollowedAction(season.id, true)) }
-        )
-    } else {
-        PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_ignore),
-            onClick = { actioner(ChangeSeasonFollowedAction(season.id, false)) }
-        )
-    }
-
-    // Season number starts from 1, rather than 0
-    if (season.number ?: -100 >= 2) {
-        items += PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_ignore_previous),
-            onClick = { actioner(UnfollowPreviousSeasonsFollowedAction(season.id)) }
-        )
-    }
-
-    if (episodesWatched > 0) {
-        items += PopupMenuItem(
-            title = stringResource(id = R.string.popup_season_mark_all_unwatched),
-            onClick = { actioner(MarkSeasonUnwatchedAction(season.id)) }
-        )
-    }
-
-    if (episodesWatched < episodesAired) {
-        items += if (episodesToAir == 0) {
-            PopupMenuItem(
-                title = stringResource(id = R.string.popup_season_mark_watched_all),
-                onClick = { actioner(MarkSeasonWatchedAction(season.id)) }
-            )
-        } else {
-            PopupMenuItem(
-                title = stringResource(id = R.string.popup_season_mark_watched_aired),
-                onClick = { actioner(MarkSeasonWatchedAction(season.id, onlyAired = true)) }
-            )
-        }
-    }
-
-    PopupMenu(
-        items = items,
-        onDismiss = onDismiss,
-        alignment = Alignment.CenterEnd
-    )
 }
 
 @Composable
@@ -1015,19 +996,6 @@ private fun ToggleShowFollowFloatingActionButton(
 }
 
 private val previewShow = TiviShow(title = "Detective Penny")
-
-@Preview
-@Composable
-private fun PreviewSeasonRow() {
-    SeasonRowOverflowMenu(
-        season = Season(showId = 0, number = 1, ignored = false),
-        episodesAired = 10,
-        episodesToAir = 2,
-        episodesWatched = 3,
-        onDismiss = {},
-        actioner = {}
-    )
-}
 
 @Preview
 @Composable
