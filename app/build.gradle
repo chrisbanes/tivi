@@ -219,8 +219,8 @@ dependencies {
     implementation Libs.AndroidX.Hilt.viewmodel
     kapt Libs.AndroidX.Hilt.compiler
 
-    implementation Libs.Google.firebaseCore
     implementation Libs.Google.crashlytics
+    implementation Libs.Google.analytics
     implementation Libs.Google.openSourceLicensesLibrary
 
     debugImplementation Libs.leakCanary
