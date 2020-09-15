@@ -63,6 +63,7 @@ import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -179,26 +180,28 @@ fun EpisodeDetails(
                         }
 
                         watches.forEach { watch ->
-                            val dismissState = rememberDismissState {
-                                if (it != DismissValue.Default) {
-                                    actioner(RemoveEpisodeWatchAction(watch.id))
+                            key(watch.id) {
+                                val dismissState = rememberDismissState {
+                                    if (it != DismissValue.Default) {
+                                        actioner(RemoveEpisodeWatchAction(watch.id))
+                                    }
+                                    it != DismissValue.DismissedToEnd
                                 }
-                                it != DismissValue.DismissedToEnd
-                            }
 
-                            SwipeToDismiss(
-                                state = dismissState,
-                                modifier = Modifier.padding(vertical = 4.dp),
-                                directions = setOf(DismissDirection.EndToStart),
-                                background = {
-                                    val fraction = dismissState.progress.fraction
-                                    EpisodeWatchSwipeBackground(
-                                        swipeProgress = fraction,
-                                        wouldCompleteOnRelease = fraction.absoluteValue >= 0.5f
-                                    )
-                                },
-                                dismissContent = { EpisodeWatch(episodeWatchEntry = watch) }
-                            )
+                                SwipeToDismiss(
+                                    state = dismissState,
+                                    modifier = Modifier.padding(vertical = 4.dp),
+                                    directions = setOf(DismissDirection.EndToStart),
+                                    background = {
+                                        val fraction = dismissState.progress.fraction
+                                        EpisodeWatchSwipeBackground(
+                                            swipeProgress = fraction,
+                                            wouldCompleteOnRelease = fraction.absoluteValue >= 0.5f
+                                        )
+                                    },
+                                    dismissContent = { EpisodeWatch(episodeWatchEntry = watch) }
+                                )
+                            }
                         }
 
                         Spacer(Modifier.preferredHeight(8.dp))
