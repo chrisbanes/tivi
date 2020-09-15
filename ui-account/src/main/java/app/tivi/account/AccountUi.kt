@@ -16,11 +16,9 @@
 
 package app.tivi.account
 
-import android.view.ViewGroup
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope.align
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,47 +38,19 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
-import androidx.compose.runtime.Recomposer
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.VectorAsset
-import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
 import androidx.ui.tooling.preview.Preview
-import app.tivi.common.compose.ProvideDisplayInsets
-import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
-import app.tivi.util.TiviDateFormatter
-import com.google.android.material.composethemeadapter.MdcTheme
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
-
-fun composeAccountUi(
-    viewGroup: ViewGroup,
-    state: LiveData<AccountUiViewState>,
-    actioner: (AccountUiAction) -> Unit,
-    tiviDateFormatter: TiviDateFormatter
-): Any = viewGroup.setContent(Recomposer.current()) {
-    MdcTheme {
-        Providers(TiviDateFormatterAmbient provides tiviDateFormatter) {
-            ProvideDisplayInsets {
-                val viewState by state.observeAsState()
-                if (viewState != null) {
-                    AccountUi(viewState!!, actioner)
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun AccountUi(

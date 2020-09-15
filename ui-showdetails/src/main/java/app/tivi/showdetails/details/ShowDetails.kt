@@ -16,7 +16,6 @@
 
 package app.tivi.showdetails.details
 
-import android.view.ViewGroup
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Box
@@ -69,10 +68,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
-import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticAmbientOf
@@ -84,12 +80,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ContextAmbient
-import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
 import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
@@ -101,8 +95,6 @@ import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PopupMenu
 import app.tivi.common.compose.PopupMenuItem
 import app.tivi.common.compose.PosterCard
-import app.tivi.common.compose.ProvideDisplayInsets
-import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.navigationBarsPadding
 import app.tivi.common.compose.offset
@@ -129,39 +121,12 @@ import app.tivi.data.resultentities.numberToAir
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.ui.animations.lerp
-import app.tivi.util.TiviDateFormatter
 import coil.request.ImageRequest
-import com.google.android.material.composethemeadapter.MdcTheme
 import dev.chrisbanes.accompanist.coil.CoilImage
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
 import org.threeten.bp.OffsetDateTime
 
 val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
-
-fun ViewGroup.composeShowDetails(
-    state: LiveData<ShowDetailsViewState>,
-    actioner: (ShowDetailsAction) -> Unit,
-    tiviDateFormatter: TiviDateFormatter,
-    textCreator: ShowDetailsTextCreator
-): Any = setContent(Recomposer.current()) {
-    Providers(
-        TiviDateFormatterAmbient provides tiviDateFormatter,
-        ShowDetailsTextCreatorAmbient provides textCreator
-    ) {
-        MdcTheme {
-            LogCompositions("MdcTheme")
-
-            ProvideDisplayInsets {
-                LogCompositions("ProvideInsets")
-                val viewState by state.observeAsState()
-                if (viewState != null) {
-                    LogCompositions("ViewState observeAsState")
-                    ShowDetails(viewState!!, actioner)
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun ShowDetails(

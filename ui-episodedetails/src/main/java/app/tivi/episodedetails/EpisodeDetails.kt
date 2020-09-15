@@ -17,7 +17,6 @@
 package app.tivi.episodedetails
 
 import android.os.Build
-import android.view.ViewGroup
 import androidx.compose.animation.ColorPropKey
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -61,9 +60,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
-import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -76,17 +73,14 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ConfigurationAmbient
-import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.loadVectorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
 import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.IconResource
-import app.tivi.common.compose.ProvideDisplayInsets
 import app.tivi.common.compose.SwipeDirection
 import app.tivi.common.compose.SwipeToDismiss
 import app.tivi.common.compose.TiviAlertDialog
@@ -102,38 +96,12 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.ui.animations.lerp
-import app.tivi.util.TiviDateFormatter
-import com.google.android.material.composethemeadapter.MdcTheme
 import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
 import org.threeten.bp.OffsetDateTime
 import kotlin.math.hypot
 
-/**
- * This is a bit of hack. I can't make `ui-episodedetails` depend on any of the compose libraries,
- * so I wrap `setContext` as my own function, which `ui-episodedetails` can use.
- *
- * We need to return an `Any` since this method will be called from modules which do not depend
- * on Compose
- */
-fun ViewGroup.composeEpisodeDetails(
-    state: LiveData<EpisodeDetailsViewState>,
-    actioner: (EpisodeDetailsAction) -> Unit,
-    tiviDateFormatter: TiviDateFormatter
-): Any = setContent(Recomposer.current()) {
-    MdcTheme {
-        Providers(TiviDateFormatterAmbient provides tiviDateFormatter) {
-            ProvideDisplayInsets {
-                val viewState by state.observeAsState()
-                if (viewState != null) {
-                    EpisodeDetails(viewState!!, actioner)
-                }
-            }
-        }
-    }
-}
-
 @Composable
-private fun EpisodeDetails(
+fun EpisodeDetails(
     viewState: EpisodeDetailsViewState,
     actioner: (EpisodeDetailsAction) -> Unit
 ) {
