@@ -38,7 +38,7 @@ class HomeTextCreator @Inject constructor(
         get() {
             if (field == Typeface.DEFAULT) {
                 try {
-                    ResourcesCompat.getFont(context, R.font.rubik_400)?.also { field = it }
+                    ResourcesCompat.getFont(context, R.font.inter_400)?.also { field = it }
                 } catch (nfe: Resources.NotFoundException) {
                     // getFont will throw a NFE if the device if offline or doesn't have
                     // Play Services. Lets not crash
