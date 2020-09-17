@@ -24,8 +24,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope.align
-import androidx.compose.foundation.layout.RowScope.alignWithSiblings
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.aspectRatio
@@ -273,7 +272,7 @@ private fun Header(
     title: String,
     modifier: Modifier = Modifier,
     loading: Boolean = false,
-    action: (@Composable () -> Unit)? = null
+    action: @Composable RowScope.() -> Unit = {}
 ) {
     Row(modifier) {
         Spacer(Modifier.preferredWidth(16.dp))
@@ -296,7 +295,7 @@ private fun Header(
             )
         }
 
-        if (action != null) action()
+        action()
 
         Spacer(Modifier.preferredWidth(16.dp))
     }

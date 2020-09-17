@@ -59,7 +59,7 @@ object Libs {
     }
 
     object Accompanist {
-        private const val version = "0.2.2.ui-6824694-SNAPSHOT"
+        private const val version = "0.2.3.ui-6834837-SNAPSHOT"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
     }
 
@@ -164,7 +164,7 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = "6824694"
+            const val snapshot = "6834837"
             const val version = "1.0.0-SNAPSHOT"
 
             @get:JvmStatic
@@ -184,6 +184,8 @@ object Libs {
 
             const val tooling = "androidx.ui:ui-tooling:$version"
             const val test = "androidx.ui:ui-test:$version"
+
+            const val navigation = "androidx.compose.navigation:navigation:0.1.0-SNAPSHOT"
         }
 
         object Hilt {
