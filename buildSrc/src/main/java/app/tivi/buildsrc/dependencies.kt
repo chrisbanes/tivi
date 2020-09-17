@@ -164,12 +164,14 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = "6834837"
+            const val snapshot = "6843810"
             const val version = "1.0.0-SNAPSHOT"
 
             @get:JvmStatic
             val snapshotUrl: String
                 get() = "https://androidx.dev/snapshots/builds/$snapshot/artifacts/ui/repository/"
+
+            const val compiler = "androidx.compose.compiler:compiler:$version"
 
             const val runtime = "androidx.compose.runtime:runtime:$version"
             const val livedata = "androidx.compose.runtime:runtime-livedata:$version"
@@ -184,8 +186,6 @@ object Libs {
 
             const val tooling = "androidx.ui:ui-tooling:$version"
             const val test = "androidx.ui:ui-test:$version"
-
-            const val navigation = "androidx.compose.navigation:navigation:0.1.0-SNAPSHOT"
         }
 
         object Hilt {
