@@ -18,7 +18,7 @@ package app.tivi.common.compose
 
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Stack
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
 import androidx.compose.material.EmphasisAmbient
@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TmdbImageEntity
-import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
+import dev.chrisbanes.accompanist.coil.CoilImage
 
 @Composable
 fun PosterCard(
@@ -40,7 +40,7 @@ fun PosterCard(
     modifier: Modifier = Modifier
 ) {
     Card(modifier = modifier) {
-        Stack(
+        Box(
             modifier = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier
         ) {
             // TODO: remove text if the image has loaded (and animated in).
@@ -53,8 +53,9 @@ fun PosterCard(
                 )
             }
             if (poster != null) {
-                CoilImageWithCrossfade(
+                CoilImage(
                     data = poster,
+                    fadeIn = true,
                     modifier = Modifier.matchParentSize()
                 )
             }

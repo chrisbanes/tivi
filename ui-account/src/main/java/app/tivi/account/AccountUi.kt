@@ -48,7 +48,7 @@ import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.VectorImage
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
-import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
+import dev.chrisbanes.accompanist.coil.CoilImage
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
 
@@ -116,8 +116,9 @@ private fun UserRow(
     ) {
         val avatarUrl = user.avatarUrl
         if (avatarUrl != null) {
-            CoilImageWithCrossfade(
+            CoilImage(
                 data = avatarUrl,
+                fadeIn = true,
                 modifier = Modifier.preferredSize(40.dp)
                     .clip(RoundedCornerShape(50))
             )

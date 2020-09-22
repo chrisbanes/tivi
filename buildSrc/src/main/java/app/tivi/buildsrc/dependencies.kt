@@ -21,7 +21,7 @@ object Versions {
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:4.2.0-alpha10"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:4.2.0-alpha11"
 
     const val gradlePlayPublisher = "com.github.triplet.gradle:play-publisher:3.0.0"
 
@@ -59,7 +59,7 @@ object Libs {
     }
 
     object Accompanist {
-        private const val version = "0.2.2.ui-6824694-SNAPSHOT"
+        private const val version = "0.2.3.compose-6854728-SNAPSHOT"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
     }
 
@@ -164,12 +164,14 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = "6824694"
+            const val snapshot = "6854728"
             const val version = "1.0.0-SNAPSHOT"
 
             @get:JvmStatic
             val snapshotUrl: String
                 get() = "https://androidx.dev/snapshots/builds/$snapshot/artifacts/ui/repository/"
+
+            const val compiler = "androidx.compose.compiler:compiler:$version"
 
             const val runtime = "androidx.compose.runtime:runtime:$version"
             const val livedata = "androidx.compose.runtime:runtime-livedata:$version"
