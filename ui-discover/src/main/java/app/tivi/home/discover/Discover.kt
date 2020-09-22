@@ -21,12 +21,12 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -79,7 +79,7 @@ fun Discover(
     actioner: (DiscoverAction) -> Unit
 ) {
     Surface(Modifier.fillMaxSize()) {
-        Stack(Modifier.fillMaxSize()) {
+        Box(Modifier.fillMaxSize()) {
             var appBarHeight by rememberMutableState { 0 }
 
             LazyColumn(Modifier.fillMaxSize()) {

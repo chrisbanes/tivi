@@ -84,7 +84,9 @@ dependencies {
 
     implementation Libs.Insetter.ktx
 
+    // Temporary workaround (see above)
     kotlinCompilerPlugin Libs.AndroidX.Compose.compiler
+
     implementation Libs.AndroidX.Compose.runtime
     implementation Libs.AndroidX.Compose.foundation
     implementation Libs.AndroidX.Compose.ui

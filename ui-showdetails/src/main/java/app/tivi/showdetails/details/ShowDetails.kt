@@ -18,7 +18,6 @@ package app.tivi.showdetails.details
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.Box
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.ScrollableColumn
@@ -27,6 +26,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.contentColor
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ConstraintLayout
 import androidx.compose.foundation.layout.ExperimentalLayout
@@ -126,7 +126,6 @@ import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.ui.animations.lerp
 import coil.request.ImageRequest
 import dev.chrisbanes.accompanist.coil.CoilImage
-import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
@@ -251,8 +250,9 @@ private fun ShowDetailsScrollingContent(
                 .onSizeChanged(onBackdropSizeChanged)
         ) {
             if (backdropImage != null) {
-                CoilImageWithCrossfade(
+                CoilImage(
                     data = backdropImage,
+                    fadeIn = true,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize().offset { size ->
                         Offset(
@@ -282,8 +282,9 @@ private fun ShowDetailsScrollingContent(
                     if (posterImage != null) {
                         Spacer(modifier = Modifier.preferredWidth(16.dp))
 
-                        CoilImageWithCrossfade(
+                        CoilImage(
                             data = posterImage,
+                            fadeIn = true,
                             alignment = Alignment.TopStart,
                             modifier = Modifier.weight(1f, fill = false)
                                 .aspectRatio(2 / 3f)

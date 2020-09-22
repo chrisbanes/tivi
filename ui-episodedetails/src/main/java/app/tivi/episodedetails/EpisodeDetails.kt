@@ -28,10 +28,10 @@ import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.contentColor
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -100,7 +100,7 @@ import app.tivi.data.entities.EpisodeWatchEntry
 import app.tivi.data.entities.PendingAction
 import app.tivi.data.entities.Season
 import app.tivi.ui.animations.lerp
-import dev.chrisbanes.accompanist.coil.CoilImageWithCrossfade
+import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 import kotlin.math.absoluteValue
@@ -112,9 +112,9 @@ fun EpisodeDetails(
     viewState: EpisodeDetailsViewState,
     actioner: (EpisodeDetailsAction) -> Unit
 ) {
-    Stack {
+    Box {
         Column {
-            Stack {
+            Box {
                 if (viewState.episode != null && viewState.season != null) {
                     Backdrop(
                         season = viewState.season,
@@ -246,10 +246,11 @@ private fun Backdrop(
     modifier: Modifier
 ) {
     Surface(modifier = modifier) {
-        Stack(Modifier.fillMaxSize()) {
+        Box(Modifier.fillMaxSize()) {
             if (episode.tmdbBackdropPath != null) {
-                CoilImageWithCrossfade(
+                CoilImage(
                     data = episode,
+                    fadeIn = true,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -449,7 +450,7 @@ private fun EpisodeWatchSwipeBackground(
         toState = wouldCompleteOnRelease
     )
 
-    Stack(
+    Box(
         Modifier.fillMaxSize()
             .background(MaterialTheme.colors.onSurface.copy(alpha = 0.2f), RectangleShape)
     ) {
