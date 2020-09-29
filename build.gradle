@@ -75,26 +75,31 @@ allprojects {
 
 subprojects {
     configurations.configureEach {
-        resolutionStrategy {
-            eachDependency { DependencyResolveDetails details ->
-                def group = details.requested.group
-                def module = details.requested.module.name
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            def group = details.requested.group
+            def module = details.requested.module.name
 
-                if (group == 'org.jetbrains.kotlin' && module == 'kotlin-stdlib-jre7') {
-                    // kotlin-stdlib-jre7 no longer exists in 1.4, so we force the
-                    // kotlin-stdlib module instead
-                    details.useTarget Libs.Kotlin.stdlib
-                }
+            if (group == 'org.jetbrains.kotlin' && module == 'kotlin-stdlib-jre7') {
+                // kotlin-stdlib-jre7 no longer exists in 1.4, so we force the
+                // kotlin-stdlib module instead
+                details.useTarget Libs.Kotlin.stdlib
+            }
 
-                if ((group.startsWith('androidx.ui') || group.startsWith('androidx.compose'))
-                        && Libs.AndroidX.Compose.version.endsWith('SNAPSHOT')) {
-                    // If we're using a SNAPSHOT version of Compose, we need to  force all
-                    // the SNAPSHOT version. We may be using other dependencies which rely
-                    // on stable version of Compose (such as a MDC Theme Adapter), which will
-                    // pin the version back.
-                    // This may not always work if there's binary changes in the snapshot.
-                    details.useVersion Libs.AndroidX.Compose.version
-                }
+            if ((group.startsWith('androidx.ui') || group.startsWith('androidx.compose'))
+                    && Libs.AndroidX.Compose.version.endsWith('SNAPSHOT')) {
+                // If we're using a SNAPSHOT version of Compose, we need to  force all
+                // the SNAPSHOT version. We may be using other dependencies which rely
+                // on stable version of Compose (such as a MDC Theme Adapter), which will
+                // pin the version back.
+                // This may not always work if there's binary changes in the snapshot.
+                details.useVersion Libs.AndroidX.Compose.version
+            }
+
+            // The Compose Compiler Maven group/module names changed in alpha04, but AGP
+            // hasn't yet been updated. We workaround that by forcing the new group/module names.
+            // TODO remove this once AGP has been updated
+            if (group == 'androidx.compose' && module == 'compose-compiler') {
+                details.useTarget(Libs.AndroidX.Compose.compiler)
             }
         }
     }
@@ -111,13 +116,7 @@ subprojects {
         }
     }
 
-    // Create a configuration which allows us to intercept the JARs, and add them to
-    // Kotlin Compiler freeCompilerArgs. This is needed because we can't currently use the
-    // built-in `compose` feature in AGP, since it depends on the old Compose Compiler artifacts.
-    // TODO: Remove this once AGP uses the new Compose Compiler artifact name
-    def compilerPluginConfig = project.configurations.create("kotlinCompilerPlugin")
-
-    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach { compile ->
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         kotlinOptions {
             // Treat all Kotlin warnings as errors
             allWarningsAsErrors = true
@@ -129,21 +128,8 @@ subprojects {
 
             freeCompilerArgs += "-Xallow-jvm-ir-dependencies"
 
-            freeCompilerArgs += "-Xjvm-default=all"
-
             // Set JVM target to 1.8
             jvmTarget = "1.8"
-        }
-
-        compile.dependsOn(compilerPluginConfig)
-        compile.doFirst {
-            if (!compilerPluginConfig.isEmpty()) {
-                // Add the compiler plugin JARs using the -Xplugin flag
-                compile.kotlinOptions.freeCompilerArgs +=
-                        "-Xplugin=${compilerPluginConfig.files.first()}"
-                // Need to turn on the IR compiler too
-                compile.kotlinOptions.useIR = true
-            }
         }
     }
 }
