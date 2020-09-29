@@ -47,7 +47,10 @@ jobs:
       - uses: actions/cache@v2
         continue-on-error: true # continue if the cache restore/upload fails
         with:
-          path: ~/.gradle/caches
+          path: |
+            ~/.gradle/caches/modules-*
+            ~/.gradle/caches/jars-*
+            ~/.gradle/caches/build-cache-*
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
 
       - name: Build and check
@@ -55,7 +58,9 @@ jobs:
 
       - name: Publish to Play Store
         if: github.ref == 'refs/heads/main'
-        run: ./gradlew publishRelease -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
+        # Need to invoke bundleRelease too for Crashlytics.
+        # See https://github.com/Triple-T/gradle-play-publisher/issues/859
+        run: ./gradlew bundleRelease publishRelease -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1
