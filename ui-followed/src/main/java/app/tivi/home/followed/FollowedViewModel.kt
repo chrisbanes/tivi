@@ -20,6 +20,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import app.tivi.ReduxViewModel
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
@@ -68,7 +69,7 @@ internal class FollowedViewModel @ViewModelInject constructor(
     private val loadingState = ObservableLoadingCounter()
     private val showSelection = ShowStateSelector()
 
-    val pagedList: Flow<PagedList<FollowedShowEntryWithShow>>
+    val pagedList: Flow<PagingData<FollowedShowEntryWithShow>>
         get() = observePagedFollowedShows.observe()
 
     init {
@@ -126,8 +127,7 @@ internal class FollowedViewModel @ViewModelInject constructor(
             ObservePagedFollowedShows.Parameters(
                 sort = state.sort,
                 filter = state.filter,
-                pagingConfig = PAGING_CONFIG,
-                boundaryCallback = boundaryCallback
+                pagingConfig = PAGING_CONFIG
             )
         )
     }

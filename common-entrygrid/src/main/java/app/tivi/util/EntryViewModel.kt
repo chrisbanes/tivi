@@ -18,6 +18,8 @@ package app.tivi.util
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import app.tivi.ReduxViewModel
 import app.tivi.api.UiError
 import app.tivi.api.UiIdle
@@ -53,17 +55,16 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
     private val messages = MutableStateFlow<UiStatus>(UiIdle)
     private val loaded = MutableStateFlow(false)
 
-    val pagedList: Flow<PagedList<LI>>
+    val pagedList: Flow<PagingData<LI>>
         get() = pagingInteractor.observe()
 
     private val showSelection = ShowStateSelector()
 
-    protected val pageListConfig = PagedList.Config.Builder().run {
-        setPageSize(pageSize * 3)
-        setPrefetchDistance(pageSize)
-        setEnablePlaceholders(false)
-        build()
-    }
+    protected val pageListConfig = PagingConfig(
+        pageSize = pageSize * 3,
+        prefetchDistance = pageSize,
+        enablePlaceholders = false
+    )
 
     protected val boundaryCallback = object : PagedList.BoundaryCallback<LI>() {
         override fun onItemAtEndLoaded(itemAtEnd: LI) = onListScrolledToEnd()

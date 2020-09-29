@@ -26,7 +26,7 @@ import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.extensions.observable
 import com.airbnb.epoxy.EpoxyModel
-import com.airbnb.epoxy.paging.PagedListEpoxyController
+import com.airbnb.epoxy.paging3.PagedListEpoxyController
 
 abstract class EntryGridEpoxyController<LI : EntryWithShow<out Entry>> :
     PagedListEpoxyController<LI>() {

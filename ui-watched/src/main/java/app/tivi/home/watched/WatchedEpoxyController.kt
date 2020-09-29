@@ -30,7 +30,7 @@ import app.tivi.ui.SortPopupMenuListener
 import app.tivi.ui.popupMenuItemIdToSortOption
 import app.tivi.util.TiviDateFormatter
 import com.airbnb.epoxy.EpoxyModel
-import com.airbnb.epoxy.paging.PagedListEpoxyController
+import com.airbnb.epoxy.paging3.PagedListEpoxyController
 import javax.inject.Inject
 
 internal class WatchedEpoxyController @Inject constructor(

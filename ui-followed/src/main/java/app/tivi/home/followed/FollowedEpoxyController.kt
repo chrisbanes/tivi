@@ -29,7 +29,7 @@ import app.tivi.home.HomeTextCreator
 import app.tivi.ui.SortPopupMenuListener
 import app.tivi.ui.popupMenuItemIdToSortOption
 import com.airbnb.epoxy.EpoxyModel
-import com.airbnb.epoxy.paging.PagedListEpoxyController
+import com.airbnb.epoxy.paging3.PagedListEpoxyController
 import javax.inject.Inject
 
 internal class FollowedEpoxyController @Inject constructor(

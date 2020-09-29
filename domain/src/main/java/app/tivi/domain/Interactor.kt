@@ -54,10 +54,8 @@ abstract class Interactor<in P> {
 }
 
 abstract class ResultInteractor<in P, R> {
-    operator fun invoke(params: P): Flow<R> {
-        return flow {
-            emit(doWork(params))
-        }
+    operator fun invoke(params: P): Flow<R> = flow {
+        emit(doWork(params))
     }
 
     protected abstract suspend fun doWork(params: P): R
