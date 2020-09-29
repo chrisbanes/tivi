@@ -17,7 +17,7 @@
 package app.tivi.buildsrc
 
 object Versions {
-    const val ktlint = "0.38.1"
+    const val ktlint = "0.39.0"
 }
 
 object Libs {
@@ -46,11 +46,11 @@ object Libs {
 
     const val junit = "junit:junit:4.13"
     const val robolectric = "org.robolectric:robolectric:4.4"
-    const val mockK = "io.mockk:mockk:1.10.0"
+    const val mockK = "io.mockk:mockk:1.10.2"
 
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.4"
 
-    const val store = "com.dropbox.mobile.store:store4:4.0.0-alpha07"
+    const val store = "com.dropbox.mobile.store:store4:4.0.0-beta01"
 
     object Insetter {
         private const val version = "0.3.1"
@@ -65,7 +65,7 @@ object Libs {
 
     object Mdc {
         const val material = "com.google.android.material:material:1.1.0"
-        const val composeThemeAdapter = "com.google.android.material:compose-theme-adapter:1.0.0-alpha02"
+        const val composeThemeAdapter = "com.google.android.material:compose-theme-adapter:1.0.0-alpha03"
     }
 
     object Google {
@@ -110,13 +110,13 @@ object Libs {
         }
 
         object Fragment {
-            private const val version = "1.3.0-alpha07"
+            private const val version = "1.3.0-alpha08"
             const val fragment = "androidx.fragment:fragment:$version"
             const val fragmentKtx = "androidx.fragment:fragment-ktx:$version"
         }
 
         object Test {
-            private const val version = "1.2.0"
+            private const val version = "1.3.0"
             const val core = "androidx.test:core:$version"
             const val rules = "androidx.test:rules:$version"
 
@@ -125,7 +125,7 @@ object Libs {
                 const val junit = "androidx.test.ext:junit-ktx:$version"
             }
 
-            const val espressoCore = "androidx.test.espresso:espresso-core:3.2.0"
+            const val espressoCore = "androidx.test.espresso:espresso-core:3.3.0"
         }
 
         const val archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
@@ -140,10 +140,10 @@ object Libs {
 
         const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.1"
 
-        const val coreKtx = "androidx.core:core-ktx:1.5.0-alpha02"
+        const val coreKtx = "androidx.core:core-ktx:1.5.0-alpha03"
 
         object Lifecycle {
-            private const val version = "2.3.0-alpha06"
+            private const val version = "2.3.0-alpha07"
             const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
             const val livedata = "androidx.lifecycle:lifecycle-livedata-ktx:$version"
             const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
@@ -223,7 +223,7 @@ object Libs {
     }
 
     object Epoxy {
-        private const val version = "4.0.0"
+        private const val version = "4.1.0"
         const val epoxy = "com.airbnb.android:epoxy:$version"
         const val paging = "com.airbnb.android:epoxy-paging:$version"
         const val dataBinding = "com.airbnb.android:epoxy-databinding:$version"
