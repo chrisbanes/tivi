@@ -16,8 +16,9 @@
 
 package app.tivi.domain.observers
 
-import androidx.paging.PagedList
-import app.tivi.data.FlowPagedListBuilder
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.domain.PagingInteractor
@@ -28,16 +29,13 @@ class ObservePagedTrendingShows @Inject constructor(
     private val trendingShowsDao: TrendingDao
 ) : PagingInteractor<ObservePagedTrendingShows.Params, TrendingEntryWithShow>() {
 
-    override fun createObservable(params: Params): Flow<PagedList<TrendingEntryWithShow>> {
-        return FlowPagedListBuilder(
-            trendingShowsDao.entriesDataSource(),
-            params.pagingConfig,
-            boundaryCallback = params.boundaryCallback
-        ).buildFlow()
-    }
+    override fun createObservable(
+        params: Params
+    ): Flow<PagingData<TrendingEntryWithShow>> = Pager(config = params.pagingConfig) {
+        trendingShowsDao.entriesPagingSource()
+    }.flow
 
     data class Params(
-        override val pagingConfig: PagedList.Config,
-        override val boundaryCallback: PagedList.BoundaryCallback<TrendingEntryWithShow>?
+        override val pagingConfig: PagingConfig,
     ) : Parameters<TrendingEntryWithShow>
 }

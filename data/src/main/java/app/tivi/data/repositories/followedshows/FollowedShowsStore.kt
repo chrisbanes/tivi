@@ -16,7 +16,7 @@
 
 package app.tivi.data.repositories.followedshows
 
-import androidx.paging.DataSource
+import androidx.paging.PagingSource
 import app.tivi.data.DatabaseTransactionRunner
 import app.tivi.data.daos.FollowedShowsDao
 import app.tivi.data.entities.FollowedShowEntry
@@ -63,7 +63,7 @@ class FollowedShowsStore @Inject constructor(
     fun observeForPaging(
         sort: SortOption,
         filter: String?
-    ): DataSource.Factory<Int, FollowedShowEntryWithShow> {
+    ): PagingSource<Int, FollowedShowEntryWithShow> {
         val filtered = filter != null && filter.isNotEmpty()
         return when (sort) {
             SortOption.SUPER_SORT -> {

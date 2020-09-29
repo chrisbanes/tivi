@@ -131,7 +131,7 @@ object Libs {
         const val archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
 
         object Paging {
-            private const val version = "2.1.2"
+            private const val version = "3.0.0-alpha06"
             const val common = "androidx.paging:paging-common-ktx:$version"
             const val runtime = "androidx.paging:paging-runtime-ktx:$version"
         }
@@ -225,7 +225,7 @@ object Libs {
     object Epoxy {
         private const val version = "4.1.0"
         const val epoxy = "com.airbnb.android:epoxy:$version"
-        const val paging = "com.airbnb.android:epoxy-paging:$version"
+        const val paging = "com.airbnb.android:epoxy-paging3:$version"
         const val dataBinding = "com.airbnb.android:epoxy-databinding:$version"
         const val processor = "com.airbnb.android:epoxy-processor:$version"
     }

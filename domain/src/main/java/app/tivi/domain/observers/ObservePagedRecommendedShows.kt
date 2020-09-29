@@ -16,8 +16,9 @@
 
 package app.tivi.domain.observers
 
-import androidx.paging.PagedList
-import app.tivi.data.FlowPagedListBuilder
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import app.tivi.data.daos.RecommendedDao
 import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.domain.PagingInteractor
@@ -28,16 +29,13 @@ class ObservePagedRecommendedShows @Inject constructor(
     private val recommendedDao: RecommendedDao
 ) : PagingInteractor<ObservePagedRecommendedShows.Params, RecommendedEntryWithShow>() {
 
-    override fun createObservable(params: Params): Flow<PagedList<RecommendedEntryWithShow>> {
-        return FlowPagedListBuilder(
-            recommendedDao.entriesDataSource(),
-            params.pagingConfig,
-            boundaryCallback = params.boundaryCallback
-        ).buildFlow()
-    }
+    override fun createObservable(
+        params: Params
+    ): Flow<PagingData<RecommendedEntryWithShow>> = Pager(config = params.pagingConfig) {
+        recommendedDao.entriesPagingSource()
+    }.flow
 
     data class Params(
-        override val pagingConfig: PagedList.Config,
-        override val boundaryCallback: PagedList.BoundaryCallback<RecommendedEntryWithShow>?
+        override val pagingConfig: PagingConfig,
     ) : Parameters<RecommendedEntryWithShow>
 }

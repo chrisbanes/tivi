@@ -19,6 +19,7 @@ package app.tivi.home.followed
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
+import androidx.paging.PagingConfig
 import app.tivi.ReduxViewModel
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
@@ -184,10 +185,10 @@ internal class FollowedViewModel @ViewModelInject constructor(
     }
 
     companion object {
-        private val PAGING_CONFIG = PagedList.Config.Builder()
-            .setPageSize(60)
-            .setPrefetchDistance(20)
-            .setEnablePlaceholders(false)
-            .build()
+        private val PAGING_CONFIG = PagingConfig(
+            pageSize = 60,
+            prefetchDistance = 20,
+            enablePlaceholders = false
+        )
     }
 }

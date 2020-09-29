@@ -16,7 +16,8 @@
 
 package app.tivi.domain
 
-import androidx.paging.PagedList
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
@@ -62,10 +63,9 @@ abstract class ResultInteractor<in P, R> {
     protected abstract suspend fun doWork(params: P): R
 }
 
-abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T> : SubjectInteractor<P, PagedList<T>>() {
-    interface Parameters<T> {
-        val pagingConfig: PagedList.Config
-        val boundaryCallback: PagedList.BoundaryCallback<T>?
+abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T : Any> : SubjectInteractor<P, PagingData<T>>() {
+    interface Parameters<T : Any> {
+        val pagingConfig: PagingConfig
     }
 }
 
