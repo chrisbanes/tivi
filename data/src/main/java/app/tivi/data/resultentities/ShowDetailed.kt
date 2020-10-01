@@ -33,12 +33,12 @@ class ShowDetailed {
     lateinit var images: List<ShowTmdbImage>
 
     @delegate:Ignore
-    val backdrop by lazy(LazyThreadSafetyMode.NONE) {
+    val backdrop: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) {
         images.findHighestRatedBackdrop()
     }
 
     @delegate:Ignore
-    val poster by lazy(LazyThreadSafetyMode.NONE) {
+    val poster: ShowTmdbImage? by lazy(LazyThreadSafetyMode.NONE) {
         images.findHighestRatedPoster()
     }
 

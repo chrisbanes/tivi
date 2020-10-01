@@ -18,97 +18,56 @@ package app.tivi.home.search
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.SearchView
-import androidx.core.net.toUri
-import androidx.core.view.marginBottom
-import androidx.core.view.updatePadding
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import androidx.compose.runtime.Providers
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.ComposeView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
-import app.tivi.FragmentWithBinding
-import app.tivi.data.entities.TiviShow
-import app.tivi.extensions.doOnLayouts
-import app.tivi.extensions.hideSoftInput
-import app.tivi.extensions.toActivityNavigatorExtras
-import app.tivi.home.search.databinding.FragmentSearchBinding
-import app.tivi.ui.createSharedElementHelperForItemId
-import app.tivi.ui.recyclerview.HideImeOnScrollListener
-import app.tivi.ui.transitions.GridToGridTransitioner
+import app.tivi.common.compose.LogCompositions
+import app.tivi.common.compose.ProvideDisplayInsets
+import com.google.android.material.composethemeadapter.MdcTheme
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import kotlinx.coroutines.channels.Channel
 
 @AndroidEntryPoint
-internal class SearchFragment : FragmentWithBinding<FragmentSearchBinding>() {
+internal class SearchFragment : Fragment() {
     private val viewModel: SearchViewModel by viewModels()
+    private val pendingActions = Channel<SearchAction>(Channel.BUFFERED)
 
-    @Inject internal lateinit var controller: SearchEpoxyController
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        GridToGridTransitioner.setupFirstFragment(this)
-    }
-
-    override fun createBinding(
+    override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): FragmentSearchBinding {
-        return FragmentSearchBinding.inflate(inflater, container, false)
-    }
+    ): View? = ComposeView(requireContext()).apply {
+        layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
-    override fun onViewCreated(binding: FragmentSearchBinding, savedInstanceState: Bundle?) {
-        binding.searchRecyclerview.apply {
-            setController(controller)
-            addOnScrollListener(HideImeOnScrollListener())
-        }
+        setContent {
+            Providers() {
+                MdcTheme {
+                    LogCompositions("MdcTheme")
 
-        binding.searchAppbar.doOnLayouts { appBar ->
-            binding.searchRecyclerview.updatePadding(top = appBar.bottom + appBar.marginBottom)
-            true
-        }
+                    ProvideDisplayInsets {
+                        LogCompositions("ProvideInsets")
 
-        binding.searchSearchview.apply {
-            setOnQueryTextListener(
-                object : SearchView.OnQueryTextListener {
-                    override fun onQueryTextSubmit(query: String): Boolean {
-                        viewModel.setSearchQuery(query)
-                        hideSoftInput()
-                        return true
-                    }
-
-                    override fun onQueryTextChange(newText: String): Boolean {
-                        viewModel.setSearchQuery(newText)
-                        return true
+                        val viewState by viewModel.liveData.observeAsState()
+                        if (viewState != null) {
+                            LogCompositions("ViewState observeAsState")
+                            Search(viewState!!) {
+                                pendingActions.offer(it)
+                            }
+                        }
                     }
                 }
-            )
-        }
-
-        controller.callbacks = object : SearchEpoxyController.Callbacks {
-            override fun onSearchItemClicked(show: TiviShow) {
-                // We should really use AndroidX navigation here, but this fragment isn't in the tree
-                val extras = binding.searchRecyclerview.createSharedElementHelperForItemId(show.id, "poster") {
-                    it.findViewById(R.id.show_poster)
-                }
-                findNavController().navigate(
-                    "app.tivi://show/${show.id}".toUri(),
-                    null,
-                    extras.toActivityNavigatorExtras(requireActivity())
-                )
             }
         }
-
-        viewModel.liveData.observe(viewLifecycleOwner, ::render)
     }
 
-    private fun render(state: SearchViewState) {
-        val binding = requireBinding()
-        binding.state = state
-        controller.state = state
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        controller.clear()
+    override fun onDestroy() {
+        super.onDestroy()
+        pendingActions.close()
     }
 }
