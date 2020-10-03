@@ -10,13 +10,13 @@ FROM mcr.microsoft.com/vscode/devcontainers/java:0-${JDK_VARIANT}
 ARG ANDROID_SDK_VERSION=6609375
 
 ENV ANDROID_SDK_ROOT /opt/android-sdk
-RUN mkdir -p ${ANDROID_SDK_ROOT} && cd ${ANDROID_SDK_ROOT} && \
+RUN mkdir -p ${ANDROID_SDK_ROOT}/cmdline-tools && cd ${ANDROID_SDK_ROOT}/cmdline-tools && \
     wget -q https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_VERSION}_latest.zip && \
     unzip *commandlinetools*linux*.zip && \
     rm *commandlinetools*linux*.zip
 
 # Install the basic SDK components
-RUN yes Y | ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager --install \
+RUN yes Y | ${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin/sdkmanager --install \
     "platform-tools" \
     "build-tools;30.0.2" \
     "platforms;android-30"
@@ -25,7 +25,7 @@ RUN yes Y | ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager --install \
     #"emulator"
 
 # Accept the SDK licenses
-RUN yes Y | ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager --licenses
+RUN yes Y | ${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin/sdkmanager --licenses
 
 # Add the tools and platform-tools to PATH
 ENV PATH="${PATH}:${ANDROID_SDK_ROOT}/tools:${ANDROID_SDK_ROOT}/platform-tools"
