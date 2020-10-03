@@ -1,0 +1,22 @@
+{
+	"name": "Android",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {
+			// Update the JDK_VARIANT arg to pick a Java version: 11, 14
+			"JDK_VARIANT": "11",
+		}
+	},
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": { 
+		"terminal.integrated.shell.linux": "/bin/bash",
+		"java.home": "/docker-java-home"
+	},
+	
+    // Add the IDs of extensions you want installed when the container is created.
+    // TODO: add Kotlin extension
+	"extensions": [
+		"vscjava.vscode-java-pack"
+	]
+}
