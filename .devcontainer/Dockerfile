@@ -18,7 +18,7 @@ RUN mkdir -p ${ANDROID_SDK_ROOT} && cd ${ANDROID_SDK_ROOT} && \
 # Install the basic SDK components
 RUN yes Y | ${ANDROID_SDK_ROOT}/tools/bin/sdkmanager --install \
     "platform-tools" \
-    "build-tools" \
+    "build-tools;30.0.2" \
     "platforms;android-30"
     # TODO: Investigate installing the emulator
     #"system-images;android-*30*;google_apis;x86" \
