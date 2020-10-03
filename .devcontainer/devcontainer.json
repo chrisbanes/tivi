@@ -17,6 +17,8 @@
     // Add the IDs of extensions you want installed when the container is created.
     // TODO: add Kotlin extension
 	"extensions": [
-		"vscjava.vscode-java-pack"
+		"vscjava.vscode-java-pack",
+		"mathiasfrohlich.kotlin",
+		"adelphes.android-dev-ext"
 	]
 }
