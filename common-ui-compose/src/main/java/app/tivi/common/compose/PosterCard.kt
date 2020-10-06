@@ -20,8 +20,8 @@ import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.AmbientEmphasisLevels
 import androidx.compose.material.Card
-import androidx.compose.material.EmphasisAmbient
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideEmphasis
 import androidx.compose.runtime.Composable
@@ -45,7 +45,7 @@ fun PosterCard(
         ) {
             // TODO: remove text if the image has loaded (and animated in).
             // https://github.com/chrisbanes/accompanist/issues/76
-            ProvideEmphasis(EmphasisAmbient.current.medium) {
+            ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
                 Text(
                     text = show.title ?: "No title",
                     style = MaterialTheme.typography.caption,

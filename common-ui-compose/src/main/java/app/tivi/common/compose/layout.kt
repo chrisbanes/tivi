@@ -22,12 +22,12 @@ import androidx.compose.ui.LayoutModifier
 import androidx.compose.ui.Measurable
 import androidx.compose.ui.MeasureScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.OnPositionedModifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.onGloballyPositioned
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toSize
@@ -39,32 +39,14 @@ inline val LayoutCoordinates.positionInParent: Offset
 inline val LayoutCoordinates.boundsInParent: Rect
     get() = Rect(positionInParent, size.toSize())
 
-fun Modifier.onSizeChanged(
-    onChange: (IntSize) -> Unit
-) = composed {
-    var lastSize by rememberMutableState<IntSize?> { null }
-
-    object : OnPositionedModifier {
-        override fun onPositioned(coordinates: LayoutCoordinates) {
-            if (coordinates.size != lastSize) {
-                lastSize = coordinates.size
-                onChange(coordinates.size)
-            }
-        }
-    }
-}
-
 fun Modifier.onPositionInParentChanged(
     onChange: (LayoutCoordinates) -> Unit
 ) = composed {
     var lastPosition by rememberMutableState<Offset?> { null }
-
-    object : OnPositionedModifier {
-        override fun onPositioned(coordinates: LayoutCoordinates) {
-            if (coordinates.positionInParent != lastPosition) {
-                lastPosition = coordinates.positionInParent
-                onChange(coordinates)
-            }
+    Modifier.onGloballyPositioned { coordinates ->
+        if (coordinates.positionInParent != lastPosition) {
+            lastPosition = coordinates.positionInParent
+            onChange(coordinates)
         }
     }
 }
@@ -73,13 +55,10 @@ fun Modifier.onPositionInRootChanged(
     onChange: (LayoutCoordinates) -> Unit
 ) = composed {
     var lastPosition by rememberMutableState<Offset?> { null }
-
-    object : OnPositionedModifier {
-        override fun onPositioned(coordinates: LayoutCoordinates) {
-            if (coordinates.positionInRoot != lastPosition) {
-                lastPosition = coordinates.positionInRoot
-                onChange(coordinates)
-            }
+    Modifier.onGloballyPositioned { coordinates ->
+        if (coordinates.positionInRoot != lastPosition) {
+            lastPosition = coordinates.positionInRoot
+            onChange(coordinates)
         }
     }
 }

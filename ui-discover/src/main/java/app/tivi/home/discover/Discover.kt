@@ -38,7 +38,7 @@ import androidx.compose.foundation.lazy.ExperimentalLazyDsl
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.FirstBaseline
-import androidx.compose.material.EmphasisAmbient
+import androidx.compose.material.AmbientEmphasisLevels
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideEmphasis
@@ -52,6 +52,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.onSizeChanged
 import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -60,7 +61,6 @@ import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.IconResource
 import app.tivi.common.compose.PosterCard
-import app.tivi.common.compose.onSizeChanged
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.statusBarsPadding
 import app.tivi.data.entities.Episode
@@ -181,7 +181,7 @@ private fun NextEpisodeToWatch(
 
             Column(Modifier.align(Alignment.CenterVertically)) {
                 val textCreator = DiscoverTextCreatorAmbient.current
-                ProvideEmphasis(EmphasisAmbient.current.disabled) {
+                ProvideEmphasis(AmbientEmphasisLevels.current.disabled) {
                     Text(
                         text = textCreator.seasonEpisodeTitleText(season, episode),
                         style = MaterialTheme.typography.caption
@@ -190,7 +190,7 @@ private fun NextEpisodeToWatch(
 
                 Spacer(Modifier.preferredHeight(4.dp))
 
-                ProvideEmphasis(EmphasisAmbient.current.high) {
+                ProvideEmphasis(AmbientEmphasisLevels.current.high) {
                     Text(
                         text = episode.title
                             ?: stringResource(R.string.episode_title_fallback, episode.number!!),
@@ -277,7 +277,7 @@ private fun Header(
     Row(modifier) {
         Spacer(Modifier.preferredWidth(16.dp))
 
-        ProvideEmphasis(EmphasisAmbient.current.high) {
+        ProvideEmphasis(AmbientEmphasisLevels.current.high) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.subtitle1,
@@ -324,7 +324,7 @@ private fun DiscoverAppBar(
                 .preferredHeight(56.dp)
                 .padding(start = 16.dp, end = 4.dp)
         ) {
-            ProvideEmphasis(EmphasisAmbient.current.high) {
+            ProvideEmphasis(AmbientEmphasisLevels.current.high) {
                 Text(
                     text = stringResource(R.string.discover_title),
                     style = MaterialTheme.typography.h6,
@@ -333,7 +333,7 @@ private fun DiscoverAppBar(
                 )
             }
 
-            ProvideEmphasis(EmphasisAmbient.current.medium) {
+            ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
                 IconButton(
                     onClick = onRefreshActionClick,
                     enabled = !refreshing,

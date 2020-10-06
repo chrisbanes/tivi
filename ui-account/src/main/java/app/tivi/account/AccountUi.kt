@@ -28,8 +28,8 @@ import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.preferredSizeIn
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AmbientEmphasisLevels
 import androidx.compose.material.Divider
-import androidx.compose.material.EmphasisAmbient
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.ProvideEmphasis
@@ -127,14 +127,14 @@ private fun UserRow(
         Spacer(modifier = Modifier.preferredWidth(8.dp))
 
         Column {
-            ProvideEmphasis(EmphasisAmbient.current.high) {
+            ProvideEmphasis(AmbientEmphasisLevels.current.high) {
                 Text(
                     text = user.name,
                     style = MaterialTheme.typography.subtitle2
                 )
             }
 
-            ProvideEmphasis(EmphasisAmbient.current.medium) {
+            ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
                 Text(
                     text = user.username,
                     style = MaterialTheme.typography.caption
@@ -158,14 +158,14 @@ private fun AppAction(
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        ProvideEmphasis(EmphasisAmbient.current.high) {
+        ProvideEmphasis(AmbientEmphasisLevels.current.high) {
             Spacer(modifier = Modifier.preferredWidth(8.dp))
 
             VectorImage(vector = icon)
 
             Spacer(modifier = Modifier.preferredWidth(16.dp))
 
-            ProvideEmphasis(EmphasisAmbient.current.high) {
+            ProvideEmphasis(AmbientEmphasisLevels.current.high) {
                 Text(
                     text = label,
                     style = MaterialTheme.typography.body2

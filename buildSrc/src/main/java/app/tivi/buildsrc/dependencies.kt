@@ -59,7 +59,7 @@ object Libs {
     }
 
     object Accompanist {
-        private const val version = "0.3.0"
+        private const val version = "0.3.1.compose-6886729-SNAPSHOT"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
     }
 
@@ -164,8 +164,8 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = ""
-            const val version = "1.0.0-alpha04"
+            const val snapshot = "6886729"
+            const val version = "1.0.0-SNAPSHOT"
 
             @get:JvmStatic
             val snapshotUrl: String

@@ -17,8 +17,8 @@
 package app.tivi.common.compose
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.AmbientContentColor
 import androidx.compose.foundation.Icon
-import androidx.compose.foundation.contentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,7 +29,7 @@ import androidx.compose.ui.res.loadVectorResource
 fun IconResource(
     @DrawableRes resourceId: Int,
     modifier: Modifier = Modifier,
-    tint: Color = contentColor()
+    tint: Color = AmbientContentColor.current
 ) {
     val deferredResource = loadVectorResource(resourceId)
     deferredResource.onLoadRun { asset ->
