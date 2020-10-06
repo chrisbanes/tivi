@@ -17,7 +17,7 @@
 
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@id/navigation_followed"
+    android:id="@+id/following_nav_graph"
     app:startDestination="@id/navigation_followed">
 
     <fragment

@@ -48,7 +48,7 @@ object Libs {
     const val robolectric = "org.robolectric:robolectric:4.4"
     const val mockK = "io.mockk:mockk:1.10.2"
 
-    const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.4"
+    const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.5"
 
     const val store = "com.dropbox.mobile.store:store4:4.0.0-beta01"
 
@@ -59,7 +59,7 @@ object Libs {
     }
 
     object Accompanist {
-        private const val version = "0.2.3.compose-6860046-SNAPSHOT"
+        private const val version = "0.3.0"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
     }
 
@@ -69,18 +69,18 @@ object Libs {
     }
 
     object Google {
-        const val crashlytics = "com.google.firebase:firebase-crashlytics-ktx:17.2.1"
+        const val crashlytics = "com.google.firebase:firebase-crashlytics-ktx:17.2.2"
         const val analytics = "com.google.firebase:firebase-analytics-ktx:17.5.0"
         const val crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.3.0"
 
-        const val gmsGoogleServices = "com.google.gms:google-services:4.3.3"
+        const val gmsGoogleServices = "com.google.gms:google-services:4.3.4"
 
         const val openSourceLicensesPlugin = "com.google.android.gms:oss-licenses-plugin:0.10.2"
         const val openSourceLicensesLibrary = "com.google.android.gms:play-services-oss-licenses:17.0.0"
     }
 
     object Kotlin {
-        private const val version = "1.4.0"
+        private const val version = "1.4.10"
         const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
         const val extensions = "org.jetbrains.kotlin:kotlin-android-extensions:$version"
@@ -98,7 +98,7 @@ object Libs {
         const val browser = "androidx.browser:browser:1.0.0"
         const val collection = "androidx.collection:collection-ktx:1.1.0"
         const val palette = "androidx.palette:palette:1.0.0"
-        const val recyclerview = "androidx.recyclerview:recyclerview:1.2.0-alpha05"
+        const val recyclerview = "androidx.recyclerview:recyclerview:1.2.0-alpha06"
         const val emoji = "androidx.emoji:emoji:1.1.0"
         const val swiperefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
@@ -110,7 +110,7 @@ object Libs {
         }
 
         object Fragment {
-            private const val version = "1.3.0-alpha08"
+            private const val version = "1.3.0-beta01"
             const val fragment = "androidx.fragment:fragment:$version"
             const val fragmentKtx = "androidx.fragment:fragment-ktx:$version"
         }
@@ -140,10 +140,10 @@ object Libs {
 
         const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.1"
 
-        const val coreKtx = "androidx.core:core-ktx:1.5.0-alpha03"
+        const val coreKtx = "androidx.core:core-ktx:1.5.0-alpha04"
 
         object Lifecycle {
-            private const val version = "2.3.0-alpha07"
+            private const val version = "2.3.0-beta01"
             const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
             const val livedata = "androidx.lifecycle:lifecycle-livedata-ktx:$version"
             const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
@@ -164,8 +164,8 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = "6860046"
-            const val version = "1.0.0-SNAPSHOT"
+            const val snapshot = ""
+            const val version = "1.0.0-alpha04"
 
             @get:JvmStatic
             val snapshotUrl: String

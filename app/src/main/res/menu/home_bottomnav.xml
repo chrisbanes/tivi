@@ -18,22 +18,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@id/navigation_discover"
+        android:id="@id/discover_nav_graph"
         android:icon="@drawable/ic_weekend_black_24dp"
         android:title="@string/discover_title" />
 
     <item
-        android:id="@id/navigation_followed"
+        android:id="@id/following_nav_graph"
         android:icon="@drawable/ic_favorite"
         android:title="@string/following_shows_title" />
 
     <item
-        android:id="@id/navigation_watched"
+        android:id="@id/watched_nav_graph"
         android:icon="@drawable/ic_visibility"
         android:title="@string/watched_shows_title" />
 
     <item
-        android:id="@id/navigation_search"
+        android:id="@id/search_nav_graph"
         android:icon="@drawable/ic_search_24dp"
         android:title="@string/search_navigation_title" />
 
