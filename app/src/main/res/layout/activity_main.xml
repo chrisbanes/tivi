@@ -34,7 +34,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/home_bottomnav" />
 
-    <FrameLayout
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/home_nav_container"
         android:layout_width="0dp"
         android:layout_height="0dp"

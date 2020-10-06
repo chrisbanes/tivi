@@ -19,6 +19,7 @@ package app.tivi.home
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import app.tivi.AppNavigator
 import app.tivi.R
@@ -38,7 +39,7 @@ class MainActivity : TiviActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    var currentNavController: NavController? = null
+    var currentNavController: LiveData<NavController>? = null
         private set
 
     @Inject lateinit var navigator: AppNavigator
@@ -66,20 +67,12 @@ class MainActivity : TiviActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        viewModel.liveData.observe(this) { invalidate() }
-    }
-
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         // Now that BottomNavigationBar has restored its instance state
         // and its selectedItemId, we can proceed with setting up the
         // BottomNavigationBar with Navigation
         setupBottomNavigationBar()
-    }
-
-    fun invalidate() {
     }
 
     override fun handleIntent(intent: Intent) {
@@ -91,19 +84,19 @@ class MainActivity : TiviActivity() {
     }
 
     private fun setupBottomNavigationBar() {
-        binding.homeBottomNavigation.setupWithNavController(
-            listOf(
+        currentNavController = binding.homeBottomNavigation.setupWithNavController(
+            navGraphIds = listOf(
                 R.navigation.discover_nav_graph,
                 R.navigation.watched_nav_graph,
                 R.navigation.following_nav_graph,
                 R.navigation.search_nav_graph
             ),
-            supportFragmentManager,
-            R.id.home_nav_container,
-            intent
-        ).observe(this) { navController ->
-            currentNavController = navController
+            fragmentManager = supportFragmentManager,
+            containerId = R.id.home_nav_container,
+            intent = intent
+        )
 
+        currentNavController?.observe(this) { navController ->
             navController.addOnDestinationChangedListener { _, destination, _ ->
                 if (destination.id != R.id.navigation_search) {
                     hideSoftInput()
@@ -113,6 +106,6 @@ class MainActivity : TiviActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return currentNavController?.navigateUp() ?: super.onSupportNavigateUp()
+        return currentNavController?.value?.navigateUp() ?: super.onSupportNavigateUp()
     }
 }
