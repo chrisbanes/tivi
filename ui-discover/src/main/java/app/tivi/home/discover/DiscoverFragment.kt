@@ -92,7 +92,7 @@ class DiscoverFragment : Fragment() {
             pendingActions.consumeAsFlow().collect { action ->
                 when (action) {
                     LoginAction,
-                    OpenUserDetails -> findNavController().navigate(R.id.navigation_account)
+                    OpenUserDetails -> findNavController().navigate("app.tivi://account".toUri())
                     is OpenShowDetails -> {
                         var uri = "app.tivi://show/${action.showId}"
                         if (action.episodeId != null) {

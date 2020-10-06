@@ -75,7 +75,7 @@ class WatchedFragment : FragmentWithBinding<FragmentWatchedBinding>() {
         binding.watchedToolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.home_menu_user_login, R.id.home_menu_user_avatar -> {
-                    findNavController().navigate(R.id.navigation_account)
+                    findNavController().navigate("app.tivi://account".toUri())
                     true
                 }
                 else -> false

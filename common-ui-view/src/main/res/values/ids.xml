@@ -16,8 +16,6 @@
   -->
 
 <resources>
-    <id name="image_key" />
-
     <id name="navigation_discover" />
     <id name="navigation_trending" />
     <id name="navigation_popular" />
@@ -30,9 +28,4 @@
     <id name="navigation_licences" />
     <id name="navigation_show_details" />
     <id name="navigation_episode_details" />
-
-    <id name="activity_show_details" />
-
-    <id name="motion_layout_listeners" />
-
 </resources>

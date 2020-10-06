@@ -23,7 +23,11 @@
     <dialog
         android:id="@id/navigation_account"
         android:name="app.tivi.account.AccountUiFragment"
-        android:label="@string/account_title" />
+        android:label="@string/account_title">
+
+        <deepLink app:uri="app.tivi://account" />
+
+    </dialog>
 
     <fragment
         android:id="@id/navigation_settings"
