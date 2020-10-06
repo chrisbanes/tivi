@@ -46,7 +46,6 @@ import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.preferredSizeIn
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AmbientEmphasisLevels
@@ -623,7 +622,7 @@ private fun NextEpisodeToWatch(
     Column(
         modifier = Modifier.fillMaxWidth()
             .preferredHeightIn(min = 48.dp)
-            .wrapContentSize(Alignment.CenterStart)
+            .wrapContentHeight()
             .clickable(onClick = onClick)
             .padding(16.dp, 8.dp)
     ) {
