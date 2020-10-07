@@ -284,9 +284,10 @@ private fun Header(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(vertical = 8.dp)
-                    .weight(1f, true)
             )
         }
+
+        Spacer(Modifier.weight(1f))
 
         AnimatedVisibility(visible = loading) {
             AutoSizedCircularProgressIndicator(
@@ -328,10 +329,11 @@ private fun DiscoverAppBar(
                 Text(
                     text = stringResource(R.string.discover_title),
                     style = MaterialTheme.typography.h6,
-                    modifier = Modifier.weight(1f, fill = true)
-                        .align(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
+
+            Spacer(Modifier.weight(1f))
 
             ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
                 IconButton(

@@ -566,24 +566,27 @@ private fun TraktRatingInfoPanel(
 
 @Composable
 private fun Header(title: String) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.subtitle1,
+    Box(
         modifier = Modifier.fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-    )
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.subtitle1
+        )
+    }
 }
 
 @Composable
 private fun Genres(genres: List<Genre>) {
-    ProvideEmphasis(AmbientEmphasisLevels.current.high) {
-        val textCreator = ShowDetailsTextCreatorAmbient.current
-        Text(
-            textCreator.genreString(genres).toString(),
-            style = MaterialTheme.typography.body2,
-            modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        )
+    Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
+        ProvideEmphasis(AmbientEmphasisLevels.current.high) {
+            val textCreator = ShowDetailsTextCreatorAmbient.current
+            Text(
+                textCreator.genreString(genres).toString(),
+                style = MaterialTheme.typography.body2
+            )
+        }
     }
 }
 

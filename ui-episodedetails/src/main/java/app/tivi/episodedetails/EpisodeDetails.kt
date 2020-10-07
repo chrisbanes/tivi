@@ -354,12 +354,13 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
         ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.high) {
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                    .align(Alignment.CenterVertically)
-                    .weight(1f),
+                    .align(Alignment.CenterVertically),
                 text = stringResource(R.string.episode_watches),
                 style = MaterialTheme.typography.subtitle1
             )
         }
+
+        Spacer(Modifier.weight(1f))
 
         ProvideEmphasis(AmbientEmphasisLevels.current.disabled) {
             IconButton(
@@ -382,11 +383,13 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
             ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.high) {
                 val formatter = TiviDateFormatterAmbient.current
                 Text(
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically),
+                    modifier = Modifier.align(Alignment.CenterVertically),
                     text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
                     style = MaterialTheme.typography.body2
                 )
             }
+
+            Spacer(Modifier.weight(1f))
 
             ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.medium) {
                 if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
