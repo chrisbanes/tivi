@@ -17,6 +17,7 @@
 package app.tivi.showdetails.details
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animate
 import androidx.compose.foundation.AmbientContentColor
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
@@ -25,7 +26,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ConstraintLayout
 import androidx.compose.foundation.layout.ExperimentalLayout
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
@@ -124,7 +124,6 @@ import app.tivi.data.resultentities.numberAiredToWatch
 import app.tivi.data.resultentities.numberToAir
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
-import app.tivi.ui.animations.lerp
 import coil.request.ImageRequest
 import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlinx.coroutines.launch
@@ -137,34 +136,36 @@ val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
 fun ShowDetails(
     viewState: ShowDetailsViewState,
     actioner: (ShowDetailsAction) -> Unit
-) = ConstraintLayout(
-    modifier = Modifier.fillMaxSize()
-) {
+) = Box(modifier = Modifier.fillMaxSize()) {
     LogCompositions("ShowDetails")
-
-    val (appbar, fab, snackbar) = createRefs()
 
     val listState = rememberLazyListState()
     var backdropHeight by rememberMutableState { 0 }
 
-    ShowDetailsScrollingContent(
-        show = viewState.show,
-        posterImage = viewState.posterImage,
-        backdropImage = viewState.backdropImage,
-        relatedShows = viewState.relatedShows,
-        nextEpisodeToWatch = viewState.nextEpisodeToWatch,
-        seasons = viewState.seasons,
-        expandedSeasonIds = viewState.expandedSeasonIds,
-        watchStats = viewState.watchStats,
-        showRefreshing = viewState.refreshing,
-        listState = listState,
-        actioner = actioner,
-        onBackdropSizeChanged = { backdropHeight = it.height }
-    )
+    Surface(Modifier.fillMaxSize()) {
+        ShowDetailsScrollingContent(
+            show = viewState.show,
+            posterImage = viewState.posterImage,
+            backdropImage = viewState.backdropImage,
+            relatedShows = viewState.relatedShows,
+            nextEpisodeToWatch = viewState.nextEpisodeToWatch,
+            seasons = viewState.seasons,
+            expandedSeasonIds = viewState.expandedSeasonIds,
+            watchStats = viewState.watchStats,
+            showRefreshing = viewState.refreshing,
+            listState = listState,
+            actioner = actioner,
+            onBackdropSizeChanged = { backdropHeight = it.height },
+            modifier = Modifier.fillMaxSize()
+        )
+    }
 
+    val trigger = backdropHeight - InsetsAmbient.current.statusBars.top
     OverlaidStatusBarAppBar(
-        scrollPosition = 0f, // scrollState.value,
-        backdropHeight = backdropHeight,
+        showAppBar = when (listState.firstVisibleItemIndex) {
+            0 -> listState.firstVisibleItemScrollOffset >= trigger
+            else -> true
+        },
         appBar = {
             ShowDetailsAppBar(
                 title = viewState.show.title ?: "",
@@ -174,31 +175,34 @@ fun ShowDetails(
                 actioner = actioner
             )
         },
-        modifier = Modifier.fillMaxWidth()
-            .constrainAs(appbar) {
-                top.linkTo(parent.top)
-            }
+        modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter)
     )
 
     val snackbarHostState = remember { SnackbarHostState() }
     val snackbarScope = rememberCoroutineScope()
 
-    SnackbarHost(
-        hostState = snackbarHostState,
-        snackbar = {
-            SwipeDismissSnackbar(
-                data = it,
-                onDismiss = { actioner(ClearError) }
-            )
-        },
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .constrainAs(snackbar) {
-                bottom.linkTo(fab.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
-    )
+    Column(Modifier.fillMaxWidth().align(Alignment.BottomCenter)) {
+        SnackbarHost(
+            hostState = snackbarHostState,
+            snackbar = {
+                SwipeDismissSnackbar(
+                    data = it,
+                    onDismiss = { actioner(ClearError) }
+                )
+            },
+            modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth()
+        )
+
+        ToggleShowFollowFloatingActionButton(
+            isFollowed = viewState.isFollowed,
+            expanded = listState.firstVisibleItemIndex >= 1,
+            onClick = { actioner(FollowShowToggleAction) },
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(16.dp)
+                .navigationBarsPadding(bottom = false)
+        )
+    }
 
     onCommit(viewState.refreshError) {
         viewState.refreshError?.let { error ->
@@ -207,19 +211,6 @@ fun ShowDetails(
             }
         }
     }
-
-    ToggleShowFollowFloatingActionButton(
-        isFollowed = viewState.isFollowed,
-        expanded = false, // scrollState.value < backdropHeight,
-        onClick = { actioner(FollowShowToggleAction) },
-        modifier = Modifier
-            .padding(16.dp)
-            .navigationBarsPadding(bottom = false)
-            .constrainAs(fab) {
-                end.linkTo(parent.end)
-                bottom.linkTo(parent.bottom)
-            }
-    )
 }
 
 @OptIn(ExperimentalLazyDsl::class)
@@ -236,13 +227,14 @@ private fun ShowDetailsScrollingContent(
     showRefreshing: Boolean,
     listState: LazyListState,
     actioner: (ShowDetailsAction) -> Unit,
-    onBackdropSizeChanged: (IntSize) -> Unit
+    onBackdropSizeChanged: (IntSize) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     LogCompositions("ShowDetailsScrollingContent")
 
     LazyColumn(
         state = listState,
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier
     ) {
         item {
             Surface(
@@ -377,7 +369,14 @@ private fun ShowDetailsScrollingContent(
                 Header(stringResource(R.string.show_details_seasons))
             }
 
-            Seasons(seasons, expandedSeasonIds, actioner)
+            seasons.forEach {
+                SeasonWithEpisodesRow(
+                    season = it.season,
+                    episodes = it.episodes,
+                    expanded = it.season.id in expandedSeasonIds,
+                    actioner = actioner,
+                )
+            }
         }
 
         // Spacer to push up content from under the FloatingActionButton
@@ -387,30 +386,20 @@ private fun ShowDetailsScrollingContent(
 
 @Composable
 private fun OverlaidStatusBarAppBar(
-    scrollPosition: Float,
-    backdropHeight: Int,
+    showAppBar: Boolean,
     modifier: Modifier = Modifier,
     appBar: @Composable () -> Unit
 ) {
     LogCompositions("OverlaidStatusBarAppBar")
 
-    val insets = InsetsAmbient.current
-    val trigger = (backdropHeight - insets.systemBars.top).coerceAtLeast(0)
-
-    val alpha = lerp(
-        startValue = 0.5f,
-        endValue = 1f,
-        fraction = if (trigger > 0) (scrollPosition / trigger).coerceIn(0f, 1f) else 0f
-    )
-
     Surface(
-        color = MaterialTheme.colors.surface.copy(alpha = alpha),
-        elevation = if (scrollPosition >= trigger) 2.dp else 0.dp,
+        color = MaterialTheme.colors.surface,
+        elevation = animate(if (showAppBar) 2.dp else 0.dp),
         modifier = modifier
     ) {
         Column(Modifier.fillMaxWidth()) {
             Spacer(Modifier.statusBarsHeight())
-            if (scrollPosition >= trigger) {
+            if (showAppBar) {
                 appBar()
             }
         }
@@ -731,21 +720,6 @@ private fun WatchStats(
     }
 }
 
-private fun LazyListScope.Seasons(
-    seasons: List<SeasonWithEpisodesAndWatches>,
-    expandedSeasonIds: Set<Long>,
-    actioner: (ShowDetailsAction) -> Unit
-) {
-    seasons.forEach {
-        SeasonWithEpisodesRow(
-            season = it.season,
-            episodes = it.episodes,
-            expanded = it.season.id in expandedSeasonIds,
-            actioner = actioner,
-        )
-    }
-}
-
 @OptIn(ExperimentalAnimationApi::class)
 private fun LazyListScope.SeasonWithEpisodesRow(
     season: Season,
@@ -753,40 +727,50 @@ private fun LazyListScope.SeasonWithEpisodesRow(
     expanded: Boolean,
     actioner: (ShowDetailsAction) -> Unit,
 ) {
-    if (expanded) {
-        item {
-            Divider()
-        }
-    }
-
     item {
-        SeasonRow(
-            season = season,
-            episodesAired = episodes.numberAired,
-            episodesWatched = episodes.numberWatched,
-            episodesToWatch = episodes.numberAiredToWatch,
-            episodesToAir = episodes.numberToAir,
-            nextToAirDate = episodes.nextToAir?.firstAired,
-            actioner = actioner,
+        Surface(
+            elevation = animate(if (expanded) 2.dp else 0.dp),
             modifier = Modifier.fillMaxWidth()
                 .clickable(enabled = !season.ignored) {
                     actioner(ChangeSeasonExpandedAction(season.id, !expanded))
                 }
-        )
+        ) {
+            Box(Modifier.fillMaxWidth()) {
+                if (expanded) Divider()
+
+                SeasonRow(
+                    season = season,
+                    episodesAired = episodes.numberAired,
+                    episodesWatched = episodes.numberWatched,
+                    episodesToWatch = episodes.numberAiredToWatch,
+                    episodesToAir = episodes.numberToAir,
+                    nextToAirDate = episodes.nextToAir?.firstAired,
+                    actioner = actioner,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
     }
 
     if (expanded) {
         items(episodes) { episodeEntry ->
             // This doesn't work with the LazyDSL: b/170287733
             // AnimatedVisibility(initiallyVisible = false, visible = expanded) {
-            EpisodeWithWatchesRow(
-                episode = episodeEntry.episode,
-                isWatched = episodeEntry.isWatched,
-                hasPending = episodeEntry.hasPending,
-                onlyPendingDeletes = episodeEntry.onlyPendingDeletes,
-                modifier = Modifier.fillMaxWidth()
+
+            Surface(
+                elevation = 2.dp,
+                modifier = Modifier
+                    .fillMaxWidth()
                     .clickable { actioner(OpenEpisodeDetails(episodeEntry.episode.id)) }
-            )
+            ) {
+                EpisodeWithWatchesRow(
+                    episode = episodeEntry.episode,
+                    isWatched = episodeEntry.isWatched,
+                    hasPending = episodeEntry.hasPending,
+                    onlyPendingDeletes = episodeEntry.onlyPendingDeletes,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
             // }
         }
     }
