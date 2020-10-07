@@ -662,7 +662,7 @@ private fun NextEpisodeToWatch(
             style = MaterialTheme.typography.caption
         )
 
-        Spacer(modifier = Modifier.preferredHeight(4.dp))
+        Spacer(Modifier.preferredHeight(4.dp))
 
         Text(
             episode.title ?: stringResource(R.string.episode_title_fallback, episode.number!!),
@@ -761,34 +761,31 @@ private fun LazyListScope.SeasonWithEpisodesRow(
 
     item {
         SeasonRow(
-            season,
-            episodes.numberAired,
-            episodes.numberWatched,
-            episodes.numberAiredToWatch,
-            episodes.numberToAir,
-            episodes.nextToAir?.firstAired,
-            actioner,
+            season = season,
+            episodesAired = episodes.numberAired,
+            episodesWatched = episodes.numberWatched,
+            episodesToWatch = episodes.numberAiredToWatch,
+            episodesToAir = episodes.numberToAir,
+            nextToAirDate = episodes.nextToAir?.firstAired,
+            actioner = actioner,
             modifier = Modifier.fillMaxWidth()
-                .clickable(
-                    onClick = { actioner(ChangeSeasonExpandedAction(season.id, !expanded)) },
-                    enabled = !season.ignored
-                )
+                .clickable(enabled = !season.ignored) {
+                    actioner(ChangeSeasonExpandedAction(season.id, !expanded))
+                }
         )
     }
 
     if (expanded) {
         items(episodes) { episodeEntry ->
-            // This doesn't work with the LazyDSL
-            // AnimatedVisibility(visible = expanded) {
+            // This doesn't work with the LazyDSL: b/170287733
+            // AnimatedVisibility(initiallyVisible = false, visible = expanded) {
             EpisodeWithWatchesRow(
                 episode = episodeEntry.episode,
                 isWatched = episodeEntry.isWatched,
                 hasPending = episodeEntry.hasPending,
                 onlyPendingDeletes = episodeEntry.onlyPendingDeletes,
                 modifier = Modifier.fillMaxWidth()
-                    .clickable {
-                        actioner(OpenEpisodeDetails(episodeEntry.episode.id))
-                    }
+                    .clickable { actioner(OpenEpisodeDetails(episodeEntry.episode.id)) }
             )
             // }
         }
