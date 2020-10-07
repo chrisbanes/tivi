@@ -79,6 +79,7 @@ import androidx.compose.runtime.staticAmbientOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -100,6 +101,7 @@ import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.navigationBarsPadding
+import app.tivi.common.compose.offset
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.spacerItem
 import app.tivi.common.compose.statusBarsHeight
@@ -253,14 +255,16 @@ private fun ShowDetailsScrollingContent(
                         data = backdropImage,
                         fadeIn = true,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-//                            .offset { size ->
-//                                Offset(
-//                                    x = 0f,
-//                                    y = (scrollState.value / 2)
-//                                        .coerceIn(-size.height.toFloat(), size.height.toFloat())
-//                                )
-//                            }
+                        modifier = Modifier.fillMaxSize().offset { size ->
+                            if (listState.firstVisibleItemIndex == 0) {
+                                // If we're the first visible item, apply a parallax offset
+                                Offset(
+                                    x = 0f,
+                                    y = (listState.firstVisibleItemScrollOffset / 2f)
+                                        .coerceIn(-size.height.toFloat(), size.height.toFloat())
+                                )
+                            } else Offset.Zero
+                        }
                     )
                 }
             }
