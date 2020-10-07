@@ -16,12 +16,9 @@
 
 package app.tivi.showdetails.details
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.AmbientContentColor
 import androidx.compose.foundation.Icon
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -46,7 +43,11 @@ import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.preferredSizeIn
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.ExperimentalLazyDsl
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AmbientEmphasisLevels
 import androidx.compose.material.Divider
@@ -78,7 +79,6 @@ import androidx.compose.runtime.staticAmbientOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -100,7 +100,6 @@ import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.navigationBarsPadding
-import app.tivi.common.compose.offset
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.statusBarsHeight
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
@@ -130,7 +129,7 @@ import org.threeten.bp.OffsetDateTime
 
 val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalLazyDsl::class)
 @Composable
 fun ShowDetails(
     viewState: ShowDetailsViewState,
@@ -142,31 +141,26 @@ fun ShowDetails(
 
     val (appbar, fab, snackbar) = createRefs()
 
-    val scrollState = rememberScrollState()
+    val listState = rememberLazyListState()
     var backdropHeight by rememberMutableState { 0 }
 
-    ScrollableColumn(
-        scrollState = scrollState,
-        modifier = Modifier.fillMaxHeight()
-    ) {
-        ShowDetailsScrollingContent(
-            show = viewState.show,
-            posterImage = viewState.posterImage,
-            backdropImage = viewState.backdropImage,
-            relatedShows = viewState.relatedShows,
-            nextEpisodeToWatch = viewState.nextEpisodeToWatch,
-            seasons = viewState.seasons,
-            expandedSeasonIds = viewState.expandedSeasonIds,
-            watchStats = viewState.watchStats,
-            showRefreshing = viewState.refreshing,
-            scrollState = scrollState,
-            actioner = actioner,
-            onBackdropSizeChanged = { backdropHeight = it.height }
-        )
-    }
+    ShowDetailsScrollingContent(
+        show = viewState.show,
+        posterImage = viewState.posterImage,
+        backdropImage = viewState.backdropImage,
+        relatedShows = viewState.relatedShows,
+        nextEpisodeToWatch = viewState.nextEpisodeToWatch,
+        seasons = viewState.seasons,
+        expandedSeasonIds = viewState.expandedSeasonIds,
+        watchStats = viewState.watchStats,
+        showRefreshing = viewState.refreshing,
+        listState = listState,
+        actioner = actioner,
+        onBackdropSizeChanged = { backdropHeight = it.height }
+    )
 
     OverlaidStatusBarAppBar(
-        scrollPosition = scrollState.value,
+        scrollPosition = 0f, // scrollState.value,
         backdropHeight = backdropHeight,
         appBar = {
             ShowDetailsAppBar(
@@ -213,7 +207,7 @@ fun ShowDetails(
 
     ToggleShowFollowFloatingActionButton(
         isFollowed = viewState.isFollowed,
-        expanded = scrollState.value < backdropHeight,
+        expanded = false, // scrollState.value < backdropHeight,
         onClick = { actioner(FollowShowToggleAction) },
         modifier = Modifier
             .padding(16.dp)
@@ -225,6 +219,7 @@ fun ShowDetails(
     )
 }
 
+@OptIn(ExperimentalLazyDsl::class)
 @Composable
 private fun ShowDetailsScrollingContent(
     show: TiviShow,
@@ -236,125 +231,153 @@ private fun ShowDetailsScrollingContent(
     expandedSeasonIds: Set<Long>,
     watchStats: FollowedShowsWatchStats?,
     showRefreshing: Boolean,
-    scrollState: ScrollState,
+    listState: LazyListState,
     actioner: (ShowDetailsAction) -> Unit,
     onBackdropSizeChanged: (IntSize) -> Unit
 ) {
     LogCompositions("ShowDetailsScrollingContent")
 
-    Column(Modifier.fillMaxWidth()) {
-        Surface(
-            modifier = Modifier.fillMaxWidth()
-                .aspectRatio(16f / 10)
-                .onSizeChanged(onBackdropSizeChanged)
-        ) {
-            if (backdropImage != null) {
-                CoilImage(
-                    data = backdropImage,
-                    fadeIn = true,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize().offset { size ->
-                        Offset(
-                            x = 0f,
-                            y = (scrollState.value / 2)
-                                .coerceIn(-size.height.toFloat(), size.height.toFloat())
-                        )
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        item {
+            Surface(
+                modifier = Modifier.fillMaxWidth()
+                    .aspectRatio(16f / 10)
+                    .onSizeChanged(onBackdropSizeChanged)
+            ) {
+                if (backdropImage != null) {
+                    CoilImage(
+                        data = backdropImage,
+                        fadeIn = true,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+//                            .offset { size ->
+//                                Offset(
+//                                    x = 0f,
+//                                    y = (scrollState.value / 2)
+//                                        .coerceIn(-size.height.toFloat(), size.height.toFloat())
+//                                )
+//                            }
+                    )
+                }
+            }
+        }
+
+        item {
+            ShowDetailsAppBar(
+                title = show.title ?: "",
+                elevation = 0.dp,
+                backgroundColor = Color.Transparent,
+                isRefreshing = showRefreshing,
+                actioner = actioner
+            )
+        }
+
+        item {
+            Row(Modifier.fillMaxWidth()) {
+                if (posterImage != null) {
+                    Spacer(modifier = Modifier.preferredWidth(16.dp))
+
+                    CoilImage(
+                        data = posterImage,
+                        fadeIn = true,
+                        alignment = Alignment.TopStart,
+                        modifier = Modifier.weight(1f, fill = false)
+                            .aspectRatio(2 / 3f)
+                            .clip(MaterialTheme.shapes.medium)
+                    )
+                }
+
+                Spacer(modifier = Modifier.preferredWidth(16.dp))
+
+                Box(Modifier.weight(1f, fill = false)) {
+                    InfoPanels(show)
+                }
+
+                Spacer(modifier = Modifier.preferredWidth(16.dp))
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.preferredHeight(16.dp))
+        }
+
+        item {
+            Header(stringResource(R.string.details_about))
+        }
+
+        if (show.summary != null) {
+            item {
+                ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.high) {
+                    ExpandingText(
+                        show.summary!!,
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                }
+            }
+        }
+
+        if (show.genres.isNotEmpty()) {
+            item {
+                Genres(show.genres)
+            }
+        }
+
+        if (nextEpisodeToWatch?.episode != null && nextEpisodeToWatch.season != null) {
+            item {
+                Spacer(modifier = Modifier.preferredHeight(8.dp))
+                Header(stringResource(id = R.string.details_next_episode_to_watch))
+                NextEpisodeToWatch(
+                    season = nextEpisodeToWatch.season!!,
+                    episode = nextEpisodeToWatch.episode!!,
+                    onClick = {
+                        actioner(OpenEpisodeDetails(nextEpisodeToWatch.episode!!.id))
                     }
                 )
             }
         }
 
-        Surface(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight(Alignment.Top),
-            elevation = 2.dp
-        ) {
-            Column(Modifier.fillMaxWidth()) {
-                ShowDetailsAppBar(
-                    title = show.title ?: "",
-                    elevation = 0.dp,
-                    backgroundColor = Color.Transparent,
-                    isRefreshing = showRefreshing,
-                    actioner = actioner
-                )
-
-                Row(Modifier.fillMaxWidth()) {
-                    if (posterImage != null) {
-                        Spacer(modifier = Modifier.preferredWidth(16.dp))
-
-                        CoilImage(
-                            data = posterImage,
-                            fadeIn = true,
-                            alignment = Alignment.TopStart,
-                            modifier = Modifier.weight(1f, fill = false)
-                                .aspectRatio(2 / 3f)
-                                .clip(MaterialTheme.shapes.medium)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.preferredWidth(16.dp))
-
-                    Box(Modifier.weight(1f, fill = false)) {
-                        InfoPanels(show)
-                    }
-
-                    Spacer(modifier = Modifier.preferredWidth(16.dp))
-                }
-
-                Spacer(modifier = Modifier.preferredHeight(16.dp))
-
-                Header(stringResource(R.string.details_about))
-
-                if (show.summary != null) {
-                    ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.high) {
-                        ExpandingText(
-                            show.summary!!,
-                            modifier = Modifier.fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                        )
-                    }
-                }
-
-                if (show.genres.isNotEmpty()) {
-                    Genres(show.genres)
-                }
-
-                if (nextEpisodeToWatch?.episode != null && nextEpisodeToWatch.season != null) {
-                    Spacer(modifier = Modifier.preferredHeight(8.dp))
-                    Header(stringResource(id = R.string.details_next_episode_to_watch))
-                    NextEpisodeToWatch(
-                        season = nextEpisodeToWatch.season!!,
-                        episode = nextEpisodeToWatch.episode!!,
-                        onClick = {
-                            actioner(OpenEpisodeDetails(nextEpisodeToWatch.episode!!.id))
-                        }
-                    )
-                }
-
-                if (relatedShows.isNotEmpty()) {
-                    Spacer(modifier = Modifier.preferredHeight(8.dp))
-                    Header(stringResource(R.string.details_related))
-                    RelatedShows(
-                        relatedShows,
-                        actioner,
-                        Modifier.fillMaxWidth().preferredHeight(112.dp)
-                    )
-                }
-
-                if (watchStats != null) {
-                    Spacer(modifier = Modifier.preferredHeight(8.dp))
-                    Header(stringResource(R.string.details_view_stats))
-                    WatchStats(watchStats.watchedEpisodeCount, watchStats.episodeCount)
-                }
-
-                if (seasons.isNotEmpty()) {
-                    Spacer(modifier = Modifier.preferredHeight(8.dp))
-                    Header(stringResource(R.string.show_details_seasons))
-                    Seasons(seasons, expandedSeasonIds, actioner)
-                }
-
-                // Spacer to push up content from under the FloatingActionButton
-                Spacer(Modifier.preferredHeight(56.dp + 16.dp + 16.dp))
+        if (relatedShows.isNotEmpty()) {
+            item {
+                Spacer(modifier = Modifier.preferredHeight(8.dp))
             }
+            item {
+                Header(stringResource(R.string.details_related))
+            }
+            item {
+                RelatedShows(
+                    related = relatedShows,
+                    actioner = actioner,
+                    modifier = Modifier.fillMaxWidth().preferredHeight(112.dp)
+                )
+            }
+        }
+
+        if (watchStats != null) {
+            item {
+                Spacer(modifier = Modifier.preferredHeight(8.dp))
+                Header(stringResource(R.string.details_view_stats))
+                WatchStats(watchStats.watchedEpisodeCount, watchStats.episodeCount)
+            }
+        }
+
+        if (seasons.isNotEmpty()) {
+            item {
+                Spacer(modifier = Modifier.preferredHeight(8.dp))
+            }
+            item {
+                Header(stringResource(R.string.show_details_seasons))
+            }
+
+            Seasons(seasons, expandedSeasonIds, actioner)
+        }
+
+        item {
+            // Spacer to push up content from under the FloatingActionButton
+            Spacer(Modifier.preferredHeight(56.dp + 16.dp + 16.dp))
         }
     }
 }
@@ -705,70 +728,66 @@ private fun WatchStats(
     }
 }
 
-@Composable
-private fun Seasons(
+private fun LazyListScope.Seasons(
     seasons: List<SeasonWithEpisodesAndWatches>,
     expandedSeasonIds: Set<Long>,
     actioner: (ShowDetailsAction) -> Unit
 ) {
-    LogCompositions("Seasons")
-
     seasons.forEach {
         SeasonWithEpisodesRow(
             season = it.season,
             episodes = it.episodes,
             expanded = it.season.id in expandedSeasonIds,
             actioner = actioner,
-            modifier = Modifier.fillMaxWidth()
         )
     }
 }
 
 @OptIn(ExperimentalAnimationApi::class)
-@Composable
-private fun SeasonWithEpisodesRow(
+private fun LazyListScope.SeasonWithEpisodesRow(
     season: Season,
     episodes: List<EpisodeWithWatches>,
     expanded: Boolean,
     actioner: (ShowDetailsAction) -> Unit,
-    modifier: Modifier = Modifier
 ) {
-    Surface(
-        elevation = if (expanded) 2.dp else 0.dp,
-        modifier = modifier
-    ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            if (expanded) Divider()
+    if (expanded) {
+        item {
+            Divider()
+        }
+    }
 
-            SeasonRow(
-                season,
-                episodes.numberAired,
-                episodes.numberWatched,
-                episodes.numberAiredToWatch,
-                episodes.numberToAir,
-                episodes.nextToAir?.firstAired,
-                actioner,
+    item {
+        SeasonRow(
+            season,
+            episodes.numberAired,
+            episodes.numberWatched,
+            episodes.numberAiredToWatch,
+            episodes.numberToAir,
+            episodes.nextToAir?.firstAired,
+            actioner,
+            modifier = Modifier.fillMaxWidth()
+                .clickable(
+                    onClick = { actioner(ChangeSeasonExpandedAction(season.id, !expanded)) },
+                    enabled = !season.ignored
+                )
+        )
+    }
+
+    if (expanded) {
+        items(episodes) { episodeEntry ->
+            // This doesn't work with the LazyDSL
+            // AnimatedVisibility(visible = expanded) {
+            EpisodeWithWatchesRow(
+                episode = episodeEntry.episode,
+                isWatched = episodeEntry.isWatched,
+                hasPending = episodeEntry.hasPending,
+                onlyPendingDeletes = episodeEntry.onlyPendingDeletes,
                 modifier = Modifier.fillMaxWidth()
-                    .clickable(
-                        onClick = { actioner(ChangeSeasonExpandedAction(season.id, !expanded)) },
-                        enabled = !season.ignored
-                    )
+                    .clickable {
+                        actioner(OpenEpisodeDetails(episodeEntry.episode.id))
+                    }
             )
-
-            episodes.forEach { episodeEntry ->
-                AnimatedVisibility(visible = expanded) {
-                    EpisodeWithWatchesRow(
-                        episodeEntry.episode,
-                        episodeEntry.isWatched,
-                        episodeEntry.hasPending,
-                        episodeEntry.onlyPendingDeletes,
-                        modifier = Modifier.fillMaxWidth()
-                            .clickable {
-                                actioner(OpenEpisodeDetails(episodeEntry.episode.id))
-                            }
-                    )
-                }
-            }
+            // }
         }
     }
 }
