@@ -16,8 +16,17 @@
 
 package app.tivi.showdetails.details
 
+import androidx.compose.animation.DpPropKey
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.VectorConverter
 import androidx.compose.animation.animate
+import androidx.compose.animation.animatedValue
+import androidx.compose.animation.core.FloatPropKey
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.transitionDefinition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.transition
 import androidx.compose.foundation.AmbientContentColor
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
@@ -36,6 +45,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredHeightIn
@@ -70,6 +80,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.emptyContent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
@@ -79,6 +90,7 @@ import androidx.compose.runtime.staticAmbientOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.drawLayer
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -387,22 +399,65 @@ private fun ShowDetailsScrollingContent(
 @Composable
 private fun OverlaidStatusBarAppBar(
     showAppBar: Boolean,
-    modifier: Modifier = Modifier,
-    appBar: @Composable () -> Unit
+    appBar: @Composable () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     LogCompositions("OverlaidStatusBarAppBar")
 
-    Surface(
-        color = MaterialTheme.colors.surface,
-        elevation = animate(if (showAppBar) 2.dp else 0.dp),
-        modifier = modifier
-    ) {
-        Column(Modifier.fillMaxWidth()) {
-            Spacer(Modifier.statusBarsHeight())
-            if (showAppBar) {
-                appBar()
-            }
+    Column(modifier) {
+        val props = transition(
+            definition = statusBarTransitionDef,
+            initState = false,
+            toState = showAppBar
+        )
+
+        Surface(
+            elevation = animate(if (showAppBar) 2.dp else 0.dp),
+            modifier = Modifier.fillMaxWidth()
+                .statusBarsHeight()
+                .drawLayer(alpha = props[AlphaKey])
+                .offset(y = props[TranslateYKey]),
+            content = emptyContent()
+        )
+
+        val elevation = animatedValue(initVal = 0.dp, converter = Dp.VectorConverter)
+        onCommit(showAppBar) {
+            elevation.animateTo(2.dp, spring())
         }
+
+        if (showAppBar) {
+            Surface(
+                elevation = elevation.value,
+                modifier = Modifier.fillMaxWidth(),
+                content = { appBar() }
+            )
+        }
+    }
+}
+
+private val TranslateYKey = DpPropKey()
+private val AlphaKey = FloatPropKey()
+
+private val statusBarTransitionDef = transitionDefinition<Boolean> {
+    state(false) {
+        this[TranslateYKey] = 24.dp
+        this[AlphaKey] = 0f
+    }
+    state(true) {
+        this[TranslateYKey] = 0.dp
+        this[AlphaKey] = 1f
+    }
+
+    transition(toState = true) {
+        TranslateYKey using spring()
+        AlphaKey using snap()
+    }
+
+    transition(toState = false) {
+        // This is a bit of a hack. We don't actually want an offset transition on exit,
+        // so we just run a snap AFTER the alpha animation has finished
+        TranslateYKey using snap(300)
+        AlphaKey using tween(durationMillis = 300)
     }
 }
 
