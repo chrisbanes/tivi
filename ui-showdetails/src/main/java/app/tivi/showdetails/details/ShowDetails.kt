@@ -18,13 +18,13 @@ package app.tivi.showdetails.details
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.AmbientContentColor
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.contentColor
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,13 +46,12 @@ import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.preferredSizeIn
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AmbientEmphasisLevels
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.EmphasisAmbient
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
@@ -83,6 +82,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.onSizeChanged
 import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -101,7 +101,6 @@ import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.navigationBarsPadding
 import app.tivi.common.compose.offset
-import app.tivi.common.compose.onSizeChanged
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.statusBarsHeight
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
@@ -306,7 +305,7 @@ private fun ShowDetailsScrollingContent(
                 Header(stringResource(R.string.details_about))
 
                 if (show.summary != null) {
-                    ProvideEmphasis(emphasis = EmphasisAmbient.current.high) {
+                    ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.high) {
                         ExpandingText(
                             show.summary!!,
                             modifier = Modifier.fillMaxWidth()
@@ -418,7 +417,10 @@ private fun NetworkInfoPanel(
                     .build(),
                 contentScale = ContentScale.Fit,
                 alignment = Alignment.TopStart,
-                colorFilter = if (isSystemInDarkTheme()) ColorFilter.tint(contentColor()) else null,
+                colorFilter = when {
+                    isSystemInDarkTheme() -> ColorFilter.tint(AmbientContentColor.current)
+                    else -> null
+                },
                 modifier = Modifier.preferredSizeIn(maxWidth = 72.dp, maxHeight = 32.dp)
             )
         } else {
@@ -564,24 +566,27 @@ private fun TraktRatingInfoPanel(
 
 @Composable
 private fun Header(title: String) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.subtitle1,
+    Box(
         modifier = Modifier.fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-    )
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.subtitle1
+        )
+    }
 }
 
 @Composable
 private fun Genres(genres: List<Genre>) {
-    ProvideEmphasis(EmphasisAmbient.current.high) {
-        val textCreator = ShowDetailsTextCreatorAmbient.current
-        Text(
-            textCreator.genreString(genres).toString(),
-            style = MaterialTheme.typography.body2,
-            modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        )
+    Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
+        ProvideEmphasis(AmbientEmphasisLevels.current.high) {
+            val textCreator = ShowDetailsTextCreatorAmbient.current
+            Text(
+                textCreator.genreString(genres).toString(),
+                style = MaterialTheme.typography.body2
+            )
+        }
     }
 }
 
@@ -620,7 +625,7 @@ private fun NextEpisodeToWatch(
     Column(
         modifier = Modifier.fillMaxWidth()
             .preferredHeightIn(min = 48.dp)
-            .wrapContentSize(Alignment.CenterStart)
+            .wrapContentHeight()
             .clickable(onClick = onClick)
             .padding(16.dp, 8.dp)
     ) {
@@ -648,7 +653,7 @@ private fun InfoPanels(show: TiviShow) {
         mainAxisSpacing = 8.dp,
         crossAxisSpacing = 8.dp
     ) {
-        ProvideEmphasis(EmphasisAmbient.current.high) {
+        ProvideEmphasis(AmbientEmphasisLevels.current.high) {
             if (show.traktRating != null) {
                 TraktRatingInfoPanel(show.traktRating!!, show.traktVotes ?: 0)
             }
@@ -788,8 +793,8 @@ private fun SeasonRow(
             val textCreator = ShowDetailsTextCreatorAmbient.current
 
             val emphasis = when {
-                season.ignored -> EmphasisAmbient.current.disabled
-                else -> EmphasisAmbient.current.high
+                season.ignored -> AmbientEmphasisLevels.current.disabled
+                else -> AmbientEmphasisLevels.current.high
             }
             ProvideEmphasis(emphasis) {
                 Text(
@@ -825,7 +830,7 @@ private fun SeasonRow(
 
         DropdownMenu(
             toggle = {
-                ProvideEmphasis(EmphasisAmbient.current.medium) {
+                ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
                     IconButton(onClick = { showMenu = true }) {
                         Icon(Icons.Default.MoreVert)
                     }
@@ -900,7 +905,7 @@ private fun EpisodeWithWatchesRow(
         Column(modifier = Modifier.weight(1f)) {
             val textCreator = ShowDetailsTextCreatorAmbient.current
 
-            ProvideEmphasis(EmphasisAmbient.current.high) {
+            ProvideEmphasis(AmbientEmphasisLevels.current.high) {
                 Text(
                     text = textCreator.episodeNumberText(episode).toString(),
                     style = MaterialTheme.typography.caption
@@ -916,7 +921,7 @@ private fun EpisodeWithWatchesRow(
             }
         }
 
-        ProvideEmphasis(EmphasisAmbient.current.medium) {
+        ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
             var needSpacer = false
             if (hasPending) {
                 IconResource(
