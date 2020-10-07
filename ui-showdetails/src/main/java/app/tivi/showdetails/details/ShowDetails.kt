@@ -101,6 +101,7 @@ import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.navigationBarsPadding
 import app.tivi.common.compose.rememberMutableState
+import app.tivi.common.compose.spacerItem
 import app.tivi.common.compose.statusBarsHeight
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
@@ -300,9 +301,7 @@ private fun ShowDetailsScrollingContent(
             }
         }
 
-        item {
-            Spacer(modifier = Modifier.preferredHeight(16.dp))
-        }
+        spacerItem(16.dp)
 
         item {
             Header(stringResource(R.string.details_about))
@@ -312,7 +311,7 @@ private fun ShowDetailsScrollingContent(
             item {
                 ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.high) {
                     ExpandingText(
-                        show.summary!!,
+                        text = show.summary!!,
                         modifier = Modifier.fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 8.dp)
                     )
@@ -327,23 +326,23 @@ private fun ShowDetailsScrollingContent(
         }
 
         if (nextEpisodeToWatch?.episode != null && nextEpisodeToWatch.season != null) {
+            spacerItem(8.dp)
+
             item {
-                Spacer(modifier = Modifier.preferredHeight(8.dp))
                 Header(stringResource(id = R.string.details_next_episode_to_watch))
+            }
+            item {
                 NextEpisodeToWatch(
                     season = nextEpisodeToWatch.season!!,
                     episode = nextEpisodeToWatch.episode!!,
-                    onClick = {
-                        actioner(OpenEpisodeDetails(nextEpisodeToWatch.episode!!.id))
-                    }
+                    onClick = { actioner(OpenEpisodeDetails(nextEpisodeToWatch.episode!!.id)) }
                 )
             }
         }
 
         if (relatedShows.isNotEmpty()) {
-            item {
-                Spacer(modifier = Modifier.preferredHeight(8.dp))
-            }
+            spacerItem(8.dp)
+
             item {
                 Header(stringResource(R.string.details_related))
             }
@@ -357,17 +356,19 @@ private fun ShowDetailsScrollingContent(
         }
 
         if (watchStats != null) {
+            spacerItem(8.dp)
+
             item {
-                Spacer(modifier = Modifier.preferredHeight(8.dp))
                 Header(stringResource(R.string.details_view_stats))
+            }
+            item {
                 WatchStats(watchStats.watchedEpisodeCount, watchStats.episodeCount)
             }
         }
 
         if (seasons.isNotEmpty()) {
-            item {
-                Spacer(modifier = Modifier.preferredHeight(8.dp))
-            }
+            spacerItem(8.dp)
+
             item {
                 Header(stringResource(R.string.show_details_seasons))
             }
@@ -375,10 +376,8 @@ private fun ShowDetailsScrollingContent(
             Seasons(seasons, expandedSeasonIds, actioner)
         }
 
-        item {
-            // Spacer to push up content from under the FloatingActionButton
-            Spacer(Modifier.preferredHeight(56.dp + 16.dp + 16.dp))
-        }
+        // Spacer to push up content from under the FloatingActionButton
+        spacerItem(56.dp + 16.dp + 16.dp)
     }
 }
 

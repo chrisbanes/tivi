@@ -62,6 +62,7 @@ import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.IconResource
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.rememberMutableState
+import app.tivi.common.compose.spacerItem
 import app.tivi.common.compose.statusBarsPadding
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
@@ -84,9 +85,11 @@ fun Discover(
 
             LazyColumn(Modifier.fillMaxSize()) {
                 item {
-                    val height = with(DensityAmbient.current) { appBarHeight.toDp() } + 16.dp
+                    val height = with(DensityAmbient.current) { appBarHeight.toDp() }
                     Spacer(Modifier.preferredHeight(height))
                 }
+
+                spacerItem(16.dp)
 
                 state.nextEpisodeWithShowToWatched?.let { nextEpisodeToWatch ->
                     item {
@@ -109,7 +112,7 @@ fun Discover(
                         )
                     }
 
-                    item { Spacer(Modifier.preferredHeight(16.dp)) }
+                    spacerItem(16.dp)
                 }
 
                 item {
@@ -142,7 +145,7 @@ fun Discover(
                     )
                 }
 
-                item { Spacer(Modifier.preferredHeight(16.dp)) }
+                spacerItem(16.dp)
             }
 
             DiscoverAppBar(
