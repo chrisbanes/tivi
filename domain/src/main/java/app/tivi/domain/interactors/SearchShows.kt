@@ -17,8 +17,8 @@
 package app.tivi.domain.interactors
 
 import app.tivi.data.daos.ShowFtsDao
-import app.tivi.data.entities.SearchResults
 import app.tivi.data.repositories.search.SearchRepository
+import app.tivi.data.resultentities.ShowDetailed
 import app.tivi.domain.SuspendingWorkInteractor
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.withContext
@@ -28,18 +28,17 @@ class SearchShows @Inject constructor(
     private val searchRepository: SearchRepository,
     private val showFtsDao: ShowFtsDao,
     private val dispatchers: AppCoroutineDispatchers
-) : SuspendingWorkInteractor<SearchShows.Params, SearchResults>() {
-    override suspend fun doWork(params: Params): SearchResults {
+) : SuspendingWorkInteractor<SearchShows.Params, List<ShowDetailed>>() {
+    override suspend fun doWork(params: Params): List<ShowDetailed> {
         return withContext(dispatchers.io) {
             val remoteResults = searchRepository.search(params.query)
             if (remoteResults.isNotEmpty()) {
-                SearchResults(params.query, remoteResults)
+                remoteResults
             } else {
-                val results = when {
+                when {
                     params.query.isNotBlank() -> showFtsDao.search("*$params.query*")
                     else -> emptyList()
                 }
-                SearchResults(params.query, results)
             }
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package app.tivi.data.entities
+package app.tivi.home.search
 
-import app.tivi.data.resultentities.ShowDetailed
-
-data class SearchResults(val query: String, val results: List<ShowDetailed>)
+sealed class SearchAction {
+    data class OpenShowDetails(val showId: Long) : SearchAction()
+    data class Search(val searchTerm: String = "") : SearchAction()
+}
