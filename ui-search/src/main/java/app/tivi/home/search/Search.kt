@@ -16,7 +16,6 @@
 
 package app.tivi.home.search
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
@@ -46,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.onSizeChanged
 import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -83,13 +83,21 @@ fun Search(
                 TextFieldValue(state.query)
             }
 
-            SearchCard(
+            OutlinedTextField(
                 value = searchQuery.value,
                 onValueChange = {
                     searchQuery.value = it
                     actioner(SearchAction.Search(it.text))
                 },
-                hint = stringResource(R.string.search_hint),
+                placeholder = {
+                    ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
+                        Text(text = stringResource(R.string.search_hint))
+                    }
+                },
+                imeAction = ImeAction.Search,
+                onImeActionPerformed = { _, keyboardController ->
+                    keyboardController?.hideSoftwareKeyboard()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
@@ -156,24 +164,4 @@ private fun SearchRow(
             }
         }
     }
-}
-
-@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
-@Composable
-private fun SearchCard(
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
-    hint: String,
-    modifier: Modifier = Modifier,
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        placeholder = {
-            ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
-                Text(text = hint)
-            }
-        },
-        modifier = modifier
-    )
 }
