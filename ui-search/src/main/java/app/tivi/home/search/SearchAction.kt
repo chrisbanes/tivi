@@ -18,4 +18,5 @@ package app.tivi.home.search
 
 sealed class SearchAction {
     data class OpenShowDetails(val showId: Long) : SearchAction()
+    data class Search(val searchTerm: String = "") : SearchAction()
 }

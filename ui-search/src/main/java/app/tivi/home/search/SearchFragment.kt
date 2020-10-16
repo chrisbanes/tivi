@@ -21,12 +21,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.ProvideDisplayInsets
 import com.google.android.material.composethemeadapter.MdcTheme
@@ -38,6 +40,21 @@ internal class SearchFragment : Fragment() {
     private val viewModel: SearchViewModel by viewModels()
     private val pendingActions = Channel<SearchAction>(Channel.BUFFERED)
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        lifecycleScope.launchWhenStarted {
+            for (action in pendingActions) {
+                when (action) {
+                    is SearchAction.OpenShowDetails -> {
+                        findNavController().navigate("app.tivi://show/${action.showId}".toUri())
+                    }
+                    else -> viewModel.submitAction(action)
+                }
+            }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -46,19 +63,17 @@ internal class SearchFragment : Fragment() {
         layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
         setContent {
-            Providers() {
-                MdcTheme {
-                    LogCompositions("MdcTheme")
+            MdcTheme {
+                LogCompositions("MdcTheme")
 
-                    ProvideDisplayInsets {
-                        LogCompositions("ProvideInsets")
+                ProvideDisplayInsets {
+                    LogCompositions("ProvideInsets")
 
-                        val viewState by viewModel.liveData.observeAsState()
-                        if (viewState != null) {
-                            LogCompositions("ViewState observeAsState")
-                            Search(viewState!!) {
-                                pendingActions.offer(it)
-                            }
+                    val viewState by viewModel.liveData.observeAsState()
+                    if (viewState != null) {
+                        LogCompositions("ViewState observeAsState")
+                        Search(viewState!!) { action ->
+                            pendingActions.offer(action)
                         }
                     }
                 }
