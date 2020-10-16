@@ -19,7 +19,6 @@ package app.tivi.databinding
 import android.content.res.Resources
 import android.graphics.Outline
 import android.graphics.Typeface
-import android.view.Gravity
 import android.view.View
 import android.view.ViewOutlineProvider
 import android.widget.ImageView
@@ -28,11 +27,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
-import app.tivi.extensions.requestApplyInsetsWhenAttached
 import app.tivi.extensions.resolveThemeReferenceResId
-import app.tivi.ui.MaxLinesToggleClickListener
-import app.tivi.ui.NoopApplyWindowInsetsListener
-import app.tivi.ui.ScrimUtil
 import kotlin.math.roundToInt
 
 @BindingAdapter("visibleIfNotNull")
@@ -62,30 +57,6 @@ fun imageViewSrcRes(view: ImageView, drawableRes: Int) {
         view.setImageResource(drawableRes)
     } else {
         view.setImageDrawable(null)
-    }
-}
-
-@BindingAdapter("maxLinesToggle")
-fun maxLinesClickListener(view: TextView, oldCollapsedMaxLines: Int, newCollapsedMaxLines: Int) {
-    if (oldCollapsedMaxLines != newCollapsedMaxLines) {
-        // Default to collapsed
-        view.maxLines = newCollapsedMaxLines
-        // Now set click listener
-        view.setOnClickListener(MaxLinesToggleClickListener(newCollapsedMaxLines))
-    }
-}
-
-@BindingAdapter("backgroundScrim")
-fun backgroundScrim(view: View, oldColor: Int, color: Int) {
-    if (oldColor != color) {
-        view.background = ScrimUtil.makeCubicGradientScrimDrawable(color, 16, Gravity.BOTTOM)
-    }
-}
-
-@BindingAdapter("foregroundScrim")
-fun foregroundScrim(view: View, oldColor: Int, color: Int) {
-    if (oldColor != color) {
-        view.foreground = ScrimUtil.makeCubicGradientScrimDrawable(color, 16, Gravity.BOTTOM)
     }
 }
 
@@ -132,15 +103,5 @@ fun fontFamily(view: TextView, oldFontFamily: Int, fontFamily: Int) {
         } catch (nfe: Resources.NotFoundException) {
             null
         } ?: Typeface.DEFAULT
-    }
-}
-
-@BindingAdapter("noopInsets")
-fun noopApplyWindowInsets(view: View, enabled: Boolean) {
-    if (enabled) {
-        view.setOnApplyWindowInsetsListener(NoopApplyWindowInsetsListener)
-        view.requestApplyInsetsWhenAttached()
-    } else {
-        view.setOnApplyWindowInsetsListener(null)
     }
 }

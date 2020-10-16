@@ -34,12 +34,10 @@ import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.extensions.doOnSizeChange
 import app.tivi.extensions.postponeEnterTransitionWithTimeout
 import app.tivi.extensions.scheduleStartPostponedTransitions
-import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.home.watched.databinding.FragmentWatchedBinding
 import app.tivi.ui.AuthStateMenuItemBinder
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.authStateToolbarMenuBinder
-import app.tivi.ui.createSharedElementHelperForItem
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -102,15 +100,7 @@ class WatchedFragment : FragmentWithBinding<FragmentWatchedBinding>() {
                     return
                 }
 
-                val extras = binding.watchedRv.createSharedElementHelperForItem(item, "poster") {
-                    it.findViewById(R.id.show_poster)
-                }
-
-                findNavController().navigate(
-                    "app.tivi://show/${item.show.id}".toUri(),
-                    null,
-                    extras.toActivityNavigatorExtras(requireActivity())
-                )
+                findNavController().navigate("app.tivi://show/${item.show.id}".toUri())
             }
 
             override fun onItemLongClicked(item: WatchedShowEntryWithShow): Boolean {
