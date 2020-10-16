@@ -33,7 +33,6 @@ import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.ProvideDisplayInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient
-import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.extensions.viewModelProviderFactoryOf
 import app.tivi.util.TiviDateFormatter
 import com.google.android.material.composethemeadapter.MdcTheme
@@ -98,8 +97,6 @@ class ShowDetailsFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        // TODO move this once we know how to handle transitions in Compose
-        scheduleStartPostponedTransitions()
 
         viewModel.liveData.observe(this, ::render)
 

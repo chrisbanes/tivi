@@ -33,14 +33,12 @@ import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.ProvideDisplayInsets
 import app.tivi.common.compose.TiviDateFormatterAmbient
-import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.util.TiviDateFormatter
 import com.google.android.material.composethemeadapter.MdcTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -85,10 +83,8 @@ class DiscoverFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        // TODO move this once we know how to handle transitions in Compose
-        scheduleStartPostponedTransitions()
 
-        lifecycleScope.launch {
+        lifecycleScope.launchWhenStarted {
             pendingActions.consumeAsFlow().collect { action ->
                 when (action) {
                     LoginAction,

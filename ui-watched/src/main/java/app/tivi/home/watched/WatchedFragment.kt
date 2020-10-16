@@ -32,8 +32,6 @@ import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.extensions.doOnSizeChange
-import app.tivi.extensions.postponeEnterTransitionWithTimeout
-import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.home.watched.databinding.FragmentWatchedBinding
 import app.tivi.ui.AuthStateMenuItemBinder
 import app.tivi.ui.SpacingItemDecorator
@@ -62,8 +60,6 @@ class WatchedFragment : FragmentWithBinding<FragmentWatchedBinding>() {
     }
 
     override fun onViewCreated(binding: FragmentWatchedBinding, savedInstanceState: Bundle?) {
-        postponeEnterTransitionWithTimeout()
-
         authStateMenuItemBinder = authStateToolbarMenuBinder(
             binding.watchedToolbar,
             R.id.home_menu_user_avatar,
@@ -131,10 +127,6 @@ class WatchedFragment : FragmentWithBinding<FragmentWatchedBinding>() {
 
     private fun render(state: WatchedViewState) {
         val binding = requireBinding()
-        if (binding.state == null) {
-            // First time we've had state, start any postponed transitions
-            scheduleStartPostponedTransitions()
-        }
 
         if (state.selectionOpen && currentActionMode == null) {
             startSelectionActionMode()
