@@ -36,7 +36,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredWidth
-import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.material.AmbientEmphasisLevels
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -58,6 +57,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.PosterCard
+import app.tivi.common.compose.WorkaroundLazyColumnFor
 import app.tivi.common.compose.statusBarsPadding
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
@@ -111,7 +111,7 @@ private fun SearchList(
     onShowClicked: (TiviShow) -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
-    LazyColumnFor(
+    WorkaroundLazyColumnFor(
         items = results,
         contentPadding = contentPadding
     ) { result ->
