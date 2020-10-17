@@ -24,7 +24,6 @@ import android.view.ViewGroup
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DefaultItemAnimator
 import app.tivi.FragmentWithBinding
 import app.tivi.api.UiError
 import app.tivi.api.UiLoading
@@ -33,11 +32,8 @@ import app.tivi.common.entrygrid.databinding.FragmentEntryGridBinding
 import app.tivi.data.Entry
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.extensions.doOnSizeChange
-import app.tivi.extensions.postponeEnterTransitionWithTimeout
-import app.tivi.extensions.scheduleStartPostponedTransitions
 import app.tivi.ui.ProgressTimeLatch
 import app.tivi.ui.SpacingItemDecorator
-import app.tivi.ui.transitions.GridToGridTransitioner
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collect
 
@@ -53,12 +49,7 @@ abstract class EntryGridFragment<LI, VM> : FragmentWithBinding<FragmentEntryGrid
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         controller = createController()
-
-        GridToGridTransitioner.setupSecondFragment(this, R.id.grid_appbar) {
-            requireBinding().gridRecyclerview.itemAnimator = DefaultItemAnimator()
-        }
     }
 
     override fun createBinding(
@@ -70,8 +61,6 @@ abstract class EntryGridFragment<LI, VM> : FragmentWithBinding<FragmentEntryGrid
     }
 
     override fun onViewCreated(binding: FragmentEntryGridBinding, savedInstanceState: Bundle?) {
-        postponeEnterTransitionWithTimeout()
-
         swipeRefreshLatch = ProgressTimeLatch(minShowTime = 1350) {
             binding.gridSwipeRefresh.isRefreshing = it
         }
@@ -132,11 +121,6 @@ abstract class EntryGridFragment<LI, VM> : FragmentWithBinding<FragmentEntryGrid
                 R.string.selection_title,
                 state.selectedShowIds.size
             )
-        }
-
-        if (state.isLoaded) {
-            // First time we've had state, start any postponed transitions
-            scheduleStartPostponedTransitions()
         }
     }
 

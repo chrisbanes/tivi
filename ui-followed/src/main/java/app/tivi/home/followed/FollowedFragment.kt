@@ -32,14 +32,10 @@ import app.tivi.common.imageloading.loadImageUrl
 import app.tivi.data.entities.SortOption
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.extensions.doOnSizeChange
-import app.tivi.extensions.postponeEnterTransitionWithTimeout
-import app.tivi.extensions.scheduleStartPostponedTransitions
-import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.home.followed.databinding.FragmentFollowedBinding
 import app.tivi.ui.AuthStateMenuItemBinder
 import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.authStateToolbarMenuBinder
-import app.tivi.ui.createSharedElementHelperForItem
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -64,8 +60,6 @@ class FollowedFragment : FragmentWithBinding<FragmentFollowedBinding>() {
     }
 
     override fun onViewCreated(binding: FragmentFollowedBinding, savedInstanceState: Bundle?) {
-        postponeEnterTransitionWithTimeout()
-
         authStateMenuItemBinder = authStateToolbarMenuBinder(
             binding.followedToolbar,
             R.id.home_menu_user_avatar,
@@ -99,15 +93,7 @@ class FollowedFragment : FragmentWithBinding<FragmentFollowedBinding>() {
                     return
                 }
 
-                val extras = binding.followedRv.createSharedElementHelperForItem(item, "poster") {
-                    it.findViewById(R.id.show_poster)
-                }
-
-                findNavController().navigate(
-                    "app.tivi://show/${item.show.id}".toUri(),
-                    null,
-                    extras.toActivityNavigatorExtras(requireActivity())
-                )
+                findNavController().navigate("app.tivi://show/${item.show.id}".toUri())
             }
 
             override fun onItemLongClicked(item: FollowedShowEntryWithShow): Boolean {
@@ -142,10 +128,6 @@ class FollowedFragment : FragmentWithBinding<FragmentFollowedBinding>() {
 
     private fun render(state: FollowedViewState) {
         val binding = requireBinding()
-        if (binding.state == null) {
-            // First time we've had state, start any postponed transitions
-            scheduleStartPostponedTransitions()
-        }
 
         if (state.selectionOpen && currentActionMode == null) {
             startSelectionActionMode()

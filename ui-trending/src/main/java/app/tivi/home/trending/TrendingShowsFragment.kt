@@ -24,11 +24,9 @@ import android.view.View
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import app.tivi.SharedElementHelper
 import app.tivi.common.entrygrid.databinding.FragmentEntryGridBinding
 import app.tivi.common.layouts.PosterGridItemBindingModel_
 import app.tivi.data.resultentities.TrendingEntryWithShow
-import app.tivi.extensions.toActivityNavigatorExtras
 import app.tivi.util.EntryGridEpoxyController
 import app.tivi.util.EntryGridFragment
 import com.airbnb.epoxy.EpoxyModel
@@ -73,16 +71,7 @@ class TrendingShowsFragment : EntryGridFragment<TrendingEntryWithShow, TrendingS
     }
 
     internal fun onItemClicked(item: TrendingEntryWithShow) {
-        val sharedElements = SharedElementHelper()
-        requireBinding().gridRecyclerview.findViewHolderForItemId(item.generateStableId())?.let {
-            sharedElements.addSharedElement(it.itemView, "poster")
-        }
-
-        findNavController().navigate(
-            "app.tivi://show/${item.show.id}".toUri(),
-            null,
-            sharedElements.toActivityNavigatorExtras(requireActivity())
-        )
+        findNavController().navigate("app.tivi://show/${item.show.id}".toUri())
     }
 
     override fun startSelectionActionMode(): ActionMode? {
