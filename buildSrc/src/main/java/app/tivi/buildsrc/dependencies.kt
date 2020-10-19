@@ -59,7 +59,7 @@ object Libs {
     }
 
     object Accompanist {
-        private const val version = "0.3.1"
+        private const val version = "0.3.2.compose-6914774-SNAPSHOT"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
     }
 
@@ -164,12 +164,12 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = ""
-            const val version = "1.0.0-alpha05"
+            const val snapshot = "6914774"
+            const val version = "1.0.0-SNAPSHOT"
 
             @get:JvmStatic
             val snapshotUrl: String
-                get() = "https://androidx.dev/snapshots/builds/$snapshot/artifacts/ui/repository/"
+                get() = "https://androidx.dev/snapshots/builds/$snapshot/artifacts/repository/"
 
             const val compiler = "androidx.compose.compiler:compiler:$version"
 
