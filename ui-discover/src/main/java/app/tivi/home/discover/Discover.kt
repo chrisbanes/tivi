@@ -39,6 +39,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.FirstBaseline
 import androidx.compose.material.AmbientEmphasisLevels
+import androidx.compose.material.ButtonConstants
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideEmphasis
@@ -221,7 +222,9 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
                 action = {
                     TextButton(
                         onClick = onMoreClick,
-                        contentColor = MaterialTheme.colors.secondary,
+                        colors = ButtonConstants.defaultTextButtonColors(
+                            contentColor = MaterialTheme.colors.secondary
+                        ),
                         modifier = Modifier.alignWithSiblings(FirstBaseline)
                     ) {
                         Text(text = stringResource(R.string.header_more))
@@ -236,9 +239,8 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
                 onItemClick = onItemClick,
                 modifier = Modifier.preferredHeight(192.dp).fillMaxWidth()
             )
-        } else {
-            // TODO empty state
         }
+        // TODO empty state
     }
 }
 

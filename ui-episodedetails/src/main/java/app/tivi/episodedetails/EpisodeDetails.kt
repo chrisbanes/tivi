@@ -16,7 +16,6 @@
 
 package app.tivi.episodedetails
 
-import android.os.Build
 import androidx.compose.animation.ColorPropKey
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.transitionDefinition
@@ -501,7 +500,6 @@ fun MarkWatchedButton(
 ) {
     Button(
         modifier = modifier,
-        elevation = if (Build.VERSION.SDK_INT != 28) 2.dp else 0.dp, // b/152696056
         onClick = { actioner(AddEpisodeWatchAction) }
     ) {
         ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.high) {
