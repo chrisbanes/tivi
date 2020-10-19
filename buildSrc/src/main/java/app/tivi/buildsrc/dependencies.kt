@@ -21,9 +21,9 @@ object Versions {
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:4.2.0-alpha11"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:4.2.0-alpha13"
 
-    const val gradlePlayPublisher = "com.github.triplet.gradle:play-publisher:3.0.0"
+    const val gradlePlayPublisher = "com.github.triplet.gradle:play-publisher:3.2.0-SNAPSHOT"
 
     const val threeTenBp = "org.threeten:threetenbp:1.4.4"
     const val threeTenBpNoTzdb = "$threeTenBp:no-tzdb"
