@@ -56,7 +56,7 @@ jobs:
         run: ./gradlew spotlessCheck assembleDebug assembleRelease app:lintDebug testDebug -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
 
       - name: Publish to Play Store
-        if: github.ref == 'refs/heads/main'
+        #if: github.ref == 'refs/heads/main'
         # Need to invoke bundleRelease too for Crashlytics.
         # See https://github.com/Triple-T/gradle-play-publisher/issues/859
         run: ./gradlew bundleRelease publishRelease -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
