@@ -56,6 +56,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import app.tivi.common.compose.AbsoluteElevationSurface
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.WorkaroundLazyColumnFor
 import app.tivi.common.compose.statusBarsPadding
@@ -69,38 +70,40 @@ fun Search(
     state: SearchViewState,
     actioner: (SearchAction) -> Unit
 ) {
-    Box(Modifier.fillMaxSize()) {
-        val searchBarHeight = remember { mutableStateOf(0) }
+    AbsoluteElevationSurface(Modifier.fillMaxSize()) {
+        Box(Modifier.fillMaxSize()) {
+            val searchBarHeight = remember { mutableStateOf(0) }
 
-        SearchList(
-            results = state.searchResults,
-            contentPadding = PaddingValues(
-                top = with(DensityAmbient.current) { searchBarHeight.value.toDp() }
-            ),
-            onShowClicked = { actioner(SearchAction.OpenShowDetails(it.id)) }
-        )
-
-        Box(
-            modifier = Modifier
-                .onSizeChanged { searchBarHeight.value = it.height }
-                .background(MaterialTheme.colors.surface.copy(alpha = 0.95f))
-                .fillMaxWidth()
-                .align(Alignment.TopCenter)
-        ) {
-            val searchQuery = savedInstanceState(saver = TextFieldValue.Saver) {
-                TextFieldValue(state.query)
-            }
-            SearchTextField(
-                value = searchQuery.value,
-                onValueChange = {
-                    searchQuery.value = it
-                    actioner(SearchAction.Search(it.text))
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            SearchList(
+                results = state.searchResults,
+                contentPadding = PaddingValues(
+                    top = with(DensityAmbient.current) { searchBarHeight.value.toDp() }
+                ),
+                onShowClicked = { actioner(SearchAction.OpenShowDetails(it.id)) }
             )
+
+            Box(
+                modifier = Modifier
+                    .onSizeChanged { searchBarHeight.value = it.height }
+                    .background(MaterialTheme.colors.surface.copy(alpha = 0.95f))
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+            ) {
+                val searchQuery = savedInstanceState(saver = TextFieldValue.Saver) {
+                    TextFieldValue(state.query)
+                }
+                SearchTextField(
+                    value = searchQuery.value,
+                    onValueChange = {
+                        searchQuery.value = it
+                        actioner(SearchAction.Search(it.text))
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
         }
     }
 }
