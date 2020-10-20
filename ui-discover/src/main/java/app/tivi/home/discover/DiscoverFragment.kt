@@ -30,11 +30,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import app.tivi.common.compose.LogCompositions
-import app.tivi.common.compose.ProvideDisplayInsets
+import app.tivi.common.compose.TiviContentSetup
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.util.TiviDateFormatter
-import com.google.android.material.composethemeadapter.MdcTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
@@ -58,23 +56,17 @@ class DiscoverFragment : Fragment() {
         layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
         setContent {
-            MdcTheme {
-                LogCompositions("MdcTheme")
-
-                Providers(
-                    TiviDateFormatterAmbient provides tiviDateFormatter,
-                    DiscoverTextCreatorAmbient provides textCreator
-                ) {
-                    ProvideDisplayInsets {
-                        LogCompositions("ProvideInsets")
-
-                        val viewState by viewModel.liveData.observeAsState()
-                        if (viewState != null) {
-                            Discover(
-                                state = viewState!!,
-                                actioner = { pendingActions.offer(it) }
-                            )
-                        }
+            Providers(
+                TiviDateFormatterAmbient provides tiviDateFormatter,
+                DiscoverTextCreatorAmbient provides textCreator
+            ) {
+                TiviContentSetup {
+                    val viewState by viewModel.liveData.observeAsState()
+                    if (viewState != null) {
+                        Discover(
+                            state = viewState!!,
+                            actioner = { pendingActions.offer(it) }
+                        )
                     }
                 }
             }

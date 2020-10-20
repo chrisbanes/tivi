@@ -14,16 +14,35 @@
  * limitations under the License.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
+
 package app.tivi.common.compose
 
+import androidx.compose.foundation.AmbientIndication
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.InteractionState
+import androidx.compose.foundation.ProvideTextStyle
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.defaultMinSizeConstraints
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ButtonColors
+import androidx.compose.material.ButtonConstants
+import androidx.compose.material.ButtonElevation
 import androidx.compose.material.ElevationOverlay
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticAmbientOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -83,4 +102,137 @@ object AbsoluteElevationOverlay : ElevationOverlay {
 private fun calculateOverlayColor(foregroundColor: Color, elevation: Dp): Color {
     val alpha = ((4.5f * ln(elevation.value + 1)) + 2f) / 100f
     return foregroundColor.copy(alpha = alpha)
+}
+
+/**
+ * Version of [androidx.compose.material.Button] which supports absolute elevation.
+ */
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun AbsoluteElevationButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    interactionState: InteractionState = remember { InteractionState() },
+    elevation: ButtonElevation? = ButtonConstants.defaultElevation(),
+    shape: Shape = MaterialTheme.shapes.small,
+    border: BorderStroke? = null,
+    colors: ButtonColors = ButtonConstants.defaultButtonColors(),
+    contentPadding: PaddingValues = ButtonConstants.DefaultContentPadding,
+    content: @Composable RowScope.() -> Unit
+) {
+    // TODO(aelias): Avoid manually putting the clickable above the clip and
+    // the ripple below the clip once http://b/157687898 is fixed and we have
+    // more flexibility to move the clickable modifier (see candidate approach
+    // aosp/1361921)
+    AbsoluteElevationSurface(
+        shape = shape,
+        color = colors.backgroundColor(enabled),
+        contentColor = colors.contentColor(enabled),
+        border = border,
+        elevation = elevation?.elevation(enabled, interactionState) ?: 0.dp,
+        modifier = modifier.clickable(
+            onClick = onClick,
+            enabled = enabled,
+            interactionState = interactionState,
+            indication = null
+        )
+    ) {
+        ProvideTextStyle(value = MaterialTheme.typography.button) {
+            Row(
+                Modifier
+                    .defaultMinSizeConstraints(
+                        minWidth = ButtonConstants.DefaultMinWidth,
+                        minHeight = ButtonConstants.DefaultMinHeight
+                    )
+                    .indication(interactionState, AmbientIndication.current())
+                    .padding(contentPadding),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                children = content
+            )
+        }
+    }
+}
+
+/**
+ * Version of [androidx.compose.material.OutlinedButton] which supports absolute elevation.
+ */
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+inline fun AbsoluteElevationOutlinedButton(
+    noinline onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    interactionState: InteractionState = remember { InteractionState() },
+    elevation: ButtonElevation? = null,
+    shape: Shape = MaterialTheme.shapes.small,
+    border: BorderStroke? = ButtonConstants.defaultOutlinedBorder,
+    colors: ButtonColors = ButtonConstants.defaultOutlinedButtonColors(),
+    contentPadding: PaddingValues = ButtonConstants.DefaultContentPadding,
+    noinline content: @Composable RowScope.() -> Unit
+) = AbsoluteElevationButton(
+    onClick = onClick,
+    modifier = modifier,
+    enabled = enabled,
+    interactionState = interactionState,
+    elevation = elevation,
+    shape = shape,
+    border = border,
+    colors = colors,
+    contentPadding = contentPadding,
+    content = content
+)
+
+/**
+ * Version of [androidx.compose.material.TextButton] which supports absolute elevation.
+ */
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+inline fun AbsoluteElevationTextButton(
+    noinline onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    interactionState: InteractionState = remember { InteractionState() },
+    elevation: ButtonElevation? = null,
+    shape: Shape = MaterialTheme.shapes.small,
+    border: BorderStroke? = null,
+    colors: ButtonColors = ButtonConstants.defaultTextButtonColors(),
+    contentPadding: PaddingValues = ButtonConstants.DefaultTextContentPadding,
+    noinline content: @Composable RowScope.() -> Unit
+) = AbsoluteElevationButton(
+    onClick = onClick,
+    modifier = modifier,
+    enabled = enabled,
+    interactionState = interactionState,
+    elevation = elevation,
+    shape = shape,
+    border = border,
+    colors = colors,
+    contentPadding = contentPadding,
+    content = content
+)
+
+/**
+ * Version of [androidx.compose.material.Card] which supports absolute elevation.
+ */
+@Composable
+inline fun AbsoluteElevationCard(
+    modifier: Modifier = Modifier,
+    shape: Shape = MaterialTheme.shapes.medium,
+    backgroundColor: Color = MaterialTheme.colors.surface,
+    contentColor: Color = contentColorFor(backgroundColor),
+    border: BorderStroke? = null,
+    elevation: Dp = 1.dp,
+    noinline content: @Composable () -> Unit
+) {
+    AbsoluteElevationSurface(
+        modifier = modifier,
+        shape = shape,
+        color = backgroundColor,
+        contentColor = contentColor,
+        elevation = elevation,
+        border = border,
+        content = content
+    )
 }

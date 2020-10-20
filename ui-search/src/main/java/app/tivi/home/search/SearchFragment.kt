@@ -30,8 +30,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.LogCompositions
-import app.tivi.common.compose.ProvideDisplayInsets
-import com.google.android.material.composethemeadapter.MdcTheme
+import app.tivi.common.compose.TiviContentSetup
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
 
@@ -63,18 +62,12 @@ internal class SearchFragment : Fragment() {
         layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
         setContent {
-            MdcTheme {
-                LogCompositions("MdcTheme")
-
-                ProvideDisplayInsets {
-                    LogCompositions("ProvideInsets")
-
-                    val viewState by viewModel.liveData.observeAsState()
-                    if (viewState != null) {
-                        LogCompositions("ViewState observeAsState")
-                        Search(viewState!!) { action ->
-                            pendingActions.offer(action)
-                        }
+            TiviContentSetup {
+                val viewState by viewModel.liveData.observeAsState()
+                if (viewState != null) {
+                    LogCompositions("ViewState observeAsState")
+                    Search(viewState!!) { action ->
+                        pendingActions.offer(action)
                     }
                 }
             }

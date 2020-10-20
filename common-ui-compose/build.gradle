@@ -61,6 +61,7 @@ dependencies {
     implementation Libs.AndroidX.Compose.livedata
 
     implementation Libs.Mdc.material
+    implementation Libs.Mdc.composeThemeAdapter
 
     implementation Libs.Kotlin.stdlib
 
