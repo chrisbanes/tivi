@@ -29,12 +29,11 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import app.tivi.common.compose.ProvideDisplayInsets
+import app.tivi.common.compose.TiviContentSetup
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.extensions.navigateToNavDestination
 import app.tivi.util.TiviDateFormatter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.composethemeadapter.MdcTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
@@ -57,14 +56,12 @@ class AccountUiFragment : BottomSheetDialogFragment() {
         layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
 
         setContent {
-            MdcTheme {
-                Providers(TiviDateFormatterAmbient provides tiviDateFormatter) {
-                    ProvideDisplayInsets {
-                        val viewState by viewModel.liveData.observeAsState()
-                        if (viewState != null) {
-                            AccountUi(viewState!!) {
-                                pendingActions.offer(it)
-                            }
+            Providers(TiviDateFormatterAmbient provides tiviDateFormatter) {
+                TiviContentSetup {
+                    val viewState by viewModel.liveData.observeAsState()
+                    if (viewState != null) {
+                        AccountUi(viewState!!) {
+                            pendingActions.offer(it)
                         }
                     }
                 }

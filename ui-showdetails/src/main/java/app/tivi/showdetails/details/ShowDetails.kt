@@ -59,7 +59,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.Surface
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -89,6 +88,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
+import app.tivi.common.compose.AbsoluteElevationSurface
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.ExpandableFloatingActionButton
@@ -243,7 +243,7 @@ private fun ShowDetailsScrollingContent(
     LogCompositions("ShowDetailsScrollingContent")
 
     Column(Modifier.fillMaxWidth()) {
-        Surface(
+        AbsoluteElevationSurface(
             modifier = Modifier.fillMaxWidth()
                 .aspectRatio(16f / 10)
                 .onSizeChanged(onBackdropSizeChanged)
@@ -264,7 +264,7 @@ private fun ShowDetailsScrollingContent(
             }
         }
 
-        Surface(
+        AbsoluteElevationSurface(
             modifier = Modifier.fillMaxWidth().wrapContentHeight(Alignment.Top),
             elevation = 2.dp
         ) {
@@ -377,7 +377,7 @@ private fun OverlaidStatusBarAppBar(
         fraction = if (trigger > 0) (scrollPosition / trigger).coerceIn(0f, 1f) else 0f
     )
 
-    Surface(
+    AbsoluteElevationSurface(
         color = MaterialTheme.colors.surface.copy(alpha = alpha),
         elevation = if (scrollPosition >= trigger) 2.dp else 0.dp,
         modifier = modifier
@@ -733,7 +733,7 @@ private fun SeasonWithEpisodesRow(
     actioner: (ShowDetailsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Surface(
+    AbsoluteElevationSurface(
         elevation = if (expanded) 2.dp else 0.dp,
         modifier = modifier
     ) {

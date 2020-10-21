@@ -31,11 +31,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.LogCompositions
-import app.tivi.common.compose.ProvideDisplayInsets
-import app.tivi.common.compose.TiviDateFormatterAmbient
+import app.tivi.common.compose.TiviContentSetup
 import app.tivi.extensions.viewModelProviderFactoryOf
 import app.tivi.util.TiviDateFormatter
-import com.google.android.material.composethemeadapter.MdcTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
@@ -72,22 +70,13 @@ class ShowDetailsFragment : Fragment() {
         layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
         setContent {
-            Providers(
-                TiviDateFormatterAmbient provides tiviDateFormatter,
-                ShowDetailsTextCreatorAmbient provides textCreator
-            ) {
-                MdcTheme {
-                    LogCompositions("MdcTheme")
-
-                    ProvideDisplayInsets {
-                        LogCompositions("ProvideInsets")
-
-                        val viewState by viewModel.liveData.observeAsState()
-                        if (viewState != null) {
-                            LogCompositions("ViewState observeAsState")
-                            ShowDetails(viewState!!) {
-                                pendingActions.offer(it)
-                            }
+            Providers(ShowDetailsTextCreatorAmbient provides textCreator) {
+                TiviContentSetup {
+                    val viewState by viewModel.liveData.observeAsState()
+                    if (viewState != null) {
+                        LogCompositions("ViewState observeAsState")
+                        ShowDetails(viewState!!) {
+                            pendingActions.offer(it)
                         }
                     }
                 }
