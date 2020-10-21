@@ -40,8 +40,8 @@ import androidx.compose.material.Surface
 import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
+import androidx.compose.runtime.ambientOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.staticAmbientOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,7 +52,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlin.math.ln
 
-val AmbientAbsoluteElevation = staticAmbientOf { 0.dp }
+val AmbientAbsoluteElevation = ambientOf { 0.dp }
 
 /**
  * A [Surface] which works with absolute elevation. This will automatically
@@ -77,6 +77,10 @@ fun AbsoluteElevationSurface(
         border = border,
         elevation = elevation
     ) {
+        // We only update the absolute elevation value for the Surface's children. This allows
+        // us to avoid any double counting on the surface itself.
+        // We assume that the current AmbientElevationOverlay is set to AbsoluteElevationOverlay,
+        // which manually calculates the current absolute elevation itself.
         Providers(AmbientAbsoluteElevation provides currentAbsElevation + elevation) {
             content()
         }
@@ -121,10 +125,6 @@ fun AbsoluteElevationButton(
     contentPadding: PaddingValues = ButtonConstants.DefaultContentPadding,
     content: @Composable RowScope.() -> Unit
 ) {
-    // TODO(aelias): Avoid manually putting the clickable above the clip and
-    // the ripple below the clip once http://b/157687898 is fixed and we have
-    // more flexibility to move the clickable modifier (see candidate approach
-    // aosp/1361921)
     AbsoluteElevationSurface(
         shape = shape,
         color = colors.backgroundColor(enabled),
