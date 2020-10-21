@@ -55,7 +55,7 @@ import kotlin.math.ln
 val AmbientAbsoluteElevation = staticAmbientOf { 0.dp }
 
 /**
- * A wrapper around [Surface] which works with absolute elevation. This will automatically
+ * A [Surface] which works with absolute elevation. This will automatically
  * update [AmbientAbsoluteElevation], adding [elevation].
  */
 @Composable
