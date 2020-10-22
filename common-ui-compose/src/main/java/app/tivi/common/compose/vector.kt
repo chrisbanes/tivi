@@ -28,7 +28,7 @@ import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.VectorAsset
-import androidx.compose.ui.graphics.vector.VectorPainter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.loadVectorResource
 
@@ -62,7 +62,7 @@ fun VectorImage(
 ) {
     Box(
         modifier = modifier.clipToBounds().paint(
-            painter = VectorPainter(vector),
+            painter = rememberVectorPainter(vector),
             alignment = alignment,
             contentScale = contentScale,
             colorFilter = ColorFilter.tint(tintColor)
