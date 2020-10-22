@@ -90,6 +90,7 @@ import androidx.compose.runtime.staticAmbientOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.drawLayer
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -176,6 +177,8 @@ fun ShowDetails(
     val trigger = backdropHeight - InsetsAmbient.current.statusBars.top
     OverlaidStatusBarAppBar(
         showAppBar = when (listState.firstVisibleItemIndex) {
+            // We only show the app bar when the first item is shown, and it's offset off screen
+            // more than the trigger value
             0 -> listState.firstVisibleItemScrollOffset >= trigger
             else -> true
         },
@@ -250,29 +253,26 @@ private fun ShowDetailsScrollingContent(
         modifier = modifier
     ) {
         item {
-            AbsoluteElevationSurface(
+            BackdropImage(
+                backdropImage = backdropImage,
                 modifier = Modifier.fillMaxWidth()
                     .aspectRatio(16f / 10)
                     .onSizeChanged(onBackdropSizeChanged)
-            ) {
-                if (backdropImage != null) {
-                    CoilImage(
-                        data = backdropImage,
-                        fadeIn = true,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize().offset { size ->
-                            if (listState.firstVisibleItemIndex == 0) {
-                                // If we're the first visible item, apply a parallax offset
+                    .clipToBounds()
+                    .offset {
+                        when (listState.firstVisibleItemIndex) {
+                            // If we're the first visible item, apply parallax using 50% of
+                            // scroll offset
+                            0 -> {
                                 Offset(
                                     x = 0f,
-                                    y = (listState.firstVisibleItemScrollOffset / 2f)
-                                        .coerceIn(-size.height.toFloat(), size.height.toFloat())
+                                    y = listState.firstVisibleItemScrollOffset / 2f
                                 )
-                            } else Offset.Zero
+                            }
+                            else -> Offset.Zero
                         }
-                    )
-                }
-            }
+                    }
+            )
         }
 
         item {
@@ -398,6 +398,24 @@ private fun ShowDetailsScrollingContent(
 }
 
 @Composable
+private fun BackdropImage(
+    backdropImage: TmdbImageEntity?,
+    modifier: Modifier = Modifier
+) {
+    AbsoluteElevationSurface(modifier = modifier) {
+        if (backdropImage != null) {
+            CoilImage(
+                data = backdropImage,
+                fadeIn = true,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        // TODO show a placeholder if null
+    }
+}
+
+@Composable
 private fun OverlaidStatusBarAppBar(
     showAppBar: Boolean,
     appBar: @Composable () -> Unit,
@@ -417,7 +435,7 @@ private fun OverlaidStatusBarAppBar(
             modifier = Modifier.fillMaxWidth()
                 .statusBarsHeight()
                 .drawLayer(alpha = props[AlphaKey])
-                .offset(y = props[TranslateYKey]),
+                .offset(y = props[OffsetYKey]),
             content = emptyContent()
         )
 
@@ -436,29 +454,29 @@ private fun OverlaidStatusBarAppBar(
     }
 }
 
-private val TranslateYKey = DpPropKey()
+private val OffsetYKey = DpPropKey()
 private val AlphaKey = FloatPropKey()
 
 private val statusBarTransitionDef = transitionDefinition<Boolean> {
     state(false) {
-        this[TranslateYKey] = 24.dp
+        this[OffsetYKey] = 24.dp
         this[AlphaKey] = 0f
     }
     state(true) {
-        this[TranslateYKey] = 0.dp
+        this[OffsetYKey] = 0.dp
         this[AlphaKey] = 1f
     }
 
     transition(toState = true) {
-        TranslateYKey using spring()
+        OffsetYKey using spring()
         AlphaKey using snap()
     }
 
     transition(toState = false) {
-        // This is a bit of a hack. We don't actually want an offset transition on exit,
-        // so we just run a snap AFTER the alpha animation has finished
-        TranslateYKey using snap(300)
         AlphaKey using tween(durationMillis = 300)
+        // This is a bit of a hack. We don't actually want an offset transition on exit,
+        // so we just run a snap AFTER the alpha animation has finished (with some buffer)
+        OffsetYKey using snap(delayMillis = 320)
     }
 }
 
