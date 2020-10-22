@@ -25,7 +25,7 @@ object Libs {
 
     const val gradlePlayPublisher = "com.github.triplet.gradle:play-publisher:3.2.0-SNAPSHOT"
 
-    const val threeTenBp = "org.threeten:threetenbp:1.4.4"
+    const val threeTenBp = "org.threeten:threetenbp:1.4.5"
     const val threeTenBpNoTzdb = "$threeTenBp:no-tzdb"
     const val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.2.4"
 
@@ -44,7 +44,7 @@ object Libs {
      */
     const val appauth = "com.github.openid:AppAuth-Android:master-SNAPSHOT"
 
-    const val junit = "junit:junit:4.13"
+    const val junit = "junit:junit:4.13.1"
     const val robolectric = "org.robolectric:robolectric:4.4"
     const val mockK = "io.mockk:mockk:1.10.2"
 
@@ -70,7 +70,7 @@ object Libs {
 
     object Google {
         const val crashlytics = "com.google.firebase:firebase-crashlytics-ktx:17.2.2"
-        const val analytics = "com.google.firebase:firebase-analytics-ktx:17.5.0"
+        const val analytics = "com.google.firebase:firebase-analytics-ktx:17.6.0"
         const val crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.3.0"
 
         const val gmsGoogleServices = "com.google.gms:google-services:4.3.4"
@@ -103,7 +103,7 @@ object Libs {
         const val swiperefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
         object Navigation {
-            private const val version = "2.3.0"
+            private const val version = "2.3.1"
             const val fragment = "androidx.navigation:navigation-fragment-ktx:$version"
             const val ui = "androidx.navigation:navigation-ui-ktx:$version"
             const val safeArgs = "androidx.navigation:navigation-safe-args-gradle-plugin:$version"
@@ -138,7 +138,7 @@ object Libs {
 
         const val preference = "androidx.preference:preference:1.1.1"
 
-        const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.1"
+        const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.2"
 
         const val coreKtx = "androidx.core:core-ktx:1.5.0-alpha04"
 
@@ -150,7 +150,7 @@ object Libs {
         }
 
         object Room {
-            private const val version = "2.3.0-alpha02"
+            private const val version = "2.3.0-alpha03"
             const val common = "androidx.room:room-common:$version"
             const val runtime = "androidx.room:room-runtime:$version"
             const val compiler = "androidx.room:room-compiler:$version"
@@ -250,5 +250,5 @@ object Libs {
         const val compiler = "com.github.chrisbanes.Roomigrant:RoomigrantCompiler:$version"
     }
 
-    const val truth = "com.google.truth:truth:1.0.1"
+    const val truth = "com.google.truth:truth:1.1"
 }
