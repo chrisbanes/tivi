@@ -18,7 +18,7 @@ package app.tivi.common.compose
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.AmbientContentColor
-import androidx.compose.foundation.Icon
+import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
