@@ -228,7 +228,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
                         colors = ButtonConstants.defaultTextButtonColors(
                             contentColor = MaterialTheme.colors.secondary
                         ),
-                        modifier = Modifier.alignWithSiblings(FirstBaseline)
+                        modifier = Modifier.alignBy(FirstBaseline)
                     ) {
                         Text(text = stringResource(R.string.header_more))
                     }
