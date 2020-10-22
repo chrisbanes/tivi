@@ -37,8 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.layout.IntrinsicMeasurable
 import androidx.compose.ui.layout.IntrinsicMeasureScope
-import androidx.compose.ui.platform.DensityAmbient
-import androidx.compose.ui.platform.LayoutDirectionAmbient
 import androidx.compose.ui.platform.ViewAmbient
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
@@ -432,18 +430,18 @@ fun Modifier.navigationBarsWidthPlus(
  * @param end Whether to apply the inset on the end dimension.
  * @param bottom Whether to apply the inset on the bottom dimension.
  */
-@Composable
 fun Insets.toPaddingValues(
+    density: Density,
+    layoutDirection: LayoutDirection,
     start: Boolean = true,
     top: Boolean = true,
     end: Boolean = true,
     bottom: Boolean = true
-): PaddingValues = with(DensityAmbient.current) {
-    val layoutDirection = LayoutDirectionAmbient.current
+): PaddingValues = with(density) {
     PaddingValues(
         start = when {
-            start && layoutDirection == LayoutDirection.Ltr -> this@toPaddingValues.left.toDp()
-            start && layoutDirection == LayoutDirection.Rtl -> this@toPaddingValues.right.toDp()
+            start && layoutDirection == LayoutDirection.Ltr -> left.toDp()
+            start && layoutDirection == LayoutDirection.Rtl -> right.toDp()
             else -> 0.dp
         },
         top = when {
@@ -451,8 +449,8 @@ fun Insets.toPaddingValues(
             else -> 0.dp
         },
         end = when {
-            end && layoutDirection == LayoutDirection.Ltr -> this@toPaddingValues.right.toDp()
-            end && layoutDirection == LayoutDirection.Rtl -> this@toPaddingValues.left.toDp()
+            end && layoutDirection == LayoutDirection.Ltr -> right.toDp()
+            end && layoutDirection == LayoutDirection.Rtl -> left.toDp()
             else -> 0.dp
         },
         bottom = when {

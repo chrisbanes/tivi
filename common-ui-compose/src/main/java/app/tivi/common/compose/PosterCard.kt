@@ -27,6 +27,7 @@ import androidx.compose.material.ProvideEmphasis
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TmdbImageEntity
@@ -56,6 +57,7 @@ fun PosterCard(
                 CoilImage(
                     data = poster,
                     fadeIn = true,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier.matchParentSize()
                 )
             }

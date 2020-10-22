@@ -39,10 +39,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.FirstBaseline
 import androidx.compose.material.AmbientEmphasisLevels
+import androidx.compose.material.ButtonConstants
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideEmphasis
-import androidx.compose.material.Surface
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
@@ -57,6 +57,7 @@ import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
+import app.tivi.common.compose.AbsoluteElevationSurface
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.IconResource
@@ -79,7 +80,7 @@ fun Discover(
     state: DiscoverViewState,
     actioner: (DiscoverAction) -> Unit
 ) {
-    Surface(Modifier.fillMaxSize()) {
+    AbsoluteElevationSurface(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize()) {
             var appBarHeight by rememberMutableState { 0 }
 
@@ -170,7 +171,7 @@ private fun NextEpisodeToWatch(
     episode: Episode,
     modifier: Modifier = Modifier,
 ) {
-    Surface(modifier) {
+    AbsoluteElevationSurface(modifier) {
         Row(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
             if (poster != null) {
                 PosterCard(
@@ -224,7 +225,9 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
                 action = {
                     TextButton(
                         onClick = onMoreClick,
-                        contentColor = MaterialTheme.colors.secondary,
+                        colors = ButtonConstants.defaultTextButtonColors(
+                            contentColor = MaterialTheme.colors.secondary
+                        ),
                         modifier = Modifier.alignWithSiblings(FirstBaseline)
                     ) {
                         Text(text = stringResource(R.string.header_more))
@@ -239,9 +242,8 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
                 onItemClick = onItemClick,
                 modifier = Modifier.preferredHeight(192.dp).fillMaxWidth()
             )
-        } else {
-            // TODO empty state
         }
+        // TODO empty state
     }
 }
 
@@ -316,7 +318,7 @@ private fun DiscoverAppBar(
     onUserActionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Surface(
+    AbsoluteElevationSurface(
         color = MaterialTheme.colors.surface.copy(alpha = TranslucentAppBarAlpha),
         contentColor = MaterialTheme.colors.onSurface,
         elevation = 4.dp,
@@ -386,7 +388,7 @@ private fun PreviewDiscoverAppBar() {
 @Preview
 @Composable
 private fun PreviewHeader() {
-    Surface(Modifier.fillMaxWidth()) {
+    AbsoluteElevationSurface(Modifier.fillMaxWidth()) {
         Header(
             title = "Being watched now",
             loading = true

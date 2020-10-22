@@ -29,6 +29,9 @@ buildscript {
         google()
         mavenCentral()
         jcenter()
+
+        // Used for Gradle Play Publisher snapshots
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 
     dependencies {

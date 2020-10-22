@@ -70,7 +70,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.Surface
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -102,6 +101,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
+import app.tivi.common.compose.AbsoluteElevationSurface
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.ExpandableFloatingActionButton
@@ -154,7 +154,7 @@ fun ShowDetails(
     val listState = rememberLazyListState()
     var backdropHeight by rememberMutableState { 0 }
 
-    Surface(Modifier.fillMaxSize()) {
+    AbsoluteElevationSurface(Modifier.fillMaxSize()) {
         ShowDetailsScrollingContent(
             show = viewState.show,
             posterImage = viewState.posterImage,
@@ -249,7 +249,7 @@ private fun ShowDetailsScrollingContent(
         modifier = modifier
     ) {
         item {
-            Surface(
+            AbsoluteElevationSurface(
                 modifier = Modifier.fillMaxWidth()
                     .aspectRatio(16f / 10)
                     .onSizeChanged(onBackdropSizeChanged)
@@ -411,7 +411,7 @@ private fun OverlaidStatusBarAppBar(
             toState = showAppBar
         )
 
-        Surface(
+        AbsoluteElevationSurface(
             elevation = animate(if (showAppBar) 2.dp else 0.dp),
             modifier = Modifier.fillMaxWidth()
                 .statusBarsHeight()
@@ -426,7 +426,7 @@ private fun OverlaidStatusBarAppBar(
         }
 
         if (showAppBar) {
-            Surface(
+            AbsoluteElevationSurface(
                 elevation = elevation.value,
                 modifier = Modifier.fillMaxWidth(),
                 content = { appBar() }
@@ -783,7 +783,7 @@ private fun LazyListScope.SeasonWithEpisodesRow(
     actioner: (ShowDetailsAction) -> Unit,
 ) {
     item {
-        Surface(
+        AbsoluteElevationSurface(
             elevation = animate(if (expanded) 2.dp else 0.dp),
             modifier = Modifier.fillMaxWidth()
                 .clickable(enabled = !season.ignored) {
@@ -812,7 +812,7 @@ private fun LazyListScope.SeasonWithEpisodesRow(
             // This doesn't work with the LazyDSL: b/170287733
             // AnimatedVisibility(initiallyVisible = false, visible = expanded) {
 
-            Surface(
+            AbsoluteElevationSurface(
                 elevation = 2.dp,
                 modifier = Modifier
                     .fillMaxWidth()

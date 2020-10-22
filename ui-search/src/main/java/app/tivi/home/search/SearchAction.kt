@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package app.tivi.ui
+package app.tivi.home.search
 
-import android.graphics.Outline
-import android.view.View
-import android.view.ViewOutlineProvider
-import app.tivi.common.ui.R
-
-object RoundRectViewOutline : ViewOutlineProvider() {
-    override fun getOutline(view: View, outline: Outline) {
-        val radius = view.resources.getDimension(R.dimen.image_round_rect_radius)
-        outline.setRoundRect(0, 0, view.width, view.height, radius)
-    }
+sealed class SearchAction {
+    data class OpenShowDetails(val showId: Long) : SearchAction()
+    data class Search(val searchTerm: String = "") : SearchAction()
 }
