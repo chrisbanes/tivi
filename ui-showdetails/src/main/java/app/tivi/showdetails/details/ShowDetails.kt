@@ -286,28 +286,11 @@ private fun ShowDetailsScrollingContent(
         }
 
         item {
-            Row(Modifier.fillMaxWidth()) {
-                if (posterImage != null) {
-                    Spacer(modifier = Modifier.preferredWidth(16.dp))
-
-                    CoilImage(
-                        data = posterImage,
-                        fadeIn = true,
-                        alignment = Alignment.TopStart,
-                        modifier = Modifier.weight(1f, fill = false)
-                            .aspectRatio(2 / 3f)
-                            .clip(MaterialTheme.shapes.medium)
-                    )
-                }
-
-                Spacer(modifier = Modifier.preferredWidth(16.dp))
-
-                Box(Modifier.weight(1f, fill = false)) {
-                    InfoPanels(show)
-                }
-
-                Spacer(modifier = Modifier.preferredWidth(16.dp))
-            }
+            PosterInfoRow(
+                show = show,
+                posterImage = posterImage,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
 
         spacerItem(16.dp)
@@ -394,6 +377,36 @@ private fun ShowDetailsScrollingContent(
 
         // Spacer to push up content from under the FloatingActionButton
         spacerItem(56.dp + 16.dp + 16.dp)
+    }
+}
+
+@Composable
+private fun PosterInfoRow(
+    show: TiviShow,
+    posterImage: TmdbImageEntity?,
+    modifier: Modifier = Modifier
+) {
+    Row(modifier) {
+        if (posterImage != null) {
+            Spacer(modifier = Modifier.preferredWidth(16.dp))
+
+            CoilImage(
+                data = posterImage,
+                fadeIn = true,
+                alignment = Alignment.TopStart,
+                modifier = Modifier.weight(1f, fill = false)
+                    .aspectRatio(2 / 3f)
+                    .clip(MaterialTheme.shapes.medium)
+            )
+        }
+
+        Spacer(modifier = Modifier.preferredWidth(16.dp))
+
+        Box(Modifier.weight(1f, fill = false)) {
+            InfoPanels(show)
+        }
+
+        Spacer(modifier = Modifier.preferredWidth(16.dp))
     }
 }
 
@@ -808,8 +821,6 @@ private fun LazyListScope.SeasonWithEpisodesRow(
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(Modifier.fillMaxWidth()) {
-                if (expanded) Divider()
-
                 SeasonRow(
                     season = season,
                     episodesAired = episodes.numberAired,
@@ -842,6 +853,10 @@ private fun LazyListScope.SeasonWithEpisodesRow(
                                 }
                         )
                     }
+                }
+
+                AnimatedVisibility(visible = expanded) {
+                    Divider()
                 }
             }
         }
