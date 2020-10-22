@@ -16,6 +16,7 @@
 
 package app.tivi.showdetails.details
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.DpPropKey
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.VectorConverter
@@ -775,6 +776,7 @@ private fun WatchStats(
     }
 }
 
+@Suppress("FunctionName")
 @OptIn(ExperimentalAnimationApi::class)
 private fun LazyListScope.SeasonWithEpisodesRow(
     season: Season,
@@ -786,11 +788,8 @@ private fun LazyListScope.SeasonWithEpisodesRow(
         AbsoluteElevationSurface(
             elevation = animate(if (expanded) 2.dp else 0.dp),
             modifier = Modifier.fillMaxWidth()
-                .clickable(enabled = !season.ignored) {
-                    actioner(ChangeSeasonExpandedAction(season.id, !expanded))
-                }
         ) {
-            Box(Modifier.fillMaxWidth()) {
+            Column(Modifier.fillMaxWidth()) {
                 if (expanded) Divider()
 
                 SeasonRow(
@@ -802,31 +801,31 @@ private fun LazyListScope.SeasonWithEpisodesRow(
                     nextToAirDate = episodes.nextToAir?.firstAired,
                     actioner = actioner,
                     modifier = Modifier.fillMaxWidth()
+                        .clickable(enabled = !season.ignored) {
+                            actioner(ChangeSeasonExpandedAction(season.id, !expanded))
+                        }
                 )
-            }
-        }
-    }
 
-    if (expanded) {
-        items(episodes) { episodeEntry ->
-            // This doesn't work with the LazyDSL: b/170287733
-            // AnimatedVisibility(initiallyVisible = false, visible = expanded) {
-
-            AbsoluteElevationSurface(
-                elevation = 2.dp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { actioner(OpenEpisodeDetails(episodeEntry.episode.id)) }
-            ) {
-                EpisodeWithWatchesRow(
-                    episode = episodeEntry.episode,
-                    isWatched = episodeEntry.isWatched,
-                    hasPending = episodeEntry.hasPending,
-                    onlyPendingDeletes = episodeEntry.onlyPendingDeletes,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                // Ideally each EpisodeWithWatchesRow would be in a different item {}, but there
+                // are currently 2 issues for that:
+                // #1: AnimatedVisibility currently crashes in Lazy*: b/170287733
+                // #2: Can't use a Surface across different items: b/170472398
+                // So instead we bundle the items in an inner Column, within a single item.
+                episodes.forEach { episodeEntry ->
+                    AnimatedVisibility(visible = expanded) {
+                        EpisodeWithWatchesRow(
+                            episode = episodeEntry.episode,
+                            isWatched = episodeEntry.isWatched,
+                            hasPending = episodeEntry.hasPending,
+                            onlyPendingDeletes = episodeEntry.onlyPendingDeletes,
+                            modifier = Modifier.fillMaxWidth()
+                                .clickable {
+                                    actioner(OpenEpisodeDetails(episodeEntry.episode.id))
+                                }
+                        )
+                    }
+                }
             }
-            // }
         }
     }
 }
