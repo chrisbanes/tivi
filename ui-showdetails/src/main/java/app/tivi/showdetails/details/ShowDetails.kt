@@ -454,7 +454,11 @@ private fun OverlaidStatusBarAppBar(
 
         val elevation = animatedValue(initVal = 0.dp, converter = Dp.VectorConverter)
         onCommit(showAppBar) {
-            elevation.animateTo(2.dp, spring())
+            if (showAppBar) {
+                elevation.animateTo(2.dp, spring())
+            } else {
+                elevation.snapTo(0.dp)
+            }
         }
 
         if (showAppBar) {
