@@ -17,18 +17,25 @@
 package app.tivi.showdetails.details
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.DpPropKey
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.VectorConverter
+import androidx.compose.animation.animate
+import androidx.compose.animation.animatedValue
+import androidx.compose.animation.core.FloatPropKey
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.transitionDefinition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.transition
 import androidx.compose.foundation.AmbientContentColor
 import androidx.compose.foundation.Icon
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ConstraintLayout
 import androidx.compose.foundation.layout.ExperimentalLayout
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,6 +46,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredHeightIn
@@ -46,7 +54,11 @@ import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.preferredSizeIn
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.ExperimentalLazyDsl
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AmbientEmphasisLevels
 import androidx.compose.material.Divider
@@ -68,6 +80,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.emptyContent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
@@ -77,6 +90,8 @@ import androidx.compose.runtime.staticAmbientOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.drawLayer
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -102,6 +117,7 @@ import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.navigationBarsPadding
 import app.tivi.common.compose.offset
 import app.tivi.common.compose.rememberMutableState
+import app.tivi.common.compose.spacerItem
 import app.tivi.common.compose.statusBarsHeight
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
@@ -122,7 +138,6 @@ import app.tivi.data.resultentities.numberAiredToWatch
 import app.tivi.data.resultentities.numberToAir
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
-import app.tivi.ui.animations.lerp
 import coil.request.ImageRequest
 import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlinx.coroutines.launch
@@ -130,25 +145,18 @@ import org.threeten.bp.OffsetDateTime
 
 val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalLazyDsl::class)
 @Composable
 fun ShowDetails(
     viewState: ShowDetailsViewState,
     actioner: (ShowDetailsAction) -> Unit
-) = ConstraintLayout(
-    modifier = Modifier.fillMaxSize()
-) {
+) = Box(modifier = Modifier.fillMaxSize()) {
     LogCompositions("ShowDetails")
 
-    val (appbar, fab, snackbar) = createRefs()
-
-    val scrollState = rememberScrollState()
+    val listState = rememberLazyListState()
     var backdropHeight by rememberMutableState { 0 }
 
-    ScrollableColumn(
-        scrollState = scrollState,
-        modifier = Modifier.fillMaxHeight()
-    ) {
+    AbsoluteElevationSurface(Modifier.fillMaxSize()) {
         ShowDetailsScrollingContent(
             show = viewState.show,
             posterImage = viewState.posterImage,
@@ -159,15 +167,21 @@ fun ShowDetails(
             expandedSeasonIds = viewState.expandedSeasonIds,
             watchStats = viewState.watchStats,
             showRefreshing = viewState.refreshing,
-            scrollState = scrollState,
+            listState = listState,
             actioner = actioner,
-            onBackdropSizeChanged = { backdropHeight = it.height }
+            onBackdropSizeChanged = { backdropHeight = it.height },
+            modifier = Modifier.fillMaxSize()
         )
     }
 
+    val trigger = backdropHeight - InsetsAmbient.current.statusBars.top
     OverlaidStatusBarAppBar(
-        scrollPosition = scrollState.value,
-        backdropHeight = backdropHeight,
+        showAppBar = when (listState.firstVisibleItemIndex) {
+            // We only show the app bar when the first item is shown, and it's offset off screen
+            // more than the trigger value
+            0 -> listState.firstVisibleItemScrollOffset >= trigger
+            else -> true
+        },
         appBar = {
             ShowDetailsAppBar(
                 title = viewState.show.title ?: "",
@@ -177,31 +191,34 @@ fun ShowDetails(
                 actioner = actioner
             )
         },
-        modifier = Modifier.fillMaxWidth()
-            .constrainAs(appbar) {
-                top.linkTo(parent.top)
-            }
+        modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter)
     )
 
     val snackbarHostState = remember { SnackbarHostState() }
     val snackbarScope = rememberCoroutineScope()
 
-    SnackbarHost(
-        hostState = snackbarHostState,
-        snackbar = {
-            SwipeDismissSnackbar(
-                data = it,
-                onDismiss = { actioner(ClearError) }
-            )
-        },
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .constrainAs(snackbar) {
-                bottom.linkTo(fab.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
-    )
+    Column(Modifier.fillMaxWidth().align(Alignment.BottomCenter)) {
+        SnackbarHost(
+            hostState = snackbarHostState,
+            snackbar = {
+                SwipeDismissSnackbar(
+                    data = it,
+                    onDismiss = { actioner(ClearError) }
+                )
+            },
+            modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth()
+        )
+
+        ToggleShowFollowFloatingActionButton(
+            isFollowed = viewState.isFollowed,
+            expanded = listState.firstVisibleItemIndex >= 1,
+            onClick = { actioner(FollowShowToggleAction) },
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(16.dp)
+                .navigationBarsPadding(bottom = false)
+        )
+    }
 
     onCommit(viewState.refreshError) {
         viewState.refreshError?.let { error ->
@@ -210,21 +227,9 @@ fun ShowDetails(
             }
         }
     }
-
-    ToggleShowFollowFloatingActionButton(
-        isFollowed = viewState.isFollowed,
-        expanded = scrollState.value < backdropHeight,
-        onClick = { actioner(FollowShowToggleAction) },
-        modifier = Modifier
-            .padding(16.dp)
-            .navigationBarsPadding(bottom = false)
-            .constrainAs(fab) {
-                end.linkTo(parent.end)
-                bottom.linkTo(parent.bottom)
-            }
-    )
 }
 
+@OptIn(ExperimentalLazyDsl::class)
 @Composable
 private fun ShowDetailsScrollingContent(
     show: TiviShow,
@@ -236,158 +241,259 @@ private fun ShowDetailsScrollingContent(
     expandedSeasonIds: Set<Long>,
     watchStats: FollowedShowsWatchStats?,
     showRefreshing: Boolean,
-    scrollState: ScrollState,
+    listState: LazyListState,
     actioner: (ShowDetailsAction) -> Unit,
-    onBackdropSizeChanged: (IntSize) -> Unit
+    onBackdropSizeChanged: (IntSize) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     LogCompositions("ShowDetailsScrollingContent")
 
-    Column(Modifier.fillMaxWidth()) {
-        AbsoluteElevationSurface(
-            modifier = Modifier.fillMaxWidth()
-                .aspectRatio(16f / 10)
-                .onSizeChanged(onBackdropSizeChanged)
-        ) {
-            if (backdropImage != null) {
-                CoilImage(
-                    data = backdropImage,
-                    fadeIn = true,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize().offset { size ->
-                        Offset(
-                            x = 0f,
-                            y = (scrollState.value / 2)
-                                .coerceIn(-size.height.toFloat(), size.height.toFloat())
-                        )
-                    }
-                )
-            }
-        }
-
-        AbsoluteElevationSurface(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight(Alignment.Top),
-            elevation = 2.dp
-        ) {
-            Column(Modifier.fillMaxWidth()) {
-                ShowDetailsAppBar(
-                    title = show.title ?: "",
-                    elevation = 0.dp,
-                    backgroundColor = Color.Transparent,
-                    isRefreshing = showRefreshing,
-                    actioner = actioner
-                )
-
-                Row(Modifier.fillMaxWidth()) {
-                    if (posterImage != null) {
-                        Spacer(modifier = Modifier.preferredWidth(16.dp))
-
-                        CoilImage(
-                            data = posterImage,
-                            fadeIn = true,
-                            alignment = Alignment.TopStart,
-                            modifier = Modifier.weight(1f, fill = false)
-                                .aspectRatio(2 / 3f)
-                                .clip(MaterialTheme.shapes.medium)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.preferredWidth(16.dp))
-
-                    Box(Modifier.weight(1f, fill = false)) {
-                        InfoPanels(show)
-                    }
-
-                    Spacer(modifier = Modifier.preferredWidth(16.dp))
-                }
-
-                Spacer(modifier = Modifier.preferredHeight(16.dp))
-
-                Header(stringResource(R.string.details_about))
-
-                if (show.summary != null) {
-                    ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.high) {
-                        ExpandingText(
-                            show.summary!!,
-                            modifier = Modifier.fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                        )
-                    }
-                }
-
-                if (show.genres.isNotEmpty()) {
-                    Genres(show.genres)
-                }
-
-                if (nextEpisodeToWatch?.episode != null && nextEpisodeToWatch.season != null) {
-                    Spacer(modifier = Modifier.preferredHeight(8.dp))
-                    Header(stringResource(id = R.string.details_next_episode_to_watch))
-                    NextEpisodeToWatch(
-                        season = nextEpisodeToWatch.season!!,
-                        episode = nextEpisodeToWatch.episode!!,
-                        onClick = {
-                            actioner(OpenEpisodeDetails(nextEpisodeToWatch.episode!!.id))
+    LazyColumn(
+        state = listState,
+        modifier = modifier
+    ) {
+        item {
+            BackdropImage(
+                backdropImage = backdropImage,
+                modifier = Modifier.fillMaxWidth()
+                    .aspectRatio(16f / 10)
+                    .onSizeChanged(onBackdropSizeChanged)
+                    .clipToBounds()
+                    .offset {
+                        when (listState.firstVisibleItemIndex) {
+                            // If we're the first visible item, apply parallax using 50% of
+                            // scroll offset
+                            0 -> {
+                                Offset(
+                                    x = 0f,
+                                    y = listState.firstVisibleItemScrollOffset / 2f
+                                )
+                            }
+                            else -> Offset.Zero
                         }
+                    }
+            )
+        }
+
+        item {
+            ShowDetailsAppBar(
+                title = show.title ?: "",
+                elevation = 0.dp,
+                backgroundColor = Color.Transparent,
+                isRefreshing = showRefreshing,
+                actioner = actioner
+            )
+        }
+
+        item {
+            PosterInfoRow(
+                show = show,
+                posterImage = posterImage,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        spacerItem(16.dp)
+
+        item {
+            Header(stringResource(R.string.details_about))
+        }
+
+        if (show.summary != null) {
+            item {
+                ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.high) {
+                    ExpandingText(
+                        text = show.summary!!,
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
                     )
                 }
-
-                if (relatedShows.isNotEmpty()) {
-                    Spacer(modifier = Modifier.preferredHeight(8.dp))
-                    Header(stringResource(R.string.details_related))
-                    RelatedShows(
-                        relatedShows,
-                        actioner,
-                        Modifier.fillMaxWidth().preferredHeight(112.dp)
-                    )
-                }
-
-                if (watchStats != null) {
-                    Spacer(modifier = Modifier.preferredHeight(8.dp))
-                    Header(stringResource(R.string.details_view_stats))
-                    WatchStats(watchStats.watchedEpisodeCount, watchStats.episodeCount)
-                }
-
-                if (seasons.isNotEmpty()) {
-                    Spacer(modifier = Modifier.preferredHeight(8.dp))
-                    Header(stringResource(R.string.show_details_seasons))
-                    Seasons(seasons, expandedSeasonIds, actioner)
-                }
-
-                // Spacer to push up content from under the FloatingActionButton
-                Spacer(Modifier.preferredHeight(56.dp + 16.dp + 16.dp))
             }
         }
+
+        if (show.genres.isNotEmpty()) {
+            item {
+                Genres(show.genres)
+            }
+        }
+
+        if (nextEpisodeToWatch?.episode != null && nextEpisodeToWatch.season != null) {
+            spacerItem(8.dp)
+
+            item {
+                Header(stringResource(id = R.string.details_next_episode_to_watch))
+            }
+            item {
+                NextEpisodeToWatch(
+                    season = nextEpisodeToWatch.season!!,
+                    episode = nextEpisodeToWatch.episode!!,
+                    onClick = { actioner(OpenEpisodeDetails(nextEpisodeToWatch.episode!!.id)) }
+                )
+            }
+        }
+
+        if (relatedShows.isNotEmpty()) {
+            spacerItem(8.dp)
+
+            item {
+                Header(stringResource(R.string.details_related))
+            }
+            item {
+                RelatedShows(
+                    related = relatedShows,
+                    actioner = actioner,
+                    modifier = Modifier.fillMaxWidth().preferredHeight(112.dp)
+                )
+            }
+        }
+
+        if (watchStats != null) {
+            spacerItem(8.dp)
+
+            item {
+                Header(stringResource(R.string.details_view_stats))
+            }
+            item {
+                WatchStats(watchStats.watchedEpisodeCount, watchStats.episodeCount)
+            }
+        }
+
+        if (seasons.isNotEmpty()) {
+            spacerItem(8.dp)
+
+            item {
+                Header(stringResource(R.string.show_details_seasons))
+            }
+
+            seasons.forEach {
+                SeasonWithEpisodesRow(
+                    season = it.season,
+                    episodes = it.episodes,
+                    expanded = it.season.id in expandedSeasonIds,
+                    actioner = actioner,
+                )
+            }
+        }
+
+        // Spacer to push up content from under the FloatingActionButton
+        spacerItem(56.dp + 16.dp + 16.dp)
+    }
+}
+
+@Composable
+private fun PosterInfoRow(
+    show: TiviShow,
+    posterImage: TmdbImageEntity?,
+    modifier: Modifier = Modifier
+) {
+    Row(modifier) {
+        if (posterImage != null) {
+            Spacer(modifier = Modifier.preferredWidth(16.dp))
+
+            CoilImage(
+                data = posterImage,
+                fadeIn = true,
+                alignment = Alignment.TopStart,
+                modifier = Modifier.weight(1f, fill = false)
+                    .aspectRatio(2 / 3f)
+                    .clip(MaterialTheme.shapes.medium)
+            )
+        }
+
+        Spacer(modifier = Modifier.preferredWidth(16.dp))
+
+        Box(Modifier.weight(1f, fill = false)) {
+            InfoPanels(show)
+        }
+
+        Spacer(modifier = Modifier.preferredWidth(16.dp))
+    }
+}
+
+@Composable
+private fun BackdropImage(
+    backdropImage: TmdbImageEntity?,
+    modifier: Modifier = Modifier
+) {
+    AbsoluteElevationSurface(modifier = modifier) {
+        if (backdropImage != null) {
+            CoilImage(
+                data = backdropImage,
+                fadeIn = true,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        // TODO show a placeholder if null
     }
 }
 
 @Composable
 private fun OverlaidStatusBarAppBar(
-    scrollPosition: Float,
-    backdropHeight: Int,
-    modifier: Modifier = Modifier,
-    appBar: @Composable () -> Unit
+    showAppBar: Boolean,
+    appBar: @Composable () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     LogCompositions("OverlaidStatusBarAppBar")
 
-    val insets = InsetsAmbient.current
-    val trigger = (backdropHeight - insets.systemBars.top).coerceAtLeast(0)
+    Column(modifier) {
+        val props = transition(
+            definition = statusBarTransitionDef,
+            initState = false,
+            toState = showAppBar
+        )
 
-    val alpha = lerp(
-        startValue = 0.5f,
-        endValue = 1f,
-        fraction = if (trigger > 0) (scrollPosition / trigger).coerceIn(0f, 1f) else 0f
-    )
+        AbsoluteElevationSurface(
+            elevation = animate(if (showAppBar) 2.dp else 0.dp),
+            modifier = Modifier.fillMaxWidth()
+                .statusBarsHeight()
+                .drawLayer(alpha = props[AlphaKey])
+                .offset(y = props[OffsetYKey]),
+            content = emptyContent()
+        )
 
-    AbsoluteElevationSurface(
-        color = MaterialTheme.colors.surface.copy(alpha = alpha),
-        elevation = if (scrollPosition >= trigger) 2.dp else 0.dp,
-        modifier = modifier
-    ) {
-        Column(Modifier.fillMaxWidth()) {
-            Spacer(Modifier.statusBarsHeight())
-            if (scrollPosition >= trigger) {
-                appBar()
+        val elevation = animatedValue(initVal = 0.dp, converter = Dp.VectorConverter)
+        onCommit(showAppBar) {
+            if (showAppBar) {
+                elevation.animateTo(2.dp, spring())
+            } else {
+                elevation.snapTo(0.dp)
             }
         }
+
+        if (showAppBar) {
+            AbsoluteElevationSurface(
+                elevation = elevation.value,
+                modifier = Modifier.fillMaxWidth(),
+                content = { appBar() }
+            )
+        }
+    }
+}
+
+private val OffsetYKey = DpPropKey()
+private val AlphaKey = FloatPropKey()
+
+private val statusBarTransitionDef = transitionDefinition<Boolean> {
+    state(false) {
+        this[OffsetYKey] = 24.dp
+        this[AlphaKey] = 0f
+    }
+    state(true) {
+        this[OffsetYKey] = 0.dp
+        this[AlphaKey] = 1f
+    }
+
+    transition(toState = true) {
+        OffsetYKey using spring()
+        AlphaKey using snap()
+    }
+
+    transition(toState = false) {
+        AlphaKey using tween(durationMillis = 300)
+        // This is a bit of a hack. We don't actually want an offset transition on exit,
+        // so we just run a snap AFTER the alpha animation has finished (with some buffer)
+        OffsetYKey using snap(delayMillis = 320)
     }
 }
 
@@ -636,7 +742,7 @@ private fun NextEpisodeToWatch(
             style = MaterialTheme.typography.caption
         )
 
-        Spacer(modifier = Modifier.preferredHeight(4.dp))
+        Spacer(Modifier.preferredHeight(4.dp))
 
         Text(
             episode.title ?: stringResource(R.string.episode_title_fallback, episode.number!!),
@@ -705,68 +811,56 @@ private fun WatchStats(
     }
 }
 
-@Composable
-private fun Seasons(
-    seasons: List<SeasonWithEpisodesAndWatches>,
-    expandedSeasonIds: Set<Long>,
-    actioner: (ShowDetailsAction) -> Unit
-) {
-    LogCompositions("Seasons")
-
-    seasons.forEach {
-        SeasonWithEpisodesRow(
-            season = it.season,
-            episodes = it.episodes,
-            expanded = it.season.id in expandedSeasonIds,
-            actioner = actioner,
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
-}
-
+@Suppress("FunctionName")
 @OptIn(ExperimentalAnimationApi::class)
-@Composable
-private fun SeasonWithEpisodesRow(
+private fun LazyListScope.SeasonWithEpisodesRow(
     season: Season,
     episodes: List<EpisodeWithWatches>,
     expanded: Boolean,
     actioner: (ShowDetailsAction) -> Unit,
-    modifier: Modifier = Modifier
 ) {
-    AbsoluteElevationSurface(
-        elevation = if (expanded) 2.dp else 0.dp,
-        modifier = modifier
-    ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            if (expanded) Divider()
+    item {
+        AbsoluteElevationSurface(
+            elevation = animate(if (expanded) 2.dp else 0.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(Modifier.fillMaxWidth()) {
+                SeasonRow(
+                    season = season,
+                    episodesAired = episodes.numberAired,
+                    episodesWatched = episodes.numberWatched,
+                    episodesToWatch = episodes.numberAiredToWatch,
+                    episodesToAir = episodes.numberToAir,
+                    nextToAirDate = episodes.nextToAir?.firstAired,
+                    actioner = actioner,
+                    modifier = Modifier.fillMaxWidth()
+                        .clickable(enabled = !season.ignored) {
+                            actioner(ChangeSeasonExpandedAction(season.id, !expanded))
+                        }
+                )
 
-            SeasonRow(
-                season,
-                episodes.numberAired,
-                episodes.numberWatched,
-                episodes.numberAiredToWatch,
-                episodes.numberToAir,
-                episodes.nextToAir?.firstAired,
-                actioner,
-                modifier = Modifier.fillMaxWidth()
-                    .clickable(
-                        onClick = { actioner(ChangeSeasonExpandedAction(season.id, !expanded)) },
-                        enabled = !season.ignored
-                    )
-            )
+                // Ideally each EpisodeWithWatchesRow would be in a different item {}, but there
+                // are currently 2 issues for that:
+                // #1: AnimatedVisibility currently crashes in Lazy*: b/170287733
+                // #2: Can't use a Surface across different items: b/170472398
+                // So instead we bundle the items in an inner Column, within a single item.
+                episodes.forEach { episodeEntry ->
+                    AnimatedVisibility(visible = expanded) {
+                        EpisodeWithWatchesRow(
+                            episode = episodeEntry.episode,
+                            isWatched = episodeEntry.isWatched,
+                            hasPending = episodeEntry.hasPending,
+                            onlyPendingDeletes = episodeEntry.onlyPendingDeletes,
+                            modifier = Modifier.fillMaxWidth()
+                                .clickable {
+                                    actioner(OpenEpisodeDetails(episodeEntry.episode.id))
+                                }
+                        )
+                    }
+                }
 
-            episodes.forEach { episodeEntry ->
                 AnimatedVisibility(visible = expanded) {
-                    EpisodeWithWatchesRow(
-                        episodeEntry.episode,
-                        episodeEntry.isWatched,
-                        episodeEntry.hasPending,
-                        episodeEntry.onlyPendingDeletes,
-                        modifier = Modifier.fillMaxWidth()
-                            .clickable {
-                                actioner(OpenEpisodeDetails(episodeEntry.episode.id))
-                            }
-                    )
+                    Divider()
                 }
             }
         }
