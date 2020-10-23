@@ -40,11 +40,6 @@ class CoilAppInitializer @OptIn(ExperimentalCoilApi::class)
             .build()
         Coil.setImageLoader {
             ImageLoader.Builder(application)
-                // Hardware bitmaps break with our transitions, disable them for now
-                .allowHardware(false)
-                // Since we don't use hardware bitmaps, we can pool bitmaps and use a higher
-                // ratio of memory
-                .bitmapPoolPercentage(0.5)
                 .componentRegistry {
                     add(tmdbImageEntityInterceptor)
                     add(episodeEntityInterceptor)
