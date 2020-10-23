@@ -56,6 +56,7 @@ dependencies {
     implementation Libs.AndroidX.Lifecycle.viewmodel
 
     implementation Libs.AndroidX.Paging.runtime
+    implementation Libs.AndroidX.Paging.compose
 
     implementation Libs.AndroidX.swiperefresh
     implementation Libs.AndroidX.constraintlayout
