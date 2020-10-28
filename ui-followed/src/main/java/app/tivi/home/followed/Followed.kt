@@ -17,22 +17,30 @@
 package app.tivi.home.followed
 
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredSize
+import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.lazy.ExperimentalLazyDsl
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AmbientEmphasisLevels
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideEmphasis
+import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
@@ -53,6 +61,8 @@ import app.tivi.common.compose.IconResource
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.spacerItem
 import app.tivi.common.compose.statusBarsPadding
+import app.tivi.data.entities.ShowTmdbImage
+import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.trakt.TraktAuthState
@@ -78,11 +88,15 @@ fun Followed(
                 spacerItem(16.dp)
 
                 items(list) { entry ->
-                    // TODO entry
                     if (entry != null) {
-                        Box(Modifier.fillMaxWidth()) {
-                            Text(text = entry.show.title ?: "")
-                        }
+                        FollowedShowItem(
+                            show = entry.show,
+                            poster = entry.poster,
+                            watchedEpisodeCount = entry.stats?.watchedEpisodeCount ?: 0,
+                            totalEpisodeCount = entry.stats?.episodeCount ?: 0,
+                            onClick = { actioner(OpenShowDetails(entry.show.id)) },
+                            modifier = Modifier.fillMaxWidth().preferredHeight(112.dp)
+                        )
                     } else {
                         // TODO placeholder?
                     }
@@ -102,6 +116,75 @@ fun Followed(
                     .onSizeChanged { appBarHeight = it.height }
             )
         }
+    }
+}
+
+@Composable
+private fun FollowedShowItem(
+    show: TiviShow,
+    poster: ShowTmdbImage?,
+    watchedEpisodeCount: Int,
+    totalEpisodeCount: Int,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val textCreator = AmbientHomeTextCreator.current
+    Row(
+        modifier
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        if (poster != null) {
+            Surface(
+                elevation = 1.dp,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(4.dp))
+                    .fillMaxHeight()
+                    .aspectRatio(2 / 3f)
+            ) {
+                CoilImage(data = poster, modifier = Modifier.fillMaxSize())
+            }
+        }
+
+        Spacer(Modifier.preferredWidth(16.dp))
+
+        Column(
+            Modifier.weight(1f)
+                .align(Alignment.Bottom)
+        ) {
+            ProvideEmphasis(AmbientEmphasisLevels.current.high) {
+                Text(
+                    text = textCreator.showTitle(show = show).toString(),
+                    style = MaterialTheme.typography.subtitle1,
+                )
+            }
+
+            Spacer(Modifier.preferredHeight(16.dp))
+
+            LinearProgressIndicator(
+                progress = when {
+                    totalEpisodeCount > 0 -> watchedEpisodeCount / totalEpisodeCount.toFloat()
+                    else -> 0f
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(Modifier.preferredHeight(2.dp))
+
+            ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
+                Text(
+                    text = textCreator.followedShowEpisodeWatchStatus(
+                        episodeCount = totalEpisodeCount,
+                        watchedEpisodeCount = watchedEpisodeCount
+                    ).toString(),
+                    style = MaterialTheme.typography.caption
+                )
+            }
+
+            Spacer(Modifier.preferredHeight(4.dp))
+        }
+
+        Spacer(Modifier.preferredWidth(16.dp))
     }
 }
 

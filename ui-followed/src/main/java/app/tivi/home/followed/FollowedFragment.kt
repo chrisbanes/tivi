@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.staticAmbientOf
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
@@ -32,6 +33,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.TiviContentSetup
 import app.tivi.common.compose.TiviDateFormatterAmbient
+import app.tivi.home.HomeTextCreator
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
@@ -42,6 +44,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class FollowedFragment : Fragment() {
     @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
+    @Inject internal lateinit var homeTextCreator: HomeTextCreator
 
     private val viewModel: FollowedViewModel by viewModels()
 
@@ -56,7 +59,8 @@ class FollowedFragment : Fragment() {
 
         setContent {
             Providers(
-                TiviDateFormatterAmbient provides tiviDateFormatter
+                TiviDateFormatterAmbient provides tiviDateFormatter,
+                AmbientHomeTextCreator provides homeTextCreator,
             ) {
                 TiviContentSetup {
                     val viewState by viewModel.liveData.observeAsState()
@@ -88,4 +92,8 @@ class FollowedFragment : Fragment() {
             }
         }
     }
+}
+
+val AmbientHomeTextCreator = staticAmbientOf<HomeTextCreator> {
+    error("HomeTextCreator not provided")
 }

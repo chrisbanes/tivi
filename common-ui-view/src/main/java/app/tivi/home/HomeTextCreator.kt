@@ -25,7 +25,6 @@ import androidx.core.text.inSpans
 import androidx.core.text.parseAsHtml
 import app.tivi.common.ui.R
 import app.tivi.data.entities.TiviShow
-import app.tivi.data.views.FollowedShowsWatchStats
 import app.tivi.ui.text.TypefaceSpan
 import app.tivi.ui.text.textAppearanceSpanForAttribute
 import dagger.hilt.android.qualifiers.ActivityContext
@@ -72,16 +71,19 @@ class HomeTextCreator @Inject constructor(
         else -> context.resources.getQuantityString(R.plurals.header_show_count, count, count)
     }.parseAsHtml()
 
-    fun followedShowEpisodeWatchStatus(stats: FollowedShowsWatchStats?): CharSequence {
-        return if (stats != null && stats.watchedEpisodeCount < stats.episodeCount) {
+    fun followedShowEpisodeWatchStatus(
+        episodeCount: Int,
+        watchedEpisodeCount: Int
+    ): CharSequence = when {
+        watchedEpisodeCount < episodeCount -> {
             context.getString(
                 R.string.followed_watch_stats_to_watch,
-                stats.episodeCount - stats.watchedEpisodeCount
+                episodeCount - watchedEpisodeCount
             ).parseAsHtml()
-        } else if (stats != null && stats.watchedEpisodeCount > 0) {
-            context.getString(R.string.followed_watch_stats_complete)
-        } else {
-            return ""
         }
+        watchedEpisodeCount > 0 -> {
+            context.getString(R.string.followed_watch_stats_complete)
+        }
+        else -> ""
     }
 }
