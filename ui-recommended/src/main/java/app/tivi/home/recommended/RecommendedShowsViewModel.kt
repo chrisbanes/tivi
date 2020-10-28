@@ -35,7 +35,7 @@ class RecommendedShowsViewModel @ViewModelInject constructor(
     override val changeShowFollowStatus: ChangeShowFollowStatus
 ) : EntryViewModel<RecommendedEntryWithShow, ObservePagedRecommendedShows>() {
     init {
-        pagingInteractor(ObservePagedRecommendedShows.Params(pageListConfig, boundaryCallback))
+        pagingInteractor(ObservePagedRecommendedShows.Params(pageListConfig))
 
         launchObserves()
 

@@ -35,7 +35,7 @@ class TrendingShowsViewModel @ViewModelInject constructor(
     override val changeShowFollowStatus: ChangeShowFollowStatus
 ) : EntryViewModel<TrendingEntryWithShow, ObservePagedTrendingShows>() {
     init {
-        pagingInteractor(ObservePagedTrendingShows.Params(pageListConfig, boundaryCallback))
+        pagingInteractor(ObservePagedTrendingShows.Params(pageListConfig))
 
         launchObserves()
 

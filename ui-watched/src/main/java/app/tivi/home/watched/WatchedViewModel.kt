@@ -18,7 +18,6 @@ package app.tivi.home.watched
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagedList
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import app.tivi.ReduxViewModel
@@ -51,19 +50,19 @@ internal class WatchedViewModel @ViewModelInject constructor(
 ) : ReduxViewModel<WatchedViewState>(
     WatchedViewState()
 ) {
-    private val boundaryCallback = object : PagedList.BoundaryCallback<WatchedShowEntryWithShow>() {
-        override fun onZeroItemsLoaded() {
-            viewModelScope.launchSetState { copy(isEmpty = filter.isNullOrEmpty()) }
-        }
-
-        override fun onItemAtEndLoaded(itemAtEnd: WatchedShowEntryWithShow) {
-            viewModelScope.launchSetState { copy(isEmpty = false) }
-        }
-
-        override fun onItemAtFrontLoaded(itemAtFront: WatchedShowEntryWithShow) {
-            viewModelScope.launchSetState { copy(isEmpty = false) }
-        }
-    }
+//    private val boundaryCallback = object : PagedList.BoundaryCallback<WatchedShowEntryWithShow>() {
+//        override fun onZeroItemsLoaded() {
+//            viewModelScope.launchSetState { copy(isEmpty = filter.isNullOrEmpty()) }
+//        }
+//
+//        override fun onItemAtEndLoaded(itemAtEnd: WatchedShowEntryWithShow) {
+//            viewModelScope.launchSetState { copy(isEmpty = false) }
+//        }
+//
+//        override fun onItemAtFrontLoaded(itemAtFront: WatchedShowEntryWithShow) {
+//            viewModelScope.launchSetState { copy(isEmpty = false) }
+//        }
+//    }
 
     private val loadingState = ObservableLoadingCounter()
     private val showSelection = ShowStateSelector()

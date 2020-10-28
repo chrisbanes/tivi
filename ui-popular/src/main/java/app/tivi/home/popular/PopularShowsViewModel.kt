@@ -35,7 +35,7 @@ class PopularShowsViewModel @ViewModelInject constructor(
     override val changeShowFollowStatus: ChangeShowFollowStatus
 ) : EntryViewModel<PopularEntryWithShow, ObservePagedPopularShows>() {
     init {
-        pagingInteractor(ObservePagedPopularShows.Params(pageListConfig, boundaryCallback))
+        pagingInteractor(ObservePagedPopularShows.Params(pageListConfig))
 
         launchObserves()
 

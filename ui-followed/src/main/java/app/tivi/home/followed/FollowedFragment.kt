@@ -25,7 +25,6 @@ import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.FragmentWithBinding
 import app.tivi.common.imageloading.loadImageUrl
@@ -38,7 +37,6 @@ import app.tivi.ui.SpacingItemDecorator
 import app.tivi.ui.authStateToolbarMenuBinder
 import app.tivi.ui.recyclerview.HideImeOnScrollListener
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 @AndroidEntryPoint

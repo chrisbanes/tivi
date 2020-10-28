@@ -17,7 +17,6 @@
 package app.tivi.util
 
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagedList
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import app.tivi.ReduxViewModel
@@ -66,17 +65,17 @@ abstract class EntryViewModel<LI : EntryWithShow<out Entry>, PI : PagingInteract
         enablePlaceholders = false
     )
 
-    protected val boundaryCallback = object : PagedList.BoundaryCallback<LI>() {
-        override fun onItemAtEndLoaded(itemAtEnd: LI) = onListScrolledToEnd()
-
-        override fun onItemAtFrontLoaded(itemAtFront: LI) {
-            loaded.value = true
-        }
-
-        override fun onZeroItemsLoaded() {
-            loaded.value = true
-        }
-    }
+//    protected val boundaryCallback = object : PagedList.BoundaryCallback<LI>() {
+//        override fun onItemAtEndLoaded(itemAtEnd: LI) = onListScrolledToEnd()
+//
+//        override fun onItemAtFrontLoaded(itemAtFront: LI) {
+//            loaded.value = true
+//        }
+//
+//        override fun onZeroItemsLoaded() {
+//            loaded.value = true
+//        }
+//    }
 
     protected fun launchObserves() {
         viewModelScope.launch {
