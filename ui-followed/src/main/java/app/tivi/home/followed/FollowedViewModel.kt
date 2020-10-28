@@ -35,7 +35,10 @@ import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.ShowStateSelector
 import app.tivi.util.collectInto
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -64,6 +67,8 @@ internal class FollowedViewModel @ViewModelInject constructor(
 //            viewModelScope.launchSetState { copy(isEmpty = false) }
 //        }
 //    }
+
+    private val pendingActions = Channel<FollowedAction>(Channel.BUFFERED)
 
     private val loadingState = ObservableLoadingCounter()
     private val showSelection = ShowStateSelector()
@@ -117,6 +122,14 @@ internal class FollowedViewModel @ViewModelInject constructor(
 
         // Subscribe to state changes, so update the observed data source
         subscribe(::updateDataSource)
+
+        viewModelScope.launch {
+            pendingActions.consumeAsFlow().collect { action ->
+                when (action) {
+                    RefreshAction -> refresh(true)
+                }
+            }
+        }
 
         refresh(false)
     }
@@ -180,6 +193,12 @@ internal class FollowedViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             updateFollowedShows(UpdateFollowedShows.Params(fromInteraction, RefreshType.QUICK))
                 .collectInto(loadingState)
+        }
+    }
+
+    fun submitAction(action: FollowedAction) {
+        viewModelScope.launch {
+            if (!pendingActions.isClosedForSend) pendingActions.send(action)
         }
     }
 
