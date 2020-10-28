@@ -43,7 +43,12 @@ android {
     }
 
     buildFeatures {
-        dataBinding true
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerVersion Libs.Kotlin.version
+        kotlinCompilerExtensionVersion Libs.AndroidX.Compose.version
     }
 }
 
@@ -51,12 +56,9 @@ dependencies {
     implementation project(':base')
     implementation project(':base-android')
     implementation project(':domain')
-
+    implementation project(':common-ui-compose')
     implementation project(':common-ui-view')
-    implementation project(':common-epoxy')
-    implementation project(':common-layouts')
     implementation project(':common-imageloading')
-    implementation project(':common-databinding')
 
     implementation Libs.AndroidX.Lifecycle.livedata
     implementation Libs.AndroidX.Lifecycle.viewmodel
@@ -65,21 +67,28 @@ dependencies {
     implementation Libs.AndroidX.Paging.compose
 
     implementation Libs.AndroidX.appcompat
-    implementation Libs.AndroidX.recyclerview
-    implementation Libs.AndroidX.swiperefresh
-    implementation Libs.AndroidX.constraintlayout
     implementation Libs.AndroidX.coreKtx
     implementation Libs.AndroidX.Fragment.fragment
     implementation Libs.AndroidX.Fragment.fragmentKtx
     implementation Libs.AndroidX.Navigation.fragment
 
+    implementation Libs.AndroidX.Compose.runtime
+    implementation Libs.AndroidX.Compose.foundation
+    implementation Libs.AndroidX.Compose.ui
+    implementation Libs.AndroidX.Compose.layout
+    implementation Libs.AndroidX.Compose.material
+    implementation Libs.AndroidX.Compose.animation
+    implementation Libs.AndroidX.Compose.tooling
+    implementation Libs.AndroidX.Compose.livedata
+
     implementation Libs.Mdc.material
+    implementation Libs.Mdc.composeThemeAdapter
+
+    implementation Libs.Accompanist.coil
 
     implementation Libs.Hilt.library
     kapt Libs.Hilt.compiler
 
     implementation Libs.AndroidX.Hilt.viewmodel
     kapt Libs.AndroidX.Hilt.compiler
-
-    kapt Libs.Epoxy.processor
 }

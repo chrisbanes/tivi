@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,8 @@
 
 package app.tivi.home.followed
 
-import com.airbnb.epoxy.EpoxyDataBindingPattern
-
-@EpoxyDataBindingPattern(rClass = R::class, layoutPrefix = "view_holder")
-internal object EpoxyDataBindingConfig
+sealed class FollowedAction
+object RefreshAction : FollowedAction()
+object LoginAction : FollowedAction()
+object OpenUserDetails : FollowedAction()
+data class OpenShowDetails(val showId: Long) : FollowedAction()
