@@ -22,7 +22,6 @@ import android.view.ActionMode
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.updatePadding
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.FragmentWithBinding
 import app.tivi.api.UiError
@@ -35,7 +34,6 @@ import app.tivi.extensions.doOnSizeChange
 import app.tivi.ui.ProgressTimeLatch
 import app.tivi.ui.SpacingItemDecorator
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.flow.collect
 
 @SuppressLint("ValidFragment")
 abstract class EntryGridFragment<LI, VM> : FragmentWithBinding<FragmentEntryGridBinding>()
@@ -90,9 +88,9 @@ abstract class EntryGridFragment<LI, VM> : FragmentWithBinding<FragmentEntryGrid
 
         binding.gridSwipeRefresh.setOnRefreshListener(viewModel::refresh)
 
-        lifecycleScope.launchWhenStarted {
-            viewModel.pagedList.collect { controller.submitList(it) }
-        }
+//        lifecycleScope.launchWhenStarted {
+//            viewModel.pagedList.collect { controller.submitList(it) }
+//        }
 
         viewModel.liveData.observe(viewLifecycleOwner, ::render)
     }

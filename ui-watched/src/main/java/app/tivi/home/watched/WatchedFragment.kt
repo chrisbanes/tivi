@@ -115,12 +115,12 @@ class WatchedFragment : FragmentWithBinding<FragmentWatchedBinding>() {
         }
 
         binding.watchedSwipeRefresh.setOnRefreshListener(viewModel::refresh)
-
-        lifecycleScope.launchWhenStarted {
-            viewModel.pagedList.collect {
-                controller.submitList(it)
-            }
-        }
+//
+//        lifecycleScope.launchWhenStarted {
+//            viewModel.pagedList.collect {
+//                controller.submitList(it)
+//            }
+//        }
 
         viewModel.liveData.observe(viewLifecycleOwner, ::render)
     }
