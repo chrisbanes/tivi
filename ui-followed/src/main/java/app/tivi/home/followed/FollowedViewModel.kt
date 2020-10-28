@@ -144,8 +144,6 @@ internal class FollowedViewModel @ViewModelInject constructor(
         )
     }
 
-    fun refresh() = refresh(true)
-
     private fun refresh(fromUser: Boolean) {
         viewModelScope.launch {
             observeTraktAuthState.observe().first().also { authState ->
