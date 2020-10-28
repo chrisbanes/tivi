@@ -134,7 +134,8 @@ object Libs {
             private const val version = "3.0.0-SNAPSHOT"
             const val common = "androidx.paging:paging-common-ktx:$version"
             const val runtime = "androidx.paging:paging-runtime-ktx:$version"
-            const val compose = "androidx.paging:paging-compose:$version"
+
+            const val compose = "androidx.paging:paging-compose:1.0.0-SNAPSHOT"
         }
 
         const val preference = "androidx.preference:preference:1.1.1"
