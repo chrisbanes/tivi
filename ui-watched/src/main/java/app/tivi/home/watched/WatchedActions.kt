@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,13 @@
 
 package app.tivi.home.watched
 
-import com.airbnb.epoxy.EpoxyDataBindingPattern
+import app.tivi.data.entities.SortOption
 
-@EpoxyDataBindingPattern(rClass = R::class, layoutPrefix = "view_holder")
-internal object EpoxyDataBindingConfig
+sealed class WatchedAction {
+    object RefreshAction : WatchedAction()
+    object LoginAction : WatchedAction()
+    data class FilterShows(val filter: String = "") : WatchedAction()
+    data class ChangeSort(val sort: SortOption) : WatchedAction()
+    object OpenUserDetails : WatchedAction()
+    data class OpenShowDetails(val showId: Long) : WatchedAction()
+}

@@ -17,161 +17,84 @@
 package app.tivi.home.watched
 
 import android.os.Bundle
-import android.view.ActionMode
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import androidx.compose.runtime.Providers
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.staticAmbientOf
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.net.toUri
-import androidx.core.view.updatePadding
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import app.tivi.FragmentWithBinding
-import app.tivi.common.imageloading.loadImageUrl
-import app.tivi.data.entities.SortOption
-import app.tivi.data.resultentities.WatchedShowEntryWithShow
-import app.tivi.extensions.doOnSizeChange
-import app.tivi.home.watched.databinding.FragmentWatchedBinding
-import app.tivi.ui.AuthStateMenuItemBinder
-import app.tivi.ui.SpacingItemDecorator
-import app.tivi.ui.authStateToolbarMenuBinder
-import app.tivi.ui.recyclerview.HideImeOnScrollListener
+import androidx.paging.compose.collectAsLazyPagingItems
+import app.tivi.common.compose.TiviContentSetup
+import app.tivi.common.compose.TiviDateFormatterAmbient
+import app.tivi.home.HomeTextCreator
+import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class WatchedFragment : FragmentWithBinding<FragmentWatchedBinding>() {
+class WatchedFragment : Fragment() {
+    @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
+    @Inject internal lateinit var homeTextCreator: HomeTextCreator
+
     private val viewModel: WatchedViewModel by viewModels()
 
-    @Inject internal lateinit var controller: WatchedEpoxyController
+    private val pendingActions = Channel<WatchedAction>(Channel.BUFFERED)
 
-    private var authStateMenuItemBinder: AuthStateMenuItemBinder? = null
-
-    private var currentActionMode: ActionMode? = null
-
-    override fun createBinding(
+    override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): FragmentWatchedBinding {
-        return FragmentWatchedBinding.inflate(inflater, container, false)
-    }
+    ): View? = ComposeView(requireContext()).apply {
+        layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
-    override fun onViewCreated(binding: FragmentWatchedBinding, savedInstanceState: Bundle?) {
-        authStateMenuItemBinder = authStateToolbarMenuBinder(
-            binding.watchedToolbar,
-            R.id.home_menu_user_avatar,
-            R.id.home_menu_user_login
-        ) { menuItem, url -> menuItem.loadImageUrl(requireContext(), url) }
-
-        binding.watchedToolbar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.home_menu_user_login, R.id.home_menu_user_avatar -> {
-                    findNavController().navigate("app.tivi://account".toUri())
-                    true
-                }
-                else -> false
-            }
-        }
-        binding.watchedToolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
-
-        binding.watchedAppBar.doOnSizeChange {
-            binding.watchedRv.updatePadding(top = it.height)
-            binding.watchedSwipeRefresh.setProgressViewOffset(
-                true,
-                0,
-                it.height + binding.watchedSwipeRefresh.progressCircleDiameter / 2
-            )
-            true
-        }
-
-        controller.callbacks = object : WatchedEpoxyController.Callbacks {
-            override fun onItemClicked(item: WatchedShowEntryWithShow) {
-                // Let the ViewModel have the first go
-                if (viewModel.onItemClick(item.show)) {
-                    return
-                }
-
-                findNavController().navigate("app.tivi://show/${item.show.id}".toUri())
-            }
-
-            override fun onItemLongClicked(item: WatchedShowEntryWithShow): Boolean {
-                return viewModel.onItemLongClick(item.show)
-            }
-
-            override fun onFilterChanged(filter: String) = viewModel.setFilter(filter)
-
-            override fun onSortSelected(sort: SortOption) = viewModel.setSort(sort)
-        }
-
-        binding.watchedRv.apply {
-            addItemDecoration(SpacingItemDecorator(paddingLeft))
-            addOnScrollListener(HideImeOnScrollListener())
-            setController(controller)
-        }
-
-        binding.watchedSwipeRefresh.setOnRefreshListener(viewModel::refresh)
-//
-//        lifecycleScope.launchWhenStarted {
-//            viewModel.pagedList.collect {
-//                controller.submitList(it)
-//            }
-//        }
-
-        viewModel.liveData.observe(viewLifecycleOwner, ::render)
-    }
-
-    private fun render(state: WatchedViewState) {
-        val binding = requireBinding()
-
-        if (state.selectionOpen && currentActionMode == null) {
-            startSelectionActionMode()
-        } else if (!state.selectionOpen && currentActionMode != null) {
-            currentActionMode?.finish()
-        }
-
-        currentActionMode?.title = getString(R.string.selection_title, state.selectedShowIds.size)
-
-        authStateMenuItemBinder?.bind(state.authState, state.user)
-
-        binding.state = state
-        controller.state = state
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        currentActionMode?.finish()
-        controller.clear()
-        authStateMenuItemBinder = null
-    }
-
-    private fun startSelectionActionMode() {
-        currentActionMode = requireActivity().startActionMode(
-            object : ActionMode.Callback {
-                override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
-                    when (item.itemId) {
-                        R.id.menu_follow -> viewModel.followSelectedShows()
-                    }
-                    return true
-                }
-
-                override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-                    mode.menuInflater.inflate(R.menu.action_mode_watched, menu)
-                    return true
-                }
-
-                override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = true
-
-                override fun onDestroyActionMode(mode: ActionMode) {
-                    viewModel.clearSelection()
-
-                    if (mode == currentActionMode) {
-                        currentActionMode = null
+        setContent {
+            Providers(
+                TiviDateFormatterAmbient provides tiviDateFormatter,
+                AmbientHomeTextCreator provides homeTextCreator,
+            ) {
+                TiviContentSetup {
+                    val viewState by viewModel.liveData.observeAsState()
+                    if (viewState != null) {
+                        Watched(
+                            state = viewState!!,
+                            list = viewModel.pagedList.collectAsLazyPagingItems(),
+                            actioner = { pendingActions.offer(it) },
+                        )
                     }
                 }
             }
-        )
+        }
     }
+
+    override fun onStart() {
+        super.onStart()
+
+        lifecycleScope.launchWhenStarted {
+            pendingActions.consumeAsFlow().collect { action ->
+                when (action) {
+                    WatchedAction.LoginAction,
+                    WatchedAction.OpenUserDetails -> findNavController().navigate("app.tivi://account".toUri())
+                    is WatchedAction.OpenShowDetails -> {
+                        findNavController().navigate("app.tivi://show/${action.showId}".toUri())
+                    }
+                    // TODO else -> viewModel.submitAction(action)
+                }
+            }
+        }
+    }
+}
+
+val AmbientHomeTextCreator = staticAmbientOf<HomeTextCreator> {
+    error("HomeTextCreator not provided")
 }
