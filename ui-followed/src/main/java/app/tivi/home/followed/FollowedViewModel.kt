@@ -51,23 +51,7 @@ internal class FollowedViewModel @ViewModelInject constructor(
     private val observeTraktAuthState: ObserveTraktAuthState,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val observeUserDetails: ObserveUserDetails
-) : ReduxViewModel<FollowedViewState>(
-    FollowedViewState()
-) {
-//    private val boundaryCallback = object : PagedList.BoundaryCallback<FollowedShowEntryWithShow>() {
-//        override fun onZeroItemsLoaded() {
-//            viewModelScope.launchSetState { copy(isEmpty = filter.isNullOrEmpty()) }
-//        }
-//
-//        override fun onItemAtEndLoaded(itemAtEnd: FollowedShowEntryWithShow) {
-//            viewModelScope.launchSetState { copy(isEmpty = false) }
-//        }
-//
-//        override fun onItemAtFrontLoaded(itemAtFront: FollowedShowEntryWithShow) {
-//            viewModelScope.launchSetState { copy(isEmpty = false) }
-//        }
-//    }
-
+) : ReduxViewModel<FollowedViewState>(FollowedViewState()) {
     private val pendingActions = Channel<FollowedAction>(Channel.BUFFERED)
 
     private val loadingState = ObservableLoadingCounter()
@@ -96,7 +80,6 @@ internal class FollowedViewModel @ViewModelInject constructor(
 
         viewModelScope.launch {
             observeTraktAuthState.observe()
-                .distinctUntilChanged()
                 .onEach { if (it == TraktAuthState.LOGGED_IN) refresh(false) }
                 .collectAndSetState { copy(authState = it) }
         }
@@ -126,7 +109,8 @@ internal class FollowedViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             pendingActions.consumeAsFlow().collect { action ->
                 when (action) {
-                    RefreshAction -> refresh(true)
+                    FollowedAction.RefreshAction -> refresh(true)
+                    is FollowedAction.FilterShows -> setFilter(action.filter)
                 }
             }
         }
@@ -154,7 +138,7 @@ internal class FollowedViewModel @ViewModelInject constructor(
         }
     }
 
-    fun setFilter(filter: String) {
+    private fun setFilter(filter: String) {
         viewModelScope.launchSetState { copy(filter = filter, filterActive = filter.isNotEmpty()) }
     }
 
