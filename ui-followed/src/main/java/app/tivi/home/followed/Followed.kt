@@ -21,6 +21,7 @@ import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayout
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -36,6 +37,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AmbientEmphasisLevels
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
@@ -96,8 +98,9 @@ fun Followed(
                     FilterSortPanel(
                         filterHint = stringResource(R.string.filter_shows, list.itemCount),
                         onFilterChanged = { actioner(FollowedAction.FilterShows(it)) },
-                        sorts = state.availableSorts,
-                        onSortChanged = { actioner(FollowedAction.ChangeSort(it)) },
+                        sortOptions = state.availableSorts,
+                        currentSortOption = state.sort,
+                        onSortSelected = { actioner(FollowedAction.ChangeSort(it)) },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -140,8 +143,9 @@ private fun FilterSortPanel(
     filterHint: String,
     onFilterChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
-    sorts: List<SortOption>,
-    onSortChanged: (SortOption) -> Unit,
+    sortOptions: List<SortOption>,
+    currentSortOption: SortOption,
+    onSortSelected: (SortOption) -> Unit,
 ) {
     Row(modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
         var filter by remember { mutableStateOf(TextFieldValue()) }
@@ -157,14 +161,16 @@ private fun FilterSortPanel(
         )
 
         SortMenuPopup(
-            options = sorts,
-            onSortSelected = onSortChanged,
+            sortOptions = sortOptions,
+            currentSortOption = currentSortOption,
+            onSortSelected = onSortSelected,
             icon = { IconResource(R.drawable.ic_sort_black_24dp) },
             iconModifier = Modifier.align(Alignment.CenterVertically)
         )
     }
 }
 
+@OptIn(ExperimentalLayout::class)
 @Composable
 private fun FollowedShowItem(
     show: TiviShow,
@@ -178,8 +184,10 @@ private fun FollowedShowItem(
     Row(
         modifier
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(vertical = 8.dp)
     ) {
+        Spacer(Modifier.preferredWidth(16.dp))
+
         if (poster != null) {
             Surface(
                 elevation = 1.dp,
@@ -194,43 +202,42 @@ private fun FollowedShowItem(
 
         Spacer(Modifier.preferredWidth(16.dp))
 
-        Column(
-            Modifier.weight(1f)
-                .align(Alignment.Bottom)
-        ) {
-            ProvideEmphasis(AmbientEmphasisLevels.current.high) {
-                Text(
-                    text = textCreator.showTitle(show = show).toString(),
-                    style = MaterialTheme.typography.subtitle1,
+        Column(Modifier.weight(1f).fillMaxHeight()) {
+            Column(Modifier.fillMaxWidth().weight(1f).padding(end = 16.dp)) {
+                ProvideEmphasis(AmbientEmphasisLevels.current.high) {
+                    Text(
+                        text = textCreator.showTitle(show = show).toString(),
+                        style = MaterialTheme.typography.subtitle1,
+                    )
+                }
+
+                Spacer(Modifier.weight(1f))
+
+                LinearProgressIndicator(
+                    progress = when {
+                        totalEpisodeCount > 0 -> watchedEpisodeCount / totalEpisodeCount.toFloat()
+                        else -> 0f
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 )
+
+                Spacer(Modifier.preferredHeight(2.dp))
+
+                ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
+                    Text(
+                        text = textCreator.followedShowEpisodeWatchStatus(
+                            episodeCount = totalEpisodeCount,
+                            watchedEpisodeCount = watchedEpisodeCount
+                        ).toString(),
+                        style = MaterialTheme.typography.caption
+                    )
+                }
+
+                Spacer(Modifier.preferredHeight(8.dp))
             }
 
-            Spacer(Modifier.preferredHeight(16.dp))
-
-            LinearProgressIndicator(
-                progress = when {
-                    totalEpisodeCount > 0 -> watchedEpisodeCount / totalEpisodeCount.toFloat()
-                    else -> 0f
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(Modifier.preferredHeight(2.dp))
-
-            ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
-                Text(
-                    text = textCreator.followedShowEpisodeWatchStatus(
-                        episodeCount = totalEpisodeCount,
-                        watchedEpisodeCount = watchedEpisodeCount
-                    ).toString(),
-                    style = MaterialTheme.typography.caption
-                )
-            }
-
-            Spacer(Modifier.preferredHeight(4.dp))
+            Divider()
         }
-
-        Spacer(Modifier.preferredWidth(16.dp))
     }
 }
 
