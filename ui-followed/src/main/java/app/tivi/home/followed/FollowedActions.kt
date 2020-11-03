@@ -16,8 +16,10 @@
 
 package app.tivi.home.followed
 
-sealed class FollowedAction
-object RefreshAction : FollowedAction()
-object LoginAction : FollowedAction()
-object OpenUserDetails : FollowedAction()
-data class OpenShowDetails(val showId: Long) : FollowedAction()
+sealed class FollowedAction {
+    object RefreshAction : FollowedAction()
+    object LoginAction : FollowedAction()
+    data class FilterShows(val filter: String = "") : FollowedAction()
+    object OpenUserDetails : FollowedAction()
+    data class OpenShowDetails(val showId: Long) : FollowedAction()
+}

@@ -16,6 +16,10 @@
 
 package app.tivi.home.followed
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -39,12 +43,16 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +60,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.onSizeChanged
 import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
@@ -87,6 +96,16 @@ fun Followed(
 
                 spacerItem(16.dp)
 
+                item {
+                    FilterSortPanel(
+                        filterHint = stringResource(R.string.filter_shows, list.itemCount),
+                        onFilterChanged = { filter ->
+                            actioner(FollowedAction.FilterShows(filter))
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
                 items(list) { entry ->
                     if (entry != null) {
                         FollowedShowItem(
@@ -94,7 +113,7 @@ fun Followed(
                             poster = entry.poster,
                             watchedEpisodeCount = entry.stats?.watchedEpisodeCount ?: 0,
                             totalEpisodeCount = entry.stats?.episodeCount ?: 0,
-                            onClick = { actioner(OpenShowDetails(entry.show.id)) },
+                            onClick = { actioner(FollowedAction.OpenShowDetails(entry.show.id)) },
                             modifier = Modifier.fillMaxWidth().preferredHeight(112.dp)
                         )
                     } else {
@@ -109,13 +128,50 @@ fun Followed(
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
                 refreshing = state.isLoading,
-                onRefreshActionClick = { actioner(RefreshAction) },
-                onUserActionClick = { actioner(OpenUserDetails) },
+                onRefreshActionClick = { actioner(FollowedAction.RefreshAction) },
+                onUserActionClick = { actioner(FollowedAction.OpenUserDetails) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .onSizeChanged { appBarHeight = it.height }
             )
         }
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun FilterSortPanel(
+    filterHint: String,
+    onFilterChanged: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+        var filter by remember { mutableStateOf(TextFieldValue()) }
+
+        OutlinedTextField(
+            value = filter,
+            onValueChange = { value ->
+                filter = value
+                onFilterChanged(value.text)
+            },
+            trailingIcon = {
+                AnimatedVisibility(
+                    visible = filter.text.isNotEmpty(),
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    IconButton(
+                        onClick = {
+                            filter = TextFieldValue()
+                            onFilterChanged("")
+                        },
+                        icon = { Icon(Icons.Default.Clear) }
+                    )
+                }
+            },
+            placeholder = { Text(text = filterHint) },
+            modifier = Modifier.weight(1f)
+        )
     }
 }
 

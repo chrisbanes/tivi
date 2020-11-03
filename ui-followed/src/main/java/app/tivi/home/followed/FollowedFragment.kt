@@ -82,9 +82,9 @@ class FollowedFragment : Fragment() {
         lifecycleScope.launchWhenStarted {
             pendingActions.consumeAsFlow().collect { action ->
                 when (action) {
-                    LoginAction,
-                    OpenUserDetails -> findNavController().navigate("app.tivi://account".toUri())
-                    is OpenShowDetails -> {
+                    FollowedAction.LoginAction,
+                    FollowedAction.OpenUserDetails -> findNavController().navigate("app.tivi://account".toUri())
+                    is FollowedAction.OpenShowDetails -> {
                         findNavController().navigate("app.tivi://show/${action.showId}".toUri())
                     }
                     else -> viewModel.submitAction(action)
