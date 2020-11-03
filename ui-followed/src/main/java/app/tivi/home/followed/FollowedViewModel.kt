@@ -111,6 +111,7 @@ internal class FollowedViewModel @ViewModelInject constructor(
                 when (action) {
                     FollowedAction.RefreshAction -> refresh(true)
                     is FollowedAction.FilterShows -> setFilter(action.filter)
+                    is FollowedAction.ChangeSort -> setSort(action.sort)
                 }
             }
         }
@@ -142,7 +143,7 @@ internal class FollowedViewModel @ViewModelInject constructor(
         viewModelScope.launchSetState { copy(filter = filter, filterActive = filter.isNotEmpty()) }
     }
 
-    fun setSort(sort: SortOption) = viewModelScope.launchSetState {
+    private fun setSort(sort: SortOption) = viewModelScope.launchSetState {
         require(availableSorts.contains(sort))
         copy(sort = sort)
     }

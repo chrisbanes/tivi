@@ -16,10 +16,13 @@
 
 package app.tivi.home.followed
 
+import app.tivi.data.entities.SortOption
+
 sealed class FollowedAction {
     object RefreshAction : FollowedAction()
     object LoginAction : FollowedAction()
     data class FilterShows(val filter: String = "") : FollowedAction()
+    data class ChangeSort(val sort: SortOption) : FollowedAction()
     object OpenUserDetails : FollowedAction()
     data class OpenShowDetails(val showId: Long) : FollowedAction()
 }
