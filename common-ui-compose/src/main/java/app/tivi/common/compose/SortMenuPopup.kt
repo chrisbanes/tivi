@@ -27,14 +27,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import app.tivi.data.entities.SortOption
 
 @Composable
 fun SortMenuPopup(
-    options: List<SortOption>,
+    sortOptions: List<SortOption>,
     onSortSelected: (SortOption) -> Unit,
     icon: @Composable () -> Unit,
     iconModifier: Modifier = Modifier,
+    currentSortOption: SortOption? = null,
 ) {
     var sortPopupOpen by remember { mutableStateOf(false) }
     DropdownMenu(
@@ -48,7 +50,7 @@ fun SortMenuPopup(
         expanded = sortPopupOpen,
         onDismissRequest = { sortPopupOpen = false },
     ) {
-        options.forEach { sort ->
+        sortOptions.forEach { sort ->
             DropdownMenuItem(
                 onClick = {
                     onSortSelected(sort)
@@ -62,7 +64,8 @@ fun SortMenuPopup(
                         SortOption.ALPHABETICAL -> stringResource(R.string.popup_sort_alpha)
                         SortOption.LAST_WATCHED -> stringResource(R.string.popup_sort_last_watched)
                         SortOption.DATE_ADDED -> stringResource(R.string.popup_sort_date_followed)
-                    }
+                    },
+                    fontWeight = if (sort == currentSortOption) FontWeight.Bold else null
                 )
             }
         }
