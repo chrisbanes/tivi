@@ -21,10 +21,10 @@ import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
 import app.tivi.base.InvokeSuccess
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withTimeout
@@ -78,15 +78,22 @@ abstract class SuspendingWorkInteractor<P : Any, T> : SubjectInteractor<P, T>() 
 }
 
 abstract class SubjectInteractor<P : Any, T> {
-    private val paramState = MutableStateFlow<P?>(null)
+    // Ideally this would be buffer = 0, since we use flatMapLatest below, BUT invoke is not
+    // suspending. This means that we can't suspend while flatMapLatest cancels any
+    // existing flows. The buffer of 1 means that we can use tryEmit() and buffer the value
+    // instead, resulting in mostly the same result.
+    private val paramState = MutableSharedFlow<P>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
 
     operator fun invoke(params: P) {
-        paramState.value = params
+        paramState.tryEmit(params)
     }
 
     protected abstract fun createObservable(params: P): Flow<T>
 
-    fun observe(): Flow<T> = paramState.filterNotNull().flatMapLatest { createObservable(it) }
+    fun observe(): Flow<T> = paramState.flatMapLatest { createObservable(it) }
 }
 
 operator fun Interactor<Unit>.invoke() = invoke(Unit)
