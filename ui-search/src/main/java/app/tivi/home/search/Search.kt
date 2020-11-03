@@ -16,10 +16,7 @@
 
 package app.tivi.home.search
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
@@ -36,13 +33,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.material.AmbientEmphasisLevels
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.ProvideEmphasis
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,6 +50,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.AbsoluteElevationSurface
 import app.tivi.common.compose.PosterCard
+import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.WorkaroundLazyColumnFor
 import app.tivi.common.compose.statusBarsPadding
 import app.tivi.data.entities.ShowTmdbImage
@@ -97,6 +90,11 @@ fun Search(
                     onValueChange = {
                         searchQuery.value = it
                         actioner(SearchAction.Search(it.text))
+                    },
+                    hint = stringResource(R.string.search_hint),
+                    imeAction = ImeAction.Search,
+                    onImeActionPerformed = { _, keyboardController ->
+                        keyboardController?.hideSoftwareKeyboard()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -165,39 +163,4 @@ private fun SearchRow(
             }
         }
     }
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-private fun SearchTextField(
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        placeholder = {
-            ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
-                Text(text = stringResource(R.string.search_hint))
-            }
-        },
-        imeAction = ImeAction.Search,
-        onImeActionPerformed = { _, keyboardController ->
-            keyboardController?.hideSoftwareKeyboard()
-        },
-        trailingIcon = {
-            AnimatedVisibility(
-                visible = value.text.isNotEmpty(),
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                IconButton(
-                    onClick = { onValueChange(TextFieldValue()) },
-                    icon = { Icon(asset = Icons.Default.Clear) }
-                )
-            }
-        },
-        modifier = modifier
-    )
 }

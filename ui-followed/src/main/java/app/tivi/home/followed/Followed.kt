@@ -16,10 +16,7 @@
 
 package app.tivi.home.followed
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -43,11 +40,9 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -67,10 +62,13 @@ import androidx.paging.compose.items
 import app.tivi.common.compose.AbsoluteElevationSurface
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.IconResource
+import app.tivi.common.compose.SearchTextField
+import app.tivi.common.compose.SortMenuPopup
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.spacerItem
 import app.tivi.common.compose.statusBarsPadding
 import app.tivi.data.entities.ShowTmdbImage
+import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
@@ -94,14 +92,12 @@ fun Followed(
                     Spacer(Modifier.preferredHeight(height))
                 }
 
-                spacerItem(16.dp)
-
                 item {
                     FilterSortPanel(
                         filterHint = stringResource(R.string.filter_shows, list.itemCount),
-                        onFilterChanged = { filter ->
-                            actioner(FollowedAction.FilterShows(filter))
-                        },
+                        onFilterChanged = { actioner(FollowedAction.FilterShows(it)) },
+                        sorts = state.availableSorts,
+                        onSortChanged = { actioner(FollowedAction.ChangeSort(it)) },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -143,34 +139,28 @@ fun Followed(
 private fun FilterSortPanel(
     filterHint: String,
     onFilterChanged: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    sorts: List<SortOption>,
+    onSortChanged: (SortOption) -> Unit,
 ) {
     Row(modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
         var filter by remember { mutableStateOf(TextFieldValue()) }
 
-        OutlinedTextField(
+        SearchTextField(
             value = filter,
             onValueChange = { value ->
                 filter = value
                 onFilterChanged(value.text)
             },
-            trailingIcon = {
-                AnimatedVisibility(
-                    visible = filter.text.isNotEmpty(),
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    IconButton(
-                        onClick = {
-                            filter = TextFieldValue()
-                            onFilterChanged("")
-                        },
-                        icon = { Icon(Icons.Default.Clear) }
-                    )
-                }
-            },
-            placeholder = { Text(text = filterHint) },
+            hint = filterHint,
             modifier = Modifier.weight(1f)
+        )
+
+        SortMenuPopup(
+            options = sorts,
+            onSortSelected = onSortChanged,
+            icon = { IconResource(R.drawable.ic_sort_black_24dp) },
+            iconModifier = Modifier.align(Alignment.CenterVertically)
         )
     }
 }
