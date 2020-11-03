@@ -18,8 +18,8 @@ package app.tivi.home
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import app.tivi.AppNavigator
 import app.tivi.R
@@ -35,7 +35,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : TiviActivity() {
-    private val viewModel: HomeActivityViewModel by viewModels()
+    private lateinit var viewModel: MainActivityViewModel
 
     private lateinit var binding: ActivityMainBinding
 
@@ -46,6 +46,8 @@ class MainActivity : TiviActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
