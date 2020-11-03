@@ -17,47 +17,37 @@
 package app.tivi.home
 
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.UpdateUserDetails
 import app.tivi.domain.invoke
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class HomeActivityViewModel @ViewModelInject constructor(
+class MainActivityViewModel @ViewModelInject constructor(
     observeTraktAuthState: ObserveTraktAuthState,
     private val updateUserDetails: UpdateUserDetails,
     observeUserDetails: ObserveUserDetails,
     private val logger: Logger
-) : ReduxViewModel<HomeActivityViewState>(
-    HomeActivityViewState()
-) {
+) : ViewModel() {
     init {
         viewModelScope.launch {
-            observeUserDetails.observe().collectAndSetState { copy(user = it) }
+            observeUserDetails.observe().collect { user ->
+                logger.setUserId(user?.username ?: "")
+            }
         }
         observeUserDetails(ObserveUserDetails.Params("me"))
 
         viewModelScope.launch {
-            observeTraktAuthState.observe()
-                .distinctUntilChanged()
-                .onEach {
-                    if (it == TraktAuthState.LOGGED_IN) {
-                        refreshMe()
-                    }
-                }
-                .collectAndSetState { copy(authState = it) }
+            observeTraktAuthState.observe().collect { state ->
+                if (state == TraktAuthState.LOGGED_IN) refreshMe()
+            }
         }
         observeTraktAuthState()
-
-        selectSubscribe(HomeActivityViewState::user) { user ->
-            logger.setUserId(user?.username ?: "")
-        }
     }
 
     private fun refreshMe() {
