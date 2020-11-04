@@ -58,6 +58,8 @@ abstract class ResultInteractor<in P, R> {
         emit(doWork(params))
     }
 
+    suspend fun executeSync(params: P): R = doWork(params)
+
     protected abstract suspend fun doWork(params: P): R
 }
 
@@ -75,12 +77,15 @@ abstract class SuspendingWorkInteractor<P : Any, T> : SubjectInteractor<P, T>() 
     abstract suspend fun doWork(params: P): T
 }
 
-abstract class SubjectInteractor<P : Any, T> {
+abstract class SubjectInteractor<P : Any, T>(
+    private val replayCount: Int = 0
+) {
     // Ideally this would be buffer = 0, since we use flatMapLatest below, BUT invoke is not
     // suspending. This means that we can't suspend while flatMapLatest cancels any
     // existing flows. The buffer of 1 means that we can use tryEmit() and buffer the value
     // instead, resulting in mostly the same result.
     private val paramState = MutableSharedFlow<P>(
+        replay = replayCount,
         extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
@@ -95,4 +100,5 @@ abstract class SubjectInteractor<P : Any, T> {
 }
 
 operator fun Interactor<Unit>.invoke() = invoke(Unit)
+suspend fun <R> ResultInteractor<Unit, R>.executeSync(): R = executeSync(Unit)
 operator fun <T> SubjectInteractor<Unit, T>.invoke() = invoke(Unit)

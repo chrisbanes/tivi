@@ -28,7 +28,6 @@ import app.tivi.trakt.TraktManager
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
 import org.threeten.bp.Duration
@@ -43,7 +42,7 @@ class UpdateRecommendedShows @Inject constructor(
     private val traktManager: TraktManager
 ) : Interactor<UpdateRecommendedShows.Params>() {
     override suspend fun doWork(params: Params) {
-        if (traktManager.state.first() != TraktAuthState.LOGGED_IN) {
+        if (traktManager.state.value != TraktAuthState.LOGGED_IN) {
             // If we're not logged in, we can't load the recommended shows
             return
         }

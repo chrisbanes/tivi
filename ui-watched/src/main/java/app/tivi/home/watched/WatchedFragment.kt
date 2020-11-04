@@ -84,11 +84,13 @@ class WatchedFragment : Fragment() {
             pendingActions.consumeAsFlow().collect { action ->
                 when (action) {
                     WatchedAction.LoginAction,
-                    WatchedAction.OpenUserDetails -> findNavController().navigate("app.tivi://account".toUri())
+                    WatchedAction.OpenUserDetails -> {
+                        findNavController().navigate("app.tivi://account".toUri())
+                    }
                     is WatchedAction.OpenShowDetails -> {
                         findNavController().navigate("app.tivi://show/${action.showId}".toUri())
                     }
-                    // TODO else -> viewModel.submitAction(action)
+                    else -> viewModel.submitAction(action)
                 }
             }
         }
