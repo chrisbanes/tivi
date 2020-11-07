@@ -72,11 +72,13 @@ internal class WatchedViewModel @ViewModelInject constructor(
         }
 
         viewModelScope.launch {
-            showSelection.observeSelectedShowIds().collectAndSetState { copy(selectedShowIds = it) }
+            showSelection.observeSelectedShowIds()
+                .collectAndSetState { copy(selectedShowIds = it) }
         }
 
         viewModelScope.launch {
-            showSelection.observeIsSelectionOpen().collectAndSetState { copy(selectionOpen = it) }
+            showSelection.observeIsSelectionOpen()
+                .collectAndSetState { copy(selectionOpen = it) }
         }
 
         viewModelScope.launch {
@@ -88,7 +90,8 @@ internal class WatchedViewModel @ViewModelInject constructor(
         observeTraktAuthState()
 
         viewModelScope.launch {
-            observeUserDetails.observe().collectAndSetState { copy(user = it) }
+            observeUserDetails.observe()
+                .collectAndSetState { copy(user = it) }
         }
         observeUserDetails(ObserveUserDetails.Params("me"))
 

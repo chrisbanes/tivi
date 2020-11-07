@@ -17,36 +17,43 @@
 package app.tivi.home.popular
 
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.ViewModel
+import androidx.paging.PagingConfig
 import app.tivi.base.InvokeStatus
-import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.observers.ObservePagedPopularShows
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
 import kotlinx.coroutines.flow.Flow
 
+@Suppress("unused")
 class PopularShowsViewModel @ViewModelInject constructor(
-    override val dispatchers: AppCoroutineDispatchers,
-    override val pagingInteractor: ObservePagedPopularShows,
+    private val dispatchers: AppCoroutineDispatchers,
+    pagingInteractor: ObservePagedPopularShows,
     private val interactor: UpdatePopularShows,
-    override val logger: Logger,
-    override val changeShowFollowStatus: ChangeShowFollowStatus
-) : EntryViewModel<PopularEntryWithShow, ObservePagedPopularShows>() {
+    private val logger: Logger,
+    private val changeShowFollowStatus: ChangeShowFollowStatus
+) : ViewModel() {
     init {
-        pagingInteractor(ObservePagedPopularShows.Params(pageListConfig))
-
-        launchObserves()
+        pagingInteractor(ObservePagedPopularShows.Params(PAGING_CONFIG))
 
         refresh(false)
     }
 
-    override fun callLoadMore(): Flow<InvokeStatus> {
+    private fun callLoadMore(): Flow<InvokeStatus> {
         return interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.NEXT_PAGE, true))
     }
 
-    override fun callRefresh(fromUser: Boolean): Flow<InvokeStatus> {
+    private fun refresh(fromUser: Boolean): Flow<InvokeStatus> {
         return interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH, fromUser))
+    }
+
+    companion object {
+        val PAGING_CONFIG = PagingConfig(
+            pageSize = 21 * 3,
+            prefetchDistance = 21,
+            enablePlaceholders = false
+        )
     }
 }
