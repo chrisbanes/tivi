@@ -30,7 +30,7 @@ jobs:
       - name: set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 8
+          java-version: 11
 
       - name: Decrypt secrets
         run: ./release/decrypt-secrets.sh
