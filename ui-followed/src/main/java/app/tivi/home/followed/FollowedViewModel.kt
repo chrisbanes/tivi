@@ -25,7 +25,9 @@ import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.ChangeShowFollowStatus
+import app.tivi.domain.interactors.GetTraktAuthState
 import app.tivi.domain.interactors.UpdateFollowedShows
 import app.tivi.domain.invoke
 import app.tivi.domain.observers.ObservePagedFollowedShows
@@ -41,7 +43,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
@@ -50,7 +51,8 @@ internal class FollowedViewModel @ViewModelInject constructor(
     private val observePagedFollowedShows: ObservePagedFollowedShows,
     private val observeTraktAuthState: ObserveTraktAuthState,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
-    private val observeUserDetails: ObserveUserDetails
+    private val observeUserDetails: ObserveUserDetails,
+    private val getTraktAuthState: GetTraktAuthState,
 ) : ReduxViewModel<FollowedViewState>(FollowedViewState()) {
     private val pendingActions = Channel<FollowedAction>(Channel.BUFFERED)
 
@@ -131,10 +133,8 @@ internal class FollowedViewModel @ViewModelInject constructor(
 
     private fun refresh(fromUser: Boolean) {
         viewModelScope.launch {
-            observeTraktAuthState.observe().first().also { authState ->
-                if (authState == TraktAuthState.LOGGED_IN) {
-                    refreshFollowed(fromUser)
-                }
+            if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
+                refreshFollowed(fromUser)
             }
         }
     }

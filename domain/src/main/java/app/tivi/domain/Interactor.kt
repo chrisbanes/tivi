@@ -58,6 +58,8 @@ abstract class ResultInteractor<in P, R> {
         emit(doWork(params))
     }
 
+    suspend fun executeSync(params: P): R = doWork(params)
+
     protected abstract suspend fun doWork(params: P): R
 }
 
@@ -81,6 +83,7 @@ abstract class SubjectInteractor<P : Any, T> {
     // existing flows. The buffer of 1 means that we can use tryEmit() and buffer the value
     // instead, resulting in mostly the same result.
     private val paramState = MutableSharedFlow<P>(
+        replay = 1,
         extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
@@ -95,4 +98,5 @@ abstract class SubjectInteractor<P : Any, T> {
 }
 
 operator fun Interactor<Unit>.invoke() = invoke(Unit)
+suspend fun <R> ResultInteractor<Unit, R>.executeSync(): R = executeSync(Unit)
 operator fun <T> SubjectInteractor<Unit, T>.invoke() = invoke(Unit)

@@ -24,7 +24,9 @@ import app.tivi.ReduxViewModel
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
+import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.ChangeShowFollowStatus
+import app.tivi.domain.interactors.GetTraktAuthState
 import app.tivi.domain.interactors.UpdateWatchedShows
 import app.tivi.domain.invoke
 import app.tivi.domain.observers.ObservePagedWatchedShows
@@ -34,10 +36,12 @@ import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.ShowStateSelector
 import app.tivi.util.collectInto
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
@@ -46,23 +50,12 @@ internal class WatchedViewModel @ViewModelInject constructor(
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val observePagedWatchedShows: ObservePagedWatchedShows,
     private val observeTraktAuthState: ObserveTraktAuthState,
+    private val getTraktAuthState: GetTraktAuthState,
     observeUserDetails: ObserveUserDetails
 ) : ReduxViewModel<WatchedViewState>(
     WatchedViewState()
 ) {
-//    private val boundaryCallback = object : PagedList.BoundaryCallback<WatchedShowEntryWithShow>() {
-//        override fun onZeroItemsLoaded() {
-//            viewModelScope.launchSetState { copy(isEmpty = filter.isNullOrEmpty()) }
-//        }
-//
-//        override fun onItemAtEndLoaded(itemAtEnd: WatchedShowEntryWithShow) {
-//            viewModelScope.launchSetState { copy(isEmpty = false) }
-//        }
-//
-//        override fun onItemAtFrontLoaded(itemAtFront: WatchedShowEntryWithShow) {
-//            viewModelScope.launchSetState { copy(isEmpty = false) }
-//        }
-//    }
+    private val pendingActions = Channel<WatchedAction>(Channel.BUFFERED)
 
     private val loadingState = ObservableLoadingCounter()
     private val showSelection = ShowStateSelector()
@@ -107,6 +100,16 @@ internal class WatchedViewModel @ViewModelInject constructor(
         // Subscribe to state changes, so update the observed data source
         subscribe(::updateDataSource)
 
+        viewModelScope.launch {
+            pendingActions.consumeAsFlow().collect { action ->
+                when (action) {
+                    WatchedAction.RefreshAction -> refresh(fromUser = true)
+                    is WatchedAction.FilterShows -> setFilter(action.filter)
+                    is WatchedAction.ChangeSort -> setSort(action.sort)
+                }
+            }
+        }
+
         refresh(false)
     }
 
@@ -120,25 +123,27 @@ internal class WatchedViewModel @ViewModelInject constructor(
         )
     }
 
-    fun refresh() = refresh(true)
-
     private fun refresh(fromUser: Boolean) {
         viewModelScope.launch {
-            observeTraktAuthState.observe().first().also { authState ->
-                if (authState == TraktAuthState.LOGGED_IN) {
-                    refreshWatched(fromUser)
-                }
+            if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
+                refreshWatched(fromUser)
             }
         }
     }
 
-    fun setFilter(filter: String) {
+    fun submitAction(action: WatchedAction) {
+        viewModelScope.launch {
+            if (!pendingActions.isClosedForSend) pendingActions.send(action)
+        }
+    }
+
+    private fun setFilter(filter: String) {
         viewModelScope.launchSetState {
             copy(filter = filter, filterActive = filter.isNotEmpty())
         }
     }
 
-    fun setSort(sort: SortOption) {
+    private fun setSort(sort: SortOption) {
         viewModelScope.launchSetState { copy(sort = sort) }
     }
 

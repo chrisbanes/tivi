@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package app.tivi.home.followed
+package app.tivi.home.watched
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Text
@@ -40,7 +40,6 @@ import androidx.compose.material.AmbientEmphasisLevels
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.Surface
@@ -66,6 +65,7 @@ import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.IconResource
 import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.SortMenuPopup
+import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.spacerItem
 import app.tivi.common.compose.statusBarsPadding
@@ -73,16 +73,17 @@ import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TraktUser
-import app.tivi.data.resultentities.FollowedShowEntryWithShow
+import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.trakt.TraktAuthState
 import dev.chrisbanes.accompanist.coil.CoilImage
+import org.threeten.bp.OffsetDateTime
 
 @OptIn(ExperimentalLazyDsl::class)
 @Composable
-fun Followed(
-    state: FollowedViewState,
-    list: LazyPagingItems<FollowedShowEntryWithShow>,
-    actioner: (FollowedAction) -> Unit
+fun Watched(
+    state: WatchedViewState,
+    list: LazyPagingItems<WatchedShowEntryWithShow>,
+    actioner: (WatchedAction) -> Unit
 ) {
     AbsoluteElevationSurface(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize()) {
@@ -97,22 +98,21 @@ fun Followed(
                 item {
                     FilterSortPanel(
                         filterHint = stringResource(R.string.filter_shows, list.itemCount),
-                        onFilterChanged = { actioner(FollowedAction.FilterShows(it)) },
+                        onFilterChanged = { actioner(WatchedAction.FilterShows(it)) },
                         sortOptions = state.availableSorts,
                         currentSortOption = state.sort,
-                        onSortSelected = { actioner(FollowedAction.ChangeSort(it)) },
+                        onSortSelected = { actioner(WatchedAction.ChangeSort(it)) },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
 
                 items(list) { entry ->
                     if (entry != null) {
-                        FollowedShowItem(
+                        WatchedShowItem(
                             show = entry.show,
                             poster = entry.poster,
-                            watchedEpisodeCount = entry.stats?.watchedEpisodeCount ?: 0,
-                            totalEpisodeCount = entry.stats?.episodeCount ?: 0,
-                            onClick = { actioner(FollowedAction.OpenShowDetails(entry.show.id)) },
+                            lastWatched = entry.entry.lastWatched,
+                            onClick = { actioner(WatchedAction.OpenShowDetails(entry.show.id)) },
                             modifier = Modifier.fillMaxWidth().preferredHeight(88.dp)
                         )
                     } else {
@@ -123,12 +123,12 @@ fun Followed(
                 spacerItem(16.dp)
             }
 
-            FollowedAppBar(
+            WatchedAppBar(
                 loggedIn = state.authState == TraktAuthState.LOGGED_IN,
                 user = state.user,
                 refreshing = state.isLoading,
-                onRefreshActionClick = { actioner(FollowedAction.RefreshAction) },
-                onUserActionClick = { actioner(FollowedAction.OpenUserDetails) },
+                onRefreshActionClick = { actioner(WatchedAction.RefreshAction) },
+                onUserActionClick = { actioner(WatchedAction.OpenUserDetails) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .onSizeChanged { appBarHeight = it.height }
@@ -172,11 +172,10 @@ private fun FilterSortPanel(
 
 @OptIn(ExperimentalLayout::class)
 @Composable
-private fun FollowedShowItem(
+private fun WatchedShowItem(
     show: TiviShow,
     poster: ShowTmdbImage?,
-    watchedEpisodeCount: Int,
-    totalEpisodeCount: Int,
+    lastWatched: OffsetDateTime,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -211,27 +210,19 @@ private fun FollowedShowItem(
                     )
                 }
 
-                Spacer(Modifier.weight(1f))
-
-                LinearProgressIndicator(
-                    progress = when {
-                        totalEpisodeCount > 0 -> watchedEpisodeCount / totalEpisodeCount.toFloat()
-                        else -> 0f
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
                 Spacer(Modifier.preferredHeight(2.dp))
 
                 ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
                     Text(
-                        text = textCreator.followedShowEpisodeWatchStatus(
-                            episodeCount = totalEpisodeCount,
-                            watchedEpisodeCount = watchedEpisodeCount
-                        ).toString(),
-                        style = MaterialTheme.typography.caption
+                        text = stringResource(
+                            R.string.library_last_watched,
+                            TiviDateFormatterAmbient.current.formatShortRelativeTime(lastWatched)
+                        ),
+                        style = MaterialTheme.typography.caption,
                     )
                 }
+
+                Spacer(Modifier.weight(1f))
 
                 Spacer(Modifier.preferredHeight(8.dp))
             }
@@ -244,7 +235,7 @@ private fun FollowedShowItem(
 private const val TranslucentAppBarAlpha = 0.93f
 
 @Composable
-private fun FollowedAppBar(
+private fun WatchedAppBar(
     loggedIn: Boolean,
     user: TraktUser?,
     refreshing: Boolean,
@@ -266,7 +257,7 @@ private fun FollowedAppBar(
         ) {
             ProvideEmphasis(AmbientEmphasisLevels.current.high) {
                 Text(
-                    text = stringResource(R.string.following_shows_title),
+                    text = stringResource(R.string.watched_shows_title),
                     style = MaterialTheme.typography.h6,
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )

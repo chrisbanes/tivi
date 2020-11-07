@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-package app.tivi.home.watched
+package app.tivi.domain.interactors
 
-import com.airbnb.epoxy.EpoxyDataBindingPattern
+import app.tivi.domain.ResultInteractor
+import app.tivi.trakt.TraktAuthState
+import app.tivi.trakt.TraktManager
+import javax.inject.Inject
 
-@EpoxyDataBindingPattern(rClass = R::class, layoutPrefix = "view_holder")
-internal object EpoxyDataBindingConfig
+class GetTraktAuthState @Inject constructor(
+    private val traktManager: TraktManager
+) : ResultInteractor<Unit, TraktAuthState>() {
+    override suspend fun doWork(params: Unit): TraktAuthState {
+        return traktManager.state.value
+    }
+}
