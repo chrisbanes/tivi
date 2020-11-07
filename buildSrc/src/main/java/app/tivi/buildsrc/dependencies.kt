@@ -54,7 +54,6 @@ object Libs {
 
     object Insetter {
         private const val version = "0.3.1"
-        const val dbx = "dev.chrisbanes:insetter-dbx:$version"
         const val ktx = "dev.chrisbanes:insetter-ktx:$version"
     }
 
@@ -222,14 +221,6 @@ object Libs {
         private const val version = "4.9.0"
         const val okhttp = "com.squareup.okhttp3:okhttp:$version"
         const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$version"
-    }
-
-    object Epoxy {
-        private const val version = "4.1.0"
-        const val epoxy = "com.airbnb.android:epoxy:$version"
-        const val paging = "com.airbnb.android:epoxy-paging3:$version"
-        const val dataBinding = "com.airbnb.android:epoxy-databinding:$version"
-        const val processor = "com.airbnb.android:epoxy-processor:$version"
     }
 
     object Coil {
