@@ -40,7 +40,6 @@ import androidx.compose.material.AmbientEmphasisLevels
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.Surface
@@ -66,6 +65,7 @@ import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.IconResource
 import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.SortMenuPopup
+import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.spacerItem
 import app.tivi.common.compose.statusBarsPadding
@@ -76,6 +76,7 @@ import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.trakt.TraktAuthState
 import dev.chrisbanes.accompanist.coil.CoilImage
+import org.threeten.bp.OffsetDateTime
 
 @OptIn(ExperimentalLazyDsl::class)
 @Composable
@@ -110,10 +111,9 @@ fun Watched(
                         WatchedShowItem(
                             show = entry.show,
                             poster = entry.poster,
-                            watchedEpisodeCount = 0,
-                            totalEpisodeCount = 0,
+                            lastWatched = entry.entry.lastWatched,
                             onClick = { actioner(WatchedAction.OpenShowDetails(entry.show.id)) },
-                            modifier = Modifier.fillMaxWidth().preferredHeight(112.dp)
+                            modifier = Modifier.fillMaxWidth().preferredHeight(88.dp)
                         )
                     } else {
                         // TODO placeholder?
@@ -175,8 +175,7 @@ private fun FilterSortPanel(
 private fun WatchedShowItem(
     show: TiviShow,
     poster: ShowTmdbImage?,
-    watchedEpisodeCount: Int,
-    totalEpisodeCount: Int,
+    lastWatched: OffsetDateTime,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -211,15 +210,19 @@ private fun WatchedShowItem(
                     )
                 }
 
-                Spacer(Modifier.weight(1f))
+                Spacer(Modifier.preferredHeight(2.dp))
 
-                LinearProgressIndicator(
-                    progress = when {
-                        totalEpisodeCount > 0 -> watchedEpisodeCount / totalEpisodeCount.toFloat()
-                        else -> 0f
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
+                ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
+                    Text(
+                        text = stringResource(
+                            R.string.library_last_watched,
+                            TiviDateFormatterAmbient.current.formatShortRelativeTime(lastWatched)
+                        ),
+                        style = MaterialTheme.typography.caption,
+                    )
+                }
+
+                Spacer(Modifier.weight(1f))
 
                 Spacer(Modifier.preferredHeight(8.dp))
             }

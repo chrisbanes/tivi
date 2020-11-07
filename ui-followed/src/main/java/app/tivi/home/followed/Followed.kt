@@ -113,7 +113,7 @@ fun Followed(
                             watchedEpisodeCount = entry.stats?.watchedEpisodeCount ?: 0,
                             totalEpisodeCount = entry.stats?.episodeCount ?: 0,
                             onClick = { actioner(FollowedAction.OpenShowDetails(entry.show.id)) },
-                            modifier = Modifier.fillMaxWidth().preferredHeight(112.dp)
+                            modifier = Modifier.fillMaxWidth().preferredHeight(88.dp)
                         )
                     } else {
                         // TODO placeholder?
