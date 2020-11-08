@@ -16,85 +16,11 @@
 
 package app.tivi.home.popular
 
-import android.os.Bundle
-import android.view.ActionMode
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
-import app.tivi.common.entrygrid.databinding.FragmentEntryGridBinding
-import app.tivi.common.layouts.PosterGridItemBindingModel_
-import app.tivi.data.resultentities.PopularEntryWithShow
-import app.tivi.util.EntryGridEpoxyController
-import app.tivi.util.EntryGridFragment
-import com.airbnb.epoxy.EpoxyModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class PopularShowsFragment : EntryGridFragment<PopularEntryWithShow, PopularShowsViewModel>() {
-    override val viewModel: PopularShowsViewModel by viewModels()
-
-    override fun onViewCreated(binding: FragmentEntryGridBinding, savedInstanceState: Bundle?) {
-        super.onViewCreated(binding, savedInstanceState)
-
-        binding.gridToolbar.apply {
-            setTitle(R.string.discover_popular_title)
-        }
-    }
-
-    internal fun onItemClicked(item: PopularEntryWithShow) {
-        findNavController().navigate("app.tivi://show/${item.show.id}".toUri())
-    }
-
-    override fun createController(): EntryGridEpoxyController<PopularEntryWithShow> {
-        return object : EntryGridEpoxyController<PopularEntryWithShow>() {
-            override fun buildItemModel(item: PopularEntryWithShow): EpoxyModel<*> {
-                return PosterGridItemBindingModel_()
-                    .id(item.generateStableId())
-                    .posterImage(item.poster)
-                    .tiviShow(item.show)
-                    .transitionName(item.show.homepage)
-                    .selected(item.show.id in state.selectedShowIds)
-                    .clickListener(
-                        View.OnClickListener {
-                            if (viewModel.onItemClick(item.show)) {
-                                return@OnClickListener
-                            }
-                            onItemClicked(item)
-                        }
-                    )
-                    .longClickListener(
-                        View.OnLongClickListener {
-                            viewModel.onItemLongClick(item.show)
-                        }
-                    )
-            }
-        }
-    }
-
-    override fun startSelectionActionMode(): ActionMode? {
-        return requireActivity().startActionMode(
-            object : ActionMode.Callback {
-                override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
-                    when (item.itemId) {
-                        R.id.menu_follow -> viewModel.followSelectedShows()
-                    }
-                    return true
-                }
-
-                override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-                    mode.menuInflater.inflate(R.menu.action_mode_entry, menu)
-                    return true
-                }
-
-                override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = true
-
-                override fun onDestroyActionMode(mode: ActionMode) {
-                    viewModel.clearSelection()
-                }
-            }
-        )
-    }
+class PopularShowsFragment : Fragment() {
+    private val viewModel: PopularShowsViewModel by viewModels()
 }

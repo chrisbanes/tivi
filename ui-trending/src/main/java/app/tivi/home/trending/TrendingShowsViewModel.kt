@@ -17,32 +17,45 @@
 package app.tivi.home.trending
 
 import androidx.hilt.lifecycle.ViewModelInject
-import app.tivi.data.resultentities.TrendingEntryWithShow
+import androidx.lifecycle.ViewModel
+import androidx.paging.PagingConfig
+import app.tivi.base.InvokeStatus
 import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.UpdateTrendingShows
 import app.tivi.domain.interactors.UpdateTrendingShows.Page.NEXT_PAGE
 import app.tivi.domain.interactors.UpdateTrendingShows.Page.REFRESH
 import app.tivi.domain.observers.ObservePagedTrendingShows
 import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.EntryViewModel
 import app.tivi.util.Logger
+import kotlinx.coroutines.flow.Flow
 
+@Suppress("unused")
 class TrendingShowsViewModel @ViewModelInject constructor(
-    override val dispatchers: AppCoroutineDispatchers,
-    override val pagingInteractor: ObservePagedTrendingShows,
+    private val dispatchers: AppCoroutineDispatchers,
+    pagingInteractor: ObservePagedTrendingShows,
     private val interactor: UpdateTrendingShows,
-    override val logger: Logger,
-    override val changeShowFollowStatus: ChangeShowFollowStatus
-) : EntryViewModel<TrendingEntryWithShow, ObservePagedTrendingShows>() {
+    private val logger: Logger,
+    private val changeShowFollowStatus: ChangeShowFollowStatus
+) : ViewModel() {
     init {
-        pagingInteractor(ObservePagedTrendingShows.Params(pageListConfig))
-
-        launchObserves()
+        pagingInteractor(ObservePagedTrendingShows.Params(PAGING_CONFIG))
 
         refresh(false)
     }
 
-    override fun callLoadMore() = interactor(UpdateTrendingShows.Params(NEXT_PAGE, true))
+    private fun callLoadMore(): Flow<InvokeStatus> {
+        return interactor(UpdateTrendingShows.Params(NEXT_PAGE, true))
+    }
 
-    override fun callRefresh(fromUser: Boolean) = interactor(UpdateTrendingShows.Params(REFRESH, fromUser))
+    private fun refresh(fromUser: Boolean): Flow<InvokeStatus> {
+        return interactor(UpdateTrendingShows.Params(REFRESH, fromUser))
+    }
+
+    companion object {
+        val PAGING_CONFIG = PagingConfig(
+            pageSize = 21 * 3,
+            prefetchDistance = 21,
+            enablePlaceholders = false
+        )
+    }
 }
