@@ -1,3 +1,5 @@
+import app.tivi.buildsrc.Libs
+
 /*
  * Copyright 2017 Google LLC
  *
@@ -24,4 +26,9 @@ android {
     defaultConfig {
         minSdkVersion buildConfig.minSdk
     }
+}
+
+dependencies {
+    implementation Libs.AndroidX.appcompat
+    implementation Libs.Mdc.material
 }
