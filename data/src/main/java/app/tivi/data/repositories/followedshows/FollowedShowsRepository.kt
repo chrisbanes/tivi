@@ -23,7 +23,6 @@ import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.Success
 import app.tivi.data.instantInPast
 import app.tivi.data.syncers.ItemSyncerResult
-import app.tivi.extensions.asyncOrAwait
 import app.tivi.trakt.TraktAuthState
 import app.tivi.util.Logger
 import org.threeten.bp.Instant
@@ -91,21 +90,19 @@ class FollowedShowsRepository @Inject constructor(
     }
 
     suspend fun syncFollowedShows(): ItemSyncerResult<FollowedShowEntry> {
-        return asyncOrAwait("sync_followed_shows") {
-            val listId = when (traktAuthState.get()) {
-                TraktAuthState.LOGGED_IN -> getFollowedTraktListId()
-                else -> null
-            }
+        val listId = when (traktAuthState.get()) {
+            TraktAuthState.LOGGED_IN -> getFollowedTraktListId()
+            else -> null
+        }
 
-            processPendingAdditions(listId)
-            processPendingDelete(listId)
+        processPendingAdditions(listId)
+        processPendingDelete(listId)
 
-            when {
-                listId != null -> pullDownTraktFollowedList(listId)
-                else -> ItemSyncerResult()
-            }.also {
-                followedShowsLastRequestStore.updateLastRequest()
-            }
+        return when {
+            listId != null -> pullDownTraktFollowedList(listId)
+            else -> ItemSyncerResult()
+        }.also {
+            followedShowsLastRequestStore.updateLastRequest()
         }
     }
 
