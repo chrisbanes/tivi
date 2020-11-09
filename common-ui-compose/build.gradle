@@ -63,6 +63,8 @@ dependencies {
     implementation Libs.AndroidX.Compose.tooling
     implementation Libs.AndroidX.Compose.livedata
 
+    implementation Libs.AndroidX.Paging.compose
+
     implementation Libs.Mdc.material
     implementation Libs.Mdc.composeThemeAdapter
 

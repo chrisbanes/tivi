@@ -18,6 +18,7 @@ package app.tivi.home.trending
 
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -45,10 +46,10 @@ import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.items
 import app.tivi.common.compose.AbsoluteElevationSurface
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.PosterCard
+import app.tivi.common.compose.fakeGridItems
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.spacerItem
 import app.tivi.common.compose.statusBarsPadding
@@ -71,14 +72,19 @@ fun Trending(
                     Spacer(Modifier.preferredHeight(height))
                 }
 
-                items(list) { entry ->
+                fakeGridItems(
+                    lazyPagingItems = list,
+                    columns = 3,
+                    contentPadding = PaddingValues(4.dp),
+                    verticalItemPadding = 2.dp,
+                    horizontalItemPadding = 2.dp
+                ) { entry ->
                     if (entry != null) {
                         PosterCard(
                             show = entry.show,
                             poster = entry.poster,
                             onClick = { actioner(TrendingAction.OpenShowDetails(entry.show.id)) },
-                            modifier = Modifier.aspectRatio(2 / 3f)
-                                .preferredHeight(88.dp)
+                            modifier = Modifier.aspectRatio(2 / 3f).fillMaxWidth()
                         )
                     }
                 }
