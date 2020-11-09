@@ -21,19 +21,27 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.resultentities.TrendingEntryWithShow
+import app.tivi.domain.PaginatedEntryRemoteMediator
 import app.tivi.domain.PagingInteractor
+import app.tivi.domain.interactors.UpdateTrendingShows
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ObservePagedTrendingShows @Inject constructor(
-    private val trendingShowsDao: TrendingDao
+    private val trendingShowsDao: TrendingDao,
+    private val updateTrendingShows: UpdateTrendingShows,
 ) : PagingInteractor<ObservePagedTrendingShows.Params, TrendingEntryWithShow>() {
-
     override fun createObservable(
         params: Params
-    ): Flow<PagingData<TrendingEntryWithShow>> = Pager(config = params.pagingConfig) {
-        trendingShowsDao.entriesPagingSource()
-    }.flow
+    ): Flow<PagingData<TrendingEntryWithShow>> {
+        return Pager(
+            config = params.pagingConfig,
+            remoteMediator = PaginatedEntryRemoteMediator { page ->
+                updateTrendingShows.executeSync(UpdateTrendingShows.Params(page = page))
+            },
+            pagingSourceFactory = trendingShowsDao::entriesPagingSource
+        ).flow
+    }
 
     data class Params(
         override val pagingConfig: PagingConfig,

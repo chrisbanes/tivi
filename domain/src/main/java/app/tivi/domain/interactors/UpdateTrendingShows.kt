@@ -28,7 +28,6 @@ import app.tivi.domain.interactors.UpdateTrendingShows.Params
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
 import org.threeten.bp.Duration
 import javax.inject.Inject
@@ -59,9 +58,10 @@ class UpdateTrendingShows @Inject constructor(
         }
     }
 
-    data class Params(val page: Page, val forceRefresh: Boolean)
+    data class Params(val page: Int, val forceRefresh: Boolean = false)
 
-    enum class Page {
-        NEXT_PAGE, REFRESH
+    object Page {
+        const val NEXT_PAGE = -1
+        const val REFRESH = -2
     }
 }

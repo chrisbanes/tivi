@@ -25,7 +25,6 @@ import app.tivi.base.InvokeStatus
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.UpdateTrendingShows
-import app.tivi.domain.interactors.UpdateTrendingShows.Page.NEXT_PAGE
 import app.tivi.domain.interactors.UpdateTrendingShows.Page.REFRESH
 import app.tivi.domain.observers.ObservePagedTrendingShows
 import app.tivi.util.AppCoroutineDispatchers
@@ -69,10 +68,6 @@ class TrendingShowsViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             if (!pendingActions.isClosedForSend) pendingActions.send(action)
         }
-    }
-
-    private fun callLoadMore(): Flow<InvokeStatus> {
-        return interactor(UpdateTrendingShows.Params(NEXT_PAGE, true))
     }
 
     private fun refresh(fromUser: Boolean): Flow<InvokeStatus> {
