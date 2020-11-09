@@ -48,6 +48,9 @@ dependencies {
     implementation project(':data')
     api project(':common-imageloading')
 
+    // TODO: Remove this dependency
+    api project(':common-ui-view')
+
     implementation Libs.AndroidX.coreKtx
     implementation Libs.AndroidX.Lifecycle.livedata
 

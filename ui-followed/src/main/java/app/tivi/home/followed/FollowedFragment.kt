@@ -24,7 +24,6 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.staticAmbientOf
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
@@ -32,6 +31,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.compose.collectAsLazyPagingItems
+import app.tivi.common.compose.AmbientHomeTextCreator
 import app.tivi.common.compose.TiviContentSetup
 import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.home.HomeTextCreator
@@ -93,8 +93,4 @@ class FollowedFragment : Fragment() {
             }
         }
     }
-}
-
-val AmbientHomeTextCreator = staticAmbientOf<HomeTextCreator> {
-    error("HomeTextCreator not provided")
 }
