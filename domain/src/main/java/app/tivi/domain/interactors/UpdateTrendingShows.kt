@@ -26,8 +26,6 @@ import app.tivi.data.repositories.trendingshows.TrendingShowsStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateTrendingShows.Params
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 import org.threeten.bp.Duration
 import javax.inject.Inject
@@ -42,9 +40,12 @@ class UpdateTrendingShows @Inject constructor(
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
-            val lastPage = trendingShowsDao.getLastPage()
             val page = when {
-                lastPage != null && params.page == Page.NEXT_PAGE -> lastPage + 1
+                params.page >= 0 -> params.page
+                params.page == Page.NEXT_PAGE -> {
+                    val lastPage = trendingShowsDao.getLastPage()
+                    if (lastPage != null) lastPage + 1 else 0
+                }
                 else -> 0
             }
 

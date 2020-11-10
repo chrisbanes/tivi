@@ -1,11 +1,11 @@
 /*
- * Copyright 2020 The Android Open Source Project
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,6 @@
 
 package app.tivi.common.compose.paging
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
@@ -27,15 +26,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.paging.AsyncPagingDataDiffer
 import androidx.paging.CombinedLoadStates
-import androidx.paging.DifferCallback
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
-import androidx.paging.NullPaddedList
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingDataDiffer
-import kotlinx.coroutines.Dispatchers
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListUpdateCallback
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -64,51 +63,34 @@ class LazyPagingItems<T : Any> internal constructor(
     val itemCount: Int
         get() = _itemCount.value
 
-    private val mainDispatcher = Dispatchers.Main
-
-    @SuppressLint("RestrictedApi")
-    private val differCallback: DifferCallback = object : DifferCallback {
-        override fun onChanged(position: Int, count: Int) {
-            // TODO Not sure if it is the correct callback, but we need to do it every time an
-            //  item has been updated for a given position
-            for (index in position until position + count) {
-                val state = currentlyUsedItems[position]
-                if (state != null) {
-                    // TODO this will probably not work currently as pagingDataDiffer updates
-                    //  their internal state AFTER notifying the callbacks, we can't get the
-                    //  value for the position right inside this callback. How we can do it?
-                    state.value = pagingDataDiffer.peek(index)
+    private val pagingDataDiffer = AsyncPagingDataDiffer(
+        diffCallback = object : DiffUtil.ItemCallback<T>() {
+            override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem === newItem
+            override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem == newItem
+        },
+        updateCallback = object : ListUpdateCallback {
+            override fun onChanged(position: Int, count: Int, payload: Any?) {
+                for (index in position until position + count) {
+                    val state = currentlyUsedItems[position]
+                    if (state != null) {
+                        state.value.pending = true
+                    }
                 }
             }
-        }
 
-        override fun onInserted(position: Int, count: Int) {
-            // TODO Not sure if it is the correct callback, but we need to change the item count
-            //  state every time the count changes
-            _itemCount.value += count
-        }
+            override fun onInserted(position: Int, count: Int) {
+                _itemCount.value += count
+            }
 
-        override fun onRemoved(position: Int, count: Int) {
-            // TODO Not sure if it is the correct callback, but we need to change the item count
-            //  state every time the count changes
-            _itemCount.value -= count
-        }
-    }
+            override fun onRemoved(position: Int, count: Int) {
+                _itemCount.value -= count
+            }
 
-    private val pagingDataDiffer = object : PagingDataDiffer<T>(
-        differCallback = differCallback,
-        mainDispatcher = mainDispatcher
-    ) {
-        override suspend fun presentNewList(
-            previousList: NullPaddedList<T>,
-            newList: NullPaddedList<T>,
-            newCombinedLoadStates: CombinedLoadStates,
-            lastAccessedIndex: Int
-        ): Int? {
-            // TODO: when this is executed?
-            return null
+            override fun onMoved(fromPosition: Int, toPosition: Int) {
+                // TODO
+            }
         }
-    }
+    )
 
     /**
      * A map of state objects used by the currently visible items. If we update the value of the
@@ -116,7 +98,7 @@ class LazyPagingItems<T : Any> internal constructor(
      * (and not affect other items). This also helps us to track what indexes are currently
      * visible to ignore onChanged events for the rest of items.
      */
-    private val currentlyUsedItems = mutableMapOf<Int, MutableState<T?>>()
+    private val currentlyUsedItems = mutableMapOf<Int, MutableState<LazyListPagingItemState<T>>>()
 
     /**
      * Returns the item specified at [index] and notifies Paging of the item accessed in
@@ -128,14 +110,22 @@ class LazyPagingItems<T : Any> internal constructor(
      */
     @Composable
     operator fun get(index: Int): T? {
-        val state = remember { mutableStateOf(pagingDataDiffer[index]) }
+        val state = remember {
+            mutableStateOf(LazyListPagingItemState(pagingDataDiffer.getItem(index)))
+        }
         onCommit(index) {
             currentlyUsedItems[index] = state
             onDispose {
                 currentlyUsedItems.remove(index)
             }
         }
-        return state.value
+        onCommit(state.value.pending) {
+            if (state.value.pending) {
+                state.value.item = pagingDataDiffer.getItem(index)
+                state.value.pending = false
+            }
+        }
+        return state.value.item
     }
 
     /**
@@ -152,8 +142,17 @@ class LazyPagingItems<T : Any> internal constructor(
 
     internal suspend fun collectPagingData() {
         flow.collectLatest {
-            pagingDataDiffer.collectFrom(it)
+            pagingDataDiffer.submitData(it)
         }
+    }
+}
+
+private class LazyListPagingItemState<T>(item: T?) {
+    var item: T? by mutableStateOf(null)
+    var pending: Boolean by mutableStateOf(false)
+
+    init {
+        this.item = item
     }
 }
 

@@ -30,10 +30,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import app.tivi.common.compose.paging.collectAsLazyPagingItems
 import app.tivi.common.compose.AmbientHomeTextCreator
 import app.tivi.common.compose.TiviContentSetup
 import app.tivi.common.compose.TiviDateFormatterAmbient
+import app.tivi.common.compose.paging.collectAsLazyPagingItems
 import app.tivi.home.HomeTextCreator
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint

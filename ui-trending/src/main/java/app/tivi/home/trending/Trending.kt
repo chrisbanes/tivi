@@ -45,11 +45,11 @@ import androidx.compose.ui.onSizeChanged
 import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import app.tivi.common.compose.paging.LazyPagingItems
 import app.tivi.common.compose.AbsoluteElevationSurface
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.fakeGridItems
+import app.tivi.common.compose.paging.LazyPagingItems
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.spacerItem
 import app.tivi.common.compose.statusBarsPadding

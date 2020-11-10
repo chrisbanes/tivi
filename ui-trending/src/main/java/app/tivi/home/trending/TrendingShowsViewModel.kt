@@ -21,12 +21,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import app.tivi.ReduxViewModel
-import app.tivi.base.InvokeStatus
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.domain.interactors.UpdateTrendingShows
 import app.tivi.domain.interactors.UpdateTrendingShows.Page.REFRESH
 import app.tivi.domain.observers.ObservePagedTrendingShows
 import app.tivi.util.ObservableLoadingCounter
+import app.tivi.util.collectInto
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -72,8 +72,10 @@ class TrendingShowsViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun refresh(fromUser: Boolean): Flow<InvokeStatus> {
-        return interactor(UpdateTrendingShows.Params(REFRESH, fromUser))
+    private fun refresh(fromUser: Boolean) {
+        viewModelScope.launch {
+            interactor(UpdateTrendingShows.Params(REFRESH, fromUser)).collectInto(loadingState)
+        }
     }
 
     companion object {
