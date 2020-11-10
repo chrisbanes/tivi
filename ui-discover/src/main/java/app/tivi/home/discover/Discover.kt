@@ -40,6 +40,7 @@ import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
@@ -57,7 +58,6 @@ import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
-import app.tivi.common.compose.AbsoluteElevationSurface
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.IconResource
@@ -79,7 +79,7 @@ fun Discover(
     state: DiscoverViewState,
     actioner: (DiscoverAction) -> Unit
 ) {
-    AbsoluteElevationSurface(Modifier.fillMaxSize()) {
+    Surface(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize()) {
             var appBarHeight by rememberMutableState { 0 }
 
@@ -170,7 +170,7 @@ private fun NextEpisodeToWatch(
     episode: Episode,
     modifier: Modifier = Modifier,
 ) {
-    AbsoluteElevationSurface(modifier) {
+    Surface(modifier) {
         Row(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
             if (poster != null) {
                 PosterCard(
@@ -313,7 +313,7 @@ private fun DiscoverAppBar(
     onUserActionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    AbsoluteElevationSurface(
+    Surface(
         color = MaterialTheme.colors.surface.copy(alpha = TranslucentAppBarAlpha),
         contentColor = MaterialTheme.colors.onSurface,
         elevation = 4.dp,
@@ -381,7 +381,7 @@ private fun PreviewDiscoverAppBar() {
 @Preview
 @Composable
 private fun PreviewHeader() {
-    AbsoluteElevationSurface(Modifier.fillMaxWidth()) {
+    Surface(Modifier.fillMaxWidth()) {
         Header(
             title = "Being watched now",
             loading = true

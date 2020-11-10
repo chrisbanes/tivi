@@ -41,6 +41,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -58,7 +59,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import app.tivi.common.compose.AbsoluteElevationSurface
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.WorkaroundLazyColumnFor
 import app.tivi.common.compose.statusBarsPadding
@@ -72,7 +72,7 @@ fun Search(
     state: SearchViewState,
     actioner: (SearchAction) -> Unit
 ) {
-    AbsoluteElevationSurface(Modifier.fillMaxSize()) {
+    Surface(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize()) {
             val searchBarHeight = remember { mutableStateOf(0) }
 

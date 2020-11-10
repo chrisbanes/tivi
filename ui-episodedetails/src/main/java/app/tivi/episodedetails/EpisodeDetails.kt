@@ -37,6 +37,8 @@ import androidx.compose.foundation.layout.preferredSizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AmbientContentAlpha
 import androidx.compose.material.AmbientContentColor
+import androidx.compose.material.Button
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
@@ -46,6 +48,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.Surface
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -78,9 +81,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
-import app.tivi.common.compose.AbsoluteElevationButton
-import app.tivi.common.compose.AbsoluteElevationOutlinedButton
-import app.tivi.common.compose.AbsoluteElevationSurface
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.IconResource
@@ -128,7 +128,7 @@ fun EpisodeDetails(
                 )
             }
             ScrollableColumn {
-                AbsoluteElevationSurface(elevation = 2.dp) {
+                Surface(elevation = 2.dp) {
                     Column {
                         val episode = viewState.episode
                         if (episode != null) {
@@ -241,7 +241,7 @@ private fun Backdrop(
     episode: Episode,
     modifier: Modifier
 ) {
-    AbsoluteElevationSurface(modifier = modifier) {
+    Surface(modifier = modifier) {
         Box(Modifier.fillMaxSize()) {
             if (episode.tmdbBackdropPath != null) {
                 CoilImage(
@@ -366,7 +366,7 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
 
 @Composable
 private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
-    AbsoluteElevationSurface {
+    Surface {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 .preferredSizeIn(minWidth = 40.dp, minHeight = 40.dp)
@@ -488,7 +488,7 @@ fun MarkWatchedButton(
     modifier: Modifier = Modifier,
     actioner: (EpisodeDetailsAction) -> Unit
 ) {
-    AbsoluteElevationButton(
+    Button(
         modifier = modifier,
         onClick = { actioner(AddEpisodeWatchAction) }
     ) {
@@ -504,7 +504,7 @@ fun AddWatchButton(
     modifier: Modifier = Modifier,
     actioner: (EpisodeDetailsAction) -> Unit
 ) {
-    AbsoluteElevationOutlinedButton(
+    OutlinedButton(
         modifier = modifier,
         onClick = { actioner(AddEpisodeWatchAction) }
     ) {

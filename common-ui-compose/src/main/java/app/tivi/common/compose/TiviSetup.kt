@@ -18,9 +18,7 @@
 
 package app.tivi.common.compose
 
-import androidx.compose.material.AmbientElevationOverlay
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
 import com.google.android.material.composethemeadapter.MdcTheme
 
 /**
@@ -30,9 +28,7 @@ import com.google.android.material.composethemeadapter.MdcTheme
 inline fun TiviContentSetup(noinline content: @Composable () -> Unit) {
     MdcTheme {
         ProvideDisplayInsets {
-            Providers(AmbientElevationOverlay provides AbsoluteElevationOverlay) {
-                content()
-            }
+            content()
         }
     }
 }
