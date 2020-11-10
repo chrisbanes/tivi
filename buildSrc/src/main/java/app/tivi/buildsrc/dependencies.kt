@@ -66,7 +66,8 @@ object Libs {
 
     object Mdc {
         const val material = "com.google.android.material:material:1.1.0"
-        const val composeThemeAdapter = "com.google.android.material:compose-theme-adapter:1.0.0-alpha05"
+        const val composeThemeAdapter = "com.github.material-components:material-components-android-compose-theme-adapter:dev_alpha07-SNAPSHOT"
+        // const val composeThemeAdapter = "com.google.android.material:compose-theme-adapter:1.0.0-alpha05"
     }
 
     object Google {
