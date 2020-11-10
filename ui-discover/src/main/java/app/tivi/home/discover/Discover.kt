@@ -64,7 +64,6 @@ import app.tivi.common.compose.IconResource
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.spacerItem
-import app.tivi.common.compose.statusBarsPadding
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Season
 import app.tivi.data.entities.TiviShow
@@ -73,6 +72,7 @@ import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.trakt.TraktAuthState
 import dev.chrisbanes.accompanist.coil.CoilImage
+import dev.chrisbanes.accompanist.insets.statusBarsPadding
 
 @Composable
 fun Discover(

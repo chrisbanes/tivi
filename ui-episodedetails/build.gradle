@@ -86,6 +86,7 @@ dependencies {
     implementation Libs.Mdc.composeThemeAdapter
 
     implementation Libs.Accompanist.coil
+    implementation Libs.Accompanist.insets
 
     implementation Libs.Kotlin.stdlib
 

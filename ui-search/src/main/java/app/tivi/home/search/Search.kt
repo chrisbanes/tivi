@@ -61,10 +61,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.WorkaroundLazyColumnFor
-import app.tivi.common.compose.statusBarsPadding
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.ShowDetailed
+import dev.chrisbanes.accompanist.insets.statusBarsPadding
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable

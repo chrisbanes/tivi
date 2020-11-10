@@ -109,16 +109,13 @@ import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.ExpandableFloatingActionButton
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.IconResource
-import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.VectorImage
-import app.tivi.common.compose.navigationBarsPadding
 import app.tivi.common.compose.offset
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.spacerItem
-import app.tivi.common.compose.statusBarsHeight
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
@@ -140,6 +137,9 @@ import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
 import coil.request.ImageRequest
 import dev.chrisbanes.accompanist.coil.CoilImage
+import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.navigationBarsPadding
+import dev.chrisbanes.accompanist.insets.statusBarsHeight
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
@@ -174,7 +174,7 @@ fun ShowDetails(
         )
     }
 
-    val trigger = backdropHeight - InsetsAmbient.current.statusBars.top
+    val trigger = backdropHeight - AmbientWindowInsets.current.statusBars.top
     OverlaidStatusBarAppBar(
         showAppBar = when (listState.firstVisibleItemIndex) {
             // We only show the app bar when the first item is shown, and it's offset off screen
