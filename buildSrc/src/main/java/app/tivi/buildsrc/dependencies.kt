@@ -59,8 +59,9 @@ object Libs {
     }
 
     object Accompanist {
-        private const val version = "0.3.2.compose-6922857-SNAPSHOT"
+        private const val version = "0.3.3.compose-6961312-SNAPSHOT"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
+        const val insets = "dev.chrisbanes.accompanist:accompanist-insets:$version"
     }
 
     object Mdc {
@@ -164,7 +165,7 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = "6922857"
+            const val snapshot = "6961312"
             const val version = "1.0.0-SNAPSHOT"
 
             @get:JvmStatic
@@ -185,7 +186,7 @@ object Libs {
             const val animation = "androidx.compose.animation:animation:$version"
 
             const val tooling = "androidx.ui:ui-tooling:$version"
-            const val test = "androidx.ui:ui-test:$version"
+            const val test = "androidx.compose.ui:ui-test-junit4:${version}"
         }
 
         object Hilt {

@@ -16,7 +16,6 @@
 
 package app.tivi.account
 
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,16 +27,18 @@ import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.preferredSizeIn
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AmbientEmphasisLevels
+import androidx.compose.material.AmbientContentAlpha
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
-import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Providers
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -127,14 +128,12 @@ private fun UserRow(
         Spacer(modifier = Modifier.preferredWidth(8.dp))
 
         Column {
-            ProvideEmphasis(AmbientEmphasisLevels.current.high) {
-                Text(
-                    text = user.name,
-                    style = MaterialTheme.typography.subtitle2
-                )
-            }
+            Text(
+                text = user.name,
+                style = MaterialTheme.typography.subtitle2
+            )
 
-            ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
+            Providers(AmbientContentAlpha provides ContentAlpha.medium) {
                 Text(
                     text = user.username,
                     style = MaterialTheme.typography.caption
@@ -158,20 +157,16 @@ private fun AppAction(
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        ProvideEmphasis(AmbientEmphasisLevels.current.high) {
-            Spacer(modifier = Modifier.preferredWidth(8.dp))
+        Spacer(modifier = Modifier.preferredWidth(8.dp))
 
-            VectorImage(vector = icon)
+        VectorImage(vector = icon)
 
-            Spacer(modifier = Modifier.preferredWidth(16.dp))
+        Spacer(modifier = Modifier.preferredWidth(16.dp))
 
-            ProvideEmphasis(AmbientEmphasisLevels.current.high) {
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.body2
-                )
-            }
-        }
+        Text(
+            text = label,
+            style = MaterialTheme.typography.body2
+        )
     }
 }
 

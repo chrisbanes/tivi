@@ -21,7 +21,6 @@ package app.tivi.common.compose
 import androidx.compose.foundation.AmbientIndication
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.InteractionState
-import androidx.compose.foundation.ProvideTextStyle
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +35,7 @@ import androidx.compose.material.ButtonElevation
 import androidx.compose.material.ElevationOverlay
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ProvideTextStyle
 import androidx.compose.material.Surface
 import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable

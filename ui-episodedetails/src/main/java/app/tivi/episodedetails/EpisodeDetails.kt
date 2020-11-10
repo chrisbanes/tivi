@@ -21,9 +21,7 @@ import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.transitionDefinition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.transition
-import androidx.compose.foundation.AmbientContentColor
 import androidx.compose.foundation.ScrollableColumn
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,17 +35,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredSizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AmbientEmphasisLevels
+import androidx.compose.material.AmbientContentAlpha
+import androidx.compose.material.AmbientContentColor
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.DismissValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.SwipeToDismiss
+import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -134,12 +134,10 @@ fun EpisodeDetails(
                         if (episode != null) {
                             InfoPanes(episode)
 
-                            ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.high) {
-                                ExpandingText(
-                                    episode.summary ?: "No summary",
-                                    modifier = Modifier.padding(16.dp)
-                                )
-                            }
+                            ExpandingText(
+                                text = episode.summary ?: "No summary",
+                                modifier = Modifier.padding(16.dp)
+                            )
                         }
 
                         val watches = viewState.watches
@@ -268,7 +266,7 @@ private fun Backdrop(
 
                 Providers(AmbientContentColor provides Color.White) {
                     if (seasonNumber != null && epNumber != null) {
-                        ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.medium) {
+                        Providers(AmbientContentAlpha provides ContentAlpha.medium) {
                             @Suppress("DEPRECATION")
                             val locale = ConfigurationAmbient.current.locale
                             Text(
@@ -284,12 +282,10 @@ private fun Backdrop(
                         Spacer(modifier = Modifier.preferredHeight(4.dp))
                     }
 
-                    ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.high) {
-                        Text(
-                            text = episode.title ?: "No title",
-                            style = type.h6.copy(color = AmbientContentColor.current)
-                        )
-                    }
+                    Text(
+                        text = episode.title ?: "No title",
+                        style = type.h6.copy(color = AmbientContentColor.current)
+                    )
                 }
             }
         }
@@ -328,7 +324,7 @@ private fun InfoPane(
     label: String
 ) {
     Column(modifier = modifier.padding(all = 16.dp)) {
-        ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.medium) {
+        Providers(AmbientContentAlpha provides ContentAlpha.medium) {
             Icon(
                 asset = icon,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -337,31 +333,27 @@ private fun InfoPane(
 
         Spacer(modifier = Modifier.preferredHeight(4.dp))
 
-        ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.high) {
-            Text(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                text = label,
-                style = MaterialTheme.typography.body1
-            )
-        }
+        Text(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            text = label,
+            style = MaterialTheme.typography.body1
+        )
     }
 }
 
 @Composable
 private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
     Row {
-        ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.high) {
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                    .align(Alignment.CenterVertically),
-                text = stringResource(R.string.episode_watches),
-                style = MaterialTheme.typography.subtitle1
-            )
-        }
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                .align(Alignment.CenterVertically),
+            text = stringResource(R.string.episode_watches),
+            style = MaterialTheme.typography.subtitle1
+        )
 
         Spacer(Modifier.weight(1f))
 
-        ProvideEmphasis(AmbientEmphasisLevels.current.disabled) {
+        Providers(AmbientContentAlpha provides ContentAlpha.disabled) {
             IconButton(
                 modifier = Modifier.padding(end = 4.dp),
                 onClick = { onSweepWatchesClick() }
@@ -379,18 +371,16 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 .preferredSizeIn(minWidth = 40.dp, minHeight = 40.dp)
         ) {
-            ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.high) {
-                val formatter = TiviDateFormatterAmbient.current
-                Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
-                    style = MaterialTheme.typography.body2
-                )
-            }
+            val formatter = TiviDateFormatterAmbient.current
+            Text(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
+                style = MaterialTheme.typography.body2
+            )
 
             Spacer(Modifier.weight(1f))
 
-            ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.medium) {
+            Providers(AmbientContentAlpha provides ContentAlpha.medium) {
                 if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
                     IconResource(
                         resourceId = R.drawable.ic_publish,
@@ -465,7 +455,7 @@ private fun EpisodeWatchSwipeBackground(
                 )
         )
 
-        ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.medium) {
+        Providers(AmbientContentAlpha provides ContentAlpha.medium) {
             Icon(
                 asset = Icons.Default.Delete,
                 modifier = Modifier
@@ -502,12 +492,10 @@ fun MarkWatchedButton(
         modifier = modifier,
         onClick = { actioner(AddEpisodeWatchAction) }
     ) {
-        ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.high) {
-            Text(
-                text = stringResource(R.string.episode_mark_watched),
-                style = MaterialTheme.typography.button.copy(color = AmbientContentColor.current)
-            )
-        }
+        Text(
+            text = stringResource(R.string.episode_mark_watched),
+            style = MaterialTheme.typography.button.copy(color = AmbientContentColor.current)
+        )
     }
 }
 
@@ -520,9 +508,7 @@ fun AddWatchButton(
         modifier = modifier,
         onClick = { actioner(AddEpisodeWatchAction) }
     ) {
-        ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.high) {
-            Text(text = stringResource(R.string.episode_add_watch))
-        }
+        Text(text = stringResource(R.string.episode_add_watch))
     }
 }
 
