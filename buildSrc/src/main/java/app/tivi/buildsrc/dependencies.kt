@@ -58,13 +58,15 @@ object Libs {
     }
 
     object Accompanist {
-        private const val version = "0.3.2.compose-6922857-SNAPSHOT"
+        private const val version = "0.3.3.compose-6964664-SNAPSHOT"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
+        const val insets = "dev.chrisbanes.accompanist:accompanist-insets:$version"
     }
 
     object Mdc {
         const val material = "com.google.android.material:material:1.1.0"
-        const val composeThemeAdapter = "com.google.android.material:compose-theme-adapter:1.0.0-alpha05"
+        const val composeThemeAdapter = "com.github.material-components:material-components-android-compose-theme-adapter:dev_alpha07-SNAPSHOT"
+        // const val composeThemeAdapter = "com.google.android.material:compose-theme-adapter:1.0.0-alpha05"
     }
 
     object Google {
@@ -165,7 +167,7 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = "6922857"
+            const val snapshot = "6964664"
             const val version = "1.0.0-SNAPSHOT"
 
             @get:JvmStatic
@@ -186,7 +188,7 @@ object Libs {
             const val animation = "androidx.compose.animation:animation:$version"
 
             const val tooling = "androidx.ui:ui-tooling:$version"
-            const val test = "androidx.ui:ui-test:$version"
+            const val test = "androidx.compose.ui:ui-test-junit4:${version}"
         }
 
         object Hilt {
@@ -224,7 +226,7 @@ object Libs {
     }
 
     object Coil {
-        private const val version = "1.0.0-rc3"
+        private const val version = "1.0.0"
         const val coil = "io.coil-kt:coil:$version"
     }
 

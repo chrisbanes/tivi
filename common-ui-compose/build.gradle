@@ -66,4 +66,5 @@ dependencies {
     implementation Libs.Kotlin.stdlib
 
     implementation Libs.Accompanist.coil
+    implementation Libs.Accompanist.insets
 }

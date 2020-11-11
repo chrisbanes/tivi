@@ -17,7 +17,6 @@
 package app.tivi.home.followed
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,21 +31,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.preferredWidth
-import androidx.compose.foundation.lazy.ExperimentalLazyDsl
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AmbientEmphasisLevels
+import androidx.compose.material.AmbientContentAlpha
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,21 +54,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.onSizeChanged
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
-import app.tivi.common.compose.AbsoluteElevationSurface
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.IconResource
 import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.SortMenuPopup
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.spacerItem
-import app.tivi.common.compose.statusBarsPadding
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
@@ -76,15 +74,15 @@ import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.trakt.TraktAuthState
 import dev.chrisbanes.accompanist.coil.CoilImage
+import dev.chrisbanes.accompanist.insets.statusBarsPadding
 
-@OptIn(ExperimentalLazyDsl::class)
 @Composable
 fun Followed(
     state: FollowedViewState,
     list: LazyPagingItems<FollowedShowEntryWithShow>,
     actioner: (FollowedAction) -> Unit
 ) {
-    AbsoluteElevationSurface(Modifier.fillMaxSize()) {
+    Surface(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize()) {
             var appBarHeight by rememberMutableState { 0 }
 
@@ -204,12 +202,10 @@ private fun FollowedShowItem(
 
         Column(Modifier.weight(1f).fillMaxHeight()) {
             Column(Modifier.fillMaxWidth().weight(1f).padding(end = 16.dp)) {
-                ProvideEmphasis(AmbientEmphasisLevels.current.high) {
-                    Text(
-                        text = textCreator.showTitle(show = show).toString(),
-                        style = MaterialTheme.typography.subtitle1,
-                    )
-                }
+                Text(
+                    text = textCreator.showTitle(show = show).toString(),
+                    style = MaterialTheme.typography.subtitle1,
+                )
 
                 Spacer(Modifier.weight(1f))
 
@@ -223,7 +219,7 @@ private fun FollowedShowItem(
 
                 Spacer(Modifier.preferredHeight(2.dp))
 
-                ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
+                Providers(AmbientContentAlpha provides ContentAlpha.medium) {
                     Text(
                         text = textCreator.followedShowEpisodeWatchStatus(
                             episodeCount = totalEpisodeCount,
@@ -252,7 +248,7 @@ private fun FollowedAppBar(
     onUserActionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    AbsoluteElevationSurface(
+    Surface(
         color = MaterialTheme.colors.surface.copy(alpha = TranslucentAppBarAlpha),
         contentColor = MaterialTheme.colors.onSurface,
         elevation = 4.dp,
@@ -264,17 +260,15 @@ private fun FollowedAppBar(
                 .preferredHeight(56.dp)
                 .padding(start = 16.dp, end = 4.dp)
         ) {
-            ProvideEmphasis(AmbientEmphasisLevels.current.high) {
-                Text(
-                    text = stringResource(R.string.following_shows_title),
-                    style = MaterialTheme.typography.h6,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
-            }
+            Text(
+                text = stringResource(R.string.following_shows_title),
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
 
             Spacer(Modifier.weight(1f))
 
-            ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
+            Providers(AmbientContentAlpha provides ContentAlpha.medium) {
                 IconButton(
                     onClick = onRefreshActionClick,
                     enabled = !refreshing,
