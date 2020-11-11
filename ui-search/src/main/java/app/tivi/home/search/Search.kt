@@ -21,7 +21,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -35,34 +34,37 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredWidth
-import androidx.compose.material.AmbientEmphasisLevels
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.AmbientContentAlpha
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.ProvideEmphasis
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Providers
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.savedinstancestate.savedInstanceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.onSizeChanged
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import app.tivi.common.compose.AbsoluteElevationSurface
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.WorkaroundLazyColumnFor
-import app.tivi.common.compose.statusBarsPadding
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.ShowDetailed
+import dev.chrisbanes.accompanist.insets.statusBarsPadding
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
@@ -70,7 +72,7 @@ fun Search(
     state: SearchViewState,
     actioner: (SearchAction) -> Unit
 ) {
-    AbsoluteElevationSurface(Modifier.fillMaxSize()) {
+    Surface(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize()) {
             val searchBarHeight = remember { mutableStateOf(0) }
 
@@ -146,15 +148,13 @@ private fun SearchRow(
         Spacer(Modifier.preferredWidth(16.dp))
 
         Column(Modifier.weight(1f).align(Alignment.CenterVertically)) {
-            ProvideEmphasis(AmbientEmphasisLevels.current.high) {
-                Text(
-                    text = show.title ?: "No title",
-                    style = MaterialTheme.typography.subtitle1,
-                )
-            }
+            Text(
+                text = show.title ?: "No title",
+                style = MaterialTheme.typography.subtitle1,
+            )
 
             if (show.summary?.isNotEmpty() == true) {
-                ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
+                Providers(AmbientContentAlpha provides ContentAlpha.medium) {
                     Text(
                         text = show.summary!!,
                         style = MaterialTheme.typography.caption,
@@ -178,11 +178,11 @@ private fun SearchTextField(
         value = value,
         onValueChange = onValueChange,
         placeholder = {
-            ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
+            Providers(AmbientContentAlpha provides ContentAlpha.medium) {
                 Text(text = stringResource(R.string.search_hint))
             }
         },
-        imeAction = ImeAction.Search,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         onImeActionPerformed = { _, keyboardController ->
             keyboardController?.hideSoftwareKeyboard()
         },
