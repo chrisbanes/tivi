@@ -57,7 +57,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AmbientContentAlpha
-import androidx.compose.material.AmbientContentColor
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
@@ -113,6 +112,7 @@ import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.VectorImage
+import app.tivi.common.compose.foregroundColor
 import app.tivi.common.compose.offset
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.spacerItem
@@ -521,7 +521,7 @@ private fun NetworkInfoPanel(
                 contentScale = ContentScale.Fit,
                 alignment = Alignment.TopStart,
                 colorFilter = when {
-                    isSystemInDarkTheme() -> ColorFilter.tint(AmbientContentColor.current)
+                    isSystemInDarkTheme() -> ColorFilter.tint(foregroundColor())
                     else -> null
                 },
                 modifier = Modifier.preferredSizeIn(maxWidth = 72.dp, maxHeight = 32.dp)
