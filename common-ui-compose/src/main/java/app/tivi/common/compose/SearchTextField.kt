@@ -20,10 +20,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Text
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
@@ -58,7 +59,9 @@ fun SearchTextField(
             }
         },
         placeholder = { Text(text = hint) },
-        imeAction = imeAction,
+        keyboardOptions = KeyboardOptions(
+            imeAction = imeAction
+        ),
         onImeActionPerformed = onImeActionPerformed,
         modifier = modifier
     )

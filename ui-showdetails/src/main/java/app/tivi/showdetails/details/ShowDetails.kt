@@ -28,8 +28,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.transitionDefinition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.transition
-import androidx.compose.foundation.AmbientContentColor
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -53,13 +51,13 @@ import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.preferredSizeIn
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.ExperimentalLazyDsl
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AmbientEmphasisLevels
+import androidx.compose.material.AmbientContentAlpha
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -68,9 +66,10 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ProvideEmphasis
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -80,6 +79,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Providers
 import androidx.compose.runtime.emptyContent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.onCommit
@@ -96,29 +96,26 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.onSizeChanged
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
-import app.tivi.common.compose.AbsoluteElevationSurface
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.ExpandableFloatingActionButton
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.IconResource
-import app.tivi.common.compose.InsetsAmbient
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.VectorImage
-import app.tivi.common.compose.navigationBarsPadding
+import app.tivi.common.compose.foregroundColor
 import app.tivi.common.compose.offset
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.spacerItem
-import app.tivi.common.compose.statusBarsHeight
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
 import app.tivi.data.entities.Episode
 import app.tivi.data.entities.Genre
@@ -140,12 +137,15 @@ import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
 import coil.request.ImageRequest
 import dev.chrisbanes.accompanist.coil.CoilImage
+import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.navigationBarsPadding
+import dev.chrisbanes.accompanist.insets.statusBarsHeight
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
 val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalLazyDsl::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ShowDetails(
     viewState: ShowDetailsViewState,
@@ -156,7 +156,7 @@ fun ShowDetails(
     val listState = rememberLazyListState()
     var backdropHeight by rememberMutableState { 0 }
 
-    AbsoluteElevationSurface(Modifier.fillMaxSize()) {
+    Surface(Modifier.fillMaxSize()) {
         ShowDetailsScrollingContent(
             show = viewState.show,
             posterImage = viewState.posterImage,
@@ -174,7 +174,7 @@ fun ShowDetails(
         )
     }
 
-    val trigger = backdropHeight - InsetsAmbient.current.statusBars.top
+    val trigger = backdropHeight - AmbientWindowInsets.current.statusBars.top
     OverlaidStatusBarAppBar(
         showAppBar = when (listState.firstVisibleItemIndex) {
             // We only show the app bar when the first item is shown, and it's offset off screen
@@ -229,7 +229,6 @@ fun ShowDetails(
     }
 }
 
-@OptIn(ExperimentalLazyDsl::class)
 @Composable
 private fun ShowDetailsScrollingContent(
     show: TiviShow,
@@ -301,13 +300,11 @@ private fun ShowDetailsScrollingContent(
 
         if (show.summary != null) {
             item {
-                ProvideEmphasis(emphasis = AmbientEmphasisLevels.current.high) {
-                    ExpandingText(
-                        text = show.summary!!,
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
-                }
+                ExpandingText(
+                    text = show.summary!!,
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                )
             }
         }
 
@@ -415,7 +412,7 @@ private fun BackdropImage(
     backdropImage: TmdbImageEntity?,
     modifier: Modifier = Modifier
 ) {
-    AbsoluteElevationSurface(modifier = modifier) {
+    Surface(modifier = modifier) {
         if (backdropImage != null) {
             CoilImage(
                 data = backdropImage,
@@ -443,7 +440,7 @@ private fun OverlaidStatusBarAppBar(
             toState = showAppBar
         )
 
-        AbsoluteElevationSurface(
+        Surface(
             elevation = animate(if (showAppBar) 2.dp else 0.dp),
             modifier = Modifier.fillMaxWidth()
                 .statusBarsHeight()
@@ -462,7 +459,7 @@ private fun OverlaidStatusBarAppBar(
         }
 
         if (showAppBar) {
-            AbsoluteElevationSurface(
+            Surface(
                 elevation = elevation.value,
                 modifier = Modifier.fillMaxWidth(),
                 content = { appBar() }
@@ -524,7 +521,7 @@ private fun NetworkInfoPanel(
                 contentScale = ContentScale.Fit,
                 alignment = Alignment.TopStart,
                 colorFilter = when {
-                    isSystemInDarkTheme() -> ColorFilter.tint(AmbientContentColor.current)
+                    isSystemInDarkTheme() -> ColorFilter.tint(foregroundColor())
                     else -> null
                 },
                 modifier = Modifier.preferredSizeIn(maxWidth = 72.dp, maxHeight = 32.dp)
@@ -686,13 +683,11 @@ private fun Header(title: String) {
 @Composable
 private fun Genres(genres: List<Genre>) {
     Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
-        ProvideEmphasis(AmbientEmphasisLevels.current.high) {
-            val textCreator = ShowDetailsTextCreatorAmbient.current
-            Text(
-                textCreator.genreString(genres).toString(),
-                style = MaterialTheme.typography.body2
-            )
-        }
+        val textCreator = ShowDetailsTextCreatorAmbient.current
+        Text(
+            textCreator.genreString(genres).toString(),
+            style = MaterialTheme.typography.body2
+        )
     }
 }
 
@@ -759,25 +754,24 @@ private fun InfoPanels(show: TiviShow) {
         mainAxisSpacing = 8.dp,
         crossAxisSpacing = 8.dp
     ) {
-        ProvideEmphasis(AmbientEmphasisLevels.current.high) {
-            if (show.traktRating != null) {
-                TraktRatingInfoPanel(show.traktRating!!, show.traktVotes ?: 0)
-            }
-            if (show.network != null) {
-                NetworkInfoPanel(show.network!!, show.networkLogoPath)
-            }
-            if (show.status != null) {
-                ShowStatusPanel(show.status!!)
-            }
-            if (show.certification != null) {
-                CertificateInfoPanel(show.certification!!)
-            }
-            if (show.runtime != null) {
-                RuntimeInfoPanel(show.runtime!!)
-            }
-            if (show.airsDay != null && show.airsTime != null && show.airsTimeZone != null) {
-                AirsInfoPanel(show)
-            }
+
+        if (show.traktRating != null) {
+            TraktRatingInfoPanel(show.traktRating!!, show.traktVotes ?: 0)
+        }
+        if (show.network != null) {
+            NetworkInfoPanel(show.network!!, show.networkLogoPath)
+        }
+        if (show.status != null) {
+            ShowStatusPanel(show.status!!)
+        }
+        if (show.certification != null) {
+            CertificateInfoPanel(show.certification!!)
+        }
+        if (show.runtime != null) {
+            RuntimeInfoPanel(show.runtime!!)
+        }
+        if (show.airsDay != null && show.airsTime != null && show.airsTimeZone != null) {
+            AirsInfoPanel(show)
         }
     }
 }
@@ -820,7 +814,7 @@ private fun LazyListScope.SeasonWithEpisodesRow(
     actioner: (ShowDetailsAction) -> Unit,
 ) {
     item {
-        AbsoluteElevationSurface(
+        Surface(
             elevation = animate(if (expanded) 2.dp else 0.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -889,11 +883,11 @@ private fun SeasonRow(
         ) {
             val textCreator = ShowDetailsTextCreatorAmbient.current
 
-            val emphasis = when {
-                season.ignored -> AmbientEmphasisLevels.current.disabled
-                else -> AmbientEmphasisLevels.current.high
+            val contentAlpha = when {
+                season.ignored -> ContentAlpha.disabled
+                else -> ContentAlpha.high
             }
-            ProvideEmphasis(emphasis) {
+            Providers(AmbientContentAlpha provides contentAlpha) {
                 Text(
                     text = season.title
                         ?: stringResource(R.string.season_title_fallback, season.number!!),
@@ -927,7 +921,7 @@ private fun SeasonRow(
 
         DropdownMenu(
             toggle = {
-                ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
+                Providers(AmbientContentAlpha provides ContentAlpha.medium) {
                     IconButton(onClick = { showMenu = true }) {
                         Icon(Icons.Default.MoreVert)
                     }
@@ -1002,23 +996,21 @@ private fun EpisodeWithWatchesRow(
         Column(modifier = Modifier.weight(1f)) {
             val textCreator = ShowDetailsTextCreatorAmbient.current
 
-            ProvideEmphasis(AmbientEmphasisLevels.current.high) {
-                Text(
-                    text = textCreator.episodeNumberText(episode).toString(),
-                    style = MaterialTheme.typography.caption
-                )
+            Text(
+                text = textCreator.episodeNumberText(episode).toString(),
+                style = MaterialTheme.typography.caption
+            )
 
-                Spacer(Modifier.preferredHeight(2.dp))
+            Spacer(Modifier.preferredHeight(2.dp))
 
-                Text(
-                    text = episode.title
-                        ?: stringResource(R.string.episode_title_fallback, episode.number!!),
-                    style = MaterialTheme.typography.body2
-                )
-            }
+            Text(
+                text = episode.title
+                    ?: stringResource(R.string.episode_title_fallback, episode.number!!),
+                style = MaterialTheme.typography.body2
+            )
         }
 
-        ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
+        Providers(AmbientContentAlpha provides ContentAlpha.medium) {
             var needSpacer = false
             if (hasPending) {
                 IconResource(

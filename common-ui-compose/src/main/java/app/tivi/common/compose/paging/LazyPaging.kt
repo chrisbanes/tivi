@@ -16,10 +16,11 @@
 
 package app.tivi.common.compose.paging
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedTask
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -66,6 +67,7 @@ class LazyPagingItems<T : Any> internal constructor(
     private val pagingDataDiffer = AsyncPagingDataDiffer(
         diffCallback = object : DiffUtil.ItemCallback<T>() {
             override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem === newItem
+            @SuppressLint("DiffUtilEquals")
             override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem == newItem
         },
         updateCallback = object : ListUpdateCallback {
@@ -174,11 +176,11 @@ private val InitialLoadStates = LoadStates(
 fun <T : Any> Flow<PagingData<T>>.collectAsLazyPagingItems(): LazyPagingItems<T> {
     val lazyPagingItems = remember(this) { LazyPagingItems(this) }
 
-    LaunchedTask(lazyPagingItems) {
+    LaunchedEffect(lazyPagingItems) {
         lazyPagingItems.collectPagingData()
     }
 
-    LaunchedTask(lazyPagingItems) {
+    LaunchedEffect(lazyPagingItems) {
         lazyPagingItems.collectLoadState()
     }
 

@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredWidth
-import androidx.compose.foundation.lazy.ExperimentalLazyDsl
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
@@ -46,7 +45,6 @@ fun LazyListScope.spacerItem(height: Dp) {
 /**
  * Provides a workaround for https://issuetracker.google.com/167913500
  */
-@OptIn(ExperimentalLazyDsl::class)
 @Composable
 fun <T> WorkaroundLazyColumnFor(
     items: List<T>,

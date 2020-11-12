@@ -26,6 +26,8 @@ import app.tivi.data.repositories.trendingshows.TrendingShowsStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateTrendingShows.Params
 import app.tivi.util.AppCoroutineDispatchers
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 import org.threeten.bp.Duration
 import javax.inject.Inject

@@ -58,13 +58,14 @@ object Libs {
     }
 
     object Accompanist {
-        private const val version = "0.3.2.compose-6922857-SNAPSHOT"
+        private const val version = "0.3.3.1"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
+        const val insets = "dev.chrisbanes.accompanist:accompanist-insets:$version"
     }
 
     object Mdc {
         const val material = "com.google.android.material:material:1.1.0"
-        const val composeThemeAdapter = "com.google.android.material:compose-theme-adapter:1.0.0-alpha05"
+        const val composeThemeAdapter = "com.google.android.material:compose-theme-adapter:1.0.0-alpha07"
     }
 
     object Google {
@@ -130,11 +131,11 @@ object Libs {
         const val archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
 
         object Paging {
-            private const val version = "3.0.0-SNAPSHOT"
+            private const val version = "3.0.0-alpha09"
             const val common = "androidx.paging:paging-common-ktx:$version"
             const val runtime = "androidx.paging:paging-runtime-ktx:$version"
 
-            const val compose = "androidx.paging:paging-compose:1.0.0-SNAPSHOT"
+            const val compose = "androidx.paging:paging-compose:1.0.0-alpha02"
         }
 
         const val preference = "androidx.preference:preference:1.1.1"
@@ -165,8 +166,8 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = "6922857"
-            const val version = "1.0.0-SNAPSHOT"
+            const val snapshot = ""
+            const val version = "1.0.0-alpha07"
 
             @get:JvmStatic
             val snapshotUrl: String
@@ -186,7 +187,7 @@ object Libs {
             const val animation = "androidx.compose.animation:animation:$version"
 
             const val tooling = "androidx.ui:ui-tooling:$version"
-            const val test = "androidx.ui:ui-test:$version"
+            const val test = "androidx.compose.ui:ui-test-junit4:${version}"
         }
 
         object Hilt {
@@ -224,7 +225,7 @@ object Libs {
     }
 
     object Coil {
-        private const val version = "1.0.0-rc3"
+        private const val version = "1.0.0"
         const val coil = "io.coil-kt:coil:$version"
     }
 

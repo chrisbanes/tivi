@@ -91,6 +91,7 @@ dependencies {
     implementation Libs.Mdc.composeThemeAdapter
 
     implementation Libs.Accompanist.coil
+    implementation Libs.Accompanist.insets
 
     implementation Libs.Hilt.library
     kapt Libs.Hilt.compiler

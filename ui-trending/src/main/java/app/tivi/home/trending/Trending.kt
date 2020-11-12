@@ -16,7 +16,6 @@
 
 package app.tivi.home.trending
 
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -27,42 +26,42 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredSize
-import androidx.compose.foundation.lazy.ExperimentalLazyDsl
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.AmbientEmphasisLevels
+import androidx.compose.material.AmbientContentAlpha
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ProvideEmphasis
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.onSizeChanged
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import app.tivi.common.compose.AbsoluteElevationSurface
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.fakeGridItems
 import app.tivi.common.compose.paging.LazyPagingItems
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.spacerItem
-import app.tivi.common.compose.statusBarsPadding
 import app.tivi.data.resultentities.TrendingEntryWithShow
+import dev.chrisbanes.accompanist.insets.statusBarsPadding
 
-@OptIn(ExperimentalLazyDsl::class)
 @Composable
 fun Trending(
     state: TrendingViewState,
     list: LazyPagingItems<TrendingEntryWithShow>,
     actioner: (TrendingAction) -> Unit
 ) {
-    AbsoluteElevationSurface(Modifier.fillMaxSize()) {
+    Surface(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize()) {
             var appBarHeight by rememberMutableState { 0 }
 
@@ -111,7 +110,7 @@ private fun TrendingAppBar(
     onRefreshActionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    AbsoluteElevationSurface(
+    Surface(
         color = MaterialTheme.colors.surface.copy(alpha = TranslucentAppBarAlpha),
         contentColor = MaterialTheme.colors.onSurface,
         elevation = 4.dp,
@@ -123,17 +122,15 @@ private fun TrendingAppBar(
                 .preferredHeight(56.dp)
                 .padding(start = 16.dp, end = 4.dp)
         ) {
-            ProvideEmphasis(AmbientEmphasisLevels.current.high) {
-                Text(
-                    text = stringResource(R.string.discover_trending_title),
-                    style = MaterialTheme.typography.h6,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                )
-            }
+            Text(
+                text = stringResource(R.string.discover_trending_title),
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
 
             Spacer(Modifier.weight(1f))
 
-            ProvideEmphasis(AmbientEmphasisLevels.current.medium) {
+            Providers(AmbientContentAlpha provides ContentAlpha.medium) {
                 IconButton(
                     onClick = onRefreshActionClick,
                     enabled = !refreshing,
