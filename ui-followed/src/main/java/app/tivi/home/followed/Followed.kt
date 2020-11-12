@@ -194,7 +194,11 @@ private fun FollowedShowItem(
                     .fillMaxHeight()
                     .aspectRatio(2 / 3f)
             ) {
-                CoilImage(data = poster, modifier = Modifier.fillMaxSize())
+                CoilImage(
+                    data = poster,
+                    fadeIn = true,
+                    modifier = Modifier.fillMaxSize()
+                )
             }
         }
 
