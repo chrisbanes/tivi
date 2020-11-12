@@ -131,11 +131,11 @@ object Libs {
         const val archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
 
         object Paging {
-            private const val version = "3.0.0-SNAPSHOT"
+            private const val version = "3.0.0-alpha09"
             const val common = "androidx.paging:paging-common-ktx:$version"
             const val runtime = "androidx.paging:paging-runtime-ktx:$version"
 
-            const val compose = "androidx.paging:paging-compose:1.0.0-SNAPSHOT"
+            const val compose = "androidx.paging:paging-compose:1.0.0-alpha02"
         }
 
         const val preference = "androidx.preference:preference:1.1.1"
