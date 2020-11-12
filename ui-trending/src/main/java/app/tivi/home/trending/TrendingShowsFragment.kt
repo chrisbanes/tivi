@@ -68,7 +68,7 @@ class TrendingShowsFragment : Fragment() {
                     if (viewState != null) {
                         Trending(
                             state = viewState!!,
-                            list = viewModel.pagedList.collectAsLazyPagingItems(),
+                            lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems(),
                             actioner = { pendingActions.offer(it) },
                         )
                     }

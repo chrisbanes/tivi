@@ -58,7 +58,7 @@ import dev.chrisbanes.accompanist.insets.statusBarsPadding
 @Composable
 fun Trending(
     state: TrendingViewState,
-    list: LazyPagingItems<TrendingEntryWithShow>,
+    lazyPagingItems: LazyPagingItems<TrendingEntryWithShow>,
     actioner: (TrendingAction) -> Unit
 ) {
     Surface(Modifier.fillMaxSize()) {
@@ -72,7 +72,7 @@ fun Trending(
                 }
 
                 fakeGridItems(
-                    lazyPagingItems = list,
+                    lazyPagingItems = lazyPagingItems,
                     columns = 3,
                     contentPadding = PaddingValues(4.dp),
                     verticalItemPadding = 2.dp,
@@ -93,7 +93,7 @@ fun Trending(
 
             TrendingAppBar(
                 refreshing = state.isLoading,
-                onRefreshActionClick = { actioner(TrendingAction.RefreshAction) },
+                onRefreshActionClick = { lazyPagingItems.refresh() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .onSizeChanged { appBarHeight = it.height }
