@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.paging.AsyncPagingDataDiffer
 import androidx.paging.CombinedLoadStates
+import androidx.paging.ItemSnapshotList
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.PagingConfig
@@ -53,7 +54,6 @@ import kotlinx.coroutines.flow.collectLatest
 class LazyPagingItems<T : Any> internal constructor(
     private val flow: Flow<PagingData<T>>
 ) {
-
     // This bakes [itemCount] property with a mutable state which means that every time we
     // update the state the usages of itemCount would be recomposed.
     private val _itemCount = mutableStateOf(0)
@@ -128,6 +128,58 @@ class LazyPagingItems<T : Any> internal constructor(
             }
         }
         return state.value.item
+    }
+
+    /**
+     * Returns the presented item at the specified position, without notifying Paging of the item
+     * access that would normally trigger page loads.
+     *
+     * @param index Index of the presented item to return, including placeholders.
+     * @return The presented item at position [index], `null` if it is a placeholder
+     */
+    fun peek(index: Int): T? {
+        return pagingDataDiffer.peek(index)
+    }
+
+    /**
+     * Returns a new [ItemSnapshotList] representing the currently presented items, including any
+     * placeholders if they are enabled.
+     */
+    fun snapshot(): ItemSnapshotList<T> {
+        return pagingDataDiffer.snapshot()
+    }
+
+    /**
+     * Retry any failed load requests that would result in a [LoadState.Error] update to this
+     * [LazyPagingItems].
+     *
+     * Unlike [refresh], this does not invalidate [PagingSource], it only retries failed loads
+     * within the same generation of [PagingData].
+     *
+     * [LoadState.Error] can be generated from two types of load requests:
+     *  * [PagingSource.load] returning [PagingSource.LoadResult.Error]
+     *  * [RemoteMediator.load] returning [RemoteMediator.MediatorResult.Error]
+     */
+    fun retry() {
+        pagingDataDiffer.retry()
+    }
+
+    /**
+     * Refresh the data presented by this [LazyPagingItems].
+     *
+     * [refresh] triggers the creation of a new [PagingData] with a new instance of [PagingSource]
+     * to represent an updated snapshot of the backing dataset. If a [RemoteMediator] is set,
+     * calling [refresh] will also trigger a call to [RemoteMediator.load] with [LoadType] [REFRESH]
+     * to allow [RemoteMediator] to check for updates to the dataset backing [PagingSource].
+     *
+     * Note: This API is intended for UI-driven refresh signals, such as swipe-to-refresh.
+     * Invalidation due repository-layer signals, such as DB-updates, should instead use
+     * [PagingSource.invalidate].
+     *
+     * @see PagingSource.invalidate
+     */
+    fun refresh() {
+        pagingDataDiffer.refresh()
     }
 
     /**
@@ -214,8 +266,6 @@ fun <T : Any> LazyListScope.items(
  * aware of its local index. The range from 0 (inclusive) to [LazyPagingItems.itemCount] (inclusive)
  * always represents the full range of presentable items, because every event from
  * [PagingDataDiffer] will trigger a recomposition.
- *
- * @sample androidx.paging.compose.samples.ItemsIndexedDemo
  *
  * @param lazyPagingItems the items received from a [Flow] of [PagingData].
  * @param itemContent the content displayed by a single item. In case the item is `null`, the
