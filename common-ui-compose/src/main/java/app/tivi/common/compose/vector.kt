@@ -19,7 +19,6 @@ package app.tivi.common.compose
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.AmbientContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +36,7 @@ fun VectorImage(
     @DrawableRes id: Int,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Inside,
-    tintColor: Color = AmbientContentColor.current,
+    tintColor: Color = foregroundColor(),
     modifier: Modifier = Modifier.wrapContentSize(align = alignment)
 ) {
     val deferred = loadVectorResource(id)
@@ -57,7 +56,7 @@ fun VectorImage(
     vector: VectorAsset,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Inside,
-    tintColor: Color = AmbientContentColor.current,
+    tintColor: Color = foregroundColor(),
     modifier: Modifier = Modifier.wrapContentSize(align = alignment)
 ) {
     Box(

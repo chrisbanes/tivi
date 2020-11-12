@@ -14,31 +14,17 @@
  * limitations under the License.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
+
 package app.tivi.common.compose
 
-import androidx.annotation.DrawableRes
-import androidx.compose.material.Icon
+import androidx.compose.material.AmbientContentAlpha
+import androidx.compose.material.AmbientContentColor
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.DeferredResource
-import androidx.compose.ui.res.loadVectorResource
 
+/**
+ * Returns the [AmbientContentColor] with the current [AmbientContentAlpha].
+ */
 @Composable
-fun IconResource(
-    @DrawableRes resourceId: Int,
-    modifier: Modifier = Modifier,
-    tint: Color = foregroundColor()
-) {
-    val deferredResource = loadVectorResource(resourceId)
-    deferredResource.onLoadRun { asset ->
-        Icon(asset = asset, modifier = modifier, tint = tint)
-    }
-}
-
-inline fun <T> DeferredResource<T>.onLoadRun(block: (T) -> Unit) {
-    val res = resource.resource
-    if (res != null) {
-        block(res)
-    }
-}
+inline fun foregroundColor(): Color = AmbientContentColor.current.copy(AmbientContentAlpha.current)

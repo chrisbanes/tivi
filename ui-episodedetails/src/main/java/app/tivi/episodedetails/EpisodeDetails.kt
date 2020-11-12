@@ -260,7 +260,6 @@ private fun Backdrop(
                     )
                     .padding(all = 16.dp)
             ) {
-                val type = MaterialTheme.typography
                 val epNumber = episode.number
                 val seasonNumber = season.number
 
@@ -276,7 +275,6 @@ private fun Backdrop(
                                     epNumber
                                 ).toUpperCase(locale),
                                 style = MaterialTheme.typography.overline
-                                    .copy(color = AmbientContentColor.current)
                             )
                         }
                         Spacer(modifier = Modifier.preferredHeight(4.dp))
@@ -284,7 +282,7 @@ private fun Backdrop(
 
                     Text(
                         text = episode.title ?: "No title",
-                        style = type.h6.copy(color = AmbientContentColor.current)
+                        style = MaterialTheme.typography.h6
                     )
                 }
             }
