@@ -27,8 +27,6 @@ import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -48,7 +46,7 @@ class UpdateFollowedShows @Inject constructor(
             }
 
             // Finally sync the seasons/episodes and watches
-            followedShowsRepository.getFollowedShows().asFlow().collect {
+            followedShowsRepository.getFollowedShows().forEach {
                 showStore.fetch(it.showId)
                 showImagesStore.fetchCollection(it.showId)
 
