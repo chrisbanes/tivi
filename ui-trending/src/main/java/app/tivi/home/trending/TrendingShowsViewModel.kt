@@ -65,10 +65,6 @@ class TrendingShowsViewModel @ViewModelInject constructor(
     }
 
     companion object {
-        val PAGING_CONFIG = PagingConfig(
-            pageSize = 21 * 3,
-            prefetchDistance = 21,
-            enablePlaceholders = false
-        )
+        val PAGING_CONFIG = PagingConfig(pageSize = 60)
     }
 }

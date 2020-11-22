@@ -129,8 +129,9 @@ class LazyPagingItems<T : Any> internal constructor(
         onCommit(state.value.pending) {
             state.value.run {
                 if (pending) {
-                    // If we're pending, re-fetch the item
-                    item = pagingDataDiffer.getItem(index)
+                    // If we're pending, re-fetch the item. We use peek() to not mess with
+                    // paging's logic for calculating when to load the next page
+                    item = pagingDataDiffer.peek(index)
                 }
             }
         }

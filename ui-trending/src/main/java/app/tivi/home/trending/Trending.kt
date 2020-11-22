@@ -47,6 +47,7 @@ import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
+import app.tivi.common.compose.PlaceholderPosterCard
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.fakeGridItems
 import app.tivi.common.compose.paging.LazyPagingItems
@@ -78,13 +79,16 @@ fun Trending(
                     verticalItemPadding = 2.dp,
                     horizontalItemPadding = 2.dp
                 ) { entry ->
+                    val modifier = Modifier.aspectRatio(2 / 3f).fillMaxWidth()
                     if (entry != null) {
                         PosterCard(
                             show = entry.show,
                             poster = entry.poster,
                             onClick = { actioner(TrendingAction.OpenShowDetails(entry.show.id)) },
-                            modifier = Modifier.aspectRatio(2 / 3f).fillMaxWidth()
+                            modifier = modifier
                         )
+                    } else {
+                        PlaceholderPosterCard(modifier = modifier)
                     }
                 }
 

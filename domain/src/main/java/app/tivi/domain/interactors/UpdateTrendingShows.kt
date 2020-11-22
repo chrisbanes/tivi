@@ -26,6 +26,7 @@ import app.tivi.data.repositories.trendingshows.TrendingShowsStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateTrendingShows.Params
 import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.util.Logger
 import kotlinx.coroutines.withContext
 import org.threeten.bp.Duration
 import javax.inject.Inject
@@ -34,9 +35,10 @@ class UpdateTrendingShows @Inject constructor(
     private val trendingShowsStore: TrendingShowsStore,
     private val trendingShowsDao: TrendingDao,
     private val lastRequestStore: TrendingShowsLastRequestStore,
-    private val showsStore: ShowStore,
+    private val showStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
+    private val logger: Logger,
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
@@ -53,8 +55,12 @@ class UpdateTrendingShows @Inject constructor(
                 // Refresh if our local data is over 3 hours old
                 page != 0 || lastRequestStore.isRequestExpired(Duration.ofHours(3))
             }.forEach {
-                showsStore.fetch(it.showId)
-                showImagesStore.fetchCollection(it.showId)
+                showStore.fetch(it.showId)
+                try {
+                    showImagesStore.fetchCollection(it.showId)
+                } catch (t: Throwable) {
+                    logger.e("Error while fetching image", t)
+                }
             }
         }
     }

@@ -65,3 +65,14 @@ fun PosterCard(
         }
     }
 }
+
+@Composable
+fun PlaceholderPosterCard(
+    modifier: Modifier = Modifier
+) {
+    Card(modifier = modifier) {
+        Box {
+            // TODO: display something better
+        }
+    }
+}
