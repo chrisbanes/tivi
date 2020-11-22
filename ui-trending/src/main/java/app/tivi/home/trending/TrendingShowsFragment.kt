@@ -68,7 +68,9 @@ class TrendingShowsFragment : Fragment() {
                     if (viewState != null) {
                         Trending(
                             state = viewState!!,
-                            lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems(),
+                            lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems { old, new ->
+                                old.entry.id == new.entry.id
+                            },
                             actioner = { pendingActions.offer(it) },
                         )
                     }
@@ -86,7 +88,7 @@ class TrendingShowsFragment : Fragment() {
                     is TrendingAction.OpenShowDetails -> {
                         findNavController().navigate("app.tivi://show/${action.showId}".toUri())
                     }
-                    else -> viewModel.submitAction(action)
+                    // else -> viewModel.submitAction(action)
                 }
             }
         }

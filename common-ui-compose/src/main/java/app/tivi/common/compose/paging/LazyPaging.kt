@@ -16,7 +16,7 @@
 
 package app.tivi.common.compose.paging
 
-import android.annotation.SuppressLint
+import androidx.collection.SparseArrayCompat
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
@@ -52,8 +52,18 @@ import kotlinx.coroutines.flow.collectLatest
  * @param T the type of value used by [PagingData].
  */
 class LazyPagingItems<T : Any> internal constructor(
-    private val flow: Flow<PagingData<T>>
+    private val flow: Flow<PagingData<T>>,
+    private val areItemsTheSame: (oldItem: T, newItem: T) -> Boolean,
+    private val areContentsTheSame: (oldItem: T, newItem: T) -> Boolean,
 ) {
+    /**
+     * A sparse array of state objects used by the currently visible items. If we update the
+     * value of the MutableState it will automatically trigger recomposition for this changed
+     * item in the list (and not affect other items). This also helps us to track what indexes
+     * are currently visible to ignore onChanged events for the rest of items.
+     */
+    private val currentlyUsedItems = SparseArrayCompat<MutableState<LazyListPagingItemState<T>>>(120)
+
     // This bakes [itemCount] property with a mutable state which means that every time we
     // update the state the usages of itemCount would be recomposed.
     private val _itemCount = mutableStateOf(0)
@@ -66,16 +76,19 @@ class LazyPagingItems<T : Any> internal constructor(
 
     private val pagingDataDiffer = AsyncPagingDataDiffer(
         diffCallback = object : DiffUtil.ItemCallback<T>() {
-            override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem === newItem
-            @SuppressLint("DiffUtilEquals")
-            override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem == newItem
+            override fun areItemsTheSame(oldItem: T, newItem: T): Boolean {
+                return this@LazyPagingItems.areItemsTheSame(oldItem, newItem)
+            }
+
+            override fun areContentsTheSame(oldItem: T, newItem: T): Boolean {
+                return this@LazyPagingItems.areContentsTheSame(oldItem, newItem)
+            }
         },
         updateCallback = object : ListUpdateCallback {
             override fun onChanged(position: Int, count: Int, payload: Any?) {
                 for (index in position until position + count) {
-                    val state = currentlyUsedItems[position]
-                    if (state != null) {
-                        state.value.pending = true
+                    currentlyUsedItems[index]?.run {
+                        value.pending = true
                     }
                 }
             }
@@ -95,14 +108,6 @@ class LazyPagingItems<T : Any> internal constructor(
     )
 
     /**
-     * A map of state objects used by the currently visible items. If we update the value of the
-     * MutableState it will automatically trigger recomposition for this changed item in the list
-     * (and not affect other items). This also helps us to track what indexes are currently
-     * visible to ignore onChanged events for the rest of items.
-     */
-    private val currentlyUsedItems = mutableMapOf<Int, MutableState<LazyListPagingItemState<T>>>()
-
-    /**
      * Returns the item specified at [index] and notifies Paging of the item accessed in
      * order to trigger any loads necessary to fulfill [PagingConfig.prefetchDistance].
      *
@@ -116,15 +121,17 @@ class LazyPagingItems<T : Any> internal constructor(
             mutableStateOf(LazyListPagingItemState(pagingDataDiffer.getItem(index)))
         }
         onCommit(index) {
-            currentlyUsedItems[index] = state
+            currentlyUsedItems.put(index, state)
             onDispose {
                 currentlyUsedItems.remove(index)
             }
         }
         onCommit(state.value.pending) {
-            if (state.value.pending) {
-                state.value.item = pagingDataDiffer.getItem(index)
-                state.value.pending = false
+            state.value.run {
+                if (pending) {
+                    // If we're pending, re-fetch the item
+                    item = pagingDataDiffer.getItem(index)
+                }
             }
         }
         return state.value.item
@@ -207,6 +214,7 @@ private class LazyListPagingItemState<T>(item: T?) {
 
     init {
         this.item = item
+        this.pending = item == null
     }
 }
 
@@ -225,8 +233,13 @@ private val InitialLoadStates = LoadStates(
  * @sample androidx.paging.compose.samples.PagingBackendSample
  */
 @Composable
-fun <T : Any> Flow<PagingData<T>>.collectAsLazyPagingItems(): LazyPagingItems<T> {
-    val lazyPagingItems = remember(this) { LazyPagingItems(this) }
+fun <T : Any> Flow<PagingData<T>>.collectAsLazyPagingItems(
+    areContentsTheSame: (old: T, new: T) -> Boolean = { old, new -> old == new },
+    areItemsTheSame: (old: T, new: T) -> Boolean
+): LazyPagingItems<T> {
+    val lazyPagingItems = remember(this) {
+        LazyPagingItems(this, areItemsTheSame, areContentsTheSame)
+    }
 
     LaunchedEffect(lazyPagingItems) {
         lazyPagingItems.collectPagingData()

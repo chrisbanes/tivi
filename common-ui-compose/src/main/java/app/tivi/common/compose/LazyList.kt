@@ -84,8 +84,6 @@ fun <T : Any> LazyListScope.fakeGridItems(
     verticalItemPadding: Dp = 0.dp,
     itemContent: @Composable (T?) -> Unit
 ) {
-    lazyPagingItems.loadState
-
     val rows = when {
         lazyPagingItems.itemCount % columns == 0 -> lazyPagingItems.itemCount / columns
         else -> (lazyPagingItems.itemCount / columns) + 1

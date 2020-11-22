@@ -22,22 +22,16 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import app.tivi.ReduxViewModel
 import app.tivi.data.resultentities.TrendingEntryWithShow
-import app.tivi.domain.interactors.UpdateTrendingShows
-import app.tivi.domain.interactors.UpdateTrendingShows.Page.REFRESH
 import app.tivi.domain.observers.ObservePagedTrendingShows
 import app.tivi.util.ObservableLoadingCounter
-import app.tivi.util.collectInto
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class TrendingShowsViewModel @ViewModelInject constructor(
     private val pagingInteractor: ObservePagedTrendingShows,
-    private val interactor: UpdateTrendingShows,
 ) : ReduxViewModel<TrendingViewState>(TrendingViewState()) {
 
     val pagedList: Flow<PagingData<TrendingEntryWithShow>>
@@ -57,24 +51,16 @@ class TrendingShowsViewModel @ViewModelInject constructor(
 
         pagingInteractor(ObservePagedTrendingShows.Params(PAGING_CONFIG))
 
-        viewModelScope.launch {
-            pendingActions.consumeAsFlow().collect { action ->
-                when (action) {
-                    TrendingAction.RefreshAction -> refresh(fromUser = true)
-                }
-            }
-        }
+//        viewModelScope.launch {
+//            pendingActions.consumeAsFlow().collect { action ->
+//                // TODO
+//            }
+//        }
     }
 
     fun submitAction(action: TrendingAction) {
         viewModelScope.launch {
             if (!pendingActions.isClosedForSend) pendingActions.send(action)
-        }
-    }
-
-    private fun refresh(fromUser: Boolean) {
-        viewModelScope.launch {
-            interactor(UpdateTrendingShows.Params(REFRESH, fromUser)).collectInto(loadingState)
         }
     }
 
