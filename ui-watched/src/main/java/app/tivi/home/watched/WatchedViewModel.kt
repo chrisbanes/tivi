@@ -24,11 +24,9 @@ import app.tivi.ReduxViewModel
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
-import app.tivi.domain.executeSync
 import app.tivi.domain.interactors.ChangeShowFollowStatus
 import app.tivi.domain.interactors.GetTraktAuthState
 import app.tivi.domain.interactors.UpdateWatchedShows
-import app.tivi.domain.invoke
 import app.tivi.domain.observers.ObservePagedWatchedShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
@@ -87,7 +85,7 @@ internal class WatchedViewModel @ViewModelInject constructor(
                 .onEach { if (it == TraktAuthState.LOGGED_IN) refresh(false) }
                 .collectAndSetState { copy(authState = it) }
         }
-        observeTraktAuthState()
+        observeTraktAuthState(Unit)
 
         viewModelScope.launch {
             observeUserDetails.observe()
@@ -128,7 +126,7 @@ internal class WatchedViewModel @ViewModelInject constructor(
 
     private fun refresh(fromUser: Boolean) {
         viewModelScope.launch {
-            if (getTraktAuthState.executeSync() == TraktAuthState.LOGGED_IN) {
+            if (getTraktAuthState.executeSync(Unit) == TraktAuthState.LOGGED_IN) {
                 refreshWatched(fromUser)
             }
         }

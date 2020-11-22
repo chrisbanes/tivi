@@ -96,7 +96,3 @@ abstract class SubjectInteractor<P : Any, T> {
 
     fun observe(): Flow<T> = paramState.flatMapLatest { createObservable(it) }
 }
-
-operator fun Interactor<Unit>.invoke() = invoke(Unit)
-suspend fun <R> ResultInteractor<Unit, R>.executeSync(): R = executeSync(Unit)
-operator fun <T> SubjectInteractor<Unit, T>.invoke() = invoke(Unit)

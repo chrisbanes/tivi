@@ -21,7 +21,6 @@ import androidx.lifecycle.viewModelScope
 import app.tivi.AppNavigator
 import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.ClearUserDetails
-import app.tivi.domain.invoke
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktManager
@@ -49,7 +48,7 @@ class AccountUiViewModel @ViewModelInject constructor(
                 .distinctUntilChanged()
                 .collectAndSetState { copy(authState = it) }
         }
-        observeTraktAuthState()
+        observeTraktAuthState(Unit)
 
         viewModelScope.launch {
             observeUserDetails.observe()
