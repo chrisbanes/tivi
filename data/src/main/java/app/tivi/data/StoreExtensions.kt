@@ -17,11 +17,8 @@
 package app.tivi.data
 
 import com.dropbox.android.external.store4.Store
-import com.dropbox.android.external.store4.StoreRequest
-import com.dropbox.android.external.store4.StoreResponse
 import com.dropbox.android.external.store4.fresh
-import kotlinx.coroutines.flow.filterNot
-import kotlinx.coroutines.flow.first
+import com.dropbox.android.external.store4.get
 
 suspend inline fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
     key: Key,
@@ -29,7 +26,7 @@ suspend inline fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
 ): Output = when {
     // If we're forcing a fresh fetch, do it now
     forceFresh -> fresh(key)
-    else -> cachedOnly(key) ?: fresh(key)
+    else -> get(key)
 }
 
 suspend fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
@@ -41,8 +38,8 @@ suspend fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
     forceFresh -> fresh(key)
     else -> {
         // Else we'll check the current cached value
-        val cached = cachedOnly(key)
-        if (cached == null || doFreshIf(cached)) {
+        val cached = get(key)
+        if (doFreshIf(cached)) {
             // Our cached value isn't valid, do a fresh fetch
             fresh(key)
         } else {
@@ -69,11 +66,4 @@ suspend inline fun <Key : Any, Output : Collection<Any>> Store<Key, Output>.fetc
     crossinline doFreshIf: suspend (Output) -> Boolean
 ): Output = fetch(key, forceFresh = forceFresh) {
     it.isEmpty() || doFreshIf(it)
-}
-
-suspend inline fun <Key : Any, Output : Any> Store<Key, Output>.cachedOnly(key: Key): Output? {
-    return stream(StoreRequest.cached(key, refresh = false))
-        .filterNot { it is StoreResponse.Loading || it is StoreResponse.NoNewData }
-        .first()
-        .dataOrNull()
 }

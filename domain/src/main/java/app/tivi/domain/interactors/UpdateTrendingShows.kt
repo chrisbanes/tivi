@@ -28,7 +28,6 @@ import app.tivi.domain.interactors.UpdateTrendingShows.Params
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import kotlinx.coroutines.withContext
-import org.threeten.bp.Duration
 import javax.inject.Inject
 
 class UpdateTrendingShows @Inject constructor(
@@ -51,10 +50,7 @@ class UpdateTrendingShows @Inject constructor(
                 else -> 0
             }
 
-            trendingShowsStore.fetchCollection(page, forceFresh = params.forceRefresh) {
-                // Refresh if our local data is over 3 hours old
-                page != 0 || lastRequestStore.isRequestExpired(Duration.ofHours(3))
-            }.forEach {
+            trendingShowsStore.fetch(page, params.forceRefresh).forEach {
                 showStore.fetch(it.showId)
                 try {
                     showImagesStore.fetchCollection(it.showId)
