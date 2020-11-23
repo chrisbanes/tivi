@@ -135,7 +135,7 @@ internal class DiscoverViewModel @ViewModelInject constructor(
                 .collectInto(trendingLoadingState)
         }
         viewModelScope.launch {
-            updateRecommendedShows(UpdateRecommendedShows.Params(UpdateRecommendedShows.Page.REFRESH, fromUser))
+            updateRecommendedShows(UpdateRecommendedShows.Params(forceRefresh = fromUser))
                 .collectInto(recommendedLoadingState)
         }
     }
