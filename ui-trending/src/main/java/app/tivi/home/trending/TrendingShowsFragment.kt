@@ -53,8 +53,12 @@ class TrendingShowsFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = ComposeView(requireContext()).apply {
+    ): View = ComposeView(requireContext()).apply {
         layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+
+        // This ensures that the viewModel is created now, rather than later after a composition.
+        // Just a small optimization to start the data fetch quicker.
+        val pagedList = viewModel.pagedList
 
         setContent {
             Providers(
@@ -63,7 +67,7 @@ class TrendingShowsFragment : Fragment() {
             ) {
                 TiviContentSetup {
                     Trending(
-                        lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems { old, new ->
+                        lazyPagingItems = pagedList.collectAsLazyPagingItems { old, new ->
                             old.entry.id == new.entry.id
                         },
                         actioner = { pendingActions.offer(it) },

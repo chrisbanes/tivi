@@ -17,38 +17,26 @@
 package app.tivi.home.trending
 
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import app.tivi.ReduxViewModel
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.domain.observers.ObservePagedTrendingShows
-import app.tivi.util.ObservableLoadingCounter
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class TrendingShowsViewModel @ViewModelInject constructor(
     private val pagingInteractor: ObservePagedTrendingShows,
-) : ReduxViewModel<TrendingViewState>(TrendingViewState()) {
+) : ViewModel() {
 
     val pagedList: Flow<PagingData<TrendingEntryWithShow>>
         get() = pagingInteractor.observe()
 
     private val pendingActions = Channel<TrendingAction>(Channel.BUFFERED)
 
-    private val loadingState = ObservableLoadingCounter()
-
     init {
-        viewModelScope.launch {
-            loadingState.observable
-                .distinctUntilChanged()
-                .debounce(2000)
-                .collectAndSetState { copy(isLoading = it) }
-        }
-
         pagingInteractor(ObservePagedTrendingShows.Params(PAGING_CONFIG))
 
 //        viewModelScope.launch {
@@ -62,6 +50,10 @@ class TrendingShowsViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             if (!pendingActions.isClosedForSend) pendingActions.send(action)
         }
+    }
+
+    override fun onCleared() {
+        pendingActions.close()
     }
 
     companion object {
