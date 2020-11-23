@@ -45,8 +45,6 @@ dependencies {
     implementation Libs.Coroutines.core
 
     api Libs.AndroidX.appcompat
-    implementation Libs.AndroidX.recyclerview
-    implementation Libs.AndroidX.constraintlayout
     implementation Libs.AndroidX.coreKtx
     implementation Libs.AndroidX.Fragment.fragment
     implementation Libs.AndroidX.Fragment.fragmentKtx

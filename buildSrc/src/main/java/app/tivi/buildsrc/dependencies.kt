@@ -99,9 +99,7 @@ object Libs {
         const val browser = "androidx.browser:browser:1.0.0"
         const val collection = "androidx.collection:collection-ktx:1.1.0"
         const val palette = "androidx.palette:palette:1.0.0"
-        const val recyclerview = "androidx.recyclerview:recyclerview:1.2.0-alpha06"
         const val emoji = "androidx.emoji:emoji:1.1.0"
-        const val swiperefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
         object Navigation {
             private const val version = "2.3.1"
