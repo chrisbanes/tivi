@@ -27,6 +27,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import kotlinx.coroutines.flow.map
+import org.threeten.bp.Duration
 import javax.inject.Singleton
 
 typealias ShowStore = Store<Long, TiviShow>
@@ -50,7 +52,16 @@ object ShowStoreModule {
                 }.getOrThrow()
         },
         sourceOfTruth = SourceOfTruth.of(
-            reader = showDao::getShowWithIdFlow,
+            reader = { showId ->
+                showDao.getShowWithIdFlow(showId).map {
+                    when {
+                        // If the request is expired, our data is stale
+                        lastRequestStore.isRequestExpired(showId, Duration.ofDays(14)) -> null
+                        // Otherwise, our data is fresh and valid
+                        else -> it
+                    }
+                }
+            },
             writer = { id, response ->
                 showDao.withTransaction {
                     showDao.insertOrUpdate(
