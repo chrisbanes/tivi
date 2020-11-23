@@ -86,9 +86,14 @@ class LazyPagingItems<T : Any> internal constructor(
         },
         updateCallback = object : ListUpdateCallback {
             override fun onChanged(position: Int, count: Int, payload: Any?) {
-                for (index in position until position + count) {
-                    currentlyUsedItems[index]?.run {
-                        value.pending = true
+                synchronized(currentlyUsedItems) {
+                    for (index in position until position + count) {
+                        // Mark all of the changed items as 'pending' so that the items are re-fetched.
+                        // Ideally we would update the items now, but getItem() does not return
+                        // the updated items until after the update.
+                        currentlyUsedItems[index]?.run {
+                            value.pending = true
+                        }
                     }
                 }
             }
@@ -102,7 +107,11 @@ class LazyPagingItems<T : Any> internal constructor(
             }
 
             override fun onMoved(fromPosition: Int, toPosition: Int) {
-                // TODO
+                synchronized(currentlyUsedItems) {
+                    val from = currentlyUsedItems.get(fromPosition)
+                    currentlyUsedItems.remove(fromPosition)
+                    currentlyUsedItems.put(toPosition, from)
+                }
             }
         }
     )
@@ -121,18 +130,23 @@ class LazyPagingItems<T : Any> internal constructor(
             mutableStateOf(LazyListPagingItemState(pagingDataDiffer.getItem(index)))
         }
         onCommit(index) {
-            currentlyUsedItems.put(index, state)
+            synchronized(currentlyUsedItems) {
+                currentlyUsedItems.put(index, state)
+            }
             onDispose {
-                currentlyUsedItems.remove(index)
+                synchronized(currentlyUsedItems) {
+                    currentlyUsedItems.remove(index)
+                }
             }
         }
         onCommit(state.value.pending) {
-            state.value.run {
-                if (pending) {
-                    // If we're pending, re-fetch the item. We use peek() to not mess with
-                    // paging's logic for calculating when to load the next page
-                    item = pagingDataDiffer.peek(index)
-                }
+            val itemState = state.value
+            if (itemState.pending) {
+                // If we're pending, re-fetch the item. We use peek() to not mess with
+                // paging's logic for calculating when to load the next page
+                itemState.item = pagingDataDiffer.peek(index)
+                // Flip the pending flag back to false
+                itemState.pending = false
             }
         }
         return state.value.item
@@ -215,7 +229,6 @@ private class LazyListPagingItemState<T>(item: T?) {
 
     init {
         this.item = item
-        this.pending = item == null
     }
 }
 
