@@ -18,10 +18,8 @@ package app.tivi.domain.interactors
 
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.fetch
-import app.tivi.data.fetchCollection
 import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
-import app.tivi.data.repositories.trendingshows.TrendingShowsLastRequestStore
 import app.tivi.data.repositories.trendingshows.TrendingShowsStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdateTrendingShows.Params
@@ -33,7 +31,6 @@ import javax.inject.Inject
 class UpdateTrendingShows @Inject constructor(
     private val trendingShowsStore: TrendingShowsStore,
     private val trendingShowsDao: TrendingDao,
-    private val lastRequestStore: TrendingShowsLastRequestStore,
     private val showStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
     private val dispatchers: AppCoroutineDispatchers,
@@ -53,9 +50,9 @@ class UpdateTrendingShows @Inject constructor(
             trendingShowsStore.fetch(page, params.forceRefresh).forEach {
                 showStore.fetch(it.showId)
                 try {
-                    showImagesStore.fetchCollection(it.showId)
+                    showImagesStore.fetch(it.showId)
                 } catch (t: Throwable) {
-                    logger.e("Error while fetching image", t)
+                    logger.e("Error while fetching images for show: ${it.showId}", t)
                 }
             }
         }

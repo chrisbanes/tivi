@@ -28,6 +28,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import kotlinx.coroutines.flow.map
+import org.threeten.bp.Duration
 import javax.inject.Singleton
 
 typealias PopularShowsStore = Store<Int, List<PopularShowEntry>>
@@ -52,7 +54,18 @@ internal object PopularShowsModule {
                 }.getOrThrow()
         },
         sourceOfTruth = SourceOfTruth.of(
-            reader = popularShowsDao::entriesObservable,
+            reader = { page ->
+                popularShowsDao.entriesObservable(page).map { entries ->
+                    when {
+                        // Store only treats null as 'no value', so convert to null
+                        entries.isEmpty() -> null
+                        // If the request is expired, our data is stale
+                        lastRequestStore.isRequestExpired(Duration.ofHours(3)) -> null
+                        // Otherwise, our data is fresh and valid
+                        else -> entries
+                    }
+                }
+            },
             writer = { page, response ->
                 popularShowsDao.withTransaction {
                     val entries = response.map { (show, entry) ->

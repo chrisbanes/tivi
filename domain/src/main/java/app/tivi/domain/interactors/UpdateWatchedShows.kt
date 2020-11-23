@@ -17,12 +17,12 @@
 package app.tivi.domain.interactors
 
 import app.tivi.data.fetch
-import app.tivi.data.fetchCollection
 import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.data.repositories.watchedshows.WatchedShowsStore
 import app.tivi.domain.Interactor
 import app.tivi.util.AppCoroutineDispatchers
+import app.tivi.util.Logger
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -30,13 +30,18 @@ class UpdateWatchedShows @Inject constructor(
     private val watchedShowsStore: WatchedShowsStore,
     private val showsStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
+    private val logger: Logger,
 ) : Interactor<UpdateWatchedShows.Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
             watchedShowsStore.fetch(Unit, params.forceRefresh).forEach {
                 showsStore.fetch(it.showId)
-                showImagesStore.fetchCollection(it.showId)
+                try {
+                    showImagesStore.fetch(it.showId)
+                } catch (t: Throwable) {
+                    logger.e("Error while fetching images for show: ${it.showId}", t)
+                }
             }
         }
     }

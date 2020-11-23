@@ -18,8 +18,6 @@ package app.tivi.domain.interactors
 
 import app.tivi.data.daos.PopularDao
 import app.tivi.data.fetch
-import app.tivi.data.fetchCollection
-import app.tivi.data.repositories.popularshows.PopularShowsLastRequestStore
 import app.tivi.data.repositories.popularshows.PopularShowsStore
 import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
@@ -28,13 +26,11 @@ import app.tivi.domain.interactors.UpdatePopularShows.Params
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import kotlinx.coroutines.withContext
-import org.threeten.bp.Duration
 import javax.inject.Inject
 
 class UpdatePopularShows @Inject constructor(
     private val popularShowStore: PopularShowsStore,
     private val popularDao: PopularDao,
-    private val lastRequestStore: PopularShowsLastRequestStore,
     private val showStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
     private val dispatchers: AppCoroutineDispatchers,
@@ -51,15 +47,12 @@ class UpdatePopularShows @Inject constructor(
                 else -> 0
             }
 
-            popularShowStore.fetchCollection(page, forceFresh = params.forceRefresh) {
-                // Refresh if our local data is over 3 hours old
-                page != 0 || lastRequestStore.isRequestExpired(Duration.ofHours(3))
-            }.forEach {
+            popularShowStore.fetch(page, forceFresh = params.forceRefresh).forEach {
                 showStore.fetch(it.showId)
                 try {
-                    showImagesStore.fetchCollection(it.showId)
+                    showImagesStore.fetch(it.showId)
                 } catch (t: Throwable) {
-                    logger.e("Error while fetching image", t)
+                    logger.e("Error while fetching images for show: ${it.showId}", t)
                 }
             }
         }
