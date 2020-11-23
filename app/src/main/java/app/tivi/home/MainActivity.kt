@@ -25,8 +25,8 @@ import app.tivi.AppNavigator
 import app.tivi.R
 import app.tivi.TiviActivity
 import app.tivi.databinding.ActivityMainBinding
+import app.tivi.extensions.MultipleBackStackNavigation
 import app.tivi.extensions.hideSoftInput
-import app.tivi.extensions.setupWithNavController
 import app.tivi.trakt.TraktConstants
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.insetter.Insetter
@@ -86,7 +86,7 @@ class MainActivity : TiviActivity() {
     }
 
     private fun setupBottomNavigationBar() {
-        currentNavController = binding.homeBottomNavigation.setupWithNavController(
+        val multiBackStackNavigation = MultipleBackStackNavigation(
             navGraphIds = listOf(
                 R.navigation.discover_nav_graph,
                 R.navigation.watched_nav_graph,
@@ -95,8 +95,23 @@ class MainActivity : TiviActivity() {
             ),
             fragmentManager = supportFragmentManager,
             containerId = R.id.home_nav_container,
-            intent = intent
+            intent = intent,
+            getSelectedItemId = {
+                binding.homeBottomNavigation.selectedItemId
+            },
+            setSelectedItemId = {
+                binding.homeBottomNavigation.selectedItemId = it
+            },
         )
+
+        binding.homeBottomNavigation.setOnNavigationItemReselectedListener {
+            multiBackStackNavigation.onReselected(it.itemId)
+        }
+        binding.homeBottomNavigation.setOnNavigationItemSelectedListener {
+            multiBackStackNavigation.onItemSelected(it.itemId)
+        }
+
+        currentNavController = multiBackStackNavigation.selectedNavController
 
         currentNavController?.observe(this) { navController ->
             navController.addOnDestinationChangedListener { _, destination, _ ->
