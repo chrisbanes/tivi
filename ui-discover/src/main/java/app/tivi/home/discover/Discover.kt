@@ -54,10 +54,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.IconResource
@@ -85,7 +85,7 @@ fun Discover(
 
             LazyColumn(Modifier.fillMaxSize()) {
                 item {
-                    val height = with(DensityAmbient.current) { appBarHeight.toDp() }
+                    val height = with(AmbientDensity.current) { appBarHeight.toDp() }
                     Spacer(Modifier.preferredHeight(height))
                 }
 
@@ -183,7 +183,7 @@ private fun NextEpisodeToWatch(
             }
 
             Column(Modifier.align(Alignment.CenterVertically)) {
-                val textCreator = DiscoverTextCreatorAmbient.current
+                val textCreator = AmbientDiscoverTextCreator.current
                 Providers(AmbientContentAlpha provides ContentAlpha.disabled) {
                     Text(
                         text = textCreator.seasonEpisodeTitleText(season, episode),
@@ -219,19 +219,18 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
             Header(
                 title = title,
                 loading = refreshing,
-                action = {
-                    TextButton(
-                        onClick = onMoreClick,
-                        colors = ButtonConstants.defaultTextButtonColors(
-                            contentColor = MaterialTheme.colors.secondary
-                        ),
-                        modifier = Modifier.alignBy(FirstBaseline)
-                    ) {
-                        Text(text = stringResource(R.string.header_more))
-                    }
-                },
                 modifier = Modifier.fillMaxWidth()
-            )
+            ) {
+                TextButton(
+                    onClick = onMoreClick,
+                    colors = ButtonConstants.defaultTextButtonColors(
+                        contentColor = MaterialTheme.colors.secondary
+                    ),
+                    modifier = Modifier.alignBy(FirstBaseline)
+                ) {
+                    Text(text = stringResource(R.string.header_more))
+                }
+            }
         }
         if (items.isNotEmpty()) {
             EntryShowCarousel(
@@ -274,7 +273,7 @@ private fun Header(
     title: String,
     modifier: Modifier = Modifier,
     loading: Boolean = false,
-    action: @Composable RowScope.() -> Unit = {}
+    content: @Composable RowScope.() -> Unit = {}
 ) {
     Row(modifier) {
         Spacer(Modifier.preferredWidth(16.dp))
@@ -296,7 +295,7 @@ private fun Header(
             )
         }
 
-        action()
+        content()
 
         Spacer(Modifier.preferredWidth(16.dp))
     }

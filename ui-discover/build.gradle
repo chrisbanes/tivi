@@ -87,6 +87,4 @@ dependencies {
 
     implementation Libs.AndroidX.Hilt.viewmodel
     kapt Libs.AndroidX.Hilt.compiler
-
-    kapt Libs.Epoxy.processor
 }

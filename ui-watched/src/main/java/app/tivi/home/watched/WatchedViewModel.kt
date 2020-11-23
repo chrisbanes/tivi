@@ -18,15 +18,15 @@ package app.tivi.home.watched
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagedList
-import app.tivi.AppNavigator
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import app.tivi.ReduxViewModel
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.WatchedShowEntryWithShow
 import app.tivi.domain.interactors.ChangeShowFollowStatus
+import app.tivi.domain.interactors.GetTraktAuthState
 import app.tivi.domain.interactors.UpdateWatchedShows
-import app.tivi.domain.invoke
 import app.tivi.domain.observers.ObservePagedWatchedShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
@@ -34,10 +34,12 @@ import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.ShowStateSelector
 import app.tivi.util.collectInto
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
@@ -46,29 +48,17 @@ internal class WatchedViewModel @ViewModelInject constructor(
     private val changeShowFollowStatus: ChangeShowFollowStatus,
     private val observePagedWatchedShows: ObservePagedWatchedShows,
     private val observeTraktAuthState: ObserveTraktAuthState,
-    observeUserDetails: ObserveUserDetails,
-    private val appNavigator: AppNavigator
+    private val getTraktAuthState: GetTraktAuthState,
+    observeUserDetails: ObserveUserDetails
 ) : ReduxViewModel<WatchedViewState>(
     WatchedViewState()
 ) {
-    private val boundaryCallback = object : PagedList.BoundaryCallback<WatchedShowEntryWithShow>() {
-        override fun onZeroItemsLoaded() {
-            viewModelScope.launchSetState { copy(isEmpty = filter.isNullOrEmpty()) }
-        }
-
-        override fun onItemAtEndLoaded(itemAtEnd: WatchedShowEntryWithShow) {
-            viewModelScope.launchSetState { copy(isEmpty = false) }
-        }
-
-        override fun onItemAtFrontLoaded(itemAtFront: WatchedShowEntryWithShow) {
-            viewModelScope.launchSetState { copy(isEmpty = false) }
-        }
-    }
+    private val pendingActions = Channel<WatchedAction>(Channel.BUFFERED)
 
     private val loadingState = ObservableLoadingCounter()
     private val showSelection = ShowStateSelector()
 
-    val pagedList: Flow<PagedList<WatchedShowEntryWithShow>>
+    val pagedList: Flow<PagingData<WatchedShowEntryWithShow>>
         get() = observePagedWatchedShows.observe()
 
     init {
@@ -80,11 +70,13 @@ internal class WatchedViewModel @ViewModelInject constructor(
         }
 
         viewModelScope.launch {
-            showSelection.observeSelectedShowIds().collectAndSetState { copy(selectedShowIds = it) }
+            showSelection.observeSelectedShowIds()
+                .collectAndSetState { copy(selectedShowIds = it) }
         }
 
         viewModelScope.launch {
-            showSelection.observeIsSelectionOpen().collectAndSetState { copy(selectionOpen = it) }
+            showSelection.observeIsSelectionOpen()
+                .collectAndSetState { copy(selectionOpen = it) }
         }
 
         viewModelScope.launch {
@@ -93,10 +85,11 @@ internal class WatchedViewModel @ViewModelInject constructor(
                 .onEach { if (it == TraktAuthState.LOGGED_IN) refresh(false) }
                 .collectAndSetState { copy(authState = it) }
         }
-        observeTraktAuthState()
+        observeTraktAuthState(Unit)
 
         viewModelScope.launch {
-            observeUserDetails.observe().collectAndSetState { copy(user = it) }
+            observeUserDetails.observe()
+                .collectAndSetState { copy(user = it) }
         }
         observeUserDetails(ObserveUserDetails.Params("me"))
 
@@ -108,6 +101,16 @@ internal class WatchedViewModel @ViewModelInject constructor(
         // Subscribe to state changes, so update the observed data source
         subscribe(::updateDataSource)
 
+        viewModelScope.launch {
+            pendingActions.consumeAsFlow().collect { action ->
+                when (action) {
+                    WatchedAction.RefreshAction -> refresh(fromUser = true)
+                    is WatchedAction.FilterShows -> setFilter(action.filter)
+                    is WatchedAction.ChangeSort -> setSort(action.sort)
+                }
+            }
+        }
+
         refresh(false)
     }
 
@@ -116,31 +119,32 @@ internal class WatchedViewModel @ViewModelInject constructor(
             ObservePagedWatchedShows.Params(
                 sort = state.sort,
                 filter = state.filter,
-                pagingConfig = PAGING_CONFIG,
-                boundaryCallback = boundaryCallback
+                pagingConfig = PAGING_CONFIG
             )
         )
     }
 
-    fun refresh() = refresh(true)
-
     private fun refresh(fromUser: Boolean) {
         viewModelScope.launch {
-            observeTraktAuthState.observe().first().also { authState ->
-                if (authState == TraktAuthState.LOGGED_IN) {
-                    refreshWatched(fromUser)
-                }
+            if (getTraktAuthState.executeSync(Unit) == TraktAuthState.LOGGED_IN) {
+                refreshWatched(fromUser)
             }
         }
     }
 
-    fun setFilter(filter: String) {
+    fun submitAction(action: WatchedAction) {
+        viewModelScope.launch {
+            if (!pendingActions.isClosedForSend) pendingActions.send(action)
+        }
+    }
+
+    private fun setFilter(filter: String) {
         viewModelScope.launchSetState {
             copy(filter = filter, filterActive = filter.isNotEmpty())
         }
     }
 
-    fun setSort(sort: SortOption) {
+    private fun setSort(sort: SortOption) {
         viewModelScope.launchSetState { copy(sort = sort) }
     }
 
@@ -177,10 +181,10 @@ internal class WatchedViewModel @ViewModelInject constructor(
     }
 
     companion object {
-        private val PAGING_CONFIG = PagedList.Config.Builder()
-            .setPageSize(60)
-            .setPrefetchDistance(20)
-            .setEnablePlaceholders(false)
-            .build()
+        private val PAGING_CONFIG = PagingConfig(
+            pageSize = 60,
+            prefetchDistance = 20,
+            enablePlaceholders = false
+        )
     }
 }

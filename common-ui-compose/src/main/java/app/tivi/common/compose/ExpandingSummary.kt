@@ -31,11 +31,11 @@ import androidx.compose.ui.text.style.TextOverflow
 @Composable
 fun ExpandingText(
     text: String,
+    modifier: Modifier = Modifier,
     textStyle: TextStyle = MaterialTheme.typography.body2,
     expandable: Boolean = true,
     collapsedMaxLines: Int = 4,
     expandedMaxLines: Int = Int.MAX_VALUE,
-    modifier: Modifier = Modifier
 ) {
     var canTextExpand by rememberMutableStateFor(text) { true }
     var expanded by rememberMutableState { false }

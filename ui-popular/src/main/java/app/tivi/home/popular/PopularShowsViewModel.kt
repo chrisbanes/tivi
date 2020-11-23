@@ -17,36 +17,49 @@
 package app.tivi.home.popular
 
 import androidx.hilt.lifecycle.ViewModelInject
-import app.tivi.base.InvokeStatus
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import app.tivi.data.resultentities.PopularEntryWithShow
-import app.tivi.domain.interactors.ChangeShowFollowStatus
-import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.observers.ObservePagedPopularShows
-import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.EntryViewModel
-import app.tivi.util.Logger
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 class PopularShowsViewModel @ViewModelInject constructor(
-    override val dispatchers: AppCoroutineDispatchers,
-    override val pagingInteractor: ObservePagedPopularShows,
-    private val interactor: UpdatePopularShows,
-    override val logger: Logger,
-    override val changeShowFollowStatus: ChangeShowFollowStatus
-) : EntryViewModel<PopularEntryWithShow, ObservePagedPopularShows>() {
+    private val pagingInteractor: ObservePagedPopularShows,
+) : ViewModel() {
+
+    val pagedList: Flow<PagingData<PopularEntryWithShow>>
+        get() = pagingInteractor.observe()
+
+    private val pendingActions = Channel<PopularAction>(Channel.BUFFERED)
+
     init {
-        pagingInteractor(ObservePagedPopularShows.Params(pageListConfig, boundaryCallback))
+        pagingInteractor(ObservePagedPopularShows.Params(PAGING_CONFIG))
 
-        launchObserves()
-
-        refresh(false)
+//        viewModelScope.launch {
+//            pendingActions.consumeAsFlow().collect { action ->
+//                // TODO
+//            }
+//        }
     }
 
-    override fun callLoadMore(): Flow<InvokeStatus> {
-        return interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.NEXT_PAGE, true))
+    fun submitAction(action: PopularAction) {
+        viewModelScope.launch {
+            if (!pendingActions.isClosedForSend) pendingActions.send(action)
+        }
     }
 
-    override fun callRefresh(fromUser: Boolean): Flow<InvokeStatus> {
-        return interactor(UpdatePopularShows.Params(UpdatePopularShows.Page.REFRESH, fromUser))
+    override fun onCleared() {
+        pendingActions.close()
+    }
+
+    companion object {
+        val PAGING_CONFIG = PagingConfig(
+            pageSize = 60,
+            initialLoadSize = 60
+        )
     }
 }

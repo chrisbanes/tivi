@@ -29,8 +29,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import app.tivi.common.compose.AmbientTiviDateFormatter
 import app.tivi.common.compose.TiviContentSetup
-import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.extensions.navigateToNavDestination
 import app.tivi.util.TiviDateFormatter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -56,7 +56,7 @@ class AccountUiFragment : BottomSheetDialogFragment() {
         layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
 
         setContent {
-            Providers(TiviDateFormatterAmbient provides tiviDateFormatter) {
+            Providers(AmbientTiviDateFormatter provides tiviDateFormatter) {
                 TiviContentSetup {
                     val viewState by viewModel.liveData.observeAsState()
                     if (viewState != null) {

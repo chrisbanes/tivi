@@ -17,10 +17,5 @@
   -->
 
 <resources>
-    <integer name="details_summary_collapsed_lines">4</integer>
-
-    <integer name="grid_span_count">3</integer>
-    <integer name="grid_condensed_span_count">4</integer>
-
     <integer name="nav_anim_duration">350</integer>
 </resources>

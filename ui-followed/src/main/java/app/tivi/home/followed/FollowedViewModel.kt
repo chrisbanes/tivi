@@ -18,15 +18,16 @@ package app.tivi.home.followed
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagedList
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import app.tivi.ReduxViewModel
 import app.tivi.data.entities.RefreshType
 import app.tivi.data.entities.SortOption
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.FollowedShowEntryWithShow
 import app.tivi.domain.interactors.ChangeShowFollowStatus
+import app.tivi.domain.interactors.GetTraktAuthState
 import app.tivi.domain.interactors.UpdateFollowedShows
-import app.tivi.domain.invoke
 import app.tivi.domain.observers.ObservePagedFollowedShows
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
@@ -34,10 +35,12 @@ import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.ShowStateSelector
 import app.tivi.util.collectInto
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
@@ -46,28 +49,15 @@ internal class FollowedViewModel @ViewModelInject constructor(
     private val observePagedFollowedShows: ObservePagedFollowedShows,
     private val observeTraktAuthState: ObserveTraktAuthState,
     private val changeShowFollowStatus: ChangeShowFollowStatus,
-    private val observeUserDetails: ObserveUserDetails
-) : ReduxViewModel<FollowedViewState>(
-    FollowedViewState()
-) {
-    private val boundaryCallback = object : PagedList.BoundaryCallback<FollowedShowEntryWithShow>() {
-        override fun onZeroItemsLoaded() {
-            viewModelScope.launchSetState { copy(isEmpty = filter.isNullOrEmpty()) }
-        }
-
-        override fun onItemAtEndLoaded(itemAtEnd: FollowedShowEntryWithShow) {
-            viewModelScope.launchSetState { copy(isEmpty = false) }
-        }
-
-        override fun onItemAtFrontLoaded(itemAtFront: FollowedShowEntryWithShow) {
-            viewModelScope.launchSetState { copy(isEmpty = false) }
-        }
-    }
+    private val observeUserDetails: ObserveUserDetails,
+    private val getTraktAuthState: GetTraktAuthState,
+) : ReduxViewModel<FollowedViewState>(FollowedViewState()) {
+    private val pendingActions = Channel<FollowedAction>(Channel.BUFFERED)
 
     private val loadingState = ObservableLoadingCounter()
     private val showSelection = ShowStateSelector()
 
-    val pagedList: Flow<PagedList<FollowedShowEntryWithShow>>
+    val pagedList: Flow<PagingData<FollowedShowEntryWithShow>>
         get() = observePagedFollowedShows.observe()
 
     init {
@@ -90,11 +80,10 @@ internal class FollowedViewModel @ViewModelInject constructor(
 
         viewModelScope.launch {
             observeTraktAuthState.observe()
-                .distinctUntilChanged()
                 .onEach { if (it == TraktAuthState.LOGGED_IN) refresh(false) }
                 .collectAndSetState { copy(authState = it) }
         }
-        observeTraktAuthState()
+        observeTraktAuthState(Unit)
 
         viewModelScope.launch {
             observeUserDetails.observe()
@@ -117,6 +106,16 @@ internal class FollowedViewModel @ViewModelInject constructor(
         // Subscribe to state changes, so update the observed data source
         subscribe(::updateDataSource)
 
+        viewModelScope.launch {
+            pendingActions.consumeAsFlow().collect { action ->
+                when (action) {
+                    FollowedAction.RefreshAction -> refresh(true)
+                    is FollowedAction.FilterShows -> setFilter(action.filter)
+                    is FollowedAction.ChangeSort -> setSort(action.sort)
+                }
+            }
+        }
+
         refresh(false)
     }
 
@@ -125,29 +124,24 @@ internal class FollowedViewModel @ViewModelInject constructor(
             ObservePagedFollowedShows.Parameters(
                 sort = state.sort,
                 filter = state.filter,
-                pagingConfig = PAGING_CONFIG,
-                boundaryCallback = boundaryCallback
+                pagingConfig = PAGING_CONFIG
             )
         )
     }
 
-    fun refresh() = refresh(true)
-
     private fun refresh(fromUser: Boolean) {
         viewModelScope.launch {
-            observeTraktAuthState.observe().first().also { authState ->
-                if (authState == TraktAuthState.LOGGED_IN) {
-                    refreshFollowed(fromUser)
-                }
+            if (getTraktAuthState.executeSync(Unit) == TraktAuthState.LOGGED_IN) {
+                refreshFollowed(fromUser)
             }
         }
     }
 
-    fun setFilter(filter: String) {
+    private fun setFilter(filter: String) {
         viewModelScope.launchSetState { copy(filter = filter, filterActive = filter.isNotEmpty()) }
     }
 
-    fun setSort(sort: SortOption) = viewModelScope.launchSetState {
+    private fun setSort(sort: SortOption) = viewModelScope.launchSetState {
         require(availableSorts.contains(sort))
         copy(sort = sort)
     }
@@ -183,11 +177,17 @@ internal class FollowedViewModel @ViewModelInject constructor(
         }
     }
 
+    fun submitAction(action: FollowedAction) {
+        viewModelScope.launch {
+            if (!pendingActions.isClosedForSend) pendingActions.send(action)
+        }
+    }
+
     companion object {
-        private val PAGING_CONFIG = PagedList.Config.Builder()
-            .setPageSize(60)
-            .setPrefetchDistance(20)
-            .setEnablePlaceholders(false)
-            .build()
+        private val PAGING_CONFIG = PagingConfig(
+            pageSize = 60,
+            prefetchDistance = 20,
+            enablePlaceholders = false
+        )
     }
 }

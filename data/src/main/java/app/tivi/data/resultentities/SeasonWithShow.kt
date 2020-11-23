@@ -31,7 +31,7 @@ class SeasonWithShow {
 
     val show: TiviShow
         get() {
-            assert(_shows.size == 1)
+            require(_shows.size == 1)
             return _shows[0]
         }
 

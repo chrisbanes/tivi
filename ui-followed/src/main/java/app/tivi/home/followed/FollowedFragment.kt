@@ -17,164 +17,80 @@
 package app.tivi.home.followed
 
 import android.os.Bundle
-import android.view.ActionMode
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import androidx.compose.runtime.Providers
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.net.toUri
-import androidx.core.view.updatePadding
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import app.tivi.FragmentWithBinding
-import app.tivi.common.imageloading.loadImageUrl
-import app.tivi.data.entities.SortOption
-import app.tivi.data.resultentities.FollowedShowEntryWithShow
-import app.tivi.extensions.doOnSizeChange
-import app.tivi.home.followed.databinding.FragmentFollowedBinding
-import app.tivi.ui.AuthStateMenuItemBinder
-import app.tivi.ui.SpacingItemDecorator
-import app.tivi.ui.authStateToolbarMenuBinder
-import app.tivi.ui.recyclerview.HideImeOnScrollListener
+import androidx.paging.compose.collectAsLazyPagingItems
+import app.tivi.common.compose.AmbientHomeTextCreator
+import app.tivi.common.compose.AmbientTiviDateFormatter
+import app.tivi.common.compose.TiviContentSetup
+import app.tivi.home.HomeTextCreator
+import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class FollowedFragment : FragmentWithBinding<FragmentFollowedBinding>() {
+class FollowedFragment : Fragment() {
+    @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
+    @Inject internal lateinit var homeTextCreator: HomeTextCreator
+
     private val viewModel: FollowedViewModel by viewModels()
 
-    @Inject internal lateinit var controller: FollowedEpoxyController
+    private val pendingActions = Channel<FollowedAction>(Channel.BUFFERED)
 
-    private var currentActionMode: ActionMode? = null
-
-    private var authStateMenuItemBinder: AuthStateMenuItemBinder? = null
-
-    override fun createBinding(
+    override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): FragmentFollowedBinding {
-        return FragmentFollowedBinding.inflate(inflater, container, false)
+    ): View? = ComposeView(requireContext()).apply {
+        layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+
+        setContent {
+            Providers(
+                AmbientTiviDateFormatter provides tiviDateFormatter,
+                AmbientHomeTextCreator provides homeTextCreator,
+            ) {
+                TiviContentSetup {
+                    val viewState by viewModel.liveData.observeAsState()
+                    if (viewState != null) {
+                        Followed(
+                            state = viewState!!,
+                            list = viewModel.pagedList.collectAsLazyPagingItems(),
+                            actioner = { pendingActions.offer(it) },
+                        )
+                    }
+                }
+            }
+        }
     }
 
-    override fun onViewCreated(binding: FragmentFollowedBinding, savedInstanceState: Bundle?) {
-        authStateMenuItemBinder = authStateToolbarMenuBinder(
-            binding.followedToolbar,
-            R.id.home_menu_user_avatar,
-            R.id.home_menu_user_login
-        ) { menuItem, url -> menuItem.loadImageUrl(requireContext(), url) }
-
-        binding.followedToolbar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.home_menu_user_login, R.id.home_menu_user_avatar -> {
-                    findNavController().navigate("app.tivi://account".toUri())
-                    true
-                }
-                else -> false
-            }
-        }
-
-        binding.followedAppBar.doOnSizeChange {
-            binding.followedRv.updatePadding(top = it.height)
-            binding.followedSwipeRefresh.setProgressViewOffset(
-                true,
-                0,
-                it.height + binding.followedSwipeRefresh.progressCircleDiameter / 2
-            )
-            true
-        }
-
-        controller.callbacks = object : FollowedEpoxyController.Callbacks {
-            override fun onItemClicked(item: FollowedShowEntryWithShow) {
-                // Let the ViewModel have the first go
-                if (viewModel.onItemClick(item.show)) {
-                    return
-                }
-
-                findNavController().navigate("app.tivi://show/${item.show.id}".toUri())
-            }
-
-            override fun onItemLongClicked(item: FollowedShowEntryWithShow): Boolean {
-                return viewModel.onItemLongClick(item.show)
-            }
-
-            override fun onFilterChanged(filter: String) {
-                viewModel.setFilter(filter)
-            }
-
-            override fun onSortSelected(sort: SortOption) {
-                viewModel.setSort(sort)
-            }
-        }
-
-        binding.followedRv.apply {
-            addItemDecoration(SpacingItemDecorator(paddingLeft))
-            addOnScrollListener(HideImeOnScrollListener())
-            setController(controller)
-        }
-
-        binding.followedSwipeRefresh.setOnRefreshListener(viewModel::refresh)
+    override fun onStart() {
+        super.onStart()
 
         lifecycleScope.launchWhenStarted {
-            viewModel.pagedList.collect {
-                controller.submitList(it)
+            pendingActions.consumeAsFlow().collect { action ->
+                when (action) {
+                    FollowedAction.LoginAction,
+                    FollowedAction.OpenUserDetails -> findNavController().navigate("app.tivi://account".toUri())
+                    is FollowedAction.OpenShowDetails -> {
+                        findNavController().navigate("app.tivi://show/${action.showId}".toUri())
+                    }
+                    else -> viewModel.submitAction(action)
+                }
             }
         }
-
-        viewModel.liveData.observe(viewLifecycleOwner, ::render)
-    }
-
-    private fun render(state: FollowedViewState) {
-        val binding = requireBinding()
-
-        if (state.selectionOpen && currentActionMode == null) {
-            startSelectionActionMode()
-        } else if (!state.selectionOpen && currentActionMode != null) {
-            currentActionMode?.finish()
-        }
-
-        currentActionMode?.title = getString(R.string.selection_title, state.selectedShowIds.size)
-
-        authStateMenuItemBinder?.bind(state.authState, state.user)
-
-        binding.state = state
-        controller.state = state
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        currentActionMode?.finish()
-        controller.clear()
-        authStateMenuItemBinder = null
-    }
-
-    private fun startSelectionActionMode() {
-        currentActionMode = requireActivity().startActionMode(
-            object : ActionMode.Callback {
-                override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
-                    when (item.itemId) {
-                        R.id.menu_unfollow -> viewModel.unfollowSelectedShows()
-                    }
-                    return true
-                }
-
-                override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-                    mode.menuInflater.inflate(R.menu.action_mode_followed, menu)
-                    return true
-                }
-
-                override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = true
-
-                override fun onDestroyActionMode(mode: ActionMode) {
-                    viewModel.clearSelection()
-
-                    if (mode == currentActionMode) {
-                        currentActionMode = null
-                    }
-                }
-            }
-        )
     }
 }

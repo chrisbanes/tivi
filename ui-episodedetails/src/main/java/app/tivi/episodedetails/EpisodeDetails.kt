@@ -73,20 +73,20 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.graphics.vector.VectorAsset
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ConfigurationAmbient
 import androidx.compose.ui.res.loadVectorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
+import app.tivi.common.compose.AmbientTiviDateFormatter
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.ExpandingText
 import app.tivi.common.compose.IconResource
 import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.TiviAlertDialog
-import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.boundsInParent
 import app.tivi.common.compose.onLoadRun
 import app.tivi.common.compose.onPositionInParentChanged
@@ -302,7 +302,7 @@ private fun InfoPanes(episode: Episode) {
         }
 
         episode.firstAired?.let { firstAired ->
-            val formatter = TiviDateFormatterAmbient.current
+            val formatter = AmbientTiviDateFormatter.current
             val deferredIcon = loadVectorResource(id = R.drawable.ic_calendar_today)
             deferredIcon.onLoadRun { asset ->
                 InfoPane(
@@ -318,13 +318,13 @@ private fun InfoPanes(episode: Episode) {
 @Composable
 private fun InfoPane(
     modifier: Modifier = Modifier,
-    icon: VectorAsset,
+    icon: ImageVector,
     label: String
 ) {
     Column(modifier = modifier.padding(all = 16.dp)) {
         Providers(AmbientContentAlpha provides ContentAlpha.medium) {
             Icon(
-                asset = icon,
+                imageVector = icon,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
@@ -369,7 +369,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 .preferredSizeIn(minWidth = 40.dp, minHeight = 40.dp)
         ) {
-            val formatter = TiviDateFormatterAmbient.current
+            val formatter = AmbientTiviDateFormatter.current
             Text(
                 modifier = Modifier.align(Alignment.CenterVertically),
                 text = formatter.formatMediumDateTime(episodeWatchEntry.watchedAt),
@@ -455,7 +455,7 @@ private fun EpisodeWatchSwipeBackground(
 
         Providers(AmbientContentAlpha provides ContentAlpha.medium) {
             Icon(
-                asset = Icons.Default.Delete,
+                imageVector = Icons.Default.Delete,
                 modifier = Modifier
                     .onPositionInParentChanged { iconCenter = it.boundsInParent.center }
                     .padding(start = 0.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)

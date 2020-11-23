@@ -54,19 +54,19 @@ object Libs {
 
     object Insetter {
         private const val version = "0.3.1"
-        const val dbx = "dev.chrisbanes:insetter-dbx:$version"
         const val ktx = "dev.chrisbanes:insetter-ktx:$version"
     }
 
     object Accompanist {
-        private const val version = "0.3.3.1"
+        private const val version = "0.3.4.compose-6989480-SNAPSHOT"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
         const val insets = "dev.chrisbanes.accompanist:accompanist-insets:$version"
     }
 
     object Mdc {
         const val material = "com.google.android.material:material:1.1.0"
-        const val composeThemeAdapter = "com.google.android.material:compose-theme-adapter:1.0.0-alpha07"
+        // const val composeThemeAdapter = "com.google.android.material:compose-theme-adapter:1.0.0-alpha07"
+        const val composeThemeAdapter = "com.github.material-components:material-components-android-compose-theme-adapter:dev_alpha08-SNAPSHOT"
     }
 
     object Google {
@@ -81,14 +81,14 @@ object Libs {
     }
 
     object Kotlin {
-        private const val version = "1.4.10"
+        private const val version = "1.4.20"
         const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
         const val extensions = "org.jetbrains.kotlin:kotlin-android-extensions:$version"
     }
 
     object Coroutines {
-        private const val version = "1.4.0"
+        private const val version = "1.4.1"
         const val core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
         const val android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
         const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$version"
@@ -99,9 +99,7 @@ object Libs {
         const val browser = "androidx.browser:browser:1.0.0"
         const val collection = "androidx.collection:collection-ktx:1.1.0"
         const val palette = "androidx.palette:palette:1.0.0"
-        const val recyclerview = "androidx.recyclerview:recyclerview:1.2.0-alpha06"
         const val emoji = "androidx.emoji:emoji:1.1.0"
-        const val swiperefresh = "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
         object Navigation {
             private const val version = "2.3.1"
@@ -132,9 +130,14 @@ object Libs {
         const val archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
 
         object Paging {
-            private const val version = "2.1.2"
+            // Need to use alpha07 due to:
+            // - https://issuetracker.google.com/issues/173717820
+            // - https://issuetracker.google.com/issues/173435602
+            private const val version = "3.0.0-alpha07"
             const val common = "androidx.paging:paging-common-ktx:$version"
             const val runtime = "androidx.paging:paging-runtime-ktx:$version"
+
+            const val compose = "androidx.paging:paging-compose:1.0.0-alpha02"
         }
 
         const val preference = "androidx.preference:preference:1.1.1"
@@ -165,8 +168,8 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = ""
-            const val version = "1.0.0-alpha07"
+            const val snapshot = "6989480"
+            const val version = "1.0.0-SNAPSHOT"
 
             @get:JvmStatic
             val snapshotUrl: String
@@ -185,7 +188,7 @@ object Libs {
 
             const val animation = "androidx.compose.animation:animation:$version"
 
-            const val tooling = "androidx.ui:ui-tooling:$version"
+            const val tooling = "androidx.compose.ui:ui-tooling:$version"
             const val test = "androidx.compose.ui:ui-test-junit4:${version}"
         }
 
@@ -221,14 +224,6 @@ object Libs {
         private const val version = "4.9.0"
         const val okhttp = "com.squareup.okhttp3:okhttp:$version"
         const val loggingInterceptor = "com.squareup.okhttp3:logging-interceptor:$version"
-    }
-
-    object Epoxy {
-        private const val version = "4.1.0"
-        const val epoxy = "com.airbnb.android:epoxy:$version"
-        const val paging = "com.airbnb.android:epoxy-paging:$version"
-        const val dataBinding = "com.airbnb.android:epoxy-databinding:$version"
-        const val processor = "com.airbnb.android:epoxy-processor:$version"
     }
 
     object Coil {

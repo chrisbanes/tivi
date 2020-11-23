@@ -16,7 +16,7 @@
 
 package app.tivi.data.daos
 
-import androidx.paging.DataSource
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
@@ -36,7 +36,7 @@ abstract class TrendingDao : PaginatedEntryDao<TrendingShowEntry, TrendingEntryW
 
     @Transaction
     @Query("SELECT * FROM trending_shows ORDER BY page ASC, watchers DESC, id ASC")
-    abstract fun entriesDataSource(): DataSource.Factory<Int, TrendingEntryWithShow>
+    abstract fun entriesPagingSource(): PagingSource<Int, TrendingEntryWithShow>
 
     @Query("DELETE FROM trending_shows WHERE page = :page")
     abstract override suspend fun deletePage(page: Int)

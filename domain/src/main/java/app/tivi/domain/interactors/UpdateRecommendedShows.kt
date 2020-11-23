@@ -23,45 +23,42 @@ import app.tivi.data.repositories.recommendedshows.RecommendedShowsStore
 import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
+import app.tivi.domain.interactors.UpdateRecommendedShows.Params
 import app.tivi.trakt.TraktAuthState
 import app.tivi.trakt.TraktManager
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.plus
+import app.tivi.util.Logger
 import kotlinx.coroutines.withContext
 import org.threeten.bp.Duration
 import javax.inject.Inject
 
 class UpdateRecommendedShows @Inject constructor(
-    private val recommendedShowsStore: RecommendedShowsStore,
+    private val RecommendedShowsStore: RecommendedShowsStore,
     private val lastRequestStore: RecommendedShowsLastRequestStore,
-    private val showsStore: ShowStore,
+    private val showStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
     private val dispatchers: AppCoroutineDispatchers,
-    private val traktManager: TraktManager
-) : Interactor<UpdateRecommendedShows.Params>() {
+    private val traktManager: TraktManager,
+    private val logger: Logger,
+) : Interactor<Params>() {
     override suspend fun doWork(params: Params) {
-        if (traktManager.state.first() != TraktAuthState.LOGGED_IN) {
-            // If we're not logged in, we can't load the recommended shows
-            return
-        }
+        // If we're not logged in, we can't load the recommended shows
+        if (traktManager.state.value != TraktAuthState.LOGGED_IN) return
+
         withContext(dispatchers.io) {
-            // Recommended fetcher does not support paging
-            recommendedShowsStore.fetchCollection(0, forceFresh = params.forceRefresh) {
+            RecommendedShowsStore.fetchCollection(0, forceFresh = params.forceRefresh) {
                 // Refresh if our local data is over 3 hours old
                 lastRequestStore.isRequestExpired(Duration.ofHours(3))
-            }.asFlow().collect {
-                showsStore.fetch(it.showId)
-                showImagesStore.fetchCollection(it.showId)
+            }.forEach {
+                showStore.fetch(it.showId)
+                try {
+                    showImagesStore.fetchCollection(it.showId)
+                } catch (t: Throwable) {
+                    logger.e("Error while fetching image", t)
+                }
             }
         }
     }
 
-    data class Params(val page: Page, val forceRefresh: Boolean)
-
-    enum class Page {
-        NEXT_PAGE, REFRESH
-    }
+    data class Params(val forceRefresh: Boolean = false)
 }

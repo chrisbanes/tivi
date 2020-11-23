@@ -126,7 +126,7 @@
 
     <string name="not_known_title">TBD</string>
 
-    <string name="library_last_watched">Last watched:</string>
+    <string name="library_last_watched">Last watched: %1$s</string>
 
     <string name="next_prefix">Next: %s</string>
     <string name="filter_shows">Filter %1$d shows</string>

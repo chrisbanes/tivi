@@ -22,13 +22,7 @@
     </style>
 
     <style name="Base.Theme.Tivi" parent="Platform.Theme.Tivi">
-        <item name="actionBarTheme">@style/ThemeOverlay.Tivi.ActionBar</item>
-
         <item name="windowActionModeOverlay">true</item>
-
-        <!-- Default widget styles -->
-        <item name="toolbarStyle">@style/Widget.Tivi.Toolbar</item>
-        <item name="appBarLayoutStyle">@style/Widget.MaterialComponents.AppBarLayout.Surface</item>
 
         <!-- Type styles -->
         <item name="textAppearanceHeadline1">@style/TextAppearance.Tivi.Headline1</item>
@@ -78,16 +72,6 @@
         <item name="android:windowLightStatusBar">@bool/use_light_status_bar</item>
     </style>
 
-    <style name="Theme.Tivi.ShowDetails" parent="Theme.Tivi.Immerse">
-        <item name="android:windowLightStatusBar">@bool/use_light_status_bar</item>
-    </style>
-
     <style name="Theme.Tivi.Settings" />
-
-    <style name="ThemeOverlay.Tivi.ActionBar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
-
-    <style name="ThemeOverlay.Tivi.Primary" parent="ThemeOverlay.AppCompat.DayNight.ActionBar">
-        <item name="android:textColorPrimary">?attr/colorOnPrimary</item>
-    </style>
 
 </resources>

@@ -37,9 +37,9 @@ import dev.chrisbanes.accompanist.coil.CoilImage
 @Composable
 fun PosterCard(
     show: TiviShow,
+    modifier: Modifier = Modifier,
     poster: TmdbImageEntity? = null,
     onClick: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
 ) {
     Card(modifier = modifier) {
         Box(
@@ -62,6 +62,17 @@ fun PosterCard(
                     modifier = Modifier.matchParentSize()
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun PlaceholderPosterCard(
+    modifier: Modifier = Modifier
+) {
+    Card(modifier = modifier) {
+        Box {
+            // TODO: display something better
         }
     }
 }

@@ -25,7 +25,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
-        android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar">
+        android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
+        style="@style/Widget.MaterialComponents.AppBarLayout.Surface">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/settings_toolbar"

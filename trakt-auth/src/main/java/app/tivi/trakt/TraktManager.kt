@@ -23,8 +23,8 @@ import app.tivi.util.AppCoroutineDispatchers
 import com.uwetrottmann.trakt5.TraktV2
 import dagger.Lazy
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -43,7 +43,7 @@ class TraktManager @Inject constructor(
     private val authState = MutableStateFlow(EmptyAuthState)
 
     private val _state = MutableStateFlow(TraktAuthState.LOGGED_OUT)
-    val state: Flow<TraktAuthState>
+    val state: StateFlow<TraktAuthState>
         get() = _state
 
     init {

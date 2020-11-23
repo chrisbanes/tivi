@@ -16,28 +16,37 @@
 
 package app.tivi.domain.observers
 
-import androidx.paging.PagedList
-import app.tivi.data.FlowPagedListBuilder
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.resultentities.TrendingEntryWithShow
+import app.tivi.domain.PaginatedEntryRemoteMediator
 import app.tivi.domain.PagingInteractor
+import app.tivi.domain.interactors.UpdateTrendingShows
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ObservePagedTrendingShows @Inject constructor(
-    private val trendingShowsDao: TrendingDao
+    private val trendingShowsDao: TrendingDao,
+    private val updateTrendingShows: UpdateTrendingShows,
 ) : PagingInteractor<ObservePagedTrendingShows.Params, TrendingEntryWithShow>() {
-
-    override fun createObservable(params: Params): Flow<PagedList<TrendingEntryWithShow>> {
-        return FlowPagedListBuilder(
-            trendingShowsDao.entriesDataSource(),
-            params.pagingConfig,
-            boundaryCallback = params.boundaryCallback
-        ).buildFlow()
+    override fun createObservable(
+        params: Params
+    ): Flow<PagingData<TrendingEntryWithShow>> {
+        return Pager(
+            config = params.pagingConfig,
+            remoteMediator = PaginatedEntryRemoteMediator(GlobalScope) { page ->
+                updateTrendingShows.executeSync(
+                    UpdateTrendingShows.Params(page = page, forceRefresh = true)
+                )
+            },
+            pagingSourceFactory = trendingShowsDao::entriesPagingSource
+        ).flow
     }
 
     data class Params(
-        override val pagingConfig: PagedList.Config,
-        override val boundaryCallback: PagedList.BoundaryCallback<TrendingEntryWithShow>?
+        override val pagingConfig: PagingConfig,
     ) : Parameters<TrendingEntryWithShow>
 }

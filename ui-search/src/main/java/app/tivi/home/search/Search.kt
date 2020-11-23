@@ -16,10 +16,7 @@
 
 package app.tivi.home.search
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,17 +31,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredWidth
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.AmbientContentAlpha
 import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.mutableStateOf
@@ -53,13 +44,14 @@ import androidx.compose.runtime.savedinstancestate.savedInstanceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.PosterCard
+import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.WorkaroundLazyColumnFor
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
@@ -79,7 +71,7 @@ fun Search(
             SearchList(
                 results = state.searchResults,
                 contentPadding = PaddingValues(
-                    top = with(DensityAmbient.current) { searchBarHeight.value.toDp() }
+                    top = with(AmbientDensity.current) { searchBarHeight.value.toDp() }
                 ),
                 onShowClicked = { actioner(SearchAction.OpenShowDetails(it.id)) }
             )
@@ -99,6 +91,11 @@ fun Search(
                     onValueChange = {
                         searchQuery.value = it
                         actioner(SearchAction.Search(it.text))
+                    },
+                    hint = stringResource(R.string.search_hint),
+                    imeAction = ImeAction.Search,
+                    onImeActionPerformed = { _, keyboardController ->
+                        keyboardController?.hideSoftwareKeyboard()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -165,39 +162,4 @@ private fun SearchRow(
             }
         }
     }
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-private fun SearchTextField(
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        placeholder = {
-            Providers(AmbientContentAlpha provides ContentAlpha.medium) {
-                Text(text = stringResource(R.string.search_hint))
-            }
-        },
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        onImeActionPerformed = { _, keyboardController ->
-            keyboardController?.hideSoftwareKeyboard()
-        },
-        trailingIcon = {
-            AnimatedVisibility(
-                visible = value.text.isNotEmpty(),
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                IconButton(
-                    onClick = { onValueChange(TextFieldValue()) },
-                    icon = { Icon(asset = Icons.Default.Clear) }
-                )
-            }
-        },
-        modifier = modifier
-    )
 }

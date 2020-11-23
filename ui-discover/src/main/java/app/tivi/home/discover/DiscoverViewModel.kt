@@ -22,7 +22,6 @@ import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.UpdatePopularShows
 import app.tivi.domain.interactors.UpdateRecommendedShows
 import app.tivi.domain.interactors.UpdateTrendingShows
-import app.tivi.domain.invoke
 import app.tivi.domain.observers.ObserveNextShowEpisodeToWatch
 import app.tivi.domain.observers.ObservePopularShows
 import app.tivi.domain.observers.ObserveRecommendedShows
@@ -100,7 +99,7 @@ internal class DiscoverViewModel @ViewModelInject constructor(
                 .distinctUntilChanged()
                 .collectAndSetState { copy(nextEpisodeWithShowToWatched = it) }
         }
-        observeNextShowEpisodeToWatch()
+        observeNextShowEpisodeToWatch(Unit)
 
         viewModelScope.launch {
             observeTraktAuthState.observe()
@@ -108,7 +107,7 @@ internal class DiscoverViewModel @ViewModelInject constructor(
                 .onEach { if (it == TraktAuthState.LOGGED_IN) refresh(false) }
                 .collectAndSetState { copy(authState = it) }
         }
-        observeTraktAuthState()
+        observeTraktAuthState(Unit)
 
         viewModelScope.launch {
             observeUserDetails.observe().collectAndSetState { copy(user = it) }
@@ -136,7 +135,7 @@ internal class DiscoverViewModel @ViewModelInject constructor(
                 .collectInto(trendingLoadingState)
         }
         viewModelScope.launch {
-            updateRecommendedShows(UpdateRecommendedShows.Params(UpdateRecommendedShows.Page.REFRESH, fromUser))
+            updateRecommendedShows(UpdateRecommendedShows.Params(forceRefresh = fromUser))
                 .collectInto(recommendedLoadingState)
         }
     }

@@ -18,7 +18,6 @@ package app.tivi.common.compose
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +25,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.vector.VectorAsset
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.loadVectorResource
@@ -34,10 +33,10 @@ import androidx.compose.ui.res.loadVectorResource
 @Composable
 fun VectorImage(
     @DrawableRes id: Int,
+    modifier: Modifier = Modifier,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Inside,
     tintColor: Color = foregroundColor(),
-    modifier: Modifier = Modifier.wrapContentSize(align = alignment)
 ) {
     val deferred = loadVectorResource(id)
     deferred.onLoadRun { asset ->
@@ -53,11 +52,11 @@ fun VectorImage(
 
 @Composable
 fun VectorImage(
-    vector: VectorAsset,
+    vector: ImageVector,
+    modifier: Modifier = Modifier,
     alignment: Alignment = Alignment.Center,
     contentScale: ContentScale = ContentScale.Inside,
     tintColor: Color = foregroundColor(),
-    modifier: Modifier = Modifier.wrapContentSize(align = alignment)
 ) {
     Box(
         modifier = modifier.clipToBounds().paint(

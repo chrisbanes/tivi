@@ -17,32 +17,49 @@
 package app.tivi.home.recommended
 
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import app.tivi.data.resultentities.RecommendedEntryWithShow
-import app.tivi.domain.interactors.ChangeShowFollowStatus
-import app.tivi.domain.interactors.UpdateRecommendedShows
-import app.tivi.domain.interactors.UpdateRecommendedShows.Page.NEXT_PAGE
-import app.tivi.domain.interactors.UpdateRecommendedShows.Page.REFRESH
 import app.tivi.domain.observers.ObservePagedRecommendedShows
-import app.tivi.util.AppCoroutineDispatchers
-import app.tivi.util.EntryViewModel
-import app.tivi.util.Logger
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 class RecommendedShowsViewModel @ViewModelInject constructor(
-    override val dispatchers: AppCoroutineDispatchers,
-    override val pagingInteractor: ObservePagedRecommendedShows,
-    private val interactor: UpdateRecommendedShows,
-    override val logger: Logger,
-    override val changeShowFollowStatus: ChangeShowFollowStatus
-) : EntryViewModel<RecommendedEntryWithShow, ObservePagedRecommendedShows>() {
+    private val pagingInteractor: ObservePagedRecommendedShows,
+) : ViewModel() {
+
+    val pagedList: Flow<PagingData<RecommendedEntryWithShow>>
+        get() = pagingInteractor.observe()
+
+    private val pendingActions = Channel<RecommendedAction>(Channel.BUFFERED)
+
     init {
-        pagingInteractor(ObservePagedRecommendedShows.Params(pageListConfig, boundaryCallback))
+        pagingInteractor(ObservePagedRecommendedShows.Params(PAGING_CONFIG))
 
-        launchObserves()
-
-        refresh(false)
+//        viewModelScope.launch {
+//            pendingActions.consumeAsFlow().collect { action ->
+//                // TODO
+//            }
+//        }
     }
 
-    override fun callLoadMore() = interactor(UpdateRecommendedShows.Params(NEXT_PAGE, true))
+    fun submitAction(action: RecommendedAction) {
+        viewModelScope.launch {
+            if (!pendingActions.isClosedForSend) pendingActions.send(action)
+        }
+    }
 
-    override fun callRefresh(fromUser: Boolean) = interactor(UpdateRecommendedShows.Params(REFRESH, fromUser))
+    override fun onCleared() {
+        pendingActions.close()
+    }
+
+    companion object {
+        val PAGING_CONFIG = PagingConfig(
+            pageSize = 60,
+            initialLoadSize = 60
+        )
+    }
 }

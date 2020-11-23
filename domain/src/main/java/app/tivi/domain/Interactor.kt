@@ -16,7 +16,8 @@
 
 package app.tivi.domain
 
-import androidx.paging.PagedList
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import app.tivi.base.InvokeError
 import app.tivi.base.InvokeStarted
 import app.tivi.base.InvokeStatus
@@ -53,19 +54,18 @@ abstract class Interactor<in P> {
 }
 
 abstract class ResultInteractor<in P, R> {
-    operator fun invoke(params: P): Flow<R> {
-        return flow {
-            emit(doWork(params))
-        }
+    operator fun invoke(params: P): Flow<R> = flow {
+        emit(doWork(params))
     }
+
+    suspend fun executeSync(params: P): R = doWork(params)
 
     protected abstract suspend fun doWork(params: P): R
 }
 
-abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T> : SubjectInteractor<P, PagedList<T>>() {
-    interface Parameters<T> {
-        val pagingConfig: PagedList.Config
-        val boundaryCallback: PagedList.BoundaryCallback<T>?
+abstract class PagingInteractor<P : PagingInteractor.Parameters<T>, T : Any> : SubjectInteractor<P, PagingData<T>>() {
+    interface Parameters<T : Any> {
+        val pagingConfig: PagingConfig
     }
 }
 
@@ -83,6 +83,7 @@ abstract class SubjectInteractor<P : Any, T> {
     // existing flows. The buffer of 1 means that we can use tryEmit() and buffer the value
     // instead, resulting in mostly the same result.
     private val paramState = MutableSharedFlow<P>(
+        replay = 1,
         extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
@@ -95,6 +96,3 @@ abstract class SubjectInteractor<P : Any, T> {
 
     fun observe(): Flow<T> = paramState.flatMapLatest { createObservable(it) }
 }
-
-operator fun Interactor<Unit>.invoke() = invoke(Unit)
-operator fun <T> SubjectInteractor<Unit, T>.invoke() = invoke(Unit)

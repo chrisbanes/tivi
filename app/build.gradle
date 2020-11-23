@@ -117,9 +117,6 @@ android {
     }
 
     buildFeatures {
-        // We need to keep this enabled because submodules use it
-        dataBinding true
-
         viewBinding true
     }
 
@@ -165,10 +162,7 @@ dependencies {
     implementation project(':base')
     implementation project(':base-android')
     implementation project(':common-ui-view')
-    implementation project(':common-epoxy')
     implementation project(':common-imageloading')
-    implementation project(':common-databinding')
-    implementation project(':common-entrygrid')
     implementation project(':data')
     implementation project(':data-android')
     implementation project(':trakt')
