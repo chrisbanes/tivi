@@ -22,7 +22,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.compose.runtime.Providers
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
@@ -30,8 +29,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.AmbientHomeTextCreator
+import app.tivi.common.compose.AmbientTiviDateFormatter
 import app.tivi.common.compose.TiviContentSetup
-import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.paging.collectAsLazyPagingItems
 import app.tivi.home.HomeTextCreator
 import app.tivi.util.TiviDateFormatter
@@ -59,7 +58,7 @@ class TrendingShowsFragment : Fragment() {
 
         setContent {
             Providers(
-                TiviDateFormatterAmbient provides tiviDateFormatter,
+                AmbientTiviDateFormatter provides tiviDateFormatter,
                 AmbientHomeTextCreator provides homeTextCreator,
             ) {
                 TiviContentSetup {

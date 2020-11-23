@@ -42,10 +42,10 @@ import androidx.compose.runtime.Providers
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.VectorAsset
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.VectorImage
 import app.tivi.data.entities.TraktUser
 import app.tivi.trakt.TraktAuthState
@@ -146,7 +146,7 @@ private fun UserRow(
 @Composable
 private fun AppAction(
     label: String,
-    icon: VectorAsset,
+    icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {

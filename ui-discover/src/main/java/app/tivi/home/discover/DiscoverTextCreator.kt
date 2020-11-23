@@ -23,7 +23,7 @@ import app.tivi.data.entities.Season
 import dagger.hilt.android.qualifiers.ActivityContext
 import javax.inject.Inject
 
-val DiscoverTextCreatorAmbient = staticAmbientOf<DiscoverTextCreator>()
+val AmbientDiscoverTextCreator = staticAmbientOf<DiscoverTextCreator>()
 
 class DiscoverTextCreator @Inject constructor(
     @ActivityContext private val context: Context

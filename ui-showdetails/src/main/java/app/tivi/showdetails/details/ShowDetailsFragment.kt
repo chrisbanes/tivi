@@ -70,7 +70,7 @@ class ShowDetailsFragment : Fragment() {
         layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
         setContent {
-            Providers(ShowDetailsTextCreatorAmbient provides textCreator) {
+            Providers(AmbientShowDetailsTextCreator provides textCreator) {
                 TiviContentSetup {
                     val viewState by viewModel.liveData.observeAsState()
                     if (viewState != null) {

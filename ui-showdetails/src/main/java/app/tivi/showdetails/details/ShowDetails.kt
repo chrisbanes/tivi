@@ -92,17 +92,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.drawLayer
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
 import app.tivi.common.compose.ExpandableFloatingActionButton
@@ -113,7 +111,6 @@ import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SwipeDismissSnackbar
 import app.tivi.common.compose.VectorImage
 import app.tivi.common.compose.foregroundColor
-import app.tivi.common.compose.offset
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.spacerItem
 import app.tivi.common.imageloading.TrimTransparentEdgesTransformation
@@ -135,7 +132,6 @@ import app.tivi.data.resultentities.numberAiredToWatch
 import app.tivi.data.resultentities.numberToAir
 import app.tivi.data.resultentities.numberWatched
 import app.tivi.data.views.FollowedShowsWatchStats
-import coil.request.ImageRequest
 import dev.chrisbanes.accompanist.coil.CoilImage
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
@@ -143,7 +139,7 @@ import dev.chrisbanes.accompanist.insets.statusBarsHeight
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
-val ShowDetailsTextCreatorAmbient = staticAmbientOf<ShowDetailsTextCreator>()
+val AmbientShowDetailsTextCreator = staticAmbientOf<ShowDetailsTextCreator>()
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -182,17 +178,16 @@ fun ShowDetails(
             0 -> listState.firstVisibleItemScrollOffset >= trigger
             else -> true
         },
-        appBar = {
-            ShowDetailsAppBar(
-                title = viewState.show.title ?: "",
-                backgroundColor = Color.Transparent,
-                elevation = 0.dp,
-                isRefreshing = viewState.refreshing,
-                actioner = actioner
-            )
-        },
         modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter)
-    )
+    ) {
+        ShowDetailsAppBar(
+            title = viewState.show.title ?: "",
+            backgroundColor = Color.Transparent,
+            elevation = 0.dp,
+            isRefreshing = viewState.refreshing,
+            actioner = actioner
+        )
+    }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val snackbarScope = rememberCoroutineScope()
@@ -258,19 +253,15 @@ private fun ShowDetailsScrollingContent(
                     .aspectRatio(16f / 10)
                     .onSizeChanged(onBackdropSizeChanged)
                     .clipToBounds()
-                    .offset {
-                        when (listState.firstVisibleItemIndex) {
+                    .offset(
+                        y = {
                             // If we're the first visible item, apply parallax using 50% of
                             // scroll offset
-                            0 -> {
-                                Offset(
-                                    x = 0f,
-                                    y = listState.firstVisibleItemScrollOffset / 2f
-                                )
-                            }
-                            else -> Offset.Zero
+                            if (listState.firstVisibleItemIndex == 0) {
+                                listState.firstVisibleItemScrollOffset / 2f
+                            } else 0f
                         }
-                    }
+                    )
             )
         }
 
@@ -428,8 +419,8 @@ private fun BackdropImage(
 @Composable
 private fun OverlaidStatusBarAppBar(
     showAppBar: Boolean,
-    appBar: @Composable () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
 ) {
     LogCompositions("OverlaidStatusBarAppBar")
 
@@ -462,7 +453,7 @@ private fun OverlaidStatusBarAppBar(
             Surface(
                 elevation = elevation.value,
                 modifier = Modifier.fillMaxWidth(),
-                content = { appBar() }
+                content = content,
             )
         }
     }
@@ -497,8 +488,8 @@ private val statusBarTransitionDef = transitionDefinition<Boolean> {
 @Composable
 private fun NetworkInfoPanel(
     networkName: String,
+    modifier: Modifier = Modifier,
     networkLogoPath: String? = null,
-    modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         Text(
@@ -514,10 +505,10 @@ private fun NetworkInfoPanel(
             }
 
             CoilImage(
-                request = ImageRequest.Builder(ContextAmbient.current)
-                    .data(tmdbImage)
-                    .transformations(TrimTransparentEdgesTransformation)
-                    .build(),
+                data = tmdbImage,
+                requestBuilder = {
+                    transformations(TrimTransparentEdgesTransformation)
+                },
                 contentScale = ContentScale.Fit,
                 alignment = Alignment.TopStart,
                 colorFilter = when {
@@ -568,7 +559,7 @@ private fun ShowStatusPanel(
 
         Spacer(Modifier.preferredHeight(4.dp))
 
-        val textCreator = ShowDetailsTextCreatorAmbient.current
+        val textCreator = AmbientShowDetailsTextCreator.current
         Text(
             text = textCreator.showStatusText(showStatus).toString(),
             style = MaterialTheme.typography.body2
@@ -589,7 +580,7 @@ private fun AirsInfoPanel(
 
         Spacer(Modifier.preferredHeight(4.dp))
 
-        val textCreator = ShowDetailsTextCreatorAmbient.current
+        val textCreator = AmbientShowDetailsTextCreator.current
         Text(
             text = textCreator.airsText(show)?.toString() ?: "No air date",
             style = MaterialTheme.typography.body2
@@ -683,7 +674,7 @@ private fun Header(title: String) {
 @Composable
 private fun Genres(genres: List<Genre>) {
     Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
-        val textCreator = ShowDetailsTextCreatorAmbient.current
+        val textCreator = AmbientShowDetailsTextCreator.current
         Text(
             textCreator.genreString(genres).toString(),
             style = MaterialTheme.typography.body2
@@ -730,7 +721,7 @@ private fun NextEpisodeToWatch(
             .clickable(onClick = onClick)
             .padding(16.dp, 8.dp)
     ) {
-        val textCreator = ShowDetailsTextCreatorAmbient.current
+        val textCreator = AmbientShowDetailsTextCreator.current
 
         Text(
             textCreator.seasonEpisodeTitleText(season, episode),
@@ -759,7 +750,7 @@ private fun InfoPanels(show: TiviShow) {
             TraktRatingInfoPanel(show.traktRating!!, show.traktVotes ?: 0)
         }
         if (show.network != null) {
-            NetworkInfoPanel(show.network!!, show.networkLogoPath)
+            NetworkInfoPanel(networkName = show.network!!, networkLogoPath = show.networkLogoPath)
         }
         if (show.status != null) {
             ShowStatusPanel(show.status!!)
@@ -795,7 +786,7 @@ private fun WatchStats(
 
         Spacer(modifier = Modifier.preferredHeight(8.dp))
 
-        val textCreator = ShowDetailsTextCreatorAmbient.current
+        val textCreator = AmbientShowDetailsTextCreator.current
 
         // TODO: Do something better with CharSequences containing markup/spans
         Text(
@@ -869,9 +860,9 @@ private fun SeasonRow(
     episodesWatched: Int,
     episodesToWatch: Int,
     episodesToAir: Int,
-    nextToAirDate: OffsetDateTime? = null,
     actioner: (ShowDetailsAction) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    nextToAirDate: OffsetDateTime? = null,
 ) {
     Row(
         modifier = modifier.preferredHeightIn(min = 48.dp)
@@ -881,7 +872,7 @@ private fun SeasonRow(
         Column(
             modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
         ) {
-            val textCreator = ShowDetailsTextCreatorAmbient.current
+            val textCreator = AmbientShowDetailsTextCreator.current
 
             val contentAlpha = when {
                 season.ignored -> ContentAlpha.disabled
@@ -994,7 +985,7 @@ private fun EpisodeWithWatchesRow(
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            val textCreator = ShowDetailsTextCreatorAmbient.current
+            val textCreator = AmbientShowDetailsTextCreator.current
 
             Text(
                 text = textCreator.episodeNumberText(episode).toString(),
@@ -1076,8 +1067,8 @@ private fun ShowDetailsAppBar(
 private fun ToggleShowFollowFloatingActionButton(
     isFollowed: Boolean,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     expanded: Boolean = true,
-    modifier: Modifier = Modifier
 ) {
     LogCompositions("ToggleShowFollowFloatingActionButton")
 

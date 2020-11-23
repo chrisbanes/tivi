@@ -54,18 +54,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import app.tivi.common.compose.AmbientHomeTextCreator
+import app.tivi.common.compose.AmbientTiviDateFormatter
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.IconResource
 import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.SortMenuPopup
-import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.spacerItem
 import app.tivi.data.entities.ShowTmdbImage
@@ -90,7 +90,7 @@ fun Watched(
 
             LazyColumn(Modifier.fillMaxSize()) {
                 item {
-                    val height = with(DensityAmbient.current) { appBarHeight.toDp() }
+                    val height = with(AmbientDensity.current) { appBarHeight.toDp() }
                     Spacer(Modifier.preferredHeight(height))
                 }
 
@@ -163,9 +163,10 @@ private fun FilterSortPanel(
             sortOptions = sortOptions,
             currentSortOption = currentSortOption,
             onSortSelected = onSortSelected,
-            icon = { IconResource(R.drawable.ic_sort_black_24dp) },
-            iconModifier = Modifier.align(Alignment.CenterVertically)
-        )
+            modifier = Modifier.align(Alignment.CenterVertically)
+        ) {
+            IconResource(R.drawable.ic_sort_black_24dp)
+        }
     }
 }
 
@@ -217,7 +218,7 @@ private fun WatchedShowItem(
                     Text(
                         text = stringResource(
                             R.string.library_last_watched,
-                            TiviDateFormatterAmbient.current.formatShortRelativeTime(lastWatched)
+                            AmbientTiviDateFormatter.current.formatShortRelativeTime(lastWatched)
                         ),
                         style = MaterialTheme.typography.caption,
                     )

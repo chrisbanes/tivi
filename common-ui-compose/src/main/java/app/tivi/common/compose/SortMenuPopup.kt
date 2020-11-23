@@ -34,19 +34,19 @@ import app.tivi.data.entities.SortOption
 fun SortMenuPopup(
     sortOptions: List<SortOption>,
     onSortSelected: (SortOption) -> Unit,
-    icon: @Composable () -> Unit,
-    iconModifier: Modifier = Modifier,
+    modifier: Modifier = Modifier,
     currentSortOption: SortOption? = null,
+    content: @Composable () -> Unit,
 ) {
     var sortPopupOpen by remember { mutableStateOf(false) }
     DropdownMenu(
         toggle = {
             IconButton(
                 onClick = { sortPopupOpen = true },
-                icon = { icon() }
+                content = content
             )
         },
-        toggleModifier = iconModifier,
+        toggleModifier = modifier,
         expanded = sortPopupOpen,
         onDismissRequest = { sortPopupOpen = false },
     ) {

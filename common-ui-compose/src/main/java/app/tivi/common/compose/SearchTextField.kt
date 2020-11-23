@@ -39,9 +39,9 @@ fun SearchTextField(
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
     hint: String,
+    modifier: Modifier = Modifier,
     imeAction: ImeAction = ImeAction.Unspecified,
     onImeActionPerformed: (ImeAction, SoftwareKeyboardController?) -> Unit = { _, _ -> },
-    modifier: Modifier = Modifier,
 ) {
     OutlinedTextField(
         value = value,
@@ -54,8 +54,9 @@ fun SearchTextField(
             ) {
                 IconButton(
                     onClick = { onValueChange(TextFieldValue()) },
-                    icon = { Icon(Icons.Default.Clear) }
-                )
+                ) {
+                    Icon(Icons.Default.Clear)
+                }
             }
         },
         placeholder = { Text(text = hint) },

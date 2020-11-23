@@ -44,7 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
@@ -69,7 +69,7 @@ fun Trending(
 
             LazyColumn(Modifier.fillMaxSize()) {
                 item {
-                    val height = with(DensityAmbient.current) { appBarHeight.toDp() }
+                    val height = with(AmbientDensity.current) { appBarHeight.toDp() }
                     Spacer(Modifier.preferredHeight(height))
                 }
 

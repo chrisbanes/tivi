@@ -30,8 +30,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import app.tivi.common.compose.AmbientTiviDateFormatter
 import app.tivi.common.compose.TiviContentSetup
-import app.tivi.common.compose.TiviDateFormatterAmbient
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
@@ -57,8 +57,8 @@ class DiscoverFragment : Fragment() {
 
         setContent {
             Providers(
-                TiviDateFormatterAmbient provides tiviDateFormatter,
-                DiscoverTextCreatorAmbient provides textCreator
+                AmbientTiviDateFormatter provides tiviDateFormatter,
+                AmbientDiscoverTextCreator provides textCreator
             ) {
                 TiviContentSetup {
                     val viewState by viewModel.liveData.observeAsState()

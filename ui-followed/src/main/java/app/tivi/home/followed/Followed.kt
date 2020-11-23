@@ -55,7 +55,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -89,7 +89,7 @@ fun Followed(
 
             LazyColumn(Modifier.fillMaxSize()) {
                 item {
-                    val height = with(DensityAmbient.current) { appBarHeight.toDp() }
+                    val height = with(AmbientDensity.current) { appBarHeight.toDp() }
                     Spacer(Modifier.preferredHeight(height))
                 }
 
@@ -163,9 +163,10 @@ private fun FilterSortPanel(
             sortOptions = sortOptions,
             currentSortOption = currentSortOption,
             onSortSelected = onSortSelected,
-            icon = { IconResource(R.drawable.ic_sort_black_24dp) },
-            iconModifier = Modifier.align(Alignment.CenterVertically)
-        )
+            modifier = Modifier.align(Alignment.CenterVertically)
+        ) {
+            IconResource(R.drawable.ic_sort_black_24dp)
+        }
     }
 }
 

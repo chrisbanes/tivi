@@ -44,7 +44,7 @@ import androidx.compose.runtime.savedinstancestate.savedInstanceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
@@ -71,7 +71,7 @@ fun Search(
             SearchList(
                 results = state.searchResults,
                 contentPadding = PaddingValues(
-                    top = with(DensityAmbient.current) { searchBarHeight.value.toDp() }
+                    top = with(AmbientDensity.current) { searchBarHeight.value.toDp() }
                 ),
                 onShowClicked = { actioner(SearchAction.OpenShowDetails(it.id)) }
             )
