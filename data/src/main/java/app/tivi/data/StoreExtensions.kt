@@ -32,7 +32,6 @@ suspend inline fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
     else -> cachedOnly(key) ?: fresh(key)
 }
 
-@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
 suspend fun <Key : Any, Output : Any> Store<Key, Output>.fetch(
     key: Key,
     forceFresh: Boolean = false,
@@ -64,7 +63,6 @@ suspend inline fun <Key : Any, Output : Collection<Any>> Store<Key, Output>.fetc
  * A wrapper around [fetch] which supports non-nullable collection outputs.
  * Primarily it checks for empty collections
  */
-@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
 suspend inline fun <Key : Any, Output : Collection<Any>> Store<Key, Output>.fetchCollection(
     key: Key,
     forceFresh: Boolean = false,

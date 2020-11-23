@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.AmbientContentAlpha
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -46,6 +47,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.PlaceholderPosterCard
 import app.tivi.common.compose.PosterCard
@@ -58,7 +60,6 @@ import dev.chrisbanes.accompanist.insets.statusBarsPadding
 
 @Composable
 fun Trending(
-    state: TrendingViewState,
     lazyPagingItems: LazyPagingItems<TrendingEntryWithShow>,
     actioner: (TrendingAction) -> Unit
 ) {
@@ -92,11 +93,19 @@ fun Trending(
                     }
                 }
 
+                if (lazyPagingItems.loadState.append == LoadState.Loading) {
+                    item {
+                        Box(Modifier.fillMaxWidth().padding(16.dp)) {
+                            CircularProgressIndicator(Modifier.align(Alignment.Center))
+                        }
+                    }
+                }
+
                 spacerItem(16.dp)
             }
 
             TrendingAppBar(
-                refreshing = state.isLoading,
+                refreshing = lazyPagingItems.loadState.refresh == LoadState.Loading,
                 onRefreshActionClick = { lazyPagingItems.refresh() },
                 modifier = Modifier
                     .fillMaxWidth()

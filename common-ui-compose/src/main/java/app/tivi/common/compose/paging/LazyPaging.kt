@@ -62,7 +62,7 @@ class LazyPagingItems<T : Any> internal constructor(
      * item in the list (and not affect other items). This also helps us to track what indexes
      * are currently visible to ignore onChanged events for the rest of items.
      */
-    private val currentlyUsedItems = SparseArrayCompat<MutableState<LazyListPagingItemState<T>>>(120)
+    private val currentlyUsedItems = SparseArrayCompat<MutableState<LazyListPagingItemState<T>>>(60)
 
     // This bakes [itemCount] property with a mutable state which means that every time we
     // update the state the usages of itemCount would be recomposed.

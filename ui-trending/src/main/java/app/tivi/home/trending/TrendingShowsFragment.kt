@@ -23,7 +23,6 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
@@ -64,16 +63,12 @@ class TrendingShowsFragment : Fragment() {
                 AmbientHomeTextCreator provides homeTextCreator,
             ) {
                 TiviContentSetup {
-                    val viewState by viewModel.liveData.observeAsState()
-                    if (viewState != null) {
-                        Trending(
-                            state = viewState!!,
-                            lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems { old, new ->
-                                old.entry.id == new.entry.id
-                            },
-                            actioner = { pendingActions.offer(it) },
-                        )
-                    }
+                    Trending(
+                        lazyPagingItems = viewModel.pagedList.collectAsLazyPagingItems { old, new ->
+                            old.entry.id == new.entry.id
+                        },
+                        actioner = { pendingActions.offer(it) },
+                    )
                 }
             }
         }

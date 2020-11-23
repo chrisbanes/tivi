@@ -16,6 +16,7 @@
 
 package app.tivi.domain.interactors
 
+import android.util.Log
 import app.tivi.data.daos.TrendingDao
 import app.tivi.data.fetch
 import app.tivi.data.fetchCollection
@@ -51,16 +52,24 @@ class UpdateTrendingShows @Inject constructor(
                 else -> 0
             }
 
-            trendingShowsStore.fetchCollection(page, forceFresh = params.forceRefresh) {
+            Log.d("PaginatedEntryRMediator", "UpdateTrendingShows: Starting $page")
+
+            val entries = trendingShowsStore.fetchCollection(page, forceFresh = params.forceRefresh) {
                 // Refresh if our local data is over 3 hours old
                 page != 0 || lastRequestStore.isRequestExpired(Duration.ofHours(3))
-            }.forEach {
+            }
+            Log.d("PaginatedEntryRMediator", "UpdateTrendingShows: Starting show updates. Page: $page. Entries count: ${entries.size}")
+
+            entries.forEach {
                 showStore.fetch(it.showId)
+                Log.d("PaginatedEntryRMediator", "UpdateTrendingShows: ${it.showId} updated")
+
                 try {
                     showImagesStore.fetchCollection(it.showId)
                 } catch (t: Throwable) {
                     logger.e("Error while fetching image", t)
                 }
+                Log.d("PaginatedEntryRMediator", "UpdateTrendingShows: ${it.showId} images updated")
             }
         }
     }
