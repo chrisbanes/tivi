@@ -26,40 +26,49 @@ import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.Interactor
 import app.tivi.domain.interactors.UpdatePopularShows.Params
 import app.tivi.util.AppCoroutineDispatchers
-import kotlinx.coroutines.plus
+import app.tivi.util.Logger
 import kotlinx.coroutines.withContext
-import org.threeten.bp.Period
+import org.threeten.bp.Duration
 import javax.inject.Inject
 
 class UpdatePopularShows @Inject constructor(
     private val popularShowStore: PopularShowsStore,
     private val popularDao: PopularDao,
     private val lastRequestStore: PopularShowsLastRequestStore,
-    private val showsStore: ShowStore,
+    private val showStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
-    private val dispatchers: AppCoroutineDispatchers
+    private val dispatchers: AppCoroutineDispatchers,
+    private val logger: Logger,
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
-            val lastPage = popularDao.getLastPage()
             val page = when {
-                lastPage != null && params.page == Page.NEXT_PAGE -> lastPage + 1
+                params.page >= 0 -> params.page
+                params.page == UpdateTrendingShows.Page.NEXT_PAGE -> {
+                    val lastPage = popularDao.getLastPage()
+                    if (lastPage != null) lastPage + 1 else 0
+                }
                 else -> 0
             }
 
             popularShowStore.fetchCollection(page, forceFresh = params.forceRefresh) {
-                // Refresh if our local data is over 7 days old
-                page == 0 && lastRequestStore.isRequestExpired(Period.ofDays(7))
+                // Refresh if our local data is over 3 hours old
+                page != 0 || lastRequestStore.isRequestExpired(Duration.ofHours(3))
             }.forEach {
-                showsStore.fetch(it.showId)
-                showImagesStore.fetchCollection(it.showId)
+                showStore.fetch(it.showId)
+                try {
+                    showImagesStore.fetchCollection(it.showId)
+                } catch (t: Throwable) {
+                    logger.e("Error while fetching image", t)
+                }
             }
         }
     }
 
-    data class Params(val page: Page, val forceRefresh: Boolean)
+    data class Params(val page: Int, val forceRefresh: Boolean = false)
 
-    enum class Page {
-        NEXT_PAGE, REFRESH
+    object Page {
+        const val NEXT_PAGE = -1
+        const val REFRESH = -2
     }
 }
