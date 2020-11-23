@@ -38,9 +38,7 @@ class ObservePagedRecommendedShows @Inject constructor(
         return Pager(
             config = params.pagingConfig,
             remoteMediator = RefreshOnlyRemoteMediator(GlobalScope) {
-                updateRecommendedShows.executeSync(
-                    UpdateRecommendedShows.Params(forceRefresh = true)
-                )
+                updateRecommendedShows.executeSync(UpdateRecommendedShows.Params())
             },
             pagingSourceFactory = RecommendedShowsDao::entriesPagingSource
         ).flow

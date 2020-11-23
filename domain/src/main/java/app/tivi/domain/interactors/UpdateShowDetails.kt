@@ -24,7 +24,6 @@ import app.tivi.domain.interactors.UpdateShowDetails.Params
 import app.tivi.util.AppCoroutineDispatchers
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
-import org.threeten.bp.Period
 import javax.inject.Inject
 
 class UpdateShowDetails @Inject constructor(
@@ -34,10 +33,7 @@ class UpdateShowDetails @Inject constructor(
 ) : Interactor<Params>() {
     override suspend fun doWork(params: Params) {
         withContext(dispatchers.io) {
-            showStore.fetch(params.showId, params.forceLoad) {
-                // Refresh if our cached data is over 14 days old
-                lastRequestStore.isRequestExpired(params.showId, Period.ofDays(14))
-            }
+            showStore.fetch(params.showId, params.forceLoad)
         }
     }
 

@@ -28,6 +28,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import kotlinx.coroutines.flow.map
+import org.threeten.bp.Duration
 import javax.inject.Singleton
 
 typealias RelatedShowsStore = Store<Long, List<RelatedShowEntry>>
@@ -52,7 +54,18 @@ internal object RelatedShowsModule {
                 }.getOrThrow()
         },
         sourceOfTruth = SourceOfTruth.of(
-            reader = relatedShowsDao::entriesObservable,
+            reader = { showId ->
+                relatedShowsDao.entriesObservable(showId).map { entries ->
+                    when {
+                        // Store only treats null as 'no value', so convert to null
+                        entries.isEmpty() -> null
+                        // If the request is expired, our data is stale
+                        lastRequestStore.isRequestExpired(showId, Duration.ofDays(28)) -> null
+                        // Otherwise, our data is fresh and valid
+                        else -> entries
+                    }
+                }
+            },
             writer = { showId, response ->
                 relatedShowsDao.withTransaction {
                     val entries = response.map { (show, entry) ->

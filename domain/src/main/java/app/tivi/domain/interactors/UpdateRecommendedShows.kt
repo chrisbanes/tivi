@@ -17,8 +17,6 @@
 package app.tivi.domain.interactors
 
 import app.tivi.data.fetch
-import app.tivi.data.fetchCollection
-import app.tivi.data.repositories.recommendedshows.RecommendedShowsLastRequestStore
 import app.tivi.data.repositories.recommendedshows.RecommendedShowsStore
 import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.data.repositories.shows.ShowStore
@@ -29,12 +27,10 @@ import app.tivi.trakt.TraktManager
 import app.tivi.util.AppCoroutineDispatchers
 import app.tivi.util.Logger
 import kotlinx.coroutines.withContext
-import org.threeten.bp.Duration
 import javax.inject.Inject
 
 class UpdateRecommendedShows @Inject constructor(
-    private val RecommendedShowsStore: RecommendedShowsStore,
-    private val lastRequestStore: RecommendedShowsLastRequestStore,
+    private val recommendedShowsStore: RecommendedShowsStore,
     private val showStore: ShowStore,
     private val showImagesStore: ShowImagesStore,
     private val dispatchers: AppCoroutineDispatchers,
@@ -46,13 +42,10 @@ class UpdateRecommendedShows @Inject constructor(
         if (traktManager.state.value != TraktAuthState.LOGGED_IN) return
 
         withContext(dispatchers.io) {
-            RecommendedShowsStore.fetchCollection(0, forceFresh = params.forceRefresh) {
-                // Refresh if our local data is over 3 hours old
-                lastRequestStore.isRequestExpired(Duration.ofHours(3))
-            }.forEach {
+            recommendedShowsStore.fetch(0, forceFresh = params.forceRefresh).forEach {
                 showStore.fetch(it.showId)
                 try {
-                    showImagesStore.fetchCollection(it.showId)
+                    showImagesStore.fetch(it.showId)
                 } catch (t: Throwable) {
                     logger.e("Error while fetching image", t)
                 }
