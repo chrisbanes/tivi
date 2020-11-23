@@ -16,9 +16,14 @@
 
 package app.tivi.common.compose
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
+import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
@@ -29,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import app.tivi.common.compose.paging.LazyPagingItems
 
 fun LazyListScope.spacerItem(height: Dp) {
     item {
@@ -62,6 +68,100 @@ fun <T> WorkaroundLazyColumnFor(
 
         if (contentPadding.bottom > 0.dp) {
             item { Spacer(Modifier.preferredHeight(contentPadding.bottom)) }
+        }
+    }
+}
+
+/**
+ * Displays a 'fake' grid using [LazyColumn]'s DSL. It's fake in that we just we add individual
+ * column items, with a inner fake row.
+ */
+fun <T : Any> LazyListScope.fakeGridItems(
+    lazyPagingItems: LazyPagingItems<T>,
+    columns: Int,
+    contentPadding: PaddingValues = PaddingValues(),
+    horizontalItemPadding: Dp = 0.dp,
+    verticalItemPadding: Dp = 0.dp,
+    itemContent: @Composable (T?) -> Unit
+) {
+    val rows = when {
+        lazyPagingItems.itemCount % columns == 0 -> lazyPagingItems.itemCount / columns
+        else -> (lazyPagingItems.itemCount / columns) + 1
+    }
+
+    for (row in 0 until rows) {
+        if (row == 0) spacerItem(contentPadding.top)
+
+        item {
+            Row(
+                Modifier.fillMaxWidth()
+                    .padding(start = contentPadding.start, end = contentPadding.end)
+            ) {
+                for (column in 0 until columns) {
+                    Box(modifier = Modifier.weight(1f)) {
+                        val index = (row * columns) + column
+                        if (index < lazyPagingItems.itemCount) {
+                            itemContent(lazyPagingItems[index])
+                        }
+                    }
+                    if (column < columns - 1) {
+                        Spacer(modifier = Modifier.preferredWidth(horizontalItemPadding))
+                    }
+                }
+            }
+        }
+
+        if (row < rows - 1) {
+            spacerItem(verticalItemPadding)
+        } else {
+            spacerItem(contentPadding.bottom)
+        }
+    }
+}
+
+/**
+ * Displays a 'fake' grid using [LazyColumn]'s DSL. It's fake in that we just we add individual
+ * column items, with a inner fake row.
+ */
+fun <T> LazyListScope.fakeGridItems(
+    items: List<T>,
+    columns: Int,
+    contentPadding: PaddingValues = PaddingValues(),
+    horizontalItemPadding: Dp = 0.dp,
+    verticalItemPadding: Dp = 0.dp,
+    itemContent: @Composable (T) -> Unit
+) {
+    val rows = when {
+        items.size % columns == 0 -> items.size / columns
+        else -> (items.size / columns) + 1
+    }
+
+    for (row in 0 until rows) {
+        if (row == 0) spacerItem(contentPadding.top)
+
+        item {
+            Row(
+                Modifier.fillMaxWidth()
+                    .padding(start = contentPadding.start, end = contentPadding.end)
+            ) {
+                for (column in 0 until columns) {
+                    Box(modifier = Modifier.weight(1f)) {
+                        val index = (row * columns) + column
+                        if (index < items.size) {
+                            itemContent(items[index])
+                        }
+                    }
+                    if (column < columns - 1) {
+                        Spacer(modifier = Modifier.preferredWidth(horizontalItemPadding))
+                    }
+                }
+            }
+        }
+
+        if (row < rows - 1) {
+            spacerItem(verticalItemPadding)
+        } else {
+            spacerItem(contentPadding.bottom)
         }
     }
 }

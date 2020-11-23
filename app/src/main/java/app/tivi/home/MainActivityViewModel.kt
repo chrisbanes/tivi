@@ -20,7 +20,6 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.tivi.domain.interactors.UpdateUserDetails
-import app.tivi.domain.invoke
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktAuthState
@@ -47,7 +46,7 @@ class MainActivityViewModel @ViewModelInject constructor(
                 if (state == TraktAuthState.LOGGED_IN) refreshMe()
             }
         }
-        observeTraktAuthState()
+        observeTraktAuthState(Unit)
     }
 
     private fun refreshMe() {

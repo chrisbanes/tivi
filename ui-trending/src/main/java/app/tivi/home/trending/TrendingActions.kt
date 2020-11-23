@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-package app.tivi.common.compose
+package app.tivi.home.trending
 
-import androidx.compose.runtime.staticAmbientOf
-import app.tivi.home.HomeTextCreator
-import app.tivi.util.TiviDateFormatter
-
-val TiviDateFormatterAmbient = staticAmbientOf<TiviDateFormatter>()
-
-val AmbientHomeTextCreator = staticAmbientOf<HomeTextCreator> {
-    error("HomeTextCreator not provided")
+sealed class TrendingAction {
+    data class OpenShowDetails(val showId: Long) : TrendingAction()
 }

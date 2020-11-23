@@ -131,7 +131,10 @@ object Libs {
         const val archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
 
         object Paging {
-            private const val version = "3.0.0-alpha09"
+            // Need to use alpha07 due to:
+            // - https://issuetracker.google.com/issues/173717820
+            // - https://issuetracker.google.com/issues/173435602
+            private const val version = "3.0.0-alpha07"
             const val common = "androidx.paging:paging-common-ktx:$version"
             const val runtime = "androidx.paging:paging-runtime-ktx:$version"
 
