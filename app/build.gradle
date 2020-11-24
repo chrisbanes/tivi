@@ -208,6 +208,8 @@ dependencies {
     implementation Libs.AndroidX.Compose.tooling
     implementation Libs.AndroidX.Compose.livedata
 
+    implementation Libs.Accompanist.insets
+
     implementation Libs.Mdc.material
 
     implementation Libs.Insetter.ktx
