@@ -118,6 +118,12 @@ android {
 
     buildFeatures {
         viewBinding true
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerVersion Libs.Kotlin.version
+        kotlinCompilerExtensionVersion Libs.AndroidX.Compose.version
     }
 
     testOptions {
@@ -163,6 +169,7 @@ dependencies {
     implementation project(':base-android')
     implementation project(':common-ui-view')
     implementation project(':common-imageloading')
+    implementation project(':common-ui-compose')
     implementation project(':data')
     implementation project(':data-android')
     implementation project(':trakt')
@@ -192,6 +199,14 @@ dependencies {
     implementation Libs.AndroidX.Fragment.fragmentKtx
     implementation Libs.AndroidX.Navigation.fragment
     implementation Libs.AndroidX.Navigation.ui
+
+    implementation Libs.AndroidX.Compose.foundation
+    implementation Libs.AndroidX.Compose.ui
+    implementation Libs.AndroidX.Compose.layout
+    implementation Libs.AndroidX.Compose.material
+    implementation Libs.AndroidX.Compose.animation
+    implementation Libs.AndroidX.Compose.tooling
+    implementation Libs.AndroidX.Compose.livedata
 
     implementation Libs.Mdc.material
 

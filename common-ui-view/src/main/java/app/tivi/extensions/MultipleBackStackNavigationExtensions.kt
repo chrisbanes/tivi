@@ -28,7 +28,7 @@ import androidx.navigation.fragment.NavHostFragment
 import app.tivi.common.ui.R
 
 class MultipleBackStackNavigation(
-    private val navGraphIds: List<Int>,
+    private val navGraphIds: IntArray,
     private val fragmentManager: FragmentManager,
     private val containerId: Int,
     private val intent: Intent,
@@ -52,6 +52,8 @@ class MultipleBackStackNavigation(
     private var isOnFirstFragment: Boolean
 
     init {
+        val currentSelectedId = getSelectedItemId()
+
         // First create a NavHostFragment for each NavGraph ID
         navGraphIds.forEachIndexed { index, navGraphId ->
             val fragmentTag = getFragmentTag(index)
@@ -61,19 +63,16 @@ class MultipleBackStackNavigation(
                 fragmentManager,
                 fragmentTag,
                 navGraphId,
-                containerId
+                containerId,
             )
 
-            // Obtain its id
-            val graphId = navHostFragment.navController.graph.id
-
-            if (index == 0) firstFragmentGraphId = graphId
+            if (index == 0) firstFragmentGraphId = navGraphId
 
             // Save to the map
-            graphIdToTagMap[graphId] = fragmentTag
+            graphIdToTagMap[navGraphId] = fragmentTag
 
             // Attach or detach nav host fragment depending on whether it's the selected item.
-            if (getSelectedItemId() == graphId) {
+            if (currentSelectedId == navGraphId) {
                 // Update livedata with the selected graph
                 _selectedNavController.value = navHostFragment.navController
                 attachNavHostFragment(fragmentManager, navHostFragment, index == 0)
@@ -82,7 +81,7 @@ class MultipleBackStackNavigation(
             }
         }
 
-        selectedItemTag = graphIdToTagMap[getSelectedItemId()]
+        selectedItemTag = graphIdToTagMap[currentSelectedId]
         firstFragmentTag = graphIdToTagMap[firstFragmentGraphId]
         isOnFirstFragment = selectedItemTag == firstFragmentTag
 
@@ -112,10 +111,8 @@ class MultipleBackStackNavigation(
         if (selectedItemTag == newlySelectedItemTag) return false
 
         // Pop everything above the first fragment (the "fixed start destination")
-        fragmentManager.popBackStack(
-            firstFragmentTag,
-            FragmentManager.POP_BACK_STACK_INCLUSIVE
-        )
+        fragmentManager.popBackStack(firstFragmentTag, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+
         val selectedFragment = fragmentManager.findFragmentByTag(newlySelectedItemTag)
             as NavHostFragment
 
