@@ -44,9 +44,6 @@ buildscript {
 
         classpath Libs.Google.gmsGoogleServices
         classpath Libs.Google.crashlyticsGradle
-        classpath Libs.Google.openSourceLicensesPlugin
-
-        classpath Libs.AndroidX.Navigation.safeArgs
 
         classpath Libs.Hilt.gradlePlugin
     }
@@ -78,6 +75,12 @@ allprojects {
 
 subprojects {
     configurations.configureEach {
+        // We forcefully exclude AppCompat + MDC from any transitive dependencies.
+        // This is a Compose app, so there's no need for these.
+        exclude group: 'androidx.appcompat', module: 'appcompat'
+        exclude group: 'com.google.android.material', module: 'material'
+        exclude group: 'com.google.android.material', module: 'material'
+
         resolutionStrategy.eachDependency { DependencyResolveDetails details ->
             def group = details.requested.group
             def module = details.requested.module.name

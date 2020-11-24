@@ -24,20 +24,13 @@
     native <methods>;
 }
 
--keep public class * extends android.view.View {
+# We only need to keep ComposeView + FragmentContainerView
+-keep public class androidx.compose.ui.platform.ComposeView {
     public <init>(android.content.Context, android.util.AttributeSet);
 }
 
--keepclasseswithmembers class * {
+-keep public class androidx.fragment.app.FragmentContainerView {
     public <init>(android.content.Context, android.util.AttributeSet);
-}
-
--keepclasseswithmembers class * {
-    public <init>(android.content.Context, android.util.AttributeSet, int);
-}
-
--keepclassmembers class * extends android.app.Activity {
-   public void *(android.view.View);
 }
 
 # For enumeration classes

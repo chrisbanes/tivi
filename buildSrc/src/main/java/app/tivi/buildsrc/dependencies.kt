@@ -69,9 +69,6 @@ object Libs {
         const val crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.3.0"
 
         const val gmsGoogleServices = "com.google.gms:google-services:4.3.4"
-
-        const val openSourceLicensesPlugin = "com.google.android.gms:oss-licenses-plugin:0.10.2"
-        const val openSourceLicensesLibrary = "com.google.android.gms:play-services-oss-licenses:17.0.0"
     }
 
     object Kotlin {
@@ -97,8 +94,6 @@ object Libs {
         object Navigation {
             private const val version = "2.3.1"
             const val fragment = "androidx.navigation:navigation-fragment-ktx:$version"
-            const val ui = "androidx.navigation:navigation-ui-ktx:$version"
-            const val safeArgs = "androidx.navigation:navigation-safe-args-gradle-plugin:$version"
         }
 
         object Fragment {
@@ -132,8 +127,6 @@ object Libs {
 
             const val compose = "androidx.paging:paging-compose:1.0.0-alpha02"
         }
-
-        const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.2"
 
         const val coreKtx = "androidx.core:core-ktx:1.5.0-alpha04"
 
