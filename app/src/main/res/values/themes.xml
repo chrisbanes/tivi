@@ -18,7 +18,7 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Platform.Theme.Tivi" parent="android:Theme.Material.Light.DarkActionBar" />
+    <style name="Platform.Theme.Tivi" parent="android:Theme.Material.Light" />
 
     <style name="Base.Theme.Tivi" parent="Platform.Theme.Tivi">
         <item name="android:windowActionModeOverlay">true</item>
