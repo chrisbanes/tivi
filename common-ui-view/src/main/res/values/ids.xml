@@ -25,7 +25,6 @@
     <id name="navigation_search" />
     <id name="navigation_account" />
     <id name="navigation_settings" />
-    <id name="navigation_licences" />
     <id name="navigation_show_details" />
     <id name="navigation_episode_details" />
 </resources>

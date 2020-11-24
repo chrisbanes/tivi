@@ -27,8 +27,3 @@ android {
         minSdkVersion buildConfig.minSdk
     }
 }
-
-dependencies {
-    implementation Libs.AndroidX.appcompat
-    implementation Libs.Mdc.material
-}

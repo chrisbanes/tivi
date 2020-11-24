@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package app.tivi.settings
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.preference.PreferenceManager
+import android.preference.PreferenceManager
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

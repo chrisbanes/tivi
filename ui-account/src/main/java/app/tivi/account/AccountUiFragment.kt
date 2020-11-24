@@ -26,6 +26,7 @@ import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -33,7 +34,6 @@ import app.tivi.common.compose.AmbientTiviDateFormatter
 import app.tivi.common.compose.TiviContentSetup
 import app.tivi.extensions.navigateToNavDestination
 import app.tivi.util.TiviDateFormatter
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AccountUiFragment : BottomSheetDialogFragment() {
+class AccountUiFragment : DialogFragment() {
     private val pendingActions = Channel<AccountUiAction>()
     private val viewModel: AccountUiViewModel by viewModels()
 

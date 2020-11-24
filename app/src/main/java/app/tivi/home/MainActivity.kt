@@ -112,8 +112,8 @@ class MainActivity : TiviActivity() {
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        return currentNavController?.value?.navigateUp() ?: super.onSupportNavigateUp()
+    override fun onNavigateUp(): Boolean {
+        return currentNavController?.value?.navigateUp() ?: super.onNavigateUp()
     }
 }
 

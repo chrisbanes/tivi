@@ -18,7 +18,6 @@ package app.tivi.settings
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import app.tivi.settings.TiviPreferences.Theme
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -59,7 +58,7 @@ class TiviPreferencesImpl @Inject constructor(
             putBoolean(KEY_DATA_SAVER, value)
         }
 
-    val Theme.storageKey: String
+    private val Theme.storageKey: String
         get() = when (this) {
             Theme.LIGHT -> context.getString(R.string.pref_theme_light_value)
             Theme.DARK -> context.getString(R.string.pref_theme_dark_value)
@@ -72,9 +71,11 @@ class TiviPreferencesImpl @Inject constructor(
         else -> Theme.SYSTEM
     }
 
-    private fun updateUsingThemePreference() = when (themePreference) {
-        Theme.DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        Theme.LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        Theme.SYSTEM -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+    private fun updateUsingThemePreference() {
+        // when (themePreference) {
+        //        Theme.DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        //        Theme.LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        //        Theme.SYSTEM -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        // }
     }
 }

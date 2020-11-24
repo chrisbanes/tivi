@@ -44,7 +44,6 @@ dependencies {
 
     implementation Libs.Coroutines.core
 
-    api Libs.AndroidX.appcompat
     implementation Libs.AndroidX.coreKtx
     implementation Libs.AndroidX.Fragment.fragment
     implementation Libs.AndroidX.Fragment.fragmentKtx
@@ -52,6 +51,4 @@ dependencies {
     implementation Libs.AndroidX.Navigation.ui
 
     implementation Libs.Hilt.library
-
-    api Libs.Mdc.material
 }

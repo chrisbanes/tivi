@@ -19,7 +19,6 @@
 package app.tivi.common.compose
 
 import androidx.compose.runtime.Composable
-import com.google.android.material.composethemeadapter.MdcTheme
 import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 
 /**
@@ -27,9 +26,7 @@ import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
  */
 @Composable
 inline fun TiviContentSetup(noinline content: @Composable () -> Unit) {
-    MdcTheme {
-        ProvideWindowInsets {
-            content()
-        }
+    ProvideWindowInsets {
+        content()
     }
 }
