@@ -91,9 +91,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.drawLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
@@ -435,7 +435,9 @@ private fun OverlaidStatusBarAppBar(
             elevation = animate(if (showAppBar) 2.dp else 0.dp),
             modifier = Modifier.fillMaxWidth()
                 .statusBarsHeight()
-                .drawLayer(alpha = props[AlphaKey])
+                .graphicsLayer {
+                    alpha = props[AlphaKey]
+                }
                 .offset(y = props[OffsetYKey]),
             content = emptyContent()
         )
