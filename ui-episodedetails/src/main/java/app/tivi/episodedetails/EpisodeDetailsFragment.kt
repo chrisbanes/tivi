@@ -34,6 +34,8 @@ import app.tivi.extensions.viewModelProviderFactoryOf
 import app.tivi.util.TiviDateFormatter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
@@ -70,11 +72,18 @@ class EpisodeDetailsFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = ComposeView(requireContext()).apply {
+    ): View = ComposeView(requireContext()).apply {
         layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
+        // We use ViewWindowInsetObserver rather than ProvideWindowInsets
+        // See: https://github.com/chrisbanes/accompanist/issues/155
+        val windowInsets = ViewWindowInsetObserver(this).start()
+
         setContent {
-            Providers(AmbientTiviDateFormatter provides tiviDateFormatter) {
+            Providers(
+                AmbientTiviDateFormatter provides tiviDateFormatter,
+                AmbientWindowInsets provides windowInsets,
+            ) {
                 TiviContentSetup {
                     val viewState by viewModel.liveData.observeAsState()
                     if (viewState != null) {

@@ -21,6 +21,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
@@ -32,6 +33,8 @@ import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.TiviContentSetup
 import dagger.hilt.android.AndroidEntryPoint
+import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
 import kotlinx.coroutines.channels.Channel
 
 @AndroidEntryPoint
@@ -61,13 +64,19 @@ internal class SearchFragment : Fragment() {
     ): View? = ComposeView(requireContext()).apply {
         layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
+        // We use ViewWindowInsetObserver rather than ProvideWindowInsets
+        // See: https://github.com/chrisbanes/accompanist/issues/155
+        val windowInsets = ViewWindowInsetObserver(this).start()
+
         setContent {
-            TiviContentSetup {
-                val viewState by viewModel.liveData.observeAsState()
-                if (viewState != null) {
-                    LogCompositions("ViewState observeAsState")
-                    Search(viewState!!) { action ->
-                        pendingActions.offer(action)
+            Providers(AmbientWindowInsets provides windowInsets) {
+                TiviContentSetup {
+                    val viewState by viewModel.liveData.observeAsState()
+                    if (viewState != null) {
+                        LogCompositions("ViewState observeAsState")
+                        Search(viewState!!) { action ->
+                            pendingActions.offer(action)
+                        }
                     }
                 }
             }

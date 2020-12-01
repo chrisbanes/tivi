@@ -35,6 +35,8 @@ import app.tivi.common.compose.paging.collectAsLazyPagingItems
 import app.tivi.home.HomeTextCreator
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
+import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
@@ -60,10 +62,15 @@ class PopularShowsFragment : Fragment() {
         // Just a small optimization to start the data fetch quicker.
         val pagedList = viewModel.pagedList
 
+        // We use ViewWindowInsetObserver rather than ProvideWindowInsets
+        // See: https://github.com/chrisbanes/accompanist/issues/155
+        val windowInsets = ViewWindowInsetObserver(this).start()
+
         setContent {
             Providers(
                 AmbientTiviDateFormatter provides tiviDateFormatter,
                 AmbientHomeTextCreator provides homeTextCreator,
+                AmbientWindowInsets provides windowInsets,
             ) {
                 TiviContentSetup {
                     Popular(
