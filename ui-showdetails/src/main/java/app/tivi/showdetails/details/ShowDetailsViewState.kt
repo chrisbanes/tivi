@@ -37,25 +37,11 @@ data class ShowDetailsViewState(
     val watchStats: FollowedShowsWatchStats? = null,
     val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
     val expandedSeasonIds: Set<Long> = emptySet(),
-    val pendingUiEffects: List<UiEffect> = emptyList(), // TODO this should really be a queue
     val refreshing: Boolean = false,
     val refreshError: UiError? = null
 )
 
-sealed class UiEffect {
-    /**
-     * Whether the effect has been consumed or not.
-     */
-    var consumed: Boolean = false
-        private set
-
-    /**
-     * Consume the UI effect so that nothing else runs the effect
-     */
-    fun consume() {
-        consumed = true
-    }
-}
+sealed class UiEffect
 data class OpenEpisodeUiEffect(val episodeId: Long, val seasonId: Long) : UiEffect()
 data class OpenShowUiEffect(val showId: Long) : UiEffect()
 data class FocusSeasonUiEffect(val seasonId: Long) : UiEffect()

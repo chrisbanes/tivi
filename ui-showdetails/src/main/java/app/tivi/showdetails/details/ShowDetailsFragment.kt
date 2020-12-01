@@ -41,7 +41,6 @@ import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -65,11 +64,48 @@ class ShowDetailsFragment : Fragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        lifecycleScope.launchWhenStarted {
+            pendingActions.consumeAsFlow().collect { action ->
+                when (action) {
+                    NavigateUp -> findNavController().navigateUp()
+                    else -> viewModel.submitAction(action)
+                }
+            }
+        }
+
+        lifecycleScope.launchWhenStarted {
+            viewModel.uiEffects.collect { effect ->
+                when (effect) {
+                    is OpenShowUiEffect -> {
+                        findNavController()
+                            .navigate("app.tivi://show/${effect.showId}".toUri())
+                    }
+                    is OpenEpisodeUiEffect -> {
+                        findNavController()
+                            .navigate(
+                                "app.tivi://episode/${effect.episodeId}".toUri(),
+                                NavOptions.Builder()
+                                    .setEnterAnim(R.anim.tivi_enter_bottom_anim)
+                                    .setPopExitAnim(R.anim.tivi_exit_bottom_anim)
+                                    .build()
+                            )
+                    }
+                    else -> {
+                        // TODO: any remaining ui effects need to be passed down to the UI
+                    }
+                }
+            }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = ComposeView(requireContext()).apply {
+    ): View = ComposeView(requireContext()).apply {
         layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
         // We use ViewWindowInsetObserver rather than ProvideWindowInsets
@@ -92,43 +128,5 @@ class ShowDetailsFragment : Fragment() {
                 }
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        viewModel.liveData.observe(this, ::render)
-
-        lifecycleScope.launch {
-            pendingActions.consumeAsFlow().collect { action ->
-                when (action) {
-                    NavigateUp -> findNavController().navigateUp()
-                    else -> viewModel.submitAction(action)
-                }
-            }
-        }
-    }
-
-    private fun render(state: ShowDetailsViewState) {
-        state.pendingUiEffects.asSequence()
-            .filter { !it.consumed }
-            .forEach { effect ->
-                when (effect) {
-                    is OpenShowUiEffect -> {
-                        findNavController().navigate("app.tivi://show/${effect.showId}".toUri())
-                        effect.consume()
-                    }
-                    is OpenEpisodeUiEffect -> {
-                        findNavController().navigate(
-                            "app.tivi://episode/${effect.episodeId}".toUri(),
-                            NavOptions.Builder()
-                                .setEnterAnim(R.anim.tivi_enter_bottom_anim)
-                                .setExitAnim(R.anim.tivi_exit_bottom_anim)
-                                .build()
-                        )
-                        effect.consume()
-                    }
-                }
-            }
     }
 }
