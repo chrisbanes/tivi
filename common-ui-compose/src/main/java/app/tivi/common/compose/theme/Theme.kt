@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-@file:Suppress("NOTHING_TO_INLINE")
+package app.tivi.common.compose.theme
 
-package app.tivi.common.compose
-
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import app.tivi.common.compose.theme.TiviTheme
-import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 
-/**
- * Just groups some common Compose content setup
- */
 @Composable
-inline fun TiviContentSetup(noinline content: @Composable () -> Unit) {
-    TiviTheme {
-        ProvideWindowInsets {
-            content()
-        }
-    }
+fun TiviTheme(
+    useDarkColors: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
+    MaterialTheme(
+        colors = if (useDarkColors) TiviDarkColors else TiviLightColors,
+        typography = TiviTypography,
+        shapes = TiviShapes,
+        content = content
+    )
 }

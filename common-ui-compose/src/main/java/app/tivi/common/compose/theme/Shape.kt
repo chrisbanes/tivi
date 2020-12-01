@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-@file:Suppress("NOTHING_TO_INLINE")
+package app.tivi.common.compose.theme
 
-package app.tivi.common.compose
-
-import androidx.compose.runtime.Composable
-import app.tivi.common.compose.theme.TiviTheme
-import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
+import androidx.compose.material.Shapes
 
 /**
- * Just groups some common Compose content setup
+ * We intentionally use the defaults for now.
  */
-@Composable
-inline fun TiviContentSetup(noinline content: @Composable () -> Unit) {
-    TiviTheme {
-        ProvideWindowInsets {
-            content()
-        }
-    }
-}
+val TiviShapes = Shapes()
