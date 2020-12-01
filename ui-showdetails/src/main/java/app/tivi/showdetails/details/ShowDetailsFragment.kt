@@ -29,6 +29,7 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.TiviContentSetup
@@ -107,7 +108,13 @@ class ShowDetailsFragment : Fragment() {
                     viewModel.submitAction(ClearPendingUiEffect(effect))
                 }
                 is OpenEpisodeUiEffect -> {
-                    findNavController().navigate("app.tivi://episode/${effect.episodeId}".toUri())
+                    findNavController().navigate(
+                        "app.tivi://episode/${effect.episodeId}".toUri(),
+                        NavOptions.Builder()
+                            .setEnterAnim(R.anim.tivi_enter_bottom_anim)
+                            .setExitAnim(R.anim.tivi_exit_bottom_anim)
+                            .build()
+                    )
                     viewModel.submitAction(ClearPendingUiEffect(effect))
                 }
             }

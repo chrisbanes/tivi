@@ -39,7 +39,7 @@
 
     </fragment>
 
-    <dialog
+    <fragment
         android:id="@id/navigation_episode_details"
         android:name="app.tivi.episodedetails.EpisodeDetailsFragment"
         android:label="@string/episode_navigation_title">
@@ -50,6 +50,6 @@
 
         <deepLink app:uri="app.tivi://episode/{episode_id}" />
 
-    </dialog>
+    </fragment>
 
 </navigation>
