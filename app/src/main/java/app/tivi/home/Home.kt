@@ -17,7 +17,9 @@
 package app.tivi.home
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.material.BottomNavigationItem
@@ -35,7 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.tivi.R
 import app.tivi.common.compose.IconResource
-import dev.chrisbanes.accompanist.insets.navigationBarsPadding
+import dev.chrisbanes.accompanist.insets.navigationBarsHeight
 
 internal enum class HomeNavigation {
     Discover,
@@ -56,39 +58,41 @@ internal fun HomeBottomNavigation(
         elevation = 8.dp,
         modifier = modifier
     ) {
-        Row(
-            Modifier.fillMaxWidth()
-                .preferredHeight(56.dp)
-                .navigationBarsPadding(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            BottomNavigationItem(
-                icon = { IconResource(R.drawable.ic_weekend_black_24dp) },
-                label = { Text(stringResource(R.string.discover_title)) },
-                selected = selectedNavigation == HomeNavigation.Discover,
-                onClick = { onNavigationSelected(HomeNavigation.Discover) },
-            )
+        Column {
+            Row(
+                Modifier.fillMaxWidth().preferredHeight(56.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                BottomNavigationItem(
+                    icon = { IconResource(R.drawable.ic_weekend_black_24dp) },
+                    label = { Text(stringResource(R.string.discover_title)) },
+                    selected = selectedNavigation == HomeNavigation.Discover,
+                    onClick = { onNavigationSelected(HomeNavigation.Discover) },
+                )
 
-            BottomNavigationItem(
-                icon = { Icon(Icons.Default.FavoriteBorder) },
-                label = { Text(stringResource(R.string.following_shows_title)) },
-                selected = selectedNavigation == HomeNavigation.Following,
-                onClick = { onNavigationSelected(HomeNavigation.Following) },
-            )
+                BottomNavigationItem(
+                    icon = { Icon(Icons.Default.FavoriteBorder) },
+                    label = { Text(stringResource(R.string.following_shows_title)) },
+                    selected = selectedNavigation == HomeNavigation.Following,
+                    onClick = { onNavigationSelected(HomeNavigation.Following) },
+                )
 
-            BottomNavigationItem(
-                icon = { IconResource(R.drawable.ic_visibility) },
-                label = { Text(stringResource(R.string.watched_shows_title)) },
-                selected = selectedNavigation == HomeNavigation.Watched,
-                onClick = { onNavigationSelected(HomeNavigation.Watched) },
-            )
+                BottomNavigationItem(
+                    icon = { IconResource(R.drawable.ic_visibility) },
+                    label = { Text(stringResource(R.string.watched_shows_title)) },
+                    selected = selectedNavigation == HomeNavigation.Watched,
+                    onClick = { onNavigationSelected(HomeNavigation.Watched) },
+                )
 
-            BottomNavigationItem(
-                icon = { Icon(Icons.Default.Search) },
-                label = { Text(stringResource(R.string.search_navigation_title)) },
-                selected = selectedNavigation == HomeNavigation.Search,
-                onClick = { onNavigationSelected(HomeNavigation.Search) },
-            )
+                BottomNavigationItem(
+                    icon = { Icon(Icons.Default.Search) },
+                    label = { Text(stringResource(R.string.search_navigation_title)) },
+                    selected = selectedNavigation == HomeNavigation.Search,
+                    onClick = { onNavigationSelected(HomeNavigation.Search) },
+                )
+            }
+
+            Spacer(modifier = Modifier.navigationBarsHeight())
         }
     }
 }
