@@ -19,7 +19,7 @@
     android:interpolator="@android:interpolator/fast_out_slow_in">
 
     <translate
-        android:fromYDelta="-50%p"
+        android:fromYDelta="50%p"
         android:toYDelta="0" />
 
     <alpha
