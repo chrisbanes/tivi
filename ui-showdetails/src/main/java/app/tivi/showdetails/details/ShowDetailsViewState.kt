@@ -42,7 +42,20 @@ data class ShowDetailsViewState(
     val refreshError: UiError? = null
 )
 
-sealed class UiEffect
+sealed class UiEffect {
+    /**
+     * Whether the effect has been consumed or not.
+     */
+    var consumed: Boolean = false
+        private set
+
+    /**
+     * Consume the UI effect so that nothing else runs the effect
+     */
+    fun consume() {
+        consumed = true
+    }
+}
 data class OpenEpisodeUiEffect(val episodeId: Long, val seasonId: Long) : UiEffect()
 data class OpenShowUiEffect(val showId: Long) : UiEffect()
 data class FocusSeasonUiEffect(val seasonId: Long) : UiEffect()

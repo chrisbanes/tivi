@@ -138,7 +138,6 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
                     is UnfollowPreviousSeasonsFollowedAction -> onUnfollowPreviousSeasonsFollowState(action)
                     is OpenEpisodeDetails -> openEpisodeDetails(action)
                     is OpenShowDetails -> openShowDetails(action)
-                    is ClearPendingUiEffect -> clearPendingUiEffect(action)
                     is ClearError -> snackbarManager.removeCurrentError()
                 }
             }
@@ -147,6 +146,15 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
         snackbarManager.launchInScope(viewModelScope) { uiError, visible ->
             viewModelScope.launchSetState {
                 copy(refreshError = if (visible) uiError else null)
+            }
+        }
+
+        selectSubscribe(ShowDetailsViewState::pendingUiEffects) { effects ->
+            if (effects.any(UiEffect::consumed)) {
+                // Remove any consumed effects once they've been consumed
+                viewModelScope.launchSetState {
+                    copy(pendingUiEffects = pendingUiEffects.filter { !it.consumed })
+                }
             }
         }
 
@@ -218,12 +226,6 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
                         OpenEpisodeUiEffect(action.episodeId, episode.seasonId)
                 )
             }
-        }
-    }
-
-    private fun clearPendingUiEffect(action: ClearPendingUiEffect) {
-        viewModelScope.launchSetState {
-            copy(pendingUiEffects = pendingUiEffects - action.effect)
         }
     }
 

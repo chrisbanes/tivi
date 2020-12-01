@@ -110,23 +110,25 @@ class ShowDetailsFragment : Fragment() {
     }
 
     private fun render(state: ShowDetailsViewState) {
-        state.pendingUiEffects.forEach { effect ->
-            when (effect) {
-                is OpenShowUiEffect -> {
-                    findNavController().navigate("app.tivi://show/${effect.showId}".toUri())
-                    viewModel.submitAction(ClearPendingUiEffect(effect))
-                }
-                is OpenEpisodeUiEffect -> {
-                    findNavController().navigate(
-                        "app.tivi://episode/${effect.episodeId}".toUri(),
-                        NavOptions.Builder()
-                            .setEnterAnim(R.anim.tivi_enter_bottom_anim)
-                            .setExitAnim(R.anim.tivi_exit_bottom_anim)
-                            .build()
-                    )
-                    viewModel.submitAction(ClearPendingUiEffect(effect))
+        state.pendingUiEffects.asSequence()
+            .filter { !it.consumed }
+            .forEach { effect ->
+                when (effect) {
+                    is OpenShowUiEffect -> {
+                        findNavController().navigate("app.tivi://show/${effect.showId}".toUri())
+                        effect.consume()
+                    }
+                    is OpenEpisodeUiEffect -> {
+                        findNavController().navigate(
+                            "app.tivi://episode/${effect.episodeId}".toUri(),
+                            NavOptions.Builder()
+                                .setEnterAnim(R.anim.tivi_enter_bottom_anim)
+                                .setExitAnim(R.anim.tivi_exit_bottom_anim)
+                                .build()
+                        )
+                        effect.consume()
+                    }
                 }
             }
-        }
     }
 }
