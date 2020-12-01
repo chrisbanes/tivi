@@ -30,12 +30,13 @@ import androidx.navigation.NavController
 import app.tivi.AppNavigator
 import app.tivi.R
 import app.tivi.TiviActivity
-import app.tivi.common.compose.TiviContentSetup
+import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.databinding.ActivityMainBinding
 import app.tivi.extensions.MultipleBackStackNavigation
 import app.tivi.extensions.hideSoftInput
 import app.tivi.trakt.TraktConstants
 import dagger.hilt.android.AndroidEntryPoint
+import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -87,19 +88,21 @@ class MainActivity : TiviActivity() {
         }
 
         binding.homeBottomNavigation.setContent {
-            TiviContentSetup {
-                HomeBottomNavigation(
-                    selectedNavigation = currentSelectedItem,
-                    onNavigationSelected = { item ->
-                        if (currentSelectedItem == item) {
-                            multiBackStackNavigation.onReselected(item.toNavigationId())
-                        } else {
-                            currentSelectedItem = item
-                            multiBackStackNavigation.onItemSelected(item.toNavigationId())
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
+            ProvideWindowInsets {
+                TiviTheme {
+                    HomeBottomNavigation(
+                        selectedNavigation = currentSelectedItem,
+                        onNavigationSelected = { item ->
+                            if (currentSelectedItem == item) {
+                                multiBackStackNavigation.onReselected(item.toNavigationId())
+                            } else {
+                                currentSelectedItem = item
+                                multiBackStackNavigation.onItemSelected(item.toNavigationId())
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
     }

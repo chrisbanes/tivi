@@ -30,8 +30,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.AmbientHomeTextCreator
 import app.tivi.common.compose.AmbientTiviDateFormatter
-import app.tivi.common.compose.TiviContentSetup
 import app.tivi.common.compose.paging.collectAsLazyPagingItems
+import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.home.HomeTextCreator
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
@@ -72,7 +72,7 @@ class RecommendedShowsFragment : Fragment() {
                 AmbientHomeTextCreator provides homeTextCreator,
                 AmbientWindowInsets provides windowInsets,
             ) {
-                TiviContentSetup {
+                TiviTheme {
                     Recommended(
                         lazyPagingItems = pagedList.collectAsLazyPagingItems { old, new ->
                             old.entry.id == new.entry.id

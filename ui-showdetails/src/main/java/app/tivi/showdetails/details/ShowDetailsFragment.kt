@@ -32,7 +32,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.LogCompositions
-import app.tivi.common.compose.TiviContentSetup
+import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.extensions.viewModelProviderFactoryOf
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
@@ -81,7 +81,7 @@ class ShowDetailsFragment : Fragment() {
                 AmbientShowDetailsTextCreator provides textCreator,
                 AmbientWindowInsets provides windowInsets,
             ) {
-                TiviContentSetup {
+                TiviTheme {
                     val viewState by viewModel.liveData.observeAsState()
                     if (viewState != null) {
                         LogCompositions("ViewState observeAsState")

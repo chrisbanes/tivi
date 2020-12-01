@@ -31,7 +31,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.LogCompositions
-import app.tivi.common.compose.TiviContentSetup
+import app.tivi.common.compose.theme.TiviTheme
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
@@ -70,7 +70,7 @@ internal class SearchFragment : Fragment() {
 
         setContent {
             Providers(AmbientWindowInsets provides windowInsets) {
-                TiviContentSetup {
+                TiviTheme {
                     val viewState by viewModel.liveData.observeAsState()
                     if (viewState != null) {
                         LogCompositions("ViewState observeAsState")

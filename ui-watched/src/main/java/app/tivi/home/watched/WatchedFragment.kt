@@ -33,7 +33,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.AmbientHomeTextCreator
 import app.tivi.common.compose.AmbientTiviDateFormatter
-import app.tivi.common.compose.TiviContentSetup
+import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.home.HomeTextCreator
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
@@ -70,7 +70,7 @@ class WatchedFragment : Fragment() {
                 AmbientHomeTextCreator provides homeTextCreator,
                 AmbientWindowInsets provides windowInsets,
             ) {
-                TiviContentSetup {
+                TiviTheme {
                     val viewState by viewModel.liveData.observeAsState()
                     if (viewState != null) {
                         Watched(
