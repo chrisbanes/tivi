@@ -37,6 +37,8 @@ import app.tivi.common.compose.TiviContentSetup
 import app.tivi.home.HomeTextCreator
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
+import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
@@ -58,10 +60,15 @@ class WatchedFragment : Fragment() {
     ): View? = ComposeView(requireContext()).apply {
         layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
 
+        // We use ViewWindowInsetObserver rather than ProvideWindowInsets
+        // See: https://github.com/chrisbanes/accompanist/issues/155
+        val windowInsets = ViewWindowInsetObserver(this).start()
+
         setContent {
             Providers(
                 AmbientTiviDateFormatter provides tiviDateFormatter,
                 AmbientHomeTextCreator provides homeTextCreator,
+                AmbientWindowInsets provides windowInsets,
             ) {
                 TiviContentSetup {
                     val viewState by viewModel.liveData.observeAsState()
