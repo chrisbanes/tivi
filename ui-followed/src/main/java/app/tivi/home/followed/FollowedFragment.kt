@@ -34,6 +34,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.AmbientHomeTextCreator
 import app.tivi.common.compose.AmbientTiviDateFormatter
 import app.tivi.common.compose.theme.TiviTheme
+import app.tivi.extensions.DefaultNavOptions
 import app.tivi.home.HomeTextCreator
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
@@ -91,9 +92,14 @@ class FollowedFragment : Fragment() {
             pendingActions.consumeAsFlow().collect { action ->
                 when (action) {
                     FollowedAction.LoginAction,
-                    FollowedAction.OpenUserDetails -> findNavController().navigate("app.tivi://account".toUri())
+                    FollowedAction.OpenUserDetails -> {
+                        findNavController().navigate("app.tivi://account".toUri())
+                    }
                     is FollowedAction.OpenShowDetails -> {
-                        findNavController().navigate("app.tivi://show/${action.showId}".toUri())
+                        findNavController().navigate(
+                            "app.tivi://show/${action.showId}".toUri(),
+                            DefaultNavOptions
+                        )
                     }
                     else -> viewModel.submitAction(action)
                 }

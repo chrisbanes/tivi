@@ -29,10 +29,11 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.theme.TiviTheme
+import app.tivi.extensions.DefaultNavOptions
 import app.tivi.extensions.viewModelProviderFactoryOf
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
@@ -80,18 +81,21 @@ class ShowDetailsFragment : Fragment() {
             viewModel.uiEffects.collect { effect ->
                 when (effect) {
                     is OpenShowUiEffect -> {
-                        findNavController()
-                            .navigate("app.tivi://show/${effect.showId}".toUri())
+                        findNavController().navigate(
+                            "app.tivi://show/${effect.showId}".toUri(),
+                            DefaultNavOptions
+                        )
                     }
                     is OpenEpisodeUiEffect -> {
-                        findNavController()
-                            .navigate(
-                                "app.tivi://episode/${effect.episodeId}".toUri(),
-                                NavOptions.Builder()
-                                    .setEnterAnim(R.anim.tivi_enter_bottom_anim)
-                                    .setPopExitAnim(R.anim.tivi_exit_bottom_anim)
-                                    .build()
-                            )
+                        findNavController().navigate(
+                            "app.tivi://episode/${effect.episodeId}".toUri(),
+                            navOptions {
+                                anim {
+                                    enter = R.anim.tivi_enter_bottom_anim
+                                    popExit = R.anim.tivi_exit_bottom_anim
+                                }
+                            }
+                        )
                     }
                     else -> {
                         // TODO: any remaining ui effects need to be passed down to the UI

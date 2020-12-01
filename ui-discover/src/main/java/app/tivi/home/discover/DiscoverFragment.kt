@@ -32,6 +32,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.AmbientTiviDateFormatter
 import app.tivi.common.compose.theme.TiviTheme
+import app.tivi.extensions.DefaultNavOptions
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
@@ -93,11 +94,29 @@ class DiscoverFragment : Fragment() {
                         if (action.episodeId != null) {
                             uri += "/episode/${action.episodeId}"
                         }
-                        findNavController().navigate(uri.toUri())
+                        findNavController().navigate(uri.toUri(), DefaultNavOptions)
                     }
-                    OpenTrendingShows -> findNavController().navigate(R.id.navigation_trending)
-                    OpenPopularShows -> findNavController().navigate(R.id.navigation_popular)
-                    OpenRecommendedShows -> findNavController().navigate(R.id.navigation_recommended)
+                    OpenTrendingShows -> {
+                        findNavController().navigate(
+                            R.id.navigation_trending,
+                            null,
+                            DefaultNavOptions
+                        )
+                    }
+                    OpenPopularShows -> {
+                        findNavController().navigate(
+                            R.id.navigation_popular,
+                            null,
+                            DefaultNavOptions
+                        )
+                    }
+                    OpenRecommendedShows -> {
+                        findNavController().navigate(
+                            R.id.navigation_recommended,
+                            null,
+                            DefaultNavOptions
+                        )
+                    }
                     else -> viewModel.submitAction(action)
                 }
             }

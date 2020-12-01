@@ -32,6 +32,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.theme.TiviTheme
+import app.tivi.extensions.DefaultNavOptions
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
@@ -49,7 +50,10 @@ internal class SearchFragment : Fragment() {
             for (action in pendingActions) {
                 when (action) {
                     is SearchAction.OpenShowDetails -> {
-                        findNavController().navigate("app.tivi://show/${action.showId}".toUri())
+                        findNavController().navigate(
+                            "app.tivi://show/${action.showId}".toUri(),
+                            DefaultNavOptions
+                        )
                     }
                     else -> viewModel.submitAction(action)
                 }

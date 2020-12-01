@@ -122,10 +122,10 @@ class MultipleBackStackNavigation(
             // to it, creating the fixed started destination.
             fragmentManager.beginTransaction()
                 .setCustomAnimations(
-                    R.anim.tivi_enter_anim,
-                    R.anim.tivi_exit_anim,
-                    R.anim.tivi_pop_enter_anim,
-                    R.anim.tivi_pop_exit_anim
+                    R.anim.tivi_fade_enter,
+                    R.anim.tivi_fade_exit,
+                    R.anim.tivi_fade_enter,
+                    R.anim.tivi_fade_exit
                 )
                 .attach(selectedFragment)
                 .setPrimaryNavigationFragment(selectedFragment)

@@ -15,10 +15,19 @@
   ~ limitations under the License.
   -->
 
-<set xmlns:android="http://schemas.android.com/apk/res/android">
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:interpolator/fast_out_slow_in"
+    android:duration="@integer/nav_anim_duration">
+
+    <scale
+        android:pivotX="50%"
+        android:pivotY="100%"
+        android:fromXScale="100%p"
+        android:fromYScale="100%p"
+        android:toXScale="90%p"
+        android:toYScale="90%p" />
+
     <alpha
-        android:interpolator="@android:interpolator/fast_out_slow_in"
-        android:duration="@integer/nav_anim_duration"
         android:fromAlpha="1.0"
         android:toAlpha="0.0"/>
 </set>
