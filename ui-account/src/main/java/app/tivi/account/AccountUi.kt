@@ -17,7 +17,11 @@
 package app.tivi.account
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayout
+import androidx.compose.foundation.layout.FlowMainAxisAlignment
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,6 +30,7 @@ import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.preferredSizeIn
 import androidx.compose.foundation.layout.preferredWidth
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AmbientContentAlpha
 import androidx.compose.material.ContentAlpha
@@ -53,6 +58,7 @@ import dev.chrisbanes.accompanist.coil.CoilImage
 import org.threeten.bp.OffsetDateTime
 import org.threeten.bp.ZoneOffset
 
+@OptIn(ExperimentalLayout::class)
 @Composable
 fun AccountUi(
     viewState: AccountUiViewState,
@@ -70,20 +76,25 @@ fun AccountUi(
                 Spacer(modifier = Modifier.preferredHeight(16.dp))
             }
 
-            Row(
-                modifier = Modifier.align(Alignment.End)
-                    .padding(horizontal = 16.dp)
+            Box(
+                modifier = Modifier.padding(horizontal = 16.dp)
+                    .wrapContentSize(Alignment.CenterEnd)
+                    .align(Alignment.End)
             ) {
-                if (viewState.authState == TraktAuthState.LOGGED_OUT) {
-                    OutlinedButton(onClick = { actioner(Login) }) {
-                        Text(text = stringResource(R.string.login))
+                FlowRow(
+                    mainAxisAlignment = FlowMainAxisAlignment.End,
+                    mainAxisSpacing = 8.dp,
+                    crossAxisSpacing = 4.dp,
+                ) {
+                    if (viewState.authState == TraktAuthState.LOGGED_OUT) {
+                        OutlinedButton(onClick = { actioner(Login) }) {
+                            Text(text = stringResource(R.string.login))
+                        }
+                    } else {
+                        TextButton(onClick = { actioner(Login) }) {
+                            Text(text = stringResource(R.string.refresh_credentials))
+                        }
                     }
-                } else {
-                    TextButton(onClick = { actioner(Login) }) {
-                        Text(text = stringResource(R.string.refresh_credentials))
-                    }
-
-                    Spacer(modifier = Modifier.preferredWidth(8.dp))
 
                     OutlinedButton(onClick = { actioner(Logout) }) {
                         Text(text = stringResource(R.string.logout))

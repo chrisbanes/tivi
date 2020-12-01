@@ -74,9 +74,6 @@ dependencies {
     implementation Libs.AndroidX.Compose.animation
     implementation Libs.AndroidX.Compose.tooling
 
-    implementation Libs.Mdc.material
-    implementation Libs.Mdc.composeThemeAdapter
-
     implementation Libs.Accompanist.coil
     implementation Libs.Accompanist.insets
 

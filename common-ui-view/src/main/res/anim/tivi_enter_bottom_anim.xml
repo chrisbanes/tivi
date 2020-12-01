@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2019 Google, Inc.
+  ~ Copyright 2019 Google LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,10 +15,15 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <style name="Platform.Theme.Tivi" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <item name="android:navigationBarColor">?android:colorBackground</item>
-        <item name="android:windowLightNavigationBar">@bool/is_light_theme</item>
-        <item name="android:navigationBarDividerColor">@color/color_on_background_10</item>
-    </style>
-</resources>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="@integer/nav_anim_duration"
+    android:interpolator="@android:interpolator/fast_out_slow_in">
+
+    <translate
+        android:fromYDelta="20%p"
+        android:toYDelta="0" />
+
+    <alpha
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0" />
+</set>

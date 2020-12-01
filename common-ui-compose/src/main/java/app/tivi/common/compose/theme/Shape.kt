@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,11 @@
  * limitations under the License.
  */
 
-package app.tivi.settings
+package app.tivi.common.compose.theme
 
-import kotlinx.coroutines.flow.Flow
+import androidx.compose.material.Shapes
 
-interface TiviPreferences {
-
-    fun setup()
-
-    var theme: Theme
-    fun observeTheme(): Flow<Theme>
-
-    var useLessData: Boolean
-    fun observeUseLessData(): Flow<Boolean>
-
-    enum class Theme {
-        LIGHT,
-        DARK,
-        SYSTEM
-    }
-}
+/**
+ * We intentionally use the defaults for now.
+ */
+val TiviShapes = Shapes()

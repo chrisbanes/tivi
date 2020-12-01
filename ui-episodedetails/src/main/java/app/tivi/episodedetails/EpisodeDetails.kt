@@ -99,6 +99,7 @@ import app.tivi.ui.animations.lerp
 import dev.chrisbanes.accompanist.coil.CoilImage
 import dev.chrisbanes.accompanist.insets.navigationBarsHeight
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
+import dev.chrisbanes.accompanist.insets.statusBarsPadding
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 import kotlin.math.absoluteValue
@@ -124,7 +125,8 @@ fun EpisodeDetails(
                     backgroundColor = Color.Transparent,
                     isRefreshing = viewState.refreshing,
                     actioner = actioner,
-                    elevation = 0.dp
+                    elevation = 0.dp,
+                    modifier = Modifier.fillMaxWidth().statusBarsPadding()
                 )
             }
             ScrollableColumn {

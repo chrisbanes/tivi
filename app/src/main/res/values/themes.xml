@@ -18,47 +18,27 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Platform.Theme.Tivi" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-    </style>
+    <style name="Platform.Theme.Tivi" parent="android:Theme.Material.Light" />
 
     <style name="Base.Theme.Tivi" parent="Platform.Theme.Tivi">
-        <item name="windowActionModeOverlay">true</item>
-
-        <!-- Type styles -->
-        <item name="textAppearanceHeadline1">@style/TextAppearance.Tivi.Headline1</item>
-        <item name="textAppearanceHeadline2">@style/TextAppearance.Tivi.Headline2</item>
-        <item name="textAppearanceHeadline3">@style/TextAppearance.Tivi.Headline3</item>
-        <item name="textAppearanceHeadline4">@style/TextAppearance.Tivi.Headline4</item>
-        <item name="textAppearanceHeadline5">@style/TextAppearance.Tivi.Headline5</item>
-        <item name="textAppearanceHeadline6">@style/TextAppearance.Tivi.Headline6</item>
-        <item name="textAppearanceSubtitle1">@style/TextAppearance.Tivi.Subtitle1</item>
-        <item name="textAppearanceSubtitle2">@style/TextAppearance.Tivi.Subtitle2</item>
-        <item name="textAppearanceBody1">@style/TextAppearance.Tivi.Body1</item>
-        <item name="textAppearanceBody2">@style/TextAppearance.Tivi.Body2</item>
-        <item name="textAppearanceCaption">@style/TextAppearance.Tivi.Caption</item>
-        <item name="textAppearanceButton">@style/TextAppearance.Tivi.Button</item>
-        <item name="textAppearanceOverline">@style/TextAppearance.Tivi.Overline</item>
-
-        <item name="textAppearanceLargePopupMenu">?attr/textAppearanceBody1</item>
-        <item name="textAppearanceSmallPopupMenu">?attr/textAppearanceBody2</item>
-        <item name="textAppearancePopupMenuHeader">@style/TextAppearance.Tivi.PopupMenu.Header</item>
+        <item name="android:windowActionModeOverlay">true</item>
     </style>
 
     <style name="Theme.Tivi" parent="Base.Theme.Tivi">
-        <item name="colorPrimary">@color/tivi_slate_700</item>
-        <item name="colorOnPrimary">#FFFFFF</item>
+<!--        <item name="colorPrimary">@color/tivi_slate_700</item>-->
+<!--        <item name="colorOnPrimary">#FFFFFF</item>-->
 
-        <item name="colorPrimaryVariant">@color/tivi_slate_600</item>
-        <item name="colorPrimaryDark">@color/tivi_slate_800</item>
+<!--        <item name="colorPrimaryVariant">@color/tivi_slate_600</item>-->
+<!--        <item name="colorPrimaryDark">@color/tivi_slate_800</item>-->
 
-        <item name="colorSecondary">@color/tivi_mtrl_orange_700</item>
-        <item name="colorSecondaryVariant">@color/tivi_mtrl_orange_500</item>
-        <item name="colorOnSecondary">#000000</item>
+<!--        <item name="colorSecondary">@color/tivi_mtrl_orange_700</item>-->
+<!--        <item name="colorSecondaryVariant">@color/tivi_mtrl_orange_500</item>-->
+<!--        <item name="colorOnSecondary">#000000</item>-->
     </style>
 
     <style name="Theme.Tivi.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
     <style name="Theme.Tivi.Immerse" parent="Theme.Tivi.NoActionBar">
@@ -71,7 +51,5 @@
     <style name="Theme.Tivi.Home" parent="Theme.Tivi.Immerse">
         <item name="android:windowLightStatusBar">@bool/use_light_status_bar</item>
     </style>
-
-    <style name="Theme.Tivi.Settings" />
 
 </resources>

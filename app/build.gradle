@@ -26,9 +26,6 @@ plugins {
 
     id 'kotlin-android'
     id 'kotlin-kapt'
-
-    id 'com.google.android.gms.oss-licenses-plugin'
-    id 'androidx.navigation.safeargs.kotlin'
 }
 
 play {
@@ -118,6 +115,12 @@ android {
 
     buildFeatures {
         viewBinding true
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerVersion Libs.Kotlin.version
+        kotlinCompilerExtensionVersion Libs.AndroidX.Compose.version
     }
 
     testOptions {
@@ -163,6 +166,7 @@ dependencies {
     implementation project(':base-android')
     implementation project(':common-ui-view')
     implementation project(':common-imageloading')
+    implementation project(':common-ui-compose')
     implementation project(':data')
     implementation project(':data-android')
     implementation project(':trakt')
@@ -186,16 +190,19 @@ dependencies {
     implementation Libs.AndroidX.Lifecycle.livedata
     implementation Libs.AndroidX.Lifecycle.viewmodel
 
-    implementation Libs.AndroidX.appcompat
     implementation Libs.AndroidX.emoji
-    implementation Libs.AndroidX.constraintlayout
     implementation Libs.AndroidX.Fragment.fragmentKtx
     implementation Libs.AndroidX.Navigation.fragment
-    implementation Libs.AndroidX.Navigation.ui
 
-    implementation Libs.Mdc.material
+    implementation Libs.AndroidX.Compose.foundation
+    implementation Libs.AndroidX.Compose.ui
+    implementation Libs.AndroidX.Compose.layout
+    implementation Libs.AndroidX.Compose.material
+    implementation Libs.AndroidX.Compose.animation
+    implementation Libs.AndroidX.Compose.tooling
+    implementation Libs.AndroidX.Compose.livedata
 
-    implementation Libs.Insetter.ktx
+    implementation Libs.Accompanist.insets
 
     implementation Libs.threeTenAbp
 
@@ -215,7 +222,6 @@ dependencies {
 
     implementation Libs.Google.crashlytics
     implementation Libs.Google.analytics
-    implementation Libs.Google.openSourceLicensesLibrary
 
     debugImplementation Libs.leakCanary
 

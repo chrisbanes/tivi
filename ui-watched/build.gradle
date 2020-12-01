@@ -65,7 +65,6 @@ dependencies {
     implementation Libs.AndroidX.Paging.runtime
     implementation Libs.AndroidX.Paging.compose
 
-    implementation Libs.AndroidX.appcompat
     implementation Libs.AndroidX.coreKtx
     implementation Libs.AndroidX.Fragment.fragment
     implementation Libs.AndroidX.Fragment.fragmentKtx
@@ -79,9 +78,6 @@ dependencies {
     implementation Libs.AndroidX.Compose.animation
     implementation Libs.AndroidX.Compose.tooling
     implementation Libs.AndroidX.Compose.livedata
-
-    implementation Libs.Mdc.material
-    implementation Libs.Mdc.composeThemeAdapter
 
     implementation Libs.Accompanist.coil
     implementation Libs.Accompanist.insets

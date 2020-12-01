@@ -48,6 +48,8 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -77,6 +79,11 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
     private val loadingState = ObservableLoadingCounter()
 
     private val pendingActions = Channel<ShowDetailsAction>(Channel.BUFFERED)
+
+    private val _uiEffects = MutableSharedFlow<UiEffect>(extraBufferCapacity = 100)
+
+    val uiEffects: Flow<UiEffect>
+        get() = _uiEffects.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -138,7 +145,6 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
                     is UnfollowPreviousSeasonsFollowedAction -> onUnfollowPreviousSeasonsFollowState(action)
                     is OpenEpisodeDetails -> openEpisodeDetails(action)
                     is OpenShowDetails -> openShowDetails(action)
-                    is ClearPendingUiEffect -> clearPendingUiEffect(action)
                     is ClearError -> snackbarManager.removeCurrentError()
                 }
             }
@@ -201,35 +207,27 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     private fun openShowDetails(action: OpenShowDetails) {
-        viewModelScope.launchSetState {
-            val pending = pendingUiEffects.filter { it !is OpenShowUiEffect }
-            copy(pendingUiEffects = pending + OpenShowUiEffect(action.showId))
+        viewModelScope.launch {
+            _uiEffects.emit(OpenShowUiEffect(action.showId))
         }
     }
 
     private fun openEpisodeDetails(action: OpenEpisodeDetails) = viewModelScope.launch {
         val episode = getEpisode(GetEpisodeDetails.Params(action.episodeId)).first()
         if (episode != null) {
+            // Make sure the season is expanded
             setState {
-                val pending = pendingUiEffects.filterNot { it is OpenEpisodeUiEffect }
-                copy(
-                    expandedSeasonIds = expandedSeasonIds + episode.seasonId,
-                    pendingUiEffects = pending +
-                        OpenEpisodeUiEffect(action.episodeId, episode.seasonId)
-                )
+                copy(expandedSeasonIds = expandedSeasonIds + episode.seasonId)
             }
-        }
-    }
-
-    private fun clearPendingUiEffect(action: ClearPendingUiEffect) {
-        viewModelScope.launchSetState {
-            copy(pendingUiEffects = pendingUiEffects - action.effect)
+            // And emit an open episode ui effect
+            _uiEffects.emit(OpenEpisodeUiEffect(action.episodeId, episode.seasonId))
         }
     }
 
     private fun onMarkSeasonWatched(action: MarkSeasonWatchedAction) {
-        changeSeasonWatchedStatus(Params(action.seasonId, Action.WATCHED, action.onlyAired, action.date))
-            .watchStatus()
+        changeSeasonWatchedStatus(
+            Params(action.seasonId, Action.WATCHED, action.onlyAired, action.date)
+        ).watchStatus()
     }
 
     private fun onMarkSeasonUnwatched(action: MarkSeasonUnwatchedAction) {
@@ -237,17 +235,16 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     private fun onChangeSeasonExpandState(seasonId: Long, expanded: Boolean) {
-        viewModelScope.launchSetState {
-            val pending = ArrayList(pendingUiEffects)
-            pending.removeAll { it is FocusSeasonUiEffect }
-
+        viewModelScope.launch {
+            setState {
+                when {
+                    expanded -> copy(expandedSeasonIds = expandedSeasonIds + seasonId)
+                    else -> copy(expandedSeasonIds = expandedSeasonIds - seasonId)
+                }
+            }
             if (expanded) {
-                copy(
-                    pendingUiEffects = pending + FocusSeasonUiEffect(seasonId),
-                    expandedSeasonIds = expandedSeasonIds + seasonId
-                )
-            } else {
-                copy(expandedSeasonIds = expandedSeasonIds - seasonId)
+                // If we've expanded, focus the season
+                _uiEffects.emit(FocusSeasonUiEffect(seasonId))
             }
         }
     }

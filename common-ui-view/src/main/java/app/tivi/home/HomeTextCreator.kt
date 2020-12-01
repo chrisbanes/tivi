@@ -17,54 +17,27 @@
 package app.tivi.home
 
 import android.content.Context
-import android.content.res.Resources
-import android.graphics.Typeface
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.text.buildSpannedString
-import androidx.core.text.inSpans
 import androidx.core.text.parseAsHtml
 import app.tivi.common.ui.R
 import app.tivi.data.entities.TiviShow
-import app.tivi.ui.text.TypefaceSpan
-import app.tivi.ui.text.textAppearanceSpanForAttribute
 import dagger.hilt.android.qualifiers.ActivityContext
 import javax.inject.Inject
 
 class HomeTextCreator @Inject constructor(
     @ActivityContext private val context: Context
 ) {
-    private var bodyTypeface: Typeface = Typeface.DEFAULT
-        get() {
-            if (field == Typeface.DEFAULT) {
-                try {
-                    ResourcesCompat.getFont(context, R.font.inter_400)?.also { field = it }
-                } catch (nfe: Resources.NotFoundException) {
-                    // getFont will throw a NFE if the device if offline or doesn't have
-                    // Play Services. Lets not crash
-                }
-            }
-            return field
-        }
-
-    @JvmOverloads
     fun showTitle(
-        context: Context = this.context,
         show: TiviShow
-    ): CharSequence = buildSpannedString {
-        append(show.title)
-
-        show.firstAired?.also { firstAired ->
-            append(" ")
-            inSpans(
-                textAppearanceSpanForAttribute(context, R.attr.textAppearanceCaption),
-                TypefaceSpan(bodyTypeface)
-            ) {
+    ): CharSequence = StringBuilder()
+        .append(show.title)
+        .apply {
+            show.firstAired?.also { firstAired ->
+                append(" ")
                 append("(")
                 append(firstAired.year.toString())
                 append(")")
             }
-        }
-    }
+        }.toString()
 
     fun showHeaderCount(count: Int, filtered: Boolean = false): CharSequence = when {
         filtered -> context.resources.getQuantityString(R.plurals.header_show_count_filtered, count, count)

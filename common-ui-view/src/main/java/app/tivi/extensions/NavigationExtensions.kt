@@ -19,6 +19,7 @@ package app.tivi.extensions
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph
+import androidx.navigation.NavOptions
 import androidx.navigation.navOptions
 import app.tivi.common.ui.R
 
@@ -26,10 +27,10 @@ fun NavController.navigateToNavDestination(itemId: Int, popUpToStart: Boolean = 
     val options = navOptions {
         launchSingleTop = true
         anim {
-            enter = R.anim.tivi_enter_anim
-            exit = R.anim.tivi_exit_anim
-            popEnter = R.anim.tivi_pop_enter_anim
-            popExit = R.anim.tivi_pop_exit_anim
+            enter = R.anim.tivi_fade_enter
+            exit = R.anim.tivi_fade_exit
+            popEnter = R.anim.tivi_fade_enter
+            popExit = R.anim.tivi_fade_exit
         }
         if (popUpToStart) {
             popUpTo(graph.findStartDestination().id) {
@@ -54,4 +55,13 @@ private fun NavGraph.findStartDestination(): NavDestination {
         startDestination = parent.findNode(parent.startDestination)!!
     }
     return startDestination
+}
+
+val DefaultNavOptions: NavOptions = navOptions {
+    anim {
+        enter = R.anim.tivi_fade_scale_enter
+        exit = R.anim.tivi_fade_exit
+        popEnter = 0
+        popExit = R.anim.tivi_fade_scale_exit
+    }
 }

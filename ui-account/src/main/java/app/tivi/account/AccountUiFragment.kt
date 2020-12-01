@@ -26,14 +26,16 @@ import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.AmbientTiviDateFormatter
-import app.tivi.common.compose.TiviContentSetup
+import app.tivi.common.compose.shouldUseDarkColors
+import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.extensions.navigateToNavDestination
+import app.tivi.settings.TiviPreferences
 import app.tivi.util.TiviDateFormatter
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
@@ -44,11 +46,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AccountUiFragment : BottomSheetDialogFragment() {
+class AccountUiFragment : DialogFragment() {
     private val pendingActions = Channel<AccountUiAction>()
     private val viewModel: AccountUiViewModel by viewModels()
 
     @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
+
+    @Inject lateinit var preferences: TiviPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,7 +70,7 @@ class AccountUiFragment : BottomSheetDialogFragment() {
                 AmbientTiviDateFormatter provides tiviDateFormatter,
                 AmbientWindowInsets provides windowInsets,
             ) {
-                TiviContentSetup {
+                TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
                     val viewState by viewModel.liveData.observeAsState()
                     if (viewState != null) {
                         AccountUi(viewState!!) {

@@ -19,4 +19,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="app.tivi.settings">
 
+    <application>
+
+        <activity android:name=".SettingsActivity"
+            android:label="@string/settings_title" />
+
+    </application>
+
 </manifest>

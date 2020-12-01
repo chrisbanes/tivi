@@ -33,8 +33,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.AmbientHomeTextCreator
 import app.tivi.common.compose.AmbientTiviDateFormatter
-import app.tivi.common.compose.TiviContentSetup
+import app.tivi.common.compose.shouldUseDarkColors
+import app.tivi.common.compose.theme.TiviTheme
+import app.tivi.extensions.DefaultNavOptions
 import app.tivi.home.HomeTextCreator
+import app.tivi.settings.TiviPreferences
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
@@ -48,6 +51,7 @@ import javax.inject.Inject
 class FollowedFragment : Fragment() {
     @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
     @Inject internal lateinit var homeTextCreator: HomeTextCreator
+    @Inject lateinit var preferences: TiviPreferences
 
     private val viewModel: FollowedViewModel by viewModels()
 
@@ -70,7 +74,7 @@ class FollowedFragment : Fragment() {
                 AmbientHomeTextCreator provides homeTextCreator,
                 AmbientWindowInsets provides windowInsets,
             ) {
-                TiviContentSetup {
+                TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
                     val viewState by viewModel.liveData.observeAsState()
                     if (viewState != null) {
                         Followed(
@@ -91,9 +95,14 @@ class FollowedFragment : Fragment() {
             pendingActions.consumeAsFlow().collect { action ->
                 when (action) {
                     FollowedAction.LoginAction,
-                    FollowedAction.OpenUserDetails -> findNavController().navigate("app.tivi://account".toUri())
+                    FollowedAction.OpenUserDetails -> {
+                        findNavController().navigate("app.tivi://account".toUri())
+                    }
                     is FollowedAction.OpenShowDetails -> {
-                        findNavController().navigate("app.tivi://show/${action.showId}".toUri())
+                        findNavController().navigate(
+                            "app.tivi://show/${action.showId}".toUri(),
+                            DefaultNavOptions
+                        )
                     }
                     else -> viewModel.submitAction(action)
                 }

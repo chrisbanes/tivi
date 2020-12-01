@@ -63,21 +63,12 @@ object Libs {
         const val insets = "dev.chrisbanes.accompanist:accompanist-insets:$version"
     }
 
-    object Mdc {
-        const val material = "com.google.android.material:material:1.1.0"
-        // const val composeThemeAdapter = "com.google.android.material:compose-theme-adapter:1.0.0-alpha07"
-        const val composeThemeAdapter = "com.github.material-components:material-components-android-compose-theme-adapter:dev_alpha08-SNAPSHOT"
-    }
-
     object Google {
         const val crashlytics = "com.google.firebase:firebase-crashlytics-ktx:17.2.2"
         const val analytics = "com.google.firebase:firebase-analytics-ktx:17.6.0"
         const val crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.3.0"
 
         const val gmsGoogleServices = "com.google.gms:google-services:4.3.4"
-
-        const val openSourceLicensesPlugin = "com.google.android.gms:oss-licenses-plugin:0.10.2"
-        const val openSourceLicensesLibrary = "com.google.android.gms:play-services-oss-licenses:17.0.0"
     }
 
     object Kotlin {
@@ -95,7 +86,6 @@ object Libs {
     }
 
     object AndroidX {
-        const val appcompat = "androidx.appcompat:appcompat:1.3.0-alpha02"
         const val browser = "androidx.browser:browser:1.0.0"
         const val collection = "androidx.collection:collection-ktx:1.1.0"
         const val palette = "androidx.palette:palette:1.0.0"
@@ -104,8 +94,6 @@ object Libs {
         object Navigation {
             private const val version = "2.3.1"
             const val fragment = "androidx.navigation:navigation-fragment-ktx:$version"
-            const val ui = "androidx.navigation:navigation-ui-ktx:$version"
-            const val safeArgs = "androidx.navigation:navigation-safe-args-gradle-plugin:$version"
         }
 
         object Fragment {
@@ -140,15 +128,11 @@ object Libs {
             const val compose = "androidx.paging:paging-compose:1.0.0-alpha02"
         }
 
-        const val preference = "androidx.preference:preference:1.1.1"
-
-        const val constraintlayout = "androidx.constraintlayout:constraintlayout:2.0.2"
-
         const val coreKtx = "androidx.core:core-ktx:1.5.0-alpha04"
 
         object Lifecycle {
             private const val version = "2.3.0-beta01"
-            const val extensions = "androidx.lifecycle:lifecycle-extensions:$version"
+            const val runtime = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
             const val livedata = "androidx.lifecycle:lifecycle-livedata-ktx:$version"
             const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
         }

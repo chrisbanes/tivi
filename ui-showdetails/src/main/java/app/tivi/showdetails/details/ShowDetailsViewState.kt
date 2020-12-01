@@ -37,7 +37,6 @@ data class ShowDetailsViewState(
     val watchStats: FollowedShowsWatchStats? = null,
     val seasons: List<SeasonWithEpisodesAndWatches> = emptyList(),
     val expandedSeasonIds: Set<Long> = emptySet(),
-    val pendingUiEffects: List<UiEffect> = emptyList(), // TODO this should really be a queue
     val refreshing: Boolean = false,
     val refreshError: UiError? = null
 )

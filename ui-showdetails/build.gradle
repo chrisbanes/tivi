@@ -69,7 +69,6 @@ dependencies {
     implementation Libs.AndroidX.Lifecycle.livedata
     implementation Libs.AndroidX.Lifecycle.viewmodel
 
-    implementation Libs.AndroidX.appcompat
     implementation Libs.AndroidX.coreKtx
     implementation Libs.AndroidX.emoji
     implementation Libs.AndroidX.Fragment.fragment
@@ -86,9 +85,6 @@ dependencies {
     implementation Libs.AndroidX.Compose.animation
     implementation Libs.AndroidX.Compose.tooling
     implementation Libs.AndroidX.Compose.livedata
-
-    implementation Libs.Mdc.material
-    implementation Libs.Mdc.composeThemeAdapter
 
     implementation Libs.Accompanist.coil
     implementation Libs.Accompanist.insets

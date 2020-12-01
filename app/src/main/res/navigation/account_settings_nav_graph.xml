@@ -29,14 +29,9 @@
 
     </dialog>
 
-    <fragment
-        android:id="@id/navigation_settings"
-        android:name="app.tivi.settings.SettingsFragment"
-        android:label="@string/settings_title" />
-
     <activity
-        android:id="@id/navigation_licences"
-        android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
-        android:label="@string/oss_license_title" />
+        android:id="@id/navigation_settings"
+        android:name="app.tivi.settings.SettingsActivity"
+        android:label="@string/settings_title" />
 
 </navigation>

@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-@file:Suppress("NOTHING_TO_INLINE")
+package app.tivi.common.compose.theme
 
-package app.tivi.common.compose
+import androidx.compose.material.Typography
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.font
+import androidx.compose.ui.text.font.fontFamily
+import app.tivi.common.compose.R
 
-import androidx.compose.runtime.Composable
-import com.google.android.material.composethemeadapter.MdcTheme
+private val Inter = fontFamily(
+    font(R.font.inter_300, FontWeight.Light),
+    font(R.font.inter_400, FontWeight.Normal),
+    font(R.font.inter_500, FontWeight.Medium),
+    font(R.font.inter_700, FontWeight.Bold)
+)
 
-/**
- * Just groups some common Compose content setup
- */
-@Composable
-inline fun TiviContentSetup(noinline content: @Composable () -> Unit) {
-    MdcTheme {
-        content()
-    }
-}
+val TiviTypography = Typography(defaultFontFamily = Inter)

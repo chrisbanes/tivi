@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright 2018 Google LLC
+  ~ Copyright 2019 Google LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,6 +15,15 @@
   ~ limitations under the License.
   -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="?attr/colorOnBackground" android:alpha="0.1" />
-</selector>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="@integer/nav_anim_duration"
+    android:interpolator="@android:interpolator/fast_out_slow_in">
+
+    <translate
+        android:fromYDelta="0"
+        android:toYDelta="20%p" />
+
+    <alpha
+        android:fromAlpha="1.0"
+        android:toAlpha="0.0" />
+</set>
