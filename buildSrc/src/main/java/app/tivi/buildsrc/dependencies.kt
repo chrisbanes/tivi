@@ -50,7 +50,7 @@ object Libs {
 
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.5"
 
-    const val store = "com.dropbox.mobile.store:store4:4.0.0-beta01"
+    const val store = "com.dropbox.mobile.store:store4:4.0.0"
 
     object Insetter {
         private const val version = "0.3.1"
