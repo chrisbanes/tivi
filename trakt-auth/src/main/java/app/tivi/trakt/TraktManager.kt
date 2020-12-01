@@ -64,12 +64,6 @@ class TraktManager @Inject constructor(
             val state = withContext(dispatchers.io) { readAuthState() }
             authState.value = state
         }
-
-        // Read the auth state from prefs
-        GlobalScope.launch(dispatchers.main) {
-            val state = withContext(dispatchers.io) { readAuthState() }
-            authState.value = state
-        }
     }
 
     private fun updateAuthState(authState: AuthState) {
