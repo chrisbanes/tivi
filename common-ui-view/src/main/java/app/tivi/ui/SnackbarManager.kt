@@ -19,34 +19,32 @@ package app.tivi.ui
 import app.tivi.api.UiError
 import app.tivi.extensions.delayFlow
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.threeten.bp.Duration
 import javax.inject.Inject
 
 class SnackbarManager @Inject constructor() {
     // We want a maximum of 3 errors queued
-    private val pendingErrors = Channel<UiError>(3)
-    private val removeErrorSignal = Channel<Unit>(1)
+    private val pendingErrors = MutableSharedFlow<UiError>(extraBufferCapacity = 3)
+    private val removeErrorSignal = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     fun launchInScope(
         scope: CoroutineScope,
         onErrorVisibilityChanged: (UiError, Boolean) -> Unit
     ) {
         scope.launch {
-            pendingErrors.consumeAsFlow().collect { error ->
+            pendingErrors.collect { error ->
                 // Set the error
                 onErrorVisibilityChanged(error, true)
 
                 merge(
                     delayFlow(Duration.ofSeconds(6).toMillis(), Unit),
-                    removeErrorSignal.receiveAsFlow()
+                    removeErrorSignal
                 ).firstOrNull()
 
                 // Now remove the error
@@ -57,15 +55,11 @@ class SnackbarManager @Inject constructor() {
         }
     }
 
-    fun sendError(error: UiError) {
-        if (!pendingErrors.isClosedForSend) {
-            pendingErrors.offer(error)
-        }
+    suspend fun sendError(error: UiError) {
+        pendingErrors.emit(error)
     }
 
-    fun removeCurrentError() {
-        if (!removeErrorSignal.isClosedForSend) {
-            removeErrorSignal.offer(Unit)
-        }
+    suspend fun removeCurrentError() {
+        removeErrorSignal.emit(Unit)
     }
 }

@@ -21,11 +21,10 @@ import androidx.lifecycle.viewModelScope
 import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.SearchShows
 import app.tivi.util.ObservableLoadingCounter
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 
@@ -37,7 +36,7 @@ internal class SearchViewModel @ViewModelInject constructor(
     private val searchQuery = MutableStateFlow("")
     private val loadingState = ObservableLoadingCounter()
 
-    private val pendingActions = Channel<SearchAction>(Channel.BUFFERED)
+    private val pendingActions = MutableSharedFlow<SearchAction>()
 
     init {
         viewModelScope.launch {
@@ -61,7 +60,7 @@ internal class SearchViewModel @ViewModelInject constructor(
         }
 
         viewModelScope.launch {
-            pendingActions.consumeAsFlow().collect { action ->
+            pendingActions.collect { action ->
                 when (action) {
                     is SearchAction.Search -> {
                         searchQuery.value = action.searchTerm
@@ -73,9 +72,7 @@ internal class SearchViewModel @ViewModelInject constructor(
 
     fun submitAction(action: SearchAction) {
         viewModelScope.launch {
-            if (!pendingActions.isClosedForSend) {
-                pendingActions.send(action)
-            }
+            pendingActions.emit(action)
         }
     }
 }

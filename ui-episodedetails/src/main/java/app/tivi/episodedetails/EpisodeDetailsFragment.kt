@@ -28,7 +28,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.AmbientTiviDateFormatter
 import app.tivi.common.compose.shouldUseDarkColors
@@ -39,10 +38,6 @@ import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -70,8 +65,6 @@ class EpisodeDetailsFragment : Fragment() {
     @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
     @Inject internal lateinit var textCreator: EpisodeDetailsTextCreator
 
-    private val pendingActions = Channel<EpisodeDetailsAction>(Channel.BUFFERED)
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -91,25 +84,20 @@ class EpisodeDetailsFragment : Fragment() {
                 TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
                     val viewState by viewModel.liveData.observeAsState()
                     if (viewState != null) {
-                        EpisodeDetails(viewState!!) {
-                            pendingActions.offer(it)
-                        }
+                        EpisodeDetails(
+                            viewState = viewState!!,
+                            actioner = ::onEpisodeDetailsAction
+                        )
                     }
                 }
             }
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        lifecycleScope.launch {
-            pendingActions.consumeAsFlow().collect { action ->
-                when (action) {
-                    is Close -> requireView().post { findNavController().navigateUp() }
-                    else -> viewModel.submitAction(action)
-                }
-            }
+    private fun onEpisodeDetailsAction(action: EpisodeDetailsAction) {
+        when (action) {
+            is Close -> requireView().post { findNavController().navigateUp() }
+            else -> viewModel.submitAction(action)
         }
     }
 }

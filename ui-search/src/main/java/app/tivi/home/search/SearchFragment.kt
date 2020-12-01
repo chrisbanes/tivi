@@ -28,7 +28,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.LogCompositions
 import app.tivi.common.compose.shouldUseDarkColors
@@ -38,7 +37,6 @@ import app.tivi.settings.TiviPreferences
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
-import kotlinx.coroutines.channels.Channel
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -46,25 +44,6 @@ internal class SearchFragment : Fragment() {
     @Inject lateinit var preferences: TiviPreferences
 
     private val viewModel: SearchViewModel by viewModels()
-    private val pendingActions = Channel<SearchAction>(Channel.BUFFERED)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        lifecycleScope.launchWhenStarted {
-            for (action in pendingActions) {
-                when (action) {
-                    is SearchAction.OpenShowDetails -> {
-                        findNavController().navigate(
-                            "app.tivi://show/${action.showId}".toUri(),
-                            DefaultNavOptions
-                        )
-                    }
-                    else -> viewModel.submitAction(action)
-                }
-            }
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -83,17 +62,25 @@ internal class SearchFragment : Fragment() {
                     val viewState by viewModel.liveData.observeAsState()
                     if (viewState != null) {
                         LogCompositions("ViewState observeAsState")
-                        Search(viewState!!) { action ->
-                            pendingActions.offer(action)
-                        }
+                        Search(
+                            state = viewState!!,
+                            actioner = ::onSearchAction
+                        )
                     }
                 }
             }
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        pendingActions.close()
+    private fun onSearchAction(action: SearchAction) {
+        when (action) {
+            is SearchAction.OpenShowDetails -> {
+                findNavController().navigate(
+                    "app.tivi://show/${action.showId}".toUri(),
+                    DefaultNavOptions
+                )
+            }
+            else -> viewModel.submitAction(action)
+        }
     }
 }

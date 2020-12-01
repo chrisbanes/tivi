@@ -28,7 +28,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.AmbientTiviDateFormatter
 import app.tivi.common.compose.shouldUseDarkColors
@@ -39,9 +38,6 @@ import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -51,8 +47,6 @@ class DiscoverFragment : Fragment() {
     @Inject lateinit var preferences: TiviPreferences
 
     private val viewModel: DiscoverViewModel by viewModels()
-
-    private val pendingActions = Channel<DiscoverAction>(Channel.BUFFERED)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,7 +70,7 @@ class DiscoverFragment : Fragment() {
                     if (viewState != null) {
                         Discover(
                             state = viewState!!,
-                            actioner = { pendingActions.offer(it) }
+                            actioner = ::onDiscoverAction
                         )
                     }
                 }
@@ -84,45 +78,39 @@ class DiscoverFragment : Fragment() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        lifecycleScope.launchWhenStarted {
-            pendingActions.consumeAsFlow().collect { action ->
-                when (action) {
-                    LoginAction,
-                    OpenUserDetails -> findNavController().navigate("app.tivi://account".toUri())
-                    is OpenShowDetails -> {
-                        var uri = "app.tivi://show/${action.showId}"
-                        if (action.episodeId != null) {
-                            uri += "/episode/${action.episodeId}"
-                        }
-                        findNavController().navigate(uri.toUri(), DefaultNavOptions)
-                    }
-                    OpenTrendingShows -> {
-                        findNavController().navigate(
-                            R.id.navigation_trending,
-                            null,
-                            DefaultNavOptions
-                        )
-                    }
-                    OpenPopularShows -> {
-                        findNavController().navigate(
-                            R.id.navigation_popular,
-                            null,
-                            DefaultNavOptions
-                        )
-                    }
-                    OpenRecommendedShows -> {
-                        findNavController().navigate(
-                            R.id.navigation_recommended,
-                            null,
-                            DefaultNavOptions
-                        )
-                    }
-                    else -> viewModel.submitAction(action)
+    private fun onDiscoverAction(action: DiscoverAction) {
+        when (action) {
+            LoginAction,
+            OpenUserDetails -> findNavController().navigate("app.tivi://account".toUri())
+            is OpenShowDetails -> {
+                var uri = "app.tivi://show/${action.showId}"
+                if (action.episodeId != null) {
+                    uri += "/episode/${action.episodeId}"
                 }
+                findNavController().navigate(uri.toUri(), DefaultNavOptions)
             }
+            OpenTrendingShows -> {
+                findNavController().navigate(
+                    R.id.navigation_trending,
+                    null,
+                    DefaultNavOptions
+                )
+            }
+            OpenPopularShows -> {
+                findNavController().navigate(
+                    R.id.navigation_popular,
+                    null,
+                    DefaultNavOptions
+                )
+            }
+            OpenRecommendedShows -> {
+                findNavController().navigate(
+                    R.id.navigation_recommended,
+                    null,
+                    DefaultNavOptions
+                )
+            }
+            else -> viewModel.submitAction(action)
         }
     }
 }

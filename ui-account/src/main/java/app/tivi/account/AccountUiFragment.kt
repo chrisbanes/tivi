@@ -28,7 +28,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.AmbientTiviDateFormatter
 import app.tivi.common.compose.shouldUseDarkColors
@@ -39,19 +38,13 @@ import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class AccountUiFragment : DialogFragment() {
-    private val pendingActions = Channel<AccountUiAction>()
     private val viewModel: AccountUiViewModel by viewModels()
 
     @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
-
     @Inject lateinit var preferences: TiviPreferences
 
     override fun onCreateView(
@@ -73,30 +66,22 @@ class AccountUiFragment : DialogFragment() {
                 TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
                     val viewState by viewModel.liveData.observeAsState()
                     if (viewState != null) {
-                        AccountUi(viewState!!) {
-                            pendingActions.offer(it)
-                        }
+                        AccountUi(viewState!!, ::onAccountUiAction)
                     }
                 }
             }
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        lifecycleScope.launch {
-            pendingActions.consumeAsFlow().collect { action ->
-                when (action) {
-                    is Close -> view?.post(::dismiss)
-                    is OpenSettings -> {
-                        view?.post {
-                            findNavController().navigateToNavDestination(R.id.navigation_settings)
-                        }
-                    }
-                    else -> viewModel.submitAction(action)
+    private fun onAccountUiAction(action: AccountUiAction) {
+        when (action) {
+            is Close -> view?.post(::dismiss)
+            is OpenSettings -> {
+                view?.post {
+                    findNavController().navigateToNavDestination(R.id.navigation_settings)
                 }
             }
+            else -> viewModel.submitAction(action)
         }
     }
 }
