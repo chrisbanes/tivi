@@ -17,6 +17,7 @@
 package app.tivi.domain.observers
 
 import app.tivi.data.entities.TiviShow
+import app.tivi.data.filterForResult
 import app.tivi.data.repositories.shows.ShowStore
 import app.tivi.domain.SubjectInteractor
 import app.tivi.util.AppCoroutineDispatchers
@@ -33,6 +34,7 @@ class ObserveShowDetails @Inject constructor(
 
     override fun createObservable(params: Params): Flow<TiviShow> {
         return showStore.stream(StoreRequest.cached(params.showId, refresh = false))
+            .filterForResult()
             .map { it.requireData() }
             .flowOn(dispatchers.computation)
     }
