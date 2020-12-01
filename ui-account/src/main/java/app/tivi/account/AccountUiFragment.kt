@@ -31,8 +31,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.AmbientTiviDateFormatter
+import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.extensions.navigateToNavDestination
+import app.tivi.settings.TiviPreferences
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
@@ -50,6 +52,8 @@ class AccountUiFragment : DialogFragment() {
 
     @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
 
+    @Inject lateinit var preferences: TiviPreferences
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -66,7 +70,7 @@ class AccountUiFragment : DialogFragment() {
                 AmbientTiviDateFormatter provides tiviDateFormatter,
                 AmbientWindowInsets provides windowInsets,
             ) {
-                TiviTheme {
+                TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
                     val viewState by viewModel.liveData.observeAsState()
                     if (viewState != null) {
                         AccountUi(viewState!!) {

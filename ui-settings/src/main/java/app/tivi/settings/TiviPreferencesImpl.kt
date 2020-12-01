@@ -21,6 +21,12 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import app.tivi.settings.TiviPreferences.Theme
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -28,13 +34,13 @@ class TiviPreferencesImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     @Named("app") private val sharedPreferences: SharedPreferences
 ) : TiviPreferences {
-    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        when (key) {
-            KEY_THEME -> updateUsingThemePreference()
-        }
-    }
-
     private val defaultThemeValue = context.getString(R.string.pref_theme_default_value)
+
+    private val preferenceKeyChangedFlow = MutableSharedFlow<String>(extraBufferCapacity = 1)
+
+    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        preferenceKeyChangedFlow.tryEmit(key)
+    }
 
     companion object {
         const val KEY_THEME = "pref_theme"
@@ -42,11 +48,10 @@ class TiviPreferencesImpl @Inject constructor(
     }
 
     override fun setup() {
-        updateUsingThemePreference()
         sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
     }
 
-    override var themePreference: Theme
+    override var theme: Theme
         get() = getThemeForStorageValue(sharedPreferences.getString(KEY_THEME, defaultThemeValue)!!)
         set(value) = sharedPreferences.edit {
             putString(KEY_THEME, value.storageKey)
@@ -57,6 +62,24 @@ class TiviPreferencesImpl @Inject constructor(
         set(value) = sharedPreferences.edit {
             putBoolean(KEY_DATA_SAVER, value)
         }
+
+    override fun observeUseLessData(): Flow<Boolean> {
+        return preferenceKeyChangedFlow
+            // Emit on start so that we always send the initial value
+            .onStart { emit(KEY_DATA_SAVER) }
+            .filter { it == KEY_DATA_SAVER }
+            .map { useLessData }
+            .distinctUntilChanged()
+    }
+
+    override fun observeTheme(): Flow<Theme> {
+        return preferenceKeyChangedFlow
+            // Emit on start so that we always send the initial value
+            .onStart { emit(KEY_THEME) }
+            .filter { it == KEY_THEME }
+            .map { theme }
+            .distinctUntilChanged()
+    }
 
     private val Theme.storageKey: String
         get() = when (this) {
@@ -69,13 +92,5 @@ class TiviPreferencesImpl @Inject constructor(
         context.getString(R.string.pref_theme_light_value) -> Theme.LIGHT
         context.getString(R.string.pref_theme_dark_value) -> Theme.DARK
         else -> Theme.SYSTEM
-    }
-
-    private fun updateUsingThemePreference() {
-        // when (themePreference) {
-        //        Theme.DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        //        Theme.LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        //        Theme.SYSTEM -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-        // }
     }
 }

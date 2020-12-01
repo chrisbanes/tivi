@@ -31,8 +31,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.AmbientTiviDateFormatter
+import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.extensions.viewModelProviderFactoryOf
+import app.tivi.settings.TiviPreferences
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
@@ -46,6 +48,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class EpisodeDetailsFragment : Fragment() {
     @Inject internal lateinit var vmFactory: EpisodeDetailsViewModel.Factory
+    @Inject lateinit var preferences: TiviPreferences
 
     companion object {
         private const val ARG_KEY_ID = "episode_id"
@@ -85,7 +88,7 @@ class EpisodeDetailsFragment : Fragment() {
                 AmbientTiviDateFormatter provides tiviDateFormatter,
                 AmbientWindowInsets provides windowInsets,
             ) {
-                TiviTheme {
+                TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
                     val viewState by viewModel.liveData.observeAsState()
                     if (viewState != null) {
                         EpisodeDetails(viewState!!) {

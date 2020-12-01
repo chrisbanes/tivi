@@ -31,15 +31,20 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.LogCompositions
+import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.extensions.DefaultNavOptions
+import app.tivi.settings.TiviPreferences
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
 import kotlinx.coroutines.channels.Channel
+import javax.inject.Inject
 
 @AndroidEntryPoint
 internal class SearchFragment : Fragment() {
+    @Inject lateinit var preferences: TiviPreferences
+
     private val viewModel: SearchViewModel by viewModels()
     private val pendingActions = Channel<SearchAction>(Channel.BUFFERED)
 
@@ -74,7 +79,7 @@ internal class SearchFragment : Fragment() {
 
         setContent {
             Providers(AmbientWindowInsets provides windowInsets) {
-                TiviTheme {
+                TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
                     val viewState by viewModel.liveData.observeAsState()
                     if (viewState != null) {
                         LogCompositions("ViewState observeAsState")

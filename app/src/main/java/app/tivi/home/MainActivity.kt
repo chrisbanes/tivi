@@ -30,10 +30,12 @@ import androidx.navigation.NavController
 import app.tivi.AppNavigator
 import app.tivi.R
 import app.tivi.TiviActivity
+import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.databinding.ActivityMainBinding
 import app.tivi.extensions.MultipleBackStackNavigation
 import app.tivi.extensions.hideSoftInput
+import app.tivi.settings.TiviPreferences
 import app.tivi.trakt.TraktConstants
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
@@ -49,6 +51,8 @@ class MainActivity : TiviActivity() {
         private set
 
     @Inject lateinit var navigator: AppNavigator
+
+    @Inject lateinit var preferences: TiviPreferences
 
     private var currentSelectedItem by mutableStateOf(HomeNavigation.Discover)
 
@@ -89,7 +93,7 @@ class MainActivity : TiviActivity() {
 
         binding.homeBottomNavigation.setContent {
             ProvideWindowInsets {
-                TiviTheme {
+                TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
                     HomeBottomNavigation(
                         selectedNavigation = currentSelectedItem,
                         onNavigationSelected = { item ->

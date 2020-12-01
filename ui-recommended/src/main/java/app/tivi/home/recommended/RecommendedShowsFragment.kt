@@ -31,9 +31,11 @@ import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.AmbientHomeTextCreator
 import app.tivi.common.compose.AmbientTiviDateFormatter
 import app.tivi.common.compose.paging.collectAsLazyPagingItems
+import app.tivi.common.compose.shouldUseDarkColors
 import app.tivi.common.compose.theme.TiviTheme
 import app.tivi.extensions.DefaultNavOptions
 import app.tivi.home.HomeTextCreator
+import app.tivi.settings.TiviPreferences
 import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
@@ -47,6 +49,7 @@ import javax.inject.Inject
 class RecommendedShowsFragment : Fragment() {
     @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
     @Inject internal lateinit var homeTextCreator: HomeTextCreator
+    @Inject lateinit var preferences: TiviPreferences
 
     private val pendingActions = Channel<RecommendedAction>(Channel.BUFFERED)
 
@@ -73,7 +76,7 @@ class RecommendedShowsFragment : Fragment() {
                 AmbientHomeTextCreator provides homeTextCreator,
                 AmbientWindowInsets provides windowInsets,
             ) {
-                TiviTheme {
+                TiviTheme(useDarkColors = preferences.shouldUseDarkColors()) {
                     Recommended(
                         lazyPagingItems = pagedList.collectAsLazyPagingItems { old, new ->
                             old.entry.id == new.entry.id
