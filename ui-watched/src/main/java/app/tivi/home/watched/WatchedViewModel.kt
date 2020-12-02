@@ -34,10 +34,9 @@ import app.tivi.trakt.TraktAuthState
 import app.tivi.util.ObservableLoadingCounter
 import app.tivi.util.ShowStateSelector
 import app.tivi.util.collectInto
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
@@ -53,7 +52,7 @@ internal class WatchedViewModel @ViewModelInject constructor(
 ) : ReduxViewModel<WatchedViewState>(
     WatchedViewState()
 ) {
-    private val pendingActions = Channel<WatchedAction>(Channel.BUFFERED)
+    private val pendingActions = MutableSharedFlow<WatchedAction>()
 
     private val loadingState = ObservableLoadingCounter()
     private val showSelection = ShowStateSelector()
@@ -102,7 +101,7 @@ internal class WatchedViewModel @ViewModelInject constructor(
         subscribe(::updateDataSource)
 
         viewModelScope.launch {
-            pendingActions.consumeAsFlow().collect { action ->
+            pendingActions.collect { action ->
                 when (action) {
                     WatchedAction.RefreshAction -> refresh(fromUser = true)
                     is WatchedAction.FilterShows -> setFilter(action.filter)
@@ -133,9 +132,7 @@ internal class WatchedViewModel @ViewModelInject constructor(
     }
 
     fun submitAction(action: WatchedAction) {
-        viewModelScope.launch {
-            if (!pendingActions.isClosedForSend) pendingActions.send(action)
-        }
+        viewModelScope.launch { pendingActions.emit(action) }
     }
 
     private fun setFilter(filter: String) {

@@ -36,10 +36,9 @@ import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
@@ -58,7 +57,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
 
     private val loadingState = ObservableLoadingCounter()
 
-    private val pendingActions = Channel<EpisodeDetailsAction>(Channel.BUFFERED)
+    private val pendingActions = MutableSharedFlow<EpisodeDetailsAction>()
 
     init {
         viewModelScope.launch {
@@ -73,7 +72,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
         }
 
         viewModelScope.launch {
-            pendingActions.consumeAsFlow().collect { action ->
+            pendingActions.collect { action ->
                 when (action) {
                     RefreshAction -> refresh(true)
                     AddEpisodeWatchAction -> markWatched()
@@ -121,9 +120,7 @@ class EpisodeDetailsViewModel @AssistedInject constructor(
 
     internal fun submitAction(action: EpisodeDetailsAction) {
         viewModelScope.launch {
-            if (!pendingActions.isClosedForSend) {
-                pendingActions.send(action)
-            }
+            pendingActions.emit(action)
         }
     }
 

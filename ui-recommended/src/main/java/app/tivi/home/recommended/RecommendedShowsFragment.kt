@@ -26,7 +26,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import app.tivi.common.compose.AmbientHomeTextCreator
 import app.tivi.common.compose.AmbientTiviDateFormatter
@@ -40,9 +39,6 @@ import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -50,8 +46,6 @@ class RecommendedShowsFragment : Fragment() {
     @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
     @Inject internal lateinit var homeTextCreator: HomeTextCreator
     @Inject lateinit var preferences: TiviPreferences
-
-    private val pendingActions = Channel<RecommendedAction>(Channel.BUFFERED)
 
     private val viewModel: RecommendedShowsViewModel by viewModels()
 
@@ -81,27 +75,20 @@ class RecommendedShowsFragment : Fragment() {
                         lazyPagingItems = pagedList.collectAsLazyPagingItems { old, new ->
                             old.entry.id == new.entry.id
                         },
-                        actioner = { pendingActions.offer(it) },
+                        actioner = ::onRecommendedAction,
                     )
                 }
             }
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        lifecycleScope.launchWhenStarted {
-            pendingActions.consumeAsFlow().collect { action ->
-                when (action) {
-                    is RecommendedAction.OpenShowDetails -> {
-                        findNavController().navigate(
-                            "app.tivi://show/${action.showId}".toUri(),
-                            DefaultNavOptions
-                        )
-                    }
-                    // else -> viewModel.submitAction(action)
-                }
+    private fun onRecommendedAction(action: RecommendedAction) {
+        when (action) {
+            is RecommendedAction.OpenShowDetails -> {
+                findNavController().navigate(
+                    "app.tivi://show/${action.showId}".toUri(),
+                    DefaultNavOptions
+                )
             }
         }
     }

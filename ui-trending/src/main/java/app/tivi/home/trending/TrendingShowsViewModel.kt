@@ -18,14 +18,11 @@ package app.tivi.home.trending
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.domain.observers.ObservePagedTrendingShows
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 
 class TrendingShowsViewModel @ViewModelInject constructor(
     private val pagingInteractor: ObservePagedTrendingShows,
@@ -34,26 +31,8 @@ class TrendingShowsViewModel @ViewModelInject constructor(
     val pagedList: Flow<PagingData<TrendingEntryWithShow>>
         get() = pagingInteractor.observe()
 
-    private val pendingActions = Channel<TrendingAction>(Channel.BUFFERED)
-
     init {
         pagingInteractor(ObservePagedTrendingShows.Params(PAGING_CONFIG))
-
-//        viewModelScope.launch {
-//            pendingActions.consumeAsFlow().collect { action ->
-//                // TODO
-//            }
-//        }
-    }
-
-    fun submitAction(action: TrendingAction) {
-        viewModelScope.launch {
-            if (!pendingActions.isClosedForSend) pendingActions.send(action)
-        }
-    }
-
-    override fun onCleared() {
-        pendingActions.close()
     }
 
     companion object {

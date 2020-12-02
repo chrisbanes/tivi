@@ -18,14 +18,11 @@ package app.tivi.home.popular
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.domain.observers.ObservePagedPopularShows
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 
 class PopularShowsViewModel @ViewModelInject constructor(
     private val pagingInteractor: ObservePagedPopularShows,
@@ -34,26 +31,8 @@ class PopularShowsViewModel @ViewModelInject constructor(
     val pagedList: Flow<PagingData<PopularEntryWithShow>>
         get() = pagingInteractor.observe()
 
-    private val pendingActions = Channel<PopularAction>(Channel.BUFFERED)
-
     init {
         pagingInteractor(ObservePagedPopularShows.Params(PAGING_CONFIG))
-
-//        viewModelScope.launch {
-//            pendingActions.consumeAsFlow().collect { action ->
-//                // TODO
-//            }
-//        }
-    }
-
-    fun submitAction(action: PopularAction) {
-        viewModelScope.launch {
-            if (!pendingActions.isClosedForSend) pendingActions.send(action)
-        }
-    }
-
-    override fun onCleared() {
-        pendingActions.close()
     }
 
     companion object {

@@ -28,7 +28,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import app.tivi.common.compose.AmbientHomeTextCreator
@@ -42,9 +41,6 @@ import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -54,8 +50,6 @@ class FollowedFragment : Fragment() {
     @Inject lateinit var preferences: TiviPreferences
 
     private val viewModel: FollowedViewModel by viewModels()
-
-    private val pendingActions = Channel<FollowedAction>(Channel.BUFFERED)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,7 +74,7 @@ class FollowedFragment : Fragment() {
                         Followed(
                             state = viewState!!,
                             list = viewModel.pagedList.collectAsLazyPagingItems(),
-                            actioner = { pendingActions.offer(it) },
+                            actioner = ::onFollowedAction,
                         )
                     }
                 }
@@ -88,25 +82,19 @@ class FollowedFragment : Fragment() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        lifecycleScope.launchWhenStarted {
-            pendingActions.consumeAsFlow().collect { action ->
-                when (action) {
-                    FollowedAction.LoginAction,
-                    FollowedAction.OpenUserDetails -> {
-                        findNavController().navigate("app.tivi://account".toUri())
-                    }
-                    is FollowedAction.OpenShowDetails -> {
-                        findNavController().navigate(
-                            "app.tivi://show/${action.showId}".toUri(),
-                            DefaultNavOptions
-                        )
-                    }
-                    else -> viewModel.submitAction(action)
-                }
+    private fun onFollowedAction(action: FollowedAction) {
+        when (action) {
+            FollowedAction.LoginAction,
+            FollowedAction.OpenUserDetails -> {
+                findNavController().navigate("app.tivi://account".toUri())
             }
+            is FollowedAction.OpenShowDetails -> {
+                findNavController().navigate(
+                    "app.tivi://show/${action.showId}".toUri(),
+                    DefaultNavOptions
+                )
+            }
+            else -> viewModel.submitAction(action)
         }
     }
 }

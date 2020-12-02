@@ -41,9 +41,7 @@ import app.tivi.util.TiviDateFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.ViewWindowInsetObserver
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -52,8 +50,6 @@ class ShowDetailsFragment : Fragment() {
     @Inject internal lateinit var textCreator: ShowDetailsTextCreator
     @Inject internal lateinit var tiviDateFormatter: TiviDateFormatter
     @Inject lateinit var preferences: TiviPreferences
-
-    private val pendingActions = Channel<ShowDetailsAction>(Channel.BUFFERED)
 
     private val viewModel: ShowDetailsFragmentViewModel by viewModels {
         viewModelProviderFactoryOf {
@@ -70,15 +66,6 @@ class ShowDetailsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        lifecycleScope.launchWhenStarted {
-            pendingActions.consumeAsFlow().collect { action ->
-                when (action) {
-                    NavigateUp -> findNavController().navigateUp()
-                    else -> viewModel.submitAction(action)
-                }
-            }
-        }
 
         lifecycleScope.launchWhenStarted {
             viewModel.uiEffects.collect { effect ->
@@ -128,12 +115,20 @@ class ShowDetailsFragment : Fragment() {
                     val viewState by viewModel.liveData.observeAsState()
                     if (viewState != null) {
                         LogCompositions("ViewState observeAsState")
-                        ShowDetails(viewState!!) {
-                            pendingActions.offer(it)
-                        }
+                        ShowDetails(
+                            viewState = viewState!!,
+                            actioner = ::onShowDetailsAction
+                        )
                     }
                 }
             }
+        }
+    }
+
+    private fun onShowDetailsAction(action: ShowDetailsAction) {
+        when (action) {
+            NavigateUp -> findNavController().navigateUp()
+            else -> viewModel.submitAction(action)
         }
     }
 }

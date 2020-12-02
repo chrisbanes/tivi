@@ -18,42 +18,20 @@ package app.tivi.home.recommended
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.domain.observers.ObservePagedRecommendedShows
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 
 class RecommendedShowsViewModel @ViewModelInject constructor(
     private val pagingInteractor: ObservePagedRecommendedShows,
 ) : ViewModel() {
-
     val pagedList: Flow<PagingData<RecommendedEntryWithShow>>
         get() = pagingInteractor.observe()
 
-    private val pendingActions = Channel<RecommendedAction>(Channel.BUFFERED)
-
     init {
         pagingInteractor(ObservePagedRecommendedShows.Params(PAGING_CONFIG))
-
-//        viewModelScope.launch {
-//            pendingActions.consumeAsFlow().collect { action ->
-//                // TODO
-//            }
-//        }
-    }
-
-    fun submitAction(action: RecommendedAction) {
-        viewModelScope.launch {
-            if (!pendingActions.isClosedForSend) pendingActions.send(action)
-        }
-    }
-
-    override fun onCleared() {
-        pendingActions.close()
     }
 
     companion object {

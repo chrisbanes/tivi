@@ -24,9 +24,8 @@ import app.tivi.domain.interactors.ClearUserDetails
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktManager
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Provider
@@ -40,7 +39,7 @@ class AccountUiViewModel @ViewModelInject constructor(
 ) : ReduxViewModel<AccountUiViewState>(
     AccountUiViewState()
 ) {
-    private val pendingActions = Channel<AccountUiAction>(Channel.BUFFERED)
+    private val pendingActions = MutableSharedFlow<AccountUiAction>()
 
     init {
         viewModelScope.launch {
@@ -57,7 +56,7 @@ class AccountUiViewModel @ViewModelInject constructor(
         observeUserDetails(ObserveUserDetails.Params("me"))
 
         viewModelScope.launch {
-            pendingActions.consumeAsFlow().collect { action ->
+            pendingActions.collect { action ->
                 when (action) {
                     Login -> appNavigator.get().login()
                     Logout -> logout()
@@ -68,9 +67,7 @@ class AccountUiViewModel @ViewModelInject constructor(
 
     fun submitAction(action: AccountUiAction) {
         viewModelScope.launch {
-            if (!pendingActions.isClosedForSend) {
-                pendingActions.send(action)
-            }
+            pendingActions.emit(action)
         }
     }
 

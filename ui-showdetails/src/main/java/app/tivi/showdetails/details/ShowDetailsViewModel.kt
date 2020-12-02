@@ -46,12 +46,10 @@ import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -78,7 +76,7 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
 ) : ReduxViewModel<ShowDetailsViewState>(initialState) {
     private val loadingState = ObservableLoadingCounter()
 
-    private val pendingActions = Channel<ShowDetailsAction>(Channel.BUFFERED)
+    private val pendingActions = MutableSharedFlow<ShowDetailsAction>()
 
     private val _uiEffects = MutableSharedFlow<UiEffect>(extraBufferCapacity = 100)
 
@@ -134,7 +132,7 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
         }
 
         viewModelScope.launch {
-            pendingActions.consumeAsFlow().collect { action ->
+            pendingActions.collect { action ->
                 when (action) {
                     is RefreshAction -> refresh(true)
                     FollowShowToggleAction -> onToggleMyShowsButtonClicked()
@@ -193,11 +191,7 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
     }
 
     fun submitAction(action: ShowDetailsAction) {
-        viewModelScope.launch {
-            if (!pendingActions.isClosedForSend) {
-                pendingActions.send(action)
-            }
-        }
+        viewModelScope.launch { pendingActions.emit(action) }
     }
 
     private fun onToggleMyShowsButtonClicked() {
