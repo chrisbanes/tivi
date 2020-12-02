@@ -17,10 +17,12 @@
 package app.tivi.domain.observers
 
 import app.tivi.data.entities.ShowImages
+import app.tivi.data.filterForResult
 import app.tivi.data.repositories.showimages.ShowImagesStore
 import app.tivi.domain.SubjectInteractor
 import app.tivi.util.AppCoroutineDispatchers
 import com.dropbox.android.external.store4.StoreRequest
+import com.dropbox.android.external.store4.get
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -33,6 +35,7 @@ class ObserveShowImages @Inject constructor(
 
     override fun createObservable(params: Params): Flow<ShowImages> {
         return store.stream(StoreRequest.cached(params.showId, refresh = false))
+            .filterForResult()
             .map { ShowImages(it.requireData()) }
             .flowOn(dispatchers.computation)
     }
