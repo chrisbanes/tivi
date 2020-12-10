@@ -30,7 +30,7 @@ jobs:
       - name: set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 8
+          java-version: 11
 
       - name: Decrypt secrets
         run: ./release/decrypt-secrets.sh
@@ -55,11 +55,9 @@ jobs:
       - name: Build and check
         run: ./gradlew spotlessCheck assembleDebug assembleRelease app:lintDebug testDebug -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
 
-      - name: Publish to Play Store
+      - name: Build release
         if: github.ref == 'refs/heads/main'
-        # Need to invoke bundleRelease too for Crashlytics.
-        # See https://github.com/Triple-T/gradle-play-publisher/issues/859
-        run: ./gradlew bundleRelease publishRelease -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
+        run: ./gradlew bundleRelease -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1

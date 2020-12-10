@@ -22,16 +22,9 @@ import java.nio.file.Files
 plugins {
     id 'com.android.application'
     id 'dagger.hilt.android.plugin'
-    id 'com.github.triplet.play'
 
     id 'kotlin-android'
     id 'kotlin-kapt'
-}
-
-play {
-   track = 'internal'
-   defaultToAppBundles = true
-   serviceAccountCredentials = rootProject.file('release/play-account.json')
 }
 
 kapt {
