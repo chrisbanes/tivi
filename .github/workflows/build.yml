@@ -56,8 +56,19 @@ jobs:
         run: ./gradlew spotlessCheck assembleDebug assembleRelease app:lintDebug testDebug -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
 
       - name: Build release
-        if: github.ref == 'refs/heads/main'
+        #if: github.ref == 'refs/heads/main'
         run: ./gradlew bundleRelease -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
+
+      - name: Publish to Play Store
+        #if: github.ref == 'refs/heads/main'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: release/play-account.json
+          packageName: app.tivi
+          track: internal
+          whatsNewDirectory: distribution/whatsnew
+          releaseFile: app/build/outputs/bundle/release/app-release.aab
+          mappingFile: app/build/outputs/mapping/release/mapping.txt
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1
