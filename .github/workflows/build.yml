@@ -62,7 +62,7 @@ jobs:
           serviceAccountJson: release/play-account.json
           packageName: app.tivi
           track: internal
-          whatsNewDirectory: distribution/whatsnew
+          #whatsNewDirectory: distribution/whatsnew
           releaseFile: app/build/outputs/bundle/release/app-release.aab
           mappingFile: app/build/outputs/mapping/release/mapping.txt
 
