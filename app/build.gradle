@@ -93,7 +93,9 @@ android {
         // Disable lintVital. Not needed since lint is run on CI
         checkReleaseBuilds false
         // Allow lint to check dependencies
-        checkDependencies true
+        // TODO: re-enable this after we move to AGP 7.0.0-alpha03
+        // https://issuetracker.google.com/174605126
+        checkDependencies false
         // Ignore any tests
         ignoreTestSources true
 
