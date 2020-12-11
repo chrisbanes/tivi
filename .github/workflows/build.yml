@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Generate build number
         shell: bash
-        run: echo "BUILD_NUMBER=$(expr $GITHUB_RUN_NUMBER + 5200)" >> $GITHUB_ENV
+        run: echo "BUILD_NUMBER=$(expr $GITHUB_RUN_NUMBER + 5210)" >> $GITHUB_ENV
 
       - uses: actions/checkout@v2
 
