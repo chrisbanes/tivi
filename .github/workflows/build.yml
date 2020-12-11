@@ -23,14 +23,14 @@ jobs:
     steps:
       - name: Generate build number
         shell: bash
-        run: echo "BUILD_NUMBER=$(expr $GITHUB_RUN_NUMBER + 5200)" >> $GITHUB_ENV
+        run: echo "BUILD_NUMBER=$(expr $GITHUB_RUN_NUMBER + 5210)" >> $GITHUB_ENV
 
       - uses: actions/checkout@v2
 
       - name: set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 8
+          java-version: 11
 
       - name: Decrypt secrets
         run: ./release/decrypt-secrets.sh
@@ -53,13 +53,17 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
 
       - name: Build and check
-        run: ./gradlew spotlessCheck assembleDebug assembleRelease app:lintDebug testDebug -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
+        run: ./gradlew spotlessCheck assemble bundle app:lintDebug testDebug -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
 
       - name: Publish to Play Store
         if: github.ref == 'refs/heads/main'
-        # Need to invoke bundleRelease too for Crashlytics.
-        # See https://github.com/Triple-T/gradle-play-publisher/issues/859
-        run: ./gradlew bundleRelease publishRelease -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: release/play-account.json
+          packageName: app.tivi
+          track: internal
+          releaseFiles: app/build/outputs/bundle/release/app-release.aab
+          mappingFile: app/build/outputs/mapping/release/mapping.txt
 
       - name: Create release for tags
         uses: softprops/action-gh-release@v1
