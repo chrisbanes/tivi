@@ -56,7 +56,7 @@ jobs:
         run: ./gradlew spotlessCheck assemble bundle app:lintDebug testDebug -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
 
       - name: Publish to Play Store
-        #if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main'
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJson: release/play-account.json
