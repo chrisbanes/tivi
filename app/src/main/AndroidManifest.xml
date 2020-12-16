@@ -57,6 +57,13 @@
             </intent-filter>
         </activity>
 
+        <!-- Disable the WorkManager default initializer since we are
+             providing our own configuration. -->
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
+            tools:node="remove" />
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

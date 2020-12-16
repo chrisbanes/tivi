@@ -53,7 +53,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('checksum.txt') }}
 
       - name: Build and check
-        run: ./gradlew spotlessCheck assemble bundle app:lintDebug testDebug -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
+        run: ./gradlew spotlessCheck assemble bundle lintDebug testDebug -Ptivi.versioncode=$BUILD_NUMBER --scan --stacktrace
 
       - name: Publish to Play Store
         if: github.ref == 'refs/heads/main'
