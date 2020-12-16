@@ -116,14 +116,11 @@ object Libs {
         const val archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
 
         object Paging {
-            // Need to use alpha07 due to:
-            // - https://issuetracker.google.com/issues/173717820
-            // - https://issuetracker.google.com/issues/173435602
-            private const val version = "3.0.0-alpha07"
+            private const val version = "3.0.0-alpha10"
             const val common = "androidx.paging:paging-common-ktx:$version"
             const val runtime = "androidx.paging:paging-runtime-ktx:$version"
 
-            const val compose = "androidx.paging:paging-compose:1.0.0-alpha02"
+            const val compose = "androidx.paging:paging-compose:1.0.0-alpha03"
         }
 
         const val coreKtx = "androidx.core:core-ktx:1.5.0-alpha04"
@@ -150,8 +147,8 @@ object Libs {
         }
 
         object Compose {
-            const val snapshot = "7001724"
-            const val version = "1.0.0-SNAPSHOT"
+            const val snapshot = ""
+            const val version = "1.0.0-alpha08"
 
             @get:JvmStatic
             val snapshotUrl: String

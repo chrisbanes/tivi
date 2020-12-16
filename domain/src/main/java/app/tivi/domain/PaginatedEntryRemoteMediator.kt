@@ -22,8 +22,6 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import app.tivi.data.PaginatedEntry
 import app.tivi.data.resultentities.EntryWithShow
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 /**
  * A [RemoteMediator] which works on [PaginatedEntry] entities. [fetch] will be called with the
@@ -31,7 +29,6 @@ import kotlinx.coroutines.launch
  */
 @OptIn(ExperimentalPagingApi::class)
 internal class PaginatedEntryRemoteMediator<LI, ET>(
-    private val fetchScope: CoroutineScope,
     private val fetch: suspend (page: Int) -> Unit
 ) : RemoteMediator<Int, LI>() where ET : PaginatedEntry, LI : EntryWithShow<ET> {
     override suspend fun load(
@@ -48,17 +45,7 @@ internal class PaginatedEntryRemoteMediator<LI, ET>(
             }
         }
         return try {
-            // Ideally we would not need to launch on a separate scope, but Paging 3.0.0-alpha07
-            // has an issue where APPENDs are cancelled as after new items are inserted into
-            // the DB. Our fetchers tend to: 1) fetch list items, 2) update the DB,
-            // 3) fetch additional data. In alpha07, step 3 never happens because paging
-            // cancels us after step #2. https://issuetracker.google.com/162252536
-            // We can't update to alpha08+ because of other issues (see dependencies.kt), so
-            // we workaround by launching on a separate scope.
-            // TODO: remove this hack when we can
-            fetchScope.launch {
-                fetch(nextPage)
-            }
+            fetch(nextPage)
             MediatorResult.Success(endOfPaginationReached = false)
         } catch (t: Throwable) {
             MediatorResult.Error(t)
