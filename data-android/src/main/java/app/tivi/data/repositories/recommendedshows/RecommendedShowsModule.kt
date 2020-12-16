@@ -27,14 +27,14 @@ import com.dropbox.android.external.store4.StoreBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.map
 import org.threeten.bp.Duration
 import javax.inject.Singleton
 
 typealias RecommendedShowsStore = Store<Int, List<RecommendedShowEntry>>
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 internal object RecommendedShowsModule {
     @Provides

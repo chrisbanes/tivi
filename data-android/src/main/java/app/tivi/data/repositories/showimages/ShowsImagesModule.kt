@@ -29,14 +29,14 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.map
 import org.threeten.bp.Duration
 import javax.inject.Singleton
 
 typealias ShowImagesStore = Store<Long, List<ShowTmdbImage>>
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 internal abstract class ShowDataSourceBinds {
     @Binds
@@ -44,7 +44,7 @@ internal abstract class ShowDataSourceBinds {
     abstract fun bindTmdbShowImagesDataSource(source: TmdbShowImagesDataSource): ShowImagesDataSource
 }
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 object ShowImagesStoreModule {
     @Provides

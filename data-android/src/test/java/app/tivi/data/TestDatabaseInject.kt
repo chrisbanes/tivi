@@ -35,12 +35,12 @@ import com.uwetrottmann.trakt5.TraktV2
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import io.mockk.mockk
 import javax.inject.Singleton
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 class TestDataSourceModule {
     private val traktFollowedShowsDataSource: TraktFollowedShowsDataSource = mockk()
@@ -78,7 +78,7 @@ class TestDataSourceModule {
     fun provideTmdbShowImagesDataSource(): ShowImagesDataSource = tmdbShowImagesDataSource
 }
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 object TestDatabaseModule {
     @Provides
@@ -95,7 +95,7 @@ object TestDatabaseModule {
     fun provideLogger(): Logger = mockk(relaxUnitFun = true)
 }
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 object TestRoomDatabaseModule {
     @Singleton
