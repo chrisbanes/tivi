@@ -22,7 +22,7 @@ import org.threeten.bp.OffsetDateTime
 
 @DatabaseView(
     value =
-        """
+    """
 SELECT
   fs.id,
   MAX(datetime(eps.first_aired)) as last_watched_air_date

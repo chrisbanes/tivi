@@ -22,7 +22,7 @@ import org.threeten.bp.OffsetDateTime
 
 @DatabaseView(
     value =
-        """
+    """
 SELECT
   fs.id,
   MIN(datetime(eps.first_aired)) AS next_ep_to_watch_air_date
