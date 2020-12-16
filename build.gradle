@@ -98,13 +98,6 @@ subprojects {
                 // This may not always work if there's binary changes in the snapshot.
                 details.useVersion Libs.AndroidX.Compose.version
             }
-
-            // The Compose Compiler Maven group/module names changed in alpha04, but AGP
-            // hasn't yet been updated. We workaround that by forcing the new group/module names.
-            // TODO remove this once AGP has been updated
-            if (group == 'androidx.compose' && module == 'compose-compiler') {
-                details.useTarget(Libs.AndroidX.Compose.compiler)
-            }
         }
     }
 
