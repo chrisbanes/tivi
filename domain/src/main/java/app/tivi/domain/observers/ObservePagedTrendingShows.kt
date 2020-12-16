@@ -24,7 +24,6 @@ import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.domain.PaginatedEntryRemoteMediator
 import app.tivi.domain.PagingInteractor
 import app.tivi.domain.interactors.UpdateTrendingShows
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -37,7 +36,7 @@ class ObservePagedTrendingShows @Inject constructor(
     ): Flow<PagingData<TrendingEntryWithShow>> {
         return Pager(
             config = params.pagingConfig,
-            remoteMediator = PaginatedEntryRemoteMediator(GlobalScope) { page ->
+            remoteMediator = PaginatedEntryRemoteMediator { page ->
                 updateTrendingShows.executeSync(
                     UpdateTrendingShows.Params(page = page)
                 )
