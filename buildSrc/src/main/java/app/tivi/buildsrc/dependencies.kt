@@ -17,11 +17,11 @@
 package app.tivi.buildsrc
 
 object Versions {
-    const val ktlint = "0.39.0"
+    const val ktlint = "0.40.0"
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:7.0.0-alpha02"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:7.0.0-alpha03"
 
     const val threeTenBp = "org.threeten:threetenbp:1.5.0"
     const val threeTenBpNoTzdb = "$threeTenBp:no-tzdb"
