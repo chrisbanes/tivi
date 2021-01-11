@@ -26,7 +26,7 @@ Tivi is an app that attempts to use the latest cutting edge libraries and tools.
 
 ## Development setup
 
-First off, you require the latest Android Studio 4.2 Canary to be able to build the app. This is because the project contains some pieces of UI which are written in [Jetpack Compose](https://developer.android.com/jetpack/compose) (more on that below).
+First off, you require the latest Android Studio 4.2 Canary to be able to build the app. This is because the project is written in [Jetpack Compose](https://developer.android.com/jetpack/compose) (more on that below).
 
 ### Code style
 
@@ -60,7 +60,7 @@ TIVI_TMDB_API_KEY=<insert>
 ```
 
 ## Jetpack Compose
-As mentioned above, this project is slowly being migrated away from views to [Jetpack Compose](https://developer.android.com/jetpack/compose). There are currently 3 pieces of UI written in Compose:
+As mentioned above, this project has been migrated to [Jetpack Compose](https://developer.android.com/jetpack/compose). The basic building blocks of the apps are still `Fragment`s, but each fragment's content is implemented in Compose. Some examples of the UI include:
 
 ### Show details
 [[source](/ui-showdetails)]
