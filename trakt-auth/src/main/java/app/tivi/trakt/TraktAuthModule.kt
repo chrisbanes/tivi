@@ -44,8 +44,7 @@ object TraktAuthModule {
     fun provideAuthConfig(): AuthorizationServiceConfiguration {
         return AuthorizationServiceConfiguration(
             Uri.parse("https://trakt.tv/oauth/authorize"),
-            Uri.parse("https://trakt.tv/oauth/token"),
-            null
+            Uri.parse("https://trakt.tv/oauth/token")
         )
     }
 
