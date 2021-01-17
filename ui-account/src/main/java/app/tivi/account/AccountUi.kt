@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package app.tivi.account
 
 import androidx.compose.foundation.clickable
@@ -81,6 +83,7 @@ fun AccountUi(
                     .wrapContentSize(Alignment.CenterEnd)
                     .align(Alignment.End)
             ) {
+                @Suppress("DEPRECATION") // TODO: Migrate away from FlowRow
                 FlowRow(
                     mainAxisAlignment = FlowMainAxisAlignment.End,
                     mainAxisSpacing = 8.dp,

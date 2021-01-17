@@ -49,7 +49,7 @@ object Libs {
     const val store = "com.dropbox.mobile.store:store4:4.0.0"
 
     object Accompanist {
-        private const val version = "0.4.0"
+        private const val version = "0.4.2"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
         const val insets = "dev.chrisbanes.accompanist:accompanist-insets:$version"
     }
@@ -63,7 +63,7 @@ object Libs {
     }
 
     object Kotlin {
-        private const val version = "1.4.20"
+        private const val version = "1.4.21"
         const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
         const val extensions = "org.jetbrains.kotlin:kotlin-android-extensions:$version"
@@ -141,7 +141,7 @@ object Libs {
 
         object Compose {
             const val snapshot = ""
-            const val version = "1.0.0-alpha08"
+            const val version = "1.0.0-alpha10"
 
             @get:JvmStatic
             val snapshotUrl: String

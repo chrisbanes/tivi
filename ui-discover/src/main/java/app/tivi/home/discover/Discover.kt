@@ -35,7 +35,7 @@ import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.AmbientContentAlpha
-import androidx.compose.material.ButtonConstants
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -223,7 +223,7 @@ private fun <T : EntryWithShow<*>> CarouselWithHeader(
             ) {
                 TextButton(
                     onClick = onMoreClick,
-                    colors = ButtonConstants.defaultTextButtonColors(
+                    colors = ButtonDefaults.textButtonColors(
                         contentColor = MaterialTheme.colors.secondary
                     ),
                     modifier = Modifier.alignBy(FirstBaseline)
