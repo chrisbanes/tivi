@@ -179,6 +179,7 @@ object Libs {
     }
 
     object Hilt {
+        // Can't update to 2.31 yet due to https://issuetracker.google.com/177649295
         private const val version = "2.30.1-alpha"
         const val library = "com.google.dagger:hilt-android:$version"
         const val compiler = "com.google.dagger:hilt-android-compiler:$version"
