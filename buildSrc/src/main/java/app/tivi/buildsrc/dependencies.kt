@@ -44,7 +44,7 @@ object Libs {
     const val robolectric = "org.robolectric:robolectric:4.4"
     const val mockK = "io.mockk:mockk:1.10.3"
 
-    const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.5"
+    const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.6"
 
     const val store = "com.dropbox.mobile.store:store4:4.0.0"
 
