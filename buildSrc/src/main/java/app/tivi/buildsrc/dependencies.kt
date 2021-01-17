@@ -27,8 +27,6 @@ object Libs {
     const val threeTenBpNoTzdb = "$threeTenBp:no-tzdb"
     const val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.3.0"
 
-    const val gravitySnapHelper = "com.github.rubensousa:gravitysnaphelper:2.2.1"
-
     const val timber = "com.jakewharton.timber:timber:4.7.1"
 
     const val tmdbJava = "com.uwetrottmann.tmdb2:tmdb-java:2.2.0"
@@ -49,11 +47,6 @@ object Libs {
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.5"
 
     const val store = "com.dropbox.mobile.store:store4:4.0.0"
-
-    object Insetter {
-        private const val version = "0.3.1"
-        const val ktx = "dev.chrisbanes:insetter-ktx:$version"
-    }
 
     object Accompanist {
         private const val version = "0.4.0"
