@@ -42,7 +42,7 @@ object Libs {
 
     const val junit = "junit:junit:4.13.1"
     const val robolectric = "org.robolectric:robolectric:4.4"
-    const val mockK = "io.mockk:mockk:1.10.3"
+    const val mockK = "io.mockk:mockk:1.10.5"
 
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.6"
 
@@ -56,7 +56,7 @@ object Libs {
 
     object Google {
         const val crashlytics = "com.google.firebase:firebase-crashlytics-ktx:17.3.0"
-        const val analytics = "com.google.firebase:firebase-analytics-ktx:18.0.0"
+        const val analytics = "com.google.firebase:firebase-analytics-ktx:18.0.1"
         const val crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.4.1"
 
         const val gmsGoogleServices = "com.google.gms:google-services:4.3.4"
