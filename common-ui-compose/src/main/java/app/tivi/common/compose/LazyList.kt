@@ -42,7 +42,7 @@ fun LazyListScope.spacerItem(height: Dp) {
  * Displays a 'fake' grid using [LazyColumn]'s DSL. It's fake in that we just we add individual
  * column items, with a inner fake row.
  */
-fun <T : Any> LazyListScope.fakeGridItems(
+fun <T : Any> LazyListScope.itemsInGrid(
     lazyPagingItems: LazyPagingItems<T>,
     columns: Int,
     contentPadding: PaddingValues = PaddingValues(),
@@ -89,7 +89,7 @@ fun <T : Any> LazyListScope.fakeGridItems(
  * Displays a 'fake' grid using [LazyColumn]'s DSL. It's fake in that we just we add individual
  * column items, with a inner fake row.
  */
-fun <T> LazyListScope.fakeGridItems(
+fun <T> LazyListScope.itemsInGrid(
     items: List<T>,
     columns: Int,
     contentPadding: PaddingValues = PaddingValues(),

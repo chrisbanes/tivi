@@ -51,7 +51,7 @@ import androidx.paging.LoadState
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.PlaceholderPosterCard
 import app.tivi.common.compose.PosterCard
-import app.tivi.common.compose.fakeGridItems
+import app.tivi.common.compose.itemsInGrid
 import app.tivi.common.compose.paging.LazyPagingItems
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.spacerItem
@@ -73,7 +73,7 @@ fun Trending(
                     Spacer(Modifier.preferredHeight(height))
                 }
 
-                fakeGridItems(
+                itemsInGrid(
                     lazyPagingItems = lazyPagingItems,
                     columns = 3,
                     contentPadding = PaddingValues(4.dp),
