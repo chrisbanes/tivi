@@ -40,7 +40,7 @@ object Libs {
      *
      * https://jitpack.io/#openid/AppAuth-Android
      */
-    const val appauth = "com.github.openid:AppAuth-Android:master-SNAPSHOT"
+    const val appauth = "com.github.openid:AppAuth-Android:7aa9bf3edd"
 
     const val junit = "junit:junit:4.13.1"
     const val robolectric = "org.robolectric:robolectric:4.4"
