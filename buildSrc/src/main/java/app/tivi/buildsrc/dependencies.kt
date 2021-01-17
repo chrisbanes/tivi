@@ -21,7 +21,7 @@ object Versions {
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:7.0.0-alpha03"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:7.0.0-alpha04"
 
     const val threeTenBp = "org.threeten:threetenbp:1.5.0"
     const val threeTenBpNoTzdb = "$threeTenBp:no-tzdb"
