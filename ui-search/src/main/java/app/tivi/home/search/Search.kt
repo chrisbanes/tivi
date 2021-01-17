@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.AmbientContentAlpha
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
@@ -52,7 +53,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.PosterCard
 import app.tivi.common.compose.SearchTextField
-import app.tivi.common.compose.WorkaroundLazyColumnFor
 import app.tivi.data.entities.ShowTmdbImage
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.resultentities.ShowDetailed
@@ -113,17 +113,16 @@ private fun SearchList(
     onShowClicked: (TiviShow) -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
-    WorkaroundLazyColumnFor(
-        items = results,
-        contentPadding = contentPadding
-    ) { result ->
-        SearchRow(
-            show = result.show,
-            posterImage = result.poster,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onShowClicked(result.show) }
-        )
+    LazyColumn(contentPadding = contentPadding) {
+        items(results) { item ->
+            SearchRow(
+                show = item.show,
+                posterImage = item.poster,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onShowClicked(item.show) }
+            )
+        }
     }
 }
 

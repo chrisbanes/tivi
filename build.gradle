@@ -48,7 +48,7 @@ buildscript {
 }
 
 plugins {
-    id 'com.diffplug.spotless' version '5.8.2'
+    id 'com.diffplug.spotless' version '5.9.0'
     id 'com.github.ben-manes.versions' version '0.36.0'
 }
 
@@ -75,7 +75,7 @@ subprojects {
     configurations.configureEach {
         // We forcefully exclude AppCompat + MDC from any transitive dependencies.
         // This is a Compose app, so there's no need for these.
-        exclude group: 'androidx.appcompat', module: 'appcompat'
+        exclude group: 'androidx.appcompat'
         exclude group: 'com.google.android.material', module: 'material'
         exclude group: 'com.google.android.material', module: 'material'
 

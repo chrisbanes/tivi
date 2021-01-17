@@ -76,8 +76,6 @@ dependencies {
     implementation Libs.AndroidX.Fragment.fragmentKtx
     implementation Libs.AndroidX.Navigation.fragment
 
-    implementation Libs.Insetter.ktx
-
     implementation Libs.AndroidX.Compose.runtime
     implementation Libs.AndroidX.Compose.foundation
     implementation Libs.AndroidX.Compose.ui

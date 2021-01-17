@@ -25,12 +25,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -43,40 +39,10 @@ fun LazyListScope.spacerItem(height: Dp) {
 }
 
 /**
- * Provides a workaround for https://issuetracker.google.com/167913500
- */
-@Composable
-fun <T> WorkaroundLazyColumnFor(
-    items: List<T>,
-    modifier: Modifier = Modifier,
-    state: LazyListState = rememberLazyListState(),
-    contentPadding: PaddingValues = PaddingValues(0.dp),
-    horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    itemContent: @Composable LazyItemScope.(T) -> Unit
-) {
-    LazyColumn(
-        modifier = modifier,
-        state = state,
-        contentPadding = contentPadding.copy(top = 0.dp, bottom = 0.dp),
-        horizontalAlignment = horizontalAlignment
-    ) {
-        if (contentPadding.top > 0.dp) {
-            item { Spacer(Modifier.preferredHeight(contentPadding.top)) }
-        }
-
-        items(items, itemContent)
-
-        if (contentPadding.bottom > 0.dp) {
-            item { Spacer(Modifier.preferredHeight(contentPadding.bottom)) }
-        }
-    }
-}
-
-/**
  * Displays a 'fake' grid using [LazyColumn]'s DSL. It's fake in that we just we add individual
  * column items, with a inner fake row.
  */
-fun <T : Any> LazyListScope.fakeGridItems(
+fun <T : Any> LazyListScope.itemsInGrid(
     lazyPagingItems: LazyPagingItems<T>,
     columns: Int,
     contentPadding: PaddingValues = PaddingValues(),
@@ -123,7 +89,7 @@ fun <T : Any> LazyListScope.fakeGridItems(
  * Displays a 'fake' grid using [LazyColumn]'s DSL. It's fake in that we just we add individual
  * column items, with a inner fake row.
  */
-fun <T> LazyListScope.fakeGridItems(
+fun <T> LazyListScope.itemsInGrid(
     items: List<T>,
     columns: Int,
     contentPadding: PaddingValues = PaddingValues(),

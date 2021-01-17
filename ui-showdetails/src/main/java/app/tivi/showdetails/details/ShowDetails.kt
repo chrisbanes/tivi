@@ -19,10 +19,8 @@ package app.tivi.showdetails.details
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.DpPropKey
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.VectorConverter
-import androidx.compose.animation.animate
-import androidx.compose.animation.animatedValue
 import androidx.compose.animation.core.FloatPropKey
+import androidx.compose.animation.core.animateAsState
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.transitionDefinition
@@ -99,6 +97,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
@@ -178,7 +177,9 @@ fun ShowDetails(
             0 -> listState.firstVisibleItemScrollOffset >= trigger
             else -> true
         },
-        modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter)
+        modifier = Modifier
+            .fillMaxWidth()
+            .align(Alignment.TopCenter)
     ) {
         ShowDetailsAppBar(
             title = viewState.show.title ?: "",
@@ -192,7 +193,11 @@ fun ShowDetails(
     val snackbarHostState = remember { SnackbarHostState() }
     val snackbarScope = rememberCoroutineScope()
 
-    Column(Modifier.fillMaxWidth().align(Alignment.BottomCenter)) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .align(Alignment.BottomCenter)
+    ) {
         SnackbarHost(
             hostState = snackbarHostState,
             snackbar = {
@@ -201,7 +206,9 @@ fun ShowDetails(
                     onDismiss = { actioner(ClearError) }
                 )
             },
-            modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
         )
 
         ToggleShowFollowFloatingActionButton(
@@ -249,19 +256,20 @@ private fun ShowDetailsScrollingContent(
         item {
             BackdropImage(
                 backdropImage = backdropImage,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .aspectRatio(16f / 10)
                     .onSizeChanged(onBackdropSizeChanged)
                     .clipToBounds()
-                    .offset(
-                        y = {
-                            // If we're the first visible item, apply parallax using 50% of
-                            // scroll offset
-                            if (listState.firstVisibleItemIndex == 0) {
-                                listState.firstVisibleItemScrollOffset / 2f
-                            } else 0f
-                        }
-                    )
+                    .offset {
+                        IntOffset(
+                            x = 0,
+                            y = when (listState.firstVisibleItemIndex) {
+                                0 -> listState.firstVisibleItemScrollOffset / 2
+                                else -> 0
+                            }
+                        )
+                    }
             )
         }
 
@@ -293,7 +301,8 @@ private fun ShowDetailsScrollingContent(
             item {
                 ExpandingText(
                     text = show.summary!!,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             }
@@ -330,7 +339,9 @@ private fun ShowDetailsScrollingContent(
                 RelatedShows(
                     related = relatedShows,
                     actioner = actioner,
-                    modifier = Modifier.fillMaxWidth().preferredHeight(112.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .preferredHeight(112.dp)
                 )
             }
         }
@@ -382,7 +393,8 @@ private fun PosterInfoRow(
                 data = posterImage,
                 fadeIn = true,
                 alignment = Alignment.TopStart,
-                modifier = Modifier.weight(1f, fill = false)
+                modifier = Modifier
+                    .weight(1f, fill = false)
                     .aspectRatio(2 / 3f)
                     .clip(MaterialTheme.shapes.medium)
             )
@@ -431,9 +443,12 @@ private fun OverlaidStatusBarAppBar(
             toState = showAppBar
         )
 
+        val elevation by animateAsState(if (showAppBar) 2.dp else 0.dp)
+
         Surface(
-            elevation = animate(if (showAppBar) 2.dp else 0.dp),
-            modifier = Modifier.fillMaxWidth()
+            elevation = elevation,
+            modifier = Modifier
+                .fillMaxWidth()
                 .statusBarsHeight()
                 .graphicsLayer {
                     alpha = props[AlphaKey]
@@ -442,18 +457,9 @@ private fun OverlaidStatusBarAppBar(
             content = emptyContent()
         )
 
-        val elevation = animatedValue(initVal = 0.dp, converter = Dp.VectorConverter)
-        onCommit(showAppBar) {
-            if (showAppBar) {
-                elevation.animateTo(2.dp, spring())
-            } else {
-                elevation.snapTo(0.dp)
-            }
-        }
-
         if (showAppBar) {
             Surface(
-                elevation = elevation.value,
+                elevation = elevation,
                 modifier = Modifier.fillMaxWidth(),
                 content = content,
             )
@@ -606,11 +612,13 @@ private fun CertificateInfoPanel(
         Text(
             text = certification,
             style = MaterialTheme.typography.body2,
-            modifier = Modifier.border(
-                width = 1.dp,
-                color = MaterialTheme.colors.onSurface,
-                shape = RoundedCornerShape(2.dp)
-            ).padding(horizontal = 4.dp, vertical = 2.dp)
+            modifier = Modifier
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colors.onSurface,
+                    shape = RoundedCornerShape(2.dp)
+                )
+                .padding(horizontal = 4.dp, vertical = 2.dp)
         )
     }
 }
@@ -663,7 +671,8 @@ private fun TraktRatingInfoPanel(
 @Composable
 private fun Header(title: String) {
     Box(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Text(
@@ -675,7 +684,11 @@ private fun Header(title: String) {
 
 @Composable
 private fun Genres(genres: List<Genre>) {
-    Box(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
         val textCreator = AmbientShowDetailsTextCreator.current
         Text(
             textCreator.genreString(genres).toString(),
@@ -717,7 +730,8 @@ private fun NextEpisodeToWatch(
     onClick: () -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .preferredHeightIn(min = 48.dp)
             .wrapContentHeight()
             .clickable(onClick = onClick)
@@ -742,12 +756,12 @@ private fun NextEpisodeToWatch(
 @OptIn(ExperimentalLayout::class)
 @Composable
 private fun InfoPanels(show: TiviShow) {
+    @Suppress("DEPRECATION") // TODO: migrate from FlowRow
     FlowRow(
         mainAxisSize = SizeMode.Expand,
         mainAxisSpacing = 8.dp,
         crossAxisSpacing = 8.dp
     ) {
-
         if (show.traktRating != null) {
             TraktRatingInfoPanel(show.traktRating!!, show.traktVotes ?: 0)
         }
@@ -775,7 +789,8 @@ private fun WatchStats(
     episodeCount: Int
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(start = 16.dp, top = 4.dp, end = 16.dp, bottom = 8.dp)
     ) {
         LinearProgressIndicator(
@@ -807,8 +822,9 @@ private fun LazyListScope.SeasonWithEpisodesRow(
     actioner: (ShowDetailsAction) -> Unit,
 ) {
     item {
+        val elevation by animateAsState(if (expanded) 2.dp else 0.dp)
         Surface(
-            elevation = animate(if (expanded) 2.dp else 0.dp),
+            elevation = elevation,
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(Modifier.fillMaxWidth()) {
@@ -820,7 +836,8 @@ private fun LazyListScope.SeasonWithEpisodesRow(
                     episodesToAir = episodes.numberToAir,
                     nextToAirDate = episodes.nextToAir?.firstAired,
                     actioner = actioner,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .clickable(enabled = !season.ignored) {
                             actioner(ChangeSeasonExpandedAction(season.id, !expanded))
                         }
@@ -838,7 +855,8 @@ private fun LazyListScope.SeasonWithEpisodesRow(
                             isWatched = episodeEntry.isWatched,
                             hasPending = episodeEntry.hasPending,
                             onlyPendingDeletes = episodeEntry.onlyPendingDeletes,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .clickable {
                                     actioner(OpenEpisodeDetails(episodeEntry.episode.id))
                                 }
@@ -867,12 +885,15 @@ private fun SeasonRow(
     nextToAirDate: OffsetDateTime? = null,
 ) {
     Row(
-        modifier = modifier.preferredHeightIn(min = 48.dp)
+        modifier = modifier
+            .preferredHeightIn(min = 48.dp)
             .wrapContentHeight(Alignment.CenterVertically)
             .padding(start = 16.dp, top = 12.dp, bottom = 12.dp)
     ) {
         Column(
-            modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
+            modifier = Modifier
+                .weight(1f)
+                .align(Alignment.CenterVertically)
         ) {
             val textCreator = AmbientShowDetailsTextCreator.current
 
@@ -982,7 +1003,8 @@ private fun EpisodeWithWatchesRow(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.preferredHeightIn(min = 48.dp)
+        modifier = modifier
+            .preferredHeightIn(min = 48.dp)
             .wrapContentHeight(Alignment.CenterVertically)
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
@@ -1049,7 +1071,8 @@ private fun ShowDetailsAppBar(
         actions = {
             if (isRefreshing) {
                 AutoSizedCircularProgressIndicator(
-                    modifier = Modifier.aspectRatio(1f)
+                    modifier = Modifier
+                        .aspectRatio(1f)
                         .fillMaxHeight()
                         .padding(14.dp)
                 )

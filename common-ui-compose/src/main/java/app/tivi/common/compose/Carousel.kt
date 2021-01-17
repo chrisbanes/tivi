@@ -18,7 +18,7 @@ package app.tivi.common.compose
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.foundation.lazy.LazyRowFor
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,14 +37,17 @@ fun <T> Carousel(
     val halfSpacing = itemSpacing / 2
     val spacingContent = PaddingValues(halfSpacing, 0.dp, halfSpacing, 0.dp)
 
-    LazyRowFor(
-        items = items,
+    LazyRow(
         modifier = modifier,
         contentPadding = contentPadding.copy(
             start = (contentPadding.start - halfSpacing).coerceAtLeast(0.dp),
             end = (contentPadding.end - halfSpacing).coerceAtLeast(0.dp)
         ),
-        verticalAlignment = verticalAlignment,
-        itemContent = { item -> itemContent(item, spacingContent) }
-    )
+        verticalAlignment = verticalAlignment
+    ) {
+        items(items) {
+            item ->
+            itemContent(item, spacingContent)
+        }
+    }
 }

@@ -21,13 +21,11 @@ object Versions {
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:7.0.0-alpha03"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:7.0.0-alpha04"
 
     const val threeTenBp = "org.threeten:threetenbp:1.5.0"
     const val threeTenBpNoTzdb = "$threeTenBp:no-tzdb"
     const val threeTenAbp = "com.jakewharton.threetenabp:threetenabp:1.3.0"
-
-    const val gravitySnapHelper = "com.github.rubensousa:gravitysnaphelper:2.2.1"
 
     const val timber = "com.jakewharton.timber:timber:4.7.1"
 
@@ -40,37 +38,32 @@ object Libs {
      *
      * https://jitpack.io/#openid/AppAuth-Android
      */
-    const val appauth = "com.github.openid:AppAuth-Android:master-SNAPSHOT"
+    const val appauth = "com.github.openid:AppAuth-Android:7aa9bf3edd"
 
     const val junit = "junit:junit:4.13.1"
     const val robolectric = "org.robolectric:robolectric:4.4"
-    const val mockK = "io.mockk:mockk:1.10.3"
+    const val mockK = "io.mockk:mockk:1.10.5"
 
-    const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.5"
+    const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.6"
 
     const val store = "com.dropbox.mobile.store:store4:4.0.0"
 
-    object Insetter {
-        private const val version = "0.3.1"
-        const val ktx = "dev.chrisbanes:insetter-ktx:$version"
-    }
-
     object Accompanist {
-        private const val version = "0.4.0"
+        private const val version = "0.4.2"
         const val coil = "dev.chrisbanes.accompanist:accompanist-coil:$version"
         const val insets = "dev.chrisbanes.accompanist:accompanist-insets:$version"
     }
 
     object Google {
         const val crashlytics = "com.google.firebase:firebase-crashlytics-ktx:17.3.0"
-        const val analytics = "com.google.firebase:firebase-analytics-ktx:18.0.0"
+        const val analytics = "com.google.firebase:firebase-analytics-ktx:18.0.1"
         const val crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:2.4.1"
 
         const val gmsGoogleServices = "com.google.gms:google-services:4.3.4"
     }
 
     object Kotlin {
-        private const val version = "1.4.20"
+        private const val version = "1.4.21"
         const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
         const val gradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$version"
         const val extensions = "org.jetbrains.kotlin:kotlin-android-extensions:$version"
@@ -116,24 +109,24 @@ object Libs {
         const val archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
 
         object Paging {
-            private const val version = "3.0.0-alpha10"
+            private const val version = "3.0.0-alpha12"
             const val common = "androidx.paging:paging-common-ktx:$version"
             const val runtime = "androidx.paging:paging-runtime-ktx:$version"
 
-            const val compose = "androidx.paging:paging-compose:1.0.0-alpha03"
+            const val compose = "androidx.paging:paging-compose:1.0.0-alpha04"
         }
 
-        const val coreKtx = "androidx.core:core-ktx:1.5.0-alpha05"
+        const val coreKtx = "androidx.core:core-ktx:1.5.0-beta01"
 
         object Lifecycle {
-            private const val version = "2.3.0-beta01"
+            private const val version = "2.3.0-rc01"
             const val runtime = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
             const val livedata = "androidx.lifecycle:lifecycle-livedata-ktx:$version"
             const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
         }
 
         object Room {
-            private const val version = "2.3.0-alpha03"
+            private const val version = "2.3.0-alpha04"
             const val common = "androidx.room:room-common:$version"
             const val runtime = "androidx.room:room-runtime:$version"
             const val compiler = "androidx.room:room-compiler:$version"
@@ -148,7 +141,7 @@ object Libs {
 
         object Compose {
             const val snapshot = ""
-            const val version = "1.0.0-alpha08"
+            const val version = "1.0.0-alpha10"
 
             @get:JvmStatic
             val snapshotUrl: String
@@ -186,6 +179,7 @@ object Libs {
     }
 
     object Hilt {
+        // Can't update to 2.31 yet due to https://issuetracker.google.com/177649295
         private const val version = "2.30.1-alpha"
         const val library = "com.google.dagger:hilt-android:$version"
         const val compiler = "com.google.dagger:hilt-android-compiler:$version"
@@ -206,7 +200,7 @@ object Libs {
     }
 
     object Coil {
-        private const val version = "1.1.0"
+        private const val version = "1.1.1"
         const val coil = "io.coil-kt:coil:$version"
     }
 
