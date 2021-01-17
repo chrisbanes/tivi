@@ -109,24 +109,24 @@ object Libs {
         const val archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
 
         object Paging {
-            private const val version = "3.0.0-alpha10"
+            private const val version = "3.0.0-alpha12"
             const val common = "androidx.paging:paging-common-ktx:$version"
             const val runtime = "androidx.paging:paging-runtime-ktx:$version"
 
-            const val compose = "androidx.paging:paging-compose:1.0.0-alpha03"
+            const val compose = "androidx.paging:paging-compose:1.0.0-alpha04"
         }
 
-        const val coreKtx = "androidx.core:core-ktx:1.5.0-alpha05"
+        const val coreKtx = "androidx.core:core-ktx:1.5.0-beta01"
 
         object Lifecycle {
-            private const val version = "2.3.0-beta01"
+            private const val version = "2.3.0-rc01"
             const val runtime = "androidx.lifecycle:lifecycle-runtime-ktx:$version"
             const val livedata = "androidx.lifecycle:lifecycle-livedata-ktx:$version"
             const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:$version"
         }
 
         object Room {
-            private const val version = "2.3.0-alpha03"
+            private const val version = "2.3.0-alpha04"
             const val common = "androidx.room:room-common:$version"
             const val runtime = "androidx.room:room-runtime:$version"
             const val compiler = "androidx.room:room-compiler:$version"

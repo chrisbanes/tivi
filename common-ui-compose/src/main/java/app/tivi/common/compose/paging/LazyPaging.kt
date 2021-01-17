@@ -207,7 +207,14 @@ class LazyPagingItems<T : Any> internal constructor(
     /**
      * A [CombinedLoadStates] object which represents the current loading state.
      */
-    var loadState: CombinedLoadStates by mutableStateOf(CombinedLoadStates(InitialLoadStates))
+    var loadState: CombinedLoadStates by mutableStateOf(
+        CombinedLoadStates(
+            refresh = InitialLoadStates.refresh,
+            prepend = InitialLoadStates.prepend,
+            append = InitialLoadStates.append,
+            source = InitialLoadStates,
+        )
+    )
         private set
 
     internal suspend fun collectLoadState() {
@@ -224,12 +231,8 @@ class LazyPagingItems<T : Any> internal constructor(
 }
 
 private class LazyListPagingItemState<T>(item: T?) {
-    var item: T? by mutableStateOf(null)
+    var item: T? by mutableStateOf(item)
     var pending: Boolean by mutableStateOf(false)
-
-    init {
-        this.item = item
-    }
 }
 
 private val IncompleteLoadState = LoadState.NotLoading(false)
