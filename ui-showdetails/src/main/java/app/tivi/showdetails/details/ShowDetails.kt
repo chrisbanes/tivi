@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION") // Compose transition v1 APIs
+
 package app.tivi.showdetails.details
 
 import androidx.compose.animation.AnimatedVisibility
@@ -392,6 +394,7 @@ private fun PosterInfoRow(
             CoilImage(
                 data = posterImage,
                 fadeIn = true,
+                contentDescription = stringResource(R.string.cd_show_poster, show.title ?: ""),
                 alignment = Alignment.TopStart,
                 modifier = Modifier
                     .weight(1f, fill = false)
@@ -419,6 +422,7 @@ private fun BackdropImage(
         if (backdropImage != null) {
             CoilImage(
                 data = backdropImage,
+                contentDescription = stringResource(R.string.cd_show_poster),
                 fadeIn = true,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
@@ -517,6 +521,7 @@ private fun NetworkInfoPanel(
                 requestBuilder = {
                     transformations(TrimTransparentEdgesTransformation)
                 },
+                contentDescription = stringResource(R.string.cd_network_logo),
                 contentScale = ContentScale.Fit,
                 alignment = Alignment.TopStart,
                 colorFilter = when {
@@ -937,7 +942,10 @@ private fun SeasonRow(
             toggle = {
                 Providers(AmbientContentAlpha provides ContentAlpha.medium) {
                     IconButton(onClick = { showMenu = true }) {
-                        Icon(Icons.Default.MoreVert)
+                        Icon(
+                            Icons.Default.MoreVert,
+                            stringResource(R.string.cd_open_overflow)
+                        )
                     }
                 }
             },
@@ -1030,18 +1038,22 @@ private fun EpisodeWithWatchesRow(
             if (hasPending) {
                 IconResource(
                     resourceId = R.drawable.ic_cloud_upload,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    contentDescription = stringResource(R.string.cd_episode_syncing),
+                    modifier = Modifier.align(Alignment.CenterVertically),
                 )
                 needSpacer = true
             }
             if (isWatched) {
-                if (needSpacer) {
-                    Spacer(Modifier.preferredWidth(4.dp))
-                }
+                if (needSpacer) Spacer(Modifier.preferredWidth(4.dp))
+
                 IconResource(
                     resourceId = when {
                         onlyPendingDeletes -> R.drawable.ic_visibility_off
                         else -> R.drawable.ic_visibility
+                    },
+                    contentDescription = when {
+                        onlyPendingDeletes -> stringResource(R.string.cd_episode_deleted)
+                        else -> stringResource(R.string.cd_episode_watched)
                     },
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
@@ -1065,7 +1077,10 @@ private fun ShowDetailsAppBar(
         title = { Text(text = title) },
         navigationIcon = {
             IconButton(onClick = { actioner(NavigateUp) }) {
-                Icon(Icons.Default.ArrowBack)
+                Icon(
+                    Icons.Default.ArrowBack,
+                    contentDescription = stringResource(R.string.cd_navigate_up)
+                )
             }
         },
         actions = {
@@ -1078,7 +1093,10 @@ private fun ShowDetailsAppBar(
                 )
             } else {
                 IconButton(onClick = { actioner(RefreshAction) }) {
-                    Icon(Icons.Default.Refresh)
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = stringResource(R.string.cd_refresh)
+                    )
                 }
             }
         },
@@ -1101,9 +1119,13 @@ private fun ToggleShowFollowFloatingActionButton(
         onClick = onClick,
         icon = {
             Icon(
-                when {
+                imageVector = when {
                     isFollowed -> Icons.Default.FavoriteBorder
                     else -> Icons.Default.Favorite
+                },
+                contentDescription = when {
+                    isFollowed -> stringResource(R.string.cd_follow_show_remove)
+                    else -> stringResource(R.string.cd_follow_show_add)
                 }
             )
         },

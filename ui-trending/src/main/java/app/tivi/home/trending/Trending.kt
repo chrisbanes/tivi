@@ -80,7 +80,9 @@ fun Trending(
                     verticalItemPadding = 2.dp,
                     horizontalItemPadding = 2.dp
                 ) { entry ->
-                    val modifier = Modifier.aspectRatio(2 / 3f).fillMaxWidth()
+                    val modifier = Modifier
+                        .aspectRatio(2 / 3f)
+                        .fillMaxWidth()
                     if (entry != null) {
                         PosterCard(
                             show = entry.show,
@@ -95,7 +97,11 @@ fun Trending(
 
                 if (lazyPagingItems.loadState.append == LoadState.Loading) {
                     item {
-                        Box(Modifier.fillMaxWidth().padding(16.dp)) {
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) {
                             CircularProgressIndicator(Modifier.align(Alignment.Center))
                         }
                     }
@@ -152,7 +158,10 @@ private fun TrendingAppBar(
                     if (refreshing) {
                         AutoSizedCircularProgressIndicator(Modifier.preferredSize(20.dp))
                     } else {
-                        Icon(Icons.Default.Refresh)
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = stringResource(R.string.cd_refresh)
+                        )
                     }
                 }
             }

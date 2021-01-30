@@ -152,7 +152,10 @@ private fun RecommendedAppBar(
                     if (refreshing) {
                         AutoSizedCircularProgressIndicator(Modifier.preferredSize(20.dp))
                     } else {
-                        Icon(Icons.Default.Refresh)
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = stringResource(R.string.cd_refresh)
+                        )
                     }
                 }
             }

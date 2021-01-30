@@ -79,7 +79,8 @@ fun AccountUi(
             }
 
             Box(
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
                     .wrapContentSize(Alignment.CenterEnd)
                     .align(Alignment.End)
             ) {
@@ -105,7 +106,11 @@ fun AccountUi(
                 }
             }
 
-            Spacer(modifier = Modifier.preferredHeight(16.dp).fillMaxWidth())
+            Spacer(
+                modifier = Modifier
+                    .preferredHeight(16.dp)
+                    .fillMaxWidth()
+            )
 
             Divider()
 
@@ -115,7 +120,11 @@ fun AccountUi(
                 onClick = { actioner(OpenSettings) }
             )
 
-            Spacer(modifier = Modifier.preferredHeight(8.dp).fillMaxWidth())
+            Spacer(
+                modifier = Modifier
+                    .preferredHeight(8.dp)
+                    .fillMaxWidth()
+            )
         }
     }
 }
@@ -133,8 +142,10 @@ private fun UserRow(
         if (avatarUrl != null) {
             CoilImage(
                 data = avatarUrl,
+                contentDescription = stringResource(R.string.cd_profile_pic, user.name),
                 fadeIn = true,
-                modifier = Modifier.preferredSize(40.dp)
+                modifier = Modifier
+                    .preferredSize(40.dp)
                     .clip(RoundedCornerShape(50))
             )
         }
@@ -166,7 +177,8 @@ private fun AppAction(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
             .preferredSizeIn(minHeight = 48.dp)
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 8.dp)

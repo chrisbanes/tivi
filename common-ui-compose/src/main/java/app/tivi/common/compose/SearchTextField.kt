@@ -29,6 +29,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
@@ -40,7 +41,7 @@ fun SearchTextField(
     onValueChange: (TextFieldValue) -> Unit,
     hint: String,
     modifier: Modifier = Modifier,
-    imeAction: ImeAction = ImeAction.Unspecified,
+    imeAction: ImeAction = ImeAction.Default,
     onImeActionPerformed: (ImeAction, SoftwareKeyboardController?) -> Unit = { _, _ -> },
 ) {
     OutlinedTextField(
@@ -55,7 +56,10 @@ fun SearchTextField(
                 IconButton(
                     onClick = { onValueChange(TextFieldValue()) },
                 ) {
-                    Icon(Icons.Default.Clear)
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = stringResource(R.string.cd_clear_text)
+                    )
                 }
             }
         },

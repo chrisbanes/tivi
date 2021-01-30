@@ -29,22 +29,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
-import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AmbientContentAlpha
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
@@ -62,10 +56,11 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import app.tivi.common.compose.AmbientHomeTextCreator
-import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.IconResource
+import app.tivi.common.compose.RefreshButton
 import app.tivi.common.compose.SearchTextField
 import app.tivi.common.compose.SortMenuPopup
+import app.tivi.common.compose.UserProfileButton
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.spacerItem
 import app.tivi.data.entities.ShowTmdbImage
@@ -112,7 +107,9 @@ fun Followed(
                             watchedEpisodeCount = entry.stats?.watchedEpisodeCount ?: 0,
                             totalEpisodeCount = entry.stats?.episodeCount ?: 0,
                             onClick = { actioner(FollowedAction.OpenShowDetails(entry.show.id)) },
-                            modifier = Modifier.fillMaxWidth().preferredHeight(88.dp)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .preferredHeight(88.dp)
                         )
                     } else {
                         // TODO placeholder?
@@ -165,7 +162,10 @@ private fun FilterSortPanel(
             onSortSelected = onSortSelected,
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
-            IconResource(R.drawable.ic_sort_black_24dp)
+            IconResource(
+                resourceId = R.drawable.ic_sort_black_24dp,
+                contentDescription = stringResource(R.string.cd_sort_list),
+            )
         }
     }
 }
@@ -198,6 +198,7 @@ private fun FollowedShowItem(
             ) {
                 CoilImage(
                     data = poster,
+                    contentDescription = stringResource(R.string.cd_show_poster_image, show.title ?: ""),
                     fadeIn = true,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -206,8 +207,17 @@ private fun FollowedShowItem(
 
         Spacer(Modifier.preferredWidth(16.dp))
 
-        Column(Modifier.weight(1f).fillMaxHeight()) {
-            Column(Modifier.fillMaxWidth().weight(1f).padding(end = 16.dp)) {
+        Column(
+            Modifier
+                .weight(1f)
+                .fillMaxHeight()
+        ) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(end = 16.dp)
+            ) {
                 Text(
                     text = textCreator.showTitle(show = show).toString(),
                     style = MaterialTheme.typography.subtitle1,
@@ -275,33 +285,18 @@ private fun FollowedAppBar(
             Spacer(Modifier.weight(1f))
 
             Providers(AmbientContentAlpha provides ContentAlpha.medium) {
-                IconButton(
+                RefreshButton(
                     onClick = onRefreshActionClick,
-                    enabled = !refreshing,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                ) {
-                    if (refreshing) {
-                        AutoSizedCircularProgressIndicator(Modifier.preferredSize(20.dp))
-                    } else {
-                        Icon(Icons.Default.Refresh)
-                    }
-                }
+                    refreshing = refreshing,
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                )
 
-                IconButton(
+                UserProfileButton(
+                    loggedIn = loggedIn,
+                    user = user,
                     onClick = onUserActionClick,
                     modifier = Modifier.align(Alignment.CenterVertically)
-                ) {
-                    when {
-                        loggedIn && user?.avatarUrl != null -> {
-                            CoilImage(
-                                data = user.avatarUrl!!,
-                                modifier = Modifier.preferredSize(32.dp).clip(CircleShape)
-                            )
-                        }
-                        loggedIn -> IconResource(R.drawable.ic_person)
-                        else -> IconResource(R.drawable.ic_person_outline)
-                    }
-                }
+                )
             }
         }
     }

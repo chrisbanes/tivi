@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.toSize
 import kotlin.math.roundToInt
 
 inline val LayoutCoordinates.positionInParent: Offset
-    get() = parentCoordinates?.childToLocal(this, Offset.Zero) ?: Offset.Zero
+    get() = parentCoordinates?.localPositionOf(this, Offset.Zero) ?: Offset.Zero
 
 inline val LayoutCoordinates.boundsInParent: Rect
     get() = Rect(positionInParent, size.toSize())
@@ -57,8 +57,8 @@ fun Modifier.onPositionInRootChanged(
 ) = composed {
     var lastPosition by rememberMutableState<Offset?> { null }
     Modifier.onGloballyPositioned { coordinates ->
-        if (coordinates.positionInRoot != lastPosition) {
-            lastPosition = coordinates.positionInRoot
+        if (coordinates.positionInRoot() != lastPosition) {
+            lastPosition = coordinates.positionInRoot()
             onChange(coordinates)
         }
     }

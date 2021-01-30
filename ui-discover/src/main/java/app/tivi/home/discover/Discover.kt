@@ -33,25 +33,19 @@ import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.AmbientContentAlpha
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.AmbientDensity
@@ -60,8 +54,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import app.tivi.common.compose.AutoSizedCircularProgressIndicator
 import app.tivi.common.compose.Carousel
-import app.tivi.common.compose.IconResource
 import app.tivi.common.compose.PosterCard
+import app.tivi.common.compose.RefreshButton
+import app.tivi.common.compose.UserProfileButton
 import app.tivi.common.compose.rememberMutableState
 import app.tivi.common.compose.spacerItem
 import app.tivi.data.entities.Episode
@@ -71,7 +66,6 @@ import app.tivi.data.entities.TmdbImageEntity
 import app.tivi.data.entities.TraktUser
 import app.tivi.data.resultentities.EntryWithShow
 import app.tivi.trakt.TraktAuthState
-import dev.chrisbanes.accompanist.coil.CoilImage
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
 
 @Composable
@@ -333,33 +327,18 @@ private fun DiscoverAppBar(
             Spacer(Modifier.weight(1f))
 
             Providers(AmbientContentAlpha provides ContentAlpha.medium) {
-                IconButton(
+                RefreshButton(
                     onClick = onRefreshActionClick,
-                    enabled = !refreshing,
-                    modifier = Modifier.align(Alignment.CenterVertically)
-                ) {
-                    if (refreshing) {
-                        AutoSizedCircularProgressIndicator(Modifier.preferredSize(20.dp))
-                    } else {
-                        Icon(Icons.Default.Refresh)
-                    }
-                }
+                    refreshing = refreshing,
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                )
 
-                IconButton(
+                UserProfileButton(
+                    loggedIn = loggedIn,
+                    user = user,
                     onClick = onUserActionClick,
                     modifier = Modifier.align(Alignment.CenterVertically)
-                ) {
-                    when {
-                        loggedIn && user?.avatarUrl != null -> {
-                            CoilImage(
-                                data = user.avatarUrl!!,
-                                modifier = Modifier.preferredSize(32.dp).clip(CircleShape)
-                            )
-                        }
-                        loggedIn -> IconResource(R.drawable.ic_person)
-                        else -> IconResource(R.drawable.ic_person_outline)
-                    }
-                }
+                )
             }
         }
     }
