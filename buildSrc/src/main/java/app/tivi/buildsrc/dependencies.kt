@@ -41,7 +41,7 @@ object Libs {
     const val appauth = "com.github.openid:AppAuth-Android:7aa9bf3edd"
 
     const val junit = "junit:junit:4.13.1"
-    const val robolectric = "org.robolectric:robolectric:4.4"
+    const val robolectric = "org.robolectric:robolectric:4.5"
     const val mockK = "io.mockk:mockk:1.10.5"
 
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:2.6"
@@ -77,7 +77,7 @@ object Libs {
     }
 
     object AndroidX {
-        const val browser = "androidx.browser:browser:1.0.0"
+        const val browser = "androidx.browser:browser:1.3.0"
         const val collection = "androidx.collection:collection-ktx:1.1.0"
         const val palette = "androidx.palette:palette:1.0.0"
         const val emoji = "androidx.emoji:emoji:1.1.0"
@@ -88,7 +88,7 @@ object Libs {
         }
 
         object Fragment {
-            private const val version = "1.3.0-beta02"
+            private const val version = "1.3.0-rc02"
             const val fragment = "androidx.fragment:fragment:$version"
             const val fragmentKtx = "androidx.fragment:fragment-ktx:$version"
         }
@@ -109,7 +109,7 @@ object Libs {
         const val archCoreTesting = "androidx.arch.core:core-testing:2.1.0"
 
         object Paging {
-            private const val version = "3.0.0-alpha12"
+            private const val version = "3.0.0-alpha13"
             const val common = "androidx.paging:paging-common-ktx:$version"
             const val runtime = "androidx.paging:paging-runtime-ktx:$version"
 
@@ -126,7 +126,7 @@ object Libs {
         }
 
         object Room {
-            private const val version = "2.3.0-alpha04"
+            private const val version = "2.3.0-beta01"
             const val common = "androidx.room:room-common:$version"
             const val runtime = "androidx.room:room-runtime:$version"
             const val compiler = "androidx.room:room-compiler:$version"
