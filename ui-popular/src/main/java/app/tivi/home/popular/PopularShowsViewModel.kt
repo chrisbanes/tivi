@@ -16,15 +16,17 @@
 
 package app.tivi.home.popular
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import app.tivi.data.resultentities.PopularEntryWithShow
 import app.tivi.domain.observers.ObservePagedPopularShows
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class PopularShowsViewModel @ViewModelInject constructor(
+@HiltViewModel
+class PopularShowsViewModel @Inject constructor(
     private val pagingInteractor: ObservePagedPopularShows,
 ) : ViewModel() {
 

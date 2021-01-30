@@ -16,19 +16,21 @@
 
 package app.tivi.home.search
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.SearchShows
 import app.tivi.util.ObservableLoadingCounter
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-internal class SearchViewModel @ViewModelInject constructor(
+@HiltViewModel
+internal class SearchViewModel @Inject constructor(
     private val searchShows: SearchShows
 ) : ReduxViewModel<SearchViewState>(
     SearchViewState()

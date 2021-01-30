@@ -16,7 +16,6 @@
 
 package app.tivi.account
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
 import app.tivi.AppNavigator
 import app.tivi.ReduxViewModel
@@ -28,9 +27,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import javax.inject.Provider
 
-class AccountUiViewModel @ViewModelInject constructor(
+class AccountUiViewModel @Inject constructor(
     private val traktManager: TraktManager,
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,

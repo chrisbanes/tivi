@@ -44,8 +44,9 @@ import app.tivi.domain.observers.ObserveShowViewStats
 import app.tivi.ui.SnackbarManager
 import app.tivi.util.Logger
 import app.tivi.util.ObservableLoadingCounter
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -270,7 +271,7 @@ internal class ShowDetailsFragmentViewModel @AssistedInject constructor(
     /**
      * Factory to allow assisted injection of [ShowDetailsFragmentViewModel] with an initial state.
      */
-    @AssistedInject.Factory
+    @AssistedFactory
     internal interface Factory {
         fun create(initialState: ShowDetailsViewState): ShowDetailsFragmentViewModel
     }
