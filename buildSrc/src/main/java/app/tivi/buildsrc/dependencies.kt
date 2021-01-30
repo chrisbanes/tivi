@@ -165,9 +165,8 @@ object Libs {
         }
 
         object Hilt {
-            private const val version = "1.0.0-alpha02"
+            private const val version = "1.0.0-alpha03"
             const val work = "androidx.hilt:hilt-work:$version"
-            const val viewmodel = "androidx.hilt:hilt-lifecycle-viewmodel:$version"
             const val compiler = "androidx.hilt:hilt-compiler:$version"
         }
     }
