@@ -79,5 +79,4 @@ dependencies {
 
     implementation Libs.Hilt.library
     kapt Libs.Hilt.compiler
-    kapt Libs.AndroidX.Hilt.compiler
 }
