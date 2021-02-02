@@ -367,7 +367,7 @@ private fun ShowDetailsScrollingContent(
             }
 
             seasons.forEach {
-                SeasonWithEpisodesRow(
+                seasonWithEpisodesRow(
                     season = it.season,
                     episodes = it.episodes,
                     expanded = it.season.id in expandedSeasonIds,
@@ -818,66 +818,62 @@ private fun WatchStats(
     }
 }
 
-@Suppress("FunctionName")
 @OptIn(ExperimentalAnimationApi::class)
-private fun LazyListScope.SeasonWithEpisodesRow(
+private fun LazyListScope.seasonWithEpisodesRow(
     season: Season,
     episodes: List<EpisodeWithWatches>,
     expanded: Boolean,
     actioner: (ShowDetailsAction) -> Unit,
-) {
-    item {
-        val elevation by animateAsState(if (expanded) 2.dp else 0.dp)
-        Surface(
-            elevation = elevation,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(Modifier.fillMaxWidth()) {
-                SeasonRow(
-                    season = season,
-                    episodesAired = episodes.numberAired,
-                    episodesWatched = episodes.numberWatched,
-                    episodesToWatch = episodes.numberAiredToWatch,
-                    episodesToAir = episodes.numberToAir,
-                    nextToAirDate = episodes.nextToAir?.firstAired,
-                    actioner = actioner,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(enabled = !season.ignored) {
-                            actioner(ChangeSeasonExpandedAction(season.id, !expanded))
-                        }
-                )
-
-                // Ideally each EpisodeWithWatchesRow would be in a different item {}, but there
-                // are currently 2 issues for that:
-                // #1: AnimatedVisibility currently crashes in Lazy*: b/170287733
-                // #2: Can't use a Surface across different items: b/170472398
-                // So instead we bundle the items in an inner Column, within a single item.
-                episodes.forEach { episodeEntry ->
-                    AnimatedVisibility(visible = expanded) {
-                        EpisodeWithWatchesRow(
-                            episode = episodeEntry.episode,
-                            isWatched = episodeEntry.isWatched,
-                            hasPending = episodeEntry.hasPending,
-                            onlyPendingDeletes = episodeEntry.onlyPendingDeletes,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    actioner(OpenEpisodeDetails(episodeEntry.episode.id))
-                                }
-                        )
+) = item {
+    val elevation by animateAsState(if (expanded) 2.dp else 0.dp)
+    Surface(
+        elevation = elevation,
+        modifier = Modifier.fillParentMaxWidth()
+    ) {
+        Column(Modifier.fillMaxWidth()) {
+            SeasonRow(
+                season = season,
+                episodesAired = episodes.numberAired,
+                episodesWatched = episodes.numberWatched,
+                episodesToWatch = episodes.numberAiredToWatch,
+                episodesToAir = episodes.numberToAir,
+                nextToAirDate = episodes.nextToAir?.firstAired,
+                actioner = actioner,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(enabled = !season.ignored) {
+                        actioner(ChangeSeasonExpandedAction(season.id, !expanded))
                     }
-                }
+            )
 
+            // Ideally each EpisodeWithWatchesRow would be in a different item {}, but there
+            // are currently 2 issues for that:
+            // #1: AnimatedVisibility currently crashes in Lazy*: b/170287733
+            // #2: Can't use a Surface across different items: b/170472398
+            // So instead we bundle the items in an inner Column, within a single item.
+            episodes.forEach { episodeEntry ->
                 AnimatedVisibility(visible = expanded) {
-                    Divider()
+                    EpisodeWithWatchesRow(
+                        episode = episodeEntry.episode,
+                        isWatched = episodeEntry.isWatched,
+                        hasPending = episodeEntry.hasPending,
+                        onlyPendingDeletes = episodeEntry.onlyPendingDeletes,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                actioner(OpenEpisodeDetails(episodeEntry.episode.id))
+                            }
+                    )
                 }
+            }
+
+            AnimatedVisibility(visible = expanded) {
+                Divider()
             }
         }
     }
 }
 
-@Suppress("UNUSED_PARAMETER")
 @Composable
 private fun SeasonRow(
     season: Season,
