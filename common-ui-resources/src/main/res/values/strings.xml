@@ -37,13 +37,16 @@
     <string name="genre_label_mystery">Mystery</string>
 
     <string name="discover_title">Discover</string>
+    <string name="cd_discover_title">Discover</string>
     <string name="discover_trending_title">Being watched now</string>
     <string name="discover_recommended_title">Recommended for you</string>
     <string name="discover_popular_title">Popular</string>
     <string name="discover_keep_watching_title">Up next</string>
 
     <string name="following_shows_title">Following</string>
+    <string name="cd_following_shows_title">@string/following_shows_title</string>
     <string name="watched_shows_title">Watched</string>
+    <string name="cd_watched_shows_title">@string/watched_shows_title</string>
 
     <string name="login">Login</string>
     <string name="refresh_credentials">Refresh credentials</string>
@@ -53,6 +56,7 @@
     <string name="episode_navigation_title">Episode details</string>
 
     <string name="search_navigation_title">Search</string>
+    <string name="cd_search_navigation_title">@string/search_navigation_title</string>
     <string name="search_hint">Search for shows</string>
 
     <string name="account_title">Trakt Account</string>
@@ -75,7 +79,10 @@
 
     <string name="trakt_rating_title">Trakt Rating</string>
     <string name="trakt_rating_text">%1$.0f%%</string>
+    <string name="cd_trakt_rating">Trakt Rating: %1$.0f%%</string>
     <string name="trakt_rating_votes">%1$.1fk votes</string>
+
+    <string name="cd_episode_first_aired">First aired: %s</string>
 
     <string name="network_title">Network</string>
     <string name="certificate_title">Certificate</string>
@@ -95,6 +102,8 @@
 
     <string name="follow_show_add">Follow show</string>
     <string name="follow_show_remove">Unfollow show</string>
+    <string name="cd_follow_show_add">@string/follow_show_add</string>
+    <string name="cd_follow_show_remove">@string/follow_show_remove</string>
 
     <string name="follow_shows_add">Follow shows</string>
     <string name="follow_shows_remove">Unfollow shows</string>
@@ -176,5 +185,22 @@
     <string name="episode_remove_watches_dialog_message">Are you sure that you want to remove all episode watches?</string>
     <string name="episode_remove_watches_dialog_confirm">Remove all</string>
     <string name="dialog_dismiss">Dismiss</string>
+
+    <string name="cd_show_poster">Poster image</string>
+    <string name="cd_show_poster_image">Poster image for %s</string>
+    <string name="cd_profile_pic">Profile picture for %s</string>
+    <string name="cd_clear_text">Clear text</string>
+    <string name="cd_refresh">Refresh</string>
+    <string name="cd_sort_list">Sort list</string>
+    <string name="cd_delete">Delete</string>
+    <string name="cd_network_logo">Network logo</string>
+    <string name="cd_user_profile">User profile</string>
+    <string name="cd_navigate_up">Navigate up</string>
+    <string name="cd_open_overflow">Open more</string>
+    <string name="cd_close">Close</string>
+
+    <string name="cd_episode_syncing">Syncing</string>
+    <string name="cd_episode_watched">Watched</string>
+    <string name="cd_episode_deleted">Removed</string>
 
 </resources>

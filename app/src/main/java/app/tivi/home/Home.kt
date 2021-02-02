@@ -60,32 +60,54 @@ internal fun HomeBottomNavigation(
     ) {
         Column {
             Row(
-                Modifier.fillMaxWidth().preferredHeight(56.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .preferredHeight(56.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 BottomNavigationItem(
-                    icon = { IconResource(R.drawable.ic_weekend_black_24dp) },
+                    icon = {
+                        IconResource(
+                            resourceId = R.drawable.ic_weekend_black_24dp,
+                            contentDescription = stringResource(R.string.cd_discover_title)
+                        )
+                    },
                     label = { Text(stringResource(R.string.discover_title)) },
                     selected = selectedNavigation == HomeNavigation.Discover,
                     onClick = { onNavigationSelected(HomeNavigation.Discover) },
                 )
 
                 BottomNavigationItem(
-                    icon = { Icon(Icons.Default.FavoriteBorder) },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.FavoriteBorder,
+                            contentDescription = stringResource(R.string.cd_following_shows_title)
+                        )
+                    },
                     label = { Text(stringResource(R.string.following_shows_title)) },
                     selected = selectedNavigation == HomeNavigation.Following,
                     onClick = { onNavigationSelected(HomeNavigation.Following) },
                 )
 
                 BottomNavigationItem(
-                    icon = { IconResource(R.drawable.ic_visibility) },
+                    icon = {
+                        IconResource(
+                            resourceId = R.drawable.ic_visibility,
+                            contentDescription = stringResource(R.string.cd_watched_shows_title)
+                        )
+                    },
                     label = { Text(stringResource(R.string.watched_shows_title)) },
                     selected = selectedNavigation == HomeNavigation.Watched,
                     onClick = { onNavigationSelected(HomeNavigation.Watched) },
                 )
 
                 BottomNavigationItem(
-                    icon = { Icon(Icons.Default.Search) },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = stringResource(R.string.cd_search_navigation_title)
+                        )
+                    },
                     label = { Text(stringResource(R.string.search_navigation_title)) },
                     selected = selectedNavigation == HomeNavigation.Search,
                     onClick = { onNavigationSelected(HomeNavigation.Search) },

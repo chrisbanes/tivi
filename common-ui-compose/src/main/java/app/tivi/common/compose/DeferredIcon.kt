@@ -27,12 +27,18 @@ import androidx.compose.ui.res.loadVectorResource
 @Composable
 fun IconResource(
     @DrawableRes resourceId: Int,
+    contentDescription: String?,
     modifier: Modifier = Modifier,
     tint: Color = foregroundColor()
 ) {
     val deferredResource = loadVectorResource(resourceId)
     deferredResource.onLoadRun { vector ->
-        Icon(imageVector = vector, modifier = modifier, tint = tint)
+        Icon(
+            imageVector = vector,
+            contentDescription = contentDescription,
+            modifier = modifier,
+            tint = tint
+        )
     }
 }
 

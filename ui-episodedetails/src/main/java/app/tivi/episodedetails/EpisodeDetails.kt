@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION") // Compose transition v1 APIs
+
 package app.tivi.episodedetails
 
 import androidx.compose.animation.ColorPropKey
@@ -126,7 +128,9 @@ fun EpisodeDetails(
                     isRefreshing = viewState.refreshing,
                     actioner = actioner,
                     elevation = 0.dp,
-                    modifier = Modifier.fillMaxWidth().statusBarsPadding()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
                 )
             }
             ScrollableColumn {
@@ -249,13 +253,15 @@ private fun Backdrop(
                 CoilImage(
                     data = episode,
                     fadeIn = true,
+                    contentDescription = stringResource(R.string.cd_show_poster),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
                 )
             }
 
             Column(
-                modifier = Modifier.align(Alignment.BottomStart)
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
                     .background(
                         color = Color.Black.copy(alpha = 0.65f),
                         shape = RoundedCornerShape(topRight = 8.dp)
@@ -299,6 +305,7 @@ private fun InfoPanes(episode: Episode) {
             InfoPane(
                 icon = Icons.Default.Star,
                 label = stringResource(R.string.trakt_rating_text, rating * 10f),
+                contentDescription = stringResource(R.string.cd_trakt_rating, rating * 10f),
                 modifier = Modifier.weight(1f)
             )
         }
@@ -307,9 +314,14 @@ private fun InfoPanes(episode: Episode) {
             val formatter = AmbientTiviDateFormatter.current
             val deferredIcon = loadVectorResource(id = R.drawable.ic_calendar_today)
             deferredIcon.onLoadRun { asset ->
+                val formattedDate = formatter.formatShortRelativeTime(firstAired)
                 InfoPane(
                     icon = asset,
-                    label = formatter.formatShortRelativeTime(firstAired),
+                    label = formattedDate,
+                    contentDescription = stringResource(
+                        R.string.cd_episode_first_aired,
+                        formattedDate
+                    ),
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -321,12 +333,14 @@ private fun InfoPanes(episode: Episode) {
 private fun InfoPane(
     modifier: Modifier = Modifier,
     icon: ImageVector,
+    contentDescription: String?,
     label: String
 ) {
     Column(modifier = modifier.padding(all = 16.dp)) {
         Providers(AmbientContentAlpha provides ContentAlpha.medium) {
             Icon(
                 imageVector = icon,
+                contentDescription = contentDescription,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
@@ -345,7 +359,8 @@ private fun InfoPane(
 private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
     Row {
         Text(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp)
                 .align(Alignment.CenterVertically),
             text = stringResource(R.string.episode_watches),
             style = MaterialTheme.typography.subtitle1
@@ -358,7 +373,10 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
                 modifier = Modifier.padding(end = 4.dp),
                 onClick = { onSweepWatchesClick() }
             ) {
-                IconResource(R.drawable.ic_delete_sweep)
+                IconResource(
+                    resourceId = R.drawable.ic_delete_sweep,
+                    contentDescription = stringResource(R.string.cd_delete),
+                )
             }
         }
     }
@@ -368,7 +386,8 @@ private fun EpisodeWatchesHeader(onSweepWatchesClick: () -> Unit) {
 private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
     Surface {
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp)
                 .preferredSizeIn(minWidth = 40.dp, minHeight = 40.dp)
         ) {
             val formatter = AmbientTiviDateFormatter.current
@@ -384,6 +403,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
                 if (episodeWatchEntry.pendingAction != PendingAction.NOTHING) {
                     IconResource(
                         resourceId = R.drawable.ic_publish,
+                        contentDescription = stringResource(R.string.cd_episode_syncing),
                         modifier = Modifier
                             .padding(start = 8.dp)
                             .align(Alignment.CenterVertically)
@@ -393,6 +413,7 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
                 if (episodeWatchEntry.pendingAction == PendingAction.DELETE) {
                     IconResource(
                         resourceId = R.drawable.ic_visibility_off,
+                        contentDescription = stringResource(R.string.cd_episode_deleted),
                         modifier = Modifier
                             .padding(start = 8.dp)
                             .align(Alignment.CenterVertically)
@@ -442,22 +463,25 @@ private fun EpisodeWatchSwipeBackground(
     )
 
     Box(
-        Modifier.fillMaxSize()
+        Modifier
+            .fillMaxSize()
             .background(MaterialTheme.colors.onSurface.copy(alpha = 0.2f), RectangleShape)
     ) {
         // A simple box to draw the growing circle, which emanates from behind the icon
         Spacer(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .drawGrowingCircle(
                     color = transitionState[color],
                     center = iconCenter,
-                    radius = lerp(0f, maxRadius.toFloat(), FastOutLinearInEasing(swipeProgress))
+                    radius = lerp(0f, maxRadius.toFloat(), FastOutLinearInEasing.transform(swipeProgress))
                 )
         )
 
         Providers(AmbientContentAlpha provides ContentAlpha.medium) {
             Icon(
                 imageVector = Icons.Default.Delete,
+                contentDescription = stringResource(R.string.cd_delete),
                 modifier = Modifier
                     .onPositionInParentChanged { iconCenter = it.boundsInParent.center }
                     .padding(start = 0.dp, top = 0.dp, end = 16.dp, bottom = 0.dp)
@@ -542,19 +566,26 @@ private fun EpisodeDetailsAppBar(
         title = {},
         navigationIcon = {
             IconButton(onClick = { actioner(Close) }) {
-                Icon(Icons.Default.Close)
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = stringResource(R.string.cd_close),
+                )
             }
         },
         actions = {
             if (isRefreshing) {
                 AutoSizedCircularProgressIndicator(
-                    modifier = Modifier.aspectRatio(1f)
+                    modifier = Modifier
+                        .aspectRatio(1f)
                         .fillMaxHeight()
                         .padding(14.dp)
                 )
             } else {
                 IconButton(onClick = { actioner(RefreshAction) }) {
-                    Icon(Icons.Default.Refresh)
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = stringResource(R.string.cd_refresh)
+                    )
                 }
             }
         },

@@ -17,16 +17,16 @@
 package app.tivi.common.compose.theme
 
 import androidx.compose.material.Typography
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.font.font
-import androidx.compose.ui.text.font.fontFamily
 import app.tivi.common.compose.R
 
-private val Inter = fontFamily(
-    font(R.font.inter_300, FontWeight.Light),
-    font(R.font.inter_400, FontWeight.Normal),
-    font(R.font.inter_500, FontWeight.Medium),
-    font(R.font.inter_700, FontWeight.Bold)
+private val Inter = FontFamily(
+    Font(R.font.inter_300, FontWeight.Light),
+    Font(R.font.inter_400, FontWeight.Normal),
+    Font(R.font.inter_500, FontWeight.Medium),
+    Font(R.font.inter_700, FontWeight.Bold)
 )
 
 val TiviTypography = Typography(defaultFontFamily = Inter)

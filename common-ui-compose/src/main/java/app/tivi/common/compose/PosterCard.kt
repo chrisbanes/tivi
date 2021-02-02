@@ -29,6 +29,7 @@ import androidx.compose.runtime.Providers
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.tivi.data.entities.TiviShow
 import app.tivi.data.entities.TmdbImageEntity
@@ -51,12 +52,18 @@ fun PosterCard(
                 Text(
                     text = show.title ?: "No title",
                     style = MaterialTheme.typography.caption,
-                    modifier = Modifier.padding(4.dp).align(Alignment.CenterStart)
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .align(Alignment.CenterStart)
                 )
             }
             if (poster != null) {
                 CoilImage(
                     data = poster,
+                    contentDescription = stringResource(
+                        R.string.cd_show_poster_image,
+                        show.title ?: "show"
+                    ),
                     fadeIn = true,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.matchParentSize()
