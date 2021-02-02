@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION") // Compose transition v1 APIs
-
 package app.tivi.showdetails.details
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.DpPropKey
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.FloatPropKey
-import androidx.compose.animation.core.animateAsState
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.transitionDefinition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.transition
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -79,12 +76,11 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.emptyContent
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticAmbientOf
 import androidx.compose.ui.Alignment
@@ -137,7 +133,6 @@ import dev.chrisbanes.accompanist.coil.CoilImage
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.statusBarsHeight
-import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 
 val AmbientShowDetailsTextCreator = staticAmbientOf<ShowDetailsTextCreator>()
@@ -193,7 +188,6 @@ fun ShowDetails(
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val snackbarScope = rememberCoroutineScope()
 
     Column(
         Modifier
@@ -224,11 +218,9 @@ fun ShowDetails(
         )
     }
 
-    onCommit(viewState.refreshError) {
+    LaunchedEffect(viewState.refreshError) {
         viewState.refreshError?.let { error ->
-            snackbarScope.launch {
-                snackbarHostState.showSnackbar(error.message)
-            }
+            snackbarHostState.showSnackbar(error.message)
         }
     }
 }
@@ -441,13 +433,36 @@ private fun OverlaidStatusBarAppBar(
     LogCompositions("OverlaidStatusBarAppBar")
 
     Column(modifier) {
-        val props = transition(
-            definition = statusBarTransitionDef,
-            initState = false,
-            toState = showAppBar
+        val transition = updateTransition(showAppBar)
+
+        val elevation by transition.animateDp { value ->
+            if (value) 2.dp else 0.dp
+        }
+
+        val barAlpha by transition.animateFloat(
+            transitionSpec = {
+                when {
+                    false isTransitioningTo true -> snap()
+                    else -> tween(durationMillis = 300)
+                }
+            },
+            targetValueByState = { value -> if (value) 1f else 0f }
         )
 
-        val elevation by animateAsState(if (showAppBar) 2.dp else 0.dp)
+        val barOffset by transition.animateFloat(
+            transitionSpec = {
+                when {
+                    false isTransitioningTo true -> spring()
+                    // This is a bit of a hack. We don't actually want an offset transition
+                    // on exit, so we just run a snap AFTER the alpha animation
+                    // has finished (with some buffer)
+                    else -> snap(delayMillis = 320)
+                }
+            },
+            targetValueByState = { value ->
+                if (value) 0f else AmbientWindowInsets.current.statusBars.top.toFloat()
+            }
+        )
 
         Surface(
             elevation = elevation,
@@ -455,9 +470,9 @@ private fun OverlaidStatusBarAppBar(
                 .fillMaxWidth()
                 .statusBarsHeight()
                 .graphicsLayer {
-                    alpha = props[AlphaKey]
-                }
-                .offset(y = props[OffsetYKey]),
+                    this.alpha = barAlpha
+                    translationY = barOffset
+                },
             content = emptyContent()
         )
 
@@ -468,32 +483,6 @@ private fun OverlaidStatusBarAppBar(
                 content = content,
             )
         }
-    }
-}
-
-private val OffsetYKey = DpPropKey()
-private val AlphaKey = FloatPropKey()
-
-private val statusBarTransitionDef = transitionDefinition<Boolean> {
-    state(false) {
-        this[OffsetYKey] = 24.dp
-        this[AlphaKey] = 0f
-    }
-    state(true) {
-        this[OffsetYKey] = 0.dp
-        this[AlphaKey] = 1f
-    }
-
-    transition(toState = true) {
-        OffsetYKey using spring()
-        AlphaKey using snap()
-    }
-
-    transition(toState = false) {
-        AlphaKey using tween(durationMillis = 300)
-        // This is a bit of a hack. We don't actually want an offset transition on exit,
-        // so we just run a snap AFTER the alpha animation has finished (with some buffer)
-        OffsetYKey using snap(delayMillis = 320)
     }
 }
 
@@ -825,7 +814,7 @@ private fun LazyListScope.seasonWithEpisodesRow(
     expanded: Boolean,
     actioner: (ShowDetailsAction) -> Unit,
 ) = item {
-    val elevation by animateAsState(if (expanded) 2.dp else 0.dp)
+    val elevation by animateDpAsState(if (expanded) 2.dp else 0.dp)
     Surface(
         elevation = elevation,
         modifier = Modifier.fillParentMaxWidth()
