@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION") // Compose transition v1 APIs
-
 package app.tivi.episodedetails
 
-import androidx.compose.animation.ColorPropKey
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.transitionDefinition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.transition
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,7 +30,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredSizeIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.AmbientContentAlpha
 import androidx.compose.material.AmbientContentColor
 import androidx.compose.material.Button
@@ -61,12 +57,11 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Providers
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -102,7 +97,6 @@ import dev.chrisbanes.accompanist.coil.CoilImage
 import dev.chrisbanes.accompanist.insets.navigationBarsHeight
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
-import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
 import kotlin.math.absoluteValue
 import kotlin.math.hypot
@@ -115,7 +109,7 @@ fun EpisodeDetails(
 ) {
     Box {
         Column {
-            Box {
+            Surface {
                 if (viewState.episode != null && viewState.season != null) {
                     Backdrop(
                         season = viewState.season,
@@ -133,7 +127,7 @@ fun EpisodeDetails(
                         .statusBarsPadding()
                 )
             }
-            ScrollableColumn {
+            Column(Modifier.verticalScroll(rememberScrollState())) {
                 Surface(elevation = 2.dp) {
                     Column {
                         val episode = viewState.episode
@@ -214,7 +208,6 @@ fun EpisodeDetails(
         }
 
         val snackbarHostState = remember { SnackbarHostState() }
-        val snackbarScope = rememberCoroutineScope()
 
         SnackbarHost(
             hostState = snackbarHostState,
@@ -231,11 +224,9 @@ fun EpisodeDetails(
                 .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
         )
 
-        onCommit(viewState.error) {
+        LaunchedEffect(viewState.error) {
             viewState.error?.let { error ->
-                snackbarScope.launch {
-                    snackbarHostState.showSnackbar(error.message)
-                }
+                snackbarHostState.showSnackbar(error.message)
             }
         }
     }
@@ -424,43 +415,16 @@ private fun EpisodeWatch(episodeWatchEntry: EpisodeWatchEntry) {
     }
 }
 
-private val color = ColorPropKey()
-
 @Composable
 private fun EpisodeWatchSwipeBackground(
     swipeProgress: Float,
     wouldCompleteOnRelease: Boolean = false
 ) {
     var iconCenter by rememberMutableState { Offset(0f, 0f) }
+    val maxRadius = hypot(iconCenter.x.toDouble(), iconCenter.y.toDouble())
 
-    val maxRadius = remember(iconCenter) {
-        hypot(iconCenter.x.toDouble(), iconCenter.y.toDouble())
-    }
-
-    // Note: can't reference these directly in transitionDefinition {} as
-    // it's not @Composable
     val secondary = MaterialTheme.colors.error.copy(alpha = 0.5f)
     val default = MaterialTheme.colors.onSurface.copy(alpha = 0.2f)
-
-    val transition = remember(secondary, default) {
-        transitionDefinition<Boolean> {
-            state(true) {
-                this[color] = secondary
-            }
-            state(false) {
-                this[color] = default
-            }
-
-            transition {
-                color using tween(durationMillis = 200)
-            }
-        }
-    }
-
-    val transitionState = transition(
-        definition = transition,
-        toState = wouldCompleteOnRelease
-    )
 
     Box(
         Modifier
@@ -472,9 +436,18 @@ private fun EpisodeWatchSwipeBackground(
             modifier = Modifier
                 .fillMaxSize()
                 .drawGrowingCircle(
-                    color = transitionState[color],
+                    color = animateColorAsState(
+                        targetValue = when (wouldCompleteOnRelease) {
+                            true -> secondary
+                            false -> default
+                        }
+                    ).value,
                     center = iconCenter,
-                    radius = lerp(0f, maxRadius.toFloat(), FastOutLinearInEasing.transform(swipeProgress))
+                    radius = lerp(
+                        startValue = 0f,
+                        endValue = maxRadius.toFloat(),
+                        fraction = FastOutLinearInEasing.transform(swipeProgress)
+                    )
                 )
         )
 
