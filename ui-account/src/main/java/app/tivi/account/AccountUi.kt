@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
 package app.tivi.account
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayout
-import androidx.compose.foundation.layout.FlowMainAxisAlignment
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -86,7 +83,7 @@ fun AccountUi(
             ) {
                 @Suppress("DEPRECATION") // TODO: Migrate away from FlowRow
                 FlowRow(
-                    mainAxisAlignment = FlowMainAxisAlignment.End,
+                    mainAxisAlignment = androidx.compose.foundation.layout.FlowMainAxisAlignment.End,
                     mainAxisSpacing = 8.dp,
                     crossAxisSpacing = 4.dp,
                 ) {
