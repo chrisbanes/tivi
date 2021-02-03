@@ -16,15 +16,17 @@
 
 package app.tivi.home.recommended
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import app.tivi.data.resultentities.RecommendedEntryWithShow
 import app.tivi.domain.observers.ObservePagedRecommendedShows
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class RecommendedShowsViewModel @ViewModelInject constructor(
+@HiltViewModel
+class RecommendedShowsViewModel @Inject constructor(
     private val pagingInteractor: ObservePagedRecommendedShows,
 ) : ViewModel() {
     val pagedList: Flow<PagingData<RecommendedEntryWithShow>>

@@ -16,15 +16,17 @@
 
 package app.tivi.home.trending
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import app.tivi.data.resultentities.TrendingEntryWithShow
 import app.tivi.domain.observers.ObservePagedTrendingShows
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class TrendingShowsViewModel @ViewModelInject constructor(
+@HiltViewModel
+class TrendingShowsViewModel @Inject constructor(
     private val pagingInteractor: ObservePagedTrendingShows,
 ) : ViewModel() {
 

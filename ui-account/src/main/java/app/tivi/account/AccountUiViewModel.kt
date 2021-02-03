@@ -16,31 +16,27 @@
 
 package app.tivi.account
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
-import app.tivi.AppNavigator
 import app.tivi.ReduxViewModel
 import app.tivi.domain.interactors.ClearUserDetails
 import app.tivi.domain.observers.ObserveTraktAuthState
 import app.tivi.domain.observers.ObserveUserDetails
 import app.tivi.trakt.TraktManager
-import kotlinx.coroutines.flow.MutableSharedFlow
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import javax.inject.Provider
+import javax.inject.Inject
 
-class AccountUiViewModel @ViewModelInject constructor(
+@HiltViewModel
+class AccountUiViewModel @Inject constructor(
     private val traktManager: TraktManager,
     observeTraktAuthState: ObserveTraktAuthState,
     observeUserDetails: ObserveUserDetails,
-    private val clearUserDetails: ClearUserDetails,
-    private val appNavigator: Provider<AppNavigator>
+    private val clearUserDetails: ClearUserDetails
 ) : ReduxViewModel<AccountUiViewState>(
     AccountUiViewState()
 ) {
-    private val pendingActions = MutableSharedFlow<AccountUiAction>()
-
     init {
         viewModelScope.launch {
             observeTraktAuthState.observe()
@@ -54,24 +50,9 @@ class AccountUiViewModel @ViewModelInject constructor(
                 .collectAndSetState { copy(user = it) }
         }
         observeUserDetails(ObserveUserDetails.Params("me"))
-
-        viewModelScope.launch {
-            pendingActions.collect { action ->
-                when (action) {
-                    Login -> appNavigator.get().login()
-                    Logout -> logout()
-                }
-            }
-        }
     }
 
-    fun submitAction(action: AccountUiAction) {
-        viewModelScope.launch {
-            pendingActions.emit(action)
-        }
-    }
-
-    private fun logout() {
+    fun logout() {
         viewModelScope.launch {
             traktManager.clearAuth()
             clearUserDetails(ClearUserDetails.Params("me")).collect()

@@ -17,18 +17,19 @@
 package app.tivi.tasks
 
 import android.content.Context
-import androidx.hilt.Assisted
-import androidx.hilt.work.WorkerInject
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import app.tivi.domain.interactors.UpdateShowSeasonData
 import app.tivi.util.Logger
-import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 
-class SyncShowWatchedProgress @WorkerInject constructor(
+@HiltWorker
+class SyncShowWatchedProgress @AssistedInject constructor(
+    @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    @Assisted @ApplicationContext context: Context,
     private val updateShowSeasonData: UpdateShowSeasonData,
     private val logger: Logger
 ) : CoroutineWorker(context, params) {

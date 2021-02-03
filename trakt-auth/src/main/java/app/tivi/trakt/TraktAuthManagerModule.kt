@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Google LLC
+ * Copyright 2017 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package app.tivi.episodedetails
+package app.tivi.trakt
 
-import com.squareup.inject.assisted.dagger2.AssistedModule
+import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.FragmentComponent
+import dagger.hilt.components.SingletonComponent
 
-@InstallIn(FragmentComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
-@AssistedModule
-internal object EpisodeDetailsAssistedModule
+internal abstract class TraktAuthManagerModule {
+    @Binds
+    abstract fun provideTraktAuthManager(manager: ActivityTraktAuthManager): TraktAuthManager
+}

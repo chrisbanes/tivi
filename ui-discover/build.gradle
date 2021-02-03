@@ -80,7 +80,4 @@ dependencies {
 
     implementation Libs.Hilt.library
     kapt Libs.Hilt.compiler
-
-    implementation Libs.AndroidX.Hilt.viewmodel
-    kapt Libs.AndroidX.Hilt.compiler
 }

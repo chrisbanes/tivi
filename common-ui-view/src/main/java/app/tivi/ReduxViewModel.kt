@@ -31,9 +31,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.reflect.KProperty1
 
-abstract class ReduxViewModel<S>(
-    initialState: S
-) : ViewModel() {
+abstract class ReduxViewModel<S> constructor(initialState: S) : ViewModel() {
     private val state = MutableStateFlow(initialState)
     private val stateMutex = Mutex()
 

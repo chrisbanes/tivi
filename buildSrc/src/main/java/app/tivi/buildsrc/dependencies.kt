@@ -165,22 +165,21 @@ object Libs {
         }
 
         object Hilt {
-            private const val version = "1.0.0-alpha02"
+            private const val version = "1.0.0-alpha03"
             const val work = "androidx.hilt:hilt-work:$version"
-            const val viewmodel = "androidx.hilt:hilt-lifecycle-viewmodel:$version"
             const val compiler = "androidx.hilt:hilt-compiler:$version"
         }
     }
 
     object Dagger {
-        private const val version = "2.30.1"
+        private const val version = "2.31.2"
         const val dagger = "com.google.dagger:dagger:$version"
         const val compiler = "com.google.dagger:dagger-compiler:$version"
     }
 
     object Hilt {
         // Can't update to 2.31 yet due to https://issuetracker.google.com/177649295
-        private const val version = "2.30.1-alpha"
+        private const val version = "2.31.2-alpha"
         const val library = "com.google.dagger:hilt-android:$version"
         const val compiler = "com.google.dagger:hilt-android-compiler:$version"
         const val testing = "com.google.dagger:hilt-android-testing:$version"
@@ -202,12 +201,6 @@ object Libs {
     object Coil {
         private const val version = "1.1.1"
         const val coil = "io.coil-kt:coil:$version"
-    }
-
-    object AssistedInject {
-        private const val version = "0.6.0"
-        const val annotationDagger2 = "com.squareup.inject:assisted-inject-annotations-dagger2:$version"
-        const val processorDagger2 = "com.squareup.inject:assisted-inject-processor-dagger2:$version"
     }
 
     object Roomigrant {
